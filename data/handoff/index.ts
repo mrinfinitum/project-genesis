@@ -94,6 +94,7 @@ export const handoffResearch: ResearchNode[] = (researchRaw as RawRow[]).map((ro
   research_time: text(row["Research Time"]),
   related_systems: list(row["Related Systems"]),
   icon_name: text(row["Icon Name"]),
+  asset_id: nullable(row["Asset ID"]),
   status: text(row.Status),
   notes: text(row.Notes)
 }));

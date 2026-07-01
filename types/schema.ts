@@ -22,6 +22,7 @@ export type ResearchNode = {
   research_time: string;
   related_systems: string[];
   icon_name: string;
+  asset_id: string | null;
   status: Status;
   notes: string;
 };

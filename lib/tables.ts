@@ -29,7 +29,7 @@ export const tableConfigs: Record<TableName, TableConfig> = {
     statusKey: "status",
     eraKey: "era",
     searchKeys: ["name", "era", "design_purpose", "gameplay_effect"],
-    columns: ["name", "era", "primary_unlock_type", "cost_experimental", "research_time", "status"],
+    columns: ["name", "era", "primary_unlock_type", "cost_experimental", "research_time", "asset_id", "status"],
     fields: [
       { key: "id", label: "ID", required: true },
       { key: "branch_id", label: "Branch ID", required: true },
@@ -46,6 +46,7 @@ export const tableConfigs: Record<TableName, TableConfig> = {
       { key: "research_time", label: "Research Time", type: "number" },
       { key: "related_systems", label: "Related Systems", type: "array" },
       { key: "icon_name", label: "Icon Name" },
+      { key: "asset_id", label: "Asset ID" },
       { key: "status", label: "Status", type: "status" },
       { key: "notes", label: "Notes", type: "textarea" }
     ]

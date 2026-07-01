@@ -100,6 +100,10 @@ function linkedSource(assetId: string) {
     return { table: "buildings", id: assetId.replace(/^asset-buildings-/, "") };
   }
 
+  if (assetId.startsWith("asset-research-")) {
+    return { table: "research", id: assetId.replace(/^asset-research-/, "") };
+  }
+
   return null;
 }
 

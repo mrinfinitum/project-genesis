@@ -22,6 +22,7 @@ create table if not exists research (
   research_time text,
   related_systems jsonb default '[]'::jsonb,
   icon_name text,
+  asset_id text,
   status text default 'Draft',
   notes text
 );
@@ -60,6 +61,18 @@ alter table assets add column if not exists source_file_type text;
 alter table assets add column if not exists parent_asset_id text references assets(id) on delete set null;
 alter table assets add column if not exists slice_name text;
 alter table assets add column if not exists export_status text;
+
+alter table research add column if not exists asset_id text references assets(id) on delete set null;
+do $$
+begin
+  alter table research
+    add constraint research_asset_id_fkey
+    foreign key (asset_id)
+    references assets(id)
+    on delete set null;
+exception
+  when duplicate_object then null;
+end $$;
 
 create table if not exists buildings (
   id text primary key,
@@ -222,6 +235,7 @@ create table if not exists changelog (
 
 create index if not exists research_branch_idx on research(branch_id);
 create index if not exists research_status_idx on research(status);
+create index if not exists research_asset_id_idx on research(asset_id);
 create index if not exists buildings_era_idx on buildings(era);
 create index if not exists unlock_matrix_status_idx on unlock_matrix(implementation_status);
 create index if not exists upgrades_type_idx on upgrades(type);

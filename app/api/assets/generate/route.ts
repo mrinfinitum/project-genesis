@@ -38,7 +38,7 @@ function sourceTableFor(value: string) {
 }
 
 function sourceTableHasAssetId(value: string) {
-  return value === "upgrades" || value === "buildings";
+  return value === "upgrades" || value === "buildings" || value === "research";
 }
 
 function defaultSizesForSource(sourceTable: string) {

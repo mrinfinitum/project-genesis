@@ -83,6 +83,7 @@ export function generateResearchNodes(): ResearchNode[] {
         research_time: `${60 + index * 30 + eraIndex * 45}s`,
         related_systems: [branch.name, "Progression", eras[eraIndex]],
         icon_name: `icon-${slug(branch.name)}-${index + 1}`,
+        asset_id: null,
         status: statuses[(branchIndex + index) % statuses.length],
         notes: index % 5 === 0 ? "Needs balance pass after first economy simulation." : ""
       };
