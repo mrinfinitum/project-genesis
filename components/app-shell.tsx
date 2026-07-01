@@ -30,9 +30,9 @@ const sections = [
   { href: "/galaxy", label: "Galaxy", icon: Rocket },
   { href: "/collectibles", label: "Collectibles", icon: Gem },
   { href: "/assets", label: "Assets", icon: Archive },
+  { href: "/conceptual-art", label: "Conceptual Art", icon: Palette },
   { href: "/releases", label: "Releases", icon: Boxes },
-  { href: "/settings", label: "Settings", icon: Settings },
-  { href: "/conceptual-art", label: "Conceptual Art", icon: Palette }
+  { href: "/settings", label: "Settings", icon: Settings }
 ];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
