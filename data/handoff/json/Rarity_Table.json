@@ -1,0 +1,74 @@
+[
+  {
+    "ID": "RAR001",
+    "Rarity": "Common",
+    "Rank": 1,
+    "Value Multiplier": 1,
+    "Color Theme": "White",
+    "Notes": "Frequent expedition reward"
+  },
+  {
+    "ID": "RAR002",
+    "Rarity": "Uncommon",
+    "Rank": 2,
+    "Value Multiplier": 1.5,
+    "Color Theme": "Green",
+    "Notes": "Useful collection filler"
+  },
+  {
+    "ID": "RAR003",
+    "Rarity": "Rare",
+    "Rank": 3,
+    "Value Multiplier": 2,
+    "Color Theme": "Blue",
+    "Notes": "Early trading value"
+  },
+  {
+    "ID": "RAR004",
+    "Rarity": "Epic",
+    "Rank": 4,
+    "Value Multiplier": 3,
+    "Color Theme": "Purple",
+    "Notes": "Strong collectible value"
+  },
+  {
+    "ID": "RAR005",
+    "Rarity": "Legendary",
+    "Rank": 5,
+    "Value Multiplier": 5,
+    "Color Theme": "Gold",
+    "Notes": "Very rare high-value drops"
+  },
+  {
+    "ID": "RAR006",
+    "Rarity": "Mythic",
+    "Rank": 6,
+    "Value Multiplier": 10,
+    "Color Theme": "Red/Pink",
+    "Notes": "Major flex item"
+  },
+  {
+    "ID": "RAR007",
+    "Rarity": "Ancient",
+    "Rank": 7,
+    "Value Multiplier": 25,
+    "Color Theme": "Teal/Gold",
+    "Notes": "Endgame rarity"
+  },
+  {
+    "ID": "RAR008",
+    "Rarity": "Cosmic",
+    "Rank": 8,
+    "Value Multiplier": 100,
+    "Color Theme": "Cosmic Cyan",
+    "Notes": "Ultra rare galaxy-level collectible"
+  },
+  {
+    "ID": "RAR009",
+    "Rarity": "One-of-One",
+    "Rank": 9,
+    "Value Multiplier": 1000,
+    "Color Theme": "Rainbow/White Gold",
+    "Notes": "Unique item minted once globally"
+  }
+]

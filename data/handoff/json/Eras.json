@@ -1,0 +1,86 @@
+[
+  {
+    "ID": "ERA001",
+    "Era": "Survival",
+    "Order": 1,
+    "Summary": "Primitive settlement with basic labor and survival structures.",
+    "Unlock Philosophy": "Start"
+  },
+  {
+    "ID": "ERA002",
+    "Era": "Village",
+    "Order": 2,
+    "Summary": "Growing community with farms, markets, and early education.",
+    "Unlock Philosophy": "Population + basic buildings"
+  },
+  {
+    "ID": "ERA003",
+    "Era": "Town",
+    "Order": 3,
+    "Summary": "Organized town with banking, factories, and public services.",
+    "Unlock Philosophy": "Credits + population + research"
+  },
+  {
+    "ID": "ERA004",
+    "Era": "Industrial",
+    "Order": 4,
+    "Summary": "Factories, power, logistics, heavy industry.",
+    "Unlock Philosophy": "Production infrastructure"
+  },
+  {
+    "ID": "ERA005",
+    "Era": "Modern",
+    "Order": 5,
+    "Summary": "Digital society with labs, universities, smart infrastructure.",
+    "Unlock Philosophy": "Advanced research + infrastructure"
+  },
+  {
+    "ID": "ERA006",
+    "Era": "Future Core",
+    "Order": 6,
+    "Summary": "Universal future technologies before specialization.",
+    "Unlock Philosophy": "Complete modern foundation"
+  },
+  {
+    "ID": "ERA007",
+    "Era": "Eco-Green Utopia",
+    "Order": 7,
+    "Summary": "Sustainable future civilization path.",
+    "Unlock Philosophy": "Future Core + Eco alignment"
+  },
+  {
+    "ID": "ERA008",
+    "Era": "High Tech Singularity",
+    "Order": 7,
+    "Summary": "AI, quantum, fusion, and automation path.",
+    "Unlock Philosophy": "Future Core + Tech alignment"
+  },
+  {
+    "ID": "ERA009",
+    "Era": "Industrial Empire",
+    "Order": 7,
+    "Summary": "Manufacturing and logistics civilization path.",
+    "Unlock Philosophy": "Future Core + Industry alignment"
+  },
+  {
+    "ID": "ERA010",
+    "Era": "Cyberpunk Megacity",
+    "Order": 7,
+    "Summary": "Neon, corporate, cybernetics, digital economy path.",
+    "Unlock Philosophy": "Future Core + Cyber alignment"
+  },
+  {
+    "ID": "ERA011",
+    "Era": "Metropolis Prime",
+    "Order": 7,
+    "Summary": "Ultimate urban civilization focused on infrastructure, transit, housing, and civic planning.",
+    "Unlock Philosophy": "Future Core + Metropolis alignment"
+  },
+  {
+    "ID": "ERA012",
+    "Era": "Harmony Ascendant",
+    "Order": 8,
+    "Summary": "Secret ultimate civilization earned through mastery and collection.",
+    "Unlock Philosophy": "Master major systems + Harmony Spire"
+  }
+]

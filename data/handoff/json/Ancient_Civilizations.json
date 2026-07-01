@@ -1,0 +1,72 @@
+[
+  {
+    "ID": "AC001",
+    "Civilization": "None",
+    "Description": "No evidence of previous civilization.",
+    "Rarity": "Low",
+    "Gameplay Effect": "Increases artifact, relic, and story-event probability."
+  },
+  {
+    "ID": "AC002",
+    "Civilization": "Primitive",
+    "Description": "Ancient settlements, tools, cave markings and burial sites.",
+    "Rarity": "Common",
+    "Gameplay Effect": "Increases artifact, relic, and story-event probability."
+  },
+  {
+    "ID": "AC003",
+    "Civilization": "Industrial",
+    "Description": "Lost factories, machinery and pollution scars.",
+    "Rarity": "Uncommon",
+    "Gameplay Effect": "Increases artifact, relic, and story-event probability."
+  },
+  {
+    "ID": "AC004",
+    "Civilization": "Technological",
+    "Description": "Advanced ruins, power systems and research remnants.",
+    "Rarity": "Rare",
+    "Gameplay Effect": "Increases artifact, relic, and story-event probability."
+  },
+  {
+    "ID": "AC005",
+    "Civilization": "Alien Empire",
+    "Description": "Non-human civilization with grand ruins and imperial relics.",
+    "Rarity": "Epic",
+    "Gameplay Effect": "Increases artifact, relic, and story-event probability."
+  },
+  {
+    "ID": "AC006",
+    "Civilization": "Machine Civilization",
+    "Description": "Autonomous AI society, dormant machines and data vaults.",
+    "Rarity": "Epic",
+    "Gameplay Effect": "Increases artifact, relic, and story-event probability."
+  },
+  {
+    "ID": "AC007",
+    "Civilization": "Metropolis Civilization",
+    "Description": "Planet-wide arcology ruins and civic megastructure relics.",
+    "Rarity": "Epic",
+    "Gameplay Effect": "Increases artifact, relic, and story-event probability."
+  },
+  {
+    "ID": "AC008",
+    "Civilization": "Ancient AI",
+    "Description": "AI-controlled world with sentient fragments and network relics.",
+    "Rarity": "Legendary",
+    "Gameplay Effect": "Increases artifact, relic, and story-event probability."
+  },
+  {
+    "ID": "AC009",
+    "Civilization": "Harmony Civilization",
+    "Description": "Extremely rare precursor civilization tied to Harmony Ascendant.",
+    "Rarity": "Ancient",
+    "Gameplay Effect": "Increases artifact, relic, and story-event probability."
+  },
+  {
+    "ID": "AC010",
+    "Civilization": "Void Civilization",
+    "Description": "Unknown origin, cosmic horror, void relics and One-of-One chance.",
+    "Rarity": "Cosmic",
+    "Gameplay Effect": "Increases artifact, relic, and story-event probability."
+  }
+]

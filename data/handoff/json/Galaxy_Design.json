@@ -1,0 +1,42 @@
+[
+  {
+    "ID": "GD001",
+    "Section": "Vision",
+    "Description": "Late game is driven by procedural galaxy exploration, rare discoveries, collection completion, and trading."
+  },
+  {
+    "ID": "GD002",
+    "Section": "Planet Generation",
+    "Description": "Every planet is generated from a unique seed. No two planets should feel exactly identical."
+  },
+  {
+    "ID": "GD003",
+    "Section": "Exploration",
+    "Description": "Players launch colony ships and expeditions to discover planets, resources, species, ruins, relics, and rare modifiers."
+  },
+  {
+    "ID": "GD004",
+    "Section": "Collectibles",
+    "Description": "Collectibles become the long-term retention system after Future Core and planet colonization."
+  },
+  {
+    "ID": "GD005",
+    "Section": "Trading",
+    "Description": "Ultra-rare collectibles create player-driven value through direct trades, auctions, duplicates, and collection completion."
+  },
+  {
+    "ID": "GD006",
+    "Section": "Museum",
+    "Description": "Players display discoveries in museum wings, complete sets, and earn permanent bonuses."
+  },
+  {
+    "ID": "GD007",
+    "Section": "Harmony Ascendant",
+    "Description": "Harmony Ascendant is earned through civilization mastery, exploration mastery, museum completion, and the Harmony Spire."
+  },
+  {
+    "ID": "GD008",
+    "Section": "Discovery",
+    "Description": "Discovery is a permanent progression statistic earned from exploration and cataloging the galaxy."
+  }
+]

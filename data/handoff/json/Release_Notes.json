@@ -1,0 +1,38 @@
+[
+  {
+    "Item": "Version",
+    "Value": "2.2 Sprint 2"
+  },
+  {
+    "Item": "Release Name",
+    "Value": "Buildings, Wonders & Relationship Mapping"
+  },
+  {
+    "Item": "Purpose",
+    "Value": "Connect Research, Buildings, Districts, Building Chains and Wonders into a relational database foundation."
+  },
+  {
+    "Item": "Added",
+    "Value": "Districts table with 10 gameplay districts."
+  },
+  {
+    "Item": "Added",
+    "Value": "Building Chains table with 10 evolution chains."
+  },
+  {
+    "Item": "Added",
+    "Value": "Wonders table with 6 civilization wonders and requirements."
+  },
+  {
+    "Item": "Added",
+    "Value": "Building Relationships table mapping Buildings to Districts, Chains, Research, Upgrades and Wonders."
+  },
+  {
+    "Item": "Updated",
+    "Value": "Unlock Matrix expanded with mapped building and wonder unlock rows."
+  },
+  {
+    "Item": "Next Release",
+    "Value": "2.3 Galaxy Generator: planets, traits, expedition pools, discovery journal."
+  }
+]

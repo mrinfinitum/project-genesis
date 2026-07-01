@@ -1,0 +1,52 @@
+[
+  {
+    "Section": "Project",
+    "Value": "Project Genesis",
+    "Notes": "Civilization Clicker: Build Your Future"
+  },
+  {
+    "Section": "Database Version",
+    "Value": "2.2 Sprint 2",
+    "Notes": "Buildings, Wonders & Relationship Mapping"
+  },
+  {
+    "Section": "Status",
+    "Value": "Pre-production",
+    "Notes": "Core research foundation plus relational building/wonder mapping included"
+  },
+  {
+    "Section": "Current Sprint",
+    "Value": "Sprint 2: Relationships",
+    "Notes": "Research, Buildings, Districts, Chains, and Wonders connected"
+  },
+  {
+    "Section": "Primary Endgame",
+    "Value": "Procedural Galaxy + Collectibles + Trading",
+    "Notes": "Harmony Ascendant remains as a secret earned goal"
+  },
+  {
+    "Section": "Database Rule",
+    "Value": "IDs are permanent",
+    "Notes": "Use IDs for references. Names may change."
+  },
+  {
+    "Section": "Research Nodes",
+    "Value": 150,
+    "Notes": "10 branches × 15 nodes"
+  },
+  {
+    "Section": "Building Relationships",
+    "Value": 177,
+    "Notes": "Buildings mapped to districts, chains, research and upgrades"
+  },
+  {
+    "Section": "Unlock Matrix Rows",
+    "Value": 287,
+    "Notes": "Research unlock rows plus mapped building/wonder unlocks"
+  },
+  {
+    "Section": "Next Release",
+    "Value": "2.3 Galaxy Generator",
+    "Notes": "Planets, traits, expedition rewards, discovery journal"
+  }
+]

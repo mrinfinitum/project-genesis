@@ -1,0 +1,317 @@
+[
+  {
+    "ID": "PG001",
+    "Category": "Biome",
+    "Value": "Forest",
+    "Description": "Biome pool used by procedural planet generation.",
+    "Generation Rule": "Planet seed selects biome, then modifiers apply."
+  },
+  {
+    "ID": "PG002",
+    "Category": "Biome",
+    "Value": "Desert",
+    "Description": "Biome pool used by procedural planet generation.",
+    "Generation Rule": "Planet seed selects biome, then modifiers apply."
+  },
+  {
+    "ID": "PG003",
+    "Category": "Biome",
+    "Value": "Ocean",
+    "Description": "Biome pool used by procedural planet generation.",
+    "Generation Rule": "Planet seed selects biome, then modifiers apply."
+  },
+  {
+    "ID": "PG004",
+    "Category": "Biome",
+    "Value": "Frozen",
+    "Description": "Biome pool used by procedural planet generation.",
+    "Generation Rule": "Planet seed selects biome, then modifiers apply."
+  },
+  {
+    "ID": "PG005",
+    "Category": "Biome",
+    "Value": "Volcanic",
+    "Description": "Biome pool used by procedural planet generation.",
+    "Generation Rule": "Planet seed selects biome, then modifiers apply."
+  },
+  {
+    "ID": "PG006",
+    "Category": "Biome",
+    "Value": "Crystal",
+    "Description": "Biome pool used by procedural planet generation.",
+    "Generation Rule": "Planet seed selects biome, then modifiers apply."
+  },
+  {
+    "ID": "PG007",
+    "Category": "Biome",
+    "Value": "Swamp",
+    "Description": "Biome pool used by procedural planet generation.",
+    "Generation Rule": "Planet seed selects biome, then modifiers apply."
+  },
+  {
+    "ID": "PG008",
+    "Category": "Biome",
+    "Value": "Jungle",
+    "Description": "Biome pool used by procedural planet generation.",
+    "Generation Rule": "Planet seed selects biome, then modifiers apply."
+  },
+  {
+    "ID": "PG009",
+    "Category": "Biome",
+    "Value": "Mountain",
+    "Description": "Biome pool used by procedural planet generation.",
+    "Generation Rule": "Planet seed selects biome, then modifiers apply."
+  },
+  {
+    "ID": "PG010",
+    "Category": "Biome",
+    "Value": "Cavern",
+    "Description": "Biome pool used by procedural planet generation.",
+    "Generation Rule": "Planet seed selects biome, then modifiers apply."
+  },
+  {
+    "ID": "PG011",
+    "Category": "Biome",
+    "Value": "Coral",
+    "Description": "Biome pool used by procedural planet generation.",
+    "Generation Rule": "Planet seed selects biome, then modifiers apply."
+  },
+  {
+    "ID": "PG012",
+    "Category": "Biome",
+    "Value": "Mushroom",
+    "Description": "Biome pool used by procedural planet generation.",
+    "Generation Rule": "Planet seed selects biome, then modifiers apply."
+  },
+  {
+    "ID": "PG013",
+    "Category": "Biome",
+    "Value": "Floating Islands",
+    "Description": "Biome pool used by procedural planet generation.",
+    "Generation Rule": "Planet seed selects biome, then modifiers apply."
+  },
+  {
+    "ID": "PG014",
+    "Category": "Biome",
+    "Value": "Mechanical World",
+    "Description": "Biome pool used by procedural planet generation.",
+    "Generation Rule": "Planet seed selects biome, then modifiers apply."
+  },
+  {
+    "ID": "PG015",
+    "Category": "Biome",
+    "Value": "Living Planet",
+    "Description": "Biome pool used by procedural planet generation.",
+    "Generation Rule": "Planet seed selects biome, then modifiers apply."
+  },
+  {
+    "ID": "PG016",
+    "Category": "Biome",
+    "Value": "Cyber Planet",
+    "Description": "Biome pool used by procedural planet generation.",
+    "Generation Rule": "Planet seed selects biome, then modifiers apply."
+  },
+  {
+    "ID": "PG017",
+    "Category": "Biome",
+    "Value": "Quantum World",
+    "Description": "Biome pool used by procedural planet generation.",
+    "Generation Rule": "Planet seed selects biome, then modifiers apply."
+  },
+  {
+    "ID": "PG018",
+    "Category": "Biome",
+    "Value": "Artificial Planet",
+    "Description": "Biome pool used by procedural planet generation.",
+    "Generation Rule": "Planet seed selects biome, then modifiers apply."
+  },
+  {
+    "ID": "PG019",
+    "Category": "Biome",
+    "Value": "Ruins",
+    "Description": "Biome pool used by procedural planet generation.",
+    "Generation Rule": "Planet seed selects biome, then modifiers apply."
+  },
+  {
+    "ID": "PG020",
+    "Category": "Biome",
+    "Value": "Asteroid",
+    "Description": "Biome pool used by procedural planet generation.",
+    "Generation Rule": "Planet seed selects biome, then modifiers apply."
+  },
+  {
+    "ID": "PG021",
+    "Category": "Biome",
+    "Value": "Gas Giant",
+    "Description": "Biome pool used by procedural planet generation.",
+    "Generation Rule": "Planet seed selects biome, then modifiers apply."
+  },
+  {
+    "ID": "PG022",
+    "Category": "Biome",
+    "Value": "Void Planet",
+    "Description": "Biome pool used by procedural planet generation.",
+    "Generation Rule": "Planet seed selects biome, then modifiers apply."
+  },
+  {
+    "ID": "PG023",
+    "Category": "Biome",
+    "Value": "Metropolis World",
+    "Description": "Biome pool used by procedural planet generation.",
+    "Generation Rule": "Planet seed selects biome, then modifiers apply."
+  },
+  {
+    "ID": "PG024",
+    "Category": "Biome",
+    "Value": "Ancient World",
+    "Description": "Biome pool used by procedural planet generation.",
+    "Generation Rule": "Planet seed selects biome, then modifiers apply."
+  },
+  {
+    "ID": "PG025",
+    "Category": "Biome",
+    "Value": "Harmony World",
+    "Description": "Biome pool used by procedural planet generation.",
+    "Generation Rule": "Planet seed selects biome, then modifiers apply."
+  },
+  {
+    "ID": "PG026",
+    "Category": "Climate",
+    "Value": "Temperate",
+    "Description": "Climate modifier affecting hazards, production, and expedition outcomes.",
+    "Generation Rule": "Seed weighted by biome."
+  },
+  {
+    "ID": "PG027",
+    "Category": "Climate",
+    "Value": "Arid",
+    "Description": "Climate modifier affecting hazards, production, and expedition outcomes.",
+    "Generation Rule": "Seed weighted by biome."
+  },
+  {
+    "ID": "PG028",
+    "Category": "Climate",
+    "Value": "Frozen",
+    "Description": "Climate modifier affecting hazards, production, and expedition outcomes.",
+    "Generation Rule": "Seed weighted by biome."
+  },
+  {
+    "ID": "PG029",
+    "Category": "Climate",
+    "Value": "Tropical",
+    "Description": "Climate modifier affecting hazards, production, and expedition outcomes.",
+    "Generation Rule": "Seed weighted by biome."
+  },
+  {
+    "ID": "PG030",
+    "Category": "Climate",
+    "Value": "Stormy",
+    "Description": "Climate modifier affecting hazards, production, and expedition outcomes.",
+    "Generation Rule": "Seed weighted by biome."
+  },
+  {
+    "ID": "PG031",
+    "Category": "Climate",
+    "Value": "Toxic",
+    "Description": "Climate modifier affecting hazards, production, and expedition outcomes.",
+    "Generation Rule": "Seed weighted by biome."
+  },
+  {
+    "ID": "PG032",
+    "Category": "Climate",
+    "Value": "Radiated",
+    "Description": "Climate modifier affecting hazards, production, and expedition outcomes.",
+    "Generation Rule": "Seed weighted by biome."
+  },
+  {
+    "ID": "PG033",
+    "Category": "Climate",
+    "Value": "Volcanic",
+    "Description": "Climate modifier affecting hazards, production, and expedition outcomes.",
+    "Generation Rule": "Seed weighted by biome."
+  },
+  {
+    "ID": "PG034",
+    "Category": "Climate",
+    "Value": "Oceanic",
+    "Description": "Climate modifier affecting hazards, production, and expedition outcomes.",
+    "Generation Rule": "Seed weighted by biome."
+  },
+  {
+    "ID": "PG035",
+    "Category": "Climate",
+    "Value": "Artificial",
+    "Description": "Climate modifier affecting hazards, production, and expedition outcomes.",
+    "Generation Rule": "Seed weighted by biome."
+  },
+  {
+    "ID": "PG036",
+    "Category": "Climate",
+    "Value": "Void-Touched",
+    "Description": "Climate modifier affecting hazards, production, and expedition outcomes.",
+    "Generation Rule": "Seed weighted by biome."
+  },
+  {
+    "ID": "PG037",
+    "Category": "Atmosphere",
+    "Value": "Breathable",
+    "Description": "Atmosphere affects colonization difficulty and expedition risk.",
+    "Generation Rule": "Seed weighted by planet type."
+  },
+  {
+    "ID": "PG038",
+    "Category": "Atmosphere",
+    "Value": "Thin",
+    "Description": "Atmosphere affects colonization difficulty and expedition risk.",
+    "Generation Rule": "Seed weighted by planet type."
+  },
+  {
+    "ID": "PG039",
+    "Category": "Atmosphere",
+    "Value": "Toxic",
+    "Description": "Atmosphere affects colonization difficulty and expedition risk.",
+    "Generation Rule": "Seed weighted by planet type."
+  },
+  {
+    "ID": "PG040",
+    "Category": "Atmosphere",
+    "Value": "Methane",
+    "Description": "Atmosphere affects colonization difficulty and expedition risk.",
+    "Generation Rule": "Seed weighted by planet type."
+  },
+  {
+    "ID": "PG041",
+    "Category": "Atmosphere",
+    "Value": "None",
+    "Description": "Atmosphere affects colonization difficulty and expedition risk.",
+    "Generation Rule": "Seed weighted by planet type."
+  },
+  {
+    "ID": "PG042",
+    "Category": "Atmosphere",
+    "Value": "Pressurized",
+    "Description": "Atmosphere affects colonization difficulty and expedition risk.",
+    "Generation Rule": "Seed weighted by planet type."
+  },
+  {
+    "ID": "PG043",
+    "Category": "Atmosphere",
+    "Value": "Bioactive",
+    "Description": "Atmosphere affects colonization difficulty and expedition risk.",
+    "Generation Rule": "Seed weighted by planet type."
+  },
+  {
+    "ID": "PG044",
+    "Category": "Atmosphere",
+    "Value": "Ionized",
+    "Description": "Atmosphere affects colonization difficulty and expedition risk.",
+    "Generation Rule": "Seed weighted by planet type."
+  },
+  {
+    "ID": "PG045",
+    "Category": "Atmosphere",
+    "Value": "Artificial",
+    "Description": "Atmosphere affects colonization difficulty and expedition risk.",
+    "Generation Rule": "Seed weighted by planet type."
+  }
+]

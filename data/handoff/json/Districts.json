@@ -1,0 +1,112 @@
+[
+  {
+    "ID": "D001",
+    "District": "Residential",
+    "Purpose": "Population, housing, citizen capacity",
+    "Primary Buildings": "Tent, Hut, House, Apartments, Luxury Towers",
+    "Primary Stat": "Population Bonus",
+    "Bonus": "+Population capacity and labor scaling",
+    "Unlock Research": "Construction, Architecture, Urban Governance",
+    "Civilization": "Universal",
+    "Priority": "High"
+  },
+  {
+    "ID": "D002",
+    "District": "Agriculture",
+    "Purpose": "Food, farming, colony support",
+    "Primary Buildings": "Berry Bush, Farm Plot, Farm, Industrial Farm, Vertical Farm",
+    "Primary Stat": "Food / Population Support",
+    "Bonus": "+Population growth and colony supply",
+    "Unlock Research": "Agriculture, Irrigation, Planetary Agriculture",
+    "Civilization": "Universal",
+    "Priority": "High"
+  },
+  {
+    "ID": "D003",
+    "District": "Production",
+    "Purpose": "Credits, labor, manufacturing",
+    "Primary Buildings": "Workshop, Factory, Mega Factory, Matter Fabricator",
+    "Primary Stat": "Production",
+    "Bonus": "+Credits/sec and Labor/sec",
+    "Unlock Research": "Manufacturing, Assembly Lines, Universal Manufacturing",
+    "Civilization": "Universal",
+    "Priority": "High"
+  },
+  {
+    "ID": "D004",
+    "District": "Commercial",
+    "Purpose": "Markets, banks, trade economy",
+    "Primary Buildings": "Trading Post, Market, Bank, Stock Market, Galactic Market",
+    "Primary Stat": "Credits",
+    "Bonus": "+Credits and trade efficiency",
+    "Unlock Research": "Trade, Banking, Universal Marketplace",
+    "Civilization": "Universal",
+    "Priority": "High"
+  },
+  {
+    "ID": "D005",
+    "District": "Research",
+    "Purpose": "Experimental, science, future systems",
+    "Primary Buildings": "Story Circle, Library, University, Quantum Lab, Planetary AI Core",
+    "Primary Stat": "Experimental",
+    "Bonus": "+Experimental/sec and research speed",
+    "Unlock Research": "Education, Digital Computing, Planetary AI",
+    "Civilization": "Universal",
+    "Priority": "High"
+  },
+  {
+    "ID": "D006",
+    "District": "Utility",
+    "Purpose": "Water, power, roads, city support",
+    "Primary Buildings": "Water Well, Power Station, Power Grid, Fusion Reactor",
+    "Primary Stat": "Efficiency",
+    "Bonus": "+Infrastructure efficiency and offline stability",
+    "Unlock Research": "Water Engineering, Electricity, Fusion Power",
+    "Civilization": "Universal",
+    "Priority": "Medium"
+  },
+  {
+    "ID": "D007",
+    "District": "Government",
+    "Purpose": "Administration, policy, public services",
+    "Primary Buildings": "Chief's Hut, Town Hall, City Hall, Digital Government",
+    "Primary Stat": "Efficiency",
+    "Bonus": "+Governance, policies, stability",
+    "Unlock Research": "Tribal Leadership, Government, Planetary Governance",
+    "Civilization": "Universal",
+    "Priority": "Medium"
+  },
+  {
+    "ID": "D008",
+    "District": "Culture",
+    "Purpose": "Happiness, museums, citizen morale",
+    "Primary Buildings": "Statue, Theater, Museum, Science Museum",
+    "Primary Stat": "Happiness",
+    "Bonus": "+Citizen happiness and event resilience",
+    "Unlock Research": "Education, Public Services, Museums",
+    "Civilization": "Universal",
+    "Priority": "Medium"
+  },
+  {
+    "ID": "D009",
+    "District": "Space",
+    "Purpose": "Spaceflight, orbital systems, colonization",
+    "Primary Buildings": "Launch Pad, Space Elevator, Orbital Shipyard, Colony Ship Facility",
+    "Primary Stat": "Discovery",
+    "Bonus": "+Discovery, expeditions, colonization",
+    "Unlock Research": "Rocketry, Orbital Transport, Colony Ships",
+    "Civilization": "Universal",
+    "Priority": "Critical"
+  },
+  {
+    "ID": "D010",
+    "District": "Wonder",
+    "Purpose": "Civilization-defining megastructures",
+    "Primary Buildings": "Planetary Garden, Singularity Engine, Global Arcology",
+    "Primary Stat": "Civilization Bonus",
+    "Bonus": "+Major civilization-wide bonuses",
+    "Unlock Research": "Late Future Core + Civilization Path",
+    "Civilization": "Civilization",
+    "Priority": "Critical"
+  }
+]

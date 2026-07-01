@@ -1,0 +1,50 @@
+[
+  {
+    "ID": "CIV001",
+    "Civilization": "Eco-Green Utopia",
+    "Subtitle": "The Sustainable Future",
+    "Type": "Main Path",
+    "Theme": "Renewable energy, climate restoration, clean cities, vertical forests",
+    "Legendary Wonder": "Planetary Garden"
+  },
+  {
+    "ID": "CIV002",
+    "Civilization": "High Tech Singularity",
+    "Subtitle": "The Age of Intelligence",
+    "Type": "Main Path",
+    "Theme": "AI, quantum computing, robotics, automation, fusion",
+    "Legendary Wonder": "Singularity Engine"
+  },
+  {
+    "ID": "CIV003",
+    "Civilization": "Industrial Empire",
+    "Subtitle": "The Forge of Progress",
+    "Type": "Main Path",
+    "Theme": "Heavy manufacturing, mining, logistics, planetary production",
+    "Legendary Wonder": "World Production Nexus"
+  },
+  {
+    "ID": "CIV004",
+    "Civilization": "Cyberpunk Megacity",
+    "Subtitle": "The Neon Future",
+    "Type": "Main Path",
+    "Theme": "Mega corporations, neural networks, neon cities, virtual commerce",
+    "Legendary Wonder": "MegaCorp Citadel"
+  },
+  {
+    "ID": "CIV005",
+    "Civilization": "Metropolis Prime",
+    "Subtitle": "The City of Tomorrow",
+    "Type": "Main Path",
+    "Theme": "Arcologies, mega infrastructure, transit, housing, public services, and civic planning",
+    "Legendary Wonder": "Global Arcology"
+  },
+  {
+    "ID": "CIV006",
+    "Civilization": "Harmony Ascendant",
+    "Subtitle": "The Unified Civilization",
+    "Type": "Secret Endgame",
+    "Theme": "Perfect balance plus exploration and collection mastery",
+    "Legendary Wonder": "Harmony Spire"
+  }
+]

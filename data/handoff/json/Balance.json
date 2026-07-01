@@ -1,0 +1,38 @@
+[
+  {
+    "System": "Building Costs",
+    "Variable": "In-Era Order Multiplier",
+    "Value": 1.075,
+    "Notes": "Each later building in the same era costs roughly 7.5% more."
+  },
+  {
+    "System": "Wonders",
+    "Variable": "Wonder Cost Multiplier",
+    "Value": 5,
+    "Notes": "Wonders are intentionally expensive and slow."
+  },
+  {
+    "System": "Upgrades",
+    "Variable": "Standard Max Level",
+    "Value": 10,
+    "Notes": "Minimum upgrade cap."
+  },
+  {
+    "System": "Upgrades",
+    "Variable": "Core Max Level",
+    "Value": 25,
+    "Notes": "Longer progression upgrades."
+  },
+  {
+    "System": "Upgrades",
+    "Variable": "Legendary Max Level",
+    "Value": 50,
+    "Notes": "Major endgame technologies."
+  },
+  {
+    "System": "Collectibles",
+    "Variable": "One-of-One Value Multiplier",
+    "Value": 1000,
+    "Notes": "Ultra rare player economy item."
+  }
+]

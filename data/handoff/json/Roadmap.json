@@ -1,0 +1,26 @@
+[
+  {
+    "Version": "1.1",
+    "Milestone": "Clean master database with Metropolis Prime",
+    "Status": "Complete",
+    "Notes": "Futigra replaced with Metropolis Prime"
+  },
+  {
+    "Version": "1.2",
+    "Milestone": "Research database",
+    "Status": "Planned",
+    "Notes": "Next production sheet"
+  },
+  {
+    "Version": "1.3",
+    "Milestone": "Events and planets",
+    "Status": "Planned",
+    "Notes": "Galaxy gameplay foundation"
+  },
+  {
+    "Version": "2.0",
+    "Milestone": "Vertical slice",
+    "Status": "Planned",
+    "Notes": "Survival to first colony"
+  }
+]

@@ -1,0 +1,182 @@
+[
+  {
+    "ID": "LOOK001",
+    "Type": "Status",
+    "Value": "Draft"
+  },
+  {
+    "ID": "LOOK002",
+    "Type": "Status",
+    "Value": "Design"
+  },
+  {
+    "ID": "LOOK003",
+    "Type": "Status",
+    "Value": "Ready"
+  },
+  {
+    "ID": "LOOK004",
+    "Type": "Status",
+    "Value": "Implemented"
+  },
+  {
+    "ID": "LOOK005",
+    "Type": "Status",
+    "Value": "Tested"
+  },
+  {
+    "ID": "LOOK006",
+    "Type": "Status",
+    "Value": "Complete"
+  },
+  {
+    "ID": "LOOK007",
+    "Type": "Priority",
+    "Value": "Critical"
+  },
+  {
+    "ID": "LOOK008",
+    "Type": "Priority",
+    "Value": "High"
+  },
+  {
+    "ID": "LOOK009",
+    "Type": "Priority",
+    "Value": "Medium"
+  },
+  {
+    "ID": "LOOK010",
+    "Type": "Priority",
+    "Value": "Low"
+  },
+  {
+    "ID": "LOOK011",
+    "Type": "Tier",
+    "Value": "Standard"
+  },
+  {
+    "ID": "LOOK012",
+    "Type": "Tier",
+    "Value": "Core"
+  },
+  {
+    "ID": "LOOK013",
+    "Type": "Tier",
+    "Value": "Legendary"
+  },
+  {
+    "ID": "LOOK014",
+    "Type": "Tier",
+    "Value": "Infinite"
+  },
+  {
+    "ID": "LOOK015",
+    "Type": "Civilization",
+    "Value": "Universal"
+  },
+  {
+    "ID": "LOOK016",
+    "Type": "Civilization",
+    "Value": "Eco-Green Utopia"
+  },
+  {
+    "ID": "LOOK017",
+    "Type": "Civilization",
+    "Value": "High Tech Singularity"
+  },
+  {
+    "ID": "LOOK018",
+    "Type": "Civilization",
+    "Value": "Industrial Empire"
+  },
+  {
+    "ID": "LOOK019",
+    "Type": "Civilization",
+    "Value": "Cyberpunk Megacity"
+  },
+  {
+    "ID": "LOOK020",
+    "Type": "Civilization",
+    "Value": "Metropolis Prime"
+  },
+  {
+    "ID": "LOOK021",
+    "Type": "Civilization",
+    "Value": "Harmony Ascendant"
+  },
+  {
+    "ID": "LOOK022",
+    "Type": "Era",
+    "Value": "Survival"
+  },
+  {
+    "ID": "LOOK023",
+    "Type": "Era",
+    "Value": "Village"
+  },
+  {
+    "ID": "LOOK024",
+    "Type": "Era",
+    "Value": "Town"
+  },
+  {
+    "ID": "LOOK025",
+    "Type": "Era",
+    "Value": "Industrial"
+  },
+  {
+    "ID": "LOOK026",
+    "Type": "Era",
+    "Value": "Modern"
+  },
+  {
+    "ID": "LOOK027",
+    "Type": "Era",
+    "Value": "Future Core"
+  },
+  {
+    "ID": "LOOK028",
+    "Type": "Rarity",
+    "Value": "Common"
+  },
+  {
+    "ID": "LOOK029",
+    "Type": "Rarity",
+    "Value": "Uncommon"
+  },
+  {
+    "ID": "LOOK030",
+    "Type": "Rarity",
+    "Value": "Rare"
+  },
+  {
+    "ID": "LOOK031",
+    "Type": "Rarity",
+    "Value": "Epic"
+  },
+  {
+    "ID": "LOOK032",
+    "Type": "Rarity",
+    "Value": "Legendary"
+  },
+  {
+    "ID": "LOOK033",
+    "Type": "Rarity",
+    "Value": "Mythic"
+  },
+  {
+    "ID": "LOOK034",
+    "Type": "Rarity",
+    "Value": "Ancient"
+  },
+  {
+    "ID": "LOOK035",
+    "Type": "Rarity",
+    "Value": "Cosmic"
+  },
+  {
+    "ID": "LOOK036",
+    "Type": "Rarity",
+    "Value": "One-of-One"
+  }
+]

@@ -1,0 +1,72 @@
+[
+  {
+    "ID": "EXP001",
+    "Expedition": "Surface Survey",
+    "Planet Requirement": "Any Colonized Planet",
+    "Duration": "15m",
+    "Risk": "Low",
+    "Reward Pool": "Common-Uncommon collectibles",
+    "Required Ship": "Basic Explorer Ship",
+    "Rare Event": "No"
+  },
+  {
+    "ID": "EXP002",
+    "Expedition": "Deep Survey",
+    "Planet Requirement": "Any Colonized Planet",
+    "Duration": "1h",
+    "Risk": "Medium",
+    "Reward Pool": "Rare-Epic collectibles",
+    "Required Ship": "Survey Ship",
+    "Rare Event": "No"
+  },
+  {
+    "ID": "EXP003",
+    "Expedition": "Ancient Ruins Expedition",
+    "Planet Requirement": "Ancient / Desert / Frozen",
+    "Duration": "4h",
+    "Risk": "Medium",
+    "Reward Pool": "Artifacts and relics",
+    "Required Ship": "Research Vessel",
+    "Rare Event": "No"
+  },
+  {
+    "ID": "EXP004",
+    "Expedition": "Wildlife Capture",
+    "Planet Requirement": "Forest / Jungle / Ocean",
+    "Duration": "2h",
+    "Risk": "Medium",
+    "Reward Pool": "Alien creatures and eggs",
+    "Required Ship": "Bio Containment Ship",
+    "Rare Event": "No"
+  },
+  {
+    "ID": "EXP005",
+    "Expedition": "Void Signal Hunt",
+    "Planet Requirement": "Unknown / Cosmic",
+    "Duration": "12h",
+    "Risk": "High",
+    "Reward Pool": "Mythic-Cosmic collectibles",
+    "Required Ship": "Advanced Expedition Fleet",
+    "Rare Event": "Yes"
+  },
+  {
+    "ID": "EXP006",
+    "Expedition": "Arcology Survey",
+    "Planet Requirement": "Metropolis World / Mega Ruins",
+    "Duration": "6h",
+    "Risk": "Medium",
+    "Reward Pool": "Metropolis relics and civic technology",
+    "Required Ship": "Urban Survey Ship",
+    "Rare Event": "Rare"
+  },
+  {
+    "ID": "EXP007",
+    "Expedition": "Orbital Salvage",
+    "Planet Requirement": "Ruined Orbit / Artificial",
+    "Duration": "3h",
+    "Risk": "Medium",
+    "Reward Pool": "Ship components and lost technology",
+    "Required Ship": "Salvage Ship",
+    "Rare Event": "No"
+  }
+]

@@ -1,0 +1,431 @@
+{
+  "project": "Project Genesis",
+  "database_version": "v2.2 Sprint 2 Relationships",
+  "source_workbook": "Project_Genesis_Master_Database_v2.2.xlsx",
+  "sheets": [
+    {
+      "sheet": "Dashboard",
+      "range": "A1:C11",
+      "csv": "csv/Dashboard.csv",
+      "json": "json/Dashboard.json",
+      "rows_including_header": 11,
+      "records": 10
+    },
+    {
+      "sheet": "README",
+      "range": "A1:B8",
+      "csv": "csv/README.csv",
+      "json": "json/README.json",
+      "rows_including_header": 8,
+      "records": 7
+    },
+    {
+      "sheet": "Resources",
+      "range": "A1:G7",
+      "csv": "csv/Resources.csv",
+      "json": "json/Resources.json",
+      "rows_including_header": 7,
+      "records": 6
+    },
+    {
+      "sheet": "Eras",
+      "range": "A1:E13",
+      "csv": "csv/Eras.csv",
+      "json": "json/Eras.json",
+      "rows_including_header": 13,
+      "records": 12
+    },
+    {
+      "sheet": "Future Core",
+      "range": "A1:C12",
+      "csv": "csv/Future_Core.csv",
+      "json": "json/Future_Core.json",
+      "rows_including_header": 12,
+      "records": 11
+    },
+    {
+      "sheet": "Civilization Paths",
+      "range": "A1:F7",
+      "csv": "csv/Civilization_Paths.csv",
+      "json": "json/Civilization_Paths.json",
+      "rows_including_header": 7,
+      "records": 6
+    },
+    {
+      "sheet": "Research Branches",
+      "range": "A1:C11",
+      "csv": "csv/Research_Branches.csv",
+      "json": "json/Research_Branches.json",
+      "rows_including_header": 11,
+      "records": 10
+    },
+    {
+      "sheet": "Research",
+      "range": "A1:R151",
+      "csv": "csv/Research.csv",
+      "json": "json/Research.json",
+      "rows_including_header": 151,
+      "records": 150
+    },
+    {
+      "sheet": "Research Unlocks",
+      "range": "A1:I151",
+      "csv": "csv/Research_Unlocks.csv",
+      "json": "json/Research_Unlocks.json",
+      "rows_including_header": 151,
+      "records": 150
+    },
+    {
+      "sheet": "Workforce Upgrades",
+      "range": "A1:Q150",
+      "csv": "csv/Workforce_Upgrades.csv",
+      "json": "json/Workforce_Upgrades.json",
+      "rows_including_header": 150,
+      "records": 149
+    },
+    {
+      "sheet": "Industry Upgrades",
+      "range": "A1:Q134",
+      "csv": "csv/Industry_Upgrades.csv",
+      "json": "json/Industry_Upgrades.json",
+      "rows_including_header": 134,
+      "records": 133
+    },
+    {
+      "sheet": "Science Upgrades",
+      "range": "A1:Q144",
+      "csv": "csv/Science_Upgrades.csv",
+      "json": "json/Science_Upgrades.json",
+      "rows_including_header": 144,
+      "records": 143
+    },
+    {
+      "sheet": "Technology Upgrades",
+      "range": "A1:Q132",
+      "csv": "csv/Technology_Upgrades.csv",
+      "json": "json/Technology_Upgrades.json",
+      "rows_including_header": 132,
+      "records": 131
+    },
+    {
+      "sheet": "All Upgrades",
+      "range": "A1:Q557",
+      "csv": "csv/All_Upgrades.csv",
+      "json": "json/All_Upgrades.json",
+      "rows_including_header": 557,
+      "records": 556
+    },
+    {
+      "sheet": "Buildings",
+      "range": "A1:Z178",
+      "csv": "csv/Buildings.csv",
+      "json": "json/Buildings.json",
+      "rows_including_header": 178,
+      "records": 177
+    },
+    {
+      "sheet": "Building Evolution",
+      "range": "A1:G1",
+      "csv": "csv/Building_Evolution.csv",
+      "json": "json/Building_Evolution.json",
+      "rows_including_header": 1,
+      "records": 0
+    },
+    {
+      "sheet": "Districts",
+      "range": "A1:I11",
+      "csv": "csv/Districts.csv",
+      "json": "json/Districts.json",
+      "rows_including_header": 11,
+      "records": 10
+    },
+    {
+      "sheet": "Wonders",
+      "range": "A1:O7",
+      "csv": "csv/Wonders.csv",
+      "json": "json/Wonders.json",
+      "rows_including_header": 7,
+      "records": 6
+    },
+    {
+      "sheet": "Galaxy Design",
+      "range": "A1:C9",
+      "csv": "csv/Galaxy_Design.csv",
+      "json": "json/Galaxy_Design.json",
+      "rows_including_header": 9,
+      "records": 8
+    },
+    {
+      "sheet": "Planet Generation",
+      "range": "A1:E46",
+      "csv": "csv/Planet_Generation.csv",
+      "json": "json/Planet_Generation.json",
+      "rows_including_header": 46,
+      "records": 45
+    },
+    {
+      "sheet": "Planet Traits",
+      "range": "A1:E24",
+      "csv": "csv/Planet_Traits.csv",
+      "json": "json/Planet_Traits.json",
+      "rows_including_header": 24,
+      "records": 23
+    },
+    {
+      "sheet": "Ancient Civilizations",
+      "range": "A1:E11",
+      "csv": "csv/Ancient_Civilizations.csv",
+      "json": "json/Ancient_Civilizations.json",
+      "rows_including_header": 11,
+      "records": 10
+    },
+    {
+      "sheet": "Planets",
+      "range": "A1:G1",
+      "csv": "csv/Planets.csv",
+      "json": "json/Planets.json",
+      "rows_including_header": 1,
+      "records": 0
+    },
+    {
+      "sheet": "Galaxy",
+      "range": "A1:F1",
+      "csv": "csv/Galaxy.csv",
+      "json": "json/Galaxy.json",
+      "rows_including_header": 1,
+      "records": 0
+    },
+    {
+      "sheet": "Discovery",
+      "range": "A1:D8",
+      "csv": "csv/Discovery.csv",
+      "json": "json/Discovery.json",
+      "rows_including_header": 8,
+      "records": 7
+    },
+    {
+      "sheet": "Expeditions",
+      "range": "A1:H8",
+      "csv": "csv/Expeditions.csv",
+      "json": "json/Expeditions.json",
+      "rows_including_header": 8,
+      "records": 7
+    },
+    {
+      "sheet": "Collectibles",
+      "range": "A1:O8",
+      "csv": "csv/Collectibles.csv",
+      "json": "json/Collectibles.json",
+      "rows_including_header": 8,
+      "records": 7
+    },
+    {
+      "sheet": "Rarity Table",
+      "range": "A1:F10",
+      "csv": "csv/Rarity_Table.csv",
+      "json": "json/Rarity_Table.json",
+      "rows_including_header": 10,
+      "records": 9
+    },
+    {
+      "sheet": "Procedural Traits",
+      "range": "A1:E11",
+      "csv": "csv/Procedural_Traits.csv",
+      "json": "json/Procedural_Traits.json",
+      "rows_including_header": 11,
+      "records": 10
+    },
+    {
+      "sheet": "Collection Sets",
+      "range": "A1:F8",
+      "csv": "csv/Collection_Sets.csv",
+      "json": "json/Collection_Sets.json",
+      "rows_including_header": 8,
+      "records": 7
+    },
+    {
+      "sheet": "Museums",
+      "range": "A1:E8",
+      "csv": "csv/Museums.csv",
+      "json": "json/Museums.json",
+      "rows_including_header": 8,
+      "records": 7
+    },
+    {
+      "sheet": "Trading",
+      "range": "A1:E6",
+      "csv": "csv/Trading.csv",
+      "json": "json/Trading.json",
+      "rows_including_header": 6,
+      "records": 5
+    },
+    {
+      "sheet": "Events",
+      "range": "A1:J1",
+      "csv": "csv/Events.csv",
+      "json": "json/Events.json",
+      "rows_including_header": 1,
+      "records": 0
+    },
+    {
+      "sheet": "Achievements",
+      "range": "A1:G1",
+      "csv": "csv/Achievements.csv",
+      "json": "json/Achievements.json",
+      "rows_including_header": 1,
+      "records": 0
+    },
+    {
+      "sheet": "Governments",
+      "range": "A1:G1",
+      "csv": "csv/Governments.csv",
+      "json": "json/Governments.json",
+      "rows_including_header": 1,
+      "records": 0
+    },
+    {
+      "sheet": "Policies",
+      "range": "A1:G1",
+      "csv": "csv/Policies.csv",
+      "json": "json/Policies.json",
+      "rows_including_header": 1,
+      "records": 0
+    },
+    {
+      "sheet": "Icons & Assets",
+      "range": "A1:G1",
+      "csv": "csv/Icons_Assets.csv",
+      "json": "json/Icons_Assets.json",
+      "rows_including_header": 1,
+      "records": 0
+    },
+    {
+      "sheet": "UI & Screens",
+      "range": "A1:F1",
+      "csv": "csv/UI_Screens.csv",
+      "json": "json/UI_Screens.json",
+      "rows_including_header": 1,
+      "records": 0
+    },
+    {
+      "sheet": "Game Constants",
+      "range": "A1:D13",
+      "csv": "csv/Game_Constants.csv",
+      "json": "json/Game_Constants.json",
+      "rows_including_header": 13,
+      "records": 12
+    },
+    {
+      "sheet": "Feature Flags",
+      "range": "A1:E13",
+      "csv": "csv/Feature_Flags.csv",
+      "json": "json/Feature_Flags.json",
+      "rows_including_header": 13,
+      "records": 12
+    },
+    {
+      "sheet": "Difficulty Curves",
+      "range": "A1:D6",
+      "csv": "csv/Difficulty_Curves.csv",
+      "json": "json/Difficulty_Curves.json",
+      "rows_including_header": 6,
+      "records": 5
+    },
+    {
+      "sheet": "Balance",
+      "range": "A1:D7",
+      "csv": "csv/Balance.csv",
+      "json": "json/Balance.json",
+      "rows_including_header": 7,
+      "records": 6
+    },
+    {
+      "sheet": "Codex Tasks",
+      "range": "A1:D1",
+      "csv": "csv/Codex_Tasks.csv",
+      "json": "json/Codex_Tasks.json",
+      "rows_including_header": 1,
+      "records": 0
+    },
+    {
+      "sheet": "Monetization",
+      "range": "A1:E1",
+      "csv": "csv/Monetization.csv",
+      "json": "json/Monetization.json",
+      "rows_including_header": 1,
+      "records": 0
+    },
+    {
+      "sheet": "Roadmap",
+      "range": "A1:D5",
+      "csv": "csv/Roadmap.csv",
+      "json": "json/Roadmap.json",
+      "rows_including_header": 5,
+      "records": 4
+    },
+    {
+      "sheet": "Google Import Notes",
+      "range": "A1:B7",
+      "csv": "csv/Google_Import_Notes.csv",
+      "json": "json/Google_Import_Notes.json",
+      "rows_including_header": 7,
+      "records": 6
+    },
+    {
+      "sheet": "Lookup Values",
+      "range": "A1:C37",
+      "csv": "csv/Lookup_Values.csv",
+      "json": "json/Lookup_Values.json",
+      "rows_including_header": 37,
+      "records": 36
+    },
+    {
+      "sheet": "Unlock Matrix",
+      "range": "A1:K288",
+      "csv": "csv/Unlock_Matrix.csv",
+      "json": "json/Unlock_Matrix.json",
+      "rows_including_header": 288,
+      "records": 287
+    },
+    {
+      "sheet": "Release Notes",
+      "range": "A1:B10",
+      "csv": "csv/Release_Notes.csv",
+      "json": "json/Release_Notes.json",
+      "rows_including_header": 10,
+      "records": 9
+    },
+    {
+      "sheet": "Changelog",
+      "range": "A1:D20",
+      "csv": "csv/Changelog.csv",
+      "json": "json/Changelog.json",
+      "rows_including_header": 20,
+      "records": 19
+    },
+    {
+      "sheet": "Content Status",
+      "range": "A1:E18",
+      "csv": "csv/Content_Status.csv",
+      "json": "json/Content_Status.json",
+      "rows_including_header": 18,
+      "records": 17
+    },
+    {
+      "sheet": "Building Chains",
+      "range": "A1:J11",
+      "csv": "csv/Building_Chains.csv",
+      "json": "json/Building_Chains.json",
+      "rows_including_header": 11,
+      "records": 10
+    },
+    {
+      "sheet": "Building Relationships",
+      "range": "A1:P178",
+      "csv": "csv/Building_Relationships.csv",
+      "json": "json/Building_Relationships.json",
+      "rows_including_header": 178,
+      "records": 177
+    }
+  ]
+}

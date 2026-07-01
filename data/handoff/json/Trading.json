@@ -1,0 +1,37 @@
+[
+  {
+    "ID": "TRD001",
+    "System": "Player Trading",
+    "Unlock": "After first colony",
+    "Description": "Players can trade collectibles directly.",
+    "Notes": "Collectibles only initially"
+  },
+  {
+    "ID": "TRD002",
+    "System": "Auction House",
+    "Unlock": "Later Update",
+    "Description": "Players list rare collectibles for timed bidding.",
+    "Notes": "Requires trade safety rules"
+  },
+  {
+    "ID": "TRD003",
+    "System": "Museum Display",
+    "Unlock": "After first rare collectible",
+    "Description": "Players display collectibles for prestige and bonuses.",
+    "Notes": "Social flex system"
+  },
+  {
+    "ID": "TRD004",
+    "System": "Duplicate Exchange",
+    "Unlock": "After 25 collectibles",
+    "Description": "Trade duplicates for collection tokens.",
+    "Notes": "Prevents inventory clutter"
+  },
+  {
+    "ID": "TRD005",
+    "System": "Galactic Marketplace",
+    "Unlock": "Endgame",
+    "Description": "Global economy for rare items and auction browsing.",
+    "Notes": "Seasonal/event economy possible"
+  }
+]

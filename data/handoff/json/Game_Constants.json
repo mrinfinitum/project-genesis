@@ -1,0 +1,74 @@
+[
+  {
+    "ID": "GC001",
+    "Constant": "Starting Labor",
+    "Value": 1,
+    "Description": "Base Labor generated per click before upgrades."
+  },
+  {
+    "ID": "GC002",
+    "Constant": "Starting Credits",
+    "Value": 0,
+    "Description": "Player starting Credits."
+  },
+  {
+    "ID": "GC003",
+    "Constant": "Starting Experimental",
+    "Value": 0,
+    "Description": "Player starting Experimental."
+  },
+  {
+    "ID": "GC004",
+    "Constant": "Base Critical Chance",
+    "Value": 0.02,
+    "Description": "Starting critical production chance."
+  },
+  {
+    "ID": "GC005",
+    "Constant": "Base Critical Multiplier",
+    "Value": 2,
+    "Description": "Starting critical production multiplier."
+  },
+  {
+    "ID": "GC006",
+    "Constant": "Max Standard Upgrade Level",
+    "Value": 10,
+    "Description": "Minimum upgrade cap for Standard upgrades."
+  },
+  {
+    "ID": "GC007",
+    "Constant": "Max Core Upgrade Level",
+    "Value": 25,
+    "Description": "Core upgrade cap."
+  },
+  {
+    "ID": "GC008",
+    "Constant": "Max Legendary Upgrade Level",
+    "Value": 50,
+    "Description": "Legendary/future upgrade cap."
+  },
+  {
+    "ID": "GC009",
+    "Constant": "Offline Progress Hours",
+    "Value": 8,
+    "Description": "Default max offline earning window."
+  },
+  {
+    "ID": "GC010",
+    "Constant": "Research Queue Slots",
+    "Value": 1,
+    "Description": "Starting number of simultaneous research slots."
+  },
+  {
+    "ID": "GC011",
+    "Constant": "Premium Research Queue Slots",
+    "Value": 3,
+    "Description": "Potential expanded research queue slots."
+  },
+  {
+    "ID": "GC012",
+    "Constant": "Colony Cost Multiplier",
+    "Value": 1.35,
+    "Description": "Cost scaling between colonies or planets."
+  }
+]

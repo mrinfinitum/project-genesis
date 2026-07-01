@@ -1,0 +1,72 @@
+[
+  {
+    "ID": "TR001",
+    "Trait": "Bioluminescent",
+    "Applies To": "Creature / Organic",
+    "Value Multiplier": 2,
+    "Notes": "Adds glow visual and value"
+  },
+  {
+    "ID": "TR002",
+    "Trait": "Gold Inlay",
+    "Applies To": "Artifact",
+    "Value Multiplier": 3,
+    "Notes": "Adds gold trim"
+  },
+  {
+    "ID": "TR003",
+    "Trait": "Crystalized",
+    "Applies To": "Artifact / Fossil",
+    "Value Multiplier": 2.5,
+    "Notes": "Crystalline mutation"
+  },
+  {
+    "ID": "TR004",
+    "Trait": "Ancient",
+    "Applies To": "Any",
+    "Value Multiplier": 4,
+    "Notes": "Old-world visual treatment"
+  },
+  {
+    "ID": "TR005",
+    "Trait": "Void-Touched",
+    "Applies To": "Any",
+    "Value Multiplier": 10,
+    "Notes": "Extremely rare dark/cosmic mutation"
+  },
+  {
+    "ID": "TR006",
+    "Trait": "Civic",
+    "Applies To": "Metropolis / Artifact",
+    "Value Multiplier": 3.5,
+    "Notes": "Megastructure or city-planning relic"
+  },
+  {
+    "ID": "TR007",
+    "Trait": "Quantum",
+    "Applies To": "Technology",
+    "Value Multiplier": 5,
+    "Notes": "Particle shimmer"
+  },
+  {
+    "ID": "TR008",
+    "Trait": "One-of-One Signature",
+    "Applies To": "Any",
+    "Value Multiplier": 1000,
+    "Notes": "Unique minting trait"
+  },
+  {
+    "ID": "TR009",
+    "Trait": "Harmonic",
+    "Applies To": "Harmony / Relic",
+    "Value Multiplier": 15,
+    "Notes": "Harmony Ascendant related mutation"
+  },
+  {
+    "ID": "TR010",
+    "Trait": "Prismatic",
+    "Applies To": "Crystal / Cosmic",
+    "Value Multiplier": 8,
+    "Notes": "Multicolor refraction visual"
+  }
+]

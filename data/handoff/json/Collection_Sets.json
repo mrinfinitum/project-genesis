@@ -1,0 +1,58 @@
+[
+  {
+    "ID": "SET001",
+    "Set Name": "Verdantia Fauna",
+    "Category": "Alien Creature",
+    "Requirement": "Collect 12 Verdantia creatures",
+    "Reward": "+5% Population Growth",
+    "Harmony Requirement": "No"
+  },
+  {
+    "ID": "SET002",
+    "Set Name": "Ancient Relics",
+    "Category": "Ancient Artifact",
+    "Requirement": "Collect 10 ancient relics",
+    "Reward": "+5% Experimental",
+    "Harmony Requirement": "No"
+  },
+  {
+    "ID": "SET003",
+    "Set Name": "Lost AI Fragments",
+    "Category": "Lost Technology",
+    "Requirement": "Collect 8 AI fragments",
+    "Reward": "Unlock AI Event Chain",
+    "Harmony Requirement": "No"
+  },
+  {
+    "ID": "SET004",
+    "Set Name": "Metropolis Relics",
+    "Category": "Planet Relic",
+    "Requirement": "Collect 10 civic megastructure relics",
+    "Reward": "+5% Construction Speed",
+    "Harmony Requirement": "No"
+  },
+  {
+    "ID": "SET005",
+    "Set Name": "Genesis Seeds",
+    "Category": "Planet Relic",
+    "Requirement": "Collect 5 Terraforming Seeds",
+    "Reward": "Harmony Requirement",
+    "Harmony Requirement": "Yes"
+  },
+  {
+    "ID": "SET006",
+    "Set Name": "Void Discoveries",
+    "Category": "Cosmic Collectible",
+    "Requirement": "Collect 3 Cosmic discoveries",
+    "Reward": "Unlock Void Signal Hunt upgrades",
+    "Harmony Requirement": "Yes"
+  },
+  {
+    "ID": "SET007",
+    "Set Name": "Lost Ship Parts",
+    "Category": "Ship Component",
+    "Requirement": "Collect 10 ancient ship components",
+    "Reward": "Unlock advanced expedition fleet",
+    "Harmony Requirement": "No"
+  }
+]

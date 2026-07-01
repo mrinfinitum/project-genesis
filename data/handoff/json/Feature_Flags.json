@@ -1,0 +1,86 @@
+[
+  {
+    "ID": "FF001",
+    "Feature": "Buildings",
+    "Enabled": true,
+    "Launch Phase": "Vertical Slice",
+    "Notes": "Core system."
+  },
+  {
+    "ID": "FF002",
+    "Feature": "Research",
+    "Enabled": true,
+    "Launch Phase": "Vertical Slice",
+    "Notes": "Unlocks new capabilities."
+  },
+  {
+    "ID": "FF003",
+    "Feature": "Upgrades",
+    "Enabled": true,
+    "Launch Phase": "Vertical Slice",
+    "Notes": "Improves existing systems."
+  },
+  {
+    "ID": "FF004",
+    "Feature": "Offline Progress",
+    "Enabled": true,
+    "Launch Phase": "Vertical Slice",
+    "Notes": "Idle progression."
+  },
+  {
+    "ID": "FF005",
+    "Feature": "Critical Bonuses",
+    "Enabled": true,
+    "Launch Phase": "Vertical Slice",
+    "Notes": "Crit chance and multiplier bonuses."
+  },
+  {
+    "ID": "FF006",
+    "Feature": "Galaxy",
+    "Enabled": true,
+    "Launch Phase": "Phase 2",
+    "Notes": "Unlock after colony ships."
+  },
+  {
+    "ID": "FF007",
+    "Feature": "Procedural Planets",
+    "Enabled": true,
+    "Launch Phase": "Phase 2",
+    "Notes": "Seed-based planet generation."
+  },
+  {
+    "ID": "FF008",
+    "Feature": "Collectibles",
+    "Enabled": true,
+    "Launch Phase": "Phase 2",
+    "Notes": "Endgame retention loop."
+  },
+  {
+    "ID": "FF009",
+    "Feature": "Trading",
+    "Enabled": false,
+    "Launch Phase": "Phase 3",
+    "Notes": "Enable after inventory/trade safety."
+  },
+  {
+    "ID": "FF010",
+    "Feature": "Museums",
+    "Enabled": true,
+    "Launch Phase": "Phase 2",
+    "Notes": "Collection display and bonuses."
+  },
+  {
+    "ID": "FF011",
+    "Feature": "PvP",
+    "Enabled": false,
+    "Launch Phase": "Future",
+    "Notes": "Not planned for launch."
+  },
+  {
+    "ID": "FF012",
+    "Feature": "Creature Breeding",
+    "Enabled": false,
+    "Launch Phase": "Future",
+    "Notes": "Potential future collectible expansion."
+  }
+]

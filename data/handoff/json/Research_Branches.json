@@ -1,0 +1,52 @@
+[
+  {
+    "ID": "RB001",
+    "Branch": "Agriculture",
+    "Branch Purpose": "Unlocks food systems, farming buildings, population scaling, and planetary agriculture."
+  },
+  {
+    "ID": "RB002",
+    "Branch": "Engineering",
+    "Branch Purpose": "Unlocks construction methods, infrastructure, megastructures, and advanced city-building capabilities."
+  },
+  {
+    "ID": "RB003",
+    "Branch": "Manufacturing",
+    "Branch Purpose": "Unlocks workshops, factories, automation, fabrication, and production chains."
+  },
+  {
+    "ID": "RB004",
+    "Branch": "Energy",
+    "Branch Purpose": "Unlocks power buildings, grids, fuel systems, fusion, and late-game energy infrastructure."
+  },
+  {
+    "ID": "RB005",
+    "Branch": "Commerce",
+    "Branch Purpose": "Unlocks trade, banking, financial systems, marketplaces, and the galactic economy."
+  },
+  {
+    "ID": "RB006",
+    "Branch": "Transportation",
+    "Branch Purpose": "Unlocks roads, transit, logistics, orbital transport, colony ships, and interstellar travel."
+  },
+  {
+    "ID": "RB007",
+    "Branch": "Computing",
+    "Branch Purpose": "Unlocks records, data systems, digital infrastructure, AI, quantum computing, and planetary intelligence."
+  },
+  {
+    "ID": "RB008",
+    "Branch": "Medicine",
+    "Branch Purpose": "Unlocks health systems, hospitals, population recovery, biotech, and human enhancement."
+  },
+  {
+    "ID": "RB009",
+    "Branch": "Space",
+    "Branch Purpose": "Unlocks astronomy, rockets, orbital systems, colony ships, terraforming, and galaxy expansion."
+  },
+  {
+    "ID": "RB010",
+    "Branch": "Civilization",
+    "Branch Purpose": "Unlocks leadership, education, government, public services, policies, and planetary governance."
+  }
+]

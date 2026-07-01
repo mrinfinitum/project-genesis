@@ -1,0 +1,44 @@
+[
+  {
+    "ID": "DISC001",
+    "Unlock": "New Galaxy Sector",
+    "Requirement Type": "Discovery Points",
+    "Description": "Unlocks access to new star systems and higher planet tiers."
+  },
+  {
+    "ID": "DISC002",
+    "Unlock": "Advanced Expedition Ship",
+    "Requirement Type": "Discovery Points",
+    "Description": "Improves expedition duration, risk and reward pools."
+  },
+  {
+    "ID": "DISC003",
+    "Unlock": "Improved Sensors",
+    "Requirement Type": "Discovery Points",
+    "Description": "Improves rare planet and hidden trait detection."
+  },
+  {
+    "ID": "DISC004",
+    "Unlock": "Rare Planet Types",
+    "Requirement Type": "Discovery Points",
+    "Description": "Adds rare biome types to procedural generation pool."
+  },
+  {
+    "ID": "DISC005",
+    "Unlock": "Legendary Expeditions",
+    "Requirement Type": "Discovery Points",
+    "Description": "Unlocks high-risk, high-reward expeditions."
+  },
+  {
+    "ID": "DISC006",
+    "Unlock": "Secret Technologies",
+    "Requirement Type": "Discovery + Research",
+    "Description": "Unlocks rare research paths tied to discoveries."
+  },
+  {
+    "ID": "DISC007",
+    "Unlock": "Harmony Ascendant",
+    "Requirement Type": "Discovery + Civilization Mastery",
+    "Description": "Ultimate civilization unlock condition."
+  }
+]

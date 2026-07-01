@@ -1,0 +1,51 @@
+[
+  {
+    "ID": "MUS001",
+    "Museum Wing": "Alien Creatures",
+    "Description": "Displays fauna discoveries and completed creature sets.",
+    "Primary Bonus": "+Population Growth",
+    "Unlock Requirement": "Collect alien creatures"
+  },
+  {
+    "ID": "MUS002",
+    "Museum Wing": "Ancient Artifacts",
+    "Description": "Displays relics from past civilizations.",
+    "Primary Bonus": "+Experimental",
+    "Unlock Requirement": "Collect ancient artifacts"
+  },
+  {
+    "ID": "MUS003",
+    "Museum Wing": "Ancient Civilizations",
+    "Description": "Catalogs civilizations discovered across the galaxy.",
+    "Primary Bonus": "+Discovery",
+    "Unlock Requirement": "Discover ancient civ evidence"
+  },
+  {
+    "ID": "MUS004",
+    "Museum Wing": "Crystal Collection",
+    "Description": "Displays crystal formations and rare mutations.",
+    "Primary Bonus": "+Credits",
+    "Unlock Requirement": "Collect crystal formations"
+  },
+  {
+    "ID": "MUS005",
+    "Museum Wing": "Metropolis Relics",
+    "Description": "Displays ancient city/arcology relics and civic plans.",
+    "Primary Bonus": "+Construction Speed",
+    "Unlock Requirement": "Collect Metropolis relics"
+  },
+  {
+    "ID": "MUS006",
+    "Museum Wing": "Legendary Discoveries",
+    "Description": "Displays Legendary, Mythic and Ancient discoveries.",
+    "Primary Bonus": "+All Production",
+    "Unlock Requirement": "Collect high-rarity items"
+  },
+  {
+    "ID": "MUS007",
+    "Museum Wing": "One-of-One Hall",
+    "Description": "Displays globally unique discoveries.",
+    "Primary Bonus": "Prestige/Flex",
+    "Unlock Requirement": "Own one-of-one items"
+  }
+]

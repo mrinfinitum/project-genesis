@@ -1,0 +1,238 @@
+create extension if not exists pgcrypto;
+
+create table if not exists research_branches (
+  id text primary key,
+  name text not null,
+  purpose text
+);
+
+create table if not exists research (
+  id text primary key,
+  branch_id text references research_branches(id) on delete set null,
+  era text,
+  era_order integer default 0,
+  node_order integer default 0,
+  name text not null,
+  design_purpose text,
+  primary_unlock_type text,
+  unlocks jsonb default '[]'::jsonb,
+  gameplay_effect text,
+  prerequisite_id text references research(id) on delete set null,
+  cost_experimental integer default 0,
+  research_time text,
+  related_systems jsonb default '[]'::jsonb,
+  icon_name text,
+  status text default 'Draft',
+  notes text
+);
+
+create table if not exists districts (
+  id text primary key,
+  name text not null,
+  purpose text,
+  primary_buildings jsonb default '[]'::jsonb,
+  primary_stat text,
+  bonus text,
+  unlock_research text,
+  civilization text,
+  priority integer default 0
+);
+
+create table if not exists assets (
+  id text primary key,
+  name text not null,
+  type text,
+  category text,
+  prompt text,
+  file_url text,
+  source_file_url text,
+  source_file_type text,
+  parent_asset_id text references assets(id) on delete set null,
+  slice_name text,
+  roblox_asset_id text,
+  export_status text,
+  status text default 'Draft',
+  notes text
+);
+
+alter table assets add column if not exists source_file_url text;
+alter table assets add column if not exists source_file_type text;
+alter table assets add column if not exists parent_asset_id text references assets(id) on delete set null;
+alter table assets add column if not exists slice_name text;
+alter table assets add column if not exists export_status text;
+
+create table if not exists buildings (
+  id text primary key,
+  era text,
+  civilization text,
+  category text,
+  name text not null,
+  description text,
+  cost_credits numeric default 0,
+  cost_labor numeric default 0,
+  cost_experimental numeric default 0,
+  construction_time text,
+  income_credits_sec numeric default 0,
+  income_labor_sec numeric default 0,
+  income_experimental_sec numeric default 0,
+  population_bonus numeric default 0,
+  labor_requirement numeric default 0,
+  building_size text,
+  district_id text references districts(id) on delete set null,
+  unlock_research_id text references research(id) on delete set null,
+  unlock_building text,
+  visual_evolution text,
+  upgrade_chain text,
+  wonder text,
+  icon_name text,
+  model_name text,
+  asset_id text references assets(id) on delete set null,
+  notes text
+);
+
+create table if not exists unlock_matrix (
+  id text primary key,
+  source_type text,
+  source_id text,
+  source_name text,
+  source_branch text,
+  source_era text,
+  unlock_type text,
+  unlock_name text,
+  unlock_id text,
+  implementation_status text default 'Draft',
+  notes text
+);
+
+create table if not exists wonders (
+  id text primary key,
+  name text not null,
+  civilization text,
+  unlock_research_id text references research(id) on delete set null,
+  civilization_id text,
+  primary_bonus_type text,
+  bonuses jsonb default '[]'::jsonb,
+  requirements jsonb default '[]'::jsonb,
+  construction_cost text,
+  construction_time text,
+  icon_name text,
+  model_name text,
+  status text default 'Draft',
+  notes text
+);
+
+create table if not exists release_notes (
+  id text primary key,
+  version text not null,
+  release_name text,
+  purpose text,
+  notes text,
+  created_at timestamptz default now()
+);
+
+create table if not exists upgrades (
+  id text primary key,
+  type text,
+  civilization text,
+  era text,
+  name text not null,
+  tier text,
+  max_level integer default 0,
+  unlock_level integer default 0,
+  cost_resource text,
+  base_cost numeric default 0,
+  cost_multiplier numeric default 0,
+  bonus_type text,
+  bonus_value text,
+  description text,
+  icon_name text,
+  asset_id text references assets(id) on delete set null,
+  notes text
+);
+
+alter table upgrades add column if not exists type text;
+do $$
+begin
+  if exists (
+    select 1
+    from information_schema.columns
+    where table_schema = 'public'
+      and table_name = 'upgrades'
+      and column_name = 'tab'
+  ) then
+    execute 'update upgrades set type = tab where type is null and tab is not null';
+  end if;
+end $$;
+
+create table if not exists building_relationships (
+  id text primary key,
+  building_id text references buildings(id) on delete cascade,
+  building text,
+  era text,
+  civilization text,
+  category text,
+  district_id text references districts(id) on delete set null,
+  district text,
+  chain_id text,
+  unlock_research text,
+  unlock_research_id text references research(id) on delete set null,
+  primary_upgrade_dependency text,
+  primary_upgrade_id text references upgrades(id) on delete set null,
+  wonder_id text references wonders(id) on delete set null,
+  implementation_status text default 'Needs ID Mapping',
+  notes text
+);
+
+create table if not exists building_chains (
+  id text primary key,
+  chain text not null,
+  district text,
+  level_1 text,
+  level_2 text,
+  level_3 text,
+  level_4 text,
+  level_5 text,
+  gameplay_role text,
+  research_progression text
+);
+
+create table if not exists game_constants (
+  id text primary key,
+  constant text not null,
+  value jsonb,
+  description text
+);
+
+create table if not exists feature_flags (
+  id text primary key,
+  feature text not null,
+  enabled boolean default false,
+  launch_phase text,
+  notes text
+);
+
+create table if not exists changelog (
+  id text primary key,
+  version text,
+  sheet_or_table text,
+  change_type text,
+  change_summary text,
+  created_at timestamptz default now()
+);
+
+create index if not exists research_branch_idx on research(branch_id);
+create index if not exists research_status_idx on research(status);
+create index if not exists buildings_era_idx on buildings(era);
+create index if not exists unlock_matrix_status_idx on unlock_matrix(implementation_status);
+create index if not exists upgrades_type_idx on upgrades(type);
+create index if not exists building_relationships_status_idx on building_relationships(implementation_status);
+create index if not exists feature_flags_enabled_idx on feature_flags(enabled);
+
+insert into storage.buckets (id, name, public)
+values ('project-genesis-assets', 'project-genesis-assets', true)
+on conflict (id) do update set public = excluded.public;
+
+drop policy if exists "Project Genesis public asset reads" on storage.objects;
+create policy "Project Genesis public asset reads"
+on storage.objects for select
+using (bucket_id = 'project-genesis-assets');

@@ -1,0 +1,116 @@
+[
+  {
+    "Version": "2.1",
+    "Sheet": "Dashboard",
+    "Change Type": "Updated",
+    "Change Summary": "Changed database version to v2.1 Sprint 1 and added research progress metrics."
+  },
+  {
+    "Version": "2.1",
+    "Sheet": "README",
+    "Change Type": "Updated",
+    "Change Summary": "Added rule that Research expands gameplay and Upgrades improve existing systems."
+  },
+  {
+    "Version": "2.1",
+    "Sheet": "Research Branches",
+    "Change Type": "Added",
+    "Change Summary": "Added 10 permanent research categories."
+  },
+  {
+    "Version": "2.1",
+    "Sheet": "Research",
+    "Change Type": "Rebuilt",
+    "Change Summary": "Added 150 major civilization milestone nodes instead of small upgrade-like techs."
+  },
+  {
+    "Version": "2.1",
+    "Sheet": "Research Unlocks",
+    "Change Type": "Added",
+    "Change Summary": "Starter relationship table for research-to-unlock mapping."
+  },
+  {
+    "Version": "2.1",
+    "Sheet": "Unlock Matrix",
+    "Change Type": "Added",
+    "Change Summary": "Normalized unlock relationship table for Codex-friendly data."
+  },
+  {
+    "Version": "2.1",
+    "Sheet": "Game Constants",
+    "Change Type": "Added",
+    "Change Summary": "Central configuration values for core gameplay."
+  },
+  {
+    "Version": "2.1",
+    "Sheet": "Feature Flags",
+    "Change Type": "Added",
+    "Change Summary": "System toggles for future development."
+  },
+  {
+    "Version": "2.1",
+    "Sheet": "Difficulty Curves",
+    "Change Type": "Added",
+    "Change Summary": "Starter balancing rules for research, buildings, upgrades, and collectibles."
+  },
+  {
+    "Version": "2.1",
+    "Sheet": "Release Notes",
+    "Change Type": "Added",
+    "Change Summary": "Human-readable release summary."
+  },
+  {
+    "Version": "2.1",
+    "Sheet": "Changelog",
+    "Change Type": "Added",
+    "Change Summary": "Tracks every major workbook change from this point forward."
+  },
+  {
+    "Version": "2.1",
+    "Sheet": "Content Status",
+    "Change Type": "Added",
+    "Change Summary": "Tracks content completion by major table."
+  },
+  {
+    "Version": "2.2",
+    "Sheet": "Districts",
+    "Change Type": "Rebuilt",
+    "Change Summary": "Added 10 gameplay districts with bonuses and unlock research."
+  },
+  {
+    "Version": "2.2",
+    "Sheet": "Building Chains",
+    "Change Type": "Rebuilt",
+    "Change Summary": "Added 10 building evolution chains for Codex and UI progression."
+  },
+  {
+    "Version": "2.2",
+    "Sheet": "Wonders",
+    "Change Type": "Rebuilt",
+    "Change Summary": "Added 6 expanded civilization wonders with requirements and bonuses."
+  },
+  {
+    "Version": "2.2",
+    "Sheet": "Building Relationships",
+    "Change Type": "Added",
+    "Change Summary": "Mapped 177 buildings to districts, chains, research and upgrade dependencies."
+  },
+  {
+    "Version": "2.2",
+    "Sheet": "Unlock Matrix",
+    "Change Type": "Updated",
+    "Change Summary": "Added mapped building and wonder unlock relationships."
+  },
+  {
+    "Version": "2.2",
+    "Sheet": "Dashboard",
+    "Change Type": "Updated",
+    "Change Summary": "Updated current version and Sprint 2 metrics."
+  },
+  {
+    "Version": "2.2",
+    "Sheet": "Content Status",
+    "Change Type": "Updated",
+    "Change Summary": "Updated Sprint 2 completion status."
+  }
+]

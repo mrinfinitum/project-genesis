@@ -1,0 +1,163 @@
+[
+  {
+    "ID": "PT001",
+    "Trait": "Rich Minerals",
+    "Description": "Increased mining output and ore-based collectibles.",
+    "Generation Rule": "2-5 traits per planet",
+    "Frequency": "Yes"
+  },
+  {
+    "ID": "PT002",
+    "Trait": "Dense Forest",
+    "Description": "Increased biological resources and creature discovery.",
+    "Generation Rule": "2-5 traits per planet",
+    "Frequency": "Yes"
+  },
+  {
+    "ID": "PT003",
+    "Trait": "Ancient Ruins",
+    "Description": "Artifact bonus and ancient civilization chance.",
+    "Generation Rule": "2-5 traits per planet",
+    "Frequency": "Yes"
+  },
+  {
+    "ID": "PT004",
+    "Trait": "Crystal Growth",
+    "Description": "Crystal collectible bonus.",
+    "Generation Rule": "2-5 traits per planet",
+    "Frequency": "Yes"
+  },
+  {
+    "ID": "PT005",
+    "Trait": "Heavy Gravity",
+    "Description": "Lower construction and production efficiency; higher rare mineral chance.",
+    "Generation Rule": "2-5 traits per planet",
+    "Frequency": "Yes"
+  },
+  {
+    "ID": "PT006",
+    "Trait": "Low Gravity",
+    "Description": "Faster construction and better orbital infrastructure.",
+    "Generation Rule": "2-5 traits per planet",
+    "Frequency": "Yes"
+  },
+  {
+    "ID": "PT007",
+    "Trait": "High Radiation",
+    "Description": "Dangerous expeditions; rare mutation chance.",
+    "Generation Rule": "2-5 traits per planet",
+    "Frequency": "Yes"
+  },
+  {
+    "ID": "PT008",
+    "Trait": "Frozen Core",
+    "Description": "Unique frozen resources and fossil bonus.",
+    "Generation Rule": "2-5 traits per planet",
+    "Frequency": "Yes"
+  },
+  {
+    "ID": "PT009",
+    "Trait": "Acid Rain",
+    "Description": "Reduced farming; toxic collectible chance.",
+    "Generation Rule": "2-5 traits per planet",
+    "Frequency": "Yes"
+  },
+  {
+    "ID": "PT010",
+    "Trait": "Living Planet",
+    "Description": "Organic structures, living relics and rare lifeform chance.",
+    "Generation Rule": "2-5 traits per planet",
+    "Frequency": "Yes"
+  },
+  {
+    "ID": "PT011",
+    "Trait": "Magnetic Storms",
+    "Description": "Electronics penalties; energy relic chance.",
+    "Generation Rule": "2-5 traits per planet",
+    "Frequency": "Rare"
+  },
+  {
+    "ID": "PT012",
+    "Trait": "Terraformable",
+    "Description": "Can be permanently improved with advanced technology.",
+    "Generation Rule": "2-5 traits per planet",
+    "Frequency": "Rare"
+  },
+  {
+    "ID": "PT013",
+    "Trait": "Floating Mountains",
+    "Description": "Rare exploration bonus and unique visual theme.",
+    "Generation Rule": "2-5 traits per planet",
+    "Frequency": "Rare"
+  },
+  {
+    "ID": "PT014",
+    "Trait": "Alien Infestation",
+    "Description": "Dangerous creatures and high-risk expedition rewards.",
+    "Generation Rule": "2-5 traits per planet",
+    "Frequency": "Rare"
+  },
+  {
+    "ID": "PT015",
+    "Trait": "Massive Caves",
+    "Description": "Fossil and underground relic bonus.",
+    "Generation Rule": "2-5 traits per planet",
+    "Frequency": "Rare"
+  },
+  {
+    "ID": "PT016",
+    "Trait": "Lava Rivers",
+    "Description": "Volcanic resources and heat-based artifacts.",
+    "Generation Rule": "2-5 traits per planet",
+    "Frequency": "Rare"
+  },
+  {
+    "ID": "PT017",
+    "Trait": "Bioluminescent",
+    "Description": "Rare creature and visual mutation modifier.",
+    "Generation Rule": "2-5 traits per planet",
+    "Frequency": "Rare"
+  },
+  {
+    "ID": "PT018",
+    "Trait": "Energy Storms",
+    "Description": "Experimental bonus and quantum artifact chance.",
+    "Generation Rule": "2-5 traits per planet",
+    "Frequency": "Rare"
+  },
+  {
+    "ID": "PT019",
+    "Trait": "Ancient Battlefield",
+    "Description": "Military artifacts and lost civilization fragments.",
+    "Generation Rule": "2-5 traits per planet",
+    "Frequency": "Rare"
+  },
+  {
+    "ID": "PT020",
+    "Trait": "Abandoned Colony",
+    "Description": "Lost technology, credits bonus and colony story events.",
+    "Generation Rule": "2-5 traits per planet",
+    "Frequency": "Rare"
+  },
+  {
+    "ID": "PT021",
+    "Trait": "Void-Touched",
+    "Description": "Extreme rarity modifier, high risk, cosmic collectibles.",
+    "Generation Rule": "2-5 traits per planet",
+    "Frequency": "Rare"
+  },
+  {
+    "ID": "PT022",
+    "Trait": "Harmonic Resonance",
+    "Description": "Rare Harmony-related progression modifier.",
+    "Generation Rule": "2-5 traits per planet",
+    "Frequency": "Rare"
+  },
+  {
+    "ID": "PT023",
+    "Trait": "Mega Ruins",
+    "Description": "Metropolis-style abandoned urban megastructure; high relic and infrastructure tech chance.",
+    "Generation Rule": "2-5 traits per planet",
+    "Frequency": "Rare"
+  }
+]

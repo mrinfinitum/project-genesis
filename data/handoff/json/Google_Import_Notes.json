@@ -1,0 +1,26 @@
+[
+  {
+    "Item": "Step 1",
+    "Instruction": "Upload this XLSX to Google Drive."
+  },
+  {
+    "Item": "Step 2",
+    "Instruction": "Right-click the file and choose Open with Google Sheets."
+  },
+  {
+    "Item": "Step 3",
+    "Instruction": "Use File > Save as Google Sheets if it does not automatically convert."
+  },
+  {
+    "Item": "Step 4",
+    "Instruction": "Use this as the live master database. Avoid multiple conflicting versions."
+  },
+  {
+    "Item": "Rule",
+    "Instruction": "Use permanent IDs for references. Names can change; IDs should not."
+  },
+  {
+    "Item": "Next Production Sheet",
+    "Instruction": "Research"
+  }
+]

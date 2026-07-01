@@ -1,0 +1,32 @@
+[
+  {
+    "ID": "DC001",
+    "Curve": "Research Cost Scaling",
+    "Formula / Value": "BaseCost * (1 + NodeOrder * 0.16)",
+    "Notes": "Draft Sprint 1 curve."
+  },
+  {
+    "ID": "DC002",
+    "Curve": "Research Time Scaling",
+    "Formula / Value": "BaseTime * (1 + NodeOrder * 0.10)",
+    "Notes": "Draft Sprint 1 curve."
+  },
+  {
+    "ID": "DC003",
+    "Curve": "Building Cost Scaling",
+    "Formula / Value": "EraBase * CategoryModifier * InEraOrder",
+    "Notes": "From v1.1."
+  },
+  {
+    "ID": "DC004",
+    "Curve": "Upgrade Cost Scaling",
+    "Formula / Value": "BaseCost * Multiplier^Level",
+    "Notes": "Standard idle-game scaling."
+  },
+  {
+    "ID": "DC005",
+    "Curve": "Collectible Value Scaling",
+    "Formula / Value": "BaseValue * Rarity * Trait * Generation",
+    "Notes": "Draft endgame economy."
+  }
+]

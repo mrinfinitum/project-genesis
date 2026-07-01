@@ -1,0 +1,122 @@
+[
+  {
+    "ID": "BC001",
+    "Chain": "Housing Chain",
+    "District": "Residential",
+    "Level 1": "Tent",
+    "Level 2": "Hut",
+    "Level 3": "House",
+    "Level 4": "Apartments",
+    "Level 5": "Luxury Towers",
+    "Gameplay Role": "Population scaling and city growth.",
+    "Research Progression": "Construction → Architecture → Urban Governance"
+  },
+  {
+    "ID": "BC002",
+    "Chain": "Food Chain",
+    "District": "Agriculture",
+    "Level 1": "Berry Bush",
+    "Level 2": "Farm Plot",
+    "Level 3": "Farm",
+    "Level 4": "Industrial Farm",
+    "Level 5": "Vertical Farm",
+    "Gameplay Role": "Food/population support and colony supply.",
+    "Research Progression": "Agriculture → Irrigation → Industrial Farming → Vertical Farming"
+  },
+  {
+    "ID": "BC003",
+    "Chain": "Research Chain",
+    "District": "Research",
+    "Level 1": "Story Circle",
+    "Level 2": "Library",
+    "Level 3": "University",
+    "Level 4": "Quantum Lab",
+    "Level 5": "Planetary AI Core",
+    "Gameplay Role": "Experimental generation and research progression.",
+    "Research Progression": "Record Keeping → Education → Digital Computing → Planetary AI"
+  },
+  {
+    "ID": "BC004",
+    "Chain": "Production Chain",
+    "District": "Production",
+    "Level 1": "Workshop",
+    "Level 2": "Factory",
+    "Level 3": "Mega Factory",
+    "Level 4": "Smart Factory",
+    "Level 5": "Matter Fabricator",
+    "Gameplay Role": "Production and advanced manufacturing.",
+    "Research Progression": "Craftsmanship → Manufacturing → Assembly Lines → Matter Fabrication"
+  },
+  {
+    "ID": "BC005",
+    "Chain": "Commerce Chain",
+    "District": "Commercial",
+    "Level 1": "Trading Post",
+    "Level 2": "Market",
+    "Level 3": "Bank",
+    "Level 4": "Financial District",
+    "Level 5": "Galactic Market",
+    "Gameplay Role": "Credits, finance, trading economy.",
+    "Research Progression": "Trade → Merchant Economy → Banking → Universal Marketplace"
+  },
+  {
+    "ID": "BC006",
+    "Chain": "Energy Chain",
+    "District": "Utility",
+    "Level 1": "Fire Workshop",
+    "Level 2": "Power Station",
+    "Level 3": "Power Grid",
+    "Level 4": "Fusion Reactor",
+    "Level 5": "Quantum Reactor",
+    "Gameplay Role": "Energy infrastructure and automation.",
+    "Research Progression": "Fire → Electricity → National Power Grid → Fusion Power"
+  },
+  {
+    "ID": "BC007",
+    "Chain": "Transit Chain",
+    "District": "Transportation",
+    "Level 1": "Road",
+    "Level 2": "Train Station",
+    "Level 3": "Airport",
+    "Level 4": "Hyperloop",
+    "Level 5": "Space Elevator",
+    "Gameplay Role": "Mobility, logistics, galaxy access.",
+    "Research Progression": "Trails → Railroads → Airports → Orbital Transport"
+  },
+  {
+    "ID": "BC008",
+    "Chain": "Government Chain",
+    "District": "Government",
+    "Level 1": "Chief's Hut",
+    "Level 2": "Town Hall",
+    "Level 3": "City Hall",
+    "Level 4": "Digital Government",
+    "Level 5": "Planetary Government",
+    "Gameplay Role": "Policies, administration, city control.",
+    "Research Progression": "Tribal Leadership → Government → Digital Government → Planetary Governance"
+  },
+  {
+    "ID": "BC009",
+    "Chain": "Museum Chain",
+    "District": "Culture",
+    "Level 1": "Statue",
+    "Level 2": "Museum",
+    "Level 3": "Science Museum",
+    "Level 4": "Legendary Museum",
+    "Level 5": "One-of-One Hall",
+    "Gameplay Role": "Collectibles, prestige, museum bonuses.",
+    "Research Progression": "Education → Museums → Discovery"
+  },
+  {
+    "ID": "BC010",
+    "Chain": "Space Chain",
+    "District": "Space",
+    "Level 1": "Observatory",
+    "Level 2": "Launch Pad",
+    "Level 3": "Orbital Station",
+    "Level 4": "Orbital Shipyard",
+    "Level 5": "Colony Ship Facility",
+    "Gameplay Role": "Colonization and exploration.",
+    "Research Progression": "Astronomy → Rocketry → Orbital Flight → Colony Ships"
+  }
+]

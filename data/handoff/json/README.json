@@ -1,0 +1,30 @@
+[
+  {
+    "Topic": "Purpose",
+    "Details": "Master XLSX for Project Genesis game database."
+  },
+  {
+    "Topic": "Current Version",
+    "Details": "v2.1 Sprint 1"
+  },
+  {
+    "Topic": "Research Rule",
+    "Details": "Research expands the game by unlocking new capabilities, systems, buildings, features, eras, or civilization milestones."
+  },
+  {
+    "Topic": "Upgrade Rule",
+    "Details": "Upgrades improve existing systems through repeatable levels and numerical bonuses."
+  },
+  {
+    "Topic": "Unlock Rule",
+    "Details": "Use the Unlock Matrix for all one-to-many unlock relationships."
+  },
+  {
+    "Topic": "ID Rule",
+    "Details": "IDs are permanent. Names can change. Codex should reference IDs, not display names."
+  },
+  {
+    "Topic": "Next Step",
+    "Details": "Sprint 2: map Research unlock IDs, complete Wonders, Districts, and clean Buildings references."
+  }
+]

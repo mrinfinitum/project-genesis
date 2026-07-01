@@ -1,0 +1,121 @@
+[
+  {
+    "Section": "Core",
+    "Sheet": "Dashboard",
+    "Status": "Complete",
+    "Notes": "v2.2 status summary in place.",
+    "Completion %": 1
+  },
+  {
+    "Section": "Core",
+    "Sheet": "README",
+    "Status": "Complete",
+    "Notes": "Database rules and philosophy in place.",
+    "Completion %": 1
+  },
+  {
+    "Section": "Core",
+    "Sheet": "Resources",
+    "Status": "Complete",
+    "Notes": "Core resource list established.",
+    "Completion %": 1
+  },
+  {
+    "Section": "Core",
+    "Sheet": "Eras",
+    "Status": "Complete",
+    "Notes": "Era structure established.",
+    "Completion %": 1
+  },
+  {
+    "Section": "Core",
+    "Sheet": "Civilization Paths",
+    "Status": "Complete",
+    "Notes": "Metropolis Prime included.",
+    "Completion %": 1
+  },
+  {
+    "Section": "Research",
+    "Sheet": "Research Branches",
+    "Status": "Complete",
+    "Notes": "10 branches locked.",
+    "Completion %": 1
+  },
+  {
+    "Section": "Research",
+    "Sheet": "Research",
+    "Status": "Complete",
+    "Notes": "150 research nodes added.",
+    "Completion %": 1
+  },
+  {
+    "Section": "Research",
+    "Sheet": "Unlock Matrix",
+    "Status": "In Progress",
+    "Notes": "Building and wonder unlocks mapped; systems/features still need IDs.",
+    "Completion %": 0.75
+  },
+  {
+    "Section": "Buildings",
+    "Sheet": "Buildings",
+    "Status": "In Progress",
+    "Notes": "Existing building data preserved; relationships added.",
+    "Completion %": 0.8
+  },
+  {
+    "Section": "Buildings",
+    "Sheet": "Building Relationships",
+    "Status": "Complete",
+    "Notes": "177 building relationship rows created.",
+    "Completion %": 1
+  },
+  {
+    "Section": "Buildings",
+    "Sheet": "Building Chains",
+    "Status": "Complete",
+    "Notes": "10 building chains created.",
+    "Completion %": 1
+  },
+  {
+    "Section": "Buildings",
+    "Sheet": "Districts",
+    "Status": "Complete",
+    "Notes": "10 districts created.",
+    "Completion %": 1
+  },
+  {
+    "Section": "Buildings",
+    "Sheet": "Wonders",
+    "Status": "Complete",
+    "Notes": "6 primary civilization wonders created.",
+    "Completion %": 1
+  },
+  {
+    "Section": "Galaxy",
+    "Sheet": "Planet Generation",
+    "Status": "In Progress",
+    "Notes": "Framework preserved; content expansion next.",
+    "Completion %": 0.35
+  },
+  {
+    "Section": "Collection",
+    "Sheet": "Collectibles",
+    "Status": "In Progress",
+    "Notes": "Starter templates preserved; expansion later.",
+    "Completion %": 0.2
+  },
+  {
+    "Section": "Gameplay",
+    "Sheet": "Events",
+    "Status": "Planned",
+    "Notes": "Future release.",
+    "Completion %": 0
+  },
+  {
+    "Section": "Development",
+    "Sheet": "Codex Tasks",
+    "Status": "Planned",
+    "Notes": "Will be expanded when vertical slice starts.",
+    "Completion %": 0.1
+  }
+]
