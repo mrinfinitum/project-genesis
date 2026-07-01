@@ -20,11 +20,11 @@ import { cn } from "@/lib/utils";
 
 const sections = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/upgrades", label: "Upgrades", icon: ChartNoAxesCombined },
   { href: "/research", label: "Research", icon: FlaskConical },
   { href: "/buildings", label: "Buildings", icon: Building2 },
   { href: "/building-relationships", label: "Relationships", icon: GitBranch },
   { href: "/unlock-matrix", label: "Unlock Matrix", icon: GitBranch },
-  { href: "/upgrades", label: "Upgrades", icon: ChartNoAxesCombined },
   { href: "/civilizations", label: "Civilizations", icon: Sparkles },
   { href: "/galaxy", label: "Galaxy", icon: Rocket },
   { href: "/collectibles", label: "Collectibles", icon: Gem },
