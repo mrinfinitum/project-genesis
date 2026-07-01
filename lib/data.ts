@@ -5,15 +5,17 @@ import { createSupabaseAdminClient, hasSupabaseServerConfig } from "@/lib/supaba
 import { editableTables } from "@/lib/tables";
 import type { GameData, TableName } from "@/types/schema";
 
-const mutableFallback = new Map<TableName, Record<string, unknown>[]>();
+type DataTableName = keyof GameData;
+
+const mutableFallback = new Map<DataTableName, Record<string, unknown>[]>();
 const localDataDir = path.join(process.cwd(), ".local-data");
 
-async function persistFallbackRows(table: TableName, rows: Record<string, unknown>[]) {
+async function persistFallbackRows(table: DataTableName, rows: Record<string, unknown>[]) {
   await mkdir(localDataDir, { recursive: true });
   await writeFile(path.join(localDataDir, `${table}.json`), JSON.stringify(rows, null, 2));
 }
 
-async function getFallbackRows(table: TableName) {
+async function getFallbackRows(table: DataTableName) {
   if (!mutableFallback.has(table)) {
     try {
       const localJson = await readFile(path.join(localDataDir, `${table}.json`), "utf8");
@@ -26,6 +28,18 @@ async function getFallbackRows(table: TableName) {
   return mutableFallback.get(table) ?? [];
 }
 
+async function getRowsFromSupabaseOrFallback(table: DataTableName) {
+  const supabase = createSupabaseAdminClient();
+  const { data, error } = await supabase.from(table).select("*");
+
+  if (error) {
+    console.error(`Supabase read failed for ${table}; using bundled fallback data.`, error.message);
+    return getFallbackRows(table);
+  }
+
+  return data ?? [];
+}
+
 export function isEditableTable(table: string): table is TableName {
   return editableTables.includes(table as TableName);
 }
@@ -35,14 +49,7 @@ export async function getRows(table: TableName) {
     return getFallbackRows(table);
   }
 
-  const supabase = createSupabaseAdminClient();
-  const { data, error } = await supabase.from(table).select("*");
-
-  if (error) {
-    throw error;
-  }
-
-  return data ?? [];
+  return getRowsFromSupabaseOrFallback(table);
 }
 
 export async function upsertRow(table: TableName, row: Record<string, unknown>) {
@@ -131,7 +138,6 @@ export async function getGameData(): Promise<GameData> {
     };
   }
 
-  const supabase = createSupabaseAdminClient();
   const [
     researchBranches,
     research,
@@ -148,57 +154,36 @@ export async function getGameData(): Promise<GameData> {
     releaseNotes,
     changelog
   ] = await Promise.all([
-    supabase.from("research_branches").select("*"),
-    supabase.from("research").select("*"),
-    supabase.from("buildings").select("*"),
-    supabase.from("unlock_matrix").select("*"),
-    supabase.from("districts").select("*"),
-    supabase.from("wonders").select("*"),
-    supabase.from("upgrades").select("*"),
-    supabase.from("building_relationships").select("*"),
-    supabase.from("building_chains").select("*"),
-    supabase.from("game_constants").select("*"),
-    supabase.from("feature_flags").select("*"),
-    supabase.from("assets").select("*"),
-    supabase.from("release_notes").select("*"),
-    supabase.from("changelog").select("*")
+    getRowsFromSupabaseOrFallback("research_branches"),
+    getRowsFromSupabaseOrFallback("research"),
+    getRowsFromSupabaseOrFallback("buildings"),
+    getRowsFromSupabaseOrFallback("unlock_matrix"),
+    getRowsFromSupabaseOrFallback("districts"),
+    getRowsFromSupabaseOrFallback("wonders"),
+    getRowsFromSupabaseOrFallback("upgrades"),
+    getRowsFromSupabaseOrFallback("building_relationships"),
+    getRowsFromSupabaseOrFallback("building_chains"),
+    getRowsFromSupabaseOrFallback("game_constants"),
+    getRowsFromSupabaseOrFallback("feature_flags"),
+    getRowsFromSupabaseOrFallback("assets"),
+    getRowsFromSupabaseOrFallback("release_notes"),
+    getRowsFromSupabaseOrFallback("changelog")
   ]);
 
-  const responses = [
-    researchBranches,
-    research,
-    buildings,
-    unlockMatrix,
-    districts,
-    wonders,
-    upgrades,
-    buildingRelationships,
-    buildingChains,
-    gameConstants,
-    featureFlags,
-    assets,
-    releaseNotes,
-    changelog
-  ];
-  const failed = responses.find((response) => response.error);
-  if (failed?.error) {
-    throw failed.error;
-  }
-
   return {
-    research_branches: researchBranches.data ?? [],
-    research: research.data ?? [],
-    buildings: buildings.data ?? [],
-    unlock_matrix: unlockMatrix.data ?? [],
-    districts: districts.data ?? [],
-    wonders: wonders.data ?? [],
-    upgrades: upgrades.data ?? [],
-    building_relationships: buildingRelationships.data ?? [],
-    building_chains: buildingChains.data ?? [],
-    game_constants: gameConstants.data ?? [],
-    feature_flags: featureFlags.data ?? [],
-    assets: assets.data ?? [],
-    release_notes: releaseNotes.data ?? [],
-    changelog: changelog.data ?? []
+    research_branches: researchBranches as GameData["research_branches"],
+    research: research as GameData["research"],
+    buildings: buildings as GameData["buildings"],
+    unlock_matrix: unlockMatrix as GameData["unlock_matrix"],
+    districts: districts as GameData["districts"],
+    wonders: wonders as GameData["wonders"],
+    upgrades: upgrades as GameData["upgrades"],
+    building_relationships: buildingRelationships as GameData["building_relationships"],
+    building_chains: buildingChains as GameData["building_chains"],
+    game_constants: gameConstants as GameData["game_constants"],
+    feature_flags: featureFlags as GameData["feature_flags"],
+    assets: assets as GameData["assets"],
+    release_notes: releaseNotes as GameData["release_notes"],
+    changelog: changelog as GameData["changelog"]
   };
 }
