@@ -73,7 +73,7 @@ export function UserManagementPanel() {
         role
       })
     });
-    const payload = (await response.json()) as { error?: string };
+    const payload = (await response.json()) as { emailed?: boolean; error?: string };
 
     if (!response.ok) {
       setError(payload.error ?? "Could not create user.");
@@ -84,7 +84,7 @@ export function UserManagementPanel() {
     setEmail("");
     setPassword("");
     setRole("member");
-    setMessage("Studio user created.");
+    setMessage(payload.emailed ? "Studio invite email sent." : "Studio user created.");
     await refreshUsers();
     setLoading(false);
   }
@@ -120,7 +120,9 @@ export function UserManagementPanel() {
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">User Access</p>
           <h3 className="mt-1 text-xl font-semibold text-white">Studio Users</h3>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">Create admin or member accounts and remove users who should no longer access the studio.</p>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
+            Invite admin or member accounts, create temporary-password logins, and remove users who should no longer access the studio.
+          </p>
         </div>
         <div className="inline-flex items-center gap-2 rounded-md border border-cyan-300/15 bg-cyan-400/10 px-3 py-2 text-sm text-cyan-100">
           <Shield className="h-4 w-4" />
@@ -147,7 +149,7 @@ export function UserManagementPanel() {
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             type="password"
-            required
+            placeholder="Leave blank to email invite"
           />
         </label>
         <label className="block text-sm text-slate-200">
@@ -164,7 +166,7 @@ export function UserManagementPanel() {
         <div className="flex items-end">
           <Button className="h-10 w-full" disabled={loading} type="submit">
             <UserPlus className="h-4 w-4" />
-            Create
+            {password ? "Create" : "Invite"}
           </Button>
         </div>
       </form>

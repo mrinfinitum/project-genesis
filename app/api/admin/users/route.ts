@@ -86,16 +86,47 @@ export async function POST(request: Request) {
   const email = String(body.email ?? "").trim().toLowerCase();
   const password = String(body.password ?? "");
   const role = normalizeRole(body.role);
+  const redirectTo = `${new URL(request.url).origin}/auth/update-password`;
 
   if (!email || !email.includes("@")) {
     return jsonError("A valid email is required.", 400);
   }
 
-  if (password.length < 8) {
+  if (password && password.length < 8) {
     return jsonError("Password must be at least 8 characters.", 400);
   }
 
   const supabase = createSupabaseAdminClient();
+
+  if (!password) {
+    const { data, error } = await supabase.auth.admin.inviteUserByEmail(email, {
+      redirectTo,
+      data: {
+        role
+      }
+    });
+
+    if (error) {
+      return jsonError(error.message, 400);
+    }
+
+    if (data.user) {
+      const { data: updatedData, error: updateError } = await supabase.auth.admin.updateUserById(data.user.id, {
+        app_metadata: {
+          role
+        }
+      });
+
+      if (updateError) {
+        return jsonError(updateError.message, 400);
+      }
+
+      return NextResponse.json({ emailed: true, user: serializeUser(updatedData.user) }, { status: 201 });
+    }
+
+    return NextResponse.json({ emailed: true, user: null }, { status: 201 });
+  }
+
   const { data, error } = await supabase.auth.admin.createUser({
     email,
     password,
@@ -109,5 +140,5 @@ export async function POST(request: Request) {
     return jsonError(error.message, 400);
   }
 
-  return NextResponse.json({ user: data.user ? serializeUser(data.user) : null }, { status: 201 });
+  return NextResponse.json({ emailed: false, user: data.user ? serializeUser(data.user) : null }, { status: 201 });
 }
