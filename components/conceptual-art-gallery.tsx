@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Download, FileArchive, Image as ImageIcon, Search, Trash2, Upload } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Download, ExternalLink, FileArchive, Image as ImageIcon, Search, Trash2, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { ConceptualArtRecord } from "@/types/schema";
 
@@ -43,6 +43,7 @@ export function ConceptualArtGallery({ initialRows }: { initialRows: ConceptualA
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [selectedRow, setSelectedRow] = useState<ConceptualArtRecord | null>(null);
 
   const filteredRows = useMemo(() => {
     const search = query.trim().toLowerCase();
@@ -134,6 +135,26 @@ export function ConceptualArtGallery({ initialRows }: { initialRows: ConceptualA
     setLoading(false);
   }
 
+  useEffect(() => {
+    if (!selectedRow) {
+      return;
+    }
+
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setSelectedRow(null);
+      }
+    }
+
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", closeOnEscape);
+
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [selectedRow]);
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
@@ -209,10 +230,22 @@ export function ConceptualArtGallery({ initialRows }: { initialRows: ConceptualA
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {filteredRows.map((row) => (
-          <article key={row.id} className="overflow-hidden rounded-md border border-cyan-300/15 bg-[#07101e]/85 shadow-glow">
+          <article
+            key={row.id}
+            className="group cursor-pointer overflow-hidden rounded-md border border-cyan-300/15 bg-[#07101e]/85 shadow-glow transition hover:-translate-y-0.5 hover:border-cyan-300/45"
+            role="button"
+            tabIndex={0}
+            onClick={() => setSelectedRow(row)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                setSelectedRow(row);
+              }
+            }}
+          >
             <div className="grid aspect-square place-items-center bg-slate-950/65">
               {isPreviewable(row) ? (
-                <img className="h-full w-full object-contain" src={row.file_url} alt={row.name} />
+                <img className="h-full w-full object-contain transition group-hover:scale-[1.02]" src={row.file_url} alt={row.name} />
               ) : (
                 <div className="grid place-items-center gap-3 text-center text-slate-300">
                   <FileArchive className="h-12 w-12 text-cyan-200" />
@@ -245,11 +278,20 @@ export function ConceptualArtGallery({ initialRows }: { initialRows: ConceptualA
                   download={row.file_name}
                   target="_blank"
                   rel="noreferrer"
+                  onClick={(event) => event.stopPropagation()}
                 >
                   <Download className="h-4 w-4" />
                   Download
                 </a>
-                <Button className="h-9 border-red-400/25 bg-red-400/10 px-3 text-red-100 hover:border-red-300/60 hover:bg-red-400/20" disabled={loading} onClick={() => deleteConceptArt(row)} type="button">
+                <Button
+                  className="h-9 border-red-400/25 bg-red-400/10 px-3 text-red-100 hover:border-red-300/60 hover:bg-red-400/20"
+                  disabled={loading}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    deleteConceptArt(row);
+                  }}
+                  type="button"
+                >
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
@@ -260,6 +302,87 @@ export function ConceptualArtGallery({ initialRows }: { initialRows: ConceptualA
 
       {!filteredRows.length ? (
         <div className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-8 text-center text-sm text-slate-400 shadow-glow">No conceptual art uploaded.</div>
+      ) : null}
+
+      {selectedRow ? (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/90 p-4 backdrop-blur-md" onClick={() => setSelectedRow(null)}>
+          <div
+            className="grid max-h-[92vh] w-full max-w-6xl overflow-hidden rounded-md border border-cyan-300/20 bg-[#07101e] shadow-glow xl:grid-cols-[minmax(0,1fr)_22rem]"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="grid min-h-[50vh] place-items-center bg-slate-950/70 p-4">
+              {isPreviewable(selectedRow) ? (
+                <img className="max-h-[78vh] w-full object-contain" src={selectedRow.file_url} alt={selectedRow.name} />
+              ) : (
+                <div className="grid max-w-md place-items-center gap-4 text-center">
+                  <FileArchive className="h-16 w-16 text-cyan-200" />
+                  <div>
+                    <p className="text-lg font-semibold text-white">{selectedRow.file_name}</p>
+                    <p className="mt-2 text-sm text-slate-400">{selectedRow.file_type || "Source file"}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <aside className="flex max-h-[92vh] flex-col overflow-y-auto border-t border-cyan-300/15 p-5 xl:border-l xl:border-t-0">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">{selectedRow.category || "Concept"}</p>
+                  <h3 className="mt-2 text-2xl font-bold text-white">{selectedRow.name}</h3>
+                </div>
+                <Button className="h-9 w-9 px-0" onClick={() => setSelectedRow(null)} type="button">
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+
+              <div className="mt-5 space-y-4 text-sm text-slate-300">
+                {selectedRow.description ? <p className="leading-6">{selectedRow.description}</p> : null}
+                {selectedRow.notes ? <p className="rounded-md border border-slate-700/70 bg-slate-950/45 p-3 leading-6 text-slate-300">{selectedRow.notes}</p> : null}
+
+                <dl className="grid grid-cols-2 gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 p-3 text-xs">
+                  <div>
+                    <dt className="uppercase tracking-[0.16em] text-slate-500">Type</dt>
+                    <dd className="mt-1 break-all text-slate-200">{selectedRow.file_type || "file"}</dd>
+                  </div>
+                  <div>
+                    <dt className="uppercase tracking-[0.16em] text-slate-500">Size</dt>
+                    <dd className="mt-1 text-slate-200">{formatBytes(selectedRow.file_size)}</dd>
+                  </div>
+                  <div className="col-span-2">
+                    <dt className="uppercase tracking-[0.16em] text-slate-500">Uploaded</dt>
+                    <dd className="mt-1 text-slate-200">{formatDate(selectedRow.created_at)}</dd>
+                  </div>
+                  <div className="col-span-2">
+                    <dt className="uppercase tracking-[0.16em] text-slate-500">File</dt>
+                    <dd className="mt-1 break-all text-slate-200">{selectedRow.file_name}</dd>
+                  </div>
+                </dl>
+              </div>
+
+              <div className="mt-5 flex flex-wrap gap-2">
+                <a
+                  className="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-cyan-400/25 bg-cyan-400/10 px-3 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/60 hover:bg-cyan-400/20"
+                  href={selectedRow.file_url}
+                  download={selectedRow.file_name}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Download className="h-4 w-4" />
+                  Download
+                </a>
+                <a
+                  className="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-slate-600/60 bg-slate-900/80 px-3 text-sm font-medium text-slate-100 transition hover:border-slate-400"
+                  href={selectedRow.file_url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                  Open
+                </a>
+              </div>
+            </aside>
+          </div>
+        </div>
       ) : null}
     </div>
   );

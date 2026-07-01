@@ -1,9 +1,15 @@
 import Link from "next/link";
-import { ArrowRight, Boxes, Building2, Gem, GitBranch, Sparkles, Wand2 } from "lucide-react";
+import { ArrowRight, Boxes, Building2, Gem, GitBranch, Palette, Sparkles, Wand2 } from "lucide-react";
 import { getGameData } from "@/lib/data";
 import { StatusBadge } from "@/components/ui/status-badge";
 
 export const dynamic = "force-dynamic";
+
+const dashboardPreviewTypes = new Set(["image/png", "image/jpeg", "image/webp", "image/gif", "image/bmp"]);
+
+function isDashboardPreviewImage(row: { file_type: string; file_url: string }) {
+  return Boolean(row.file_url && dashboardPreviewTypes.has(row.file_type));
+}
 
 export default async function DashboardPage() {
   const data = await getGameData();
@@ -24,6 +30,10 @@ export default async function DashboardPage() {
   ];
 
   const recentChanges = data.changelog.slice(0, 5);
+  const newestConceptImages = data.conceptual_art
+    .filter(isDashboardPreviewImage)
+    .sort((left, right) => String(right.created_at).localeCompare(String(left.created_at)))
+    .slice(0, 6);
   const completion = [
     { label: "Research Ready", value: Math.round((readyResearch / data.research.length) * 100) },
     { label: "Unlocks Implemented", value: Math.round((readyUnlocks / data.unlock_matrix.length) * 100) },
@@ -74,6 +84,45 @@ export default async function DashboardPage() {
             </Link>
           );
         })}
+      </section>
+
+      <section className="rounded-md border border-cyan-400/15 bg-genesis-panel/90 p-5 shadow-glow">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div className="flex items-center gap-2">
+              <Palette className="h-4 w-4 text-cyan-200" />
+              <h3 className="text-base font-semibold text-white">Newest Concept Art</h3>
+            </div>
+            <p className="mt-1 text-sm text-slate-400">Latest uploaded visual references and production explorations.</p>
+          </div>
+          <Link href="/conceptual-art" className="inline-flex h-9 items-center justify-center rounded-md border border-cyan-300/30 bg-cyan-300/10 px-3 text-sm text-cyan-100 hover:bg-cyan-300/20">
+            Open Gallery
+          </Link>
+        </div>
+
+        {newestConceptImages.length ? (
+          <div className="mt-4 grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
+            {newestConceptImages.map((art) => (
+              <Link
+                key={art.id}
+                href="/conceptual-art"
+                className="group overflow-hidden rounded-md border border-cyan-300/10 bg-slate-950/45 transition hover:border-cyan-300/45"
+              >
+                <div className="aspect-square bg-slate-950/70">
+                  <img className="h-full w-full object-cover transition group-hover:scale-[1.03]" src={art.file_url} alt={art.name} />
+                </div>
+                <div className="p-2">
+                  <p className="truncate text-xs font-medium text-slate-100">{art.name}</p>
+                  <p className="mt-1 truncate text-[0.68rem] uppercase tracking-[0.12em] text-slate-500">{art.category || "Concept"}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="mt-4 rounded-md border border-slate-700/70 bg-slate-950/35 p-4 text-sm text-slate-400">
+            No previewable concept images uploaded yet.
+          </div>
+        )}
       </section>
 
       <section className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr_0.9fr]">
