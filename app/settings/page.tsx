@@ -1,5 +1,14 @@
 import { AccountSecurityPanel } from "@/components/auth/account-security-panel";
+import { UserManagementPanel } from "@/components/auth/user-management-panel";
+import { getStudioAccess } from "@/lib/auth/permissions";
 
-export default function SettingsPage() {
-  return <AccountSecurityPanel />;
+export default async function SettingsPage() {
+  const access = await getStudioAccess();
+
+  return (
+    <div className="space-y-6">
+      <AccountSecurityPanel />
+      {access.isAdmin ? <UserManagementPanel /> : null}
+    </div>
+  );
 }

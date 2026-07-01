@@ -30,6 +30,7 @@ SUPABASE_ASSET_BUCKET=project-genesis-assets
 NEXT_PUBLIC_REQUIRE_MFA=true
 REQUIRE_MFA=true
 PROJECT_GENESIS_EXPORT_TOKEN=
+PROJECT_GENESIS_ADMIN_EMAILS=
 ```
 
 5. Seed the database:
@@ -80,6 +81,8 @@ Project Genesis Studio uses Supabase Auth for private admin access.
 Protected admin routes require a Supabase session. When MFA is enabled, app pages and API routes require an `aal2` session after the authenticator code is verified.
 
 Password recovery starts from `/login` and sends users to `/auth/update-password`. Add your production domain and `http://localhost:3000/**` to Supabase Auth redirect URLs so reset links can open the password update page.
+
+Studio admins can create and delete users from `/settings`. Bootstrap the first admin by setting `PROJECT_GENESIS_ADMIN_EMAILS` to one or more comma-separated email addresses. Users created from the app are stored in Supabase Auth with `app_metadata.role` set to `admin` or `member`; only admins can call the user-management API.
 
 For read-only automation or another project, set `PROJECT_GENESIS_EXPORT_TOKEN` and call export endpoints with:
 
