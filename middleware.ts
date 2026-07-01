@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const authPaths = ["/login", "/auth/mfa", "/auth/setup-2fa"];
+const authPaths = ["/login", "/auth/mfa", "/auth/setup-2fa", "/auth/update-password"];
 
 function hasSupabaseAuthConfig() {
   return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
@@ -111,4 +111,3 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico|uploads|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)"]
 };
-

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { LogIn, ShieldCheck } from "lucide-react";
+import { KeyRound, LogIn, ShieldCheck } from "lucide-react";
 import { AuthCard } from "@/components/auth/auth-card";
 import { Button } from "@/components/ui/button";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -18,12 +18,15 @@ export function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
   const next = searchParams.get("next") || "/";
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
+    setMessage("");
     setLoading(true);
 
     const { error: signInError } = await supabase.auth.signInWithPassword({
@@ -56,6 +59,31 @@ export function LoginForm() {
     router.refresh();
   }
 
+  async function handleResetPassword() {
+    setError("");
+    setMessage("");
+
+    if (!email) {
+      setError("Enter your email address first, then use the password reset link.");
+      return;
+    }
+
+    setResetLoading(true);
+
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/update-password`
+    });
+
+    if (resetError) {
+      setError(resetError.message);
+      setResetLoading(false);
+      return;
+    }
+
+    setMessage("Password reset email sent. Open the link in that email to choose a new password.");
+    setResetLoading(false);
+  }
+
   return (
     <AuthCard
       eyebrow="Secure Access"
@@ -86,12 +114,21 @@ export function LoginForm() {
           />
         </label>
         {error ? <p className="rounded-md border border-red-400/30 bg-red-400/10 px-3 py-2 text-sm text-red-100">{error}</p> : null}
+        {message ? <p className="rounded-md border border-green-400/30 bg-green-400/10 px-3 py-2 text-sm text-green-100">{message}</p> : null}
         <Button className="h-11 w-full" disabled={loading} type="submit">
           {requireMfa() ? <ShieldCheck className="h-4 w-4" /> : <LogIn className="h-4 w-4" />}
           {loading ? "Authenticating..." : "Sign In"}
         </Button>
+        <button
+          className="inline-flex w-full items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-cyan-200 transition hover:bg-cyan-300/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={resetLoading}
+          onClick={handleResetPassword}
+          type="button"
+        >
+          <KeyRound className="h-4 w-4" />
+          {resetLoading ? "Sending reset email..." : "Forgot password?"}
+        </button>
       </form>
     </AuthCard>
   );
 }
-

@@ -68,6 +68,8 @@ Project Genesis Studio uses Supabase Auth for private admin access.
 
 Protected admin routes require a Supabase session. When MFA is enabled, app pages and API routes require an `aal2` session after the authenticator code is verified.
 
+Password recovery starts from `/login` and sends users to `/auth/update-password`. Add your production domain and `http://localhost:3000/**` to Supabase Auth redirect URLs so reset links can open the password update page.
+
 For read-only automation or another project, set `PROJECT_GENESIS_EXPORT_TOKEN` and call export endpoints with:
 
 ```bash
