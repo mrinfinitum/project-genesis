@@ -126,6 +126,8 @@ export type ConceptualArtRecord = {
   file_type: string;
   file_size: number;
   storage_path: string;
+  preview_url: string;
+  preview_storage_path: string;
   status: Status;
   notes: string;
   created_at: string;

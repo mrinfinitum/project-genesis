@@ -8,10 +8,18 @@ create table if not exists public.conceptual_art (
   file_type text,
   file_size bigint default 0,
   storage_path text,
+  preview_url text,
+  preview_storage_path text,
   status text default 'Uploaded',
   notes text,
   created_at timestamptz default now()
 );
+
+alter table public.conceptual_art
+  add column if not exists preview_url text;
+
+alter table public.conceptual_art
+  add column if not exists preview_storage_path text;
 
 create index if not exists conceptual_art_created_at_idx
   on public.conceptual_art(created_at desc);

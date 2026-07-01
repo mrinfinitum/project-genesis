@@ -7,8 +7,12 @@ export const dynamic = "force-dynamic";
 
 const dashboardPreviewTypes = new Set(["image/png", "image/jpeg", "image/webp", "image/gif", "image/bmp"]);
 
-function isDashboardPreviewImage(row: { file_type: string; file_url: string }) {
-  return Boolean(row.file_url && dashboardPreviewTypes.has(row.file_type));
+function isDashboardPreviewImage(row: { file_type: string; file_url: string; preview_url?: string }) {
+  return Boolean(row.preview_url || (row.file_url && dashboardPreviewTypes.has(row.file_type)));
+}
+
+function dashboardPreviewUrl(row: { file_type: string; file_url: string; preview_url?: string }) {
+  return row.preview_url || row.file_url;
 }
 
 export default async function DashboardPage() {
@@ -109,7 +113,7 @@ export default async function DashboardPage() {
                 className="group overflow-hidden rounded-md border border-cyan-300/10 bg-slate-950/45 transition hover:border-cyan-300/45"
               >
                 <div className="aspect-square bg-slate-950/70">
-                  <img className="h-full w-full object-cover transition group-hover:scale-[1.03]" src={art.file_url} alt={art.name} />
+                  <img className="h-full w-full object-cover transition group-hover:scale-[1.03]" src={dashboardPreviewUrl(art)} alt={art.name} />
                 </div>
                 <div className="p-2">
                   <p className="truncate text-xs font-medium text-slate-100">{art.name}</p>

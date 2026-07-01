@@ -20,7 +20,8 @@ export async function DELETE(_request: Request, { params }: Params) {
 
   if (hasSupabaseServerConfig() && row?.storage_path) {
     const supabase = createSupabaseAdminClient();
-    const { error } = await supabase.storage.from(getAssetBucketName()).remove([String(row.storage_path)]);
+    const paths = [String(row.storage_path), String(row.preview_storage_path ?? "")].filter(Boolean);
+    const { error } = await supabase.storage.from(getAssetBucketName()).remove(paths);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });

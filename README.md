@@ -43,7 +43,7 @@ npm run seed
 
 The Assets, Upgrades, Buildings, and Research pages support source PSD uploads.
 
-The Conceptual Art page stores standalone reference/source artwork in the separate `conceptual_art` table and accepts PSD, PNG, JPG/JPEG, WebP, GIF, TIFF, BMP, and PDF files.
+The Conceptual Art page stores standalone reference/source artwork in the separate `conceptual_art` table and accepts PSD, PNG, JPG/JPEG, WebP, GIF, TIFF, BMP, and PDF files. PSD uploads keep the original source file for download and generate a PNG preview for the gallery, dashboard feed, and image-only lightbox.
 
 Without Supabase, files are saved locally to `public/uploads/project-genesis-assets`, while row metadata is saved to `.local-data`.
 

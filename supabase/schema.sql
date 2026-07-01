@@ -66,6 +66,8 @@ create table if not exists conceptual_art (
   file_type text,
   file_size bigint default 0,
   storage_path text,
+  preview_url text,
+  preview_storage_path text,
   status text default 'Uploaded',
   notes text,
   created_at timestamptz default now()
