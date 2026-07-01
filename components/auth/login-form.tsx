@@ -103,7 +103,18 @@ export function LoginForm() {
           />
         </label>
         <label className="block text-sm text-slate-200">
-          <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Password</span>
+          <span className="mb-2 flex items-center justify-between gap-3">
+            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Password</span>
+            <button
+              className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-semibold text-cyan-200 transition hover:bg-cyan-300/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={resetLoading}
+              onClick={handleResetPassword}
+              type="button"
+            >
+              <KeyRound className="h-3.5 w-3.5" />
+              Reset
+            </button>
+          </span>
           <input
             className="h-11 w-full rounded-md border border-cyan-300/20 bg-slate-950/60 px-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-cyan-300/60"
             type="password"
