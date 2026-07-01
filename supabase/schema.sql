@@ -89,6 +89,49 @@ create table if not exists planets (
   notes text
 );
 
+create table if not exists generated_planets (
+  id text primary key,
+  seed text not null,
+  name text not null,
+  galaxy_sector text,
+  star_system text,
+  orbit_position integer default 0,
+  discovery_order integer default 0,
+  star_type text,
+  distance_from_star text,
+  orbit_speed text,
+  planet_class text,
+  primary_biome text,
+  climate text,
+  atmosphere text,
+  temperature text,
+  gravity text,
+  water_coverage text,
+  moons text,
+  resources jsonb default '[]'::jsonb,
+  flora text,
+  fauna text,
+  ancient_civilization text,
+  ruins text,
+  hazards jsonb default '[]'::jsonb,
+  traits jsonb default '[]'::jsonb,
+  modifiers jsonb default '[]'::jsonb,
+  collectible_pools jsonb default '[]'::jsonb,
+  visual_theme jsonb default '{}'::jsonb,
+  weather jsonb default '[]'::jsonb,
+  colonization jsonb default '{}'::jsonb,
+  science jsonb default '{}'::jsonb,
+  economy jsonb default '{}'::jsonb,
+  event_pool jsonb default '[]'::jsonb,
+  story text,
+  colonized boolean default false,
+  terraform_level integer default 0,
+  discovery_points integer default 0,
+  completion_percent integer default 0,
+  created_at timestamptz default now(),
+  notes text
+);
+
 alter table assets add column if not exists source_file_url text;
 alter table assets add column if not exists source_file_type text;
 alter table assets add column if not exists parent_asset_id text references assets(id) on delete set null;
@@ -274,6 +317,8 @@ create index if not exists conceptual_art_created_at_idx on conceptual_art(creat
 create index if not exists conceptual_art_category_idx on conceptual_art(category);
 create index if not exists planets_category_idx on planets(category);
 create index if not exists planets_status_idx on planets(status);
+create index if not exists generated_planets_created_at_idx on generated_planets(created_at desc);
+create index if not exists generated_planets_class_idx on generated_planets(planet_class);
 create index if not exists unlock_matrix_status_idx on unlock_matrix(implementation_status);
 create index if not exists upgrades_type_idx on upgrades(type);
 create index if not exists building_relationships_status_idx on building_relationships(implementation_status);

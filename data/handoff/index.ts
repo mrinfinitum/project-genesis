@@ -26,6 +26,7 @@ import type {
   FeatureFlag,
   GameConstant,
   GameData,
+  GeneratedPlanet,
   PlanetVariable,
   ReleaseNote,
   ResearchBranch,
@@ -276,6 +277,7 @@ export const handoffAssets: AssetRecord[] = (assetsRaw as RawRow[]).map((row) =>
 }));
 
 export const handoffConceptualArt: ConceptualArtRecord[] = [];
+export const handoffGeneratedPlanets: GeneratedPlanet[] = [];
 
 const handoffPlanetGeneration: PlanetVariable[] = (planetGenerationRaw as RawRow[]).map((row) => ({
     id: text(row.ID),
@@ -344,6 +346,7 @@ export const handoffData: GameData = {
   assets: handoffAssets,
   conceptual_art: handoffConceptualArt,
   planets: handoffPlanets,
+  generated_planets: handoffGeneratedPlanets,
   release_notes: handoffReleaseNotes,
   changelog: handoffChangelog
 };

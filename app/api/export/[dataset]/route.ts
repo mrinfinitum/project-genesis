@@ -23,6 +23,9 @@ const jsonDatasets = new Set([
   "game_constants",
   "feature_flags",
   "planets",
+  "planetary-rules",
+  "generated_planets",
+  "generated-planets",
   "research.json",
   "buildings.json",
   "unlock_matrix.json",
@@ -35,13 +38,20 @@ const jsonDatasets = new Set([
   "building_chains.json",
   "game_constants.json",
   "feature_flags.json",
-  "planets.json"
+  "planets.json",
+  "planetary-rules.json",
+  "generated_planets.json",
+  "generated-planets.json"
 ]);
 
 function normalizeDataset(dataset: string) {
   const withoutExtension = dataset.replace(".json", "");
   if (withoutExtension === "game-data") {
     return "all";
+  }
+
+  if (withoutExtension === "planetary-rules") {
+    return "planets";
   }
 
   return withoutExtension.replace(/-/g, "_");

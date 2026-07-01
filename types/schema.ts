@@ -149,6 +149,49 @@ export type PlanetVariable = {
   notes: string;
 };
 
+export type GeneratedPlanet = {
+  id: string;
+  seed: string;
+  name: string;
+  galaxy_sector: string;
+  star_system: string;
+  orbit_position: number;
+  discovery_order: number;
+  star_type: string;
+  distance_from_star: string;
+  orbit_speed: string;
+  planet_class: string;
+  primary_biome: string;
+  climate: string;
+  atmosphere: string;
+  temperature: string;
+  gravity: string;
+  water_coverage: string;
+  moons: string;
+  resources: string[];
+  flora: string;
+  fauna: string;
+  ancient_civilization: string;
+  ruins: string;
+  hazards: string[];
+  traits: string[];
+  modifiers: string[];
+  collectible_pools: string[];
+  visual_theme: Record<string, string>;
+  weather: string[];
+  colonization: Record<string, string | number>;
+  science: Record<string, string | number>;
+  economy: Record<string, string | number>;
+  event_pool: string[];
+  story: string;
+  colonized: boolean;
+  terraform_level: number;
+  discovery_points: number;
+  completion_percent: number;
+  created_at: string;
+  notes: string;
+};
+
 export type Upgrade = {
   id: string;
   type: string;
@@ -249,6 +292,7 @@ export type GameData = {
   assets: AssetRecord[];
   conceptual_art: ConceptualArtRecord[];
   planets: PlanetVariable[];
+  generated_planets: GeneratedPlanet[];
   release_notes: ReleaseNote[];
   changelog: ChangelogEntry[];
 };
@@ -262,6 +306,7 @@ export type TableName =
   | "assets"
   | "conceptual_art"
   | "planets"
+  | "generated_planets"
   | "upgrades"
   | "building_relationships"
   | "building_chains"

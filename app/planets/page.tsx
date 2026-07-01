@@ -1,10 +1,10 @@
-import { AdminTable } from "@/components/admin-table";
+import { GeneratedPlanetsGallery } from "@/components/generated-planets-gallery";
 import { getRows } from "@/lib/data";
-import { tableConfigs } from "@/lib/tables";
+import type { GeneratedPlanet } from "@/types/schema";
 
 export const dynamic = "force-dynamic";
 
 export default async function PlanetsPage() {
-  const rows = await getRows("planets");
-  return <AdminTable config={tableConfigs.planets} initialRows={rows} />;
+  const rows = (await getRows("generated_planets")) as GeneratedPlanet[];
+  return <GeneratedPlanetsGallery initialRows={rows} />;
 }

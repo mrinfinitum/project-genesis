@@ -109,7 +109,8 @@ export async function getGameData(): Promise<GameData> {
       featureFlags,
       assets,
       conceptualArt,
-      planets
+      planets,
+      generatedPlanets
     ] = await Promise.all([
       getFallbackRows("research"),
       getFallbackRows("buildings"),
@@ -123,7 +124,8 @@ export async function getGameData(): Promise<GameData> {
       getFallbackRows("feature_flags"),
       getFallbackRows("assets"),
       getFallbackRows("conceptual_art"),
-      getFallbackRows("planets")
+      getFallbackRows("planets"),
+      getFallbackRows("generated_planets")
     ]);
 
     return {
@@ -140,7 +142,8 @@ export async function getGameData(): Promise<GameData> {
       feature_flags: featureFlags as GameData["feature_flags"],
       assets: assets as GameData["assets"],
       conceptual_art: conceptualArt as GameData["conceptual_art"],
-      planets: planets as GameData["planets"]
+      planets: planets as GameData["planets"],
+      generated_planets: generatedPlanets as GameData["generated_planets"]
     };
   }
 
@@ -159,6 +162,7 @@ export async function getGameData(): Promise<GameData> {
     assets,
     conceptualArt,
     planets,
+    generatedPlanets,
     releaseNotes,
     changelog
   ] = await Promise.all([
@@ -176,6 +180,7 @@ export async function getGameData(): Promise<GameData> {
     getRowsFromSupabaseOrFallback("assets"),
     getRowsFromSupabaseOrFallback("conceptual_art"),
     getRowsFromSupabaseOrFallback("planets"),
+    getRowsFromSupabaseOrFallback("generated_planets"),
     getRowsFromSupabaseOrFallback("release_notes"),
     getRowsFromSupabaseOrFallback("changelog")
   ]);
@@ -195,6 +200,7 @@ export async function getGameData(): Promise<GameData> {
     assets: assets as GameData["assets"],
     conceptual_art: conceptualArt as GameData["conceptual_art"],
     planets: planets as GameData["planets"],
+    generated_planets: generatedPlanets as GameData["generated_planets"],
     release_notes: releaseNotes as GameData["release_notes"],
     changelog: changelog as GameData["changelog"]
   };

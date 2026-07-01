@@ -272,6 +272,7 @@ export const seedData: GameData = {
   assets,
   conceptual_art: [],
   planets,
+  generated_planets: [],
   release_notes: releaseNotes,
   changelog
 };

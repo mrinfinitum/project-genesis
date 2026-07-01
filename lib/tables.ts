@@ -197,7 +197,7 @@ export const tableConfigs: Record<TableName, TableConfig> = {
   },
   planets: {
     table: "planets",
-    title: "Planets",
+    title: "Planetary Rules",
     description: "Procedural planet generation variables, biome pools, trait rules, resources, hazards, and tuning weights.",
     statusKey: "status",
     typeKey: "category",
@@ -216,6 +216,36 @@ export const tableConfigs: Record<TableName, TableConfig> = {
       { key: "biome_tags", label: "Biome Tags", type: "array" },
       { key: "resource_tags", label: "Resource Tags", type: "array" },
       { key: "status", label: "Status", type: "status" },
+      { key: "notes", label: "Notes", type: "textarea" }
+    ]
+  },
+  generated_planets: {
+    table: "generated_planets",
+    title: "Generated Planets",
+    description: "Persisted procedural planets generated from planetary rules.",
+    searchKeys: ["name", "seed", "galaxy_sector", "star_system", "planet_class", "primary_biome", "story"],
+    columns: ["name", "planet_class", "primary_biome", "star_type", "discovery_points", "completion_percent"],
+    fields: [
+      { key: "id", label: "ID", required: true },
+      { key: "seed", label: "Seed", required: true },
+      { key: "name", label: "Name", required: true },
+      { key: "galaxy_sector", label: "Galaxy Sector" },
+      { key: "star_system", label: "Star System" },
+      { key: "orbit_position", label: "Orbit Position", type: "number" },
+      { key: "discovery_order", label: "Discovery Order", type: "number" },
+      { key: "star_type", label: "Star Type" },
+      { key: "planet_class", label: "Planet Class" },
+      { key: "primary_biome", label: "Primary Biome" },
+      { key: "climate", label: "Climate" },
+      { key: "atmosphere", label: "Atmosphere" },
+      { key: "resources", label: "Resources", type: "array" },
+      { key: "hazards", label: "Hazards", type: "array" },
+      { key: "traits", label: "Traits", type: "array" },
+      { key: "story", label: "Story", type: "textarea" },
+      { key: "colonized", label: "Colonized", type: "boolean" },
+      { key: "terraform_level", label: "Terraform Level", type: "number" },
+      { key: "discovery_points", label: "Discovery Points", type: "number" },
+      { key: "completion_percent", label: "Completion %", type: "number" },
       { key: "notes", label: "Notes", type: "textarea" }
     ]
   },

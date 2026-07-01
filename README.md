@@ -15,7 +15,7 @@ The app renders with local data from `data/handoff/json` when Supabase environme
 
 Uploads also work without Supabase during local development. PNG and PSD files are saved under `public/uploads/project-genesis-assets`, and their row links are saved in `.local-data`.
 
-The Planets section stores the Project Genesis Planet Generation System v1.0 as procedural generation variables, including seed-driven planet fields, star systems, classes, biomes, climates, atmospheres, resources, flora, fauna, ancient civilizations, hazards, traits, modifiers, collectibles, visual themes, weather, colonization, science, economy, events, discovery journal fields, and story components.
+The Planetary Rules section stores the Project Genesis Planet Generation System v1.0 as procedural generation variables, including seed-driven planet fields, star systems, classes, biomes, climates, atmospheres, resources, flora, fauna, ancient civilizations, hazards, traits, modifiers, collectibles, visual themes, weather, colonization, science, economy, events, discovery journal fields, and story components. The Planets section generates and stores planet cards from those rules.
 
 ## Supabase Setup
 
@@ -118,7 +118,8 @@ Variants are trimmed, centered with `contain`, and saved with transparent backgr
 - `/upgrades` Upgrades CRUD
 - `/wonders` Wonders CRUD
 - `/districts` Districts CRUD
-- `/planets` Planets procedural variable CRUD
+- `/planets` Generated planet card gallery
+- `/planetary-rules` Planetary Rules variable CRUD
 - `/assets` Assets CRUD
 - `/conceptual-art` Conceptual Art gallery
 - `/building-chains` Building Chains CRUD
@@ -150,6 +151,8 @@ Codex/Roblox-ready JSON exports:
 - `/api/export/game_constants.json`
 - `/api/export/feature_flags.json`
 - `/api/export/planets.json`
+- `/api/export/planetary-rules.json`
+- `/api/export/generated_planets.json`
 - `/api/export/all`
 - `/api/export/game-data`
 
