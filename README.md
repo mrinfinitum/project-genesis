@@ -56,6 +56,17 @@ Source PSD uploads write to `assets.source_file_url` and mark the asset as `PSD 
 
 Uploads use the server-side `SUPABASE_SERVICE_ROLE_KEY`; the key is never sent to the browser.
 
+### Migrating Local Uploads
+
+If files were uploaded before Supabase Storage was configured, migrate local files from `public/uploads/project-genesis-assets` into Supabase Storage:
+
+```bash
+npm run migrate:local-assets
+npm run migrate:local-assets -- --apply
+```
+
+The first command is a dry run. The `--apply` command uploads files, upserts asset rows, and links upgrade/building rows when asset IDs follow `asset-upgrades-*` or `asset-buildings-*`.
+
 ## Authentication
 
 Project Genesis Studio uses Supabase Auth for private admin access.

@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "seed": "tsx scripts/seed.ts",
+    "migrate:local-assets": "tsx scripts/migrate-local-assets.ts",
     "regenerate:assets": "tsx scripts/regenerate-asset-variants.ts"
   },
   "dependencies": {
