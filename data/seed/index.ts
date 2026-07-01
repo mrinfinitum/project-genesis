@@ -12,6 +12,7 @@ import type {
   UnlockMatrixRow,
   Wonder
 } from "@/types/schema";
+import { planetSystemVariables } from "@/data/handoff/planet-system";
 
 export const civilizations = [
   "Eco-Green Utopia",
@@ -254,38 +255,7 @@ export const changelog: ChangelogEntry[] = [
   }
 ];
 
-export const planets: PlanetVariable[] = [
-  {
-    id: "planet-biome-forest",
-    category: "Biome",
-    value: "Forest",
-    description: "Biome pool entry for procedural planet generation.",
-    generation_rule: "Planet seed selects a primary biome, then trait modifiers apply.",
-    frequency: "Common",
-    weight: 1,
-    min_value: 0,
-    max_value: 0,
-    biome_tags: ["temperate", "organic"],
-    resource_tags: ["wood", "biomass"],
-    status: "Draft",
-    notes: ""
-  },
-  {
-    id: "planet-trait-rich-minerals",
-    category: "Trait",
-    value: "Rich Minerals",
-    description: "Increased mining output and ore-based collectibles.",
-    generation_rule: "Roll 2-5 traits per planet after biome selection.",
-    frequency: "Uncommon",
-    weight: 0.7,
-    min_value: 2,
-    max_value: 5,
-    biome_tags: ["mountain", "desert"],
-    resource_tags: ["ore", "crystal"],
-    status: "Draft",
-    notes: ""
-  }
-];
+export const planets: PlanetVariable[] = planetSystemVariables;
 
 export const seedData: GameData = {
   research_branches: researchBranches,

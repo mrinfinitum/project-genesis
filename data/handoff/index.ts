@@ -14,6 +14,7 @@ import researchRaw from "./json/Research.json";
 import unlockMatrixRaw from "./json/Unlock_Matrix.json";
 import upgradesRaw from "./json/All_Upgrades.json";
 import wondersRaw from "./json/Wonders.json";
+import { planetSystemVariables } from "./planet-system";
 import type {
   AssetRecord,
   Building,
@@ -71,6 +72,21 @@ function list(value: unknown) {
     .split(/[;,]/)
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+function dedupePlanetVariables(rows: PlanetVariable[]) {
+  const seen = new Set<string>();
+  const deduped: PlanetVariable[] = [];
+
+  for (const row of rows) {
+    const key = `${row.category.toLowerCase()}::${row.value.toLowerCase()}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      deduped.push(row);
+    }
+  }
+
+  return deduped;
 }
 
 const researchNameToId = new Map((researchRaw as RawRow[]).map((row) => [text(row.Research), text(row.ID)]));
@@ -261,10 +277,9 @@ export const handoffAssets: AssetRecord[] = (assetsRaw as RawRow[]).map((row) =>
 
 export const handoffConceptualArt: ConceptualArtRecord[] = [];
 
-export const handoffPlanets: PlanetVariable[] = [
-  ...(planetGenerationRaw as RawRow[]).map((row) => ({
+const handoffPlanetGeneration: PlanetVariable[] = (planetGenerationRaw as RawRow[]).map((row) => ({
     id: text(row.ID),
-    category: text(row.Category),
+    category: text(row.Category) === "Biome" ? "Primary Biome" : text(row.Category),
     value: text(row.Value),
     description: text(row.Description),
     generation_rule: text(row["Generation Rule"]),
@@ -276,8 +291,9 @@ export const handoffPlanets: PlanetVariable[] = [
     resource_tags: [],
     status: "Draft",
     notes: ""
-  })),
-  ...(planetTraitsRaw as RawRow[]).map((row) => ({
+  }));
+
+const handoffPlanetTraits: PlanetVariable[] = (planetTraitsRaw as RawRow[]).map((row) => ({
     id: text(row.ID),
     category: "Trait",
     value: text(row.Trait),
@@ -291,8 +307,9 @@ export const handoffPlanets: PlanetVariable[] = [
     resource_tags: [],
     status: "Draft",
     notes: ""
-  }))
-];
+  }));
+
+export const handoffPlanets: PlanetVariable[] = dedupePlanetVariables([...planetSystemVariables, ...handoffPlanetGeneration, ...handoffPlanetTraits]);
 
 export const handoffReleaseNotes: ReleaseNote[] = (releaseNotesRaw as RawRow[]).map((row, index) => ({
   id: `release-note-${index + 1}`,

@@ -15,7 +15,7 @@ The app renders with local data from `data/handoff/json` when Supabase environme
 
 Uploads also work without Supabase during local development. PNG and PSD files are saved under `public/uploads/project-genesis-assets`, and their row links are saved in `.local-data`.
 
-The Planets section stores procedural generation variables from `Planet_Generation.json` and `Planet_Traits.json`, including biome pools, trait rules, resource tags, weights, and tuning ranges.
+The Planets section stores the Project Genesis Planet Generation System v1.0 as procedural generation variables, including seed-driven planet fields, star systems, classes, biomes, climates, atmospheres, resources, flora, fauna, ancient civilizations, hazards, traits, modifiers, collectibles, visual themes, weather, colonization, science, economy, events, discovery journal fields, and story components.
 
 ## Supabase Setup
 
