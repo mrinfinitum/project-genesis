@@ -22,6 +22,7 @@ const jsonDatasets = new Set([
   "building_chains",
   "game_constants",
   "feature_flags",
+  "planets",
   "research.json",
   "buildings.json",
   "unlock_matrix.json",
@@ -33,7 +34,8 @@ const jsonDatasets = new Set([
   "building-relationships.json",
   "building_chains.json",
   "game_constants.json",
-  "feature_flags.json"
+  "feature_flags.json",
+  "planets.json"
 ]);
 
 function normalizeDataset(dataset: string) {

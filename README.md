@@ -15,6 +15,8 @@ The app renders with local data from `data/handoff/json` when Supabase environme
 
 Uploads also work without Supabase during local development. PNG and PSD files are saved under `public/uploads/project-genesis-assets`, and their row links are saved in `.local-data`.
 
+The Planets section stores procedural generation variables from `Planet_Generation.json` and `Planet_Traits.json`, including biome pools, trait rules, resource tags, weights, and tuning ranges.
+
 ## Supabase Setup
 
 1. Create a Supabase project.
@@ -116,6 +118,7 @@ Variants are trimmed, centered with `contain`, and saved with transparent backgr
 - `/upgrades` Upgrades CRUD
 - `/wonders` Wonders CRUD
 - `/districts` Districts CRUD
+- `/planets` Planets procedural variable CRUD
 - `/assets` Assets CRUD
 - `/conceptual-art` Conceptual Art gallery
 - `/building-chains` Building Chains CRUD
@@ -146,6 +149,7 @@ Codex/Roblox-ready JSON exports:
 - `/api/export/building_chains.json`
 - `/api/export/game_constants.json`
 - `/api/export/feature_flags.json`
+- `/api/export/planets.json`
 - `/api/export/all`
 - `/api/export/game-data`
 

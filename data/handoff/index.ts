@@ -6,6 +6,8 @@ import changelogRaw from "./json/Changelog.json";
 import districtsRaw from "./json/Districts.json";
 import featureFlagsRaw from "./json/Feature_Flags.json";
 import gameConstantsRaw from "./json/Game_Constants.json";
+import planetGenerationRaw from "./json/Planet_Generation.json";
+import planetTraitsRaw from "./json/Planet_Traits.json";
 import releaseNotesRaw from "./json/Release_Notes.json";
 import researchBranchesRaw from "./json/Research_Branches.json";
 import researchRaw from "./json/Research.json";
@@ -23,6 +25,7 @@ import type {
   FeatureFlag,
   GameConstant,
   GameData,
+  PlanetVariable,
   ReleaseNote,
   ResearchBranch,
   ResearchNode,
@@ -258,6 +261,39 @@ export const handoffAssets: AssetRecord[] = (assetsRaw as RawRow[]).map((row) =>
 
 export const handoffConceptualArt: ConceptualArtRecord[] = [];
 
+export const handoffPlanets: PlanetVariable[] = [
+  ...(planetGenerationRaw as RawRow[]).map((row) => ({
+    id: text(row.ID),
+    category: text(row.Category),
+    value: text(row.Value),
+    description: text(row.Description),
+    generation_rule: text(row["Generation Rule"]),
+    frequency: "",
+    weight: 0,
+    min_value: 0,
+    max_value: 0,
+    biome_tags: [],
+    resource_tags: [],
+    status: "Draft",
+    notes: ""
+  })),
+  ...(planetTraitsRaw as RawRow[]).map((row) => ({
+    id: text(row.ID),
+    category: "Trait",
+    value: text(row.Trait),
+    description: text(row.Description),
+    generation_rule: text(row["Generation Rule"]),
+    frequency: text(row.Frequency),
+    weight: 0,
+    min_value: 0,
+    max_value: 0,
+    biome_tags: [],
+    resource_tags: [],
+    status: "Draft",
+    notes: ""
+  }))
+];
+
 export const handoffReleaseNotes: ReleaseNote[] = (releaseNotesRaw as RawRow[]).map((row, index) => ({
   id: `release-note-${index + 1}`,
   version: text(row.Item) === "Version" ? text(row.Value) : "2.2 Sprint 2",
@@ -290,6 +326,7 @@ export const handoffData: GameData = {
   feature_flags: handoffFeatureFlags,
   assets: handoffAssets,
   conceptual_art: handoffConceptualArt,
+  planets: handoffPlanets,
   release_notes: handoffReleaseNotes,
   changelog: handoffChangelog
 };

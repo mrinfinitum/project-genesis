@@ -195,6 +195,30 @@ export const tableConfigs: Record<TableName, TableConfig> = {
       { key: "created_at", label: "Created At" }
     ]
   },
+  planets: {
+    table: "planets",
+    title: "Planets",
+    description: "Procedural planet generation variables, biome pools, trait rules, resources, hazards, and tuning weights.",
+    statusKey: "status",
+    typeKey: "category",
+    searchKeys: ["category", "value", "description", "generation_rule", "frequency", "notes"],
+    columns: ["category", "value", "generation_rule", "frequency", "weight", "status"],
+    fields: [
+      { key: "id", label: "ID", required: true },
+      { key: "category", label: "Category", required: true },
+      { key: "value", label: "Value", required: true },
+      { key: "description", label: "Description", type: "textarea" },
+      { key: "generation_rule", label: "Generation Rule", type: "textarea" },
+      { key: "frequency", label: "Frequency" },
+      { key: "weight", label: "Weight", type: "number" },
+      { key: "min_value", label: "Min Value", type: "number" },
+      { key: "max_value", label: "Max Value", type: "number" },
+      { key: "biome_tags", label: "Biome Tags", type: "array" },
+      { key: "resource_tags", label: "Resource Tags", type: "array" },
+      { key: "status", label: "Status", type: "status" },
+      { key: "notes", label: "Notes", type: "textarea" }
+    ]
+  },
   upgrades: {
     table: "upgrades",
     title: "Upgrades",

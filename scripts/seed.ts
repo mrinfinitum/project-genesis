@@ -32,6 +32,7 @@ async function main() {
   await upsert("research");
   await upsert("districts");
   await upsert("assets");
+  await upsert("planets");
   await upsert("buildings");
   await upsert("unlock_matrix");
   await upsert("wonders");

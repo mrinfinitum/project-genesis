@@ -133,6 +133,22 @@ export type ConceptualArtRecord = {
   created_at: string;
 };
 
+export type PlanetVariable = {
+  id: string;
+  category: string;
+  value: string;
+  description: string;
+  generation_rule: string;
+  frequency: string;
+  weight: number;
+  min_value: number;
+  max_value: number;
+  biome_tags: string[];
+  resource_tags: string[];
+  status: Status;
+  notes: string;
+};
+
 export type Upgrade = {
   id: string;
   type: string;
@@ -232,6 +248,7 @@ export type GameData = {
   feature_flags: FeatureFlag[];
   assets: AssetRecord[];
   conceptual_art: ConceptualArtRecord[];
+  planets: PlanetVariable[];
   release_notes: ReleaseNote[];
   changelog: ChangelogEntry[];
 };
@@ -244,6 +261,7 @@ export type TableName =
   | "wonders"
   | "assets"
   | "conceptual_art"
+  | "planets"
   | "upgrades"
   | "building_relationships"
   | "building_chains"

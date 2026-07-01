@@ -73,6 +73,22 @@ create table if not exists conceptual_art (
   created_at timestamptz default now()
 );
 
+create table if not exists planets (
+  id text primary key,
+  category text not null,
+  value text not null,
+  description text,
+  generation_rule text,
+  frequency text,
+  weight numeric default 0,
+  min_value numeric default 0,
+  max_value numeric default 0,
+  biome_tags jsonb default '[]'::jsonb,
+  resource_tags jsonb default '[]'::jsonb,
+  status text default 'Draft',
+  notes text
+);
+
 alter table assets add column if not exists source_file_url text;
 alter table assets add column if not exists source_file_type text;
 alter table assets add column if not exists parent_asset_id text references assets(id) on delete set null;
@@ -256,6 +272,8 @@ create index if not exists research_asset_id_idx on research(asset_id);
 create index if not exists buildings_era_idx on buildings(era);
 create index if not exists conceptual_art_created_at_idx on conceptual_art(created_at desc);
 create index if not exists conceptual_art_category_idx on conceptual_art(category);
+create index if not exists planets_category_idx on planets(category);
+create index if not exists planets_status_idx on planets(status);
 create index if not exists unlock_matrix_status_idx on unlock_matrix(implementation_status);
 create index if not exists upgrades_type_idx on upgrades(type);
 create index if not exists building_relationships_status_idx on building_relationships(implementation_status);
