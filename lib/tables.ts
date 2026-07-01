@@ -173,6 +173,28 @@ export const tableConfigs: Record<TableName, TableConfig> = {
       { key: "notes", label: "Notes", type: "textarea" }
     ]
   },
+  conceptual_art: {
+    table: "conceptual_art",
+    title: "Conceptual Art",
+    description: "Reference art, source files, mood explorations, and production concepts.",
+    statusKey: "status",
+    searchKeys: ["name", "category", "description", "file_name", "notes"],
+    columns: ["name", "category", "file_type", "file_size", "status", "created_at"],
+    fields: [
+      { key: "id", label: "ID", required: true },
+      { key: "name", label: "Name", required: true },
+      { key: "category", label: "Category" },
+      { key: "description", label: "Description", type: "textarea" },
+      { key: "file_url", label: "File URL" },
+      { key: "file_name", label: "File Name" },
+      { key: "file_type", label: "File Type" },
+      { key: "file_size", label: "File Size", type: "number" },
+      { key: "storage_path", label: "Storage Path" },
+      { key: "status", label: "Status", type: "status" },
+      { key: "notes", label: "Notes", type: "textarea" },
+      { key: "created_at", label: "Created At" }
+    ]
+  },
   upgrades: {
     table: "upgrades",
     title: "Upgrades",

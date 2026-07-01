@@ -43,6 +43,8 @@ npm run seed
 
 The Assets, Upgrades, Buildings, and Research pages support source PSD uploads.
 
+The Conceptual Art page stores standalone reference/source artwork in the separate `conceptual_art` table and accepts PSD, PNG, JPG/JPEG, WebP, GIF, TIFF, BMP, and PDF files.
+
 Without Supabase, files are saved locally to `public/uploads/project-genesis-assets`, while row metadata is saved to `.local-data`.
 
 With Supabase:
@@ -115,6 +117,7 @@ Variants are trimmed, centered with `contain`, and saved with transparent backgr
 - `/wonders` Wonders CRUD
 - `/districts` Districts CRUD
 - `/assets` Assets CRUD
+- `/conceptual-art` Conceptual Art gallery
 - `/building-chains` Building Chains CRUD
 - `/game-constants` Game Constants CRUD
 - `/feature-flags` Feature Flags CRUD

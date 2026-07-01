@@ -12,6 +12,7 @@ import {
   Gem,
   GitBranch,
   LayoutDashboard,
+  Palette,
   Rocket,
   Settings,
   Sparkles
@@ -30,7 +31,8 @@ const sections = [
   { href: "/collectibles", label: "Collectibles", icon: Gem },
   { href: "/assets", label: "Assets", icon: Archive },
   { href: "/releases", label: "Releases", icon: Boxes },
-  { href: "/settings", label: "Settings", icon: Settings }
+  { href: "/settings", label: "Settings", icon: Settings },
+  { href: "/conceptual-art", label: "Conceptual Art", icon: Palette }
 ];
 
 export function AppShell({ children }: { children: React.ReactNode }) {

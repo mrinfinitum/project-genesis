@@ -116,6 +116,21 @@ export type AssetRecord = {
   notes: string;
 };
 
+export type ConceptualArtRecord = {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  file_url: string;
+  file_name: string;
+  file_type: string;
+  file_size: number;
+  storage_path: string;
+  status: Status;
+  notes: string;
+  created_at: string;
+};
+
 export type Upgrade = {
   id: string;
   type: string;
@@ -214,6 +229,7 @@ export type GameData = {
   game_constants: GameConstant[];
   feature_flags: FeatureFlag[];
   assets: AssetRecord[];
+  conceptual_art: ConceptualArtRecord[];
   release_notes: ReleaseNote[];
   changelog: ChangelogEntry[];
 };
@@ -225,6 +241,7 @@ export type TableName =
   | "districts"
   | "wonders"
   | "assets"
+  | "conceptual_art"
   | "upgrades"
   | "building_relationships"
   | "building_chains"

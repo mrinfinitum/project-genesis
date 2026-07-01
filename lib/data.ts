@@ -107,7 +107,8 @@ export async function getGameData(): Promise<GameData> {
       buildingChains,
       gameConstants,
       featureFlags,
-      assets
+      assets,
+      conceptualArt
     ] = await Promise.all([
       getFallbackRows("research"),
       getFallbackRows("buildings"),
@@ -119,7 +120,8 @@ export async function getGameData(): Promise<GameData> {
       getFallbackRows("building_chains"),
       getFallbackRows("game_constants"),
       getFallbackRows("feature_flags"),
-      getFallbackRows("assets")
+      getFallbackRows("assets"),
+      getFallbackRows("conceptual_art")
     ]);
 
     return {
@@ -134,7 +136,8 @@ export async function getGameData(): Promise<GameData> {
       building_chains: buildingChains as GameData["building_chains"],
       game_constants: gameConstants as GameData["game_constants"],
       feature_flags: featureFlags as GameData["feature_flags"],
-      assets: assets as GameData["assets"]
+      assets: assets as GameData["assets"],
+      conceptual_art: conceptualArt as GameData["conceptual_art"]
     };
   }
 
@@ -151,6 +154,7 @@ export async function getGameData(): Promise<GameData> {
     gameConstants,
     featureFlags,
     assets,
+    conceptualArt,
     releaseNotes,
     changelog
   ] = await Promise.all([
@@ -166,6 +170,7 @@ export async function getGameData(): Promise<GameData> {
     getRowsFromSupabaseOrFallback("game_constants"),
     getRowsFromSupabaseOrFallback("feature_flags"),
     getRowsFromSupabaseOrFallback("assets"),
+    getRowsFromSupabaseOrFallback("conceptual_art"),
     getRowsFromSupabaseOrFallback("release_notes"),
     getRowsFromSupabaseOrFallback("changelog")
   ]);
@@ -183,6 +188,7 @@ export async function getGameData(): Promise<GameData> {
     game_constants: gameConstants as GameData["game_constants"],
     feature_flags: featureFlags as GameData["feature_flags"],
     assets: assets as GameData["assets"],
+    conceptual_art: conceptualArt as GameData["conceptual_art"],
     release_notes: releaseNotes as GameData["release_notes"],
     changelog: changelog as GameData["changelog"]
   };

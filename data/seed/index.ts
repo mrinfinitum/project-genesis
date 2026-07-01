@@ -266,6 +266,7 @@ export const seedData: GameData = {
   game_constants: [],
   feature_flags: [],
   assets,
+  conceptual_art: [],
   release_notes: releaseNotes,
   changelog
 };

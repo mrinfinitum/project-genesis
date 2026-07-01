@@ -18,6 +18,7 @@ import type {
   BuildingChain,
   BuildingRelationship,
   ChangelogEntry,
+  ConceptualArtRecord,
   District,
   FeatureFlag,
   GameConstant,
@@ -255,6 +256,8 @@ export const handoffAssets: AssetRecord[] = (assetsRaw as RawRow[]).map((row) =>
   notes: text(row.Notes)
 }));
 
+export const handoffConceptualArt: ConceptualArtRecord[] = [];
+
 export const handoffReleaseNotes: ReleaseNote[] = (releaseNotesRaw as RawRow[]).map((row, index) => ({
   id: `release-note-${index + 1}`,
   version: text(row.Item) === "Version" ? text(row.Value) : "2.2 Sprint 2",
@@ -286,6 +289,7 @@ export const handoffData: GameData = {
   game_constants: handoffGameConstants,
   feature_flags: handoffFeatureFlags,
   assets: handoffAssets,
+  conceptual_art: handoffConceptualArt,
   release_notes: handoffReleaseNotes,
   changelog: handoffChangelog
 };
