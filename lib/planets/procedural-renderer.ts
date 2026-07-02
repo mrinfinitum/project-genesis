@@ -16,6 +16,13 @@ type Palette = {
   atmosphere: Rgb;
 };
 
+type SurfaceSample = {
+  color: Rgb;
+  water: number;
+  coast: number;
+  glow: number;
+};
+
 const colorWordMap: Record<string, Rgb> = {
   amber: { r: 255, g: 174, b: 64 },
   azure: { r: 64, g: 170, b: 255 },
@@ -35,6 +42,11 @@ const colorWordMap: Record<string, Rgb> = {
 
 function clamp(value: number, min = 0, max = 1) {
   return Math.max(min, Math.min(max, value));
+}
+
+function smoothstep(edge0: number, edge1: number, value: number) {
+  const t = clamp((value - edge0) / (edge1 - edge0));
+  return t * t * (3 - 2 * t);
 }
 
 function lerp(left: number, right: number, amount: number) {
@@ -97,11 +109,28 @@ function fbm(x: number, y: number, z: number, seed: number) {
   let frequency = 1;
   let total = 0;
 
-  for (let octave = 0; octave < 5; octave += 1) {
+  for (let octave = 0; octave < 6; octave += 1) {
     value += smoothNoise(x * frequency, y * frequency, z * frequency, seed + octave * 1013) * amplitude;
     total += amplitude;
     amplitude *= 0.5;
     frequency *= 2.03;
+  }
+
+  return value / total;
+}
+
+function ridgeFbm(x: number, y: number, z: number, seed: number) {
+  let value = 0;
+  let amplitude = 0.55;
+  let frequency = 1;
+  let total = 0;
+
+  for (let octave = 0; octave < 5; octave += 1) {
+    const noise = smoothNoise(x * frequency, y * frequency, z * frequency, seed + octave * 1297);
+    value += (1 - Math.abs(noise * 2 - 1)) * amplitude;
+    total += amplitude;
+    amplitude *= 0.52;
+    frequency *= 2.15;
   }
 
   return value / total;
@@ -406,47 +435,69 @@ function renderRings(data: Buffer, width: number, planet: GeneratedPlanet, palet
   }
 }
 
-function surfaceColor(planet: GeneratedPlanet, palette: Palette, nx: number, ny: number, nz: number, seed: number) {
+function surfaceSample(planet: GeneratedPlanet, palette: Palette, nx: number, ny: number, nz: number, seed: number): SurfaceSample {
   const gas = isGasLike(planet);
   const text = planetText(planet);
   const waterCoverage = effectiveWaterCoverage(planet);
-  const warp = fbm(nx * 5.2 + 31, ny * 5.2 - 17, nz * 5.2 + 8, seed + 17) - 0.5;
-  const continental = fbm(nx * 3.2 + 12 + warp * 1.8, ny * 3.2 - 4 - warp, nz * 3.2 + 8 + warp * 1.4, seed);
-  const detail = fbm(nx * 10.5 - 3, ny * 10.5 + 9, nz * 10.5, seed + 41);
-  const ridges = Math.abs(fbm(nx * 18, ny * 18, nz * 18, seed + 77) - 0.5) * 2;
+  const longitude = Math.atan2(nx, nz);
+  const sphericalLatitude = Math.asin(clamp(ny, -1, 1));
+  const warpA = fbm(nx * 4.4 + 31, ny * 4.4 - 17, nz * 4.4 + 8, seed + 17) - 0.5;
+  const warpB = fbm(nx * 7.8 - 19, ny * 7.8 + 23, nz * 7.8 - 11, seed + 23) - 0.5;
+  const continental = fbm(
+    nx * 3.0 + 12 + warpA * 2.6,
+    ny * 3.0 - 4 + warpB * 1.9,
+    nz * 3.0 + 8 + warpA * 2.1,
+    seed
+  );
+  const detail = fbm(nx * 13.5 - 3 + warpB, ny * 13.5 + 9 - warpA, nz * 13.5, seed + 41);
+  const micro = fbm(nx * 42 + 9, ny * 42 - 3, nz * 42 + 14, seed + 131);
+  const ridges = ridgeFbm(nx * 19, ny * 19, nz * 19, seed + 77);
   const latitude = Math.abs(ny);
 
   if (gas) {
-    const bands = Math.sin((ny + detail * 0.18) * (28 + hashNoise(1, 1, 1, seed) * 22) + seed * 0.001) * 0.5 + 0.5;
-    const storm = fbm(nx * 8, ny * 8, nz * 8, seed + 202);
-    const stormMix = storm > 0.64 ? clamp((storm - 0.64) * 2.4) : 0.04;
-    return mix(mix(palette.land, palette.highland, bands), palette.accent, stormMix);
+    const bandCount = 16 + hashNoise(1, 1, 1, seed) * 28;
+    const bands = Math.sin((ny + detail * 0.25 + warpA * 0.12) * bandCount + seed * 0.001) * 0.5 + 0.5;
+    const turbulent = ridgeFbm(nx * 12 + warpA, ny * 24, nz * 12 - warpB, seed + 202);
+    const stormCore = fbm(nx * 10 + Math.sin(longitude * 2.4), ny * 10 + Math.cos(sphericalLatitude * 5), nz * 10, seed + 303);
+    const stormMix = stormCore > 0.62 ? smoothstep(0.62, 0.9, stormCore) : 0.04;
+    const color = mix(mix(palette.land, palette.highland, bands * 0.75 + turbulent * 0.25), palette.accent, stormMix);
+    return { color, water: 0, coast: 0, glow: stormMix * 0.3 };
   }
 
   const oceanThreshold = 1 - waterCoverage;
-  const coast = clamp((continental - oceanThreshold + 0.11) / 0.22);
+  const landAmount = smoothstep(oceanThreshold - 0.11, oceanThreshold + 0.12, continental);
+  const coast = 1 - clamp(Math.abs(landAmount - 0.5) * 2);
   const ice = hasAny(text, ["hot", "lava", "volcanic", "desert"]) ? 0 : latitude > 0.64 ? clamp((latitude - 0.64) * 3.2) : 0;
-  const landBase = mix(palette.land, palette.highland, detail * 0.72 + ridges * 0.28);
-  const ocean = mix(palette.water, palette.accent, detail * 0.28 + ridges * 0.08);
-  const color = mix(ocean, landBase, coast);
+  const mountainMask = smoothstep(0.56, 0.9, ridges * 0.78 + detail * 0.32) * landAmount;
+  const vegetationBands = Math.sin(longitude * 4.2 + latitude * 7.8 + warpA * 6) * 0.5 + 0.5;
+  const terrainGrain = (micro - 0.5) * 0.18;
+  const landBase = mix(palette.land, palette.highland, mountainMask * 0.75 + detail * 0.24 + terrainGrain);
+  const landTint = mix(landBase, palette.accent, hasAny(text, ["bioluminescent", "crystal", "quantum"]) ? smoothstep(0.72, 0.98, micro) * 0.42 : 0);
+  const ocean = mix(palette.water, palette.accent, detail * 0.18 + coast * 0.24);
+  const shallowWater = mix(ocean, palette.accent, coast * 0.36 + smoothstep(0.7, 0.92, vegetationBands) * coast * 0.12);
+  let color = mix(shallowWater, landTint, landAmount);
+  color = mix(color, { r: 238, g: 248, b: 255 }, coast * (waterCoverage > 0.25 ? 0.22 : 0.06));
   const withIce = mix(color, { r: 235, g: 248, b: 255 }, ice);
 
   if (hasAny(text, ["lava", "extreme heat", "volcano", "volcanic", "ash fall"])) {
-    const lava = fbm(nx * 28, ny * 28, nz * 28, seed + 404);
-    return mix(withIce, palette.accent, lava > 0.62 ? clamp((lava - 0.62) * 2.2) : 0);
+    const lava = ridgeFbm(nx * 32, ny * 32, nz * 32, seed + 404);
+    const lavaGlow = smoothstep(0.66, 0.94, lava) * (0.35 + landAmount * 0.65);
+    return { color: mix(withIce, palette.accent, lavaGlow), water: 1 - landAmount, coast, glow: lavaGlow };
   }
 
   if (hasAny(text, ["crystal", "quantum", "bioluminescent", "energy storm", "ionized"])) {
     const glow = fbm(nx * 24, ny * 24, nz * 24, seed + 505);
-    return mix(withIce, palette.accent, glow > 0.66 ? clamp((glow - 0.66) * 1.9) : 0);
+    const glowAmount = smoothstep(0.66, 0.92, glow) * 0.52;
+    return { color: mix(withIce, palette.accent, glowAmount), water: 1 - landAmount, coast, glow: glowAmount };
   }
 
   if (hasAny(text, ["artificial", "cyber", "machine", "urban", "metropolis"])) {
-    const grid = Math.max(Math.abs(Math.sin((nx + warp) * 42)), Math.abs(Math.sin((ny - warp) * 42)));
-    return mix(withIce, palette.accent, grid > 0.95 ? 0.42 : 0);
+    const grid = Math.max(Math.abs(Math.sin((nx + warpA) * 42)), Math.abs(Math.sin((ny - warpB) * 42)));
+    const glowAmount = grid > 0.95 ? 0.42 : 0;
+    return { color: mix(withIce, palette.accent, glowAmount), water: 1 - landAmount, coast, glow: glowAmount };
   }
 
-  return withIce;
+  return { color: withIce, water: 1 - landAmount, coast, glow: 0 };
 }
 
 function cloudAlpha(planet: GeneratedPlanet, nx: number, ny: number, nz: number, seed: number) {
@@ -455,10 +506,22 @@ function cloudAlpha(planet: GeneratedPlanet, nx: number, ny: number, nz: number,
     return 0.02;
   }
 
-  const cloud = fbm(nx * 9.5 + 5, ny * 9.5, nz * 9.5 - 2, seed + 700);
-  const bands = Math.sin((ny + cloud * 0.18) * 20) * 0.5 + 0.5;
+  const longitude = Math.atan2(nx, nz);
+  const latitude = Math.asin(clamp(ny, -1, 1));
+  const warpA = fbm(nx * 5.8 + 5, ny * 5.8, nz * 5.8 - 2, seed + 701) - 0.5;
+  const warpB = fbm(nx * 11.5 - 8, ny * 11.5 + 6, nz * 11.5, seed + 702) - 0.5;
+  const cloud = fbm(nx * 10.5 + 5 + warpA * 2.2, ny * 10.5 + warpB * 1.8, nz * 10.5 - 2, seed + 700);
+  const wisps = ridgeFbm(nx * 30 + warpB * 5, ny * 20 - warpA * 3, nz * 30, seed + 730);
+  const jetStreams = Math.sin((latitude + warpA * 0.18) * 18 + longitude * 1.6 + seed * 0.0007) * 0.5 + 0.5;
+  const stormOne = smoothstep(0.55, 0.95, fbm(nx * 7 + Math.sin(longitude * 2.8) * 1.4, ny * 7 + Math.cos(latitude * 7), nz * 7, seed + 770));
+  const stormTwo = smoothstep(0.62, 0.98, fbm(nx * 12 - Math.cos(longitude * 3.5), ny * 12 + Math.sin(latitude * 8), nz * 12, seed + 771));
   const stormBoost = hasAny(text, ["storm", "cloud", "rain", "snow", "blizzard", "dense"]) ? 0.14 : 0;
-  return clamp((cloud - 0.62) * 1.18 + bands * 0.08 + stormBoost, 0, 0.32);
+  const dryPenalty = hasAny(text, ["arid", "dry", "desert", "ash"]) ? 0.1 : 0;
+  const sheetClouds = smoothstep(0.48, 0.77, cloud) * 0.34;
+  const filamentClouds = smoothstep(0.58, 0.88, wisps) * (0.18 + jetStreams * 0.16);
+  const stormClouds = (stormOne + stormTwo) * 0.18;
+  const cover = sheetClouds + filamentClouds + stormClouds + stormBoost - dryPenalty;
+  return clamp(cover, 0, hasAny(text, ["dense", "storm", "blizzard"]) ? 0.62 : 0.46);
 }
 
 export async function renderProceduralPlanetPng(planet: GeneratedPlanet, size = 4096) {
@@ -508,11 +571,19 @@ export async function renderProceduralPlanetPng(planet: GeneratedPlanet, size = 
       const lambert = clamp(nx * light.x + ny * light.y + nz * light.z);
       const night = clamp((lambert + 0.18) / 1.18);
       const rim = clamp((1 - nz) ** 2.4);
-      const base = surfaceColor(planet, palette, nx, ny, nz, seed);
+      const sample = surfaceSample(planet, palette, nx, ny, nz, seed);
       const clouds = cloudAlpha(planet, nx, ny, nz, seed);
-      let color = mix(base, palette.cloud, clouds);
+      const highlightX = light.x * 0.42;
+      const highlightY = light.y * 0.42;
+      const specular = Math.exp(-((nx - highlightX) ** 2 + (ny - highlightY) ** 2) * 30) * sample.water * (1 - clouds) * lambert;
+      const cloudShadow = clouds * (0.08 + sample.water * 0.08);
+      let color = mix(sample.color, { r: 238, g: 249, b: 255 }, sample.coast * sample.water * 0.18);
+      color = mix(color, { r: 255, g: 255, b: 255 }, specular * 0.7);
+      color = mix(color, { r: 1, g: 5, b: 16 }, cloudShadow);
+      color = mix(color, { r: 248, g: 253, b: 255 }, clouds * (0.86 + rim * 0.22));
+      color = mix(color, palette.accent, sample.glow * 0.28);
       color = mix({ r: 3, g: 10, b: 26 }, color, 0.22 + night * 0.95);
-      color = mix(color, palette.atmosphere, rim * 0.46);
+      color = mix(color, palette.atmosphere, rim * (0.55 + clouds * 0.18));
 
       const alpha = clamp((1 - distance) * 70);
       setPixel(data, width, x, y, color, alpha);
