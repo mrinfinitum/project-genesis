@@ -52,6 +52,20 @@ function detailPill(label: string, value: string | number | boolean) {
   );
 }
 
+async function readPayload<T>(response: Response) {
+  const text = await response.text();
+
+  if (!text) {
+    return {} as T;
+  }
+
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    return { error: text.slice(0, 220) } as T;
+  }
+}
+
 export function GeneratedPlanetsGallery({ initialRows }: { initialRows: GeneratedPlanet[] }) {
   const [rows, setRows] = useState(initialRows);
   const [query, setQuery] = useState("");
@@ -70,42 +84,50 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
   }, [query, rows]);
 
   async function refreshRows() {
-    const response = await fetch("/api/planets");
-    const payload = (await response.json()) as { rows?: GeneratedPlanet[]; error?: string };
+    try {
+      const response = await fetch("/api/planets");
+      const payload = await readPayload<{ rows?: GeneratedPlanet[]; error?: string }>(response);
 
-    if (!response.ok) {
-      setError(payload.error ?? "Could not load planets.");
-      return;
+      if (!response.ok) {
+        setError(payload.error ?? "Could not load planets.");
+        return;
+      }
+
+      setRows(payload.rows ?? []);
+    } catch (caughtError) {
+      setError(caughtError instanceof Error ? caughtError.message : "Could not load planets.");
     }
-
-    setRows(payload.rows ?? []);
   }
 
   async function generateNewPlanet() {
     setLoading(true);
     setError("");
 
-    const response = await fetch("/api/planets", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json"
-      },
-      body: JSON.stringify({
-        seed: seed.trim() || undefined
-      })
-    });
-    const payload = (await response.json()) as { row?: GeneratedPlanet; error?: string };
+    try {
+      const response = await fetch("/api/planets", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json"
+        },
+        body: JSON.stringify({
+          seed: seed.trim() || undefined
+        })
+      });
+      const payload = await readPayload<{ row?: GeneratedPlanet; error?: string }>(response);
 
-    if (!response.ok) {
-      setError(payload.error ?? "Could not generate planet.");
+      if (!response.ok) {
+        setError(payload.error ?? "Could not generate planet.");
+        return;
+      }
+
+      setSeed("");
+      await refreshRows();
+      setSelectedPlanet(payload.row ?? null);
+    } catch (caughtError) {
+      setError(caughtError instanceof Error ? caughtError.message : "Could not generate planet.");
+    } finally {
       setLoading(false);
-      return;
     }
-
-    setSeed("");
-    await refreshRows();
-    setSelectedPlanet(payload.row ?? null);
-    setLoading(false);
   }
 
   async function deletePlanet(row: GeneratedPlanet) {
@@ -115,23 +137,28 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
 
     setLoading(true);
     setError("");
-    const response = await fetch(`/api/planets/${encodeURIComponent(row.id)}`, {
-      method: "DELETE"
-    });
-    const payload = (await response.json()) as { error?: string };
 
-    if (!response.ok) {
-      setError(payload.error ?? "Could not delete planet.");
+    try {
+      const response = await fetch(`/api/planets/${encodeURIComponent(row.id)}`, {
+        method: "DELETE"
+      });
+      const payload = await readPayload<{ error?: string }>(response);
+
+      if (!response.ok) {
+        setError(payload.error ?? "Could not delete planet.");
+        return;
+      }
+
+      if (selectedPlanet?.id === row.id) {
+        setSelectedPlanet(null);
+      }
+
+      await refreshRows();
+    } catch (caughtError) {
+      setError(caughtError instanceof Error ? caughtError.message : "Could not delete planet.");
+    } finally {
       setLoading(false);
-      return;
     }
-
-    if (selectedPlanet?.id === row.id) {
-      setSelectedPlanet(null);
-    }
-
-    await refreshRows();
-    setLoading(false);
   }
 
   return (

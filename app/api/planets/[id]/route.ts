@@ -14,6 +14,11 @@ export async function DELETE(_request: Request, { params }: Params) {
     return NextResponse.json({ error: "Planet ID is required." }, { status: 400 });
   }
 
-  await deleteRow("generated_planets", id);
-  return NextResponse.json({ ok: true });
+  try {
+    await deleteRow("generated_planets", id);
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Could not delete planet.";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }
