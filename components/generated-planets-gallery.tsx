@@ -150,7 +150,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
       const payload = await readPayload<{ row?: GeneratedPlanet; error?: string }>(response);
 
       if (!response.ok) {
-        setError(payload.error ?? "Could not generate planet.");
+        setError(payload.error || `Could not generate planet (${response.status}).`);
         return;
       }
 
