@@ -60,14 +60,16 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json().catch(() => ({}))) as { seed?: string };
+    const body = (await request.json().catch(() => ({}))) as { seed?: string; primaryBiome?: string };
     const [rules, existingRows, renderLibrary] = await Promise.all([
       getRows("planets"),
       getRows("generated_planets"),
       getRows("planet_render_library")
     ]);
     const ruleRows = rules.length ? rules : handoffData.planets;
-    const planet = generatePlanet(ruleRows as PlanetVariable[], existingRows.length, body.seed);
+    const planet = generatePlanet(ruleRows as PlanetVariable[], existingRows.length, body.seed, {
+      primaryBiome: body.primaryBiome
+    });
     const renderMatch = matchPlanetRender(planet, renderLibrary as PlanetRenderLibraryRecord[]);
     const planetWithLibraryRender = renderMatch
       ? {

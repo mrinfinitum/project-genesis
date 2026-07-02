@@ -1,6 +1,9 @@
 import type { GeneratedPlanet, PlanetVariable } from "@/types/schema";
 
 type RandomSource = () => number;
+type GeneratePlanetOptions = {
+  primaryBiome?: string;
+};
 
 const colorWords = ["Cyan", "Amber", "Violet", "Emerald", "Silver", "Crimson", "Indigo", "Pearl", "Obsidian", "Azure"];
 const lightWords = ["Low", "Soft", "Radiant", "Harsh", "Diffuse", "Prismatic", "Pale", "Neon"];
@@ -89,11 +92,12 @@ function metricMap(keys: string[], random: RandomSource, min = 0, max = 100) {
   return Object.fromEntries(keys.map((key) => [key, numericRange(random, min, max)]));
 }
 
-export function generatePlanet(rules: PlanetVariable[], existingCount: number, requestedSeed?: string): GeneratedPlanet {
+export function generatePlanet(rules: PlanetVariable[], existingCount: number, requestedSeed?: string, options: GeneratePlanetOptions = {}): GeneratedPlanet {
   const seed = requestedSeed?.trim() || `PG-${Date.now()}-${existingCount + 1}`;
   const random = seededRandom(seed);
   const planetClass = pickRule(rules, "Planet Class", random, "Terrestrial");
-  const primaryBiome = pickRule(rules, "Primary Biome", random, "Forest");
+  const forcedPrimaryBiome = options.primaryBiome?.trim();
+  const primaryBiome = forcedPrimaryBiome || pickRule(rules, "Primary Biome", random, "Forest");
   const ancientCivilization = pickRule(rules, "Ancient Civilization", random, "None");
   const ruins = pickRule(rules, "Ruins", random, "None");
   const traits = pickMany(rules, "Trait", random, 2, 5);

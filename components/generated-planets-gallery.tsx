@@ -7,6 +7,21 @@ import type { GeneratedPlanet } from "@/types/schema";
 
 type PlanetImageVariant = NonNullable<GeneratedPlanet["image_variants"]>[number];
 const autoRenderProceduralPlanets = process.env.NEXT_PUBLIC_AUTO_RENDER_PROCEDURAL_PLANETS === "true";
+const biomeOptions = [
+  { label: "Any biome", value: "" },
+  { label: "Ocean", value: "Ocean" },
+  { label: "Lava / Volcanic", value: "Volcanic" },
+  { label: "Ice / Frozen", value: "Frozen" },
+  { label: "Desert", value: "Desert" },
+  { label: "Crystal", value: "Crystal" },
+  { label: "Forest", value: "Forest" },
+  { label: "Jungle", value: "Jungle" },
+  { label: "Swamp", value: "Swamp" },
+  { label: "Canyon", value: "Canyon" },
+  { label: "Coral", value: "Coral" },
+  { label: "Mechanical", value: "Mechanical" },
+  { label: "Urban Ruins", value: "Urban Ruins" }
+];
 
 function asList(values: string[] | null | undefined) {
   return Array.isArray(values) ? values.filter(Boolean) : [];
@@ -180,6 +195,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
   const [rows, setRows] = useState(initialRows);
   const [query, setQuery] = useState("");
   const [seed, setSeed] = useState("");
+  const [primaryBiome, setPrimaryBiome] = useState("");
   const [loading, setLoading] = useState(false);
   const [renderingPlanetId, setRenderingPlanetId] = useState("");
   const [renderingMode, setRenderingMode] = useState<"procedural" | "ai" | "">("");
@@ -223,7 +239,8 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
           "content-type": "application/json"
         },
         body: JSON.stringify({
-          seed: seed.trim() || undefined
+          seed: seed.trim() || undefined,
+          primaryBiome: primaryBiome || undefined
         })
       });
       const payload = await readPayload<{ row?: GeneratedPlanet; error?: string }>(response);
@@ -349,6 +366,18 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
             value={seed}
             onChange={(event) => setSeed(event.target.value)}
           />
+          <select
+            className="h-10 min-w-44 rounded-md border border-cyan-300/20 bg-slate-950/60 px-3 text-sm text-white outline-none transition focus:border-cyan-300/60"
+            value={primaryBiome}
+            onChange={(event) => setPrimaryBiome(event.target.value)}
+            aria-label="Generation biome"
+          >
+            {biomeOptions.map((option) => (
+              <option key={option.label} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
           <Button className="h-10" disabled={loading} onClick={generateNewPlanet} type="button">
             <Plus className="h-4 w-4" />
             {loading ? "Generating..." : "Generate Planet"}
