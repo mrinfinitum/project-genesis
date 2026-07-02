@@ -96,7 +96,9 @@ export async function POST(request: Request) {
   const email = String(body.email ?? "").trim().toLowerCase();
   const password = String(body.password ?? "");
   const role = normalizeRole(body.role);
-  const redirectTo = `${configuredSiteOrigin(request)}/auth/update-password`;
+  const redirectUrl = new URL("/auth/callback", configuredSiteOrigin(request));
+  redirectUrl.searchParams.set("next", "/auth/update-password");
+  const redirectTo = redirectUrl.toString();
 
   if (!email || !email.includes("@")) {
     return jsonError("A valid email is required.", 400);

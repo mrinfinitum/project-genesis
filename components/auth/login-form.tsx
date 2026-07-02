@@ -15,6 +15,12 @@ function siteOrigin() {
   return (process.env.NEXT_PUBLIC_SITE_URL || window.location.origin).replace(/\/$/, "");
 }
 
+function authCallbackUrl(next = "/auth/update-password") {
+  const url = new URL("/auth/callback", siteOrigin());
+  url.searchParams.set("next", next);
+  return url.toString();
+}
+
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -75,7 +81,7 @@ export function LoginForm() {
     setResetLoading(true);
 
     const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${siteOrigin()}/auth/update-password`
+      redirectTo: authCallbackUrl()
     });
 
     if (resetError) {

@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const authPaths = ["/login", "/auth/mfa", "/auth/setup-2fa", "/auth/update-password"];
+const authPaths = ["/login", "/auth/callback", "/auth/mfa", "/auth/setup-2fa", "/auth/update-password"];
 
 function hasSupabaseAuthConfig() {
   return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);

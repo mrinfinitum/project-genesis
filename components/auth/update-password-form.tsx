@@ -19,6 +19,18 @@ export function UpdatePasswordForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  function readHashSession() {
+    if (typeof window === "undefined" || !window.location.hash) {
+      return null;
+    }
+
+    const params = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    const accessToken = params.get("access_token");
+    const refreshToken = params.get("refresh_token");
+
+    return accessToken && refreshToken ? { access_token: accessToken, refresh_token: refreshToken } : null;
+  }
+
   useEffect(() => {
     let mounted = true;
 
@@ -32,6 +44,23 @@ export function UpdatePasswordForm() {
 
       const code = searchParams.get("code");
 
+      const hashSession = readHashSession();
+
+      if (hashSession) {
+        const { error: sessionError } = await supabase.auth.setSession(hashSession);
+
+        if (!mounted) {
+          return;
+        }
+
+        if (sessionError) {
+          setError(sessionError.message);
+          return;
+        }
+
+        router.replace("/auth/update-password");
+      }
+
       if (code) {
         const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
 
@@ -40,7 +69,10 @@ export function UpdatePasswordForm() {
         }
 
         if (exchangeError) {
-          setError(exchangeError.message);
+          const message = exchangeError.message.includes("code verifier")
+            ? "This password link was opened without its verifier. Request a new invite or reset link, then open it in the same browser where you requested it."
+            : exchangeError.message;
+          setError(message);
           return;
         }
 
@@ -155,4 +187,3 @@ export function UpdatePasswordForm() {
     </AuthCard>
   );
 }
-
