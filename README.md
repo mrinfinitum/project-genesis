@@ -127,7 +127,16 @@ For large batches, render high-quality planet PNGs offline and import them into 
 
 1. Run `supabase/migrations/202607020930_add_planet_render_library.sql` in Supabase SQL Editor.
 2. Put offline renders in a folder, for example `planet-renders/ocean/high-clouds/planet-ocean-0001-4096.png`.
-3. Optionally add a sidecar JSON file next to each PNG, such as `planet-ocean-0001-4096.json`:
+3. Optionally add `OPENAI_API_KEY` to `.env.local` and generate sidecar metadata from the PNGs:
+
+```bash
+npm run describe:planet-renders -- ./planet-renders
+npm run describe:planet-renders -- ./planet-renders --write
+```
+
+Use `--limit=10` for a small test batch and `--overwrite` to replace existing sidecar JSON files.
+
+4. You can also write or edit a sidecar JSON file manually next to each PNG, such as `planet-ocean-0001-4096.json`:
 
 ```json
 {
@@ -150,13 +159,13 @@ For large batches, render high-quality planet PNGs offline and import them into 
 }
 ```
 
-4. Dry-run the import:
+5. Dry-run the import:
 
 ```bash
 npm run import:planet-renders -- ./planet-renders
 ```
 
-5. Upload files to Supabase Storage and upsert `planet_render_library` rows:
+6. Upload files to Supabase Storage and upsert `planet_render_library` rows:
 
 ```bash
 npm run import:planet-renders -- ./planet-renders --apply
