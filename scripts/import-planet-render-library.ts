@@ -281,6 +281,105 @@ function removeLightMatteFringe(data: Buffer, width: number, height: number) {
   return output;
 }
 
+function softenSilhouetteEdge(data: Buffer, width: number, height: number) {
+  let output = Buffer.from(data);
+  const transparentPasses = 5;
+  const featherPasses = 4;
+
+  for (let pass = 0; pass < transparentPasses + featherPasses; pass += 1) {
+    const next = Buffer.from(output);
+
+    for (let y = 0; y < height; y += 1) {
+      for (let x = 0; x < width; x += 1) {
+        const pixelOffset = (y * width + x) * 4;
+        const alpha = output[pixelOffset + 3];
+
+        if (alpha <= 8 || !hasTransparentNeighbor(output, width, height, x, y)) {
+          continue;
+        }
+
+        if (pass < transparentPasses) {
+          next[pixelOffset + 3] = 0;
+          continue;
+        }
+
+        const featherIndex = pass - transparentPasses;
+        const alphaScales = [0.28, 0.45, 0.64, 0.82];
+        const colorScales = [0.34, 0.44, 0.58, 0.76];
+        const alphaScale = alphaScales[featherIndex] ?? 0.82;
+        const colorScale = colorScales[featherIndex] ?? 0.76;
+
+        next[pixelOffset] = Math.round(output[pixelOffset] * colorScale);
+        next[pixelOffset + 1] = Math.round(output[pixelOffset + 1] * colorScale);
+        next[pixelOffset + 2] = Math.round(output[pixelOffset + 2] * colorScale);
+        next[pixelOffset + 3] = Math.round(alpha * alphaScale);
+      }
+    }
+
+    output = next;
+  }
+
+  return output;
+}
+
+function blendOuterPlanetLimb(data: Buffer, width: number, height: number) {
+  const output = Buffer.from(data);
+  let left = width;
+  let right = -1;
+  let top = height;
+  let bottom = -1;
+
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      if (data[(y * width + x) * 4 + 3] > 8) {
+        left = Math.min(left, x);
+        right = Math.max(right, x);
+        top = Math.min(top, y);
+        bottom = Math.max(bottom, y);
+      }
+    }
+  }
+
+  if (right < left || bottom < top) {
+    return output;
+  }
+
+  const centerX = (left + right) / 2;
+  const centerY = (top + bottom) / 2;
+  const radiusX = Math.max(1, (right - left + 1) / 2);
+  const radiusY = Math.max(1, (bottom - top + 1) / 2);
+
+  for (let y = top; y <= bottom; y += 1) {
+    for (let x = left; x <= right; x += 1) {
+      const pixelOffset = (y * width + x) * 4;
+      const alpha = data[pixelOffset + 3];
+
+      if (alpha <= 8) {
+        continue;
+      }
+
+      const normalizedX = (x - centerX) / radiusX;
+      const normalizedY = (y - centerY) / radiusY;
+      const distance = Math.sqrt(normalizedX * normalizedX + normalizedY * normalizedY);
+
+      if (distance < 0.948) {
+        continue;
+      }
+
+      const edgeAmount = Math.min(1, Math.max(0, (distance - 0.948) / 0.052));
+      const colorScale = 1 - edgeAmount * 0.74;
+      const alphaScale = 1 - edgeAmount * 0.18;
+
+      output[pixelOffset] = Math.round(data[pixelOffset] * colorScale);
+      output[pixelOffset + 1] = Math.round(data[pixelOffset + 1] * colorScale);
+      output[pixelOffset + 2] = Math.round(data[pixelOffset + 2] * colorScale);
+      output[pixelOffset + 3] = Math.round(alpha * alphaScale);
+    }
+  }
+
+  return output;
+}
+
 async function psdToPngBuffer(file: string) {
   const psd = readPsd(await readFile(file), {
     useImageData: true,
@@ -296,7 +395,15 @@ async function psdToPngBuffer(file: string) {
 
   const width = imageData.width || psd.width;
   const height = imageData.height || psd.height;
-  const rgba = removeLightMatteFringe(removeEdgeWhiteBackground(toEightBitRgba(imageData.data, width, height), width, height), width, height);
+  const rgba = blendOuterPlanetLimb(
+    softenSilhouetteEdge(
+      removeLightMatteFringe(removeEdgeWhiteBackground(toEightBitRgba(imageData.data, width, height), width, height), width, height),
+      width,
+      height
+    ),
+    width,
+    height
+  );
   const trimmed = trimTransparentPixels(rgba, width, height);
   const buffer = await sharp(trimmed.data, {
     raw: {
@@ -382,6 +489,62 @@ async function publicUrlFor(storagePath: string) {
   return supabase.storage.from(bucket).getPublicUrl(storagePath).data.publicUrl;
 }
 
+function cacheBustUrl(url: string, version: string) {
+  if (!url) {
+    return url;
+  }
+
+  const separator = url.includes("?") ? "&" : "?";
+  return `${url}${separator}v=${version}`;
+}
+
+async function syncGeneratedPlanetRenderUrls(rows: PlanetRenderLibraryRecord[]) {
+  if (!supabase || !rows.length) {
+    return;
+  }
+
+  const { data, error } = await supabase.from("generated_planets").select("*");
+
+  if (error) {
+    console.warn(`Generated planet image URL sync skipped: ${error.message}`);
+    return;
+  }
+
+  const updates = (data ?? []).flatMap((planet) => {
+    const matchingRender = rows.find((row) => {
+      const variants = (Array.isArray(planet.image_variants) ? planet.image_variants : []) as Array<{ path?: unknown }>;
+      const imageUrl = String(planet.image_url ?? "");
+
+      return imageUrl.includes(row.storage_path) || variants.some((variant) => String(variant?.path ?? "") === row.storage_path);
+    });
+
+    if (!matchingRender) {
+      return [];
+    }
+
+    return [
+      {
+        ...planet,
+        image_url: matchingRender.file_url,
+        image_variants: matchingRender.image_variants
+      }
+    ];
+  });
+
+  if (!updates.length) {
+    return;
+  }
+
+  const { error: updateError } = await supabase.from("generated_planets").upsert(updates);
+
+  if (updateError) {
+    console.warn(`Generated planet image URL sync skipped: ${updateError.message}`);
+    return;
+  }
+
+  console.log(`Synced ${updates.length} generated planet image URL${updates.length === 1 ? "" : "s"}.`);
+}
+
 async function main() {
   const rootStat = await stat(sourceRoot).catch(() => null);
 
@@ -397,6 +560,7 @@ async function main() {
 
   const files = await walkFiles(sourceRoot);
   const rows: PlanetRenderLibraryRecord[] = [];
+  const importVersion = Date.now().toString(36);
 
   for (const file of files) {
     const metadata = await readMetadata(file);
@@ -411,7 +575,7 @@ async function main() {
     const resolution = inferResolution(filename, metadata);
     const width = Number(metadata.width ?? asset.width ?? resolution);
     const height = Number(metadata.height ?? asset.height ?? resolution);
-    const fileUrl = String(metadata.file_url ?? (await publicUrlFor(storagePath)));
+    const fileUrl = String(metadata.file_url ?? cacheBustUrl(await publicUrlFor(storagePath), importVersion));
     const sourceFileUrl = sourceStoragePath ? await publicUrlFor(sourceStoragePath) : "";
     const inferredBiome = inferValue(pathParts, ["Ocean", "Desert", "Ice", "Lava", "Volcanic", "Crystal", "Toxic", "Void", "Forest", "Jungle", "Swamp", "Cyber", "Artificial"]);
     const inferredClass = inferValue(pathParts, ["Ocean World", "Desert World", "Ice World", "Volcanic World", "Crystal World", "Toxic World", "Void World", "Gas Giant", "Terrestrial"]);
@@ -496,6 +660,8 @@ async function main() {
     if (error) {
       throw error;
     }
+
+    await syncGeneratedPlanetRenderUrls(rows);
   }
 
   console.log(`${apply ? "Imported" : "Dry run found"} ${rows.length} planet render${rows.length === 1 ? "" : "s"}.`);
