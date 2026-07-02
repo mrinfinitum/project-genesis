@@ -23,6 +23,7 @@ type PlanetVariant = {
 };
 
 const variantSizes = [256, 512, 1024, 2048, 4096];
+const magnificBaseUrl = "https://api.magnific.com/v1/ai/text-to-image/nano-banana-pro";
 
 function safeFilename(value: string) {
   return value.toLowerCase().replace(/[^a-z0-9._-]+/g, "-").replace(/^-+|-+$/g, "") || "planet";
@@ -50,9 +51,9 @@ function promptForPlanet(planet: GeneratedPlanet) {
   const visualTheme = statText(planet.visual_theme);
 
   return [
-    "Create a premium sci-fi game asset: one isolated spherical planet, centered, transparent background.",
+    "Create a premium sci-fi game asset: one isolated spherical planet, centered on a perfectly flat pure chroma green (#00FF00) background for later transparency removal.",
     "Uniform Project Genesis card art style: cinematic but readable, high-detail surface, clean silhouette, no text, no logo, no UI, no stars, no space background, no frame, no drop shadow.",
-    "Keep the full planet visible with a small transparent margin. Orthographic three-quarter lighting, crisp rim light, Roblox-friendly stylized realism.",
+    "Keep the full planet visible with a clean margin. Orthographic three-quarter lighting, crisp rim light, Roblox-friendly stylized realism. Do not use green on the planet surface unless the planet data explicitly requires it.",
     `Planet name: ${planet.name}.`,
     `Planet class: ${planet.planet_class}. Primary biome: ${planet.primary_biome}. Climate: ${planet.climate}. Atmosphere: ${planet.atmosphere}. Temperature: ${planet.temperature}. Gravity: ${planet.gravity}. Water coverage: ${planet.water_coverage}.`,
     resources ? `Surface/resource cues: ${resources}.` : "",
@@ -66,53 +67,122 @@ function promptForPlanet(planet: GeneratedPlanet) {
     .join("\n");
 }
 
-async function readOpenAiImage(prompt: string) {
-  const apiKey = process.env.OPENAI_API_KEY;
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
-  if (!apiKey) {
-    throw new Error("OPENAI_API_KEY is not configured. Add it in Vercel and .env.local to render planet art.");
+function magnificApiKey() {
+  return process.env.MAGNIFIC_API_KEY || process.env.NANO_BANANA_API_KEY || "";
+}
+
+function magnificResolution() {
+  const value = process.env.MAGNIFIC_NANO_BANANA_RESOLUTION || "4K";
+  return ["1K", "2K", "4K", "low", "medium", "high"].includes(value) ? value : "4K";
+}
+
+async function readMagnificPayload(response: Response) {
+  return (await response.json().catch(() => ({}))) as {
+    data?: {
+      generated?: string[];
+      task_id?: string;
+      status?: string;
+    };
+    error?: string | { message?: string };
+    message?: string;
+  };
+}
+
+function magnificError(payload: Awaited<ReturnType<typeof readMagnificPayload>>, fallback: string) {
+  if (typeof payload.error === "string") {
+    return payload.error;
   }
 
-  const response = await fetch("https://api.openai.com/v1/images/generations", {
+  return payload.error?.message ?? payload.message ?? fallback;
+}
+
+async function createMagnificTask(prompt: string) {
+  const apiKey = magnificApiKey();
+
+  if (!apiKey) {
+    throw new Error("MAGNIFIC_API_KEY is not configured. Add it in Vercel and .env.local to render planet art.");
+  }
+
+  const response = await fetch(magnificBaseUrl, {
     method: "POST",
     headers: {
-      authorization: `Bearer ${apiKey}`,
+      "x-magnific-api-key": apiKey,
       "content-type": "application/json"
     },
     body: JSON.stringify({
-      model: process.env.OPENAI_IMAGE_MODEL || "gpt-image-1",
-      prompt,
-      size: "1024x1024",
-      quality: "high",
-      background: "transparent",
-      output_format: "png"
+      prompt: prompt.slice(0, 3000),
+      aspect_ratio: "1:1",
+      resolution: magnificResolution()
     })
   });
 
-  const payload = (await response.json().catch(() => ({}))) as {
-    data?: Array<{ b64_json?: string; url?: string }>;
-    error?: { message?: string };
-  };
+  const payload = await readMagnificPayload(response);
 
   if (!response.ok) {
-    throw new Error(payload.error?.message ?? `OpenAI image generation failed (${response.status}).`);
+    throw new Error(magnificError(payload, `Magnific image generation failed (${response.status}).`));
   }
 
-  const image = payload.data?.[0];
+  const taskId = payload.data?.task_id;
 
-  if (image?.b64_json) {
-    return Buffer.from(image.b64_json, "base64");
+  if (!taskId) {
+    throw new Error("Magnific did not return a task ID.");
   }
 
-  if (image?.url) {
-    const imageResponse = await fetch(image.url);
-    if (!imageResponse.ok) {
-      throw new Error(`Could not download generated image (${imageResponse.status}).`);
+  return {
+    taskId,
+    generated: payload.data?.generated ?? [],
+    status: payload.data?.status ?? "CREATED"
+  };
+}
+
+async function pollMagnificTask(taskId: string) {
+  const apiKey = magnificApiKey();
+  const attempts = Number(process.env.MAGNIFIC_POLL_ATTEMPTS ?? 24);
+  const intervalMs = Number(process.env.MAGNIFIC_POLL_INTERVAL_MS ?? 2000);
+
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    const response = await fetch(`${magnificBaseUrl}/${encodeURIComponent(taskId)}`, {
+      headers: {
+        "x-magnific-api-key": apiKey
+      }
+    });
+    const payload = await readMagnificPayload(response);
+
+    if (!response.ok) {
+      throw new Error(magnificError(payload, `Magnific task status failed (${response.status}).`));
     }
-    return Buffer.from(await imageResponse.arrayBuffer());
+
+    const status = String(payload.data?.status ?? "");
+    const generated = payload.data?.generated ?? [];
+
+    if (generated.length) {
+      return generated[0];
+    }
+
+    if (["FAILED", "ERROR", "CANCELED", "CANCELLED"].includes(status.toUpperCase())) {
+      throw new Error(`Magnific task ${taskId} ended with status ${status}.`);
+    }
+
+    await sleep(intervalMs);
   }
 
-  throw new Error("OpenAI did not return image data.");
+  throw new Error("Magnific render is still processing. Try the render action again in a moment.");
+}
+
+async function readMagnificImage(prompt: string) {
+  const task = await createMagnificTask(prompt);
+  const imageUrl = task.generated[0] ?? (await pollMagnificTask(task.taskId));
+  const imageResponse = await fetch(imageUrl);
+
+  if (!imageResponse.ok) {
+    throw new Error(`Could not download Magnific image (${imageResponse.status}).`);
+  }
+
+  return Buffer.from(await imageResponse.arrayBuffer());
 }
 
 async function trimTransparentPng(png: Buffer) {
@@ -151,6 +221,56 @@ async function trimTransparentPng(png: Buffer) {
   }
 
   return { data: nextData, width: nextWidth, height: nextHeight };
+}
+
+async function removeKeyedBackground(image: Buffer) {
+  const decoded = await sharp(image).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  const { width, height } = decoded.info;
+  const data = Buffer.from(decoded.data);
+  const samples = [
+    [0, 0],
+    [width - 1, 0],
+    [0, height - 1],
+    [width - 1, height - 1]
+  ];
+  const color = samples.reduce(
+    (total, [x, y]) => {
+      const index = (y * width + x) * 4;
+      total.r += data[index];
+      total.g += data[index + 1];
+      total.b += data[index + 2];
+      return total;
+    },
+    { r: 0, g: 0, b: 0 }
+  );
+  const background = {
+    r: Math.round(color.r / samples.length),
+    g: Math.round(color.g / samples.length),
+    b: Math.round(color.b / samples.length)
+  };
+
+  for (let index = 0; index < data.length; index += 4) {
+    const r = data[index];
+    const g = data[index + 1];
+    const b = data[index + 2];
+    const distance = Math.sqrt((r - background.r) ** 2 + (g - background.g) ** 2 + (b - background.b) ** 2);
+    const greenScreenDistance = Math.sqrt((r - 0) ** 2 + (g - 255) ** 2 + (b - 0) ** 2);
+    const isKeyedBackground = distance < 62 || greenScreenDistance < 92 || (g > 150 && g > r * 1.35 && g > b * 1.35);
+
+    if (isKeyedBackground) {
+      data[index + 3] = 0;
+    }
+  }
+
+  return sharp(data, {
+    raw: {
+      width,
+      height,
+      channels: 4
+    }
+  })
+    .png()
+    .toBuffer();
 }
 
 async function variantPng(input: Awaited<ReturnType<typeof trimTransparentPng>>, size: number) {
@@ -241,7 +361,7 @@ export async function POST(_request: Request, { params }: Params) {
     }
 
     const prompt = promptForPlanet(planet);
-    const sourcePng = await readOpenAiImage(prompt);
+    const sourcePng = await removeKeyedBackground(await readMagnificImage(prompt));
     const trimmed = await trimTransparentPng(sourcePng);
     const variants: PlanetVariant[] = [];
 
@@ -256,7 +376,7 @@ export async function POST(_request: Request, { params }: Params) {
       image_prompt: prompt,
       image_status: "Rendered",
       image_variants: variants,
-      notes: `${planet.notes ? `${planet.notes}\n` : ""}Rendered transparent planet image variants: ${variantSizes.map((size) => `${size}x${size}`).join(", ")}.`
+      notes: `${planet.notes ? `${planet.notes}\n` : ""}Rendered Nano Banana Pro transparent planet image variants: ${variantSizes.map((size) => `${size}x${size}`).join(", ")}.`
     });
 
     return NextResponse.json({ row, variants });

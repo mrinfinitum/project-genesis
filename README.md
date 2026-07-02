@@ -113,12 +113,12 @@ Variants are trimmed, centered with `contain`, and saved with transparent backgr
 
 Generated planets can render transparent PNG art for card graphics.
 
-1. Add `OPENAI_API_KEY` to local `.env.local` and Vercel Environment Variables.
-2. Optional: set `OPENAI_IMAGE_MODEL`; the default is `gpt-image-1`.
+1. Add `MAGNIFIC_API_KEY` to local `.env.local` and Vercel Environment Variables.
+2. Optional: set `MAGNIFIC_NANO_BANANA_RESOLUTION`; the default is `4K`.
 3. Run `supabase/migrations/202607011820_add_generated_planet_images.sql` in Supabase SQL Editor.
 4. Open `/planets`, generate or choose a planet, then click the sparkle render action.
 
-The app requests a transparent PNG image, trims empty pixels, centers the planet, stores it in Supabase Storage, and creates 256x256, 512x512, 1024x1024, 2048x2048, and 4096x4096 PNG variants for download.
+The app creates a Magnific Nano Banana Pro task, polls until an image URL is ready, removes the keyed background, trims empty pixels, centers the planet, stores it in Supabase Storage, and creates 256x256, 512x512, 1024x1024, 2048x2048, and 4096x4096 transparent PNG variants for download.
 
 ## Phase 1 Routes
 
