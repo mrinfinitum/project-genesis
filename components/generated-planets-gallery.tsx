@@ -33,11 +33,15 @@ function hasAny(text: string, terms: string[]) {
 }
 
 function placeholderStyle(row: GeneratedPlanet): CSSProperties {
-  const text = [
+  const identityText = [
     row.planet_class,
     row.primary_biome,
     row.climate,
-    row.atmosphere,
+    row.atmosphere
+  ]
+    .join(" ")
+    .toLowerCase();
+  const detailText = [
     row.temperature,
     compactText(row.resources),
     compactText(row.hazards),
@@ -49,22 +53,38 @@ function placeholderStyle(row: GeneratedPlanet): CSSProperties {
   const hue = hashString(`${row.id}:${row.seed}`) % 360;
   let colors = [`hsl(${hue} 72% 64%)`, `hsl(${(hue + 55) % 360} 70% 34%)`, "rgb(15 23 42)"];
 
-  if (hasAny(text, ["lava", "volcanic", "extreme heat", "ash"])) {
-    colors = ["rgb(255 147 55)", "rgb(157 50 30)", "rgb(35 12 16)"];
-  } else if (hasAny(text, ["ice", "frozen", "snow", "blizzard"])) {
-    colors = ["rgb(231 250 255)", "rgb(92 190 238)", "rgb(23 60 97)"];
-  } else if (hasAny(text, ["desert", "arid", "dust", "canyon"])) {
-    colors = ["rgb(248 210 122)", "rgb(181 111 49)", "rgb(64 35 24)"];
-  } else if (hasAny(text, ["toxic", "acid", "radiation", "methane"])) {
-    colors = ["rgb(186 255 77)", "rgb(60 153 88)", "rgb(31 48 44)"];
-  } else if (hasAny(text, ["crystal", "quantum", "ionized"])) {
-    colors = ["rgb(124 241 255)", "rgb(166 88 255)", "rgb(39 32 84)"];
-  } else if (hasAny(text, ["void", "rift", "corruption"])) {
+  if (hasAny(identityText, ["ocean", "aquatic", "water", "reef"])) {
+    colors = ["rgb(120 238 255)", "rgb(34 118 190)", "rgb(14 33 74)"];
+  } else if (hasAny(identityText, ["harmony", "garden", "forest", "jungle", "swamp", "living", "grassland"])) {
+    colors = ["rgb(115 255 195)", "rgb(39 153 99)", "rgb(14 58 56)"];
+  } else if (hasAny(identityText, ["crystal", "quantum", "ionized"])) {
+    colors = ["rgb(138 245 255)", "rgb(157 91 255)", "rgb(34 32 88)"];
+  } else if (hasAny(identityText, ["void", "rift", "corruption", "shadow"])) {
     colors = ["rgb(217 89 255)", "rgb(65 41 111)", "rgb(10 12 31)"];
-  } else if (hasAny(text, ["forest", "jungle", "swamp", "living", "harmony"])) {
-    colors = ["rgb(104 255 185)", "rgb(44 153 80)", "rgb(15 54 52)"];
-  } else if (hasAny(text, ["cyber", "machine", "artificial", "urban"])) {
+  } else if (hasAny(identityText, ["cyber", "machine", "artificial", "urban", "tech"])) {
     colors = ["rgb(95 232 255)", "rgb(78 88 109)", "rgb(15 23 42)"];
+  } else if (hasAny(identityText, ["ice", "frozen", "snow", "glacier", "tundra"])) {
+    colors = ["rgb(231 250 255)", "rgb(92 190 238)", "rgb(23 60 97)"];
+  } else if (hasAny(identityText, ["desert", "arid", "dust", "canyon", "dune"])) {
+    colors = ["rgb(248 210 122)", "rgb(181 111 49)", "rgb(64 35 24)"];
+  } else if (hasAny(identityText, ["lava", "volcanic", "magma", "inferno"])) {
+    colors = ["rgb(255 147 55)", "rgb(157 50 30)", "rgb(35 12 16)"];
+  } else if (hasAny(identityText, ["toxic", "acid", "radiation", "methane"])) {
+    colors = ["rgb(186 255 77)", "rgb(60 153 88)", "rgb(31 48 44)"];
+  } else if (hasAny(detailText, ["crystal", "quantum", "rare crystal"])) {
+    colors = ["rgb(135 235 255)", "rgb(116 91 224)", "rgb(24 35 80)"];
+  } else if (hasAny(detailText, ["void", "rift", "dark matter", "corruption"])) {
+    colors = ["rgb(183 96 255)", "rgb(67 47 125)", "rgb(11 12 33)"];
+  } else if (hasAny(detailText, ["lava", "volcanic", "extreme heat", "ash"])) {
+    colors = ["rgb(255 152 70)", "rgb(163 70 38)", "rgb(42 18 20)"];
+  } else if (hasAny(detailText, ["ice", "frozen", "snow", "blizzard", "extreme cold"])) {
+    colors = ["rgb(231 250 255)", "rgb(92 190 238)", "rgb(23 60 97)"];
+  } else if (hasAny(detailText, ["desert", "arid", "dust", "sandstorm", "canyon"])) {
+    colors = ["rgb(248 210 122)", "rgb(181 111 49)", "rgb(64 35 24)"];
+  } else if (hasAny(detailText, ["toxic", "acid", "radiation", "methane"])) {
+    colors = ["rgb(186 255 77)", "rgb(60 153 88)", "rgb(31 48 44)"];
+  } else if (hasAny(detailText, ["forest", "jungle", "swamp", "living", "biomass"])) {
+    colors = ["rgb(104 255 185)", "rgb(44 153 80)", "rgb(15 54 52)"];
   }
 
   return {
@@ -213,8 +233,15 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
       }
 
       setSeed("");
-      await refreshRows();
-      setSelectedPlanet(payload.row ?? null);
+
+      if (payload.row) {
+        setRows((currentRows) => [payload.row!, ...currentRows.filter((current) => current.id !== payload.row!.id)]);
+        setSelectedPlanet(payload.row);
+        void renderPlanet(payload.row, "procedural", { openVariantMenu: false });
+      } else {
+        await refreshRows();
+        setSelectedPlanet(null);
+      }
     } catch (caughtError) {
       setError(caughtError instanceof Error ? caughtError.message : String(caughtError || "Could not generate planet."));
     } finally {
@@ -253,7 +280,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
     }
   }
 
-  async function renderPlanet(row: GeneratedPlanet, mode: "procedural" | "ai") {
+  async function renderPlanet(row: GeneratedPlanet, mode: "procedural" | "ai", options: { openVariantMenu?: boolean } = {}) {
     setRenderingPlanetId(row.id);
     setRenderingMode(mode);
     setVariantMenuPlanetId("");
@@ -274,7 +301,9 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
       if (payload.row) {
         setRows((currentRows) => currentRows.map((current) => (current.id === row.id ? payload.row! : current)));
         setSelectedPlanet((current) => (current?.id === row.id ? payload.row! : current));
-        setVariantMenuPlanetId(row.id);
+        if (options.openVariantMenu ?? true) {
+          setVariantMenuPlanetId(row.id);
+        }
       } else {
         await refreshRows();
       }
@@ -485,7 +514,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
             </div>
             <div className="grid gap-5 p-5 xl:grid-cols-[1fr_0.9fr]">
               <div className="space-y-5">
-                <div className="grid aspect-square max-h-[64vh] place-items-center rounded-md border border-cyan-300/10 bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.12),rgba(2,6,23,0.82)_68%)] p-6">
+                <div className="relative grid aspect-square max-h-[64vh] place-items-center rounded-md border border-cyan-300/10 bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.12),rgba(2,6,23,0.82)_68%)] p-6">
                   {largestVariant(selectedPlanet) || selectedPlanet.image_url ? (
                     <img
                       className="h-full w-full object-contain"
@@ -493,8 +522,13 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                       alt={`${selectedPlanet.name} planet render`}
                     />
                   ) : (
-                    <div className="h-56 w-56 rounded-full border border-cyan-300/25 bg-[radial-gradient(circle_at_30%_25%,rgba(255,255,255,0.72),rgba(34,211,238,0.38)_24%,rgba(59,130,246,0.2)_52%,rgba(15,23,42,0.95)_76%)] shadow-[0_0_56px_rgba(34,211,238,0.18)]" />
+                    <div className="h-56 w-56 rounded-full border border-cyan-300/25" style={placeholderStyle(selectedPlanet)} />
                   )}
+                  {renderingPlanetId === selectedPlanet.id ? (
+                    <p className="absolute bottom-5 rounded border border-cyan-300/20 bg-slate-950/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-cyan-200">
+                      Rendering procedural PNG
+                    </p>
+                  ) : null}
                 </div>
                 <p className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-4 text-sm leading-6 text-slate-200">{selectedPlanet.story}</p>
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
