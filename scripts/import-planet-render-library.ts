@@ -19,6 +19,7 @@ const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const bucket = process.env.SUPABASE_ASSET_BUCKET || "project-genesis-assets";
 const apply = process.argv.includes("--apply");
+const uploadPsdSources = process.argv.includes("--upload-psd-source");
 const sourceArg = process.argv.slice(2).find((arg) => !arg.startsWith("--")) ?? "planet-render-library";
 const sourceRoot = path.resolve(process.cwd(), sourceArg);
 
@@ -116,6 +117,106 @@ function toEightBitRgba(data: Uint8Array | Uint8ClampedArray | Uint16Array | Flo
   return Buffer.from(data);
 }
 
+function isWhiteBackgroundPixel(data: Buffer, pixelOffset: number) {
+  const alpha = data[pixelOffset + 3];
+  if (alpha <= 8) {
+    return true;
+  }
+
+  const red = data[pixelOffset];
+  const green = data[pixelOffset + 1];
+  const blue = data[pixelOffset + 2];
+  const brightest = Math.max(red, green, blue);
+  const darkest = Math.min(red, green, blue);
+
+  return alpha > 0 && darkest >= 225 && brightest - darkest <= 35;
+}
+
+function removeEdgeWhiteBackground(data: Buffer, width: number, height: number) {
+  const output = Buffer.from(data);
+  const visited = new Uint8Array(width * height);
+  const queue: number[] = [];
+
+  function enqueue(x: number, y: number) {
+    if (x < 0 || y < 0 || x >= width || y >= height) {
+      return;
+    }
+
+    const index = y * width + x;
+    if (visited[index]) {
+      return;
+    }
+
+    const pixelOffset = index * 4;
+    if (!isWhiteBackgroundPixel(output, pixelOffset)) {
+      return;
+    }
+
+    visited[index] = 1;
+    queue.push(index);
+  }
+
+  for (let x = 0; x < width; x += 1) {
+    enqueue(x, 0);
+    enqueue(x, height - 1);
+  }
+
+  for (let y = 0; y < height; y += 1) {
+    enqueue(0, y);
+    enqueue(width - 1, y);
+  }
+
+  for (let cursor = 0; cursor < queue.length; cursor += 1) {
+    const index = queue[cursor];
+    const x = index % width;
+    const y = Math.floor(index / width);
+    const pixelOffset = index * 4;
+    output[pixelOffset + 3] = 0;
+
+    enqueue(x + 1, y);
+    enqueue(x - 1, y);
+    enqueue(x, y + 1);
+    enqueue(x, y - 1);
+  }
+
+  return output;
+}
+
+function trimTransparentPixels(data: Buffer, width: number, height: number) {
+  let left = width;
+  let right = -1;
+  let top = height;
+  let bottom = -1;
+
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const alpha = data[(y * width + x) * 4 + 3];
+      if (alpha > 8) {
+        left = Math.min(left, x);
+        right = Math.max(right, x);
+        top = Math.min(top, y);
+        bottom = Math.max(bottom, y);
+      }
+    }
+  }
+
+  if (right < left || bottom < top) {
+    return { data, width, height };
+  }
+
+  const nextWidth = right - left + 1;
+  const nextHeight = bottom - top + 1;
+  const nextData = Buffer.alloc(nextWidth * nextHeight * 4);
+
+  for (let y = 0; y < nextHeight; y += 1) {
+    const sourceStart = ((top + y) * width + left) * 4;
+    const sourceEnd = sourceStart + nextWidth * 4;
+    data.copy(nextData, y * nextWidth * 4, sourceStart, sourceEnd);
+  }
+
+  return { data: nextData, width: nextWidth, height: nextHeight };
+}
+
 async function psdToPngBuffer(file: string) {
   const psd = readPsd(await readFile(file), {
     useImageData: true,
@@ -131,17 +232,19 @@ async function psdToPngBuffer(file: string) {
 
   const width = imageData.width || psd.width;
   const height = imageData.height || psd.height;
-  const buffer = await sharp(toEightBitRgba(imageData.data, width, height), {
+  const rgba = removeEdgeWhiteBackground(toEightBitRgba(imageData.data, width, height), width, height);
+  const trimmed = trimTransparentPixels(rgba, width, height);
+  const buffer = await sharp(trimmed.data, {
     raw: {
-      width,
-      height,
+      width: trimmed.width,
+      height: trimmed.height,
       channels: 4
     }
   })
     .png()
     .toBuffer();
 
-  return { buffer, width, height };
+  return { buffer, width: trimmed.width, height: trimmed.height };
 }
 
 async function renderAssetFor(file: string, metadata: PlanetRenderMetadata) {
@@ -305,7 +408,7 @@ async function main() {
         throw new Error(`${storagePath}: ${uploadError.message}`);
       }
 
-      if (sourceStoragePath && asset.sourceBuffer) {
+      if (sourceStoragePath && asset.sourceBuffer && uploadPsdSources) {
         const { error: sourceUploadError } = await supabase.storage.from(bucket).upload(sourceStoragePath, asset.sourceBuffer, {
           contentType: asset.sourceContentType,
           upsert: true
@@ -316,6 +419,9 @@ async function main() {
           row.notes = row.notes ? `${row.notes}\n${warning}` : warning;
           console.warn(`${sourceStoragePath}: ${warning}`);
         }
+      } else if (sourceStoragePath && asset.sourceBuffer) {
+        const warning = "Source PSD upload skipped. Re-run with --upload-psd-source to try uploading the PSD source file.";
+        row.notes = row.notes ? `${row.notes}\n${warning}` : warning;
       }
     }
   }

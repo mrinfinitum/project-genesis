@@ -408,9 +408,9 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
               className="group cursor-pointer overflow-hidden rounded-md border border-cyan-300/15 bg-[#07101e]/85 shadow-glow transition hover:-translate-y-0.5 hover:border-cyan-300/45"
               onClick={() => setSelectedPlanet(row)}
             >
-              <div className="grid h-36 place-items-center border-b border-cyan-300/10 bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.14),rgba(2,6,23,0.2)_42%,rgba(2,6,23,0.78)_75%)] p-4">
+              <div className="grid h-36 place-items-center overflow-hidden border-b border-cyan-300/10 bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.14),rgba(2,6,23,0.2)_42%,rgba(2,6,23,0.78)_75%)] p-4">
                 {heroVariant || row.image_url ? (
-                  <img className="h-full w-full object-contain" src={heroVariant?.url ?? row.image_url ?? ""} alt={`${row.name} planet render`} />
+                  <img className="h-28 max-h-full w-28 max-w-full object-contain" src={heroVariant?.url ?? row.image_url ?? ""} alt={`${row.name} planet render`} />
                 ) : (
                   <div className="h-24 w-24 rounded-full border border-cyan-300/25" style={placeholderStyle(row)} />
                 )}
