@@ -217,6 +217,70 @@ function trimTransparentPixels(data: Buffer, width: number, height: number) {
   return { data: nextData, width: nextWidth, height: nextHeight };
 }
 
+function hasTransparentNeighbor(data: Buffer, width: number, height: number, x: number, y: number) {
+  for (let offsetY = -1; offsetY <= 1; offsetY += 1) {
+    for (let offsetX = -1; offsetX <= 1; offsetX += 1) {
+      if (!offsetX && !offsetY) {
+        continue;
+      }
+
+      const nextX = x + offsetX;
+      const nextY = y + offsetY;
+
+      if (nextX < 0 || nextY < 0 || nextX >= width || nextY >= height) {
+        return true;
+      }
+
+      if (data[(nextY * width + nextX) * 4 + 3] <= 8) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+function removeLightMatteFringe(data: Buffer, width: number, height: number) {
+  let output = Buffer.from(data);
+
+  for (let pass = 0; pass < 3; pass += 1) {
+    const next = Buffer.from(output);
+
+    for (let y = 0; y < height; y += 1) {
+      for (let x = 0; x < width; x += 1) {
+        const pixelOffset = (y * width + x) * 4;
+        const alpha = output[pixelOffset + 3];
+
+        if (alpha <= 8 || !hasTransparentNeighbor(output, width, height, x, y)) {
+          continue;
+        }
+
+        const red = output[pixelOffset];
+        const green = output[pixelOffset + 1];
+        const blue = output[pixelOffset + 2];
+        const brightest = Math.max(red, green, blue);
+        const darkest = Math.min(red, green, blue);
+        const average = (red + green + blue) / 3;
+        const isNeutralFringe = brightest - darkest <= 70 && average >= 105;
+
+        if (!isNeutralFringe) {
+          continue;
+        }
+
+        const nextAlpha = pass === 0 ? 0 : Math.min(alpha, 96);
+        next[pixelOffset] = Math.round(red * 0.45);
+        next[pixelOffset + 1] = Math.round(green * 0.45);
+        next[pixelOffset + 2] = Math.round(blue * 0.45);
+        next[pixelOffset + 3] = nextAlpha;
+      }
+    }
+
+    output = next;
+  }
+
+  return output;
+}
+
 async function psdToPngBuffer(file: string) {
   const psd = readPsd(await readFile(file), {
     useImageData: true,
@@ -232,7 +296,7 @@ async function psdToPngBuffer(file: string) {
 
   const width = imageData.width || psd.width;
   const height = imageData.height || psd.height;
-  const rgba = removeEdgeWhiteBackground(toEightBitRgba(imageData.data, width, height), width, height);
+  const rgba = removeLightMatteFringe(removeEdgeWhiteBackground(toEightBitRgba(imageData.data, width, height), width, height), width, height);
   const trimmed = trimTransparentPixels(rgba, width, height);
   const buffer = await sharp(trimmed.data, {
     raw: {
