@@ -5,3 +5,5 @@ node_modules
 public/uploads
 .local-data
 .DS_Store
+planet-renders/*
+!planet-renders/README.md
