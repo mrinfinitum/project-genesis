@@ -1,9 +1,17 @@
 import { readdir, readFile, stat, writeFile } from "fs/promises";
 import path from "path";
 import sharp from "sharp";
+import { getCompositeImageData, initializeCanvas, readPsd } from "ag-psd";
 import { loadEnvConfig } from "@next/env";
 
 loadEnvConfig(process.cwd());
+
+initializeCanvas(
+  () => {
+    throw new Error("Canvas rendering is not available in this script.");
+  },
+  (width, height) => ({ width, height, data: new Uint8ClampedArray(width * height * 4) }) as ImageData
+);
 
 type PlanetSidecarMetadata = {
   planet_class: string;
@@ -23,6 +31,19 @@ type PlanetSidecarMetadata = {
   notes: string;
 };
 
+type OpenAiResponsePayload = {
+  output_text?: string;
+  output?: Array<{
+    content?: Array<{
+      type?: string;
+      text?: string;
+    }>;
+  }>;
+  error?: {
+    message?: string;
+  };
+};
+
 const apiKey = process.env.OPENAI_API_KEY;
 const model = process.env.OPENAI_PLANET_METADATA_MODEL || "gpt-4.1-mini";
 const write = process.argv.includes("--write");
@@ -33,17 +54,54 @@ const sourceArg = process.argv.slice(2).find((arg) => !arg.startsWith("--")) ?? 
 const sourceRoot = path.resolve(process.cwd(), sourceArg);
 
 function isImage(filename: string) {
-  return /\.(png|jpe?g|webp)$/i.test(filename);
+  return /\.(png|jpe?g|webp|psd)$/i.test(filename);
 }
 
-function mimeType(filename: string) {
-  const lower = filename.toLowerCase();
+function toEightBitRgba(data: Uint8Array | Uint8ClampedArray | Uint16Array | Float32Array, width: number, height: number) {
+  if (data instanceof Uint16Array) {
+    const rgba = Buffer.alloc(width * height * 4);
+    for (let index = 0; index < rgba.length; index += 1) {
+      rgba[index] = Math.round(data[index] / 257);
+    }
+    return rgba;
+  }
 
-  if (lower.endsWith(".png")) return "image/png";
-  if (lower.endsWith(".webp")) return "image/webp";
-  if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) return "image/jpeg";
+  if (data instanceof Float32Array) {
+    const rgba = Buffer.alloc(width * height * 4);
+    for (let index = 0; index < rgba.length; index += 1) {
+      rgba[index] = Math.max(0, Math.min(255, Math.round(data[index] * 255)));
+    }
+    return rgba;
+  }
 
-  return "application/octet-stream";
+  return Buffer.from(data);
+}
+
+async function psdToPngBuffer(file: string) {
+  const psd = readPsd(await readFile(file), {
+    useImageData: true,
+    skipLayerImageData: true,
+    skipThumbnail: true,
+    throwForMissingFeatures: false
+  });
+  const imageData = psd.imageData ?? getCompositeImageData(psd);
+
+  if (!imageData?.data) {
+    throw new Error(`${file}: PSD does not include readable composite image data. Re-save it from Photoshop with compatibility enabled.`);
+  }
+
+  const width = imageData.width || psd.width;
+  const height = imageData.height || psd.height;
+
+  return sharp(toEightBitRgba(imageData.data, width, height), {
+    raw: {
+      width,
+      height,
+      channels: 4
+    }
+  })
+    .png()
+    .toBuffer();
 }
 
 function sidecarPathFor(file: string) {
@@ -61,6 +119,19 @@ function parseJsonObject(text: string) {
   }
 
   return JSON.parse(trimmed.slice(firstBrace, lastBrace + 1)) as Partial<PlanetSidecarMetadata>;
+}
+
+function outputTextFrom(payload: OpenAiResponsePayload) {
+  if (payload.output_text) {
+    return payload.output_text;
+  }
+
+  const nestedText = payload.output
+    ?.flatMap((item) => item.content ?? [])
+    .map((content) => content.text)
+    .find((text): text is string => Boolean(text));
+
+  return nestedText ?? "";
 }
 
 function asString(value: unknown, fallback = "") {
@@ -106,6 +177,64 @@ function normalizeMetadata(raw: Partial<PlanetSidecarMetadata>, resolution: numb
   };
 }
 
+function titleize(value: string) {
+  return value.replace(/[-_]+/g, " ").replace(/\s+/g, " ").trim().replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function inferFromPath(file: string, resolution: number, error?: unknown): PlanetSidecarMetadata {
+  const relativePath = path.relative(sourceRoot, file).toLowerCase();
+  const tokens = relativePath.split(/[^a-z0-9]+/).filter(Boolean);
+  const includes = (values: string[]) => values.find((value) => tokens.includes(value.toLowerCase())) ?? "";
+  const biome = includes(["ocean", "lava", "volcanic", "ice", "frozen", "desert", "toxic", "gas", "alien", "crater", "barren", "city", "cyberpunk", "forest", "jungle"]);
+  const variant = includes(["temperate", "volcanic", "frozen", "arid", "acidic", "amber", "purple", "barren", "cyberpunk"]);
+  const colorFamily =
+    biome === "lava" || biome === "volcanic"
+      ? "Orange"
+      : biome === "ice" || biome === "frozen"
+        ? "White"
+        : biome === "desert"
+          ? "Gold"
+          : biome === "toxic"
+            ? "Green"
+            : biome === "ocean"
+              ? "Blue"
+              : "Unknown";
+  const planetClass =
+    biome === "gas"
+      ? "Gas Giant"
+      : biome === "lava" || biome === "volcanic"
+        ? "Volcanic World"
+        : biome === "ice" || biome === "frozen"
+          ? "Ice World"
+          : biome === "desert"
+            ? "Desert World"
+            : biome === "ocean"
+              ? "Ocean World"
+              : biome
+                ? `${titleize(biome)} World`
+                : "Unknown World";
+  const notes = error instanceof Error ? `AI metadata fallback from filename. Original error: ${error.message}` : "AI metadata fallback from filename.";
+
+  return normalizeMetadata(
+    {
+      planet_class: planetClass,
+      biome: titleize(biome || "Unknown"),
+      atmosphere: "Unknown",
+      climate: titleize(variant || "Unknown"),
+      color_family: colorFamily,
+      has_rings: tokens.includes("ring") || tokens.includes("ringed"),
+      water_level: biome === "ocean" ? "high" : biome === "desert" || biome === "lava" || biome === "volcanic" ? "low" : "medium",
+      cloud_level: "medium",
+      tags: [...new Set(tokens.filter((token) => token !== "planet" && token !== "psd" && !/^\d+$/.test(token)))].slice(0, 16),
+      hazards: biome === "lava" || biome === "volcanic" ? ["Extreme Heat", "Lava Flows"] : [],
+      traits: variant ? [titleize(variant)] : [],
+      rarity: "common",
+      notes
+    },
+    resolution
+  );
+}
+
 async function walkFiles(dir: string): Promise<string[]> {
   const entries = await readdir(dir, { withFileTypes: true });
   const files = await Promise.all(
@@ -124,11 +253,12 @@ async function walkFiles(dir: string): Promise<string[]> {
 }
 
 async function imagePayload(file: string) {
-  const metadata = await sharp(file).metadata();
+  const imageBuffer = file.toLowerCase().endsWith(".psd") ? await psdToPngBuffer(file) : await readFile(file);
+  const metadata = await sharp(imageBuffer).metadata();
   const width = metadata.width ?? 4096;
   const height = metadata.height ?? width;
   const resolution = Math.max(width, height);
-  const preview = await sharp(file)
+  const preview = await sharp(imageBuffer)
     .resize({ width: 768, height: 768, fit: "inside", withoutEnlargement: true })
     .png()
     .toBuffer();
@@ -181,17 +311,19 @@ async function describeImage(file: string): Promise<PlanetSidecarMetadata> {
     })
   });
 
-  const payload = (await response.json().catch(() => ({}))) as { output_text?: string; error?: { message?: string } };
+  const payload = (await response.json().catch(() => ({}))) as OpenAiResponsePayload;
 
   if (!response.ok) {
     throw new Error(payload.error?.message ?? `OpenAI request failed with ${response.status}`);
   }
 
-  if (!payload.output_text) {
+  const outputText = outputTextFrom(payload);
+
+  if (!outputText) {
     throw new Error("OpenAI response did not include output_text.");
   }
 
-  return normalizeMetadata(parseJsonObject(payload.output_text), resolution);
+  return normalizeMetadata(parseJsonObject(outputText), resolution);
 }
 
 async function main() {
@@ -214,7 +346,15 @@ async function main() {
       continue;
     }
 
-    const metadata = await describeImage(file);
+    const { resolution } = await imagePayload(file);
+    let metadata: PlanetSidecarMetadata;
+
+    try {
+      metadata = await describeImage(file);
+    } catch (error) {
+      metadata = inferFromPath(file, resolution, error);
+    }
+
     const json = `${JSON.stringify(metadata, null, 2)}\n`;
     console.log(`${write ? "Writing" : "Would write"} ${path.relative(sourceRoot, sidecarPath)}`);
     console.log(json);
