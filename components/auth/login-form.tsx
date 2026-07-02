@@ -11,6 +11,10 @@ function requireMfa() {
   return process.env.NEXT_PUBLIC_REQUIRE_MFA === "true";
 }
 
+function siteOrigin() {
+  return (process.env.NEXT_PUBLIC_SITE_URL || window.location.origin).replace(/\/$/, "");
+}
+
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -71,7 +75,7 @@ export function LoginForm() {
     setResetLoading(true);
 
     const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/update-password`
+      redirectTo: `${siteOrigin()}/auth/update-password`
     });
 
     if (resetError) {

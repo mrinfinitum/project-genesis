@@ -30,6 +30,16 @@ function normalizeRole(value: unknown): StudioRole {
   return value === "admin" ? "admin" : "member";
 }
 
+function configuredSiteOrigin(request: Request) {
+  const configuredUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "") ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
+
+  const origin = configuredUrl || new URL(request.url).origin;
+  return origin.replace(/\/$/, "");
+}
+
 function serializeUser(user: {
   id: string;
   email?: string;
@@ -86,7 +96,7 @@ export async function POST(request: Request) {
   const email = String(body.email ?? "").trim().toLowerCase();
   const password = String(body.password ?? "");
   const role = normalizeRole(body.role);
-  const redirectTo = `${new URL(request.url).origin}/auth/update-password`;
+  const redirectTo = `${configuredSiteOrigin(request)}/auth/update-password`;
 
   if (!email || !email.includes("@")) {
     return jsonError("A valid email is required.", 400);

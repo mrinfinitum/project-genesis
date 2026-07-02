@@ -79,12 +79,13 @@ Project Genesis Studio uses Supabase Auth for private admin access.
 1. In Supabase, open Authentication and enable the Email provider.
 2. Create studio users from Authentication > Users, or invite them by email.
 3. Enable TOTP multi-factor authentication in Supabase Auth settings.
-4. Set `NEXT_PUBLIC_REQUIRE_MFA=true` and `REQUIRE_MFA=true` in local and Vercel environments.
-5. Open `/login`, sign in with email/password, then enroll an authenticator app when prompted.
+4. Set `NEXT_PUBLIC_SITE_URL` to your production URL, such as `https://project-genesis-livid.vercel.app`, in Vercel.
+5. Set `NEXT_PUBLIC_REQUIRE_MFA=true` and `REQUIRE_MFA=true` in local and Vercel environments.
+6. Open `/login`, sign in with email/password, then enroll an authenticator app when prompted.
 
 Protected admin routes require a Supabase session. When MFA is enabled, app pages and API routes require an `aal2` session after the authenticator code is verified.
 
-Password recovery starts from `/login` and sends users to `/auth/update-password`. Add your production domain and `http://localhost:3000/**` to Supabase Auth redirect URLs so reset links can open the password update page.
+Password recovery starts from `/login` and sends users to `/auth/update-password`. Add your production domain, `/auth/update-password`, and `http://localhost:3000/**` to Supabase Auth redirect URLs so reset links can open the password update page.
 
 Studio admins can create and delete users from `/settings`. Bootstrap the first admin by setting `PROJECT_GENESIS_ADMIN_EMAILS` to one or more comma-separated email addresses. Users created from the app are stored in Supabase Auth with `app_metadata.role` set to `admin` or `member`; only admins can call the user-management API.
 
