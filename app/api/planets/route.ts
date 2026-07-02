@@ -10,12 +10,28 @@ function sortRows(rows: Record<string, unknown>[]) {
   return [...rows].sort((left, right) => String(right.created_at ?? "").localeCompare(String(left.created_at ?? "")));
 }
 
+function errorMessage(error: unknown, fallback: string) {
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  if (error && typeof error === "object" && "message" in error && typeof error.message === "string") {
+    return error.message;
+  }
+
+  if (typeof error === "string") {
+    return error;
+  }
+
+  return fallback;
+}
+
 export async function GET() {
   try {
     const rows = await getRows("generated_planets");
     return NextResponse.json({ rows: sortRows(rows) });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Could not load generated planets.";
+    const message = errorMessage(error, "Could not load generated planets.");
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
@@ -30,7 +46,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ row: row as GeneratedPlanet }, { status: 201 });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Could not generate planet.";
+    const message = errorMessage(error, "Could not generate planet.");
     const hint = message.includes("generated_planets") ? `${message} Run supabase/migrations/202607011735_add_generated_planets.sql in Supabase.` : message;
     return NextResponse.json({ error: hint }, { status: 500 });
   }

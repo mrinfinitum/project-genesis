@@ -158,7 +158,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
       await refreshRows();
       setSelectedPlanet(payload.row ?? null);
     } catch (caughtError) {
-      setError(caughtError instanceof Error ? caughtError.message : "Could not generate planet.");
+      setError(caughtError instanceof Error ? caughtError.message : String(caughtError || "Could not generate planet."));
     } finally {
       setLoading(false);
     }
