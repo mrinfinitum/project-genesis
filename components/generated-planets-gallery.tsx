@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Download, ImageIcon, Plus, Search, Sparkles, Trash2, X } from "lucide-react";
+import { Download, Plus, Search, Sparkles, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { GeneratedPlanet } from "@/types/schema";
 
@@ -59,6 +59,15 @@ function detailPill(label: string, value: string | number | boolean) {
     <div className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
       <p className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-slate-500">{label}</p>
       <p className="mt-1 text-sm font-medium text-slate-100">{String(value)}</p>
+    </div>
+  );
+}
+
+function compactPill(label: string, value: string | number | boolean) {
+  return (
+    <div className="min-w-0 rounded border border-cyan-300/10 bg-slate-950/45 px-2 py-1.5">
+      <p className="text-[0.58rem] font-semibold uppercase tracking-[0.14em] text-slate-500">{label}</p>
+      <p className="mt-0.5 truncate text-xs font-medium text-slate-100">{String(value)}</p>
     </div>
   );
 }
@@ -265,7 +274,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
 
       {error ? <p className="rounded-md border border-red-400/30 bg-red-400/10 px-3 py-2 text-sm text-red-100">{error}</p> : null}
 
-      <div className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {filteredRows.map((row) => {
           const heroVariant = largestVariant(row);
           const variants = imageVariants(row);
@@ -276,26 +285,24 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
               className="group cursor-pointer overflow-hidden rounded-md border border-cyan-300/15 bg-[#07101e]/85 shadow-glow transition hover:-translate-y-0.5 hover:border-cyan-300/45"
               onClick={() => setSelectedPlanet(row)}
             >
-              <div className="grid aspect-square place-items-center border-b border-cyan-300/10 bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.14),rgba(2,6,23,0.2)_42%,rgba(2,6,23,0.78)_75%)] p-6">
+              <div className="grid h-36 place-items-center border-b border-cyan-300/10 bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.14),rgba(2,6,23,0.2)_42%,rgba(2,6,23,0.78)_75%)] p-4">
                 {heroVariant || row.image_url ? (
                   <img className="h-full w-full object-contain" src={heroVariant?.url ?? row.image_url ?? ""} alt={`${row.name} planet render`} />
                 ) : (
-                  <div className="grid h-40 w-40 place-items-center rounded-full border border-cyan-300/25 bg-[radial-gradient(circle_at_30%_25%,rgba(255,255,255,0.72),rgba(34,211,238,0.38)_24%,rgba(59,130,246,0.2)_52%,rgba(15,23,42,0.95)_76%)] shadow-[0_0_56px_rgba(34,211,238,0.18)]">
-                    <ImageIcon className="h-8 w-8 text-cyan-100/80" />
-                  </div>
+                  <div className="h-24 w-24 rounded-full border border-cyan-300/25 bg-[radial-gradient(circle_at_30%_25%,rgba(255,255,255,0.72),rgba(34,211,238,0.38)_24%,rgba(59,130,246,0.2)_52%,rgba(15,23,42,0.95)_76%)] shadow-[0_0_42px_rgba(34,211,238,0.18)]" />
                 )}
               </div>
-              <div className="border-b border-cyan-300/10 bg-slate-950/45 p-4">
+              <div className="border-b border-cyan-300/10 bg-slate-950/45 p-3">
                 <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">{row.planet_class}</p>
-                    <h3 className="mt-2 text-xl font-bold text-white">{row.name}</h3>
+                  <div className="min-w-0">
+                    <p className="truncate text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-cyan-300">{row.planet_class}</p>
+                    <h3 className="mt-1 truncate text-base font-bold text-white">{row.name}</h3>
                     <p className="mt-1 font-mono text-xs text-slate-500">{row.seed}</p>
                   </div>
                   <div className="relative flex shrink-0 gap-2">
                     <button
                       type="button"
-                      className="grid h-9 w-9 place-items-center rounded-md border border-cyan-300/20 text-cyan-100 opacity-80 transition hover:bg-cyan-400/10 group-hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-40"
+                      className="grid h-8 w-8 place-items-center rounded-md border border-cyan-300/20 text-cyan-100 opacity-80 transition hover:bg-cyan-400/10 group-hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-40"
                       onClick={(event) => {
                         event.stopPropagation();
                         renderPlanet(row);
@@ -308,7 +315,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                     </button>
                     <button
                       type="button"
-                      className="grid h-9 w-9 place-items-center rounded-md border border-cyan-300/20 text-cyan-100 opacity-80 transition hover:bg-cyan-400/10 group-hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-40"
+                      className="grid h-8 w-8 place-items-center rounded-md border border-cyan-300/20 text-cyan-100 opacity-80 transition hover:bg-cyan-400/10 group-hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-40"
                       onClick={(event) => {
                         event.stopPropagation();
                         setVariantMenuPlanetId((current) => (current === row.id ? "" : row.id));
@@ -321,7 +328,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                     </button>
                     <button
                       type="button"
-                      className="grid h-9 w-9 place-items-center rounded-md border border-red-300/20 text-red-200 opacity-80 transition hover:bg-red-400/10 group-hover:opacity-100"
+                      className="grid h-8 w-8 place-items-center rounded-md border border-red-300/20 text-red-200 opacity-80 transition hover:bg-red-400/10 group-hover:opacity-100"
                       onClick={(event) => {
                         event.stopPropagation();
                         deletePlanet(row);
@@ -350,31 +357,24 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                     ) : null}
                   </div>
                 </div>
-                {renderingPlanetId === row.id ? <p className="mt-3 text-xs font-semibold uppercase tracking-[0.16em] text-cyan-200">Rendering transparent PNG variants...</p> : null}
+                {renderingPlanetId === row.id ? <p className="mt-2 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-cyan-200">Rendering PNG variants...</p> : null}
               </div>
-              <div className="space-y-4 p-4">
+              <div className="space-y-3 p-3">
                 <div className="grid grid-cols-2 gap-2">
-                  {detailPill("Biome", row.primary_biome)}
-                  {detailPill("Star", row.star_type)}
-                  {detailPill("Atmosphere", row.atmosphere)}
-                  {detailPill("Gravity", row.gravity)}
+                  {compactPill("Biome", row.primary_biome)}
+                  {compactPill("Gravity", row.gravity)}
                 </div>
-                <p className="line-clamp-3 text-sm leading-6 text-slate-300">{row.story}</p>
-                <div className="space-y-2 text-xs text-slate-400">
-                  <p>
+                <p className="line-clamp-2 text-xs leading-5 text-slate-300">{row.story}</p>
+                <div className="space-y-1 text-xs text-slate-400">
+                  <p className="truncate">
                     <span className="text-slate-500">Resources:</span> {listText(row.resources)}
                   </p>
-                  <p>
+                  <p className="truncate">
                     <span className="text-slate-500">Traits:</span> {listText(row.traits)}
-                  </p>
-                  <p>
-                    <span className="text-slate-500">Hazards:</span> {listText(row.hazards)}
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <span className="rounded border border-cyan-300/20 bg-cyan-400/10 px-2 py-1 text-xs text-cyan-100">{row.discovery_points} discovery pts</span>
-                  <span className="rounded border border-blue-300/20 bg-blue-400/10 px-2 py-1 text-xs text-blue-100">{row.completion_percent}% complete</span>
-                  <span className="rounded border border-emerald-300/20 bg-emerald-400/10 px-2 py-1 text-xs text-emerald-100">TL {row.terraform_level}</span>
                 </div>
               </div>
             </article>
@@ -414,9 +414,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                       alt={`${selectedPlanet.name} planet render`}
                     />
                   ) : (
-                    <div className="grid h-56 w-56 place-items-center rounded-full border border-cyan-300/25 bg-[radial-gradient(circle_at_30%_25%,rgba(255,255,255,0.72),rgba(34,211,238,0.38)_24%,rgba(59,130,246,0.2)_52%,rgba(15,23,42,0.95)_76%)] shadow-[0_0_56px_rgba(34,211,238,0.18)]">
-                      <ImageIcon className="h-10 w-10 text-cyan-100/80" />
-                    </div>
+                    <div className="h-56 w-56 rounded-full border border-cyan-300/25 bg-[radial-gradient(circle_at_30%_25%,rgba(255,255,255,0.72),rgba(34,211,238,0.38)_24%,rgba(59,130,246,0.2)_52%,rgba(15,23,42,0.95)_76%)] shadow-[0_0_56px_rgba(34,211,238,0.18)]" />
                   )}
                 </div>
                 <p className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-4 text-sm leading-6 text-slate-200">{selectedPlanet.story}</p>
