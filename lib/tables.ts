@@ -249,6 +249,38 @@ export const tableConfigs: Record<TableName, TableConfig> = {
       { key: "notes", label: "Notes", type: "textarea" }
     ]
   },
+  planet_render_library: {
+    table: "planet_render_library",
+    title: "Planet Render Library",
+    description: "Pre-rendered planet PNG assets with metadata used to match generated planets to existing artwork.",
+    statusKey: "status",
+    typeKey: "biome",
+    searchKeys: ["name", "planet_class", "biome", "atmosphere", "climate", "color_family", "tags", "notes"],
+    columns: ["name", "planet_class", "biome", "atmosphere", "has_rings", "usage_count", "status"],
+    fields: [
+      { key: "id", label: "ID", required: true },
+      { key: "name", label: "Name", required: true },
+      { key: "file_url", label: "File URL", required: true },
+      { key: "storage_path", label: "Storage Path", required: true },
+      { key: "thumbnail_url", label: "Thumbnail URL" },
+      { key: "planet_class", label: "Planet Class" },
+      { key: "biome", label: "Biome" },
+      { key: "atmosphere", label: "Atmosphere" },
+      { key: "climate", label: "Climate" },
+      { key: "color_family", label: "Color Family" },
+      { key: "has_rings", label: "Has Rings", type: "boolean" },
+      { key: "water_level", label: "Water Level" },
+      { key: "cloud_level", label: "Cloud Level" },
+      { key: "tags", label: "Tags", type: "array" },
+      { key: "hazards", label: "Hazards", type: "array" },
+      { key: "traits", label: "Traits", type: "array" },
+      { key: "rarity", label: "Rarity" },
+      { key: "resolution", label: "Resolution", type: "number" },
+      { key: "usage_count", label: "Usage Count", type: "number" },
+      { key: "status", label: "Status", type: "status" },
+      { key: "notes", label: "Notes", type: "textarea" }
+    ]
+  },
   upgrades: {
     table: "upgrades",
     title: "Upgrades",

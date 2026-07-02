@@ -141,6 +141,35 @@ alter table generated_planets add column if not exists image_prompt text;
 alter table generated_planets add column if not exists image_status text default 'Not Rendered';
 alter table generated_planets add column if not exists image_variants jsonb default '[]'::jsonb;
 
+create table if not exists planet_render_library (
+  id text primary key,
+  name text not null,
+  file_url text not null,
+  storage_path text not null,
+  thumbnail_url text default '',
+  planet_class text default '',
+  biome text default '',
+  atmosphere text default '',
+  climate text default '',
+  color_family text default '',
+  has_rings boolean default false,
+  water_level text default '',
+  cloud_level text default '',
+  tags jsonb default '[]'::jsonb,
+  hazards jsonb default '[]'::jsonb,
+  traits jsonb default '[]'::jsonb,
+  image_variants jsonb default '[]'::jsonb,
+  rarity text default 'common',
+  resolution integer default 4096,
+  width integer default 4096,
+  height integer default 4096,
+  usage_count integer default 0,
+  status text default 'Ready',
+  notes text default '',
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
 alter table assets add column if not exists source_file_url text;
 alter table assets add column if not exists source_file_type text;
 alter table assets add column if not exists parent_asset_id text references assets(id) on delete set null;
@@ -328,6 +357,11 @@ create index if not exists planets_category_idx on planets(category);
 create index if not exists planets_status_idx on planets(status);
 create index if not exists generated_planets_created_at_idx on generated_planets(created_at desc);
 create index if not exists generated_planets_class_idx on generated_planets(planet_class);
+create index if not exists planet_render_library_status_idx on planet_render_library(status);
+create index if not exists planet_render_library_class_idx on planet_render_library(planet_class);
+create index if not exists planet_render_library_biome_idx on planet_render_library(biome);
+create index if not exists planet_render_library_rings_idx on planet_render_library(has_rings);
+create index if not exists planet_render_library_usage_idx on planet_render_library(usage_count);
 create index if not exists unlock_matrix_status_idx on unlock_matrix(implementation_status);
 create index if not exists upgrades_type_idx on upgrades(type);
 create index if not exists building_relationships_status_idx on building_relationships(implementation_status);

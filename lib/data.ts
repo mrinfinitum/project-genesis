@@ -21,7 +21,7 @@ async function getFallbackRows(table: DataTableName) {
       const localJson = await readFile(path.join(localDataDir, `${table}.json`), "utf8");
       mutableFallback.set(table, JSON.parse(localJson) as Record<string, unknown>[]);
     } catch {
-      mutableFallback.set(table, [...(handoffData[table] as Record<string, unknown>[])]);
+      mutableFallback.set(table, [...((handoffData[table] as Record<string, unknown>[] | undefined) ?? [])]);
     }
   }
 
@@ -110,7 +110,8 @@ export async function getGameData(): Promise<GameData> {
       assets,
       conceptualArt,
       planets,
-      generatedPlanets
+      generatedPlanets,
+      planetRenderLibrary
     ] = await Promise.all([
       getFallbackRows("research"),
       getFallbackRows("buildings"),
@@ -125,7 +126,8 @@ export async function getGameData(): Promise<GameData> {
       getFallbackRows("assets"),
       getFallbackRows("conceptual_art"),
       getFallbackRows("planets"),
-      getFallbackRows("generated_planets")
+      getFallbackRows("generated_planets"),
+      getFallbackRows("planet_render_library")
     ]);
 
     return {
@@ -143,7 +145,8 @@ export async function getGameData(): Promise<GameData> {
       assets: assets as GameData["assets"],
       conceptual_art: conceptualArt as GameData["conceptual_art"],
       planets: planets as GameData["planets"],
-      generated_planets: generatedPlanets as GameData["generated_planets"]
+      generated_planets: generatedPlanets as GameData["generated_planets"],
+      planet_render_library: planetRenderLibrary as GameData["planet_render_library"]
     };
   }
 
@@ -163,6 +166,7 @@ export async function getGameData(): Promise<GameData> {
     conceptualArt,
     planets,
     generatedPlanets,
+    planetRenderLibrary,
     releaseNotes,
     changelog
   ] = await Promise.all([
@@ -181,6 +185,7 @@ export async function getGameData(): Promise<GameData> {
     getRowsFromSupabaseOrFallback("conceptual_art"),
     getRowsFromSupabaseOrFallback("planets"),
     getRowsFromSupabaseOrFallback("generated_planets"),
+    getRowsFromSupabaseOrFallback("planet_render_library"),
     getRowsFromSupabaseOrFallback("release_notes"),
     getRowsFromSupabaseOrFallback("changelog")
   ]);
@@ -201,6 +206,7 @@ export async function getGameData(): Promise<GameData> {
     conceptual_art: conceptualArt as GameData["conceptual_art"],
     planets: planets as GameData["planets"],
     generated_planets: generatedPlanets as GameData["generated_planets"],
+    planet_render_library: planetRenderLibrary as GameData["planet_render_library"],
     release_notes: releaseNotes as GameData["release_notes"],
     changelog: changelog as GameData["changelog"]
   };

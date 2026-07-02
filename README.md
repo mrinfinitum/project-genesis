@@ -121,6 +121,49 @@ Generated planets can render transparent PNG art for card graphics. The normal r
 
 Both render paths store the result in Supabase Storage and create 256x256, 512x512, 1024x1024, 2048x2048, and 4096x4096 transparent PNG variants for download. The AI path creates a Magnific Nano Banana Pro task, polls until an image URL is ready, removes the keyed background, trims empty pixels, and centers the planet.
 
+### Planet Render Library
+
+For large batches, render high-quality planet PNGs offline and import them into a reusable render library. New generated planets will score the library by planet class, biome, atmosphere, climate, rings, water level, cloud level, tags, hazards, traits, and usage count. If a strong match exists, the generated planet uses that pre-rendered PNG instead of waiting for a new render.
+
+1. Run `supabase/migrations/202607020930_add_planet_render_library.sql` in Supabase SQL Editor.
+2. Put offline renders in a folder, for example `planet-renders/ocean/high-clouds/planet-ocean-0001-4096.png`.
+3. Optionally add a sidecar JSON file next to each PNG, such as `planet-ocean-0001-4096.json`:
+
+```json
+{
+  "id": "planet-ocean-0001",
+  "name": "Ocean World 0001",
+  "planet_class": "Ocean World",
+  "biome": "Ocean",
+  "atmosphere": "Dense",
+  "climate": "Temperate",
+  "color_family": "Blue",
+  "has_rings": false,
+  "water_level": "high",
+  "cloud_level": "high",
+  "tags": ["ocean", "lush", "reef", "temperate"],
+  "hazards": ["Storms"],
+  "traits": ["World Ocean"],
+  "rarity": "common",
+  "resolution": 4096,
+  "status": "Ready"
+}
+```
+
+4. Dry-run the import:
+
+```bash
+npm run import:planet-renders -- ./planet-renders
+```
+
+5. Upload files to Supabase Storage and upsert `planet_render_library` rows:
+
+```bash
+npm run import:planet-renders -- ./planet-renders --apply
+```
+
+The script uploads to `project-genesis-assets/planet-render-library/{id}/{filename}` by default. Without sidecar JSON, it infers rough metadata from folder and file names.
+
 ## Phase 1 Routes
 
 - `/` Dashboard
@@ -166,6 +209,7 @@ Codex/Roblox-ready JSON exports:
 - `/api/export/planets.json`
 - `/api/export/planetary-rules.json`
 - `/api/export/generated_planets.json`
+- `/api/export/planet_render_library.json`
 - `/api/export/all`
 - `/api/export/game-data`
 

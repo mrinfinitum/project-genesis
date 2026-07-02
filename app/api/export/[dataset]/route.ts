@@ -26,6 +26,8 @@ const jsonDatasets = new Set([
   "planetary-rules",
   "generated_planets",
   "generated-planets",
+  "planet_render_library",
+  "planet-render-library",
   "research.json",
   "buildings.json",
   "unlock_matrix.json",
@@ -41,7 +43,9 @@ const jsonDatasets = new Set([
   "planets.json",
   "planetary-rules.json",
   "generated_planets.json",
-  "generated-planets.json"
+  "generated-planets.json",
+  "planet_render_library.json",
+  "planet-render-library.json"
 ]);
 
 function normalizeDataset(dataset: string) {

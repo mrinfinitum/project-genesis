@@ -347,6 +347,7 @@ export const handoffData: GameData = {
   conceptual_art: handoffConceptualArt,
   planets: handoffPlanets,
   generated_planets: handoffGeneratedPlanets,
+  planet_render_library: [],
   release_notes: handoffReleaseNotes,
   changelog: handoffChangelog
 };

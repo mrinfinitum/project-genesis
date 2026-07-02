@@ -237,7 +237,9 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
       if (payload.row) {
         setRows((currentRows) => [payload.row!, ...currentRows.filter((current) => current.id !== payload.row!.id)]);
         setSelectedPlanet(payload.row);
-        void renderPlanet(payload.row, "procedural", { openVariantMenu: false });
+        if (!payload.row.image_url) {
+          void renderPlanet(payload.row, "procedural", { openVariantMenu: false });
+        }
       } else {
         await refreshRows();
         setSelectedPlanet(null);

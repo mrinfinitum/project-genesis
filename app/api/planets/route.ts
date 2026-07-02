@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { handoffData } from "@/data/handoff";
 import { generatePlanet } from "@/lib/planets/generator";
 import { getRows, upsertRow } from "@/lib/data";
-import type { GeneratedPlanet, PlanetVariable } from "@/types/schema";
+import { imageVariantsFromRender, matchPlanetRender } from "@/lib/planets/render-library";
+import type { GeneratedPlanet, PlanetRenderLibraryRecord, PlanetVariable } from "@/types/schema";
 
 export const runtime = "nodejs";
 
@@ -60,19 +61,44 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = (await request.json().catch(() => ({}))) as { seed?: string };
-    const [rules, existingRows] = await Promise.all([getRows("planets"), getRows("generated_planets")]);
+    const [rules, existingRows, renderLibrary] = await Promise.all([
+      getRows("planets"),
+      getRows("generated_planets"),
+      getRows("planet_render_library")
+    ]);
     const ruleRows = rules.length ? rules : handoffData.planets;
     const planet = generatePlanet(ruleRows as PlanetVariable[], existingRows.length, body.seed);
+    const renderMatch = matchPlanetRender(planet, renderLibrary as PlanetRenderLibraryRecord[]);
+    const planetWithLibraryRender = renderMatch
+      ? {
+          ...planet,
+          image_url: renderMatch.render.file_url,
+          image_prompt: `Matched pre-rendered planet library asset "${renderMatch.render.name}" with score ${Math.round(renderMatch.score)} (${renderMatch.reasons.join(", ")}).`,
+          image_status: "Library Match",
+          image_variants: imageVariantsFromRender(renderMatch.render),
+          notes: `${planet.notes ? `${planet.notes}\n` : ""}Matched planet render library asset ${renderMatch.render.id}.`
+        }
+      : planet;
     let row: Record<string, unknown>;
 
     try {
-      row = await upsertRow("generated_planets", planet as unknown as Record<string, unknown>);
+      row = await upsertRow("generated_planets", planetWithLibraryRender as unknown as Record<string, unknown>);
     } catch (error) {
       if (!isMissingGeneratedPlanetImageColumn(error)) {
         throw error;
       }
 
-      row = await upsertRow("generated_planets", stripGeneratedPlanetImageFields(planet));
+      row = await upsertRow("generated_planets", stripGeneratedPlanetImageFields(planetWithLibraryRender));
+    }
+
+    if (renderMatch) {
+      await upsertRow("planet_render_library", {
+        ...renderMatch.render,
+        usage_count: (Number(renderMatch.render.usage_count) || 0) + 1,
+        updated_at: new Date().toISOString()
+      }).catch((error) => {
+        console.error("Planet render library usage update failed", error);
+      });
     }
 
     return NextResponse.json({ row: row as GeneratedPlanet }, { status: 201 });

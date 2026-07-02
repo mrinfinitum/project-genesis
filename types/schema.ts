@@ -203,6 +203,42 @@ export type GeneratedPlanet = {
   notes: string;
 };
 
+export type PlanetRenderLibraryRecord = {
+  id: string;
+  name: string;
+  file_url: string;
+  storage_path: string;
+  thumbnail_url: string;
+  planet_class: string;
+  biome: string;
+  atmosphere: string;
+  climate: string;
+  color_family: string;
+  has_rings: boolean;
+  water_level: string;
+  cloud_level: string;
+  tags: string[];
+  hazards: string[];
+  traits: string[];
+  image_variants: Array<{
+    size: number;
+    width: number;
+    height: number;
+    url: string;
+    path: string;
+    filename: string;
+  }>;
+  rarity: string;
+  resolution: number;
+  width: number;
+  height: number;
+  usage_count: number;
+  status: Status;
+  notes: string;
+  created_at: string;
+  updated_at: string;
+};
+
 export type Upgrade = {
   id: string;
   type: string;
@@ -304,6 +340,7 @@ export type GameData = {
   conceptual_art: ConceptualArtRecord[];
   planets: PlanetVariable[];
   generated_planets: GeneratedPlanet[];
+  planet_render_library: PlanetRenderLibraryRecord[];
   release_notes: ReleaseNote[];
   changelog: ChangelogEntry[];
 };
@@ -318,6 +355,7 @@ export type TableName =
   | "conceptual_art"
   | "planets"
   | "generated_planets"
+  | "planet_render_library"
   | "upgrades"
   | "building_relationships"
   | "building_chains"
