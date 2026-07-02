@@ -37,6 +37,16 @@ function errorMessage(error: unknown, fallback: string) {
   return fallback;
 }
 
+function stripGeneratedPlanetImageFields(planet: GeneratedPlanet) {
+  const { image_url, image_prompt, image_status, image_variants, ...row } = planet;
+  return row as unknown as Record<string, unknown>;
+}
+
+function isMissingGeneratedPlanetImageColumn(error: unknown) {
+  const message = errorMessage(error, "");
+  return message.includes("generated_planets") && /image_(url|prompt|status|variants)/.test(message);
+}
+
 export async function GET() {
   try {
     const rows = await getRows("generated_planets");
@@ -53,13 +63,27 @@ export async function POST(request: Request) {
     const [rules, existingRows] = await Promise.all([getRows("planets"), getRows("generated_planets")]);
     const ruleRows = rules.length ? rules : handoffData.planets;
     const planet = generatePlanet(ruleRows as PlanetVariable[], existingRows.length, body.seed);
-    const row = await upsertRow("generated_planets", planet as unknown as Record<string, unknown>);
+    let row: Record<string, unknown>;
+
+    try {
+      row = await upsertRow("generated_planets", planet as unknown as Record<string, unknown>);
+    } catch (error) {
+      if (!isMissingGeneratedPlanetImageColumn(error)) {
+        throw error;
+      }
+
+      row = await upsertRow("generated_planets", stripGeneratedPlanetImageFields(planet));
+    }
 
     return NextResponse.json({ row: row as GeneratedPlanet }, { status: 201 });
   } catch (error) {
     console.error("Planet generation failed", error);
     const message = errorMessage(error, "Could not generate planet.");
-    const hint = message.includes("generated_planets") ? `${message} Run supabase/migrations/202607011735_add_generated_planets.sql in Supabase.` : message;
+    const hint = message.includes("image_")
+      ? `${message} Run supabase/migrations/202607011820_add_generated_planet_images.sql in Supabase.`
+      : message.includes("generated_planets")
+        ? `${message} Run supabase/migrations/202607011735_add_generated_planets.sql in Supabase.`
+        : message;
     return NextResponse.json({ error: hint }, { status: 500 });
   }
 }
