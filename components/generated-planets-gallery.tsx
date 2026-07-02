@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 import { Download, Orbit, Plus, Search, Sparkles, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { GeneratedPlanet } from "@/types/schema";
@@ -13,6 +13,64 @@ function asList(values: string[] | null | undefined) {
 
 function listText(values: string[] | null | undefined) {
   return asList(values).join(", ");
+}
+
+function compactText(values: string[] | null | undefined) {
+  return asList(values).join(" ").toLowerCase();
+}
+
+function hashString(value: string) {
+  let hash = 2166136261;
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+}
+
+function hasAny(text: string, terms: string[]) {
+  return terms.some((term) => text.includes(term));
+}
+
+function placeholderStyle(row: GeneratedPlanet): CSSProperties {
+  const text = [
+    row.planet_class,
+    row.primary_biome,
+    row.climate,
+    row.atmosphere,
+    row.temperature,
+    compactText(row.resources),
+    compactText(row.hazards),
+    compactText(row.traits),
+    compactText(row.weather)
+  ]
+    .join(" ")
+    .toLowerCase();
+  const hue = hashString(`${row.id}:${row.seed}`) % 360;
+  let colors = [`hsl(${hue} 72% 64%)`, `hsl(${(hue + 55) % 360} 70% 34%)`, "rgb(15 23 42)"];
+
+  if (hasAny(text, ["lava", "volcanic", "extreme heat", "ash"])) {
+    colors = ["rgb(255 147 55)", "rgb(157 50 30)", "rgb(35 12 16)"];
+  } else if (hasAny(text, ["ice", "frozen", "snow", "blizzard"])) {
+    colors = ["rgb(231 250 255)", "rgb(92 190 238)", "rgb(23 60 97)"];
+  } else if (hasAny(text, ["desert", "arid", "dust", "canyon"])) {
+    colors = ["rgb(248 210 122)", "rgb(181 111 49)", "rgb(64 35 24)"];
+  } else if (hasAny(text, ["toxic", "acid", "radiation", "methane"])) {
+    colors = ["rgb(186 255 77)", "rgb(60 153 88)", "rgb(31 48 44)"];
+  } else if (hasAny(text, ["crystal", "quantum", "ionized"])) {
+    colors = ["rgb(124 241 255)", "rgb(166 88 255)", "rgb(39 32 84)"];
+  } else if (hasAny(text, ["void", "rift", "corruption"])) {
+    colors = ["rgb(217 89 255)", "rgb(65 41 111)", "rgb(10 12 31)"];
+  } else if (hasAny(text, ["forest", "jungle", "swamp", "living", "harmony"])) {
+    colors = ["rgb(104 255 185)", "rgb(44 153 80)", "rgb(15 54 52)"];
+  } else if (hasAny(text, ["cyber", "machine", "artificial", "urban"])) {
+    colors = ["rgb(95 232 255)", "rgb(78 88 109)", "rgb(15 23 42)"];
+  }
+
+  return {
+    background: `radial-gradient(circle at 30% 24%, rgba(255,255,255,0.8), ${colors[0]} 18%, ${colors[1]} 54%, ${colors[2]} 80%)`,
+    boxShadow: `0 0 42px color-mix(in srgb, ${colors[0]} 28%, transparent)`
+  };
 }
 
 function statEntries(value: Record<string, string | number>) {
@@ -293,7 +351,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                 {heroVariant || row.image_url ? (
                   <img className="h-full w-full object-contain" src={heroVariant?.url ?? row.image_url ?? ""} alt={`${row.name} planet render`} />
                 ) : (
-                  <div className="h-24 w-24 rounded-full border border-cyan-300/25 bg-[radial-gradient(circle_at_30%_25%,rgba(255,255,255,0.72),rgba(34,211,238,0.38)_24%,rgba(59,130,246,0.2)_52%,rgba(15,23,42,0.95)_76%)] shadow-[0_0_42px_rgba(34,211,238,0.18)]" />
+                  <div className="h-24 w-24 rounded-full border border-cyan-300/25" style={placeholderStyle(row)} />
                 )}
               </div>
               <div className="border-b border-cyan-300/10 bg-slate-950/45 p-3">

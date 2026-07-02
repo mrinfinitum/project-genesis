@@ -34,8 +34,8 @@ function sourceSize() {
   return Number.isFinite(configuredSize) ? Math.max(256, Math.min(4096, Math.round(configuredSize))) : 4096;
 }
 
-function storagePathFor(planetId: string, size: number) {
-  return `generated-planets/${planetId}/procedural/${size}x${size}.png`;
+function storagePathFor(planetId: string, renderId: string, size: number) {
+  return `generated-planets/${planetId}/procedural/${renderId}/${size}x${size}.png`;
 }
 
 async function variantPng(source: Buffer, size: number) {
@@ -51,9 +51,9 @@ async function variantPng(source: Buffer, size: number) {
     .toBuffer();
 }
 
-async function writeVariant(planet: GeneratedPlanet, png: Buffer, size: number): Promise<PlanetVariant> {
+async function writeVariant(planet: GeneratedPlanet, renderId: string, png: Buffer, size: number): Promise<PlanetVariant> {
   const bucket = getAssetBucketName();
-  const storagePath = storagePathFor(planet.id, size);
+  const storagePath = storagePathFor(planet.id, renderId, size);
   const filename = `${safeFilename(planet.name)}-procedural-${size}x${size}.png`;
 
   if (!hasSupabaseServerConfig()) {
@@ -93,10 +93,11 @@ export async function POST(_request: Request, { params }: Params) {
     }
 
     const sourcePng = await renderProceduralPlanetPng(planet, sourceSize());
+    const renderId = `v2-${Date.now().toString(36)}`;
     const variants: PlanetVariant[] = [];
 
     for (const size of variantSizes) {
-      variants.push(await writeVariant(planet, await variantPng(sourcePng, size), size));
+      variants.push(await writeVariant(planet, renderId, await variantPng(sourcePng, size), size));
     }
 
     const fullSize = variants.find((variant) => variant.size === 4096) ?? variants[variants.length - 1];
@@ -106,7 +107,7 @@ export async function POST(_request: Request, { params }: Params) {
       image_prompt: `Procedural renderer seed: ${planet.seed}. Generated from planet rules, biome, atmosphere, resources, hazards, traits, weather, ruins, moons, and visual theme.`,
       image_status: "Procedural Rendered",
       image_variants: variants,
-      notes: `${planet.notes ? `${planet.notes}\n` : ""}Rendered procedural transparent planet image variants: ${variantSizes.map((size) => `${size}x${size}`).join(", ")}.`
+      notes: `${planet.notes ? `${planet.notes}\n` : ""}Rendered procedural transparent planet image variants ${renderId}: ${variantSizes.map((size) => `${size}x${size}`).join(", ")}.`
     });
 
     return NextResponse.json({ row, variants });
