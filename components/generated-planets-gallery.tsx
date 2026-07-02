@@ -408,10 +408,10 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
               className="group cursor-pointer overflow-hidden rounded-md border border-cyan-300/15 bg-[#07101e]/85 shadow-glow transition hover:-translate-y-0.5 hover:border-cyan-300/45"
               onClick={() => setSelectedPlanet(row)}
             >
-              <div className="grid h-36 place-items-center overflow-hidden border-b border-cyan-300/10 bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.14),rgba(2,6,23,0.2)_42%,rgba(2,6,23,0.78)_75%)] p-4">
+              <div className="grid h-36 place-items-center overflow-hidden border-b border-cyan-300/10 bg-black p-4">
                 {heroVariant || row.image_url ? (
                   <img
-                    className="h-28 max-h-full w-28 max-w-full object-contain drop-shadow-[0_0_24px_rgba(34,211,238,0.18)]"
+                    className="h-28 max-h-full w-28 max-w-full object-contain"
                     src={heroVariant?.url ?? row.image_url ?? ""}
                     alt={`${row.name} planet render`}
                   />
@@ -550,10 +550,10 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
             </div>
             <div className="grid gap-5 p-5 xl:grid-cols-[1fr_0.9fr]">
               <div className="space-y-5">
-                <div className="relative grid aspect-square max-h-[64vh] place-items-center overflow-hidden rounded-md border border-cyan-300/10 bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.12),rgba(2,6,23,0.82)_68%)] p-6">
+                <div className="relative grid aspect-square max-h-[64vh] place-items-center overflow-hidden rounded-md border border-cyan-300/10 bg-black p-6">
                   {largestVariant(selectedPlanet) || selectedPlanet.image_url ? (
                     <img
-                      className="h-[88%] w-[88%] object-contain drop-shadow-[0_0_42px_rgba(34,211,238,0.16)]"
+                      className="h-[88%] w-[88%] object-contain"
                       src={largestVariant(selectedPlanet)?.url ?? selectedPlanet.image_url ?? ""}
                       alt={`${selectedPlanet.name} planet render`}
                     />
