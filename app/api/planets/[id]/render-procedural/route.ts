@@ -23,15 +23,27 @@ type PlanetVariant = {
   filename: string;
 };
 
-const variantSizes = [256, 512, 1024, 2048, 4096];
+function variantSizes() {
+  const configuredSizes = String(process.env.PROCEDURAL_PLANET_VARIANT_SIZES ?? "")
+    .split(",")
+    .map((size) => Number(size.trim()))
+    .filter((size) => Number.isFinite(size) && size >= 128 && size <= 4096);
+
+  if (configuredSizes.length) {
+    return [...new Set(configuredSizes.map((size) => Math.round(size)))].sort((left, right) => left - right);
+  }
+
+  return process.env.VERCEL ? [256, 512, 1024] : [256, 512, 1024, 2048, 4096];
+}
 
 function safeFilename(value: string) {
   return value.toLowerCase().replace(/[^a-z0-9._-]+/g, "-").replace(/^-+|-+$/g, "") || "planet";
 }
 
 function sourceSize() {
-  const configuredSize = Number(process.env.PROCEDURAL_PLANET_SOURCE_SIZE ?? 4096);
-  return Number.isFinite(configuredSize) ? Math.max(256, Math.min(4096, Math.round(configuredSize))) : 4096;
+  const fallbackSize = process.env.VERCEL ? 1024 : 4096;
+  const configuredSize = Number(process.env.PROCEDURAL_PLANET_SOURCE_SIZE ?? fallbackSize);
+  return Number.isFinite(configuredSize) ? Math.max(256, Math.min(4096, Math.round(configuredSize))) : fallbackSize;
 }
 
 function storagePathFor(planetId: string, renderId: string, size: number) {
@@ -95,19 +107,20 @@ export async function POST(_request: Request, { params }: Params) {
     const sourcePng = await renderProceduralPlanetPng(planet, sourceSize());
     const renderId = `v2-${Date.now().toString(36)}`;
     const variants: PlanetVariant[] = [];
+    const sizes = variantSizes();
 
-    for (const size of variantSizes) {
+    for (const size of sizes) {
       variants.push(await writeVariant(planet, renderId, await variantPng(sourcePng, size), size));
     }
 
-    const fullSize = variants.find((variant) => variant.size === 4096) ?? variants[variants.length - 1];
+    const fullSize = variants[variants.length - 1];
     const row = await upsertRow("generated_planets", {
       ...planet,
       image_url: fullSize.url,
       image_prompt: `Procedural renderer seed: ${planet.seed}. Generated from planet rules, biome, atmosphere, resources, hazards, traits, weather, ruins, moons, and visual theme.`,
       image_status: "Procedural Rendered",
       image_variants: variants,
-      notes: `${planet.notes ? `${planet.notes}\n` : ""}Rendered procedural transparent planet image variants ${renderId}: ${variantSizes.map((size) => `${size}x${size}`).join(", ")}.`
+      notes: `${planet.notes ? `${planet.notes}\n` : ""}Rendered procedural transparent planet image variants ${renderId}: ${sizes.map((size) => `${size}x${size}`).join(", ")}.`
     });
 
     return NextResponse.json({ row, variants });

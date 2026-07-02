@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import type { GeneratedPlanet } from "@/types/schema";
 
 type PlanetImageVariant = NonNullable<GeneratedPlanet["image_variants"]>[number];
+const autoRenderProceduralPlanets = process.env.NEXT_PUBLIC_AUTO_RENDER_PROCEDURAL_PLANETS === "true";
 
 function asList(values: string[] | null | undefined) {
   return Array.isArray(values) ? values.filter(Boolean) : [];
@@ -237,7 +238,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
       if (payload.row) {
         setRows((currentRows) => [payload.row!, ...currentRows.filter((current) => current.id !== payload.row!.id)]);
         setSelectedPlanet(payload.row);
-        if (!payload.row.image_url) {
+        if (!payload.row.image_url && autoRenderProceduralPlanets) {
           void renderPlanet(payload.row, "procedural", { openVariantMenu: false });
         }
       } else {

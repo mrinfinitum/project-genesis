@@ -113,13 +113,15 @@ Variants are trimmed, centered with `contain`, and saved with transparent backgr
 
 Generated planets can render transparent PNG art for card graphics. The normal render path is a free deterministic procedural renderer that uses the planet seed, biome, atmosphere, water, hazards, traits, weather, ruins, moons, and visual theme. The AI render path is still available for special hero planets.
 
-1. Optional: set `PROCEDURAL_PLANET_SOURCE_SIZE`; the default is `4096`.
+1. Optional: set `PROCEDURAL_PLANET_SOURCE_SIZE`; the local default is `4096`, while Vercel defaults to `1024` to avoid function timeouts.
 2. Add `MAGNIFIC_API_KEY` to local `.env.local` and Vercel Environment Variables only if you want the paid AI hero render action.
 3. Optional: set `MAGNIFIC_NANO_BANANA_RESOLUTION`; the default is `4K`.
 4. Run `supabase/migrations/202607011820_add_generated_planet_images.sql` in Supabase SQL Editor.
 5. Open `/planets`, generate or choose a planet, then click the orbit render action for procedural art or the sparkle render action for AI art.
 
-Both render paths store the result in Supabase Storage and create 256x256, 512x512, 1024x1024, 2048x2048, and 4096x4096 transparent PNG variants for download. The AI path creates a Magnific Nano Banana Pro task, polls until an image URL is ready, removes the keyed background, trims empty pixels, and centers the planet.
+Both render paths store the result in Supabase Storage. Local procedural renders default to 256x256, 512x512, 1024x1024, 2048x2048, and 4096x4096 variants; Vercel defaults to 256x256, 512x512, and 1024x1024 variants to stay inside serverless function limits. Override with `PROCEDURAL_PLANET_VARIANT_SIZES=256,512,1024,2048,4096` only when your hosting plan can handle longer image jobs.
+
+New planet generation does not auto-render procedural images by default. Set `NEXT_PUBLIC_AUTO_RENDER_PROCEDURAL_PLANETS=true` only for local development or a hosting plan with enough function time.
 
 ### Planet Render Library
 
