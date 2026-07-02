@@ -23,6 +23,17 @@ function errorMessage(error: unknown, fallback: string) {
     return error;
   }
 
+  if (error && typeof error === "object") {
+    try {
+      const serialized = JSON.stringify(error);
+      if (serialized && serialized !== "{}") {
+        return serialized;
+      }
+    } catch {
+      return String(error);
+    }
+  }
+
   return fallback;
 }
 
@@ -46,6 +57,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ row: row as GeneratedPlanet }, { status: 201 });
   } catch (error) {
+    console.error("Planet generation failed", error);
     const message = errorMessage(error, "Could not generate planet.");
     const hint = message.includes("generated_planets") ? `${message} Run supabase/migrations/202607011735_add_generated_planets.sql in Supabase.` : message;
     return NextResponse.json({ error: hint }, { status: 500 });
