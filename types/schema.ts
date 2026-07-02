@@ -188,6 +188,17 @@ export type GeneratedPlanet = {
   terraform_level: number;
   discovery_points: number;
   completion_percent: number;
+  image_url: string | null;
+  image_prompt: string | null;
+  image_status: string | null;
+  image_variants: Array<{
+    size: number;
+    width: number;
+    height: number;
+    url: string;
+    path: string;
+    filename: string;
+  }> | null;
   created_at: string;
   notes: string;
 };

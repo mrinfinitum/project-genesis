@@ -146,6 +146,10 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
     terraform_level: 0,
     discovery_points: numericRange(random, 25, 500),
     completion_percent: numericRange(random, 0, 12),
+    image_url: null,
+    image_prompt: null,
+    image_status: "Not Rendered",
+    image_variants: [],
     created_at: new Date().toISOString(),
     notes: ""
   };

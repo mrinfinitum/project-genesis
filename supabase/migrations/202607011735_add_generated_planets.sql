@@ -37,6 +37,10 @@ create table if not exists public.generated_planets (
   terraform_level integer default 0,
   discovery_points integer default 0,
   completion_percent integer default 0,
+  image_url text,
+  image_prompt text,
+  image_status text default 'Not Rendered',
+  image_variants jsonb default '[]'::jsonb,
   created_at timestamptz default now(),
   notes text
 );

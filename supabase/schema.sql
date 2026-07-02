@@ -128,9 +128,18 @@ create table if not exists generated_planets (
   terraform_level integer default 0,
   discovery_points integer default 0,
   completion_percent integer default 0,
+  image_url text,
+  image_prompt text,
+  image_status text default 'Not Rendered',
+  image_variants jsonb default '[]'::jsonb,
   created_at timestamptz default now(),
   notes text
 );
+
+alter table generated_planets add column if not exists image_url text;
+alter table generated_planets add column if not exists image_prompt text;
+alter table generated_planets add column if not exists image_status text default 'Not Rendered';
+alter table generated_planets add column if not exists image_variants jsonb default '[]'::jsonb;
 
 alter table assets add column if not exists source_file_url text;
 alter table assets add column if not exists source_file_type text;

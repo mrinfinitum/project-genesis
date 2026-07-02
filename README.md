@@ -109,6 +109,17 @@ Assets, Upgrades, Buildings, and Research with a source PSD generate transparent
 
 Variants are trimmed, centered with `contain`, and saved with transparent backgrounds. The generator reads the PSD composite image data. For best results, save PSD files with Photoshop compatibility enabled.
 
+## Planet Image Rendering
+
+Generated planets can render transparent PNG art for card graphics.
+
+1. Add `OPENAI_API_KEY` to local `.env.local` and Vercel Environment Variables.
+2. Optional: set `OPENAI_IMAGE_MODEL`; the default is `gpt-image-1`.
+3. Run `supabase/migrations/202607011820_add_generated_planet_images.sql` in Supabase SQL Editor.
+4. Open `/planets`, generate or choose a planet, then click the sparkle render action.
+
+The app requests a transparent PNG image, trims empty pixels, centers the planet, stores it in Supabase Storage, and creates 256x256, 512x512, 1024x1024, 2048x2048, and 4096x4096 PNG variants for download.
+
 ## Phase 1 Routes
 
 - `/` Dashboard
