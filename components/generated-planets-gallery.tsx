@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Download, Plus, Search, Sparkles, Trash2, X } from "lucide-react";
+import { Download, Orbit, Plus, Search, Sparkles, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { GeneratedPlanet } from "@/types/schema";
 
@@ -103,6 +103,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
   const [seed, setSeed] = useState("");
   const [loading, setLoading] = useState(false);
   const [renderingPlanetId, setRenderingPlanetId] = useState("");
+  const [renderingMode, setRenderingMode] = useState<"procedural" | "ai" | "">("");
   const [variantMenuPlanetId, setVariantMenuPlanetId] = useState("");
   const [error, setError] = useState("");
   const [selectedPlanet, setSelectedPlanet] = useState<GeneratedPlanet | null>(null);
@@ -194,19 +195,21 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
     }
   }
 
-  async function renderPlanet(row: GeneratedPlanet) {
+  async function renderPlanet(row: GeneratedPlanet, mode: "procedural" | "ai") {
     setRenderingPlanetId(row.id);
+    setRenderingMode(mode);
     setVariantMenuPlanetId("");
     setError("");
 
     try {
-      const response = await fetch(`/api/planets/${encodeURIComponent(row.id)}/render`, {
+      const endpoint = mode === "procedural" ? "render-procedural" : "render";
+      const response = await fetch(`/api/planets/${encodeURIComponent(row.id)}/${endpoint}`, {
         method: "POST"
       });
       const payload = await readPayload<{ row?: GeneratedPlanet; error?: string }>(response);
 
       if (!response.ok) {
-        setError(payload.error ?? "Could not render planet image.");
+        setError(payload.error ?? `Could not render ${mode === "procedural" ? "procedural" : "AI"} planet image.`);
         return;
       }
 
@@ -218,9 +221,10 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
         await refreshRows();
       }
     } catch (caughtError) {
-      setError(caughtError instanceof Error ? caughtError.message : "Could not render planet image.");
+      setError(caughtError instanceof Error ? caughtError.message : `Could not render ${mode === "procedural" ? "procedural" : "AI"} planet image.`);
     } finally {
       setRenderingPlanetId("");
+      setRenderingMode("");
     }
   }
 
@@ -305,11 +309,24 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                       className="grid h-8 w-8 place-items-center rounded-md border border-cyan-300/20 text-cyan-100 opacity-80 transition hover:bg-cyan-400/10 group-hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-40"
                       onClick={(event) => {
                         event.stopPropagation();
-                        renderPlanet(row);
+                        renderPlanet(row, "procedural");
                       }}
                       disabled={Boolean(renderingPlanetId)}
-                      aria-label="Render planet image"
-                      title="Render planet image"
+                      aria-label="Render procedural planet image"
+                      title="Render procedural planet image"
+                    >
+                      <Orbit className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      className="grid h-8 w-8 place-items-center rounded-md border border-cyan-300/20 text-cyan-100 opacity-80 transition hover:bg-cyan-400/10 group-hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-40"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        renderPlanet(row, "ai");
+                      }}
+                      disabled={Boolean(renderingPlanetId)}
+                      aria-label="Render AI hero planet image"
+                      title="Render AI hero planet image"
                     >
                       <Sparkles className="h-4 w-4" />
                     </button>
@@ -357,7 +374,11 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                     ) : null}
                   </div>
                 </div>
-                {renderingPlanetId === row.id ? <p className="mt-2 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-cyan-200">Rendering PNG variants...</p> : null}
+                {renderingPlanetId === row.id ? (
+                  <p className="mt-2 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-cyan-200">
+                    {renderingMode === "ai" ? "Rendering AI PNG variants..." : "Rendering procedural PNG variants..."}
+                  </p>
+                ) : null}
               </div>
               <div className="space-y-3 p-3">
                 <div className="grid grid-cols-2 gap-2">

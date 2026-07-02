@@ -111,14 +111,15 @@ Variants are trimmed, centered with `contain`, and saved with transparent backgr
 
 ## Planet Image Rendering
 
-Generated planets can render transparent PNG art for card graphics.
+Generated planets can render transparent PNG art for card graphics. The normal render path is a free deterministic procedural renderer that uses the planet seed, biome, atmosphere, water, hazards, traits, weather, ruins, moons, and visual theme. The AI render path is still available for special hero planets.
 
-1. Add `MAGNIFIC_API_KEY` to local `.env.local` and Vercel Environment Variables.
-2. Optional: set `MAGNIFIC_NANO_BANANA_RESOLUTION`; the default is `4K`.
-3. Run `supabase/migrations/202607011820_add_generated_planet_images.sql` in Supabase SQL Editor.
-4. Open `/planets`, generate or choose a planet, then click the sparkle render action.
+1. Optional: set `PROCEDURAL_PLANET_SOURCE_SIZE`; the default is `4096`.
+2. Add `MAGNIFIC_API_KEY` to local `.env.local` and Vercel Environment Variables only if you want the paid AI hero render action.
+3. Optional: set `MAGNIFIC_NANO_BANANA_RESOLUTION`; the default is `4K`.
+4. Run `supabase/migrations/202607011820_add_generated_planet_images.sql` in Supabase SQL Editor.
+5. Open `/planets`, generate or choose a planet, then click the orbit render action for procedural art or the sparkle render action for AI art.
 
-The app creates a Magnific Nano Banana Pro task, polls until an image URL is ready, removes the keyed background, trims empty pixels, centers the planet, stores it in Supabase Storage, and creates 256x256, 512x512, 1024x1024, 2048x2048, and 4096x4096 transparent PNG variants for download.
+Both render paths store the result in Supabase Storage and create 256x256, 512x512, 1024x1024, 2048x2048, and 4096x4096 transparent PNG variants for download. The AI path creates a Magnific Nano Banana Pro task, polls until an image URL is ready, removes the keyed background, trims empty pixels, and centers the planet.
 
 ## Phase 1 Routes
 
