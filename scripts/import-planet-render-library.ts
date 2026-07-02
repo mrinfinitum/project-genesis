@@ -94,7 +94,12 @@ function inferResolution(filename: string, metadata: PlanetRenderMetadata) {
 
 function inferValue(parts: string[], options: string[]) {
   const lowerParts = parts.map((part) => part.toLowerCase());
-  return options.find((option) => lowerParts.some((part) => part.includes(option.toLowerCase()))) ?? "";
+  return (
+    options.find((option) => {
+      const lowerOption = option.toLowerCase();
+      return lowerParts.some((part) => part.includes(lowerOption) || lowerOption.includes(part));
+    }) ?? ""
+  );
 }
 
 function toEightBitRgba(data: Uint8Array | Uint8ClampedArray | Uint16Array | Float32Array, width: number, height: number) {
