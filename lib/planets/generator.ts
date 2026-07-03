@@ -1,5 +1,5 @@
 import type { GeneratedPlanet, PlanetVariable } from "@/types/schema";
-import { findPlanetClassByBiome, findPlanetClassByName, PLANET_ANOMALIES, PLANET_CLASS_MODEL } from "@/lib/planets/class-model";
+import { findPlanetClassByBiome, findPlanetClassByName, PLANET_ANOMALIES, PLANET_CLASS_MODEL, rollPlanetClass } from "@/lib/planets/class-model";
 import { rollPlanetRarity } from "@/lib/planets/rarity";
 
 type RandomSource = () => number;
@@ -121,6 +121,18 @@ function metricMap(keys: string[], random: RandomSource, min = 0, max = 100) {
   return Object.fromEntries(keys.map((key) => [key, numericRange(random, min, max)]));
 }
 
+function colonizationDifficultyScore(stars: number, random: RandomSource) {
+  const ranges: Record<number, [number, number]> = {
+    1: [8, 24],
+    2: [25, 44],
+    3: [45, 64],
+    4: [65, 84],
+    5: [85, 100]
+  };
+  const [min, max] = ranges[stars] ?? ranges[3];
+  return numericRange(random, min, max);
+}
+
 function articleFor(value: string) {
   return /^[aeiou]/i.test(value) ? "an" : "a";
 }
@@ -154,7 +166,7 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
   const rarity = rollPlanetRarity(random);
   const forcedPrimaryBiome = options.primaryBiome?.trim();
   const forcedClass = forcedPrimaryBiome ? findPlanetClassByBiome(forcedPrimaryBiome) ?? findPlanetClassByName(forcedPrimaryBiome) : null;
-  const planetClassDefinition = forcedClass ?? (forcedPrimaryBiome ? PLANET_CLASS_MODEL[0] : PLANET_CLASS_MODEL[Math.floor(random() * PLANET_CLASS_MODEL.length)]) ?? PLANET_CLASS_MODEL[0];
+  const planetClassDefinition = forcedClass ?? (forcedPrimaryBiome ? PLANET_CLASS_MODEL[0] : rollPlanetClass(random)) ?? PLANET_CLASS_MODEL[0];
   const planetClass = planetClassDefinition.name;
   const planetSubclass = pick(planetClassDefinition.subclasses, random, planetClass);
   const primaryBiome = forcedPrimaryBiome && !findPlanetClassByName(forcedPrimaryBiome)
@@ -210,7 +222,10 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
     collectible_pools: collectiblePools,
     visual_theme: visualTheme(random, primaryBiome, planetClass),
     weather: pickMany(rules, "Weather", random, 1, 4),
-    colonization: metricMap(["Difficulty", "Population Capacity", "Construction Modifier", "Food Modifier", "Power Modifier", "Expansion Modifier", "Terraform Cost"], random, 1, 100),
+    colonization: {
+      Difficulty: colonizationDifficultyScore(planetClassDefinition.colonizationDifficulty, random),
+      ...metricMap(["Population Capacity", "Construction Modifier", "Food Modifier", "Power Modifier", "Expansion Modifier", "Terraform Cost"], random, 1, 100)
+    },
     science: metricMap(["Research Bonus", "Discovery Bonus", "Artifact Bonus", "Ancient Knowledge", "Rare Research", "Technology Chance"], random, 0, 100),
     economy: metricMap(["Trade Value", "Mining Value", "Agriculture Value", "Industry Value", "Tourism Value", "Collectible Value"], random, 0, 100),
     event_pool: eventPool,

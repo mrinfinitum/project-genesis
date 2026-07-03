@@ -1,5 +1,12 @@
 import type { PlanetVariable } from "@/types/schema";
-import { PLANET_ANOMALIES, planetBiomeRows, planetClassNames, planetSubclassRows } from "@/lib/planets/class-model";
+import {
+  PLANET_ANOMALIES,
+  planetBiomeRows,
+  planetClassNames,
+  planetClassSpawnRows,
+  planetColonizationDifficultyRows,
+  planetSubclassRows
+} from "@/lib/planets/class-model";
 
 type PlanetVariableInput = {
   category: string;
@@ -35,6 +42,42 @@ function variableRows(input: PlanetVariableInput): PlanetVariable[] {
     resource_tags: input.resource_tags ?? [],
     status: input.status ?? "Draft",
     notes: input.notes ?? ""
+  }));
+}
+
+function planetClassSpawnWeightRows(): PlanetVariable[] {
+  return planetClassSpawnRows().map((row) => ({
+    id: `planet-class-spawn-weight-${slug(row.planetClass)}`,
+    category: "Planet Class Spawn Weight",
+    value: row.planetClass,
+    description: "Independent weighted chance for selecting the fundamental planet class after rarity is rolled.",
+    generation_rule: "Planet rarity and planet class are independent. Every rarity can combine with every class unless a future explicit restriction is added.",
+    frequency: row.tier,
+    weight: row.weight,
+    min_value: 0,
+    max_value: 100,
+    biome_tags: [],
+    resource_tags: [],
+    status: "Active",
+    notes: `${row.weight}% class spawn weight.`
+  }));
+}
+
+function planetClassColonizationDifficultyRows(): PlanetVariable[] {
+  return planetColonizationDifficultyRows().map((row) => ({
+    id: `planet-class-colonization-difficulty-${slug(row.planetClass)}`,
+    category: "Planet Class Colonization Difficulty",
+    value: row.planetClass,
+    description: "Baseline colonization difficulty determined by planet class.",
+    generation_rule: "Class difficulty sets the baseline colonization Difficulty score before other modifiers are applied.",
+    frequency: `${row.difficulty}/5`,
+    weight: row.difficulty,
+    min_value: row.difficulty,
+    max_value: row.difficulty,
+    biome_tags: [],
+    resource_tags: [],
+    status: "Active",
+    notes: `${row.difficulty} out of 5 difficulty.`
   }));
 }
 
@@ -75,6 +118,8 @@ export const planetSystemVariables: PlanetVariable[] = [
     description: "Fundamental world type used to drive visual identity, rules, resource pools, and story tone.",
     generation_rule: "Planet rarity rolls first, then planet class is selected before subclass, biome, atmosphere, resources, anomalies, and story."
   }),
+  ...planetClassSpawnWeightRows(),
+  ...planetClassColonizationDifficultyRows(),
   ...variableRows({
     category: "Planet Subclass",
     values: planetSubclassRows().map((row) => row.subclass),
