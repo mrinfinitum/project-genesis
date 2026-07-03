@@ -1,4 +1,5 @@
 import type { PlanetVariable } from "@/types/schema";
+import { PLANET_ANOMALIES, planetBiomeRows, planetClassNames, planetSubclassRows } from "@/lib/planets/class-model";
 
 type PlanetVariableInput = {
   category: string;
@@ -46,7 +47,7 @@ export const planetSystemVariables: PlanetVariable[] = [
   }),
   ...variableRows({
     category: "Planet Data Field",
-    values: ["Planet ID", "Planet Seed", "Planet Name", "Galaxy Sector", "Star System", "Orbit Position", "Planet Class", "Discovery Order", "Colonized", "Terraform Level", "Discovery Points"],
+    values: ["Planet ID", "Planet Seed", "Planet Name", "Galaxy Sector", "Star System", "Orbit Position", "Planet Class", "Planet Subclass", "Primary Biome", "Planet Anomalies", "Discovery Order", "Colonized", "Terraform Level", "Discovery Points"],
     description: "Canonical stored fields for a generated planet record.",
     generation_rule: "Persist these fields for every discovered planet."
   }),
@@ -70,15 +71,27 @@ export const planetSystemVariables: PlanetVariable[] = [
   }),
   ...variableRows({
     category: "Planet Class",
-    values: ["Terrestrial", "Ocean", "Desert", "Ice", "Volcanic", "Lava", "Gas Giant", "Super Earth", "Dwarf Planet", "Artificial World", "Ring World", "Living Planet", "Crystal Planet", "Cyber Planet", "Ancient World", "Harmony World", "Void World"],
-    description: "Primary planet class used to drive visual identity, rules, resource pools, and story tone.",
-    generation_rule: "Planet class is selected early and constrains biome, atmosphere, hazards, resources, and narrative fragments."
+    values: planetClassNames(),
+    description: "Fundamental world type used to drive visual identity, rules, resource pools, and story tone.",
+    generation_rule: "Planet rarity rolls first, then planet class is selected before subclass, biome, atmosphere, resources, anomalies, and story."
+  }),
+  ...variableRows({
+    category: "Planet Subclass",
+    values: planetSubclassRows().map((row) => row.subclass),
+    description: "Major variation within a planet class.",
+    generation_rule: "Subclass is selected after planet class and before biome. Rings are not subclasses; rings are generated as planet anomalies."
   }),
   ...variableRows({
     category: "Primary Biome",
-    values: ["Forest", "Jungle", "Swamp", "Grassland", "Mountain", "Canyon", "Desert", "Frozen", "Tundra", "Ocean", "Coral", "Mushroom", "Crystal", "Volcanic", "Floating Islands", "Cavern", "Mechanical", "Urban Ruins"],
+    values: planetBiomeRows().map((row) => row.biome),
     description: "Primary biome pool used by planet generation.",
-    generation_rule: "Seed selects a primary biome, then planet class and traits apply modifiers."
+    generation_rule: "Biome is constrained by planet class and subclass, then climate and atmosphere apply modifiers."
+  }),
+  ...variableRows({
+    category: "Planet Anomaly",
+    values: PLANET_ANOMALIES,
+    description: "Rare procedural modifier that can add visual identity, gameplay hooks, and story complexity.",
+    generation_rule: "Anomalies are selected after traits. Planetary Rings now live here and can appear on many compatible planet classes."
   }),
   ...variableRows({
     category: "Climate",
@@ -220,7 +233,7 @@ export const planetSystemVariables: PlanetVariable[] = [
   }),
   ...variableRows({
     category: "Story Component",
-    values: ["Planet Class", "Biome", "Ancient Civilization", "Ruins", "Traits", "Resources", "Hazards", "Collectibles", "Events"],
+    values: ["Planet Class", "Planet Subclass", "Biome", "Anomalies", "Ancient Civilization", "Ruins", "Traits", "Resources", "Hazards", "Collectibles", "Events"],
     description: "Inputs used to assemble hidden procedural planet narratives.",
     generation_rule: "Narrative fragments are assembled from generated variables to make every planet feel historical and discoverable."
   }),

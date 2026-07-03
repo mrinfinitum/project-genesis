@@ -40,13 +40,13 @@ function errorMessage(error: unknown, fallback: string) {
 }
 
 function stripGeneratedPlanetUnsupportedFields(planet: GeneratedPlanet) {
-  const { image_url, image_prompt, image_status, image_variants, rarity, ...row } = planet;
+  const { image_url, image_prompt, image_status, image_variants, rarity, planet_subclass, anomalies, ...row } = planet;
   return row as unknown as Record<string, unknown>;
 }
 
 function isMissingGeneratedPlanetOptionalColumn(error: unknown) {
   const message = errorMessage(error, "");
-  return message.includes("generated_planets") && /(image_(url|prompt|status|variants)|rarity)/.test(message);
+  return message.includes("generated_planets") && /(image_(url|prompt|status|variants)|rarity|planet_subclass|anomalies)/.test(message);
 }
 
 export async function GET() {

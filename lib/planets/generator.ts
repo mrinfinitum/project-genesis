@@ -1,4 +1,5 @@
 import type { GeneratedPlanet, PlanetVariable } from "@/types/schema";
+import { findPlanetClassByBiome, findPlanetClassByName, PLANET_ANOMALIES, PLANET_CLASS_MODEL } from "@/lib/planets/class-model";
 import { rollPlanetRarity } from "@/lib/planets/rarity";
 
 type RandomSource = () => number;
@@ -74,6 +75,22 @@ function pickMany(rules: PlanetVariable[], category: string, random: RandomSourc
   return selected;
 }
 
+function pickManyValues(values: string[], random: RandomSource, min: number, max: number) {
+  const candidates = [...new Set(values.filter(Boolean))];
+  const count = Math.min(candidates.length, min + Math.floor(random() * (max - min + 1)));
+  const selected: string[] = [];
+
+  while (selected.length < count && candidates.length) {
+    const index = Math.floor(random() * candidates.length);
+    const [value] = candidates.splice(index, 1);
+    if (value) {
+      selected.push(value);
+    }
+  }
+
+  return selected;
+}
+
 function numericRange(random: RandomSource, min: number, max: number) {
   return min + Math.floor(random() * (max - min + 1));
 }
@@ -108,17 +125,47 @@ function articleFor(value: string) {
   return /^[aeiou]/i.test(value) ? "an" : "a";
 }
 
+function anomalyCountForRarity(rarityName: string): [number, number] {
+  switch (rarityName) {
+    case "Common":
+      return [0, 1];
+    case "Uncommon":
+      return [0, 2];
+    case "Rare":
+      return [1, 2];
+    case "Epic":
+      return [1, 3];
+    case "Legendary":
+      return [2, 4];
+    case "Mythic":
+      return [3, 5];
+    case "Relic":
+    case "Cosmic":
+    case "Genesis":
+      return [4, 6];
+    default:
+      return [0, 1];
+  }
+}
+
 export function generatePlanet(rules: PlanetVariable[], existingCount: number, requestedSeed?: string, options: GeneratePlanetOptions = {}): GeneratedPlanet {
   const seed = requestedSeed?.trim() || `PG-${Date.now()}-${existingCount + 1}`;
   const random = seededRandom(seed);
   const rarity = rollPlanetRarity(random);
-  const planetClass = pickRule(rules, "Planet Class", random, "Terrestrial");
   const forcedPrimaryBiome = options.primaryBiome?.trim();
-  const primaryBiome = forcedPrimaryBiome || pickRule(rules, "Primary Biome", random, "Forest");
+  const forcedClass = forcedPrimaryBiome ? findPlanetClassByBiome(forcedPrimaryBiome) ?? findPlanetClassByName(forcedPrimaryBiome) : null;
+  const planetClassDefinition = forcedClass ?? (forcedPrimaryBiome ? PLANET_CLASS_MODEL[0] : PLANET_CLASS_MODEL[Math.floor(random() * PLANET_CLASS_MODEL.length)]) ?? PLANET_CLASS_MODEL[0];
+  const planetClass = planetClassDefinition.name;
+  const planetSubclass = pick(planetClassDefinition.subclasses, random, planetClass);
+  const primaryBiome = forcedPrimaryBiome && !findPlanetClassByName(forcedPrimaryBiome)
+    ? forcedPrimaryBiome
+    : pick(planetClassDefinition.biomes, random, pickRule(rules, "Primary Biome", random, "Forest"));
+  const anomalyRange = anomalyCountForRarity(rarity.name);
   const hasAncientCivilization = random() < rarity.ancientCivilizationChance;
   const ancientCivilization = hasAncientCivilization ? pickRuleExcluding(rules, "Ancient Civilization", random, "Ancient", ["None"]) : "None";
   const ruins = pickRule(rules, "Ruins", random, "None");
   const traits = pickMany(rules, "Trait", random, rarity.traitCount[0], rarity.traitCount[1]);
+  const anomalies = pickManyValues(PLANET_ANOMALIES, random, anomalyRange[0], anomalyRange[1]);
   const resources = pickMany(rules, "Resource", random, rarity.resourceCount[0], rarity.resourceCount[1]);
   const hazards = pickMany(rules, "Hazard", random, 2, 6);
   const collectiblePools = pickMany(rules, "Collectible Pool", random, rarity.collectibleCount[0], rarity.collectibleCount[1]);
@@ -128,7 +175,7 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
   const resource = resources[0] ?? "Stone";
   const trait = traits[0] ?? "Terraformable";
   const civilizationFragment = ancientCivilization === "None" ? "unknown explorers" : ancientCivilization.toLowerCase();
-  const worldIdentity = primaryBiome ? `${primaryBiome} world` : planetClass;
+  const worldIdentity = planetSubclass.toLowerCase().includes("world") ? planetSubclass : `${planetSubclass} ${planetClass}`;
 
   return {
     id: `generated-planet-${slug(name)}-${hashSeed(seed).toString(16)}`,
@@ -143,6 +190,7 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
     distance_from_star: pickRule(rules, "Distance From Star", random, "Habitable"),
     orbit_speed: pickRule(rules, "Orbit Speed", random, "Normal"),
     planet_class: planetClass,
+    planet_subclass: planetSubclass,
     primary_biome: primaryBiome,
     climate: pickRule(rules, "Climate", random, "Temperate"),
     atmosphere: pickRule(rules, "Atmosphere", random, "Breathable"),
@@ -157,6 +205,7 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
     ruins,
     hazards,
     traits,
+    anomalies,
     modifiers: pickMany(rules, "Modifier", random, 1, 4),
     collectible_pools: collectiblePools,
     visual_theme: visualTheme(random, primaryBiome, planetClass),
@@ -165,7 +214,7 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
     science: metricMap(["Research Bonus", "Discovery Bonus", "Artifact Bonus", "Ancient Knowledge", "Rare Research", "Technology Chance"], random, 0, 100),
     economy: metricMap(["Trade Value", "Mining Value", "Agriculture Value", "Industry Value", "Tourism Value", "Collectible Value"], random, 0, 100),
     event_pool: eventPool,
-    story: `${name} is ${articleFor(rarity.name)} ${rarity.name.toLowerCase()} ${worldIdentity.toLowerCase()} shaped by ${primaryBiome.toLowerCase()} regions and ${trait.toLowerCase()}. ${civilizationFragment} left traces near ${ruins.toLowerCase()} sites, where ${artifact.toLowerCase()} and ${resource.toLowerCase()} continue to draw explorers despite ${hazards.slice(0, 2).join(" and ").toLowerCase() || "unknown hazards"}.`,
+    story: `${name} is ${articleFor(rarity.name)} ${rarity.name.toLowerCase()} ${worldIdentity.toLowerCase()} shaped by ${primaryBiome.toLowerCase()} regions and ${trait.toLowerCase()}. ${civilizationFragment} left traces near ${ruins.toLowerCase()} sites, where ${artifact.toLowerCase()} and ${resource.toLowerCase()} continue to draw explorers despite ${hazards.slice(0, 2).join(" and ").toLowerCase() || "unknown hazards"}${anomalies.length ? `, alongside anomalies like ${anomalies.slice(0, 2).join(" and ").toLowerCase()}` : ""}.`,
     colonized: false,
     terraform_level: 0,
     discovery_points: numericRange(random, rarity.discoveryPoints[0], rarity.discoveryPoints[1]),

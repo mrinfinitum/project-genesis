@@ -162,6 +162,7 @@ export type GeneratedPlanet = {
   distance_from_star: string;
   orbit_speed: string;
   planet_class: string;
+  planet_subclass: string;
   primary_biome: string;
   climate: string;
   atmosphere: string;
@@ -176,6 +177,7 @@ export type GeneratedPlanet = {
   ruins: string;
   hazards: string[];
   traits: string[];
+  anomalies: string[];
   modifiers: string[];
   collectible_pools: string[];
   visual_theme: Record<string, string>;

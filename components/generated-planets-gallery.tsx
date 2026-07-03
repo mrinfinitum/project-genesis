@@ -3,6 +3,7 @@
 import { useMemo, useState, type CSSProperties } from "react";
 import { Download, Orbit, Plus, Search, Sparkles, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PLANET_CLASS_MODEL } from "@/lib/planets/class-model";
 import { normalizePlanetRarity } from "@/lib/planets/rarity";
 import { hasLockedPlanetRender } from "@/lib/planets/render-lock";
 import type { GeneratedPlanet } from "@/types/schema";
@@ -11,18 +12,9 @@ type PlanetImageVariant = NonNullable<GeneratedPlanet["image_variants"]>[number]
 const autoRenderProceduralPlanets = process.env.NEXT_PUBLIC_AUTO_RENDER_PROCEDURAL_PLANETS === "true";
 const biomeOptions = [
   { label: "Any biome", value: "" },
-  { label: "Ocean", value: "Ocean" },
-  { label: "Lava / Volcanic", value: "Volcanic" },
-  { label: "Ice / Frozen", value: "Frozen" },
-  { label: "Desert", value: "Desert" },
-  { label: "Crystal", value: "Crystal" },
-  { label: "Forest", value: "Forest" },
-  { label: "Jungle", value: "Jungle" },
-  { label: "Swamp", value: "Swamp" },
-  { label: "Canyon", value: "Canyon" },
-  { label: "Coral", value: "Coral" },
-  { label: "Mechanical", value: "Mechanical" },
-  { label: "Urban Ruins", value: "Urban Ruins" }
+  ...[...new Set(PLANET_CLASS_MODEL.flatMap((planetClass) => planetClass.biomes))]
+    .sort((left, right) => left.localeCompare(right))
+    .map((biome) => ({ label: biome, value: biome }))
 ];
 
 function asList(values: string[] | null | undefined) {
@@ -132,6 +124,7 @@ function planetSearchText(row: GeneratedPlanet) {
     row.star_system,
     row.star_type,
     row.planet_class,
+    row.planet_subclass,
     row.primary_biome,
     row.climate,
     row.atmosphere,
@@ -143,6 +136,7 @@ function planetSearchText(row: GeneratedPlanet) {
     ...asList(row.resources),
     ...asList(row.hazards),
     ...asList(row.traits),
+    ...asList(row.anomalies),
     ...asList(row.collectible_pools),
     ...asList(row.event_pool)
   ]
@@ -151,7 +145,7 @@ function planetSearchText(row: GeneratedPlanet) {
 }
 
 function planetWorldLabel(row: GeneratedPlanet) {
-  return row.primary_biome || row.planet_class || "Planet";
+  return row.planet_subclass ? row.planet_class || "Planet" : row.primary_biome || row.planet_class || "Planet";
 }
 
 function detailPill(label: string, value: string | number | boolean) {
@@ -593,8 +587,9 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                 ) : null}
               </div>
               <div className="space-y-3 p-3">
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                   {compactRarityPill(row)}
+                  {compactPill("Subclass", row.planet_subclass || row.primary_biome)}
                   {compactPill("Biome", row.primary_biome)}
                   {compactPill("Gravity", row.gravity)}
                 </div>
@@ -671,6 +666,8 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                   {detailPill("Distance", selectedPlanet.distance_from_star)}
                   {detailPill("Orbit Speed", selectedPlanet.orbit_speed)}
                   {detailPill("Rarity", normalizePlanetRarity(selectedPlanet.rarity).name)}
+                  {detailPill("Class", selectedPlanet.planet_class)}
+                  {detailPill("Subclass", selectedPlanet.planet_subclass || selectedPlanet.primary_biome)}
                   {detailPill("Biome", selectedPlanet.primary_biome)}
                   {detailPill("Climate", selectedPlanet.climate)}
                   {detailPill("Atmosphere", selectedPlanet.atmosphere)}
@@ -690,6 +687,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                   ["Resources", selectedPlanet.resources],
                   ["Hazards", selectedPlanet.hazards],
                   ["Traits", selectedPlanet.traits],
+                  ["Anomalies", selectedPlanet.anomalies],
                   ["Modifiers", selectedPlanet.modifiers],
                   ["Collectibles", selectedPlanet.collectible_pools],
                   ["Weather", selectedPlanet.weather],

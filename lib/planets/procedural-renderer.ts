@@ -158,6 +158,10 @@ function listText(values: string[] | null | undefined) {
   return Array.isArray(values) ? values.join(" ").toLowerCase() : "";
 }
 
+function asList(values: string[] | null | undefined) {
+  return Array.isArray(values) ? values : [];
+}
+
 function objectText(value: unknown) {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     return "";
@@ -169,6 +173,7 @@ function objectText(value: unknown) {
 function planetText(planet: GeneratedPlanet) {
   return [
     planet.planet_class,
+    planet.planet_subclass,
     planet.primary_biome,
     planet.climate,
     planet.atmosphere,
@@ -183,6 +188,7 @@ function planetText(planet: GeneratedPlanet) {
     listText(planet.resources),
     listText(planet.hazards),
     listText(planet.traits),
+    listText(planet.anomalies),
     listText(planet.modifiers),
     listText(planet.weather),
     objectText(planet.visual_theme)
@@ -314,7 +320,7 @@ function paletteForPlanet(planet: GeneratedPlanet): Palette {
 }
 
 function isGasLike(planet: GeneratedPlanet) {
-  const text = normalized(`${planet.planet_class} ${planet.primary_biome} ${planet.atmosphere}`);
+  const text = normalized(`${planet.planet_class} ${planet.planet_subclass} ${planet.primary_biome} ${planet.atmosphere}`);
   return hasAny(text, ["gas", "jovian", "neptune", "storm giant"]);
 }
 
@@ -322,7 +328,8 @@ function shouldHaveRings(planet: GeneratedPlanet, seed: number) {
   const text = planetText(planet);
   const moons = parseMoonCount(planet.moons);
   return (
-    hasAny(text, ["ring world", "gas giant", "floating", "magnetic core"]) ||
+    asList(planet.anomalies).some((anomaly) => normalized(anomaly).includes("planetary rings")) ||
+    hasAny(text, ["gas giant", "floating", "magnetic core"]) ||
     moons >= 4 ||
     (moons >= 2 && hashNoise(1, 2, 3, seed) > 0.38) ||
     hashNoise(4, 5, 6, seed) > 0.82
@@ -333,7 +340,7 @@ function radiusFactorForPlanet(planet: GeneratedPlanet, seed: number) {
   const text = planetText(planet);
   let factor = 0.34 + (hashNoise(11, 13, 17, seed) - 0.5) * 0.05;
 
-  if (hasAny(text, ["gas giant", "super earth", "ring world"])) {
+  if (hasAny(text, ["gas giant", "super earth"])) {
     factor += 0.045;
   }
 

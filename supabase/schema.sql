@@ -102,6 +102,7 @@ create table if not exists generated_planets (
   distance_from_star text,
   orbit_speed text,
   planet_class text,
+  planet_subclass text,
   primary_biome text,
   climate text,
   atmosphere text,
@@ -116,6 +117,7 @@ create table if not exists generated_planets (
   ruins text,
   hazards jsonb default '[]'::jsonb,
   traits jsonb default '[]'::jsonb,
+  anomalies jsonb default '[]'::jsonb,
   modifiers jsonb default '[]'::jsonb,
   collectible_pools jsonb default '[]'::jsonb,
   visual_theme jsonb default '{}'::jsonb,
@@ -142,6 +144,8 @@ alter table generated_planets add column if not exists image_prompt text;
 alter table generated_planets add column if not exists image_status text default 'Not Rendered';
 alter table generated_planets add column if not exists image_variants jsonb default '[]'::jsonb;
 alter table generated_planets add column if not exists rarity text default 'Common';
+alter table generated_planets add column if not exists planet_subclass text;
+alter table generated_planets add column if not exists anomalies jsonb default '[]'::jsonb;
 
 create table if not exists planet_render_library (
   id text primary key,

@@ -80,9 +80,11 @@ function listOverlap(left: string[] | null | undefined, right: string[] | null |
 function planetWantsRings(planet: GeneratedPlanet) {
   const text = [
     planet.planet_class,
+    planet.planet_subclass,
     planet.primary_biome,
     planet.moons,
     planet.atmosphere,
+    ...asList(planet.anomalies),
     ...asList(planet.traits),
     ...asList(planet.modifiers)
   ]
@@ -175,12 +177,14 @@ function scoreRender(planet: GeneratedPlanet, render: PlanetRenderLibraryRecord)
 
   const tagHits = listOverlap(render.tags, [
     planet.planet_class,
+    planet.planet_subclass,
     planet.primary_biome,
     planet.climate,
     planet.atmosphere,
     ...asList(planet.resources),
     ...asList(planet.hazards),
     ...asList(planet.traits),
+    ...asList(planet.anomalies),
     ...asList(planet.weather)
   ]);
   score += Math.min(30, tagHits.length * 5);
