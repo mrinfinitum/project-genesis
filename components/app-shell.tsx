@@ -31,6 +31,7 @@ const sections = [
   { href: "/galaxy", label: "Galaxy", icon: Rocket },
   { href: "/planets", label: "Planets", icon: Orbit },
   { href: "/planetary-rules", label: "Planetary Rules", icon: GitBranch },
+  { href: "/planet-generation", label: "Planet Generation", icon: Sparkles },
   { href: "/collectibles", label: "Collectibles", icon: Gem },
   { href: "/assets", label: "Assets", icon: Archive },
   { href: "/conceptual-art", label: "Conceptual Art", icon: Palette },
