@@ -61,6 +61,17 @@ function sameVisualFamily(left: string | null | undefined, right: string | null 
   return Boolean(leftFamily && rightFamily && leftFamily === rightFamily);
 }
 
+function hasCompatibleVisualFamily(planet: GeneratedPlanet, render: PlanetRenderLibraryRecord) {
+  const planetFamily = visualFamily(planet.primary_biome);
+  const renderFamily = visualFamily(render.biome);
+
+  if (!planetFamily) {
+    return true;
+  }
+
+  return Boolean(renderFamily && planetFamily === renderFamily);
+}
+
 function listOverlap(left: string[] | null | undefined, right: string[] | null | undefined) {
   const leftTokens = new Set(asList(left).flatMap(tokens));
   return asList(right).filter((value) => tokens(value).some((token) => leftTokens.has(token)));
@@ -189,6 +200,7 @@ function scoreRender(planet: GeneratedPlanet, render: PlanetRenderLibraryRecord)
 export function matchPlanetRender(planet: GeneratedPlanet, renders: PlanetRenderLibraryRecord[], minScore = 36) {
   const scored = renders
     .filter((render) => render.file_url && render.storage_path)
+    .filter((render) => hasCompatibleVisualFamily(planet, render))
     .map((render) => scoreRender(planet, render))
     .filter((match) => match.score >= minScore)
     .sort((left, right) => right.score - left.score);
