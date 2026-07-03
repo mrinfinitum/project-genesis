@@ -7,6 +7,7 @@ import {
   planetColonizationDifficultyRows,
   planetSubclassRows
 } from "@/lib/planets/class-model";
+import { PLANET_RARITIES } from "@/lib/planets/rarity";
 
 type PlanetVariableInput = {
   category: string;
@@ -81,6 +82,32 @@ function planetClassColonizationDifficultyRows(): PlanetVariable[] {
   }));
 }
 
+function planetRarityRows(): PlanetVariable[] {
+  return PLANET_RARITIES.map((rarity) => ({
+    id: `planet-rarity-${slug(rarity.name)}`,
+    category: "Planet Rarity",
+    value: rarity.name,
+    description: "Independent rarity roll that controls planet value, resource count, trait count, civilization odds, collectibles, discovery points, and card treatment.",
+    generation_rule: "Planet rarity rolls before planet class. Rarity and class are independent, so every rarity can combine with every class unless explicitly restricted later.",
+    frequency: `${rarity.spawnChance}%`,
+    weight: rarity.spawnChance,
+    min_value: rarity.discoveryPoints[0],
+    max_value: rarity.discoveryPoints[1],
+    biome_tags: [],
+    resource_tags: [],
+    status: "Active",
+    notes: [
+      `Color ${rarity.color}.`,
+      `Discovery points ${rarity.discoveryPoints[0]}-${rarity.discoveryPoints[1]}.`,
+      `Resources ${rarity.resourceCount[0]}-${rarity.resourceCount[1]}.`,
+      `Traits ${rarity.traitCount[0]}-${rarity.traitCount[1]}.`,
+      `Ancient civilization chance ${Math.round(rarity.ancientCivilizationChance * 100)}%.`,
+      `Collectibles ${rarity.collectibleQuality}.`,
+      `Card ${rarity.cardTreatment}.`
+    ].join(" ")
+  }));
+}
+
 export const planetSystemVariables: PlanetVariable[] = [
   ...variableRows({
     category: "Objective",
@@ -118,6 +145,7 @@ export const planetSystemVariables: PlanetVariable[] = [
     description: "Fundamental world type used to drive visual identity, rules, resource pools, and story tone.",
     generation_rule: "Planet rarity rolls first, then planet class is selected before subclass, biome, atmosphere, resources, anomalies, and story."
   }),
+  ...planetRarityRows(),
   ...planetClassSpawnWeightRows(),
   ...planetClassColonizationDifficultyRows(),
   ...variableRows({
