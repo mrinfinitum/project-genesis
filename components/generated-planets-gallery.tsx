@@ -150,6 +150,10 @@ function planetSearchText(row: GeneratedPlanet) {
     .toLowerCase();
 }
 
+function planetWorldLabel(row: GeneratedPlanet) {
+  return row.primary_biome || row.planet_class || "Planet";
+}
+
 function detailPill(label: string, value: string | number | boolean) {
   return (
     <div className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
@@ -507,7 +511,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
               <div className="border-b border-cyan-300/10 bg-slate-950/45 p-3">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="truncate text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-cyan-300">{row.planet_class}</p>
+                    <p className="truncate text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-cyan-300">{planetWorldLabel(row)}</p>
                     <h3 className="mt-1 truncate text-base font-bold text-white">{row.name}</h3>
                     <p className="mt-1 font-mono text-xs text-slate-500">{row.seed}</p>
                   </div>
@@ -630,7 +634,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
             <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-cyan-300/15 bg-[#07101e]/95 p-5">
               <div>
                 <div className="flex flex-wrap items-center gap-3">
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">{selectedPlanet.planet_class}</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">{planetWorldLabel(selectedPlanet)}</p>
                   {rarityBadge(selectedPlanet, "detail")}
                 </div>
                 <h3 className="mt-2 text-3xl font-bold text-white">{selectedPlanet.name}</h3>

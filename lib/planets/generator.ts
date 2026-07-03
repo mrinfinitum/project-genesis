@@ -128,6 +128,7 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
   const resource = resources[0] ?? "Stone";
   const trait = traits[0] ?? "Terraformable";
   const civilizationFragment = ancientCivilization === "None" ? "unknown explorers" : ancientCivilization.toLowerCase();
+  const worldIdentity = primaryBiome ? `${primaryBiome} world` : planetClass;
 
   return {
     id: `generated-planet-${slug(name)}-${hashSeed(seed).toString(16)}`,
@@ -164,7 +165,7 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
     science: metricMap(["Research Bonus", "Discovery Bonus", "Artifact Bonus", "Ancient Knowledge", "Rare Research", "Technology Chance"], random, 0, 100),
     economy: metricMap(["Trade Value", "Mining Value", "Agriculture Value", "Industry Value", "Tourism Value", "Collectible Value"], random, 0, 100),
     event_pool: eventPool,
-    story: `${name} is ${articleFor(rarity.name)} ${rarity.name.toLowerCase()} ${planetClass.toLowerCase()} shaped by ${primaryBiome.toLowerCase()} regions and ${trait.toLowerCase()}. ${civilizationFragment} left traces near ${ruins.toLowerCase()} sites, where ${artifact.toLowerCase()} and ${resource.toLowerCase()} continue to draw explorers despite ${hazards.slice(0, 2).join(" and ").toLowerCase() || "unknown hazards"}.`,
+    story: `${name} is ${articleFor(rarity.name)} ${rarity.name.toLowerCase()} ${worldIdentity.toLowerCase()} shaped by ${primaryBiome.toLowerCase()} regions and ${trait.toLowerCase()}. ${civilizationFragment} left traces near ${ruins.toLowerCase()} sites, where ${artifact.toLowerCase()} and ${resource.toLowerCase()} continue to draw explorers despite ${hazards.slice(0, 2).join(" and ").toLowerCase() || "unknown hazards"}.`,
     colonized: false,
     terraform_level: 0,
     discovery_points: numericRange(random, rarity.discoveryPoints[0], rarity.discoveryPoints[1]),
