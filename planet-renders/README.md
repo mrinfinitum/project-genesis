@@ -6,10 +6,18 @@ Example:
 
 ```text
 planet-renders/
-  ocean/high-clouds/ocean-world-0001-4096.png
-  lava/rings/lava-world-0002-4096.png
-  ice/thin-atmosphere/ice-world-0003-4096.png
+  ocean/deep-ocean/planet_ocean_deep_ocean_00001.png
+  lava/volcanic/planet_lava_volcanic_00001.png
+  ice/glacial/planet_ice_glacial_00001.png
 ```
+
+The folder skeleton follows the Planet Generation prompt library:
+
+```text
+planet-renders/<planet-class>/<subclass>/
+```
+
+Do not use `rings` folders. Moons and rings are planet characteristics now, not render library folders.
 
 Generate sidecar metadata JSON:
 

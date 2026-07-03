@@ -5,5 +5,8 @@ node_modules
 public/uploads
 .local-data
 .DS_Store
-planet-renders/*
+planet-renders/**
+!planet-renders/
 !planet-renders/README.md
+!planet-renders/**/
+!planet-renders/**/.gitkeep
