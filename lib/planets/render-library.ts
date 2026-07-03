@@ -35,6 +35,32 @@ function includesToken(haystack: string, needle: string) {
   return Boolean(left && right && (left === right || left.includes(right) || right.includes(left)));
 }
 
+const VISUAL_FAMILIES = [
+  ["volcanic", "lava", "magma", "molten", "basalt", "obsidian", "ash"],
+  ["swamp", "marsh", "bog", "wetland", "algae"],
+  ["ocean", "water", "aquatic", "archipelago", "coral"],
+  ["ice", "frozen", "glacier", "snow", "arctic"],
+  ["desert", "dune", "arid", "canyon", "mesa"],
+  ["forest", "jungle", "lush", "rainforest"],
+  ["toxic", "acid", "sulfur", "radioactive", "chemical"],
+  ["crystal", "quartz", "geode", "prism"],
+  ["void", "shadow", "corrupted", "anomaly"],
+  ["cyber", "machine", "artificial", "city", "construct"],
+  ["barren", "rocky", "cratered", "moonlike"],
+  ["gas", "jovian", "storm", "striped"]
+];
+
+function visualFamily(value: string | null | undefined) {
+  const valueTokens = tokens(value);
+  return VISUAL_FAMILIES.find((family) => family.some((alias) => valueTokens.some((token) => token === alias || token.includes(alias) || alias.includes(token))));
+}
+
+function sameVisualFamily(left: string | null | undefined, right: string | null | undefined) {
+  const leftFamily = visualFamily(left);
+  const rightFamily = visualFamily(right);
+  return Boolean(leftFamily && rightFamily && leftFamily === rightFamily);
+}
+
 function listOverlap(left: string[] | null | undefined, right: string[] | null | undefined) {
   const leftTokens = new Set(asList(left).flatMap(tokens));
   return asList(right).filter((value) => tokens(value).some((token) => leftTokens.has(token)));
@@ -103,7 +129,7 @@ function scoreRender(planet: GeneratedPlanet, render: PlanetRenderLibraryRecord)
     reasons.push("class");
   }
 
-  if (includesToken(planet.primary_biome, render.biome)) {
+  if (includesToken(planet.primary_biome, render.biome) || sameVisualFamily(planet.primary_biome, render.biome)) {
     score += 42;
     reasons.push("biome");
   }
