@@ -1,4 +1,5 @@
 import type { GeneratedPlanet, PlanetVariable } from "@/types/schema";
+import { rollPlanetRarity } from "@/lib/planets/rarity";
 
 type RandomSource = () => number;
 type GeneratePlanetOptions = {
@@ -44,6 +45,17 @@ function pick(values: string[], random: RandomSource, fallback: string) {
 
 function pickRule(rules: PlanetVariable[], category: string, random: RandomSource, fallback: string) {
   return pick(byCategory(rules, category).map((rule) => rule.value), random, fallback);
+}
+
+function pickRuleExcluding(rules: PlanetVariable[], category: string, random: RandomSource, fallback: string, excluded: string[] = []) {
+  const excludedValues = new Set(excluded.map((value) => value.toLowerCase()));
+  return pick(
+    byCategory(rules, category)
+      .map((rule) => rule.value)
+      .filter((value) => !excludedValues.has(value.toLowerCase())),
+    random,
+    fallback
+  );
 }
 
 function pickMany(rules: PlanetVariable[], category: string, random: RandomSource, min: number, max: number) {
@@ -92,18 +104,24 @@ function metricMap(keys: string[], random: RandomSource, min = 0, max = 100) {
   return Object.fromEntries(keys.map((key) => [key, numericRange(random, min, max)]));
 }
 
+function articleFor(value: string) {
+  return /^[aeiou]/i.test(value) ? "an" : "a";
+}
+
 export function generatePlanet(rules: PlanetVariable[], existingCount: number, requestedSeed?: string, options: GeneratePlanetOptions = {}): GeneratedPlanet {
   const seed = requestedSeed?.trim() || `PG-${Date.now()}-${existingCount + 1}`;
   const random = seededRandom(seed);
+  const rarity = rollPlanetRarity(random);
   const planetClass = pickRule(rules, "Planet Class", random, "Terrestrial");
   const forcedPrimaryBiome = options.primaryBiome?.trim();
   const primaryBiome = forcedPrimaryBiome || pickRule(rules, "Primary Biome", random, "Forest");
-  const ancientCivilization = pickRule(rules, "Ancient Civilization", random, "None");
+  const hasAncientCivilization = random() < rarity.ancientCivilizationChance;
+  const ancientCivilization = hasAncientCivilization ? pickRuleExcluding(rules, "Ancient Civilization", random, "Ancient", ["None"]) : "None";
   const ruins = pickRule(rules, "Ruins", random, "None");
-  const traits = pickMany(rules, "Trait", random, 2, 5);
-  const resources = pickMany(rules, "Resource", random, 5, 15);
+  const traits = pickMany(rules, "Trait", random, rarity.traitCount[0], rarity.traitCount[1]);
+  const resources = pickMany(rules, "Resource", random, rarity.resourceCount[0], rarity.resourceCount[1]);
   const hazards = pickMany(rules, "Hazard", random, 2, 6);
-  const collectiblePools = pickMany(rules, "Collectible Pool", random, 2, 5);
+  const collectiblePools = pickMany(rules, "Collectible Pool", random, rarity.collectibleCount[0], rarity.collectibleCount[1]);
   const eventPool = pickMany(rules, "Event Pool", random, 2, 5);
   const name = planetName(seed, random, planetClass);
   const artifact = collectiblePools[0] ?? "Planet Relic";
@@ -119,6 +137,7 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
     star_system: `${pick(["Helio", "Aster", "Nova", "Kepler", "Vega", "Orbis"], random, "Helio")}-${numericRange(random, 100, 999)}`,
     orbit_position: numericRange(random, 1, 9),
     discovery_order: existingCount + 1,
+    rarity: rarity.name,
     star_type: pickRule(rules, "Star Type", random, "Yellow Star"),
     distance_from_star: pickRule(rules, "Distance From Star", random, "Habitable"),
     orbit_speed: pickRule(rules, "Orbit Speed", random, "Normal"),
@@ -145,10 +164,10 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
     science: metricMap(["Research Bonus", "Discovery Bonus", "Artifact Bonus", "Ancient Knowledge", "Rare Research", "Technology Chance"], random, 0, 100),
     economy: metricMap(["Trade Value", "Mining Value", "Agriculture Value", "Industry Value", "Tourism Value", "Collectible Value"], random, 0, 100),
     event_pool: eventPool,
-    story: `${name} is a ${planetClass.toLowerCase()} shaped by ${primaryBiome.toLowerCase()} regions and ${trait.toLowerCase()}. ${civilizationFragment} left traces near ${ruins.toLowerCase()} sites, where ${artifact.toLowerCase()} and ${resource.toLowerCase()} continue to draw explorers despite ${hazards.slice(0, 2).join(" and ").toLowerCase() || "unknown hazards"}.`,
+    story: `${name} is ${articleFor(rarity.name)} ${rarity.name.toLowerCase()} ${planetClass.toLowerCase()} shaped by ${primaryBiome.toLowerCase()} regions and ${trait.toLowerCase()}. ${civilizationFragment} left traces near ${ruins.toLowerCase()} sites, where ${artifact.toLowerCase()} and ${resource.toLowerCase()} continue to draw explorers despite ${hazards.slice(0, 2).join(" and ").toLowerCase() || "unknown hazards"}.`,
     colonized: false,
     terraform_level: 0,
-    discovery_points: numericRange(random, 25, 500),
+    discovery_points: numericRange(random, rarity.discoveryPoints[0], rarity.discoveryPoints[1]),
     completion_percent: numericRange(random, 0, 12),
     image_url: null,
     image_prompt: null,

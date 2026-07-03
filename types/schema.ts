@@ -157,6 +157,7 @@ export type GeneratedPlanet = {
   star_system: string;
   orbit_position: number;
   discovery_order: number;
+  rarity: string;
   star_type: string;
   distance_from_star: string;
   orbit_speed: string;

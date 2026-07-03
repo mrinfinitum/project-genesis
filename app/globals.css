@@ -33,3 +33,59 @@ select {
     linear-gradient(90deg, rgba(56, 213, 255, 0.05) 1px, transparent 1px);
   background-size: 36px 36px;
 }
+
+@keyframes rarity-glow {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.12);
+  }
+}
+
+@keyframes rarity-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.78;
+  }
+}
+
+@keyframes rarity-cosmic {
+  0%,
+  100% {
+    box-shadow: 0 0 18px rgba(0, 229, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 34px rgba(0, 229, 255, 0.45);
+  }
+}
+
+@keyframes rarity-shimmer {
+  0%,
+  100% {
+    filter: saturate(1) brightness(1);
+  }
+  50% {
+    filter: saturate(1.25) brightness(1.16);
+  }
+}
+
+.rarity-glow {
+  animation: rarity-glow 2.4s ease-in-out infinite;
+}
+
+.rarity-pulse {
+  animation: rarity-pulse 1.8s ease-in-out infinite;
+}
+
+.rarity-cosmic {
+  animation: rarity-cosmic 2.6s ease-in-out infinite;
+}
+
+.rarity-shimmer {
+  animation: rarity-shimmer 2.2s ease-in-out infinite;
+}

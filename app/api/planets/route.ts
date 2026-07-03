@@ -38,14 +38,14 @@ function errorMessage(error: unknown, fallback: string) {
   return fallback;
 }
 
-function stripGeneratedPlanetImageFields(planet: GeneratedPlanet) {
-  const { image_url, image_prompt, image_status, image_variants, ...row } = planet;
+function stripGeneratedPlanetUnsupportedFields(planet: GeneratedPlanet) {
+  const { image_url, image_prompt, image_status, image_variants, rarity, ...row } = planet;
   return row as unknown as Record<string, unknown>;
 }
 
-function isMissingGeneratedPlanetImageColumn(error: unknown) {
+function isMissingGeneratedPlanetOptionalColumn(error: unknown) {
   const message = errorMessage(error, "");
-  return message.includes("generated_planets") && /image_(url|prompt|status|variants)/.test(message);
+  return message.includes("generated_planets") && /(image_(url|prompt|status|variants)|rarity)/.test(message);
 }
 
 export async function GET() {
@@ -86,11 +86,11 @@ export async function POST(request: Request) {
     try {
       row = await upsertRow("generated_planets", planetWithLibraryRender as unknown as Record<string, unknown>);
     } catch (error) {
-      if (!isMissingGeneratedPlanetImageColumn(error)) {
+      if (!isMissingGeneratedPlanetOptionalColumn(error)) {
         throw error;
       }
 
-      row = await upsertRow("generated_planets", stripGeneratedPlanetImageFields(planetWithLibraryRender));
+      row = await upsertRow("generated_planets", stripGeneratedPlanetUnsupportedFields(planetWithLibraryRender));
     }
 
     if (renderMatch) {

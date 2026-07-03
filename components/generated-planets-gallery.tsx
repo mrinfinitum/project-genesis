@@ -3,6 +3,7 @@
 import { useMemo, useState, type CSSProperties } from "react";
 import { Download, Orbit, Plus, Search, Sparkles, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { normalizePlanetRarity } from "@/lib/planets/rarity";
 import type { GeneratedPlanet } from "@/types/schema";
 
 type PlanetImageVariant = NonNullable<GeneratedPlanet["image_variants"]>[number];
@@ -163,6 +164,85 @@ function compactPill(label: string, value: string | number | boolean) {
       <p className="text-[0.58rem] font-semibold uppercase tracking-[0.14em] text-slate-500">{label}</p>
       <p className="mt-0.5 truncate text-xs font-medium text-slate-100">{String(value)}</p>
     </div>
+  );
+}
+
+function compactRarityPill(row: GeneratedPlanet) {
+  const rarity = normalizePlanetRarity(row.rarity);
+  const isCommon = rarity.name === "Common";
+
+  return (
+    <div
+      className={["min-w-0 rounded border bg-slate-950/45 px-2 py-1.5", rarityAnimationClass(row)]
+        .filter(Boolean)
+        .join(" ")}
+      style={{
+        borderColor: withAlpha(rarity.color, isCommon ? "55" : "AA"),
+        boxShadow: isCommon ? undefined : `0 0 16px ${withAlpha(rarity.color, "20")}`
+      }}
+      title={`${rarity.name} rarity - ${rarity.spawnChance}% spawn chance`}
+    >
+      <p className="text-[0.58rem] font-semibold uppercase tracking-[0.14em] text-slate-500">Rarity</p>
+      <p className="mt-0.5 truncate text-xs font-bold uppercase tracking-[0.1em]" style={{ color: rarity.color }}>
+        {rarity.name}
+      </p>
+    </div>
+  );
+}
+
+function withAlpha(hex: string, alpha: string) {
+  return /^#[0-9a-f]{6}$/i.test(hex) ? `${hex}${alpha}` : hex;
+}
+
+function rarityAnimationClass(row: GeneratedPlanet) {
+  const rarity = normalizePlanetRarity(row.rarity);
+
+  if (rarity.name === "Genesis") return "rarity-shimmer";
+  if (rarity.name === "Cosmic") return "rarity-cosmic";
+  if (rarity.name === "Relic") return "rarity-pulse";
+  if (rarity.name === "Mythic") return "rarity-glow";
+
+  return "";
+}
+
+function planetCardStyle(row: GeneratedPlanet): CSSProperties {
+  const rarity = normalizePlanetRarity(row.rarity);
+
+  if (rarity.name === "Common" || rarity.name === "Uncommon" || rarity.name === "Rare") {
+    return {
+      borderColor: withAlpha(rarity.color, rarity.name === "Common" ? "26" : "66")
+    };
+  }
+
+  return {
+    borderColor: withAlpha(rarity.color, "AA"),
+    boxShadow: `0 0 26px ${withAlpha(rarity.color, rarity.name === "Legendary" ? "30" : "45")}, inset 0 0 0 1px ${withAlpha(rarity.color, "22")}`
+  };
+}
+
+function rarityBadge(row: GeneratedPlanet, size: "compact" | "detail" = "compact") {
+  const rarity = normalizePlanetRarity(row.rarity);
+  const isCommon = rarity.name === "Common";
+
+  return (
+    <span
+      className={[
+        "inline-flex w-fit items-center rounded border font-bold uppercase leading-none",
+        size === "detail" ? "px-3 py-1.5 text-xs tracking-[0.2em]" : "px-2 py-1 text-[0.58rem] tracking-[0.16em]",
+        rarityAnimationClass(row)
+      ]
+        .filter(Boolean)
+        .join(" ")}
+      style={{
+        borderColor: withAlpha(rarity.color, isCommon ? "55" : "AA"),
+        backgroundColor: withAlpha(rarity.color, isCommon ? "10" : "1F"),
+        color: rarity.color,
+        boxShadow: isCommon ? undefined : `0 0 18px ${withAlpha(rarity.color, "28")}`
+      }}
+      title={`${rarity.name} rarity - ${rarity.spawnChance}% spawn chance`}
+    >
+      {rarity.name}
+    </span>
   );
 }
 
@@ -405,10 +485,13 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
           return (
             <article
               key={row.id}
-              className="group cursor-pointer overflow-hidden rounded-md border border-cyan-300/15 bg-[#07101e]/85 shadow-glow transition hover:-translate-y-0.5 hover:border-cyan-300/45"
+              className={["group cursor-pointer overflow-hidden rounded-md border bg-[#07101e]/85 shadow-glow transition hover:-translate-y-0.5", rarityAnimationClass(row)]
+                .filter(Boolean)
+                .join(" ")}
+              style={planetCardStyle(row)}
               onClick={() => setSelectedPlanet(row)}
             >
-              <div className="grid h-36 place-items-center overflow-hidden border-b border-cyan-300/10 bg-black p-4">
+              <div className="relative grid h-36 place-items-center overflow-hidden border-b border-cyan-300/10 bg-black p-4">
                 {heroVariant || row.image_url ? (
                   <img
                     className="h-28 max-h-full w-28 max-w-full object-contain"
@@ -504,7 +587,8 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                 ) : null}
               </div>
               <div className="space-y-3 p-3">
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-3 gap-2">
+                  {compactRarityPill(row)}
                   {compactPill("Biome", row.primary_biome)}
                   {compactPill("Gravity", row.gravity)}
                 </div>
@@ -535,12 +619,18 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
       {selectedPlanet ? (
         <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/90 p-4 backdrop-blur-md" onClick={() => setSelectedPlanet(null)}>
           <section
-            className="max-h-[92vh] w-full max-w-6xl overflow-y-auto rounded-md border border-cyan-300/20 bg-[#07101e] shadow-glow"
+            className={["max-h-[92vh] w-full max-w-6xl overflow-y-auto rounded-md border bg-[#07101e] shadow-glow", rarityAnimationClass(selectedPlanet)]
+              .filter(Boolean)
+              .join(" ")}
+            style={planetCardStyle(selectedPlanet)}
             onClick={(event) => event.stopPropagation()}
           >
             <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-cyan-300/15 bg-[#07101e]/95 p-5">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">{selectedPlanet.planet_class}</p>
+                <div className="flex flex-wrap items-center gap-3">
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">{selectedPlanet.planet_class}</p>
+                  {rarityBadge(selectedPlanet, "detail")}
+                </div>
                 <h3 className="mt-2 text-3xl font-bold text-white">{selectedPlanet.name}</h3>
                 <p className="mt-1 font-mono text-xs text-slate-500">{selectedPlanet.seed}</p>
               </div>
@@ -574,6 +664,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                   {detailPill("Star Type", selectedPlanet.star_type)}
                   {detailPill("Distance", selectedPlanet.distance_from_star)}
                   {detailPill("Orbit Speed", selectedPlanet.orbit_speed)}
+                  {detailPill("Rarity", normalizePlanetRarity(selectedPlanet.rarity).name)}
                   {detailPill("Biome", selectedPlanet.primary_biome)}
                   {detailPill("Climate", selectedPlanet.climate)}
                   {detailPill("Atmosphere", selectedPlanet.atmosphere)}

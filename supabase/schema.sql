@@ -97,6 +97,7 @@ create table if not exists generated_planets (
   star_system text,
   orbit_position integer default 0,
   discovery_order integer default 0,
+  rarity text default 'Common',
   star_type text,
   distance_from_star text,
   orbit_speed text,
@@ -140,6 +141,7 @@ alter table generated_planets add column if not exists image_url text;
 alter table generated_planets add column if not exists image_prompt text;
 alter table generated_planets add column if not exists image_status text default 'Not Rendered';
 alter table generated_planets add column if not exists image_variants jsonb default '[]'::jsonb;
+alter table generated_planets add column if not exists rarity text default 'Common';
 
 create table if not exists planet_render_library (
   id text primary key,
