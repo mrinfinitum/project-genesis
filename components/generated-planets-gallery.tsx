@@ -4,6 +4,7 @@ import { useMemo, useState, type CSSProperties } from "react";
 import { Download, Orbit, Plus, Search, Sparkles, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { normalizePlanetRarity } from "@/lib/planets/rarity";
+import { hasLockedPlanetRender } from "@/lib/planets/render-lock";
 import type { GeneratedPlanet } from "@/types/schema";
 
 type PlanetImageVariant = NonNullable<GeneratedPlanet["image_variants"]>[number];
@@ -335,7 +336,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
       if (payload.row) {
         setRows((currentRows) => [payload.row!, ...currentRows.filter((current) => current.id !== payload.row!.id)]);
         setSelectedPlanet(payload.row);
-        if (!payload.row.image_url && autoRenderProceduralPlanets) {
+        if (!hasLockedPlanetRender(payload.row) && autoRenderProceduralPlanets) {
           void renderPlanet(payload.row, "procedural", { openVariantMenu: false });
         }
       } else {
@@ -481,6 +482,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
         {filteredRows.map((row) => {
           const heroVariant = largestVariant(row);
           const variants = imageVariants(row);
+          const renderLocked = hasLockedPlanetRender(row);
 
           return (
             <article
@@ -517,9 +519,9 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                         event.stopPropagation();
                         renderPlanet(row, "procedural");
                       }}
-                      disabled={Boolean(renderingPlanetId)}
+                      disabled={Boolean(renderingPlanetId) || renderLocked}
                       aria-label="Render procedural planet image"
-                      title="Render procedural planet image"
+                      title={renderLocked ? "Planet render is locked" : "Render procedural planet image"}
                     >
                       <Orbit className="h-4 w-4" />
                     </button>
@@ -530,9 +532,9 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                         event.stopPropagation();
                         renderPlanet(row, "ai");
                       }}
-                      disabled={Boolean(renderingPlanetId)}
+                      disabled={Boolean(renderingPlanetId) || renderLocked}
                       aria-label="Render AI hero planet image"
-                      title="Render AI hero planet image"
+                      title={renderLocked ? "Planet render is locked" : "Render AI hero planet image"}
                     >
                       <Sparkles className="h-4 w-4" />
                     </button>

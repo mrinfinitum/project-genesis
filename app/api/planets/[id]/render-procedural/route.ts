@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import sharp from "sharp";
 import { getRows, upsertRow } from "@/lib/data";
 import { renderProceduralPlanetPng } from "@/lib/planets/procedural-renderer";
+import { hasLockedPlanetRender } from "@/lib/planets/render-lock";
 import { createSupabaseAdminClient, getAssetBucketName, hasSupabaseServerConfig } from "@/lib/supabase/server";
 import type { GeneratedPlanet } from "@/types/schema";
 
@@ -102,6 +103,10 @@ export async function POST(_request: Request, { params }: Params) {
 
     if (!planet) {
       return NextResponse.json({ error: "Planet not found." }, { status: 404 });
+    }
+
+    if (hasLockedPlanetRender(planet)) {
+      return NextResponse.json({ row: planet, variants: planet.image_variants ?? [], preserved: true });
     }
 
     const sourcePng = await renderProceduralPlanetPng(planet, sourceSize());

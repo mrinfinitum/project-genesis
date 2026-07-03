@@ -3,6 +3,7 @@ import { handoffData } from "@/data/handoff";
 import { generatePlanet } from "@/lib/planets/generator";
 import { getRows, upsertRow } from "@/lib/data";
 import { imageVariantsFromRender, matchPlanetRender } from "@/lib/planets/render-library";
+import { hasLockedPlanetRender } from "@/lib/planets/render-lock";
 import type { GeneratedPlanet, PlanetRenderLibraryRecord, PlanetVariable } from "@/types/schema";
 
 export const runtime = "nodejs";
@@ -70,6 +71,12 @@ export async function POST(request: Request) {
     const planet = generatePlanet(ruleRows as PlanetVariable[], existingRows.length, body.seed, {
       primaryBiome: body.primaryBiome
     });
+    const existingPlanet = (existingRows as GeneratedPlanet[]).find((row) => row.id === planet.id);
+
+    if (existingPlanet && hasLockedPlanetRender(existingPlanet)) {
+      return NextResponse.json({ row: existingPlanet, preserved: true }, { status: 200 });
+    }
+
     const renderMatch = matchPlanetRender(planet, renderLibrary as PlanetRenderLibraryRecord[]);
     const planetWithLibraryRender = renderMatch
       ? {
