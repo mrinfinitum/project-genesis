@@ -39,14 +39,40 @@ function errorMessage(error: unknown, fallback: string) {
   return fallback;
 }
 
-function stripGeneratedPlanetUnsupportedFields(planet: GeneratedPlanet) {
-  const { image_url, image_prompt, image_status, image_variants, rarity, planet_subclass, anomalies, ...row } = planet;
-  return row as unknown as Record<string, unknown>;
-}
-
 function isMissingGeneratedPlanetOptionalColumn(error: unknown) {
   const message = errorMessage(error, "");
   return message.includes("generated_planets") && /(image_(url|prompt|status|variants)|rarity|planet_subclass|anomalies)/.test(message);
+}
+
+function unsupportedGeneratedPlanetColumn(error: unknown) {
+  const message = errorMessage(error, "");
+  const match =
+    message.match(/'([^']+)' column/) ??
+    message.match(/column generated_planets\.([a-z_]+) does not exist/) ??
+    message.match(/Could not find the ([a-z_]+) column/);
+
+  return match?.[1] ?? "";
+}
+
+async function upsertGeneratedPlanet(planet: GeneratedPlanet) {
+  const row = { ...(planet as unknown as Record<string, unknown>) };
+  const unsupportedColumns = new Set(["image_url", "image_prompt", "image_status", "image_variants", "rarity", "planet_subclass", "anomalies"]);
+
+  for (let attempt = 0; attempt < unsupportedColumns.size + 1; attempt += 1) {
+    try {
+      return await upsertRow("generated_planets", row);
+    } catch (error) {
+      const column = unsupportedGeneratedPlanetColumn(error);
+
+      if (!isMissingGeneratedPlanetOptionalColumn(error) || !unsupportedColumns.has(column) || !(column in row)) {
+        throw error;
+      }
+
+      delete row[column];
+    }
+  }
+
+  return upsertRow("generated_planets", row);
 }
 
 export async function GET() {
@@ -97,15 +123,7 @@ export async function POST(request: Request) {
       : planet;
     let row: Record<string, unknown>;
 
-    try {
-      row = await upsertRow("generated_planets", planetWithLibraryRender as unknown as Record<string, unknown>);
-    } catch (error) {
-      if (!isMissingGeneratedPlanetOptionalColumn(error)) {
-        throw error;
-      }
-
-      row = await upsertRow("generated_planets", stripGeneratedPlanetUnsupportedFields(planetWithLibraryRender));
-    }
+    row = await upsertGeneratedPlanet(planetWithLibraryRender);
 
     if (renderMatch) {
       await upsertRow("planet_render_library", {
@@ -117,7 +135,7 @@ export async function POST(request: Request) {
       });
     }
 
-    return NextResponse.json({ row: row as GeneratedPlanet }, { status: 201 });
+    return NextResponse.json({ row: { ...planetWithLibraryRender, ...row } as GeneratedPlanet }, { status: 201 });
   } catch (error) {
     console.error("Planet generation failed", error);
     const message = errorMessage(error, "Could not generate planet.");
