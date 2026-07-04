@@ -31,3 +31,16 @@ Upload to Supabase Storage and register rows:
 ```bash
 npm run import:planet-renders -- ./planet-renders --apply
 ```
+
+Or run the full metadata + import flow:
+
+```bash
+npm run sync:planet-renders -- ./planet-renders
+```
+
+Useful checks:
+
+```bash
+npm run sync:planet-renders -- ./planet-renders --dry-run --limit=1
+npm run sync:planet-renders -- ./planet-renders --overwrite
+```

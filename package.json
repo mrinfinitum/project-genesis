@@ -11,6 +11,7 @@
     "migrate:local-assets": "tsx scripts/migrate-local-assets.ts",
     "describe:planet-renders": "tsx scripts/describe-planet-renders.ts",
     "import:planet-renders": "tsx scripts/import-planet-render-library.ts",
+    "sync:planet-renders": "bash scripts/sync-planet-renders.sh",
     "regenerate:assets": "tsx scripts/regenerate-asset-variants.ts"
   },
   "dependencies": {
