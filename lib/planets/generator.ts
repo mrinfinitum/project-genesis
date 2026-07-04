@@ -1,9 +1,18 @@
 import type { GeneratedPlanet, PlanetVariable } from "@/types/schema";
-import { findPlanetClassByBiome, findPlanetClassByName, PLANET_ANOMALIES, PLANET_CLASS_MODEL, rollPlanetClass } from "@/lib/planets/class-model";
+import {
+  findPlanetClassByBiome,
+  findPlanetClassByName,
+  findPlanetClassBySubclass,
+  PLANET_ANOMALIES,
+  PLANET_CLASS_MODEL,
+  rollPlanetClass
+} from "@/lib/planets/class-model";
 import { rollPlanetRarity } from "@/lib/planets/rarity";
 
 type RandomSource = () => number;
 type GeneratePlanetOptions = {
+  planetClass?: string;
+  planetSubclass?: string;
   primaryBiome?: string;
 };
 
@@ -164,14 +173,20 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
   const seed = requestedSeed?.trim() || `PG-${Date.now()}-${existingCount + 1}`;
   const random = seededRandom(seed);
   const rarity = rollPlanetRarity(random);
+  const forcedPlanetClass = options.planetClass?.trim();
+  const forcedPlanetSubclass = options.planetSubclass?.trim();
   const forcedPrimaryBiome = options.primaryBiome?.trim();
-  const forcedClass = forcedPrimaryBiome ? findPlanetClassByBiome(forcedPrimaryBiome) ?? findPlanetClassByName(forcedPrimaryBiome) : null;
-  const planetClassDefinition = forcedClass ?? (forcedPrimaryBiome ? PLANET_CLASS_MODEL[0] : rollPlanetClass(random)) ?? PLANET_CLASS_MODEL[0];
+  const forcedClass = (forcedPlanetClass ? findPlanetClassByName(forcedPlanetClass) : null) ??
+    (forcedPlanetSubclass ? findPlanetClassBySubclass(forcedPlanetSubclass) : null) ??
+    (forcedPrimaryBiome ? findPlanetClassByBiome(forcedPrimaryBiome) ?? findPlanetClassByName(forcedPrimaryBiome) : null);
+  const planetClassDefinition = forcedClass ?? rollPlanetClass(random) ?? PLANET_CLASS_MODEL[0];
   const planetClass = planetClassDefinition.name;
-  const planetSubclass = pick(planetClassDefinition.subclasses, random, planetClass);
-  const primaryBiome = forcedPrimaryBiome && !findPlanetClassByName(forcedPrimaryBiome)
+  const planetSubclass = forcedPlanetSubclass && planetClassDefinition.subclasses.some((candidate) => candidate.toLowerCase() === forcedPlanetSubclass.toLowerCase())
+    ? forcedPlanetSubclass
+    : pick(planetClassDefinition.subclasses, random, planetClass);
+  const primaryBiome = forcedPrimaryBiome && !findPlanetClassByName(forcedPrimaryBiome) && !findPlanetClassBySubclass(forcedPrimaryBiome)
     ? forcedPrimaryBiome
-    : pick(planetClassDefinition.biomes, random, pickRule(rules, "Primary Biome", random, "Forest"));
+    : planetSubclass;
   const anomalyRange = anomalyCountForRarity(rarity.name);
   const hasAncientCivilization = random() < rarity.ancientCivilizationChance;
   const ancientCivilization = hasAncientCivilization ? pickRuleExcluding(rules, "Ancient Civilization", random, "Ancient", ["None"]) : "None";

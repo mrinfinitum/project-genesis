@@ -273,7 +273,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
   const [query, setQuery] = useState("");
   const [seed, setSeed] = useState("");
   const [selectedPlanetClass, setSelectedPlanetClass] = useState("");
-  const [primaryBiome, setPrimaryBiome] = useState("");
+  const [planetSubclass, setPlanetSubclass] = useState("");
   const [loading, setLoading] = useState(false);
   const [renderingPlanetId, setRenderingPlanetId] = useState("");
   const [renderingMode, setRenderingMode] = useState<"procedural" | "ai" | "">("");
@@ -299,7 +299,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
         label: selectedPlanetClassDefinition ? `Any ${selectedPlanetClassDefinition.name}` : "Choose class first",
         value: ""
       },
-      ...(selectedPlanetClassDefinition?.biomes.map((biome) => ({ label: biome, value: biome })) ?? [])
+      ...(selectedPlanetClassDefinition?.subclasses.map((subclass) => ({ label: subclass, value: subclass })) ?? [])
     ],
     [selectedPlanetClassDefinition]
   );
@@ -332,7 +332,8 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
         },
         body: JSON.stringify({
           seed: seed.trim() || undefined,
-          primaryBiome: primaryBiome || selectedPlanetClass || undefined
+          planetClass: selectedPlanetClass || undefined,
+          planetSubclass: planetSubclass || undefined
         })
       });
       const payload = await readPayload<{ row?: GeneratedPlanet; error?: string }>(response);
@@ -463,7 +464,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
             value={selectedPlanetClass}
             onChange={(event) => {
               setSelectedPlanetClass(event.target.value);
-              setPrimaryBiome("");
+              setPlanetSubclass("");
             }}
             aria-label="Generation planet class"
           >
@@ -475,8 +476,8 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
           </select>
           <select
             className="h-10 min-w-0 rounded-md border border-cyan-300/20 bg-slate-950/60 px-3 text-sm text-white outline-none transition focus:border-cyan-300/60 disabled:cursor-not-allowed disabled:opacity-55"
-            value={primaryBiome}
-            onChange={(event) => setPrimaryBiome(event.target.value)}
+            value={planetSubclass}
+            onChange={(event) => setPlanetSubclass(event.target.value)}
             disabled={!selectedPlanetClassDefinition}
             aria-label="Generation sub-biome"
           >

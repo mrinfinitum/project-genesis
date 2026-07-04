@@ -14,72 +14,72 @@ export const PLANET_CLASS_MODEL: PlanetClassDefinition[] = [
     spawnTier: "Very Common",
     spawnWeight: 22,
     colonizationDifficulty: 1,
-    subclasses: ["Earthlike", "Continental", "Highlands", "Supercontinent"],
-    biomes: ["Forest", "Grassland", "Swamp", "Mountain", "Highlands", "Continental"]
+    subclasses: ["Earthlike", "Continental", "Highlands", "Supercontinent", "Riverlands", "Badlands", "Savanna", "Alpine"],
+    biomes: ["Earthlike", "Continental", "Highlands", "Supercontinent", "Riverlands", "Badlands", "Savanna", "Alpine"]
   },
   {
     name: "Ocean",
     spawnTier: "Very Common",
     spawnWeight: 11,
     colonizationDifficulty: 2,
-    subclasses: ["Deep Ocean", "Island World", "Archipelago", "Storm Ocean"],
-    biomes: ["Ocean", "Coral", "Island", "Archipelago", "Storm Ocean"]
+    subclasses: ["Deep Ocean", "Island World", "Archipelago", "Storm Ocean", "Coral World", "Frozen Ocean", "Kelp Ocean", "Abyssal Ocean"],
+    biomes: ["Deep Ocean", "Island World", "Archipelago", "Storm Ocean", "Coral World", "Frozen Ocean", "Kelp Ocean", "Abyssal Ocean"]
   },
   {
     name: "Desert",
     spawnTier: "Very Common",
     spawnWeight: 12,
     colonizationDifficulty: 2,
-    subclasses: ["Dunes", "Canyon", "Salt Flats", "Rock Desert"],
-    biomes: ["Desert", "Canyon", "Dunes", "Salt Flats", "Rock Desert"]
+    subclasses: ["Dunes", "Canyon", "Salt Flats", "Rock Desert", "Mesa", "Dust Basin", "Black Desert", "Oasis"],
+    biomes: ["Dunes", "Canyon", "Salt Flats", "Rock Desert", "Mesa", "Dust Basin", "Black Desert", "Oasis"]
   },
   {
     name: "Ice",
     spawnTier: "Very Common",
     spawnWeight: 11,
     colonizationDifficulty: 3,
-    subclasses: ["Glacial", "Frozen Ocean", "Snow World", "Cryovolcanic"],
-    biomes: ["Frozen", "Tundra", "Glacier", "Frozen Ocean", "Cryovolcanic"]
+    subclasses: ["Glacial", "Frozen Ocean", "Snow World", "Cryovolcanic", "Blue Ice", "Ice Canyons", "Polar", "Fractured Ice"],
+    biomes: ["Glacial", "Frozen Ocean", "Snow World", "Cryovolcanic", "Blue Ice", "Ice Canyons", "Polar", "Fractured Ice"]
   },
   {
     name: "Lava",
     spawnTier: "Common",
     spawnWeight: 7,
     colonizationDifficulty: 4,
-    subclasses: ["Volcanic", "Molten Core", "Ash World", "Basalt World"],
-    biomes: ["Volcanic", "Magma", "Ash Fields", "Basalt", "Molten"]
+    subclasses: ["Volcanic", "Molten Core", "Ash World", "Basalt World", "Obsidian", "Firestorm", "Sulfur Basin", "Magma Ocean"],
+    biomes: ["Volcanic", "Molten Core", "Ash World", "Basalt World", "Obsidian", "Firestorm", "Sulfur Basin", "Magma Ocean"]
   },
   {
     name: "Gas Giant",
     spawnTier: "Very Common",
     spawnWeight: 10,
     colonizationDifficulty: 5,
-    subclasses: ["Banded", "Storm Giant", "Ice Giant", "Metallic Giant"],
-    biomes: ["Gas Bands", "Storm Layers", "Ice Clouds", "Metallic Clouds"]
+    subclasses: ["Banded", "Storm Giant", "Ice Giant", "Metallic Giant", "Amber Giant", "Emerald Giant", "Striped Giant", "Cyclone Giant"],
+    biomes: ["Banded", "Storm Giant", "Ice Giant", "Metallic Giant", "Amber Giant", "Emerald Giant", "Striped Giant", "Cyclone Giant"]
   },
   {
     name: "Crystal",
     spawnTier: "Common",
     spawnWeight: 5,
     colonizationDifficulty: 3,
-    subclasses: ["Crystal Forest", "Crystal Desert", "Crystal Caverns", "Prismatic"],
-    biomes: ["Crystal", "Crystal Forest", "Crystal Desert", "Crystal Caverns", "Prismatic Fields"]
+    subclasses: ["Crystal Forest", "Crystal Desert", "Crystal Caverns", "Prismatic", "Quartz Peaks", "Amethyst", "Emerald Crystal", "Sapphire Crystal"],
+    biomes: ["Crystal Forest", "Crystal Desert", "Crystal Caverns", "Prismatic", "Quartz Peaks", "Amethyst", "Emerald Crystal", "Sapphire Crystal"]
   },
   {
     name: "Toxic",
     spawnTier: "Common",
     spawnWeight: 6,
     colonizationDifficulty: 4,
-    subclasses: ["Acid World", "Sulfur World", "Poison Swamp", "Corrosive"],
-    biomes: ["Acid Swamp", "Sulfur Flats", "Poison Swamp", "Corrosive Wastes"]
+    subclasses: ["Acid World", "Sulfur World", "Poison Swamp", "Corrosive", "Green Atmosphere", "Purple Atmosphere", "Chemical Seas", "Industrial Wasteland"],
+    biomes: ["Acid World", "Sulfur World", "Poison Swamp", "Corrosive", "Green Atmosphere", "Purple Atmosphere", "Chemical Seas", "Industrial Wasteland"]
   },
   {
     name: "Artificial",
     spawnTier: "Uncommon",
     spawnWeight: 4,
     colonizationDifficulty: 4,
-    subclasses: ["Cyber Planet", "Machine World", "Arcology World", "Forge World"],
-    biomes: ["Urban Ruins", "Mechanical", "Cyber Grid", "Arcology", "Forge"]
+    subclasses: ["Machine World", "Cyber Planet", "Forge World", "Arcology World", "AI Core", "Nanotech World", "Data Sphere", "Defense World"],
+    biomes: ["Machine World", "Cyber Planet", "Forge World", "Arcology World", "AI Core", "Nanotech World", "Data Sphere", "Defense World"]
   },
   {
     name: "Void",
@@ -87,58 +87,62 @@ export const PLANET_CLASS_MODEL: PlanetClassDefinition[] = [
     spawnTier: "Extremely Rare",
     spawnWeight: 0.15,
     colonizationDifficulty: 5,
-    subclasses: ["Dark Void", "Quantum Rift", "Entropy World", "Singularity World"],
-    biomes: ["Void", "Dark Rift", "Quantum Rift", "Entropy Field", "Singularity"]
+    subclasses: ["Dark Void", "Quantum Rift", "Entropy World", "Singularity World", "Shadow World", "Event Horizon", "Negative Space", "Void Storms"],
+    biomes: ["Dark Void", "Quantum Rift", "Entropy World", "Singularity World", "Shadow World", "Event Horizon", "Negative Space", "Void Storms"]
   },
   {
-    name: "Living Planet",
+    name: "Living",
+    aliases: ["Living Planet"],
     spawnTier: "Rare",
     spawnWeight: 2,
     colonizationDifficulty: 5,
-    subclasses: ["Living Forest", "Living Ocean", "Organic World", "Symbiotic World"],
-    biomes: ["Living Forest", "Living Ocean", "Organic", "Symbiotic", "Root Network"]
+    subclasses: ["Living Forest", "Living Ocean", "Organic World", "Symbiotic World", "World Tree", "Living Coral", "Breathing World", "Root Network"],
+    biomes: ["Living Forest", "Living Ocean", "Organic World", "Symbiotic World", "World Tree", "Living Coral", "Breathing World", "Root Network"]
   },
   {
-    name: "Bio Planet",
+    name: "Bio",
+    aliases: ["Bio Planet"],
     spawnTier: "Rare",
     spawnWeight: 1.5,
     colonizationDifficulty: 5,
-    subclasses: ["Mutated", "Bioluminescent", "Hive World", "Genetic World"],
-    biomes: ["Mutated Jungle", "Bioluminescent Forest", "Hive", "Genetic Garden"]
+    subclasses: ["Mutated", "Bioluminescent", "Hive World", "Genetic World", "Spore World", "Fungal World", "Parasite World", "Cellular"],
+    biomes: ["Mutated", "Bioluminescent", "Hive World", "Genetic World", "Spore World", "Fungal World", "Parasite World", "Cellular"]
   },
   {
-    name: "Ancient World",
-    aliases: ["Ancient"],
+    name: "Ancient",
+    aliases: ["Ancient World"],
     spawnTier: "Uncommon",
     spawnWeight: 3,
     colonizationDifficulty: 4,
-    subclasses: ["Temple World", "Lost Civilization", "Ruined Empire", "Archaeological"],
-    biomes: ["Temple Ruins", "Lost City", "Ruined Empire", "Archaeological Dig", "Megalithic"]
+    subclasses: ["Temple World", "Lost Civilization", "Ruined Empire", "Archaeological", "Ancient Battlefield", "Collapsed Arcology", "Relic World", "Forgotten Capital"],
+    biomes: ["Temple World", "Lost Civilization", "Ruined Empire", "Archaeological", "Ancient Battlefield", "Collapsed Arcology", "Relic World", "Forgotten Capital"]
   },
   {
-    name: "Energy World",
+    name: "Energy",
+    aliases: ["Energy World"],
     spawnTier: "Rare",
     spawnWeight: 1,
     colonizationDifficulty: 5,
-    subclasses: ["Plasma", "Electromagnetic", "Storm World", "Radiant"],
-    biomes: ["Plasma", "Electromagnetic", "Storm", "Radiant", "Lightning"]
+    subclasses: ["Plasma World", "Electromagnetic", "Storm World", "Radiant", "Aurora", "Ion World", "Charged", "Quantum Storm"],
+    biomes: ["Plasma World", "Electromagnetic", "Storm World", "Radiant", "Aurora", "Ion World", "Charged", "Quantum Storm"]
   },
   {
-    name: "Primordial World",
+    name: "Primordial",
+    aliases: ["Primordial World"],
     spawnTier: "Extremely Rare",
     spawnWeight: 0.35,
     colonizationDifficulty: 5,
-    subclasses: ["Proto World", "Young Planet", "Ancient Core", "Unformed"],
-    biomes: ["Proto Crust", "Young Ocean", "Ancient Core", "Unformed Terrain"]
+    subclasses: ["Proto World", "Young Planet", "Ancient Core", "Unformed", "Cooling Crust", "Heavy Bombardment", "Proto Ocean", "Molten Crust"],
+    biomes: ["Proto World", "Young Planet", "Ancient Core", "Unformed", "Cooling Crust", "Heavy Bombardment", "Proto Ocean", "Molten Crust"]
   },
   {
-    name: "Dead World",
-    aliases: ["Dead"],
+    name: "Dead",
+    aliases: ["Dead World"],
     spawnTier: "Uncommon",
     spawnWeight: 4,
     colonizationDifficulty: 3,
-    subclasses: ["Barren", "Dust Planet", "Impact World", "Lifeless"],
-    biomes: ["Barren", "Dust", "Impact Craters", "Lifeless Rock"]
+    subclasses: ["Barren", "Dust Planet", "Impact World", "Lifeless", "Airless", "Grey World", "Broken World", "Crater Fields"],
+    biomes: ["Barren", "Dust Planet", "Impact World", "Lifeless", "Airless", "Grey World", "Broken World", "Crater Fields"]
   }
 ];
 
@@ -180,6 +184,14 @@ export function findPlanetClassByBiome(biome: string) {
 
   return PLANET_CLASS_MODEL.find((planetClass) =>
     planetClass.biomes.some((candidate) => candidate.toLowerCase() === normalizedBiome)
+  );
+}
+
+export function findPlanetClassBySubclass(subclass: string) {
+  const normalizedSubclass = subclass.trim().toLowerCase();
+
+  return PLANET_CLASS_MODEL.find((planetClass) =>
+    planetClass.subclasses.some((candidate) => candidate.toLowerCase() === normalizedSubclass)
   );
 }
 

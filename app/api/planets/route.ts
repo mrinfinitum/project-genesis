@@ -61,7 +61,12 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json().catch(() => ({}))) as { seed?: string; primaryBiome?: string };
+    const body = (await request.json().catch(() => ({}))) as {
+      seed?: string;
+      planetClass?: string;
+      planetSubclass?: string;
+      primaryBiome?: string;
+    };
     const [rules, existingRows, renderLibrary] = await Promise.all([
       getRows("planets"),
       getRows("generated_planets"),
@@ -69,6 +74,8 @@ export async function POST(request: Request) {
     ]);
     const ruleRows = rules.length ? rules : handoffData.planets;
     const planet = generatePlanet(ruleRows as PlanetVariable[], existingRows.length, body.seed, {
+      planetClass: body.planetClass,
+      planetSubclass: body.planetSubclass,
       primaryBiome: body.primaryBiome
     });
     const existingPlanet = (existingRows as GeneratedPlanet[]).find((row) => row.id === planet.id);
