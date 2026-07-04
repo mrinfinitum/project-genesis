@@ -10,11 +10,9 @@ import type { GeneratedPlanet } from "@/types/schema";
 
 type PlanetImageVariant = NonNullable<GeneratedPlanet["image_variants"]>[number];
 const autoRenderProceduralPlanets = process.env.NEXT_PUBLIC_AUTO_RENDER_PROCEDURAL_PLANETS === "true";
-const biomeOptions = [
-  { label: "Any biome", value: "" },
-  ...[...new Set(PLANET_CLASS_MODEL.flatMap((planetClass) => planetClass.biomes))]
-    .sort((left, right) => left.localeCompare(right))
-    .map((biome) => ({ label: biome, value: biome }))
+const planetClassOptions = [
+  { label: "Any class", value: "" },
+  ...PLANET_CLASS_MODEL.map((planetClass) => ({ label: planetClass.name, value: planetClass.name }))
 ];
 
 function asList(values: string[] | null | undefined) {
@@ -274,6 +272,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
   const [rows, setRows] = useState(initialRows);
   const [query, setQuery] = useState("");
   const [seed, setSeed] = useState("");
+  const [selectedPlanetClass, setSelectedPlanetClass] = useState("");
   const [primaryBiome, setPrimaryBiome] = useState("");
   const [loading, setLoading] = useState(false);
   const [renderingPlanetId, setRenderingPlanetId] = useState("");
@@ -290,6 +289,20 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
 
     return rows.filter((row) => planetSearchText(row).includes(search));
   }, [query, rows]);
+  const selectedPlanetClassDefinition = useMemo(
+    () => PLANET_CLASS_MODEL.find((planetClass) => planetClass.name === selectedPlanetClass) ?? null,
+    [selectedPlanetClass]
+  );
+  const subBiomeOptions = useMemo(
+    () => [
+      {
+        label: selectedPlanetClassDefinition ? `Any ${selectedPlanetClassDefinition.name}` : "Choose class first",
+        value: ""
+      },
+      ...(selectedPlanetClassDefinition?.biomes.map((biome) => ({ label: biome, value: biome })) ?? [])
+    ],
+    [selectedPlanetClassDefinition]
+  );
 
   async function refreshRows() {
     try {
@@ -319,7 +332,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
         },
         body: JSON.stringify({
           seed: seed.trim() || undefined,
-          primaryBiome: primaryBiome || undefined
+          primaryBiome: primaryBiome || selectedPlanetClass || undefined
         })
       });
       const payload = await readPayload<{ row?: GeneratedPlanet; error?: string }>(response);
@@ -447,11 +460,27 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
           />
           <select
             className="h-10 min-w-44 rounded-md border border-cyan-300/20 bg-slate-950/60 px-3 text-sm text-white outline-none transition focus:border-cyan-300/60"
+            value={selectedPlanetClass}
+            onChange={(event) => {
+              setSelectedPlanetClass(event.target.value);
+              setPrimaryBiome("");
+            }}
+            aria-label="Generation planet class"
+          >
+            {planetClassOptions.map((option) => (
+              <option key={option.label} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          <select
+            className="h-10 min-w-48 rounded-md border border-cyan-300/20 bg-slate-950/60 px-3 text-sm text-white outline-none transition focus:border-cyan-300/60 disabled:cursor-not-allowed disabled:opacity-55"
             value={primaryBiome}
             onChange={(event) => setPrimaryBiome(event.target.value)}
-            aria-label="Generation biome"
+            disabled={!selectedPlanetClassDefinition}
+            aria-label="Generation sub-biome"
           >
-            {biomeOptions.map((option) => (
+            {subBiomeOptions.map((option) => (
               <option key={option.label} value={option.value}>
                 {option.label}
               </option>
