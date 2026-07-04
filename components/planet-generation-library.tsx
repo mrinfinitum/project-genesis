@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import {
   buildPlanetPrompt,
   PLANET_MASTER_PROMPT,
-  PLANET_MOON_CHARACTERISTICS,
   type PlanetPromptTemplate
 } from "@/data/planet-generation-prompts";
 
@@ -24,10 +23,6 @@ function groupedPrompts(rows: PlanetPromptTemplate[]) {
     groups[row.planetClass] = [...(groups[row.planetClass] ?? []), row];
     return groups;
   }, {});
-}
-
-function randomMoonCharacteristic() {
-  return (PLANET_MOON_CHARACTERISTICS[Math.floor(Math.random() * PLANET_MOON_CHARACTERISTICS.length)] ?? PLANET_MOON_CHARACTERISTICS[0]).prompt;
 }
 
 function CopyButton({
@@ -89,7 +84,7 @@ export function PlanetGenerationLibrary({ rows }: { rows: PlanetPromptTemplate[]
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Prompt Library</p>
             <h2 className="mt-2 text-4xl font-bold text-white">Planet Generation</h2>
             <p className="mt-3 max-w-4xl text-sm leading-6 text-slate-300">
-              Master render prompt and planet type inserts for consistent black-background planet assets. Full prompt copies include a randomized moon characteristic.
+              Master render prompt and planet type inserts for consistent black-background planet assets. Full prompt copies now explicitly request one centered planet with no moons or companion bodies.
             </p>
           </div>
           <CopyButton
@@ -107,15 +102,10 @@ export function PlanetGenerationLibrary({ rows }: { rows: PlanetPromptTemplate[]
         </pre>
 
         <div className="rounded-md border border-cyan-400/15 bg-[#07101e]/85 p-4 shadow-glow">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">Moon Roll</p>
-          <div className="mt-3 grid gap-2 md:grid-cols-2 xl:grid-cols-3">
-            {PLANET_MOON_CHARACTERISTICS.map((moonCharacteristic) => (
-              <div key={moonCharacteristic.label} className="rounded border border-slate-700/70 bg-slate-950/45 px-3 py-2 text-xs leading-5 text-slate-300">
-                <p className="font-semibold uppercase tracking-[0.14em] text-slate-100">{moonCharacteristic.label}</p>
-                <p className="mt-1 text-slate-400">{moonCharacteristic.prompt || "No moon instruction is added to the copied prompt."}</p>
-              </div>
-            ))}
-          </div>
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">Render Rule</p>
+          <p className="mt-2 text-sm leading-6 text-slate-300">
+            Planet images should stay planet-only. Moon counts can remain gameplay data on generated planet cards, but copied art prompts exclude moons, satellites, and companion bodies for cleaner assets.
+          </p>
         </div>
       </section>
 
@@ -178,8 +168,8 @@ export function PlanetGenerationLibrary({ rows }: { rows: PlanetPromptTemplate[]
                         <Button
                           type="button"
                           className="h-9 border-slate-700 bg-slate-900/70 px-3 text-slate-200 hover:bg-slate-800"
-                          title="Copy full planet prompt with randomized moon characteristic"
-                          onClick={() => copyValue(buildPlanetPrompt(row.imagePrompt, randomMoonCharacteristic()), { id, kind: "full" })}
+                          title="Copy full planet prompt with no moons"
+                          onClick={() => copyValue(buildPlanetPrompt(row.imagePrompt), { id, kind: "full" })}
                         >
                           {copied?.id === id && copied.kind === "full" ? <Check className="h-4 w-4" /> : <Clipboard className="h-4 w-4" />}
                           Full
