@@ -451,15 +451,15 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
             Generated planet cards with persistent seeds, discovery stats, resources, hazards, traits, economy, science, colonization, and story output.
           </p>
         </div>
-        <div className="flex flex-col gap-2 sm:flex-row">
+        <div className="grid w-full gap-2 sm:grid-cols-[minmax(8rem,12rem)_minmax(10rem,1fr)_minmax(11rem,1fr)_minmax(11rem,13rem)] xl:w-auto xl:min-w-[58rem]">
           <input
-            className="h-10 min-w-64 rounded-md border border-cyan-300/20 bg-slate-950/60 px-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/60"
+            className="h-10 min-w-0 rounded-md border border-cyan-300/20 bg-slate-950/60 px-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/60"
             placeholder="Optional seed"
             value={seed}
             onChange={(event) => setSeed(event.target.value)}
           />
           <select
-            className="h-10 min-w-44 rounded-md border border-cyan-300/20 bg-slate-950/60 px-3 text-sm text-white outline-none transition focus:border-cyan-300/60"
+            className="h-10 min-w-0 rounded-md border border-cyan-300/20 bg-slate-950/60 px-3 text-sm text-white outline-none transition focus:border-cyan-300/60"
             value={selectedPlanetClass}
             onChange={(event) => {
               setSelectedPlanetClass(event.target.value);
@@ -474,7 +474,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
             ))}
           </select>
           <select
-            className="h-10 min-w-48 rounded-md border border-cyan-300/20 bg-slate-950/60 px-3 text-sm text-white outline-none transition focus:border-cyan-300/60 disabled:cursor-not-allowed disabled:opacity-55"
+            className="h-10 min-w-0 rounded-md border border-cyan-300/20 bg-slate-950/60 px-3 text-sm text-white outline-none transition focus:border-cyan-300/60 disabled:cursor-not-allowed disabled:opacity-55"
             value={primaryBiome}
             onChange={(event) => setPrimaryBiome(event.target.value)}
             disabled={!selectedPlanetClassDefinition}
@@ -486,7 +486,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
               </option>
             ))}
           </select>
-          <Button className="h-10" disabled={loading} onClick={generateNewPlanet} type="button">
+          <Button className="h-10 w-full whitespace-nowrap px-4 text-sm font-semibold" disabled={loading} onClick={generateNewPlanet} type="button">
             <Plus className="h-4 w-4" />
             {loading ? "Generating..." : "Generate Planet"}
           </Button>
