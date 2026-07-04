@@ -179,6 +179,10 @@ export const PLANET_ANOMALIES = [
   "Orbital Elevator"
 ];
 
+export function slugPlanetTaxonomyValue(value: string) {
+  return value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
 export function findPlanetClassByBiome(biome: string) {
   const normalizedBiome = biome.trim().toLowerCase();
 
@@ -201,6 +205,43 @@ export function findPlanetClassByName(name: string) {
     planetClass.name.toLowerCase() === normalizedName ||
     planetClass.aliases?.some((alias) => alias.toLowerCase() === normalizedName)
   );
+}
+
+export function inferPlanetTaxonomyFromPathParts(parts: string[]) {
+  const slugs = parts.map(slugPlanetTaxonomyValue).filter(Boolean);
+  const includesSlug = (candidate: string) => slugs.some((part) => part === candidate || part.includes(candidate));
+
+  for (const planetClass of PLANET_CLASS_MODEL) {
+    const classSlugs = [planetClass.name, ...(planetClass.aliases ?? [])].map(slugPlanetTaxonomyValue);
+    const classIndex = slugs.findIndex((part) => classSlugs.some((classSlug) => part === classSlug || part.includes(classSlug)));
+
+    if (classIndex === -1) {
+      continue;
+    }
+
+    const subclass = planetClass.subclasses.find((candidate) => {
+      const subclassSlug = slugPlanetTaxonomyValue(candidate);
+      return slugs.some((part, index) => index >= classIndex && (part === subclassSlug || part.includes(subclassSlug)));
+    });
+
+    return {
+      planetClass,
+      subclass
+    };
+  }
+
+  for (const planetClass of PLANET_CLASS_MODEL) {
+    const subclass = planetClass.subclasses.find((candidate) => includesSlug(slugPlanetTaxonomyValue(candidate)));
+
+    if (subclass) {
+      return {
+        planetClass,
+        subclass
+      };
+    }
+  }
+
+  return null;
 }
 
 export function rollPlanetClass(random: () => number) {

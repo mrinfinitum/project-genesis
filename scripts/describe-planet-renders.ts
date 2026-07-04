@@ -3,6 +3,7 @@ import path from "path";
 import sharp from "sharp";
 import { getCompositeImageData, initializeCanvas, readPsd } from "ag-psd";
 import { loadEnvConfig } from "@next/env";
+import { inferPlanetTaxonomyFromPathParts } from "@/lib/planets/class-model";
 
 loadEnvConfig(process.cwd());
 
@@ -181,9 +182,38 @@ function titleize(value: string) {
   return value.replace(/[-_]+/g, " ").replace(/\s+/g, " ").trim().replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
+function pathPartsFor(file: string) {
+  return path
+    .relative(sourceRoot, file)
+    .split(path.sep)
+    .map((part) => part.replace(/\.[^/.]+$/, ""));
+}
+
+function taxonomyForPath(file: string) {
+  return inferPlanetTaxonomyFromPathParts(pathPartsFor(file));
+}
+
+function applyPathTaxonomy(metadata: PlanetSidecarMetadata, file: string): PlanetSidecarMetadata {
+  const taxonomy = taxonomyForPath(file);
+
+  if (!taxonomy) {
+    return metadata;
+  }
+
+  const tags = [...new Set([taxonomy.planetClass.name, taxonomy.subclass, ...metadata.tags].filter((tag): tag is string => Boolean(tag)))];
+
+  return {
+    ...metadata,
+    planet_class: taxonomy.planetClass.name,
+    biome: taxonomy.subclass ?? metadata.biome,
+    tags
+  };
+}
+
 function inferFromPath(file: string, resolution: number, error?: unknown): PlanetSidecarMetadata {
   const relativePath = path.relative(sourceRoot, file).toLowerCase();
   const tokens = relativePath.split(/[^a-z0-9]+/).filter(Boolean);
+  const taxonomy = taxonomyForPath(file);
   const includes = (values: string[]) => values.find((value) => tokens.includes(value.toLowerCase())) ?? "";
   const biome = includes(["ocean", "lava", "volcanic", "ice", "frozen", "desert", "toxic", "gas", "alien", "crater", "barren", "city", "cyberpunk", "forest", "jungle"]);
   const variant = includes(["temperate", "volcanic", "frozen", "arid", "acidic", "amber", "purple", "barren", "cyberpunk"]);
@@ -215,10 +245,10 @@ function inferFromPath(file: string, resolution: number, error?: unknown): Plane
                 : "Unknown World";
   const notes = error instanceof Error ? `AI metadata fallback from filename. Original error: ${error.message}` : "AI metadata fallback from filename.";
 
-  return normalizeMetadata(
+  return applyPathTaxonomy(normalizeMetadata(
     {
-      planet_class: planetClass,
-      biome: titleize(biome || "Unknown"),
+      planet_class: taxonomy?.planetClass.name ?? planetClass,
+      biome: taxonomy?.subclass ?? titleize(biome || "Unknown"),
       atmosphere: "Unknown",
       climate: titleize(variant || "Unknown"),
       color_family: colorFamily,
@@ -232,7 +262,7 @@ function inferFromPath(file: string, resolution: number, error?: unknown): Plane
       notes
     },
     resolution
-  );
+  ), file);
 }
 
 async function walkFiles(dir: string): Promise<string[]> {
@@ -350,7 +380,7 @@ async function main() {
     let metadata: PlanetSidecarMetadata;
 
     try {
-      metadata = await describeImage(file);
+      metadata = applyPathTaxonomy(await describeImage(file), file);
     } catch (error) {
       metadata = inferFromPath(file, resolution, error);
     }

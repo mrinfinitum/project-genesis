@@ -4,6 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 import sharp from "sharp";
 import { getCompositeImageData, initializeCanvas, readPsd } from "ag-psd";
 import { loadEnvConfig } from "@next/env";
+import { inferPlanetTaxonomyFromPathParts } from "@/lib/planets/class-model";
 import type { PlanetRenderLibraryRecord } from "@/types/schema";
 
 loadEnvConfig(process.cwd());
@@ -93,13 +94,17 @@ function inferResolution(filename: string, metadata: PlanetRenderMetadata) {
 }
 
 function inferValue(parts: string[], options: string[]) {
-  const lowerParts = parts.map((part) => part.toLowerCase());
+  const lowerParts = parts.map((part) => slug(part));
   return (
     options.find((option) => {
-      const lowerOption = option.toLowerCase();
+      const lowerOption = slug(option);
       return lowerParts.some((part) => part.includes(lowerOption) || lowerOption.includes(part));
     }) ?? ""
   );
+}
+
+function taxonomyForPath(parts: string[]) {
+  return inferPlanetTaxonomyFromPathParts(parts);
 }
 
 function toEightBitRgba(data: Uint8Array | Uint8ClampedArray | Uint16Array | Float32Array, width: number, height: number) {
@@ -573,6 +578,7 @@ async function main() {
     const asset = await renderAssetFor(file, metadata);
     const filename = asset.filename;
     const pathParts = relativePath.split(path.sep).map((part) => part.replace(/\.[^/.]+$/, ""));
+    const taxonomy = taxonomyForPath(pathParts);
     const id = String(metadata.id ?? assetId(path.parse(filename).name));
     const storagePath = String(metadata.storage_path ?? `planet-render-library/${id}/${filename}`);
     const sourceStoragePath =
@@ -582,8 +588,8 @@ async function main() {
     const height = Number(metadata.height ?? asset.height ?? resolution);
     const fileUrl = String(metadata.file_url ?? cacheBustUrl(await publicUrlFor(storagePath), importVersion));
     const sourceFileUrl = sourceStoragePath ? await publicUrlFor(sourceStoragePath) : "";
-    const inferredBiome = inferValue(pathParts, ["Ocean", "Desert", "Ice", "Lava", "Volcanic", "Crystal", "Toxic", "Void", "Forest", "Jungle", "Swamp", "Cyber", "Artificial"]);
-    const inferredClass = inferValue(pathParts, ["Ocean World", "Desert World", "Ice World", "Volcanic World", "Crystal World", "Toxic World", "Void World", "Gas Giant", "Terrestrial"]);
+    const inferredBiome = inferValue(pathParts, ["Ocean", "Desert", "Ice", "Lava", "Volcanic", "Crystal", "Toxic", "Void", "Forest", "Jungle", "Swamp", "Cyber", "Artificial", "Gas Giant"]);
+    const inferredClass = inferValue(pathParts, ["Ocean", "Desert", "Ice", "Lava", "Crystal", "Toxic", "Void", "Gas Giant", "Terrestrial", "Artificial", "Bio", "Living", "Ancient", "Energy", "Primordial", "Dead"]);
 
     const row: PlanetRenderLibraryRecord = {
       id,
@@ -591,15 +597,15 @@ async function main() {
       file_url: fileUrl,
       storage_path: storagePath,
       thumbnail_url: String(metadata.thumbnail_url ?? ""),
-      planet_class: String(metadata.planet_class ?? inferredClass),
-      biome: String(metadata.biome ?? inferredBiome),
+      planet_class: String(taxonomy?.planetClass.name ?? metadata.planet_class ?? inferredClass),
+      biome: String(taxonomy?.subclass ?? metadata.biome ?? inferredBiome),
       atmosphere: String(metadata.atmosphere ?? inferValue(pathParts, ["Dense", "Thin", "Toxic", "Ionized", "Methane"])),
       climate: String(metadata.climate ?? inferValue(pathParts, ["Temperate", "Arid", "Frozen", "Tropical", "Storm", "Barren"])),
       color_family: String(metadata.color_family ?? inferValue(pathParts, ["Blue", "Green", "Red", "Orange", "Purple", "Cyan", "White", "Black"])),
       has_rings: Boolean(metadata.has_rings ?? /ring/i.test(relativePath)),
       water_level: String(metadata.water_level ?? inferValue(pathParts, ["High", "Medium", "Low"])),
       cloud_level: String(metadata.cloud_level ?? inferValue(pathParts, ["High", "Medium", "Low"])),
-      tags: asList(metadata.tags ?? pathParts.join(",")),
+      tags: [...new Set([taxonomy?.planetClass.name, taxonomy?.subclass, ...asList(metadata.tags ?? pathParts.join(","))].filter((tag): tag is string => Boolean(tag)))],
       hazards: asList(metadata.hazards),
       traits: asList(metadata.traits),
       image_variants: metadata.image_variants ?? [
