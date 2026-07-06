@@ -187,6 +187,88 @@ export type ResourceCatalogItem = {
   updated_at: string;
 };
 
+export type UniverseRecord = {
+  id: string;
+  universe_seed: string;
+  name: string;
+  created_at: string;
+};
+
+export type GalaxyRecord = {
+  id: string;
+  universe_id: string;
+  galaxy_seed: string;
+  name: string;
+  galaxy_type: string;
+  sector_count: number;
+  created_at: string;
+};
+
+export type SectorRecord = {
+  id: string;
+  galaxy_id: string;
+  sector_seed: string;
+  coordinates_x: number;
+  coordinates_y: number;
+  coordinates_z: number;
+  system_count: number;
+  discovered: boolean;
+  discovered_at: string | null;
+  created_at: string;
+};
+
+export type StarSystemRecord = {
+  id: string;
+  sector_id: string;
+  system_seed: string;
+  system_name: string;
+  catalog_designation: string;
+  system_rarity: string;
+  star_count: number;
+  planet_count: number;
+  resource_bias: string;
+  danger_level: number;
+  discovered: boolean;
+  discovered_at: string | null;
+  created_at: string;
+};
+
+export type StarRecord = {
+  id: string;
+  system_id: string;
+  star_seed: string;
+  star_name: string;
+  star_type: string;
+  star_size: string;
+  star_temperature: number;
+  star_color: string;
+  luminosity: number;
+  age: string;
+  created_at: string;
+};
+
+export type UniversePlanetRecord = {
+  id: string;
+  system_id: string;
+  planet_seed: string;
+  planet_name: string;
+  orbit_position: number;
+  planet_rarity: string;
+  planet_class: string;
+  planet_subclass: string;
+  discovered: boolean;
+  discovered_at: string | null;
+  renamed_to: string | null;
+  colonized: boolean;
+  terraform_level: number;
+  resources_mined: Record<string, number>;
+  buildings_built: string[];
+  collectibles_found: string[];
+  expeditions_completed: string[];
+  created_at: string;
+  updated_at: string;
+};
+
 export type GeneratedPlanet = {
   id: string;
   seed: string;

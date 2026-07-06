@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Boxes, Building2, Gem, GitBranch, Palette, Sparkles, Wand2 } from "lucide-react";
+import { ArrowRight, Boxes, Building2, Compass, Gem, GitBranch, Palette, Sparkles, Wand2 } from "lucide-react";
 import { getGameData } from "@/lib/data";
 import { StatusBadge } from "@/components/ui/status-badge";
 
@@ -30,6 +30,7 @@ export default async function DashboardPage() {
     { label: "Collectibles", value: 0, icon: Gem, href: "/collectibles" },
     { label: "Building Relationships", value: data.building_relationships.length, icon: GitBranch, href: "/building-relationships" },
     { label: "Current Version", value: data.release_notes[0]?.version ?? "0.1.0", icon: Sparkles, href: "/releases" },
+    { label: "Universe Explorer", value: "Seeded", icon: Compass, href: "/universe-explorer" },
     { label: "Feature Flags Enabled", value: `${enabledFeatureFlags}/${data.feature_flags.length}`, icon: ArrowRight, href: "/feature-flags" }
   ];
 
