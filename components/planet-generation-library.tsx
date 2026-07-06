@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import {
   buildPlanetPrompt,
   PLANET_MASTER_PROMPT,
+  planetTypeFeaturePrompt,
   type PlanetPromptTemplate
 } from "@/data/planet-generation-prompts";
 
@@ -66,7 +67,7 @@ export function PlanetGenerationLibrary({ rows }: { rows: PlanetPromptTemplate[]
 
     return rows.filter((row) => {
       const matchesClass = planetClass === "all" || row.planetClass === planetClass;
-      const searchText = `${row.planetClass} ${row.subclass} ${row.displayName} ${row.imagePrompt}`.toLowerCase();
+      const searchText = `${row.planetClass} ${row.subclass} ${row.displayName} ${planetTypeFeaturePrompt(row)}`.toLowerCase();
       return matchesClass && (!normalizedQuery || searchText.includes(normalizedQuery));
     });
   }, [planetClass, query, rows]);
@@ -88,7 +89,7 @@ export function PlanetGenerationLibrary({ rows }: { rows: PlanetPromptTemplate[]
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Prompt Library</p>
             <h2 className="mt-2 text-4xl font-bold text-white">Planet Generation</h2>
             <p className="mt-3 max-w-4xl text-sm leading-6 text-slate-300">
-              Master render prompt and planet type inserts for consistent black-background planet assets. Full prompt copies now explicitly request one centered planet with no moons or companion bodies.
+              Master render prompt and feature-only planet type inserts for consistent black-background planet assets. Full prompt copies insert only the selected planet features into the master rule.
             </p>
           </div>
           <CopyButton
@@ -189,6 +190,7 @@ export function PlanetGenerationLibrary({ rows }: { rows: PlanetPromptTemplate[]
               <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
                 {groups[className].map((row) => {
                   const id = `${row.planetClass}-${row.subclass}`;
+                  const featurePrompt = planetTypeFeaturePrompt(row);
                   return (
                     <article key={id} className="rounded-md border border-cyan-400/15 bg-[#07101e]/85 p-4 shadow-glow">
                       <div className="flex min-h-24 flex-col justify-between gap-3">
@@ -196,11 +198,11 @@ export function PlanetGenerationLibrary({ rows }: { rows: PlanetPromptTemplate[]
                           <p className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-cyan-300">{row.planetClass}</p>
                           <h4 className="mt-2 text-lg font-semibold text-white">{row.displayName}</h4>
                         </div>
-                        <p className="line-clamp-4 text-sm leading-6 text-slate-300">{row.imagePrompt}</p>
+                        <p className="line-clamp-4 text-sm leading-6 text-slate-300">{featurePrompt}</p>
                       </div>
                       <div className="mt-4 flex flex-wrap gap-2">
                         <CopyButton
-                          value={row.imagePrompt}
+                          value={featurePrompt}
                           copied={copied?.id === id && copied.kind === "description"}
                           title="Copy planet type insert"
                           onCopy={(value) => copyValue(value, { id, kind: "description" })}
@@ -211,7 +213,7 @@ export function PlanetGenerationLibrary({ rows }: { rows: PlanetPromptTemplate[]
                           type="button"
                           className="h-9 border-slate-700 bg-slate-900/70 px-3 text-slate-200 hover:bg-slate-800"
                           title="Copy full planet prompt with no moons"
-                          onClick={() => copyValue(buildPlanetPrompt(row.imagePrompt), { id, kind: "full" })}
+                          onClick={() => copyValue(buildPlanetPrompt(featurePrompt), { id, kind: "full" })}
                         >
                           {copied?.id === id && copied.kind === "full" ? <Check className="h-4 w-4" /> : <Clipboard className="h-4 w-4" />}
                           Full
