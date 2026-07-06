@@ -16,6 +16,7 @@ export type TableConfig = {
   statusKey?: string;
   eraKey?: string;
   typeKey?: string;
+  filterKeys?: string[];
   searchKeys: string[];
   columns: string[];
   fields: FieldConfig[];
@@ -240,6 +241,34 @@ export const tableConfigs: Record<TableName, TableConfig> = {
       { key: "rare_resources", label: "Rare Resources", type: "array" },
       { key: "exotic_resources", label: "Exotic Resources", type: "array" },
       { key: "scientific_notes", label: "Scientific / Design Notes", type: "textarea" },
+      { key: "created_at", label: "Created At" },
+      { key: "updated_at", label: "Updated At" }
+    ]
+  },
+  resource_catalog: {
+    table: "resource_catalog",
+    title: "Resource Catalog",
+    description: "Master catalog of all resources, rarity labels, progression tiers, trade values, stack rules, and lore notes.",
+    typeKey: "category",
+    filterKeys: ["category", "rarity", "discovery_tier", "earth_available"],
+    searchKeys: ["id", "resource_name", "category", "rarity", "discovery_tier", "earth_available", "first_unlock_requirement", "typical_planet_classes", "primary_uses", "description", "science_lore_notes", "codex_implementation_notes"],
+    columns: ["id", "resource_name", "category", "rarity", "discovery_tier", "earth_available", "base_trade_value", "stack_size"],
+    fields: [
+      { key: "id", label: "Resource ID", required: true },
+      { key: "resource_name", label: "Resource Name", required: true },
+      { key: "category", label: "Category" },
+      { key: "rarity", label: "Rarity" },
+      { key: "rarity_color", label: "Rarity Color" },
+      { key: "discovery_tier", label: "Discovery Tier" },
+      { key: "earth_available", label: "Earth Available" },
+      { key: "first_unlock_requirement", label: "First Unlock / Requirement" },
+      { key: "typical_planet_classes", label: "Typical Planet Classes", type: "array" },
+      { key: "primary_uses", label: "Primary Uses", type: "array" },
+      { key: "base_trade_value", label: "Base Trade Value", type: "number" },
+      { key: "stack_size", label: "Stack Size", type: "number" },
+      { key: "description", label: "Description", type: "textarea" },
+      { key: "science_lore_notes", label: "Science / Lore Notes", type: "textarea" },
+      { key: "codex_implementation_notes", label: "Codex Implementation Notes", type: "textarea" },
       { key: "created_at", label: "Created At" },
       { key: "updated_at", label: "Updated At" }
     ]

@@ -27,6 +27,9 @@ const jsonDatasets = new Set([
   "planet_resource_profiles",
   "planet-resource-profiles",
   "planet-resources",
+  "resource_catalog",
+  "resource-catalog",
+  "resources",
   "generated_planets",
   "generated-planets",
   "planet_render_library",
@@ -48,6 +51,9 @@ const jsonDatasets = new Set([
   "planet_resource_profiles.json",
   "planet-resource-profiles.json",
   "planet-resources.json",
+  "resource_catalog.json",
+  "resource-catalog.json",
+  "resources.json",
   "generated_planets.json",
   "generated-planets.json",
   "planet_render_library.json",
@@ -66,6 +72,10 @@ function normalizeDataset(dataset: string) {
 
   if (withoutExtension === "planet-resources") {
     return "planet_resource_profiles";
+  }
+
+  if (withoutExtension === "resources") {
+    return "resource_catalog";
   }
 
   return withoutExtension.replace(/-/g, "_");

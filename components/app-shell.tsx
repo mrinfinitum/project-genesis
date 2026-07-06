@@ -32,6 +32,7 @@ const sections = [
   { href: "/planets", label: "Planets", icon: Orbit },
   { href: "/planetary-rules", label: "Planetary Rules", icon: GitBranch },
   { href: "/planet-resource-profiles", label: "Planet Resources", icon: Gem },
+  { href: "/resource-catalog", label: "Resource Catalog", icon: Gem },
   { href: "/planet-generation", label: "Planet Generation", icon: Sparkles },
   { href: "/collectibles", label: "Collectibles", icon: Gem },
   { href: "/assets", label: "Assets", icon: Archive },

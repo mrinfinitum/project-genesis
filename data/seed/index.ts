@@ -9,11 +9,12 @@ import type {
   ReleaseNote,
   ResearchBranch,
   ResearchNode,
+  ResourceCatalogItem,
   Status,
   UnlockMatrixRow,
   Wonder
 } from "@/types/schema";
-import { handoffPlanetResourceProfiles } from "@/data/handoff";
+import { handoffPlanetResourceProfiles, handoffResourceCatalog } from "@/data/handoff";
 import { planetSystemVariables } from "@/data/handoff/planet-system";
 
 export const civilizations = [
@@ -259,6 +260,7 @@ export const changelog: ChangelogEntry[] = [
 
 export const planets: PlanetVariable[] = planetSystemVariables;
 export const planetResourceProfiles: PlanetResourceProfile[] = handoffPlanetResourceProfiles;
+export const resourceCatalog: ResourceCatalogItem[] = handoffResourceCatalog;
 
 export const seedData: GameData = {
   research_branches: researchBranches,
@@ -276,6 +278,7 @@ export const seedData: GameData = {
   conceptual_art: [],
   planets,
   planet_resource_profiles: planetResourceProfiles,
+  resource_catalog: resourceCatalog,
   generated_planets: [],
   planet_render_library: [],
   release_notes: releaseNotes,

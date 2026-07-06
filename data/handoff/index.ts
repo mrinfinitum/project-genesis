@@ -10,6 +10,7 @@ import planetGenerationRaw from "./json/Planet_Generation.json";
 import planetResourceProfilesRaw from "./json/Planet_Resource_Profiles.json";
 import planetTraitsRaw from "./json/Planet_Traits.json";
 import releaseNotesRaw from "./json/Release_Notes.json";
+import resourceCatalogRaw from "./json/Resource_Catalog.json";
 import researchBranchesRaw from "./json/Research_Branches.json";
 import researchRaw from "./json/Research.json";
 import unlockMatrixRaw from "./json/Unlock_Matrix.json";
@@ -33,6 +34,7 @@ import type {
   ReleaseNote,
   ResearchBranch,
   ResearchNode,
+  ResourceCatalogItem,
   UnlockMatrixRow,
   Upgrade,
   Wonder
@@ -342,6 +344,26 @@ export const handoffPlanetResourceProfiles: PlanetResourceProfile[] = (planetRes
   };
 });
 
+export const handoffResourceCatalog: ResourceCatalogItem[] = (resourceCatalogRaw as RawRow[]).map((row) => ({
+  id: text(row["Resource ID"]),
+  resource_name: text(row["Resource Name"]),
+  category: text(row.Category),
+  rarity: text(row.Rarity),
+  rarity_color: text(row["Rarity Color"]),
+  discovery_tier: text(row["Discovery Tier"]),
+  earth_available: text(row["Earth Available"]),
+  first_unlock_requirement: text(row["First Unlock / Requirement"]),
+  typical_planet_classes: list(row["Typical Planet Classes"]),
+  primary_uses: list(row["Primary Uses"]),
+  base_trade_value: number(row["Base Trade Value"]),
+  stack_size: number(row["Stack Size"]),
+  description: text(row.Description),
+  science_lore_notes: text(row["Science / Lore Notes"]),
+  codex_implementation_notes: text(row["Codex Implementation Notes"]),
+  created_at: "2026-07-06T00:00:00.000Z",
+  updated_at: "2026-07-06T00:00:00.000Z"
+}));
+
 export const handoffReleaseNotes: ReleaseNote[] = (releaseNotesRaw as RawRow[]).map((row, index) => ({
   id: `release-note-${index + 1}`,
   version: text(row.Item) === "Version" ? text(row.Value) : "2.2 Sprint 2",
@@ -376,6 +398,7 @@ export const handoffData: GameData = {
   conceptual_art: handoffConceptualArt,
   planets: handoffPlanets,
   planet_resource_profiles: handoffPlanetResourceProfiles,
+  resource_catalog: handoffResourceCatalog,
   generated_planets: handoffGeneratedPlanets,
   planet_render_library: [],
   release_notes: handoffReleaseNotes,

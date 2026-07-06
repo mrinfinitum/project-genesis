@@ -167,6 +167,26 @@ export type PlanetResourceProfile = {
   updated_at: string;
 };
 
+export type ResourceCatalogItem = {
+  id: string;
+  resource_name: string;
+  category: string;
+  rarity: string;
+  rarity_color: string;
+  discovery_tier: string;
+  earth_available: string;
+  first_unlock_requirement: string;
+  typical_planet_classes: string[];
+  primary_uses: string[];
+  base_trade_value: number;
+  stack_size: number;
+  description: string;
+  science_lore_notes: string;
+  codex_implementation_notes: string;
+  created_at: string;
+  updated_at: string;
+};
+
 export type GeneratedPlanet = {
   id: string;
   seed: string;
@@ -361,6 +381,7 @@ export type GameData = {
   conceptual_art: ConceptualArtRecord[];
   planets: PlanetVariable[];
   planet_resource_profiles: PlanetResourceProfile[];
+  resource_catalog: ResourceCatalogItem[];
   generated_planets: GeneratedPlanet[];
   planet_render_library: PlanetRenderLibraryRecord[];
   release_notes: ReleaseNote[];
@@ -377,6 +398,7 @@ export type TableName =
   | "conceptual_art"
   | "planets"
   | "planet_resource_profiles"
+  | "resource_catalog"
   | "generated_planets"
   | "planet_render_library"
   | "upgrades"

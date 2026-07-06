@@ -79,6 +79,7 @@ export function AdminTable({ config, initialRows }: { config: TableConfig; initi
   const [status, setStatus] = useState("all");
   const [era, setEra] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
+  const [extraFilters, setExtraFilters] = useState<Record<string, string>>({});
   const [editing, setEditing] = useState<Row | null>(null);
   const [formOpen, setFormOpen] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -117,11 +118,23 @@ export function AdminTable({ config, initialRows }: { config: TableConfig; initi
     return Array.from(new Set(rows.map((row) => stringifyValue(row[config.typeKey as string])).filter(Boolean))).sort();
   }, [config.typeKey, rows]);
 
+  const extraFilterOptions = useMemo(() => {
+    return Object.fromEntries(
+      (config.filterKeys ?? [])
+        .filter((key) => key !== config.typeKey && key !== config.eraKey && key !== config.statusKey)
+        .map((key) => [
+          key,
+          Array.from(new Set(rows.map((row) => stringifyValue(row[key])).filter(Boolean))).sort()
+        ])
+    );
+  }, [config.eraKey, config.filterKeys, config.statusKey, config.typeKey, rows]);
+
   const filtered = rows.filter((row) => {
     const matchesStatus = !config.statusKey || status === "all" || stringifyValue(row[config.statusKey]) === status;
     const matchesEra = !config.eraKey || era === "all" || stringifyValue(row[config.eraKey]) === era;
     const matchesType = !config.typeKey || typeFilter === "all" || stringifyValue(row[config.typeKey]) === typeFilter;
-    return matchesStatus && matchesEra && matchesType && rowMatches(row, config.searchKeys, search);
+    const matchesExtraFilters = Object.entries(extraFilters).every(([key, value]) => value === "all" || stringifyValue(row[key]) === value);
+    return matchesStatus && matchesEra && matchesType && matchesExtraFilters && rowMatches(row, config.searchKeys, search);
   });
 
   async function saveRow(event: FormEvent<HTMLFormElement>) {
@@ -488,7 +501,7 @@ export function AdminTable({ config, initialRows }: { config: TableConfig; initi
               onChange={(event) => setTypeFilter(event.target.value)}
               className="h-10 rounded-md border border-slate-700 bg-slate-950/70 px-3 text-sm text-white outline-none focus:border-cyan-300/60"
             >
-              <option value="all">All types</option>
+              <option value="all">All {titleCase(config.typeKey).toLowerCase()}</option>
               {typeOptions.map((option) => (
                 <option key={option} value={option}>
                   {option}
@@ -496,6 +509,21 @@ export function AdminTable({ config, initialRows }: { config: TableConfig; initi
               ))}
             </select>
           ) : null}
+          {Object.entries(extraFilterOptions).map(([key, options]) => (
+            <select
+              key={key}
+              value={extraFilters[key] ?? "all"}
+              onChange={(event) => setExtraFilters((current) => ({ ...current, [key]: event.target.value }))}
+              className="h-10 rounded-md border border-slate-700 bg-slate-950/70 px-3 text-sm text-white outline-none focus:border-cyan-300/60"
+            >
+              <option value="all">All {titleCase(key).toLowerCase()}</option>
+              {options.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          ))}
         </div>
 
         <div className="overflow-x-auto">
