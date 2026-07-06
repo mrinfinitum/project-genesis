@@ -251,6 +251,10 @@ async function readPayload<T>(response: Response) {
   }
 }
 
+function responseError(response: Response, payload: { error?: string }, fallback: string) {
+  return payload.error || `${fallback} (${response.status} ${response.statusText || "error"})`;
+}
+
 function downloadBlob(filename: string, blob: Blob) {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
@@ -404,7 +408,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
       const payload = await readPayload<{ row?: GeneratedPlanet; error?: string }>(response);
 
       if (!response.ok) {
-        setError(payload.error ?? "Could not reroll planet stats.");
+        setError(responseError(response, payload, "Could not reroll planet stats."));
         return;
       }
 
@@ -433,15 +437,24 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
       const response = await fetch("/api/planets/reroll-stats", {
         method: "POST"
       });
-      const payload = await readPayload<{ rows?: GeneratedPlanet[]; count?: number; error?: string }>(response);
+      const payload = await readPayload<{
+        rows?: GeneratedPlanet[];
+        count?: number;
+        failures?: Array<{ id: string; name: string; error: string }>;
+        error?: string;
+      }>(response);
 
       if (!response.ok) {
-        setError(payload.error ?? "Could not reroll existing planet stats.");
+        setError(responseError(response, payload, "Could not reroll existing planet stats."));
         return;
       }
 
       setRows(payload.rows ?? []);
       setSelectedPlanet((current) => (current ? (payload.rows ?? []).find((row) => row.id === current.id) ?? current : current));
+      if (payload.failures?.length) {
+        const firstFailure = payload.failures[0];
+        setError(`Rerolled ${payload.count ?? 0} planets, but ${payload.failures.length} failed. ${firstFailure.name}: ${firstFailure.error}`);
+      }
     } catch (caughtError) {
       setError(caughtError instanceof Error ? caughtError.message : "Could not reroll existing planet stats.");
     } finally {

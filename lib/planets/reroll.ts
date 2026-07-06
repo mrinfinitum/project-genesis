@@ -1,6 +1,56 @@
 import { generatePlanet } from "@/lib/planets/generator";
 import type { GeneratedPlanet, PlanetResourceProfile, PlanetVariable } from "@/types/schema";
 
+const generatedPlanetStorageKeys = [
+  "id",
+  "seed",
+  "name",
+  "galaxy_sector",
+  "star_system",
+  "orbit_position",
+  "discovery_order",
+  "rarity",
+  "star_type",
+  "distance_from_star",
+  "orbit_speed",
+  "planet_class",
+  "planet_subclass",
+  "primary_biome",
+  "climate",
+  "atmosphere",
+  "temperature",
+  "gravity",
+  "water_coverage",
+  "moons",
+  "resources",
+  "flora",
+  "fauna",
+  "ancient_civilization",
+  "ruins",
+  "hazards",
+  "traits",
+  "anomalies",
+  "modifiers",
+  "collectible_pools",
+  "visual_theme",
+  "weather",
+  "colonization",
+  "science",
+  "economy",
+  "event_pool",
+  "story",
+  "colonized",
+  "terraform_level",
+  "discovery_points",
+  "completion_percent",
+  "image_url",
+  "image_prompt",
+  "image_status",
+  "image_variants",
+  "created_at",
+  "notes"
+] as const;
+
 function renderNotes(existing: GeneratedPlanet, nextNotes: string) {
   const existingNotes = existing.notes ?? "";
 
@@ -13,6 +63,35 @@ function renderNotes(existing: GeneratedPlanet, nextNotes: string) {
   }
 
   return nextNotes || existingNotes;
+}
+
+function arrayValue(value: unknown) {
+  return Array.isArray(value) ? value : [];
+}
+
+function objectValue(value: unknown) {
+  return value && typeof value === "object" && !Array.isArray(value) ? value : {};
+}
+
+export function generatedPlanetStorageRow(row: GeneratedPlanet) {
+  const normalized = {
+    ...row,
+    resources: arrayValue(row.resources),
+    hazards: arrayValue(row.hazards),
+    traits: arrayValue(row.traits),
+    anomalies: arrayValue(row.anomalies),
+    modifiers: arrayValue(row.modifiers),
+    collectible_pools: arrayValue(row.collectible_pools),
+    visual_theme: objectValue(row.visual_theme),
+    weather: arrayValue(row.weather),
+    colonization: objectValue(row.colonization),
+    science: objectValue(row.science),
+    economy: objectValue(row.economy),
+    event_pool: arrayValue(row.event_pool),
+    image_variants: arrayValue(row.image_variants)
+  };
+
+  return Object.fromEntries(generatedPlanetStorageKeys.map((key) => [key, normalized[key]]));
 }
 
 export function rerollPlanetStats(

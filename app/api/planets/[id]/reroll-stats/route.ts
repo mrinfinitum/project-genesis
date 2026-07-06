@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { handoffData } from "@/data/handoff";
 import { getRows, upsertRow } from "@/lib/data";
-import { rerollPlanetStats } from "@/lib/planets/reroll";
+import { generatedPlanetStorageRow, rerollPlanetStats } from "@/lib/planets/reroll";
 import type { GeneratedPlanet, PlanetResourceProfile, PlanetVariable } from "@/types/schema";
 
 export const runtime = "nodejs";
@@ -36,11 +36,12 @@ export async function POST(_request: Request, { params }: Params) {
       (resourceProfiles.length ? resourceProfiles : handoffData.planet_resource_profiles) as PlanetResourceProfile[],
       Math.max(0, Number(existing.discovery_order || existingRows.length) - 1)
     );
-    const saved = await upsertRow("generated_planets", row as unknown as Record<string, unknown>);
+    const saved = await upsertRow("generated_planets", generatedPlanetStorageRow(row));
 
     return NextResponse.json({ row: { ...row, ...saved } as GeneratedPlanet });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Could not reroll planet stats.";
+    console.error(`Planet reroll failed for ${id}`, error);
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
