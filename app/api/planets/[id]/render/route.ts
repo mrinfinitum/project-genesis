@@ -57,7 +57,7 @@ function promptForPlanet(planet: GeneratedPlanet) {
     "Uniform Project Genesis card art style: cinematic but readable, high-detail surface, clean silhouette, no text, no logo, no UI, no stars, no space background, no frame, no drop shadow.",
     "Keep the full planet visible with a clean margin. Orthographic three-quarter lighting, crisp rim light, Roblox-friendly stylized realism. Do not use green on the planet surface unless the planet data explicitly requires it.",
     `Planet name: ${planet.name}.`,
-    `Planet class: ${planet.planet_class}. Planet subclass: ${planet.planet_subclass || planet.primary_biome}. Primary biome: ${planet.primary_biome}. Climate: ${planet.climate}. Atmosphere: ${planet.atmosphere}. Temperature: ${planet.temperature}. Gravity: ${planet.gravity}. Water coverage: ${planet.water_coverage}.`,
+    `Planet biome: ${planet.planet_class || planet.primary_biome}. Planet subclass: ${planet.planet_subclass || planet.primary_biome}. Climate: ${planet.climate}. Atmosphere: ${planet.atmosphere}. Temperature: ${planet.temperature}. Gravity: ${planet.gravity}. Water coverage: ${planet.water_coverage}.`,
     resources ? `Surface/resource cues: ${resources}.` : "",
     hazards ? `Hazard cues: ${hazards}.` : "",
     traits ? `Planet traits: ${traits}.` : "",

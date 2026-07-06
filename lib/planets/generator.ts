@@ -186,7 +186,7 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
     : pick(planetClassDefinition.subclasses, random, planetClass);
   const primaryBiome = forcedPrimaryBiome && !findPlanetClassByName(forcedPrimaryBiome) && !findPlanetClassBySubclass(forcedPrimaryBiome)
     ? forcedPrimaryBiome
-    : planetSubclass;
+    : planetClass;
   const anomalyRange = anomalyCountForRarity(rarity.name);
   const hasAncientCivilization = random() < rarity.ancientCivilizationChance;
   const ancientCivilization = hasAncientCivilization ? pickRuleExcluding(rules, "Ancient Civilization", random, "Ancient", ["None"]) : "None";
@@ -235,7 +235,7 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
     anomalies,
     modifiers: pickMany(rules, "Modifier", random, 1, 4),
     collectible_pools: collectiblePools,
-    visual_theme: visualTheme(random, primaryBiome, planetClass),
+    visual_theme: visualTheme(random, planetSubclass, planetClass),
     weather: pickMany(rules, "Weather", random, 1, 4),
     colonization: {
       Difficulty: colonizationDifficultyScore(planetClassDefinition.colonizationDifficulty, random),
@@ -244,7 +244,7 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
     science: metricMap(["Research Bonus", "Discovery Bonus", "Artifact Bonus", "Ancient Knowledge", "Rare Research", "Technology Chance"], random, 0, 100),
     economy: metricMap(["Trade Value", "Mining Value", "Agriculture Value", "Industry Value", "Tourism Value", "Collectible Value"], random, 0, 100),
     event_pool: eventPool,
-    story: `${name} is ${articleFor(rarity.name)} ${rarity.name.toLowerCase()} ${worldIdentity.toLowerCase()} shaped by ${primaryBiome.toLowerCase()} regions and ${trait.toLowerCase()}. ${civilizationFragment} left traces near ${ruins.toLowerCase()} sites, where ${artifact.toLowerCase()} and ${resource.toLowerCase()} continue to draw explorers despite ${hazards.slice(0, 2).join(" and ").toLowerCase() || "unknown hazards"}${anomalies.length ? `, alongside anomalies like ${anomalies.slice(0, 2).join(" and ").toLowerCase()}` : ""}.`,
+    story: `${name} is ${articleFor(rarity.name)} ${rarity.name.toLowerCase()} ${worldIdentity.toLowerCase()} in the ${planetClass.toLowerCase()} biome, shaped by ${planetSubclass.toLowerCase()} regions and ${trait.toLowerCase()}. ${civilizationFragment} left traces near ${ruins.toLowerCase()} sites, where ${artifact.toLowerCase()} and ${resource.toLowerCase()} continue to draw explorers despite ${hazards.slice(0, 2).join(" and ").toLowerCase() || "unknown hazards"}${anomalies.length ? `, alongside anomalies like ${anomalies.slice(0, 2).join(" and ").toLowerCase()}` : ""}.`,
     colonized: false,
     terraform_level: 0,
     discovery_points: numericRange(random, rarity.discoveryPoints[0], rarity.discoveryPoints[1]),

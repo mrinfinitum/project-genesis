@@ -43,6 +43,7 @@ function hasAny(text: string, terms: string[]) {
 function placeholderStyle(row: GeneratedPlanet): CSSProperties {
   const identityText = [
     row.planet_class,
+    row.planet_subclass,
     row.primary_biome,
     row.climate,
     row.atmosphere
@@ -144,6 +145,22 @@ function planetSearchText(row: GeneratedPlanet) {
 
 function planetWorldLabel(row: GeneratedPlanet) {
   return row.planet_subclass ? row.planet_class || "Planet" : row.primary_biome || row.planet_class || "Planet";
+}
+
+function planetBiomeLabel(row: GeneratedPlanet) {
+  return row.planet_class || row.primary_biome || "Planet";
+}
+
+function planetSubclassLabel(row: GeneratedPlanet) {
+  if (row.planet_subclass) {
+    return row.planet_subclass;
+  }
+
+  if (row.primary_biome && row.primary_biome !== row.planet_class) {
+    return row.primary_biome;
+  }
+
+  return "General";
 }
 
 function detailPill(label: string, value: string | number | boolean) {
@@ -598,8 +615,8 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
               </div>
               <div className="space-y-3 p-3">
                 <div className="grid grid-cols-3 gap-2">
-                  {compactPill("Subclass", row.planet_subclass || row.primary_biome)}
-                  {compactPill("Biome", row.primary_biome)}
+                  {compactPill("Biome", planetBiomeLabel(row))}
+                  {compactPill("Subclass", planetSubclassLabel(row))}
                   {compactPill("Gravity", row.gravity)}
                 </div>
                 <p className="line-clamp-2 text-xs leading-5 text-slate-300">{row.story}</p>
@@ -675,9 +692,8 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                   {detailPill("Distance", selectedPlanet.distance_from_star)}
                   {detailPill("Orbit Speed", selectedPlanet.orbit_speed)}
                   {detailPill("Rarity", normalizePlanetRarity(selectedPlanet.rarity).name)}
-                  {detailPill("Class", selectedPlanet.planet_class)}
-                  {detailPill("Subclass", selectedPlanet.planet_subclass || selectedPlanet.primary_biome)}
-                  {detailPill("Biome", selectedPlanet.primary_biome)}
+                  {detailPill("Biome", planetBiomeLabel(selectedPlanet))}
+                  {detailPill("Subclass", planetSubclassLabel(selectedPlanet))}
                   {detailPill("Climate", selectedPlanet.climate)}
                   {detailPill("Atmosphere", selectedPlanet.atmosphere)}
                   {detailPill("Temperature", selectedPlanet.temperature)}

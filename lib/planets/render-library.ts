@@ -61,8 +61,19 @@ function sameVisualFamily(left: string | null | undefined, right: string | null 
   return Boolean(leftFamily && rightFamily && leftFamily === rightFamily);
 }
 
+function planetRenderSubtype(planet: GeneratedPlanet) {
+  const subclass = normalize(planet.planet_subclass);
+  if (subclass) {
+    return subclass;
+  }
+
+  const primaryBiome = normalize(planet.primary_biome);
+  const planetClass = normalize(planet.planet_class);
+  return primaryBiome && primaryBiome !== planetClass ? primaryBiome : planetClass;
+}
+
 function hasCompatibleVisualFamily(planet: GeneratedPlanet, render: PlanetRenderLibraryRecord) {
-  const planetFamily = visualFamily(planet.primary_biome);
+  const planetFamily = visualFamily(planetRenderSubtype(planet));
   const renderFamily = visualFamily(render.biome);
 
   if (!planetFamily) {
@@ -96,7 +107,7 @@ function planetWantsRings(planet: GeneratedPlanet) {
 
 function waterLevelFor(planet: GeneratedPlanet) {
   const parsed = Number.parseFloat(planet.water_coverage);
-  const text = normalize(`${planet.planet_class} ${planet.primary_biome}`);
+  const text = normalize(`${planet.planet_class} ${planetRenderSubtype(planet)}`);
 
   if (text.includes("ocean") || text.includes("water") || text.includes("coral")) {
     return "high";
@@ -142,9 +153,10 @@ function scoreRender(planet: GeneratedPlanet, render: PlanetRenderLibraryRecord)
     reasons.push("class");
   }
 
-  if (includesToken(planet.primary_biome, render.biome) || sameVisualFamily(planet.primary_biome, render.biome)) {
+  const renderSubtype = planetRenderSubtype(planet);
+  if (includesToken(renderSubtype, render.biome) || sameVisualFamily(renderSubtype, render.biome)) {
     score += 42;
-    reasons.push("biome");
+    reasons.push("subclass");
   }
 
   if (includesToken(planet.atmosphere, render.atmosphere)) {
@@ -179,6 +191,7 @@ function scoreRender(planet: GeneratedPlanet, render: PlanetRenderLibraryRecord)
     planet.planet_class,
     planet.planet_subclass,
     planet.primary_biome,
+    planetRenderSubtype(planet),
     planet.climate,
     planet.atmosphere,
     ...asList(planet.resources),
