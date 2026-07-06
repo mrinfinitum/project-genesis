@@ -4,6 +4,11 @@ export type PlanetClassDefinition = {
   spawnTier: "Very Common" | "Common" | "Uncommon" | "Rare" | "Extremely Rare";
   spawnWeight: number;
   colonizationDifficulty: number;
+  landable: boolean;
+  colonizable: boolean;
+  usesSurfaceGeneration: boolean;
+  usesOrbitalGameplay: boolean;
+  defaultInteractionType: string;
   subclasses: string[];
   biomes: string[];
 };
@@ -14,6 +19,11 @@ export const PLANET_CLASS_MODEL: PlanetClassDefinition[] = [
     spawnTier: "Very Common",
     spawnWeight: 22,
     colonizationDifficulty: 1,
+    landable: true,
+    colonizable: true,
+    usesSurfaceGeneration: true,
+    usesOrbitalGameplay: false,
+    defaultInteractionType: "Surface Exploration",
     subclasses: ["Earthlike", "Continental", "Highlands", "Supercontinent", "Riverlands", "Badlands", "Savanna", "Alpine"],
     biomes: ["Earthlike", "Continental", "Highlands", "Supercontinent", "Riverlands", "Badlands", "Savanna", "Alpine"]
   },
@@ -22,6 +32,11 @@ export const PLANET_CLASS_MODEL: PlanetClassDefinition[] = [
     spawnTier: "Very Common",
     spawnWeight: 11,
     colonizationDifficulty: 2,
+    landable: true,
+    colonizable: true,
+    usesSurfaceGeneration: true,
+    usesOrbitalGameplay: false,
+    defaultInteractionType: "Surface Exploration",
     subclasses: ["Deep Ocean", "Island World", "Archipelago", "Storm Ocean", "Coral World", "Frozen Ocean", "Kelp Ocean", "Abyssal Ocean"],
     biomes: ["Deep Ocean", "Island World", "Archipelago", "Storm Ocean", "Coral World", "Frozen Ocean", "Kelp Ocean", "Abyssal Ocean"]
   },
@@ -30,6 +45,11 @@ export const PLANET_CLASS_MODEL: PlanetClassDefinition[] = [
     spawnTier: "Very Common",
     spawnWeight: 12,
     colonizationDifficulty: 2,
+    landable: true,
+    colonizable: true,
+    usesSurfaceGeneration: true,
+    usesOrbitalGameplay: false,
+    defaultInteractionType: "Surface Exploration",
     subclasses: ["Dunes", "Canyon", "Salt Flats", "Rock Desert", "Mesa", "Dust Basin", "Black Desert", "Oasis"],
     biomes: ["Dunes", "Canyon", "Salt Flats", "Rock Desert", "Mesa", "Dust Basin", "Black Desert", "Oasis"]
   },
@@ -38,6 +58,11 @@ export const PLANET_CLASS_MODEL: PlanetClassDefinition[] = [
     spawnTier: "Very Common",
     spawnWeight: 11,
     colonizationDifficulty: 3,
+    landable: true,
+    colonizable: true,
+    usesSurfaceGeneration: true,
+    usesOrbitalGameplay: false,
+    defaultInteractionType: "Surface Exploration",
     subclasses: ["Glacial", "Frozen Ocean", "Snow World", "Cryovolcanic", "Blue Ice", "Ice Canyons", "Polar", "Fractured Ice"],
     biomes: ["Glacial", "Frozen Ocean", "Snow World", "Cryovolcanic", "Blue Ice", "Ice Canyons", "Polar", "Fractured Ice"]
   },
@@ -46,6 +71,11 @@ export const PLANET_CLASS_MODEL: PlanetClassDefinition[] = [
     spawnTier: "Common",
     spawnWeight: 7,
     colonizationDifficulty: 4,
+    landable: true,
+    colonizable: true,
+    usesSurfaceGeneration: true,
+    usesOrbitalGameplay: false,
+    defaultInteractionType: "Surface Exploration",
     subclasses: ["Volcanic", "Molten Core", "Ash World", "Basalt World", "Obsidian", "Firestorm", "Sulfur Basin", "Magma Ocean"],
     biomes: ["Volcanic", "Molten Core", "Ash World", "Basalt World", "Obsidian", "Firestorm", "Sulfur Basin", "Magma Ocean"]
   },
@@ -54,6 +84,11 @@ export const PLANET_CLASS_MODEL: PlanetClassDefinition[] = [
     spawnTier: "Very Common",
     spawnWeight: 10,
     colonizationDifficulty: 5,
+    landable: false,
+    colonizable: false,
+    usesSurfaceGeneration: false,
+    usesOrbitalGameplay: true,
+    defaultInteractionType: "Orbital Harvesting",
     subclasses: ["Banded", "Storm Giant", "Ice Giant", "Metallic Giant", "Amber Giant", "Emerald Giant", "Striped Giant", "Cyclone Giant"],
     biomes: ["Banded", "Storm Giant", "Ice Giant", "Metallic Giant", "Amber Giant", "Emerald Giant", "Striped Giant", "Cyclone Giant"]
   },
@@ -62,6 +97,11 @@ export const PLANET_CLASS_MODEL: PlanetClassDefinition[] = [
     spawnTier: "Common",
     spawnWeight: 5,
     colonizationDifficulty: 3,
+    landable: true,
+    colonizable: true,
+    usesSurfaceGeneration: true,
+    usesOrbitalGameplay: false,
+    defaultInteractionType: "Surface Exploration",
     subclasses: ["Crystal Forest", "Crystal Desert", "Crystal Caverns", "Prismatic", "Quartz Peaks", "Amethyst", "Emerald Crystal", "Sapphire Crystal"],
     biomes: ["Crystal Forest", "Crystal Desert", "Crystal Caverns", "Prismatic", "Quartz Peaks", "Amethyst", "Emerald Crystal", "Sapphire Crystal"]
   },
@@ -70,6 +110,11 @@ export const PLANET_CLASS_MODEL: PlanetClassDefinition[] = [
     spawnTier: "Common",
     spawnWeight: 6,
     colonizationDifficulty: 4,
+    landable: true,
+    colonizable: true,
+    usesSurfaceGeneration: true,
+    usesOrbitalGameplay: false,
+    defaultInteractionType: "Surface Exploration",
     subclasses: ["Acid World", "Sulfur World", "Poison Swamp", "Corrosive", "Green Atmosphere", "Purple Atmosphere", "Chemical Seas", "Industrial Wasteland"],
     biomes: ["Acid World", "Sulfur World", "Poison Swamp", "Corrosive", "Green Atmosphere", "Purple Atmosphere", "Chemical Seas", "Industrial Wasteland"]
   },
@@ -78,6 +123,11 @@ export const PLANET_CLASS_MODEL: PlanetClassDefinition[] = [
     spawnTier: "Uncommon",
     spawnWeight: 4,
     colonizationDifficulty: 4,
+    landable: true,
+    colonizable: true,
+    usesSurfaceGeneration: true,
+    usesOrbitalGameplay: false,
+    defaultInteractionType: "Surface Exploration",
     subclasses: ["Machine World", "Cyber Planet", "Forge World", "Arcology World", "AI Core", "Nanotech World", "Data Sphere", "Defense World"],
     biomes: ["Machine World", "Cyber Planet", "Forge World", "Arcology World", "AI Core", "Nanotech World", "Data Sphere", "Defense World"]
   },
@@ -87,6 +137,11 @@ export const PLANET_CLASS_MODEL: PlanetClassDefinition[] = [
     spawnTier: "Extremely Rare",
     spawnWeight: 0.15,
     colonizationDifficulty: 5,
+    landable: true,
+    colonizable: false,
+    usesSurfaceGeneration: true,
+    usesOrbitalGameplay: false,
+    defaultInteractionType: "Anomaly Survey",
     subclasses: ["Dark Void", "Quantum Rift", "Entropy World", "Singularity World", "Shadow World", "Event Horizon", "Negative Space", "Void Storms"],
     biomes: ["Dark Void", "Quantum Rift", "Entropy World", "Singularity World", "Shadow World", "Event Horizon", "Negative Space", "Void Storms"]
   },
@@ -96,6 +151,11 @@ export const PLANET_CLASS_MODEL: PlanetClassDefinition[] = [
     spawnTier: "Rare",
     spawnWeight: 2,
     colonizationDifficulty: 5,
+    landable: true,
+    colonizable: true,
+    usesSurfaceGeneration: true,
+    usesOrbitalGameplay: false,
+    defaultInteractionType: "Bio Survey",
     subclasses: ["Living Forest", "Living Ocean", "Organic World", "Symbiotic World", "World Tree", "Living Coral", "Breathing World", "Root Network"],
     biomes: ["Living Forest", "Living Ocean", "Organic World", "Symbiotic World", "World Tree", "Living Coral", "Breathing World", "Root Network"]
   },
@@ -105,6 +165,11 @@ export const PLANET_CLASS_MODEL: PlanetClassDefinition[] = [
     spawnTier: "Rare",
     spawnWeight: 1.5,
     colonizationDifficulty: 5,
+    landable: true,
+    colonizable: true,
+    usesSurfaceGeneration: true,
+    usesOrbitalGameplay: false,
+    defaultInteractionType: "Bio Survey",
     subclasses: ["Mutated", "Bioluminescent", "Hive World", "Genetic World", "Spore World", "Fungal World", "Parasite World", "Cellular"],
     biomes: ["Mutated", "Bioluminescent", "Hive World", "Genetic World", "Spore World", "Fungal World", "Parasite World", "Cellular"]
   },
@@ -114,6 +179,11 @@ export const PLANET_CLASS_MODEL: PlanetClassDefinition[] = [
     spawnTier: "Uncommon",
     spawnWeight: 3,
     colonizationDifficulty: 4,
+    landable: true,
+    colonizable: true,
+    usesSurfaceGeneration: true,
+    usesOrbitalGameplay: false,
+    defaultInteractionType: "Archaeological Survey",
     subclasses: ["Temple World", "Lost Civilization", "Ruined Empire", "Archaeological", "Ancient Battlefield", "Collapsed Arcology", "Relic World", "Forgotten Capital"],
     biomes: ["Temple World", "Lost Civilization", "Ruined Empire", "Archaeological", "Ancient Battlefield", "Collapsed Arcology", "Relic World", "Forgotten Capital"]
   },
@@ -123,6 +193,11 @@ export const PLANET_CLASS_MODEL: PlanetClassDefinition[] = [
     spawnTier: "Rare",
     spawnWeight: 1,
     colonizationDifficulty: 5,
+    landable: true,
+    colonizable: false,
+    usesSurfaceGeneration: true,
+    usesOrbitalGameplay: false,
+    defaultInteractionType: "Energy Survey",
     subclasses: ["Plasma World", "Electromagnetic", "Storm World", "Radiant", "Aurora", "Ion World", "Charged", "Quantum Storm"],
     biomes: ["Plasma World", "Electromagnetic", "Storm World", "Radiant", "Aurora", "Ion World", "Charged", "Quantum Storm"]
   },
@@ -132,6 +207,11 @@ export const PLANET_CLASS_MODEL: PlanetClassDefinition[] = [
     spawnTier: "Extremely Rare",
     spawnWeight: 0.35,
     colonizationDifficulty: 5,
+    landable: true,
+    colonizable: true,
+    usesSurfaceGeneration: true,
+    usesOrbitalGameplay: false,
+    defaultInteractionType: "Surface Exploration",
     subclasses: ["Proto World", "Young Planet", "Ancient Core", "Unformed", "Cooling Crust", "Heavy Bombardment", "Proto Ocean", "Molten Crust"],
     biomes: ["Proto World", "Young Planet", "Ancient Core", "Unformed", "Cooling Crust", "Heavy Bombardment", "Proto Ocean", "Molten Crust"]
   },
@@ -141,6 +221,11 @@ export const PLANET_CLASS_MODEL: PlanetClassDefinition[] = [
     spawnTier: "Uncommon",
     spawnWeight: 4,
     colonizationDifficulty: 3,
+    landable: true,
+    colonizable: false,
+    usesSurfaceGeneration: true,
+    usesOrbitalGameplay: false,
+    defaultInteractionType: "Surface Survey",
     subclasses: ["Barren", "Dust Planet", "Impact World", "Lifeless", "Airless", "Grey World", "Broken World", "Crater Fields"],
     biomes: ["Barren", "Dust Planet", "Impact World", "Lifeless", "Airless", "Grey World", "Broken World", "Crater Fields"]
   }

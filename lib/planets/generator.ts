@@ -17,8 +17,92 @@ type GeneratePlanetOptions = {
   resourceProfiles?: PlanetResourceProfile[];
 };
 
+type GasGiantResourceProfile = {
+  guaranteed: string[];
+  common: string[];
+  rare: string[];
+  exotic: string[];
+};
+
 const colorWords = ["Cyan", "Amber", "Violet", "Emerald", "Silver", "Crimson", "Indigo", "Pearl", "Obsidian", "Azure"];
 const lightWords = ["Low", "Soft", "Radiant", "Harsh", "Diffuse", "Prismatic", "Pale", "Neon"];
+const gasGiantHazards = [
+  "Extreme Winds",
+  "High Pressure",
+  "Lightning Storms",
+  "Radiation Belts",
+  "Magnetic Storms",
+  "Gravity Stress",
+  "Storm Cells",
+  "Atmospheric Turbulence"
+];
+const gasGiantOrbitalStructures = [
+  "Orbital Harvester",
+  "Atmospheric Collector",
+  "Gas Refinery",
+  "Fusion Fuel Plant",
+  "Storm Research Station",
+  "Orbital Depot",
+  "Floating Platform",
+  "Skyhook Platform"
+];
+const gasGiantRequiredTechnology = [
+  "Atmospheric Surveying",
+  "Orbital Platform Engineering",
+  "Gas Refining",
+  "Fusion Fuel Processing"
+];
+const gasGiantTransportOptions = ["Orbital Depot", "Fuel Tanker Route", "Cargo Shuttle", "Skyhook Transfer"];
+const gasGiantResources: Record<string, GasGiantResourceProfile> = {
+  Banded: {
+    guaranteed: ["Hydrogen", "Helium"],
+    common: ["Methane", "Ammonia"],
+    rare: ["Helium-3", "Deuterium"],
+    exotic: ["Exotic Gas"]
+  },
+  "Storm Giant": {
+    guaranteed: ["Hydrogen", "Helium"],
+    common: ["Storm Plasma", "Methane"],
+    rare: ["Helium-3", "Deuterium", "Ion Gas"],
+    exotic: ["Storm Core"]
+  },
+  "Ice Giant": {
+    guaranteed: ["Hydrogen", "Methane"],
+    common: ["Ammonia", "Helium", "Nitrogen Ice"],
+    rare: ["Helium-3", "Deuterium"],
+    exotic: ["Exotic Ice", "Quantum Gas Trace"]
+  },
+  "Metallic Giant": {
+    guaranteed: ["Hydrogen", "Metallic Hydrogen"],
+    common: ["Helium", "Ammonia"],
+    rare: ["Helium-3", "Deuterium"],
+    exotic: ["Quantum Gas", "Gravitonium Trace"]
+  },
+  "Amber Giant": {
+    guaranteed: ["Hydrogen", "Helium"],
+    common: ["Hydrocarbons", "Methane"],
+    rare: ["Helium-3", "Deuterium"],
+    exotic: ["Exotic Gas"]
+  },
+  "Emerald Giant": {
+    guaranteed: ["Hydrogen", "Methane"],
+    common: ["Ammonia", "Alien Gas"],
+    rare: ["Helium-3", "Deuterium"],
+    exotic: ["Exotic Gas", "Bio Gas Trace"]
+  },
+  "Striped Giant": {
+    guaranteed: ["Hydrogen", "Helium"],
+    common: ["Ammonia", "Methane"],
+    rare: ["Helium-3", "Deuterium"],
+    exotic: ["Storm Plasma"]
+  },
+  "Cyclone Giant": {
+    guaranteed: ["Hydrogen", "Helium"],
+    common: ["Storm Plasma", "Methane"],
+    rare: ["Helium-3", "Deuterium"],
+    exotic: ["Storm Core", "Exotic Gas"]
+  }
+};
 
 function slug(value: string) {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
@@ -166,6 +250,22 @@ function pickProfileResources(
   return selected.length ? selected : fallbackResources;
 }
 
+function pickGasGiantResources(subclass: string, rarityName: string, random: RandomSource, min: number, max: number) {
+  const profile = gasGiantResources[subclass] ?? gasGiantResources.Banded;
+  const rank = rarityRank(rarityName);
+  const target = Math.max(min, Math.min(max, min + Math.floor(random() * (max - min + 1))));
+  const selected = [...profile.guaranteed];
+  const candidates = [
+    ...profile.common,
+    ...(rank >= 3 ? profile.rare : []),
+    ...(rank >= 5 ? profile.exotic : []),
+    ...(rank >= 7 ? profile.exotic : [])
+  ];
+
+  fillResourcePool(selected, candidates, random, target);
+  return selected.slice(0, target);
+}
+
 function resourceDensityScore(density: string, random: RandomSource) {
   const scores: Record<string, number> = {
     Sparse: 25,
@@ -265,6 +365,7 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
     (forcedPrimaryBiome ? findPlanetClassByBiome(forcedPrimaryBiome) ?? findPlanetClassByName(forcedPrimaryBiome) : null);
   const planetClassDefinition = forcedClass ?? rollPlanetClass(random) ?? PLANET_CLASS_MODEL[0];
   const planetClass = planetClassDefinition.name;
+  const isGasGiant = planetClass === "Gas Giant";
   const planetSubclass = forcedPlanetSubclass && planetClassDefinition.subclasses.some((candidate) => candidate.toLowerCase() === forcedPlanetSubclass.toLowerCase())
     ? forcedPlanetSubclass
     : pick(planetClassDefinition.subclasses, random, planetClass);
@@ -279,10 +380,12 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
   const traits = pickMany(rules, "Trait", random, rarity.traitCount[0], rarity.traitCount[1]);
   const anomalies = pickManyValues(PLANET_ANOMALIES, random, anomalyRange[0], anomalyRange[1]);
   const fallbackResources = pickMany(rules, "Resource", random, rarity.resourceCount[0], rarity.resourceCount[1]);
-  const resources = resourceProfile
+  const resources = isGasGiant
+    ? pickGasGiantResources(planetSubclass, rarity.name, random, rarity.resourceCount[0], rarity.resourceCount[1])
+    : resourceProfile
     ? pickProfileResources(resourceProfile, rarity.name, random, rarity.resourceCount[0], rarity.resourceCount[1], fallbackResources)
     : fallbackResources;
-  const hazards = pickMany(rules, "Hazard", random, 2, 6);
+  const hazards = isGasGiant ? pickManyValues(gasGiantHazards, random, 3, 6) : pickMany(rules, "Hazard", random, 2, 6);
   const collectiblePools = pickMany(rules, "Collectible Pool", random, rarity.collectibleCount[0], rarity.collectibleCount[1]);
   const eventPool = pickMany(rules, "Event Pool", random, 2, 5);
   const name = planetName(seed, random, planetClass);
@@ -291,9 +394,18 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
   const trait = traits[0] ?? "Terraformable";
   const miningDifficulty = resourceProfile?.mining_difficulty ?? numericRange(random, 1, 10);
   const densityScore = resourceProfile ? resourceDensityScore(resourceProfile.resource_density, random) : numericRange(random, 0, 100);
-  const orbitalOnly = resourceProfile?.colonizable.toLowerCase().includes("orbital") ?? false;
+  const orbitalOnly = isGasGiant || (resourceProfile?.colonizable.toLowerCase().includes("orbital") ?? false);
   const civilizationFragment = ancientCivilization === "None" ? "unknown explorers" : ancientCivilization.toLowerCase();
   const worldIdentity = planetSubclass.toLowerCase().includes("world") ? planetSubclass : `${planetSubclass} ${planetClass}`;
+  const orbitalSlotCount = isGasGiant ? numericRange(random, 3, 8) : 0;
+  const gasGiantHazardLevel = isGasGiant ? numericRange(random, 45, 100) : 0;
+  const atmosphericHarvestRate = isGasGiant ? numericRange(random, 20, 120) + rarityRank(rarity.name) * 12 : 0;
+  const platformSlots = isGasGiant ? pickManyValues(gasGiantOrbitalStructures, random, 0, Math.min(2, orbitalSlotCount)) : [];
+  const requiredTechnology = isGasGiant ? pickManyValues(gasGiantRequiredTechnology, random, 2, 4) : [];
+  const transportOptions = isGasGiant ? pickManyValues(gasGiantTransportOptions, random, 2, 4) : [];
+  const story = isGasGiant
+    ? `${name} is ${articleFor(rarity.name)} ${rarity.name.toLowerCase()} orbital resource world: a non-landable ${planetSubclass.toLowerCase()} gas giant surveyed from orbit for ${resources.slice(0, 3).join(", ").toLowerCase()}. Its platform slots support atmospheric harvesters, fuel refining, and transport logistics, but crews must manage ${hazards.slice(0, 2).join(" and ").toLowerCase()} before sustained extraction can begin.`
+    : `${name} is ${articleFor(rarity.name)} ${rarity.name.toLowerCase()} ${worldIdentity.toLowerCase()} in the ${planetClass.toLowerCase()} biome, shaped by ${planetSubclass.toLowerCase()} regions and ${trait.toLowerCase()}. ${civilizationFragment} left traces near ${ruins.toLowerCase()} sites, where ${artifact.toLowerCase()} and ${resource.toLowerCase()} continue to draw explorers despite ${hazards.slice(0, 2).join(" and ").toLowerCase() || "unknown hazards"}${anomalies.length ? `, alongside anomalies like ${anomalies.slice(0, 2).join(" and ").toLowerCase()}` : ""}.`;
 
   return {
     id: `generated-planet-${slug(name)}-${hashSeed(seed).toString(16)}`,
@@ -329,9 +441,20 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
     visual_theme: visualTheme(random, planetSubclass, planetClass),
     weather: pickMany(rules, "Weather", random, 1, 4),
     colonization: {
-      Difficulty: colonizationDifficultyScore(planetClassDefinition.colonizationDifficulty, random),
-      Colonizable: resourceProfile?.colonizable ?? (orbitalOnly ? "Orbital Only" : "Yes"),
+      Difficulty: isGasGiant ? gasGiantHazardLevel : colonizationDifficultyScore(planetClassDefinition.colonizationDifficulty, random),
+      Colonizable: planetClassDefinition.colonizable ? resourceProfile?.colonizable ?? "Yes" : "No",
+      Landable: planetClassDefinition.landable ? "Yes" : "No",
+      "Surface Exploration": planetClassDefinition.usesSurfaceGeneration ? "Yes" : "No",
+      "Terrain Generation": planetClassDefinition.usesSurfaceGeneration ? "Yes" : "No",
+      "Interaction Type": planetClassDefinition.defaultInteractionType,
       "Mining Difficulty": miningDifficulty,
+      ...(orbitalOnly
+        ? {
+            "Orbital Platform Slots": orbitalSlotCount,
+            "Atmospheric Harvest Rate": atmosphericHarvestRate,
+            "Gas Giant Hazard Level": gasGiantHazardLevel
+          }
+        : {}),
       ...metricMap(["Population Capacity", "Construction Modifier", "Food Modifier", "Power Modifier", "Expansion Modifier", "Terraform Cost"], random, 1, 100)
     },
     science: metricMap(["Research Bonus", "Discovery Bonus", "Artifact Bonus", "Ancient Knowledge", "Rare Research", "Technology Chance"], random, 0, 100),
@@ -341,10 +464,28 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
       "Resource Density": resourceProfile?.resource_density ?? "Unknown",
       "Extraction Difficulty": miningDifficulty,
       "Extraction Yield": densityScore,
-      "Discovery Tier": resourceProfile?.discovery_tier ?? ""
+      "Discovery Tier": resourceProfile?.discovery_tier ?? "",
+      ...(isGasGiant
+        ? {
+            "Fuel Economy Value": numericRange(random, 55, 100),
+            "Fusion Feedstock Value": numericRange(random, 65, 100),
+            "Orbital Trade Value": numericRange(random, 40, 100)
+          }
+        : {})
     },
     event_pool: eventPool,
-    story: `${name} is ${articleFor(rarity.name)} ${rarity.name.toLowerCase()} ${worldIdentity.toLowerCase()} in the ${planetClass.toLowerCase()} biome, shaped by ${planetSubclass.toLowerCase()} regions and ${trait.toLowerCase()}. ${civilizationFragment} left traces near ${ruins.toLowerCase()} sites, where ${artifact.toLowerCase()} and ${resource.toLowerCase()} continue to draw explorers despite ${hazards.slice(0, 2).join(" and ").toLowerCase() || "unknown hazards"}${anomalies.length ? `, alongside anomalies like ${anomalies.slice(0, 2).join(" and ").toLowerCase()}` : ""}.`,
+    story,
+    colonizable: planetClassDefinition.colonizable,
+    landable: planetClassDefinition.landable,
+    surface_exploration: planetClassDefinition.usesSurfaceGeneration,
+    terrain_generation: planetClassDefinition.usesSurfaceGeneration,
+    uses_orbital_gameplay: planetClassDefinition.usesOrbitalGameplay,
+    orbital_slot_count: orbitalSlotCount,
+    orbital_platforms_built: platformSlots,
+    atmospheric_harvest_rate: atmosphericHarvestRate,
+    gas_giant_hazard_level: gasGiantHazardLevel,
+    required_technology: requiredTechnology,
+    resource_transport_options: transportOptions,
     colonized: false,
     terraform_level: 0,
     discovery_points: numericRange(random, rarity.discoveryPoints[0], rarity.discoveryPoints[1]),

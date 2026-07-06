@@ -307,6 +307,17 @@ export type GeneratedPlanet = {
   economy: Record<string, string | number>;
   event_pool: string[];
   story: string;
+  colonizable: boolean;
+  landable: boolean;
+  surface_exploration: boolean;
+  terrain_generation: boolean;
+  uses_orbital_gameplay: boolean;
+  orbital_slot_count: number;
+  orbital_platforms_built: string[];
+  atmospheric_harvest_rate: number;
+  gas_giant_hazard_level: number;
+  required_technology: string[];
+  resource_transport_options: string[];
   colonized: boolean;
   terraform_level: number;
   discovery_points: number;
