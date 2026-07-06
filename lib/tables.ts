@@ -219,6 +219,31 @@ export const tableConfigs: Record<TableName, TableConfig> = {
       { key: "notes", label: "Notes", type: "textarea" }
     ]
   },
+  planet_resource_profiles: {
+    table: "planet_resource_profiles",
+    title: "Planet Resource Profiles",
+    description: "Class/subclass resource pools, discovery tiers, mining difficulty, density, and rarity bias for generated planets.",
+    typeKey: "planet_class",
+    searchKeys: ["planet_class", "subclass", "discovery_tier", "resource_density", "planet_rarity_bias", "guaranteed_resources", "common_resources", "rare_resources", "exotic_resources", "scientific_notes"],
+    columns: ["planet_class", "subclass", "discovery_tier", "colonizable", "mining_difficulty", "resource_density", "planet_rarity_bias"],
+    fields: [
+      { key: "id", label: "ID", required: true },
+      { key: "planet_class", label: "Planet Class", required: true },
+      { key: "subclass", label: "Subclass", required: true },
+      { key: "discovery_tier", label: "Discovery Tier" },
+      { key: "colonizable", label: "Colonizable" },
+      { key: "mining_difficulty", label: "Mining Difficulty", type: "number" },
+      { key: "resource_density", label: "Resource Density" },
+      { key: "planet_rarity_bias", label: "Planet Rarity Bias" },
+      { key: "guaranteed_resources", label: "Guaranteed Resources", type: "array" },
+      { key: "common_resources", label: "Common Resources", type: "array" },
+      { key: "rare_resources", label: "Rare Resources", type: "array" },
+      { key: "exotic_resources", label: "Exotic Resources", type: "array" },
+      { key: "scientific_notes", label: "Scientific / Design Notes", type: "textarea" },
+      { key: "created_at", label: "Created At" },
+      { key: "updated_at", label: "Updated At" }
+    ]
+  },
   generated_planets: {
     table: "generated_planets",
     title: "Generated Planets",

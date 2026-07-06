@@ -4,6 +4,7 @@ import type {
   ChangelogEntry,
   District,
   GameData,
+  PlanetResourceProfile,
   PlanetVariable,
   ReleaseNote,
   ResearchBranch,
@@ -12,6 +13,7 @@ import type {
   UnlockMatrixRow,
   Wonder
 } from "@/types/schema";
+import { handoffPlanetResourceProfiles } from "@/data/handoff";
 import { planetSystemVariables } from "@/data/handoff/planet-system";
 
 export const civilizations = [
@@ -256,6 +258,7 @@ export const changelog: ChangelogEntry[] = [
 ];
 
 export const planets: PlanetVariable[] = planetSystemVariables;
+export const planetResourceProfiles: PlanetResourceProfile[] = handoffPlanetResourceProfiles;
 
 export const seedData: GameData = {
   research_branches: researchBranches,
@@ -272,6 +275,7 @@ export const seedData: GameData = {
   assets,
   conceptual_art: [],
   planets,
+  planet_resource_profiles: planetResourceProfiles,
   generated_planets: [],
   planet_render_library: [],
   release_notes: releaseNotes,

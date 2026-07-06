@@ -149,6 +149,24 @@ export type PlanetVariable = {
   notes: string;
 };
 
+export type PlanetResourceProfile = {
+  id: string;
+  planet_class: string;
+  subclass: string;
+  discovery_tier: string;
+  colonizable: string;
+  mining_difficulty: number;
+  resource_density: string;
+  planet_rarity_bias: string;
+  guaranteed_resources: string[];
+  common_resources: string[];
+  rare_resources: string[];
+  exotic_resources: string[];
+  scientific_notes: string;
+  created_at: string;
+  updated_at: string;
+};
+
 export type GeneratedPlanet = {
   id: string;
   seed: string;
@@ -342,6 +360,7 @@ export type GameData = {
   assets: AssetRecord[];
   conceptual_art: ConceptualArtRecord[];
   planets: PlanetVariable[];
+  planet_resource_profiles: PlanetResourceProfile[];
   generated_planets: GeneratedPlanet[];
   planet_render_library: PlanetRenderLibraryRecord[];
   release_notes: ReleaseNote[];
@@ -357,6 +376,7 @@ export type TableName =
   | "assets"
   | "conceptual_art"
   | "planets"
+  | "planet_resource_profiles"
   | "generated_planets"
   | "planet_render_library"
   | "upgrades"

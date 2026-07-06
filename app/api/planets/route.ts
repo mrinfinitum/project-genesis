@@ -4,7 +4,7 @@ import { generatePlanet } from "@/lib/planets/generator";
 import { getRows, upsertRow } from "@/lib/data";
 import { imageVariantsFromRender, matchPlanetRender } from "@/lib/planets/render-library";
 import { hasLockedPlanetRender } from "@/lib/planets/render-lock";
-import type { GeneratedPlanet, PlanetRenderLibraryRecord, PlanetVariable } from "@/types/schema";
+import type { GeneratedPlanet, PlanetRenderLibraryRecord, PlanetResourceProfile, PlanetVariable } from "@/types/schema";
 
 export const runtime = "nodejs";
 
@@ -93,16 +93,19 @@ export async function POST(request: Request) {
       planetSubclass?: string;
       primaryBiome?: string;
     };
-    const [rules, existingRows, renderLibrary] = await Promise.all([
+    const [rules, resourceProfiles, existingRows, renderLibrary] = await Promise.all([
       getRows("planets"),
+      getRows("planet_resource_profiles"),
       getRows("generated_planets"),
       getRows("planet_render_library")
     ]);
     const ruleRows = rules.length ? rules : handoffData.planets;
+    const profileRows = resourceProfiles.length ? resourceProfiles : handoffData.planet_resource_profiles;
     const planet = generatePlanet(ruleRows as PlanetVariable[], existingRows.length, body.seed, {
       planetClass: body.planetClass,
       planetSubclass: body.planetSubclass,
-      primaryBiome: body.primaryBiome
+      primaryBiome: body.primaryBiome,
+      resourceProfiles: profileRows as PlanetResourceProfile[]
     });
     const existingPlanet = (existingRows as GeneratedPlanet[]).find((row) => row.id === planet.id);
 

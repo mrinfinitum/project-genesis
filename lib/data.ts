@@ -110,6 +110,7 @@ export async function getGameData(): Promise<GameData> {
       assets,
       conceptualArt,
       planets,
+      planetResourceProfiles,
       generatedPlanets,
       planetRenderLibrary
     ] = await Promise.all([
@@ -126,6 +127,7 @@ export async function getGameData(): Promise<GameData> {
       getFallbackRows("assets"),
       getFallbackRows("conceptual_art"),
       getFallbackRows("planets"),
+      getFallbackRows("planet_resource_profiles"),
       getFallbackRows("generated_planets"),
       getFallbackRows("planet_render_library")
     ]);
@@ -145,6 +147,7 @@ export async function getGameData(): Promise<GameData> {
       assets: assets as GameData["assets"],
       conceptual_art: conceptualArt as GameData["conceptual_art"],
       planets: planets as GameData["planets"],
+      planet_resource_profiles: planetResourceProfiles as GameData["planet_resource_profiles"],
       generated_planets: generatedPlanets as GameData["generated_planets"],
       planet_render_library: planetRenderLibrary as GameData["planet_render_library"]
     };
@@ -165,6 +168,7 @@ export async function getGameData(): Promise<GameData> {
     assets,
     conceptualArt,
     planets,
+    planetResourceProfiles,
     generatedPlanets,
     planetRenderLibrary,
     releaseNotes,
@@ -184,6 +188,7 @@ export async function getGameData(): Promise<GameData> {
     getRowsFromSupabaseOrFallback("assets"),
     getRowsFromSupabaseOrFallback("conceptual_art"),
     getRowsFromSupabaseOrFallback("planets"),
+    getRowsFromSupabaseOrFallback("planet_resource_profiles"),
     getRowsFromSupabaseOrFallback("generated_planets"),
     getRowsFromSupabaseOrFallback("planet_render_library"),
     getRowsFromSupabaseOrFallback("release_notes"),
@@ -205,6 +210,7 @@ export async function getGameData(): Promise<GameData> {
     assets: assets as GameData["assets"],
     conceptual_art: conceptualArt as GameData["conceptual_art"],
     planets: planets as GameData["planets"],
+    planet_resource_profiles: planetResourceProfiles as GameData["planet_resource_profiles"],
     generated_planets: generatedPlanets as GameData["generated_planets"],
     planet_render_library: planetRenderLibrary as GameData["planet_render_library"],
     release_notes: releaseNotes as GameData["release_notes"],

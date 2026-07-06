@@ -33,6 +33,7 @@ async function main() {
   await upsert("districts");
   await upsert("assets");
   await upsert("planets");
+  await upsert("planet_resource_profiles");
   await upsert("generated_planets");
   await upsert("buildings");
   await upsert("unlock_matrix");

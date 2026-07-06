@@ -7,6 +7,7 @@ import districtsRaw from "./json/Districts.json";
 import featureFlagsRaw from "./json/Feature_Flags.json";
 import gameConstantsRaw from "./json/Game_Constants.json";
 import planetGenerationRaw from "./json/Planet_Generation.json";
+import planetResourceProfilesRaw from "./json/Planet_Resource_Profiles.json";
 import planetTraitsRaw from "./json/Planet_Traits.json";
 import releaseNotesRaw from "./json/Release_Notes.json";
 import researchBranchesRaw from "./json/Research_Branches.json";
@@ -27,6 +28,7 @@ import type {
   GameConstant,
   GameData,
   GeneratedPlanet,
+  PlanetResourceProfile,
   PlanetVariable,
   ReleaseNote,
   ResearchBranch,
@@ -73,6 +75,10 @@ function list(value: unknown) {
     .split(/[;,]/)
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+function slug(value: string) {
+  return value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 
 function dedupePlanetVariables(rows: PlanetVariable[]) {
@@ -313,6 +319,29 @@ const handoffPlanetTraits: PlanetVariable[] = (planetTraitsRaw as RawRow[]).map(
 
 export const handoffPlanets: PlanetVariable[] = dedupePlanetVariables([...planetSystemVariables, ...handoffPlanetGeneration, ...handoffPlanetTraits]);
 
+export const handoffPlanetResourceProfiles: PlanetResourceProfile[] = (planetResourceProfilesRaw as RawRow[]).map((row) => {
+  const planetClass = text(row["Planet Class"]);
+  const subclass = text(row.Subclass);
+
+  return {
+    id: `planet-resource-${slug(planetClass)}-${slug(subclass)}`,
+    planet_class: planetClass,
+    subclass,
+    discovery_tier: text(row["Discovery Tier"]),
+    colonizable: text(row.Colonizable),
+    mining_difficulty: number(row["Mining Difficulty 1-10"]),
+    resource_density: text(row["Resource Density"]),
+    planet_rarity_bias: text(row["Planet Rarity Bias"]),
+    guaranteed_resources: list(row["Guaranteed Resources"]),
+    common_resources: list(row["Common Resources"]),
+    rare_resources: list(row["Rare Resources"]),
+    exotic_resources: list(row["Exotic Resources"]),
+    scientific_notes: text(row["Scientific / Design Notes"]),
+    created_at: "2026-07-06T00:00:00.000Z",
+    updated_at: "2026-07-06T00:00:00.000Z"
+  };
+});
+
 export const handoffReleaseNotes: ReleaseNote[] = (releaseNotesRaw as RawRow[]).map((row, index) => ({
   id: `release-note-${index + 1}`,
   version: text(row.Item) === "Version" ? text(row.Value) : "2.2 Sprint 2",
@@ -346,6 +375,7 @@ export const handoffData: GameData = {
   assets: handoffAssets,
   conceptual_art: handoffConceptualArt,
   planets: handoffPlanets,
+  planet_resource_profiles: handoffPlanetResourceProfiles,
   generated_planets: handoffGeneratedPlanets,
   planet_render_library: [],
   release_notes: handoffReleaseNotes,

@@ -1,4 +1,4 @@
-import type { GeneratedPlanet, PlanetVariable } from "@/types/schema";
+import type { GeneratedPlanet, PlanetResourceProfile, PlanetVariable } from "@/types/schema";
 import {
   findPlanetClassByBiome,
   findPlanetClassByName,
@@ -14,6 +14,7 @@ type GeneratePlanetOptions = {
   planetClass?: string;
   planetSubclass?: string;
   primaryBiome?: string;
+  resourceProfiles?: PlanetResourceProfile[];
 };
 
 const colorWords = ["Cyan", "Amber", "Violet", "Emerald", "Silver", "Crimson", "Indigo", "Pearl", "Obsidian", "Azure"];
@@ -21,6 +22,10 @@ const lightWords = ["Low", "Soft", "Radiant", "Harsh", "Diffuse", "Prismatic", "
 
 function slug(value: string) {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
+function key(value: string | null | undefined) {
+  return slug(value ?? "");
 }
 
 function hashSeed(seed: string) {
@@ -98,6 +103,85 @@ function pickManyValues(values: string[], random: RandomSource, min: number, max
   }
 
   return selected;
+}
+
+function rarityRank(rarityName: string) {
+  const ranks: Record<string, number> = {
+    Common: 1,
+    Uncommon: 2,
+    Rare: 3,
+    Epic: 4,
+    Legendary: 5,
+    Mythic: 6,
+    Relic: 7,
+    Cosmic: 8,
+    Genesis: 9
+  };
+
+  return ranks[rarityName] ?? 1;
+}
+
+function findResourceProfile(profiles: PlanetResourceProfile[], planetClass: string, planetSubclass: string) {
+  const classKey = key(planetClass);
+  const subclassKey = key(planetSubclass);
+
+  return profiles.find((profile) => key(profile.planet_class) === classKey && key(profile.subclass) === subclassKey) ??
+    profiles.find((profile) => key(profile.subclass) === subclassKey) ??
+    profiles.find((profile) => key(profile.planet_class) === classKey) ??
+    null;
+}
+
+function fillResourcePool(selected: string[], candidates: string[], random: RandomSource, target: number) {
+  const uniqueCandidates = [...new Set(candidates.filter(Boolean))].filter((resource) => !selected.includes(resource));
+
+  while (selected.length < target && uniqueCandidates.length) {
+    const index = Math.floor(random() * uniqueCandidates.length);
+    const [resource] = uniqueCandidates.splice(index, 1);
+    if (resource) {
+      selected.push(resource);
+    }
+  }
+}
+
+function pickProfileResources(
+  profile: PlanetResourceProfile,
+  rarityName: string,
+  random: RandomSource,
+  min: number,
+  max: number,
+  fallbackResources: string[]
+) {
+  const target = Math.max(min, Math.min(max, min + Math.floor(random() * (max - min + 1))));
+  const rank = rarityRank(rarityName);
+  const selected = [...new Set(profile.guaranteed_resources.filter(Boolean))].slice(0, target);
+  const candidates = [
+    ...profile.common_resources,
+    ...(rank >= 3 ? profile.rare_resources : []),
+    ...(rank >= 5 ? profile.exotic_resources : []),
+    ...(rank >= 7 ? profile.exotic_resources : []),
+    ...fallbackResources
+  ];
+
+  fillResourcePool(selected, candidates, random, target);
+  return selected.length ? selected : fallbackResources;
+}
+
+function resourceDensityScore(density: string, random: RandomSource) {
+  const scores: Record<string, number> = {
+    Sparse: 25,
+    Low: 32,
+    Moderate: 45,
+    Balanced: 55,
+    Abundant: 70,
+    Rich: 82,
+    "Very Rich": 95,
+    Atmospheric: 60,
+    Trace: 18,
+    Variable: 50,
+    Exotic: 90
+  };
+
+  return scores[density] ?? numericRange(random, 35, 75);
 }
 
 function numericRange(random: RandomSource, min: number, max: number) {
@@ -187,13 +271,17 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
   const primaryBiome = forcedPrimaryBiome && !findPlanetClassByName(forcedPrimaryBiome) && !findPlanetClassBySubclass(forcedPrimaryBiome)
     ? forcedPrimaryBiome
     : planetClass;
+  const resourceProfile = findResourceProfile(options.resourceProfiles ?? [], planetClass, planetSubclass);
   const anomalyRange = anomalyCountForRarity(rarity.name);
   const hasAncientCivilization = random() < rarity.ancientCivilizationChance;
   const ancientCivilization = hasAncientCivilization ? pickRuleExcluding(rules, "Ancient Civilization", random, "Ancient", ["None"]) : "None";
   const ruins = pickRule(rules, "Ruins", random, "None");
   const traits = pickMany(rules, "Trait", random, rarity.traitCount[0], rarity.traitCount[1]);
   const anomalies = pickManyValues(PLANET_ANOMALIES, random, anomalyRange[0], anomalyRange[1]);
-  const resources = pickMany(rules, "Resource", random, rarity.resourceCount[0], rarity.resourceCount[1]);
+  const fallbackResources = pickMany(rules, "Resource", random, rarity.resourceCount[0], rarity.resourceCount[1]);
+  const resources = resourceProfile
+    ? pickProfileResources(resourceProfile, rarity.name, random, rarity.resourceCount[0], rarity.resourceCount[1], fallbackResources)
+    : fallbackResources;
   const hazards = pickMany(rules, "Hazard", random, 2, 6);
   const collectiblePools = pickMany(rules, "Collectible Pool", random, rarity.collectibleCount[0], rarity.collectibleCount[1]);
   const eventPool = pickMany(rules, "Event Pool", random, 2, 5);
@@ -201,6 +289,9 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
   const artifact = collectiblePools[0] ?? "Planet Relic";
   const resource = resources[0] ?? "Stone";
   const trait = traits[0] ?? "Terraformable";
+  const miningDifficulty = resourceProfile?.mining_difficulty ?? numericRange(random, 1, 10);
+  const densityScore = resourceProfile ? resourceDensityScore(resourceProfile.resource_density, random) : numericRange(random, 0, 100);
+  const orbitalOnly = resourceProfile?.colonizable.toLowerCase().includes("orbital") ?? false;
   const civilizationFragment = ancientCivilization === "None" ? "unknown explorers" : ancientCivilization.toLowerCase();
   const worldIdentity = planetSubclass.toLowerCase().includes("world") ? planetSubclass : `${planetSubclass} ${planetClass}`;
 
@@ -239,10 +330,19 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
     weather: pickMany(rules, "Weather", random, 1, 4),
     colonization: {
       Difficulty: colonizationDifficultyScore(planetClassDefinition.colonizationDifficulty, random),
+      Colonizable: resourceProfile?.colonizable ?? (orbitalOnly ? "Orbital Only" : "Yes"),
+      "Mining Difficulty": miningDifficulty,
       ...metricMap(["Population Capacity", "Construction Modifier", "Food Modifier", "Power Modifier", "Expansion Modifier", "Terraform Cost"], random, 1, 100)
     },
     science: metricMap(["Research Bonus", "Discovery Bonus", "Artifact Bonus", "Ancient Knowledge", "Rare Research", "Technology Chance"], random, 0, 100),
-    economy: metricMap(["Trade Value", "Mining Value", "Agriculture Value", "Industry Value", "Tourism Value", "Collectible Value"], random, 0, 100),
+    economy: {
+      ...metricMap(["Trade Value", "Agriculture Value", "Industry Value", "Tourism Value", "Collectible Value"], random, 0, 100),
+      "Mining Value": Math.max(0, Math.min(100, densityScore + Math.floor((11 - miningDifficulty) * 2))),
+      "Resource Density": resourceProfile?.resource_density ?? "Unknown",
+      "Extraction Difficulty": miningDifficulty,
+      "Extraction Yield": densityScore,
+      "Discovery Tier": resourceProfile?.discovery_tier ?? ""
+    },
     event_pool: eventPool,
     story: `${name} is ${articleFor(rarity.name)} ${rarity.name.toLowerCase()} ${worldIdentity.toLowerCase()} in the ${planetClass.toLowerCase()} biome, shaped by ${planetSubclass.toLowerCase()} regions and ${trait.toLowerCase()}. ${civilizationFragment} left traces near ${ruins.toLowerCase()} sites, where ${artifact.toLowerCase()} and ${resource.toLowerCase()} continue to draw explorers despite ${hazards.slice(0, 2).join(" and ").toLowerCase() || "unknown hazards"}${anomalies.length ? `, alongside anomalies like ${anomalies.slice(0, 2).join(" and ").toLowerCase()}` : ""}.`,
     colonized: false,
@@ -254,6 +354,6 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
     image_status: "Not Rendered",
     image_variants: [],
     created_at: new Date().toISOString(),
-    notes: ""
+    notes: resourceProfile?.scientific_notes ?? ""
   };
 }
