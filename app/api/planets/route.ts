@@ -41,7 +41,7 @@ function errorMessage(error: unknown, fallback: string) {
 
 function isMissingGeneratedPlanetOptionalColumn(error: unknown) {
   const message = errorMessage(error, "");
-  return message.includes("generated_planets") && /(image_(url|prompt|status|variants)|rarity|planet_subclass|anomalies)/.test(message);
+  return message.includes("generated_planets") && /(image_(url|prompt|status|variants)|rarity|planet_subclass|anomalies|colonizable|landable|surface_exploration|terrain_generation|uses_orbital_gameplay|orbital_slot_count|orbital_platforms_built|atmospheric_harvest_rate|gas_giant_hazard_level|required_technology|resource_transport_options)/.test(message);
 }
 
 function unsupportedGeneratedPlanetColumn(error: unknown) {
@@ -56,7 +56,26 @@ function unsupportedGeneratedPlanetColumn(error: unknown) {
 
 async function upsertGeneratedPlanet(planet: GeneratedPlanet) {
   const row = { ...(planet as unknown as Record<string, unknown>) };
-  const unsupportedColumns = new Set(["image_url", "image_prompt", "image_status", "image_variants", "rarity", "planet_subclass", "anomalies"]);
+  const unsupportedColumns = new Set([
+    "image_url",
+    "image_prompt",
+    "image_status",
+    "image_variants",
+    "rarity",
+    "planet_subclass",
+    "anomalies",
+    "colonizable",
+    "landable",
+    "surface_exploration",
+    "terrain_generation",
+    "uses_orbital_gameplay",
+    "orbital_slot_count",
+    "orbital_platforms_built",
+    "atmospheric_harvest_rate",
+    "gas_giant_hazard_level",
+    "required_technology",
+    "resource_transport_options"
+  ]);
 
   for (let attempt = 0; attempt < unsupportedColumns.size + 1; attempt += 1) {
     try {

@@ -163,6 +163,14 @@ function planetSubclassLabel(row: GeneratedPlanet) {
   return "General";
 }
 
+function isGasGiant(row: GeneratedPlanet) {
+  return row.planet_class === "Gas Giant" || row.uses_orbital_gameplay;
+}
+
+function planetInteractionLabel(row: GeneratedPlanet) {
+  return isGasGiant(row) ? "ORBITAL WORLD" : planetWorldLabel(row);
+}
+
 function detailPill(label: string, value: string | number | boolean) {
   return (
     <div className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
@@ -249,10 +257,6 @@ async function readPayload<T>(response: Response) {
   } catch {
     return { error: text.slice(0, 220) } as T;
   }
-}
-
-function responseError(response: Response, payload: { error?: string }, fallback: string) {
-  return payload.error || `${fallback} (${response.status} ${response.statusText || "error"})`;
 }
 
 function downloadBlob(filename: string, blob: Blob) {
@@ -533,7 +537,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
               <div className="border-b border-cyan-300/10 bg-slate-950/45 p-3">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="truncate text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-cyan-300">{planetWorldLabel(row)}</p>
+                    <p className="truncate text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-cyan-300">{planetInteractionLabel(row)}</p>
                     <h3 className="mt-1 truncate text-base font-bold text-white">{row.name}</h3>
                     <div className="mt-1 flex min-w-0 flex-wrap items-center gap-2">
                       <span className="min-w-0 truncate font-mono text-xs text-slate-500">{row.seed}</span>
@@ -621,7 +625,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                 <div className="grid grid-cols-3 gap-2">
                   {compactPill("Biome", planetBiomeLabel(row))}
                   {compactPill("Subclass", planetSubclassLabel(row))}
-                  {compactPill("Gravity", row.gravity)}
+                  {isGasGiant(row) ? compactPill("Slots", row.orbital_slot_count || 0) : compactPill("Gravity", row.gravity)}
                 </div>
                 <p className="line-clamp-2 text-xs leading-5 text-slate-300">{row.story}</p>
                 <div className="space-y-1 text-xs text-slate-400">
@@ -629,9 +633,15 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                     <span className="text-slate-500">Resources:</span> {listText(row.resources)}
                   </p>
                   <p className="truncate">
-                    <span className="text-slate-500">Traits:</span> {listText(row.traits)}
+                    <span className="text-slate-500">{isGasGiant(row) ? "Hazards:" : "Traits:"}</span> {isGasGiant(row) ? listText(row.hazards) : listText(row.traits)}
                   </p>
                 </div>
+                {isGasGiant(row) ? (
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <span className="rounded border border-cyan-300/20 bg-cyan-400/10 px-2 py-1 text-cyan-100">Survey Atmosphere</span>
+                    <span className="rounded border border-blue-300/20 bg-blue-400/10 px-2 py-1 text-blue-100">Deploy Harvester</span>
+                  </div>
+                ) : null}
                 <div className="flex flex-wrap gap-2">
                   <span className="rounded border border-cyan-300/20 bg-cyan-400/10 px-2 py-1 text-xs text-cyan-100">{row.discovery_points} discovery pts</span>
                 </div>
@@ -659,7 +669,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
             <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-cyan-300/15 bg-[#07101e]/95 p-5">
               <div>
                 <div className="flex flex-wrap items-center gap-3">
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">{planetWorldLabel(selectedPlanet)}</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">{planetInteractionLabel(selectedPlanet)}</p>
                   {rarityBadge(selectedPlanet, "detail")}
                 </div>
                 <h3 className="mt-2 text-3xl font-bold text-white">{selectedPlanet.name}</h3>
@@ -702,20 +712,38 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                   {detailPill("Atmosphere", selectedPlanet.atmosphere)}
                   {detailPill("Temperature", selectedPlanet.temperature)}
                   {detailPill("Gravity", selectedPlanet.gravity)}
-                  {detailPill("Water", selectedPlanet.water_coverage)}
+                  {isGasGiant(selectedPlanet) ? detailPill("Landable", "No") : detailPill("Water", selectedPlanet.water_coverage)}
                   {detailPill("Moons", selectedPlanet.moons)}
-                  {detailPill("Flora", selectedPlanet.flora)}
-                  {detailPill("Fauna", selectedPlanet.fauna)}
+                  {isGasGiant(selectedPlanet) ? detailPill("Interaction", "Orbital Harvesting") : detailPill("Flora", selectedPlanet.flora)}
+                  {isGasGiant(selectedPlanet) ? detailPill("Hazard Level", selectedPlanet.gas_giant_hazard_level || 0) : detailPill("Fauna", selectedPlanet.fauna)}
                   {detailPill("Ancients", selectedPlanet.ancient_civilization)}
                   {detailPill("Ruins", selectedPlanet.ruins)}
-                  {detailPill("Colonized", selectedPlanet.colonized)}
+                  {isGasGiant(selectedPlanet) ? detailPill("Orbital Slots", selectedPlanet.orbital_slot_count || 0) : detailPill("Colonized", selectedPlanet.colonized)}
                 </div>
+                {isGasGiant(selectedPlanet) ? (
+                  <div className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-300">Orbital Resource Loop</p>
+                    <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                      {detailPill("Harvest Rate", `${selectedPlanet.atmospheric_harvest_rate || 0}/cycle`)}
+                      {detailPill("Platform Slots", selectedPlanet.orbital_slot_count || 0)}
+                      {detailPill("Surface Exploration", "Disabled")}
+                      {detailPill("Terrain Generation", "Disabled")}
+                    </div>
+                  </div>
+                ) : null}
               </div>
               <div className="space-y-4">
                 {[
-                  ["Resources", selectedPlanet.resources],
+                  [isGasGiant(selectedPlanet) ? "Atmospheric Resources" : "Resources", selectedPlanet.resources],
                   ["Hazards", selectedPlanet.hazards],
                   ["Traits", selectedPlanet.traits],
+                  ...(isGasGiant(selectedPlanet)
+                    ? [
+                        ["Orbital Structures", selectedPlanet.orbital_platforms_built],
+                        ["Required Technology", selectedPlanet.required_technology],
+                        ["Transport Options", selectedPlanet.resource_transport_options]
+                      ] as [string, string[]][]
+                    : []),
                   ["Anomalies", selectedPlanet.anomalies],
                   ["Modifiers", selectedPlanet.modifiers],
                   ["Collectibles", selectedPlanet.collectible_pools],
