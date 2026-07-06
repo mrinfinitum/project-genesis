@@ -113,7 +113,9 @@ export async function getGameData(): Promise<GameData> {
       planetResourceProfiles,
       resourceCatalog,
       generatedPlanets,
-      planetRenderLibrary
+      planetRenderLibrary,
+      aiInbox,
+      promptTemplates
     ] = await Promise.all([
       getFallbackRows("research"),
       getFallbackRows("buildings"),
@@ -131,7 +133,9 @@ export async function getGameData(): Promise<GameData> {
       getFallbackRows("planet_resource_profiles"),
       getFallbackRows("resource_catalog"),
       getFallbackRows("generated_planets"),
-      getFallbackRows("planet_render_library")
+      getFallbackRows("planet_render_library"),
+      getFallbackRows("ai_inbox"),
+      getFallbackRows("prompt_templates")
     ]);
 
     return {
@@ -152,7 +156,9 @@ export async function getGameData(): Promise<GameData> {
       planet_resource_profiles: planetResourceProfiles as GameData["planet_resource_profiles"],
       resource_catalog: resourceCatalog as GameData["resource_catalog"],
       generated_planets: generatedPlanets as GameData["generated_planets"],
-      planet_render_library: planetRenderLibrary as GameData["planet_render_library"]
+      planet_render_library: planetRenderLibrary as GameData["planet_render_library"],
+      ai_inbox: aiInbox as GameData["ai_inbox"],
+      prompt_templates: promptTemplates as GameData["prompt_templates"]
     };
   }
 
@@ -175,6 +181,8 @@ export async function getGameData(): Promise<GameData> {
     resourceCatalog,
     generatedPlanets,
     planetRenderLibrary,
+    aiInbox,
+    promptTemplates,
     releaseNotes,
     changelog
   ] = await Promise.all([
@@ -196,6 +204,8 @@ export async function getGameData(): Promise<GameData> {
     getRowsFromSupabaseOrFallback("resource_catalog"),
     getRowsFromSupabaseOrFallback("generated_planets"),
     getRowsFromSupabaseOrFallback("planet_render_library"),
+    getRowsFromSupabaseOrFallback("ai_inbox"),
+    getRowsFromSupabaseOrFallback("prompt_templates"),
     getRowsFromSupabaseOrFallback("release_notes"),
     getRowsFromSupabaseOrFallback("changelog")
   ]);
@@ -219,6 +229,8 @@ export async function getGameData(): Promise<GameData> {
     resource_catalog: resourceCatalog as GameData["resource_catalog"],
     generated_planets: generatedPlanets as GameData["generated_planets"],
     planet_render_library: planetRenderLibrary as GameData["planet_render_library"],
+    ai_inbox: aiInbox as GameData["ai_inbox"],
+    prompt_templates: promptTemplates as GameData["prompt_templates"],
     release_notes: releaseNotes as GameData["release_notes"],
     changelog: changelog as GameData["changelog"]
   };

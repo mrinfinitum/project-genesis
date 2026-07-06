@@ -518,6 +518,49 @@ create index if not exists planet_render_library_status_idx on planet_render_lib
 create index if not exists planet_render_library_class_idx on planet_render_library(planet_class);
 create index if not exists planet_render_library_biome_idx on planet_render_library(biome);
 create index if not exists planet_render_library_rings_idx on planet_render_library(has_rings);
+
+create table if not exists ai_inbox (
+  id text primary key,
+  title text not null,
+  content_type text not null,
+  source_table text,
+  source_id text,
+  system text,
+  status text default 'Pending',
+  priority text default 'Medium',
+  prompt_template text,
+  generated_prompt text,
+  ai_result text,
+  result_summary text,
+  related_name text,
+  related_metadata jsonb default '{}'::jsonb,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  completed_at timestamptz,
+  notes text
+);
+
+create table if not exists prompt_templates (
+  id text primary key,
+  name text not null,
+  content_type text not null,
+  system text,
+  template_text text not null,
+  output_format text,
+  active boolean default true,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  notes text
+);
+
+create index if not exists ai_inbox_status_idx on ai_inbox(status);
+create index if not exists ai_inbox_content_type_idx on ai_inbox(content_type);
+create index if not exists ai_inbox_system_idx on ai_inbox(system);
+create index if not exists ai_inbox_priority_idx on ai_inbox(priority);
+create index if not exists ai_inbox_source_table_idx on ai_inbox(source_table);
+create index if not exists ai_inbox_updated_at_idx on ai_inbox(updated_at desc);
+create index if not exists prompt_templates_content_type_idx on prompt_templates(content_type);
+create index if not exists prompt_templates_active_idx on prompt_templates(active);
 create index if not exists planet_render_library_usage_idx on planet_render_library(usage_count);
 create index if not exists unlock_matrix_status_idx on unlock_matrix(implementation_status);
 create index if not exists upgrades_type_idx on upgrades(type);

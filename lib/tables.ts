@@ -337,6 +337,57 @@ export const tableConfigs: Record<TableName, TableConfig> = {
       { key: "notes", label: "Notes", type: "textarea" }
     ]
   },
+  ai_inbox: {
+    table: "ai_inbox",
+    title: "AI Inbox",
+    description: "Copy-ready prompt queue for external ChatGPT work, pasted results, approvals, and source record follow-through.",
+    statusKey: "status",
+    typeKey: "content_type",
+    filterKeys: ["content_type", "system", "priority", "status", "source_table"],
+    searchKeys: ["title", "content_type", "source_table", "source_id", "related_name", "result_summary", "notes"],
+    columns: ["title", "content_type", "system", "priority", "status", "related_name", "updated_at"],
+    fields: [
+      { key: "id", label: "ID", required: true },
+      { key: "title", label: "Title", required: true },
+      { key: "content_type", label: "Content Type" },
+      { key: "source_table", label: "Source Table" },
+      { key: "source_id", label: "Source ID" },
+      { key: "system", label: "System" },
+      { key: "status", label: "Status", type: "status" },
+      { key: "priority", label: "Priority" },
+      { key: "prompt_template", label: "Prompt Template" },
+      { key: "generated_prompt", label: "Generated Prompt", type: "textarea" },
+      { key: "ai_result", label: "AI Result", type: "textarea" },
+      { key: "result_summary", label: "Result Summary", type: "textarea" },
+      { key: "related_name", label: "Related Name" },
+      { key: "created_at", label: "Created At" },
+      { key: "updated_at", label: "Updated At" },
+      { key: "completed_at", label: "Completed At" },
+      { key: "notes", label: "Notes", type: "textarea" }
+    ]
+  },
+  prompt_templates: {
+    table: "prompt_templates",
+    title: "Prompt Templates",
+    description: "Reusable no-API prompt templates used by the AI Workshop queue.",
+    statusKey: "system",
+    typeKey: "content_type",
+    filterKeys: ["content_type", "system", "active"],
+    searchKeys: ["name", "content_type", "system", "template_text", "output_format", "notes"],
+    columns: ["name", "content_type", "system", "active", "updated_at"],
+    fields: [
+      { key: "id", label: "ID", required: true },
+      { key: "name", label: "Name", required: true },
+      { key: "content_type", label: "Content Type", required: true },
+      { key: "system", label: "System" },
+      { key: "template_text", label: "Template Text", type: "textarea" },
+      { key: "output_format", label: "Output Format", type: "textarea" },
+      { key: "active", label: "Active", type: "boolean" },
+      { key: "created_at", label: "Created At" },
+      { key: "updated_at", label: "Updated At" },
+      { key: "notes", label: "Notes", type: "textarea" }
+    ]
+  },
   upgrades: {
     table: "upgrades",
     title: "Upgrades",
