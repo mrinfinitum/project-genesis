@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, type CSSProperties } from "react";
-import { Download, Orbit, Plus, Search, Sparkles, Trash2, X } from "lucide-react";
+import { Download, Orbit, Plus, RefreshCcw, Search, Sparkles, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PLANET_CLASS_MODEL } from "@/lib/planets/class-model";
 import { normalizePlanetRarity } from "@/lib/planets/rarity";
@@ -269,6 +269,8 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
   const [selectedPlanetClass, setSelectedPlanetClass] = useState("");
   const [planetSubclass, setPlanetSubclass] = useState("");
   const [loading, setLoading] = useState(false);
+  const [rerollingPlanetId, setRerollingPlanetId] = useState("");
+  const [rerollingAll, setRerollingAll] = useState(false);
   const [renderingPlanetId, setRenderingPlanetId] = useState("");
   const [renderingMode, setRenderingMode] = useState<"procedural" | "ai" | "">("");
   const [variantMenuPlanetId, setVariantMenuPlanetId] = useState("");
@@ -387,6 +389,66 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
     }
   }
 
+  async function rerollPlanet(row: GeneratedPlanet) {
+    if (!window.confirm(`Reroll stats for ${row.name}? The planet image, name, seed, class, and subclass will be preserved.`)) {
+      return;
+    }
+
+    setRerollingPlanetId(row.id);
+    setError("");
+
+    try {
+      const response = await fetch(`/api/planets/${encodeURIComponent(row.id)}/reroll-stats`, {
+        method: "POST"
+      });
+      const payload = await readPayload<{ row?: GeneratedPlanet; error?: string }>(response);
+
+      if (!response.ok) {
+        setError(payload.error ?? "Could not reroll planet stats.");
+        return;
+      }
+
+      if (payload.row) {
+        setRows((currentRows) => currentRows.map((current) => (current.id === row.id ? payload.row! : current)));
+        setSelectedPlanet((current) => (current?.id === row.id ? payload.row! : current));
+      } else {
+        await refreshRows();
+      }
+    } catch (caughtError) {
+      setError(caughtError instanceof Error ? caughtError.message : "Could not reroll planet stats.");
+    } finally {
+      setRerollingPlanetId("");
+    }
+  }
+
+  async function rerollAllPlanets() {
+    if (!rows.length || !window.confirm(`Reroll stats for all ${rows.length} existing planets? Images, names, seeds, classes, and subclasses will be preserved.`)) {
+      return;
+    }
+
+    setRerollingAll(true);
+    setError("");
+
+    try {
+      const response = await fetch("/api/planets/reroll-stats", {
+        method: "POST"
+      });
+      const payload = await readPayload<{ rows?: GeneratedPlanet[]; count?: number; error?: string }>(response);
+
+      if (!response.ok) {
+        setError(payload.error ?? "Could not reroll existing planet stats.");
+        return;
+      }
+
+      setRows(payload.rows ?? []);
+      setSelectedPlanet((current) => (current ? (payload.rows ?? []).find((row) => row.id === current.id) ?? current : current));
+    } catch (caughtError) {
+      setError(caughtError instanceof Error ? caughtError.message : "Could not reroll existing planet stats.");
+    } finally {
+      setRerollingAll(false);
+    }
+  }
+
   async function renderPlanet(row: GeneratedPlanet, mode: "procedural" | "ai", options: { openVariantMenu?: boolean } = {}) {
     setRenderingPlanetId(row.id);
     setRenderingMode(mode);
@@ -488,7 +550,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
         </div>
       </section>
 
-      <div className="flex items-center gap-3 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-3">
+      <div className="flex flex-col gap-3 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-3 sm:flex-row sm:items-center">
         <Search className="h-4 w-4 text-slate-500" />
         <input
           className="h-10 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-slate-500"
@@ -496,6 +558,10 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
           value={query}
           onChange={(event) => setQuery(event.target.value)}
         />
+        <Button className="h-9 whitespace-nowrap px-3 text-xs" disabled={rerollingAll || loading || !rows.length} onClick={rerollAllPlanets} type="button">
+          <RefreshCcw className="h-4 w-4" />
+          {rerollingAll ? "Rerolling..." : "Reroll All Stats"}
+        </Button>
       </div>
 
       {error ? <p className="rounded-md border border-red-400/30 bg-red-400/10 px-3 py-2 text-sm text-red-100">{error}</p> : null}
@@ -537,6 +603,19 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                     </div>
                   </div>
                   <div className="relative flex shrink-0 gap-2">
+                    <button
+                      type="button"
+                      className="grid h-8 w-8 place-items-center rounded-md border border-cyan-300/20 text-cyan-100 opacity-80 transition hover:bg-cyan-400/10 group-hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-40"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        rerollPlanet(row);
+                      }}
+                      disabled={Boolean(rerollingPlanetId) || rerollingAll}
+                      aria-label="Reroll planet stats"
+                      title="Reroll stats, preserve image"
+                    >
+                      <RefreshCcw className={["h-4 w-4", rerollingPlanetId === row.id ? "animate-spin" : ""].filter(Boolean).join(" ")} />
+                    </button>
                     <button
                       type="button"
                       className="grid h-8 w-8 place-items-center rounded-md border border-cyan-300/20 text-cyan-100 opacity-80 transition hover:bg-cyan-400/10 group-hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-40"
