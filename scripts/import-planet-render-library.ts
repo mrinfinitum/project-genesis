@@ -20,6 +20,7 @@ const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const bucket = process.env.SUPABASE_ASSET_BUCKET || "project-genesis-assets";
 const apply = process.argv.includes("--apply");
+const overwrite = process.argv.includes("--overwrite") || process.argv.includes("--force");
 const uploadPsdSources = process.argv.includes("--upload-psd-source");
 const sourceArg = process.argv.slice(2).find((arg) => !arg.startsWith("--")) ?? "planet-render-library";
 const sourceRoot = path.resolve(process.cwd(), sourceArg);
@@ -555,6 +556,20 @@ async function syncGeneratedPlanetRenderUrls(rows: PlanetRenderLibraryRecord[]) 
   console.log(`Synced ${updates.length} generated planet image URL${updates.length === 1 ? "" : "s"}.`);
 }
 
+async function existingRenderIds() {
+  if (!supabase) {
+    return new Set<string>();
+  }
+
+  const { data, error } = await supabase.from("planet_render_library").select("id");
+
+  if (error) {
+    throw error;
+  }
+
+  return new Set((data ?? []).map((row) => String(row.id)));
+}
+
 async function main() {
   const rootStat = await stat(sourceRoot).catch(() => null);
 
@@ -570,16 +585,25 @@ async function main() {
 
   const files = await walkFiles(sourceRoot);
   const rows: PlanetRenderLibraryRecord[] = [];
+  const existingIds = apply && !overwrite ? await existingRenderIds() : new Set<string>();
   const importVersion = Date.now().toString(36);
+  let skippedExisting = 0;
 
   for (const file of files) {
     const metadata = await readMetadata(file);
     const relativePath = path.relative(sourceRoot, file);
+    const preliminaryId = String(metadata.id ?? assetId(path.parse(file).name));
+
+    if (existingIds.has(preliminaryId)) {
+      skippedExisting += 1;
+      continue;
+    }
+
     const asset = await renderAssetFor(file, metadata);
     const filename = asset.filename;
     const pathParts = relativePath.split(path.sep).map((part) => part.replace(/\.[^/.]+$/, ""));
     const taxonomy = taxonomyForPath(pathParts);
-    const id = String(metadata.id ?? assetId(path.parse(filename).name));
+    const id = preliminaryId;
     const storagePath = String(metadata.storage_path ?? `planet-render-library/${id}/${filename}`);
     const sourceStoragePath =
       asset.sourceBuffer && asset.sourceFilename ? `planet-render-library/${id}/source/${asset.sourceFilename}` : "";
@@ -675,7 +699,12 @@ async function main() {
     await syncGeneratedPlanetRenderUrls(rows);
   }
 
-  console.log(`${apply ? "Imported" : "Dry run found"} ${rows.length} planet render${rows.length === 1 ? "" : "s"}.`);
+  const actionLabel = apply ? (overwrite ? "Imported/updated" : "Imported new") : "Dry run found";
+  console.log(`${actionLabel} ${rows.length} planet render${rows.length === 1 ? "" : "s"}.`);
+
+  if (skippedExisting) {
+    console.log(`Skipped ${skippedExisting} existing planet render${skippedExisting === 1 ? "" : "s"}. Use --overwrite to reprocess existing files.`);
+  }
 }
 
 main().catch((error) => {

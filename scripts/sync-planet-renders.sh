@@ -66,6 +66,7 @@ fi
 
 if [[ "$OVERWRITE" == "1" ]]; then
   describe_flags+=("--overwrite")
+  import_flags+=("--overwrite")
 fi
 
 if [[ -n "$LIMIT" ]]; then
