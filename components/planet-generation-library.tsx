@@ -106,49 +106,48 @@ export function PlanetGenerationLibrary({ rows }: { rows: PlanetPromptTemplate[]
         </pre>
 
         <div className="rounded-md border border-cyan-400/15 bg-[#07101e]/85 p-4 shadow-glow">
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">Render Sync Workflow</p>
-              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
-                Add a planet PNG/PSD to the matching class and subclass folder, then run the sync command. This writes the JSON metadata and registers the render in Supabase.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <CopyButton
-                value={PLANET_RENDER_SYNC_COMMAND}
-                copied={copied?.id === "planet-render-sync" && copied.kind === "sync"}
-                title="Copy planet render sync command"
-                onCopy={(value) => copyValue(value, { id: "planet-render-sync", kind: "sync" })}
-              >
-                Sync Command
-              </CopyButton>
-              <CopyButton
-                value={PLANET_RENDER_OVERWRITE_COMMAND}
-                copied={copied?.id === "planet-render-overwrite" && copied.kind === "sync"}
-                title="Copy planet render overwrite sync command"
-                onCopy={(value) => copyValue(value, { id: "planet-render-overwrite", kind: "sync" })}
-              >
-                Overwrite Sync
-              </CopyButton>
-            </div>
-          </div>
-          <div className="mt-4 grid gap-3 lg:grid-cols-[1fr_1fr]">
-            <div className="rounded border border-slate-700/70 bg-slate-950/45 p-3">
-              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-slate-500">Folder Pattern</p>
-              <code className="mt-2 block overflow-x-auto whitespace-nowrap text-sm text-cyan-100">{PLANET_RENDER_FOLDER_EXAMPLE}</code>
-            </div>
-            <div className="rounded border border-slate-700/70 bg-slate-950/45 p-3">
-              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-slate-500">Normal Sync</p>
-              <code className="mt-2 block overflow-x-auto whitespace-nowrap text-sm text-cyan-100">{PLANET_RENDER_SYNC_COMMAND}</code>
-            </div>
-          </div>
-        </div>
-
-        <div className="rounded-md border border-cyan-400/15 bg-[#07101e]/85 p-4 shadow-glow">
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">Render Rule</p>
           <p className="mt-2 text-sm leading-6 text-slate-300">
             Planet images should stay planet-only. Moon counts can remain gameplay data on generated planet cards, but copied art prompts exclude moons, satellites, and companion bodies for cleaner assets.
           </p>
+          <div className="mt-5 border-t border-cyan-400/10 pt-4">
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">Render Sync Workflow</p>
+                <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
+                  Add a planet PNG/PSD to the matching class and subclass folder, then run the sync command. This writes the JSON metadata and registers the render in Supabase.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <CopyButton
+                  value={PLANET_RENDER_SYNC_COMMAND}
+                  copied={copied?.id === "planet-render-sync" && copied.kind === "sync"}
+                  title="Copy planet render sync command"
+                  onCopy={(value) => copyValue(value, { id: "planet-render-sync", kind: "sync" })}
+                >
+                  Sync Command
+                </CopyButton>
+                <CopyButton
+                  value={PLANET_RENDER_OVERWRITE_COMMAND}
+                  copied={copied?.id === "planet-render-overwrite" && copied.kind === "sync"}
+                  title="Copy planet render overwrite sync command"
+                  onCopy={(value) => copyValue(value, { id: "planet-render-overwrite", kind: "sync" })}
+                >
+                  Overwrite Sync
+                </CopyButton>
+              </div>
+            </div>
+            <div className="mt-4 grid gap-3 lg:grid-cols-[1fr_1fr]">
+              <div className="rounded border border-slate-700/70 bg-slate-950/45 p-3">
+                <p className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-slate-500">Folder Pattern</p>
+                <code className="mt-2 block overflow-x-auto whitespace-nowrap text-sm text-cyan-100">{PLANET_RENDER_FOLDER_EXAMPLE}</code>
+              </div>
+              <div className="rounded border border-slate-700/70 bg-slate-950/45 p-3">
+                <p className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-slate-500">Normal Sync</p>
+                <code className="mt-2 block overflow-x-auto whitespace-nowrap text-sm text-cyan-100">{PLANET_RENDER_SYNC_COMMAND}</code>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

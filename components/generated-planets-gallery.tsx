@@ -164,29 +164,6 @@ function compactPill(label: string, value: string | number | boolean) {
   );
 }
 
-function compactRarityPill(row: GeneratedPlanet) {
-  const rarity = normalizePlanetRarity(row.rarity);
-  const isCommon = rarity.name === "Common";
-
-  return (
-    <div
-      className={["min-w-0 rounded border bg-slate-950/45 px-2 py-1.5", rarityAnimationClass(row)]
-        .filter(Boolean)
-        .join(" ")}
-      style={{
-        borderColor: withAlpha(rarity.color, isCommon ? "55" : "AA"),
-        boxShadow: isCommon ? undefined : `0 0 16px ${withAlpha(rarity.color, "20")}`
-      }}
-      title={`${rarity.name} rarity - ${rarity.spawnChance}% spawn chance`}
-    >
-      <p className="text-[0.58rem] font-semibold uppercase tracking-[0.14em] text-slate-500">Rarity</p>
-      <p className="mt-0.5 truncate text-xs font-bold uppercase tracking-[0.1em]" style={{ color: rarity.color }}>
-        {rarity.name}
-      </p>
-    </div>
-  );
-}
-
 function withAlpha(hex: string, alpha: string) {
   return /^#[0-9a-f]{6}$/i.test(hex) ? `${hex}${alpha}` : hex;
 }
@@ -537,7 +514,10 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                   <div className="min-w-0">
                     <p className="truncate text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-cyan-300">{planetWorldLabel(row)}</p>
                     <h3 className="mt-1 truncate text-base font-bold text-white">{row.name}</h3>
-                    <p className="mt-1 font-mono text-xs text-slate-500">{row.seed}</p>
+                    <div className="mt-1 flex min-w-0 flex-wrap items-center gap-2">
+                      <span className="min-w-0 truncate font-mono text-xs text-slate-500">{row.seed}</span>
+                      {rarityBadge(row)}
+                    </div>
                   </div>
                   <div className="relative flex shrink-0 gap-2">
                     <button
@@ -617,8 +597,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                 ) : null}
               </div>
               <div className="space-y-3 p-3">
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                  {compactRarityPill(row)}
+                <div className="grid grid-cols-3 gap-2">
                   {compactPill("Subclass", row.planet_subclass || row.primary_biome)}
                   {compactPill("Biome", row.primary_biome)}
                   {compactPill("Gravity", row.gravity)}
