@@ -25,10 +25,18 @@ import type { AiInboxItem, PromptTemplate } from "@/types/schema";
 type Row = Record<string, unknown>;
 type SourceRows = Record<string, Row[]>;
 type ViewMode = "cards" | "table" | "templates";
+type WorkshopModuleInput = {
+  label: string;
+  controlType: string;
+  required: boolean;
+  examples: string[];
+  helperText: string;
+  placeholder: string;
+};
 type WorkshopModuleCard = {
   description: string;
-  requiredInputs: string[];
-  optionalInputs: string[];
+  requiredInputs: WorkshopModuleInput[];
+  optionalInputs: WorkshopModuleInput[];
   output: string[];
   actions: string[];
   about: string[];
@@ -207,21 +215,82 @@ function valuesAfter(label: string, lines: string[]) {
   return index >= 0 ? lines.slice(index + 1) : [];
 }
 
+function helperForInput(label: string) {
+  const normalized = label.toLowerCase();
+  if (normalized.includes("planet class")) return "Choose the primary planetary classification.";
+  if (normalized.includes("planet subclass")) return "Automatically filtered by the selected Planet Class.";
+  if (normalized.includes("rarity")) return "Determines rarity label and procedural uniqueness.";
+  if (normalized.includes("biome")) return "Primary surface environment.";
+  if (normalized.includes("visual style")) return "Controls the rendering style used for prompt generation.";
+  if (normalized.includes("color palette")) return "Sets the dominant color direction for the output.";
+  if (normalized.includes("atmosphere")) return "Defines atmospheric appearance and mood.";
+  if (normalized.includes("anomal")) return "Adds optional special phenomena to the result.";
+  if (normalized.includes("notes")) return "Add any extra constraints or creative direction.";
+  return "Choose the value that best matches the content you want to generate.";
+}
+
+function placeholderForInput(label: string, controlType: string) {
+  const normalized = label.toLowerCase();
+  if (normalized.includes("planet class")) return "Select Planet Class...";
+  if (normalized.includes("planet subclass")) return "Select Planet Subclass...";
+  if (normalized.includes("rarity")) return "Select Planet Rarity...";
+  if (normalized.includes("biome")) return "Select Primary Biome...";
+  if (normalized.includes("visual style")) return "Select Visual Style...";
+  if (/textarea/i.test(controlType)) return `Describe ${label}...`;
+  if (/multi/i.test(controlType)) return `Choose ${label}...`;
+  if (/dropdown|select/i.test(controlType)) return `Select ${label}...`;
+  return `Enter ${label}...`;
+}
+
+function normalizeControlType(value: string) {
+  return value.replace(/^Type:\s*/i, "").trim() || "Text Input";
+}
+
+function examplesFromLine(line: string) {
+  return line
+    .replace(/^Examples?:\s*/i, "")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean);
+}
+
+function createInput(label: string, controlType: string, details: string[], fallbackRequired: boolean): WorkshopModuleInput {
+  const examplesIndex = details.findIndex((detail) => /^Examples?:$/i.test(detail));
+  const inlineExample = details.find((detail) => /^Examples?:\s+.+/i.test(detail));
+  const examples = inlineExample
+    ? examplesFromLine(inlineExample)
+    : examplesIndex >= 0
+      ? details.slice(examplesIndex + 1).filter((detail) => !/^(Required|Optional)$/i.test(detail)).slice(0, 12)
+      : [];
+  const required = details.some((detail) => /^Required$/i.test(detail)) || fallbackRequired;
+  const normalizedControl = normalizeControlType(controlType);
+
+  return {
+    label,
+    controlType: normalizedControl,
+    required,
+    examples,
+    helperText: helperForInput(label),
+    placeholder: placeholderForInput(label, normalizedControl)
+  };
+}
+
 function parseInputGroups(lines: string[]) {
   const controls = /^(Dropdown|Textarea|Input|Text Input|Multi-select|Multi Select|Checkbox|Toggle|Code Block|Large Code Block|Number)$/i;
-  const required: string[] = [];
-  const optional: string[] = [];
+  const required: WorkshopModuleInput[] = [];
+  const optional: WorkshopModuleInput[] = [];
 
   for (let index = 0; index < lines.length; index += 1) {
     const label = lines[index];
     const control = lines[index + 1] ?? "";
-    if (!control || !controls.test(control) || ["Examples", "Buttons", "Fields"].includes(label)) {
+    const typeLine = normalizeControlType(control);
+    if (!control || !(controls.test(control) || /^Type:\s*/i.test(control)) || ["Examples", "Buttons", "Fields"].includes(label)) {
       continue;
     }
 
-    const details: string[] = [control];
+    const details: string[] = [typeLine];
     index += 2;
-    while (index < lines.length && !controls.test(lines[index + 1] ?? "")) {
+    while (index < lines.length && !(controls.test(lines[index + 1] ?? "") || /^Type:\s*/i.test(lines[index + 1] ?? ""))) {
       details.push(lines[index]);
       index += 1;
     }
@@ -229,19 +298,12 @@ function parseInputGroups(lines: string[]) {
 
     const isOptional = details.some((detail) => detail.toLowerCase() === "optional");
     const isRequired = details.some((detail) => detail.toLowerCase() === "required");
-    const optionsIndex = details.findIndex((detail) => detail.toLowerCase() === "examples");
-    const examples = optionsIndex >= 0 ? details.slice(optionsIndex + 1, optionsIndex + 5).join(", ") : "";
-    const summary = [
-      label,
-      `Type: ${control}`,
-      isRequired ? "Required" : isOptional ? "Optional" : "Optional",
-      examples ? `Examples: ${examples}` : ""
-    ].filter(Boolean).join(" | ");
+    const input = createInput(label, typeLine, details, false);
 
     if (isRequired) {
-      required.push(summary);
+      required.push(input);
     } else {
-      optional.push(summary);
+      optional.push({ ...input, required: false || (!isOptional && input.required) });
     }
   }
 
@@ -254,7 +316,42 @@ function workshopCardFromMetadata(metadata: Record<string, unknown> | undefined)
     return null;
   }
 
-  return card as WorkshopModuleCard;
+  const raw = card as Record<string, unknown>;
+  const normalizeInputs = (value: unknown, fallbackRequired: boolean) => {
+    if (!Array.isArray(value)) return [];
+    return value.map((entry) => {
+      if (typeof entry === "string") {
+        const [label, typePart = "Text Input", requiredPart = fallbackRequired ? "Required" : "Optional", examplesPart = ""] = entry.split("|").map((part) => part.trim());
+        const controlType = normalizeControlType(typePart.replace(/^Type:\s*/i, ""));
+        return createInput(label, controlType, [requiredPart, examplesPart], fallbackRequired);
+      }
+      if (entry && typeof entry === "object") {
+        const input = entry as Partial<WorkshopModuleInput>;
+        const controlType = input.controlType ?? "Text Input";
+        return {
+          label: input.label ?? "Input",
+          controlType,
+          required: Boolean(input.required ?? fallbackRequired),
+          examples: Array.isArray(input.examples) ? input.examples : [],
+          helperText: input.helperText ?? helperForInput(input.label ?? "Input"),
+          placeholder: input.placeholder ?? placeholderForInput(input.label ?? "Input", controlType)
+        };
+      }
+      return createInput("Input", "Text Input", [], fallbackRequired);
+    });
+  };
+
+  return {
+    description: stringify(raw.description),
+    requiredInputs: normalizeInputs(raw.requiredInputs, true),
+    optionalInputs: normalizeInputs(raw.optionalInputs, false),
+    output: Array.isArray(raw.output) ? raw.output.map(stringify) : [],
+    actions: Array.isArray(raw.actions) ? raw.actions.map(stringify) : [],
+    about: Array.isArray(raw.about) ? raw.about.map(stringify) : [],
+    category: stringify(raw.category),
+    outputType: stringify(raw.outputType),
+    provider: stringify(raw.provider)
+  };
 }
 
 function parseWorkshopModuleSpec(raw: string): AiInboxItem {
@@ -271,8 +368,8 @@ function parseWorkshopModuleSpec(raw: string): AiInboxItem {
   const outputType = valueAfter("Output Type", moduleLines) || "";
   const provider = valueAfter("AI Provider", moduleLines) || "";
   const inputGroups = parseInputGroups(sections.INPUTS ?? []);
-  const requiredInputs = sections["REQUIRED INPUTS"]?.length ? sections["REQUIRED INPUTS"] : inputGroups.required;
-  const optionalInputs = sections["OPTIONAL INPUTS"]?.length ? sections["OPTIONAL INPUTS"] : inputGroups.optional;
+  const requiredInputs = sections["REQUIRED INPUTS"]?.length ? parseInputGroups(sections["REQUIRED INPUTS"]).required : inputGroups.required;
+  const optionalInputs = sections["OPTIONAL INPUTS"]?.length ? parseInputGroups(sections["OPTIONAL INPUTS"]).optional : inputGroups.optional;
   const outputLines = sections.OUTPUT ?? [];
   const buttonsIndex = outputLines.findIndex((line) => line.toLowerCase() === "buttons");
   const output = (buttonsIndex >= 0 ? outputLines.slice(0, buttonsIndex) : outputLines).filter((line) => line.toLowerCase() !== "buttons");
@@ -936,6 +1033,18 @@ function AIItemCard({
 }) {
   const workshopCard = workshopCardFromMetadata(item.related_metadata);
 
+  if (workshopCard) {
+    return (
+      <WorkshopModuleToolCard
+        item={item}
+        card={workshopCard}
+        onArchive={onArchive}
+        onDelete={onDelete}
+        onEdit={onEdit}
+      />
+    );
+  }
+
   return (
     <article className="rounded-md border border-slate-800 bg-slate-950/40 p-4">
       <div className="flex items-start justify-between gap-3">
@@ -956,9 +1065,7 @@ function AIItemCard({
         <Spec label="Updated" value={formatDate(item.updated_at)} />
       </div>
 
-      {workshopCard ? <WorkshopModuleSummary card={workshopCard} /> : null}
-
-      {!workshopCard && item.result_summary ? <p className="mt-4 line-clamp-3 text-sm leading-6 text-slate-300">{item.result_summary}</p> : null}
+      {item.result_summary ? <p className="mt-4 line-clamp-3 text-sm leading-6 text-slate-300">{item.result_summary}</p> : null}
 
       <div className="mt-4 flex flex-wrap gap-2">
         <Button onClick={onGenerate}><Wand2 className="h-4 w-4" /> Generate</Button>
@@ -984,13 +1091,214 @@ function AIItemCard({
   );
 }
 
+function WorkshopModuleToolCard({
+  item,
+  card,
+  onArchive,
+  onDelete,
+  onEdit
+}: {
+  item: AiInboxItem;
+  card: WorkshopModuleCard;
+  onArchive: () => void;
+  onDelete: () => void;
+  onEdit: () => void;
+}) {
+  const primaryInputs = card.requiredInputs.slice(0, 5);
+  const advancedInputs = [...card.requiredInputs.slice(5), ...card.optionalInputs];
+  const [advancedOpen, setAdvancedOpen] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
+  const [builtPrompt, setBuiltPrompt] = useState(item.generated_prompt);
+  const [localCopied, setLocalCopied] = useState(false);
+
+  function buildPrompt() {
+    const summary = [...card.requiredInputs, ...card.optionalInputs]
+      .map((input) => `${input.label}: ${input.examples[0] ?? input.placeholder}`)
+      .join("\n");
+    const nextPrompt = item.generated_prompt.trim()
+      ? `${item.generated_prompt.trim()}\n\nSelected Inputs:\n${summary}`
+      : `Build ${item.title}\n\nSelected Inputs:\n${summary}`;
+    setBuiltPrompt(nextPrompt);
+  }
+
+  async function copyBuiltPrompt() {
+    if (builtPrompt.trim()) {
+      await navigator.clipboard.writeText(builtPrompt);
+      setLocalCopied(true);
+      window.setTimeout(() => setLocalCopied(false), 1600);
+    }
+  }
+
+  return (
+    <article className="overflow-hidden rounded-md border border-cyan-400/15 bg-genesis-panel/95 shadow-[0_18px_60px_rgba(0,0,0,0.24)]">
+      <div className="border-b border-cyan-400/10 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="min-w-0">
+            <h4 className="text-xl font-semibold text-white">{item.title || "Untitled Module"}</h4>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">{card.description}</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {card.category ? <ModuleBadge>{card.category}</ModuleBadge> : null}
+              {card.outputType ? <ModuleBadge>{card.outputType}</ModuleBadge> : null}
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button onClick={onEdit} title="Edit"><Pencil className="h-4 w-4" /></Button>
+            <Button onClick={onArchive} className="border-slate-500/30 bg-slate-500/10 text-slate-200" title="Archive">
+              <Archive className="h-4 w-4" />
+            </Button>
+            <Button onClick={onDelete} className="border-red-300/30 bg-red-300/10 text-red-100" title="Delete">
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid gap-5 p-5">
+        <div className="grid gap-4">
+          {primaryInputs.map((input) => <WorkshopInputControl key={input.label} input={input} />)}
+        </div>
+
+        {advancedInputs.length ? (
+          <div className="rounded-md border border-slate-800 bg-slate-950/35">
+            <button
+              type="button"
+              onClick={() => setAdvancedOpen((value) => !value)}
+              className="flex w-full items-center justify-between px-4 py-3 text-left"
+            >
+              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-300">Advanced Options</span>
+              <span className="text-sm text-slate-500">{advancedOpen ? "Hide" : "Show"}</span>
+            </button>
+            {advancedOpen ? (
+              <div className="grid gap-4 border-t border-slate-800 p-4">
+                {advancedInputs.map((input) => <WorkshopInputControl key={input.label} input={input} />)}
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+
+        <div className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">Output</p>
+          <div className="mt-3 grid gap-2 text-sm text-slate-200">
+            {(card.output.length ? card.output : ["Copy-ready prompt", "Ready for ChatGPT"]).map((row) => (
+              <p key={row} className="flex gap-2">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-cyan-300" />
+                <span>{row}</span>
+              </p>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={buildPrompt} className="min-w-32">
+            <Wand2 className="h-4 w-4" /> Build Prompt
+          </Button>
+          <Button onClick={copyBuiltPrompt} disabled={!builtPrompt.trim()}>
+            {localCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />} {localCopied ? "Copied" : "Copy Prompt"}
+          </Button>
+          <Button onClick={copyBuiltPrompt} disabled={!builtPrompt.trim()}>
+            <FileText className="h-4 w-4" /> Save Prompt
+          </Button>
+          <Button onClick={onEdit}>
+            <Plus className="h-4 w-4" /> Create AI Task
+          </Button>
+        </div>
+
+        {builtPrompt.trim() ? (
+          <pre className="max-h-56 overflow-auto whitespace-pre-wrap rounded-md border border-slate-800 bg-black/45 p-3 text-xs leading-5 text-slate-300">
+            {builtPrompt}
+          </pre>
+        ) : null}
+
+        <div className="rounded-md border border-slate-800 bg-slate-950/35">
+          <button
+            type="button"
+            onClick={() => setAboutOpen((value) => !value)}
+            className="flex w-full items-center justify-between px-4 py-3 text-left"
+          >
+            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-300">About This Template</span>
+            <span className="text-sm text-slate-500">{aboutOpen ? "Hide" : "Show"}</span>
+          </button>
+          {aboutOpen ? (
+            <div className="space-y-2 border-t border-slate-800 p-4 text-sm leading-6 text-slate-300">
+              {(card.about.length ? card.about : ["No template notes listed."]).map((row) => <p key={row}>{row}</p>)}
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function ModuleBadge({ children }: { children: ReactNode }) {
+  return (
+    <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-medium text-cyan-100">
+      {children}
+    </span>
+  );
+}
+
+function WorkshopInputControl({ input }: { input: WorkshopModuleInput }) {
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const options = input.examples.length ? input.examples : ["Option 1", "Option 2", "Option 3"];
+  const requiredMark = input.required ? <span className="text-red-300">*</span> : null;
+  const control = input.controlType.toLowerCase();
+
+  return (
+    <label className="block">
+      <span className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-300">
+        {input.label} {requiredMark}
+      </span>
+      {control.includes("multi") ? (
+        <div className="mt-2 flex min-h-11 flex-wrap gap-2 rounded-md border border-slate-700 bg-slate-950/70 p-2">
+          {options.map((option) => {
+            const active = selectedTags.includes(option);
+            return (
+              <button
+                key={option}
+                type="button"
+                onClick={() => setSelectedTags((current) => active ? current.filter((value) => value !== option) : [...current, option])}
+                className={cn(
+                  "rounded border px-2 py-1 text-xs transition",
+                  active ? "border-cyan-300/60 bg-cyan-300/20 text-cyan-100" : "border-slate-700 bg-slate-900 text-slate-300"
+                )}
+              >
+                {option}
+              </button>
+            );
+          })}
+        </div>
+      ) : control.includes("textarea") ? (
+        <textarea
+          rows={4}
+          placeholder={input.placeholder}
+          className="mt-2 w-full rounded-md border border-slate-700 bg-slate-950/70 px-3 py-2 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-cyan-300/50"
+        />
+      ) : control.includes("dropdown") || control.includes("select") ? (
+        <select
+          defaultValue=""
+          className="mt-2 h-11 w-full rounded-md border border-slate-700 bg-slate-950/70 px-3 text-sm text-slate-100 outline-none focus:border-cyan-300/50"
+        >
+          <option value="" disabled>{input.placeholder}</option>
+          {options.map((option) => <option key={option} value={option}>{option}</option>)}
+        </select>
+      ) : (
+        <input
+          placeholder={input.placeholder}
+          className="mt-2 h-11 w-full rounded-md border border-slate-700 bg-slate-950/70 px-3 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-cyan-300/50"
+        />
+      )}
+      <span className="mt-2 block text-xs leading-5 text-slate-500">{input.helperText}</span>
+    </label>
+  );
+}
+
 function WorkshopModuleSummary({ card }: { card: WorkshopModuleCard }) {
   return (
     <div className="mt-4 space-y-4">
       <p className="text-sm leading-6 text-slate-300">{card.description}</p>
       <div className="grid gap-3 md:grid-cols-2">
-        <WorkshopModuleSection title="Required Inputs" rows={card.requiredInputs} empty="No required inputs listed." />
-        <WorkshopModuleSection title="Optional Inputs" rows={card.optionalInputs} empty="No optional inputs listed." />
+        <WorkshopModuleSection title="Required Inputs" rows={card.requiredInputs.map((input) => input.label)} empty="No required inputs listed." />
+        <WorkshopModuleSection title="Optional Inputs" rows={card.optionalInputs.map((input) => input.label)} empty="No optional inputs listed." />
       </div>
       <div className="grid gap-3 md:grid-cols-2">
         <WorkshopModuleSection title="Output" rows={card.output} empty="No output listed." />
