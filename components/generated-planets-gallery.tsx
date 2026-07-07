@@ -115,10 +115,6 @@ function largestVariant(row: GeneratedPlanet) {
   return variants.reduce<PlanetImageVariant | null>((current, next) => (!current || next.size > current.size ? next : current), null);
 }
 
-function orbitArtworkUrl(row: GeneratedPlanet) {
-  return largestVariant(row)?.url ?? row.orbit_view_image_url ?? row.image_url ?? "";
-}
-
 function secondaryArtworkUrl(row: GeneratedPlanet) {
   return row.surface_landscape_image_url ?? "";
 }
@@ -253,10 +249,6 @@ function rarityBadge(row: GeneratedPlanet, size: "compact" | "detail" = "compact
   );
 }
 
-function secondaryArtworkType(row: GeneratedPlanet) {
-  return isGasGiant(row) ? "Orbital Platform" : "Surface Landscape";
-}
-
 async function readPayload<T>(response: Response) {
   const text = await response.text();
 
@@ -294,6 +286,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
   const [variantMenuPlanetId, setVariantMenuPlanetId] = useState("");
   const [error, setError] = useState("");
   const [selectedPlanet, setSelectedPlanet] = useState<GeneratedPlanet | null>(null);
+  const [lightboxImage, setLightboxImage] = useState<{ url: string; alt: string } | null>(null);
 
   const filteredRows = useMemo(() => {
     const search = query.trim().toLowerCase();
@@ -713,42 +706,40 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                 <div className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-4">
                   <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
                     <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-300">Artwork</p>
-                      <p className="mt-1 text-xs text-slate-400">
-                        Preview slots for generated planet art. Prompt copy lives on Planet Generation.
-                      </p>
+                      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-300">Surface Landscape</p>
+                      <p className="mt-1 text-xs text-slate-400">High-resolution surface landscape view.</p>
                     </div>
                     <span className="w-fit rounded border border-cyan-300/20 bg-cyan-400/10 px-2 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-cyan-100">
-                      {secondaryArtworkType(selectedPlanet)}
+                      Click to enlarge
                     </span>
                   </div>
 
-                  <div className="mt-4 grid gap-4 lg:grid-cols-2">
-                    <div className="grid aspect-square place-items-center overflow-hidden rounded-md bg-black">
-                      {orbitArtworkUrl(selectedPlanet) ? (
-                        <img className="h-full w-full object-contain" src={orbitArtworkUrl(selectedPlanet)} alt={`${selectedPlanet.name} orbit view`} />
-                      ) : (
-                        <div className="flex flex-col items-center gap-2 text-center text-slate-500">
-                          <ImageIcon className="h-8 w-8 text-cyan-200/50" />
-                          <p className="text-xs">No orbit render yet</p>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="grid aspect-video place-items-center overflow-hidden rounded-md bg-black">
-                      {secondaryArtworkUrl(selectedPlanet) ? (
+                  <div className="mt-4">
+                    {secondaryArtworkUrl(selectedPlanet) ? (
+                      <button
+                        type="button"
+                        className="block w-full overflow-hidden rounded-md bg-black text-left"
+                        onClick={() =>
+                          setLightboxImage({
+                            url: secondaryArtworkUrl(selectedPlanet),
+                            alt: `${selectedPlanet.name} surface landscape`
+                          })
+                        }
+                      >
                         <img
-                          className="h-full w-full object-contain"
+                          className="h-auto w-full object-contain"
                           src={secondaryArtworkUrl(selectedPlanet)}
-                          alt={`${selectedPlanet.name} ${secondaryArtworkType(selectedPlanet).toLowerCase()}`}
+                          alt={`${selectedPlanet.name} surface landscape`}
                         />
-                      ) : (
+                      </button>
+                    ) : (
+                      <div className="grid aspect-video place-items-center rounded-md bg-black">
                         <div className="flex flex-col items-center gap-2 text-center text-slate-500">
                           <ImageIcon className="h-8 w-8 text-cyan-200/50" />
-                          <p className="text-xs">No {secondaryArtworkType(selectedPlanet).toLowerCase()} render yet</p>
+                          <p className="text-xs">No surface landscape render yet</p>
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -835,6 +826,26 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
               </div>
             </div>
           </section>
+        </div>
+      ) : null}
+      {lightboxImage ? (
+        <div className="fixed inset-0 z-[60] grid place-items-center bg-black/95 p-4" onClick={() => setLightboxImage(null)}>
+          <Button
+            className="absolute right-4 top-4 h-9 w-9 px-0"
+            onClick={(event) => {
+              event.stopPropagation();
+              setLightboxImage(null);
+            }}
+            type="button"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+          <img
+            className="max-h-[92vh] max-w-[96vw] object-contain"
+            src={lightboxImage.url}
+            alt={lightboxImage.alt}
+            onClick={(event) => event.stopPropagation()}
+          />
         </div>
       ) : null}
     </div>
