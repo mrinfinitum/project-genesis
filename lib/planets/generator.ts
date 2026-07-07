@@ -25,8 +25,137 @@ type GasGiantResourceProfile = {
   exotic: string[];
 };
 
-const colorWords = ["Cyan", "Amber", "Violet", "Emerald", "Silver", "Crimson", "Indigo", "Pearl", "Obsidian", "Azure"];
 const lightWords = ["Low", "Soft", "Radiant", "Harsh", "Diffuse", "Prismatic", "Pale", "Neon"];
+type VisualPalette = {
+  sky: string[];
+  fog: string[];
+  water: string[];
+  rock: string[];
+  vegetation: string[];
+};
+
+const defaultVisualPalette: VisualPalette = {
+  sky: ["Cyan", "Azure", "Silver", "Indigo"],
+  fog: ["Silver", "Pearl", "Cyan", "Azure"],
+  water: ["Azure", "Cyan", "Deep Blue", "Teal"],
+  rock: ["Obsidian", "Slate", "Granite", "Basalt"],
+  vegetation: ["Green", "Emerald", "Moss", "None"]
+};
+
+const visualPalettes: Record<string, VisualPalette> = {
+  Terrestrial: {
+    sky: ["Cyan", "Azure", "Pearl", "Silver"],
+    fog: ["Silver", "Pearl", "Mist Blue", "None"],
+    water: ["Azure", "Deep Blue", "Teal", "Cyan"],
+    rock: ["Granite", "Slate", "Basalt", "Umber"],
+    vegetation: ["Green", "Emerald", "Olive", "Moss"]
+  },
+  Ocean: {
+    sky: ["Azure", "Cyan", "Pearl", "Storm Blue"],
+    fog: ["Sea Mist", "Pearl", "Cyan", "Silver"],
+    water: ["Deep Blue", "Azure", "Turquoise", "Teal"],
+    rock: ["Basalt", "Coral Stone", "Slate", "Pearl"],
+    vegetation: ["Kelp Green", "Emerald", "Seaweed", "Coral"]
+  },
+  Desert: {
+    sky: ["Amber", "Copper", "Pale Blue", "Pearl"],
+    fog: ["Dust", "Amber", "Ochre", "None"],
+    water: ["None", "Oasis Blue", "Mineral Green", "Brackish"],
+    rock: ["Sandstone", "Ochre", "Basalt", "Umber"],
+    vegetation: ["Sparse", "Olive", "Dry Grass", "None"]
+  },
+  Ice: {
+    sky: ["Pale Blue", "Azure", "Silver", "Pearl"],
+    fog: ["Frost", "Silver", "Pearl", "Pale Blue"],
+    water: ["Frozen Blue", "Azure", "Glacier", "Deep Blue"],
+    rock: ["Slate", "Blue Grey", "Obsidian", "Pearl"],
+    vegetation: ["None", "Ice", "Frost Lichen", "Pale Moss"]
+  },
+  Lava: {
+    sky: ["Ash", "Amber", "Crimson", "Obsidian"],
+    fog: ["Smoke", "Ash", "Sulfur", "Amber"],
+    water: ["None", "Magma", "Molten", "Boiling"],
+    rock: ["Obsidian", "Basalt", "Charcoal", "Crimson"],
+    vegetation: ["None", "Charred", "Ash", "Sulfur Moss"]
+  },
+  "Gas Giant": {
+    sky: ["Storm Blue", "Amber", "Emerald", "Pearl"],
+    fog: ["Layered Clouds", "Storm Haze", "Ammonia", "Methane"],
+    water: ["None", "Atmospheric", "Methane", "Ammonia"],
+    rock: ["None", "Metallic Hydrogen", "Cloud Core", "Storm Core"],
+    vegetation: ["None"]
+  },
+  Crystal: {
+    sky: ["Prismatic", "Cyan", "Violet", "Sapphire"],
+    fog: ["Crystal Mist", "Pearl", "Violet", "Cyan"],
+    water: ["Crystal Blue", "Azure", "Prismatic", "None"],
+    rock: ["Quartz", "Amethyst", "Sapphire", "Emerald"],
+    vegetation: ["Crystal", "Prismatic", "None", "Glass Moss"]
+  },
+  Toxic: {
+    sky: ["Acid Green", "Sulfur", "Emerald", "Amber"],
+    fog: ["Toxic Green", "Sulfur", "Chemical Yellow", "Emerald"],
+    water: ["Acid Green", "Toxic Slurry", "Chemical Yellow", "Black"],
+    rock: ["Charcoal", "Sulfur", "Basalt", "Sickly Green"],
+    vegetation: ["Toxic Moss", "Mutated Green", "Purple Fungus", "None"]
+  },
+  Artificial: {
+    sky: ["Neon Blue", "Cyan", "Violet", "Obsidian"],
+    fog: ["Holographic", "Neon", "Industrial", "None"],
+    water: ["Coolant Blue", "None", "Synthetic Cyan", "Black"],
+    rock: ["Dark Metal", "Chrome", "Obsidian", "Graphite"],
+    vegetation: ["None", "Synthetic", "Bio Circuit", "Neon Green"]
+  },
+  Void: {
+    sky: ["Obsidian", "Indigo", "Violet", "Black"],
+    fog: ["Void Purple", "Indigo", "Black", "None"],
+    water: ["Black", "Void", "Indigo", "None"],
+    rock: ["Obsidian", "Black Glass", "Dark Matter", "Indigo"],
+    vegetation: ["None", "Void Tendrils", "Shadow Moss", "Black Lichen"]
+  },
+  Living: {
+    sky: ["Emerald", "Cyan", "Pearl", "Warm Green"],
+    fog: ["Bio Mist", "Emerald", "Pearl", "Faint"],
+    water: ["Teal", "Emerald", "Azure", "Bioluminescent"],
+    rock: ["Root Stone", "Moss Rock", "Basalt", "Umber"],
+    vegetation: ["Emerald", "Bioluminescent", "Living Green", "Violet"]
+  },
+  Bio: {
+    sky: ["Bioluminescent", "Emerald", "Violet", "Cyan"],
+    fog: ["Spore Mist", "Bio Mist", "Emerald", "Violet"],
+    water: ["Bioluminescent", "Toxic Green", "Teal", "Organic"],
+    rock: ["Organic", "Fungal", "Basalt", "Umber"],
+    vegetation: ["Fungal", "Mutated", "Bioluminescent", "Emerald"]
+  },
+  Ancient: {
+    sky: ["Amber", "Pearl", "Azure", "Dust"],
+    fog: ["Dust", "Amber", "Pearl", "None"],
+    water: ["Azure", "Ancient Blue", "Mineral", "None"],
+    rock: ["Sandstone", "Granite", "Basalt", "Relic Stone"],
+    vegetation: ["Overgrown", "Moss", "Olive", "None"]
+  },
+  Energy: {
+    sky: ["Ion Blue", "Cyan", "Violet", "Radiant"],
+    fog: ["Charged", "Plasma", "Cyan", "Violet"],
+    water: ["Ionized", "Plasma Blue", "Cyan", "None"],
+    rock: ["Charged Stone", "Basalt", "Quartz", "Obsidian"],
+    vegetation: ["None", "Charged Flora", "Neon", "Radiant Moss"]
+  },
+  Primordial: {
+    sky: ["Amber", "Ash", "Copper", "Storm Blue"],
+    fog: ["Ash", "Steam", "Dust", "Amber"],
+    water: ["Proto Ocean", "Mineral", "Boiling", "None"],
+    rock: ["Basalt", "Cooling Crust", "Obsidian", "Granite"],
+    vegetation: ["None", "Primitive Moss", "Algae", "Sparse"]
+  },
+  Dead: {
+    sky: ["Grey", "Silver", "Dust", "Obsidian"],
+    fog: ["Dust", "None", "Ash", "Grey"],
+    water: ["None", "Brine", "Trace Ice", "Black"],
+    rock: ["Grey", "Slate", "Basalt", "Dust"],
+    vegetation: ["None", "Dead", "Sparse", "Lichen"]
+  }
+};
 const gasGiantHazards = [
   "Extreme Winds",
   "High Pressure",
@@ -297,17 +426,19 @@ function planetName(seed: string, random: RandomSource, planetClass: string) {
   return `${base}-${code}`;
 }
 
-function visualTheme(random: RandomSource, biome: string, climate: string) {
+function visualTheme(random: RandomSource, planetClass: string, planetSubclass: string) {
+  const palette = visualPalettes[planetClass] ?? defaultVisualPalette;
+
   return {
-    "Sky Color": pick(colorWords, random, "Cyan"),
-    "Ground Color": biome,
-    "Fog Color": pick(colorWords, random, "Silver"),
-    "Water Color": pick(colorWords, random, "Azure"),
+    "Sky Color": pick(palette.sky, random, "Cyan"),
+    "Ground Color": planetSubclass,
+    "Fog Color": pick(palette.fog, random, "Silver"),
+    "Water Color": pick(palette.water, random, "Azure"),
     "Cloud Density": pick(["None", "Sparse", "Broken", "Dense", "Layered"], random, "Broken"),
     Lighting: pick(lightWords, random, "Soft"),
     Aurora: pick(["None", "Faint", "Seasonal", "Persistent"], random, "Faint"),
-    "Vegetation Color": climate,
-    "Rock Color": pick(colorWords, random, "Obsidian")
+    "Vegetation Color": pick(palette.vegetation, random, "None"),
+    "Rock Color": pick(palette.rock, random, "Obsidian")
   };
 }
 
@@ -439,7 +570,7 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
     anomalies,
     modifiers: pickMany(rules, "Modifier", random, 1, 4),
     collectible_pools: collectiblePools,
-    visual_theme: visualTheme(random, planetSubclass, planetClass),
+    visual_theme: visualTheme(random, planetClass, planetSubclass),
     weather: pickMany(rules, "Weather", random, 1, 4),
     colonization: {
       Difficulty: isGasGiant ? gasGiantHazardLevel : colonizationDifficultyScore(planetClassDefinition.colonizationDifficulty, random),

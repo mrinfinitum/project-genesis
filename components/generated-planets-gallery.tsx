@@ -709,9 +709,6 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-300">Surface Landscape</p>
                       <p className="mt-1 text-xs text-slate-400">High-resolution surface landscape view.</p>
                     </div>
-                    <span className="w-fit rounded border border-cyan-300/20 bg-cyan-400/10 px-2 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-cyan-100">
-                      Click to enlarge
-                    </span>
                   </div>
 
                   <div className="mt-4">
