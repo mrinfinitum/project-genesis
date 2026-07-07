@@ -16,6 +16,7 @@ export type GalaxyNode = {
   galaxy_seed: string;
   name: string;
   galaxy_type: string;
+  galaxy_size: string;
   sector_count: number;
 };
 
@@ -23,10 +24,21 @@ export type SectorNode = {
   id: string;
   galaxy_id: string;
   sector_seed: string;
+  sector_name: string;
   coordinates_x: number;
   coordinates_y: number;
   coordinates_z: number;
+  sector_type: string;
+  sector_rarity: string;
   system_count: number;
+  difficulty: number;
+  discovery_value: number;
+  discovery_level: string;
+  modifier: string;
+  resource_signal: string;
+  colonized_worlds: number;
+  discovered: boolean;
+  discovered_at: string | null;
 };
 
 export type StarSystemNode = {
@@ -96,7 +108,60 @@ export const PLANET_SUB_SEED_KEYS = [
   "story"
 ];
 
-const galaxyTypes = ["Spiral", "Barred Spiral", "Elliptical", "Irregular", "Ring", "Lenticular", "Dwarf", "Ancient Core"];
+const galaxyTypes = [
+  "Spiral Galaxy",
+  "Elliptical Galaxy",
+  "Ring Galaxy",
+  "Barred Spiral",
+  "Irregular Galaxy",
+  "Ancient Galaxy",
+  "Nebula Cluster",
+  "Void Galaxy",
+  "Artificial Galaxy",
+  "Harmony Galaxy"
+];
+const galaxySizes = [
+  { name: "Small", sectors: 1000, weight: 8 },
+  { name: "Medium", sectors: 5000, weight: 12 },
+  { name: "Large", sectors: 20000, weight: 18 },
+  { name: "Massive", sectors: 100000, weight: 22 },
+  { name: "Infinite", sectors: 100000, weight: 40 }
+];
+const sectorTypes = [
+  "Core Worlds",
+  "Civilized Space",
+  "Outer Rim",
+  "Ancient Expanse",
+  "Nebula",
+  "Frontier",
+  "Deep Space",
+  "Void Region",
+  "Harmony Region",
+  "Uncharted Space"
+];
+const sectorRarities = [
+  { name: "Common", weight: 55 },
+  { name: "Uncommon", weight: 22 },
+  { name: "Rare", weight: 12 },
+  { name: "Epic", weight: 6 },
+  { name: "Legendary", weight: 3 },
+  { name: "Mythic", weight: 1 },
+  { name: "Relic", weight: 0.8 },
+  { name: "Genesis", weight: 0.2 }
+];
+const discoveryLevels = ["Unknown", "Detected", "Scanned", "Surveyed", "Explored", "Colonized", "Mastered"];
+const sectorModifiers = [
+  "Stable Corridor",
+  "Rich Minerals",
+  "Ancient Trade Route",
+  "Dark Matter Region",
+  "Nebula",
+  "Pirate Territory",
+  "Harmony Beacon",
+  "Quantum Storms",
+  "High Radiation",
+  "Lost Civilization"
+];
 const systemRarities = ["Common", "Common", "Common", "Uncommon", "Uncommon", "Rare", "Epic", "Legendary"];
 const resourceBiases = ["Balanced", "Mineral Rich", "Organic", "Ancient Relic", "Energy", "Volatile", "Crystal", "Industrial"];
 const starTypes = ["Red Dwarf", "Yellow Main Sequence", "Blue Giant", "White Dwarf", "Orange Dwarf", "Neutron Star", "Binary Pair", "Black Hole"];
@@ -148,6 +213,20 @@ function pick<T>(values: T[], random: RandomSource, fallback: T) {
   return values[Math.floor(random() * values.length)] ?? fallback;
 }
 
+function pickWeighted<T extends { weight: number }>(values: T[], random: RandomSource, fallback: T) {
+  const totalWeight = values.reduce((total, item) => total + item.weight, 0);
+  let roll = random() * totalWeight;
+
+  for (const item of values) {
+    roll -= item.weight;
+    if (roll <= 0) {
+      return item;
+    }
+  }
+
+  return fallback;
+}
+
 function pickWeightedPlanetClass(random: RandomSource) {
   const totalWeight = PLANET_CLASS_MODEL.reduce((total, item) => total + item.spawnWeight, 0);
   let roll = random() * totalWeight;
@@ -181,6 +260,7 @@ export function generateUniverse(universeSeed: string, name = "Genesis Universe"
 export function generateGalaxy(universeSeed: string, galaxyIndex = 0): GalaxyNode {
   const galaxySeed = deriveSeed(universeSeed, "galaxy", galaxyIndex);
   const random = seededRandom(galaxySeed);
+  const galaxySize = pickWeighted(galaxySizes, random, galaxySizes[galaxySizes.length - 1]);
 
   return {
     id: `galaxy-${galaxyIndex}-${hashSeed(galaxySeed).toString(16)}`,
@@ -188,22 +268,61 @@ export function generateGalaxy(universeSeed: string, galaxyIndex = 0): GalaxyNod
     galaxy_seed: galaxySeed,
     name: generatedName(galaxySeed, "galaxy"),
     galaxy_type: pick(galaxyTypes, random, "Spiral"),
-    sector_count: numericRange(random, 36, 144)
+    galaxy_size: galaxySize.name,
+    sector_count: galaxySize.sectors
   };
 }
 
 export function generateSector(galaxy: GalaxyNode, sectorIndex: number): SectorNode {
   const sectorSeed = deriveSeed(galaxy.galaxy_seed, "sector", sectorIndex);
   const random = seededRandom(sectorSeed);
+  const sectorRarity = pickWeighted(sectorRarities, random, sectorRarities[0]).name;
+  const sectorType = pick(sectorTypes, random, "Uncharted Space");
+  const discovered = sectorIndex === 0;
+  const nearbyDetected = sectorIndex > 0 && sectorIndex < 6;
+  const discoveryLevel = discovered ? "Scanned" : nearbyDetected ? "Detected" : "Unknown";
+  const difficultyByRarity: Record<string, [number, number]> = {
+    Common: [5, 28],
+    Uncommon: [20, 42],
+    Rare: [35, 60],
+    Epic: [55, 78],
+    Legendary: [72, 90],
+    Mythic: [82, 96],
+    Relic: [88, 100],
+    Genesis: [96, 100]
+  };
+  const valueByRarity: Record<string, [number, number]> = {
+    Common: [100, 300],
+    Uncommon: [250, 650],
+    Rare: [600, 1300],
+    Epic: [1200, 3000],
+    Legendary: [2500, 7000],
+    Mythic: [6500, 15000],
+    Relic: [14000, 40000],
+    Genesis: [75000, 150000]
+  };
+  const [difficultyMin, difficultyMax] = difficultyByRarity[sectorRarity] ?? difficultyByRarity.Common;
+  const [valueMin, valueMax] = valueByRarity[sectorRarity] ?? valueByRarity.Common;
 
   return {
     id: `sector-${sectorIndex}-${hashSeed(sectorSeed).toString(16)}`,
     galaxy_id: galaxy.id,
     sector_seed: sectorSeed,
+    sector_name: `${pick(namePrefixes, random, "Astra")} ${pick(["Reach", "Veil", "Expanse", "Frontier", "Basin", "Crown", "Drift"], random, "Reach")}-${String(sectorIndex + 1).padStart(3, "0")}`,
     coordinates_x: numericRange(random, -999, 999),
     coordinates_y: numericRange(random, -999, 999),
     coordinates_z: numericRange(random, -999, 999),
-    system_count: numericRange(random, 4, 28)
+    sector_type: sectorType,
+    sector_rarity: sectorRarity,
+    system_count: numericRange(random, 20, 150),
+    difficulty: numericRange(random, difficultyMin, difficultyMax),
+    discovery_value: numericRange(random, valueMin, valueMax),
+    discovery_level: discoveryLevel,
+    modifier: pick(sectorModifiers, random, "Stable Corridor"),
+    resource_signal: pick(resourceBiases, random, "Balanced"),
+    colonized_worlds: discovered ? numericRange(random, 0, 3) : 0,
+    discovered,
+    discovered_at: discovered ? "derived" : null
   };
 }
 

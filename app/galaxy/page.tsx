@@ -1,5 +1,5 @@
-import { PlaceholderPage } from "@/components/placeholder-page";
+import { GalaxyCommandCenter } from "@/components/galaxy-command-center";
 
 export default function GalaxyPage() {
-  return <PlaceholderPage title="Galaxy" />;
+  return <GalaxyCommandCenter />;
 }

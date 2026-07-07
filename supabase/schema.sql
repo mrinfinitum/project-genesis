@@ -185,9 +185,11 @@ create table if not exists universes (
 create table if not exists galaxies (
   id text primary key,
   universe_id text references universes(id) on delete cascade,
+  universe_seed text,
   galaxy_seed text not null unique,
   name text not null,
   galaxy_type text not null,
+  galaxy_size text not null default 'Infinite',
   sector_count integer not null default 0,
   created_at timestamptz default now()
 );
@@ -196,10 +198,19 @@ create table if not exists sectors (
   id text primary key,
   galaxy_id text references galaxies(id) on delete cascade,
   sector_seed text not null unique,
+  sector_name text not null default 'Uncharted Sector',
   coordinates_x integer not null default 0,
   coordinates_y integer not null default 0,
   coordinates_z integer not null default 0,
+  sector_type text not null default 'Uncharted Space',
+  sector_rarity text not null default 'Common',
   system_count integer not null default 0,
+  difficulty integer not null default 0,
+  discovery_value integer not null default 0,
+  discovery_level text not null default 'Unknown',
+  modifier text not null default 'Stable Corridor',
+  resource_signal text not null default 'Balanced',
+  colonized_worlds integer not null default 0,
   discovered boolean not null default false,
   discovered_at timestamptz,
   created_at timestamptz default now()
@@ -693,8 +704,12 @@ create index if not exists buildings_era_idx on buildings(era);
 create index if not exists conceptual_art_created_at_idx on conceptual_art(created_at desc);
 create index if not exists conceptual_art_category_idx on conceptual_art(category);
 create index if not exists galaxies_universe_id_idx on galaxies(universe_id);
+create index if not exists galaxies_seed_size_idx on galaxies(galaxy_seed, galaxy_size);
 create index if not exists sectors_galaxy_id_idx on sectors(galaxy_id);
 create index if not exists sectors_discovered_idx on sectors(discovered);
+create index if not exists sectors_type_idx on sectors(sector_type);
+create index if not exists sectors_rarity_idx on sectors(sector_rarity);
+create index if not exists sectors_discovery_level_idx on sectors(discovery_level);
 create index if not exists star_systems_sector_id_idx on star_systems(sector_id);
 create index if not exists star_systems_discovered_idx on star_systems(discovered);
 create index if not exists stars_system_id_idx on stars(system_id);

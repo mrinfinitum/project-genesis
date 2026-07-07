@@ -197,9 +197,11 @@ export type UniverseRecord = {
 export type GalaxyRecord = {
   id: string;
   universe_id: string;
+  universe_seed: string | null;
   galaxy_seed: string;
   name: string;
   galaxy_type: string;
+  galaxy_size: string;
   sector_count: number;
   created_at: string;
 };
@@ -208,10 +210,19 @@ export type SectorRecord = {
   id: string;
   galaxy_id: string;
   sector_seed: string;
+  sector_name: string;
   coordinates_x: number;
   coordinates_y: number;
   coordinates_z: number;
+  sector_type: string;
+  sector_rarity: string;
   system_count: number;
+  difficulty: number;
+  discovery_value: number;
+  discovery_level: string;
+  modifier: string;
+  resource_signal: string;
+  colonized_worlds: number;
   discovered: boolean;
   discovered_at: string | null;
   created_at: string;
