@@ -7,7 +7,7 @@ import {
   PLANET_CLASS_MODEL,
   rollPlanetClass
 } from "@/lib/planets/class-model";
-import { rollPlanetRarity } from "@/lib/planets/rarity";
+import { generatePlanetRarity } from "@/lib/planets/rarity";
 import { buildOrbitViewPrompt } from "@/lib/planets/artwork-prompts";
 
 type RandomSource = () => number;
@@ -15,6 +15,7 @@ type GeneratePlanetOptions = {
   planetClass?: string;
   planetSubclass?: string;
   primaryBiome?: string;
+  systemRarity?: string;
   resourceProfiles?: PlanetResourceProfile[];
 };
 
@@ -488,7 +489,6 @@ function anomalyCountForRarity(rarityName: string): [number, number] {
 export function generatePlanet(rules: PlanetVariable[], existingCount: number, requestedSeed?: string, options: GeneratePlanetOptions = {}): GeneratedPlanet {
   const seed = requestedSeed?.trim() || `PG-${Date.now()}-${existingCount + 1}`;
   const random = seededRandom(seed);
-  const rarity = rollPlanetRarity(random);
   const forcedPlanetClass = options.planetClass?.trim();
   const forcedPlanetSubclass = options.planetSubclass?.trim();
   const forcedPrimaryBiome = options.primaryBiome?.trim();
@@ -497,6 +497,7 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
     (forcedPrimaryBiome ? findPlanetClassByBiome(forcedPrimaryBiome) ?? findPlanetClassByName(forcedPrimaryBiome) : null);
   const planetClassDefinition = forcedClass ?? rollPlanetClass(random) ?? PLANET_CLASS_MODEL[0];
   const planetClass = planetClassDefinition.name;
+  const rarity = generatePlanetRarity(seededRandom(`${seed}:rarity:${planetClass}:${options.systemRarity ?? "Common"}`), planetClass, options.systemRarity);
   const isGasGiant = planetClass === "Gas Giant";
   const planetSubclass = forcedPlanetSubclass && planetClassDefinition.subclasses.some((candidate) => candidate.toLowerCase() === forcedPlanetSubclass.toLowerCase())
     ? forcedPlanetSubclass

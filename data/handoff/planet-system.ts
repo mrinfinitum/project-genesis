@@ -7,7 +7,7 @@ import {
   planetColonizationDifficultyRows,
   planetSubclassRows
 } from "@/lib/planets/class-model";
-import { PLANET_RARITIES } from "@/lib/planets/rarity";
+import { PLANET_CLASS_RARITY_PROFILES, PLANET_RARITIES, SYSTEM_RARITY_MODIFIERS } from "@/lib/planets/rarity";
 
 type PlanetVariableInput = {
   category: string;
@@ -51,8 +51,8 @@ function planetClassSpawnWeightRows(): PlanetVariable[] {
     id: `planet-class-spawn-weight-${slug(row.planetClass)}`,
     category: "Planet Class Spawn Weight",
     value: row.planetClass,
-    description: "Independent weighted chance for selecting the fundamental planet class after rarity is rolled.",
-    generation_rule: "Planet rarity and planet class are independent. Every rarity can combine with every class unless a future explicit restriction is added.",
+    description: "Weighted chance for selecting the fundamental planet class before the class-influenced rarity roll.",
+    generation_rule: "Planet class is selected before final rarity. Class then supplies the rarity profile used by the seeded rarity roll.",
     frequency: row.tier,
     weight: row.weight,
     min_value: 0,
@@ -87,8 +87,8 @@ function planetRarityRows(): PlanetVariable[] {
     id: `planet-rarity-${slug(rarity.name)}`,
     category: "Planet Rarity",
     value: rarity.name,
-    description: "Independent rarity roll that controls planet value, resource count, trait count, civilization odds, collectibles, discovery points, and card treatment.",
-    generation_rule: "Planet rarity rolls before planet class. Rarity and class are independent, so every rarity can combine with every class unless explicitly restricted later.",
+    description: "Final rarity result that controls planet value, resource count, trait count, civilization odds, collectibles, discovery points, and card treatment.",
+    generation_rule: "Final planet rarity is rolled from the selected Planet Class Rarity Profile, adjusted by System Rarity, then normalized. This table still owns display color, discovery bands, and UI treatment.",
     frequency: `${rarity.spawnChance}%`,
     weight: rarity.spawnChance,
     min_value: rarity.discoveryPoints[0],
@@ -108,12 +108,66 @@ function planetRarityRows(): PlanetVariable[] {
   }));
 }
 
+function planetClassRarityProfileRows(): PlanetVariable[] {
+  return PLANET_CLASS_RARITY_PROFILES.map((profile) => ({
+    id: `planet-class-rarity-profile-${slug(profile.planetClass)}`,
+    category: "Planet Class Rarity Profile",
+    value: profile.planetClass,
+    description: "Class-specific rarity weight curve used after planet class is selected.",
+    generation_rule: "System Rarity modifies this profile, then a seeded weighted roll returns the final Planet Rarity. Class influences rarity but never guarantees it.",
+    frequency: [
+      `Common ${profile.weights.Common}`,
+      `Uncommon ${profile.weights.Uncommon}`,
+      `Rare ${profile.weights.Rare}`,
+      `Epic ${profile.weights.Epic}`,
+      `Legendary ${profile.weights.Legendary}`,
+      `Mythic ${profile.weights.Mythic}`,
+      `Relic ${profile.weights.Relic}`,
+      `Cosmic ${profile.weights.Cosmic}`,
+      `Genesis ${profile.weights.Genesis}`
+    ].join(" / "),
+    weight: profile.weights.Rare + profile.weights.Epic + profile.weights.Legendary + profile.weights.Mythic + profile.weights.Relic + profile.weights.Cosmic + profile.weights.Genesis,
+    min_value: profile.weights.Common,
+    max_value: profile.weights.Genesis,
+    biome_tags: [profile.planetClass],
+    resource_tags: [],
+    status: "Active",
+    notes: profile.notes
+  }));
+}
+
+function systemRarityModifierRows(): PlanetVariable[] {
+  return SYSTEM_RARITY_MODIFIERS.map((modifier) => ({
+    id: `system-rarity-modifier-${slug(modifier.systemRarity)}`,
+    category: "System Rarity Modifier",
+    value: modifier.systemRarity,
+    description: "Upward pressure applied to the final planet rarity roll inside a star system.",
+    generation_rule: "Boost Legendary, Mythic, Relic, Cosmic, and Genesis weights; reduce Common and Uncommon proportionally; normalize weights before rolling.",
+    frequency: `rarity_shift ${modifier.rarityShift}`,
+    weight: modifier.rarityShift,
+    min_value: 0,
+    max_value: 1,
+    biome_tags: [],
+    resource_tags: [],
+    status: "Active",
+    notes: modifier.description
+  }));
+}
+
 export const planetSystemVariables: PlanetVariable[] = [
   ...variableRows({
     category: "Objective",
-    values: ["Unique Seed", "Procedural Galaxy", "No Handcrafted Planets", "Permanent Discovery Record"],
+    values: ["Unique Seed", "Procedural Galaxy", "No Handcrafted Planets", "Permanent Discovery Record", "Class-Weighted Rarity"],
     description: "Core planet generation objective for Project Genesis.",
     generation_rule: "Every discovered planet is generated from a unique seed and permanently stored."
+  }),
+  ...variableRows({
+    category: "Generation Flow",
+    values: ["System Rarity + Planet Class Rarity Profile + Seeded Roll = Final Planet Rarity"],
+    description: "Current high-level rarity flow for generated planets.",
+    generation_rule: "Galaxy Seed -> Sector Seed -> Star System Seed -> System Rarity -> Planet Class -> Planet Class Rarity Profile -> Planet Rarity Roll -> Planet Subclass -> Biome -> Resources -> Traits -> Story.",
+    status: "Active",
+    notes: "Rarity is no longer a flat global table. Planet class influences rarity odds, system rarity shifts the result upward, and seeded randomness preserves surprise."
   }),
   ...variableRows({
     category: "Planet Data Field",
@@ -143,9 +197,11 @@ export const planetSystemVariables: PlanetVariable[] = [
     category: "Planet Class",
     values: planetClassNames(),
     description: "Fundamental world type used to drive visual identity, rules, resource pools, and story tone.",
-    generation_rule: "Planet rarity rolls first, then planet class is selected before subclass, biome, atmosphere, resources, anomalies, and story."
+    generation_rule: "Planet class is selected before final rarity. The class provides the rarity profile used by the seeded rarity roll."
   }),
   ...planetRarityRows(),
+  ...planetClassRarityProfileRows(),
+  ...systemRarityModifierRows(),
   ...planetClassSpawnWeightRows(),
   ...planetClassColonizationDifficultyRows(),
   ...variableRows({

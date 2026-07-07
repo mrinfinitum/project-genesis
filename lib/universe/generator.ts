@@ -1,5 +1,5 @@
 import { PLANET_CLASS_MODEL } from "@/lib/planets/class-model";
-import { rollPlanetRarity } from "@/lib/planets/rarity";
+import { generatePlanetRarity } from "@/lib/planets/rarity";
 
 type RandomSource = () => number;
 
@@ -263,9 +263,8 @@ export function generateStars(system: StarSystemNode) {
 
 export function generateUniversePlanet(system: StarSystemNode, planetIndex: number): UniversePlanetNode {
   const planetSeed = deriveSeed(system.system_seed, "planet", planetIndex);
-  const random = seededRandom(planetSeed);
-  const rarity = rollPlanetRarity(seededRandom(deriveSeed(planetSeed, "rarity")));
   const planetClass = pickWeightedPlanetClass(seededRandom(deriveSeed(planetSeed, "class")));
+  const rarity = generatePlanetRarity(seededRandom(deriveSeed(planetSeed, "rarity")), planetClass.name, system.system_rarity);
   const planetSubclass = pick(planetClass.subclasses, seededRandom(deriveSeed(planetSeed, "subclass")), planetClass.name);
 
   return {

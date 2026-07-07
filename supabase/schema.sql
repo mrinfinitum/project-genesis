@@ -117,6 +117,32 @@ create index if not exists planet_resource_profiles_subclass_idx
 create index if not exists planet_resource_profiles_tier_idx
   on planet_resource_profiles(discovery_tier);
 
+create table if not exists planet_class_rarity_profiles (
+  id text primary key,
+  planet_class text not null unique,
+  common_weight numeric default 0,
+  uncommon_weight numeric default 0,
+  rare_weight numeric default 0,
+  epic_weight numeric default 0,
+  legendary_weight numeric default 0,
+  mythic_weight numeric default 0,
+  relic_weight numeric default 0,
+  cosmic_weight numeric default 0,
+  genesis_weight numeric default 0,
+  notes text,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create table if not exists system_rarity_modifiers (
+  id text primary key,
+  system_rarity text not null unique,
+  rarity_shift numeric default 0,
+  description text,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
 create table if not exists resource_catalog (
   id text primary key,
   resource_name text not null,
