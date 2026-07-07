@@ -27,6 +27,7 @@ const sourceRoot = path.resolve(process.cwd(), sourceArg);
 
 type PlanetRenderMetadata = Partial<Omit<PlanetRenderLibraryRecord, "created_at" | "updated_at">>;
 type CompanionKind = "landscape" | "orbital";
+type PsdRenderMode = "planet" | "full-frame";
 type RenderAsset = Awaited<ReturnType<typeof renderAssetFor>>;
 type CompanionUpload = {
   file: string;
@@ -433,7 +434,7 @@ function blendOuterPlanetLimb(data: Buffer, width: number, height: number) {
   return output;
 }
 
-async function psdToPngBuffer(file: string) {
+async function psdToPngBuffer(file: string, mode: PsdRenderMode = "planet") {
   const psd = readPsd(await readFile(file), {
     useImageData: true,
     skipLayerImageData: true,
@@ -448,34 +449,37 @@ async function psdToPngBuffer(file: string) {
 
   const width = imageData.width || psd.width;
   const height = imageData.height || psd.height;
-  const rgba = blendOuterPlanetLimb(
-    softenSilhouetteEdge(
-      removeLightMatteFringe(removeEdgeWhiteBackground(toEightBitRgba(imageData.data, width, height), width, height), width, height),
-      width,
-      height
-    ),
-    width,
-    height
-  );
-  const trimmed = trimTransparentPixels(rgba, width, height);
-  const buffer = await sharp(trimmed.data, {
+  const rgba =
+    mode === "planet"
+      ? blendOuterPlanetLimb(
+          softenSilhouetteEdge(
+            removeLightMatteFringe(removeEdgeWhiteBackground(toEightBitRgba(imageData.data, width, height), width, height), width, height),
+            width,
+            height
+          ),
+          width,
+          height
+        )
+      : toEightBitRgba(imageData.data, width, height);
+  const output = mode === "planet" ? trimTransparentPixels(rgba, width, height) : { data: rgba, width, height };
+  const buffer = await sharp(output.data, {
     raw: {
-      width: trimmed.width,
-      height: trimmed.height,
+      width: output.width,
+      height: output.height,
       channels: 4
     }
   })
     .png()
     .toBuffer();
 
-  return { buffer, width: trimmed.width, height: trimmed.height };
+  return { buffer, width: output.width, height: output.height };
 }
 
-async function renderAssetFor(file: string, metadata: PlanetRenderMetadata) {
+async function renderAssetFor(file: string, metadata: PlanetRenderMetadata, psdRenderMode: PsdRenderMode = "planet") {
   const filename = path.basename(file);
 
   if (filename.toLowerCase().endsWith(".psd")) {
-    const rendered = await psdToPngBuffer(file);
+    const rendered = await psdToPngBuffer(file, psdRenderMode);
     return {
       buffer: rendered.buffer,
       width: Number(metadata.width ?? rendered.width),
@@ -580,7 +584,7 @@ async function uploadCompanionArtwork(companion: CompanionUpload, importVersion:
     return {};
   }
 
-  const asset = await renderAssetFor(companion.file, companion.metadata);
+  const asset = await renderAssetFor(companion.file, companion.metadata, "full-frame");
   const storagePath = String(companion.metadata[fields.storagePathKey] ?? `planet-render-library/${companion.baseId}/${fields.folder}/${asset.filename}`);
   const sourceStoragePath =
     asset.sourceBuffer && asset.sourceFilename ? `planet-render-library/${companion.baseId}/${fields.folder}/source/${asset.sourceFilename}` : "";
