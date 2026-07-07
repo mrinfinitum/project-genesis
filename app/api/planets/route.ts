@@ -139,11 +139,18 @@ export async function POST(request: Request) {
     }
 
     const renderMatch = matchPlanetRender(planet, renderLibrary as PlanetRenderLibraryRecord[]);
+    const matchedSecondaryArtworkUrl = renderMatch
+      ? planet.uses_orbital_gameplay || planet.planet_class === "Gas Giant"
+        ? renderMatch.render.orbital_image_url || renderMatch.render.landscape_image_url || ""
+        : renderMatch.render.landscape_image_url || ""
+      : "";
     const planetWithLibraryRender = renderMatch
       ? {
           ...planet,
           image_url: renderMatch.render.file_url,
           orbit_view_image_url: renderMatch.render.file_url,
+          surface_landscape_image_url: matchedSecondaryArtworkUrl || planet.surface_landscape_image_url,
+          surface_landscape_status: matchedSecondaryArtworkUrl ? "Library Match" : planet.surface_landscape_status,
           image_prompt: `Matched pre-rendered planet library asset "${renderMatch.render.name}" with score ${Math.round(renderMatch.score)} (${renderMatch.reasons.join(", ")}).`,
           orbit_view_prompt: planet.orbit_view_prompt ?? planet.image_prompt,
           image_status: "Library Match",

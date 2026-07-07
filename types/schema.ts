@@ -367,6 +367,12 @@ export type PlanetRenderLibraryRecord = {
   file_url: string;
   storage_path: string;
   thumbnail_url: string;
+  landscape_image_url: string;
+  landscape_storage_path: string;
+  landscape_source_path: string;
+  orbital_image_url: string;
+  orbital_storage_path: string;
+  orbital_source_path: string;
   planet_class: string;
   biome: string;
   atmosphere: string;

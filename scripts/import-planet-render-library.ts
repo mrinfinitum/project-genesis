@@ -26,6 +26,14 @@ const sourceArg = process.argv.slice(2).find((arg) => !arg.startsWith("--")) ?? 
 const sourceRoot = path.resolve(process.cwd(), sourceArg);
 
 type PlanetRenderMetadata = Partial<Omit<PlanetRenderLibraryRecord, "created_at" | "updated_at">>;
+type CompanionKind = "landscape" | "orbital";
+type RenderAsset = Awaited<ReturnType<typeof renderAssetFor>>;
+type CompanionUpload = {
+  file: string;
+  kind: CompanionKind;
+  baseId: string;
+  metadata: PlanetRenderMetadata;
+};
 
 const supabase =
   url && serviceRoleKey
@@ -43,6 +51,40 @@ function slug(input: string) {
 
 function assetId(input: string) {
   return input.toLowerCase().replace(/[^a-z0-9_-]+/g, "_").replace(/^_+|_+$/g, "") || "planet_render";
+}
+
+function companionInfoForFilename(filename: string): { kind: CompanionKind; baseName: string } | null {
+  const name = path.parse(filename).name;
+  const normalized = name.toLowerCase();
+  const numberedMatch = normalized.match(/(?:_|-)(surface_landscape|landscape|surface|orbital_platform|orbital|platform)(?:_|-)([0-9]+)$/i);
+
+  if (numberedMatch?.index !== undefined) {
+    const token = numberedMatch[1];
+    const number = numberedMatch[2];
+    const kind: CompanionKind = /orbital|platform/i.test(token) ? "orbital" : "landscape";
+    const baseName = `${name.slice(0, numberedMatch.index)}_${number}`;
+    return { kind, baseName };
+  }
+
+  const patterns: Array<{ kind: CompanionKind; pattern: RegExp }> = [
+    { kind: "landscape", pattern: /(?:_|-)(?:surface_)?landscape$/i },
+    { kind: "landscape", pattern: /(?:_|-)surface$/i },
+    { kind: "orbital", pattern: /(?:_|-)(?:orbital|orbital_platform|platform)$/i }
+  ];
+
+  for (const item of patterns) {
+    if (item.pattern.test(normalized)) {
+      const baseName = name.replace(item.pattern, "");
+      return { kind: item.kind, baseName };
+    }
+  }
+
+  return null;
+}
+
+function baseRenderIdFor(file: string, metadata: PlanetRenderMetadata) {
+  const filenameInfo = companionInfoForFilename(path.basename(file));
+  return String(metadata.id ?? assetId(filenameInfo?.baseName ?? path.parse(file).name));
 }
 
 function titleize(input: string) {
@@ -509,6 +551,72 @@ function cacheBustUrl(url: string, version: string) {
   return `${url}${separator}v=${version}`;
 }
 
+function companionFields(kind: CompanionKind) {
+  return kind === "landscape"
+    ? {
+        imageUrlKey: "landscape_image_url" as const,
+        storagePathKey: "landscape_storage_path" as const,
+        sourcePathKey: "landscape_source_path" as const,
+        folder: "landscape"
+      }
+    : {
+        imageUrlKey: "orbital_image_url" as const,
+        storagePathKey: "orbital_storage_path" as const,
+        sourcePathKey: "orbital_source_path" as const,
+        folder: "orbital"
+      };
+}
+
+async function uploadCompanionArtwork(companion: CompanionUpload, importVersion: string, existingRow?: PlanetRenderLibraryRecord) {
+  if (!supabase) {
+    return {};
+  }
+
+  const fields = companionFields(companion.kind);
+  const existingUrl = String(existingRow?.[fields.imageUrlKey] ?? "");
+
+  if (existingUrl && !overwrite) {
+    console.log(`Skipping existing ${companion.kind} artwork for ${companion.baseId}. Use --overwrite to reprocess.`);
+    return {};
+  }
+
+  const asset = await renderAssetFor(companion.file, companion.metadata);
+  const storagePath = String(companion.metadata[fields.storagePathKey] ?? `planet-render-library/${companion.baseId}/${fields.folder}/${asset.filename}`);
+  const sourceStoragePath =
+    asset.sourceBuffer && asset.sourceFilename ? `planet-render-library/${companion.baseId}/${fields.folder}/source/${asset.sourceFilename}` : "";
+  const fileUrl = String(companion.metadata[fields.imageUrlKey] ?? cacheBustUrl(await publicUrlFor(storagePath), importVersion));
+
+  console.log(`${apply ? "Uploading" : "Would upload"} ${companion.kind} artwork ${path.relative(sourceRoot, companion.file)} -> ${companion.baseId}`);
+
+  if (apply) {
+    const { error: uploadError } = await supabase.storage.from(bucket).upload(storagePath, asset.buffer, {
+      contentType: asset.contentType,
+      upsert: true
+    });
+
+    if (uploadError) {
+      throw new Error(`${storagePath}: ${uploadError.message}`);
+    }
+
+    if (sourceStoragePath && asset.sourceBuffer && uploadPsdSources) {
+      const { error: sourceUploadError } = await supabase.storage.from(bucket).upload(sourceStoragePath, asset.sourceBuffer, {
+        contentType: asset.sourceContentType,
+        upsert: true
+      });
+
+      if (sourceUploadError) {
+        console.warn(`${sourceStoragePath}: Source PSD upload skipped: ${sourceUploadError.message}`);
+      }
+    }
+  }
+
+  return {
+    [fields.imageUrlKey]: fileUrl,
+    [fields.storagePathKey]: storagePath,
+    [fields.sourcePathKey]: sourceStoragePath
+  };
+}
+
 async function syncGeneratedPlanetRenderUrls(rows: PlanetRenderLibraryRecord[]) {
   if (!supabase || !rows.length) {
     return;
@@ -537,7 +645,13 @@ async function syncGeneratedPlanetRenderUrls(rows: PlanetRenderLibraryRecord[]) 
       {
         ...planet,
         image_url: matchingRender.file_url,
-        image_variants: matchingRender.image_variants
+        image_variants: matchingRender.image_variants,
+        surface_landscape_image_url:
+          planet.uses_orbital_gameplay || planet.planet_class === "Gas Giant"
+            ? matchingRender.orbital_image_url || matchingRender.landscape_image_url || planet.surface_landscape_image_url || ""
+            : matchingRender.landscape_image_url || planet.surface_landscape_image_url || "",
+        surface_landscape_status:
+          matchingRender.landscape_image_url || matchingRender.orbital_image_url ? "Library Match" : planet.surface_landscape_status || "Not Started"
       }
     ];
   });
@@ -556,18 +670,18 @@ async function syncGeneratedPlanetRenderUrls(rows: PlanetRenderLibraryRecord[]) 
   console.log(`Synced ${updates.length} generated planet image URL${updates.length === 1 ? "" : "s"}.`);
 }
 
-async function existingRenderIds() {
+async function existingRenderRows() {
   if (!supabase) {
-    return new Set<string>();
+    return new Map<string, PlanetRenderLibraryRecord>();
   }
 
-  const { data, error } = await supabase.from("planet_render_library").select("id");
+  const { data, error } = await supabase.from("planet_render_library").select("*");
 
   if (error) {
     throw error;
   }
 
-  return new Set((data ?? []).map((row) => String(row.id)));
+  return new Map((data ?? []).map((row) => [String(row.id), row as PlanetRenderLibraryRecord]));
 }
 
 async function main() {
@@ -584,17 +698,65 @@ async function main() {
   }
 
   const files = await walkFiles(sourceRoot);
+  const mainFiles: Array<{ file: string; metadata: PlanetRenderMetadata }> = [];
+  const companionsByBaseId = new Map<string, CompanionUpload[]>();
   const rows: PlanetRenderLibraryRecord[] = [];
-  const existingIds = apply && !overwrite ? await existingRenderIds() : new Set<string>();
+  const existingRowsById = apply ? await existingRenderRows() : new Map<string, PlanetRenderLibraryRecord>();
+  const existingIds = new Set(existingRowsById.keys());
   const importVersion = Date.now().toString(36);
+  const handledCompanionFiles = new Set<string>();
   let skippedExisting = 0;
+  let companionUpdates = 0;
 
   for (const file of files) {
     const metadata = await readMetadata(file);
-    const relativePath = path.relative(sourceRoot, file);
-    const preliminaryId = String(metadata.id ?? assetId(path.parse(file).name));
+    const companionInfo = companionInfoForFilename(path.basename(file));
 
-    if (existingIds.has(preliminaryId)) {
+    if (companionInfo) {
+      const baseId = baseRenderIdFor(file, metadata);
+      companionsByBaseId.set(baseId, [
+        ...(companionsByBaseId.get(baseId) ?? []),
+        {
+          file,
+          kind: companionInfo.kind,
+          baseId,
+          metadata
+        }
+      ]);
+      continue;
+    }
+
+    mainFiles.push({ file, metadata });
+  }
+
+  async function uploadCompanionsFor(baseId: string, existingRow?: PlanetRenderLibraryRecord) {
+    const companions = companionsByBaseId.get(baseId) ?? [];
+    const patch: Record<string, unknown> = {};
+
+    for (const companion of companions) {
+      const fields = await uploadCompanionArtwork(companion, importVersion, existingRow);
+      Object.assign(patch, fields);
+      handledCompanionFiles.add(companion.file);
+    }
+
+    return patch;
+  }
+
+  for (const { file, metadata } of mainFiles) {
+    const relativePath = path.relative(sourceRoot, file);
+    const preliminaryId = baseRenderIdFor(file, metadata);
+    const existingRow = existingRowsById.get(preliminaryId);
+
+    if (existingIds.has(preliminaryId) && !overwrite) {
+      const companionPatch = await uploadCompanionsFor(preliminaryId, existingRow);
+      if (Object.keys(companionPatch).length && existingRow) {
+        rows.push({
+          ...existingRow,
+          ...companionPatch,
+          updated_at: new Date().toISOString()
+        });
+        companionUpdates += 1;
+      }
       skippedExisting += 1;
       continue;
     }
@@ -621,6 +783,12 @@ async function main() {
       file_url: fileUrl,
       storage_path: storagePath,
       thumbnail_url: String(metadata.thumbnail_url ?? ""),
+      landscape_image_url: String(metadata.landscape_image_url ?? ""),
+      landscape_storage_path: String(metadata.landscape_storage_path ?? ""),
+      landscape_source_path: String(metadata.landscape_source_path ?? ""),
+      orbital_image_url: String(metadata.orbital_image_url ?? ""),
+      orbital_storage_path: String(metadata.orbital_storage_path ?? ""),
+      orbital_source_path: String(metadata.orbital_source_path ?? ""),
       planet_class: String(taxonomy?.planetClass.name ?? metadata.planet_class ?? inferredClass),
       biome: String(taxonomy?.subclass ?? metadata.biome ?? inferredBiome),
       atmosphere: String(metadata.atmosphere ?? inferValue(pathParts, ["Dense", "Thin", "Toxic", "Ionized", "Methane"])),
@@ -687,6 +855,37 @@ async function main() {
         row.notes = row.notes ? `${row.notes}\n${warning}` : warning;
       }
     }
+
+    Object.assign(row, await uploadCompanionsFor(id, existingRow));
+  }
+
+  for (const [baseId, companions] of companionsByBaseId) {
+    const existingRow = existingRowsById.get(baseId);
+    const unhandled = companions.filter((companion) => !handledCompanionFiles.has(companion.file));
+
+    if (!unhandled.length) {
+      continue;
+    }
+
+    if (!existingRow) {
+      console.warn(`Skipped ${unhandled.length} companion artwork file${unhandled.length === 1 ? "" : "s"} for ${baseId}: no base planet render exists.`);
+      continue;
+    }
+
+    const patch: Record<string, unknown> = {};
+    for (const companion of unhandled) {
+      Object.assign(patch, await uploadCompanionArtwork(companion, importVersion, existingRow));
+      handledCompanionFiles.add(companion.file);
+    }
+
+    if (Object.keys(patch).length) {
+      rows.push({
+        ...existingRow,
+        ...patch,
+        updated_at: new Date().toISOString()
+      });
+      companionUpdates += 1;
+    }
   }
 
   if (apply && supabase && rows.length) {
@@ -704,6 +903,10 @@ async function main() {
 
   if (skippedExisting) {
     console.log(`Skipped ${skippedExisting} existing planet render${skippedExisting === 1 ? "" : "s"}. Use --overwrite to reprocess existing files.`);
+  }
+
+  if (companionUpdates) {
+    console.log(`Updated companion artwork for ${companionUpdates} planet render${companionUpdates === 1 ? "" : "s"}.`);
   }
 }
 
