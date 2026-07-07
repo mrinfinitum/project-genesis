@@ -724,52 +724,30 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                   </div>
 
                   <div className="mt-4 grid gap-4 lg:grid-cols-2">
-                    <div className="space-y-3 rounded-md border border-cyan-300/10 bg-slate-950/50 p-3">
-                      <div className="flex items-center justify-between gap-3">
-                        <div>
-                          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-300">Orbit View</p>
-                          <p className="text-[0.7rem] text-slate-500">1:1 planet sphere render</p>
+                    <div className="grid aspect-square place-items-center overflow-hidden rounded-md bg-black">
+                      {orbitArtworkUrl(selectedPlanet) ? (
+                        <img className="h-full w-full object-contain" src={orbitArtworkUrl(selectedPlanet)} alt={`${selectedPlanet.name} orbit view`} />
+                      ) : (
+                        <div className="flex flex-col items-center gap-2 text-center text-slate-500">
+                          <ImageIcon className="h-8 w-8 text-cyan-200/50" />
+                          <p className="text-xs">No orbit render yet</p>
                         </div>
-                        <span className="rounded border border-slate-600/70 bg-slate-900 px-2 py-1 text-[0.65rem] text-slate-300">
-                          {selectedPlanet.image_status || "Not Rendered"}
-                        </span>
-                      </div>
-                      <div className="grid aspect-square place-items-center overflow-hidden rounded-md border border-cyan-300/10 bg-black p-4">
-                        {orbitArtworkUrl(selectedPlanet) ? (
-                          <img className="h-full w-full object-contain" src={orbitArtworkUrl(selectedPlanet)} alt={`${selectedPlanet.name} orbit view`} />
-                        ) : (
-                          <div className="flex flex-col items-center gap-2 text-center text-slate-500">
-                            <ImageIcon className="h-8 w-8 text-cyan-200/50" />
-                            <p className="text-xs">No orbit render yet</p>
-                          </div>
-                        )}
-                      </div>
+                      )}
                     </div>
 
-                    <div className="space-y-3 rounded-md border border-cyan-300/10 bg-slate-950/50 p-3">
-                      <div className="flex items-center justify-between gap-3">
-                        <div>
-                          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-300">{secondaryArtworkType(selectedPlanet)}</p>
-                          <p className="text-[0.7rem] text-slate-500">{isGasGiant(selectedPlanet) ? "16:9 orbital gameplay scene" : "16:9 surface landscape render"}</p>
+                    <div className="grid aspect-video place-items-center overflow-hidden rounded-md bg-black">
+                      {secondaryArtworkUrl(selectedPlanet) ? (
+                        <img
+                          className="h-full w-full object-contain"
+                          src={secondaryArtworkUrl(selectedPlanet)}
+                          alt={`${selectedPlanet.name} ${secondaryArtworkType(selectedPlanet).toLowerCase()}`}
+                        />
+                      ) : (
+                        <div className="flex flex-col items-center gap-2 text-center text-slate-500">
+                          <ImageIcon className="h-8 w-8 text-cyan-200/50" />
+                          <p className="text-xs">No {secondaryArtworkType(selectedPlanet).toLowerCase()} render yet</p>
                         </div>
-                        <span className="rounded border border-slate-600/70 bg-slate-900 px-2 py-1 text-[0.65rem] text-slate-300">
-                          {selectedPlanet.surface_landscape_status || "Not Started"}
-                        </span>
-                      </div>
-                      <div className="grid aspect-video place-items-center overflow-hidden rounded-md border border-cyan-300/10 bg-black p-4">
-                        {secondaryArtworkUrl(selectedPlanet) ? (
-                          <img
-                            className="h-full w-full object-contain"
-                            src={secondaryArtworkUrl(selectedPlanet)}
-                            alt={`${selectedPlanet.name} ${secondaryArtworkType(selectedPlanet).toLowerCase()}`}
-                          />
-                        ) : (
-                          <div className="flex flex-col items-center gap-2 text-center text-slate-500">
-                            <ImageIcon className="h-8 w-8 text-cyan-200/50" />
-                            <p className="text-xs">No {secondaryArtworkType(selectedPlanet).toLowerCase()} render yet</p>
-                          </div>
-                        )}
-                      </div>
+                      )}
                     </div>
                   </div>
                 </div>
