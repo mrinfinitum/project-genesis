@@ -32,6 +32,8 @@ const jsonDatasets = new Set([
   "resources",
   "generated_planets",
   "generated-planets",
+  "planet_prompt_library",
+  "planet-prompt-library",
   "planet_render_library",
   "planet-render-library",
   "research.json",
@@ -56,6 +58,8 @@ const jsonDatasets = new Set([
   "resources.json",
   "generated_planets.json",
   "generated-planets.json",
+  "planet_prompt_library.json",
+  "planet-prompt-library.json",
   "planet_render_library.json",
   "planet-render-library.json"
 ]);

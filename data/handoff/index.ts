@@ -33,6 +33,7 @@ import type {
   GameConstant,
   GameData,
   GeneratedPlanet,
+  PlanetPromptLibraryRecord,
   PlanetResourceProfile,
   PlanetVariable,
   ProjectSystem,
@@ -576,6 +577,7 @@ export const handoffDashboardMetrics: DashboardMetric[] = [
 ];
 
 export const handoffCodexTasks: CodexTask[] = [];
+export const handoffPlanetPromptLibrary: PlanetPromptLibraryRecord[] = [];
 
 export const handoffData: GameData = {
   research_branches: handoffResearchBranches,
@@ -595,6 +597,7 @@ export const handoffData: GameData = {
   planet_resource_profiles: handoffPlanetResourceProfiles,
   resource_catalog: handoffResourceCatalog,
   generated_planets: handoffGeneratedPlanets,
+  planet_prompt_library: handoffPlanetPromptLibrary,
   planet_render_library: [],
   release_notes: handoffReleaseNotes,
   changelog: handoffChangelog,

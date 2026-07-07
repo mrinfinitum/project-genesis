@@ -288,6 +288,7 @@ export const seedData: GameData = {
   planet_resource_profiles: planetResourceProfiles,
   resource_catalog: resourceCatalog,
   generated_planets: [],
+  planet_prompt_library: [],
   planet_render_library: [],
   release_notes: releaseNotes,
   changelog,

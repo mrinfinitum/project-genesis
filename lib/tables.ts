@@ -302,7 +302,40 @@ export const tableConfigs: Record<TableName, TableConfig> = {
       { key: "terraform_level", label: "Terraform Level", type: "number" },
       { key: "discovery_points", label: "Discovery Points", type: "number" },
       { key: "completion_percent", label: "Completion %", type: "number" },
+      { key: "orbit_view_prompt", label: "Orbit View Prompt", type: "textarea" },
+      { key: "orbit_view_image_url", label: "Orbit View Image URL" },
+      { key: "surface_landscape_prompt", label: "Surface Landscape Prompt", type: "textarea" },
+      { key: "surface_landscape_image_url", label: "Surface Landscape Image URL" },
+      { key: "surface_landscape_status", label: "Surface Landscape Status", type: "status" },
+      { key: "surface_landscape_notes", label: "Surface Landscape Notes", type: "textarea" },
       { key: "notes", label: "Notes", type: "textarea" }
+    ]
+  },
+  planet_prompt_library: {
+    table: "planet_prompt_library",
+    title: "Planet Prompt Library",
+    description: "Orbit, surface landscape, and future hero prompts tied to generated planets and reusable planet types.",
+    statusKey: "status",
+    typeKey: "prompt_type",
+    filterKeys: ["prompt_type", "aspect_ratio", "status", "planet_class"],
+    searchKeys: ["planet_id", "planet_class", "planet_subclass", "prompt_type", "aspect_ratio", "reference_image_key", "reference_image_url", "prompt_text", "recommended_use", "notes"],
+    columns: ["planet_class", "planet_subclass", "prompt_type", "aspect_ratio", "status", "recommended_use"],
+    fields: [
+      { key: "id", label: "ID", required: true },
+      { key: "planet_id", label: "Planet ID" },
+      { key: "planet_class", label: "Planet Class" },
+      { key: "planet_subclass", label: "Planet Subclass" },
+      { key: "prompt_type", label: "Prompt Type" },
+      { key: "aspect_ratio", label: "Aspect Ratio" },
+      { key: "reference_image_key", label: "Reference Image Key" },
+      { key: "reference_image_url", label: "Reference Image URL" },
+      { key: "prompt_text", label: "Prompt Text", type: "textarea" },
+      { key: "image_url", label: "Image URL" },
+      { key: "status", label: "Status", type: "status" },
+      { key: "recommended_use", label: "Recommended Use" },
+      { key: "notes", label: "Notes", type: "textarea" },
+      { key: "created_at", label: "Created At" },
+      { key: "updated_at", label: "Updated At" }
     ]
   },
   planet_render_library: {

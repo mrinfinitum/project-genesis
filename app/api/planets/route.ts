@@ -41,7 +41,7 @@ function errorMessage(error: unknown, fallback: string) {
 
 function isMissingGeneratedPlanetOptionalColumn(error: unknown) {
   const message = errorMessage(error, "");
-  return message.includes("generated_planets") && /(image_(url|prompt|status|variants)|rarity|planet_subclass|anomalies|colonizable|landable|surface_exploration|terrain_generation|uses_orbital_gameplay|orbital_slot_count|orbital_platforms_built|atmospheric_harvest_rate|gas_giant_hazard_level|required_technology|resource_transport_options)/.test(message);
+  return message.includes("generated_planets") && /(image_(url|prompt|status|variants)|orbit_view_(prompt|image_url)|surface_landscape_(prompt|image_url|status|notes)|rarity|planet_subclass|anomalies|colonizable|landable|surface_exploration|terrain_generation|uses_orbital_gameplay|orbital_slot_count|orbital_platforms_built|atmospheric_harvest_rate|gas_giant_hazard_level|required_technology|resource_transport_options)/.test(message);
 }
 
 function unsupportedGeneratedPlanetColumn(error: unknown) {
@@ -61,6 +61,12 @@ async function upsertGeneratedPlanet(planet: GeneratedPlanet) {
     "image_prompt",
     "image_status",
     "image_variants",
+    "orbit_view_prompt",
+    "orbit_view_image_url",
+    "surface_landscape_prompt",
+    "surface_landscape_image_url",
+    "surface_landscape_status",
+    "surface_landscape_notes",
     "rarity",
     "planet_subclass",
     "anomalies",
@@ -137,7 +143,9 @@ export async function POST(request: Request) {
       ? {
           ...planet,
           image_url: renderMatch.render.file_url,
+          orbit_view_image_url: renderMatch.render.file_url,
           image_prompt: `Matched pre-rendered planet library asset "${renderMatch.render.name}" with score ${Math.round(renderMatch.score)} (${renderMatch.reasons.join(", ")}).`,
+          orbit_view_prompt: planet.orbit_view_prompt ?? planet.image_prompt,
           image_status: "Library Match",
           image_variants: imageVariantsFromRender(renderMatch.render),
           notes: `${planet.notes ? `${planet.notes}\n` : ""}Matched planet render library asset ${renderMatch.render.id}.`

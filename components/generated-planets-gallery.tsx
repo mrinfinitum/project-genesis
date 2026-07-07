@@ -1,9 +1,10 @@
 "use client";
 
 import { useMemo, useState, type CSSProperties } from "react";
-import { Download, Orbit, Plus, Search, Sparkles, Trash2, X } from "lucide-react";
+import { CheckCircle2, Clipboard, Download, Orbit, Plus, Save, Search, Sparkles, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PLANET_CLASS_MODEL } from "@/lib/planets/class-model";
+import { buildOrbitViewPrompt, buildPlanetSecondaryArtworkPrompt } from "@/lib/planets/artwork-prompts";
 import { normalizePlanetRarity } from "@/lib/planets/rarity";
 import { hasLockedPlanetRender } from "@/lib/planets/render-lock";
 import type { GeneratedPlanet } from "@/types/schema";
@@ -245,6 +246,24 @@ function rarityBadge(row: GeneratedPlanet, size: "compact" | "detail" = "compact
   );
 }
 
+function slugify(value: string) {
+  return value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
+function artworkReferenceUrl(row: GeneratedPlanet) {
+  return row.orbit_view_image_url || row.image_url || "";
+}
+
+function secondaryArtworkType(row: GeneratedPlanet) {
+  return isGasGiant(row) ? "Orbital Platform" : "Surface Landscape";
+}
+
+function secondaryArtworkUse(row: GeneratedPlanet) {
+  return isGasGiant(row)
+    ? "16:9 orbital resource platform scene using @img1 orbit render reference."
+    : "16:9 ground-level landscape using @img1 orbit render reference.";
+}
+
 async function readPayload<T>(response: Response) {
   const text = await response.text();
 
@@ -280,6 +299,8 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
   const [renderingPlanetId, setRenderingPlanetId] = useState("");
   const [renderingMode, setRenderingMode] = useState<"procedural" | "ai" | "">("");
   const [variantMenuPlanetId, setVariantMenuPlanetId] = useState("");
+  const [artworkSaving, setArtworkSaving] = useState(false);
+  const [copiedArtworkTarget, setCopiedArtworkTarget] = useState("");
   const [error, setError] = useState("");
   const [selectedPlanet, setSelectedPlanet] = useState<GeneratedPlanet | null>(null);
 
@@ -441,6 +462,153 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
       downloadBlob(variant.filename, await response.blob());
     } catch (caughtError) {
       setError(caughtError instanceof Error ? caughtError.message : "Could not download image.");
+    }
+  }
+
+  function updatePlanetInState(row: GeneratedPlanet) {
+    setRows((currentRows) => currentRows.map((current) => (current.id === row.id ? row : current)));
+    setSelectedPlanet((current) => (current?.id === row.id ? row : current));
+  }
+
+  function updateSelectedPlanetDraft(patch: Partial<GeneratedPlanet>) {
+    setSelectedPlanet((current) => (current ? ({ ...current, ...patch } as GeneratedPlanet) : current));
+  }
+
+  async function copyArtwork(value: string, target: string) {
+    if (!value.trim()) {
+      setError("Nothing to copy yet.");
+      return;
+    }
+
+    await navigator.clipboard.writeText(value);
+    setCopiedArtworkTarget(target);
+    window.setTimeout(() => setCopiedArtworkTarget(""), 1300);
+  }
+
+  async function savePlanetArtwork(patch: Partial<GeneratedPlanet>) {
+    if (!selectedPlanet) {
+      return null;
+    }
+
+    setArtworkSaving(true);
+    setError("");
+
+    try {
+      const response = await fetch(`/api/planets/${encodeURIComponent(selectedPlanet.id)}`, {
+        method: "PATCH",
+        headers: {
+          "content-type": "application/json"
+        },
+        body: JSON.stringify(patch)
+      });
+      const payload = await readPayload<{ row?: GeneratedPlanet; error?: string }>(response);
+
+      if (!response.ok || !payload.row) {
+        setError(payload.error ?? "Could not save planet artwork fields.");
+        return null;
+      }
+
+      updatePlanetInState(payload.row);
+      return payload.row;
+    } catch (caughtError) {
+      setError(caughtError instanceof Error ? caughtError.message : "Could not save planet artwork fields.");
+      return null;
+    } finally {
+      setArtworkSaving(false);
+    }
+  }
+
+  async function buildSecondaryPrompt() {
+    if (!selectedPlanet) {
+      return;
+    }
+
+    const referenceUrl = artworkReferenceUrl(selectedPlanet);
+
+    if (!referenceUrl) {
+      setError("Add or render an Orbit View image URL before building the @img1 surface/orbital prompt.");
+      return;
+    }
+
+    updateSelectedPlanetDraft({
+      surface_landscape_prompt: buildPlanetSecondaryArtworkPrompt(selectedPlanet, referenceUrl),
+      surface_landscape_status: selectedPlanet.surface_landscape_status || "Prompt Ready"
+    });
+  }
+
+  async function savePromptLibraryRecord(promptType: "Orbit View" | "Surface Landscape" | "Hero Discovery", promptText: string) {
+    if (!selectedPlanet) {
+      return;
+    }
+
+    const isOrbit = promptType === "Orbit View";
+    const now = new Date().toISOString();
+    const response = await fetch("/api/data/planet_prompt_library", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json"
+      },
+      body: JSON.stringify({
+        id: `planet-prompt-${slugify(selectedPlanet.id)}-${slugify(promptType)}`,
+        planet_id: selectedPlanet.id,
+        planet_class: selectedPlanet.planet_class || "",
+        planet_subclass: selectedPlanet.planet_subclass || "",
+        prompt_type: promptType,
+        aspect_ratio: isOrbit ? "1:1" : "16:9",
+        reference_image_key: isOrbit ? "" : "@img1",
+        reference_image_url: isOrbit ? "" : artworkReferenceUrl(selectedPlanet),
+        prompt_text: promptText,
+        image_url: isOrbit ? selectedPlanet.orbit_view_image_url || selectedPlanet.image_url || "" : selectedPlanet.surface_landscape_image_url || "",
+        status: "Ready",
+        recommended_use: isOrbit ? "1:1 orbit-view planet sphere render." : secondaryArtworkUse(selectedPlanet),
+        notes: "",
+        created_at: now,
+        updated_at: now
+      })
+    });
+    const payload = await readPayload<{ error?: string }>(response);
+
+    if (!response.ok) {
+      throw new Error(payload.error ?? "Could not save prompt library record.");
+    }
+  }
+
+  async function saveArtworkPrompt(promptType: "Orbit View" | "Surface Landscape") {
+    if (!selectedPlanet) {
+      return;
+    }
+
+    const isOrbit = promptType === "Orbit View";
+    const promptText = isOrbit
+      ? selectedPlanet.orbit_view_prompt || selectedPlanet.image_prompt || buildOrbitViewPrompt(selectedPlanet)
+      : selectedPlanet.surface_landscape_prompt || "";
+
+    if (!promptText.trim()) {
+      setError(isOrbit ? "Build or enter an orbit prompt first." : `Build or enter a ${secondaryArtworkType(selectedPlanet).toLowerCase()} prompt first.`);
+      return;
+    }
+
+    setArtworkSaving(true);
+    setError("");
+
+    try {
+      await savePromptLibraryRecord(promptType, promptText);
+      await savePlanetArtwork(
+        isOrbit
+          ? {
+              orbit_view_prompt: promptText,
+              image_prompt: promptText,
+              orbit_view_image_url: selectedPlanet.orbit_view_image_url || selectedPlanet.image_url || null
+            }
+          : {
+              surface_landscape_prompt: promptText,
+              surface_landscape_status: selectedPlanet.surface_landscape_status || "Prompt Ready"
+            }
+      );
+    } catch (caughtError) {
+      setError(caughtError instanceof Error ? caughtError.message : "Could not save prompt.");
+    } finally {
+      setArtworkSaving(false);
     }
   }
 
@@ -698,6 +866,141 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                   ) : null}
                 </div>
                 <p className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-4 text-sm leading-6 text-slate-200">{selectedPlanet.story}</p>
+                <div className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-4">
+                  <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-300">Artwork</p>
+                      <p className="mt-1 text-xs text-slate-400">
+                        Orbit view is the 1:1 planet sphere. {secondaryArtworkType(selectedPlanet)} uses the orbit render as @img1.
+                      </p>
+                    </div>
+                    <span className="w-fit rounded border border-cyan-300/20 bg-cyan-400/10 px-2 py-1 font-mono text-[0.65rem] text-cyan-100">
+                      @img1 {artworkReferenceUrl(selectedPlanet) ? "ready" : "needs orbit image"}
+                    </span>
+                  </div>
+
+                  <div className="mt-4 grid gap-4 lg:grid-cols-2">
+                    <div className="space-y-3 rounded-md border border-cyan-300/10 bg-slate-950/50 p-3">
+                      <div className="flex items-center justify-between gap-3">
+                        <div>
+                          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-300">Orbit View</p>
+                          <p className="text-[0.7rem] text-slate-500">1:1 planet sphere render</p>
+                        </div>
+                        <span className="rounded border border-slate-600/70 bg-slate-900 px-2 py-1 text-[0.65rem] text-slate-300">
+                          {selectedPlanet.image_status || "Not Rendered"}
+                        </span>
+                      </div>
+                      <input
+                        className="h-9 w-full rounded border border-cyan-300/15 bg-slate-950 px-3 text-xs text-white outline-none placeholder:text-slate-600 focus:border-cyan-300/50"
+                        placeholder="Orbit view image URL"
+                        value={selectedPlanet.orbit_view_image_url ?? selectedPlanet.image_url ?? ""}
+                        onChange={(event) => updateSelectedPlanetDraft({ orbit_view_image_url: event.target.value })}
+                      />
+                      <textarea
+                        className="min-h-36 w-full resize-y rounded border border-cyan-300/15 bg-slate-950 p-3 font-mono text-[0.72rem] leading-5 text-slate-200 outline-none placeholder:text-slate-600 focus:border-cyan-300/50"
+                        placeholder="Orbit view prompt"
+                        value={selectedPlanet.orbit_view_prompt ?? selectedPlanet.image_prompt ?? ""}
+                        onChange={(event) => updateSelectedPlanetDraft({ orbit_view_prompt: event.target.value })}
+                      />
+                      <div className="flex flex-wrap gap-2">
+                        <Button className="h-8 px-3 text-xs" type="button" onClick={() => updateSelectedPlanetDraft({ orbit_view_prompt: buildOrbitViewPrompt(selectedPlanet) })}>
+                          <Orbit className="h-3.5 w-3.5" />
+                          Build Orbit Prompt
+                        </Button>
+                        <Button className="h-8 px-3 text-xs" type="button" onClick={() => copyArtwork(selectedPlanet.orbit_view_prompt ?? selectedPlanet.image_prompt ?? "", "orbit")}>
+                          <Clipboard className="h-3.5 w-3.5" />
+                          {copiedArtworkTarget === "orbit" ? "Copied" : "Copy Prompt"}
+                        </Button>
+                        <Button className="h-8 px-3 text-xs" type="button" disabled={artworkSaving} onClick={() => saveArtworkPrompt("Orbit View")}>
+                          <Save className="h-3.5 w-3.5" />
+                          Save Prompt
+                        </Button>
+                        <Button
+                          className="h-8 px-3 text-xs"
+                          type="button"
+                          disabled={artworkSaving}
+                          onClick={() =>
+                            savePlanetArtwork({
+                              orbit_view_image_url: selectedPlanet.orbit_view_image_url || selectedPlanet.image_url || null,
+                              image_url: selectedPlanet.orbit_view_image_url || selectedPlanet.image_url || null
+                            })
+                          }
+                        >
+                          <Save className="h-3.5 w-3.5" />
+                          Save URL
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3 rounded-md border border-cyan-300/10 bg-slate-950/50 p-3">
+                      <div className="flex items-center justify-between gap-3">
+                        <div>
+                          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-300">{secondaryArtworkType(selectedPlanet)}</p>
+                          <p className="text-[0.7rem] text-slate-500">{secondaryArtworkUse(selectedPlanet)}</p>
+                        </div>
+                        <span className="rounded border border-slate-600/70 bg-slate-900 px-2 py-1 text-[0.65rem] text-slate-300">
+                          {selectedPlanet.surface_landscape_status || "Not Started"}
+                        </span>
+                      </div>
+                      <input
+                        className="h-9 w-full rounded border border-cyan-300/15 bg-slate-950 px-3 text-xs text-white outline-none placeholder:text-slate-600 focus:border-cyan-300/50"
+                        placeholder={`${secondaryArtworkType(selectedPlanet)} image URL`}
+                        value={selectedPlanet.surface_landscape_image_url ?? ""}
+                        onChange={(event) => updateSelectedPlanetDraft({ surface_landscape_image_url: event.target.value })}
+                      />
+                      <textarea
+                        className="min-h-36 w-full resize-y rounded border border-cyan-300/15 bg-slate-950 p-3 font-mono text-[0.72rem] leading-5 text-slate-200 outline-none placeholder:text-slate-600 focus:border-cyan-300/50"
+                        placeholder={artworkReferenceUrl(selectedPlanet) ? `${secondaryArtworkType(selectedPlanet)} prompt` : "Render or add an orbit view image URL first"}
+                        value={selectedPlanet.surface_landscape_prompt ?? ""}
+                        onChange={(event) => updateSelectedPlanetDraft({ surface_landscape_prompt: event.target.value })}
+                      />
+                      <textarea
+                        className="min-h-16 w-full resize-y rounded border border-cyan-300/15 bg-slate-950 p-3 text-xs leading-5 text-slate-200 outline-none placeholder:text-slate-600 focus:border-cyan-300/50"
+                        placeholder={`${secondaryArtworkType(selectedPlanet)} notes`}
+                        value={selectedPlanet.surface_landscape_notes ?? ""}
+                        onChange={(event) => updateSelectedPlanetDraft({ surface_landscape_notes: event.target.value })}
+                      />
+                      <div className="flex flex-wrap gap-2">
+                        <Button className="h-8 px-3 text-xs" type="button" disabled={!artworkReferenceUrl(selectedPlanet)} onClick={buildSecondaryPrompt}>
+                          <Sparkles className="h-3.5 w-3.5" />
+                          Build {isGasGiant(selectedPlanet) ? "Orbital" : "Surface"} Prompt
+                        </Button>
+                        <Button className="h-8 px-3 text-xs" type="button" onClick={() => copyArtwork(selectedPlanet.surface_landscape_prompt ?? "", "surface")}>
+                          <Clipboard className="h-3.5 w-3.5" />
+                          {copiedArtworkTarget === "surface" ? "Copied" : "Copy Prompt"}
+                        </Button>
+                        <Button className="h-8 px-3 text-xs" type="button" disabled={artworkSaving} onClick={() => saveArtworkPrompt("Surface Landscape")}>
+                          <Save className="h-3.5 w-3.5" />
+                          Save Prompt
+                        </Button>
+                        <Button
+                          className="h-8 px-3 text-xs"
+                          type="button"
+                          disabled={artworkSaving}
+                          onClick={() =>
+                            savePlanetArtwork({
+                              surface_landscape_image_url: selectedPlanet.surface_landscape_image_url || null,
+                              surface_landscape_notes: selectedPlanet.surface_landscape_notes || "",
+                              surface_landscape_status: selectedPlanet.surface_landscape_image_url ? "Rendered" : selectedPlanet.surface_landscape_status || "Prompt Ready"
+                            })
+                          }
+                        >
+                          <Save className="h-3.5 w-3.5" />
+                          Save URL
+                        </Button>
+                        <Button
+                          className="h-8 px-3 text-xs"
+                          type="button"
+                          disabled={artworkSaving}
+                          onClick={() => savePlanetArtwork({ surface_landscape_status: "Rendered", surface_landscape_notes: selectedPlanet.surface_landscape_notes || "" })}
+                        >
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                          Mark Rendered
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {detailPill("Sector", selectedPlanet.galaxy_sector)}
                   {detailPill("System", selectedPlanet.star_system)}

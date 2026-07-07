@@ -322,6 +322,12 @@ export type GeneratedPlanet = {
   terraform_level: number;
   discovery_points: number;
   completion_percent: number;
+  orbit_view_prompt: string | null;
+  orbit_view_image_url: string | null;
+  surface_landscape_prompt: string | null;
+  surface_landscape_image_url: string | null;
+  surface_landscape_status: string | null;
+  surface_landscape_notes: string | null;
   image_url: string | null;
   image_prompt: string | null;
   image_status: string | null;
@@ -335,6 +341,24 @@ export type GeneratedPlanet = {
   }> | null;
   created_at: string;
   notes: string;
+};
+
+export type PlanetPromptLibraryRecord = {
+  id: string;
+  planet_id: string | null;
+  planet_class: string;
+  planet_subclass: string;
+  prompt_type: "Orbit View" | "Surface Landscape" | "Hero Discovery" | string;
+  aspect_ratio: "1:1" | "16:9" | "21:9" | string;
+  reference_image_key: string;
+  reference_image_url: string;
+  prompt_text: string;
+  image_url: string;
+  status: Status;
+  recommended_use: string;
+  notes: string;
+  created_at: string;
+  updated_at: string;
 };
 
 export type PlanetRenderLibraryRecord = {
@@ -560,6 +584,7 @@ export type GameData = {
   planet_resource_profiles: PlanetResourceProfile[];
   resource_catalog: ResourceCatalogItem[];
   generated_planets: GeneratedPlanet[];
+  planet_prompt_library: PlanetPromptLibraryRecord[];
   planet_render_library: PlanetRenderLibraryRecord[];
   release_notes: ReleaseNote[];
   changelog: ChangelogEntry[];
@@ -583,6 +608,7 @@ export type TableName =
   | "planet_resource_profiles"
   | "resource_catalog"
   | "generated_planets"
+  | "planet_prompt_library"
   | "planet_render_library"
   | "upgrades"
   | "building_relationships"

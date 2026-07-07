@@ -8,6 +8,7 @@ import {
   rollPlanetClass
 } from "@/lib/planets/class-model";
 import { rollPlanetRarity } from "@/lib/planets/rarity";
+import { buildOrbitViewPrompt } from "@/lib/planets/artwork-prompts";
 
 type RandomSource = () => number;
 type GeneratePlanetOptions = {
@@ -407,7 +408,7 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
     ? `${name} is ${articleFor(rarity.name)} ${rarity.name.toLowerCase()} orbital resource world: a non-landable ${planetSubclass.toLowerCase()} gas giant surveyed from orbit for ${resources.slice(0, 3).join(", ").toLowerCase()}. Its platform slots support atmospheric harvesters, fuel refining, and transport logistics, but crews must manage ${hazards.slice(0, 2).join(" and ").toLowerCase()} before sustained extraction can begin.`
     : `${name} is ${articleFor(rarity.name)} ${rarity.name.toLowerCase()} ${worldIdentity.toLowerCase()} in the ${planetClass.toLowerCase()} biome, shaped by ${planetSubclass.toLowerCase()} regions and ${trait.toLowerCase()}. ${civilizationFragment} left traces near ${ruins.toLowerCase()} sites, where ${artifact.toLowerCase()} and ${resource.toLowerCase()} continue to draw explorers despite ${hazards.slice(0, 2).join(" and ").toLowerCase() || "unknown hazards"}${anomalies.length ? `, alongside anomalies like ${anomalies.slice(0, 2).join(" and ").toLowerCase()}` : ""}.`;
 
-  return {
+  const generatedPlanet: GeneratedPlanet = {
     id: `generated-planet-${slug(name)}-${hashSeed(seed).toString(16)}`,
     seed,
     name,
@@ -490,6 +491,12 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
     terraform_level: 0,
     discovery_points: numericRange(random, rarity.discoveryPoints[0], rarity.discoveryPoints[1]),
     completion_percent: numericRange(random, 0, 12),
+    orbit_view_prompt: null,
+    orbit_view_image_url: null,
+    surface_landscape_prompt: null,
+    surface_landscape_image_url: null,
+    surface_landscape_status: "Not Started",
+    surface_landscape_notes: "",
     image_url: null,
     image_prompt: null,
     image_status: "Not Rendered",
@@ -497,4 +504,9 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
     created_at: new Date().toISOString(),
     notes: resourceProfile?.scientific_notes ?? ""
   };
+
+  generatedPlanet.orbit_view_prompt = buildOrbitViewPrompt(generatedPlanet);
+  generatedPlanet.image_prompt = generatedPlanet.orbit_view_prompt;
+
+  return generatedPlanet;
 }
