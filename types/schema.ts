@@ -458,6 +458,74 @@ export type ChangelogEntry = {
   created_at: string;
 };
 
+export type ProjectSystem = {
+  id: string;
+  name: string;
+  group_name: string;
+  description: string;
+  icon: string;
+  status: Status;
+  completion_percent: number;
+  total_records: number;
+  complete_records: number;
+  draft_records: number;
+  needs_review_records: number;
+  missing_required_fields: number;
+  blocked_records: number;
+  codex_ready_count: number;
+  last_updated: string;
+  next_action: string;
+  priority: string;
+  notes: string;
+};
+
+export type ProjectSystemHistory = {
+  id: string;
+  system_id: string;
+  date: string;
+  completion_percent: number;
+  total_records: number;
+  complete_records: number;
+  needs_review_records: number;
+  missing_required_fields: number;
+  notes: string;
+};
+
+export type DataHealthCheck = {
+  id: string;
+  system: string;
+  issue: string;
+  severity: string;
+  affected_count: number;
+  description: string;
+  recommended_action: string;
+  resolved: boolean;
+  created_at: string;
+  resolved_at: string | null;
+};
+
+export type CodexReadinessItem = {
+  id: string;
+  title: string;
+  system: string;
+  status: Status;
+  description: string;
+  related_tables: string[];
+  export_path: string;
+  priority: string;
+  created_at: string;
+  notes: string;
+};
+
+export type DashboardMetric = {
+  id: string;
+  metric_name: string;
+  metric_value: string;
+  metric_group: string;
+  display_order: number;
+  updated_at: string;
+};
+
 export type GameData = {
   research_branches: ResearchBranch[];
   research: ResearchNode[];
@@ -479,6 +547,11 @@ export type GameData = {
   planet_render_library: PlanetRenderLibraryRecord[];
   release_notes: ReleaseNote[];
   changelog: ChangelogEntry[];
+  project_systems: ProjectSystem[];
+  project_system_history: ProjectSystemHistory[];
+  data_health_checks: DataHealthCheck[];
+  codex_readiness_items: CodexReadinessItem[];
+  dashboard_metrics: DashboardMetric[];
 };
 
 export type TableName =
@@ -498,4 +571,9 @@ export type TableName =
   | "building_relationships"
   | "building_chains"
   | "game_constants"
-  | "feature_flags";
+  | "feature_flags"
+  | "project_systems"
+  | "project_system_history"
+  | "data_health_checks"
+  | "codex_readiness_items"
+  | "dashboard_metrics";

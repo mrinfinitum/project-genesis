@@ -15,6 +15,13 @@ import type {
   Wonder
 } from "@/types/schema";
 import { handoffPlanetResourceProfiles, handoffResourceCatalog } from "@/data/handoff";
+import {
+  handoffCodexReadinessItems,
+  handoffDashboardMetrics,
+  handoffDataHealthChecks,
+  handoffProjectSystemHistory,
+  handoffProjectSystems
+} from "@/data/handoff";
 import { planetSystemVariables } from "@/data/handoff/planet-system";
 
 export const civilizations = [
@@ -282,5 +289,10 @@ export const seedData: GameData = {
   generated_planets: [],
   planet_render_library: [],
   release_notes: releaseNotes,
-  changelog
+  changelog,
+  project_systems: handoffProjectSystems,
+  project_system_history: handoffProjectSystemHistory,
+  data_health_checks: handoffDataHealthChecks,
+  codex_readiness_items: handoffCodexReadinessItems,
+  dashboard_metrics: handoffDashboardMetrics
 };

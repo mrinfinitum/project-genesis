@@ -113,7 +113,12 @@ export async function getGameData(): Promise<GameData> {
       planetResourceProfiles,
       resourceCatalog,
       generatedPlanets,
-      planetRenderLibrary
+      planetRenderLibrary,
+      projectSystems,
+      projectSystemHistory,
+      dataHealthChecks,
+      codexReadinessItems,
+      dashboardMetrics
     ] = await Promise.all([
       getFallbackRows("research"),
       getFallbackRows("buildings"),
@@ -131,7 +136,12 @@ export async function getGameData(): Promise<GameData> {
       getFallbackRows("planet_resource_profiles"),
       getFallbackRows("resource_catalog"),
       getFallbackRows("generated_planets"),
-      getFallbackRows("planet_render_library")
+      getFallbackRows("planet_render_library"),
+      getFallbackRows("project_systems"),
+      getFallbackRows("project_system_history"),
+      getFallbackRows("data_health_checks"),
+      getFallbackRows("codex_readiness_items"),
+      getFallbackRows("dashboard_metrics")
     ]);
 
     return {
@@ -152,7 +162,12 @@ export async function getGameData(): Promise<GameData> {
       planet_resource_profiles: planetResourceProfiles as GameData["planet_resource_profiles"],
       resource_catalog: resourceCatalog as GameData["resource_catalog"],
       generated_planets: generatedPlanets as GameData["generated_planets"],
-      planet_render_library: planetRenderLibrary as GameData["planet_render_library"]
+      planet_render_library: planetRenderLibrary as GameData["planet_render_library"],
+      project_systems: projectSystems as GameData["project_systems"],
+      project_system_history: projectSystemHistory as GameData["project_system_history"],
+      data_health_checks: dataHealthChecks as GameData["data_health_checks"],
+      codex_readiness_items: codexReadinessItems as GameData["codex_readiness_items"],
+      dashboard_metrics: dashboardMetrics as GameData["dashboard_metrics"]
     };
   }
 
@@ -176,7 +191,12 @@ export async function getGameData(): Promise<GameData> {
     generatedPlanets,
     planetRenderLibrary,
     releaseNotes,
-    changelog
+    changelog,
+    projectSystems,
+    projectSystemHistory,
+    dataHealthChecks,
+    codexReadinessItems,
+    dashboardMetrics
   ] = await Promise.all([
     getRowsFromSupabaseOrFallback("research_branches"),
     getRowsFromSupabaseOrFallback("research"),
@@ -197,7 +217,12 @@ export async function getGameData(): Promise<GameData> {
     getRowsFromSupabaseOrFallback("generated_planets"),
     getRowsFromSupabaseOrFallback("planet_render_library"),
     getRowsFromSupabaseOrFallback("release_notes"),
-    getRowsFromSupabaseOrFallback("changelog")
+    getRowsFromSupabaseOrFallback("changelog"),
+    getRowsFromSupabaseOrFallback("project_systems"),
+    getRowsFromSupabaseOrFallback("project_system_history"),
+    getRowsFromSupabaseOrFallback("data_health_checks"),
+    getRowsFromSupabaseOrFallback("codex_readiness_items"),
+    getRowsFromSupabaseOrFallback("dashboard_metrics")
   ]);
 
   return {
@@ -220,6 +245,11 @@ export async function getGameData(): Promise<GameData> {
     generated_planets: generatedPlanets as GameData["generated_planets"],
     planet_render_library: planetRenderLibrary as GameData["planet_render_library"],
     release_notes: releaseNotes as GameData["release_notes"],
-    changelog: changelog as GameData["changelog"]
+    changelog: changelog as GameData["changelog"],
+    project_systems: projectSystems as GameData["project_systems"],
+    project_system_history: projectSystemHistory as GameData["project_system_history"],
+    data_health_checks: dataHealthChecks as GameData["data_health_checks"],
+    codex_readiness_items: codexReadinessItems as GameData["codex_readiness_items"],
+    dashboard_metrics: dashboardMetrics as GameData["dashboard_metrics"]
   };
 }

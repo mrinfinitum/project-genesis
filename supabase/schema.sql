@@ -537,6 +537,74 @@ create table if not exists feature_flags (
   notes text
 );
 
+create table if not exists project_systems (
+  id text primary key,
+  name text not null,
+  group_name text not null,
+  description text,
+  icon text,
+  status text default 'In Progress',
+  completion_percent integer default 0,
+  total_records integer default 0,
+  complete_records integer default 0,
+  draft_records integer default 0,
+  needs_review_records integer default 0,
+  missing_required_fields integer default 0,
+  blocked_records integer default 0,
+  codex_ready_count integer default 0,
+  last_updated timestamptz default now(),
+  next_action text,
+  priority text default 'Medium',
+  notes text
+);
+
+create table if not exists project_system_history (
+  id text primary key,
+  system_id text references project_systems(id) on delete cascade,
+  date timestamptz default now(),
+  completion_percent integer default 0,
+  total_records integer default 0,
+  complete_records integer default 0,
+  needs_review_records integer default 0,
+  missing_required_fields integer default 0,
+  notes text
+);
+
+create table if not exists data_health_checks (
+  id text primary key,
+  system text not null,
+  issue text not null,
+  severity text default 'Medium',
+  affected_count integer default 0,
+  description text,
+  recommended_action text,
+  resolved boolean default false,
+  created_at timestamptz default now(),
+  resolved_at timestamptz
+);
+
+create table if not exists codex_readiness_items (
+  id text primary key,
+  title text not null,
+  system text not null,
+  status text default 'In Progress',
+  description text,
+  related_tables jsonb default '[]'::jsonb,
+  export_path text,
+  priority text default 'Medium',
+  created_at timestamptz default now(),
+  notes text
+);
+
+create table if not exists dashboard_metrics (
+  id text primary key,
+  metric_name text not null,
+  metric_value text,
+  metric_group text default 'hero',
+  display_order integer default 0,
+  updated_at timestamptz default now()
+);
+
 create table if not exists changelog (
   id text primary key,
   version text,
@@ -574,6 +642,12 @@ create index if not exists unlock_matrix_status_idx on unlock_matrix(implementat
 create index if not exists upgrades_type_idx on upgrades(type);
 create index if not exists building_relationships_status_idx on building_relationships(implementation_status);
 create index if not exists feature_flags_enabled_idx on feature_flags(enabled);
+create index if not exists project_systems_group_idx on project_systems(group_name);
+create index if not exists project_systems_status_idx on project_systems(status);
+create index if not exists project_system_history_system_idx on project_system_history(system_id);
+create index if not exists data_health_checks_resolved_idx on data_health_checks(resolved);
+create index if not exists codex_readiness_items_status_idx on codex_readiness_items(status);
+create index if not exists dashboard_metrics_group_idx on dashboard_metrics(metric_group);
 
 insert into storage.buckets (id, name, public)
 values ('project-genesis-assets', 'project-genesis-assets', true)

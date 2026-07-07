@@ -23,7 +23,10 @@ import type {
   BuildingChain,
   BuildingRelationship,
   ChangelogEntry,
+  CodexReadinessItem,
   ConceptualArtRecord,
+  DashboardMetric,
+  DataHealthCheck,
   District,
   FeatureFlag,
   GameConstant,
@@ -31,6 +34,8 @@ import type {
   GeneratedPlanet,
   PlanetResourceProfile,
   PlanetVariable,
+  ProjectSystem,
+  ProjectSystemHistory,
   ReleaseNote,
   ResearchBranch,
   ResearchNode,
@@ -382,6 +387,193 @@ export const handoffChangelog: ChangelogEntry[] = (changelogRaw as RawRow[]).map
   created_at: "2026-06-30T00:00:00.000Z"
 }));
 
+const projectSystemSeeds = [
+  ["universe", "Universe", "Core Foundation", "Deterministic universe architecture, root seeds, and world rules.", "Orbit", 5, 0, "Draft universe seed schema and galaxy root identifiers.", "Critical"],
+  ["galaxy", "Galaxy", "Core Foundation", "Galaxy map, sectors, regions, and traversal layer.", "Compass", 10, 0, "Build sector tables and connect explorer output.", "Critical"],
+  ["star-systems", "Star Systems", "Core Foundation", "Generated star systems, orbital slots, and stellar metadata.", "Sun", 15, 0, "Create persistent star system generation tables.", "High"],
+  ["seeds", "Seeds", "Core Foundation", "Root seed rules for repeatable generation.", "Fingerprint", 20, 0, "Lock seed format for planets, systems, and sectors.", "High"],
+  ["exports", "Exports", "Core Foundation", "Codex and Roblox-ready JSON export surface.", "Download", 70, 12, "Add universe and resource profile exports.", "Medium"],
+  ["planet-classes", "Planet Classes", "Planet Generation", "Main planet classes and landability rules.", "CircleDot", 78, 16, "Audit gas giant orbital-only behavior.", "High"],
+  ["planet-subclasses", "Planet Subclasses", "Planet Generation", "Second-level planet subclasses and art matching.", "Layers", 62, 48, "Finish subclass-to-render-library mapping.", "High"],
+  ["planet-rarity", "Planet Rarity", "Planet Generation", "Rarity rolls, discovery point bands, and card treatment.", "Gem", 85, 9, "Expose rarity weights in generation docs.", "Medium"],
+  ["planet-resources", "Planet Resources", "Planet Generation", "Planet resource profiles and resource catalog links.", "Database", 65, 92, "Resolve unknown resource names in profiles.", "Critical"],
+  ["planet-prompt-library", "Planet Prompt Library", "Planet Generation", "Copy-ready image prompts for external render workflows.", "Palette", 55, 54, "Trim duplicate wording in subclass prompt blocks.", "Medium"],
+  ["planet-art-assets", "Planet Art Assets", "Planet Generation", "PSD and PNG planet render library.", "Image", 32, 9, "Import the next batch of biome render files.", "High"],
+  ["resources", "Resources", "Gameplay Database", "Canonical resource catalog, usage, rarity, and planet availability.", "Pickaxe", 90, 140, "Attach resource IDs to planet profile outputs.", "High"],
+  ["research", "Research", "Gameplay Database", "Research nodes, branches, eras, and unlock logic.", "FlaskConical", 100, 150, "Lock v1 research module export.", "Medium"],
+  ["buildings", "Buildings", "Gameplay Database", "Buildings, costs, unlocks, production, and art references.", "Building2", 75, 118, "Fill missing unlock research references.", "High"],
+  ["upgrades", "Upgrades", "Gameplay Database", "Progression upgrades, tiers, and assets.", "TrendingUp", 70, 96, "Attach final source PSD files.", "Medium"],
+  ["unlock-matrix", "Unlock Matrix", "Gameplay Database", "Research-to-content unlock relationships.", "GitBranch", 68, 180, "Map orphan unlock names to IDs.", "High"],
+  ["districts", "Districts", "Gameplay Database", "District definitions, bonuses, and priority.", "Map", 72, 10, "Connect district IDs to building records.", "Medium"],
+  ["wonders", "Wonders", "Gameplay Database", "Civilization wonders and special bonuses.", "Landmark", 58, 6, "Complete wonder requirements and art refs.", "Medium"],
+  ["ancient-civilizations", "Ancient Civilizations", "Galaxy Content", "Ancient civilization pools for planet history.", "Scroll", 35, 0, "Create first civilization relic set.", "Medium"],
+  ["planet-traits", "Planet Traits", "Galaxy Content", "Trait pools, modifiers, and surface hooks.", "Sparkles", 45, 0, "Normalize trait effect naming.", "Medium"],
+  ["anomalies", "Anomalies", "Galaxy Content", "Rare planet and system anomalies.", "Atom", 28, 0, "Define anomaly rarity and output effects.", "Low"],
+  ["hazards", "Hazards", "Galaxy Content", "Environmental and orbital hazard catalog.", "TriangleAlert", 52, 0, "Split surface hazards from orbital hazards.", "Medium"],
+  ["expeditions", "Expeditions", "Galaxy Content", "Exploration outcomes and expedition events.", "Rocket", 18, 0, "Draft expedition reward tables.", "Low"],
+  ["collectibles", "Collectibles", "Galaxy Content", "Collectible pools, museums, and discovery rewards.", "Archive", 20, 0, "Create resource-linked collectible sets.", "Medium"],
+  ["assets", "Assets", "Production", "Game art assets, PSD sources, exports, and Roblox IDs.", "Package", 15, 36, "Upload source PSDs for priority gameplay icons.", "High"],
+  ["tasks", "Tasks", "Production", "Production task planning and implementation handoffs.", "ListChecks", 40, 0, "Convert dashboard next steps into task records.", "Medium"],
+  ["release-notes", "Release Notes", "Production", "Versioned release notes and milestone notes.", "FileText", 50, 4, "Add Sprint 0 universe foundation notes.", "Low"],
+  ["changelog", "Changelog", "Production", "Tracked content and schema changes.", "History", 60, 18, "Summarize planet generation rewrite changes.", "Low"],
+  ["codex-handoffs", "Codex Handoffs", "Production", "Codex-ready export packages and implementation briefs.", "Bot", 42, 5, "Package resource catalog v2 for Roblox modules.", "High"]
+] as const;
+
+export const handoffProjectSystems: ProjectSystem[] = projectSystemSeeds.map((row) => {
+  const [id, name, groupName, description, icon, completion, completeRecords, nextAction, priority] = row;
+  const totalRecords = completeRecords || Math.max(8, Math.round(completion * 1.6));
+  const complete = completeRecords || Math.round((totalRecords * completion) / 100);
+  const missing = Math.max(0, Math.round((totalRecords - complete) * 0.22));
+  const needsReview = Math.max(0, Math.round((totalRecords - complete) * 0.35));
+  const blocked = priority === "Critical" ? 2 : priority === "High" ? 1 : 0;
+
+  return {
+    id,
+    name,
+    group_name: groupName,
+    description,
+    icon,
+    status: completion >= 90 ? "Complete" : blocked ? "Needs Review" : "In Progress",
+    completion_percent: completion,
+    total_records: totalRecords,
+    complete_records: complete,
+    draft_records: Math.max(0, totalRecords - complete - needsReview),
+    needs_review_records: needsReview,
+    missing_required_fields: missing,
+    blocked_records: blocked,
+    codex_ready_count: completion >= 70 ? Math.max(1, Math.round(complete / 25)) : 0,
+    last_updated: "2026-07-06T00:00:00.000Z",
+    next_action: nextAction,
+    priority,
+    notes: ""
+  };
+});
+
+export const handoffProjectSystemHistory: ProjectSystemHistory[] = handoffProjectSystems.flatMap((system) =>
+  [28, 21, 14, 7, 0].map((daysAgo, index) => {
+    const completion = Math.max(0, system.completion_percent - (4 - index) * 5);
+    return {
+      id: `${system.id}-history-${index + 1}`,
+      system_id: system.id,
+      date: new Date(Date.UTC(2026, 6, 6 - daysAgo)).toISOString(),
+      completion_percent: completion,
+      total_records: system.total_records,
+      complete_records: Math.round((system.total_records * completion) / 100),
+      needs_review_records: system.needs_review_records,
+      missing_required_fields: system.missing_required_fields,
+      notes: "Seeded trend sample."
+    };
+  })
+);
+
+export const handoffDataHealthChecks: DataHealthCheck[] = [
+  {
+    id: "health-planet-resource-unknowns",
+    system: "Planet Resources",
+    issue: "Planet resource profiles contain unknown resource names",
+    severity: "Critical",
+    affected_count: 18,
+    description: "Several generated profile rows reference resource labels that need canonical resource IDs.",
+    recommended_action: "Normalize profile resources against the Resource Catalog v2 table.",
+    resolved: false,
+    created_at: "2026-07-06T00:00:00.000Z",
+    resolved_at: null
+  },
+  {
+    id: "health-building-unlocks",
+    system: "Buildings",
+    issue: "Buildings missing unlock research",
+    severity: "High",
+    affected_count: 14,
+    description: "Some building records are not connected to research unlock IDs.",
+    recommended_action: "Review building unlock fields and map them to research node IDs.",
+    resolved: false,
+    created_at: "2026-07-06T00:00:00.000Z",
+    resolved_at: null
+  },
+  {
+    id: "health-research-unlock-matrix",
+    system: "Research",
+    issue: "Research nodes missing unlock matrix rows",
+    severity: "Medium",
+    affected_count: 9,
+    description: "Research nodes marked ready should have matching unlock matrix records.",
+    recommended_action: "Generate matrix rows for ready research nodes without unlock coverage.",
+    resolved: false,
+    created_at: "2026-07-06T00:00:00.000Z",
+    resolved_at: null
+  },
+  {
+    id: "health-asset-files",
+    system: "Assets",
+    issue: "Assets missing file URLs",
+    severity: "High",
+    affected_count: 22,
+    description: "Priority art records still need source or generated file URLs.",
+    recommended_action: "Upload source PSDs and regenerate exported PNG variants.",
+    resolved: false,
+    created_at: "2026-07-06T00:00:00.000Z",
+    resolved_at: null
+  },
+  {
+    id: "health-planet-prompts",
+    system: "Planet Prompt Library",
+    issue: "Planet art prompts missing subclass mapping",
+    severity: "Medium",
+    affected_count: 11,
+    description: "Some prompt library entries do not line up with current class/subclass folders.",
+    recommended_action: "Sync prompt library rows with planet-renders folder names.",
+    resolved: false,
+    created_at: "2026-07-06T00:00:00.000Z",
+    resolved_at: null
+  }
+];
+
+export const handoffCodexReadinessItems: CodexReadinessItem[] = [
+  {
+    id: "codex-resource-catalog-v1",
+    title: "Resource Catalog v1.0",
+    system: "Resources",
+    status: "Ready",
+    description: "Canonical resource definitions are ready for Roblox module generation.",
+    related_tables: ["resource_catalog", "planet_resource_profiles"],
+    export_path: "/api/export/resource_catalog.json",
+    priority: "High",
+    created_at: "2026-07-06T00:00:00.000Z",
+    notes: "Use for resource constants and economy references."
+  },
+  {
+    id: "codex-planet-resource-profiles-v2",
+    title: "Planet Resource Profiles v2.0",
+    system: "Planet Resources",
+    status: "Needs Review",
+    description: "Profile data is structurally ready but needs resource ID normalization.",
+    related_tables: ["planet_resource_profiles", "resource_catalog"],
+    export_path: "/api/export/planet_resource_profiles.json",
+    priority: "Critical",
+    created_at: "2026-07-06T00:00:00.000Z",
+    notes: "Blocker for deterministic planet resource generation."
+  },
+  {
+    id: "codex-research-unlocks",
+    title: "Research Unlock Matrix",
+    system: "Research",
+    status: "In Progress",
+    description: "Research and unlock matrix can be exported for Lua unlock modules.",
+    related_tables: ["research", "unlock_matrix"],
+    export_path: "/api/export/research.json",
+    priority: "High",
+    created_at: "2026-07-06T00:00:00.000Z",
+    notes: "Needs final orphan unlock review."
+  }
+];
+
+export const handoffDashboardMetrics: DashboardMetric[] = [
+  { id: "metric-current-sprint", metric_name: "Current Sprint", metric_value: "Sprint 0 Universe Foundation", metric_group: "hero", display_order: 1, updated_at: "2026-07-06T00:00:00.000Z" },
+  { id: "metric-database-version", metric_name: "Database Version", metric_value: "v0.4.0", metric_group: "hero", display_order: 2, updated_at: "2026-07-06T00:00:00.000Z" },
+  { id: "metric-ready-for-codex", metric_name: "Ready for Codex", metric_value: "3", metric_group: "hero", display_order: 3, updated_at: "2026-07-06T00:00:00.000Z" }
+];
+
 export const handoffData: GameData = {
   research_branches: handoffResearchBranches,
   research: handoffResearch,
@@ -402,5 +594,10 @@ export const handoffData: GameData = {
   generated_planets: handoffGeneratedPlanets,
   planet_render_library: [],
   release_notes: handoffReleaseNotes,
-  changelog: handoffChangelog
+  changelog: handoffChangelog,
+  project_systems: handoffProjectSystems,
+  project_system_history: handoffProjectSystemHistory,
+  data_health_checks: handoffDataHealthChecks,
+  codex_readiness_items: handoffCodexReadinessItems,
+  dashboard_metrics: handoffDashboardMetrics
 };

@@ -437,6 +437,112 @@ export const tableConfigs: Record<TableName, TableConfig> = {
       { key: "launch_phase", label: "Launch Phase" },
       { key: "notes", label: "Notes", type: "textarea" }
     ]
+  },
+  project_systems: {
+    table: "project_systems",
+    title: "Project Systems",
+    description: "Command center system progress, completion counts, priorities, and next actions.",
+    statusKey: "status",
+    typeKey: "group_name",
+    searchKeys: ["name", "group_name", "description", "status", "next_action", "priority", "notes"],
+    columns: ["name", "group_name", "completion_percent", "total_records", "needs_review_records", "missing_required_fields", "priority"],
+    fields: [
+      { key: "id", label: "ID", required: true },
+      { key: "name", label: "Name", required: true },
+      { key: "group_name", label: "Group", required: true },
+      { key: "description", label: "Description", type: "textarea" },
+      { key: "icon", label: "Icon" },
+      { key: "status", label: "Status", type: "status" },
+      { key: "completion_percent", label: "Completion %", type: "number" },
+      { key: "total_records", label: "Total Records", type: "number" },
+      { key: "complete_records", label: "Complete Records", type: "number" },
+      { key: "draft_records", label: "Draft Records", type: "number" },
+      { key: "needs_review_records", label: "Needs Review", type: "number" },
+      { key: "missing_required_fields", label: "Missing Fields", type: "number" },
+      { key: "blocked_records", label: "Blocked Records", type: "number" },
+      { key: "codex_ready_count", label: "Codex Ready", type: "number" },
+      { key: "last_updated", label: "Last Updated" },
+      { key: "next_action", label: "Next Action", type: "textarea" },
+      { key: "priority", label: "Priority" },
+      { key: "notes", label: "Notes", type: "textarea" }
+    ]
+  },
+  project_system_history: {
+    table: "project_system_history",
+    title: "Project System History",
+    description: "Recent progress snapshots used by command center sparklines.",
+    typeKey: "system_id",
+    searchKeys: ["system_id", "date", "notes"],
+    columns: ["system_id", "date", "completion_percent", "total_records", "complete_records", "missing_required_fields"],
+    fields: [
+      { key: "id", label: "ID", required: true },
+      { key: "system_id", label: "System ID", required: true },
+      { key: "date", label: "Date" },
+      { key: "completion_percent", label: "Completion %", type: "number" },
+      { key: "total_records", label: "Total Records", type: "number" },
+      { key: "complete_records", label: "Complete Records", type: "number" },
+      { key: "needs_review_records", label: "Needs Review", type: "number" },
+      { key: "missing_required_fields", label: "Missing Fields", type: "number" },
+      { key: "notes", label: "Notes", type: "textarea" }
+    ]
+  },
+  data_health_checks: {
+    table: "data_health_checks",
+    title: "Data Health Checks",
+    description: "Dashboard warnings for missing fields, broken references, and other production risks.",
+    statusKey: "severity",
+    typeKey: "system",
+    searchKeys: ["system", "issue", "severity", "description", "recommended_action"],
+    columns: ["issue", "severity", "system", "affected_count", "resolved"],
+    fields: [
+      { key: "id", label: "ID", required: true },
+      { key: "system", label: "System", required: true },
+      { key: "issue", label: "Issue", required: true },
+      { key: "severity", label: "Severity" },
+      { key: "affected_count", label: "Affected Count", type: "number" },
+      { key: "description", label: "Description", type: "textarea" },
+      { key: "recommended_action", label: "Recommended Action", type: "textarea" },
+      { key: "resolved", label: "Resolved", type: "boolean" },
+      { key: "created_at", label: "Created At" },
+      { key: "resolved_at", label: "Resolved At" }
+    ]
+  },
+  codex_readiness_items: {
+    table: "codex_readiness_items",
+    title: "Codex Readiness Items",
+    description: "Handoff-ready exports and specs prepared for Codex implementation work.",
+    statusKey: "status",
+    typeKey: "system",
+    searchKeys: ["title", "system", "status", "description", "related_tables", "notes"],
+    columns: ["title", "system", "status", "priority", "export_path"],
+    fields: [
+      { key: "id", label: "ID", required: true },
+      { key: "title", label: "Title", required: true },
+      { key: "system", label: "System", required: true },
+      { key: "status", label: "Status", type: "status" },
+      { key: "description", label: "Description", type: "textarea" },
+      { key: "related_tables", label: "Related Tables", type: "array" },
+      { key: "export_path", label: "Export Path" },
+      { key: "priority", label: "Priority" },
+      { key: "created_at", label: "Created At" },
+      { key: "notes", label: "Notes", type: "textarea" }
+    ]
+  },
+  dashboard_metrics: {
+    table: "dashboard_metrics",
+    title: "Dashboard Metrics",
+    description: "Small command-center metric values shown in the dashboard hero.",
+    typeKey: "metric_group",
+    searchKeys: ["metric_name", "metric_value", "metric_group"],
+    columns: ["metric_name", "metric_value", "metric_group", "display_order", "updated_at"],
+    fields: [
+      { key: "id", label: "ID", required: true },
+      { key: "metric_name", label: "Metric Name", required: true },
+      { key: "metric_value", label: "Metric Value" },
+      { key: "metric_group", label: "Metric Group" },
+      { key: "display_order", label: "Display Order", type: "number" },
+      { key: "updated_at", label: "Updated At" }
+    ]
   }
 };
 
