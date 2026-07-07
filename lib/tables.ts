@@ -29,8 +29,8 @@ export const tableConfigs: Record<TableName, TableConfig> = {
     description: "Technology tree nodes, costs, prerequisites, and gameplay unlocks.",
     statusKey: "status",
     eraKey: "era",
-    searchKeys: ["name", "era", "design_purpose", "gameplay_effect"],
-    columns: ["name", "era", "primary_unlock_type", "cost_experimental", "research_time", "asset_id", "status"],
+    searchKeys: ["name", "era", "design_purpose", "gameplay_effect", "travel_tier", "space_system_unlocked", "unlock_summary"],
+    columns: ["name", "era", "travel_tier", "space_system_unlocked", "primary_unlock_type", "asset_id", "status"],
     fields: [
       { key: "id", label: "ID", required: true },
       { key: "branch_id", label: "Branch ID", required: true },
@@ -49,7 +49,12 @@ export const tableConfigs: Record<TableName, TableConfig> = {
       { key: "icon_name", label: "Icon Name" },
       { key: "asset_id", label: "Asset ID" },
       { key: "status", label: "Status", type: "status" },
-      { key: "notes", label: "Notes", type: "textarea" }
+      { key: "notes", label: "Notes", type: "textarea" },
+      { key: "exploration_scope_unlocked", label: "Exploration Scope Unlocked" },
+      { key: "travel_tier", label: "Travel Tier" },
+      { key: "space_system_unlocked", label: "Space System Unlocked" },
+      { key: "requires_previous_space_research", label: "Requires Previous Space Research", type: "boolean" },
+      { key: "unlock_summary", label: "Unlock Summary", type: "textarea" }
     ]
   },
   buildings: {

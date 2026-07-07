@@ -25,6 +25,11 @@ export type ResearchNode = {
   asset_id: string | null;
   status: Status;
   notes: string;
+  exploration_scope_unlocked: string | null;
+  travel_tier: string | null;
+  space_system_unlocked: string | null;
+  requires_previous_space_research: boolean;
+  unlock_summary: string;
 };
 
 export type Building = {

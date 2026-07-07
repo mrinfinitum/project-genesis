@@ -16,6 +16,11 @@ import type {
 } from "@/types/schema";
 import { handoffPlanetResourceProfiles, handoffResourceCatalog } from "@/data/handoff";
 import {
+  mergeSpaceResearchBranches,
+  mergeSpaceResearchNodes,
+  SPACE_RESEARCH_BRANCH_PURPOSE
+} from "@/data/space-research-progression";
+import {
   handoffCodexReadinessItems,
   handoffCodexTasks,
   handoffDashboardMetrics,
@@ -53,7 +58,7 @@ export const researchBranches: ResearchBranch[] = [
   { id: "branch-transportation", name: "Transportation", purpose: "Movement, logistics, roads, rail, flight, and orbital transit." },
   { id: "branch-computing", name: "Computing", purpose: "Automation, data, AI, simulation, and optimization systems." },
   { id: "branch-medicine", name: "Medicine", purpose: "Health, lifespan, happiness, and population resilience." },
-  { id: "branch-space", name: "Space", purpose: "Planetary expansion, satellites, colonization, and stellar infrastructure." },
+  { id: "branch-space", name: "Space", purpose: SPACE_RESEARCH_BRANCH_PURPOSE },
   { id: "branch-civilization", name: "Civilization", purpose: "Culture, governance, wonders, and civilization identity." }
 ];
 
@@ -98,7 +103,12 @@ export function generateResearchNodes(): ResearchNode[] {
         icon_name: `icon-${slug(branch.name)}-${index + 1}`,
         asset_id: null,
         status: statuses[(branchIndex + index) % statuses.length],
-        notes: index % 5 === 0 ? "Needs balance pass after first economy simulation." : ""
+        notes: index % 5 === 0 ? "Needs balance pass after first economy simulation." : "",
+        exploration_scope_unlocked: null,
+        travel_tier: null,
+        space_system_unlocked: null,
+        requires_previous_space_research: false,
+        unlock_summary: ""
       };
     })
   );
@@ -154,7 +164,8 @@ export const wonders: Wonder[] = civilizations.map((civilization, index) => ({
   notes: "Phase 1 seed wonder."
 }));
 
-export const research = generateResearchNodes();
+export const researchBranchesWithSpaceProgression = mergeSpaceResearchBranches(researchBranches);
+export const research = mergeSpaceResearchNodes(generateResearchNodes());
 
 export const buildings: Building[] = districts.flatMap((district, districtIndex) =>
   district.primary_buildings.map((name, buildingIndex) => ({
@@ -271,7 +282,7 @@ export const planetResourceProfiles: PlanetResourceProfile[] = handoffPlanetReso
 export const resourceCatalog: ResourceCatalogItem[] = handoffResourceCatalog;
 
 export const seedData: GameData = {
-  research_branches: researchBranches,
+  research_branches: researchBranchesWithSpaceProgression,
   research,
   buildings,
   unlock_matrix: unlockMatrix,

@@ -17,6 +17,11 @@ import unlockMatrixRaw from "./json/Unlock_Matrix.json";
 import upgradesRaw from "./json/All_Upgrades.json";
 import wondersRaw from "./json/Wonders.json";
 import { planetSystemVariables } from "./planet-system";
+import {
+  mergeSpaceResearchBranches,
+  mergeSpaceResearchNodes,
+  mergeSpaceUnlockMatrixRows
+} from "@/data/space-research-progression";
 import type {
   AssetRecord,
   Building,
@@ -108,13 +113,15 @@ function dedupePlanetVariables(rows: PlanetVariable[]) {
 const researchNameToId = new Map((researchRaw as RawRow[]).map((row) => [text(row.Research), text(row.ID)]));
 const districtNameToId = new Map((districtsRaw as RawRow[]).map((row) => [text(row.District), text(row.ID)]));
 
-export const handoffResearchBranches: ResearchBranch[] = (researchBranchesRaw as RawRow[]).map((row) => ({
+const baseResearchBranches: ResearchBranch[] = (researchBranchesRaw as RawRow[]).map((row) => ({
   id: text(row.ID),
   name: text(row.Branch),
   purpose: text(row["Branch Purpose"])
 }));
 
-export const handoffResearch: ResearchNode[] = (researchRaw as RawRow[]).map((row) => ({
+export const handoffResearchBranches: ResearchBranch[] = mergeSpaceResearchBranches(baseResearchBranches);
+
+const baseResearch: ResearchNode[] = (researchRaw as RawRow[]).map((row) => ({
   id: text(row.ID),
   branch_id: text(row["Branch ID"]),
   era: text(row.Era),
@@ -132,8 +139,15 @@ export const handoffResearch: ResearchNode[] = (researchRaw as RawRow[]).map((ro
   icon_name: text(row["Icon Name"]),
   asset_id: nullable(row["Asset ID"]),
   status: text(row.Status),
-  notes: text(row.Notes)
+  notes: text(row.Notes),
+  exploration_scope_unlocked: nullable(row["Exploration Scope Unlocked"]),
+  travel_tier: nullable(row["Travel Tier"]),
+  space_system_unlocked: nullable(row["Space System Unlocked"]),
+  requires_previous_space_research: boolean(row["Requires Previous Space Research"]),
+  unlock_summary: text(row["Unlock Summary"])
 }));
+
+export const handoffResearch: ResearchNode[] = mergeSpaceResearchNodes(baseResearch);
 
 export const handoffDistricts: District[] = (districtsRaw as RawRow[]).map((row) => ({
   id: text(row.ID),
@@ -176,7 +190,7 @@ export const handoffBuildings: Building[] = (buildingsRaw as RawRow[]).map((row)
   notes: text(row.Notes)
 }));
 
-export const handoffUnlockMatrix: UnlockMatrixRow[] = (unlockMatrixRaw as RawRow[]).map((row) => ({
+const baseUnlockMatrix: UnlockMatrixRow[] = (unlockMatrixRaw as RawRow[]).map((row) => ({
   id: text(row.ID),
   source_type: text(row["Source Type"]),
   source_id: text(row["Source ID"]),
@@ -189,6 +203,8 @@ export const handoffUnlockMatrix: UnlockMatrixRow[] = (unlockMatrixRaw as RawRow
   implementation_status: text(row["Implementation Status"]),
   notes: text(row.Notes)
 }));
+
+export const handoffUnlockMatrix: UnlockMatrixRow[] = mergeSpaceUnlockMatrixRows(baseUnlockMatrix);
 
 export const handoffWonders: Wonder[] = (wondersRaw as RawRow[]).map((row) => ({
   id: text(row.ID),

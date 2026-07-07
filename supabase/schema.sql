@@ -24,7 +24,12 @@ create table if not exists research (
   icon_name text,
   asset_id text,
   status text default 'Draft',
-  notes text
+  notes text,
+  exploration_scope_unlocked text,
+  travel_tier text,
+  space_system_unlocked text,
+  requires_previous_space_research boolean not null default false,
+  unlock_summary text
 );
 
 create table if not exists districts (
@@ -443,6 +448,11 @@ alter table assets add column if not exists slice_name text;
 alter table assets add column if not exists export_status text;
 
 alter table research add column if not exists asset_id text references assets(id) on delete set null;
+alter table research add column if not exists exploration_scope_unlocked text;
+alter table research add column if not exists travel_tier text;
+alter table research add column if not exists space_system_unlocked text;
+alter table research add column if not exists requires_previous_space_research boolean not null default false;
+alter table research add column if not exists unlock_summary text;
 do $$
 begin
   alter table research
@@ -700,6 +710,8 @@ create table if not exists changelog (
 create index if not exists research_branch_idx on research(branch_id);
 create index if not exists research_status_idx on research(status);
 create index if not exists research_asset_id_idx on research(asset_id);
+create index if not exists research_travel_tier_idx on research(travel_tier);
+create index if not exists research_space_system_idx on research(space_system_unlocked);
 create index if not exists buildings_era_idx on buildings(era);
 create index if not exists conceptual_art_created_at_idx on conceptual_art(created_at desc);
 create index if not exists conceptual_art_category_idx on conceptual_art(category);
