@@ -605,6 +605,22 @@ create table if not exists dashboard_metrics (
   updated_at timestamptz default now()
 );
 
+create table if not exists codex_tasks (
+  id text primary key,
+  title text not null,
+  source_type text,
+  source_id text,
+  system text,
+  priority text default 'Medium',
+  status text default 'Open',
+  description text,
+  related_tables jsonb default '[]'::jsonb,
+  export_path text,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  notes text
+);
+
 create table if not exists changelog (
   id text primary key,
   version text,
@@ -648,6 +664,8 @@ create index if not exists project_system_history_system_idx on project_system_h
 create index if not exists data_health_checks_resolved_idx on data_health_checks(resolved);
 create index if not exists codex_readiness_items_status_idx on codex_readiness_items(status);
 create index if not exists dashboard_metrics_group_idx on dashboard_metrics(metric_group);
+create index if not exists codex_tasks_status_idx on codex_tasks(status);
+create index if not exists codex_tasks_system_idx on codex_tasks(system);
 
 insert into storage.buckets (id, name, public)
 values ('project-genesis-assets', 'project-genesis-assets', true)

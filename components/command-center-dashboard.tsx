@@ -38,7 +38,7 @@ import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { cn } from "@/lib/utils";
-import type { CodexReadinessItem, DashboardMetric, DataHealthCheck, ProjectSystem, ProjectSystemHistory } from "@/types/schema";
+import type { CodexReadinessItem, CodexTask, DashboardMetric, DataHealthCheck, ProjectSystem, ProjectSystemHistory } from "@/types/schema";
 
 type CommandCenterDashboardProps = {
   systems: ProjectSystem[];
@@ -89,6 +89,8 @@ const severityStyles: Record<string, string> = {
   High: "border-orange-300/35 bg-orange-400/10 text-orange-100",
   Critical: "border-red-300/40 bg-red-400/10 text-red-100"
 };
+
+type TaskDraft = Omit<CodexTask, "created_at" | "updated_at">;
 
 function clampPercent(value: number) {
   return Math.min(100, Math.max(0, Number.isFinite(value) ? value : 0));
@@ -345,7 +347,17 @@ function StatTile({ label, value }: { label: string; value: number | string }) {
   );
 }
 
-function NextStepsPanel({ systems }: { systems: ProjectSystem[] }) {
+function NextStepsPanel({
+  systems,
+  creatingTaskId,
+  createdTasks,
+  onCreateTask
+}: {
+  systems: ProjectSystem[];
+  creatingTaskId: string | null;
+  createdTasks: Set<string>;
+  onCreateTask: (task: TaskDraft) => Promise<void>;
+}) {
   return (
     <Panel title="Next Production Steps" eyebrow="Priority Queue">
       <div className="space-y-3">
@@ -363,8 +375,27 @@ function NextStepsPanel({ systems }: { systems: ProjectSystem[] }) {
               <h4 className="mt-3 text-sm font-semibold text-white">{system.name}</h4>
               <p className="mt-1 text-sm text-slate-300">{system.next_action}</p>
               <p className="mt-2 text-xs text-cyan-200">Impact: unlocks downstream {system.group_name.toLowerCase()} work.</p>
-              <Button className="mt-3 w-full" type="button">
-                Create Task
+              <Button
+                className="mt-3 w-full"
+                type="button"
+                disabled={creatingTaskId === `task-system-${system.id}`}
+                onClick={() =>
+                  onCreateTask({
+                    id: `task-system-${system.id}`,
+                    title: system.next_action,
+                    source_type: "project_system",
+                    source_id: system.id,
+                    system: system.name,
+                    priority: system.priority,
+                    status: "Open",
+                    description: `Production task for ${system.name}: ${system.next_action}`,
+                    related_tables: [system.name.toLowerCase().replace(/\s+/g, "_")],
+                    export_path: "",
+                    notes: `Created from Command Center next step. Group: ${system.group_name}.`
+                  })
+                }
+              >
+                {createdTasks.has(`task-system-${system.id}`) ? "Task Created" : creatingTaskId === `task-system-${system.id}` ? "Creating..." : "Create Task"}
               </Button>
             </div>
           ))}
@@ -398,7 +429,17 @@ function DataHealthPanel({ checks }: { checks: DataHealthCheck[] }) {
   );
 }
 
-function CodexReadinessPanel({ items }: { items: CodexReadinessItem[] }) {
+function CodexReadinessPanel({
+  items,
+  creatingTaskId,
+  createdTasks,
+  onCreateTask
+}: {
+  items: CodexReadinessItem[];
+  creatingTaskId: string | null;
+  createdTasks: Set<string>;
+  onCreateTask: (task: TaskDraft) => Promise<void>;
+}) {
   return (
     <Panel title="Ready for Codex" eyebrow="Handoff Queue">
       <div className="space-y-3">
@@ -415,7 +456,27 @@ function CodexReadinessPanel({ items }: { items: CodexReadinessItem[] }) {
               <Link href={item.export_path} className="inline-flex h-9 items-center justify-center rounded-md border border-cyan-400/25 bg-cyan-400/10 px-3 text-sm text-cyan-100 hover:bg-cyan-400/20">
                 Export
               </Link>
-              <Button type="button">Codex Task</Button>
+              <Button
+                type="button"
+                disabled={creatingTaskId === `task-codex-${item.id}`}
+                onClick={() =>
+                  onCreateTask({
+                    id: `task-codex-${item.id}`,
+                    title: item.title,
+                    source_type: "codex_readiness_item",
+                    source_id: item.id,
+                    system: item.system,
+                    priority: item.priority,
+                    status: "Open",
+                    description: item.description,
+                    related_tables: item.related_tables,
+                    export_path: item.export_path,
+                    notes: item.notes
+                  })
+                }
+              >
+                {createdTasks.has(`task-codex-${item.id}`) ? "Task Created" : creatingTaskId === `task-codex-${item.id}` ? "Creating..." : "Codex Task"}
+              </Button>
             </div>
           </div>
         ))}
@@ -518,6 +579,10 @@ function SystemDetailModal({
 
 export function CommandCenterDashboard({ systems, history, healthChecks, codexItems, metrics, totalRecords }: CommandCenterDashboardProps) {
   const [selectedSystem, setSelectedSystem] = useState<ProjectSystem | null>(null);
+  const [creatingTaskId, setCreatingTaskId] = useState<string | null>(null);
+  const [createdTasks, setCreatedTasks] = useState<Set<string>>(new Set());
+  const [taskMessage, setTaskMessage] = useState("");
+  const [taskError, setTaskError] = useState("");
   const overallCompletion = systems.length
     ? Math.round(systems.reduce((sum, system) => sum + system.completion_percent, 0) / systems.length)
     : 0;
@@ -547,8 +612,46 @@ export function CommandCenterDashboard({ systems, history, healthChecks, codexIt
     { label: "Ready for Codex", value: String(readyForCodex) }
   ];
 
+  async function createCodexTask(task: TaskDraft) {
+    setCreatingTaskId(task.id);
+    setTaskError("");
+    setTaskMessage("");
+    const now = new Date().toISOString();
+    const response = await fetch("/api/data/codex_tasks", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        ...task,
+        created_at: now,
+        updated_at: now
+      })
+    });
+    const payload = await response.json();
+
+    if (!response.ok) {
+      setTaskError(payload.error ?? "Could not create Codex task.");
+      setCreatingTaskId(null);
+      return;
+    }
+
+    setCreatedTasks((current) => new Set(current).add(task.id));
+    setTaskMessage(`Task created: ${payload.row?.title ?? task.title}`);
+    setCreatingTaskId(null);
+  }
+
   return (
     <div className="space-y-6">
+      {taskMessage || taskError ? (
+        <div
+          className={cn(
+            "rounded-md border px-4 py-3 text-sm",
+            taskError ? "border-red-300/35 bg-red-400/10 text-red-100" : "border-emerald-300/35 bg-emerald-400/10 text-emerald-100"
+          )}
+        >
+          {taskError || taskMessage}
+        </div>
+      ) : null}
+
       <section className="overflow-hidden rounded-md border border-cyan-300/20 bg-[#07101f]/90 shadow-[0_0_60px_rgba(56,213,255,0.12)]">
         <div className="grid gap-6 p-5 lg:grid-cols-[220px_1fr] lg:p-7">
           <div className="flex justify-center lg:justify-start">
@@ -579,7 +682,7 @@ export function CommandCenterDashboard({ systems, history, healthChecks, codexIt
         <Panel title="System Health" eyebrow="Readiness">
           <SystemHealthBars systems={systems} />
         </Panel>
-        <CodexReadinessPanel items={codexItems} />
+        <CodexReadinessPanel items={codexItems} creatingTaskId={creatingTaskId} createdTasks={createdTasks} onCreateTask={createCodexTask} />
       </section>
 
       <section className="grid gap-5 xl:grid-cols-[1fr_360px]">
@@ -604,7 +707,7 @@ export function CommandCenterDashboard({ systems, history, healthChecks, codexIt
           ))}
         </div>
         <aside className="space-y-5">
-          <NextStepsPanel systems={systems} />
+          <NextStepsPanel systems={systems} creatingTaskId={creatingTaskId} createdTasks={createdTasks} onCreateTask={createCodexTask} />
           <DataHealthPanel checks={healthChecks} />
         </aside>
       </section>

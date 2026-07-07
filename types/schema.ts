@@ -526,6 +526,22 @@ export type DashboardMetric = {
   updated_at: string;
 };
 
+export type CodexTask = {
+  id: string;
+  title: string;
+  source_type: string;
+  source_id: string;
+  system: string;
+  priority: string;
+  status: Status;
+  description: string;
+  related_tables: string[];
+  export_path: string;
+  created_at: string;
+  updated_at: string;
+  notes: string;
+};
+
 export type GameData = {
   research_branches: ResearchBranch[];
   research: ResearchNode[];
@@ -552,6 +568,7 @@ export type GameData = {
   data_health_checks: DataHealthCheck[];
   codex_readiness_items: CodexReadinessItem[];
   dashboard_metrics: DashboardMetric[];
+  codex_tasks: CodexTask[];
 };
 
 export type TableName =
@@ -576,4 +593,5 @@ export type TableName =
   | "project_system_history"
   | "data_health_checks"
   | "codex_readiness_items"
-  | "dashboard_metrics";
+  | "dashboard_metrics"
+  | "codex_tasks";

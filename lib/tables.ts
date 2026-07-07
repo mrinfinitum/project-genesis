@@ -543,6 +543,30 @@ export const tableConfigs: Record<TableName, TableConfig> = {
       { key: "display_order", label: "Display Order", type: "number" },
       { key: "updated_at", label: "Updated At" }
     ]
+  },
+  codex_tasks: {
+    table: "codex_tasks",
+    title: "Codex Tasks",
+    description: "Actionable implementation tasks created from command center handoff and production queue items.",
+    statusKey: "status",
+    typeKey: "system",
+    searchKeys: ["title", "source_type", "source_id", "system", "priority", "status", "description", "related_tables", "notes"],
+    columns: ["title", "system", "priority", "status", "source_type", "created_at"],
+    fields: [
+      { key: "id", label: "ID", required: true },
+      { key: "title", label: "Title", required: true },
+      { key: "source_type", label: "Source Type" },
+      { key: "source_id", label: "Source ID" },
+      { key: "system", label: "System" },
+      { key: "priority", label: "Priority" },
+      { key: "status", label: "Status", type: "status" },
+      { key: "description", label: "Description", type: "textarea" },
+      { key: "related_tables", label: "Related Tables", type: "array" },
+      { key: "export_path", label: "Export Path" },
+      { key: "created_at", label: "Created At" },
+      { key: "updated_at", label: "Updated At" },
+      { key: "notes", label: "Notes", type: "textarea" }
+    ]
   }
 };
 

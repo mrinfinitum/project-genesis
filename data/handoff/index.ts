@@ -24,6 +24,7 @@ import type {
   BuildingRelationship,
   ChangelogEntry,
   CodexReadinessItem,
+  CodexTask,
   ConceptualArtRecord,
   DashboardMetric,
   DataHealthCheck,
@@ -574,6 +575,8 @@ export const handoffDashboardMetrics: DashboardMetric[] = [
   { id: "metric-ready-for-codex", metric_name: "Ready for Codex", metric_value: "3", metric_group: "hero", display_order: 3, updated_at: "2026-07-06T00:00:00.000Z" }
 ];
 
+export const handoffCodexTasks: CodexTask[] = [];
+
 export const handoffData: GameData = {
   research_branches: handoffResearchBranches,
   research: handoffResearch,
@@ -599,5 +602,6 @@ export const handoffData: GameData = {
   project_system_history: handoffProjectSystemHistory,
   data_health_checks: handoffDataHealthChecks,
   codex_readiness_items: handoffCodexReadinessItems,
-  dashboard_metrics: handoffDashboardMetrics
+  dashboard_metrics: handoffDashboardMetrics,
+  codex_tasks: handoffCodexTasks
 };

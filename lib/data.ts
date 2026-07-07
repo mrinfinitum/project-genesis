@@ -118,7 +118,8 @@ export async function getGameData(): Promise<GameData> {
       projectSystemHistory,
       dataHealthChecks,
       codexReadinessItems,
-      dashboardMetrics
+      dashboardMetrics,
+      codexTasks
     ] = await Promise.all([
       getFallbackRows("research"),
       getFallbackRows("buildings"),
@@ -141,7 +142,8 @@ export async function getGameData(): Promise<GameData> {
       getFallbackRows("project_system_history"),
       getFallbackRows("data_health_checks"),
       getFallbackRows("codex_readiness_items"),
-      getFallbackRows("dashboard_metrics")
+      getFallbackRows("dashboard_metrics"),
+      getFallbackRows("codex_tasks")
     ]);
 
     return {
@@ -167,7 +169,8 @@ export async function getGameData(): Promise<GameData> {
       project_system_history: projectSystemHistory as GameData["project_system_history"],
       data_health_checks: dataHealthChecks as GameData["data_health_checks"],
       codex_readiness_items: codexReadinessItems as GameData["codex_readiness_items"],
-      dashboard_metrics: dashboardMetrics as GameData["dashboard_metrics"]
+      dashboard_metrics: dashboardMetrics as GameData["dashboard_metrics"],
+      codex_tasks: codexTasks as GameData["codex_tasks"]
     };
   }
 
@@ -196,7 +199,8 @@ export async function getGameData(): Promise<GameData> {
     projectSystemHistory,
     dataHealthChecks,
     codexReadinessItems,
-    dashboardMetrics
+    dashboardMetrics,
+    codexTasks
   ] = await Promise.all([
     getRowsFromSupabaseOrFallback("research_branches"),
     getRowsFromSupabaseOrFallback("research"),
@@ -222,7 +226,8 @@ export async function getGameData(): Promise<GameData> {
     getRowsFromSupabaseOrFallback("project_system_history"),
     getRowsFromSupabaseOrFallback("data_health_checks"),
     getRowsFromSupabaseOrFallback("codex_readiness_items"),
-    getRowsFromSupabaseOrFallback("dashboard_metrics")
+    getRowsFromSupabaseOrFallback("dashboard_metrics"),
+    getRowsFromSupabaseOrFallback("codex_tasks")
   ]);
 
   return {
@@ -250,6 +255,7 @@ export async function getGameData(): Promise<GameData> {
     project_system_history: projectSystemHistory as GameData["project_system_history"],
     data_health_checks: dataHealthChecks as GameData["data_health_checks"],
     codex_readiness_items: codexReadinessItems as GameData["codex_readiness_items"],
-    dashboard_metrics: dashboardMetrics as GameData["dashboard_metrics"]
+    dashboard_metrics: dashboardMetrics as GameData["dashboard_metrics"],
+    codex_tasks: codexTasks as GameData["codex_tasks"]
   };
 }

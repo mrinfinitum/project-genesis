@@ -44,6 +44,12 @@ async function main() {
   await upsert("building_chains");
   await upsert("game_constants");
   await upsert("feature_flags");
+  await upsert("project_systems");
+  await upsert("project_system_history");
+  await upsert("data_health_checks");
+  await upsert("codex_readiness_items");
+  await upsert("dashboard_metrics");
+  await upsert("codex_tasks");
   await upsert("release_notes");
   await upsert("changelog");
 }

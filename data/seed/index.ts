@@ -17,6 +17,7 @@ import type {
 import { handoffPlanetResourceProfiles, handoffResourceCatalog } from "@/data/handoff";
 import {
   handoffCodexReadinessItems,
+  handoffCodexTasks,
   handoffDashboardMetrics,
   handoffDataHealthChecks,
   handoffProjectSystemHistory,
@@ -294,5 +295,6 @@ export const seedData: GameData = {
   project_system_history: handoffProjectSystemHistory,
   data_health_checks: handoffDataHealthChecks,
   codex_readiness_items: handoffCodexReadinessItems,
-  dashboard_metrics: handoffDashboardMetrics
+  dashboard_metrics: handoffDashboardMetrics,
+  codex_tasks: handoffCodexTasks
 };
