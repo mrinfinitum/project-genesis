@@ -4,6 +4,7 @@ import { generatePlanet } from "@/lib/planets/generator";
 import { getRows, upsertRow } from "@/lib/data";
 import { imageVariantsFromRender, matchPlanetRender } from "@/lib/planets/render-library";
 import { hasLockedPlanetRender } from "@/lib/planets/render-lock";
+import { planetGenerationRuleRows } from "@/lib/planets/rule-rows";
 import type { GeneratedPlanet, PlanetRenderLibraryRecord, PlanetResourceProfile, PlanetVariable } from "@/types/schema";
 
 export const runtime = "nodejs";
@@ -124,7 +125,7 @@ export async function POST(request: Request) {
       getRows("generated_planets"),
       getRows("planet_render_library")
     ]);
-    const ruleRows = rules.length ? rules : handoffData.planets;
+    const ruleRows = planetGenerationRuleRows(rules as PlanetVariable[], handoffData.planets);
     const profileRows = resourceProfiles.length ? resourceProfiles : handoffData.planet_resource_profiles;
     const planet = generatePlanet(ruleRows as PlanetVariable[], existingRows.length, body.seed, {
       planetClass: body.planetClass,
