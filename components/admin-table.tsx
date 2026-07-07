@@ -1,7 +1,7 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useMemo, useRef, useState } from "react";
-import { Download, FileJson, FileUp, ImagePlus, Pencil, Plus, Search, Trash2, Upload, X } from "lucide-react";
+import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { Download, FileJson, FileUp, ImageIcon, ImagePlus, Pencil, Plus, Search, Trash2, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { downloadBlob, titleCase } from "@/lib/utils";
@@ -73,8 +73,41 @@ function singularTableLabel(table: string) {
   return table.replace(/s$/, "");
 }
 
+function assetLookupId(table: string, row: Row) {
+  return table === "assets" ? stringifyValue(row.id) : stringifyValue(row.asset_id);
+}
+
+function assetPreviewUrl(table: string, row: Row, assetById: Map<string, Row>) {
+  if (table === "assets") {
+    return stringifyValue(row.file_url);
+  }
+
+  const assetId = assetLookupId(table, row);
+  const asset = assetById.get(assetId);
+  return stringifyValue(asset?.file_url);
+}
+
+function assetPreviewName(table: string, row: Row, assetById: Map<string, Row>) {
+  const assetId = assetLookupId(table, row);
+  const asset = assetById.get(assetId);
+  return stringifyValue(asset?.name || row.name || assetId || "Asset preview");
+}
+
+function AssetThumbnail({ name, url }: { name: string; url: string }) {
+  return (
+    <div className="grid h-12 w-12 place-items-center overflow-hidden rounded-md border border-cyan-300/15 bg-slate-950/80">
+      {url ? (
+        <img className="h-full w-full object-contain p-1" src={url} alt={`${name} asset thumbnail`} loading="lazy" />
+      ) : (
+        <ImageIcon className="h-4 w-4 text-slate-600" />
+      )}
+    </div>
+  );
+}
+
 export function AdminTable({ config, initialRows }: { config: TableConfig; initialRows: Row[] }) {
   const [rows, setRows] = useState(initialRows);
+  const [assetRows, setAssetRows] = useState<Row[]>([]);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("all");
   const [era, setEra] = useState("all");
@@ -93,6 +126,36 @@ export function AdminTable({ config, initialRows }: { config: TableConfig; initi
   const sourceFileInputRef = useRef<HTMLInputElement | null>(null);
   const supportsAssetUploads = assetUploadTables.includes(config.table);
   const assetVariantSizes = config.table === "buildings" || config.table === "research" ? largeAssetSizes : upgradeIconSizes;
+  const assetRowsForLookup = config.table === "assets" ? rows : assetRows;
+  const assetById = useMemo(
+    () => new Map(assetRowsForLookup.map((row) => [stringifyValue(row.id), row])),
+    [assetRowsForLookup]
+  );
+
+  useEffect(() => {
+    if (!supportsAssetUploads || config.table === "assets") {
+      return;
+    }
+
+    let active = true;
+
+    fetch("/api/data/assets")
+      .then((response) => (response.ok ? response.json() : Promise.reject(new Error("Could not load asset previews."))))
+      .then((payload: { rows?: Row[] }) => {
+        if (active) {
+          setAssetRows(payload.rows ?? []);
+        }
+      })
+      .catch(() => {
+        if (active) {
+          setAssetRows([]);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [config.table, supportsAssetUploads]);
 
   const eras = useMemo(() => {
     if (!config.eraKey) {
@@ -227,6 +290,18 @@ export function AdminTable({ config, initialRows }: { config: TableConfig; initi
 
     if (!response.ok) {
       throw new Error(payload.error ?? "PNG variant generation failed.");
+    }
+
+    if (payload.row?.id && config.table !== "assets") {
+      setAssetRows((current) => {
+        const index = current.findIndex((item) => item.id === payload.row.id);
+        if (index >= 0) {
+          const next = [...current];
+          next[index] = payload.row;
+          return next;
+        }
+        return [payload.row, ...current];
+      });
     }
 
     setRows((current) =>
@@ -530,6 +605,11 @@ export function AdminTable({ config, initialRows }: { config: TableConfig; initi
           <table className="w-full min-w-[900px] border-collapse text-left text-sm">
             <thead className="bg-slate-950/55 text-xs uppercase tracking-[0.14em] text-slate-400">
               <tr>
+                {supportsAssetUploads ? (
+                  <th className="w-20 border-b border-cyan-400/15 px-4 py-3 font-medium">
+                    Asset
+                  </th>
+                ) : null}
                 {config.columns.map((column) => (
                   <th key={column} className="border-b border-cyan-400/15 px-4 py-3 font-medium">
                     {titleCase(column)}
@@ -541,6 +621,14 @@ export function AdminTable({ config, initialRows }: { config: TableConfig; initi
             <tbody>
               {filtered.map((row) => (
                 <tr key={String(row.id)} className="border-b border-slate-800/80 hover:bg-cyan-300/[0.04]">
+                  {supportsAssetUploads ? (
+                    <td className="px-4 py-3">
+                      <AssetThumbnail
+                        name={assetPreviewName(config.table, row, assetById)}
+                        url={assetPreviewUrl(config.table, row, assetById)}
+                      />
+                    </td>
+                  ) : null}
                   {config.columns.map((column) => (
                     <td key={column} className="max-w-[320px] px-4 py-3 text-slate-300">
                       {column === config.statusKey ? <StatusBadge value={stringifyValue(row[column])} /> : stringifyValue(row[column])}
