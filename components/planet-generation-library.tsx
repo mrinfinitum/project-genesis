@@ -9,10 +9,11 @@ import {
   planetTypeFeaturePrompt,
   type PlanetPromptTemplate
 } from "@/data/planet-generation-prompts";
+import { buildPlanetLandscapePromptForTemplate } from "@/lib/planets/artwork-prompts";
 
 type CopyTarget = {
   id: string;
-  kind: "description" | "full" | "master" | "sync";
+  kind: "description" | "full" | "landscape" | "master" | "sync";
 };
 
 const PLANET_RENDER_FOLDER_EXAMPLE = "planet-renders/organic/living-world/planet_organic_living_world_00001.png";
@@ -89,7 +90,7 @@ export function PlanetGenerationLibrary({ rows }: { rows: PlanetPromptTemplate[]
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Prompt Library</p>
             <h2 className="mt-2 text-4xl font-bold text-white">Planet Generation</h2>
             <p className="mt-3 max-w-4xl text-sm leading-6 text-slate-300">
-              Master render prompt and feature-only planet type inserts for consistent black-background planet assets. Full prompt copies insert only the selected planet features into the master rule.
+              Master render prompt, feature-only planet type inserts, and @img1 landscape prompts for consistent planet artwork. Full prompt copies insert only the selected planet features into the master rule.
             </p>
           </div>
           <CopyButton
@@ -191,6 +192,8 @@ export function PlanetGenerationLibrary({ rows }: { rows: PlanetPromptTemplate[]
                 {groups[className].map((row) => {
                   const id = `${row.planetClass}-${row.subclass}`;
                   const featurePrompt = planetTypeFeaturePrompt(row);
+                  const landscapePrompt = buildPlanetLandscapePromptForTemplate(row);
+                  const secondaryLabel = row.planetClass === "Gas Giant" ? "Orbital" : "Landscape";
                   return (
                     <article key={id} className="rounded-md border border-cyan-400/15 bg-[#07101e]/85 p-4 shadow-glow">
                       <div className="flex min-h-24 flex-col justify-between gap-3">
@@ -217,6 +220,15 @@ export function PlanetGenerationLibrary({ rows }: { rows: PlanetPromptTemplate[]
                         >
                           {copied?.id === id && copied.kind === "full" ? <Check className="h-4 w-4" /> : <Clipboard className="h-4 w-4" />}
                           Full
+                        </Button>
+                        <Button
+                          type="button"
+                          className="h-9 border-blue-400/25 bg-blue-300/10 px-3 text-blue-100 hover:bg-blue-300/20"
+                          title={`Copy ${secondaryLabel.toLowerCase()} prompt using @img1`}
+                          onClick={() => copyValue(landscapePrompt, { id, kind: "landscape" })}
+                        >
+                          {copied?.id === id && copied.kind === "landscape" ? <Check className="h-4 w-4" /> : <Clipboard className="h-4 w-4" />}
+                          {secondaryLabel}
                         </Button>
                       </div>
                     </article>

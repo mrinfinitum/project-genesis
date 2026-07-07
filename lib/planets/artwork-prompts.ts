@@ -1,5 +1,14 @@
 import { buildPlanetPrompt, planetTypeFeaturePrompt, PLANET_PROMPT_LIBRARY } from "@/data/planet-generation-prompts";
+import type { PlanetPromptTemplate } from "@/data/planet-generation-prompts";
 import type { GeneratedPlanet } from "@/types/schema";
+
+type PlanetArtworkPromptInput = {
+  planetClass: string;
+  planetSubclass: string;
+  rarity?: string;
+  biome?: string;
+  anomalies?: string[];
+};
 
 function listText(values: string[] | null | undefined) {
   return Array.isArray(values) ? values.filter(Boolean).join(", ") : "";
@@ -35,29 +44,49 @@ export function buildOrbitViewPrompt(planet: GeneratedPlanet) {
   return buildPlanetPrompt(planetFeatureDescription(planet));
 }
 
-function commonPromptFacts(planet: GeneratedPlanet) {
+function commonPromptFacts(input: PlanetArtworkPromptInput) {
   return [
     "Planet Class",
-    planet.planet_class || "Unknown",
+    input.planetClass || "Unknown",
     "",
     "Planet Subclass",
-    planet.planet_subclass || "Unknown",
+    input.planetSubclass || "Unknown",
     "",
     "Planet Rarity",
-    planet.rarity || "Common",
+    input.rarity || "Common",
     "",
     "Primary Biome",
-    planet.primary_biome || planet.planet_class || "Unknown",
+    input.biome || input.planetClass || "Unknown",
     "",
     "Planet Anomalies",
-    listText(planet.anomalies) || "None",
+    listText(input.anomalies) || "None",
     "",
     "Visual Style",
     "Cinematic realistic AAA science-fiction exploration game"
   ].join("\n");
 }
 
-export function buildSurfaceLandscapePrompt(planet: GeneratedPlanet, referenceImageUrl: string) {
+function planetInputFromGeneratedPlanet(planet: GeneratedPlanet): PlanetArtworkPromptInput {
+  return {
+    planetClass: planet.planet_class || "Unknown",
+    planetSubclass: planet.planet_subclass || "Unknown",
+    rarity: planet.rarity || "Common",
+    biome: planet.primary_biome || planet.planet_class || "Unknown",
+    anomalies: planet.anomalies
+  };
+}
+
+function planetInputFromTemplate(row: PlanetPromptTemplate): PlanetArtworkPromptInput {
+  return {
+    planetClass: row.planetClass,
+    planetSubclass: row.subclass,
+    rarity: "Common",
+    biome: row.planetClass,
+    anomalies: []
+  };
+}
+
+function buildSurfaceLandscapePromptForInput(input: PlanetArtworkPromptInput, referenceImageUrl = "") {
   return [
     "Reference Image",
     "@img1",
@@ -71,7 +100,7 @@ export function buildSurfaceLandscapePrompt(planet: GeneratedPlanet, referenceIm
     "",
     "Create one ultra-high-resolution cinematic 16:9 landscape showing what an explorer would see standing on the surface of @img1.",
     "",
-    commonPromptFacts(planet),
+    commonPromptFacts(input),
     "",
     "ENVIRONMENT",
     "Create a massive open landscape that feels like an entire planet.",
@@ -103,7 +132,7 @@ export function buildSurfaceLandscapePrompt(planet: GeneratedPlanet, referenceIm
   ].join("\n");
 }
 
-export function buildOrbitalPlatformPrompt(planet: GeneratedPlanet, referenceImageUrl: string) {
+function buildOrbitalPlatformPromptForInput(input: PlanetArtworkPromptInput, referenceImageUrl = "", resources = "", hazards = "") {
   return [
     "Reference Image",
     "@img1",
@@ -115,14 +144,14 @@ export function buildOrbitalPlatformPrompt(planet: GeneratedPlanet, referenceIma
     "",
     "Create one ultra-high-resolution cinematic 16:9 orbital platform scene showing industrial harvesting infrastructure operating above @img1.",
     "",
-    commonPromptFacts(planet),
+    commonPromptFacts(input),
     "",
     "ORBITAL GAMEPLAY",
     "Show believable orbital resource infrastructure such as atmospheric collectors, orbital harvesters, gas refineries, fusion fuel platforms, storm research stations, orbital depots, skyhook platforms, or floating platforms.",
     "",
     "RESOURCES",
-    `Atmospheric resources: ${listText(planet.resources) || "Hydrogen, Helium, exotic gases"}.`,
-    `Hazards: ${listText(planet.hazards) || "extreme winds, high pressure, lightning storms, radiation belts"}.`,
+    `Atmospheric resources: ${resources || "Hydrogen, Helium, exotic gases"}.`,
+    `Hazards: ${hazards || "extreme winds, high pressure, lightning storms, radiation belts"}.`,
     "",
     "COMPOSITION",
     "16:9 cinematic view from orbit, massive gas giant below or behind the platform, clear scale, professional space-game key art, no surface landing, no terrain exploration.",
@@ -135,8 +164,24 @@ export function buildOrbitalPlatformPrompt(planet: GeneratedPlanet, referenceIma
   ].join("\n");
 }
 
+export function buildSurfaceLandscapePrompt(planet: GeneratedPlanet, referenceImageUrl: string) {
+  return buildSurfaceLandscapePromptForInput(planetInputFromGeneratedPlanet(planet), referenceImageUrl);
+}
+
+export function buildOrbitalPlatformPrompt(planet: GeneratedPlanet, referenceImageUrl: string) {
+  return buildOrbitalPlatformPromptForInput(planetInputFromGeneratedPlanet(planet), referenceImageUrl, listText(planet.resources), listText(planet.hazards));
+}
+
 export function buildPlanetSecondaryArtworkPrompt(planet: GeneratedPlanet, referenceImageUrl: string) {
   return planet.uses_orbital_gameplay || planet.planet_class === "Gas Giant"
     ? buildOrbitalPlatformPrompt(planet, referenceImageUrl)
     : buildSurfaceLandscapePrompt(planet, referenceImageUrl);
+}
+
+export function buildPlanetLandscapePromptForTemplate(row: PlanetPromptTemplate) {
+  const input = planetInputFromTemplate(row);
+
+  return row.planetClass === "Gas Giant"
+    ? buildOrbitalPlatformPromptForInput(input)
+    : buildSurfaceLandscapePromptForInput(input);
 }
