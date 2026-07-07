@@ -12,7 +12,8 @@
     "describe:planet-renders": "tsx scripts/describe-planet-renders.ts",
     "import:planet-renders": "tsx scripts/import-planet-render-library.ts",
     "sync:planet-renders": "bash scripts/sync-planet-renders.sh",
-    "regenerate:assets": "tsx scripts/regenerate-asset-variants.ts"
+    "regenerate:assets": "tsx scripts/regenerate-asset-variants.ts",
+    "cleanup:remote-psd": "tsx scripts/cleanup-remote-psd-sources.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",

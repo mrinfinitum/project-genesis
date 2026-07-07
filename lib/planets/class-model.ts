@@ -24,8 +24,8 @@ export const PLANET_CLASS_MODEL: PlanetClassDefinition[] = [
     usesSurfaceGeneration: true,
     usesOrbitalGameplay: false,
     defaultInteractionType: "Surface Exploration",
-    subclasses: ["Earthlike", "Continental", "Highlands", "Supercontinent", "Riverlands", "Badlands", "Savanna", "Alpine"],
-    biomes: ["Earthlike", "Continental", "Highlands", "Supercontinent", "Riverlands", "Badlands", "Savanna", "Alpine"]
+    subclasses: ["Earthlike", "Continental", "Highlands", "Swamp", "Riverlands", "Badlands", "Savanna", "Alpine"],
+    biomes: ["Earthlike", "Continental", "Highlands", "Swamp", "Riverlands", "Badlands", "Savanna", "Alpine"]
   },
   {
     name: "Ocean",

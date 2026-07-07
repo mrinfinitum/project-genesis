@@ -43,17 +43,17 @@
   },
   {
     "Planet Class": "Terrestrial",
-    "Subclass": "Supercontinent",
+    "Subclass": "Swamp",
     "Discovery Tier": "Earth",
     "Colonizable": "Yes",
-    "Mining Difficulty 1-10": "3",
-    "Resource Density": "Abundant",
-    "Planet Rarity Bias": "Common-Rare",
-    "Guaranteed Resources": "Stone; Iron; Soil",
-    "Common Resources": "Coal; Copper; Limestone; Fresh Water; Sand",
-    "Rare Resources": "Gold; Lithium; Uranium; Titanium",
-    "Exotic Resources": "Rare Earth Elements; Ancient Fossils",
-    "Scientific / Design Notes": "Huge landmass gives diverse mining zones but less coastal water distribution."
+    "Mining Difficulty 1-10": "2",
+    "Resource Density": "Balanced",
+    "Planet Rarity Bias": "Common-Uncommon",
+    "Guaranteed Resources": "Fresh Water; Soil; Living Biomass",
+    "Common Resources": "Stone; Coal; Copper; Limestone",
+    "Rare Resources": "Gold; Rare Earth Elements; Ancient Fossils",
+    "Exotic Resources": "Exotic Matter; Alien Organics",
+    "Scientific / Design Notes": "Wetland worlds support biological resources, sediment deposits, and difficult but valuable lowland extraction."
   },
   {
     "Planet Class": "Terrestrial",

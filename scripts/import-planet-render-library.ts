@@ -21,7 +21,6 @@ const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const bucket = process.env.SUPABASE_ASSET_BUCKET || "project-genesis-assets";
 const apply = process.argv.includes("--apply");
 const overwrite = process.argv.includes("--overwrite") || process.argv.includes("--force");
-const uploadPsdSources = process.argv.includes("--upload-psd-source");
 const sourceArg = process.argv.slice(2).find((arg) => !arg.startsWith("--")) ?? "planet-render-library";
 const sourceRoot = path.resolve(process.cwd(), sourceArg);
 
@@ -486,9 +485,9 @@ async function renderAssetFor(file: string, metadata: PlanetRenderMetadata, psdR
       height: Number(metadata.height ?? rendered.height),
       filename: `${path.parse(filename).name}.png`,
       contentType: "image/png",
-      sourceBuffer: await readFile(file),
-      sourceFilename: filename,
-      sourceContentType: contentTypeFor(filename)
+      sourceBuffer: null as Buffer | null,
+      sourceFilename: "",
+      sourceContentType: ""
     };
   }
 
@@ -586,8 +585,6 @@ async function uploadCompanionArtwork(companion: CompanionUpload, importVersion:
 
   const asset = await renderAssetFor(companion.file, companion.metadata, "full-frame");
   const storagePath = String(companion.metadata[fields.storagePathKey] ?? `planet-render-library/${companion.baseId}/${fields.folder}/${asset.filename}`);
-  const sourceStoragePath =
-    asset.sourceBuffer && asset.sourceFilename ? `planet-render-library/${companion.baseId}/${fields.folder}/source/${asset.sourceFilename}` : "";
   const fileUrl = String(companion.metadata[fields.imageUrlKey] ?? cacheBustUrl(await publicUrlFor(storagePath), importVersion));
 
   console.log(`${apply ? "Uploading" : "Would upload"} ${companion.kind} artwork ${path.relative(sourceRoot, companion.file)} -> ${companion.baseId}`);
@@ -601,23 +598,12 @@ async function uploadCompanionArtwork(companion: CompanionUpload, importVersion:
     if (uploadError) {
       throw new Error(`${storagePath}: ${uploadError.message}`);
     }
-
-    if (sourceStoragePath && asset.sourceBuffer && uploadPsdSources) {
-      const { error: sourceUploadError } = await supabase.storage.from(bucket).upload(sourceStoragePath, asset.sourceBuffer, {
-        contentType: asset.sourceContentType,
-        upsert: true
-      });
-
-      if (sourceUploadError) {
-        console.warn(`${sourceStoragePath}: Source PSD upload skipped: ${sourceUploadError.message}`);
-      }
-    }
   }
 
   return {
     [fields.imageUrlKey]: fileUrl,
     [fields.storagePathKey]: storagePath,
-    [fields.sourcePathKey]: sourceStoragePath
+    [fields.sourcePathKey]: ""
   };
 }
 
@@ -771,13 +757,10 @@ async function main() {
     const taxonomy = taxonomyForPath(pathParts);
     const id = preliminaryId;
     const storagePath = String(metadata.storage_path ?? `planet-render-library/${id}/${filename}`);
-    const sourceStoragePath =
-      asset.sourceBuffer && asset.sourceFilename ? `planet-render-library/${id}/source/${asset.sourceFilename}` : "";
     const resolution = inferResolution(filename, metadata);
     const width = Number(metadata.width ?? asset.width ?? resolution);
     const height = Number(metadata.height ?? asset.height ?? resolution);
     const fileUrl = String(metadata.file_url ?? cacheBustUrl(await publicUrlFor(storagePath), importVersion));
-    const sourceFileUrl = sourceStoragePath ? await publicUrlFor(sourceStoragePath) : "";
     const inferredBiome = inferValue(pathParts, ["Ocean", "Desert", "Ice", "Lava", "Volcanic", "Crystal", "Toxic", "Void", "Forest", "Jungle", "Swamp", "Cyber", "Artificial", "Gas Giant"]);
     const inferredClass = inferValue(pathParts, ["Ocean", "Desert", "Ice", "Lava", "Crystal", "Toxic", "Void", "Gas Giant", "Terrestrial", "Artificial", "Bio", "Living", "Ancient", "Energy", "Primordial", "Dead"]);
 
@@ -789,10 +772,10 @@ async function main() {
       thumbnail_url: String(metadata.thumbnail_url ?? ""),
       landscape_image_url: String(metadata.landscape_image_url ?? ""),
       landscape_storage_path: String(metadata.landscape_storage_path ?? ""),
-      landscape_source_path: String(metadata.landscape_source_path ?? ""),
+      landscape_source_path: "",
       orbital_image_url: String(metadata.orbital_image_url ?? ""),
       orbital_storage_path: String(metadata.orbital_storage_path ?? ""),
-      orbital_source_path: String(metadata.orbital_source_path ?? ""),
+      orbital_source_path: "",
       planet_class: String(taxonomy?.planetClass.name ?? metadata.planet_class ?? inferredClass),
       biome: String(taxonomy?.subclass ?? metadata.biome ?? inferredBiome),
       atmosphere: String(metadata.atmosphere ?? inferValue(pathParts, ["Dense", "Thin", "Toxic", "Ionized", "Methane"])),
@@ -820,12 +803,7 @@ async function main() {
       height,
       usage_count: Number(metadata.usage_count ?? 0),
       status: metadata.status ?? "Ready",
-      notes: String(
-        metadata.notes ??
-          (sourceStoragePath
-            ? `Source PSD: ${sourceStoragePath}${sourceFileUrl ? `\nSource PSD URL: ${sourceFileUrl}` : ""}`
-            : "")
-      ),
+      notes: String(metadata.notes ?? ""),
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
@@ -841,22 +819,6 @@ async function main() {
 
       if (uploadError) {
         throw new Error(`${storagePath}: ${uploadError.message}`);
-      }
-
-      if (sourceStoragePath && asset.sourceBuffer && uploadPsdSources) {
-        const { error: sourceUploadError } = await supabase.storage.from(bucket).upload(sourceStoragePath, asset.sourceBuffer, {
-          contentType: asset.sourceContentType,
-          upsert: true
-        });
-
-        if (sourceUploadError) {
-          const warning = `Source PSD upload skipped: ${sourceUploadError.message}`;
-          row.notes = row.notes ? `${row.notes}\n${warning}` : warning;
-          console.warn(`${sourceStoragePath}: ${warning}`);
-        }
-      } else if (sourceStoragePath && asset.sourceBuffer) {
-        const warning = "Source PSD upload skipped. Re-run with --upload-psd-source to try uploading the PSD source file.";
-        row.notes = row.notes ? `${row.notes}\n${warning}` : warning;
       }
     }
 

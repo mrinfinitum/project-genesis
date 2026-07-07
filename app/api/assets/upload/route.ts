@@ -59,6 +59,10 @@ export async function POST(request: Request) {
   const requestedAssetId = String(formData.get("asset_id") ?? "").trim();
   const uploadKind = String(formData.get("upload_kind") ?? "export").trim();
 
+  if (uploadKind === "source") {
+    return NextResponse.json({ error: "PSD source files are local-only. Upload a generated PNG export instead." }, { status: 400 });
+  }
+
   if (!sourceId && !requestedAssetId && uploadKind !== "source") {
     return NextResponse.json({ error: "source_id or asset_id is required." }, { status: 400 });
   }

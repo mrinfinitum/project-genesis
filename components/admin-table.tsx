@@ -1,7 +1,7 @@
 "use client";
 
 import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from "react";
-import { Download, FileJson, FileUp, ImageIcon, ImagePlus, Pencil, Plus, Search, Trash2, Upload, X } from "lucide-react";
+import { Download, FileJson, ImageIcon, ImagePlus, Pencil, Plus, Search, Trash2, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { downloadBlob, titleCase } from "@/lib/utils";
@@ -61,18 +61,6 @@ function rowMatches(row: Row, keys: string[], search: string) {
   return keys.some((key) => stringifyValue(row[key]).toLowerCase().includes(needle));
 }
 
-function singularTableLabel(table: string) {
-  if (table === "assets") {
-    return "asset";
-  }
-
-  if (table === "research") {
-    return "research";
-  }
-
-  return table.replace(/s$/, "");
-}
-
 function assetLookupId(table: string, row: Row) {
   return table === "assets" ? stringifyValue(row.id) : stringifyValue(row.asset_id);
 }
@@ -116,14 +104,11 @@ export function AdminTable({ config, initialRows }: { config: TableConfig; initi
   const [editing, setEditing] = useState<Row | null>(null);
   const [formOpen, setFormOpen] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [sourceUploadRow, setSourceUploadRow] = useState<Row | null>(null);
-  const [sourceUploadingId, setSourceUploadingId] = useState<string | null>(null);
   const [generateRow, setGenerateRow] = useState<Row | null>(null);
   const [generatingId, setGeneratingId] = useState<string | null>(null);
   const [variants, setVariants] = useState<AssetVariant[]>([]);
   const [variantsLoading, setVariantsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const sourceFileInputRef = useRef<HTMLInputElement | null>(null);
   const supportsAssetUploads = assetUploadTables.includes(config.table);
   const assetVariantSizes = config.table === "buildings" || config.table === "research" ? largeAssetSizes : upgradeIconSizes;
   const assetRowsForLookup = config.table === "assets" ? rows : assetRows;
@@ -325,86 +310,6 @@ export function AdminTable({ config, initialRows }: { config: TableConfig; initi
     return (payload.variants ?? []) as AssetVariant[];
   }
 
-  async function uploadSourcePsd(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    const row = sourceUploadRow;
-    event.target.value = "";
-
-    if (!file) {
-      return;
-    }
-
-    if (!file.name.toLowerCase().endsWith(".psd")) {
-      window.alert("Please choose a PSD file.");
-      return;
-    }
-
-    const sourceId = row ? stringifyValue(row.id) : "";
-    const currentAssetId = row ? stringifyValue(row.asset_id) : "";
-    setSourceUploadingId(sourceId || "new-source");
-    const body = new FormData();
-    body.append("source_table", row ? config.table : "assets");
-    body.append("source_id", sourceId);
-    body.append("asset_id", row && config.table === "assets" ? sourceId : currentAssetId);
-    body.append("upload_kind", "source");
-    body.append("asset_name", row ? stringifyValue(row.name || row.source_name || row.id) : file.name.replace(/\.[^/.]+$/, ""));
-    body.append("file", file);
-
-    const response = await fetch("/api/assets/upload", {
-      method: "POST",
-      body
-    });
-    const payload = await response.json();
-
-    if (!response.ok) {
-      window.alert(payload.error ?? "Source PSD upload failed.");
-      setSourceUploadingId(null);
-      setSourceUploadRow(null);
-      return;
-    }
-
-    if (row) {
-      setRows((current) =>
-        current.map((item) =>
-          item.id === sourceId
-            ? {
-                ...item,
-                ...(config.table === "assets" ? payload.row ?? {} : {}),
-                asset_id: payload.asset_id ?? item.asset_id,
-                source_file_url: payload.source_file_url ?? item.source_file_url,
-                source_file_type: "PSD",
-                export_status: payload.row?.export_status ?? item.export_status
-              }
-            : item
-        )
-      );
-    } else if (config.table === "assets") {
-      setRows((current) => {
-        const row = payload.row as Row;
-        const index = current.findIndex((item) => item.id === row.id);
-        if (index >= 0) {
-          const next = [...current];
-          next[index] = row;
-          return next;
-        }
-        return [row, ...current];
-      });
-    }
-
-    try {
-      const nextSourceId = row ? sourceId : stringifyValue(payload.asset_id);
-      const nextAssetId = stringifyValue(payload.asset_id);
-      if (nextSourceId && nextAssetId) {
-        await generateVariantsFor(row ?? (payload.row as Row), nextSourceId, nextAssetId);
-      }
-    } catch (error) {
-      window.alert(error instanceof Error ? error.message : "Source PSD uploaded, but PNG variants could not be generated.");
-    } finally {
-      setSourceUploadingId(null);
-      setSourceUploadRow(null);
-    }
-  }
-
   async function openVariantMenu(row: Row) {
     setGenerateRow(row);
     setVariants([]);
@@ -496,22 +401,6 @@ export function AdminTable({ config, initialRows }: { config: TableConfig; initi
         </div>
         <div className="flex flex-wrap gap-2">
           <input ref={fileInputRef} type="file" accept=".csv,text/csv" hidden onChange={importCsv} />
-          {supportsAssetUploads ? (
-            <input ref={sourceFileInputRef} type="file" accept=".psd,image/vnd.adobe.photoshop" hidden onChange={uploadSourcePsd} />
-          ) : null}
-          {config.table === "assets" ? (
-            <Button
-              type="button"
-              onClick={() => {
-                setSourceUploadRow(null);
-                sourceFileInputRef.current?.click();
-              }}
-              disabled={sourceUploadingId !== null}
-            >
-              <FileUp className="h-4 w-4" />
-              {sourceUploadingId === "new-source" ? "Uploading..." : "Source PSD"}
-            </Button>
-          ) : null}
           <Button type="button" onClick={() => fileInputRef.current?.click()}>
             <Upload className="h-4 w-4" />
             Import CSV
@@ -636,21 +525,6 @@ export function AdminTable({ config, initialRows }: { config: TableConfig; initi
                   ))}
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
-                      {supportsAssetUploads ? (
-                        <button
-                          type="button"
-                          className="grid h-8 w-8 place-items-center rounded-md border border-cyan-300/20 text-cyan-100 hover:bg-cyan-300/10 disabled:cursor-not-allowed disabled:opacity-50"
-                          onClick={() => {
-                            setSourceUploadRow(row);
-                            sourceFileInputRef.current?.click();
-                          }}
-                          disabled={sourceUploadingId === stringifyValue(row.id)}
-                          aria-label={`Upload source PSD for ${singularTableLabel(config.table)}`}
-                          title={`Upload source PSD for this ${singularTableLabel(config.table)}`}
-                        >
-                          <FileUp className="h-4 w-4" />
-                        </button>
-                      ) : null}
                       {supportsAssetUploads ? (
                         <button
                           type="button"

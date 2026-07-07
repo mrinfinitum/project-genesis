@@ -47,9 +47,9 @@ export const PLANET_PROMPT_LIBRARY: PlanetPromptTemplate[] = [
   },
   {
     "planetClass": "Terrestrial",
-    "subclass": "Supercontinent",
-    "displayName": "Supercontinent",
-    "imagePrompt": "A highly detailed supercontinent terrestrial featuring realistic planetary surface textures, believable geological formations, cinematic lighting, and premium sci-fi strategy game quality viewed from orbit."
+    "subclass": "Swamp",
+    "displayName": "Swamp",
+    "imagePrompt": "A wet terrestrial world with vast marshlands, dark green wetland continents, shallow inland seas, branching river deltas, misty lowlands, and humid cloud systems."
   },
   {
     "planetClass": "Terrestrial",
@@ -820,7 +820,7 @@ const SUBCLASS_FEATURES: Record<string, string> = {
   "Earthlike": "Balanced blue oceans, green-brown continents, white cloud systems, and small polar ice caps.",
   "Continental": "Large connected landmasses, visible coastlines, inland seas, and varied green-brown terrain.",
   "Highlands": "Raised continental regions, mountain-like texture fields, plateaus, and rugged elevation patterns.",
-  "Supercontinent": "One dominant landmass surrounded by ocean, with dramatic coastlines and interior climate bands.",
+  "Swamp": "Dark green wetland continents, shallow inland seas, branching river deltas, misty lowlands, and humid cloud systems.",
   "Riverlands": "Branching river networks, wet lowlands, inland deltas, and lush terrain corridors.",
   "Badlands": "Eroded rock, dry ridges, exposed sediment bands, and rusty canyon coloration.",
   "Savanna": "Warm golden grassland tones, scattered green belts, seasonal river marks, and dry cloud patterns.",

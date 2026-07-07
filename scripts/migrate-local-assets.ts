@@ -75,7 +75,7 @@ function nameFromAssetId(assetId: string) {
     .replace(/\b\w/g, (letter) => letter.toUpperCase()) || assetId;
 }
 
-function categoryForAsset(assetId: string, hasSource: boolean) {
+function categoryForAsset(assetId: string) {
   if (assetId.startsWith("asset-upgrades-")) {
     return "Upgrade Icon";
   }
@@ -88,7 +88,7 @@ function categoryForAsset(assetId: string, hasSource: boolean) {
     return "Research Icon";
   }
 
-  return hasSource ? "Source Artwork" : "Asset";
+  return "Asset";
 }
 
 function linkedSource(assetId: string) {
@@ -161,7 +161,7 @@ async function main() {
     }
   }
 
-  const assetFiles = new Map<string, { source?: string; exports: string[] }>();
+  const assetFiles = new Map<string, { exports: string[] }>();
 
   for (const file of files) {
     const storagePath = path.relative(uploadsRoot, file).split(path.sep).join("/");
@@ -174,11 +174,16 @@ async function main() {
     const group = assetFiles.get(assetId) ?? { exports: [] };
 
     if (kind === "source") {
-      group.source = storagePath;
+      console.log(`Skipping local-only source file ${storagePath}`);
+      assetFiles.set(assetId, group);
+      continue;
     }
 
     if (kind === "exports") {
       group.exports.push(storagePath);
+    } else {
+      assetFiles.set(assetId, group);
+      continue;
     }
 
     assetFiles.set(assetId, group);
@@ -203,27 +208,28 @@ async function main() {
   for (const [assetId, group] of assetFiles.entries()) {
     const existing = rowById.get(assetId) ?? {};
     const exportPath = [...group.exports].sort().at(-1) ?? "";
-    const sourcePath = group.source ?? "";
+
+    if (!exportPath) {
+      continue;
+    }
+
     const exportUrl = exportPath ? await publicUrlFor(exportPath) : String(existing.file_url ?? "");
-    const sourceUrl = sourcePath ? await publicUrlFor(sourcePath) : String(existing.source_file_url ?? "");
-    const sourceFile = sourcePath ? path.basename(sourcePath) : "";
     const exportFile = exportPath ? path.basename(exportPath) : "";
-    const hasSource = Boolean(sourcePath || existing.source_file_url);
 
     rows.push({
       id: assetId,
-      name: String(existing.name ?? (fileBaseName(sourceFile || exportFile) || nameFromAssetId(assetId))),
-      type: String(existing.type ?? (hasSource ? "PSD Source" : "Image")),
-      category: String(existing.category ?? categoryForAsset(assetId, hasSource)),
+      name: String(existing.name ?? (fileBaseName(exportFile) || nameFromAssetId(assetId))),
+      type: String(existing.type === "PSD Source" ? "Image" : existing.type ?? "Image"),
+      category: String(existing.category === "Source Artwork" ? categoryForAsset(assetId) : existing.category ?? categoryForAsset(assetId)),
       prompt: String(existing.prompt ?? ""),
       file_url: exportUrl,
-      source_file_url: sourceUrl,
-      source_file_type: String(existing.source_file_type ?? (hasSource ? "PSD" : "")),
+      source_file_url: "",
+      source_file_type: "",
       parent_asset_id: (existing.parent_asset_id as string | null | undefined) ?? null,
       slice_name: String(existing.slice_name ?? ""),
       roblox_asset_id: String(existing.roblox_asset_id ?? ""),
-      export_status: String(existing.export_status ?? (exportPath ? "PNG Uploaded" : hasSource ? "Source Uploaded" : "")),
-      status: String(existing.status ?? (exportPath ? "Uploaded" : hasSource ? "Source Uploaded" : "Draft")),
+      export_status: String(existing.export_status === "Source Uploaded" ? "PNG Uploaded" : existing.export_status ?? "PNG Uploaded"),
+      status: String(existing.status === "Source Uploaded" ? "Uploaded" : existing.status ?? "Uploaded"),
       notes: String(existing.notes ?? `Migrated from local public/uploads/${bucket}/${assetId}.`)
     });
   }
