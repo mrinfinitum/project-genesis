@@ -25,8 +25,20 @@ import type { AiInboxItem, PromptTemplate } from "@/types/schema";
 type Row = Record<string, unknown>;
 type SourceRows = Record<string, Row[]>;
 type ViewMode = "cards" | "table" | "templates";
+type WorkshopModuleCard = {
+  description: string;
+  requiredInputs: string[];
+  optionalInputs: string[];
+  output: string[];
+  actions: string[];
+  about: string[];
+  category: string;
+  outputType: string;
+  provider: string;
+};
 
 const contentTypes = [
+  "Workshop Module",
   "Planet Name",
   "Planet Story",
   "Planet Discovery Journal",
@@ -43,6 +55,7 @@ const contentTypes = [
 ];
 
 const systems = [
+  "AI Workshop",
   "Galaxy",
   "Star Systems",
   "Planets",
@@ -140,6 +153,176 @@ function nowIso() {
 
 function newId(prefix: string) {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+}
+
+function isDivider(line: string) {
+  return /^[=\-─]{3,}$/.test(line.trim());
+}
+
+function normalizedSpecLines(value: string) {
+  return value
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line && !isDivider(line));
+}
+
+function sectionizeSpec(lines: string[]) {
+  const sectionNames = new Set([
+    "AI WORKSHOP",
+    "MODULE",
+    "INPUTS",
+    "OUTPUT",
+    "PROMPT TEMPLATE",
+    "LAYOUT",
+    "SAVE",
+    "FUTURE",
+    "REQUIRED INPUTS",
+    "OPTIONAL INPUTS",
+    "ACTIONS",
+    "ABOUT THIS TEMPLATE"
+  ]);
+  const sections: Record<string, string[]> = { ROOT: [] };
+  let current = "ROOT";
+
+  for (const line of lines) {
+    const upper = line.toUpperCase();
+    if (sectionNames.has(upper)) {
+      current = upper;
+      sections[current] = sections[current] ?? [];
+      continue;
+    }
+    sections[current].push(line);
+  }
+
+  return sections;
+}
+
+function valueAfter(label: string, lines: string[]) {
+  const index = lines.findIndex((line) => line.toLowerCase() === label.toLowerCase());
+  return index >= 0 ? lines[index + 1] ?? "" : "";
+}
+
+function valuesAfter(label: string, lines: string[]) {
+  const index = lines.findIndex((line) => line.toLowerCase() === label.toLowerCase());
+  return index >= 0 ? lines.slice(index + 1) : [];
+}
+
+function parseInputGroups(lines: string[]) {
+  const controls = /^(Dropdown|Textarea|Input|Text Input|Multi-select|Multi Select|Checkbox|Toggle|Code Block|Large Code Block|Number)$/i;
+  const required: string[] = [];
+  const optional: string[] = [];
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const label = lines[index];
+    const control = lines[index + 1] ?? "";
+    if (!control || !controls.test(control) || ["Examples", "Buttons", "Fields"].includes(label)) {
+      continue;
+    }
+
+    const details: string[] = [control];
+    index += 2;
+    while (index < lines.length && !controls.test(lines[index + 1] ?? "")) {
+      details.push(lines[index]);
+      index += 1;
+    }
+    index -= 1;
+
+    const isOptional = details.some((detail) => detail.toLowerCase() === "optional");
+    const isRequired = details.some((detail) => detail.toLowerCase() === "required");
+    const optionsIndex = details.findIndex((detail) => detail.toLowerCase() === "examples");
+    const examples = optionsIndex >= 0 ? details.slice(optionsIndex + 1, optionsIndex + 5).join(", ") : "";
+    const summary = [
+      label,
+      `Type: ${control}`,
+      isRequired ? "Required" : isOptional ? "Optional" : "Optional",
+      examples ? `Examples: ${examples}` : ""
+    ].filter(Boolean).join(" | ");
+
+    if (isRequired) {
+      required.push(summary);
+    } else {
+      optional.push(summary);
+    }
+  }
+
+  return { required, optional };
+}
+
+function workshopCardFromMetadata(metadata: Record<string, unknown> | undefined) {
+  const card = metadata?.workshop_card;
+  if (!card || typeof card !== "object" || Array.isArray(card)) {
+    return null;
+  }
+
+  return card as WorkshopModuleCard;
+}
+
+function parseWorkshopModuleSpec(raw: string): AiInboxItem {
+  const timestamp = nowIso();
+  const lines = normalizedSpecLines(raw);
+  const sections = sectionizeSpec(lines);
+  const moduleLines = sections.MODULE ?? sections.ROOT ?? [];
+  const title =
+    valueAfter("Title", lines) ||
+    moduleLines.find((line) => !["Category", "Description", "Output Type", "AI Provider"].includes(line)) ||
+    "Imported AI Workshop Module";
+  const description = valueAfter("Description", moduleLines) || valueAfter("One sentence description", lines) || "Imported AI Workshop module.";
+  const category = valueAfter("Category", moduleLines) || "AI Workshop";
+  const outputType = valueAfter("Output Type", moduleLines) || "";
+  const provider = valueAfter("AI Provider", moduleLines) || "";
+  const inputGroups = parseInputGroups(sections.INPUTS ?? []);
+  const requiredInputs = sections["REQUIRED INPUTS"]?.length ? sections["REQUIRED INPUTS"] : inputGroups.required;
+  const optionalInputs = sections["OPTIONAL INPUTS"]?.length ? sections["OPTIONAL INPUTS"] : inputGroups.optional;
+  const outputLines = sections.OUTPUT ?? [];
+  const buttonsIndex = outputLines.findIndex((line) => line.toLowerCase() === "buttons");
+  const output = (buttonsIndex >= 0 ? outputLines.slice(0, buttonsIndex) : outputLines).filter((line) => line.toLowerCase() !== "buttons");
+  const actions = sections.ACTIONS?.length ? sections.ACTIONS : buttonsIndex >= 0 ? outputLines.slice(buttonsIndex + 1) : [];
+  const about = sections["ABOUT THIS TEMPLATE"]?.length
+    ? sections["ABOUT THIS TEMPLATE"]
+    : [
+        description,
+        category ? `Category: ${category}` : "",
+        outputType ? `Output Type: ${outputType}` : "",
+        provider ? `Provider: ${provider}` : "",
+        moduleLines.includes("No API Required") ? "No API required." : "",
+        ...(sections.FUTURE?.length ? ["Future:", ...sections.FUTURE] : [])
+      ].filter(Boolean);
+  const promptTemplate = (sections["PROMPT TEMPLATE"] ?? []).join("\n");
+  const card: WorkshopModuleCard = {
+    description,
+    requiredInputs,
+    optionalInputs,
+    output,
+    actions,
+    about,
+    category,
+    outputType,
+    provider
+  };
+
+  return {
+    id: newId("ai-module"),
+    title,
+    content_type: "Workshop Module",
+    source_table: "",
+    source_id: "",
+    system: "AI Workshop",
+    status: "Pending",
+    priority: "Medium",
+    prompt_template: "",
+    generated_prompt: promptTemplate,
+    ai_result: "",
+    result_summary: description,
+    related_name: category,
+    related_metadata: {
+      workshop_card: card,
+      imported_spec: raw
+    },
+    created_at: timestamp,
+    updated_at: timestamp,
+    completed_at: null,
+    notes: raw
+  };
 }
 
 function emptyItem(): AiInboxItem {
@@ -304,6 +487,7 @@ export function AIWorkshop({
   const [sourceTable, setSourceTable] = useState("all");
   const [editingItem, setEditingItem] = useState<AiInboxItem | null>(null);
   const [editingTemplate, setEditingTemplate] = useState<PromptTemplate | null>(null);
+  const [moduleImportOpen, setModuleImportOpen] = useState(false);
   const [pasteItem, setPasteItem] = useState<AiInboxItem | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [error, setError] = useState("");
@@ -498,6 +682,9 @@ export function AIWorkshop({
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <Button onClick={() => setModuleImportOpen(true)} className="border-cyan-300/30 bg-cyan-300/10 text-cyan-100">
+            <Clipboard className="h-4 w-4" /> Paste Module Spec
+          </Button>
           <Button onClick={() => setEditingItem(emptyItem())}>
             <Plus className="h-4 w-4" /> New AI Item
           </Button>
@@ -675,6 +862,22 @@ export function AIWorkshop({
         />
       ) : null}
 
+      {moduleImportOpen ? (
+        <ModuleImportModal
+          onClose={() => setModuleImportOpen(false)}
+          onSave={async (raw) => {
+            const saved = await saveItem(parseWorkshopModuleSpec(raw));
+            if (saved) {
+              setModuleImportOpen(false);
+              setView("cards");
+              setContentType("Workshop Module");
+              setSystem("AI Workshop");
+              setStatus("all");
+            }
+          }}
+        />
+      ) : null}
+
       {pasteItem ? (
         <PasteResultModal item={pasteItem} onClose={() => setPasteItem(null)} onSave={saveResult} />
       ) : null}
@@ -731,6 +934,8 @@ function AIItemCard({
   onReject: () => void;
   onSaveSource: () => void;
 }) {
+  const workshopCard = workshopCardFromMetadata(item.related_metadata);
+
   return (
     <article className="rounded-md border border-slate-800 bg-slate-950/40 p-4">
       <div className="flex items-start justify-between gap-3">
@@ -751,7 +956,9 @@ function AIItemCard({
         <Spec label="Updated" value={formatDate(item.updated_at)} />
       </div>
 
-      {item.result_summary ? <p className="mt-4 line-clamp-3 text-sm leading-6 text-slate-300">{item.result_summary}</p> : null}
+      {workshopCard ? <WorkshopModuleSummary card={workshopCard} /> : null}
+
+      {!workshopCard && item.result_summary ? <p className="mt-4 line-clamp-3 text-sm leading-6 text-slate-300">{item.result_summary}</p> : null}
 
       <div className="mt-4 flex flex-wrap gap-2">
         <Button onClick={onGenerate}><Wand2 className="h-4 w-4" /> Generate</Button>
@@ -774,6 +981,34 @@ function AIItemCard({
         <Button onClick={onDelete} className="border-red-300/30 bg-red-300/10 text-red-100"><Trash2 className="h-4 w-4" /></Button>
       </div>
     </article>
+  );
+}
+
+function WorkshopModuleSummary({ card }: { card: WorkshopModuleCard }) {
+  return (
+    <div className="mt-4 space-y-4">
+      <p className="text-sm leading-6 text-slate-300">{card.description}</p>
+      <div className="grid gap-3 md:grid-cols-2">
+        <WorkshopModuleSection title="Required Inputs" rows={card.requiredInputs} empty="No required inputs listed." />
+        <WorkshopModuleSection title="Optional Inputs" rows={card.optionalInputs} empty="No optional inputs listed." />
+      </div>
+      <div className="grid gap-3 md:grid-cols-2">
+        <WorkshopModuleSection title="Output" rows={card.output} empty="No output listed." />
+        <WorkshopModuleSection title="Actions" rows={card.actions} empty="No actions listed." />
+      </div>
+      <WorkshopModuleSection title="About This Template" rows={card.about} empty="No template notes listed." />
+    </div>
+  );
+}
+
+function WorkshopModuleSection({ title, rows, empty }: { title: string; rows: string[]; empty: string }) {
+  return (
+    <div className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
+      <p className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-cyan-300">{title}</p>
+      <div className="mt-2 space-y-1 text-xs leading-5 text-slate-300">
+        {rows.length ? rows.map((row) => <p key={row}>{row}</p>) : <p className="text-slate-500">{empty}</p>}
+      </div>
+    </div>
   );
 }
 
@@ -958,6 +1193,53 @@ function PasteResultModal({
         <div className="flex justify-end gap-2">
           <Button type="button" onClick={onClose} className="border-slate-600 bg-slate-800/50 text-slate-200">Cancel</Button>
           <Button type="button" onClick={() => onSave(item, aiResult, summary)}>Save Result</Button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+function ModuleImportModal({
+  onClose,
+  onSave
+}: {
+  onClose: () => void;
+  onSave: (raw: string) => void;
+}) {
+  const [raw, setRaw] = useState("");
+  const preview = raw.trim() ? parseWorkshopModuleSpec(raw) : null;
+  const previewCard = preview ? workshopCardFromMetadata(preview.related_metadata) : null;
+
+  return (
+    <Modal title="Paste Workshop Module Spec" onClose={onClose}>
+      <div className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
+        <div>
+          <label className="block">
+            <span className="text-xs uppercase tracking-[0.14em] text-slate-400">Spec Text</span>
+            <textarea
+              value={raw}
+              onChange={(event) => setRaw(event.target.value)}
+              rows={22}
+              className="mt-2 w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 font-mono text-xs leading-5 text-slate-100"
+              placeholder="Paste the AI WORKSHOP / MODULE / INPUTS / OUTPUT block here"
+            />
+          </label>
+          <div className="mt-4 flex justify-end gap-2">
+            <Button type="button" onClick={onClose} className="border-slate-600 bg-slate-800/50 text-slate-200">Cancel</Button>
+            <Button type="button" disabled={!raw.trim()} onClick={() => onSave(raw)}>Create Workshop Card</Button>
+          </div>
+        </div>
+        <div className="rounded-md border border-cyan-400/15 bg-slate-950/45 p-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">Preview</p>
+          {preview && previewCard ? (
+            <div className="mt-3">
+              <h4 className="text-xl font-semibold text-white">{preview.title}</h4>
+              <p className="mt-1 text-xs text-slate-500">{preview.related_name || "AI Workshop"}</p>
+              <WorkshopModuleSummary card={previewCard} />
+            </div>
+          ) : (
+            <p className="mt-4 text-sm leading-6 text-slate-500">Paste a module spec to preview the generated card.</p>
+          )}
         </div>
       </div>
     </Modal>
