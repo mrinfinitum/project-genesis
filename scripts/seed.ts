@@ -44,7 +44,6 @@ async function main() {
   await upsert("building_chains");
   await upsert("game_constants");
   await upsert("feature_flags");
-  await upsert("prompt_templates");
   await upsert("release_notes");
   await upsert("changelog");
 }

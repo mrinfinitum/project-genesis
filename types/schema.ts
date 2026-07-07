@@ -373,40 +373,6 @@ export type PlanetRenderLibraryRecord = {
   updated_at: string;
 };
 
-export type AiInboxItem = {
-  id: string;
-  title: string;
-  content_type: string;
-  source_table: string;
-  source_id: string;
-  system: string;
-  status: string;
-  priority: string;
-  prompt_template: string;
-  generated_prompt: string;
-  ai_result: string;
-  result_summary: string;
-  related_name: string;
-  related_metadata: Record<string, unknown>;
-  created_at: string;
-  updated_at: string;
-  completed_at: string | null;
-  notes: string;
-};
-
-export type PromptTemplate = {
-  id: string;
-  name: string;
-  content_type: string;
-  system: string;
-  template_text: string;
-  output_format: string;
-  active: boolean;
-  created_at: string;
-  updated_at: string;
-  notes: string;
-};
-
 export type Upgrade = {
   id: string;
   type: string;
@@ -511,8 +477,6 @@ export type GameData = {
   resource_catalog: ResourceCatalogItem[];
   generated_planets: GeneratedPlanet[];
   planet_render_library: PlanetRenderLibraryRecord[];
-  ai_inbox: AiInboxItem[];
-  prompt_templates: PromptTemplate[];
   release_notes: ReleaseNote[];
   changelog: ChangelogEntry[];
 };
@@ -530,8 +494,6 @@ export type TableName =
   | "resource_catalog"
   | "generated_planets"
   | "planet_render_library"
-  | "ai_inbox"
-  | "prompt_templates"
   | "upgrades"
   | "building_relationships"
   | "building_chains"

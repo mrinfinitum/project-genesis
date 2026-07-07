@@ -17,8 +17,6 @@ Uploads also work without Supabase during local development. PNG and PSD files a
 
 The Planetary Rules section stores the Project Genesis Planet Generation System v1.0 as procedural generation variables, including seed-driven planet fields, star systems, classes, biomes, climates, atmospheres, resources, flora, fauna, ancient civilizations, hazards, traits, modifiers, collectibles, visual themes, weather, colonization, science, economy, events, discovery journal fields, and story components. The Planets section generates and stores planet cards from those rules.
 
-The AI Workshop section is a zero-API-cost content queue. It generates copy-ready prompts from Studio records, lets you paste ChatGPT results back into the app, and tracks approval/rejection without calling OpenAI or any other AI API.
-
 ## Supabase Setup
 
 1. Create a Supabase project.
@@ -42,8 +40,6 @@ PROJECT_GENESIS_ADMIN_EMAILS=
 ```bash
 npm run seed
 ```
-
-If your Supabase project already exists, run `supabase/migrations/202607062340_add_ai_workshop.sql` to add the AI Workshop `ai_inbox` and `prompt_templates` tables plus default templates.
 
 ## File Storage
 

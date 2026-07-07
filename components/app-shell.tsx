@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Archive,
-  Bot,
   Boxes,
   Building2,
   ChartNoAxesCombined,
@@ -32,7 +31,6 @@ const sections = [
   { href: "/civilizations", label: "Civilizations", icon: Sparkles },
   { href: "/galaxy", label: "Galaxy", icon: Rocket },
   { href: "/universe-explorer", label: "Universe Explorer", icon: Compass },
-  { href: "/ai-workshop", label: "AI Workshop", icon: Bot },
   { href: "/planets", label: "Planets", icon: Orbit },
   { href: "/planetary-rules", label: "Planetary Rules", icon: GitBranch },
   { href: "/planet-resource-profiles", label: "Planet Resources", icon: Gem },

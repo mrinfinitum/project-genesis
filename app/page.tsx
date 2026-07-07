@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Bot, Boxes, Building2, Compass, Gem, GitBranch, Palette, Sparkles, Wand2 } from "lucide-react";
+import { ArrowRight, Boxes, Building2, Compass, Gem, GitBranch, Palette, Sparkles, Wand2 } from "lucide-react";
 import { getGameData } from "@/lib/data";
 import { StatusBadge } from "@/components/ui/status-badge";
 
@@ -21,7 +21,6 @@ export default async function DashboardPage() {
   const readyUnlocks = data.unlock_matrix.filter((row) => ["Ready", "Mapped"].includes(row.implementation_status)).length;
   const enabledFeatureFlags = data.feature_flags.filter((flag) => flag.enabled).length;
   const mappedRelationships = data.building_relationships.filter((row) => row.implementation_status === "Mapped").length;
-  const openAiItems = data.ai_inbox.filter((item) => !["Approved", "Archived"].includes(item.status)).length;
 
   const metrics = [
     { label: "Research Nodes", value: data.research.length, icon: Sparkles, href: "/research" },
@@ -32,7 +31,6 @@ export default async function DashboardPage() {
     { label: "Building Relationships", value: data.building_relationships.length, icon: GitBranch, href: "/building-relationships" },
     { label: "Current Version", value: data.release_notes[0]?.version ?? "0.1.0", icon: Sparkles, href: "/releases" },
     { label: "Universe Explorer", value: "Seeded", icon: Compass, href: "/universe-explorer" },
-    { label: "AI Workshop", value: openAiItems, icon: Bot, href: "/ai-workshop" },
     { label: "Feature Flags Enabled", value: `${enabledFeatureFlags}/${data.feature_flags.length}`, icon: ArrowRight, href: "/feature-flags" }
   ];
 
@@ -51,7 +49,6 @@ export default async function DashboardPage() {
     "Review Sprint 2 relationship blanks and edge cases",
     "Import civilization and planet sheet exports",
     "Map unlock IDs to Roblox module names",
-    "Queue AI Workshop prompts for planet stories and resource descriptions",
     "Run economy balance pass on v2.2 upgrade costs"
   ];
 

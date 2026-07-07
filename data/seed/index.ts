@@ -1,5 +1,4 @@
 import type {
-  AiInboxItem,
   AssetRecord,
   Building,
   ChangelogEntry,
@@ -7,7 +6,6 @@ import type {
   GameData,
   PlanetResourceProfile,
   PlanetVariable,
-  PromptTemplate,
   ReleaseNote,
   ResearchBranch,
   ResearchNode,
@@ -17,7 +15,6 @@ import type {
   Wonder
 } from "@/types/schema";
 import { handoffPlanetResourceProfiles, handoffResourceCatalog } from "@/data/handoff";
-import { aiPromptTemplates } from "@/data/ai-workshop";
 import { planetSystemVariables } from "@/data/handoff/planet-system";
 
 export const civilizations = [
@@ -264,8 +261,6 @@ export const changelog: ChangelogEntry[] = [
 export const planets: PlanetVariable[] = planetSystemVariables;
 export const planetResourceProfiles: PlanetResourceProfile[] = handoffPlanetResourceProfiles;
 export const resourceCatalog: ResourceCatalogItem[] = handoffResourceCatalog;
-export const aiInbox: AiInboxItem[] = [];
-export const promptTemplates: PromptTemplate[] = aiPromptTemplates;
 
 export const seedData: GameData = {
   research_branches: researchBranches,
@@ -286,8 +281,6 @@ export const seedData: GameData = {
   resource_catalog: resourceCatalog,
   generated_planets: [],
   planet_render_library: [],
-  ai_inbox: aiInbox,
-  prompt_templates: promptTemplates,
   release_notes: releaseNotes,
   changelog
 };

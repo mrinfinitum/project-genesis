@@ -16,10 +16,8 @@ import researchRaw from "./json/Research.json";
 import unlockMatrixRaw from "./json/Unlock_Matrix.json";
 import upgradesRaw from "./json/All_Upgrades.json";
 import wondersRaw from "./json/Wonders.json";
-import { aiPromptTemplates } from "@/data/ai-workshop";
 import { planetSystemVariables } from "./planet-system";
 import type {
-  AiInboxItem,
   AssetRecord,
   Building,
   BuildingChain,
@@ -33,7 +31,6 @@ import type {
   GeneratedPlanet,
   PlanetResourceProfile,
   PlanetVariable,
-  PromptTemplate,
   ReleaseNote,
   ResearchBranch,
   ResearchNode,
@@ -289,8 +286,6 @@ export const handoffAssets: AssetRecord[] = (assetsRaw as RawRow[]).map((row) =>
 
 export const handoffConceptualArt: ConceptualArtRecord[] = [];
 export const handoffGeneratedPlanets: GeneratedPlanet[] = [];
-export const handoffAiInbox: AiInboxItem[] = [];
-export const handoffPromptTemplates: PromptTemplate[] = aiPromptTemplates;
 
 const handoffPlanetGeneration: PlanetVariable[] = (planetGenerationRaw as RawRow[]).map((row) => ({
     id: text(row.ID),
@@ -406,8 +401,6 @@ export const handoffData: GameData = {
   resource_catalog: handoffResourceCatalog,
   generated_planets: handoffGeneratedPlanets,
   planet_render_library: [],
-  ai_inbox: handoffAiInbox,
-  prompt_templates: handoffPromptTemplates,
   release_notes: handoffReleaseNotes,
   changelog: handoffChangelog
 };
