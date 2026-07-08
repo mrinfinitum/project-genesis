@@ -237,6 +237,166 @@ export const SOL_UNLOCK_PROGRESSION = [
   { unlock: "Interstellar Navigation", bodies: ["Nearby procedural star systems"] }
 ];
 
+type SolMoonInput = {
+  parentId: string;
+  parentName: string;
+  name: string;
+  planetClass?: string;
+  planetSubclass?: string;
+  rarity?: string;
+  biome?: string;
+  atmosphere?: string;
+  gravity?: string;
+  resources?: string[];
+  notes?: string;
+  unlockRequirement?: string;
+};
+
+function solBodyId(name: string) {
+  return `body-${name.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")}`;
+}
+
+function solMoon({
+  parentId,
+  parentName,
+  name,
+  planetClass = "Dead",
+  planetSubclass = "Airless",
+  rarity = "Common",
+  biome = "Regolith",
+  atmosphere = "Trace",
+  gravity = "Low",
+  resources = ["Water Ice", "Silicates", "Trace Metals"],
+  notes = "Fixed Sol system moon.",
+  unlockRequirement = "Outer Moon Exploration"
+}: SolMoonInput): CelestialBodyNode {
+  return {
+    id: solBodyId(name),
+    system_id: SOL_SYSTEM_ID,
+    parent_body_id: parentId,
+    name,
+    celestial_body_type: "Moon",
+    planet_class: planetClass,
+    planet_subclass: planetSubclass,
+    planet_rarity: rarity,
+    biome,
+    atmosphere,
+    gravity,
+    orbit_position: null,
+    orbit_parent: parentName,
+    landable: true,
+    colonizable: true,
+    colonizable_status: "Future",
+    uses_orbital_gameplay: false,
+    is_fixed: true,
+    is_starting_body: false,
+    is_procedural: false,
+    unlock_requirement: unlockRequirement,
+    resources,
+    notes
+  };
+}
+
+const MARS_MOONS: CelestialBodyNode[] = [
+  solMoon({
+    parentId: "body-mars",
+    parentName: "Mars",
+    name: "Phobos",
+    planetClass: "Dead",
+    planetSubclass: "Captured Asteroid",
+    biome: "Cratered Rock",
+    gravity: "Very Low",
+    resources: ["Regolith", "Nickel", "Iron", "Silicates"],
+    unlockRequirement: "Planetary Exploration",
+    notes: "Inner Martian moon suited for early orbital logistics and asteroid-mining practice."
+  }),
+  solMoon({
+    parentId: "body-mars",
+    parentName: "Mars",
+    name: "Deimos",
+    planetClass: "Dead",
+    planetSubclass: "Captured Asteroid",
+    biome: "Dusty Rock",
+    gravity: "Very Low",
+    resources: ["Regolith", "Carbonaceous Rock", "Silicates"],
+    unlockRequirement: "Planetary Exploration",
+    notes: "Outer Martian moon with low-gravity staging potential."
+  })
+];
+
+const JUPITER_ADDITIONAL_MOONS: CelestialBodyNode[] = [
+  solMoon({
+    parentId: "body-jupiter",
+    parentName: "Jupiter",
+    name: "Io",
+    planetClass: "Lava",
+    planetSubclass: "Volcanic",
+    rarity: "Rare",
+    biome: "Sulfur Lava Fields",
+    atmosphere: "Thin Sulfur",
+    gravity: "Low",
+    resources: ["Sulfur", "Silicates", "Volcanic Minerals", "Rare Metals"],
+    notes: "Hyper-volcanic moon shaped by tidal heating."
+  }),
+  solMoon({
+    parentId: "body-jupiter",
+    parentName: "Jupiter",
+    name: "Callisto",
+    planetClass: "Ice",
+    planetSubclass: "Cratered Ice",
+    rarity: "Uncommon",
+    biome: "Ancient Ice Crust",
+    atmosphere: "Trace",
+    gravity: "Low",
+    resources: ["Water Ice", "Silicates", "Carbon Compounds"],
+    notes: "Heavily cratered outer Galilean moon with stable colony potential."
+  })
+];
+
+const SATURN_ADDITIONAL_MOONS: CelestialBodyNode[] = [
+  solMoon({ parentId: "body-saturn", parentName: "Saturn", name: "Mimas", planetClass: "Ice", planetSubclass: "Cratered Ice", biome: "Impact Basin", resources: ["Water Ice", "Silicates"], notes: "Small icy moon dominated by a massive impact basin." }),
+  solMoon({ parentId: "body-saturn", parentName: "Saturn", name: "Tethys", planetClass: "Ice", planetSubclass: "Fractured Ice", biome: "Ice Trenches", resources: ["Water Ice", "Ammonia", "Silicates"], notes: "Icy moon with long fracture systems." }),
+  solMoon({ parentId: "body-saturn", parentName: "Saturn", name: "Dione", planetClass: "Ice", planetSubclass: "Glacial", biome: "Ice Cliffs", resources: ["Water Ice", "Silicates", "Organics"], notes: "Icy moon with bright cliff networks." }),
+  solMoon({ parentId: "body-saturn", parentName: "Saturn", name: "Rhea", planetClass: "Ice", planetSubclass: "Cratered Ice", biome: "Ancient Ice Plains", resources: ["Water Ice", "Silicates"], notes: "Large icy moon with broad cratered plains." }),
+  solMoon({ parentId: "body-saturn", parentName: "Saturn", name: "Iapetus", planetClass: "Ice", planetSubclass: "Two-Tone Ice", rarity: "Uncommon", biome: "Dark Ridge", resources: ["Water Ice", "Carbon Compounds", "Silicates"], notes: "Two-toned moon with a dramatic equatorial ridge." }),
+  solMoon({ parentId: "body-saturn", parentName: "Saturn", name: "Hyperion", planetClass: "Dead", planetSubclass: "Porous Rock", biome: "Chaotic Craters", gravity: "Very Low", resources: ["Carbonaceous Rock", "Water Ice", "Silicates"], notes: "Irregular porous moon with chaotic rotation." }),
+  solMoon({ parentId: "body-saturn", parentName: "Saturn", name: "Phoebe", planetClass: "Dead", planetSubclass: "Captured Asteroid", biome: "Dark Craters", gravity: "Very Low", resources: ["Carbonaceous Rock", "Water Ice", "Trace Metals"], notes: "Captured outer moon with dark primitive material." })
+];
+
+const URANUS_MAJOR_MOONS: CelestialBodyNode[] = [
+  solMoon({ parentId: "body-uranus", parentName: "Uranus", name: "Miranda", planetClass: "Ice", planetSubclass: "Fractured Ice", rarity: "Uncommon", biome: "Patchwork Cliffs", resources: ["Water Ice", "Silicates", "Ammonia"], notes: "Uranian moon with extreme fractured terrain." }),
+  solMoon({ parentId: "body-uranus", parentName: "Uranus", name: "Ariel", planetClass: "Ice", planetSubclass: "Canyon Ice", biome: "Ice Canyons", resources: ["Water Ice", "Carbon Dioxide Ice", "Silicates"], notes: "Bright icy moon cut by canyons." }),
+  solMoon({ parentId: "body-uranus", parentName: "Uranus", name: "Umbriel", planetClass: "Ice", planetSubclass: "Dark Ice", biome: "Ancient Dark Ice", resources: ["Water Ice", "Carbon Compounds", "Silicates"], notes: "Dark ancient icy moon." }),
+  solMoon({ parentId: "body-uranus", parentName: "Uranus", name: "Titania", planetClass: "Ice", planetSubclass: "Glacial", rarity: "Uncommon", biome: "Ice Faults", resources: ["Water Ice", "Silicates", "Ammonia"], notes: "Largest Uranian moon with broad fault valleys." }),
+  solMoon({ parentId: "body-uranus", parentName: "Uranus", name: "Oberon", planetClass: "Ice", planetSubclass: "Cratered Ice", biome: "Cratered Ice Plains", resources: ["Water Ice", "Silicates", "Carbon Compounds"], notes: "Outer major moon of Uranus with ancient crater fields." })
+];
+
+const NEPTUNE_MAJOR_MOONS: CelestialBodyNode[] = [
+  solMoon({
+    parentId: "body-neptune",
+    parentName: "Neptune",
+    name: "Triton",
+    planetClass: "Ice",
+    planetSubclass: "Cryovolcanic",
+    rarity: "Rare",
+    biome: "Nitrogen Geysers",
+    atmosphere: "Thin Nitrogen",
+    gravity: "Low",
+    resources: ["Nitrogen Ice", "Methane Ice", "Water Ice", "Cryovolcanic Compounds"],
+    notes: "Captured Kuiper-belt moon with active nitrogen geysers."
+  }),
+  solMoon({ parentId: "body-neptune", parentName: "Neptune", name: "Nereid", planetClass: "Ice", planetSubclass: "Captured Ice", biome: "Outer Ice Rock", gravity: "Very Low", resources: ["Water Ice", "Silicates", "Carbon Compounds"], notes: "Distant irregular Neptunian moon." }),
+  solMoon({ parentId: "body-neptune", parentName: "Neptune", name: "Proteus", planetClass: "Dead", planetSubclass: "Irregular Rock", biome: "Dark Craters", gravity: "Very Low", resources: ["Silicates", "Water Ice", "Trace Metals"], notes: "Large irregular inner moon of Neptune." })
+];
+
+const PLUTO_MOONS: CelestialBodyNode[] = [
+  solMoon({ parentId: "body-pluto", parentName: "Pluto", name: "Charon", planetClass: "Ice", planetSubclass: "Binary Ice", rarity: "Uncommon", biome: "Frozen Canyons", atmosphere: "None", gravity: "Very Low", resources: ["Water Ice", "Ammonia", "Methane Ice"], notes: "Pluto's largest moon and binary companion." }),
+  solMoon({ parentId: "body-pluto", parentName: "Pluto", name: "Nix", planetClass: "Ice", planetSubclass: "Small Ice", biome: "Outer Ice", atmosphere: "None", gravity: "Very Low", resources: ["Water Ice", "Methane Ice"], notes: "Small icy moon of Pluto." }),
+  solMoon({ parentId: "body-pluto", parentName: "Pluto", name: "Hydra", planetClass: "Ice", planetSubclass: "Small Ice", biome: "Outer Ice", atmosphere: "None", gravity: "Very Low", resources: ["Water Ice", "Methane Ice"], notes: "Small outer icy moon of Pluto." }),
+  solMoon({ parentId: "body-pluto", parentName: "Pluto", name: "Kerberos", planetClass: "Ice", planetSubclass: "Small Ice", biome: "Outer Ice", atmosphere: "None", gravity: "Very Low", resources: ["Water Ice", "Carbon Compounds"], notes: "Small dark icy moon of Pluto." }),
+  solMoon({ parentId: "body-pluto", parentName: "Pluto", name: "Styx", planetClass: "Ice", planetSubclass: "Small Ice", biome: "Outer Ice", atmosphere: "None", gravity: "Very Low", resources: ["Water Ice", "Methane Ice"], notes: "Small outer moon of Pluto." })
+];
+
 const SOL_CELESTIAL_BODIES: CelestialBodyNode[] = [
   {
     id: "body-sol",
@@ -388,6 +548,7 @@ const SOL_CELESTIAL_BODIES: CelestialBodyNode[] = [
     resources: ["Iron", "Silicon", "Water Ice", "Titanium"],
     notes: "First major planetary colony target."
   },
+  ...MARS_MOONS,
   {
     id: "body-asteroid-belt",
     system_id: SOL_SYSTEM_ID,
@@ -438,6 +599,7 @@ const SOL_CELESTIAL_BODIES: CelestialBodyNode[] = [
     resources: ["Hydrogen", "Helium", "Helium-3", "Storm Plasma", "Metallic Hydrogen"],
     notes: "First major orbital harvesting world."
   },
+  ...JUPITER_ADDITIONAL_MOONS,
   {
     id: "body-europa",
     system_id: SOL_SYSTEM_ID,
@@ -563,6 +725,7 @@ const SOL_CELESTIAL_BODIES: CelestialBodyNode[] = [
     resources: ["Water Ice", "Heavy Water", "Organic Compounds"],
     notes: "Cryovolcanic research world."
   },
+  ...SATURN_ADDITIONAL_MOONS,
   {
     id: "body-uranus",
     system_id: SOL_SYSTEM_ID,
@@ -588,6 +751,7 @@ const SOL_CELESTIAL_BODIES: CelestialBodyNode[] = [
     resources: ["Hydrogen", "Methane", "Ammonia", "Helium"],
     notes: "Outer system ice giant."
   },
+  ...URANUS_MAJOR_MOONS,
   {
     id: "body-neptune",
     system_id: SOL_SYSTEM_ID,
@@ -613,6 +777,7 @@ const SOL_CELESTIAL_BODIES: CelestialBodyNode[] = [
     resources: ["Hydrogen", "Helium", "Storm Plasma", "Methane"],
     notes: "High-wind outer system gas giant."
   },
+  ...NEPTUNE_MAJOR_MOONS,
   {
     id: "body-pluto",
     system_id: SOL_SYSTEM_ID,
@@ -637,7 +802,8 @@ const SOL_CELESTIAL_BODIES: CelestialBodyNode[] = [
     unlock_requirement: "Deep Space Communications",
     resources: ["Nitrogen Ice", "Methane Ice", "Water Ice"],
     notes: "Edge of the starting Sol system."
-  }
+  },
+  ...PLUTO_MOONS
 ];
 
 function slug(value: string) {

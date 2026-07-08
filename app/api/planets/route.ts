@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { handoffData } from "@/data/handoff";
 import { generatePlanet } from "@/lib/planets/generator";
 import { getRows, upsertRow } from "@/lib/data";
+import { withFixedSolGeneratedPlanets } from "@/lib/planets/fixed-sol-planets";
 import { imageVariantsFromRender, matchPlanetRender } from "@/lib/planets/render-library";
 import { hasLockedPlanetRender } from "@/lib/planets/render-lock";
 import { planetGenerationRuleRows } from "@/lib/planets/rule-rows";
@@ -103,8 +104,8 @@ async function upsertGeneratedPlanet(planet: GeneratedPlanet) {
 
 export async function GET() {
   try {
-    const rows = await getRows("generated_planets");
-    return NextResponse.json({ rows: sortRows(rows) });
+    const [rows, renderLibrary] = await Promise.all([getRows("generated_planets"), getRows("planet_render_library").catch(() => [])]);
+    return NextResponse.json({ rows: sortRows(withFixedSolGeneratedPlanets(rows as GeneratedPlanet[], renderLibrary as PlanetRenderLibraryRecord[])) });
   } catch (error) {
     const message = errorMessage(error, "Could not load generated planets.");
     return NextResponse.json({ error: message }, { status: 500 });

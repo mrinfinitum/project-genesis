@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { deleteRow, getRows, upsertRow } from "@/lib/data";
+import { isFixedSolGeneratedPlanet } from "@/lib/planets/fixed-sol-planets";
 import type { GeneratedPlanet } from "@/types/schema";
 
 export const runtime = "nodejs";
@@ -13,6 +14,10 @@ export async function DELETE(_request: Request, { params }: Params) {
 
   if (!id) {
     return NextResponse.json({ error: "Planet ID is required." }, { status: 400 });
+  }
+
+  if (isFixedSolGeneratedPlanet({ id, seed: id })) {
+    return NextResponse.json({ error: "Fixed Sol System planets cannot be deleted from the canonical universe seed." }, { status: 400 });
   }
 
   try {

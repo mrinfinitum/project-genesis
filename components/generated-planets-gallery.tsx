@@ -10,6 +10,7 @@ import type { GeneratedPlanet } from "@/types/schema";
 
 type PlanetImageVariant = NonNullable<GeneratedPlanet["image_variants"]>[number];
 const autoRenderProceduralPlanets = process.env.NEXT_PUBLIC_AUTO_RENDER_PROCEDURAL_PLANETS === "true";
+const fixedSolSeedPrefix = "PROJECT-GENESIS-UNIVERSE:milky-way:local-bubble:sol";
 const planetClassOptions = [
   { label: "Any class", value: "" },
   ...PLANET_CLASS_MODEL.map((planetClass) => ({ label: planetClass.name, value: planetClass.name }))
@@ -108,6 +109,10 @@ function statEntries(value: Record<string, string | number>) {
 
 function imageVariants(row: GeneratedPlanet) {
   return Array.isArray(row.image_variants) ? row.image_variants : [];
+}
+
+function isFixedSolPlanet(row: GeneratedPlanet) {
+  return row.id.startsWith("fixed-sol-") || row.seed.startsWith(fixedSolSeedPrefix);
 }
 
 function largestVariant(row: GeneratedPlanet) {
@@ -370,6 +375,11 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
   }
 
   async function deletePlanet(row: GeneratedPlanet) {
+    if (isFixedSolPlanet(row)) {
+      setError("Fixed Sol System planets are part of the canonical universe seed and cannot be deleted.");
+      return;
+    }
+
     if (!window.confirm(`Delete ${row.name}?`)) {
       return;
     }
@@ -518,6 +528,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
           const heroVariant = largestVariant(row);
           const variants = imageVariants(row);
           const renderLocked = hasLockedPlanetRender(row);
+          const fixedSolPlanet = isFixedSolPlanet(row);
 
           return (
             <article
@@ -557,9 +568,9 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                         event.stopPropagation();
                         renderPlanet(row, "procedural");
                       }}
-                      disabled={Boolean(renderingPlanetId) || renderLocked}
+                      disabled={Boolean(renderingPlanetId) || renderLocked || fixedSolPlanet}
                       aria-label="Render procedural planet image"
-                      title={renderLocked ? "Planet render is locked" : "Render procedural planet image"}
+                      title={fixedSolPlanet ? "Fixed Sol planets use uploaded library artwork" : renderLocked ? "Planet render is locked" : "Render procedural planet image"}
                     >
                       <Orbit className="h-4 w-4" />
                     </button>
@@ -570,9 +581,9 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                         event.stopPropagation();
                         renderPlanet(row, "ai");
                       }}
-                      disabled={Boolean(renderingPlanetId) || renderLocked}
+                      disabled={Boolean(renderingPlanetId) || renderLocked || fixedSolPlanet}
                       aria-label="Render AI hero planet image"
-                      title={renderLocked ? "Planet render is locked" : "Render AI hero planet image"}
+                      title={fixedSolPlanet ? "Fixed Sol planets use uploaded library artwork" : renderLocked ? "Planet render is locked" : "Render AI hero planet image"}
                     >
                       <Sparkles className="h-4 w-4" />
                     </button>
@@ -596,8 +607,9 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                         event.stopPropagation();
                         deletePlanet(row);
                       }}
-                      disabled={loading}
-                      aria-label="Delete planet"
+                      disabled={loading || fixedSolPlanet}
+                      aria-label={fixedSolPlanet ? "Fixed Sol planet cannot be deleted" : "Delete planet"}
+                      title={fixedSolPlanet ? "Fixed Sol planet cannot be deleted" : "Delete planet"}
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
