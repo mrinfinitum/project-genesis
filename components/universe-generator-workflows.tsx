@@ -16,6 +16,7 @@ import {
   type StarSystemNode
 } from "@/lib/universe/generator";
 import { cn } from "@/lib/utils";
+import { fixedSolGeneratedPlanets } from "@/lib/planets/fixed-sol-planets";
 import type { GeneratedPlanet } from "@/types/schema";
 
 type AssignmentContext = {
@@ -45,9 +46,34 @@ type PlanetAssignmentData = {
 
 type BodyCardState = CelestialBodyNode & PlanetAssignmentData;
 
+type PlanetAssignmentFields = {
+  galaxyId?: string;
+  galaxyName?: string;
+  sectorId?: string;
+  sectorName?: string;
+  starSystemId?: string;
+  starSystemName?: string;
+  orbitIndex?: number;
+  orbitalRole?: "Planet";
+  parentStarClass?: string;
+  parentStarSeed?: string;
+};
+
+type AssignedPlanet = GeneratedPlanet & PlanetAssignmentFields;
+
+type LinkedStarSystemNode = StarSystemNode & {
+  galaxyId?: string;
+  galaxyName?: string;
+  sectorId?: string;
+  sectorName?: string;
+  planetIds?: string[];
+  planets?: AssignedPlanet[];
+};
+
 type StarSystemCardState = {
-  system: StarSystemNode;
+  system: LinkedStarSystemNode;
   bodies: BodyCardState[];
+  planets: AssignedPlanet[];
 };
 
 type SectorCardState = {
@@ -124,10 +150,6 @@ function slug(value: string) {
 
 const solPlanetNames = new Set(["Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"]);
 
-function fixedSolPlanetId(name: string) {
-  return `fixed-sol-${slug(name)}`;
-}
-
 function withAssignment(body: CelestialBodyNode, context: AssignmentContext, orbitIndex: number, assignedPlanetId?: string): BodyCardState {
   return {
     ...body,
@@ -146,16 +168,50 @@ function withAssignment(body: CelestialBodyNode, context: AssignmentContext, orb
   };
 }
 
+function assignPlanetToContext(planet: GeneratedPlanet, context: AssignmentContext, orbitIndex: number): AssignedPlanet {
+  return {
+    ...planet,
+    galaxyId: context.galaxy.id,
+    galaxyName: context.galaxy.name,
+    sectorId: context.sector.id,
+    sectorName: context.sector.sector_name,
+    starSystemId: context.system.id,
+    starSystemName: context.system.system_name,
+    orbitIndex,
+    orbitalRole: "Planet",
+    parentStarClass: context.system.star_type,
+    parentStarSeed: context.system.system_seed,
+    galaxy_sector: context.sector.sector_name,
+    star_system: context.system.system_name,
+    orbit_position: orbitIndex,
+    star_type: context.system.star_type
+  };
+}
+
+function linkSystemToPlanets(system: StarSystemNode, context: AssignmentContext, planets: AssignedPlanet[]): LinkedStarSystemNode {
+  return {
+    ...system,
+    galaxyId: context.galaxy.id,
+    galaxyName: context.galaxy.name,
+    sectorId: context.sector.id,
+    sectorName: context.sector.sector_name,
+    planetIds: planets.map((planet) => planet.id),
+    planets,
+    planet_count: planets.length || system.planet_count
+  };
+}
+
 function toSystemState(system: StarSystemNode, galaxy?: GalaxyNode, sector?: SectorNode): StarSystemCardState {
   const context = galaxy && sector ? { galaxy, sector, system } : null;
-  const bodies =
+  const planets =
     context && system.is_fixed
-      ? generateCelestialBodies(system)
-          .filter((body) => body.celestial_body_type === "Planet" && solPlanetNames.has(body.name))
-          .map((body) => withAssignment(body, context, body.orbit_position ?? 0, fixedSolPlanetId(body.name)))
+      ? fixedSolGeneratedPlanets()
+          .filter((planet) => solPlanetNames.has(planet.name))
+          .sort((left, right) => left.orbit_position - right.orbit_position)
+          .map((planet) => assignPlanetToContext(planet, context, planet.orbit_position))
       : [];
 
-  return { system, bodies };
+  return { system: context ? linkSystemToPlanets(system, context, planets) : system, bodies: [], planets };
 }
 
 function toSectorState(sector: SectorNode, galaxy?: GalaxyNode): SectorCardState {
@@ -256,7 +312,13 @@ function useGeneratedPlanetPool() {
 }
 
 function assignedPlanetIdsInSystems(systems: StarSystemCardState[]) {
-  return new Set(systems.flatMap((system) => system.bodies.map((body) => body.assignedPlanetId).filter(Boolean) as string[]));
+  return new Set(
+    systems.flatMap((system) => [
+      ...system.planets.map((planet) => planet.id),
+      ...(system.system.planetIds ?? []),
+      ...system.bodies.map((body) => body.assignedPlanetId).filter(Boolean)
+    ] as string[])
+  );
 }
 
 function assignedPlanetIdsInSectors(sectors: SectorCardState[]) {
@@ -268,7 +330,7 @@ function assignedPlanetIdsInGalaxies(galaxies: GalaxyCardState[]) {
 }
 
 function addGeneratedPlanetsToSystem(card: StarSystemCardState, context: AssignmentContext, planets: GeneratedPlanet[], planetIds: string[]) {
-  const existingPlanetIds = new Set(card.bodies.map((body) => body.assignedPlanetId).filter(Boolean));
+  const existingPlanetIds = new Set([...card.planets.map((planet) => planet.id), ...(card.system.planetIds ?? [])]);
   const selectedPlanets = planetIds
     .filter((id) => !existingPlanetIds.has(id))
     .map((id) => planets.find((planet) => planet.id === id))
@@ -278,16 +340,35 @@ function addGeneratedPlanetsToSystem(card: StarSystemCardState, context: Assignm
     return card;
   }
 
-  const currentMaxOrbit = card.bodies.reduce((max, body) => Math.max(max, body.orbitIndex ?? body.orbit_position ?? 0), 0);
-  const addedBodies = selectedPlanets.map((planet, index) => generatedPlanetToBody(planet, context, currentMaxOrbit + index + 1));
+  const currentMaxOrbit = [...card.planets.map((planet) => planet.orbitIndex ?? planet.orbit_position ?? 0), ...card.bodies.map((body) => body.orbitIndex ?? body.orbit_position ?? 0)].reduce(
+    (max, orbit) => Math.max(max, orbit),
+    0
+  );
+  const addedPlanets = selectedPlanets.map((planet, index) => assignPlanetToContext(planet, context, currentMaxOrbit + index + 1));
+  const nextPlanets = [...card.planets, ...addedPlanets];
+
+  return {
+    ...card,
+    system: {
+      ...linkSystemToPlanets(card.system, context, nextPlanets),
+      planet_count: nextPlanets.length + card.bodies.filter((body) => body.celestial_body_type === "Planet").length
+    },
+    planets: nextPlanets
+  };
+}
+
+function removePlanetFromSystem(card: StarSystemCardState, planetId: string) {
+  const nextPlanets = card.planets.filter((planet) => planet.id !== planetId);
 
   return {
     ...card,
     system: {
       ...card.system,
-      planet_count: card.system.planet_count + addedBodies.length
+      planets: nextPlanets,
+      planetIds: nextPlanets.map((planet) => planet.id),
+      planet_count: nextPlanets.length + card.bodies.filter((body) => body.celestial_body_type === "Planet").length
     },
-    bodies: [...card.bodies, ...addedBodies]
+    planets: nextPlanets
   };
 }
 
@@ -340,11 +421,12 @@ function planetPlaceholderStyle(planet: GeneratedPlanet): CSSProperties {
   return { background: "radial-gradient(circle at 35% 28%, #cffafe, #0284c7 34%, #0f172a 76%)" };
 }
 
-function generatedPlanetToBody(planet: GeneratedPlanet, context: AssignmentContext, orbitIndex: number): BodyCardState {
+function planetToBodySnapshot(planet: AssignedPlanet): BodyCardState {
   const gasGiant = planet.uses_orbital_gameplay || planet.planet_class === "Gas Giant";
+  const orbitIndex = planet.orbitIndex ?? planet.orbit_position ?? 0;
   return {
-    id: `assigned-${planet.id}`,
-    system_id: context.system.id,
+    id: planet.id,
+    system_id: planet.starSystemId ?? "",
     parent_body_id: null,
     name: planet.name,
     celestial_body_type: "Planet",
@@ -355,7 +437,7 @@ function generatedPlanetToBody(planet: GeneratedPlanet, context: AssignmentConte
     atmosphere: planet.atmosphere,
     gravity: planet.gravity,
     orbit_position: orbitIndex,
-    orbit_parent: context.system.system_name,
+    orbit_parent: planet.starSystemName ?? planet.star_system,
     landable: planet.landable,
     colonizable: planet.colonizable,
     colonizable_status: planet.colonized ? "Already Colonized" : planet.colonizable ? "Colonizable" : "Not Colonizable",
@@ -367,20 +449,20 @@ function generatedPlanetToBody(planet: GeneratedPlanet, context: AssignmentConte
     resources: planet.resources,
     notes: planet.notes,
     seed: planet.seed,
-    generation_parent_seed: context.system.system_seed,
+    generation_parent_seed: planet.parentStarSeed ?? planet.seed,
     generation_index: orbitIndex,
     generation_version: "star-system-assignment-v1",
     assignedPlanetId: planet.id,
-    assignedSystemId: context.system.id,
-    assignedSystemName: context.system.system_name,
-    assignedSectorId: context.sector.id,
-    assignedSectorName: context.sector.sector_name,
-    assignedGalaxyId: context.galaxy.id,
-    assignedGalaxyName: context.galaxy.name,
+    assignedSystemId: planet.starSystemId,
+    assignedSystemName: planet.starSystemName,
+    assignedSectorId: planet.sectorId,
+    assignedSectorName: planet.sectorName,
+    assignedGalaxyId: planet.galaxyId,
+    assignedGalaxyName: planet.galaxyName,
     orbitIndex,
     orbitalRole: "Planet",
-    parentStarClass: context.system.star_type,
-    parentStarSeed: context.system.system_seed,
+    parentStarClass: planet.parentStarClass,
+    parentStarSeed: planet.parentStarSeed,
     image_url: planetImageUrl(planet),
     seed_id: planet.seed,
     story: planet.story,
@@ -564,7 +646,8 @@ function radiationLevel(system: StarSystemNode) {
 
 function systemStats(card: StarSystemCardState) {
   const { system, bodies } = card;
-  const nonStarBodies = bodies.filter((body) => body.celestial_body_type !== "Star");
+  const assignedPlanetBodies = card.planets.map((planet) => planetToBodySnapshot(planet));
+  const nonStarBodies = [...assignedPlanetBodies, ...bodies.filter((body) => body.celestial_body_type !== "Star")];
   const planets = nonStarBodies.filter((body) => body.celestial_body_type === "Planet");
   const moons = nonStarBodies.filter((body) => body.celestial_body_type === "Moon");
   const belts = nonStarBodies.filter((body) => body.celestial_body_type === "Asteroid Belt");
@@ -609,14 +692,14 @@ function systemStats(card: StarSystemCardState) {
 }
 
 function inferredResources(card: StarSystemCardState) {
-  return uniqueValues([...card.bodies.flatMap((body) => body.resources), card.system.resource_bias, "Fusion Fuel", "Survey Data"]).slice(0, 10);
+  return uniqueValues([...card.planets.flatMap((planet) => planet.resources), ...card.bodies.flatMap((body) => body.resources), card.system.resource_bias, "Fusion Fuel", "Survey Data"]).slice(0, 10);
 }
 
 function inferredHazards(card: StarSystemCardState) {
   const values = ["Radiation Belts"];
   if (card.system.danger_level >= 70) values.push("High Gravity Stress", "Unstable Orbits");
   if (card.system.danger_level >= 45) values.push("Solar Storms");
-  card.bodies.forEach((body) => {
+  systemStats(card).nonStarBodies.forEach((body) => {
     if (body.planet_class === "Gas Giant") values.push("Atmospheric Turbulence");
     if (body.planet_class === "Lava") values.push("Extreme Heat");
     if (body.planet_class === "Void") values.push("Void Distortion");
@@ -663,7 +746,7 @@ function inferredEvents(card: StarSystemCardState) {
 }
 
 function inferredCollectibles(card: StarSystemCardState) {
-  const rareBodies = card.bodies.filter((body) => ["Rare", "Epic", "Legendary", "Mythic", "Relic", "Genesis"].includes(body.planet_rarity ?? ""));
+  const rareBodies = systemStats(card).nonStarBodies.filter((body) => ["Rare", "Epic", "Legendary", "Mythic", "Relic", "Genesis"].includes(body.planet_rarity ?? ""));
   return uniqueValues([
     rareBodies.length ? "Rare Survey Cache" : "Survey Fragments",
     "Stellar Cartography",
@@ -873,6 +956,57 @@ function PlanetPickerCard({
   );
 }
 
+function AssignedPlanetCard({ planet, onOpen, onUnassign }: { planet: AssignedPlanet; onOpen: () => void; onUnassign: () => void }) {
+  const imageUrl = planetImageUrl(planet);
+  const rarityClass = rarityClasses[planet.rarity] ?? "border-cyan-300/25 text-cyan-100";
+
+  return (
+    <article
+      className="relative cursor-pointer overflow-hidden rounded-md border border-cyan-300/15 bg-genesis-panel/95 transition hover:border-cyan-300/55 hover:shadow-[0_0_24px_rgba(34,211,238,0.12)]"
+      onClick={onOpen}
+    >
+      <DeleteButton label={`Remove ${planet.name} from ${planet.starSystemName ?? "system"}`} onDelete={onUnassign} />
+      <div className="grid h-36 place-items-center overflow-hidden border-b border-cyan-300/10 bg-black p-4">
+        {imageUrl ? (
+          <img className="h-28 max-h-full w-28 max-w-full object-contain" src={imageUrl} alt={`${planet.name} render`} />
+        ) : (
+          <div className="h-24 w-24 rounded-full border border-cyan-300/25" style={planetPlaceholderStyle(planet)} />
+        )}
+      </div>
+      <div className="space-y-4 p-4">
+        <div>
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-cyan-300">{planet.planet_class}</p>
+            <Badge className={rarityClass}>{planet.rarity}</Badge>
+          </div>
+          <h4 className="mt-2 truncate text-2xl font-bold text-white">{planet.name}</h4>
+          <p className="mt-1 truncate font-mono text-xs text-slate-500">{planet.seed}</p>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <StatChip label="System" value={planet.starSystemName ?? planet.star_system ?? "Unassigned"} />
+          <StatChip label="Orbit" value={planet.orbitIndex ?? planet.orbit_position ?? "Pending"} />
+          <StatChip label="Sector" value={planet.sectorName ?? planet.galaxy_sector ?? "Unassigned"} />
+          <StatChip label="Galaxy" value={planet.galaxyName ?? "Unassigned"} />
+          <StatChip label="Biome" value={planet.primary_biome} />
+          <StatChip label="Parent Star" value={planet.parentStarClass ?? planet.star_type ?? "Unknown"} />
+        </div>
+        <div className="space-y-1 text-xs text-slate-400">
+          <p className="truncate">
+            <span className="text-slate-500">Resources:</span> {planet.resources.join(", ")}
+          </p>
+          <p className="truncate">
+            <span className="text-slate-500">Traits:</span> {planet.traits.join(", ")}
+          </p>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function AssignedPlanetDetailOverlay({ planet, onClose }: { planet: AssignedPlanet; onClose: () => void }) {
+  return <BodyDetailOverlay body={planetToBodySnapshot(planet)} onClose={onClose} />;
+}
+
 function StarSystemCard({
   card,
   onOpen,
@@ -931,7 +1065,8 @@ function StarSystemDetailPanel({
   onDelete,
   onGenerateBodies,
   onAddBody,
-  onDeleteBody
+  onDeleteBody,
+  onUnassignPlanet
 }: {
   card: StarSystemCardState;
   context: AssignmentContext;
@@ -944,11 +1079,13 @@ function StarSystemDetailPanel({
   onGenerateBodies: () => void;
   onAddBody: (planetIds: string[]) => void;
   onDeleteBody: (bodyId: string) => void;
+  onUnassignPlanet: (planetId: string) => void;
 }) {
   const { system } = card;
   const [pickerOpen, setPickerOpen] = useState(false);
   const [selectedPlanetIds, setSelectedPlanetIds] = useState<string[]>([]);
   const [selectedBody, setSelectedBody] = useState<BodyCardState | null>(null);
+  const [selectedPlanet, setSelectedPlanet] = useState<AssignedPlanet | null>(null);
   const stats = systemStats(card);
   const availablePlanets = planetPool.filter((planet) => !assignedPlanetIds.has(planet.id));
   const composition = [
@@ -1077,12 +1214,12 @@ function StarSystemDetailPanel({
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h3 className="text-2xl font-black text-white">Celestial Bodies</h3>
-            <p className="mt-1 text-sm font-semibold text-slate-400">Planets, moons, asteroid belts, stations, and anomalies generated inside this star system.</p>
+            <p className="mt-1 text-sm font-semibold text-slate-400">Real assigned planets plus generated moons, asteroid belts, stations, and anomalies inside this star system.</p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Button type="button" onClick={onGenerateBodies}>
               <Sparkles className="h-4 w-4" />
-              Generate Planets
+              Generate Bodies
             </Button>
             <Button
               type="button"
@@ -1150,9 +1287,12 @@ function StarSystemDetailPanel({
             {!planetPoolLoading && !availablePlanets.length ? <EmptyState>No unassigned generated planets are available. Generate more planets in Planet Designer first.</EmptyState> : null}
           </div>
         ) : null}
-        {stats.nonStarBodies.length ? (
+        {card.planets.length || card.bodies.length ? (
           <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
-            {stats.nonStarBodies.map((body) => (
+            {card.planets.map((planet) => (
+              <AssignedPlanetCard key={planet.id} planet={planet} onOpen={() => setSelectedPlanet(planet)} onUnassign={() => onUnassignPlanet(planet.id)} />
+            ))}
+            {card.bodies.map((body) => (
               <BodyCard key={body.id} body={body} onOpen={() => setSelectedBody(body)} onDelete={() => onDeleteBody(body.id)} />
             ))}
           </div>
@@ -1160,6 +1300,7 @@ function StarSystemDetailPanel({
           <EmptyState>No planets yet. Generate planets to populate this star system.</EmptyState>
         )}
       </section>
+      {selectedPlanet ? <AssignedPlanetDetailOverlay planet={selectedPlanet} onClose={() => setSelectedPlanet(null)} /> : null}
       {selectedBody ? <BodyDetailOverlay body={selectedBody} onClose={() => setSelectedBody(null)} /> : null}
     </article>
   );
@@ -1177,6 +1318,7 @@ function StarSystemDetailOverlay(props: {
   onGenerateBodies: () => void;
   onAddBody: (planetIds: string[]) => void;
   onDeleteBody: (bodyId: string) => void;
+  onUnassignPlanet: (planetId: string) => void;
 }) {
   return (
     <div
@@ -1209,6 +1351,7 @@ function SectorCard({
   onGenerateBodies,
   onAddBody,
   onDeleteBody,
+  onUnassignPlanet,
   openSystemId,
   setOpenSystemId
 }: {
@@ -1227,6 +1370,7 @@ function SectorCard({
   onGenerateBodies: (systemId: string) => void;
   onAddBody: (systemId: string, planetIds: string[]) => void;
   onDeleteBody: (systemId: string, bodyId: string) => void;
+  onUnassignPlanet: (systemId: string, planetId: string) => void;
   openSystemId: string | null;
   setOpenSystemId: (systemId: string | null) => void;
 }) {
@@ -1307,11 +1451,12 @@ function SectorCard({
                 onDeleteSystem(selectedSystem.system.id);
                 setOpenSystemId(null);
               }}
-              onGenerateBodies={() => onGenerateBodies(selectedSystem.system.id)}
-              onAddBody={(planetIds) => onAddBody(selectedSystem.system.id, planetIds)}
-              onDeleteBody={(bodyId) => onDeleteBody(selectedSystem.system.id, bodyId)}
-            />
-          ) : null}
+          onGenerateBodies={() => onGenerateBodies(selectedSystem.system.id)}
+          onAddBody={(planetIds) => onAddBody(selectedSystem.system.id, planetIds)}
+          onDeleteBody={(bodyId) => onDeleteBody(selectedSystem.system.id, bodyId)}
+          onUnassignPlanet={(planetId) => onUnassignPlanet(selectedSystem.system.id, planetId)}
+        />
+      ) : null}
         </div>
       ) : null}
     </article>
@@ -1336,6 +1481,7 @@ function GalaxyCard({
   onGenerateBodies,
   onAddBody,
   onDeleteBody,
+  onUnassignPlanet,
   openSectorId,
   setOpenSectorId,
   openSystemId,
@@ -1358,6 +1504,7 @@ function GalaxyCard({
   onGenerateBodies: (sectorId: string, systemId: string) => void;
   onAddBody: (sectorId: string, systemId: string, planetIds: string[]) => void;
   onDeleteBody: (sectorId: string, systemId: string, bodyId: string) => void;
+  onUnassignPlanet: (sectorId: string, systemId: string, planetId: string) => void;
   openSectorId: string | null;
   setOpenSectorId: (sectorId: string | null) => void;
   openSystemId: string | null;
@@ -1448,6 +1595,7 @@ function GalaxyCard({
                   onGenerateBodies={(systemId) => onGenerateBodies(sectorCard.sector.id, systemId)}
                   onAddBody={(systemId, planetIds) => onAddBody(sectorCard.sector.id, systemId, planetIds)}
                   onDeleteBody={(systemId, bodyId) => onDeleteBody(sectorCard.sector.id, systemId, bodyId)}
+                  onUnassignPlanet={(systemId, planetId) => onUnassignPlanet(sectorCard.sector.id, systemId, planetId)}
                   openSystemId={openSystemId}
                   setOpenSystemId={setOpenSystemId}
                 />
@@ -1526,7 +1674,7 @@ export function GalaxyGeneratorWorkflow() {
         systems: sectorCard.sector.id === sectorId
           ? sectorCard.systems.map((systemCard) => {
               if (systemCard.system.id !== systemId) return systemCard;
-              const bodies = generateCelestialBodies(systemCard.system).filter((body) => body.celestial_body_type !== "Star");
+              const bodies = generateCelestialBodies(systemCard.system).filter((body) => !["Star", "Planet"].includes(body.celestial_body_type));
               return { ...systemCard, bodies: append ? [...systemCard.bodies, ...bodies.slice(systemCard.bodies.length, systemCard.bodies.length + 1)] : bodies };
             })
           : sectorCard.systems
@@ -1566,6 +1714,16 @@ export function GalaxyGeneratorWorkflow() {
         systems: sector.sector.id === sectorId
           ? sector.systems.map((system) => (system.system.id === systemId ? { ...system, bodies: system.bodies.filter((body) => body.id !== bodyId) } : system))
           : sector.systems
+      }))
+    }));
+  }
+
+  function unassignPlanet(galaxyId: string, sectorId: string, systemId: string, planetId: string) {
+    updateGalaxy(galaxyId, (card) => ({
+      ...card,
+      sectors: card.sectors.map((sector) => ({
+        ...sector,
+        systems: sector.sector.id === sectorId ? sector.systems.map((system) => (system.system.id === systemId ? removePlanetFromSystem(system, planetId) : system)) : sector.systems
       }))
     }));
   }
@@ -1624,6 +1782,7 @@ export function GalaxyGeneratorWorkflow() {
               onGenerateBodies={(sectorId, systemId) => generateBodiesForSystem(card.galaxy.id, sectorId, systemId)}
               onAddBody={(sectorId, systemId, planetIds) => addPlanetsToSystem(card.galaxy.id, sectorId, systemId, planetIds)}
               onDeleteBody={(sectorId, systemId, bodyId) => deleteBody(card.galaxy.id, sectorId, systemId, bodyId)}
+              onUnassignPlanet={(sectorId, systemId, planetId) => unassignPlanet(card.galaxy.id, sectorId, systemId, planetId)}
               openSectorId={openSectorId}
               setOpenSectorId={setOpenSectorId}
               openSystemId={openSystemId}
@@ -1679,7 +1838,7 @@ export function SectorGeneratorWorkflow() {
       ...sectorCard,
       systems: sectorCard.systems.map((systemCard) => {
         if (systemCard.system.id !== systemId) return systemCard;
-        const bodies = generateCelestialBodies(systemCard.system).filter((body) => body.celestial_body_type !== "Star");
+        const bodies = generateCelestialBodies(systemCard.system).filter((body) => !["Star", "Planet"].includes(body.celestial_body_type));
         return { ...systemCard, bodies: append ? [...systemCard.bodies, ...bodies.slice(systemCard.bodies.length, systemCard.bodies.length + 1)] : bodies };
       })
     }));
@@ -1693,6 +1852,13 @@ export function SectorGeneratorWorkflow() {
           ? addGeneratedPlanetsToSystem(systemCard, { galaxy, sector: sectorCard.sector, system: systemCard.system }, planetPool.planets, planetIds)
           : systemCard
       )
+    }));
+  }
+
+  function unassignPlanet(sectorId: string, systemId: string, planetId: string) {
+    updateSector(sectorId, (sectorCard) => ({
+      ...sectorCard,
+      systems: sectorCard.systems.map((systemCard) => (systemCard.system.id === systemId ? removePlanetFromSystem(systemCard, planetId) : systemCard))
     }));
   }
 
@@ -1761,6 +1927,7 @@ export function SectorGeneratorWorkflow() {
                   systems: sectorCard.systems.map((system) => (system.system.id === systemId ? { ...system, bodies: system.bodies.filter((body) => body.id !== bodyId) } : system))
                 }))
               }
+              onUnassignPlanet={(systemId, planetId) => unassignPlanet(card.sector.id, systemId, planetId)}
               openSystemId={openSystemId}
               setOpenSystemId={setOpenSystemId}
             />
@@ -1804,13 +1971,17 @@ export function StarSystemGeneratorWorkflow() {
 
   function generateBodies(systemId: string, append = false) {
     updateSystem(systemId, (card) => {
-      const bodies = generateCelestialBodies(card.system).filter((body) => body.celestial_body_type !== "Star");
+      const bodies = generateCelestialBodies(card.system).filter((body) => !["Star", "Planet"].includes(body.celestial_body_type));
       return { ...card, bodies: append ? [...card.bodies, ...bodies.slice(card.bodies.length, card.bodies.length + 1)] : bodies };
     });
   }
 
   function addPlanets(systemId: string, planetIds: string[]) {
     updateSystem(systemId, (card) => addGeneratedPlanetsToSystem(card, { galaxy, sector, system: card.system }, planetPool.planets, planetIds));
+  }
+
+  function unassignPlanet(systemId: string, planetId: string) {
+    updateSystem(systemId, (card) => removePlanetFromSystem(card, planetId));
   }
 
   const visibleCards = cards.filter((card) => {
@@ -1888,6 +2059,7 @@ export function StarSystemGeneratorWorkflow() {
           onGenerateBodies={() => generateBodies(selectedSystem.system.id)}
           onAddBody={(planetIds) => addPlanets(selectedSystem.system.id, planetIds)}
           onDeleteBody={(bodyId) => updateSystem(selectedSystem.system.id, (systemCard) => ({ ...systemCard, bodies: systemCard.bodies.filter((body) => body.id !== bodyId) }))}
+          onUnassignPlanet={(planetId) => unassignPlanet(selectedSystem.system.id, planetId)}
         />
       ) : null}
     </GeneratorShell>
