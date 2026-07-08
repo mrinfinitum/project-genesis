@@ -101,7 +101,7 @@ const navigationGroups: NavigationGroup[] = [
     fallbackProgress: 84,
     systemIds: ["research", "buildings", "upgrades", "districts", "wonders"],
     items: [
-      { href: "/civilizations", label: "Civilization Identity", icon: Landmark },
+      { href: "/civilizations", label: "Civilization Design Studio", icon: Landmark },
       { href: "/research", label: "Research", icon: FlaskConical },
       { href: "/upgrades", label: "Upgrades", icon: Gauge },
       { href: "/buildings", label: "Buildings", icon: Building2 },
