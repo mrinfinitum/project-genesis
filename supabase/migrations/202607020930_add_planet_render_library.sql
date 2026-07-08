@@ -4,6 +4,7 @@ create table if not exists public.planet_render_library (
   file_url text not null,
   storage_path text not null,
   thumbnail_url text default '',
+  fixed_sol_body text not null default '',
   planet_class text default '',
   biome text default '',
   atmosphere text default '',

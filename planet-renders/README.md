@@ -9,6 +9,8 @@ planet-renders/
   ocean/deep-ocean/planet_ocean_deep_ocean_00001.png
   lava/volcanic/planet_lava_volcanic_00001.png
   ice/glacial/planet_ice_glacial_00001.png
+  sol/earth.psd
+  sol/mars_landscape.psd
 ```
 
 The folder skeleton follows the Planet Generation prompt library:
@@ -18,6 +20,8 @@ planet-renders/<planet-class>/<subclass>/
 ```
 
 Do not use `rings` folders. Moons and rings are planet characteristics now, not render library folders.
+
+Hardcoded Sol system bodies can live directly in `planet-renders/sol/`. Use the body name as the filename, for example `earth.psd`, `mars.png`, `jupiter.psd`, or `moon.webp`. Landscape and orbital companion files can use the same suffix pattern as procedural renders, for example `earth_landscape.psd` or `saturn_orbital.psd`.
 
 Generate sidecar metadata JSON:
 

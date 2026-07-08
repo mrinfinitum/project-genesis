@@ -53,6 +53,60 @@ function assetId(input: string) {
   return input.toLowerCase().replace(/[^a-z0-9_-]+/g, "_").replace(/^_+|_+$/g, "") || "planet_render";
 }
 
+const SOL_BODY_NAMES = [
+  "Sun",
+  "Sol",
+  "Mercury",
+  "Venus",
+  "Earth",
+  "Moon",
+  "Mars",
+  "Phobos",
+  "Deimos",
+  "Jupiter",
+  "Io",
+  "Europa",
+  "Ganymede",
+  "Callisto",
+  "Amalthea",
+  "Himalia",
+  "Saturn",
+  "Titan",
+  "Enceladus",
+  "Mimas",
+  "Tethys",
+  "Dione",
+  "Rhea",
+  "Iapetus",
+  "Hyperion",
+  "Phoebe",
+  "Uranus",
+  "Miranda",
+  "Ariel",
+  "Umbriel",
+  "Titania",
+  "Oberon",
+  "Neptune",
+  "Triton",
+  "Nereid",
+  "Proteus",
+  "Pluto",
+  "Charon",
+  "Nix",
+  "Hydra",
+  "Kerberos",
+  "Styx"
+];
+
+const SOL_BODY_ALIASES = new Map<string, string>(
+  SOL_BODY_NAMES.flatMap((name): Array<[string, string]> => {
+    const aliases: Array<[string, string]> = [[slug(name), name]];
+    if (name === "Moon") aliases.push(["luna", name], ["earth-moon", name]);
+    if (name === "Sun") aliases.push(["the-sun", name]);
+    return aliases;
+  })
+);
+
 function companionInfoForFilename(filename: string): { kind: CompanionKind; baseName: string } | null {
   const name = path.parse(filename).name;
   const normalized = name.toLowerCase();
@@ -84,7 +138,8 @@ function companionInfoForFilename(filename: string): { kind: CompanionKind; base
 
 function baseRenderIdFor(file: string, metadata: PlanetRenderMetadata) {
   const filenameInfo = companionInfoForFilename(path.basename(file));
-  return String(metadata.id ?? assetId(filenameInfo?.baseName ?? path.parse(file).name));
+  const fixedSolBody = inferFixedSolBody(file, metadata);
+  return String(metadata.id ?? assetId(fixedSolBody ? `sol_${fixedSolBody}` : filenameInfo?.baseName ?? path.parse(file).name));
 }
 
 function titleize(input: string) {
@@ -144,6 +199,36 @@ function inferValue(parts: string[], options: string[]) {
       return lowerParts.some((part) => part.includes(lowerOption) || lowerOption.includes(part));
     }) ?? ""
   );
+}
+
+function inferFixedSolBody(file: string, metadata: PlanetRenderMetadata) {
+  if (metadata.fixed_sol_body) {
+    return String(metadata.fixed_sol_body);
+  }
+
+  const relativeParts = path.relative(sourceRoot, file).split(path.sep);
+  if (!relativeParts.map((part) => slug(part)).includes("sol")) {
+    return "";
+  }
+
+  const filenameInfo = companionInfoForFilename(path.basename(file));
+  const baseName = filenameInfo?.baseName ?? path.parse(file).name;
+  const baseSlug = slug(baseName);
+  const candidates = [
+    baseSlug,
+    baseSlug.replace(/^planet-/, ""),
+    baseSlug.replace(/^sol-/, ""),
+    baseSlug.replace(/^planet-sol-/, "")
+  ];
+
+  for (const candidate of candidates) {
+    const body = SOL_BODY_ALIASES.get(candidate);
+    if (body) {
+      return body;
+    }
+  }
+
+  return titleize(baseName.replace(/^planet[-_]/i, "").replace(/^sol[-_]/i, ""));
 }
 
 function taxonomyForPath(parts: string[]) {
@@ -761,6 +846,7 @@ async function main() {
     const width = Number(metadata.width ?? asset.width ?? resolution);
     const height = Number(metadata.height ?? asset.height ?? resolution);
     const fileUrl = String(metadata.file_url ?? cacheBustUrl(await publicUrlFor(storagePath), importVersion));
+    const fixedSolBody = inferFixedSolBody(file, metadata);
     const inferredBiome = inferValue(pathParts, ["Ocean", "Desert", "Ice", "Lava", "Volcanic", "Crystal", "Toxic", "Void", "Forest", "Jungle", "Swamp", "Cyber", "Artificial", "Gas Giant"]);
     const inferredClass = inferValue(pathParts, ["Ocean", "Desert", "Ice", "Lava", "Crystal", "Toxic", "Void", "Gas Giant", "Terrestrial", "Artificial", "Bio", "Living", "Ancient", "Energy", "Primordial", "Dead"]);
 
@@ -776,6 +862,7 @@ async function main() {
       orbital_image_url: String(metadata.orbital_image_url ?? ""),
       orbital_storage_path: String(metadata.orbital_storage_path ?? ""),
       orbital_source_path: "",
+      fixed_sol_body: String(metadata.fixed_sol_body ?? fixedSolBody),
       planet_class: String(taxonomy?.planetClass.name ?? metadata.planet_class ?? inferredClass),
       biome: String(taxonomy?.subclass ?? metadata.biome ?? inferredBiome),
       atmosphere: String(metadata.atmosphere ?? inferValue(pathParts, ["Dense", "Thin", "Toxic", "Ionized", "Methane"])),

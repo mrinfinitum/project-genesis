@@ -441,8 +441,8 @@ export const tableConfigs: Record<TableName, TableConfig> = {
     description: "Pre-rendered planet PNG assets with metadata used to match generated planets to existing artwork.",
     statusKey: "status",
     typeKey: "biome",
-    searchKeys: ["name", "planet_class", "biome", "atmosphere", "climate", "color_family", "tags", "notes"],
-    columns: ["name", "planet_class", "biome", "atmosphere", "has_rings", "usage_count", "status"],
+    searchKeys: ["name", "fixed_sol_body", "planet_class", "biome", "atmosphere", "climate", "color_family", "tags", "notes"],
+    columns: ["name", "fixed_sol_body", "planet_class", "biome", "atmosphere", "has_rings", "usage_count", "status"],
     fields: [
       { key: "id", label: "ID", required: true },
       { key: "name", label: "Name", required: true },
@@ -455,6 +455,7 @@ export const tableConfigs: Record<TableName, TableConfig> = {
       { key: "orbital_image_url", label: "Orbital Image URL" },
       { key: "orbital_storage_path", label: "Orbital Storage Path" },
       { key: "orbital_source_path", label: "Orbital Source Path" },
+      { key: "fixed_sol_body", label: "Fixed Sol Body" },
       { key: "planet_class", label: "Planet Class" },
       { key: "biome", label: "Biome" },
       { key: "atmosphere", label: "Atmosphere" },

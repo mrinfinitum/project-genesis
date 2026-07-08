@@ -19,6 +19,10 @@ function normalize(value: string | null | undefined) {
   return String(value ?? "").trim().toLowerCase();
 }
 
+function slug(value: string | null | undefined) {
+  return normalize(value).replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
 function tokens(value: string | null | undefined) {
   return normalize(value)
     .split(/[^a-z0-9]+/)
@@ -215,6 +219,22 @@ function scoreRender(planet: GeneratedPlanet, render: PlanetRenderLibraryRecord)
 }
 
 export function matchPlanetRender(planet: GeneratedPlanet, renders: PlanetRenderLibraryRecord[], minScore = 36) {
+  const fixedSolMatches = renders
+    .filter((render) => render.file_url && render.storage_path)
+    .filter((render) => {
+      const fixedSolBody = slug(render.fixed_sol_body);
+      return Boolean(fixedSolBody && fixedSolBody === slug(planet.name));
+    })
+    .map((render) => ({
+      render,
+      score: 999,
+      reasons: [`fixed-sol:${render.fixed_sol_body}`]
+    }));
+
+  if (fixedSolMatches.length) {
+    return fixedSolMatches[0];
+  }
+
   const scored = renders
     .filter((render) => render.file_url && render.storage_path)
     .filter((render) => hasCompatibleVisualFamily(planet, render))
