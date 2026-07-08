@@ -151,10 +151,10 @@ export function StarSystemMap() {
     <div className="space-y-6">
       <section className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Orbital View</p>
-          <h1 className="mt-3 text-5xl font-bold text-white">Star System Map</h1>
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">System Layout Preview</p>
+          <h1 className="mt-3 text-5xl font-bold text-white">Star System Generator</h1>
           <p className="mt-3 max-w-4xl text-lg text-slate-300">
-            Visited systems reveal orbit rings, planets, moons, asteroid fields, and orbital resource worlds.
+            Generate and inspect orbit layouts, moons, asteroid fields, and orbital resource worlds.
           </p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row">

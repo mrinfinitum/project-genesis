@@ -166,10 +166,10 @@ export function GalaxyCommandCenter() {
     <div className="space-y-6">
       <section className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Galaxy Control</p>
-          <h1 className="mt-3 text-5xl font-bold text-white">Galaxy</h1>
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Universe Workflow</p>
+          <h1 className="mt-3 text-5xl font-bold text-white">Galaxy Generator</h1>
           <p className="mt-3 max-w-4xl text-lg text-slate-300">
-            Sector-level procedural galaxy view for exploration, discovery state, star system generation, and seed inspection.
+            Create, preview, validate, and export sector-level galaxy structure from deterministic universe seeds.
           </p>
         </div>
         <div className="grid gap-3 sm:grid-cols-[minmax(16rem,26rem)_8rem]">

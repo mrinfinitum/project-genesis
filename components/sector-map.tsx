@@ -166,10 +166,10 @@ export function SectorMap() {
     <div className="space-y-6">
       <section className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Universe Discovery</p>
-          <h1 className="mt-3 text-5xl font-bold text-white">Sector Map</h1>
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Universe Workflow</p>
+          <h1 className="mt-3 text-5xl font-bold text-white">Sector Generator</h1>
           <p className="mt-3 max-w-4xl text-lg text-slate-300">
-            Discovery-state map for nearby star systems. Unknown systems stay hidden until a detector, probe, scan, or expedition reveals them.
+            Generate sector composition, preview discovered signals, and validate the star-system discovery flow.
           </p>
         </div>
         <Button type="button" onClick={copySectorExport}>

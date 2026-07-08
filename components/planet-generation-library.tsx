@@ -21,9 +21,49 @@ type CopyTarget = {
   kind: "description" | "full" | "landscape" | "master" | "sync" | "canonical-master" | "canonical-description" | "canonical-full";
 };
 
+type LibraryFocus = "all" | "planet-artwork" | "surface-landscapes" | "hero-discovery-shots" | "prompt-library";
+
 const PLANET_RENDER_FOLDER_EXAMPLE = "planet-renders/organic/living-world/planet_organic_living_world_00001.png";
 const PLANET_RENDER_SYNC_COMMAND = "npm run sync:planet-renders -- ./planet-renders";
 const PLANET_RENDER_OVERWRITE_COMMAND = "npm run sync:planet-renders -- ./planet-renders --overwrite";
+
+const focusMeta: Record<LibraryFocus, { eyebrow: string; title: string; description: string; primaryCopy: "full" | "landscape" | "description" }> = {
+  all: {
+    eyebrow: "Prompt Library",
+    title: "Planet Generation",
+    description:
+      "Master render prompt, feature-only planet type inserts, and @img1 landscape prompts for consistent planet artwork. Full prompt copies insert only the selected planet features into the master rule.",
+    primaryCopy: "description"
+  },
+  "planet-artwork": {
+    eyebrow: "Creative Workspace",
+    title: "Planet Artwork",
+    description:
+      "Copy orbit-view planet prompts for clean black-background renders, then sync finished assets back into the planet render library.",
+    primaryCopy: "full"
+  },
+  "surface-landscapes": {
+    eyebrow: "Creative Workspace",
+    title: "Surface Landscapes",
+    description:
+      "Copy @img1 landscape prompts for high-resolution surface views tied to the selected planet class and subclass.",
+    primaryCopy: "landscape"
+  },
+  "hero-discovery-shots": {
+    eyebrow: "Creative Workspace",
+    title: "Hero Discovery Shots",
+    description:
+      "Use planet feature inserts as the source material for future one-off discovery art and cinematic reveal prompts.",
+    primaryCopy: "description"
+  },
+  "prompt-library": {
+    eyebrow: "Prompt Library",
+    title: "Prompt Library",
+    description:
+      "Browse the canonical master prompt, feature-only inserts, Sol system prompts, and render sync commands in one lookup space.",
+    primaryCopy: "description"
+  }
+};
 
 function classKey(value: string) {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
@@ -64,10 +104,12 @@ function CopyButton({
 
 export function PlanetGenerationLibrary({
   rows,
-  canonicalSolRows = []
+  canonicalSolRows = [],
+  focus = "all"
 }: {
   rows: PlanetPromptTemplate[];
   canonicalSolRows?: CanonicalSolPrompt[];
+  focus?: LibraryFocus;
 }) {
   const [query, setQuery] = useState("");
   const [planetClass, setPlanetClass] = useState("all");
@@ -84,6 +126,7 @@ export function PlanetGenerationLibrary({
     });
   }, [planetClass, query, rows]);
   const groups = useMemo(() => groupedPrompts(filteredRows), [filteredRows]);
+  const meta = focusMeta[focus];
 
   async function copyValue(value: string, target: CopyTarget) {
     await navigator.clipboard.writeText(value);
@@ -98,10 +141,10 @@ export function PlanetGenerationLibrary({
       <section className="space-y-4">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Prompt Library</p>
-            <h2 className="mt-2 text-4xl font-bold text-white">Planet Generation</h2>
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">{meta.eyebrow}</p>
+            <h2 className="mt-2 text-4xl font-bold text-white">{meta.title}</h2>
             <p className="mt-3 max-w-4xl text-sm leading-6 text-slate-300">
-              Master render prompt, feature-only planet type inserts, and @img1 landscape prompts for consistent planet artwork. Full prompt copies insert only the selected planet features into the master rule.
+              {meta.description}
             </p>
           </div>
           <CopyButton
@@ -280,6 +323,10 @@ export function PlanetGenerationLibrary({
                   const featurePrompt = planetTypeFeaturePrompt(row);
                   const landscapePrompt = buildPlanetLandscapePromptForTemplate(row);
                   const secondaryLabel = row.planetClass === "Gas Giant" ? "Orbital" : "Landscape";
+                  const primaryValue =
+                    meta.primaryCopy === "full" ? buildPlanetPrompt(featurePrompt) : meta.primaryCopy === "landscape" ? landscapePrompt : featurePrompt;
+                  const primaryKind = meta.primaryCopy === "full" ? "full" : meta.primaryCopy === "landscape" ? "landscape" : "description";
+                  const primaryLabel = meta.primaryCopy === "full" ? "Orbit Prompt" : meta.primaryCopy === "landscape" ? secondaryLabel : "Type";
                   return (
                     <article key={id} className="rounded-md border border-cyan-400/15 bg-[#07101e]/85 p-4 shadow-glow">
                       <div className="flex min-h-24 flex-col justify-between gap-3">
@@ -291,12 +338,12 @@ export function PlanetGenerationLibrary({
                       </div>
                       <div className="mt-4 flex flex-wrap gap-2">
                         <CopyButton
-                          value={featurePrompt}
-                          copied={copied?.id === id && copied.kind === "description"}
-                          title="Copy planet type insert"
-                          onCopy={(value) => copyValue(value, { id, kind: "description" })}
+                          value={primaryValue}
+                          copied={copied?.id === id && copied.kind === primaryKind}
+                          title={`Copy ${primaryLabel.toLowerCase()}`}
+                          onCopy={(value) => copyValue(value, { id, kind: primaryKind })}
                         >
-                          Type
+                          {primaryLabel}
                         </CopyButton>
                         <Button
                           type="button"

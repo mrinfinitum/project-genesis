@@ -1,17 +1,13 @@
-import { AdminTable } from "@/components/admin-table";
+import { CelestialBodyDesigner } from "@/components/celestial-body-designer";
 import { getRows } from "@/lib/data";
 import { generatedCelestialBodyRows } from "@/lib/universe/fallback-data";
-import { tableConfigs } from "@/lib/tables";
+import type { CelestialBodyRecord } from "@/types/schema";
 
 export const dynamic = "force-dynamic";
 
 export default async function CelestialBodiesPage() {
-  const rows = await getRows("celestial_bodies");
+  const rows = (await getRows("celestial_bodies")) as CelestialBodyRecord[];
+  const fallbackRows = generatedCelestialBodyRows(5) as CelestialBodyRecord[];
 
-  return (
-    <AdminTable
-      config={tableConfigs.celestial_bodies}
-      initialRows={rows.length ? rows : generatedCelestialBodyRows(5)}
-    />
-  );
+  return <CelestialBodyDesigner rows={rows.length ? rows : fallbackRows} />;
 }

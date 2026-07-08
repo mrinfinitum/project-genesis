@@ -463,10 +463,10 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
     <div className="space-y-6">
       <section className="flex flex-col justify-between gap-4 xl:flex-row xl:items-end">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">Procedural Worlds</p>
-          <h2 className="mt-2 text-3xl font-bold text-white">Planets</h2>
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">Universe Workflow</p>
+          <h2 className="mt-2 text-3xl font-bold text-white">Planet Designer</h2>
           <p className="mt-2 max-w-3xl text-sm text-slate-300">
-            Generated planet cards with persistent seeds, discovery stats, resources, hazards, traits, economy, science, colonization, and story output.
+            Generate, preview, validate, and lock persistent planet cards with stats, resources, artwork, and story output.
           </p>
         </div>
         <div className="grid w-full gap-2 sm:grid-cols-[minmax(8rem,12rem)_minmax(10rem,1fr)_minmax(11rem,1fr)_minmax(11rem,13rem)] xl:w-auto xl:min-w-[58rem]">

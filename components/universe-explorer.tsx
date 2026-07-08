@@ -194,12 +194,12 @@ export function UniverseExplorer() {
   return (
     <div className="space-y-6">
       <section className="flex flex-col gap-3">
-        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Sprint 0 Foundation</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Developer Tools</p>
         <div className="flex flex-col justify-between gap-4 xl:flex-row xl:items-end">
           <div>
-            <h2 className="text-3xl font-bold text-white">Universe Explorer</h2>
+            <h2 className="text-3xl font-bold text-white">Developer Seed Explorer</h2>
             <p className="mt-2 max-w-3xl text-sm text-slate-300">
-              Deterministic generator for the Project Genesis hierarchy: universe, galaxy, sector, star system, stars, celestial bodies, and procedural sub-seeds.
+              Debug deterministic universe, galaxy, sector, star system, celestial body, and procedural sub-seeds outside the main authoring workflow.
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-[minmax(16rem,28rem)_8rem]">

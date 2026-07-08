@@ -87,7 +87,6 @@ const navigationGroups: NavigationGroup[] = [
     systemIds: ["planet-generation", "ancient-civilizations", "planet-traits", "anomalies", "hazards", "expeditions"],
     items: [
       { href: "/galaxy", label: "Galaxy Generator", icon: Star },
-      { href: "/universe-explorer", label: "Universe Explorer", icon: Compass },
       { href: "/sector-map", label: "Sector Generator", icon: Map },
       { href: "/star-system-map", label: "Star System Generator", icon: Radar },
       { href: "/celestial-bodies", label: "Celestial Body Designer", icon: CircleDot },
@@ -135,7 +134,7 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/unlock-matrix", label: "Unlock Matrix", icon: GitBranch },
       { href: "/building-relationships", label: "Relationship Graph", icon: Network },
       { href: "/building-chains", label: "Balance Designer", icon: Gauge },
-      { label: "Validation Engine", icon: Database, future: true },
+      { href: "/validation-engine", label: "Validation Engine", icon: Database },
       { label: "Events", icon: Sparkles, future: true },
       { label: "Achievements", icon: Star, future: true }
     ]
@@ -147,10 +146,10 @@ const navigationGroups: NavigationGroup[] = [
     fallbackProgress: 18,
     systemIds: ["assets"],
     items: [
-      { href: "/planet-generation", label: "Planet Artwork", icon: Sparkles, activePaths: [] },
-      { href: "/planet-generation", label: "Surface Landscapes", icon: Palette, activePaths: [] },
-      { href: "/planet-generation", label: "Hero Discovery Shots", icon: Star, activePaths: [] },
-      { href: "/planet-generation", label: "Prompt Library", icon: ScrollText, activePaths: [] },
+      { href: "/planet-artwork", label: "Planet Artwork", icon: Sparkles },
+      { href: "/surface-landscapes", label: "Surface Landscapes", icon: Palette },
+      { href: "/hero-discovery-shots", label: "Hero Discovery Shots", icon: Star },
+      { href: "/prompt-library", label: "Prompt Library", icon: ScrollText },
       { href: "/conceptual-art", label: "Concept Art", icon: Palette },
       { href: "/assets", label: "Asset Library", icon: Archive },
       { href: "/assets", label: "UI Assets", icon: Gamepad2, activePaths: [] }
@@ -166,6 +165,7 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/tasks", label: "Tasks", icon: ListChecks },
       { href: "/database", label: "Database", icon: Database },
       { href: "/settings", label: "Imports / Exports", icon: UploadCloud },
+      { href: "/universe-explorer", label: "Developer Seed Explorer", icon: Compass },
       { href: "/changelog", label: "Changelog", icon: History },
       { href: "/releases", label: "Release Notes", icon: ScrollText },
       { href: "/settings", label: "Settings", icon: Settings }
