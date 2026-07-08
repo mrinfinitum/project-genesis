@@ -703,6 +703,140 @@ export const tableConfigs: Record<TableName, TableConfig> = {
       { key: "updated_at", label: "Updated At" },
       { key: "notes", label: "Notes", type: "textarea" }
     ]
+  },
+  civilization_identity: {
+    table: "civilization_identity",
+    title: "Civilization Identity",
+    description: "Persistent civilization age, title, alignment, population, discovery, and future prediction state.",
+    typeKey: "current_age",
+    searchKeys: ["civilization_name", "current_age", "civilization_title", "primary_alignment", "future_prediction", "notes"],
+    columns: ["civilization_name", "current_age", "civilization_title", "primary_alignment", "future_prediction"],
+    fields: [
+      { key: "id", label: "ID", required: true },
+      { key: "civilization_name", label: "Civilization Name", required: true },
+      { key: "current_age", label: "Current Age" },
+      { key: "civilization_title", label: "Civilization Title" },
+      { key: "primary_alignment", label: "Primary Alignment" },
+      { key: "secondary_alignment", label: "Secondary Alignment" },
+      { key: "emerging_alignment", label: "Emerging Alignment" },
+      { key: "future_prediction", label: "Future Prediction" },
+      { key: "population", label: "Population", type: "number" },
+      { key: "total_discovery_points", label: "Discovery Points", type: "number" },
+      { key: "total_colonized_worlds", label: "Colonized Worlds", type: "number" },
+      { key: "total_wonders_built", label: "Wonders Built", type: "number" },
+      { key: "total_milestones_unlocked", label: "Milestones Unlocked", type: "number" },
+      { key: "notes", label: "Notes", type: "textarea" }
+    ]
+  },
+  civilization_alignment_scores: {
+    table: "civilization_alignment_scores",
+    title: "Civilization Alignment Scores",
+    description: "Current 0-100 alignment scores and visible bonus summaries.",
+    typeKey: "alignment_name",
+    searchKeys: ["alignment_name", "bonus_summary", "last_changed_by"],
+    columns: ["alignment_name", "score", "bonus_summary", "last_changed_by"],
+    fields: [
+      { key: "id", label: "ID", required: true },
+      { key: "civilization_id", label: "Civilization ID" },
+      { key: "alignment_name", label: "Alignment" },
+      { key: "score", label: "Score", type: "number" },
+      { key: "bonus_summary", label: "Bonus Summary", type: "textarea" },
+      { key: "last_changed_by", label: "Last Changed By" },
+      { key: "updated_at", label: "Updated At" }
+    ]
+  },
+  civilization_alignment_history: {
+    table: "civilization_alignment_history",
+    title: "Civilization Alignment History",
+    description: "Audit trail of alignment score changes from milestones, research, buildings, upgrades, events, and discoveries.",
+    typeKey: "alignment_name",
+    searchKeys: ["alignment_name", "source_type", "source_id", "reason"],
+    columns: ["alignment_name", "previous_score", "new_score", "change_amount", "source_type"],
+    fields: [
+      { key: "id", label: "ID", required: true },
+      { key: "civilization_id", label: "Civilization ID" },
+      { key: "alignment_name", label: "Alignment" },
+      { key: "previous_score", label: "Previous Score", type: "number" },
+      { key: "new_score", label: "New Score", type: "number" },
+      { key: "change_amount", label: "Change Amount", type: "number" },
+      { key: "source_type", label: "Source Type" },
+      { key: "source_id", label: "Source ID" },
+      { key: "reason", label: "Reason", type: "textarea" },
+      { key: "created_at", label: "Created At" }
+    ]
+  },
+  civilization_milestones: {
+    table: "civilization_milestones",
+    title: "Civilization Milestones",
+    description: "Canonical milestone timeline from survival through Genesis progression.",
+    typeKey: "age",
+    searchKeys: ["title", "age", "description", "unlocked_by", "importance"],
+    columns: ["title", "age", "importance", "unlocked_by", "sort_order"],
+    fields: [
+      { key: "id", label: "ID", required: true },
+      { key: "title", label: "Title", required: true },
+      { key: "age", label: "Age" },
+      { key: "description", label: "Description", type: "textarea" },
+      { key: "unlocked_by", label: "Unlocked By" },
+      { key: "icon", label: "Icon" },
+      { key: "importance", label: "Importance" },
+      { key: "sort_order", label: "Sort Order", type: "number" }
+    ]
+  },
+  civilization_unlocked_milestones: {
+    table: "civilization_unlocked_milestones",
+    title: "Civilization Unlocked Milestones",
+    description: "Milestones currently unlocked for the active civilization.",
+    typeKey: "source_type",
+    searchKeys: ["civilization_id", "milestone_id", "source_type", "source_id", "notes"],
+    columns: ["milestone_id", "unlocked_at", "source_type", "notes"],
+    fields: [
+      { key: "id", label: "ID", required: true },
+      { key: "civilization_id", label: "Civilization ID" },
+      { key: "milestone_id", label: "Milestone ID" },
+      { key: "unlocked_at", label: "Unlocked At" },
+      { key: "source_type", label: "Source Type" },
+      { key: "source_id", label: "Source ID" },
+      { key: "notes", label: "Notes", type: "textarea" }
+    ]
+  },
+  civilization_titles: {
+    table: "civilization_titles",
+    title: "Civilization Titles",
+    description: "Earned identity titles selected from age, alignment, and gameplay history rules.",
+    typeKey: "required_age",
+    searchKeys: ["title", "description", "required_age", "primary_alignment", "secondary_alignment", "requirement_summary"],
+    columns: ["title", "required_age", "primary_alignment", "secondary_alignment", "priority"],
+    fields: [
+      { key: "id", label: "ID", required: true },
+      { key: "title", label: "Title", required: true },
+      { key: "description", label: "Description", type: "textarea" },
+      { key: "required_age", label: "Required Age" },
+      { key: "primary_alignment", label: "Primary Alignment" },
+      { key: "secondary_alignment", label: "Secondary Alignment" },
+      { key: "requirement_summary", label: "Requirement Summary", type: "textarea" },
+      { key: "bonus_summary", label: "Bonus Summary", type: "textarea" },
+      { key: "priority", label: "Priority", type: "number" }
+    ]
+  },
+  civilization_bonuses: {
+    table: "civilization_bonuses",
+    title: "Civilization Bonuses",
+    description: "Permanent bonuses sourced from titles, alignments, milestones, wonders, and discoveries.",
+    typeKey: "bonus_type",
+    searchKeys: ["bonus_name", "bonus_type", "bonus_value", "source_type", "description"],
+    columns: ["bonus_name", "bonus_type", "bonus_value", "source_type", "active"],
+    fields: [
+      { key: "id", label: "ID", required: true },
+      { key: "civilization_id", label: "Civilization ID" },
+      { key: "bonus_name", label: "Bonus Name" },
+      { key: "bonus_type", label: "Bonus Type" },
+      { key: "bonus_value", label: "Bonus Value" },
+      { key: "source_type", label: "Source Type" },
+      { key: "source_id", label: "Source ID" },
+      { key: "description", label: "Description", type: "textarea" },
+      { key: "active", label: "Active", type: "boolean" }
+    ]
   }
 };
 

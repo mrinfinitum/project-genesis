@@ -16,6 +16,15 @@ import type {
 } from "@/types/schema";
 import { handoffPlanetResourceProfiles, handoffResourceCatalog } from "@/data/handoff";
 import {
+  civilizationAlignmentHistory,
+  civilizationAlignmentScores,
+  civilizationBonuses,
+  civilizationIdentity,
+  civilizationMilestones,
+  civilizationTitles,
+  civilizationUnlockedMilestones
+} from "@/data/civilization-identity";
+import {
   mergeSpaceResearchBranches,
   mergeSpaceResearchNodes,
   SPACE_RESEARCH_BRANCH_PURPOSE
@@ -312,5 +321,12 @@ export const seedData: GameData = {
   data_health_checks: handoffDataHealthChecks,
   codex_readiness_items: handoffCodexReadinessItems,
   dashboard_metrics: handoffDashboardMetrics,
-  codex_tasks: handoffCodexTasks
+  codex_tasks: handoffCodexTasks,
+  civilization_identity: civilizationIdentity,
+  civilization_alignment_scores: civilizationAlignmentScores,
+  civilization_alignment_history: civilizationAlignmentHistory,
+  civilization_milestones: civilizationMilestones,
+  civilization_unlocked_milestones: civilizationUnlockedMilestones,
+  civilization_titles: civilizationTitles,
+  civilization_bonuses: civilizationBonuses
 };

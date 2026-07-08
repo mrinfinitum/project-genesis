@@ -18,6 +18,15 @@ import upgradesRaw from "./json/All_Upgrades.json";
 import wondersRaw from "./json/Wonders.json";
 import { planetSystemVariables } from "./planet-system";
 import {
+  civilizationAlignmentHistory,
+  civilizationAlignmentScores,
+  civilizationBonuses,
+  civilizationIdentity,
+  civilizationMilestones,
+  civilizationTitles,
+  civilizationUnlockedMilestones
+} from "@/data/civilization-identity";
+import {
   mergeSpaceResearchBranches,
   mergeSpaceResearchNodes,
   mergeSpaceUnlockMatrixRows
@@ -49,6 +58,13 @@ import type {
   ResourceCatalogItem,
   StarSystemRecord,
   CelestialBodyRecord,
+  CivilizationAlignmentHistory,
+  CivilizationAlignmentScore,
+  CivilizationBonus,
+  CivilizationIdentity,
+  CivilizationMilestone,
+  CivilizationTitle,
+  CivilizationUnlockedMilestone,
   SystemProbeRecord,
   UnlockMatrixRow,
   Upgrade,
@@ -600,6 +616,13 @@ export const handoffPlanetPromptLibrary: PlanetPromptLibraryRecord[] = [];
 export const handoffStarSystems: StarSystemRecord[] = [];
 export const handoffCelestialBodies: CelestialBodyRecord[] = [];
 export const handoffSystemProbes: SystemProbeRecord[] = [];
+export const handoffCivilizationIdentity: CivilizationIdentity[] = civilizationIdentity;
+export const handoffCivilizationAlignmentScores: CivilizationAlignmentScore[] = civilizationAlignmentScores;
+export const handoffCivilizationAlignmentHistory: CivilizationAlignmentHistory[] = civilizationAlignmentHistory;
+export const handoffCivilizationMilestones: CivilizationMilestone[] = civilizationMilestones;
+export const handoffCivilizationUnlockedMilestones: CivilizationUnlockedMilestone[] = civilizationUnlockedMilestones;
+export const handoffCivilizationTitles: CivilizationTitle[] = civilizationTitles;
+export const handoffCivilizationBonuses: CivilizationBonus[] = civilizationBonuses;
 
 export const handoffData: GameData = {
   research_branches: handoffResearchBranches,
@@ -631,5 +654,12 @@ export const handoffData: GameData = {
   data_health_checks: handoffDataHealthChecks,
   codex_readiness_items: handoffCodexReadinessItems,
   dashboard_metrics: handoffDashboardMetrics,
-  codex_tasks: handoffCodexTasks
+  codex_tasks: handoffCodexTasks,
+  civilization_identity: handoffCivilizationIdentity,
+  civilization_alignment_scores: handoffCivilizationAlignmentScores,
+  civilization_alignment_history: handoffCivilizationAlignmentHistory,
+  civilization_milestones: handoffCivilizationMilestones,
+  civilization_unlocked_milestones: handoffCivilizationUnlockedMilestones,
+  civilization_titles: handoffCivilizationTitles,
+  civilization_bonuses: handoffCivilizationBonuses
 };

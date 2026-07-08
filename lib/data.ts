@@ -123,7 +123,14 @@ export async function getGameData(): Promise<GameData> {
       dataHealthChecks,
       codexReadinessItems,
       dashboardMetrics,
-      codexTasks
+      codexTasks,
+      civilizationIdentity,
+      civilizationAlignmentScores,
+      civilizationAlignmentHistory,
+      civilizationMilestones,
+      civilizationUnlockedMilestones,
+      civilizationTitles,
+      civilizationBonuses
     ] = await Promise.all([
       getFallbackRows("research"),
       getFallbackRows("buildings"),
@@ -151,7 +158,14 @@ export async function getGameData(): Promise<GameData> {
       getFallbackRows("data_health_checks"),
       getFallbackRows("codex_readiness_items"),
       getFallbackRows("dashboard_metrics"),
-      getFallbackRows("codex_tasks")
+      getFallbackRows("codex_tasks"),
+      getFallbackRows("civilization_identity"),
+      getFallbackRows("civilization_alignment_scores"),
+      getFallbackRows("civilization_alignment_history"),
+      getFallbackRows("civilization_milestones"),
+      getFallbackRows("civilization_unlocked_milestones"),
+      getFallbackRows("civilization_titles"),
+      getFallbackRows("civilization_bonuses")
     ]);
 
     return {
@@ -182,7 +196,14 @@ export async function getGameData(): Promise<GameData> {
       data_health_checks: dataHealthChecks as GameData["data_health_checks"],
       codex_readiness_items: codexReadinessItems as GameData["codex_readiness_items"],
       dashboard_metrics: dashboardMetrics as GameData["dashboard_metrics"],
-      codex_tasks: codexTasks as GameData["codex_tasks"]
+      codex_tasks: codexTasks as GameData["codex_tasks"],
+      civilization_identity: civilizationIdentity as GameData["civilization_identity"],
+      civilization_alignment_scores: civilizationAlignmentScores as GameData["civilization_alignment_scores"],
+      civilization_alignment_history: civilizationAlignmentHistory as GameData["civilization_alignment_history"],
+      civilization_milestones: civilizationMilestones as GameData["civilization_milestones"],
+      civilization_unlocked_milestones: civilizationUnlockedMilestones as GameData["civilization_unlocked_milestones"],
+      civilization_titles: civilizationTitles as GameData["civilization_titles"],
+      civilization_bonuses: civilizationBonuses as GameData["civilization_bonuses"]
     };
   }
 
@@ -216,7 +237,14 @@ export async function getGameData(): Promise<GameData> {
     dataHealthChecks,
     codexReadinessItems,
     dashboardMetrics,
-    codexTasks
+    codexTasks,
+    civilizationIdentity,
+    civilizationAlignmentScores,
+    civilizationAlignmentHistory,
+    civilizationMilestones,
+    civilizationUnlockedMilestones,
+    civilizationTitles,
+    civilizationBonuses
   ] = await Promise.all([
     getRowsFromSupabaseOrFallback("research_branches"),
     getRowsFromSupabaseOrFallback("research"),
@@ -247,7 +275,14 @@ export async function getGameData(): Promise<GameData> {
     getRowsFromSupabaseOrFallback("data_health_checks"),
     getRowsFromSupabaseOrFallback("codex_readiness_items"),
     getRowsFromSupabaseOrFallback("dashboard_metrics"),
-    getRowsFromSupabaseOrFallback("codex_tasks")
+    getRowsFromSupabaseOrFallback("codex_tasks"),
+    getRowsFromSupabaseOrFallback("civilization_identity"),
+    getRowsFromSupabaseOrFallback("civilization_alignment_scores"),
+    getRowsFromSupabaseOrFallback("civilization_alignment_history"),
+    getRowsFromSupabaseOrFallback("civilization_milestones"),
+    getRowsFromSupabaseOrFallback("civilization_unlocked_milestones"),
+    getRowsFromSupabaseOrFallback("civilization_titles"),
+    getRowsFromSupabaseOrFallback("civilization_bonuses")
   ]);
 
   return {
@@ -280,6 +315,13 @@ export async function getGameData(): Promise<GameData> {
     data_health_checks: dataHealthChecks as GameData["data_health_checks"],
     codex_readiness_items: codexReadinessItems as GameData["codex_readiness_items"],
     dashboard_metrics: dashboardMetrics as GameData["dashboard_metrics"],
-    codex_tasks: codexTasks as GameData["codex_tasks"]
+    codex_tasks: codexTasks as GameData["codex_tasks"],
+    civilization_identity: civilizationIdentity as GameData["civilization_identity"],
+    civilization_alignment_scores: civilizationAlignmentScores as GameData["civilization_alignment_scores"],
+    civilization_alignment_history: civilizationAlignmentHistory as GameData["civilization_alignment_history"],
+    civilization_milestones: civilizationMilestones as GameData["civilization_milestones"],
+    civilization_unlocked_milestones: civilizationUnlockedMilestones as GameData["civilization_unlocked_milestones"],
+    civilization_titles: civilizationTitles as GameData["civilization_titles"],
+    civilization_bonuses: civilizationBonuses as GameData["civilization_bonuses"]
   };
 }

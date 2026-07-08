@@ -650,6 +650,99 @@ export type CodexTask = {
   notes: string;
 };
 
+export type CivilizationIdentity = {
+  id: string;
+  civilization_name: string;
+  current_age: string;
+  civilization_title: string;
+  primary_alignment: string;
+  secondary_alignment: string;
+  emerging_alignment: string;
+  future_prediction: string;
+  population: number;
+  total_discovery_points: number;
+  total_colonized_worlds: number;
+  total_wonders_built: number;
+  total_milestones_unlocked: number;
+  created_at: string;
+  updated_at: string;
+  notes: string;
+};
+
+export type CivilizationAlignmentScore = {
+  id: string;
+  civilization_id: string;
+  alignment_name: string;
+  score: number;
+  bonus_summary: string;
+  last_changed_by: string;
+  updated_at: string;
+};
+
+export type CivilizationAlignmentHistory = {
+  id: string;
+  civilization_id: string;
+  alignment_name: string;
+  previous_score: number;
+  new_score: number;
+  change_amount: number;
+  source_type: string;
+  source_id: string;
+  reason: string;
+  created_at: string;
+};
+
+export type CivilizationMilestone = {
+  id: string;
+  title: string;
+  age: string;
+  description: string;
+  unlocked_by: string;
+  icon: string;
+  importance: string;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CivilizationUnlockedMilestone = {
+  id: string;
+  civilization_id: string;
+  milestone_id: string;
+  unlocked_at: string;
+  source_type: string;
+  source_id: string;
+  notes: string;
+};
+
+export type CivilizationTitle = {
+  id: string;
+  title: string;
+  description: string;
+  required_age: string;
+  primary_alignment: string;
+  secondary_alignment: string;
+  requirement_summary: string;
+  bonus_summary: string;
+  priority: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CivilizationBonus = {
+  id: string;
+  civilization_id: string;
+  bonus_name: string;
+  bonus_type: string;
+  bonus_value: string;
+  source_type: string;
+  source_id: string;
+  description: string;
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
 export type GameData = {
   research_branches: ResearchBranch[];
   research: ResearchNode[];
@@ -681,6 +774,13 @@ export type GameData = {
   codex_readiness_items: CodexReadinessItem[];
   dashboard_metrics: DashboardMetric[];
   codex_tasks: CodexTask[];
+  civilization_identity: CivilizationIdentity[];
+  civilization_alignment_scores: CivilizationAlignmentScore[];
+  civilization_alignment_history: CivilizationAlignmentHistory[];
+  civilization_milestones: CivilizationMilestone[];
+  civilization_unlocked_milestones: CivilizationUnlockedMilestone[];
+  civilization_titles: CivilizationTitle[];
+  civilization_bonuses: CivilizationBonus[];
 };
 
 export type TableName =
@@ -710,4 +810,11 @@ export type TableName =
   | "data_health_checks"
   | "codex_readiness_items"
   | "dashboard_metrics"
-  | "codex_tasks";
+  | "codex_tasks"
+  | "civilization_identity"
+  | "civilization_alignment_scores"
+  | "civilization_alignment_history"
+  | "civilization_milestones"
+  | "civilization_unlocked_milestones"
+  | "civilization_titles"
+  | "civilization_bonuses";
