@@ -584,13 +584,18 @@ function DeleteButton({ label, onDelete }: { label: string; onDelete: () => void
   );
 }
 
-function CardImage({ variant, icon: Icon, label }: { variant: string; icon: React.ElementType; label: string }) {
+function CardImage({ variant, icon: Icon, label, compact = false }: { variant: string; icon: React.ElementType; label: string; compact?: boolean }) {
   return (
-    <div className={cn("relative h-56 overflow-hidden rounded-t-md bg-gradient-to-br", variant)}>
+    <div className={cn("relative overflow-hidden rounded-t-md bg-gradient-to-br", compact ? "h-40" : "h-56", variant)}>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_48%,rgba(103,232,249,0.35),transparent_12%),radial-gradient(circle_at_42%_56%,rgba(255,255,255,0.12),transparent_18%),radial-gradient(circle_at_60%_45%,rgba(147,51,234,0.25),transparent_28%)]" />
       <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.05)_1px,transparent_1px)] bg-[size:34px_34px] opacity-70" />
-      <div className="absolute left-1/2 top-1/2 grid h-24 w-24 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-cyan-200/25 bg-black/35 shadow-[0_0_45px_rgba(34,211,238,0.2)]">
-        <Icon className="h-11 w-11 text-cyan-100/85" />
+      <div
+        className={cn(
+          "absolute left-1/2 top-1/2 grid -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-cyan-200/25 bg-black/35 shadow-[0_0_45px_rgba(34,211,238,0.2)]",
+          compact ? "h-16 w-16" : "h-24 w-24"
+        )}
+      >
+        <Icon className={cn("text-cyan-100/85", compact ? "h-8 w-8" : "h-11 w-11")} />
       </div>
       <p className="absolute bottom-4 left-5 text-[0.65rem] font-black uppercase tracking-[0.24em] text-cyan-100/75">{label}</p>
     </div>
@@ -1025,8 +1030,8 @@ function StarSystemCard({
       onClick={onOpen}
     >
       <DeleteButton label={system.system_name} onDelete={onDelete} />
-      <CardImage variant={systemVisual(system)} icon={Star} label="Star System" />
-      <div className="space-y-4 p-5">
+      <CardImage variant={systemVisual(system)} icon={Star} label="Star System" compact />
+      <div className="space-y-3 p-4">
         <div className="flex flex-wrap gap-2">
           <Badge className={rarityClasses[system.system_rarity] ?? "border-cyan-300/25 text-cyan-100"}>{system.system_rarity}</Badge>
           <Badge className="border-cyan-300/30 text-cyan-100">{system.discovery_state}</Badge>
@@ -1034,16 +1039,14 @@ function StarSystemCard({
         </div>
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">{system.star_type}</p>
-          <h3 className="mt-2 truncate text-3xl font-bold text-white">{system.system_name}</h3>
-          <p className="mt-1 font-mono text-sm text-slate-500">{system.catalog_designation}</p>
+          <h3 className="mt-2 truncate text-2xl font-bold text-white">{system.system_name}</h3>
+          <p className="mt-1 truncate font-mono text-xs text-slate-500">{system.catalog_designation}</p>
         </div>
-        <div className="grid grid-cols-2 gap-2 xl:grid-cols-3">
+        <div className="grid grid-cols-2 gap-2">
           <StatChip label="Star Class" value={system.star_type} />
           <StatChip label="Planets" value={stats.planetCount} />
-          <StatChip label="Belts" value={stats.beltCount} />
           <StatChip label="Habitable Zone" value={stats.habitableZone} />
           <StatChip label="Danger" value={system.danger_level} tone={system.danger_level > 70 ? "text-red-200" : "text-slate-100"} />
-          <StatChip label="Resource Value" value={stats.resourceValue} />
         </div>
         <div className="flex items-center gap-2 text-sm font-semibold text-cyan-100">
           <Eye className="h-4 w-4" />
@@ -1425,7 +1428,7 @@ function SectorCard({
             </div>
           </div>
           {systems.length ? (
-            <div className="grid gap-4 xl:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
               {systems.map((systemCard) => (
                 <StarSystemCard
                   key={systemCard.system.id}
@@ -2023,7 +2026,7 @@ export function StarSystemGeneratorWorkflow() {
       </div>
 
       {visibleCards.length ? (
-        <section className="grid gap-5 2xl:grid-cols-2">
+        <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {visibleCards.map((card) => (
             <StarSystemCard
               key={card.system.id}
