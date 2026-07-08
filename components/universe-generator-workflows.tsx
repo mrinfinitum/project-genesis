@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { ChevronRight, CirclePlus, Eye, Orbit, Plus, Search, Sparkles, Star, Trash2, Waypoints, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DEFAULT_UNIVERSE_SEED } from "@/lib/universe/fallback-data";
@@ -16,8 +16,34 @@ import {
   type StarSystemNode
 } from "@/lib/universe/generator";
 import { cn } from "@/lib/utils";
+import type { GeneratedPlanet } from "@/types/schema";
 
-type BodyCardState = CelestialBodyNode;
+type AssignmentContext = {
+  galaxy: GalaxyNode;
+  sector: SectorNode;
+  system: StarSystemNode;
+};
+
+type PlanetAssignmentData = {
+  assignedPlanetId?: string;
+  assignedSystemId?: string;
+  assignedSystemName?: string;
+  assignedSectorId?: string;
+  assignedSectorName?: string;
+  assignedGalaxyId?: string;
+  assignedGalaxyName?: string;
+  orbitIndex?: number;
+  orbitalRole?: "Planet";
+  parentStarClass?: string;
+  parentStarSeed?: string;
+  image_url?: string | null;
+  seed_id?: string;
+  story?: string;
+  discovery_points?: number;
+  source_planet?: GeneratedPlanet;
+};
+
+type BodyCardState = CelestialBodyNode & PlanetAssignmentData;
 
 type StarSystemCardState = {
   system: StarSystemNode;
@@ -88,12 +114,53 @@ function applySystemBias(system: StarSystemNode, rarity: string, starRule: strin
   };
 }
 
-function toSystemState(system: StarSystemNode): StarSystemCardState {
-  return { system, bodies: [] };
+function slug(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
-function toSectorState(sector: SectorNode): SectorCardState {
-  return { sector, systems: [] };
+const solPlanetNames = new Set(["Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"]);
+
+function fixedSolPlanetId(name: string) {
+  return `fixed-sol-${slug(name)}`;
+}
+
+function withAssignment(body: CelestialBodyNode, context: AssignmentContext, orbitIndex: number, assignedPlanetId?: string): BodyCardState {
+  return {
+    ...body,
+    assignedPlanetId,
+    assignedSystemId: context.system.id,
+    assignedSystemName: context.system.system_name,
+    assignedSectorId: context.sector.id,
+    assignedSectorName: context.sector.sector_name,
+    assignedGalaxyId: context.galaxy.id,
+    assignedGalaxyName: context.galaxy.name,
+    orbitIndex,
+    orbitalRole: "Planet",
+    parentStarClass: context.system.star_type,
+    parentStarSeed: context.system.system_seed,
+    seed_id: body.seed ?? body.id
+  };
+}
+
+function toSystemState(system: StarSystemNode, galaxy?: GalaxyNode, sector?: SectorNode): StarSystemCardState {
+  const context = galaxy && sector ? { galaxy, sector, system } : null;
+  const bodies =
+    context && system.is_fixed
+      ? generateCelestialBodies(system)
+          .filter((body) => body.celestial_body_type === "Planet" && solPlanetNames.has(body.name))
+          .map((body) => withAssignment(body, context, body.orbit_position ?? 0, fixedSolPlanetId(body.name)))
+      : [];
+
+  return { system, bodies };
+}
+
+function toSectorState(sector: SectorNode, galaxy?: GalaxyNode): SectorCardState {
+  const system = galaxy && sector.is_fixed ? generateStarSystems(sector, 1)[0] : null;
+  return { sector, systems: system ? [toSystemState(system, galaxy, sector)] : [] };
 }
 
 function toGalaxyState(galaxy: GalaxyNode): GalaxyCardState {
@@ -102,14 +169,39 @@ function toGalaxyState(galaxy: GalaxyNode): GalaxyCardState {
 
 function defaultGalaxyCards(universeSeed: string) {
   const universe = generateUniverse(universeSeed);
-  return [toGalaxyState(generateGalaxy(universe.universe_seed, 0))];
+  const galaxy = generateGalaxy(universe.universe_seed, 0);
+  const sector = generateSectors(galaxy, 1)[0];
+  const system = sector ? generateStarSystems(sector, 1)[0] : null;
+
+  return [
+    {
+      galaxy,
+      sectors: sector
+        ? [
+            {
+              sector,
+              systems: system ? [toSystemState(system, galaxy, sector)] : []
+            }
+          ]
+        : []
+    }
+  ];
 }
 
 function defaultSectorCards(universeSeed: string, galaxyIndex: number) {
   const universe = generateUniverse(universeSeed);
   const galaxy = generateGalaxy(universe.universe_seed, galaxyIndex);
   const sector = generateSectors(galaxy, 1)[0];
-  return sector ? [toSectorState(sector)] : [];
+  const system = sector ? generateStarSystems(sector, 1)[0] : null;
+
+  return sector
+    ? [
+        {
+          sector,
+          systems: system ? [toSystemState(system, galaxy, sector)] : []
+        }
+      ]
+    : [];
 }
 
 function defaultSystemCards(universeSeed: string, galaxyIndex: number, sectorIndex: number) {
@@ -117,7 +209,86 @@ function defaultSystemCards(universeSeed: string, galaxyIndex: number, sectorInd
   const galaxy = generateGalaxy(universe.universe_seed, galaxyIndex);
   const sector = generateSectors(galaxy, Math.max(sectorIndex + 1, 1))[sectorIndex] ?? generateSectors(galaxy, 1)[0];
   const system = sector ? generateStarSystems(sector, 1)[0] : null;
-  return system ? [toSystemState(system)] : [];
+  return system && sector ? [toSystemState(system, galaxy, sector)] : [];
+}
+
+function useGeneratedPlanetPool() {
+  const [planets, setPlanets] = useState<GeneratedPlanet[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadPlanets() {
+      setLoading(true);
+      setError("");
+      try {
+        const response = await fetch("/api/planets");
+        const payload = (await response.json().catch(() => ({}))) as { rows?: GeneratedPlanet[]; error?: string };
+
+        if (!response.ok) {
+          throw new Error(payload.error ?? "Could not load generated planets.");
+        }
+
+        if (!cancelled) {
+          setPlanets(payload.rows ?? []);
+        }
+      } catch (caughtError) {
+        if (!cancelled) {
+          setError(caughtError instanceof Error ? caughtError.message : "Could not load generated planets.");
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    void loadPlanets();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return { planets, loading, error };
+}
+
+function assignedPlanetIdsInSystems(systems: StarSystemCardState[]) {
+  return new Set(systems.flatMap((system) => system.bodies.map((body) => body.assignedPlanetId).filter(Boolean) as string[]));
+}
+
+function assignedPlanetIdsInSectors(sectors: SectorCardState[]) {
+  return new Set(sectors.flatMap((sector) => [...assignedPlanetIdsInSystems(sector.systems)]));
+}
+
+function assignedPlanetIdsInGalaxies(galaxies: GalaxyCardState[]) {
+  return new Set(galaxies.flatMap((galaxy) => [...assignedPlanetIdsInSectors(galaxy.sectors)]));
+}
+
+function addGeneratedPlanetsToSystem(card: StarSystemCardState, context: AssignmentContext, planets: GeneratedPlanet[], planetIds: string[]) {
+  const existingPlanetIds = new Set(card.bodies.map((body) => body.assignedPlanetId).filter(Boolean));
+  const selectedPlanets = planetIds
+    .filter((id) => !existingPlanetIds.has(id))
+    .map((id) => planets.find((planet) => planet.id === id))
+    .filter(Boolean) as GeneratedPlanet[];
+
+  if (!selectedPlanets.length) {
+    return card;
+  }
+
+  const currentMaxOrbit = card.bodies.reduce((max, body) => Math.max(max, body.orbitIndex ?? body.orbit_position ?? 0), 0);
+  const addedBodies = selectedPlanets.map((planet, index) => generatedPlanetToBody(planet, context, currentMaxOrbit + index + 1));
+
+  return {
+    ...card,
+    system: {
+      ...card.system,
+      planet_count: card.system.planet_count + addedBodies.length
+    },
+    bodies: [...card.bodies, ...addedBodies]
+  };
 }
 
 function galaxyVisual(galaxy: GalaxyNode) {
@@ -150,6 +321,72 @@ function bodyVisual(body: CelestialBodyNode) {
   if (body.planet_class === "Ice") return "from-cyan-950 via-slate-950 to-black";
   if (body.celestial_body_type === "Moon") return "from-slate-700 via-slate-950 to-black";
   return "from-cyan-950 via-slate-950 to-black";
+}
+
+function planetImageUrl(planet: GeneratedPlanet) {
+  const variants = planet.image_variants ?? [];
+  const largest = variants.reduce<(typeof variants)[number] | null>((best, variant) => (!best || variant.size > best.size ? variant : best), null);
+  return largest?.url ?? planet.image_url ?? planet.orbit_view_image_url ?? null;
+}
+
+function planetPlaceholderStyle(planet: GeneratedPlanet): CSSProperties {
+  const text = [planet.planet_class, planet.planet_subclass, planet.primary_biome, planet.climate, planet.atmosphere].join(" ").toLowerCase();
+  if (text.includes("lava") || text.includes("volcanic")) return { background: "radial-gradient(circle at 35% 28%, #ffb26b, #f97316 28%, #42110b 72%)" };
+  if (text.includes("ice") || text.includes("frozen")) return { background: "radial-gradient(circle at 35% 28%, #e0f2fe, #38bdf8 35%, #0f172a 76%)" };
+  if (text.includes("swamp") || text.includes("living") || text.includes("organic")) return { background: "radial-gradient(circle at 35% 28%, #dcfce7, #22c55e 34%, #052e16 76%)" };
+  if (text.includes("desert")) return { background: "radial-gradient(circle at 35% 28%, #fde68a, #d97706 38%, #451a03 78%)" };
+  if (text.includes("void")) return { background: "radial-gradient(circle at 35% 28%, #f5d0fe, #7e22ce 36%, #020617 76%)" };
+  if (text.includes("gas")) return { background: "radial-gradient(circle at 35% 28%, #ccfbf1, #14b8a6 34%, #0f172a 76%)" };
+  return { background: "radial-gradient(circle at 35% 28%, #cffafe, #0284c7 34%, #0f172a 76%)" };
+}
+
+function generatedPlanetToBody(planet: GeneratedPlanet, context: AssignmentContext, orbitIndex: number): BodyCardState {
+  const gasGiant = planet.uses_orbital_gameplay || planet.planet_class === "Gas Giant";
+  return {
+    id: `assigned-${planet.id}`,
+    system_id: context.system.id,
+    parent_body_id: null,
+    name: planet.name,
+    celestial_body_type: "Planet",
+    planet_class: planet.planet_class,
+    planet_subclass: planet.planet_subclass,
+    planet_rarity: planet.rarity,
+    biome: planet.primary_biome,
+    atmosphere: planet.atmosphere,
+    gravity: planet.gravity,
+    orbit_position: orbitIndex,
+    orbit_parent: context.system.system_name,
+    landable: planet.landable,
+    colonizable: planet.colonizable,
+    colonizable_status: planet.colonized ? "Already Colonized" : planet.colonizable ? "Colonizable" : "Not Colonizable",
+    uses_orbital_gameplay: gasGiant,
+    is_fixed: false,
+    is_starting_body: false,
+    is_procedural: true,
+    unlock_requirement: planet.required_technology?.[0] ?? "Survey Required",
+    resources: planet.resources,
+    notes: planet.notes,
+    seed: planet.seed,
+    generation_parent_seed: context.system.system_seed,
+    generation_index: orbitIndex,
+    generation_version: "star-system-assignment-v1",
+    assignedPlanetId: planet.id,
+    assignedSystemId: context.system.id,
+    assignedSystemName: context.system.system_name,
+    assignedSectorId: context.sector.id,
+    assignedSectorName: context.sector.sector_name,
+    assignedGalaxyId: context.galaxy.id,
+    assignedGalaxyName: context.galaxy.name,
+    orbitIndex,
+    orbitalRole: "Planet",
+    parentStarClass: context.system.star_type,
+    parentStarSeed: context.system.system_seed,
+    image_url: planetImageUrl(planet),
+    seed_id: planet.seed,
+    story: planet.story,
+    discovery_points: planet.discovery_points,
+    source_planet: planet
+  };
 }
 
 function Badge({ children, className }: { children: React.ReactNode; className?: string }) {
@@ -466,20 +703,29 @@ function systemDescription(card: StarSystemCardState) {
   return `${system.system_name} is a ${system.star_type.toLowerCase()} system with a ${stats.habitableZone.toLowerCase()} habitable zone, ${density}, and ${risk}. Its resource profile leans toward ${system.resource_bias.toLowerCase()}, while ${outerBodies}.`;
 }
 
-function BodyCard({ body, onDelete }: { body: BodyCardState; onDelete: () => void }) {
+function BodyCard({ body, onOpen, onDelete }: { body: BodyCardState; onOpen: () => void; onDelete: () => void }) {
   return (
-    <article className="relative overflow-hidden rounded-md border border-cyan-300/15 bg-genesis-panel/95">
+    <article
+      className="relative cursor-pointer overflow-hidden rounded-md border border-cyan-300/15 bg-genesis-panel/95 transition hover:border-cyan-300/55 hover:shadow-[0_0_24px_rgba(34,211,238,0.12)]"
+      onClick={onOpen}
+    >
       <DeleteButton label={body.name} onDelete={onDelete} />
-      <CardImage variant={bodyVisual(body)} icon={body.celestial_body_type === "Moon" ? Orbit : Star} label={body.celestial_body_type} />
+      {body.image_url ? (
+        <div className="grid h-36 place-items-center overflow-hidden border-b border-cyan-300/10 bg-black p-4">
+          <img className="h-28 max-h-full w-28 max-w-full object-contain" src={body.image_url} alt={`${body.name} render`} />
+        </div>
+      ) : (
+        <CardImage variant={bodyVisual(body)} icon={body.celestial_body_type === "Moon" ? Orbit : Star} label={body.celestial_body_type} />
+      )}
       <div className="space-y-4 p-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">{body.planet_class ?? body.celestial_body_type}</p>
           <h4 className="mt-2 truncate text-2xl font-bold text-white">{body.name}</h4>
-          <p className="mt-1 truncate font-mono text-xs text-slate-500">
-            {body.parent_body_id ? `Moon of ${body.orbit_parent}` : body.orbit_parent ? `Orbits ${body.orbit_parent}` : "Primary body"}
-          </p>
+          <p className="mt-1 truncate font-mono text-xs text-slate-500">{body.seed_id ?? body.id}</p>
         </div>
         <div className="grid grid-cols-2 gap-2">
+          <StatChip label="System" value={body.assignedSystemName ?? body.orbit_parent ?? "Unassigned"} />
+          <StatChip label="Orbit" value={body.orbitIndex ?? body.orbit_position ?? "Pending"} />
           <StatChip label="Subclass" value={body.planet_subclass ?? "None"} />
           <StatChip label="Rarity" value={body.planet_rarity ?? "Body"} tone={rarityClasses[body.planet_rarity ?? ""]?.split(" ")[1]} />
           <StatChip label="Biome" value={body.biome ?? "Unknown"} />
@@ -491,6 +737,139 @@ function BodyCard({ body, onDelete }: { body: BodyCardState; onDelete: () => voi
         </div>
       </div>
     </article>
+  );
+}
+
+function BodyDetailOverlay({ body, onClose }: { body: BodyCardState; onClose: () => void }) {
+  const assignment = [
+    { label: "System", value: body.assignedSystemName ?? body.orbit_parent ?? "Unassigned" },
+    { label: "Sector", value: body.assignedSectorName ?? "Unassigned" },
+    { label: "Galaxy", value: body.assignedGalaxyName ?? "Unassigned" },
+    { label: "Orbit", value: body.orbitIndex ?? body.orbit_position ?? "Pending" },
+    { label: "Parent Star", value: body.parentStarClass ?? "Unknown" },
+    { label: "Parent Star Seed", value: body.parentStarSeed ?? "Unknown" }
+  ];
+
+  return (
+    <div className="fixed inset-0 z-[60] overflow-y-auto bg-slate-950/86 px-4 py-8 backdrop-blur-sm" onClick={onClose} role="dialog" aria-modal="true">
+      <article className="mx-auto max-w-5xl overflow-hidden rounded-md border border-cyan-300/20 bg-genesis-panel/95 shadow-[0_0_50px_rgba(8,145,178,0.1)]" onClick={(event) => event.stopPropagation()}>
+        <header className="flex items-start justify-between gap-4 border-b border-cyan-300/15 p-6">
+          <div>
+            <div className="flex flex-wrap gap-2">
+              <Badge className="border-cyan-300/35 text-cyan-100">{body.planet_class ?? body.celestial_body_type}</Badge>
+              <Badge className={rarityClasses[body.planet_rarity ?? ""] ?? "border-cyan-300/25 text-cyan-100"}>{body.planet_rarity ?? "Body"}</Badge>
+              {body.is_fixed ? <Badge className="border-amber-300/45 text-amber-100">Fixed Sol Body</Badge> : null}
+            </div>
+            <h3 className="mt-3 text-4xl font-black text-white">{body.name}</h3>
+            <p className="mt-2 font-mono text-sm text-slate-500">{body.seed_id ?? body.id}</p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="grid h-11 w-11 place-items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 text-cyan-100 transition hover:border-cyan-200/60 hover:bg-cyan-300/20"
+            aria-label="Close planet detail"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </header>
+        <div className="grid gap-6 p-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
+          <div className="space-y-5">
+            <div className="grid min-h-80 place-items-center overflow-hidden rounded-md border border-cyan-300/10 bg-black p-6">
+              {body.image_url ? (
+                <img className="max-h-[28rem] max-w-full object-contain" src={body.image_url} alt={`${body.name} render`} />
+              ) : (
+                <div className="h-48 w-48 rounded-full border border-cyan-300/25" style={body.source_planet ? planetPlaceholderStyle(body.source_planet) : undefined} />
+              )}
+            </div>
+            <div className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-5">
+              <p className="text-base font-semibold leading-8 text-slate-200">{body.story ?? body.notes}</p>
+            </div>
+          </div>
+          <div className="space-y-4">
+            <DetailSection title="Assignment">
+              <div className="grid gap-3">
+                {assignment.map((item) => (
+                  <StatChip key={item.label} label={item.label} value={item.value} />
+                ))}
+              </div>
+            </DetailSection>
+            <DetailSection title="Planet Specs">
+              <div className="grid gap-3">
+                <StatChip label="Subclass" value={body.planet_subclass ?? "None"} />
+                <StatChip label="Biome" value={body.biome ?? "Unknown"} />
+                <StatChip label="Gravity" value={body.gravity ?? "Unknown"} />
+                <StatChip label="Atmosphere" value={body.atmosphere ?? "Unknown"} />
+                <StatChip label="Colonization" value={body.colonizable_status} />
+                <StatChip label="Discovery Points" value={body.discovery_points ?? "Pending"} />
+              </div>
+            </DetailSection>
+            <DetailSection title="Resources">
+              <ChipList values={body.resources} />
+            </DetailSection>
+          </div>
+        </div>
+      </article>
+    </div>
+  );
+}
+
+function PlanetPickerCard({
+  planet,
+  selected,
+  onToggle
+}: {
+  planet: GeneratedPlanet;
+  selected: boolean;
+  onToggle: () => void;
+}) {
+  const imageUrl = planetImageUrl(planet);
+
+  return (
+    <button
+      type="button"
+      className={cn(
+        "group overflow-hidden rounded-md border bg-genesis-panel/95 text-left transition hover:border-cyan-300/60 hover:shadow-[0_0_24px_rgba(34,211,238,0.12)]",
+        selected ? "border-cyan-300/75 shadow-[0_0_28px_rgba(34,211,238,0.16)]" : "border-cyan-300/15"
+      )}
+      onClick={onToggle}
+    >
+      <div className="relative grid h-36 place-items-center overflow-hidden border-b border-cyan-300/10 bg-black p-4">
+        {imageUrl ? (
+          <img className="h-28 max-h-full w-28 max-w-full object-contain" src={imageUrl} alt={`${planet.name} render`} />
+        ) : (
+          <div className="h-24 w-24 rounded-full border border-cyan-300/25" style={planetPlaceholderStyle(planet)} />
+        )}
+        <span
+          className={cn(
+            "absolute right-3 top-3 rounded-md border px-2 py-1 text-[0.6rem] font-black uppercase tracking-[0.14em]",
+            selected ? "border-cyan-200 bg-cyan-300/20 text-cyan-50" : "border-slate-500/50 bg-black/55 text-slate-300"
+          )}
+        >
+          {selected ? "Selected" : "Available"}
+        </span>
+      </div>
+      <div className="space-y-3 p-4">
+        <div>
+          <p className="truncate text-xs font-black uppercase tracking-[0.2em] text-cyan-300">{planet.planet_class}</p>
+          <h4 className="mt-2 truncate text-xl font-bold text-white">{planet.name}</h4>
+          <p className="mt-1 truncate font-mono text-xs text-slate-500">{planet.seed}</p>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <StatChip label="Rarity" value={planet.rarity} tone={rarityClasses[planet.rarity]?.split(" ")[1]} />
+          <StatChip label="Biome" value={planet.primary_biome} />
+          <StatChip label="Subclass" value={planet.planet_subclass} />
+          <StatChip label="Gravity" value={planet.gravity} />
+        </div>
+        <div className="space-y-1 text-xs text-slate-400">
+          <p className="truncate">
+            <span className="text-slate-500">Resources:</span> {planet.resources.join(", ")}
+          </p>
+          <p className="truncate">
+            <span className="text-slate-500">Traits:</span> {planet.traits.join(", ")}
+          </p>
+        </div>
+      </div>
+    </button>
   );
 }
 
@@ -543,6 +922,11 @@ function StarSystemCard({
 
 function StarSystemDetailPanel({
   card,
+  context,
+  planetPool,
+  assignedPlanetIds,
+  planetPoolLoading,
+  planetPoolError,
   onClose,
   onDelete,
   onGenerateBodies,
@@ -550,14 +934,23 @@ function StarSystemDetailPanel({
   onDeleteBody
 }: {
   card: StarSystemCardState;
+  context: AssignmentContext;
+  planetPool: GeneratedPlanet[];
+  assignedPlanetIds: Set<string>;
+  planetPoolLoading: boolean;
+  planetPoolError: string;
   onClose: () => void;
   onDelete: () => void;
   onGenerateBodies: () => void;
-  onAddBody: () => void;
+  onAddBody: (planetIds: string[]) => void;
   onDeleteBody: (bodyId: string) => void;
 }) {
   const { system } = card;
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [selectedPlanetIds, setSelectedPlanetIds] = useState<string[]>([]);
+  const [selectedBody, setSelectedBody] = useState<BodyCardState | null>(null);
   const stats = systemStats(card);
+  const availablePlanets = planetPool.filter((planet) => !assignedPlanetIds.has(planet.id));
   const composition = [
     { label: "Inner Planets", value: Math.min(stats.planetCount, 4) },
     { label: "Habitable Planets", value: stats.habitablePlanets.length },
@@ -691,32 +1084,98 @@ function StarSystemDetailPanel({
               <Sparkles className="h-4 w-4" />
               Generate Planets
             </Button>
-            <Button type="button" onClick={onAddBody} className="border-slate-600 bg-slate-900/70 text-slate-100">
+            <Button
+              type="button"
+              onClick={() => {
+                setPickerOpen((current) => !current);
+                setSelectedPlanetIds([]);
+              }}
+              className="border-slate-600 bg-slate-900/70 text-slate-100"
+            >
               <CirclePlus className="h-4 w-4" />
               Add Planet
             </Button>
           </div>
         </div>
+        {pickerOpen ? (
+          <div className="space-y-4 rounded-md border border-cyan-300/15 bg-slate-950/45 p-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <h4 className="text-xl font-black text-white">Available Generated Planets</h4>
+                <p className="mt-1 text-sm font-semibold text-slate-400">
+                  Choose planets that are not assigned to any star system in this workflow. They will be stamped into {context.system.system_name} with orbit and parent-star metadata.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  disabled={!selectedPlanetIds.length}
+                  onClick={() => {
+                    onAddBody(selectedPlanetIds);
+                    setSelectedPlanetIds([]);
+                    setPickerOpen(false);
+                  }}
+                >
+                  <CirclePlus className="h-4 w-4" />
+                  Add Selected to System
+                </Button>
+                <Button
+                  type="button"
+                  className="border-slate-600 bg-slate-900/70 text-slate-100"
+                  onClick={() => {
+                    setSelectedPlanetIds([]);
+                    setPickerOpen(false);
+                  }}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+            {planetPoolError ? <p className="rounded-md border border-red-400/30 bg-red-400/10 px-3 py-2 text-sm font-semibold text-red-100">{planetPoolError}</p> : null}
+            {planetPoolLoading ? <EmptyState>Loading generated planet cards...</EmptyState> : null}
+            {!planetPoolLoading && availablePlanets.length ? (
+              <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
+                {availablePlanets.map((planet) => (
+                  <PlanetPickerCard
+                    key={planet.id}
+                    planet={planet}
+                    selected={selectedPlanetIds.includes(planet.id)}
+                    onToggle={() =>
+                      setSelectedPlanetIds((current) => (current.includes(planet.id) ? current.filter((id) => id !== planet.id) : [...current, planet.id]))
+                    }
+                  />
+                ))}
+              </div>
+            ) : null}
+            {!planetPoolLoading && !availablePlanets.length ? <EmptyState>No unassigned generated planets are available. Generate more planets in Planet Designer first.</EmptyState> : null}
+          </div>
+        ) : null}
         {stats.nonStarBodies.length ? (
           <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
             {stats.nonStarBodies.map((body) => (
-              <BodyCard key={body.id} body={body} onDelete={() => onDeleteBody(body.id)} />
+              <BodyCard key={body.id} body={body} onOpen={() => setSelectedBody(body)} onDelete={() => onDeleteBody(body.id)} />
             ))}
           </div>
         ) : (
           <EmptyState>No planets yet. Generate planets to populate this star system.</EmptyState>
         )}
       </section>
+      {selectedBody ? <BodyDetailOverlay body={selectedBody} onClose={() => setSelectedBody(null)} /> : null}
     </article>
   );
 }
 
 function StarSystemDetailOverlay(props: {
   card: StarSystemCardState;
+  context: AssignmentContext;
+  planetPool: GeneratedPlanet[];
+  assignedPlanetIds: Set<string>;
+  planetPoolLoading: boolean;
+  planetPoolError: string;
   onClose: () => void;
   onDelete: () => void;
   onGenerateBodies: () => void;
-  onAddBody: () => void;
+  onAddBody: (planetIds: string[]) => void;
   onDeleteBody: (bodyId: string) => void;
 }) {
   return (
@@ -736,6 +1195,11 @@ function StarSystemDetailOverlay(props: {
 
 function SectorCard({
   card,
+  galaxy,
+  planetPool,
+  assignedPlanetIds,
+  planetPoolLoading,
+  planetPoolError,
   open,
   onOpen,
   onGenerateSystems,
@@ -749,6 +1213,11 @@ function SectorCard({
   setOpenSystemId
 }: {
   card: SectorCardState;
+  galaxy: GalaxyNode;
+  planetPool: GeneratedPlanet[];
+  assignedPlanetIds: Set<string>;
+  planetPoolLoading: boolean;
+  planetPoolError: string;
   open: boolean;
   onOpen: () => void;
   onGenerateSystems: () => void;
@@ -756,7 +1225,7 @@ function SectorCard({
   onDelete: () => void;
   onDeleteSystem: (systemId: string) => void;
   onGenerateBodies: (systemId: string) => void;
-  onAddBody: (systemId: string) => void;
+  onAddBody: (systemId: string, planetIds: string[]) => void;
   onDeleteBody: (systemId: string, bodyId: string) => void;
   openSystemId: string | null;
   setOpenSystemId: (systemId: string | null) => void;
@@ -828,13 +1297,18 @@ function SectorCard({
           {selectedSystem ? (
             <StarSystemDetailOverlay
               card={selectedSystem}
+              context={{ galaxy, sector, system: selectedSystem.system }}
+              planetPool={planetPool}
+              assignedPlanetIds={assignedPlanetIds}
+              planetPoolLoading={planetPoolLoading}
+              planetPoolError={planetPoolError}
               onClose={() => setOpenSystemId(null)}
               onDelete={() => {
                 onDeleteSystem(selectedSystem.system.id);
                 setOpenSystemId(null);
               }}
               onGenerateBodies={() => onGenerateBodies(selectedSystem.system.id)}
-              onAddBody={() => onAddBody(selectedSystem.system.id)}
+              onAddBody={(planetIds) => onAddBody(selectedSystem.system.id, planetIds)}
               onDeleteBody={(bodyId) => onDeleteBody(selectedSystem.system.id, bodyId)}
             />
           ) : null}
@@ -846,6 +1320,10 @@ function SectorCard({
 
 function GalaxyCard({
   card,
+  planetPool,
+  assignedPlanetIds,
+  planetPoolLoading,
+  planetPoolError,
   open,
   onOpen,
   onGenerateSectors,
@@ -864,6 +1342,10 @@ function GalaxyCard({
   setOpenSystemId
 }: {
   card: GalaxyCardState;
+  planetPool: GeneratedPlanet[];
+  assignedPlanetIds: Set<string>;
+  planetPoolLoading: boolean;
+  planetPoolError: string;
   open: boolean;
   onOpen: () => void;
   onGenerateSectors: () => void;
@@ -874,7 +1356,7 @@ function GalaxyCard({
   onAddSystem: (sectorId: string) => void;
   onDeleteSystem: (sectorId: string, systemId: string) => void;
   onGenerateBodies: (sectorId: string, systemId: string) => void;
-  onAddBody: (sectorId: string, systemId: string) => void;
+  onAddBody: (sectorId: string, systemId: string, planetIds: string[]) => void;
   onDeleteBody: (sectorId: string, systemId: string, bodyId: string) => void;
   openSectorId: string | null;
   setOpenSectorId: (sectorId: string | null) => void;
@@ -952,6 +1434,11 @@ function GalaxyCard({
                 <SectorCard
                   key={sectorCard.sector.id}
                   card={sectorCard}
+                  galaxy={galaxy}
+                  planetPool={planetPool}
+                  assignedPlanetIds={assignedPlanetIds}
+                  planetPoolLoading={planetPoolLoading}
+                  planetPoolError={planetPoolError}
                   open={openSectorId === sectorCard.sector.id}
                   onOpen={() => setOpenSectorId(openSectorId === sectorCard.sector.id ? null : sectorCard.sector.id)}
                   onDelete={() => onDeleteSector(sectorCard.sector.id)}
@@ -959,7 +1446,7 @@ function GalaxyCard({
                   onAddSystem={() => onAddSystem(sectorCard.sector.id)}
                   onDeleteSystem={(systemId) => onDeleteSystem(sectorCard.sector.id, systemId)}
                   onGenerateBodies={(systemId) => onGenerateBodies(sectorCard.sector.id, systemId)}
-                  onAddBody={(systemId) => onAddBody(sectorCard.sector.id, systemId)}
+                  onAddBody={(systemId, planetIds) => onAddBody(sectorCard.sector.id, systemId, planetIds)}
                   onDeleteBody={(systemId, bodyId) => onDeleteBody(sectorCard.sector.id, systemId, bodyId)}
                   openSystemId={openSystemId}
                   setOpenSystemId={setOpenSystemId}
@@ -989,6 +1476,8 @@ export function GalaxyGeneratorWorkflow() {
   const [openSectorId, setOpenSectorId] = useState<string | null>(null);
   const [openSystemId, setOpenSystemId] = useState<string | null>(null);
   const universe = useMemo(() => generateUniverse(universeSeed), [universeSeed]);
+  const planetPool = useGeneratedPlanetPool();
+  const assignedPlanetIds = useMemo(() => assignedPlanetIdsInGalaxies(galaxies), [galaxies]);
 
   function generateGalaxyCards() {
     const next = Array.from({ length: Math.max(1, count) }, (_, index) => {
@@ -1008,7 +1497,9 @@ export function GalaxyGeneratorWorkflow() {
   function generateSectorsForGalaxy(galaxyId: string, append = false) {
     updateGalaxy(galaxyId, (card) => {
       const startIndex = append ? card.sectors.length : 0;
-      const generated = generateSectors(card.galaxy, Math.min(card.galaxy.sector_count, startIndex + 6)).slice(startIndex, startIndex + 6).map(toSectorState);
+      const generated = generateSectors(card.galaxy, Math.min(card.galaxy.sector_count, startIndex + 6))
+        .slice(startIndex, startIndex + 6)
+        .map((sector) => toSectorState(sector, card.galaxy));
       return { ...card, sectors: append ? [...card.sectors, ...generated] : generated };
     });
   }
@@ -1019,7 +1510,9 @@ export function GalaxyGeneratorWorkflow() {
       sectors: galaxyCard.sectors.map((sectorCard) => {
         if (sectorCard.sector.id !== sectorId) return sectorCard;
         const startIndex = append ? sectorCard.systems.length : 0;
-        const generated = generateStarSystems(sectorCard.sector, Math.min(sectorCard.sector.system_count, startIndex + 6)).slice(startIndex, startIndex + 6).map(toSystemState);
+        const generated = generateStarSystems(sectorCard.sector, Math.min(sectorCard.sector.system_count, startIndex + 6))
+          .slice(startIndex, startIndex + 6)
+          .map((system) => toSystemState(system, galaxyCard.galaxy, sectorCard.sector));
         return { ...sectorCard, systems: append ? [...sectorCard.systems, ...generated] : generated };
       })
     }));
@@ -1077,6 +1570,23 @@ export function GalaxyGeneratorWorkflow() {
     }));
   }
 
+  function addPlanetsToSystem(galaxyId: string, sectorId: string, systemId: string, planetIds: string[]) {
+    updateGalaxy(galaxyId, (galaxyCard) => ({
+      ...galaxyCard,
+      sectors: galaxyCard.sectors.map((sectorCard) => ({
+        ...sectorCard,
+        systems:
+          sectorCard.sector.id === sectorId
+            ? sectorCard.systems.map((systemCard) =>
+                systemCard.system.id === systemId
+                  ? addGeneratedPlanetsToSystem(systemCard, { galaxy: galaxyCard.galaxy, sector: sectorCard.sector, system: systemCard.system }, planetPool.planets, planetIds)
+                  : systemCard
+              )
+            : sectorCard.systems
+      }))
+    }));
+  }
+
   return (
     <GeneratorShell eyebrow="Universe Workflow" title="Galaxy Generator" description="Generate visual galaxy cards, drill into sectors, and shape the content hierarchy before it moves into the game app.">
       <GeneratorPanel>
@@ -1098,6 +1608,10 @@ export function GalaxyGeneratorWorkflow() {
             <GalaxyCard
               key={card.galaxy.id}
               card={card}
+              planetPool={planetPool.planets}
+              assignedPlanetIds={assignedPlanetIds}
+              planetPoolLoading={planetPool.loading}
+              planetPoolError={planetPool.error}
               open={openGalaxyId === card.galaxy.id}
               onOpen={() => setOpenGalaxyId(openGalaxyId === card.galaxy.id ? null : card.galaxy.id)}
               onDelete={() => deleteGalaxy(card.galaxy.id)}
@@ -1108,7 +1622,7 @@ export function GalaxyGeneratorWorkflow() {
               onAddSystem={(sectorId) => generateSystemsForSector(card.galaxy.id, sectorId, true)}
               onDeleteSystem={(sectorId, systemId) => deleteSystem(card.galaxy.id, sectorId, systemId)}
               onGenerateBodies={(sectorId, systemId) => generateBodiesForSystem(card.galaxy.id, sectorId, systemId)}
-              onAddBody={(sectorId, systemId) => generateBodiesForSystem(card.galaxy.id, sectorId, systemId, true)}
+              onAddBody={(sectorId, systemId, planetIds) => addPlanetsToSystem(card.galaxy.id, sectorId, systemId, planetIds)}
               onDeleteBody={(sectorId, systemId, bodyId) => deleteBody(card.galaxy.id, sectorId, systemId, bodyId)}
               openSectorId={openSectorId}
               setOpenSectorId={setOpenSectorId}
@@ -1136,9 +1650,11 @@ export function SectorGeneratorWorkflow() {
   const [search, setSearch] = useState("");
   const universe = useMemo(() => generateUniverse(universeSeed), [universeSeed]);
   const galaxy = useMemo(() => generateGalaxy(universe.universe_seed, galaxyIndex), [galaxyIndex, universe.universe_seed]);
+  const planetPool = useGeneratedPlanetPool();
+  const assignedPlanetIds = useMemo(() => assignedPlanetIdsInSectors(cards), [cards]);
 
   function generateSectorCards() {
-    const next = generateSectors(galaxy, Math.max(1, count)).map((sector) => toSectorState(sector.is_fixed ? sector : applySectorBias(sector, sectorType, rarity)));
+    const next = generateSectors(galaxy, Math.max(1, count)).map((sector) => toSectorState(sector.is_fixed ? sector : applySectorBias(sector, sectorType, rarity), galaxy));
     setCards(next);
     setOpenSectorId(next[0]?.sector.id ?? null);
     setOpenSystemId(null);
@@ -1151,7 +1667,9 @@ export function SectorGeneratorWorkflow() {
   function generateSystems(sectorId: string, append = false) {
     updateSector(sectorId, (card) => {
       const startIndex = append ? card.systems.length : 0;
-      const generated = generateStarSystems(card.sector, Math.min(card.sector.system_count, startIndex + 6)).slice(startIndex, startIndex + 6).map(toSystemState);
+      const generated = generateStarSystems(card.sector, Math.min(card.sector.system_count, startIndex + 6))
+        .slice(startIndex, startIndex + 6)
+        .map((system) => toSystemState(system, galaxy, card.sector));
       return { ...card, systems: append ? [...card.systems, ...generated] : generated };
     });
   }
@@ -1164,6 +1682,17 @@ export function SectorGeneratorWorkflow() {
         const bodies = generateCelestialBodies(systemCard.system).filter((body) => body.celestial_body_type !== "Star");
         return { ...systemCard, bodies: append ? [...systemCard.bodies, ...bodies.slice(systemCard.bodies.length, systemCard.bodies.length + 1)] : bodies };
       })
+    }));
+  }
+
+  function addPlanets(sectorId: string, systemId: string, planetIds: string[]) {
+    updateSector(sectorId, (sectorCard) => ({
+      ...sectorCard,
+      systems: sectorCard.systems.map((systemCard) =>
+        systemCard.system.id === systemId
+          ? addGeneratedPlanetsToSystem(systemCard, { galaxy, sector: sectorCard.sector, system: systemCard.system }, planetPool.planets, planetIds)
+          : systemCard
+      )
     }));
   }
 
@@ -1205,6 +1734,11 @@ export function SectorGeneratorWorkflow() {
             <SectorCard
               key={card.sector.id}
               card={card}
+              galaxy={galaxy}
+              planetPool={planetPool.planets}
+              assignedPlanetIds={assignedPlanetIds}
+              planetPoolLoading={planetPool.loading}
+              planetPoolError={planetPool.error}
               open={openSectorId === card.sector.id}
               onOpen={() => setOpenSectorId(openSectorId === card.sector.id ? null : card.sector.id)}
               onDelete={() => {
@@ -1220,7 +1754,7 @@ export function SectorGeneratorWorkflow() {
                 updateSector(card.sector.id, (sectorCard) => ({ ...sectorCard, systems: sectorCard.systems.filter((item) => item.system.id !== systemId) }));
               }}
               onGenerateBodies={(systemId) => generateBodies(card.sector.id, systemId)}
-              onAddBody={(systemId) => generateBodies(card.sector.id, systemId, true)}
+              onAddBody={(systemId, planetIds) => addPlanets(card.sector.id, systemId, planetIds)}
               onDeleteBody={(systemId, bodyId) =>
                 updateSector(card.sector.id, (sectorCard) => ({
                   ...sectorCard,
@@ -1252,9 +1786,14 @@ export function StarSystemGeneratorWorkflow() {
   const universe = useMemo(() => generateUniverse(universeSeed), [universeSeed]);
   const galaxy = useMemo(() => generateGalaxy(universe.universe_seed, galaxyIndex), [galaxyIndex, universe.universe_seed]);
   const sector = useMemo(() => generateSectors(galaxy, Math.max(sectorIndex + 1, 1))[sectorIndex] ?? generateSectors(galaxy, 1)[0], [galaxy, sectorIndex]);
+  const planetPool = useGeneratedPlanetPool();
+  const assignedPlanetIds = useMemo(() => assignedPlanetIdsInSystems(cards), [cards]);
 
   function generateSystemCards() {
-    const next = generateStarSystems(sector, Math.max(1, count)).map((system) => toSystemState(system.is_fixed ? system : applySystemBias(system, rarity, starRule)));
+    const next = generateStarSystems(sector, Math.max(1, count)).map((system) => {
+      const biasedSystem = system.is_fixed ? system : applySystemBias(system, rarity, starRule);
+      return toSystemState(biasedSystem, galaxy, sector);
+    });
     setCards(next);
     setOpenSystemId(null);
   }
@@ -1268,6 +1807,10 @@ export function StarSystemGeneratorWorkflow() {
       const bodies = generateCelestialBodies(card.system).filter((body) => body.celestial_body_type !== "Star");
       return { ...card, bodies: append ? [...card.bodies, ...bodies.slice(card.bodies.length, card.bodies.length + 1)] : bodies };
     });
+  }
+
+  function addPlanets(systemId: string, planetIds: string[]) {
+    updateSystem(systemId, (card) => addGeneratedPlanetsToSystem(card, { galaxy, sector, system: card.system }, planetPool.planets, planetIds));
   }
 
   const visibleCards = cards.filter((card) => {
@@ -1330,6 +1873,11 @@ export function StarSystemGeneratorWorkflow() {
       {selectedSystem ? (
         <StarSystemDetailOverlay
           card={selectedSystem}
+          context={{ galaxy, sector, system: selectedSystem.system }}
+          planetPool={planetPool.planets}
+          assignedPlanetIds={assignedPlanetIds}
+          planetPoolLoading={planetPool.loading}
+          planetPoolError={planetPool.error}
           onClose={() => setOpenSystemId(null)}
           onDelete={() => {
             if (window.confirm(`Delete ${selectedSystem.system.system_name} and all generated planets/bodies inside it?`)) {
@@ -1338,7 +1886,7 @@ export function StarSystemGeneratorWorkflow() {
             }
           }}
           onGenerateBodies={() => generateBodies(selectedSystem.system.id)}
-          onAddBody={() => generateBodies(selectedSystem.system.id, true)}
+          onAddBody={(planetIds) => addPlanets(selectedSystem.system.id, planetIds)}
           onDeleteBody={(bodyId) => updateSystem(selectedSystem.system.id, (systemCard) => ({ ...systemCard, bodies: systemCard.bodies.filter((body) => body.id !== bodyId) }))}
         />
       ) : null}
