@@ -800,8 +800,7 @@ function SectorCard({
               onAddBody={() => onAddBody(selectedSystem.system.id)}
               onDeleteBody={(bodyId) => onDeleteBody(selectedSystem.system.id, bodyId)}
             />
-          ) : null}
-          {systems.length ? (
+          ) : systems.length ? (
             <div className="grid gap-4 xl:grid-cols-2">
               {systems.map((systemCard) => (
                 <StarSystemCard
@@ -1275,6 +1274,16 @@ export function StarSystemGeneratorWorkflow() {
         <Breadcrumbs items={["Universe", galaxy.name, sector.sector_name]} />
       </div>
 
+      <div className="relative">
+        <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-500" />
+        <input
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+          className="h-14 w-full rounded-md border border-cyan-300/15 bg-genesis-panel/90 pl-12 pr-4 text-sm font-semibold text-white outline-none placeholder:text-slate-600 focus:border-cyan-300/60"
+          placeholder={`Search star systems in ${sector.sector_name}`}
+        />
+      </div>
+
       {selectedSystem ? (
         <StarSystemDetailPanel
           card={selectedSystem}
@@ -1289,19 +1298,7 @@ export function StarSystemGeneratorWorkflow() {
           onAddBody={() => generateBodies(selectedSystem.system.id, true)}
           onDeleteBody={(bodyId) => updateSystem(selectedSystem.system.id, (systemCard) => ({ ...systemCard, bodies: systemCard.bodies.filter((body) => body.id !== bodyId) }))}
         />
-      ) : null}
-
-      <div className="relative">
-        <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-500" />
-        <input
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-          className="h-14 w-full rounded-md border border-cyan-300/15 bg-genesis-panel/90 pl-12 pr-4 text-sm font-semibold text-white outline-none placeholder:text-slate-600 focus:border-cyan-300/60"
-          placeholder={`Search star systems in ${sector.sector_name}`}
-        />
-      </div>
-
-      {visibleCards.length ? (
+      ) : visibleCards.length ? (
         <section className="grid gap-5 2xl:grid-cols-2">
           {visibleCards.map((card) => (
             <StarSystemCard
