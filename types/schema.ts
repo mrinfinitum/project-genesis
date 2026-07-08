@@ -251,9 +251,36 @@ export type StarSystemRecord = {
   danger_level: number;
   starting_system: boolean;
   is_procedural: boolean;
+  discovery_state: string;
+  detected_at: string | null;
+  probed_at: string | null;
+  scanned_at: string | null;
+  visited_at: string | null;
+  surveyed_at: string | null;
+  colonized_at: string | null;
+  estimated_planet_count_min: number | null;
+  estimated_planet_count_max: number | null;
+  estimated_celestial_body_count_min: number | null;
+  estimated_celestial_body_count_max: number | null;
+  estimated_danger_level: number | null;
+  known_star_signature: string | null;
+  probe_data: Record<string, unknown>;
+  scan_data: Record<string, unknown>;
   discovered: boolean;
   discovered_at: string | null;
   created_at: string;
+};
+
+export type SystemProbeRecord = {
+  id: string;
+  system_id: string;
+  probe_type: string;
+  launched_at: string | null;
+  arrival_at: string | null;
+  status: Status;
+  scan_quality: number;
+  revealed_data: Record<string, unknown>;
+  notes: string | null;
 };
 
 export type StarRecord = {
@@ -640,6 +667,9 @@ export type GameData = {
   planets: PlanetVariable[];
   planet_resource_profiles: PlanetResourceProfile[];
   resource_catalog: ResourceCatalogItem[];
+  star_systems: StarSystemRecord[];
+  celestial_bodies: CelestialBodyRecord[];
+  system_probes: SystemProbeRecord[];
   generated_planets: GeneratedPlanet[];
   planet_prompt_library: PlanetPromptLibraryRecord[];
   planet_render_library: PlanetRenderLibraryRecord[];
@@ -664,6 +694,9 @@ export type TableName =
   | "planets"
   | "planet_resource_profiles"
   | "resource_catalog"
+  | "star_systems"
+  | "celestial_bodies"
+  | "system_probes"
   | "generated_planets"
   | "planet_prompt_library"
   | "planet_render_library"

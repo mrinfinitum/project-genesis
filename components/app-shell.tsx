@@ -22,9 +22,11 @@ import {
   Landmark,
   LayoutDashboard,
   ListChecks,
+  Map,
   Network,
   Orbit,
   Palette,
+  Radar,
   Rocket,
   ScrollText,
   Settings,
@@ -83,7 +85,10 @@ const navigationGroups: NavigationGroup[] = [
     systemIds: ["planet-generation", "ancient-civilizations", "planet-traits", "anomalies", "hazards", "expeditions"],
     items: [
       { href: "/galaxy", label: "Galaxy", icon: Star },
-      { label: "Star Systems", icon: Orbit, future: true },
+      { href: "/sector-map", label: "Sector Map", icon: Map },
+      { href: "/star-systems", label: "Star Systems", icon: Orbit },
+      { href: "/star-system-map", label: "Star System Map", icon: Radar },
+      { href: "/celestial-bodies", label: "Celestial Bodies", icon: CircleDot },
       { href: "/planets", label: "Planets", icon: Orbit },
       { href: "/planet-generation", label: "Planet Generator", icon: Sparkles },
       { href: "/planetary-rules", label: "Generation Rules", icon: GitBranch }

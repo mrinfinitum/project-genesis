@@ -47,6 +47,9 @@ import type {
   ResearchBranch,
   ResearchNode,
   ResourceCatalogItem,
+  StarSystemRecord,
+  CelestialBodyRecord,
+  SystemProbeRecord,
   UnlockMatrixRow,
   Upgrade,
   Wonder
@@ -594,6 +597,9 @@ export const handoffDashboardMetrics: DashboardMetric[] = [
 
 export const handoffCodexTasks: CodexTask[] = [];
 export const handoffPlanetPromptLibrary: PlanetPromptLibraryRecord[] = [];
+export const handoffStarSystems: StarSystemRecord[] = [];
+export const handoffCelestialBodies: CelestialBodyRecord[] = [];
+export const handoffSystemProbes: SystemProbeRecord[] = [];
 
 export const handoffData: GameData = {
   research_branches: handoffResearchBranches,
@@ -612,6 +618,9 @@ export const handoffData: GameData = {
   planets: handoffPlanets,
   planet_resource_profiles: handoffPlanetResourceProfiles,
   resource_catalog: handoffResourceCatalog,
+  star_systems: handoffStarSystems,
+  celestial_bodies: handoffCelestialBodies,
+  system_probes: handoffSystemProbes,
   generated_planets: handoffGeneratedPlanets,
   planet_prompt_library: handoffPlanetPromptLibrary,
   planet_render_library: [],

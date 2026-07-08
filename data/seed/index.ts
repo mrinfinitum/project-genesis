@@ -29,6 +29,7 @@ import {
   handoffProjectSystems
 } from "@/data/handoff";
 import { planetSystemVariables } from "@/data/handoff/planet-system";
+import { generatedCelestialBodyRows, generatedStarSystemRows } from "@/lib/universe/fallback-data";
 
 export const civilizations = [
   "Eco-Green Utopia",
@@ -298,6 +299,9 @@ export const seedData: GameData = {
   planets,
   planet_resource_profiles: planetResourceProfiles,
   resource_catalog: resourceCatalog,
+  star_systems: generatedStarSystemRows(24),
+  celestial_bodies: generatedCelestialBodyRows(5),
+  system_probes: [],
   generated_planets: [],
   planet_prompt_library: [],
   planet_render_library: [],

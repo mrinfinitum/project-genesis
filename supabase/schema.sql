@@ -239,6 +239,21 @@ create table if not exists star_systems (
   danger_level integer not null default 0,
   starting_system boolean not null default false,
   is_procedural boolean not null default true,
+  discovery_state text not null default 'Undetected',
+  detected_at timestamptz,
+  probed_at timestamptz,
+  scanned_at timestamptz,
+  visited_at timestamptz,
+  surveyed_at timestamptz,
+  colonized_at timestamptz,
+  estimated_planet_count_min integer,
+  estimated_planet_count_max integer,
+  estimated_celestial_body_count_min integer,
+  estimated_celestial_body_count_max integer,
+  estimated_danger_level integer,
+  known_star_signature text,
+  probe_data jsonb not null default '{}'::jsonb,
+  scan_data jsonb not null default '{}'::jsonb,
   discovered boolean not null default false,
   discovered_at timestamptz,
   created_at timestamptz default now()
@@ -306,6 +321,18 @@ create table if not exists celestial_bodies (
   notes text,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
+);
+
+create table if not exists system_probes (
+  id text primary key,
+  system_id text references star_systems(id) on delete cascade,
+  probe_type text not null,
+  launched_at timestamptz,
+  arrival_at timestamptz,
+  status text not null default 'Planned',
+  scan_quality integer not null default 0,
+  revealed_data jsonb not null default '{}'::jsonb,
+  notes text
 );
 
 create table if not exists generated_planets (
@@ -760,6 +787,7 @@ create index if not exists sectors_discovery_level_idx on sectors(discovery_leve
 create index if not exists star_systems_sector_id_idx on star_systems(sector_id);
 create index if not exists star_systems_discovered_idx on star_systems(discovered);
 create index if not exists star_systems_starting_system_idx on star_systems(starting_system);
+create index if not exists star_systems_discovery_state_idx on star_systems(discovery_state);
 create index if not exists stars_system_id_idx on stars(system_id);
 create index if not exists universe_planets_system_id_idx on universe_planets(system_id);
 create index if not exists universe_planets_discovered_idx on universe_planets(discovered);
@@ -768,6 +796,8 @@ create index if not exists celestial_bodies_system_id_idx on celestial_bodies(sy
 create index if not exists celestial_bodies_parent_body_id_idx on celestial_bodies(parent_body_id);
 create index if not exists celestial_bodies_type_idx on celestial_bodies(celestial_body_type);
 create index if not exists celestial_bodies_fixed_idx on celestial_bodies(is_fixed);
+create index if not exists system_probes_system_id_idx on system_probes(system_id);
+create index if not exists system_probes_status_idx on system_probes(status);
 create index if not exists planets_category_idx on planets(category);
 create index if not exists planets_status_idx on planets(status);
 create index if not exists generated_planets_created_at_idx on generated_planets(created_at desc);

@@ -59,9 +59,26 @@ export type StarSystemNode = {
   danger_level: number;
   starting_system: boolean;
   is_procedural: boolean;
+  discovery_state: DiscoveryState;
+  detected_at: string | null;
+  probed_at: string | null;
+  scanned_at: string | null;
+  visited_at: string | null;
+  surveyed_at: string | null;
+  colonized_at: string | null;
+  estimated_planet_count_min: number | null;
+  estimated_planet_count_max: number | null;
+  estimated_celestial_body_count_min: number | null;
+  estimated_celestial_body_count_max: number | null;
+  estimated_danger_level: number | null;
+  known_star_signature: string | null;
+  probe_data: Record<string, unknown>;
+  scan_data: Record<string, unknown>;
   discovered: boolean;
   discovered_at: string | null;
 };
+
+export type DiscoveryState = "Undetected" | "Detected" | "Probed" | "Scanned" | "Visited" | "Surveyed" | "Colonized";
 
 export type StarNode = {
   id: string;
@@ -202,6 +219,7 @@ const starSizes = ["Dwarf", "Standard", "Large", "Giant", "Supergiant", "Collaps
 const starColors = ["Red", "Orange", "Yellow", "White", "Blue", "Violet", "Cyan"];
 const namePrefixes = ["Astra", "Nova", "Vega", "Orion", "Elios", "Kyra", "Vanta", "Lyra", "Solan", "Iris", "Nexa", "Verd"];
 const nameSuffixes = ["Prime", "Reach", "Veil", "Fall", "Thia", "Ara", "Ion", "Mere", "Os", "Dor"];
+export const DISCOVERY_STATES: DiscoveryState[] = ["Undetected", "Detected", "Probed", "Scanned", "Visited", "Surveyed", "Colonized"];
 
 const SOL_GALAXY_ID = "galaxy-milky-way";
 const SOL_SECTOR_ID = "sector-local-bubble";
@@ -698,6 +716,34 @@ function generatedName(seed: string, kind: string) {
   return `${pick(namePrefixes, random, "Astra")} ${pick(nameSuffixes, random, "Prime")}-${String(hashSeed(seed) % 997).padStart(3, "0")}`;
 }
 
+function discoveryStateForSystem(sector: SectorNode, systemIndex: number): DiscoveryState {
+  if (sector.id === SOL_SECTOR_ID && systemIndex === 0) return "Colonized";
+  if (!sector.discovered && sector.discovery_level === "Unknown") return "Undetected";
+  if (systemIndex === 1) return "Visited";
+  if (systemIndex === 2) return "Scanned";
+  if (systemIndex === 3) return "Probed";
+  if (systemIndex >= 4 && systemIndex <= 7) return "Detected";
+  return "Undetected";
+}
+
+function discoveryTimestamps(state: DiscoveryState) {
+  const detected = state !== "Undetected";
+  const probed = ["Probed", "Scanned", "Visited", "Surveyed", "Colonized"].includes(state);
+  const scanned = ["Scanned", "Visited", "Surveyed", "Colonized"].includes(state);
+  const visited = ["Visited", "Surveyed", "Colonized"].includes(state);
+  const surveyed = ["Surveyed", "Colonized"].includes(state);
+  const colonized = state === "Colonized";
+
+  return {
+    detected_at: detected ? "derived" : null,
+    probed_at: probed ? "derived" : null,
+    scanned_at: scanned ? "derived" : null,
+    visited_at: visited ? "derived" : null,
+    surveyed_at: surveyed ? "derived" : null,
+    colonized_at: colonized ? "derived" : null
+  };
+}
+
 export function generateUniverse(universeSeed: string, name = "Genesis Universe"): UniverseNode {
   const seed = universeSeed.trim() || "PROJECT-GENESIS-UNIVERSE";
 
@@ -838,6 +884,22 @@ export function generateStarSystem(sector: SectorNode, systemIndex: number): Sta
       danger_level: 8,
       starting_system: true,
       is_procedural: false,
+      discovery_state: "Colonized",
+      ...discoveryTimestamps("Colonized"),
+      estimated_planet_count_min: 15,
+      estimated_planet_count_max: 15,
+      estimated_celestial_body_count_min: 16,
+      estimated_celestial_body_count_max: 16,
+      estimated_danger_level: 8,
+      known_star_signature: "Yellow Main Sequence",
+      probe_data: {
+        interaction: "Starting system",
+        status: "Fully known"
+      },
+      scan_data: {
+        celestial_bodies: SOL_CELESTIAL_BODIES.length,
+        handcrafted: true
+      },
       discovered: true,
       discovered_at: "derived"
     };
@@ -847,6 +909,11 @@ export function generateStarSystem(sector: SectorNode, systemIndex: number): Sta
   const random = seededRandom(systemSeed);
   const rarity = pick(systemRarities, random, "Common");
   const starType = pick(starTypes, seededRandom(deriveSeed(systemSeed, "primary-star")), "Yellow Main Sequence");
+  const planetCount = numericRange(random, 1, rarity === "Common" ? 6 : 12);
+  const dangerLevel = numericRange(random, 1, rarity === "Common" ? 45 : 100);
+  const discoveryState = discoveryStateForSystem(sector, systemIndex);
+  const estimatedPlanetMin = Math.max(1, planetCount - numericRange(random, 1, 3));
+  const estimatedPlanetMax = planetCount + numericRange(random, 1, 4);
 
   return {
     id: `system-${systemIndex}-${hashSeed(systemSeed).toString(16)}`,
@@ -859,15 +926,31 @@ export function generateStarSystem(sector: SectorNode, systemIndex: number): Sta
     generation_type: "Procedural",
     system_rarity: rarity,
     star_count: numericRange(random, rarity === "Legendary" ? 2 : 1, rarity === "Common" ? 1 : 3),
-    planet_count: numericRange(random, 1, rarity === "Common" ? 6 : 12),
+    planet_count: planetCount,
     primary_star: "Procedural Primary",
     star_type: starType,
     resource_bias: pick(resourceBiases, random, "Balanced"),
-    danger_level: numericRange(random, 1, rarity === "Common" ? 45 : 100),
+    danger_level: dangerLevel,
     starting_system: false,
     is_procedural: true,
-    discovered: false,
-    discovered_at: null
+    discovery_state: discoveryState,
+    ...discoveryTimestamps(discoveryState),
+    estimated_planet_count_min: estimatedPlanetMin,
+    estimated_planet_count_max: estimatedPlanetMax,
+    estimated_celestial_body_count_min: estimatedPlanetMin + 1,
+    estimated_celestial_body_count_max: estimatedPlanetMax + 2,
+    estimated_danger_level: Math.max(1, Math.min(100, dangerLevel + numericRange(random, -10, 10))),
+    known_star_signature: discoveryState === "Detected" ? "Unknown stellar signal" : starType,
+    probe_data: {
+      probe_accuracy: discoveryState === "Probed" ? "Low" : ["Scanned", "Visited", "Surveyed", "Colonized"].includes(discoveryState) ? "Moderate" : "None",
+      estimated_bodies: `${estimatedPlanetMin + 1}-${estimatedPlanetMax + 2}`
+    },
+    scan_data: {
+      system_rarity: ["Scanned", "Visited", "Surveyed", "Colonized"].includes(discoveryState) ? rarity : null,
+      resource_bias: ["Visited", "Surveyed", "Colonized"].includes(discoveryState) ? "Known after visit" : null
+    },
+    discovered: discoveryState !== "Undetected",
+    discovered_at: discoveryState !== "Undetected" ? "derived" : null
   };
 }
 

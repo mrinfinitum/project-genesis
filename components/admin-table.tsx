@@ -395,7 +395,7 @@ export function AdminTable({ config, initialRows }: { config: TableConfig; initi
     <div className="space-y-5">
       <section className="flex flex-col justify-between gap-4 xl:flex-row xl:items-end">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">Content Table</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">Studio Library</p>
           <h2 className="mt-2 text-3xl font-bold text-white">{config.title}</h2>
           <p className="mt-2 max-w-3xl text-sm text-slate-300">{config.description}</p>
         </div>
