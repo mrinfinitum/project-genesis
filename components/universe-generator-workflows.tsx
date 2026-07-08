@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ChevronRight, CirclePlus, Eye, Orbit, Plus, Search, Sparkles, Star, Trash2, Waypoints } from "lucide-react";
+import { ChevronRight, CirclePlus, Eye, Orbit, Plus, Search, Sparkles, Star, Trash2, Waypoints, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DEFAULT_UNIVERSE_SEED } from "@/lib/universe/fallback-data";
 import {
@@ -282,6 +282,190 @@ function EmptyState({ children }: { children: React.ReactNode }) {
   return <div className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-6 text-sm font-semibold text-slate-400">{children}</div>;
 }
 
+function hashText(value: string) {
+  let hash = 2166136261;
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+}
+
+function seededRange(seed: string, key: string, min: number, max: number) {
+  return min + (hashText(`${seed}:${key}`) % (max - min + 1));
+}
+
+function uniqueValues(values: Array<string | null | undefined>) {
+  return [...new Set(values.map((value) => value?.trim()).filter(Boolean) as string[])];
+}
+
+function starColor(system: StarSystemNode) {
+  const signature = `${system.primary_star} ${system.star_type}`.toLowerCase();
+  if (signature.includes("red")) return "Red";
+  if (signature.includes("blue")) return "Blue";
+  if (signature.includes("white")) return "White";
+  if (signature.includes("black")) return "Violet";
+  if (signature.includes("neutron")) return "Electric Blue";
+  if (signature.includes("orange")) return "Orange";
+  return "Yellow";
+}
+
+function starStability(system: StarSystemNode) {
+  if (system.danger_level >= 85) return "Critical";
+  if (system.danger_level >= 65) return "Unstable";
+  if (system.danger_level >= 40) return "Variable";
+  return "Stable";
+}
+
+function radiationLevel(system: StarSystemNode) {
+  const signature = `${system.primary_star} ${system.star_type}`.toLowerCase();
+  if (signature.includes("black") || signature.includes("neutron") || signature.includes("blue")) return "Extreme";
+  if (system.danger_level >= 70) return "High";
+  if (signature.includes("red") || system.danger_level < 35) return "Low";
+  return "Moderate";
+}
+
+function systemStats(card: StarSystemCardState) {
+  const { system, bodies } = card;
+  const nonStarBodies = bodies.filter((body) => body.celestial_body_type !== "Star");
+  const planets = nonStarBodies.filter((body) => body.celestial_body_type === "Planet");
+  const moons = nonStarBodies.filter((body) => body.celestial_body_type === "Moon");
+  const belts = nonStarBodies.filter((body) => body.celestial_body_type === "Asteroid Belt");
+  const gasGiants = nonStarBodies.filter((body) => body.planet_class === "Gas Giant");
+  const iceWorlds = nonStarBodies.filter((body) => body.planet_class === "Ice" || body.biome === "Ice");
+  const habitablePlanets = nonStarBodies.filter((body) => body.landable && body.colonizable);
+  const colonizedWorlds = nonStarBodies.filter((body) => body.colonizable_status === "Colonized" || body.is_starting_body);
+  const stationLike = nonStarBodies.filter((body) => /station|outpost|depot|platform/i.test(`${body.celestial_body_type} ${body.name}`));
+  const anomalyLike = nonStarBodies.filter((body) => /anomaly|rift|signal|relic|void/i.test(`${body.name} ${body.notes}`));
+  const derivedBelts = belts.length || (system.resource_bias.toLowerCase().includes("mineral") ? 1 : 0);
+  const habitableZone = system.starting_system ? "Stable" : system.danger_level < 45 ? "Likely" : system.danger_level < 75 ? "Unstable" : "Hostile";
+  const colonizationStatus = system.colonized_at || colonizedWorlds.length ? "Colonized" : system.visited_at ? "Visited" : system.surveyed_at ? "Surveyed" : "Unclaimed";
+  const discoveryStatus = system.discovery_state || (system.discovered ? "Discovered" : "Undetected");
+
+  return {
+    nonStarBodies,
+    planets,
+    moons,
+    belts,
+    gasGiants,
+    iceWorlds,
+    habitablePlanets,
+    colonizedWorlds,
+    stationLike,
+    anomalyLike,
+    planetCount: planets.length || system.planet_count,
+    moonCount: moons.length,
+    beltCount: derivedBelts,
+    habitableZone,
+    colonizationStatus,
+    discoveryStatus,
+    starColor: starColor(system),
+    stability: starStability(system),
+    radiation: radiationLevel(system),
+    starAge: `${(seededRange(system.system_seed, "age", 80, 980) / 100).toFixed(1)} billion years`,
+    starMass: `${(seededRange(system.system_seed, "mass", 65, 245) / 100).toFixed(2)} solar masses`,
+    starRadius: `${(seededRange(system.system_seed, "radius", 55, 330) / 100).toFixed(2)} solar radii`,
+    temperature: `${formatNumber(seededRange(system.system_seed, "temperature", 2800, 11200))} K`,
+    luminosity: `${(seededRange(system.system_seed, "luminosity", 15, 620) / 100).toFixed(2)} L`,
+    resourceValue: system.system_rarity === "Common" ? system.resource_bias : `${system.system_rarity} ${system.resource_bias}`
+  };
+}
+
+function inferredResources(card: StarSystemCardState) {
+  return uniqueValues([...card.bodies.flatMap((body) => body.resources), card.system.resource_bias, "Fusion Fuel", "Survey Data"]).slice(0, 10);
+}
+
+function inferredHazards(card: StarSystemCardState) {
+  const values = ["Radiation Belts"];
+  if (card.system.danger_level >= 70) values.push("High Gravity Stress", "Unstable Orbits");
+  if (card.system.danger_level >= 45) values.push("Solar Storms");
+  card.bodies.forEach((body) => {
+    if (body.planet_class === "Gas Giant") values.push("Atmospheric Turbulence");
+    if (body.planet_class === "Lava") values.push("Extreme Heat");
+    if (body.planet_class === "Void") values.push("Void Distortion");
+  });
+  return uniqueValues(values).slice(0, 8);
+}
+
+function inferredTraits(card: StarSystemCardState) {
+  const stats = systemStats(card);
+  return uniqueValues([
+    card.system.system_role,
+    `${stats.stability} Star`,
+    `${stats.habitableZone} Habitable Zone`,
+    stats.gasGiants.length ? "Orbital Resource Worlds" : null,
+    stats.habitablePlanets.length ? "Colonization Candidates" : null
+  ]).slice(0, 8);
+}
+
+function inferredAnomalies(card: StarSystemCardState) {
+  const stats = systemStats(card);
+  return uniqueValues([
+    ...stats.anomalyLike.map((body) => body.name),
+    card.system.danger_level >= 80 ? "Deep Space Distortion" : null,
+    card.system.system_rarity === "Relic" || card.system.system_rarity === "Genesis" ? "Ancient Signal" : null
+  ]).slice(0, 8);
+}
+
+function inferredModifiers(card: StarSystemCardState) {
+  const stats = systemStats(card);
+  return uniqueValues([
+    `${card.system.resource_bias} Bias`,
+    `${stats.radiation} Radiation`,
+    stats.habitablePlanets.length ? "Colony Opportunity" : null,
+    stats.beltCount ? "Mining Corridor" : null
+  ]).slice(0, 8);
+}
+
+function inferredEvents(card: StarSystemCardState) {
+  return uniqueValues([
+    card.system.starting_system ? "Starting System Established" : "Long Range Survey",
+    card.system.danger_level >= 70 ? "Hazard Alert" : "Routine Survey",
+    card.system.discovery_state === "Colonized" ? "Colonial Logistics" : null
+  ]).slice(0, 8);
+}
+
+function inferredCollectibles(card: StarSystemCardState) {
+  const rareBodies = card.bodies.filter((body) => ["Rare", "Epic", "Legendary", "Mythic", "Relic", "Genesis"].includes(body.planet_rarity ?? ""));
+  return uniqueValues([
+    rareBodies.length ? "Rare Survey Cache" : "Survey Fragments",
+    "Stellar Cartography",
+    card.system.system_rarity === "Genesis" ? "Genesis Archive" : null,
+    card.system.system_rarity === "Relic" ? "Relic Beacon" : null
+  ]).slice(0, 8);
+}
+
+function DetailSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-4">
+      <h4 className="text-xs font-black uppercase tracking-[0.22em] text-cyan-300">{title}</h4>
+      <div className="mt-3">{children}</div>
+    </section>
+  );
+}
+
+function ChipList({ values }: { values: string[] }) {
+  if (!values.length) return <p className="text-sm font-semibold text-slate-500">None detected.</p>;
+  return (
+    <div className="flex flex-wrap gap-2">
+      {values.map((value) => (
+        <span key={value} className="rounded-md border border-slate-500/60 bg-slate-900/70 px-2.5 py-1 text-xs font-semibold text-slate-200">
+          {value}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function systemDescription(card: StarSystemCardState) {
+  const { system } = card;
+  const stats = systemStats(card);
+  const density = stats.planetCount >= 9 ? "high planet density" : stats.planetCount >= 5 ? "balanced planet density" : "sparse planet density";
+  const risk = system.danger_level >= 70 ? "high exploration risk" : system.danger_level >= 40 ? "moderate exploration risk" : "low exploration risk";
+  const outerBodies = stats.gasGiants.length || stats.beltCount ? "outer bodies contain orbital resource targets and possible anomalies" : "outer orbits are still awaiting survey resolution";
+  return `${system.system_name} is a ${system.star_type.toLowerCase()} system with a ${stats.habitableZone.toLowerCase()} habitable zone, ${density}, and ${risk}. Its resource profile leans toward ${system.resource_bias.toLowerCase()}, while ${outerBodies}.`;
+}
+
 function BodyCard({ body, onDelete }: { body: BodyCardState; onDelete: () => void }) {
   return (
     <article className="relative overflow-hidden rounded-md border border-cyan-300/15 bg-genesis-panel/95">
@@ -312,32 +496,19 @@ function BodyCard({ body, onDelete }: { body: BodyCardState; onDelete: () => voi
 
 function StarSystemCard({
   card,
-  open,
   onOpen,
-  onGenerateBodies,
-  onAddBody,
-  onDelete,
-  onDeleteBody
+  onDelete
 }: {
   card: StarSystemCardState;
-  open: boolean;
   onOpen: () => void;
-  onGenerateBodies: () => void;
-  onAddBody: () => void;
   onDelete: () => void;
-  onDeleteBody: (bodyId: string) => void;
 }) {
   const { system, bodies } = card;
-  const nonStarBodies = bodies.filter((body) => body.celestial_body_type !== "Star");
-  const planetCount = nonStarBodies.filter((body) => body.celestial_body_type === "Planet").length;
-  const beltCount = nonStarBodies.filter((body) => body.celestial_body_type === "Asteroid Belt").length;
-  const gasGiants = nonStarBodies.filter((body) => body.planet_class === "Gas Giant").length;
-  const habitableZone = system.starting_system ? "Known" : system.danger_level < 45 ? "Likely" : system.danger_level < 75 ? "Unstable" : "Hostile";
-  const resourceValue = system.system_rarity === "Common" ? "Standard" : system.resource_bias;
+  const stats = systemStats(card);
 
   return (
     <article
-      className={cn("relative cursor-pointer overflow-hidden rounded-md border bg-genesis-panel/95 transition hover:border-cyan-300/55 hover:shadow-[0_0_28px_rgba(34,211,238,0.12)]", open ? "border-cyan-300/65" : "border-cyan-400/15")}
+      className="relative cursor-pointer overflow-hidden rounded-md border border-cyan-400/15 bg-genesis-panel/95 transition hover:border-cyan-300/55 hover:shadow-[0_0_28px_rgba(34,211,238,0.12)]"
       onClick={onOpen}
     >
       <DeleteButton label={system.system_name} onDelete={onDelete} />
@@ -355,44 +526,187 @@ function StarSystemCard({
         </div>
         <div className="grid grid-cols-2 gap-2 xl:grid-cols-3">
           <StatChip label="Star Class" value={system.star_type} />
-          <StatChip label="Planets" value={planetCount || system.planet_count} />
-          <StatChip label="Belts" value={beltCount} />
-          <StatChip label="Habitable Zone" value={habitableZone} />
+          <StatChip label="Planets" value={stats.planetCount} />
+          <StatChip label="Belts" value={stats.beltCount} />
+          <StatChip label="Habitable Zone" value={stats.habitableZone} />
           <StatChip label="Danger" value={system.danger_level} tone={system.danger_level > 70 ? "text-red-200" : "text-slate-100"} />
-          <StatChip label="Resource Value" value={resourceValue} />
+          <StatChip label="Resource Value" value={stats.resourceValue} />
         </div>
         <div className="flex items-center gap-2 text-sm font-semibold text-cyan-100">
           <Eye className="h-4 w-4" />
           Open / View System
         </div>
       </div>
-      {open ? (
-        <div className="space-y-4 border-t border-cyan-300/15 p-5" onClick={(event) => event.stopPropagation()}>
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <Breadcrumbs items={["Sector", system.system_name, "Celestial Bodies"]} />
-            <div className="flex flex-wrap gap-2">
-              <Button type="button" onClick={onGenerateBodies}>
-                <Sparkles className="h-4 w-4" />
-                Generate Planets
-              </Button>
-              <Button type="button" onClick={onAddBody} className="border-slate-600 bg-slate-900/70 text-slate-100">
-                <CirclePlus className="h-4 w-4" />
-                Add Planet
-              </Button>
+    </article>
+  );
+}
+
+function StarSystemDetailPanel({
+  card,
+  onClose,
+  onDelete,
+  onGenerateBodies,
+  onAddBody,
+  onDeleteBody
+}: {
+  card: StarSystemCardState;
+  onClose: () => void;
+  onDelete: () => void;
+  onGenerateBodies: () => void;
+  onAddBody: () => void;
+  onDeleteBody: (bodyId: string) => void;
+}) {
+  const { system } = card;
+  const stats = systemStats(card);
+  const composition = [
+    { label: "Inner Planets", value: Math.min(stats.planetCount, 4) },
+    { label: "Habitable Planets", value: stats.habitablePlanets.length },
+    { label: "Gas Giants", value: stats.gasGiants.length },
+    { label: "Ice Worlds", value: stats.iceWorlds.length },
+    { label: "Asteroid Belts", value: stats.beltCount },
+    { label: "Anomalies", value: stats.anomalyLike.length },
+    { label: "Stations / Outposts", value: stats.stationLike.length },
+    { label: "Colonized Worlds", value: stats.colonizedWorlds.length }
+  ];
+
+  return (
+    <article className="overflow-hidden rounded-md border border-cyan-300/20 bg-genesis-panel/95 shadow-[0_0_50px_rgba(8,145,178,0.08)]">
+      <header className="flex flex-col gap-5 border-b border-cyan-300/15 p-6 lg:flex-row lg:items-start lg:justify-between">
+        <div className="space-y-4">
+          <div className="flex flex-wrap gap-2">
+            <Badge className="border-cyan-300/35 text-cyan-100">{system.system_type}</Badge>
+            <Badge className={rarityClasses[system.system_rarity] ?? "border-cyan-300/25 text-cyan-100"}>{system.system_rarity}</Badge>
+            {system.starting_system ? <Badge className="border-emerald-300/45 text-emerald-100">Starting</Badge> : null}
+            {system.colonized_at || stats.colonizedWorlds.length ? <Badge className="border-emerald-300/45 text-emerald-100">Colonized</Badge> : null}
+            {system.discovered || system.discovery_state !== "Undetected" ? <Badge className="border-cyan-300/45 text-cyan-100">Discovered</Badge> : null}
+          </div>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">{system.star_type}</p>
+            <h2 className="mt-2 text-4xl font-black text-white">{system.system_name}</h2>
+            <p className="mt-2 font-mono text-sm text-slate-500">{system.catalog_designation}</p>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={onClose}
+            className="grid h-11 w-11 place-items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 text-cyan-100 transition hover:border-cyan-200/60 hover:bg-cyan-300/20"
+            aria-label="Close star system detail"
+          >
+            <X className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            onClick={onDelete}
+            className="grid h-11 w-11 place-items-center rounded-md border border-red-300/25 bg-red-500/10 text-red-100 transition hover:border-red-200/60 hover:bg-red-500/20"
+            aria-label={`Delete ${system.system_name}`}
+          >
+            <Trash2 className="h-5 w-5" />
+          </button>
+        </div>
+      </header>
+
+      <div className="grid gap-6 p-6 xl:grid-cols-[minmax(0,1.1fr)_minmax(24rem,0.9fr)]">
+        <div className="space-y-5">
+          <div className={cn("relative min-h-[28rem] overflow-hidden rounded-md border border-cyan-300/10 bg-gradient-to-br", systemVisual(system))}>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_42%_44%,rgba(255,255,255,0.24),transparent_7%),radial-gradient(circle_at_50%_52%,rgba(34,211,238,0.25),transparent_16%),radial-gradient(circle_at_50%_52%,rgba(15,23,42,0.75),transparent_34%),linear-gradient(120deg,rgba(8,13,28,0),rgba(8,13,28,0.75))]" />
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.07)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.06)_1px,transparent_1px)] bg-[size:42px_42px] opacity-40" />
+            <div className="absolute left-1/2 top-1/2 grid h-40 w-40 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-cyan-200/25 bg-black/45 shadow-[0_0_80px_rgba(34,211,238,0.22)]">
+              <Star className="h-20 w-20 text-cyan-100/85" />
+            </div>
+            <div className="absolute bottom-5 left-5 rounded-md border border-cyan-300/20 bg-black/45 px-4 py-3 backdrop-blur">
+              <p className="text-xs font-black uppercase tracking-[0.22em] text-cyan-200">System Render Placeholder</p>
+              <p className="mt-1 text-sm font-semibold text-slate-300">Seeded visual awaiting final artwork.</p>
             </div>
           </div>
-          {nonStarBodies.length ? (
-            <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
-              {nonStarBodies.map((body) => (
-                <BodyCard key={body.id} body={body} onDelete={() => onDeleteBody(body.id)} />
+
+          <div className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-5">
+            <p className="text-base font-semibold leading-8 text-slate-200">{systemDescription(card)}</p>
+          </div>
+
+          <DetailSection title="Star System Specs">
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              <StatChip label="Star Class" value={system.star_type} />
+              <StatChip label="Star Color" value={stats.starColor} />
+              <StatChip label="Star Age" value={stats.starAge} />
+              <StatChip label="Star Mass" value={stats.starMass} />
+              <StatChip label="Star Radius" value={stats.starRadius} />
+              <StatChip label="Temperature" value={stats.temperature} />
+              <StatChip label="Luminosity" value={stats.luminosity} />
+              <StatChip label="Stability" value={stats.stability} />
+              <StatChip label="Radiation Level" value={stats.radiation} />
+              <StatChip label="Habitable Zone" value={stats.habitableZone} />
+              <StatChip label="Planet Count" value={stats.planetCount} />
+              <StatChip label="Moon Count" value={stats.moonCount} />
+              <StatChip label="Asteroid Belts" value={stats.beltCount} />
+              <StatChip label="Resource Value" value={stats.resourceValue} />
+              <StatChip label="Danger Level" value={system.danger_level} tone={system.danger_level > 70 ? "text-red-200" : "text-slate-100"} />
+              <StatChip label="Discovery Status" value={stats.discoveryStatus} />
+              <StatChip label="Colonization Status" value={stats.colonizationStatus} />
+            </div>
+          </DetailSection>
+
+          <DetailSection title="System Composition">
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              {composition.map((item) => (
+                <StatChip key={item.label} label={item.label} value={item.value} />
               ))}
             </div>
-          ) : (
-            <EmptyState>No planets yet. Generate planets to populate this star system.</EmptyState>
-          )}
-          {gasGiants ? <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-200">{gasGiants} orbital resource worlds detected.</p> : null}
+          </DetailSection>
         </div>
-      ) : null}
+
+        <div className="space-y-5">
+          <DetailSection title="Resources">
+            <ChipList values={inferredResources(card)} />
+          </DetailSection>
+          <DetailSection title="Hazards">
+            <ChipList values={inferredHazards(card)} />
+          </DetailSection>
+          <DetailSection title="Traits">
+            <ChipList values={inferredTraits(card)} />
+          </DetailSection>
+          <DetailSection title="Anomalies">
+            <ChipList values={inferredAnomalies(card)} />
+          </DetailSection>
+          <DetailSection title="Modifiers">
+            <ChipList values={inferredModifiers(card)} />
+          </DetailSection>
+          <DetailSection title="Events">
+            <ChipList values={inferredEvents(card)} />
+          </DetailSection>
+          <DetailSection title="Collectibles">
+            <ChipList values={inferredCollectibles(card)} />
+          </DetailSection>
+        </div>
+      </div>
+
+      <section className="space-y-4 border-t border-cyan-300/15 p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h3 className="text-2xl font-black text-white">Celestial Bodies</h3>
+            <p className="mt-1 text-sm font-semibold text-slate-400">Planets, moons, asteroid belts, stations, and anomalies generated inside this star system.</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" onClick={onGenerateBodies}>
+              <Sparkles className="h-4 w-4" />
+              Generate Planets
+            </Button>
+            <Button type="button" onClick={onAddBody} className="border-slate-600 bg-slate-900/70 text-slate-100">
+              <CirclePlus className="h-4 w-4" />
+              Add Planet
+            </Button>
+          </div>
+        </div>
+        {stats.nonStarBodies.length ? (
+          <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
+            {stats.nonStarBodies.map((body) => (
+              <BodyCard key={body.id} body={body} onDelete={() => onDeleteBody(body.id)} />
+            ))}
+          </div>
+        ) : (
+          <EmptyState>No planets yet. Generate planets to populate this star system.</EmptyState>
+        )}
+      </section>
     </article>
   );
 }
@@ -426,6 +740,7 @@ function SectorCard({
 }) {
   const { sector, systems } = card;
   const discoveryState = sector.discovered ? "Discovered" : sector.discovery_level;
+  const selectedSystem = systems.find((systemCard) => systemCard.system.id === openSystemId);
 
   return (
     <article
@@ -473,18 +788,27 @@ function SectorCard({
               </Button>
             </div>
           </div>
+          {selectedSystem ? (
+            <StarSystemDetailPanel
+              card={selectedSystem}
+              onClose={() => setOpenSystemId(null)}
+              onDelete={() => {
+                onDeleteSystem(selectedSystem.system.id);
+                setOpenSystemId(null);
+              }}
+              onGenerateBodies={() => onGenerateBodies(selectedSystem.system.id)}
+              onAddBody={() => onAddBody(selectedSystem.system.id)}
+              onDeleteBody={(bodyId) => onDeleteBody(selectedSystem.system.id, bodyId)}
+            />
+          ) : null}
           {systems.length ? (
             <div className="grid gap-4 xl:grid-cols-2">
               {systems.map((systemCard) => (
                 <StarSystemCard
                   key={systemCard.system.id}
                   card={systemCard}
-                  open={openSystemId === systemCard.system.id}
-                  onOpen={() => setOpenSystemId(openSystemId === systemCard.system.id ? null : systemCard.system.id)}
+                  onOpen={() => setOpenSystemId(systemCard.system.id)}
                   onDelete={() => onDeleteSystem(systemCard.system.id)}
-                  onGenerateBodies={() => onGenerateBodies(systemCard.system.id)}
-                  onAddBody={() => onAddBody(systemCard.system.id)}
-                  onDeleteBody={(bodyId) => onDeleteBody(systemCard.system.id, bodyId)}
                 />
               ))}
             </div>
@@ -900,7 +1224,7 @@ export function StarSystemGeneratorWorkflow() {
   const [rarity, setRarity] = useState("Any");
   const [starRule, setStarRule] = useState("Generated");
   const [cards, setCards] = useState<StarSystemCardState[]>(() => defaultSystemCards(DEFAULT_UNIVERSE_SEED, 0, 0));
-  const [openSystemId, setOpenSystemId] = useState<string | null>(() => defaultSystemCards(DEFAULT_UNIVERSE_SEED, 0, 0)[0]?.system.id ?? null);
+  const [openSystemId, setOpenSystemId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const universe = useMemo(() => generateUniverse(universeSeed), [universeSeed]);
   const galaxy = useMemo(() => generateGalaxy(universe.universe_seed, galaxyIndex), [galaxyIndex, universe.universe_seed]);
@@ -909,7 +1233,7 @@ export function StarSystemGeneratorWorkflow() {
   function generateSystemCards() {
     const next = generateStarSystems(sector, Math.max(1, count)).map((system) => toSystemState(system.is_fixed ? system : applySystemBias(system, rarity, starRule)));
     setCards(next);
-    setOpenSystemId(next[0]?.system.id ?? null);
+    setOpenSystemId(null);
   }
 
   function updateSystem(systemId: string, updater: (card: StarSystemCardState) => StarSystemCardState) {
@@ -928,6 +1252,7 @@ export function StarSystemGeneratorWorkflow() {
     if (!query) return true;
     return [card.system.system_name, card.system.catalog_designation, card.system.system_rarity, card.system.star_type, card.system.resource_bias].some((value) => value.toLowerCase().includes(query));
   });
+  const selectedSystem = cards.find((card) => card.system.id === openSystemId);
 
   return (
     <GeneratorShell eyebrow="Universe Workflow" title="Star System Generator" description="Generate collectible star-system cards, then open them to populate planets, moons, belts, and orbital worlds.">
@@ -950,6 +1275,22 @@ export function StarSystemGeneratorWorkflow() {
         <Breadcrumbs items={["Universe", galaxy.name, sector.sector_name]} />
       </div>
 
+      {selectedSystem ? (
+        <StarSystemDetailPanel
+          card={selectedSystem}
+          onClose={() => setOpenSystemId(null)}
+          onDelete={() => {
+            if (window.confirm(`Delete ${selectedSystem.system.system_name} and all generated planets/bodies inside it?`)) {
+              setCards((current) => current.filter((item) => item.system.id !== selectedSystem.system.id));
+              setOpenSystemId(null);
+            }
+          }}
+          onGenerateBodies={() => generateBodies(selectedSystem.system.id)}
+          onAddBody={() => generateBodies(selectedSystem.system.id, true)}
+          onDeleteBody={(bodyId) => updateSystem(selectedSystem.system.id, (systemCard) => ({ ...systemCard, bodies: systemCard.bodies.filter((body) => body.id !== bodyId) }))}
+        />
+      ) : null}
+
       <div className="relative">
         <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-500" />
         <input
@@ -966,16 +1307,13 @@ export function StarSystemGeneratorWorkflow() {
             <StarSystemCard
               key={card.system.id}
               card={card}
-              open={openSystemId === card.system.id}
-              onOpen={() => setOpenSystemId(openSystemId === card.system.id ? null : card.system.id)}
+              onOpen={() => setOpenSystemId(card.system.id)}
               onDelete={() => {
                 if (window.confirm(`Delete ${card.system.system_name} and all generated planets/bodies inside it?`)) {
                   setCards((current) => current.filter((item) => item.system.id !== card.system.id));
+                  if (openSystemId === card.system.id) setOpenSystemId(null);
                 }
               }}
-              onGenerateBodies={() => generateBodies(card.system.id)}
-              onAddBody={() => generateBodies(card.system.id, true)}
-              onDeleteBody={(bodyId) => updateSystem(card.system.id, (systemCard) => ({ ...systemCard, bodies: systemCard.bodies.filter((body) => body.id !== bodyId) }))}
             />
           ))}
         </section>
