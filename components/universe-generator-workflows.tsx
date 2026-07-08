@@ -35,7 +35,7 @@ type GalaxyCardState = {
 };
 
 const galaxyTypes = ["Any", "Spiral Galaxy", "Elliptical Galaxy", "Ring Galaxy", "Barred Spiral", "Irregular Galaxy", "Ancient Galaxy", "Nebula Cluster", "Void Galaxy", "Artificial Galaxy", "Harmony Galaxy"];
-const galaxySizes = ["Any", "Small", "Medium", "Large", "Starting Galaxy"];
+const galaxySizes = ["Any", "Small", "Medium", "Large"];
 const sectorTypes = ["Any", "Core Worlds", "Civilized Space", "Outer Rim", "Ancient Expanse", "Nebula", "Frontier", "Deep Space", "Void Region", "Harmony Region", "Uncharted Space"];
 const rarityOptions = ["Any", "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Relic", "Genesis"];
 const starCountRules = ["Generated", "Single Star", "Binary", "Trinary"];
@@ -626,7 +626,6 @@ export function GalaxyGeneratorWorkflow() {
   const [count, setCount] = useState(2);
   const [type, setType] = useState("Any");
   const [size, setSize] = useState("Any");
-  const [includeStarting, setIncludeStarting] = useState(true);
   const [galaxies, setGalaxies] = useState<GalaxyCardState[]>([]);
   const [openGalaxyId, setOpenGalaxyId] = useState<string | null>(null);
   const [openSectorId, setOpenSectorId] = useState<string | null>(null);
@@ -634,8 +633,10 @@ export function GalaxyGeneratorWorkflow() {
   const universe = useMemo(() => generateUniverse(universeSeed), [universeSeed]);
 
   function generateGalaxyCards() {
-    const start = includeStarting ? 0 : 1;
-    const next = Array.from({ length: Math.max(1, count) }, (_, index) => toGalaxyState(applyGalaxyBias(generateGalaxy(universe.universe_seed, start + index), type, size)));
+    const next = Array.from({ length: Math.max(1, count) }, (_, index) => {
+      const galaxy = generateGalaxy(universe.universe_seed, index);
+      return toGalaxyState(galaxy.is_fixed ? galaxy : applyGalaxyBias(galaxy, type, size));
+    });
     setGalaxies(next);
     setOpenGalaxyId(next[0]?.galaxy.id ?? null);
     setOpenSectorId(null);
@@ -721,12 +722,11 @@ export function GalaxyGeneratorWorkflow() {
   return (
     <GeneratorShell eyebrow="Universe Workflow" title="Galaxy Generator" description="Generate visual galaxy cards, drill into sectors, and shape the content hierarchy before it moves into the game app.">
       <GeneratorPanel>
-        <div className="grid gap-3 lg:grid-cols-[minmax(14rem,1fr)_9rem_13rem_12rem_13rem_auto] lg:items-end">
+        <div className="grid gap-3 lg:grid-cols-[minmax(14rem,1fr)_9rem_13rem_12rem_auto] lg:items-end">
           <TextInput label="Universe Seed" value={universeSeed} onChange={setUniverseSeed} placeholder="PROJECT-GENESIS-UNIVERSE" />
           <TextInput label="Galaxy Count" value={count} onChange={(value) => setCount(Math.max(1, Number(value) || 1))} type="number" min={1} />
           <SelectInput label="Galaxy Type" value={type} options={galaxyTypes} onChange={setType} />
           <SelectInput label="Galaxy Size" value={size} options={galaxySizes} onChange={setSize} />
-          <ToggleInput label="Starting Galaxy" checked={includeStarting} onChange={setIncludeStarting} />
           <Button type="button" onClick={generateGalaxyCards} className="h-11 px-5">
             <Plus className="h-4 w-4" />
             Generate Galaxies
