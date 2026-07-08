@@ -4,6 +4,11 @@ import { useMemo, useState, type ReactNode } from "react";
 import { Check, Clipboard, Copy, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
+  buildCanonicalSolPrompt,
+  CANONICAL_SOL_MASTER_PROMPT,
+  type CanonicalSolPrompt
+} from "@/data/canonical-sol-prompts";
+import {
   buildPlanetPrompt,
   PLANET_MASTER_PROMPT,
   planetTypeFeaturePrompt,
@@ -13,7 +18,7 @@ import { buildPlanetLandscapePromptForTemplate } from "@/lib/planets/artwork-pro
 
 type CopyTarget = {
   id: string;
-  kind: "description" | "full" | "landscape" | "master" | "sync";
+  kind: "description" | "full" | "landscape" | "master" | "sync" | "canonical-master" | "canonical-description" | "canonical-full";
 };
 
 const PLANET_RENDER_FOLDER_EXAMPLE = "planet-renders/organic/living-world/planet_organic_living_world_00001.png";
@@ -57,7 +62,13 @@ function CopyButton({
   );
 }
 
-export function PlanetGenerationLibrary({ rows }: { rows: PlanetPromptTemplate[] }) {
+export function PlanetGenerationLibrary({
+  rows,
+  canonicalSolRows = []
+}: {
+  rows: PlanetPromptTemplate[];
+  canonicalSolRows?: CanonicalSolPrompt[];
+}) {
   const [query, setQuery] = useState("");
   const [planetClass, setPlanetClass] = useState("all");
   const [copied, setCopied] = useState<CopyTarget | null>(null);
@@ -152,6 +163,81 @@ export function PlanetGenerationLibrary({ rows }: { rows: PlanetPromptTemplate[]
           </div>
         </div>
       </section>
+
+      {canonicalSolRows.length ? (
+        <section className="rounded-md border border-amber-300/20 bg-[#07101e]/85 p-5 shadow-glow">
+          <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-amber-200">Canonical Sol System</p>
+              <h3 className="mt-2 text-2xl font-bold text-white">Handcrafted Solar System Prompts</h3>
+              <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-300">
+                These are not procedural planet types. They use one shared Sol master prompt and inject a real-body description for Sol, planets, dwarf planets, and major moons.
+              </p>
+            </div>
+            <CopyButton
+              value={CANONICAL_SOL_MASTER_PROMPT}
+              copied={copied?.id === "canonical-sol-master" && copied.kind === "canonical-master"}
+              title="Copy canonical Sol master prompt"
+              onCopy={(value) => copyValue(value, { id: "canonical-sol-master", kind: "canonical-master" })}
+            >
+              Sol Master
+            </CopyButton>
+          </div>
+
+          <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            {canonicalSolRows.map((row) => {
+              const id = `canonical-${row.id}`;
+              const fullPrompt = buildCanonicalSolPrompt(row.planetDescription);
+
+              return (
+                <article key={row.id} className="rounded-md border border-amber-300/15 bg-slate-950/45 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-amber-200">{row.bodyType}</p>
+                      <h4 className="mt-2 text-xl font-semibold text-white">{row.displayName}</h4>
+                    </div>
+                    <span className="rounded border border-amber-300/20 bg-amber-300/10 px-2 py-1 text-[0.65rem] font-bold text-amber-100">
+                      #{row.planetOrder}
+                    </span>
+                  </div>
+                  <p className="mt-3 line-clamp-5 text-sm leading-6 text-slate-300">{row.planetDescription}</p>
+                  <div className="mt-4 grid gap-2 rounded border border-slate-700/70 bg-slate-950/45 p-3 text-xs text-slate-400">
+                    <p>
+                      <span className="font-semibold uppercase tracking-[0.14em] text-slate-500">Style</span>
+                      <br />
+                      {row.artStyle}
+                    </p>
+                    <p>
+                      <span className="font-semibold uppercase tracking-[0.14em] text-slate-500">Reference</span>
+                      <br />
+                      {row.scientificReference}
+                    </p>
+                  </div>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <CopyButton
+                      value={row.planetDescription}
+                      copied={copied?.id === id && copied.kind === "canonical-description"}
+                      title="Copy canonical body insert"
+                      onCopy={(value) => copyValue(value, { id, kind: "canonical-description" })}
+                    >
+                      Body
+                    </CopyButton>
+                    <Button
+                      type="button"
+                      className="h-9 border-amber-300/25 bg-amber-300/10 px-3 text-amber-100 hover:bg-amber-300/20"
+                      title="Copy full canonical Sol prompt"
+                      onClick={() => copyValue(fullPrompt, { id, kind: "canonical-full" })}
+                    >
+                      {copied?.id === id && copied.kind === "canonical-full" ? <Check className="h-4 w-4" /> : <Clipboard className="h-4 w-4" />}
+                      Full
+                    </Button>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+      ) : null}
 
       <section className="grid gap-3 md:grid-cols-[1fr_260px]">
         <label className="relative block">
