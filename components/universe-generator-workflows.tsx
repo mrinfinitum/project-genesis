@@ -115,9 +115,61 @@ type SectorCardState = {
   systems: StarSystemCardState[];
 };
 
+type SectorSeedModel = {
+  id: string;
+  seedId: string;
+  name: string;
+  type: string;
+  rarity: string;
+  discoveryPoints: number;
+  sectorClass: string;
+  sectorArchetype: string;
+  stability: string;
+  coordinates: string;
+  difficulty: number;
+  systemCount: number;
+  resourceBias: string;
+  dangerLevel: string;
+  resources: string[];
+  traits: string[];
+  hazards: string[];
+  anomalies: string[];
+  modifiers: string[];
+  events: string[];
+  visualTheme: Record<string, string | number | boolean>;
+  description: string;
+};
+
 type GalaxyCardState = {
   galaxy: GalaxyNode;
   sectors: SectorCardState[];
+};
+
+type GalaxySeedModel = {
+  id: string;
+  seedId: string;
+  name: string;
+  type: string;
+  rarity: string;
+  discoveryPoints: number;
+  galaxyClass: string;
+  galaxyArchetype: string;
+  stability: string;
+  galaxySize: string;
+  sectorCount: number;
+  generatedSectors: number;
+  estimatedSystems: number;
+  estimatedBodies: number;
+  discoveryPercent: number;
+  startingSector: string;
+  resources: string[];
+  traits: string[];
+  hazards: string[];
+  anomalies: string[];
+  modifiers: string[];
+  events: string[];
+  visualTheme: Record<string, string | number | boolean>;
+  description: string;
 };
 
 const galaxyTypes = ["Any", "Spiral Galaxy", "Elliptical Galaxy", "Ring Galaxy", "Barred Spiral", "Irregular Galaxy", "Ancient Galaxy", "Nebula Cluster", "Void Galaxy", "Artificial Galaxy", "Harmony Galaxy"];
@@ -850,6 +902,97 @@ function systemSeedModel(card: StarSystemCardState): StarSystemSeedModel {
   };
 }
 
+function sectorSeedModel(card: SectorCardState): SectorSeedModel {
+  const { sector, systems } = card;
+  const systemModels = systems.map((systemCard) => systemSeedModel(systemCard));
+  const resources = uniqueValues([sector.resource_signal, ...systemModels.flatMap((model) => model.resources), "Survey Data"]).slice(0, 10);
+  const hazards = uniqueValues([
+    sector.difficulty >= 70 ? "Hostile Navigation" : null,
+    sector.difficulty >= 45 ? "Patrol Risk" : "Low Navigation Risk",
+    ...systemModels.flatMap((model) => model.hazards)
+  ]).slice(0, 8);
+  const traits = uniqueValues([sector.modifier, sector.discovery_level, `${sector.system_count} System Capacity`, ...systemModels.flatMap((model) => model.traits)]).slice(0, 8);
+  const anomalies = uniqueValues([...systemModels.flatMap((model) => model.anomalies), sector.sector_rarity === "Relic" ? "Relic Signal" : null]).slice(0, 8);
+  const stability = sector.difficulty >= 75 ? "Volatile" : sector.difficulty >= 45 ? "Contested" : "Stable";
+  const discoveryPoints = sector.discovery_value + systems.length * 100;
+
+  return {
+    id: sector.id,
+    seedId: sector.sector_seed,
+    name: sector.sector_name,
+    type: "Sector",
+    rarity: sector.sector_rarity,
+    discoveryPoints,
+    sectorClass: sector.sector_type,
+    sectorArchetype: sector.modifier || sector.discovery_level,
+    stability,
+    coordinates: `${sector.coordinates_x}, ${sector.coordinates_y}, ${sector.coordinates_z}`,
+    difficulty: sector.difficulty,
+    systemCount: systems.length || sector.system_count,
+    resourceBias: sector.resource_signal,
+    dangerLevel: sector.difficulty >= 70 ? "High" : sector.difficulty >= 40 ? "Moderate" : "Low",
+    resources,
+    traits,
+    hazards,
+    anomalies,
+    modifiers: uniqueValues([sector.modifier, `${sector.resource_signal} Bias`, sector.colonized_worlds ? "Colonized Presence" : null]).slice(0, 8),
+    events: uniqueValues([sector.discovered ? "Sector Charted" : "Awaiting Discovery", sector.difficulty >= 70 ? "Hazard Advisory" : "Survey Window Open"]).slice(0, 8),
+    visualTheme: {
+      Coordinates: `${sector.coordinates_x}, ${sector.coordinates_y}, ${sector.coordinates_z}`,
+      "Sector Type": sector.sector_type,
+      "Discovery Level": sector.discovery_level,
+      "Resource Signal": sector.resource_signal,
+      "System Density": sector.system_count >= 9 ? "Dense" : sector.system_count >= 5 ? "Balanced" : "Sparse"
+    },
+    description: `${sector.sector_name} is a ${sector.sector_rarity.toLowerCase()} ${sector.sector_type.toLowerCase()} sector at coordinates ${sector.coordinates_x}, ${sector.coordinates_y}, ${sector.coordinates_z}. Its ${sector.resource_signal.toLowerCase()} signal, ${sector.modifier.toLowerCase()} modifier, and ${stability.toLowerCase()} operating conditions make it a ${sector.discovery_value.toLocaleString()} point discovery region.`
+  };
+}
+
+function galaxySeedModel(card: GalaxyCardState): GalaxySeedModel {
+  const { galaxy, sectors } = card;
+  const sectorModels = sectors.map((sectorCard) => sectorSeedModel(sectorCard));
+  const discovered = sectors.filter((sector) => sector.sector.discovered).length;
+  const discoveryPercent = sectors.length ? Math.round((discovered / sectors.length) * 100) : 0;
+  const avgSystems = sectors.length ? Math.round(sectors.reduce((total, sector) => total + (sector.systems.length || sector.sector.system_count), 0) / sectors.length) : 0;
+  const estimatedSystems = avgSystems * galaxy.sector_count;
+  const estimatedBodies = estimatedSystems * 7;
+  const rarity = sectors.find((sector) => ["Genesis", "Relic", "Mythic", "Legendary"].includes(sector.sector.sector_rarity))?.sector.sector_rarity ?? (galaxy.is_fixed ? "Common" : "Uncommon");
+  const stability = galaxy.galaxy_type.includes("Void") ? "Volatile" : galaxy.galaxy_type.includes("Ancient") ? "Unstable" : "Stable";
+
+  return {
+    id: galaxy.id,
+    seedId: galaxy.galaxy_seed,
+    name: galaxy.name,
+    type: "Galaxy",
+    rarity,
+    discoveryPoints: galaxy.sector_count + sectors.length * 500 + estimatedSystems,
+    galaxyClass: galaxy.galaxy_type,
+    galaxyArchetype: galaxy.is_fixed ? "Starting Galaxy" : galaxy.galaxy_type,
+    stability,
+    galaxySize: galaxy.galaxy_size,
+    sectorCount: galaxy.sector_count,
+    generatedSectors: sectors.length,
+    estimatedSystems,
+    estimatedBodies,
+    discoveryPercent,
+    startingSector: sectors[0]?.sector.sector_name ?? "None",
+    resources: uniqueValues([...sectorModels.flatMap((model) => model.resources), "Galactic Cartography", "Long Range Survey Data"]).slice(0, 10),
+    traits: uniqueValues([galaxy.galaxy_size, galaxy.galaxy_type, galaxy.is_fixed ? "Starting Galaxy" : "Procedural Galaxy", ...sectorModels.flatMap((model) => model.traits)]).slice(0, 8),
+    hazards: uniqueValues([...sectorModels.flatMap((model) => model.hazards), galaxy.galaxy_type.includes("Void") ? "Void Routes" : null]).slice(0, 8),
+    anomalies: uniqueValues([...sectorModels.flatMap((model) => model.anomalies), galaxy.galaxy_type.includes("Ancient") ? "Ancient Spiral Relics" : null]).slice(0, 8),
+    modifiers: uniqueValues([`${galaxy.galaxy_size} Scale`, `${galaxy.sector_count.toLocaleString()} Sector Capacity`, galaxy.is_fixed ? "Sol Origin" : "Procedural Expansion"]).slice(0, 8),
+    events: uniqueValues([galaxy.is_fixed ? "Milky Way Baseline Loaded" : "Galaxy Seed Generated", sectors.length ? "Sectors Available" : "Awaiting Sector Generation"]).slice(0, 8),
+    visualTheme: {
+      "Galaxy Type": galaxy.galaxy_type,
+      Size: galaxy.galaxy_size,
+      "Sector Capacity": galaxy.sector_count.toLocaleString(),
+      "Generated Sectors": sectors.length,
+      "Estimated Systems": estimatedSystems ? estimatedSystems.toLocaleString() : "Pending"
+    },
+    description: `${galaxy.name} is a ${rarity.toLowerCase()} ${galaxy.galaxy_type.toLowerCase()} with ${galaxy.sector_count.toLocaleString()} planned sectors and ${discoveryPercent}% of generated sectors discovered. It serves as a ${galaxy.is_fixed ? "starting civilization anchor" : "procedural expansion space"} with ${estimatedSystems ? estimatedSystems.toLocaleString() : "pending"} estimated star systems.`
+  };
+}
+
 function inferredResources(card: StarSystemCardState) {
   return uniqueValues([...card.planets.flatMap((planet) => planet.resources), ...card.bodies.flatMap((body) => body.resources), card.system.resource_bias, "Fusion Fuel", "Survey Data"]).slice(0, 10);
 }
@@ -994,6 +1137,58 @@ function StarSystemVisual({ model, large = false }: { model: StarSystemSeedModel
         style={starLightStyle(model)}
       />
       <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(2,6,23,0.16),rgba(2,6,23,0.72))]" />
+    </div>
+  );
+}
+
+function SectorVisual({ model, large = false }: { model: SectorSeedModel; large?: boolean }) {
+  const nodes = Array.from({ length: Math.min(9, Math.max(4, model.systemCount || 4)) }, (_, index) => ({
+    x: seededRange(model.seedId, `sector-node-x-${index}`, 16, 84),
+    y: seededRange(model.seedId, `sector-node-y-${index}`, 18, 82),
+    size: seededRange(model.seedId, `sector-node-size-${index}`, 6, 12)
+  }));
+
+  return (
+    <div className={cn("relative overflow-hidden border-cyan-300/10 bg-black", large ? "min-h-[28rem] rounded-md border" : "h-64 border-b")}>
+      <div className={cn("absolute inset-0 bg-gradient-to-br opacity-85", sectorVisual({ sector_type: model.sectorClass } as SectorNode))} />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_34%_34%,rgba(34,211,238,0.18),transparent_22%),radial-gradient(circle_at_68%_58%,rgba(168,85,247,0.13),transparent_28%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.04)_1px,transparent_1px)] bg-[size:38px_38px] opacity-50" />
+      <svg className="absolute inset-0 h-full w-full opacity-50" aria-hidden="true">
+        {nodes.slice(1).map((node, index) => (
+          <line key={`${node.x}-${node.y}`} x1={`${nodes[0].x}%`} y1={`${nodes[0].y}%`} x2={`${node.x}%`} y2={`${node.y}%`} stroke="rgba(103,232,249,0.18)" strokeWidth="1" />
+        ))}
+      </svg>
+      {nodes.map((node, index) => (
+        <div
+          key={index}
+          className="absolute rounded-full border border-cyan-100/35 bg-cyan-200/80 shadow-[0_0_18px_rgba(34,211,238,0.45)]"
+          style={{ left: `${node.x}%`, top: `${node.y}%`, width: node.size, height: node.size }}
+        />
+      ))}
+      <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(2,6,23,0.12),rgba(2,6,23,0.72))]" />
+    </div>
+  );
+}
+
+function GalaxyVisual({ model, large = false }: { model: GalaxySeedModel; large?: boolean }) {
+  const arms = Array.from({ length: 5 }, (_, index) => ({
+    rotate: index * 72 + seededRange(model.seedId, `galaxy-arm-${index}`, -10, 10),
+    scale: 0.7 + seededRange(model.seedId, `galaxy-scale-${index}`, 0, 30) / 100
+  }));
+
+  return (
+    <div className={cn("relative overflow-hidden border-cyan-300/10 bg-black", large ? "min-h-[28rem] rounded-md border" : "h-64 border-b")}>
+      <div className={cn("absolute inset-0 bg-gradient-to-br opacity-85", galaxyVisual({ galaxy_type: model.galaxyClass } as GalaxyNode))} />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.22),transparent_5%),radial-gradient(circle_at_50%_50%,rgba(34,211,238,0.2),transparent_21%),radial-gradient(circle_at_50%_50%,rgba(147,51,234,0.14),transparent_38%)]" />
+      {arms.map((arm, index) => (
+        <div
+          key={index}
+          className="absolute left-1/2 top-1/2 h-12 w-[58%] origin-left -translate-y-1/2 rounded-full bg-gradient-to-r from-cyan-100/45 via-cyan-300/12 to-transparent blur-sm"
+          style={{ transform: `rotate(${arm.rotate}deg) scaleX(${arm.scale})` }}
+        />
+      ))}
+      <div className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/80 shadow-[0_0_60px_rgba(103,232,249,0.5)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(2,6,23,0.04),rgba(2,6,23,0.72))]" />
     </div>
   );
 }
@@ -1640,42 +1835,107 @@ function SectorCard({
   setOpenSystemId: (systemId: string | null) => void;
 }) {
   const { sector, systems } = card;
-  const discoveryState = sector.discovered ? "Discovered" : sector.discovery_level;
+  const model = sectorSeedModel(card);
   const selectedSystem = systems.find((systemCard) => systemCard.system.id === openSystemId);
+  const rarityClass = rarityClasses[model.rarity] ?? "border-cyan-300/25 text-cyan-100";
 
   return (
     <article
-      className={cn("relative cursor-pointer overflow-hidden rounded-md border bg-genesis-panel/95 transition hover:border-cyan-300/55 hover:shadow-[0_0_28px_rgba(34,211,238,0.12)]", open ? "border-cyan-300/65" : "border-cyan-400/15")}
+      className={cn("group relative cursor-pointer overflow-hidden rounded-md border bg-genesis-panel/95 transition hover:border-cyan-300/55 hover:shadow-[0_0_28px_rgba(34,211,238,0.12)]", open ? "border-cyan-300/65" : "border-cyan-400/15")}
       onClick={onOpen}
     >
-      <DeleteButton label={sector.sector_name} onDelete={onDelete} />
-      <CardImage variant={sectorVisual(sector)} icon={Waypoints} label="Sector" />
-      <div className="space-y-4 p-5">
+      <SectorVisual model={model} />
+      <div className="border-b border-cyan-300/10 p-4">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="truncate text-xs font-black uppercase tracking-[0.22em] text-cyan-300">{model.type}</p>
+              <Badge className={rarityClass}>{model.rarity}</Badge>
+            </div>
+            <h3 className="mt-2 truncate text-2xl font-bold text-white">{model.name}</h3>
+            <p className="mt-1 truncate font-mono text-xs text-slate-500">{model.seedId}</p>
+          </div>
+          <div className="relative flex shrink-0 gap-2">
+            <button
+              type="button"
+              className="grid h-10 w-10 place-items-center rounded-md border border-cyan-300/20 text-cyan-100 opacity-80 transition hover:bg-cyan-400/10 group-hover:opacity-100"
+              onClick={(event) => {
+                event.stopPropagation();
+                onOpen();
+              }}
+              aria-label={`Open ${model.name}`}
+              title={`Open ${model.name}`}
+            >
+              <Eye className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              className="grid h-10 w-10 place-items-center rounded-md border border-red-300/20 text-red-200 opacity-80 transition hover:bg-red-400/10 group-hover:opacity-100"
+              onClick={(event) => {
+                event.stopPropagation();
+                onDelete();
+              }}
+              aria-label={`Delete ${model.name}`}
+              title={`Delete ${model.name}`}
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+      <div className="space-y-3 p-3">
+        <div className="grid grid-cols-3 gap-2">
+          <StatChip label="Sector Class" value={model.sectorClass} />
+          <StatChip label="Sector Archetype" value={model.sectorArchetype} />
+          <StatChip label="Stability" value={model.stability} tone={model.stability === "Volatile" ? "text-red-200" : "text-slate-100"} />
+        </div>
+        <p className="line-clamp-2 text-xs leading-5 text-slate-300">{model.description}</p>
+        <div className="space-y-1 text-xs text-slate-400">
+          <p className="truncate">
+            <span className="text-slate-500">Resources:</span> {model.resources.join(", ")}
+          </p>
+          <p className="truncate">
+            <span className="text-slate-500">Traits:</span> {model.traits.join(", ")}
+          </p>
+          <p className="truncate">
+            <span className="text-slate-500">Hazards:</span> {model.hazards.join(", ")}
+          </p>
+        </div>
         <div className="flex flex-wrap gap-2">
-          <Badge className={rarityClasses[sector.sector_rarity] ?? "border-cyan-300/25 text-cyan-100"}>{sector.sector_rarity}</Badge>
-          <Badge className="border-cyan-300/25 text-cyan-100">{discoveryState}</Badge>
-          <Badge className="border-emerald-300/35 text-emerald-100">Ready</Badge>
-        </div>
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">{sector.sector_type}</p>
-          <h3 className="mt-2 truncate text-3xl font-bold text-white">{sector.sector_name}</h3>
-          <p className="mt-1 font-mono text-sm text-slate-500">{sector.sector_seed}</p>
-        </div>
-        <div className="grid grid-cols-2 gap-2 xl:grid-cols-3">
-          <StatChip label="Coordinates" value={`${sector.coordinates_x}, ${sector.coordinates_y}, ${sector.coordinates_z}`} />
-          <StatChip label="Difficulty" value={sector.difficulty} tone={sector.difficulty > 70 ? "text-red-200" : "text-slate-100"} />
-          <StatChip label="Systems" value={systems.length || sector.system_count} />
-          <StatChip label="Resource Bias" value={sector.resource_signal} />
-          <StatChip label="Discovery Value" value={formatNumber(sector.discovery_value)} />
-          <StatChip label="Modifier" value={sector.modifier} />
-        </div>
-        <div className="flex items-center gap-2 text-sm font-semibold text-cyan-100">
-          <Eye className="h-4 w-4" />
-          Open / View Sector
+          <span className="rounded border border-cyan-300/20 bg-cyan-400/10 px-2 py-1 text-xs text-cyan-100">{model.discoveryPoints} discovery pts</span>
         </div>
       </div>
       {open ? (
         <div className="space-y-4 border-t border-cyan-300/15 p-5" onClick={(event) => event.stopPropagation()}>
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
+            <div className="space-y-4">
+              <SectorVisual model={model} large />
+              <div className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-5">
+                <p className="text-base font-semibold leading-8 text-slate-200">{model.description}</p>
+              </div>
+              <DetailSection title="Sector Specs">
+                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                  <StatChip label="Sector Class" value={model.sectorClass} />
+                  <StatChip label="Sector Archetype" value={model.sectorArchetype} />
+                  <StatChip label="Coordinates" value={model.coordinates} />
+                  <StatChip label="Difficulty" value={model.difficulty} />
+                  <StatChip label="Systems" value={model.systemCount} />
+                  <StatChip label="Resource Bias" value={model.resourceBias} />
+                  <StatChip label="Danger Level" value={model.dangerLevel} />
+                  <StatChip label="Discovery Points" value={model.discoveryPoints} />
+                </div>
+              </DetailSection>
+            </div>
+            <div className="space-y-4">
+              <DetailSection title="Resources"><ChipList values={model.resources} /></DetailSection>
+              <DetailSection title="Hazards"><ChipList values={model.hazards} /></DetailSection>
+              <DetailSection title="Traits"><ChipList values={model.traits} /></DetailSection>
+              <DetailSection title="Anomalies"><ChipList values={model.anomalies} /></DetailSection>
+              <DetailSection title="Modifiers"><ChipList values={model.modifiers} /></DetailSection>
+              <DetailSection title="Events"><ChipList values={model.events} /></DetailSection>
+              <DetailSection title="Visual Theme"><KeyValueGrid values={model.visualTheme} /></DetailSection>
+            </div>
+          </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <Breadcrumbs items={["Galaxy", sector.sector_name, "Star Systems"]} />
             <div className="flex flex-wrap gap-2">
@@ -1776,57 +2036,109 @@ function GalaxyCard({
   setOpenSystemId: (systemId: string | null) => void;
 }) {
   const { galaxy, sectors } = card;
-  const discovered = sectors.filter((sector) => sector.sector.discovered).length;
-  const discoveryPercent = sectors.length ? Math.round((discovered / sectors.length) * 100) : 0;
-  const avgSystems = sectors.length ? Math.round(sectors.reduce((total, sector) => total + (sector.systems.length || sector.sector.system_count), 0) / sectors.length) : 0;
-  const estimatedSystems = avgSystems * galaxy.sector_count;
-  const estimatedBodies = estimatedSystems * 7;
-  const rarityBias = sectors.find((sector) => ["Genesis", "Relic", "Mythic"].includes(sector.sector.sector_rarity))?.sector.sector_rarity ?? galaxy.galaxy_type;
+  const model = galaxySeedModel(card);
+  const rarityClass = rarityClasses[model.rarity] ?? "border-cyan-300/25 text-cyan-100";
 
   return (
     <article
-      className={cn("relative cursor-pointer overflow-hidden rounded-md border bg-genesis-panel/95 transition hover:border-cyan-300/55 hover:shadow-[0_0_28px_rgba(34,211,238,0.12)]", open ? "border-cyan-300/65" : "border-cyan-400/15")}
+      className={cn("group relative cursor-pointer overflow-hidden rounded-md border bg-genesis-panel/95 transition hover:border-cyan-300/55 hover:shadow-[0_0_28px_rgba(34,211,238,0.12)]", open ? "border-cyan-300/65" : "border-cyan-400/15")}
       onClick={onOpen}
     >
-      <DeleteButton label={galaxy.name} onDelete={onDelete} />
-      <CardImage variant={galaxyVisual(galaxy)} icon={LayersIcon} label="Galaxy" />
-      <div className="space-y-4 p-5">
-        <div className="flex flex-wrap gap-2">
-          <Badge className="border-cyan-300/35 text-cyan-100">{galaxy.galaxy_type}</Badge>
-          <Badge className="border-emerald-300/35 text-emerald-100">Ready</Badge>
-          {galaxy.is_fixed ? <Badge className="border-amber-300/45 text-amber-100">Starting</Badge> : null}
-        </div>
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">{galaxy.galaxy_size}</p>
-          <h3 className="mt-2 truncate text-3xl font-bold text-white">{galaxy.name}</h3>
-          <p className="mt-1 font-mono text-sm text-slate-500">{galaxy.galaxy_seed}</p>
-        </div>
-        <div className="grid grid-cols-2 gap-2 xl:grid-cols-4">
-          <StatChip label="Rarity Bias" value={rarityBias} />
-          <StatChip label="Discovery" value={`${discoveryPercent}%`} tone="text-cyan-200" />
-          <StatChip label="Starting Sector" value={sectors[0]?.sector.sector_name ?? "None"} />
-          <StatChip label="Sector Count" value={formatNumber(galaxy.sector_count)} />
-          <StatChip label="Star Systems Est." value={estimatedSystems ? formatNumber(estimatedSystems) : "Pending"} />
-          <StatChip label="Bodies Est." value={estimatedBodies ? formatNumber(estimatedBodies) : "Pending"} />
-          <StatChip label="Generated Sectors" value={sectors.length} />
-          <StatChip label="Generated Systems" value={sectors.reduce((total, sector) => total + sector.systems.length, 0)} />
-        </div>
-        {sectors.length ? (
-          <div className="flex flex-wrap gap-2">
-            {sectors.slice(0, 5).map((sector) => (
-              <span key={sector.sector.id} className="rounded-md border border-cyan-300/15 bg-slate-950/45 px-2 py-1 text-xs font-semibold text-slate-300">
-                {sector.sector.sector_name}
-              </span>
-            ))}
+      <GalaxyVisual model={model} />
+      <div className="border-b border-cyan-300/10 p-4">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="truncate text-xs font-black uppercase tracking-[0.22em] text-cyan-300">{model.type}</p>
+              <Badge className={rarityClass}>{model.rarity}</Badge>
+              {galaxy.is_fixed ? <Badge className="border-amber-300/45 text-amber-100">Starting</Badge> : null}
+            </div>
+            <h3 className="mt-2 truncate text-2xl font-bold text-white">{model.name}</h3>
+            <p className="mt-1 truncate font-mono text-xs text-slate-500">{model.seedId}</p>
           </div>
-        ) : null}
-        <div className="flex items-center gap-2 text-sm font-semibold text-cyan-100">
-          <Eye className="h-4 w-4" />
-          Open / View Galaxy
+          <div className="relative flex shrink-0 gap-2">
+            <button
+              type="button"
+              className="grid h-10 w-10 place-items-center rounded-md border border-cyan-300/20 text-cyan-100 opacity-80 transition hover:bg-cyan-400/10 group-hover:opacity-100"
+              onClick={(event) => {
+                event.stopPropagation();
+                onOpen();
+              }}
+              aria-label={`Open ${model.name}`}
+              title={`Open ${model.name}`}
+            >
+              <Eye className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              className="grid h-10 w-10 place-items-center rounded-md border border-red-300/20 text-red-200 opacity-80 transition hover:bg-red-400/10 group-hover:opacity-100"
+              onClick={(event) => {
+                event.stopPropagation();
+                onDelete();
+              }}
+              aria-label={`Delete ${model.name}`}
+              title={`Delete ${model.name}`}
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+      <div className="space-y-3 p-3">
+        <div className="grid grid-cols-3 gap-2">
+          <StatChip label="Galaxy Class" value={model.galaxyClass} />
+          <StatChip label="Galaxy Archetype" value={model.galaxyArchetype} />
+          <StatChip label="Stability" value={model.stability} tone={model.stability === "Volatile" ? "text-red-200" : "text-slate-100"} />
+        </div>
+        <p className="line-clamp-2 text-xs leading-5 text-slate-300">{model.description}</p>
+        <div className="space-y-1 text-xs text-slate-400">
+          <p className="truncate">
+            <span className="text-slate-500">Resources:</span> {model.resources.join(", ")}
+          </p>
+          <p className="truncate">
+            <span className="text-slate-500">Traits:</span> {model.traits.join(", ")}
+          </p>
+          <p className="truncate">
+            <span className="text-slate-500">Hazards:</span> {model.hazards.join(", ")}
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <span className="rounded border border-cyan-300/20 bg-cyan-400/10 px-2 py-1 text-xs text-cyan-100">{formatNumber(model.discoveryPoints)} discovery pts</span>
         </div>
       </div>
       {open ? (
         <div className="space-y-4 border-t border-cyan-300/15 p-5" onClick={(event) => event.stopPropagation()}>
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
+            <div className="space-y-4">
+              <GalaxyVisual model={model} large />
+              <div className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-5">
+                <p className="text-base font-semibold leading-8 text-slate-200">{model.description}</p>
+              </div>
+              <DetailSection title="Galaxy Specs">
+                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                  <StatChip label="Galaxy Class" value={model.galaxyClass} />
+                  <StatChip label="Galaxy Archetype" value={model.galaxyArchetype} />
+                  <StatChip label="Galaxy Size" value={model.galaxySize} />
+                  <StatChip label="Sector Count" value={formatNumber(model.sectorCount)} />
+                  <StatChip label="Generated Sectors" value={model.generatedSectors} />
+                  <StatChip label="Starting Sector" value={model.startingSector} />
+                  <StatChip label="Estimated Systems" value={model.estimatedSystems ? formatNumber(model.estimatedSystems) : "Pending"} />
+                  <StatChip label="Estimated Bodies" value={model.estimatedBodies ? formatNumber(model.estimatedBodies) : "Pending"} />
+                  <StatChip label="Discovery" value={`${model.discoveryPercent}%`} />
+                  <StatChip label="Discovery Points" value={formatNumber(model.discoveryPoints)} />
+                </div>
+              </DetailSection>
+            </div>
+            <div className="space-y-4">
+              <DetailSection title="Resources"><ChipList values={model.resources} /></DetailSection>
+              <DetailSection title="Hazards"><ChipList values={model.hazards} /></DetailSection>
+              <DetailSection title="Traits"><ChipList values={model.traits} /></DetailSection>
+              <DetailSection title="Anomalies"><ChipList values={model.anomalies} /></DetailSection>
+              <DetailSection title="Modifiers"><ChipList values={model.modifiers} /></DetailSection>
+              <DetailSection title="Events"><ChipList values={model.events} /></DetailSection>
+              <DetailSection title="Visual Theme"><KeyValueGrid values={model.visualTheme} /></DetailSection>
+            </div>
+          </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <Breadcrumbs items={["Universe", galaxy.name, "Sectors"]} />
             <div className="flex flex-wrap gap-2">
