@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { AlertTriangle, Check, CheckCircle2, CircleDot, Clipboard, Database, GitBranch, Moon, Orbit, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { buildCanonicalSolLandscapePrompt, buildCanonicalSolPrompt, CANONICAL_SOL_PROMPTS } from "@/data/canonical-sol-prompts";
+import { buildCanonicalSolLandscapePrompt, buildCanonicalSolPrompt, CANONICAL_SOL_PROMPTS, REQUIRED_CANONICAL_SOL_BODY_NAMES } from "@/data/canonical-sol-prompts";
 import { buildPlanetPrompt, PLANET_PROMPT_LIBRARY, planetTypeFeaturePrompt } from "@/data/planet-generation-prompts";
 import { buildPlanetLandscapePromptForTemplate } from "@/lib/planets/artwork-prompts";
 import { cn } from "@/lib/utils";
@@ -118,23 +118,63 @@ function buildBodyLandscapePrompt(row: Body) {
 function validationItems(rows: Body[]) {
   const ids = new Set<string>();
   const duplicates = new Set<string>();
+  const names = new Map<string, number>();
   for (const row of rows) {
     if (ids.has(row.id)) duplicates.add(row.id);
     ids.add(row.id);
+    if (row.is_fixed) {
+      const key = normalized(row.name);
+      names.set(key, (names.get(key) ?? 0) + 1);
+    }
   }
 
+  const canonicalNames = new Set(REQUIRED_CANONICAL_SOL_BODY_NAMES.map((name) => normalized(name)));
+  const missingCanonicalBodies = REQUIRED_CANONICAL_SOL_BODY_NAMES.filter((name) => !names.has(normalized(name)));
+  const duplicateCanonicalBodies = Array.from(names.entries()).filter(([name, count]) => canonicalNames.has(name) && count > 1);
   const brokenParents = rows.filter((row) => row.parent_body_id && !ids.has(row.parent_body_id));
+  const moonParentErrors = rows.filter((row) => row.celestial_body_type === "Moon" && !row.parent_body_id);
   const missingClass = rows.filter((row) => ["Planet", "Dwarf Planet", "Moon"].includes(row.celestial_body_type) && !row.planet_class);
-  const gasGiantSurfaceErrors = rows.filter((row) => row.planet_class === "Gas Giant" && (row.landable || row.colonizable || !row.uses_orbital_gameplay));
+  const gasGiantSurfaceErrors = rows.filter((row) => row.planet_class === "Gas Giant" && row.surface_landscape_prompt);
+  const landableGasGiantErrors = rows.filter((row) => row.planet_class === "Gas Giant" && (row.landable || row.colonizable || !row.uses_orbital_gameplay));
   const missingPrompts = rows.filter((row) => ["Planet", "Dwarf Planet", "Moon"].includes(row.celestial_body_type) && !row.planet_subclass);
+  const misclassifiedCanonicalBodies = rows.filter((row) => {
+    const canonical = canonicalSolPromptMatch(row);
+    if (!canonical) return false;
+
+    return (
+      row.celestial_body_type !== canonical.celestialBodyType ||
+      (canonical.planetClass !== null && row.planet_class !== canonical.planetClass) ||
+      (canonical.planetSubclass !== null && row.planet_subclass !== canonical.planetSubclass)
+    );
+  });
+  const proceduralFixedNames = rows.filter((row) => row.is_fixed && !canonicalNames.has(normalized(row.name)) && /(?:prime|reach|veil|fall|thia|ara|ion|mere|os|dor)-\d/i.test(row.name));
 
   return [
+    { label: "Missing canonical Sol bodies", count: missingCanonicalBodies.length, severity: missingCanonicalBodies.length ? "Critical" : "Ready" },
+    { label: "Misclassified Sol bodies", count: misclassifiedCanonicalBodies.length, severity: misclassifiedCanonicalBodies.length ? "High" : "Ready" },
     { label: "Broken parent links", count: brokenParents.length, severity: brokenParents.length ? "Critical" : "Ready" },
+    { label: "Missing moon parents", count: moonParentErrors.length, severity: moonParentErrors.length ? "Critical" : "Ready" },
     { label: "Duplicate body IDs", count: duplicates.size, severity: duplicates.size ? "Critical" : "Ready" },
+    { label: "Duplicate canonical bodies", count: duplicateCanonicalBodies.length, severity: duplicateCanonicalBodies.length ? "Critical" : "Ready" },
     { label: "Missing planet class", count: missingClass.length, severity: missingClass.length ? "High" : "Ready" },
-    { label: "Gas giant rule errors", count: gasGiantSurfaceErrors.length, severity: gasGiantSurfaceErrors.length ? "High" : "Ready" },
+    { label: "Gas giant landscape prompts", count: gasGiantSurfaceErrors.length, severity: gasGiantSurfaceErrors.length ? "High" : "Ready" },
+    { label: "Landable gas giants", count: landableGasGiantErrors.length, severity: landableGasGiantErrors.length ? "Critical" : "Ready" },
+    { label: "Procedural fixed names", count: proceduralFixedNames.length, severity: proceduralFixedNames.length ? "Medium" : "Ready" },
     { label: "Missing prompt subclass", count: missingPrompts.length, severity: missingPrompts.length ? "Medium" : "Ready" }
   ];
+}
+
+function artworkStatusFor(row: Body) {
+  if (!["Planet", "Dwarf Planet", "Moon"].includes(row.celestial_body_type)) return "Not Required";
+  if (row.orbit_view_image_url || row.surface_landscape_image_url) return "Rendered";
+  if (row.is_fixed) return "Placeholder";
+  return "Missing";
+}
+
+function fixedBodyRelation(row: Body) {
+  if (!row.is_fixed) return "";
+  if (row.orbit_parent) return `${row.celestial_body_type} of ${row.orbit_parent}`;
+  return row.celestial_body_type;
 }
 
 function BodyCard({
@@ -149,7 +189,7 @@ function BodyCard({
   onCopy: (row: Body, kind: PromptKind) => void;
 }) {
   const Icon = bodyIcons[row.celestial_body_type as keyof typeof bodyIcons] ?? CircleDot;
-  const artworkStatus = ["Planet", "Dwarf Planet", "Moon"].includes(row.celestial_body_type) ? "Needs Art" : "Not Required";
+  const artworkStatus = artworkStatusFor(row);
   const promptStatus = row.planet_class && row.planet_subclass ? "Prompt Ready" : ["Planet", "Dwarf Planet", "Moon"].includes(row.celestial_body_type) ? "Needs Prompt" : "Not Required";
   const canCopyPrompts = supportsPromptActions(row);
   const canCopyLandscape = supportsLandscapePrompt(row);
@@ -165,6 +205,7 @@ function BodyCard({
             <p className="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-cyan-300">{row.celestial_body_type}</p>
             <h3 className="mt-1 truncate text-xl font-bold text-white">{row.name}</h3>
             <p className="mt-1 truncate font-mono text-xs text-slate-500">{row.id}</p>
+            {row.is_fixed ? <p className="mt-1 text-xs font-semibold text-amber-100">{fixedBodyRelation(row)}</p> : null}
           </div>
         </div>
         <div className="flex flex-wrap justify-end gap-2">
@@ -248,7 +289,12 @@ export function CelestialBodyDesigner({ rows }: { rows: Body[] }) {
     map.set(row.parent_body_id, [...(map.get(row.parent_body_id) ?? []), row]);
     return map;
   }, new Map<string, Body[]>());
-  const rootBodies = rows.filter((row) => !row.parent_body_id);
+  const displayBodies = [...rows].sort((left, right) => {
+    if (left.system_id !== right.system_id) return left.system_id.localeCompare(right.system_id);
+    if (left.parent_body_id && !right.parent_body_id) return 1;
+    if (!left.parent_body_id && right.parent_body_id) return -1;
+    return (left.orbit_position ?? 999) - (right.orbit_position ?? 999) || left.name.localeCompare(right.name);
+  });
   const fixedBodies = rows.filter((row) => row.is_fixed).length;
   const orbitalWorlds = rows.filter((row) => row.uses_orbital_gameplay).length;
   const moonCount = rows.filter((row) => row.celestial_body_type === "Moon").length;
@@ -324,7 +370,7 @@ export function CelestialBodyDesigner({ rows }: { rows: Body[] }) {
       </section>
 
       <section className="grid gap-4 xl:grid-cols-2">
-        {rootBodies.map((row) => (
+        {displayBodies.map((row) => (
           <BodyCard key={row.id} row={row} children={childBodies(row, byParent)} copied={copied} onCopy={copyPrompt} />
         ))}
       </section>

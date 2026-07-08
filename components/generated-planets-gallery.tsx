@@ -3,6 +3,7 @@
 import { useMemo, useState, type CSSProperties } from "react";
 import { Check, Clipboard, Download, ImageIcon, Orbit, Plus, Search, Sparkles, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { buildCanonicalSolLandscapePrompt, buildCanonicalSolPrompt, CANONICAL_SOL_PROMPTS } from "@/data/canonical-sol-prompts";
 import { buildOrbitViewPrompt, buildSurfaceLandscapePrompt } from "@/lib/planets/artwork-prompts";
 import { PLANET_CLASS_MODEL } from "@/lib/planets/class-model";
 import { normalizePlanetRarity } from "@/lib/planets/rarity";
@@ -116,6 +117,11 @@ function isFixedSolPlanet(row: GeneratedPlanet) {
   return row.id.startsWith("fixed-sol-") || row.seed.startsWith(fixedSolSeedPrefix);
 }
 
+function canonicalSolPromptForPlanet(row: GeneratedPlanet) {
+  if (!isFixedSolPlanet(row)) return null;
+  return CANONICAL_SOL_PROMPTS.find((prompt) => prompt.displayName.toLowerCase() === row.name.toLowerCase()) ?? null;
+}
+
 function largestVariant(row: GeneratedPlanet) {
   const variants = imageVariants(row);
   return variants.reduce<PlanetImageVariant | null>((current, next) => (!current || next.size > current.size ? next : current), null);
@@ -183,6 +189,17 @@ function isGasGiant(row: GeneratedPlanet) {
 
 function planetInteractionLabel(row: GeneratedPlanet) {
   return isGasGiant(row) ? "ORBITAL WORLD" : planetWorldLabel(row);
+}
+
+function fixedSolRelation(row: GeneratedPlanet) {
+  if (!isFixedSolPlanet(row)) return "";
+
+  const type = asList(row.traits).find((value) => ["Planet", "Moon", "Dwarf Planet"].includes(value)) ?? "Planet";
+  if (type === "Moon" && row.distance_from_star.startsWith("Moon of")) {
+    return row.distance_from_star;
+  }
+
+  return `${type} of Sol`;
 }
 
 function detailPill(label: string, value: string | number | boolean) {
@@ -468,7 +485,14 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
   async function copyPlanetPrompt(row: GeneratedPlanet, kind: "orbit" | "landscape") {
     if (kind === "landscape" && isGasGiant(row)) return;
 
-    const prompt = kind === "orbit" ? row.orbit_view_prompt ?? buildOrbitViewPrompt(row) : row.surface_landscape_prompt ?? buildSurfaceLandscapePrompt(row, orbitReferenceUrl(row));
+    const canonical = canonicalSolPromptForPlanet(row);
+    const prompt = canonical
+      ? kind === "orbit"
+        ? row.orbit_view_prompt ?? buildCanonicalSolPrompt(canonical.planetDescription)
+        : row.surface_landscape_prompt ?? buildCanonicalSolLandscapePrompt(canonical)
+      : kind === "orbit"
+        ? row.orbit_view_prompt ?? buildOrbitViewPrompt(row)
+        : row.surface_landscape_prompt ?? buildSurfaceLandscapePrompt(row, orbitReferenceUrl(row));
 
     await navigator.clipboard.writeText(prompt);
     setCopiedPrompt({ id: row.id, kind });
@@ -565,6 +589,11 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                 ) : (
                   <div className="h-24 w-24 rounded-full border border-cyan-300/25" style={placeholderStyle(row)} />
                 )}
+                {fixedSolPlanet && !heroVariant && !row.image_url ? (
+                  <span className="absolute left-3 top-3 rounded border border-amber-200/30 bg-black/70 px-2 py-1 text-[0.58rem] font-bold uppercase tracking-[0.14em] text-amber-100">
+                    Placeholder Artwork
+                  </span>
+                ) : null}
               </div>
               <div className="border-b border-cyan-300/10 bg-slate-950/45 p-3">
                 <div className="flex items-start justify-between gap-3">
@@ -573,8 +602,14 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                     <h3 className="mt-1 truncate text-base font-bold text-white">{row.name}</h3>
                     <div className="mt-1 flex min-w-0 flex-wrap items-center gap-2">
                       <span className="min-w-0 truncate font-mono text-xs text-slate-500">{row.seed}</span>
+                      {fixedSolPlanet ? (
+                        <span className="rounded border border-amber-200/30 bg-amber-200/10 px-2 py-1 text-[0.58rem] font-bold uppercase tracking-[0.14em] text-amber-100">
+                          Fixed Sol Body
+                        </span>
+                      ) : null}
                       {rarityBadge(row)}
                     </div>
+                    {fixedSolPlanet ? <p className="mt-1 text-xs font-semibold text-slate-400">{fixedSolRelation(row)}</p> : null}
                   </div>
                   <div className="relative flex shrink-0 gap-2">
                     <button
@@ -691,7 +726,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                     {copiedPrompt?.id === row.id && copiedPrompt.kind === "orbit" ? <Check className="h-3.5 w-3.5" /> : <Clipboard className="h-3.5 w-3.5" />}
                     Full Planet Prompt
                   </button>
-                  {!isGasGiant(row) ? (
+                  {!isGasGiant(row) && (!fixedSolPlanet || canonicalSolPromptForPlanet(row)?.landable) ? (
                     <button
                       type="button"
                       className="inline-flex h-8 items-center gap-1.5 rounded border border-blue-300/20 bg-blue-400/10 px-2 text-[0.68rem] font-semibold text-blue-100 transition hover:bg-blue-400/20"
@@ -745,7 +780,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                     {copiedPrompt?.id === selectedPlanet.id && copiedPrompt.kind === "orbit" ? <Check className="h-4 w-4" /> : <Clipboard className="h-4 w-4" />}
                     Full Planet Prompt
                   </Button>
-                  {!isGasGiant(selectedPlanet) ? (
+                  {!isGasGiant(selectedPlanet) && (!isFixedSolPlanet(selectedPlanet) || canonicalSolPromptForPlanet(selectedPlanet)?.landable) ? (
                     <Button
                       type="button"
                       className="h-9 border-blue-400/25 bg-blue-300/10 px-3 text-blue-100 hover:bg-blue-300/20"
@@ -777,6 +812,11 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                   {renderingPlanetId === selectedPlanet.id ? (
                     <p className="absolute bottom-5 rounded border border-cyan-300/20 bg-slate-950/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-cyan-200">
                       Rendering procedural PNG
+                    </p>
+                  ) : null}
+                  {isFixedSolPlanet(selectedPlanet) && !largestVariant(selectedPlanet) && !selectedPlanet.image_url ? (
+                    <p className="absolute left-5 top-5 rounded border border-amber-200/30 bg-black/70 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-amber-100">
+                      Placeholder Artwork
                     </p>
                   ) : null}
                 </div>

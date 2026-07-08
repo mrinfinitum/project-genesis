@@ -71,7 +71,7 @@ function classKey(value: string) {
 }
 
 function supportsSolLandscapePrompt(row: CanonicalSolPrompt) {
-  return !["Star", "Gas Giant", "Ice Giant"].includes(row.bodyType);
+  return row.landable && row.planetClass !== "Gas Giant" && !row.usesOrbitalGameplay;
 }
 
 function supportsTemplateLandscapePrompt(row: PlanetPromptTemplate) {
@@ -122,18 +122,60 @@ export function PlanetGenerationLibrary({
 }) {
   const [query, setQuery] = useState("");
   const [planetClass, setPlanetClass] = useState("all");
+  const [catalogFilter, setCatalogFilter] = useState("all");
   const [copied, setCopied] = useState<CopyTarget | null>(null);
 
   const classes = useMemo(() => [...new Set(rows.map((row) => row.planetClass))], [rows]);
+  const showProceduralPrompts = catalogFilter === "all" || catalogFilter === "procedural";
   const filteredRows = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
+
+    if (!showProceduralPrompts) {
+      return [];
+    }
 
     return rows.filter((row) => {
       const matchesClass = planetClass === "all" || row.planetClass === planetClass;
       const searchText = `${row.planetClass} ${row.subclass} ${row.displayName} ${planetTypeFeaturePrompt(row)}`.toLowerCase();
       return matchesClass && (!normalizedQuery || searchText.includes(normalizedQuery));
     });
-  }, [planetClass, query, rows]);
+  }, [planetClass, query, rows, showProceduralPrompts]);
+  const filteredCanonicalSolRows = useMemo(() => {
+    const normalizedQuery = query.trim().toLowerCase();
+
+    if (catalogFilter === "procedural") {
+      return [];
+    }
+
+    return canonicalSolRows.filter((row) => {
+      const searchText = [
+        row.displayName,
+        row.bodyType,
+        row.celestialBodyType,
+        row.planetClass,
+        row.planetSubclass,
+        row.artStyle,
+        row.scientificReference,
+        row.planetDescription
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      const matchesSearch = !normalizedQuery || searchText.includes(normalizedQuery);
+      const matchesFilter =
+        catalogFilter === "all" ||
+        catalogFilter === "canonical" ||
+        (catalogFilter === "star" && row.celestialBodyType === "Star") ||
+        (catalogFilter === "planet" && row.celestialBodyType === "Planet") ||
+        (catalogFilter === "moon" && row.celestialBodyType === "Moon") ||
+        (catalogFilter === "dwarf-planet" && row.celestialBodyType === "Dwarf Planet") ||
+        (catalogFilter === "asteroid-belt" && row.celestialBodyType === "Asteroid Belt") ||
+        (catalogFilter === "gas-giants" && (row.planetClass === "Gas Giant" || row.usesOrbitalGameplay)) ||
+        (catalogFilter === "landable" && supportsSolLandscapePrompt(row));
+
+      return matchesSearch && matchesFilter;
+    });
+  }, [canonicalSolRows, catalogFilter, query]);
   const groups = useMemo(() => groupedPrompts(filteredRows), [filteredRows]);
   const meta = focusMeta[focus];
 
@@ -216,7 +258,48 @@ export function PlanetGenerationLibrary({
         </div>
       </section>
 
-      {canonicalSolRows.length ? (
+      <section className="grid gap-3 md:grid-cols-[1fr_260px_260px]">
+        <label className="relative block">
+          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+          <input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search planet prompts"
+            className="h-12 w-full rounded-md border border-cyan-400/20 bg-[#07101e]/85 pl-11 pr-4 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/60"
+          />
+        </label>
+        <select
+          value={catalogFilter}
+          onChange={(event) => setCatalogFilter(event.target.value)}
+          className="h-12 rounded-md border border-cyan-400/20 bg-[#07101e]/85 px-4 text-sm text-white outline-none transition focus:border-cyan-300/60"
+        >
+          <option value="all">All prompt sets</option>
+          <option value="canonical">Canonical Sol Bodies</option>
+          <option value="procedural">Procedural Bodies</option>
+          <option value="star">Star</option>
+          <option value="planet">Planet</option>
+          <option value="moon">Moon</option>
+          <option value="dwarf-planet">Dwarf Planet</option>
+          <option value="asteroid-belt">Asteroid Belt</option>
+          <option value="gas-giants">Gas Giants / Orbital Worlds</option>
+          <option value="landable">Landable Bodies</option>
+        </select>
+        <select
+          value={planetClass}
+          onChange={(event) => setPlanetClass(event.target.value)}
+          className="h-12 rounded-md border border-cyan-400/20 bg-[#07101e]/85 px-4 text-sm text-white outline-none transition focus:border-cyan-300/60 disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={!showProceduralPrompts}
+        >
+          <option value="all">All classes</option>
+          {classes.map((className) => (
+            <option key={className} value={className}>
+              {className}
+            </option>
+          ))}
+        </select>
+      </section>
+
+      {canonicalSolRows.length && filteredCanonicalSolRows.length ? (
         <section className="rounded-md border border-amber-300/20 bg-[#07101e]/85 p-5 shadow-glow">
           <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
             <div>
@@ -237,7 +320,7 @@ export function PlanetGenerationLibrary({
           </div>
 
           <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-            {canonicalSolRows.map((row) => {
+            {filteredCanonicalSolRows.map((row) => {
               const id = `canonical-${row.id}`;
               const fullPrompt = buildCanonicalSolPrompt(row.planetDescription);
               const landscapePrompt = buildCanonicalSolLandscapePrompt(row);
@@ -249,6 +332,9 @@ export function PlanetGenerationLibrary({
                     <div>
                       <p className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-amber-200">{row.bodyType}</p>
                       <h4 className="mt-2 text-xl font-semibold text-white">{row.displayName}</h4>
+                      <p className="mt-1 text-xs text-slate-500">
+                        {[row.planetClass, row.planetSubclass].filter(Boolean).join(" / ") || row.celestialBodyType}
+                      </p>
                     </div>
                     <span className="rounded border border-amber-300/20 bg-amber-300/10 px-2 py-1 text-[0.65rem] font-bold text-amber-100">
                       #{row.planetOrder}
@@ -304,30 +390,7 @@ export function PlanetGenerationLibrary({
         </section>
       ) : null}
 
-      <section className="grid gap-3 md:grid-cols-[1fr_260px]">
-        <label className="relative block">
-          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
-          <input
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search planet prompts"
-            className="h-12 w-full rounded-md border border-cyan-400/20 bg-[#07101e]/85 pl-11 pr-4 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/60"
-          />
-        </label>
-        <select
-          value={planetClass}
-          onChange={(event) => setPlanetClass(event.target.value)}
-          className="h-12 rounded-md border border-cyan-400/20 bg-[#07101e]/85 px-4 text-sm text-white outline-none transition focus:border-cyan-300/60"
-        >
-          <option value="all">All classes</option>
-          {classes.map((className) => (
-            <option key={className} value={className}>
-              {className}
-            </option>
-          ))}
-        </select>
-      </section>
-
+      {showProceduralPrompts ? (
       <section className="space-y-8">
         {classes
           .filter((className) => groups[className]?.length)
@@ -395,6 +458,7 @@ export function PlanetGenerationLibrary({
             </div>
           ))}
       </section>
+      ) : null}
     </div>
   );
 }
