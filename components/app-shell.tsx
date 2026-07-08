@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import {
   Archive,
-  Boxes,
   Building2,
   ChevronDown,
   ChevronRight,
@@ -13,9 +12,7 @@ import {
   Compass,
   Cpu,
   Database,
-  Download,
   FlaskConical,
-  Gamepad2,
   Gauge,
   Gem,
   GitBranch,
@@ -29,7 +26,6 @@ import {
   Palette,
   Pickaxe,
   Radar,
-  Rocket,
   ScrollText,
   Settings,
   Sparkles,
@@ -62,7 +58,7 @@ type NavigationGroup = {
   items: NavigationItem[];
 };
 
-const STORAGE_KEY = "project-genesis-nav-section";
+const STORAGE_SECTIONS_KEY = "project-genesis-nav-sections";
 
 const navigationGroups: NavigationGroup[] = [
   {
@@ -70,13 +66,10 @@ const navigationGroups: NavigationGroup[] = [
     label: "Command Center",
     icon: LayoutDashboard,
     fallbackProgress: 64,
-    systemIds: ["dashboard-metrics", "tasks", "codex-handoffs"],
+    systemIds: ["dashboard-metrics", "tasks"],
     items: [
       { href: "/", label: "Dashboard", icon: LayoutDashboard, activePaths: ["/"] },
-      { href: "/tasks", label: "Current Sprint", icon: ListChecks },
-      { href: "/codex-handoffs", label: "Ready for Codex", icon: Cpu },
-      { href: "/#data-health", label: "Data Health", icon: Database, activePaths: [] },
-      { href: "/database", label: "Design Review Export", icon: Download }
+      { href: "/tasks", label: "Current Sprint", icon: ListChecks }
     ]
   },
   {
@@ -105,8 +98,8 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/research", label: "Research Designer", icon: FlaskConical },
       { href: "/upgrades", label: "Upgrade Designer", icon: Gauge },
       { href: "/buildings", label: "Building Designer", icon: Building2 },
-      { href: "/districts", label: "District Designer", icon: Network },
-      { href: "/wonders", label: "Wonder Designer", icon: Sparkles }
+      { href: "/wonders", label: "Wonder Designer", icon: Sparkles },
+      { href: "/districts", label: "District Designer", icon: Network }
     ]
   },
   {
@@ -117,26 +110,9 @@ const navigationGroups: NavigationGroup[] = [
     systemIds: ["resources", "collectibles"],
     items: [
       { href: "/resource-catalog", label: "Resource Catalog", icon: Gem },
-      { href: "/planet-resource-profiles", label: "Planet Resources", icon: CircleDot },
-      { label: "Resource Distribution Designer", icon: Pickaxe, future: true },
-      { href: "/collectibles", label: "Collectibles", icon: Archive },
-      { label: "Trading", icon: Boxes, future: true },
-      { label: "Manufacturing", icon: Building2, future: true }
-    ]
-  },
-  {
-    id: "systems",
-    label: "Systems",
-    icon: GitBranch,
-    fallbackProgress: 61,
-    systemIds: ["unlock-matrix"],
-    items: [
-      { href: "/unlock-matrix", label: "Unlock Matrix", icon: GitBranch },
-      { href: "/building-relationships", label: "Relationship Graph", icon: Network },
-      { href: "/building-chains", label: "Balance Designer", icon: Gauge },
-      { href: "/validation-engine", label: "Validation Engine", icon: Database },
-      { label: "Events", icon: Sparkles, future: true },
-      { label: "Achievements", icon: Star, future: true }
+      { href: "/planet-resource-profiles", label: "Planet Resource Profiles", icon: CircleDot },
+      { label: "Resource Distribution", icon: Pickaxe, future: true },
+      { href: "/collectibles", label: "Collectibles", icon: Archive }
     ]
   },
   {
@@ -148,23 +124,36 @@ const navigationGroups: NavigationGroup[] = [
     items: [
       { href: "/planet-artwork", label: "Planet Artwork", icon: Sparkles },
       { href: "/surface-landscapes", label: "Surface Landscapes", icon: Palette },
-      { href: "/hero-discovery-shots", label: "Hero Discovery Shots", icon: Star },
+      { href: "/hero-discovery-shots", label: "Hero Discovery", icon: Star },
       { href: "/prompt-library", label: "Prompt Library", icon: ScrollText },
-      { href: "/conceptual-art", label: "Concept Art", icon: Palette },
       { href: "/assets", label: "Asset Library", icon: Archive },
-      { href: "/assets", label: "UI Assets", icon: Gamepad2, activePaths: [] }
+      { href: "/conceptual-art", label: "Concept Art", icon: Palette }
     ]
   },
   {
-    id: "project",
-    label: "Project",
+    id: "engine",
+    label: "Engine",
+    icon: GitBranch,
+    fallbackProgress: 61,
+    systemIds: ["unlock-matrix"],
+    items: [
+      { href: "/unlock-matrix", label: "Unlock Matrix", icon: GitBranch },
+      { href: "/building-relationships", label: "Relationship Graph", icon: Network },
+      { href: "/validation-engine", label: "Validation Center", icon: Database },
+      { href: "/building-chains", label: "Balance Designer", icon: Gauge },
+      { label: "Rule Engine", icon: Cpu, future: true }
+    ]
+  },
+  {
+    id: "developer",
+    label: "Developer",
     icon: Settings,
     fallbackProgress: 52,
     systemIds: ["tasks", "release-notes", "changelog", "codex-handoffs"],
     items: [
-      { href: "/tasks", label: "Tasks", icon: ListChecks },
+      { href: "/tasks", label: "Tasks", icon: ListChecks, activePaths: [] },
       { href: "/database", label: "Database", icon: Database },
-      { href: "/settings", label: "Imports / Exports", icon: UploadCloud },
+      { href: "/settings#imports-exports", label: "Imports / Exports", icon: UploadCloud, activePaths: [] },
       { href: "/universe-explorer", label: "Developer Seed Explorer", icon: Compass },
       { href: "/changelog", label: "Changelog", icon: History },
       { href: "/releases", label: "Release Notes", icon: ScrollText },
@@ -214,16 +203,38 @@ function isItemActive(item: NavigationItem, pathname: string) {
   return item.href.split("#")[0] === pathname;
 }
 
+function uniqueSections(ids: Array<string | undefined>) {
+  return ids.filter((id, index, values): id is string => Boolean(id) && values.indexOf(id) === index);
+}
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAuthRoute = pathname === "/login" || pathname.startsWith("/auth/");
   const activeGroup = useMemo(() => activeGroupForPath(pathname), [pathname]);
-  const [expandedGroup, setExpandedGroup] = useState(activeGroup?.id ?? "command-center");
+  const [expandedGroups, setExpandedGroups] = useState<string[]>(() => uniqueSections(["command-center", activeGroup?.id]));
   const [systems, setSystems] = useState<ProjectSystemProgress[]>([]);
 
   useEffect(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    setExpandedGroup(activeGroup?.id ?? stored ?? "command-center");
+    const storedSections = window.localStorage.getItem(STORAGE_SECTIONS_KEY);
+    const legacyStoredSection = window.localStorage.getItem("project-genesis-nav-section");
+    let stored: string[] = [];
+
+    if (storedSections) {
+      try {
+        const parsed = JSON.parse(storedSections) as unknown;
+        stored = Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === "string") : [];
+      } catch {
+        stored = [];
+      }
+    } else if (legacyStoredSection) {
+      stored = [legacyStoredSection];
+      window.localStorage.removeItem("project-genesis-nav-section");
+    }
+
+    const defaults = uniqueSections(["command-center", activeGroup?.id]);
+    const next = stored.length ? uniqueSections([...stored, activeGroup?.id]) : defaults;
+    setExpandedGroups(next);
+    window.localStorage.setItem(STORAGE_SECTIONS_KEY, JSON.stringify(next));
   }, [activeGroup?.id]);
 
   useEffect(() => {
@@ -252,9 +263,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }
 
   function toggleGroup(groupId: string) {
-    const next = expandedGroup === groupId ? "" : groupId;
-    setExpandedGroup(next);
-    window.localStorage.setItem(STORAGE_KEY, next);
+    const next = expandedGroups.includes(groupId)
+      ? expandedGroups.filter((id) => id !== groupId)
+      : [...expandedGroups, groupId];
+    setExpandedGroups(next);
+    window.localStorage.setItem(STORAGE_SECTIONS_KEY, JSON.stringify(next));
   }
 
   return (
@@ -273,7 +286,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <nav className="h-[calc(100vh-6.5rem)] space-y-2 overflow-y-auto pr-1">
           {navigationGroups.map((group) => {
             const Icon = group.icon;
-            const expanded = expandedGroup === group.id;
+            const expanded = expandedGroups.includes(group.id);
             const groupActive = activeGroup?.id === group.id;
             const progress = progressForGroup(group, systems);
 
@@ -282,7 +295,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 key={group.id}
                 className={cn(
                   "rounded-md border border-cyan-400/10 bg-slate-950/25 transition",
-                  groupActive && "border-cyan-300/30 bg-cyan-300/[0.04]"
+                  expanded && !groupActive && "border-cyan-400/20 shadow-[0_0_18px_rgba(34,211,238,0.06)]",
+                  groupActive && "border-cyan-300/35 shadow-[0_0_24px_rgba(34,211,238,0.10)]"
                 )}
               >
                 <button
@@ -337,7 +351,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                           href={item.href}
                           className={cn(
                             "flex h-9 items-center gap-3 rounded-md px-2 text-sm text-slate-300 transition hover:bg-cyan-300/10 hover:text-white",
-                            active && "border border-cyan-300/25 bg-cyan-300/15 text-cyan-100"
+                            active && "border border-cyan-300/45 bg-cyan-300/20 text-cyan-50 shadow-[0_0_18px_rgba(34,211,238,0.12)]"
                           )}
                         >
                           <ItemIcon className="h-4 w-4" />
