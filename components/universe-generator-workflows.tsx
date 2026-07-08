@@ -198,15 +198,6 @@ function SelectInput({ label, value, options, onChange }: { label: string; value
   );
 }
 
-function ToggleInput({ label, checked, onChange }: { label: string; checked: boolean; onChange: (value: boolean) => void }) {
-  return (
-    <label className="flex h-full min-h-11 items-center gap-3 rounded-md border border-cyan-300/15 bg-slate-950/45 px-3">
-      <input type="checkbox" checked={checked} onChange={(event) => onChange(event.target.checked)} className="h-4 w-4 accent-cyan-300" />
-      <span className="text-sm font-semibold text-slate-200">{label}</span>
-    </label>
-  );
-}
-
 function Breadcrumbs({ items }: { items: string[] }) {
   return (
     <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
@@ -772,7 +763,6 @@ export function SectorGeneratorWorkflow() {
   const [count, setCount] = useState(8);
   const [sectorType, setSectorType] = useState("Any");
   const [rarity, setRarity] = useState("Any");
-  const [includeLocalBubble, setIncludeLocalBubble] = useState(true);
   const [cards, setCards] = useState<SectorCardState[]>([]);
   const [openSectorId, setOpenSectorId] = useState<string | null>(null);
   const [openSystemId, setOpenSystemId] = useState<string | null>(null);
@@ -781,11 +771,7 @@ export function SectorGeneratorWorkflow() {
   const galaxy = useMemo(() => generateGalaxy(universe.universe_seed, galaxyIndex), [galaxyIndex, universe.universe_seed]);
 
   function generateSectorCards() {
-    const raw = generateSectors(galaxy, Math.max(1, count + (includeLocalBubble ? 0 : 1)));
-    const next = raw
-      .filter((sector) => includeLocalBubble || !sector.is_fixed)
-      .slice(0, Math.max(1, count))
-      .map((sector) => toSectorState(applySectorBias(sector, sectorType, rarity)));
+    const next = generateSectors(galaxy, Math.max(1, count)).map((sector) => toSectorState(sector.is_fixed ? sector : applySectorBias(sector, sectorType, rarity)));
     setCards(next);
     setOpenSectorId(next[0]?.sector.id ?? null);
     setOpenSystemId(null);
@@ -823,13 +809,12 @@ export function SectorGeneratorWorkflow() {
   return (
     <GeneratorShell eyebrow="Universe Workflow" title="Sector Generator" description="Generate sector cards, drill into their star systems, and curate what belongs in the selected galaxy.">
       <GeneratorPanel>
-        <div className="grid gap-3 lg:grid-cols-[minmax(14rem,1fr)_9rem_9rem_13rem_11rem_13rem_auto] lg:items-end">
+        <div className="grid gap-3 lg:grid-cols-[minmax(14rem,1fr)_9rem_9rem_13rem_11rem_auto] lg:items-end">
           <TextInput label="Universe Seed" value={universeSeed} onChange={setUniverseSeed} placeholder="PROJECT-GENESIS-UNIVERSE" />
           <TextInput label="Galaxy" value={galaxyIndex} onChange={(value) => setGalaxyIndex(Math.max(0, Number(value) || 0))} type="number" min={0} />
           <TextInput label="Sectors" value={count} onChange={(value) => setCount(Math.max(1, Number(value) || 1))} type="number" min={1} />
           <SelectInput label="Sector Bias" value={sectorType} options={sectorTypes} onChange={setSectorType} />
           <SelectInput label="Rarity Bias" value={rarity} options={rarityOptions} onChange={setRarity} />
-          <ToggleInput label="Include Local Bubble" checked={includeLocalBubble} onChange={setIncludeLocalBubble} />
           <Button type="button" onClick={generateSectorCards} className="h-11 px-5">
             <Plus className="h-4 w-4" />
             Generate Sectors
@@ -894,7 +879,6 @@ export function StarSystemGeneratorWorkflow() {
   const [count, setCount] = useState(8);
   const [rarity, setRarity] = useState("Any");
   const [starRule, setStarRule] = useState("Generated");
-  const [includeSol, setIncludeSol] = useState(true);
   const [cards, setCards] = useState<StarSystemCardState[]>([]);
   const [openSystemId, setOpenSystemId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
@@ -903,11 +887,7 @@ export function StarSystemGeneratorWorkflow() {
   const sector = useMemo(() => generateSectors(galaxy, Math.max(sectorIndex + 1, 1))[sectorIndex] ?? generateSectors(galaxy, 1)[0], [galaxy, sectorIndex]);
 
   function generateSystemCards() {
-    const raw = generateStarSystems(sector, Math.max(1, count + (includeSol ? 0 : 1)));
-    const next = raw
-      .filter((system) => includeSol || !system.is_fixed)
-      .slice(0, Math.max(1, count))
-      .map((system) => toSystemState(applySystemBias(system, rarity, starRule)));
+    const next = generateStarSystems(sector, Math.max(1, count)).map((system) => toSystemState(system.is_fixed ? system : applySystemBias(system, rarity, starRule)));
     setCards(next);
     setOpenSystemId(next[0]?.system.id ?? null);
   }
@@ -932,14 +912,13 @@ export function StarSystemGeneratorWorkflow() {
   return (
     <GeneratorShell eyebrow="Universe Workflow" title="Star System Generator" description="Generate collectible star-system cards, then open them to populate planets, moons, belts, and orbital worlds.">
       <GeneratorPanel>
-        <div className="grid gap-3 lg:grid-cols-[minmax(14rem,1fr)_8rem_8rem_9rem_11rem_11rem_11rem_auto] lg:items-end">
+        <div className="grid gap-3 lg:grid-cols-[minmax(14rem,1fr)_8rem_8rem_9rem_11rem_11rem_auto] lg:items-end">
           <TextInput label="Universe Seed" value={universeSeed} onChange={setUniverseSeed} placeholder="PROJECT-GENESIS-UNIVERSE" />
           <TextInput label="Galaxy" value={galaxyIndex} onChange={(value) => setGalaxyIndex(Math.max(0, Number(value) || 0))} type="number" min={0} />
           <TextInput label="Sector" value={sectorIndex} onChange={(value) => setSectorIndex(Math.max(0, Number(value) || 0))} type="number" min={0} />
           <TextInput label="Systems" value={count} onChange={(value) => setCount(Math.max(1, Number(value) || 1))} type="number" min={1} />
           <SelectInput label="Rarity Bias" value={rarity} options={rarityOptions} onChange={setRarity} />
           <SelectInput label="Star Rules" value={starRule} options={starCountRules} onChange={setStarRule} />
-          <ToggleInput label="Include Sol" checked={includeSol} onChange={setIncludeSol} />
           <Button type="button" onClick={generateSystemCards} className="h-11 px-5">
             <Plus className="h-4 w-4" />
             Generate Star Systems
