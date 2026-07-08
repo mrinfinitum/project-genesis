@@ -711,6 +711,29 @@ function StarSystemDetailPanel({
   );
 }
 
+function StarSystemDetailOverlay(props: {
+  card: StarSystemCardState;
+  onClose: () => void;
+  onDelete: () => void;
+  onGenerateBodies: () => void;
+  onAddBody: () => void;
+  onDeleteBody: (bodyId: string) => void;
+}) {
+  return (
+    <div
+      className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/82 px-4 py-8 backdrop-blur-sm"
+      onClick={props.onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${props.card.system.system_name} star system details`}
+    >
+      <div className="mx-auto w-full max-w-[78rem]" onClick={(event) => event.stopPropagation()}>
+        <StarSystemDetailPanel {...props} />
+      </div>
+    </div>
+  );
+}
+
 function SectorCard({
   card,
   open,
@@ -788,19 +811,7 @@ function SectorCard({
               </Button>
             </div>
           </div>
-          {selectedSystem ? (
-            <StarSystemDetailPanel
-              card={selectedSystem}
-              onClose={() => setOpenSystemId(null)}
-              onDelete={() => {
-                onDeleteSystem(selectedSystem.system.id);
-                setOpenSystemId(null);
-              }}
-              onGenerateBodies={() => onGenerateBodies(selectedSystem.system.id)}
-              onAddBody={() => onAddBody(selectedSystem.system.id)}
-              onDeleteBody={(bodyId) => onDeleteBody(selectedSystem.system.id, bodyId)}
-            />
-          ) : systems.length ? (
+          {systems.length ? (
             <div className="grid gap-4 xl:grid-cols-2">
               {systems.map((systemCard) => (
                 <StarSystemCard
@@ -814,6 +825,19 @@ function SectorCard({
           ) : (
             <EmptyState>No star systems yet. Generate star systems to populate this sector.</EmptyState>
           )}
+          {selectedSystem ? (
+            <StarSystemDetailOverlay
+              card={selectedSystem}
+              onClose={() => setOpenSystemId(null)}
+              onDelete={() => {
+                onDeleteSystem(selectedSystem.system.id);
+                setOpenSystemId(null);
+              }}
+              onGenerateBodies={() => onGenerateBodies(selectedSystem.system.id)}
+              onAddBody={() => onAddBody(selectedSystem.system.id)}
+              onDeleteBody={(bodyId) => onDeleteBody(selectedSystem.system.id, bodyId)}
+            />
+          ) : null}
         </div>
       ) : null}
     </article>
@@ -1284,21 +1308,7 @@ export function StarSystemGeneratorWorkflow() {
         />
       </div>
 
-      {selectedSystem ? (
-        <StarSystemDetailPanel
-          card={selectedSystem}
-          onClose={() => setOpenSystemId(null)}
-          onDelete={() => {
-            if (window.confirm(`Delete ${selectedSystem.system.system_name} and all generated planets/bodies inside it?`)) {
-              setCards((current) => current.filter((item) => item.system.id !== selectedSystem.system.id));
-              setOpenSystemId(null);
-            }
-          }}
-          onGenerateBodies={() => generateBodies(selectedSystem.system.id)}
-          onAddBody={() => generateBodies(selectedSystem.system.id, true)}
-          onDeleteBody={(bodyId) => updateSystem(selectedSystem.system.id, (systemCard) => ({ ...systemCard, bodies: systemCard.bodies.filter((body) => body.id !== bodyId) }))}
-        />
-      ) : visibleCards.length ? (
+      {visibleCards.length ? (
         <section className="grid gap-5 2xl:grid-cols-2">
           {visibleCards.map((card) => (
             <StarSystemCard
@@ -1317,6 +1327,21 @@ export function StarSystemGeneratorWorkflow() {
       ) : (
         <EmptyState>No star systems yet. Generate star systems to populate this sector.</EmptyState>
       )}
+      {selectedSystem ? (
+        <StarSystemDetailOverlay
+          card={selectedSystem}
+          onClose={() => setOpenSystemId(null)}
+          onDelete={() => {
+            if (window.confirm(`Delete ${selectedSystem.system.system_name} and all generated planets/bodies inside it?`)) {
+              setCards((current) => current.filter((item) => item.system.id !== selectedSystem.system.id));
+              setOpenSystemId(null);
+            }
+          }}
+          onGenerateBodies={() => generateBodies(selectedSystem.system.id)}
+          onAddBody={() => generateBodies(selectedSystem.system.id, true)}
+          onDeleteBody={(bodyId) => updateSystem(selectedSystem.system.id, (systemCard) => ({ ...systemCard, bodies: systemCard.bodies.filter((body) => body.id !== bodyId) }))}
+        />
+      ) : null}
     </GeneratorShell>
   );
 }
