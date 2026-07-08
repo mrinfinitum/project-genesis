@@ -100,6 +100,26 @@ function toGalaxyState(galaxy: GalaxyNode): GalaxyCardState {
   return { galaxy, sectors: [] };
 }
 
+function defaultGalaxyCards(universeSeed: string) {
+  const universe = generateUniverse(universeSeed);
+  return [toGalaxyState(generateGalaxy(universe.universe_seed, 0))];
+}
+
+function defaultSectorCards(universeSeed: string, galaxyIndex: number) {
+  const universe = generateUniverse(universeSeed);
+  const galaxy = generateGalaxy(universe.universe_seed, galaxyIndex);
+  const sector = generateSectors(galaxy, 1)[0];
+  return sector ? [toSectorState(sector)] : [];
+}
+
+function defaultSystemCards(universeSeed: string, galaxyIndex: number, sectorIndex: number) {
+  const universe = generateUniverse(universeSeed);
+  const galaxy = generateGalaxy(universe.universe_seed, galaxyIndex);
+  const sector = generateSectors(galaxy, Math.max(sectorIndex + 1, 1))[sectorIndex] ?? generateSectors(galaxy, 1)[0];
+  const system = sector ? generateStarSystems(sector, 1)[0] : null;
+  return system ? [toSystemState(system)] : [];
+}
+
 function galaxyVisual(galaxy: GalaxyNode) {
   if (galaxy.galaxy_type.includes("Void")) return "from-fuchsia-950 via-slate-950 to-black";
   if (galaxy.galaxy_type.includes("Ancient")) return "from-amber-900/50 via-slate-950 to-black";
@@ -617,8 +637,8 @@ export function GalaxyGeneratorWorkflow() {
   const [count, setCount] = useState(2);
   const [type, setType] = useState("Any");
   const [size, setSize] = useState("Any");
-  const [galaxies, setGalaxies] = useState<GalaxyCardState[]>([]);
-  const [openGalaxyId, setOpenGalaxyId] = useState<string | null>(null);
+  const [galaxies, setGalaxies] = useState<GalaxyCardState[]>(() => defaultGalaxyCards(DEFAULT_UNIVERSE_SEED));
+  const [openGalaxyId, setOpenGalaxyId] = useState<string | null>(() => defaultGalaxyCards(DEFAULT_UNIVERSE_SEED)[0]?.galaxy.id ?? null);
   const [openSectorId, setOpenSectorId] = useState<string | null>(null);
   const [openSystemId, setOpenSystemId] = useState<string | null>(null);
   const universe = useMemo(() => generateUniverse(universeSeed), [universeSeed]);
@@ -763,8 +783,8 @@ export function SectorGeneratorWorkflow() {
   const [count, setCount] = useState(8);
   const [sectorType, setSectorType] = useState("Any");
   const [rarity, setRarity] = useState("Any");
-  const [cards, setCards] = useState<SectorCardState[]>([]);
-  const [openSectorId, setOpenSectorId] = useState<string | null>(null);
+  const [cards, setCards] = useState<SectorCardState[]>(() => defaultSectorCards(DEFAULT_UNIVERSE_SEED, 0));
+  const [openSectorId, setOpenSectorId] = useState<string | null>(() => defaultSectorCards(DEFAULT_UNIVERSE_SEED, 0)[0]?.sector.id ?? null);
   const [openSystemId, setOpenSystemId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const universe = useMemo(() => generateUniverse(universeSeed), [universeSeed]);
@@ -879,8 +899,8 @@ export function StarSystemGeneratorWorkflow() {
   const [count, setCount] = useState(8);
   const [rarity, setRarity] = useState("Any");
   const [starRule, setStarRule] = useState("Generated");
-  const [cards, setCards] = useState<StarSystemCardState[]>([]);
-  const [openSystemId, setOpenSystemId] = useState<string | null>(null);
+  const [cards, setCards] = useState<StarSystemCardState[]>(() => defaultSystemCards(DEFAULT_UNIVERSE_SEED, 0, 0));
+  const [openSystemId, setOpenSystemId] = useState<string | null>(() => defaultSystemCards(DEFAULT_UNIVERSE_SEED, 0, 0)[0]?.system.id ?? null);
   const [search, setSearch] = useState("");
   const universe = useMemo(() => generateUniverse(universeSeed), [universeSeed]);
   const galaxy = useMemo(() => generateGalaxy(universe.universe_seed, galaxyIndex), [galaxyIndex, universe.universe_seed]);
