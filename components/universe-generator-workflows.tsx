@@ -76,6 +76,40 @@ type StarSystemCardState = {
   planets: AssignedPlanet[];
 };
 
+type StarSystemSeedModel = {
+  id: string;
+  seedId: string;
+  name: string;
+  type: string;
+  rarity: string;
+  discoveryPoints: number;
+  starClass: string;
+  starColor: string;
+  systemArchetype: string;
+  stability: string;
+  gravityProfile: string;
+  radiationLevel: string;
+  habitableZone: string;
+  planetCount: number;
+  moonCount: number;
+  asteroidBelts: number;
+  resourceValue: string;
+  dangerLevel: number;
+  resources: string[];
+  traits: string[];
+  hazards: string[];
+  anomalies: string[];
+  modifiers: string[];
+  collectibles: string[];
+  events: string[];
+  spaceConditions: string[];
+  colonization: Record<string, string | number | boolean>;
+  science: Record<string, string | number | boolean>;
+  economy: Record<string, string | number | boolean>;
+  visualTheme: Record<string, string | number | boolean>;
+  description: string;
+};
+
 type SectorCardState = {
   sector: SectorNode;
   systems: StarSystemCardState[];
@@ -396,6 +430,14 @@ function systemVisual(system: StarSystemNode) {
   return "from-amber-950 via-slate-950 to-black";
 }
 
+function systemVisualTone(system: StarSystemNode) {
+  if (system.star_type.includes("Red")) return "Crimson";
+  if (system.star_type.includes("Blue")) return "Azure";
+  if (system.star_type.includes("White")) return "White";
+  if (system.star_type.includes("Black Hole")) return "Violet";
+  return "Gold";
+}
+
 function bodyVisual(body: CelestialBodyNode) {
   if (body.planet_class === "Gas Giant") return "from-emerald-950 via-slate-950 to-black";
   if (body.planet_class === "Lava") return "from-orange-950 via-slate-950 to-black";
@@ -696,6 +738,118 @@ function systemStats(card: StarSystemCardState) {
   };
 }
 
+function systemArchetype(system: StarSystemNode) {
+  if (system.starting_system) return "Civilized Core";
+  const source = `${system.system_role} ${system.system_type} ${system.resource_bias}`.toLowerCase();
+  if (source.includes("frontier") || source.includes("outer")) return "Frontier Reach";
+  if (source.includes("ancient") || source.includes("relic")) return "Ancient Archive";
+  if (source.includes("resource") || source.includes("mineral")) return "Resource Corridor";
+  if (source.includes("void") || source.includes("hazard")) return "Hazard Expanse";
+  if (source.includes("trade") || source.includes("civilized")) return "Trade Nexus";
+  return system.system_role || system.system_type || "Uncharted System";
+}
+
+function gravityProfile(system: StarSystemNode) {
+  if (/black hole|neutron/i.test(`${system.primary_star} ${system.star_type}`)) return "Extreme";
+  if (system.danger_level >= 70) return "High Variance";
+  if (system.danger_level <= 25) return "Calm";
+  return "Standard";
+}
+
+function systemDiscoveryPoints(system: StarSystemNode, stats: ReturnType<typeof systemStats>) {
+  const rarityBase: Record<string, number> = {
+    Common: 250,
+    Uncommon: 500,
+    Rare: 1000,
+    Epic: 2500,
+    Legendary: 6000,
+    Mythic: 15000,
+    Relic: 40000,
+    Genesis: 100000
+  };
+  return (rarityBase[system.system_rarity] ?? 250) + seededRange(system.system_seed, "discovery-points", 0, 180) + stats.planetCount * 15 + stats.beltCount * 25;
+}
+
+function systemSpaceConditions(card: StarSystemCardState) {
+  const { system } = card;
+  const stats = systemStats(card);
+  return uniqueValues([
+    `${stats.radiation} Radiation`,
+    `${stats.stability} Stellar Output`,
+    system.danger_level >= 65 ? "Solar Storm Windows" : "Predictable Solar Weather",
+    stats.beltCount ? "Asteroid Drift" : null,
+    stats.gasGiants.length ? "Gas Giant Magnetospheres" : null
+  ]).slice(0, 8);
+}
+
+function systemSeedModel(card: StarSystemCardState): StarSystemSeedModel {
+  const { system } = card;
+  const stats = systemStats(card);
+  const discoveryPoints = systemDiscoveryPoints(system, stats);
+  const archetype = systemArchetype(system);
+  const resources = inferredResources(card);
+  const hazards = inferredHazards(card);
+  const traits = inferredTraits(card);
+
+  return {
+    id: system.id,
+    seedId: system.system_seed || system.catalog_designation,
+    name: system.system_name,
+    type: "Star System",
+    rarity: system.system_rarity,
+    discoveryPoints,
+    starClass: system.star_type,
+    starColor: stats.starColor,
+    systemArchetype: archetype,
+    stability: stats.stability,
+    gravityProfile: gravityProfile(system),
+    radiationLevel: stats.radiation,
+    habitableZone: stats.habitableZone,
+    planetCount: stats.planetCount,
+    moonCount: stats.moonCount,
+    asteroidBelts: stats.beltCount,
+    resourceValue: stats.resourceValue,
+    dangerLevel: system.danger_level,
+    resources,
+    traits,
+    hazards,
+    anomalies: inferredAnomalies(card),
+    modifiers: inferredModifiers(card),
+    collectibles: inferredCollectibles(card),
+    events: inferredEvents(card),
+    spaceConditions: systemSpaceConditions(card),
+    colonization: {
+      Status: stats.colonizationStatus,
+      "Habitable Zone": stats.habitableZone,
+      "Candidate Worlds": stats.habitablePlanets.length,
+      "Colonized Worlds": stats.colonizedWorlds.length,
+      "Starting System": system.starting_system ? "Yes" : "No"
+    },
+    science: {
+      "Discovery Status": stats.discoveryStatus,
+      "Survey Value": discoveryPoints,
+      "Radiation Level": stats.radiation,
+      "Known Anomalies": inferredAnomalies(card).length,
+      "Star Signature": system.known_star_signature ?? system.primary_star
+    },
+    economy: {
+      "Resource Bias": system.resource_bias,
+      "Resource Value": stats.resourceValue,
+      "Fuel Potential": stats.gasGiants.length ? "High" : "Moderate",
+      "Mining Corridors": stats.beltCount,
+      "Trade Potential": archetype.includes("Trade") || system.starting_system ? "High" : "Developing"
+    },
+    visualTheme: {
+      "Star Color": stats.starColor,
+      "Primary Tone": systemVisualTone(system),
+      Lighting: stats.stability === "Stable" ? "Soft" : "Volatile",
+      "Orbital Density": stats.planetCount >= 8 ? "Dense" : stats.planetCount >= 4 ? "Balanced" : "Sparse",
+      "Danger Glow": system.danger_level >= 70 ? "High" : "Low"
+    },
+    description: systemDescription(card)
+  };
+}
+
 function inferredResources(card: StarSystemCardState) {
   return uniqueValues([...card.planets.flatMap((planet) => planet.resources), ...card.bodies.flatMap((body) => body.resources), card.system.resource_bias, "Fusion Fuel", "Survey Data"]).slice(0, 10);
 }
@@ -778,6 +932,68 @@ function ChipList({ values }: { values: string[] }) {
           {value}
         </span>
       ))}
+    </div>
+  );
+}
+
+function KeyValueGrid({ values }: { values: Record<string, string | number | boolean> }) {
+  return (
+    <div className="grid gap-3 sm:grid-cols-2">
+      {Object.entries(values).map(([label, value]) => (
+        <StatChip key={label} label={label} value={String(value)} />
+      ))}
+    </div>
+  );
+}
+
+function starLightStyle(model: StarSystemSeedModel): CSSProperties {
+  const color = model.starColor.toLowerCase();
+  if (color.includes("red")) return { background: "radial-gradient(circle at 35% 34%, #fee2e2, #ef4444 24%, #7f1d1d 52%, transparent 72%)" };
+  if (color.includes("blue") || color.includes("electric")) return { background: "radial-gradient(circle at 35% 34%, #eff6ff, #38bdf8 24%, #1d4ed8 52%, transparent 72%)" };
+  if (color.includes("white")) return { background: "radial-gradient(circle at 35% 34%, #ffffff, #cbd5e1 28%, #475569 56%, transparent 74%)" };
+  if (color.includes("violet")) return { background: "radial-gradient(circle at 35% 34%, #f5d0fe, #a855f7 26%, #581c87 54%, transparent 74%)" };
+  if (color.includes("orange")) return { background: "radial-gradient(circle at 35% 34%, #ffedd5, #fb923c 25%, #9a3412 54%, transparent 74%)" };
+  return { background: "radial-gradient(circle at 35% 34%, #fef9c3, #facc15 24%, #92400e 54%, transparent 74%)" };
+}
+
+function StarSystemVisual({ model, large = false }: { model: StarSystemSeedModel; large?: boolean }) {
+  const orbitCount = Math.min(6, Math.max(3, Math.ceil(model.planetCount / 2)));
+  const planetDots = Array.from({ length: orbitCount }, (_, index) => ({
+    orbit: 25 + index * 11,
+    angle: seededRange(model.seedId, `orbit-angle-${index}`, 0, 359),
+    size: seededRange(model.seedId, `orbit-size-${index}`, 5, 10)
+  }));
+
+  return (
+    <div className={cn("relative overflow-hidden border-cyan-300/10 bg-black", large ? "min-h-[28rem] rounded-md border" : "h-64 border-b")}>
+      <div className={cn("absolute inset-0 bg-gradient-to-br opacity-80", systemVisual({ star_type: model.starClass } as StarSystemNode))} />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_38%_42%,rgba(34,211,238,0.14),transparent_24%),radial-gradient(circle_at_62%_54%,rgba(147,51,234,0.1),transparent_30%)]" />
+      <div className="absolute left-1/2 top-1/2 aspect-square w-[72%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-100/5" />
+      {planetDots.map((dot, index) => {
+        const radius = dot.orbit;
+        const x = 50 + Math.cos((dot.angle * Math.PI) / 180) * (radius / 2);
+        const y = 50 + Math.sin((dot.angle * Math.PI) / 180) * (radius / 2);
+        return (
+          <div key={index}>
+            <div
+              className="absolute left-1/2 top-1/2 aspect-square -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-100/10"
+              style={{ width: `${radius}%` }}
+            />
+            <div
+              className="absolute rounded-full border border-cyan-100/35 bg-cyan-100/80 shadow-[0_0_12px_rgba(34,211,238,0.45)]"
+              style={{ left: `${x}%`, top: `${y}%`, width: dot.size, height: dot.size }}
+            />
+          </div>
+        );
+      })}
+      <div
+        className={cn(
+          "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full shadow-[0_0_80px_rgba(250,204,21,0.22)]",
+          large ? "h-32 w-32" : "h-20 w-20"
+        )}
+        style={starLightStyle(model)}
+      />
+      <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(2,6,23,0.16),rgba(2,6,23,0.72))]" />
     </div>
   );
 }
@@ -1021,36 +1237,74 @@ function StarSystemCard({
   onOpen: () => void;
   onDelete: () => void;
 }) {
-  const { system, bodies } = card;
-  const stats = systemStats(card);
+  const { system } = card;
+  const model = systemSeedModel(card);
+  const rarityClass = rarityClasses[model.rarity] ?? "border-cyan-300/25 text-cyan-100";
 
   return (
     <article
-      className="relative cursor-pointer overflow-hidden rounded-md border border-cyan-400/15 bg-genesis-panel/95 transition hover:border-cyan-300/55 hover:shadow-[0_0_28px_rgba(34,211,238,0.12)]"
+      className="group relative cursor-pointer overflow-hidden rounded-md border border-cyan-400/15 bg-genesis-panel/95 transition hover:border-cyan-300/55 hover:shadow-[0_0_28px_rgba(34,211,238,0.12)]"
       onClick={onOpen}
     >
-      <DeleteButton label={system.system_name} onDelete={onDelete} />
-      <CardImage variant={systemVisual(system)} icon={Star} label="Star System" compact />
-      <div className="space-y-3 p-4">
+      <StarSystemVisual model={model} />
+      <div className="border-b border-cyan-300/10 p-4">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="truncate text-xs font-black uppercase tracking-[0.22em] text-cyan-300">{model.type}</p>
+              <Badge className={rarityClass}>{model.rarity}</Badge>
+            </div>
+            <h3 className="mt-2 truncate text-2xl font-bold text-white">{model.name}</h3>
+            <p className="mt-1 truncate font-mono text-xs text-slate-500">{model.seedId}</p>
+          </div>
+          <div className="relative flex shrink-0 gap-2">
+            <button
+              type="button"
+              className="grid h-10 w-10 place-items-center rounded-md border border-cyan-300/20 text-cyan-100 opacity-80 transition hover:bg-cyan-400/10 group-hover:opacity-100"
+              onClick={(event) => {
+                event.stopPropagation();
+                onOpen();
+              }}
+              aria-label={`Open ${model.name}`}
+              title={`Open ${model.name}`}
+            >
+              <Eye className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              className="grid h-10 w-10 place-items-center rounded-md border border-red-300/20 text-red-200 opacity-80 transition hover:bg-red-400/10 group-hover:opacity-100"
+              onClick={(event) => {
+                event.stopPropagation();
+                onDelete();
+              }}
+              aria-label={`Delete ${model.name}`}
+              title={`Delete ${model.name}`}
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+      <div className="space-y-3 p-3">
+        <div className="grid grid-cols-3 gap-2">
+          <StatChip label="Star Class" value={model.starClass} />
+          <StatChip label="System Archetype" value={model.systemArchetype} />
+          <StatChip label="Stability" value={model.stability} tone={model.stability === "Critical" ? "text-red-200" : "text-slate-100"} />
+        </div>
+        <p className="line-clamp-2 text-xs leading-5 text-slate-300">{model.description}</p>
+        <div className="space-y-1 text-xs text-slate-400">
+          <p className="truncate">
+            <span className="text-slate-500">Resources:</span> {model.resources.join(", ")}
+          </p>
+          <p className="truncate">
+            <span className="text-slate-500">Traits:</span> {model.traits.join(", ")}
+          </p>
+          <p className="truncate">
+            <span className="text-slate-500">Hazards:</span> {model.hazards.join(", ")}
+          </p>
+        </div>
         <div className="flex flex-wrap gap-2">
-          <Badge className={rarityClasses[system.system_rarity] ?? "border-cyan-300/25 text-cyan-100"}>{system.system_rarity}</Badge>
-          <Badge className="border-cyan-300/30 text-cyan-100">{system.discovery_state}</Badge>
-          {system.starting_system ? <Badge className="border-emerald-300/45 text-emerald-100">Starting</Badge> : null}
-        </div>
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">{system.star_type}</p>
-          <h3 className="mt-2 truncate text-2xl font-bold text-white">{system.system_name}</h3>
-          <p className="mt-1 truncate font-mono text-xs text-slate-500">{system.catalog_designation}</p>
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          <StatChip label="Star Class" value={system.star_type} />
-          <StatChip label="Planets" value={stats.planetCount} />
-          <StatChip label="Habitable Zone" value={stats.habitableZone} />
-          <StatChip label="Danger" value={system.danger_level} tone={system.danger_level > 70 ? "text-red-200" : "text-slate-100"} />
-        </div>
-        <div className="flex items-center gap-2 text-sm font-semibold text-cyan-100">
-          <Eye className="h-4 w-4" />
-          Open / View System
+          <span className="rounded border border-cyan-300/20 bg-cyan-400/10 px-2 py-1 text-xs text-cyan-100">{model.discoveryPoints} discovery pts</span>
         </div>
       </div>
     </article>
@@ -1090,6 +1344,7 @@ function StarSystemDetailPanel({
   const [selectedBody, setSelectedBody] = useState<BodyCardState | null>(null);
   const [selectedPlanet, setSelectedPlanet] = useState<AssignedPlanet | null>(null);
   const stats = systemStats(card);
+  const model = systemSeedModel(card);
   const availablePlanets = planetPool.filter((planet) => !assignedPlanetIds.has(planet.id));
   const composition = [
     { label: "Inner Planets", value: Math.min(stats.planetCount, 4) },
@@ -1107,16 +1362,16 @@ function StarSystemDetailPanel({
       <header className="flex flex-col gap-5 border-b border-cyan-300/15 p-6 lg:flex-row lg:items-start lg:justify-between">
         <div className="space-y-4">
           <div className="flex flex-wrap gap-2">
-            <Badge className="border-cyan-300/35 text-cyan-100">{system.system_type}</Badge>
-            <Badge className={rarityClasses[system.system_rarity] ?? "border-cyan-300/25 text-cyan-100"}>{system.system_rarity}</Badge>
+            <Badge className="border-cyan-300/35 text-cyan-100">{model.type}</Badge>
+            <Badge className={rarityClasses[model.rarity] ?? "border-cyan-300/25 text-cyan-100"}>{model.rarity}</Badge>
             {system.starting_system ? <Badge className="border-emerald-300/45 text-emerald-100">Starting</Badge> : null}
             {system.colonized_at || stats.colonizedWorlds.length ? <Badge className="border-emerald-300/45 text-emerald-100">Colonized</Badge> : null}
             {system.discovered || system.discovery_state !== "Undetected" ? <Badge className="border-cyan-300/45 text-cyan-100">Discovered</Badge> : null}
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">{system.star_type}</p>
-            <h2 className="mt-2 text-4xl font-black text-white">{system.system_name}</h2>
-            <p className="mt-2 font-mono text-sm text-slate-500">{system.catalog_designation}</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">{model.starClass}</p>
+            <h2 className="mt-2 text-4xl font-black text-white">{model.name}</h2>
+            <p className="mt-2 font-mono text-sm text-slate-500">{model.seedId}</p>
           </div>
         </div>
         <div className="flex gap-2">
@@ -1141,41 +1396,33 @@ function StarSystemDetailPanel({
 
       <div className="grid gap-6 p-6 xl:grid-cols-[minmax(0,1.1fr)_minmax(24rem,0.9fr)]">
         <div className="space-y-5">
-          <div className={cn("relative min-h-[28rem] overflow-hidden rounded-md border border-cyan-300/10 bg-gradient-to-br", systemVisual(system))}>
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_42%_44%,rgba(255,255,255,0.24),transparent_7%),radial-gradient(circle_at_50%_52%,rgba(34,211,238,0.25),transparent_16%),radial-gradient(circle_at_50%_52%,rgba(15,23,42,0.75),transparent_34%),linear-gradient(120deg,rgba(8,13,28,0),rgba(8,13,28,0.75))]" />
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.07)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.06)_1px,transparent_1px)] bg-[size:42px_42px] opacity-40" />
-            <div className="absolute left-1/2 top-1/2 grid h-40 w-40 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-cyan-200/25 bg-black/45 shadow-[0_0_80px_rgba(34,211,238,0.22)]">
-              <Star className="h-20 w-20 text-cyan-100/85" />
-            </div>
-            <div className="absolute bottom-5 left-5 rounded-md border border-cyan-300/20 bg-black/45 px-4 py-3 backdrop-blur">
-              <p className="text-xs font-black uppercase tracking-[0.22em] text-cyan-200">System Render Placeholder</p>
-              <p className="mt-1 text-sm font-semibold text-slate-300">Seeded visual awaiting final artwork.</p>
-            </div>
-          </div>
+          <StarSystemVisual model={model} large />
 
           <div className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-5">
-            <p className="text-base font-semibold leading-8 text-slate-200">{systemDescription(card)}</p>
+            <p className="text-base font-semibold leading-8 text-slate-200">{model.description}</p>
           </div>
 
           <DetailSection title="Star System Specs">
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-              <StatChip label="Star Class" value={system.star_type} />
-              <StatChip label="Star Color" value={stats.starColor} />
+              <StatChip label="Star Class" value={model.starClass} />
+              <StatChip label="Star Color" value={model.starColor} />
               <StatChip label="Star Age" value={stats.starAge} />
               <StatChip label="Star Mass" value={stats.starMass} />
               <StatChip label="Star Radius" value={stats.starRadius} />
               <StatChip label="Temperature" value={stats.temperature} />
               <StatChip label="Luminosity" value={stats.luminosity} />
-              <StatChip label="Stability" value={stats.stability} />
-              <StatChip label="Radiation Level" value={stats.radiation} />
-              <StatChip label="Habitable Zone" value={stats.habitableZone} />
-              <StatChip label="Planet Count" value={stats.planetCount} />
-              <StatChip label="Moon Count" value={stats.moonCount} />
-              <StatChip label="Asteroid Belts" value={stats.beltCount} />
-              <StatChip label="Resource Value" value={stats.resourceValue} />
-              <StatChip label="Danger Level" value={system.danger_level} tone={system.danger_level > 70 ? "text-red-200" : "text-slate-100"} />
+              <StatChip label="Stability" value={model.stability} />
+              <StatChip label="Gravity Profile" value={model.gravityProfile} />
+              <StatChip label="Radiation Level" value={model.radiationLevel} />
+              <StatChip label="Habitable Zone" value={model.habitableZone} />
+              <StatChip label="Planet Count" value={model.planetCount} />
+              <StatChip label="Moon Count" value={model.moonCount} />
+              <StatChip label="Asteroid Belts" value={model.asteroidBelts} />
+              <StatChip label="Resource Value" value={model.resourceValue} />
+              <StatChip label="Danger Level" value={model.dangerLevel} tone={model.dangerLevel > 70 ? "text-red-200" : "text-slate-100"} />
               <StatChip label="Discovery Status" value={stats.discoveryStatus} />
               <StatChip label="Colonization Status" value={stats.colonizationStatus} />
+              <StatChip label="Discovery Points" value={model.discoveryPoints} />
             </div>
           </DetailSection>
 
@@ -1190,25 +1437,40 @@ function StarSystemDetailPanel({
 
         <div className="space-y-5">
           <DetailSection title="Resources">
-            <ChipList values={inferredResources(card)} />
+            <ChipList values={model.resources} />
           </DetailSection>
           <DetailSection title="Hazards">
-            <ChipList values={inferredHazards(card)} />
+            <ChipList values={model.hazards} />
           </DetailSection>
           <DetailSection title="Traits">
-            <ChipList values={inferredTraits(card)} />
+            <ChipList values={model.traits} />
           </DetailSection>
           <DetailSection title="Anomalies">
-            <ChipList values={inferredAnomalies(card)} />
+            <ChipList values={model.anomalies} />
           </DetailSection>
           <DetailSection title="Modifiers">
-            <ChipList values={inferredModifiers(card)} />
-          </DetailSection>
-          <DetailSection title="Events">
-            <ChipList values={inferredEvents(card)} />
+            <ChipList values={model.modifiers} />
           </DetailSection>
           <DetailSection title="Collectibles">
-            <ChipList values={inferredCollectibles(card)} />
+            <ChipList values={model.collectibles} />
+          </DetailSection>
+          <DetailSection title="Weather / Space Conditions">
+            <ChipList values={model.spaceConditions} />
+          </DetailSection>
+          <DetailSection title="Events">
+            <ChipList values={model.events} />
+          </DetailSection>
+          <DetailSection title="Colonization">
+            <KeyValueGrid values={model.colonization} />
+          </DetailSection>
+          <DetailSection title="Science">
+            <KeyValueGrid values={model.science} />
+          </DetailSection>
+          <DetailSection title="Economy">
+            <KeyValueGrid values={model.economy} />
+          </DetailSection>
+          <DetailSection title="Visual Theme">
+            <KeyValueGrid values={model.visualTheme} />
           </DetailSection>
         </div>
       </div>
