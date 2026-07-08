@@ -323,7 +323,7 @@ export const tableConfigs: Record<TableName, TableConfig> = {
     statusKey: "colonizable_status",
     typeKey: "celestial_body_type",
     filterKeys: ["celestial_body_type", "planet_class", "planet_rarity", "unlock_requirement", "colonizable_status"],
-    searchKeys: ["name", "celestial_body_type", "planet_class", "planet_subclass", "biome", "resources", "notes"],
+    searchKeys: ["name", "celestial_body_type", "planet_class", "planet_subclass", "biome", "resources", "orbit_view_prompt", "surface_landscape_prompt", "notes"],
     columns: ["name", "celestial_body_type", "planet_class", "planet_subclass", "orbit_parent", "unlock_requirement", "colonizable_status"],
     fields: [
       { key: "id", label: "ID", required: true },
@@ -348,6 +348,15 @@ export const tableConfigs: Record<TableName, TableConfig> = {
       { key: "is_procedural", label: "Procedural", type: "boolean" },
       { key: "unlock_requirement", label: "Unlock Requirement" },
       { key: "resources", label: "Resources", type: "array" },
+      { key: "orbit_view_prompt", label: "Orbit View Prompt", type: "textarea" },
+      { key: "orbit_view_image_url", label: "Orbit View Image URL" },
+      { key: "surface_landscape_prompt", label: "Surface Landscape Prompt", type: "textarea" },
+      { key: "surface_landscape_image_url", label: "Surface Landscape Image URL" },
+      { key: "surface_landscape_status", label: "Surface Landscape Status", type: "status" },
+      { key: "surface_landscape_notes", label: "Surface Landscape Notes", type: "textarea" },
+      { key: "hero_discovery_prompt", label: "Hero Discovery Prompt", type: "textarea" },
+      { key: "hero_discovery_image_url", label: "Hero Discovery Image URL" },
+      { key: "hero_discovery_status", label: "Hero Discovery Status", type: "status" },
       { key: "notes", label: "Notes", type: "textarea" }
     ]
   },

@@ -33,8 +33,17 @@ export function generatedCelestialBodyRows(systemLimit = 5) {
   const { systems } = getLocalBubbleSystems(systemLimit);
 
   return systems.flatMap((system) =>
-    generateCelestialBodies(system).map((body): CelestialBodyNode & { created_at: string; updated_at: string } => ({
+    generateCelestialBodies(system).map((body) => ({
       ...body,
+      orbit_view_prompt: null,
+      orbit_view_image_url: null,
+      surface_landscape_prompt: null,
+      surface_landscape_image_url: null,
+      surface_landscape_status: "Not Started",
+      surface_landscape_notes: null,
+      hero_discovery_prompt: null,
+      hero_discovery_image_url: null,
+      hero_discovery_status: "Future",
       created_at: "derived",
       updated_at: "derived"
     }))

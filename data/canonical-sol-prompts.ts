@@ -28,6 +28,33 @@ export const CANONICAL_SOL_MASTER_PROMPT = [
   "Avoid: stylized fantasy redesign, cartoon, anime, painterly brushwork, fictional terrain features, invented moons, extra planets, spacecraft, satellites, cities protruding from the surface, text, UI, watermark, signature, logo, cropped edges, distorted sphere, oval planet, excessive glow, excessive bloom, lens flare, nebula background, starfield, messy background."
 ].join("\n");
 
+export const CANONICAL_SOL_SURFACE_LANDSCAPE_MASTER_PROMPT = [
+  "Create one high-resolution canonical Solar System surface landscape on a clean 16:9 cinematic frame.",
+  "",
+  "This must be a scientifically grounded surface-level or near-surface environment for the real Solar System body below.",
+  "",
+  "Use NASA, ESA, JPL, mission photography, probe imagery, orbital mapping, spectral data, and current planetary science as the visual authority.",
+  "",
+  "Canonical Solar System body:",
+  "{{body_name}}",
+  "",
+  "Scientific reference:",
+  "{{scientific_reference}}",
+  "",
+  "Surface landscape brief:",
+  "{{planet_description}}",
+  "",
+  "Important: do not use @img1 unless a separate orbit-view render has already been intentionally selected as a reference. This first-pass Sol landscape should come from scientific identity, not a generated orbit asset.",
+  "",
+  "Visual style: ultra-realistic expedition photography, documentary planetary science realism, physically plausible terrain, atmosphere, lighting, color, geological scale, and material detail.",
+  "",
+  "Composition: 16:9 landscape image, broad readable horizon, believable foreground/midground/background depth, no UI, no text, no labels, no watermark.",
+  "",
+  "Accuracy: prioritize real planetary science over fantasy. Keep terrain, sky color, atmosphere, lighting, ice, dust, clouds, haze, craters, plains, mountains, or seas appropriate to the specific Solar System body.",
+  "",
+  "Avoid: cartoon, anime, painterly brushwork, stylized concept art, fantasy terrain, invented alien vegetation, invented cities, spacecraft as the subject, astronauts, characters, labels, logos, signatures, oversaturated colors, fantasy glow, excessive bloom, impossible geology, and anything that contradicts NASA/ESA/JPL references."
+].join("\n");
+
 export const CANONICAL_SOL_PROMPTS: CanonicalSolPrompt[] = [
   {
     id: "sol",
@@ -198,4 +225,11 @@ export const CANONICAL_SOL_PROMPTS: CanonicalSolPrompt[] = [
 
 export function buildCanonicalSolPrompt(description: string) {
   return CANONICAL_SOL_MASTER_PROMPT.replace("{{planet_description}}", description.trim());
+}
+
+export function buildCanonicalSolLandscapePrompt(row: CanonicalSolPrompt) {
+  return CANONICAL_SOL_SURFACE_LANDSCAPE_MASTER_PROMPT
+    .replace("{{body_name}}", row.displayName)
+    .replace("{{scientific_reference}}", row.scientificReference)
+    .replace("{{planet_description}}", row.planetDescription.trim());
 }

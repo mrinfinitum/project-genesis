@@ -4,6 +4,7 @@ import { useMemo, useState, type ReactNode } from "react";
 import { Check, Clipboard, Copy, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
+  buildCanonicalSolLandscapePrompt,
   buildCanonicalSolPrompt,
   CANONICAL_SOL_MASTER_PROMPT,
   type CanonicalSolPrompt
@@ -18,7 +19,7 @@ import { buildPlanetLandscapePromptForTemplate } from "@/lib/planets/artwork-pro
 
 type CopyTarget = {
   id: string;
-  kind: "description" | "full" | "landscape" | "master" | "sync" | "canonical-master" | "canonical-description" | "canonical-full";
+  kind: "description" | "full" | "landscape" | "master" | "sync" | "canonical-master" | "canonical-description" | "canonical-full" | "canonical-landscape";
 };
 
 type LibraryFocus = "all" | "planet-artwork" | "surface-landscapes" | "hero-discovery-shots" | "prompt-library";
@@ -67,6 +68,14 @@ const focusMeta: Record<LibraryFocus, { eyebrow: string; title: string; descript
 
 function classKey(value: string) {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
+function supportsSolLandscapePrompt(row: CanonicalSolPrompt) {
+  return !["Star", "Gas Giant", "Ice Giant"].includes(row.bodyType);
+}
+
+function supportsTemplateLandscapePrompt(row: PlanetPromptTemplate) {
+  return row.planetClass !== "Gas Giant";
 }
 
 function groupedPrompts(rows: PlanetPromptTemplate[]) {
@@ -231,6 +240,8 @@ export function PlanetGenerationLibrary({
             {canonicalSolRows.map((row) => {
               const id = `canonical-${row.id}`;
               const fullPrompt = buildCanonicalSolPrompt(row.planetDescription);
+              const landscapePrompt = buildCanonicalSolLandscapePrompt(row);
+              const canCopyLandscape = supportsSolLandscapePrompt(row);
 
               return (
                 <article key={row.id} className="rounded-md border border-amber-300/15 bg-slate-950/45 p-4">
@@ -271,9 +282,20 @@ export function PlanetGenerationLibrary({
                       title="Copy full canonical Sol prompt"
                       onClick={() => copyValue(fullPrompt, { id, kind: "canonical-full" })}
                     >
-                      {copied?.id === id && copied.kind === "canonical-full" ? <Check className="h-4 w-4" /> : <Clipboard className="h-4 w-4" />}
-                      Full
+                        {copied?.id === id && copied.kind === "canonical-full" ? <Check className="h-4 w-4" /> : <Clipboard className="h-4 w-4" />}
+                      Full Planet Prompt
                     </Button>
+                    {canCopyLandscape ? (
+                      <Button
+                        type="button"
+                        className="h-9 border-blue-400/25 bg-blue-300/10 px-3 text-blue-100 hover:bg-blue-300/20"
+                        title="Copy canonical surface landscape prompt"
+                        onClick={() => copyValue(landscapePrompt, { id, kind: "canonical-landscape" })}
+                      >
+                        {copied?.id === id && copied.kind === "canonical-landscape" ? <Check className="h-4 w-4" /> : <Clipboard className="h-4 w-4" />}
+                        Landscape Prompt
+                      </Button>
+                    ) : null}
                   </div>
                 </article>
               );
@@ -321,12 +343,12 @@ export function PlanetGenerationLibrary({
                 {groups[className].map((row) => {
                   const id = `${row.planetClass}-${row.subclass}`;
                   const featurePrompt = planetTypeFeaturePrompt(row);
-                  const landscapePrompt = buildPlanetLandscapePromptForTemplate(row);
-                  const secondaryLabel = row.planetClass === "Gas Giant" ? "Orbital" : "Landscape";
+                  const canCopyLandscape = supportsTemplateLandscapePrompt(row);
+                  const landscapePrompt = canCopyLandscape ? buildPlanetLandscapePromptForTemplate(row) : "";
                   const primaryValue =
-                    meta.primaryCopy === "full" ? buildPlanetPrompt(featurePrompt) : meta.primaryCopy === "landscape" ? landscapePrompt : featurePrompt;
-                  const primaryKind = meta.primaryCopy === "full" ? "full" : meta.primaryCopy === "landscape" ? "landscape" : "description";
-                  const primaryLabel = meta.primaryCopy === "full" ? "Orbit Prompt" : meta.primaryCopy === "landscape" ? secondaryLabel : "Type";
+                    meta.primaryCopy === "full" ? buildPlanetPrompt(featurePrompt) : meta.primaryCopy === "landscape" && canCopyLandscape ? landscapePrompt : featurePrompt;
+                  const primaryKind = meta.primaryCopy === "full" ? "full" : meta.primaryCopy === "landscape" && canCopyLandscape ? "landscape" : "description";
+                  const primaryLabel = meta.primaryCopy === "full" ? "Full Planet Prompt" : meta.primaryCopy === "landscape" && canCopyLandscape ? "Landscape Prompt" : "Type";
                   return (
                     <article key={id} className="rounded-md border border-cyan-400/15 bg-[#07101e]/85 p-4 shadow-glow">
                       <div className="flex min-h-24 flex-col justify-between gap-3">
@@ -352,17 +374,19 @@ export function PlanetGenerationLibrary({
                           onClick={() => copyValue(buildPlanetPrompt(featurePrompt), { id, kind: "full" })}
                         >
                           {copied?.id === id && copied.kind === "full" ? <Check className="h-4 w-4" /> : <Clipboard className="h-4 w-4" />}
-                          Full
+                          Full Planet Prompt
                         </Button>
-                        <Button
-                          type="button"
-                          className="h-9 border-blue-400/25 bg-blue-300/10 px-3 text-blue-100 hover:bg-blue-300/20"
-                          title={`Copy ${secondaryLabel.toLowerCase()} prompt using @img1`}
-                          onClick={() => copyValue(landscapePrompt, { id, kind: "landscape" })}
-                        >
-                          {copied?.id === id && copied.kind === "landscape" ? <Check className="h-4 w-4" /> : <Clipboard className="h-4 w-4" />}
-                          {secondaryLabel}
-                        </Button>
+                        {canCopyLandscape ? (
+                          <Button
+                            type="button"
+                            className="h-9 border-blue-400/25 bg-blue-300/10 px-3 text-blue-100 hover:bg-blue-300/20"
+                            title="Copy surface landscape prompt"
+                            onClick={() => copyValue(landscapePrompt, { id, kind: "landscape" })}
+                          >
+                            {copied?.id === id && copied.kind === "landscape" ? <Check className="h-4 w-4" /> : <Clipboard className="h-4 w-4" />}
+                            Landscape Prompt
+                          </Button>
+                        ) : null}
                       </div>
                     </article>
                   );

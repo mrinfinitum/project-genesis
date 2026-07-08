@@ -1,8 +1,9 @@
 "use client";
 
 import { useMemo, useState, type CSSProperties } from "react";
-import { Download, ImageIcon, Orbit, Plus, Search, Sparkles, Trash2, X } from "lucide-react";
+import { Check, Clipboard, Download, ImageIcon, Orbit, Plus, Search, Sparkles, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { buildOrbitViewPrompt, buildSurfaceLandscapePrompt } from "@/lib/planets/artwork-prompts";
 import { PLANET_CLASS_MODEL } from "@/lib/planets/class-model";
 import { normalizePlanetRarity } from "@/lib/planets/rarity";
 import { hasLockedPlanetRender } from "@/lib/planets/render-lock";
@@ -118,6 +119,10 @@ function isFixedSolPlanet(row: GeneratedPlanet) {
 function largestVariant(row: GeneratedPlanet) {
   const variants = imageVariants(row);
   return variants.reduce<PlanetImageVariant | null>((current, next) => (!current || next.size > current.size ? next : current), null);
+}
+
+function orbitReferenceUrl(row: GeneratedPlanet) {
+  return row.orbit_view_image_url ?? largestVariant(row)?.url ?? row.image_url ?? "";
 }
 
 function secondaryArtworkUrl(row: GeneratedPlanet) {
@@ -292,6 +297,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
   const [error, setError] = useState("");
   const [selectedPlanet, setSelectedPlanet] = useState<GeneratedPlanet | null>(null);
   const [lightboxImage, setLightboxImage] = useState<{ url: string; alt: string } | null>(null);
+  const [copiedPrompt, setCopiedPrompt] = useState<{ id: string; kind: "orbit" | "landscape" } | null>(null);
 
   const filteredRows = useMemo(() => {
     const search = query.trim().toLowerCase();
@@ -457,6 +463,16 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
     } catch (caughtError) {
       setError(caughtError instanceof Error ? caughtError.message : "Could not download image.");
     }
+  }
+
+  async function copyPlanetPrompt(row: GeneratedPlanet, kind: "orbit" | "landscape") {
+    if (kind === "landscape" && isGasGiant(row)) return;
+
+    const prompt = kind === "orbit" ? row.orbit_view_prompt ?? buildOrbitViewPrompt(row) : row.surface_landscape_prompt ?? buildSurfaceLandscapePrompt(row, orbitReferenceUrl(row));
+
+    await navigator.clipboard.writeText(prompt);
+    setCopiedPrompt({ id: row.id, kind });
+    window.setTimeout(() => setCopiedPrompt(null), 1600);
   }
 
   return (
@@ -662,6 +678,34 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                 <div className="flex flex-wrap gap-2">
                   <span className="rounded border border-cyan-300/20 bg-cyan-400/10 px-2 py-1 text-xs text-cyan-100">{row.discovery_points} discovery pts</span>
                 </div>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    className="inline-flex h-8 items-center gap-1.5 rounded border border-cyan-300/20 bg-cyan-400/10 px-2 text-[0.68rem] font-semibold text-cyan-100 transition hover:bg-cyan-400/20"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      void copyPlanetPrompt(row, "orbit");
+                    }}
+                    title="Copy full orbit-view planet prompt"
+                  >
+                    {copiedPrompt?.id === row.id && copiedPrompt.kind === "orbit" ? <Check className="h-3.5 w-3.5" /> : <Clipboard className="h-3.5 w-3.5" />}
+                    Full Planet Prompt
+                  </button>
+                  {!isGasGiant(row) ? (
+                    <button
+                      type="button"
+                      className="inline-flex h-8 items-center gap-1.5 rounded border border-blue-300/20 bg-blue-400/10 px-2 text-[0.68rem] font-semibold text-blue-100 transition hover:bg-blue-400/20"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        void copyPlanetPrompt(row, "landscape");
+                      }}
+                      title="Copy surface landscape prompt"
+                    >
+                      {copiedPrompt?.id === row.id && copiedPrompt.kind === "landscape" ? <Check className="h-3.5 w-3.5" /> : <Clipboard className="h-3.5 w-3.5" />}
+                      Landscape Prompt
+                    </button>
+                  ) : null}
+                </div>
               </div>
             </article>
           );
@@ -691,6 +735,28 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                 </div>
                 <h3 className="mt-2 text-3xl font-bold text-white">{selectedPlanet.name}</h3>
                 <p className="mt-1 font-mono text-xs text-slate-500">{selectedPlanet.seed}</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Button
+                    type="button"
+                    className="h-9 border-cyan-400/25 bg-cyan-300/10 px-3 text-cyan-100 hover:bg-cyan-300/20"
+                    title="Copy full orbit-view planet prompt"
+                    onClick={() => copyPlanetPrompt(selectedPlanet, "orbit")}
+                  >
+                    {copiedPrompt?.id === selectedPlanet.id && copiedPrompt.kind === "orbit" ? <Check className="h-4 w-4" /> : <Clipboard className="h-4 w-4" />}
+                    Full Planet Prompt
+                  </Button>
+                  {!isGasGiant(selectedPlanet) ? (
+                    <Button
+                      type="button"
+                      className="h-9 border-blue-400/25 bg-blue-300/10 px-3 text-blue-100 hover:bg-blue-300/20"
+                      title="Copy surface landscape prompt"
+                      onClick={() => copyPlanetPrompt(selectedPlanet, "landscape")}
+                    >
+                      {copiedPrompt?.id === selectedPlanet.id && copiedPrompt.kind === "landscape" ? <Check className="h-4 w-4" /> : <Clipboard className="h-4 w-4" />}
+                      Landscape Prompt
+                    </Button>
+                  ) : null}
+                </div>
               </div>
               <Button className="h-9 w-9 px-0" onClick={() => setSelectedPlanet(null)} type="button">
                 <X className="h-4 w-4" />

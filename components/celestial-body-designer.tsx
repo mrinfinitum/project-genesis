@@ -1,8 +1,16 @@
-import { AlertTriangle, CheckCircle2, CircleDot, Database, GitBranch, Image, Moon, Orbit, Sparkles, Star } from "lucide-react";
+"use client";
+
+import { useState } from "react";
+import { AlertTriangle, Check, CheckCircle2, CircleDot, Clipboard, Database, GitBranch, Moon, Orbit, Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { buildCanonicalSolLandscapePrompt, buildCanonicalSolPrompt, CANONICAL_SOL_PROMPTS } from "@/data/canonical-sol-prompts";
+import { buildPlanetPrompt, PLANET_PROMPT_LIBRARY, planetTypeFeaturePrompt } from "@/data/planet-generation-prompts";
+import { buildPlanetLandscapePromptForTemplate } from "@/lib/planets/artwork-prompts";
 import { cn } from "@/lib/utils";
 import type { CelestialBodyRecord } from "@/types/schema";
 
 type Body = CelestialBodyRecord;
+type PromptKind = "orbit" | "landscape";
 
 const bodyIcons = {
   Star,
@@ -38,6 +46,75 @@ function childBodies(row: Body, byParent: Map<string, Body[]>) {
   return byParent.get(row.id) ?? [];
 }
 
+function normalized(value: string | null | undefined) {
+  return (value ?? "").trim().toLowerCase();
+}
+
+function canonicalSolPromptMatch(row: Body) {
+  return row.is_fixed ? CANONICAL_SOL_PROMPTS.find((prompt) => normalized(prompt.displayName) === normalized(row.name)) ?? null : null;
+}
+
+function planetTemplateMatch(row: Body) {
+  const planetClass = normalized(row.planet_class);
+  const subclass = normalized(row.planet_subclass);
+
+  return (
+    PLANET_PROMPT_LIBRARY.find((template) => normalized(template.planetClass) === planetClass && normalized(template.subclass) === subclass) ??
+    PLANET_PROMPT_LIBRARY.find((template) => normalized(template.planetClass) === planetClass) ??
+    null
+  );
+}
+
+function supportsPromptActions(row: Body) {
+  return ["Planet", "Dwarf Planet", "Moon"].includes(row.celestial_body_type) || Boolean(row.planet_class);
+}
+
+function supportsLandscapePrompt(row: Body) {
+  return supportsPromptActions(row) && row.landable && row.planet_class !== "Gas Giant" && !row.uses_orbital_gameplay;
+}
+
+function bodyFeatureDescription(row: Body) {
+  const template = planetTemplateMatch(row);
+  if (template) return planetTypeFeaturePrompt(template);
+
+  return [
+    `${row.planet_subclass ?? row.biome ?? "Unique"} ${row.planet_class ?? row.celestial_body_type}.`,
+    row.atmosphere ? `${row.atmosphere} atmosphere.` : "",
+    row.gravity ? `${row.gravity} gravity.` : "",
+    row.resources?.length ? `Known resources: ${row.resources.join(", ")}.` : "",
+    row.notes ?? ""
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+function buildBodyOrbitPrompt(row: Body) {
+  if (row.orbit_view_prompt) return row.orbit_view_prompt;
+
+  const canonical = canonicalSolPromptMatch(row);
+  if (canonical) return buildCanonicalSolPrompt(canonical.planetDescription);
+
+  return buildPlanetPrompt(bodyFeatureDescription(row));
+}
+
+function buildBodyLandscapePrompt(row: Body) {
+  if (!supportsLandscapePrompt(row)) return "";
+  if (row.surface_landscape_prompt) return row.surface_landscape_prompt;
+
+  const canonical = canonicalSolPromptMatch(row);
+  if (canonical) return buildCanonicalSolLandscapePrompt(canonical);
+
+  const template = planetTemplateMatch(row);
+  if (template) {
+    return buildPlanetLandscapePromptForTemplate(template, {
+      referenceImageUrl: row.orbit_view_image_url ?? "",
+      useOrbitReference: Boolean(row.orbit_view_image_url)
+    });
+  }
+
+  return buildPlanetPrompt(bodyFeatureDescription(row));
+}
+
 function validationItems(rows: Body[]) {
   const ids = new Set<string>();
   const duplicates = new Set<string>();
@@ -60,10 +137,22 @@ function validationItems(rows: Body[]) {
   ];
 }
 
-function BodyCard({ row, children }: { row: Body; children: Body[] }) {
+function BodyCard({
+  row,
+  children,
+  copied,
+  onCopy
+}: {
+  row: Body;
+  children: Body[];
+  copied: { id: string; kind: PromptKind } | null;
+  onCopy: (row: Body, kind: PromptKind) => void;
+}) {
   const Icon = bodyIcons[row.celestial_body_type as keyof typeof bodyIcons] ?? CircleDot;
   const artworkStatus = ["Planet", "Dwarf Planet", "Moon"].includes(row.celestial_body_type) ? "Needs Art" : "Not Required";
   const promptStatus = row.planet_class && row.planet_subclass ? "Prompt Ready" : ["Planet", "Dwarf Planet", "Moon"].includes(row.celestial_body_type) ? "Needs Prompt" : "Not Required";
+  const canCopyPrompts = supportsPromptActions(row);
+  const canCopyLandscape = supportsLandscapePrompt(row);
 
   return (
     <article className="rounded-md border border-cyan-400/15 bg-[#07101e]/85 p-4 shadow-glow">
@@ -109,6 +198,31 @@ function BodyCard({ row, children }: { row: Body; children: Body[] }) {
         <StatusPill value={row.colonizable ? "Colonizable" : "Not Colonizable"} />
       </div>
 
+      {canCopyPrompts ? (
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Button
+            type="button"
+            className="h-9 border-cyan-400/25 bg-cyan-300/10 px-3 text-cyan-100 hover:bg-cyan-300/20"
+            title="Copy full orbit-view planet prompt"
+            onClick={() => onCopy(row, "orbit")}
+          >
+            {copied?.id === row.id && copied.kind === "orbit" ? <Check className="h-4 w-4" /> : <Clipboard className="h-4 w-4" />}
+            Full Planet Prompt
+          </Button>
+          {canCopyLandscape ? (
+            <Button
+              type="button"
+              className="h-9 border-blue-400/25 bg-blue-300/10 px-3 text-blue-100 hover:bg-blue-300/20"
+              title="Copy surface landscape prompt"
+              onClick={() => onCopy(row, "landscape")}
+            >
+              {copied?.id === row.id && copied.kind === "landscape" ? <Check className="h-4 w-4" /> : <Clipboard className="h-4 w-4" />}
+              Landscape Prompt
+            </Button>
+          ) : null}
+        </div>
+      ) : null}
+
       {children.length ? (
         <div className="mt-4 rounded-md border border-cyan-400/10 bg-slate-950/45 p-3">
           <p className="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-cyan-300">Nested Bodies</p>
@@ -127,6 +241,7 @@ function BodyCard({ row, children }: { row: Body; children: Body[] }) {
 }
 
 export function CelestialBodyDesigner({ rows }: { rows: Body[] }) {
+  const [copied, setCopied] = useState<{ id: string; kind: PromptKind } | null>(null);
   const groups = bodyTypeGroups(rows);
   const byParent = rows.reduce((map, row) => {
     if (!row.parent_body_id) return map;
@@ -146,6 +261,15 @@ export function CelestialBodyDesigner({ rows }: { rows: Body[] }) {
     { label: "Orbital Worlds", value: orbitalWorlds, icon: Orbit },
     { label: "Export Blockers", value: blockers, icon: AlertTriangle }
   ];
+
+  async function copyPrompt(row: Body, kind: PromptKind) {
+    const prompt = kind === "landscape" ? buildBodyLandscapePrompt(row) : buildBodyOrbitPrompt(row);
+    if (!prompt) return;
+
+    await navigator.clipboard.writeText(prompt);
+    setCopied({ id: row.id, kind });
+    window.setTimeout(() => setCopied(null), 1600);
+  }
 
   return (
     <div className="space-y-6">
@@ -201,7 +325,7 @@ export function CelestialBodyDesigner({ rows }: { rows: Body[] }) {
 
       <section className="grid gap-4 xl:grid-cols-2">
         {rootBodies.map((row) => (
-          <BodyCard key={row.id} row={row} children={childBodies(row, byParent)} />
+          <BodyCard key={row.id} row={row} children={childBodies(row, byParent)} copied={copied} onCopy={copyPrompt} />
         ))}
       </section>
     </div>

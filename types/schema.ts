@@ -342,6 +342,15 @@ export type CelestialBodyRecord = {
   is_procedural: boolean;
   unlock_requirement: string | null;
   resources: string[];
+  orbit_view_prompt: string | null;
+  orbit_view_image_url: string | null;
+  surface_landscape_prompt: string | null;
+  surface_landscape_image_url: string | null;
+  surface_landscape_status: string | null;
+  surface_landscape_notes: string | null;
+  hero_discovery_prompt: string | null;
+  hero_discovery_image_url: string | null;
+  hero_discovery_status: string | null;
   notes: string | null;
   created_at: string;
   updated_at: string;

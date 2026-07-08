@@ -10,6 +10,11 @@ type PlanetArtworkPromptInput = {
   anomalies?: string[];
 };
 
+type SurfaceLandscapePromptOptions = {
+  referenceImageUrl?: string;
+  useOrbitReference?: boolean;
+};
+
 function listText(values: string[] | null | undefined) {
   return Array.isArray(values) ? values.filter(Boolean).join(", ") : "";
 }
@@ -86,18 +91,35 @@ function planetInputFromTemplate(row: PlanetPromptTemplate): PlanetArtworkPrompt
   };
 }
 
-function buildSurfaceLandscapePromptForInput(input: PlanetArtworkPromptInput, referenceImageUrl = "") {
+function buildSurfaceLandscapePromptForInput(input: PlanetArtworkPromptInput, options: SurfaceLandscapePromptOptions = {}) {
+  const referenceImageUrl = options.referenceImageUrl ?? "";
+  const useOrbitReference = options.useOrbitReference ?? true;
+  const referenceLines = useOrbitReference
+    ? [
+        "Reference Image",
+        "@img1",
+        referenceImageUrl ? `@img1 URL: ${referenceImageUrl}` : "",
+        "",
+        "REFERENCE RULE",
+        "Use @img1 as the visual anchor for this planet.",
+        "Create the surface landscape that belongs to this exact world, matching its colors, atmosphere, geology, lighting mood, planet class, subclass, and biome.",
+        "Do not redesign the planet or invent a different world. Interpret @img1 as a real place viewed from ground level.",
+        "",
+        "Create one ultra-realistic 16:9 photographic surface landscape from @img1."
+      ]
+    : [
+        "Reference Image",
+        "None selected",
+        "",
+        "REFERENCE RULE",
+        "Create the surface landscape from the planet class, subclass, biome, rarity, and notes below.",
+        "Do not use @img1 unless an orbit-view render has already been intentionally selected as a reference.",
+        "",
+        "Create one ultra-realistic 16:9 photographic surface landscape."
+      ];
+
   return [
-    "Reference Image",
-    "@img1",
-    referenceImageUrl ? `@img1 URL: ${referenceImageUrl}` : "",
-    "",
-    "REFERENCE RULE",
-    "Use @img1 as the visual anchor for this planet.",
-    "Create the surface landscape that belongs to this exact world, matching its colors, atmosphere, geology, lighting mood, planet class, subclass, and biome.",
-    "Do not redesign the planet or invent a different world. Interpret @img1 as a real place viewed from ground level.",
-    "",
-    "Create one ultra-realistic 16:9 photographic surface landscape from @img1.",
+    ...referenceLines,
     "It should look like a real expedition photograph or high-end cinema still from an actual alien planet, not artwork.",
     "",
     commonPromptFacts(input),
@@ -166,7 +188,10 @@ function buildOrbitalPlatformPromptForInput(input: PlanetArtworkPromptInput, ref
 }
 
 export function buildSurfaceLandscapePrompt(planet: GeneratedPlanet, referenceImageUrl: string) {
-  return buildSurfaceLandscapePromptForInput(planetInputFromGeneratedPlanet(planet), referenceImageUrl);
+  return buildSurfaceLandscapePromptForInput(planetInputFromGeneratedPlanet(planet), {
+    referenceImageUrl,
+    useOrbitReference: Boolean(referenceImageUrl)
+  });
 }
 
 export function buildOrbitalPlatformPrompt(planet: GeneratedPlanet, referenceImageUrl: string) {
@@ -179,10 +204,10 @@ export function buildPlanetSecondaryArtworkPrompt(planet: GeneratedPlanet, refer
     : buildSurfaceLandscapePrompt(planet, referenceImageUrl);
 }
 
-export function buildPlanetLandscapePromptForTemplate(row: PlanetPromptTemplate) {
+export function buildPlanetLandscapePromptForTemplate(row: PlanetPromptTemplate, options: SurfaceLandscapePromptOptions = {}) {
   const input = planetInputFromTemplate(row);
 
   return row.planetClass === "Gas Giant"
     ? buildOrbitalPlatformPromptForInput(input)
-    : buildSurfaceLandscapePromptForInput(input);
+    : buildSurfaceLandscapePromptForInput(input, options);
 }
