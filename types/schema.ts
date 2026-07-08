@@ -199,6 +199,15 @@ export type UniverseRecord = {
   created_at: string;
 };
 
+export type GenerationMetadataRecord = {
+  seed?: string | null;
+  generation_parent_seed?: string | null;
+  generation_index?: number | null;
+  generation_version?: string | null;
+  is_fixed?: boolean | null;
+  is_procedural?: boolean | null;
+};
+
 export type GalaxyRecord = {
   id: string;
   universe_id: string;
@@ -209,7 +218,7 @@ export type GalaxyRecord = {
   galaxy_size: string;
   sector_count: number;
   created_at: string;
-};
+} & GenerationMetadataRecord;
 
 export type SectorRecord = {
   id: string;
@@ -231,7 +240,7 @@ export type SectorRecord = {
   discovered: boolean;
   discovered_at: string | null;
   created_at: string;
-};
+} & GenerationMetadataRecord;
 
 export type StarSystemRecord = {
   id: string;
@@ -269,7 +278,7 @@ export type StarSystemRecord = {
   discovered: boolean;
   discovered_at: string | null;
   created_at: string;
-};
+} & GenerationMetadataRecord;
 
 export type SystemProbeRecord = {
   id: string;
@@ -295,7 +304,7 @@ export type StarRecord = {
   luminosity: number;
   age: string;
   created_at: string;
-};
+} & GenerationMetadataRecord;
 
 export type UniversePlanetRecord = {
   id: string;
@@ -317,7 +326,7 @@ export type UniversePlanetRecord = {
   expeditions_completed: string[];
   created_at: string;
   updated_at: string;
-};
+} & GenerationMetadataRecord;
 
 export type CelestialBodyRecord = {
   id: string;
@@ -354,7 +363,7 @@ export type CelestialBodyRecord = {
   notes: string | null;
   created_at: string;
   updated_at: string;
-};
+} & GenerationMetadataRecord;
 
 export type GeneratedPlanet = {
   id: string;

@@ -196,6 +196,12 @@ create table if not exists galaxies (
   galaxy_type text not null,
   galaxy_size text not null default 'Infinite',
   sector_count integer not null default 0,
+  seed text,
+  generation_parent_seed text,
+  generation_index integer,
+  generation_version text not null default 'seeded-cascade-v1',
+  is_fixed boolean not null default false,
+  is_procedural boolean not null default true,
   created_at timestamptz default now()
 );
 
@@ -218,6 +224,12 @@ create table if not exists sectors (
   colonized_worlds integer not null default 0,
   discovered boolean not null default false,
   discovered_at timestamptz,
+  seed text,
+  generation_parent_seed text,
+  generation_index integer,
+  generation_version text not null default 'seeded-cascade-v1',
+  is_fixed boolean not null default false,
+  is_procedural boolean not null default true,
   created_at timestamptz default now()
 );
 
@@ -256,6 +268,11 @@ create table if not exists star_systems (
   scan_data jsonb not null default '{}'::jsonb,
   discovered boolean not null default false,
   discovered_at timestamptz,
+  seed text,
+  generation_parent_seed text,
+  generation_index integer,
+  generation_version text not null default 'seeded-cascade-v1',
+  is_fixed boolean not null default false,
   created_at timestamptz default now()
 );
 
@@ -270,6 +287,12 @@ create table if not exists stars (
   star_color text not null,
   luminosity integer not null default 0,
   age text not null,
+  seed text,
+  generation_parent_seed text,
+  generation_index integer,
+  generation_version text not null default 'seeded-cascade-v1',
+  is_fixed boolean not null default false,
+  is_procedural boolean not null default true,
   created_at timestamptz default now()
 );
 
@@ -291,6 +314,12 @@ create table if not exists universe_planets (
   buildings_built jsonb not null default '[]'::jsonb,
   collectibles_found jsonb not null default '[]'::jsonb,
   expeditions_completed jsonb not null default '[]'::jsonb,
+  seed text,
+  generation_parent_seed text,
+  generation_index integer,
+  generation_version text not null default 'seeded-cascade-v1',
+  is_fixed boolean not null default false,
+  is_procedural boolean not null default true,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
@@ -328,6 +357,10 @@ create table if not exists celestial_bodies (
   hero_discovery_image_url text,
   hero_discovery_status text default 'Future',
   notes text,
+  seed text,
+  generation_parent_seed text,
+  generation_index integer,
+  generation_version text not null default 'seeded-cascade-v1',
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );

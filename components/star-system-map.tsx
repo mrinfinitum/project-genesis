@@ -101,6 +101,8 @@ export function StarSystemMap() {
   const [systemId, setSystemId] = useState("system-sol");
   const [bodyId, setBodyId] = useState("body-earth");
   const [query, setQuery] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
 
   const universe = useMemo(() => generateUniverse(DEFAULT_UNIVERSE_SEED), []);
   const galaxy = useMemo(() => generateGalaxy(universe.universe_seed, 0), [universe.universe_seed]);
@@ -147,6 +149,36 @@ export function StarSystemMap() {
     );
   }
 
+  async function saveSystemPreview() {
+    setSaving(true);
+    setSaveMessage(null);
+
+    try {
+      const response = await fetch("/api/universe/cascade", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          scope: "star-system",
+          seed: universe.universe_seed,
+          galaxyIndex: 0,
+          sectorIndex: 0,
+          systemIndex: systems.findIndex((system) => system.id === selectedSystem.id)
+        })
+      });
+      const payload = (await response.json()) as { error?: string };
+
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Could not save star system preview.");
+      }
+
+      setSaveMessage("Star system cascade saved.");
+    } catch (error) {
+      setSaveMessage(error instanceof Error ? error.message : "Could not save star system preview.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
   return (
     <div className="space-y-6">
       <section className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
@@ -173,8 +205,14 @@ export function StarSystemMap() {
             <Database className="h-4 w-4" />
             Export System
           </Button>
+          <Button type="button" onClick={saveSystemPreview} disabled={saving}>
+            <Database className="h-4 w-4" />
+            {saving ? "Saving..." : "Save Preview"}
+          </Button>
         </div>
       </section>
+
+      {saveMessage ? <div className="rounded-md border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-sm font-semibold text-cyan-100">{saveMessage}</div> : null}
 
       <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_28rem]">
         <div className="overflow-hidden rounded-md border border-cyan-400/15 bg-genesis-panel/90">

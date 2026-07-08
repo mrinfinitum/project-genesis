@@ -120,6 +120,9 @@ export function GalaxyCommandCenter() {
   const [systemIndex, setSystemIndex] = useState(0);
   const [filter, setFilter] = useState("All");
   const [query, setQuery] = useState("");
+  const [savingScope, setSavingScope] = useState<"galaxy" | "sector" | "star-system" | null>(null);
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const universe = useMemo(() => generateUniverse(universeSeed), [universeSeed]);
   const galaxy = useMemo(() => generateGalaxy(universe.universe_seed, galaxyIndex), [universe.universe_seed, galaxyIndex]);
@@ -162,6 +165,40 @@ export function GalaxyCommandCenter() {
     );
   }
 
+  async function saveCascade(scope: "galaxy" | "sector" | "star-system") {
+    setSavingScope(scope);
+    setSaveMessage(null);
+    setSaveError(null);
+
+    try {
+      const response = await fetch("/api/universe/cascade", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          scope,
+          seed: universe.universe_seed,
+          galaxyIndex,
+          sectorIndex,
+          systemIndex
+        })
+      });
+      const payload = (await response.json()) as { saved?: Record<string, number>; error?: string };
+
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Could not save seeded cascade.");
+      }
+
+      const savedSummary = Object.entries(payload.saved ?? {})
+        .map(([table, count]) => `${count} ${table.replaceAll("_", " ")}`)
+        .join(", ");
+      setSaveMessage(`Saved ${scope.replace("-", " ")} cascade: ${savedSummary}.`);
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : "Could not save seeded cascade.");
+    } finally {
+      setSavingScope(null);
+    }
+  }
+
   return (
     <div className="space-y-6">
       <section className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
@@ -195,8 +232,17 @@ export function GalaxyCommandCenter() {
             type="number"
             aria-label="Galaxy index"
           />
+          <Button type="button" onClick={() => saveCascade("galaxy")} disabled={savingScope !== null} className="sm:col-span-2">
+            <Database className="h-4 w-4" />
+            {savingScope === "galaxy" ? "Saving Galaxy..." : "Save Galaxy Preview"}
+          </Button>
         </div>
       </section>
+
+      {saveMessage ? (
+        <div className="rounded-md border border-emerald-300/30 bg-emerald-300/10 px-4 py-3 text-sm font-semibold text-emerald-100">{saveMessage}</div>
+      ) : null}
+      {saveError ? <div className="rounded-md border border-red-300/30 bg-red-500/10 px-4 py-3 text-sm font-semibold text-red-100">{saveError}</div> : null}
 
       <section className="grid gap-3 lg:grid-cols-6">
         <Field label="Galaxy Name" value={galaxy.name} />
@@ -273,6 +319,10 @@ export function GalaxyCommandCenter() {
             <Crosshair className="h-4 w-4 text-cyan-200" />
             <h2 className="text-lg font-semibold text-white">Sector Details</h2>
           </div>
+          <Button type="button" onClick={() => saveCascade("sector")} disabled={savingScope !== null} className="w-full">
+            <Database className="h-4 w-4" />
+            {savingScope === "sector" ? "Saving Sector..." : "Save Sector Preview"}
+          </Button>
           <div className="space-y-3">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">{selectedSector.sector_type}</p>
@@ -320,7 +370,7 @@ export function GalaxyCommandCenter() {
             ))}
           </div>
           <div className="mt-5 rounded-md border border-amber-300/20 bg-amber-300/10 p-3 text-sm text-amber-50/90">
-            Store only galaxy seed, discovered sectors, discovered systems, colonies, and player changes. Regenerate the rest.
+            Preview generation does not save. Use the save buttons to persist a galaxy, sector, or star-system cascade with fixed Sol protected.
           </div>
         </div>
 
@@ -383,6 +433,10 @@ export function GalaxyCommandCenter() {
             <Field label="Generation" value={selectedSystem.generation_type} />
             <Field label="Danger" value={selectedSystem.danger_level} />
             <SeedRow label="System Seed" value={selectedSystem.system_seed} />
+            <Button type="button" onClick={() => saveCascade("star-system")} disabled={savingScope !== null} className="w-full">
+              <Database className="h-4 w-4" />
+              {savingScope === "star-system" ? "Saving System..." : "Save System Preview"}
+            </Button>
             <div className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-3">
               <p className="text-[0.66rem] font-semibold uppercase tracking-[0.18em] text-cyan-300">Celestial Bodies</p>
               <div className="mt-3 space-y-2">

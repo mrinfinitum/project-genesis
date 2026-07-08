@@ -3,6 +3,17 @@ import { generatePlanetRarity } from "@/lib/planets/rarity";
 
 type RandomSource = () => number;
 
+export const SEED_GENERATION_VERSION = "seeded-cascade-v1";
+
+export type GenerationMetadata = {
+  seed: string;
+  generation_parent_seed: string | null;
+  generation_index: number;
+  generation_version: string;
+  is_fixed?: boolean;
+  is_procedural?: boolean;
+};
+
 export type UniverseNode = {
   id: string;
   universe_seed: string;
@@ -18,6 +29,12 @@ export type GalaxyNode = {
   galaxy_type: string;
   galaxy_size: string;
   sector_count: number;
+  seed?: string;
+  generation_parent_seed?: string | null;
+  generation_index?: number;
+  generation_version?: string;
+  is_fixed?: boolean;
+  is_procedural?: boolean;
 };
 
 export type SectorNode = {
@@ -39,6 +56,12 @@ export type SectorNode = {
   colonized_worlds: number;
   discovered: boolean;
   discovered_at: string | null;
+  seed?: string;
+  generation_parent_seed?: string | null;
+  generation_index?: number;
+  generation_version?: string;
+  is_fixed?: boolean;
+  is_procedural?: boolean;
 };
 
 export type StarSystemNode = {
@@ -76,6 +99,11 @@ export type StarSystemNode = {
   scan_data: Record<string, unknown>;
   discovered: boolean;
   discovered_at: string | null;
+  seed?: string;
+  generation_parent_seed?: string | null;
+  generation_index?: number;
+  generation_version?: string;
+  is_fixed?: boolean;
 };
 
 export type DiscoveryState = "Undetected" | "Detected" | "Probed" | "Scanned" | "Visited" | "Surveyed" | "Colonized";
@@ -91,6 +119,12 @@ export type StarNode = {
   star_color: string;
   luminosity: number;
   age: string;
+  seed?: string;
+  generation_parent_seed?: string | null;
+  generation_index?: number;
+  generation_version?: string;
+  is_fixed?: boolean;
+  is_procedural?: boolean;
 };
 
 export type UniversePlanetNode = {
@@ -104,6 +138,12 @@ export type UniversePlanetNode = {
   planet_subclass: string;
   colonized: boolean;
   terraform_level: number;
+  seed?: string;
+  generation_parent_seed?: string | null;
+  generation_index?: number;
+  generation_version?: string;
+  is_fixed?: boolean;
+  is_procedural?: boolean;
 };
 
 export type CelestialBodyNode = {
@@ -130,6 +170,10 @@ export type CelestialBodyNode = {
   unlock_requirement: string;
   resources: string[];
   notes: string;
+  seed?: string;
+  generation_parent_seed?: string | null;
+  generation_index?: number;
+  generation_version?: string;
 };
 
 export const PLANET_SUB_SEED_KEYS = [
@@ -824,6 +868,19 @@ export function deriveSeed(parentSeed: string, scope: string, index?: number) {
   return `${parentSeed}:${scope}${suffix}:${hashSeed(`${parentSeed}:${scope}${suffix}`).toString(36)}`;
 }
 
+export function deriveChildSeed(parentSeed: string, scope: string, index: number) {
+  return deriveSeed(parentSeed, scope, index);
+}
+
+function generationMetadata(seed: string, parentSeed: string | null, generationIndex: number) {
+  return {
+    seed,
+    generation_parent_seed: parentSeed,
+    generation_index: generationIndex,
+    generation_version: SEED_GENERATION_VERSION
+  };
+}
+
 export function planetSubSeeds(planetSeed: string) {
   return Object.fromEntries(PLANET_SUB_SEED_KEYS.map((key) => [key, deriveSeed(planetSeed, key)]));
 }
@@ -930,7 +987,10 @@ export function generateGalaxy(universeSeed: string, galaxyIndex = 0): GalaxyNod
       name: "Milky Way",
       galaxy_type: "Spiral Galaxy",
       galaxy_size: "Starting Galaxy",
-      sector_count: 100000
+      sector_count: 100000,
+      is_fixed: true,
+      is_procedural: false,
+      ...generationMetadata("PROJECT-GENESIS-UNIVERSE:milky-way", universeSeed, galaxyIndex)
     };
   }
 
@@ -945,7 +1005,10 @@ export function generateGalaxy(universeSeed: string, galaxyIndex = 0): GalaxyNod
     name: generatedName(galaxySeed, "galaxy"),
     galaxy_type: pick(galaxyTypes, random, "Spiral"),
     galaxy_size: galaxySize.name,
-    sector_count: galaxySize.sectors
+    sector_count: galaxySize.sectors,
+    is_fixed: false,
+    is_procedural: true,
+    ...generationMetadata(galaxySeed, universeSeed, galaxyIndex)
   };
 }
 
@@ -969,7 +1032,10 @@ export function generateSector(galaxy: GalaxyNode, sectorIndex: number): SectorN
       resource_signal: "Balanced",
       colonized_worlds: 1,
       discovered: true,
-      discovered_at: "derived"
+      discovered_at: "derived",
+      is_fixed: true,
+      is_procedural: false,
+      ...generationMetadata("PROJECT-GENESIS-UNIVERSE:milky-way:local-bubble", galaxy.galaxy_seed, sectorIndex)
     };
   }
 
@@ -1021,7 +1087,10 @@ export function generateSector(galaxy: GalaxyNode, sectorIndex: number): SectorN
     resource_signal: pick(resourceBiases, random, "Balanced"),
     colonized_worlds: discovered ? numericRange(random, 0, 3) : 0,
     discovered,
-    discovered_at: discovered ? "derived" : null
+    discovered_at: discovered ? "derived" : null,
+    is_fixed: false,
+    is_procedural: true,
+    ...generationMetadata(sectorSeed, galaxy.galaxy_seed, sectorIndex)
   };
 }
 
@@ -1067,7 +1136,9 @@ export function generateStarSystem(sector: SectorNode, systemIndex: number): Sta
         handcrafted: true
       },
       discovered: true,
-      discovered_at: "derived"
+      discovered_at: "derived",
+      is_fixed: true,
+      ...generationMetadata(SOL_SYSTEM_SEED, sector.sector_seed, systemIndex)
     };
   }
 
@@ -1116,7 +1187,9 @@ export function generateStarSystem(sector: SectorNode, systemIndex: number): Sta
       resource_bias: ["Visited", "Surveyed", "Colonized"].includes(discoveryState) ? "Known after visit" : null
     },
     discovered: discoveryState !== "Undetected",
-    discovered_at: discoveryState !== "Undetected" ? "derived" : null
+    discovered_at: discoveryState !== "Undetected" ? "derived" : null,
+    is_fixed: false,
+    ...generationMetadata(systemSeed, sector.sector_seed, systemIndex)
   };
 }
 
@@ -1137,7 +1210,10 @@ export function generateStar(system: StarSystemNode, starIndex: number): StarNod
       star_temperature: 5772,
       star_color: "Yellow",
       luminosity: 100,
-      age: "4.6b years"
+      age: "4.6b years",
+      is_fixed: true,
+      is_procedural: false,
+      ...generationMetadata(`${SOL_SYSTEM_SEED}:star:sol`, system.system_seed, starIndex)
     };
   }
 
@@ -1155,7 +1231,10 @@ export function generateStar(system: StarSystemNode, starIndex: number): StarNod
     star_temperature: numericRange(random, 2600, starType === "Blue Giant" ? 30000 : 9000),
     star_color: pick(starColors, random, "Yellow"),
     luminosity: numericRange(random, 1, starType === "Black Hole" ? 20 : 500),
-    age: `${numericRange(random, 1, 13)}.${numericRange(random, 0, 9)}b years`
+    age: `${numericRange(random, 1, 13)}.${numericRange(random, 0, 9)}b years`,
+    is_fixed: false,
+    is_procedural: true,
+    ...generationMetadata(starSeed, system.system_seed, starIndex)
   };
 }
 
@@ -1164,6 +1243,8 @@ export function generateStars(system: StarSystemNode) {
 }
 
 function generatedCelestialBodyFromPlanet(system: StarSystemNode, planet: UniversePlanetNode): CelestialBodyNode {
+  const bodyIndex = Math.max(0, planet.orbit_position - 1);
+
   return {
     id: `body-${planet.id}`,
     system_id: system.id,
@@ -1187,13 +1268,19 @@ function generatedCelestialBodyFromPlanet(system: StarSystemNode, planet: Univer
     is_procedural: true,
     unlock_requirement: "Interstellar Navigation",
     resources: [],
-    notes: "Procedural celestial body derived from the system seed."
+    notes: "Procedural celestial body derived from the system seed.",
+    ...generationMetadata(planet.planet_seed, system.system_seed, bodyIndex)
   };
 }
 
 export function generateCelestialBodies(system: StarSystemNode): CelestialBodyNode[] {
   if (system.id === SOL_SYSTEM_ID) {
-    return SOL_CELESTIAL_BODIES;
+    return SOL_CELESTIAL_BODIES.map((body, index) => ({
+      ...body,
+      is_fixed: true,
+      is_procedural: false,
+      ...generationMetadata(deriveChildSeed(system.system_seed, "body", index), system.system_seed, index)
+    }));
   }
 
   return generateUniversePlanets(system).map((planet) => generatedCelestialBodyFromPlanet(system, planet));
@@ -1213,7 +1300,10 @@ export function generateUniversePlanet(system: StarSystemNode, planetIndex: numb
         planet_class: body.planet_class ?? body.celestial_body_type,
         planet_subclass: body.planet_subclass ?? body.celestial_body_type,
         colonized: body.colonizable_status === "Already Colonized",
-        terraform_level: 0
+        terraform_level: 0,
+        is_fixed: true,
+        is_procedural: false,
+        ...generationMetadata(`${SOL_SYSTEM_SEED}:${slug(body.name)}`, system.system_seed, planetIndex)
       };
     }
   }
@@ -1233,7 +1323,10 @@ export function generateUniversePlanet(system: StarSystemNode, planetIndex: numb
     planet_class: planetClass.name,
     planet_subclass: planetSubclass,
     colonized: false,
-    terraform_level: 0
+    terraform_level: 0,
+    is_fixed: false,
+    is_procedural: true,
+    ...generationMetadata(planetSeed, system.system_seed, planetIndex)
   };
 }
 
