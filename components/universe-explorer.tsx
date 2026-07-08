@@ -5,16 +5,16 @@ import { Copy, Orbit, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   generateGalaxy,
+  generateCelestialBodies,
   generateSectors,
   generateStars,
   generateStarSystems,
   generateUniverse,
-  generateUniversePlanets,
   planetSubSeeds,
+  type CelestialBodyNode,
   type GalaxyNode,
   type SectorNode,
   type StarSystemNode,
-  type UniversePlanetNode
 } from "@/lib/universe/generator";
 
 const DEFAULT_UNIVERSE_SEED = "PROJECT-GENESIS-UNIVERSE";
@@ -86,6 +86,53 @@ function SelectableCard<T extends { id: string }>({
   );
 }
 
+function BodyCard({
+  body,
+  active,
+  onClick,
+  parentName
+}: {
+  body: CelestialBodyNode;
+  active: boolean;
+  onClick: (body: CelestialBodyNode) => void;
+  parentName: string | null;
+}) {
+  const labels = [
+    body.is_starting_body ? "Starting World" : null,
+    body.unlock_requirement !== "Start" ? `Locked until ${body.unlock_requirement}` : null,
+    body.uses_orbital_gameplay ? "Orbital World" : null,
+    !body.landable ? "Not Landable" : null,
+    body.celestial_body_type === "Asteroid Belt" ? "Resource Field" : null
+  ].filter(Boolean);
+
+  return (
+    <button
+      type="button"
+      className={cx(
+        "rounded-md border bg-[#07101e]/85 p-3 text-left transition hover:border-cyan-300/45",
+        active ? "border-cyan-300/60 shadow-[0_0_24px_rgba(34,211,238,0.15)]" : "border-cyan-400/15",
+        parentName && "ml-4"
+      )}
+      onClick={() => onClick(body)}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="truncate text-sm font-semibold text-white">{body.name}</p>
+          <p className="mt-1 truncate text-xs text-slate-500">
+            {body.celestial_body_type}
+            {parentName ? ` of ${parentName}` : ""}
+          </p>
+        </div>
+        {body.planet_rarity ? <span className="text-xs font-bold uppercase tracking-[0.14em] text-cyan-300">{body.planet_rarity}</span> : null}
+      </div>
+      <p className="mt-3 text-xs uppercase tracking-[0.14em] text-cyan-300">
+        {[body.planet_class, body.planet_subclass].filter(Boolean).join(" / ") || body.unlock_requirement}
+      </p>
+      {labels.length ? <p className="mt-2 text-xs text-slate-400">{labels.join(" / ")}</p> : null}
+    </button>
+  );
+}
+
 function StoreOnlyCallout() {
   return (
     <section className="rounded-md border border-amber-300/20 bg-amber-300/10 p-4">
@@ -111,9 +158,10 @@ export function UniverseExplorer() {
   const systems = useMemo(() => generateStarSystems(selectedSector, 12), [selectedSector]);
   const selectedSystem = systems[Math.min(systemIndex, systems.length - 1)] ?? systems[0];
   const stars = useMemo(() => generateStars(selectedSystem), [selectedSystem]);
-  const planets = useMemo(() => generateUniversePlanets(selectedSystem), [selectedSystem]);
-  const selectedPlanet = planets[Math.min(planetIndex, planets.length - 1)] ?? planets[0];
-  const subSeeds = selectedPlanet ? planetSubSeeds(selectedPlanet.planet_seed) : {};
+  const bodies = useMemo(() => generateCelestialBodies(selectedSystem), [selectedSystem]);
+  const selectableBodies = bodies.filter((body) => body.celestial_body_type !== "Star");
+  const selectedBody = selectableBodies[Math.min(planetIndex, selectableBodies.length - 1)] ?? selectableBodies[0];
+  const subSeeds = selectedBody?.is_procedural ? planetSubSeeds(`${selectedSystem.system_seed}:${selectedBody.id}`) : {};
 
   function chooseSector(sector: SectorNode) {
     setSectorIndex(sectors.findIndex((item) => item.id === sector.id));
@@ -126,8 +174,8 @@ export function UniverseExplorer() {
     setPlanetIndex(0);
   }
 
-  function choosePlanet(planet: UniversePlanetNode) {
-    setPlanetIndex(planets.findIndex((item) => item.id === planet.id));
+  function chooseBody(body: CelestialBodyNode) {
+    setPlanetIndex(selectableBodies.findIndex((item) => item.id === body.id));
   }
 
   function chooseGalaxy(nextIndex: number) {
@@ -138,8 +186,8 @@ export function UniverseExplorer() {
   }
 
   function copyPlanetSeed() {
-    if (selectedPlanet) {
-      navigator.clipboard.writeText(selectedPlanet.planet_seed);
+    if (selectedBody) {
+      navigator.clipboard.writeText(`${selectedSystem.system_seed}:${selectedBody.id}`);
     }
   }
 
@@ -151,7 +199,7 @@ export function UniverseExplorer() {
           <div>
             <h2 className="text-3xl font-bold text-white">Universe Explorer</h2>
             <p className="mt-2 max-w-3xl text-sm text-slate-300">
-              Deterministic generator for the Project Genesis hierarchy: universe, galaxy, sector, star system, stars, planets, and planet sub-seeds.
+              Deterministic generator for the Project Genesis hierarchy: universe, galaxy, sector, star system, stars, celestial bodies, and procedural sub-seeds.
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-[minmax(16rem,28rem)_8rem]">
@@ -212,17 +260,17 @@ export function UniverseExplorer() {
         </div>
 
         <div className="rounded-md border border-cyan-400/15 bg-genesis-panel/90 p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">Selected Planet</p>
-          <h3 className="mt-3 text-xl font-semibold text-white">{selectedPlanet.planet_name}</h3>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">Selected Body</p>
+          <h3 className="mt-3 text-xl font-semibold text-white">{selectedBody.name}</h3>
           <div className="mt-4 grid grid-cols-2 gap-2">
-            <Field label="Rarity" value={selectedPlanet.planet_rarity} />
-            <Field label="Orbit" value={selectedPlanet.orbit_position} />
-            <Field label="Class" value={selectedPlanet.planet_class} />
-            <Field label="Subclass" value={selectedPlanet.planet_subclass} />
+            <Field label="Type" value={selectedBody.celestial_body_type} />
+            <Field label="Orbit" value={selectedBody.orbit_position ?? "-"} />
+            <Field label="Class" value={selectedBody.planet_class ?? "-"} />
+            <Field label="Unlock" value={selectedBody.unlock_requirement} />
           </div>
           <Button className="mt-3 w-full" onClick={copyPlanetSeed} type="button">
             <Copy className="h-4 w-4" />
-            Copy Planet Seed
+            Copy Body Seed
           </Button>
         </div>
       </section>
@@ -262,24 +310,22 @@ export function UniverseExplorer() {
                 onClick={chooseSystem}
                 title={system.system_name}
                 subtitle={system.catalog_designation}
-                meta={`${system.star_count} stars / ${system.planet_count} planets / ${system.resource_bias}`}
+                meta={`${system.generation_type} / ${system.star_count} stars / ${system.planet_count} bodies`}
               />
             ))}
           </div>
         </div>
 
         <div className="rounded-md border border-cyan-400/15 bg-genesis-panel/90 p-4">
-          <h3 className="text-base font-semibold text-white">Generate Planets</h3>
+          <h3 className="text-base font-semibold text-white">Celestial Bodies</h3>
           <div className="mt-4 grid max-h-[28rem] gap-2 overflow-auto pr-1">
-            {planets.map((planet) => (
-              <SelectableCard
-                key={planet.id}
-                item={planet}
-                active={selectedPlanet.id === planet.id}
-                onClick={choosePlanet}
-                title={planet.planet_name}
-                subtitle={planet.planet_seed}
-                meta={`${planet.planet_rarity} / ${planet.planet_class} / ${planet.planet_subclass}`}
+            {selectableBodies.map((body) => (
+              <BodyCard
+                key={body.id}
+                body={body}
+                active={selectedBody.id === body.id}
+                onClick={chooseBody}
+                parentName={body.parent_body_id ? bodies.find((item) => item.id === body.parent_body_id)?.name ?? null : null}
               />
             ))}
           </div>
@@ -306,15 +352,16 @@ export function UniverseExplorer() {
         </div>
 
         <div className="rounded-md border border-cyan-400/15 bg-genesis-panel/90 p-4">
-          <h3 className="text-base font-semibold text-white">Inspect Planet Sub-Seeds</h3>
+          <h3 className="text-base font-semibold text-white">Inspect Body Sub-Seeds</h3>
           <p className="mt-1 text-sm text-slate-400">
-            Store the planet seed. These child seeds are derived deterministically for generation systems.
+            Fixed Sol bodies are handcrafted. Procedural bodies expose child seeds for downstream generation systems.
           </p>
           <div className="mt-4 grid gap-2 lg:grid-cols-2">
-            <SeedLine label="Planet Seed" value={selectedPlanet.planet_seed} />
+            <SeedLine label="Body Seed" value={`${selectedSystem.system_seed}:${selectedBody.id}`} />
             {Object.entries(subSeeds).map(([label, value]) => (
               <SeedLine key={label} label={label.replace(/-/g, " ")} value={value} />
             ))}
+            {!selectedBody.is_procedural ? <Field label="Generation" value="Handcrafted fixed Sol record" /> : null}
           </div>
         </div>
       </section>

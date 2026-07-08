@@ -227,11 +227,18 @@ create table if not exists star_systems (
   system_seed text not null unique,
   system_name text not null,
   catalog_designation text not null,
+  system_type text not null default 'Procedural Star System',
+  system_role text not null default 'Exploration Target',
+  generation_type text not null default 'Procedural',
   system_rarity text not null,
   star_count integer not null default 1,
   planet_count integer not null default 0,
+  primary_star text,
+  star_type text,
   resource_bias text not null default 'Balanced',
   danger_level integer not null default 0,
+  starting_system boolean not null default false,
+  is_procedural boolean not null default true,
   discovered boolean not null default false,
   discovered_at timestamptz,
   created_at timestamptz default now()
@@ -269,6 +276,34 @@ create table if not exists universe_planets (
   buildings_built jsonb not null default '[]'::jsonb,
   collectibles_found jsonb not null default '[]'::jsonb,
   expeditions_completed jsonb not null default '[]'::jsonb,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create table if not exists celestial_bodies (
+  id text primary key,
+  system_id text references star_systems(id) on delete cascade,
+  parent_body_id text references celestial_bodies(id) on delete set null,
+  name text not null,
+  celestial_body_type text not null,
+  planet_class text,
+  planet_subclass text,
+  planet_rarity text,
+  biome text,
+  atmosphere text,
+  gravity text,
+  orbit_position integer,
+  orbit_parent text,
+  landable boolean not null default false,
+  colonizable boolean not null default false,
+  colonizable_status text not null default 'Unknown',
+  uses_orbital_gameplay boolean not null default false,
+  is_fixed boolean not null default false,
+  is_starting_body boolean not null default false,
+  is_procedural boolean not null default true,
+  unlock_requirement text,
+  resources jsonb not null default '[]'::jsonb,
+  notes text,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
@@ -724,10 +759,15 @@ create index if not exists sectors_rarity_idx on sectors(sector_rarity);
 create index if not exists sectors_discovery_level_idx on sectors(discovery_level);
 create index if not exists star_systems_sector_id_idx on star_systems(sector_id);
 create index if not exists star_systems_discovered_idx on star_systems(discovered);
+create index if not exists star_systems_starting_system_idx on star_systems(starting_system);
 create index if not exists stars_system_id_idx on stars(system_id);
 create index if not exists universe_planets_system_id_idx on universe_planets(system_id);
 create index if not exists universe_planets_discovered_idx on universe_planets(discovered);
 create index if not exists universe_planets_class_idx on universe_planets(planet_class);
+create index if not exists celestial_bodies_system_id_idx on celestial_bodies(system_id);
+create index if not exists celestial_bodies_parent_body_id_idx on celestial_bodies(parent_body_id);
+create index if not exists celestial_bodies_type_idx on celestial_bodies(celestial_body_type);
+create index if not exists celestial_bodies_fixed_idx on celestial_bodies(is_fixed);
 create index if not exists planets_category_idx on planets(category);
 create index if not exists planets_status_idx on planets(status);
 create index if not exists generated_planets_created_at_idx on generated_planets(created_at desc);

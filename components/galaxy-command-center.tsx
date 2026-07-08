@@ -5,10 +5,10 @@ import { Activity, Copy, Crosshair, Database, Filter, Map, Orbit, Radar, Search,
 import { Button } from "@/components/ui/button";
 import {
   generateGalaxy,
+  generateCelestialBodies,
   generateSectors,
   generateStarSystems,
   generateUniverse,
-  generateUniversePlanets,
   planetSubSeeds,
   type SectorNode,
   type StarSystemNode
@@ -129,7 +129,8 @@ export function GalaxyCommandCenter() {
   const systems = useMemo(() => generateStarSystems(selectedSector, 18), [selectedSector]);
   const visibleSystems = useMemo(() => systems.filter((system) => systemMatchesSearch(system, query)), [query, systems]);
   const selectedSystem = systems[Math.min(systemIndex, systems.length - 1)] ?? systems[0];
-  const planets = useMemo(() => generateUniversePlanets(selectedSystem), [selectedSystem]);
+  const bodies = useMemo(() => generateCelestialBodies(selectedSystem), [selectedSystem]);
+  const systemBodies = bodies.filter((body) => body.celestial_body_type !== "Star");
   const discoveredSectors = sectors.filter((sector) => sector.discovered).length;
   const colonizedWorlds = sectors.reduce((total, sector) => total + sector.colonized_worlds, 0);
   const discoveryPoints = sectors.filter((sector) => sector.discovered).reduce((total, sector) => total + sector.discovery_value, 0);
@@ -152,7 +153,7 @@ export function GalaxyCommandCenter() {
           galaxy,
           selected_sector: selectedSector,
           selected_system: selectedSystem,
-          generated_planets: planets,
+          celestial_bodies: bodies,
           persistence_rule: "Store only seeds, discovery state, player changes, and colonies. Regenerate everything else from deterministic child seeds."
         },
         null,
@@ -359,10 +360,12 @@ export function GalaxyCommandCenter() {
                 </div>
                 <div className="mt-4 grid grid-cols-3 gap-2 text-center text-xs text-slate-300">
                   <span>{system.star_count} stars</span>
-                  <span>{system.planet_count} planets</span>
+                  <span>{system.planet_count} bodies</span>
                   <span>{system.danger_level} danger</span>
                 </div>
-                <p className="mt-3 text-xs uppercase tracking-[0.16em] text-cyan-300">{system.resource_bias}</p>
+                <p className="mt-3 text-xs uppercase tracking-[0.16em] text-cyan-300">
+                  {system.starting_system ? "Starting System / Handcrafted" : system.resource_bias}
+                </p>
               </button>
             ))}
           </div>
@@ -376,19 +379,30 @@ export function GalaxyCommandCenter() {
           <div className="mt-4 space-y-3">
             <Field label="System" value={selectedSystem.system_name} />
             <Field label="Catalog ID" value={selectedSystem.catalog_designation} />
+            <Field label="System Type" value={selectedSystem.system_type} />
+            <Field label="Generation" value={selectedSystem.generation_type} />
             <Field label="Danger" value={selectedSystem.danger_level} />
             <SeedRow label="System Seed" value={selectedSystem.system_seed} />
             <div className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-3">
-              <p className="text-[0.66rem] font-semibold uppercase tracking-[0.18em] text-cyan-300">Planets</p>
+              <p className="text-[0.66rem] font-semibold uppercase tracking-[0.18em] text-cyan-300">Celestial Bodies</p>
               <div className="mt-3 space-y-2">
-                {planets.map((planet) => (
-                  <div key={planet.id} className="rounded-md border border-cyan-300/10 bg-slate-950/40 p-2">
+                {systemBodies.map((body) => (
+                  <div key={body.id} className="rounded-md border border-cyan-300/10 bg-slate-950/40 p-2">
                     <div className="flex items-center justify-between gap-2">
-                      <p className="truncate text-sm font-semibold text-white">{planet.planet_name}</p>
-                      <span className={cn("text-xs font-bold", rarityColors[planet.planet_rarity]?.split(" ")[0])}>{planet.planet_rarity}</span>
+                      <p className="truncate text-sm font-semibold text-white">{body.name}</p>
+                      <span className={cn("text-xs font-bold", rarityColors[body.planet_rarity ?? ""]?.split(" ")[0])}>
+                        {body.planet_rarity ?? body.celestial_body_type}
+                      </span>
                     </div>
                     <p className="mt-1 truncate text-xs text-slate-500">
-                      Orbit {planet.orbit_position} / {planet.planet_class} / {planet.planet_subclass}
+                      {body.orbit_parent ? `${body.orbit_parent} / ` : ""}
+                      {body.orbit_position ? `Orbit ${body.orbit_position} / ` : ""}
+                      {body.celestial_body_type} / {[body.planet_class, body.planet_subclass].filter(Boolean).join(" / ") || "System Feature"}
+                    </p>
+                    <p className="mt-1 truncate text-xs text-cyan-200/80">
+                      {body.is_starting_body ? "Starting World / " : ""}
+                      {body.uses_orbital_gameplay ? "Orbital World / Atmospheric Harvesting / " : ""}
+                      {body.landable ? "Landable" : "Not Landable"} / Locked until {body.unlock_requirement}
                     </p>
                   </div>
                 ))}
@@ -405,7 +419,7 @@ export function GalaxyCommandCenter() {
             <h2 className="text-lg font-semibold text-white">Generation Pipeline</h2>
           </div>
           <div className="mt-4 grid gap-2 md:grid-cols-4">
-            {["Universe Seed", "Galaxy Seed", "Sector Seeds", "Star System Seeds", "Planet Seeds"].map((step, index) => (
+            {["Universe Seed", "Galaxy Seed", "Sector Seeds", "Star System Seeds", "Celestial Body Seeds"].map((step, index) => (
               <div key={step} className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-3">
                 <p className="text-[0.66rem] font-semibold uppercase tracking-[0.18em] text-slate-500">Step {index + 1}</p>
                 <p className="mt-2 text-sm font-semibold text-white">{step}</p>
@@ -424,8 +438,8 @@ export function GalaxyCommandCenter() {
             <SeedRow label="Galaxy Seed" value={galaxy.galaxy_seed} />
             <SeedRow label="Sector Seed" value={selectedSector.sector_seed} />
             <SeedRow label="System Seed" value={selectedSystem.system_seed} />
-            {planets[0] ? <SeedRow label="First Planet Seed" value={planets[0].planet_seed} /> : null}
-            {planets[0] ? <SeedRow label="First Planet Class Seed" value={planetSubSeeds(planets[0].planet_seed).class} /> : null}
+            {systemBodies[0] ? <SeedRow label="First Body Seed" value={`${selectedSystem.system_seed}:${systemBodies[0].id}`} /> : null}
+            {systemBodies[0]?.is_procedural ? <SeedRow label="First Body Class Seed" value={planetSubSeeds(`${selectedSystem.system_seed}:${systemBodies[0].id}`).class} /> : null}
           </div>
         </div>
       </section>

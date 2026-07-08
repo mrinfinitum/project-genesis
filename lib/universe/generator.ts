@@ -47,11 +47,18 @@ export type StarSystemNode = {
   system_seed: string;
   system_name: string;
   catalog_designation: string;
+  system_type: string;
+  system_role: string;
+  generation_type: string;
   system_rarity: string;
   star_count: number;
   planet_count: number;
+  primary_star: string;
+  star_type: string;
   resource_bias: string;
   danger_level: number;
+  starting_system: boolean;
+  is_procedural: boolean;
   discovered: boolean;
   discovered_at: string | null;
 };
@@ -80,6 +87,32 @@ export type UniversePlanetNode = {
   planet_subclass: string;
   colonized: boolean;
   terraform_level: number;
+};
+
+export type CelestialBodyNode = {
+  id: string;
+  system_id: string;
+  parent_body_id: string | null;
+  name: string;
+  celestial_body_type: string;
+  planet_class: string | null;
+  planet_subclass: string | null;
+  planet_rarity: string | null;
+  biome: string | null;
+  atmosphere: string | null;
+  gravity: string | null;
+  orbit_position: number | null;
+  orbit_parent: string | null;
+  landable: boolean;
+  colonizable: boolean;
+  colonizable_status: string;
+  uses_orbital_gameplay: boolean;
+  is_fixed: boolean;
+  is_starting_body: boolean;
+  is_procedural: boolean;
+  unlock_requirement: string;
+  resources: string[];
+  notes: string;
 };
 
 export const PLANET_SUB_SEED_KEYS = [
@@ -170,6 +203,425 @@ const starColors = ["Red", "Orange", "Yellow", "White", "Blue", "Violet", "Cyan"
 const namePrefixes = ["Astra", "Nova", "Vega", "Orion", "Elios", "Kyra", "Vanta", "Lyra", "Solan", "Iris", "Nexa", "Verd"];
 const nameSuffixes = ["Prime", "Reach", "Veil", "Fall", "Thia", "Ara", "Ion", "Mere", "Os", "Dor"];
 
+const SOL_GALAXY_ID = "galaxy-milky-way";
+const SOL_SECTOR_ID = "sector-local-bubble";
+const SOL_SYSTEM_ID = "system-sol";
+const SOL_SYSTEM_SEED = "PROJECT-GENESIS-UNIVERSE:milky-way:local-bubble:sol";
+
+export const SOL_UNLOCK_PROGRESSION = [
+  { unlock: "Start", bodies: ["Earth"] },
+  { unlock: "Lunar Exploration", bodies: ["Moon"] },
+  { unlock: "Planetary Exploration", bodies: ["Mercury", "Venus", "Mars"] },
+  { unlock: "Asteroid Mining", bodies: ["Asteroid Belt"] },
+  { unlock: "Gas Giant Harvesting", bodies: ["Jupiter", "Saturn"] },
+  { unlock: "Outer Moon Exploration", bodies: ["Europa", "Ganymede", "Titan", "Enceladus"] },
+  { unlock: "Deep Space Communications", bodies: ["Uranus", "Neptune", "Pluto"] },
+  { unlock: "Interstellar Navigation", bodies: ["Nearby procedural star systems"] }
+];
+
+const SOL_CELESTIAL_BODIES: CelestialBodyNode[] = [
+  {
+    id: "body-sol",
+    system_id: SOL_SYSTEM_ID,
+    parent_body_id: null,
+    name: "Sol",
+    celestial_body_type: "Star",
+    planet_class: null,
+    planet_subclass: null,
+    planet_rarity: null,
+    biome: null,
+    atmosphere: null,
+    gravity: null,
+    orbit_position: null,
+    orbit_parent: null,
+    landable: false,
+    colonizable: false,
+    colonizable_status: "Not Colonizable",
+    uses_orbital_gameplay: false,
+    is_fixed: true,
+    is_starting_body: false,
+    is_procedural: false,
+    unlock_requirement: "Start",
+    resources: ["Solar Energy"],
+    notes: "The home star of humanity."
+  },
+  {
+    id: "body-earth",
+    system_id: SOL_SYSTEM_ID,
+    parent_body_id: "body-sol",
+    name: "Earth",
+    celestial_body_type: "Planet",
+    planet_class: "Terrestrial",
+    planet_subclass: "Earthlike",
+    planet_rarity: "Common",
+    biome: "Mixed",
+    atmosphere: "Breathable",
+    gravity: "Standard",
+    orbit_position: 3,
+    orbit_parent: "Sol",
+    landable: true,
+    colonizable: true,
+    colonizable_status: "Already Colonized",
+    uses_orbital_gameplay: false,
+    is_fixed: true,
+    is_starting_body: true,
+    is_procedural: false,
+    unlock_requirement: "Start",
+    resources: ["All Earth Resources"],
+    notes: "Humanity's home world and the starting point of Project Genesis."
+  },
+  {
+    id: "body-moon",
+    system_id: SOL_SYSTEM_ID,
+    parent_body_id: "body-earth",
+    name: "Moon",
+    celestial_body_type: "Moon",
+    planet_class: "Dead",
+    planet_subclass: "Airless",
+    planet_rarity: "Common",
+    biome: "Regolith",
+    atmosphere: "None",
+    gravity: "Low",
+    orbit_position: null,
+    orbit_parent: "Earth",
+    landable: true,
+    colonizable: true,
+    colonizable_status: "Colonizable",
+    uses_orbital_gameplay: false,
+    is_fixed: true,
+    is_starting_body: false,
+    is_procedural: false,
+    unlock_requirement: "Lunar Exploration",
+    resources: ["Helium-3", "Regolith", "Titanium", "Rare Earth Elements"],
+    notes: "First off-world colony target."
+  },
+  {
+    id: "body-mercury",
+    system_id: SOL_SYSTEM_ID,
+    parent_body_id: "body-sol",
+    name: "Mercury",
+    celestial_body_type: "Planet",
+    planet_class: "Dead",
+    planet_subclass: "Barren",
+    planet_rarity: "Common",
+    biome: "Rocky",
+    atmosphere: "Trace",
+    gravity: "Low",
+    orbit_position: 1,
+    orbit_parent: "Sol",
+    landable: true,
+    colonizable: true,
+    colonizable_status: "Late Game",
+    uses_orbital_gameplay: false,
+    is_fixed: true,
+    is_starting_body: false,
+    is_procedural: false,
+    unlock_requirement: "Planetary Exploration",
+    resources: ["Iron", "Nickel", "Silicon", "Rare Earth Elements"],
+    notes: "Harsh inner-world mining planet close to Sol."
+  },
+  {
+    id: "body-venus",
+    system_id: SOL_SYSTEM_ID,
+    parent_body_id: "body-sol",
+    name: "Venus",
+    celestial_body_type: "Planet",
+    planet_class: "Toxic",
+    planet_subclass: "Green Atmosphere",
+    planet_rarity: "Rare",
+    biome: "Volcanic Highlands",
+    atmosphere: "Dense CO2",
+    gravity: "High",
+    orbit_position: 2,
+    orbit_parent: "Sol",
+    landable: false,
+    colonizable: true,
+    colonizable_status: "Terraforming Required",
+    uses_orbital_gameplay: false,
+    is_fixed: true,
+    is_starting_body: false,
+    is_procedural: false,
+    unlock_requirement: "Planetary Exploration",
+    resources: ["Sulfur", "Chemical Salts", "Rare Metals", "Titanium"],
+    notes: "Extreme heat and pressure. Major late-game terraforming candidate."
+  },
+  {
+    id: "body-mars",
+    system_id: SOL_SYSTEM_ID,
+    parent_body_id: "body-sol",
+    name: "Mars",
+    celestial_body_type: "Planet",
+    planet_class: "Desert",
+    planet_subclass: "Rock Desert",
+    planet_rarity: "Common",
+    biome: "Dust Basin",
+    atmosphere: "Thin CO2",
+    gravity: "Low",
+    orbit_position: 4,
+    orbit_parent: "Sol",
+    landable: true,
+    colonizable: true,
+    colonizable_status: "Colonizable",
+    uses_orbital_gameplay: false,
+    is_fixed: true,
+    is_starting_body: false,
+    is_procedural: false,
+    unlock_requirement: "Planetary Exploration",
+    resources: ["Iron", "Silicon", "Water Ice", "Titanium"],
+    notes: "First major planetary colony target."
+  },
+  {
+    id: "body-asteroid-belt",
+    system_id: SOL_SYSTEM_ID,
+    parent_body_id: "body-sol",
+    name: "Asteroid Belt",
+    celestial_body_type: "Asteroid Belt",
+    planet_class: null,
+    planet_subclass: "Asteroid Megabelt",
+    planet_rarity: "Common",
+    biome: null,
+    atmosphere: "None",
+    gravity: "Microgravity",
+    orbit_position: null,
+    orbit_parent: "Sol",
+    landable: false,
+    colonizable: false,
+    colonizable_status: "Not Colonizable",
+    uses_orbital_gameplay: true,
+    is_fixed: true,
+    is_starting_body: false,
+    is_procedural: false,
+    unlock_requirement: "Asteroid Mining",
+    resources: ["Iron", "Nickel", "Gold", "Platinum", "Iridium", "Rare Earth Elements"],
+    notes: "Resource field between Mars and Jupiter."
+  },
+  {
+    id: "body-jupiter",
+    system_id: SOL_SYSTEM_ID,
+    parent_body_id: "body-sol",
+    name: "Jupiter",
+    celestial_body_type: "Planet",
+    planet_class: "Gas Giant",
+    planet_subclass: "Storm Giant",
+    planet_rarity: "Rare",
+    biome: "Upper Atmosphere",
+    atmosphere: "Hydrogen / Helium",
+    gravity: "Extreme",
+    orbit_position: 5,
+    orbit_parent: "Sol",
+    landable: false,
+    colonizable: false,
+    colonizable_status: "Not Colonizable",
+    uses_orbital_gameplay: true,
+    is_fixed: true,
+    is_starting_body: false,
+    is_procedural: false,
+    unlock_requirement: "Gas Giant Harvesting",
+    resources: ["Hydrogen", "Helium", "Helium-3", "Storm Plasma", "Metallic Hydrogen"],
+    notes: "First major orbital harvesting world."
+  },
+  {
+    id: "body-europa",
+    system_id: SOL_SYSTEM_ID,
+    parent_body_id: "body-jupiter",
+    name: "Europa",
+    celestial_body_type: "Moon",
+    planet_class: "Ice",
+    planet_subclass: "Frozen Ocean",
+    planet_rarity: "Rare",
+    biome: "Ice Shell",
+    atmosphere: "Trace",
+    gravity: "Low",
+    orbit_position: null,
+    orbit_parent: "Jupiter",
+    landable: true,
+    colonizable: true,
+    colonizable_status: "Future",
+    uses_orbital_gameplay: false,
+    is_fixed: true,
+    is_starting_body: false,
+    is_procedural: false,
+    unlock_requirement: "Outer Moon Exploration",
+    resources: ["Water Ice", "Heavy Water", "Ammonia"],
+    notes: "Possible subsurface ocean world."
+  },
+  {
+    id: "body-ganymede",
+    system_id: SOL_SYSTEM_ID,
+    parent_body_id: "body-jupiter",
+    name: "Ganymede",
+    celestial_body_type: "Moon",
+    planet_class: "Ice",
+    planet_subclass: "Glacial",
+    planet_rarity: "Uncommon",
+    biome: "Ice Plains",
+    atmosphere: "Trace",
+    gravity: "Low",
+    orbit_position: null,
+    orbit_parent: "Jupiter",
+    landable: true,
+    colonizable: true,
+    colonizable_status: "Future",
+    uses_orbital_gameplay: false,
+    is_fixed: true,
+    is_starting_body: false,
+    is_procedural: false,
+    unlock_requirement: "Outer Moon Exploration",
+    resources: ["Water Ice", "Iron", "Silicon"],
+    notes: "Large icy moon with colony potential."
+  },
+  {
+    id: "body-saturn",
+    system_id: SOL_SYSTEM_ID,
+    parent_body_id: "body-sol",
+    name: "Saturn",
+    celestial_body_type: "Planet",
+    planet_class: "Gas Giant",
+    planet_subclass: "Banded",
+    planet_rarity: "Rare",
+    biome: "Upper Atmosphere",
+    atmosphere: "Hydrogen / Helium",
+    gravity: "Extreme",
+    orbit_position: 6,
+    orbit_parent: "Sol",
+    landable: false,
+    colonizable: false,
+    colonizable_status: "Not Colonizable",
+    uses_orbital_gameplay: true,
+    is_fixed: true,
+    is_starting_body: false,
+    is_procedural: false,
+    unlock_requirement: "Gas Giant Harvesting",
+    resources: ["Hydrogen", "Helium", "Helium-3", "Methane"],
+    notes: "Orbital harvesting world with iconic rings."
+  },
+  {
+    id: "body-titan",
+    system_id: SOL_SYSTEM_ID,
+    parent_body_id: "body-saturn",
+    name: "Titan",
+    celestial_body_type: "Moon",
+    planet_class: "Toxic",
+    planet_subclass: "Chemical Seas",
+    planet_rarity: "Rare",
+    biome: "Hydrocarbon Lakes",
+    atmosphere: "Dense Nitrogen",
+    gravity: "Low",
+    orbit_position: null,
+    orbit_parent: "Saturn",
+    landable: true,
+    colonizable: true,
+    colonizable_status: "Future",
+    uses_orbital_gameplay: false,
+    is_fixed: true,
+    is_starting_body: false,
+    is_procedural: false,
+    unlock_requirement: "Outer Moon Exploration",
+    resources: ["Methane", "Hydrocarbons", "Nitrogen Ice"],
+    notes: "Fuel economy and atmospheric chemistry world."
+  },
+  {
+    id: "body-enceladus",
+    system_id: SOL_SYSTEM_ID,
+    parent_body_id: "body-saturn",
+    name: "Enceladus",
+    celestial_body_type: "Moon",
+    planet_class: "Ice",
+    planet_subclass: "Cryovolcanic",
+    planet_rarity: "Rare",
+    biome: "Ice Geysers",
+    atmosphere: "Trace",
+    gravity: "Very Low",
+    orbit_position: null,
+    orbit_parent: "Saturn",
+    landable: true,
+    colonizable: true,
+    colonizable_status: "Future",
+    uses_orbital_gameplay: false,
+    is_fixed: true,
+    is_starting_body: false,
+    is_procedural: false,
+    unlock_requirement: "Outer Moon Exploration",
+    resources: ["Water Ice", "Heavy Water", "Organic Compounds"],
+    notes: "Cryovolcanic research world."
+  },
+  {
+    id: "body-uranus",
+    system_id: SOL_SYSTEM_ID,
+    parent_body_id: "body-sol",
+    name: "Uranus",
+    celestial_body_type: "Planet",
+    planet_class: "Gas Giant",
+    planet_subclass: "Ice Giant",
+    planet_rarity: "Uncommon",
+    biome: "Upper Atmosphere",
+    atmosphere: "Hydrogen / Methane / Helium",
+    gravity: "Extreme",
+    orbit_position: 7,
+    orbit_parent: "Sol",
+    landable: false,
+    colonizable: false,
+    colonizable_status: "Not Colonizable",
+    uses_orbital_gameplay: true,
+    is_fixed: true,
+    is_starting_body: false,
+    is_procedural: false,
+    unlock_requirement: "Deep Space Communications",
+    resources: ["Hydrogen", "Methane", "Ammonia", "Helium"],
+    notes: "Outer system ice giant."
+  },
+  {
+    id: "body-neptune",
+    system_id: SOL_SYSTEM_ID,
+    parent_body_id: "body-sol",
+    name: "Neptune",
+    celestial_body_type: "Planet",
+    planet_class: "Gas Giant",
+    planet_subclass: "Cyclone Giant",
+    planet_rarity: "Rare",
+    biome: "Upper Atmosphere",
+    atmosphere: "Hydrogen / Helium / Methane",
+    gravity: "Extreme",
+    orbit_position: 8,
+    orbit_parent: "Sol",
+    landable: false,
+    colonizable: false,
+    colonizable_status: "Not Colonizable",
+    uses_orbital_gameplay: true,
+    is_fixed: true,
+    is_starting_body: false,
+    is_procedural: false,
+    unlock_requirement: "Deep Space Communications",
+    resources: ["Hydrogen", "Helium", "Storm Plasma", "Methane"],
+    notes: "High-wind outer system gas giant."
+  },
+  {
+    id: "body-pluto",
+    system_id: SOL_SYSTEM_ID,
+    parent_body_id: "body-sol",
+    name: "Pluto",
+    celestial_body_type: "Dwarf Planet",
+    planet_class: "Ice",
+    planet_subclass: "Polar",
+    planet_rarity: "Uncommon",
+    biome: "Frozen Plains",
+    atmosphere: "Thin Nitrogen",
+    gravity: "Very Low",
+    orbit_position: null,
+    orbit_parent: "Sol",
+    landable: true,
+    colonizable: true,
+    colonizable_status: "Future",
+    uses_orbital_gameplay: false,
+    is_fixed: true,
+    is_starting_body: false,
+    is_procedural: false,
+    unlock_requirement: "Deep Space Communications",
+    resources: ["Nitrogen Ice", "Methane Ice", "Water Ice"],
+    notes: "Edge of the starting Sol system."
+  }
+];
+
 function slug(value: string) {
   return value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
@@ -258,6 +710,18 @@ export function generateUniverse(universeSeed: string, name = "Genesis Universe"
 }
 
 export function generateGalaxy(universeSeed: string, galaxyIndex = 0): GalaxyNode {
+  if (galaxyIndex === 0) {
+    return {
+      id: SOL_GALAXY_ID,
+      universe_id: `universe-${slug(universeSeed)}`,
+      galaxy_seed: "PROJECT-GENESIS-UNIVERSE:milky-way",
+      name: "Milky Way",
+      galaxy_type: "Spiral Galaxy",
+      galaxy_size: "Starting Galaxy",
+      sector_count: 100000
+    };
+  }
+
   const galaxySeed = deriveSeed(universeSeed, "galaxy", galaxyIndex);
   const random = seededRandom(galaxySeed);
   const galaxySize = pickWeighted(galaxySizes, random, galaxySizes[galaxySizes.length - 1]);
@@ -274,6 +738,29 @@ export function generateGalaxy(universeSeed: string, galaxyIndex = 0): GalaxyNod
 }
 
 export function generateSector(galaxy: GalaxyNode, sectorIndex: number): SectorNode {
+  if (galaxy.id === SOL_GALAXY_ID && sectorIndex === 0) {
+    return {
+      id: SOL_SECTOR_ID,
+      galaxy_id: galaxy.id,
+      sector_seed: "PROJECT-GENESIS-UNIVERSE:milky-way:local-bubble",
+      sector_name: "Local Bubble",
+      coordinates_x: 0,
+      coordinates_y: 0,
+      coordinates_z: 0,
+      sector_type: "Civilized Space",
+      sector_rarity: "Common",
+      system_count: 24,
+      difficulty: 5,
+      discovery_value: 100,
+      discovery_level: "Scanned",
+      modifier: "Starting Region",
+      resource_signal: "Balanced",
+      colonized_worlds: 1,
+      discovered: true,
+      discovered_at: "derived"
+    };
+  }
+
   const sectorSeed = deriveSeed(galaxy.galaxy_seed, "sector", sectorIndex);
   const random = seededRandom(sectorSeed);
   const sectorRarity = pickWeighted(sectorRarities, random, sectorRarities[0]).name;
@@ -332,9 +819,34 @@ export function generateSectors(galaxy: GalaxyNode, limit = 24) {
 }
 
 export function generateStarSystem(sector: SectorNode, systemIndex: number): StarSystemNode {
+  if (sector.id === SOL_SECTOR_ID && systemIndex === 0) {
+    return {
+      id: SOL_SYSTEM_ID,
+      sector_id: sector.id,
+      system_seed: SOL_SYSTEM_SEED,
+      system_name: "Sol",
+      catalog_designation: "SOL-0001",
+      system_type: "Single Star System",
+      system_role: "Starting System",
+      generation_type: "Handcrafted",
+      system_rarity: "Common",
+      star_count: 1,
+      planet_count: SOL_CELESTIAL_BODIES.filter((body) => body.celestial_body_type !== "Star").length,
+      primary_star: "Sol",
+      star_type: "Yellow Main Sequence",
+      resource_bias: "Balanced",
+      danger_level: 8,
+      starting_system: true,
+      is_procedural: false,
+      discovered: true,
+      discovered_at: "derived"
+    };
+  }
+
   const systemSeed = deriveSeed(sector.sector_seed, "system", systemIndex);
   const random = seededRandom(systemSeed);
   const rarity = pick(systemRarities, random, "Common");
+  const starType = pick(starTypes, seededRandom(deriveSeed(systemSeed, "primary-star")), "Yellow Main Sequence");
 
   return {
     id: `system-${systemIndex}-${hashSeed(systemSeed).toString(16)}`,
@@ -342,11 +854,18 @@ export function generateStarSystem(sector: SectorNode, systemIndex: number): Sta
     system_seed: systemSeed,
     system_name: generatedName(systemSeed, "system"),
     catalog_designation: `PG-${Math.abs(sector.coordinates_x)}.${Math.abs(sector.coordinates_y)}.${systemIndex + 1}`,
+    system_type: "Procedural Star System",
+    system_role: "Exploration Target",
+    generation_type: "Procedural",
     system_rarity: rarity,
     star_count: numericRange(random, rarity === "Legendary" ? 2 : 1, rarity === "Common" ? 1 : 3),
     planet_count: numericRange(random, 1, rarity === "Common" ? 6 : 12),
+    primary_star: "Procedural Primary",
+    star_type: starType,
     resource_bias: pick(resourceBiases, random, "Balanced"),
     danger_level: numericRange(random, 1, rarity === "Common" ? 45 : 100),
+    starting_system: false,
+    is_procedural: true,
     discovered: false,
     discovered_at: null
   };
@@ -358,6 +877,21 @@ export function generateStarSystems(sector: SectorNode, limit = 12) {
 }
 
 export function generateStar(system: StarSystemNode, starIndex: number): StarNode {
+  if (system.id === SOL_SYSTEM_ID) {
+    return {
+      id: "star-sol",
+      system_id: SOL_SYSTEM_ID,
+      star_seed: `${SOL_SYSTEM_SEED}:star:sol`,
+      star_name: "Sol",
+      star_type: "Yellow Main Sequence",
+      star_size: "Standard",
+      star_temperature: 5772,
+      star_color: "Yellow",
+      luminosity: 100,
+      age: "4.6b years"
+    };
+  }
+
   const starSeed = deriveSeed(system.system_seed, "star", starIndex);
   const random = seededRandom(starSeed);
   const starType = pick(starTypes, random, "Yellow Main Sequence");
@@ -380,7 +914,61 @@ export function generateStars(system: StarSystemNode) {
   return Array.from({ length: system.star_count }, (_, index) => generateStar(system, index));
 }
 
+function generatedCelestialBodyFromPlanet(system: StarSystemNode, planet: UniversePlanetNode): CelestialBodyNode {
+  return {
+    id: `body-${planet.id}`,
+    system_id: system.id,
+    parent_body_id: null,
+    name: planet.planet_name,
+    celestial_body_type: "Planet",
+    planet_class: planet.planet_class,
+    planet_subclass: planet.planet_subclass,
+    planet_rarity: planet.planet_rarity,
+    biome: null,
+    atmosphere: null,
+    gravity: null,
+    orbit_position: planet.orbit_position,
+    orbit_parent: system.primary_star,
+    landable: planet.planet_class !== "Gas Giant",
+    colonizable: planet.planet_class !== "Gas Giant",
+    colonizable_status: planet.planet_class === "Gas Giant" ? "Not Colonizable" : "Unknown",
+    uses_orbital_gameplay: planet.planet_class === "Gas Giant",
+    is_fixed: false,
+    is_starting_body: false,
+    is_procedural: true,
+    unlock_requirement: "Interstellar Navigation",
+    resources: [],
+    notes: "Procedural celestial body derived from the system seed."
+  };
+}
+
+export function generateCelestialBodies(system: StarSystemNode): CelestialBodyNode[] {
+  if (system.id === SOL_SYSTEM_ID) {
+    return SOL_CELESTIAL_BODIES;
+  }
+
+  return generateUniversePlanets(system).map((planet) => generatedCelestialBodyFromPlanet(system, planet));
+}
+
 export function generateUniversePlanet(system: StarSystemNode, planetIndex: number): UniversePlanetNode {
+  if (system.id === SOL_SYSTEM_ID) {
+    const body = SOL_CELESTIAL_BODIES.filter((item) => item.celestial_body_type !== "Star")[planetIndex];
+    if (body) {
+      return {
+        id: body.id.replace("body-", "planet-"),
+        system_id: system.id,
+        planet_seed: `${SOL_SYSTEM_SEED}:${slug(body.name)}`,
+        planet_name: body.name,
+        orbit_position: body.orbit_position ?? planetIndex + 1,
+        planet_rarity: body.planet_rarity ?? "Common",
+        planet_class: body.planet_class ?? body.celestial_body_type,
+        planet_subclass: body.planet_subclass ?? body.celestial_body_type,
+        colonized: body.colonizable_status === "Already Colonized",
+        terraform_level: 0
+      };
+    }
+  }
+
   const planetSeed = deriveSeed(system.system_seed, "planet", planetIndex);
   const planetClass = pickWeightedPlanetClass(seededRandom(deriveSeed(planetSeed, "class")));
   const rarity = generatePlanetRarity(seededRandom(deriveSeed(planetSeed, "rarity")), planetClass.name, system.system_rarity);
