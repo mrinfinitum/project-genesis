@@ -13,6 +13,7 @@ import {
   Compass,
   Cpu,
   Database,
+  Download,
   FlaskConical,
   Gamepad2,
   Gauge,
@@ -26,6 +27,7 @@ import {
   Network,
   Orbit,
   Palette,
+  Pickaxe,
   Radar,
   Rocket,
   ScrollText,
@@ -71,10 +73,10 @@ const navigationGroups: NavigationGroup[] = [
     systemIds: ["dashboard-metrics", "tasks", "codex-handoffs"],
     items: [
       { href: "/", label: "Dashboard", icon: LayoutDashboard, activePaths: ["/"] },
-      { href: "/universe-explorer", label: "Universe Explorer", icon: Compass },
       { href: "/tasks", label: "Current Sprint", icon: ListChecks },
-      { href: "/", label: "Recent Activity", icon: History, activePaths: [] },
-      { href: "/codex-handoffs", label: "Codex Handoffs", icon: Cpu }
+      { href: "/codex-handoffs", label: "Ready for Codex", icon: Cpu },
+      { href: "/#data-health", label: "Data Health", icon: Database, activePaths: [] },
+      { href: "/database", label: "Design Review Export", icon: Download }
     ]
   },
   {
@@ -84,13 +86,12 @@ const navigationGroups: NavigationGroup[] = [
     fallbackProgress: 58,
     systemIds: ["planet-generation", "ancient-civilizations", "planet-traits", "anomalies", "hazards", "expeditions"],
     items: [
-      { href: "/galaxy", label: "Galaxy", icon: Star },
-      { href: "/sector-map", label: "Sector Map", icon: Map },
-      { href: "/star-systems", label: "Star Systems", icon: Orbit },
-      { href: "/star-system-map", label: "Star System Map", icon: Radar },
-      { href: "/celestial-bodies", label: "Celestial Bodies", icon: CircleDot },
-      { href: "/planets", label: "Planets", icon: Orbit },
-      { href: "/planet-generation", label: "Planet Generator", icon: Sparkles },
+      { href: "/galaxy", label: "Galaxy Generator", icon: Star },
+      { href: "/universe-explorer", label: "Universe Explorer", icon: Compass },
+      { href: "/sector-map", label: "Sector Generator", icon: Map },
+      { href: "/star-system-map", label: "Star System Generator", icon: Radar },
+      { href: "/celestial-bodies", label: "Celestial Body Designer", icon: CircleDot },
+      { href: "/planets", label: "Planet Designer", icon: Orbit },
       { href: "/planetary-rules", label: "Generation Rules", icon: GitBranch }
     ]
   },
@@ -102,11 +103,11 @@ const navigationGroups: NavigationGroup[] = [
     systemIds: ["research", "buildings", "upgrades", "districts", "wonders"],
     items: [
       { href: "/civilizations", label: "Civilization Design Studio", icon: Landmark },
-      { href: "/research", label: "Research", icon: FlaskConical },
-      { href: "/upgrades", label: "Upgrades", icon: Gauge },
-      { href: "/buildings", label: "Buildings", icon: Building2 },
-      { href: "/districts", label: "Districts", icon: Network },
-      { href: "/wonders", label: "Wonders", icon: Sparkles }
+      { href: "/research", label: "Research Designer", icon: FlaskConical },
+      { href: "/upgrades", label: "Upgrade Designer", icon: Gauge },
+      { href: "/buildings", label: "Building Designer", icon: Building2 },
+      { href: "/districts", label: "District Designer", icon: Network },
+      { href: "/wonders", label: "Wonder Designer", icon: Sparkles }
     ]
   },
   {
@@ -118,21 +119,23 @@ const navigationGroups: NavigationGroup[] = [
     items: [
       { href: "/resource-catalog", label: "Resource Catalog", icon: Gem },
       { href: "/planet-resource-profiles", label: "Planet Resources", icon: CircleDot },
+      { label: "Resource Distribution Designer", icon: Pickaxe, future: true },
       { href: "/collectibles", label: "Collectibles", icon: Archive },
       { label: "Trading", icon: Boxes, future: true },
       { label: "Manufacturing", icon: Building2, future: true }
     ]
   },
   {
-    id: "game-systems",
-    label: "Game Systems",
+    id: "systems",
+    label: "Systems",
     icon: GitBranch,
     fallbackProgress: 61,
     systemIds: ["unlock-matrix"],
     items: [
       { href: "/unlock-matrix", label: "Unlock Matrix", icon: GitBranch },
-      { href: "/building-relationships", label: "Relationships", icon: Network },
-      { href: "/building-chains", label: "Balance", icon: Gauge },
+      { href: "/building-relationships", label: "Relationship Graph", icon: Network },
+      { href: "/building-chains", label: "Balance Designer", icon: Gauge },
+      { label: "Validation Engine", icon: Database, future: true },
       { label: "Events", icon: Sparkles, future: true },
       { label: "Achievements", icon: Star, future: true }
     ]
@@ -147,9 +150,9 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/planet-generation", label: "Planet Artwork", icon: Sparkles, activePaths: [] },
       { href: "/planet-generation", label: "Surface Landscapes", icon: Palette, activePaths: [] },
       { href: "/planet-generation", label: "Hero Discovery Shots", icon: Star, activePaths: [] },
+      { href: "/planet-generation", label: "Prompt Library", icon: ScrollText, activePaths: [] },
       { href: "/conceptual-art", label: "Concept Art", icon: Palette },
       { href: "/assets", label: "Asset Library", icon: Archive },
-      { href: "/planet-generation", label: "Prompt Library", icon: ScrollText, activePaths: [] },
       { href: "/assets", label: "UI Assets", icon: Gamepad2, activePaths: [] }
     ]
   },
@@ -163,8 +166,8 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/tasks", label: "Tasks", icon: ListChecks },
       { href: "/database", label: "Database", icon: Database },
       { href: "/settings", label: "Imports / Exports", icon: UploadCloud },
-      { href: "/releases", label: "Release Notes", icon: ScrollText },
       { href: "/changelog", label: "Changelog", icon: History },
+      { href: "/releases", label: "Release Notes", icon: ScrollText },
       { href: "/settings", label: "Settings", icon: Settings }
     ]
   }
@@ -354,7 +357,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <header className="sticky top-0 z-10 border-b border-cyan-400/15 bg-[#07101e]/85 backdrop-blur">
           <div className="flex min-h-16 items-center justify-between gap-4 px-5 lg:px-8">
             <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">Internal Content Database</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">Universe Authoring IDE</p>
               <h1 className="text-lg font-semibold text-white">Project Genesis Studio</h1>
             </div>
             <div className="flex items-center gap-3 text-xs text-slate-300">

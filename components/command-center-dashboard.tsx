@@ -279,6 +279,58 @@ function SystemHealthBars({ systems }: { systems: ProjectSystem[] }) {
   );
 }
 
+function StudioWorkflowPanel() {
+  const steps = [
+    {
+      label: "Inputs",
+      icon: Database,
+      description: "Import, seed, and normalize source records."
+    },
+    {
+      label: "Generator / Editor",
+      icon: Sparkles,
+      description: "Design systems through focused workspace tools."
+    },
+    {
+      label: "Preview",
+      icon: Image,
+      description: "Inspect universe, planet, artwork, and content output."
+    },
+    {
+      label: "Validation",
+      icon: TriangleAlert,
+      description: "Find missing fields, broken references, and blockers."
+    },
+    {
+      label: "Export / Handoff",
+      icon: Download,
+      description: "Prepare JSON, CSV, Roblox data, and Codex tasks."
+    }
+  ];
+
+  return (
+    <Panel title="IDE Workflow" eyebrow="Create / Preview / Validate / Export">
+      <div className="grid gap-3 md:grid-cols-5">
+        {steps.map((step, index) => {
+          const Icon = step.icon;
+          return (
+            <div key={step.label} className="relative rounded-md border border-cyan-400/10 bg-slate-950/45 p-3">
+              <div className="flex items-center gap-2">
+                <span className="grid h-9 w-9 place-items-center rounded-md border border-cyan-300/20 bg-cyan-300/10">
+                  <Icon className="h-4 w-4 text-cyan-200" />
+                </span>
+                <span className="text-[0.64rem] font-bold uppercase tracking-[0.16em] text-cyan-100">{step.label}</span>
+              </div>
+              <p className="mt-3 text-xs leading-5 text-slate-400">{step.description}</p>
+              {index < steps.length - 1 ? <span className="absolute -right-2 top-1/2 hidden h-px w-4 bg-cyan-400/30 md:block" /> : null}
+            </div>
+          );
+        })}
+      </div>
+    </Panel>
+  );
+}
+
 function SystemProgressCard({
   system,
   trend,
@@ -661,7 +713,7 @@ export function CommandCenterDashboard({ systems, history, healthChecks, codexIt
             <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-300">Studio Mission Control</p>
             <h2 className="mt-3 text-4xl font-black tracking-tight text-white sm:text-5xl">Project Genesis Command Center</h2>
             <p className="mt-3 max-w-3xl text-base text-slate-300">
-              Track database progress, content readiness, and next production priorities across the entire Project Genesis universe.
+              Universe authoring IDE for creating, previewing, validating, and exporting the Project Genesis game database.
             </p>
             <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
               {heroMetrics.map((metric) => (
@@ -675,6 +727,8 @@ export function CommandCenterDashboard({ systems, history, healthChecks, codexIt
         </div>
       </section>
 
+      <StudioWorkflowPanel />
+
       <section className="grid gap-5 xl:grid-cols-[1fr_1fr_1fr]">
         <Panel title="Status Breakdown" eyebrow="Systems">
           <StatusDonut systems={systems} />
@@ -682,7 +736,9 @@ export function CommandCenterDashboard({ systems, history, healthChecks, codexIt
         <Panel title="System Health" eyebrow="Readiness">
           <SystemHealthBars systems={systems} />
         </Panel>
-        <CodexReadinessPanel items={codexItems} creatingTaskId={creatingTaskId} createdTasks={createdTasks} onCreateTask={createCodexTask} />
+        <div id="ready-for-codex">
+          <CodexReadinessPanel items={codexItems} creatingTaskId={creatingTaskId} createdTasks={createdTasks} onCreateTask={createCodexTask} />
+        </div>
       </section>
 
       <section className="grid gap-5 xl:grid-cols-[1fr_360px]">
@@ -708,7 +764,9 @@ export function CommandCenterDashboard({ systems, history, healthChecks, codexIt
         </div>
         <aside className="space-y-5">
           <NextStepsPanel systems={systems} creatingTaskId={creatingTaskId} createdTasks={createdTasks} onCreateTask={createCodexTask} />
-          <DataHealthPanel checks={healthChecks} />
+          <div id="data-health">
+            <DataHealthPanel checks={healthChecks} />
+          </div>
         </aside>
       </section>
 
