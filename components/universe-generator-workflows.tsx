@@ -1801,7 +1801,7 @@ function StarSystemCard({
 
   return (
     <article
-      className="group relative cursor-pointer overflow-hidden rounded-md border border-cyan-400/15 bg-[#07101e]/85 shadow-glow transition hover:-translate-y-0.5 hover:border-cyan-300/55"
+      className="group relative cursor-pointer overflow-hidden rounded-md border border-cyan-400/15 bg-[#07101e]/85 shadow-glow transition hover:border-cyan-300/55"
       onClick={onOpen}
     >
       <StarSystemVisual model={model} />
@@ -2183,7 +2183,7 @@ function SectorCard({
 
   return (
     <article
-      className={cn("group relative cursor-pointer overflow-hidden rounded-md border bg-[#07101e]/85 shadow-glow transition hover:-translate-y-0.5 hover:border-cyan-300/55", open ? "border-cyan-300/65" : "border-cyan-400/15")}
+      className={cn("group relative cursor-pointer overflow-hidden rounded-md border bg-[#07101e]/85 shadow-glow transition hover:border-cyan-300/55", open ? "border-cyan-300/65" : "border-cyan-400/15")}
       onClick={onOpen}
     >
       <SectorVisual model={model} />
@@ -2373,7 +2373,7 @@ function GalaxyCard({
 
   return (
     <article
-      className={cn("group relative cursor-pointer overflow-hidden rounded-md border bg-[#07101e]/85 shadow-glow transition hover:-translate-y-0.5 hover:border-cyan-300/55", open ? "border-cyan-300/65" : "border-cyan-400/15")}
+      className={cn("group relative cursor-pointer overflow-hidden rounded-md border bg-[#07101e]/85 shadow-glow transition hover:border-cyan-300/55", open ? "border-cyan-300/65" : "border-cyan-400/15")}
       onClick={onOpen}
     >
       <GalaxyVisual model={model} />
