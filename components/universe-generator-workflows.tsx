@@ -788,6 +788,19 @@ function StatChip({ label, value, tone }: { label: string; value: React.ReactNod
   );
 }
 
+function CardStatChip({ label, value, tone }: { label: string; value: React.ReactNode; tone?: string }) {
+  return (
+    <div className="min-w-0 rounded border border-cyan-300/10 bg-slate-950/45 px-2 py-1.5">
+      <p className="text-[0.58rem] font-semibold uppercase tracking-[0.14em] text-slate-500">{label}</p>
+      <p className={cn("mt-0.5 truncate text-xs font-medium text-slate-100", tone)}>{value}</p>
+    </div>
+  );
+}
+
+function cardList(values: string[]) {
+  return values.filter(Boolean).slice(0, 6).join(", ") || "None";
+}
+
 function TextInput({
   label,
   value,
@@ -853,10 +866,12 @@ function Breadcrumbs({ items }: { items: string[] }) {
 function GeneratorShell({ eyebrow, title, description, children }: { eyebrow: string; title: string; description: string; children: React.ReactNode }) {
   return (
     <div className="space-y-6">
-      <section>
-        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">{eyebrow}</p>
-        <h1 className="mt-3 text-5xl font-bold text-white">{title}</h1>
-        <p className="mt-3 max-w-5xl text-lg text-slate-300">{description}</p>
+      <section className="flex flex-col justify-between gap-4 xl:flex-row xl:items-end">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">{eyebrow}</p>
+          <h1 className="mt-2 text-3xl font-bold text-white">{title}</h1>
+          <p className="mt-2 max-w-3xl text-sm text-slate-300">{description}</p>
+        </div>
       </section>
       {children}
     </div>
@@ -1402,7 +1417,7 @@ function StarSystemVisual({ model, large = false }: { model: StarSystemSeedModel
   }));
 
   return (
-    <div className={cn("relative overflow-hidden border-cyan-300/10 bg-black", large ? "min-h-[28rem] rounded-md border" : "h-64 border-b")}>
+    <div className={cn("relative overflow-hidden border-cyan-300/10 bg-black", large ? "min-h-[28rem] rounded-md border" : "h-36 border-b")}>
       <div className={cn("absolute inset-0 bg-gradient-to-br opacity-80", systemVisual({ star_type: model.starClass } as StarSystemNode))} />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_38%_42%,rgba(34,211,238,0.14),transparent_24%),radial-gradient(circle_at_62%_54%,rgba(147,51,234,0.1),transparent_30%)]" />
       <div className="absolute left-1/2 top-1/2 aspect-square w-[72%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-100/5" />
@@ -1426,7 +1441,7 @@ function StarSystemVisual({ model, large = false }: { model: StarSystemSeedModel
       <div
         className={cn(
           "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full shadow-[0_0_80px_rgba(250,204,21,0.22)]",
-          large ? "h-32 w-32" : "h-20 w-20"
+          large ? "h-32 w-32" : "h-14 w-14"
         )}
         style={starLightStyle(model)}
       />
@@ -1443,7 +1458,7 @@ function SectorVisual({ model, large = false }: { model: SectorSeedModel; large?
   }));
 
   return (
-    <div className={cn("relative overflow-hidden border-cyan-300/10 bg-black", large ? "min-h-[28rem] rounded-md border" : "h-64 border-b")}>
+    <div className={cn("relative overflow-hidden border-cyan-300/10 bg-black", large ? "min-h-[28rem] rounded-md border" : "h-36 border-b")}>
       <div className={cn("absolute inset-0 bg-gradient-to-br opacity-85", sectorVisual({ sector_type: model.sectorClass } as SectorNode))} />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_34%_34%,rgba(34,211,238,0.18),transparent_22%),radial-gradient(circle_at_68%_58%,rgba(168,85,247,0.13),transparent_28%)]" />
       <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.04)_1px,transparent_1px)] bg-[size:38px_38px] opacity-50" />
@@ -1471,7 +1486,7 @@ function GalaxyVisual({ model, large = false }: { model: GalaxySeedModel; large?
   }));
 
   return (
-    <div className={cn("relative overflow-hidden border-cyan-300/10 bg-black", large ? "min-h-[28rem] rounded-md border" : "h-64 border-b")}>
+    <div className={cn("relative overflow-hidden border-cyan-300/10 bg-black", large ? "min-h-[28rem] rounded-md border" : "h-36 border-b")}>
       <div className={cn("absolute inset-0 bg-gradient-to-br opacity-85", galaxyVisual({ galaxy_type: model.galaxyClass } as GalaxyNode))} />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.22),transparent_5%),radial-gradient(circle_at_50%_50%,rgba(34,211,238,0.2),transparent_21%),radial-gradient(circle_at_50%_50%,rgba(147,51,234,0.14),transparent_38%)]" />
       {arms.map((arm, index) => (
@@ -1481,7 +1496,7 @@ function GalaxyVisual({ model, large = false }: { model: GalaxySeedModel; large?
           style={{ transform: `rotate(${arm.rotate}deg) scaleX(${arm.scale})` }}
         />
       ))}
-      <div className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/80 shadow-[0_0_60px_rgba(103,232,249,0.5)]" />
+      <div className={cn("absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/80 shadow-[0_0_60px_rgba(103,232,249,0.5)]", large ? "h-16 w-16" : "h-10 w-10")} />
       <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(2,6,23,0.04),rgba(2,6,23,0.72))]" />
     </div>
   );
@@ -1732,24 +1747,24 @@ function StarSystemCard({
 
   return (
     <article
-      className="group relative cursor-pointer overflow-hidden rounded-md border border-cyan-400/15 bg-genesis-panel/95 transition hover:border-cyan-300/55 hover:shadow-[0_0_28px_rgba(34,211,238,0.12)]"
+      className="group relative cursor-pointer overflow-hidden rounded-md border border-cyan-400/15 bg-[#07101e]/85 shadow-glow transition hover:-translate-y-0.5 hover:border-cyan-300/55"
       onClick={onOpen}
     >
       <StarSystemVisual model={model} />
-      <div className="border-b border-cyan-300/10 p-4">
+      <div className="border-b border-cyan-300/10 bg-slate-950/45 p-3">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <p className="truncate text-xs font-black uppercase tracking-[0.22em] text-cyan-300">{model.type}</p>
+            <p className="truncate text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-cyan-300">{model.type}</p>
+            <h3 className="mt-1 truncate text-base font-bold text-white">{model.name}</h3>
+            <div className="mt-1 flex min-w-0 flex-wrap items-center gap-2">
+              <span className="min-w-0 truncate font-mono text-xs text-slate-500">{model.seedId}</span>
               <Badge className={rarityClass}>{model.rarity}</Badge>
             </div>
-            <h3 className="mt-2 truncate text-2xl font-bold text-white">{model.name}</h3>
-            <p className="mt-1 truncate font-mono text-xs text-slate-500">{model.seedId}</p>
           </div>
           <div className="relative flex shrink-0 gap-2">
             <button
               type="button"
-              className="grid h-10 w-10 place-items-center rounded-md border border-red-300/20 text-red-200 opacity-80 transition hover:bg-red-400/10 group-hover:opacity-100"
+              className="grid h-8 w-8 place-items-center rounded-md border border-red-300/20 text-red-200 opacity-80 transition hover:bg-red-400/10 group-hover:opacity-100"
               onClick={(event) => {
                 event.stopPropagation();
                 onDelete();
@@ -1764,12 +1779,20 @@ function StarSystemCard({
       </div>
       <div className="space-y-3 p-3">
         <div className="grid grid-cols-3 gap-2">
-          <StatChip label="Star Class" value={model.starClass} />
-          <StatChip label="System Type" value={model.systemType} />
-          <StatChip label="Stability" value={model.stability} tone={model.stability === "Collapsing" || model.stability === "Volatile" ? "text-red-200" : "text-slate-100"} />
+          <CardStatChip label="Star Class" value={model.starClass} />
+          <CardStatChip label="System Type" value={model.systemType} />
+          <CardStatChip label="Stability" value={model.stability} tone={model.stability === "Collapsing" || model.stability === "Volatile" ? "text-red-200" : "text-slate-100"} />
         </div>
         <p className="line-clamp-2 text-xs leading-5 text-slate-300">{model.description}</p>
-        <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="space-y-1 text-xs text-slate-400">
+          <p className="truncate">
+            <span className="text-slate-500">Resources:</span> {cardList(model.resources)}
+          </p>
+          <p className="truncate">
+            <span className="text-slate-500">Traits:</span> {cardList(model.traits)}
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
           <span className="rounded border border-cyan-300/20 bg-cyan-400/10 px-2 py-1 text-xs text-cyan-100">{model.discoveryPoints} discovery pts</span>
         </div>
       </div>
@@ -2106,24 +2129,24 @@ function SectorCard({
 
   return (
     <article
-      className={cn("group relative cursor-pointer overflow-hidden rounded-md border bg-genesis-panel/95 transition hover:border-cyan-300/55 hover:shadow-[0_0_28px_rgba(34,211,238,0.12)]", open ? "border-cyan-300/65" : "border-cyan-400/15")}
+      className={cn("group relative cursor-pointer overflow-hidden rounded-md border bg-[#07101e]/85 shadow-glow transition hover:-translate-y-0.5 hover:border-cyan-300/55", open ? "border-cyan-300/65" : "border-cyan-400/15")}
       onClick={onOpen}
     >
       <SectorVisual model={model} />
-      <div className="border-b border-cyan-300/10 p-4">
+      <div className="border-b border-cyan-300/10 bg-slate-950/45 p-3">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <p className="truncate text-xs font-black uppercase tracking-[0.22em] text-cyan-300">{model.type}</p>
+            <p className="truncate text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-cyan-300">{model.type}</p>
+            <h3 className="mt-1 truncate text-base font-bold text-white">{model.name}</h3>
+            <div className="mt-1 flex min-w-0 flex-wrap items-center gap-2">
+              <span className="min-w-0 truncate font-mono text-xs text-slate-500">{model.seedId}</span>
               <Badge className={rarityClass}>{model.rarity}</Badge>
             </div>
-            <h3 className="mt-2 truncate text-2xl font-bold text-white">{model.name}</h3>
-            <p className="mt-1 truncate font-mono text-xs text-slate-500">{model.seedId}</p>
           </div>
           <div className="relative flex shrink-0 gap-2">
             <button
               type="button"
-              className="grid h-10 w-10 place-items-center rounded-md border border-red-300/20 text-red-200 opacity-80 transition hover:bg-red-400/10 group-hover:opacity-100"
+              className="grid h-8 w-8 place-items-center rounded-md border border-red-300/20 text-red-200 opacity-80 transition hover:bg-red-400/10 group-hover:opacity-100"
               onClick={(event) => {
                 event.stopPropagation();
                 onDelete();
@@ -2138,12 +2161,20 @@ function SectorCard({
       </div>
       <div className="space-y-3 p-3">
         <div className="grid grid-cols-3 gap-2">
-          <StatChip label="Sector Class" value={model.sectorClass} />
-          <StatChip label="System Density" value={model.systemDensity} />
-          <StatChip label="Danger Level" value={model.dangerLevel} tone={model.dangerLevel === "High" || model.dangerLevel === "Extreme" ? "text-red-200" : "text-slate-100"} />
+          <CardStatChip label="Sector Class" value={model.sectorClass} />
+          <CardStatChip label="System Density" value={model.systemDensity} />
+          <CardStatChip label="Danger Level" value={model.dangerLevel} tone={model.dangerLevel === "High" || model.dangerLevel === "Extreme" ? "text-red-200" : "text-slate-100"} />
         </div>
         <p className="line-clamp-2 text-xs leading-5 text-slate-300">{model.description}</p>
-        <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="space-y-1 text-xs text-slate-400">
+          <p className="truncate">
+            <span className="text-slate-500">Resources:</span> {cardList(model.resources)}
+          </p>
+          <p className="truncate">
+            <span className="text-slate-500">Traits:</span> {cardList(model.traits)}
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
           <span className="rounded border border-cyan-300/20 bg-cyan-400/10 px-2 py-1 text-xs text-cyan-100">{model.discoveryPoints} discovery pts</span>
         </div>
       </div>
@@ -2288,26 +2319,26 @@ function GalaxyCard({
 
   return (
     <article
-      className={cn("group relative cursor-pointer overflow-hidden rounded-md border bg-genesis-panel/95 transition hover:border-cyan-300/55 hover:shadow-[0_0_28px_rgba(34,211,238,0.12)]", open ? "border-cyan-300/65" : "border-cyan-400/15")}
+      className={cn("group relative cursor-pointer overflow-hidden rounded-md border bg-[#07101e]/85 shadow-glow transition hover:-translate-y-0.5 hover:border-cyan-300/55", open ? "border-cyan-300/65" : "border-cyan-400/15")}
       onClick={onOpen}
     >
       <GalaxyVisual model={model} />
-      <div className="border-b border-cyan-300/10 p-4">
+      <div className="border-b border-cyan-300/10 bg-slate-950/45 p-3">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <p className="truncate text-xs font-black uppercase tracking-[0.22em] text-cyan-300">{model.type}</p>
+            <p className="truncate text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-cyan-300">{model.type}</p>
+            <h3 className="mt-1 truncate text-base font-bold text-white">{model.name}</h3>
+            <div className="mt-1 flex min-w-0 flex-wrap items-center gap-2">
+              <span className="min-w-0 truncate font-mono text-xs text-slate-500">{model.seedId}</span>
               <Badge className={rarityClass}>{model.rarity}</Badge>
               {galaxy.is_fixed ? <Badge className="border-amber-300/45 text-amber-100">Starting</Badge> : null}
               <Badge className={model.isUnlocked ? "border-emerald-300/45 text-emerald-100" : "border-slate-500/45 text-slate-300"}>{model.isUnlocked ? "Unlocked" : "Locked"}</Badge>
             </div>
-            <h3 className="mt-2 truncate text-2xl font-bold text-white">{model.name}</h3>
-            <p className="mt-1 truncate font-mono text-xs text-slate-500">{model.seedId}</p>
           </div>
           <div className="relative flex shrink-0 gap-2">
             <button
               type="button"
-              className="grid h-10 w-10 place-items-center rounded-md border border-red-300/20 text-red-200 opacity-80 transition hover:bg-red-400/10 group-hover:opacity-100"
+              className="grid h-8 w-8 place-items-center rounded-md border border-red-300/20 text-red-200 opacity-80 transition hover:bg-red-400/10 group-hover:opacity-100"
               onClick={(event) => {
                 event.stopPropagation();
                 onDelete();
@@ -2322,12 +2353,20 @@ function GalaxyCard({
       </div>
       <div className="space-y-3 p-3">
         <div className="grid grid-cols-3 gap-2">
-          <StatChip label="Galaxy Class" value={model.galaxyClass} />
-          <StatChip label="Galaxy Scale" value={model.galaxyScale} />
-          <StatChip label="Discovery" value={model.discoveryPercentDisplay} />
+          <CardStatChip label="Galaxy Class" value={model.galaxyClass} />
+          <CardStatChip label="Galaxy Scale" value={model.galaxyScale} />
+          <CardStatChip label="Discovery" value={model.discoveryPercentDisplay} />
         </div>
         <p className="line-clamp-2 text-xs leading-5 text-slate-300">{model.description}</p>
-        <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="space-y-1 text-xs text-slate-400">
+          <p className="truncate">
+            <span className="text-slate-500">Resources:</span> {cardList(model.resources)}
+          </p>
+          <p className="truncate">
+            <span className="text-slate-500">Traits:</span> {cardList(model.traits)}
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
           <span className="rounded border border-cyan-300/20 bg-cyan-400/10 px-2 py-1 text-xs text-cyan-100">{formatNumber(model.discoveryPoints)} discovery pts</span>
         </div>
       </div>
