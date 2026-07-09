@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getGameData } from "@/lib/data";
+import { discoveryJournalSchema, sampleDiscoveryJournal, sampleTimelineEvents, timelineEventSchema } from "@/lib/explorer/discovery-log";
 import { getLocalBubbleSystems, generatedCelestialBodyRows, generatedStarSystemRows } from "@/lib/universe/fallback-data";
 import { normalizePlanetResourceProfiles, validatePlanetResourceProfiles } from "@/lib/resources/planet-resource-profiles";
 import { ResourceService } from "@/lib/resources/service";
@@ -104,6 +105,9 @@ type CanonicalModules = {
   unassigned_planets: ExportUnassignedPlanet[];
   planet_rules: GameData["planets"];
   celestial_bodies: GameData["celestial_bodies"];
+  discovery_journal: typeof sampleDiscoveryJournal;
+  timeline_events: typeof sampleTimelineEvents;
+  explorer_schemas: Array<Record<string, unknown>>;
   colonies: Array<Record<string, unknown>>;
   economy: Array<Record<string, unknown>>;
   factions: Array<Record<string, unknown>>;
@@ -123,6 +127,8 @@ type ExportGeneratedPlanet = GeneratedPlanet & {
   orbitIndex: number;
   parentStarClass: string;
   parentStarSeed: string;
+  generatedName: string;
+  displayName: string;
 };
 
 type ExportUnassignedPlanet = GeneratedPlanet & {
@@ -250,6 +256,8 @@ function normalizeExportPlanets(
     const orbitIndex = Number(planet.orbitIndex ?? planet.orbit_position) || 0;
     const starType = system.star_type ?? planet.star_type ?? "Unknown";
 
+    const namedPlanet = planet as GeneratedPlanet & { generatedName?: string; displayName?: string };
+
     assigned.push({
       ...planet,
       galaxyId: String(galaxy.id),
@@ -267,7 +275,9 @@ function normalizeExportPlanets(
       orbitIndex,
       star_type: starType,
       parentStarClass: starType,
-      parentStarSeed: system.system_seed
+      parentStarSeed: system.system_seed,
+      generatedName: namedPlanet.generatedName ?? planet.name,
+      displayName: namedPlanet.displayName ?? planet.name
     });
   }
 
@@ -287,13 +297,31 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
     planet_resource_profiles: validatePlanetResourceProfiles(data.planet_resource_profiles as PlanetResourceProfile[]),
     research: data.research,
     unlock_matrix: data.unlock_matrix,
-    galaxies,
-    sectors,
-    star_systems: starSystems,
+    galaxies: galaxies.map((galaxy) => ({ ...galaxy, generatedName: galaxyName(galaxy), displayName: galaxyName(galaxy) })),
+    sectors: sectors.map((sector) => ({ ...sector, generatedName: asString(sector.sector_name) || String(sector.id), displayName: asString(sector.sector_name) || String(sector.id) })),
+    star_systems: starSystems.map((system) => ({ ...system, generatedName: system.system_name, displayName: system.system_name })),
     planets: normalizedPlanets.assigned,
     unassigned_planets: normalizedPlanets.unassigned,
     planet_rules: data.planets,
-    celestial_bodies: celestialBodies,
+    celestial_bodies: celestialBodies.map((body) => ({ ...body, generatedName: body.name, displayName: body.name })),
+    discovery_journal: sampleDiscoveryJournal,
+    timeline_events: sampleTimelineEvents,
+    explorer_schemas: [
+      {
+        id: "discovery_journal_schema",
+        module: "discovery_journal",
+        playerSpecific: true,
+        staticExportRule: "Static exports include schema and sample mock data only. Runtime/player journal data remains client or save scoped.",
+        fields: discoveryJournalSchema
+      },
+      {
+        id: "timeline_events_schema",
+        module: "timeline_events",
+        playerSpecific: true,
+        staticExportRule: "Static exports include schema and sample mock data only. Runtime/player timeline data remains client or save scoped.",
+        fields: timelineEventSchema
+      }
+    ],
     colonies: placeholderModule("colonies"),
     economy: placeholderModule("economy"),
     factions: placeholderModule("factions"),
@@ -524,6 +552,9 @@ function compactModules(modules: CanonicalModules) {
     planets: modules.planets,
     unassigned_planets: modules.unassigned_planets,
     celestial_bodies: modules.celestial_bodies,
+    discovery_journal: modules.discovery_journal,
+    timeline_events: modules.timeline_events,
+    explorer_schemas: modules.explorer_schemas,
     colonies: modules.colonies,
     economy: modules.economy,
     factions: modules.factions,

@@ -85,6 +85,8 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/star-system-map", label: "Star Systems", icon: Radar },
       { href: "/celestial-bodies", label: "Celestial Bodies", icon: CircleDot },
       { href: "/planets", label: "Planets", icon: Orbit },
+      { href: "/discovery-journal", label: "Discovery Journal", icon: ScrollText },
+      { href: "/universe-timeline", label: "Universe Timeline", icon: History },
       { href: "/planetary-rules", label: "Rules", icon: GitBranch }
     ]
   },
