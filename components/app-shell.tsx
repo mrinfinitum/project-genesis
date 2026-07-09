@@ -12,6 +12,7 @@ import {
   Compass,
   Cpu,
   Database,
+  FileCode2,
   FlaskConical,
   Gauge,
   Gem,
@@ -138,6 +139,7 @@ const navigationGroups: NavigationGroup[] = [
     systemIds: ["unlock-matrix"],
     items: [
       { href: "/unlock-matrix", label: "Unlock Matrix", icon: GitBranch },
+      { href: "/game-engine-exports", label: "Game Engine Exports", icon: FileCode2 },
       { href: "/building-relationships", label: "Relationship Graph", icon: Network },
       { href: "/validation-engine", label: "Validation Center", icon: Database },
       { href: "/building-chains", label: "Balance Designer", icon: Gauge },

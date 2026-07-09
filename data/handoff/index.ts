@@ -595,13 +595,13 @@ export const handoffCodexReadinessItems: CodexReadinessItem[] = [
     id: "codex-research-unlocks",
     title: "Multi-Engine Game IDE Exports",
     system: "Game Engine Exports",
-    status: "Open",
+    status: "Complete",
     description: "Expand Project Genesis Studio into an engine-agnostic export hub for Roblox, Unity, Unreal, Godot, Web, and Generic JSON targets.",
     related_tables: ["resource_catalog", "planet_resource_profiles", "research", "unlock_matrix", "star_systems", "celestial_bodies", "generated_planets", "planets"],
     export_path: "/api/export/generic",
     priority: "Critical",
     created_at: "2026-07-06T00:00:00.000Z",
-    notes: "Roblox remains supported as one export target. The Studio remains the canonical source of truth; engine exports must consume the same data and must not fork gameplay rules."
+    notes: "Completed with a Game Engine Exports IDE page, six engine export routes, shared canonical export payload, validation layer, relationship map, and target-specific starter artifacts."
   }
 ];
 
@@ -649,29 +649,13 @@ export const handoffCodexTasks: CodexTask[] = [
     source_id: "codex-research-unlocks",
     system: "Game Engine Exports",
     priority: "Critical",
-    status: "Open",
+    status: "Complete",
     description: "Expand Project Genesis Studio so it prepares and exports canonical game data for multiple game engines, with Roblox becoming one supported target instead of the only target.",
     related_tables: ["resource_catalog", "planet_resource_profiles", "research", "unlock_matrix", "star_systems", "celestial_bodies", "generated_planets", "planets"],
     export_path: "/api/export/generic",
     created_at: "2026-07-09T00:00:00.000Z",
     updated_at: "2026-07-09T00:00:00.000Z",
-    notes: [
-      "Goal: Expand Project Genesis Studio into a Multi-Engine Game IDE that exports the same canonical data to Roblox/Lua, Unity/C#, Unreal/JSON or DataTables, Godot/GDScript or JSON, Web/TypeScript, and Generic JSON API targets.",
-      "Do not remove Roblox support. Roblox should become one export target.",
-      "Add an Engine Target selector with: Roblox, Unity, Unreal, Godot, Web, Generic.",
-      "Core source of truth remains Project Genesis Studio: resources, planet resource profiles, research, unlock matrix, galaxies, sectors, star systems, planets, colonies, economy, factions, and missions.",
-      "Each engine target needs export format, folder structure recommendation, generated module names, schema mapping, validation checklist, API connection notes, and sample loader code.",
-      "Add export paths: /api/export/roblox, /api/export/unity, /api/export/unreal, /api/export/godot, /api/export/web, /api/export/generic.",
-      "Roblox output: Lua ModuleScripts, ResourceCatalogModule, ResearchUnlockModule, UniverseDataModule, ApiService template.",
-      "Unity output: C# ScriptableObject schemas, JSON import files, ResourceCatalog.cs, ResearchUnlocks.cs, UniverseLoader.cs.",
-      "Unreal output: JSON/DataTable-ready exports, struct definitions, ResourceCatalog, ResearchUnlockTable, UniverseData.",
-      "Godot output: JSON exports, GDScript loader templates, ResourceCatalog.gd, ResearchUnlocks.gd, UniverseLoader.gd.",
-      "Web output: TypeScript interfaces, JSON exports, API client, Zustand/Redux-ready store examples.",
-      "Generic output: clean normalized JSON, OpenAPI-style schema notes, ID relationship map.",
-      "Before export, validate stable IDs, orphan unlocks, invalid resource IDs, parent/child links, duplicate IDs, and selected-engine schema compatibility.",
-      "Create a Game Engine Exports IDE section with target selector, export summary, included data modules, validation status, download/export buttons, API endpoint references, and copy-ready integration instructions.",
-      "Main rule: Project Genesis Studio remains engine-agnostic. Game engines consume exported data or API data. The Studio is the source of truth."
-    ].join("\n")
+    notes: "Completed: added /game-engine-exports, /api/export/roblox, /api/export/unity, /api/export/unreal, /api/export/godot, /api/export/web, /api/export/generic; all targets derive from the same canonical Studio payload and run export validation before returning target artifacts."
   }
 ];
 export const handoffPlanetPromptLibrary: PlanetPromptLibraryRecord[] = [];

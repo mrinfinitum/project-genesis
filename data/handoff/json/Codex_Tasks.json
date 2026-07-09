@@ -42,7 +42,7 @@
     "source_id": "codex-research-unlocks",
     "system": "Game Engine Exports",
     "priority": "Critical",
-    "status": "Open",
+    "status": "Complete",
     "description": "Expand Project Genesis Studio so it prepares and exports canonical game data for multiple game engines, with Roblox becoming one supported target instead of the only target.",
     "related_tables": [
       "resource_catalog",
@@ -57,6 +57,6 @@
     "export_path": "/api/export/generic",
     "created_at": "2026-07-09T00:00:00.000Z",
     "updated_at": "2026-07-09T00:00:00.000Z",
-    "notes": "Goal: Expand Project Genesis Studio into a Multi-Engine Game IDE that exports the same canonical data to Roblox/Lua, Unity/C#, Unreal/JSON or DataTables, Godot/GDScript or JSON, Web/TypeScript, and Generic JSON API targets.\nDo not remove Roblox support. Roblox should become one export target.\nAdd an Engine Target selector with: Roblox, Unity, Unreal, Godot, Web, Generic.\nCore source of truth remains Project Genesis Studio: resources, planet resource profiles, research, unlock matrix, galaxies, sectors, star systems, planets, colonies, economy, factions, and missions.\nEach engine target needs export format, folder structure recommendation, generated module names, schema mapping, validation checklist, API connection notes, and sample loader code.\nAdd export paths: /api/export/roblox, /api/export/unity, /api/export/unreal, /api/export/godot, /api/export/web, /api/export/generic.\nRoblox output: Lua ModuleScripts, ResourceCatalogModule, ResearchUnlockModule, UniverseDataModule, ApiService template.\nUnity output: C# ScriptableObject schemas, JSON import files, ResourceCatalog.cs, ResearchUnlocks.cs, UniverseLoader.cs.\nUnreal output: JSON/DataTable-ready exports, struct definitions, ResourceCatalog, ResearchUnlockTable, UniverseData.\nGodot output: JSON exports, GDScript loader templates, ResourceCatalog.gd, ResearchUnlocks.gd, UniverseLoader.gd.\nWeb output: TypeScript interfaces, JSON exports, API client, Zustand/Redux-ready store examples.\nGeneric output: clean normalized JSON, OpenAPI-style schema notes, ID relationship map.\nBefore export, validate stable IDs, orphan unlocks, invalid resource IDs, parent/child links, duplicate IDs, and selected-engine schema compatibility.\nCreate a Game Engine Exports IDE section with target selector, export summary, included data modules, validation status, download/export buttons, API endpoint references, and copy-ready integration instructions.\nMain rule: Project Genesis Studio remains engine-agnostic. Game engines consume exported data or API data. The Studio is the source of truth."
+    "notes": "Completed: added /game-engine-exports, /api/export/roblox, /api/export/unity, /api/export/unreal, /api/export/godot, /api/export/web, /api/export/generic; all targets derive from the same canonical Studio payload and run export validation before returning target artifacts."
   }
 ]
