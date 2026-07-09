@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Check, Clipboard, ExternalLink, Search } from "lucide-react";
+import { Check, Clipboard, ExternalLink, RotateCcw, Search } from "lucide-react";
 import type { CodexTask } from "@/types/schema";
 
 function taskPrompt(task: CodexTask) {
@@ -51,26 +51,74 @@ function statusClass(status: string) {
 }
 
 export function ChatGptTasksWorkspace({ tasks }: { tasks: CodexTask[] }) {
+  const [rows, setRows] = useState(tasks);
   const [query, setQuery] = useState("");
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [updatingTaskId, setUpdatingTaskId] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState("");
+  const [statusError, setStatusError] = useState("");
+
+  const taskCounts = useMemo(() => {
+    const complete = rows.filter((task) => task.status.toLowerCase().includes("complete") || task.status.toLowerCase().includes("done")).length;
+    return {
+      complete,
+      open: rows.length - complete,
+      total: rows.length
+    };
+  }, [rows]);
 
   const filteredTasks = useMemo(() => {
     const needle = query.trim().toLowerCase();
-    if (!needle) return tasks;
+    if (!needle) return rows;
 
-    return tasks.filter((task) =>
+    return rows.filter((task) =>
       [task.title, task.system, task.priority, task.status, task.description, task.notes, task.related_tables?.join(" ")]
         .filter(Boolean)
         .join(" ")
         .toLowerCase()
         .includes(needle)
     );
-  }, [query, tasks]);
+  }, [query, rows]);
 
   async function copyTask(task: CodexTask) {
     await navigator.clipboard.writeText(taskPrompt(task));
     setCopiedId(task.id);
     window.setTimeout(() => setCopiedId((current) => (current === task.id ? null : current)), 1800);
+  }
+
+  async function updateTaskStatus(task: CodexTask, status: "Open" | "Complete") {
+    setUpdatingTaskId(task.id);
+    setStatusMessage("");
+    setStatusError("");
+
+    const updatedTask = {
+      ...task,
+      status,
+      updated_at: new Date().toISOString()
+    };
+
+    try {
+      const response = await fetch("/api/data/codex_tasks", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json"
+        },
+        body: JSON.stringify(updatedTask)
+      });
+      const payload = (await response.json().catch(() => ({}))) as { row?: CodexTask; error?: string };
+
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Could not update task status.");
+      }
+
+      const savedTask = payload.row ?? updatedTask;
+      setRows((currentRows) => currentRows.map((current) => (current.id === task.id ? savedTask : current)));
+      setStatusMessage(`${savedTask.title} marked ${savedTask.status}.`);
+    } catch (caughtError) {
+      setStatusError(caughtError instanceof Error ? caughtError.message : "Could not update task status.");
+    } finally {
+      setUpdatingTaskId(null);
+    }
   }
 
   return (
@@ -83,7 +131,27 @@ export function ChatGptTasksWorkspace({ tasks }: { tasks: CodexTask[] }) {
             Copy-ready task handoffs for ChatGPT review, planning, and requirement cleanup before the work goes back into the studio.
           </p>
         </div>
+        <div className="grid min-w-72 grid-cols-3 gap-3">
+          <div className="rounded-md border border-cyan-300/15 bg-slate-950/45 p-3 text-center">
+            <p className="text-2xl font-black text-white">{taskCounts.total}</p>
+            <p className="mt-1 text-[0.65rem] font-bold uppercase tracking-[0.16em] text-slate-500">Tracked</p>
+          </div>
+          <div className="rounded-md border border-amber-300/20 bg-amber-300/10 p-3 text-center">
+            <p className="text-2xl font-black text-amber-100">{taskCounts.open}</p>
+            <p className="mt-1 text-[0.65rem] font-bold uppercase tracking-[0.16em] text-amber-200/70">Open</p>
+          </div>
+          <div className="rounded-md border border-emerald-300/20 bg-emerald-300/10 p-3 text-center">
+            <p className="text-2xl font-black text-emerald-100">{taskCounts.complete}</p>
+            <p className="mt-1 text-[0.65rem] font-bold uppercase tracking-[0.16em] text-emerald-200/70">Complete</p>
+          </div>
+        </div>
       </section>
+
+      {statusMessage || statusError ? (
+        <p className={`rounded-md border px-4 py-3 text-sm font-semibold ${statusError ? "border-red-300/35 bg-red-400/10 text-red-100" : "border-emerald-300/35 bg-emerald-400/10 text-emerald-100"}`}>
+          {statusError || statusMessage}
+        </p>
+      ) : null}
 
       <section className="rounded-md border border-cyan-300/15 bg-[#081120]/90">
         <div className="flex items-center gap-3 border-b border-cyan-300/10 p-4">
@@ -148,6 +216,27 @@ export function ChatGptTasksWorkspace({ tasks }: { tasks: CodexTask[] }) {
                   <Clipboard className="h-4 w-4" />
                   Copy for ChatGPT
                 </button>
+                {task.status.toLowerCase().includes("complete") || task.status.toLowerCase().includes("done") ? (
+                  <button
+                    type="button"
+                    onClick={() => updateTaskStatus(task, "Open")}
+                    disabled={updatingTaskId === task.id}
+                    className="inline-flex h-10 items-center gap-2 rounded-md border border-slate-600 bg-slate-900/70 px-3 text-sm font-bold text-slate-100 transition hover:border-amber-300/45 hover:text-amber-100 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <RotateCcw className="h-4 w-4" />
+                    Reopen
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => updateTaskStatus(task, "Complete")}
+                    disabled={updatingTaskId === task.id}
+                    className="inline-flex h-10 items-center gap-2 rounded-md border border-emerald-300/30 bg-emerald-400/10 px-3 text-sm font-bold text-emerald-100 transition hover:border-emerald-200/60 hover:bg-emerald-400/15 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <Check className="h-4 w-4" />
+                    Mark Complete
+                  </button>
+                )}
               </div>
             </article>
           ))}

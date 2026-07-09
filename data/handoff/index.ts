@@ -611,7 +611,23 @@ export const handoffDashboardMetrics: DashboardMetric[] = [
   { id: "metric-ready-for-codex", metric_name: "Ready for Codex", metric_value: "3", metric_group: "hero", display_order: 3, updated_at: "2026-07-06T00:00:00.000Z" }
 ];
 
-export const handoffCodexTasks: CodexTask[] = [];
+export const handoffCodexTasks: CodexTask[] = [
+  {
+    id: "task-codex-resource-catalog-v1",
+    title: "Resource Catalog v1.0",
+    source_type: "codex_readiness_item",
+    source_id: "codex-resource-catalog-v1",
+    system: "Resources",
+    priority: "High",
+    status: "Complete",
+    description: "Canonical resource definitions are ready for Roblox module generation.",
+    related_tables: ["resource_catalog", "planet_resource_profiles"],
+    export_path: "/api/export/resource_catalog.json",
+    created_at: "2026-07-06T00:00:00.000Z",
+    updated_at: "2026-07-09T00:00:00.000Z",
+    notes: "Completed by centralizing resource catalog access through ResourceService/resource_catalog and removing hardcoded resource names from generation paths. Evidence: commit 4dbdc24 Centralize resource catalog access."
+  }
+];
 export const handoffPlanetPromptLibrary: PlanetPromptLibraryRecord[] = [];
 export const handoffStarSystems: StarSystemRecord[] = [];
 export const handoffCelestialBodies: CelestialBodyRecord[] = [];
