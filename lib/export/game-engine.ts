@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getGameData } from "@/lib/data";
 import { discoveryJournalSchema, sampleDiscoveryJournal, sampleTimelineEvents, timelineEventSchema } from "@/lib/explorer/discovery-log";
+import { generateFaction, generateFallbackFactions, type FactionRecord } from "@/lib/factions/procedural";
 import { getLocalBubbleSystems, generatedCelestialBodyRows, generatedStarSystemRows } from "@/lib/universe/fallback-data";
 import { normalizePlanetResourceProfiles, validatePlanetResourceProfiles } from "@/lib/resources/planet-resource-profiles";
 import { ResourceService } from "@/lib/resources/service";
@@ -36,7 +37,7 @@ const targetConfigs: Record<EngineTarget, EngineTargetConfig> = {
     endpoint: "/api/export/roblox",
     folderStructure: ["ReplicatedStorage/ProjectGenesis/Data", "ReplicatedStorage/ProjectGenesis/Services", "ServerScriptService/ProjectGenesis"],
     generatedModules: ["ResourceCatalogModule", "ResearchUnlockModule", "UniverseDataModule", "ApiService"],
-    schemaMapping: ["resource_catalog -> ResourceCatalogModule", "research + unlock_matrix -> ResearchUnlockModule", "galaxies/sectors/star_systems/planets -> UniverseDataModule"],
+    schemaMapping: ["resource_catalog -> ResourceCatalogModule", "research + unlock_matrix -> ResearchUnlockModule", "galaxies/sectors/star_systems/planets/factions -> UniverseDataModule"],
     apiNotes: ["Roblox consumes Studio/API data; it is not the primary data generator.", "Use HttpService against the Generic JSON API for live sync workflows."]
   },
   unity: {
@@ -46,7 +47,7 @@ const targetConfigs: Record<EngineTarget, EngineTargetConfig> = {
     endpoint: "/api/export/unity",
     folderStructure: ["Assets/ProjectGenesis/Data", "Assets/ProjectGenesis/Scripts/Generated", "Assets/ProjectGenesis/ScriptableObjects"],
     generatedModules: ["ResourceCatalog.cs", "ResearchUnlocks.cs", "UniverseLoader.cs"],
-    schemaMapping: ["resource_catalog -> ResourceDefinition", "research + unlock_matrix -> ResearchUnlockDefinition", "universe data -> UniverseData"],
+    schemaMapping: ["resource_catalog -> ResourceDefinition", "research + unlock_matrix -> ResearchUnlockDefinition", "universe + factions -> UniverseData"],
     apiNotes: ["Import JSON at build time or pull from the Generic JSON API at runtime.", "ScriptableObjects should cache imported data, not replace Studio ownership."]
   },
   unreal: {
@@ -56,7 +57,7 @@ const targetConfigs: Record<EngineTarget, EngineTargetConfig> = {
     endpoint: "/api/export/unreal",
     folderStructure: ["Content/ProjectGenesis/Data", "Source/ProjectGenesis/Public/Generated", "Source/ProjectGenesis/Private/Loaders"],
     generatedModules: ["ResourceCatalog", "ResearchUnlockTable", "UniverseData"],
-    schemaMapping: ["resource_catalog -> FGenesisResourceRow", "unlock_matrix -> FGenesisResearchUnlockRow", "universe data -> FGenesisUniverseData"],
+    schemaMapping: ["resource_catalog -> FGenesisResourceRow", "unlock_matrix -> FGenesisResearchUnlockRow", "universe + factions -> FGenesisUniverseData"],
     apiNotes: ["Use DataTables for static builds or HTTP JSON for live tools.", "Structs mirror Studio IDs and relationships."]
   },
   godot: {
@@ -66,7 +67,7 @@ const targetConfigs: Record<EngineTarget, EngineTargetConfig> = {
     endpoint: "/api/export/godot",
     folderStructure: ["res://project_genesis/data", "res://project_genesis/loaders", "res://project_genesis/autoload"],
     generatedModules: ["ResourceCatalog.gd", "ResearchUnlocks.gd", "UniverseLoader.gd"],
-    schemaMapping: ["resource_catalog -> ResourceCatalog.gd", "research + unlock_matrix -> ResearchUnlocks.gd", "universe data -> UniverseLoader.gd"],
+    schemaMapping: ["resource_catalog -> ResourceCatalog.gd", "research + unlock_matrix -> ResearchUnlocks.gd", "universe + factions -> UniverseLoader.gd"],
     apiNotes: ["Load local JSON with FileAccess or fetch Studio exports with HTTPRequest.", "Keep gameplay rules in exported JSON, not duplicated GDScript tables."]
   },
   web: {
@@ -76,7 +77,7 @@ const targetConfigs: Record<EngineTarget, EngineTargetConfig> = {
     endpoint: "/api/export/web",
     folderStructure: ["src/project-genesis/data", "src/project-genesis/api", "src/project-genesis/store"],
     generatedModules: ["project-genesis.types.ts", "projectGenesisClient.ts", "projectGenesisStore.ts"],
-    schemaMapping: ["canonical payload -> TypeScript interfaces", "endpoint references -> API client", "relationship map -> normalized store"],
+    schemaMapping: ["canonical payload -> TypeScript interfaces", "factions -> normalized faction store", "endpoint references -> API client", "relationship map -> normalized store"],
     apiNotes: ["Use this target for browser games, tools, previews, and local editor clients.", "Zustand/Redux examples consume normalized canonical data."]
   },
   generic: {
@@ -110,7 +111,7 @@ type CanonicalModules = {
   explorer_schemas: Array<Record<string, unknown>>;
   colonies: Array<Record<string, unknown>>;
   economy: Array<Record<string, unknown>>;
-  factions: Array<Record<string, unknown>>;
+  factions: FactionRecord[];
   missions: Array<Record<string, unknown>>;
 };
 
@@ -284,6 +285,49 @@ function normalizeExportPlanets(
   return { assigned, unassigned };
 }
 
+function buildExportFactions(
+  galaxies: Array<Record<string, unknown>>,
+  sectors: Array<Record<string, unknown>>,
+  starSystems: GameData["star_systems"],
+  planets: ExportGeneratedPlanet[]
+) {
+  const sectorById = new Map(sectors.map((sector) => [String(sector.id), sector]));
+  const factions = new Map<string, FactionRecord>();
+
+  for (const system of starSystems.slice(0, 36)) {
+    const sector = sectorById.get(system.sector_id);
+    if (!sector) continue;
+    const faction = generateFaction({
+      galaxyId: String(sector.galaxy_id),
+      sectorId: String(sector.id),
+      starSystemId: system.id,
+      systemName: system.system_name,
+      rarity: system.system_rarity,
+      resourceBias: system.resource_bias,
+      dangerLevel: system.danger_level
+    });
+    if (faction) factions.set(faction.id, faction);
+  }
+
+  for (const planet of planets.slice(0, 48)) {
+    const faction = generateFaction({
+      galaxyId: planet.galaxyId,
+      sectorId: planet.sectorId,
+      starSystemId: planet.starSystemId,
+      planetId: planet.id,
+      systemName: planet.starSystemName,
+      planetName: planet.displayName || planet.name,
+      rarity: planet.rarity,
+      resourceBias: planet.resourceIds?.[0] ?? planet.resources?.[0],
+      dangerLevel: planet.planet_class === "Lava" || planet.planet_class === "Void" ? 75 : 25
+    });
+    if (faction) factions.set(faction.id, faction);
+  }
+
+  if (!factions.size && galaxies.length) return generateFallbackFactions();
+  return [...factions.values()];
+}
+
 function buildCanonicalModules(data: GameData): CanonicalModules {
   const localBubble = getLocalBubbleSystems(24);
   const starSystems = data.star_systems.length ? data.star_systems : (generatedStarSystemRows(24) as GameData["star_systems"]);
@@ -291,6 +335,7 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
   const sectors = ensureSectorsForSystems(localBubble.galaxy, localBubble.sector, starSystems);
   const celestialBodies = data.celestial_bodies.length ? data.celestial_bodies : (generatedCelestialBodyRows(5) as GameData["celestial_bodies"]);
   const normalizedPlanets = normalizeExportPlanets(data.generated_planets, galaxies, sectors, starSystems);
+  const factions = buildExportFactions(galaxies, sectors, starSystems, normalizedPlanets.assigned);
 
   return {
     resource_catalog: ResourceService.catalog,
@@ -324,7 +369,7 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
     ],
     colonies: placeholderModule("colonies"),
     economy: placeholderModule("economy"),
-    factions: placeholderModule("factions"),
+    factions,
     missions: placeholderModule("missions")
   };
 }
@@ -338,6 +383,7 @@ function buildRelationshipMap(modules: CanonicalModules) {
   const systemsBySector: Record<string, string[]> = {};
   const bodiesBySystem: Record<string, string[]> = {};
   const planetsBySystem: Record<string, string[]> = {};
+  const factionsBySystem: Record<string, string[]> = {};
 
   for (const sector of modules.sectors) {
     const galaxyId = String(sector.galaxy_id ?? "");
@@ -359,11 +405,16 @@ function buildRelationshipMap(modules: CanonicalModules) {
     planetsBySystem[systemId] = [...(planetsBySystem[systemId] ?? []), planet.id];
   }
 
+  for (const faction of modules.factions) {
+    factionsBySystem[faction.homeStarSystemId] = [...(factionsBySystem[faction.homeStarSystemId] ?? []), faction.id];
+  }
+
   return {
     sectorsByGalaxy,
     systemsBySector,
     bodiesBySystem,
-    planetsBySystem
+    planetsBySystem,
+    factionsBySystem
   };
 }
 
@@ -567,14 +618,14 @@ function targetArtifacts(target: EngineTarget, modules: CanonicalModules) {
     return {
       "ResourceCatalogModule.lua": `local ResourceCatalog = ${luaValue(modules.resource_catalog)}\n\nreturn ResourceCatalog\n`,
       "ResearchUnlockModule.lua": `local ResearchUnlocks = ${luaValue({ research: modules.research, unlocks: modules.unlock_matrix })}\n\nreturn ResearchUnlocks\n`,
-      "UniverseDataModule.lua": `local UniverseData = ${luaValue({ galaxies: modules.galaxies, sectors: modules.sectors, starSystems: modules.star_systems, planets: modules.planets, celestialBodies: modules.celestial_bodies })}\n\nreturn UniverseData\n`,
+      "UniverseDataModule.lua": `local UniverseData = ${luaValue({ galaxies: modules.galaxies, sectors: modules.sectors, starSystems: modules.star_systems, planets: modules.planets, celestialBodies: modules.celestial_bodies, factions: modules.factions })}\n\nreturn UniverseData\n`,
       "ApiService.lua": "local HttpService = game:GetService(\"HttpService\")\n\nlocal ApiService = {}\nApiService.BaseUrl = \"https://your-studio-host.example.com/api/export\"\n\nfunction ApiService.FetchGeneric()\n  local response = HttpService:GetAsync(ApiService.BaseUrl .. \"/generic\")\n  return HttpService:JSONDecode(response)\nend\n\nreturn ApiService\n"
     };
   }
 
   if (target === "web") {
     return {
-      "project-genesis.types.ts": "export type GenesisId = string;\n\nexport interface GenesisResource { id: GenesisId; resource_name: string; category: string; rarity: string; }\nexport interface GenesisResearchNode { id: GenesisId; name: string; era: string; status: string; }\nexport interface GenesisExportPayload { target: string; canonical: Record<string, unknown>; relationshipMap: Record<string, unknown>; }\n",
+      "project-genesis.types.ts": "export type GenesisId = string;\n\nexport interface GenesisResource { id: GenesisId; resource_name: string; category: string; rarity: string; }\nexport interface GenesisResearchNode { id: GenesisId; name: string; era: string; status: string; }\nexport interface GenesisFaction { id: GenesisId; name: string; type: string; disposition: string; homeStarSystemId: GenesisId; controlledPlanetIds: GenesisId[]; }\nexport interface GenesisExportPayload { target: string; canonical: Record<string, unknown>; relationshipMap: Record<string, unknown>; }\n",
       "projectGenesisClient.ts": "export async function fetchProjectGenesisExport(target = 'generic') {\n  const response = await fetch(`/api/export/${target}`);\n  if (!response.ok) throw new Error(`Project Genesis export failed: ${response.status}`);\n  return response.json();\n}\n",
       "projectGenesisStore.ts": "import { create } from 'zustand';\n\ntype GenesisStore = { data: unknown | null; setData: (data: unknown) => void };\nexport const useGenesisStore = create<GenesisStore>((set) => ({ data: null, setData: (data) => set({ data }) }));\n"
     };

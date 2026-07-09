@@ -7,6 +7,7 @@ export type DiscoveryObjectType =
   | "resource"
   | "anomaly"
   | "colony"
+  | "faction"
   | "civilization";
 
 export type TimelineEventType =
@@ -17,6 +18,7 @@ export type TimelineEventType =
   | "planet_claimed"
   | "planet_colonized"
   | "rare_resource_found"
+  | "faction_discovered"
   | "research_completed"
   | "intergalactic_travel_unlocked";
 
@@ -75,7 +77,7 @@ export const DISCOVERY_LOG_UPDATED_EVENT = "project-genesis-discovery-log-update
 export const discoveryJournalSchema = {
   id: "string",
   objectId: "string",
-  objectType: "galaxy | sector | star_system | planet | celestial_body | resource | anomaly | colony | civilization",
+  objectType: "galaxy | sector | star_system | planet | celestial_body | resource | anomaly | colony | faction | civilization",
   objectName: "string",
   generatedName: "string",
   displayName: "string",
@@ -93,7 +95,7 @@ export const discoveryJournalSchema = {
 
 export const timelineEventSchema = {
   id: "string",
-  eventType: "sector_detected | sector_scanned | star_system_discovered | planet_scanned | planet_claimed | planet_colonized | rare_resource_found | research_completed | intergalactic_travel_unlocked",
+  eventType: "sector_detected | sector_scanned | star_system_discovered | planet_scanned | planet_claimed | planet_colonized | rare_resource_found | faction_discovered | research_completed | intergalactic_travel_unlocked",
   title: "string",
   description: "string",
   timestamp: "ISO timestamp",
@@ -102,7 +104,7 @@ export const timelineEventSchema = {
   starSystemId: "string",
   planetId: "string",
   relatedObjectId: "string",
-  relatedObjectType: "galaxy | sector | star_system | planet | celestial_body | resource | anomaly | colony | civilization",
+  relatedObjectType: "galaxy | sector | star_system | planet | celestial_body | resource | anomaly | colony | faction | civilization",
   importance: "low | medium | high | legendary"
 };
 

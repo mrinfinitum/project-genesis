@@ -6,6 +6,7 @@ import { ChevronRight, CirclePlus, Orbit, Pencil, Plus, Search, Sparkles, Star, 
 import { Button } from "@/components/ui/button";
 import { handoffData } from "@/data/handoff";
 import { appendTimelineEvent, renameDiscoveryObject, upsertDiscoveryJournalEntry, type DiscoveryObjectType, type TimelineImportance, type TimelineEventType } from "@/lib/explorer/discovery-log";
+import { generateFaction, upsertDiscoveredFaction, type FactionRecord } from "@/lib/factions/procedural";
 import { DEFAULT_UNIVERSE_SEED } from "@/lib/universe/fallback-data";
 import {
   generateCelestialBodies,
@@ -38,6 +39,9 @@ type DiscoveryFields = {
   isColonizable: boolean;
   generatedName?: string;
   displayName?: string;
+  factionIds?: string[];
+  factionPresence?: FactionRecord[];
+  faction?: FactionRecord;
 };
 
 type PlayerProgressionState = {
@@ -105,6 +109,7 @@ type PlanetAssignmentFields = Partial<DiscoveryFields> & {
   orbitalRole?: "Planet";
   parentStarClass?: string;
   parentStarSeed?: string;
+  faction?: FactionRecord;
 };
 
 type AssignedPlanet = GeneratedPlanet & PlanetAssignmentFields;
@@ -122,6 +127,7 @@ type StarSystemCardState = {
   system: LinkedStarSystemNode;
   bodies: BodyCardState[];
   planets: AssignedPlanet[];
+  factions: FactionRecord[];
 };
 
 type StarSystemSeedModel = {
@@ -166,6 +172,7 @@ type StarSystemSeedModel = {
 type SectorCardState = {
   sector: SectorNode & DiscoveryFields;
   systems: StarSystemCardState[];
+  factions: FactionRecord[];
 };
 
 type SectorSeedModel = {
@@ -868,13 +875,14 @@ function toSystemState(system: StarSystemNode, galaxy?: GalaxyNode, sector?: Sec
   return {
     system: context ? linkSystemToPlanets(system, context, planets) : withDiscovery(system, isSolSystem(system) ? "charted" : "detected", seededRange(system.system_seed, "system-discovery-points", 200, 900)),
     bodies,
-    planets
+    planets,
+    factions: []
   };
 }
 
 function toSectorState(sector: SectorNode, galaxy?: GalaxyNode): SectorCardState {
   const system = galaxy && sector.is_fixed ? generateStarSystems(sector, 1)[0] : null;
-  return { sector: withDiscovery(sector, sector.is_fixed ? "charted" : "detected", sector.discovery_value, sector.colonized_worlds > 0), systems: system ? [toSystemState(system, galaxy, sector)] : [] };
+  return { sector: withDiscovery(sector, sector.is_fixed ? "charted" : "detected", sector.discovery_value, sector.colonized_worlds > 0), systems: system ? [toSystemState(system, galaxy, sector)] : [], factions: [] };
 }
 
 function toGalaxyState(galaxy: GalaxyNode): GalaxyCardState {
@@ -1203,6 +1211,9 @@ function planetToBodySnapshot(planet: AssignedPlanet): BodyCardState {
     seed_id: planet.seed,
     story: planet.story,
     discovery_points: planet.discovery_points,
+    faction: planet.faction,
+    factionIds: planet.faction ? [planet.faction.id] : [],
+    factionPresence: planet.faction ? [planet.faction] : [],
     source_planet: planet
   }, normalizeDiscoveryState(planet.discoveryState, "detected"), planet.discoveryPoints ?? planet.discovery_points ?? 120, planet.colonizable);
 }
@@ -1212,6 +1223,19 @@ function Badge({ children, className }: { children: React.ReactNode; className?:
     <span className={cn("inline-flex items-center rounded-md border px-2.5 py-1 text-[0.68rem] font-bold uppercase tracking-[0.16em]", className)}>
       {children}
     </span>
+  );
+}
+
+function FactionBadges({ factions, compact = false }: { factions?: FactionRecord[]; compact?: boolean }) {
+  if (!factions?.length) return null;
+  return (
+    <div className="flex flex-wrap gap-2">
+      {factions.slice(0, compact ? 2 : 4).map((faction) => (
+        <Badge key={faction.id} className={cn("border-violet-300/45 text-violet-100", faction.disposition === "Hostile" && "border-rose-300/45 text-rose-100", faction.disposition === "Friendly" && "border-emerald-300/45 text-emerald-100")}>
+          {compact ? faction.type : `${faction.name} - ${faction.type}`}
+        </Badge>
+      ))}
+    </div>
   );
 }
 
@@ -2137,6 +2161,7 @@ function BodyCard({ body, onOpen, onDelete }: { body: BodyCardState; onOpen: () 
           {body.landable ? <Badge className="border-emerald-300/45 text-emerald-100">Landable</Badge> : <Badge className="border-amber-300/45 text-amber-100">Not Landable</Badge>}
           {body.uses_orbital_gameplay ? <Badge className="border-cyan-300/45 text-cyan-100">Orbital World</Badge> : null}
         </div>
+        <FactionBadges factions={body.factionPresence ?? (body.faction ? [body.faction] : [])} compact />
       </div>
     </article>
   );
@@ -2259,6 +2284,9 @@ function BodyDetailOverlay({
             <DetailSection title="Resources">
               {canSeeResources ? <ChipList values={body.resources} /> : <DiscoveryLockedPanel>{progression.requirementText("resource_scan")} or explore this body to unlock deeper resource details.</DiscoveryLockedPanel>}
             </DetailSection>
+            <DetailSection title="Faction Presence">
+              {body.factionPresence?.length || body.faction ? <FactionBadges factions={body.factionPresence ?? (body.faction ? [body.faction] : [])} /> : <p className="text-sm font-semibold text-slate-500">No faction presence detected.</p>}
+            </DetailSection>
           </div>
         </div>
       </article>
@@ -2372,6 +2400,7 @@ function AssignedPlanetCard({ planet, onOpen, onUnassign }: { planet: AssignedPl
             <span className="text-slate-500">Traits:</span> {planet.traits.join(", ")}
           </p>
         </div>
+        <FactionBadges factions={planet.factionPresence ?? (planet.faction ? [planet.faction] : [])} compact />
       </div>
     </article>
   );
@@ -2460,6 +2489,7 @@ function StarSystemCard({
         <div className="flex flex-wrap gap-2">
           <span className="rounded border border-cyan-300/20 bg-cyan-400/10 px-2 py-1 text-xs text-cyan-100">{model.discoveryPoints} discovery pts</span>
         </div>
+        <FactionBadges factions={card.factions} compact />
       </div>
     </article>
   );
@@ -2622,6 +2652,9 @@ function StarSystemDetailPanel({
             </DetailSection>
             <DetailSection title="Events">
               <ChipList values={model.events} />
+            </DetailSection>
+            <DetailSection title="Faction Presence">
+              {card.factions.length ? <FactionBadges factions={card.factions} /> : <p className="text-sm font-semibold text-slate-500">No faction presence detected.</p>}
             </DetailSection>
           </div>
         </div>
@@ -2954,6 +2987,7 @@ function SectorCard({
           <div className="flex flex-wrap gap-2">
             <span className="rounded border border-cyan-300/20 bg-cyan-400/10 px-2 py-1 text-xs text-cyan-100">{model.discoveryPoints} discovery pts</span>
           </div>
+          <FactionBadges factions={card.factions} compact />
         </div>
       </article>
       {open ? (
@@ -3650,6 +3684,106 @@ function logBodyDiscovery(context: AssignmentContext, body: BodyCardState, event
   }
 }
 
+function logFactionDiscovery(faction: FactionRecord) {
+  upsertDiscoveredFaction(faction);
+  upsertDiscoveryJournalEntry({
+    objectId: faction.id,
+    objectType: "faction",
+    objectName: faction.name,
+    generatedName: faction.name,
+    discoveryState: faction.discoveryState,
+    discoveredBy: "Studio Explorer",
+    discoveryPoints: faction.type === "Ancient Remnant" || faction.type === "Alien Civilization" ? 750 : 350,
+    galaxyId: faction.homeGalaxyId,
+    sectorId: faction.homeSectorId,
+    starSystemId: faction.homeStarSystemId,
+    rarity: faction.technologyLevel,
+    tags: [faction.type, faction.alignment, faction.disposition, faction.economyType],
+    notes: faction.description
+  });
+  logTimeline({
+    eventType: "faction_discovered",
+    title: `${faction.name} Contacted`,
+    description: faction.description,
+    relatedObjectId: faction.id,
+    relatedObjectType: "faction",
+    galaxyId: faction.homeGalaxyId,
+    sectorId: faction.homeSectorId,
+    starSystemId: faction.homeStarSystemId,
+    planetId: faction.homePlanetId,
+    importance: faction.type === "Ancient Remnant" || faction.type === "Alien Civilization" || faction.type === "AI Collective" ? "high" : "medium"
+  });
+}
+
+function factionForSystem(context: AssignmentContext, system: LinkedStarSystemNode) {
+  return generateFaction({
+    galaxyId: context.galaxy.id,
+    sectorId: context.sector.id,
+    starSystemId: system.id,
+    systemName: system.system_name,
+    rarity: system.system_rarity,
+    resourceBias: system.resource_bias,
+    dangerLevel: system.danger_level
+  });
+}
+
+function factionForBody(context: AssignmentContext, body: BodyCardState) {
+  return generateFaction({
+    galaxyId: context.galaxy.id,
+    sectorId: context.sector.id,
+    starSystemId: context.system.id,
+    planetId: body.id,
+    systemName: context.system.system_name,
+    planetName: body.name,
+    rarity: body.planet_rarity ?? undefined,
+    resourceBias: body.resources[0],
+    dangerLevel: body.planet_class === "Lava" || body.planet_class === "Void" ? 75 : 25
+  });
+}
+
+function addFactionToSystem(card: StarSystemCardState, faction: FactionRecord | null) {
+  if (!faction || card.factions.some((row) => row.id === faction.id)) return card;
+  return {
+    ...card,
+    system: {
+      ...card.system,
+      factionIds: [...(card.system.factionIds ?? []), faction.id],
+      factionPresence: [...(card.system.factionPresence ?? []), faction]
+    },
+    factions: [...card.factions, faction]
+  };
+}
+
+function mergeFactionList(factions: FactionRecord[], faction: FactionRecord | null) {
+  if (!faction || factions.some((row) => row.id === faction.id)) return factions;
+  return [...factions, faction];
+}
+
+function attachFactionToBody(card: StarSystemCardState, bodyId: string, source: "body" | "planet", faction: FactionRecord | null) {
+  const withSystemFaction = addFactionToSystem(card, faction);
+  if (!faction) return withSystemFaction;
+
+  if (source === "planet") {
+    return {
+      ...withSystemFaction,
+      planets: withSystemFaction.planets.map((planet) =>
+        planet.id === bodyId
+          ? { ...planet, faction, factionIds: [...(planet.factionIds ?? []), faction.id], factionPresence: [...(planet.factionPresence ?? []), faction] }
+          : planet
+      )
+    };
+  }
+
+  return {
+    ...withSystemFaction,
+    bodies: withSystemFaction.bodies.map((body) =>
+      body.id === bodyId
+        ? { ...body, faction, factionIds: [...(body.factionIds ?? []), faction.id], factionPresence: [...(body.factionPresence ?? []), faction] }
+        : body
+    )
+  };
+}
+
 export function GalaxyGeneratorWorkflow() {
   const [universeSeed, setUniverseSeed] = useState(DEFAULT_UNIVERSE_SEED);
   const [count, setCount] = useState(2);
@@ -3738,15 +3872,19 @@ export function GalaxyGeneratorWorkflow() {
     const galaxyCard = galaxies.find((card) => card.galaxy.id === galaxyId);
     const sectorCard = galaxyCard?.sectors.find((sector) => sector.sector.id === sectorId);
     const systemCard = sectorCard?.systems.find((system) => system.system.id === systemId);
+    const context = galaxyCard && sectorCard && systemCard ? { galaxy: galaxyCard.galaxy, sector: sectorCard.sector, system: systemCard.system } : null;
+    const faction = context && systemCard && !discoveryAtLeast(systemCard.system.discoveryState, "scanned") ? factionForSystem(context, systemCard.system) : null;
     if (galaxyCard && sectorCard && systemCard && !discoveryAtLeast(systemCard.system.discoveryState, "scanned")) {
       progression.awardDiscovery("system", systemCard.system.discoveryPoints);
       logSystemDiscovery(galaxyCard.galaxy, sectorCard.sector, scanDiscovery(systemCard.system));
+      if (faction) logFactionDiscovery(faction);
     }
     updateGalaxy(galaxyId, (galaxyCard) => ({
       ...galaxyCard,
       sectors: galaxyCard.sectors.map((sectorCard) => ({
         ...sectorCard,
-        systems: sectorCard.sector.id === sectorId ? sectorCard.systems.map((systemCard) => (systemCard.system.id === systemId ? { ...systemCard, system: scanDiscovery(systemCard.system) } : systemCard)) : sectorCard.systems
+        factions: sectorCard.sector.id === sectorId ? mergeFactionList(sectorCard.factions, faction) : sectorCard.factions,
+        systems: sectorCard.sector.id === sectorId ? sectorCard.systems.map((systemCard) => (systemCard.system.id === systemId ? addFactionToSystem({ ...systemCard, system: scanDiscovery(systemCard.system) }, faction) : systemCard)) : sectorCard.systems
       }))
     }));
   }
@@ -3768,14 +3906,18 @@ export function GalaxyGeneratorWorkflow() {
     const galaxyCard = galaxies.find((card) => card.galaxy.id === galaxyId);
     const sectorCard = galaxyCard?.sectors.find((sector) => sector.sector.id === sectorId);
     const systemCard = sectorCard?.systems.find((system) => system.system.id === systemId);
+    const context = galaxyCard && sectorCard && systemCard ? { galaxy: galaxyCard.galaxy, sector: sectorCard.sector, system: systemCard.system } : null;
+    const faction = context && systemCard && !discoveryAtLeast(systemCard.system.discoveryState, "scanned") ? factionForSystem(context, systemCard.system) : null;
     if (galaxyCard && sectorCard && systemCard && !discoveryAtLeast(systemCard.system.discoveryState, "scanned")) {
       progression.awardDiscovery("system", systemCard.system.discoveryPoints);
       logSystemDiscovery(galaxyCard.galaxy, sectorCard.sector, scanDiscovery(systemCard.system));
+      if (faction) logFactionDiscovery(faction);
     }
     updateGalaxy(galaxyId, (galaxyCard) => ({
       ...galaxyCard,
       sectors: galaxyCard.sectors.map((sectorCard) => ({
         ...sectorCard,
+        factions: sectorCard.sector.id === sectorId ? mergeFactionList(sectorCard.factions, faction) : sectorCard.factions,
         systems: sectorCard.sector.id === sectorId
           ? sectorCard.systems.map((systemCard) => {
               if (systemCard.system.id !== systemId) return systemCard;
@@ -3783,7 +3925,7 @@ export function GalaxyGeneratorWorkflow() {
               const bodies = generateCelestialBodies(systemCard.system)
                 .filter((body) => !["Star", "Planet"].includes(body.celestial_body_type))
                 .map((body, index) => withAssignment(body, context, body.orbit_position ?? index + 1, undefined));
-              return { ...systemCard, system: scanDiscovery(systemCard.system), bodies: append ? [...systemCard.bodies, ...bodies.slice(systemCard.bodies.length, systemCard.bodies.length + 1)] : bodies };
+              return addFactionToSystem({ ...systemCard, system: scanDiscovery(systemCard.system), bodies: append ? [...systemCard.bodies, ...bodies.slice(systemCard.bodies.length, systemCard.bodies.length + 1)] : bodies }, faction);
             })
           : sectorCard.systems
       }))
@@ -3796,16 +3938,21 @@ export function GalaxyGeneratorWorkflow() {
     const sectorCard = galaxyCard?.sectors.find((sector) => sector.sector.id === sectorId);
     const systemCard = sectorCard?.systems.find((system) => system.system.id === systemId);
     const points = systemCard ? bodyDiscoveryPoints(systemCard, bodyId, source) : 0;
+    const context = galaxyCard && sectorCard && systemCard ? { galaxy: galaxyCard.galaxy, sector: sectorCard.sector, system: systemCard.system } : null;
+    const currentBody = source === "planet" ? systemCard?.planets.find((planet) => planet.id === bodyId) : systemCard?.bodies.find((body) => body.id === bodyId);
+    const scannedBody = currentBody ? scanBodyState(source === "planet" ? planetToBodySnapshot(currentBody as AssignedPlanet) : (currentBody as BodyCardState)) : null;
+    const faction = context && scannedBody && points ? factionForBody(context, scannedBody) : null;
     if (points && galaxyCard && sectorCard && systemCard) {
       progression.awardDiscovery("planet", points);
-      const currentBody = source === "planet" ? systemCard.planets.find((planet) => planet.id === bodyId) : systemCard.bodies.find((body) => body.id === bodyId);
-      if (currentBody) logBodyDiscovery({ galaxy: galaxyCard.galaxy, sector: sectorCard.sector, system: systemCard.system }, scanBodyState(source === "planet" ? planetToBodySnapshot(currentBody as AssignedPlanet) : (currentBody as BodyCardState)), "planet_scanned");
+      if (scannedBody) logBodyDiscovery({ galaxy: galaxyCard.galaxy, sector: sectorCard.sector, system: systemCard.system }, scannedBody, "planet_scanned");
+      if (faction) logFactionDiscovery(faction);
     }
     updateGalaxy(galaxyId, (card) => ({
       ...card,
       sectors: card.sectors.map((sector) => ({
         ...sector,
-        systems: sector.sector.id === sectorId ? sector.systems.map((system) => (system.system.id === systemId ? scanBodyInSystem(system, bodyId, source) : system)) : sector.systems
+        factions: sector.sector.id === sectorId ? mergeFactionList(sector.factions, faction) : sector.factions,
+        systems: sector.sector.id === sectorId ? sector.systems.map((system) => (system.system.id === systemId ? attachFactionToBody(scanBodyInSystem(system, bodyId, source), bodyId, source, faction) : system)) : sector.systems
       }))
     }));
   }
@@ -4069,13 +4216,17 @@ export function SectorGeneratorWorkflow() {
     if (!progression.canScanSystem()) return;
     const sectorCard = cards.find((card) => card.sector.id === sectorId);
     const systemCard = sectorCard?.systems.find((system) => system.system.id === systemId);
+    const context = sectorCard && systemCard ? { galaxy, sector: sectorCard.sector, system: systemCard.system } : null;
+    const faction = context && systemCard && !discoveryAtLeast(systemCard.system.discoveryState, "scanned") ? factionForSystem(context, systemCard.system) : null;
     if (sectorCard && systemCard && !discoveryAtLeast(systemCard.system.discoveryState, "scanned")) {
       progression.awardDiscovery("system", systemCard.system.discoveryPoints);
       logSystemDiscovery(galaxy, sectorCard.sector, scanDiscovery(systemCard.system));
+      if (faction) logFactionDiscovery(faction);
     }
     updateSector(sectorId, (sectorCard) => ({
       ...sectorCard,
-      systems: sectorCard.systems.map((systemCard) => (systemCard.system.id === systemId ? { ...systemCard, system: scanDiscovery(systemCard.system) } : systemCard))
+      factions: mergeFactionList(sectorCard.factions, faction),
+      systems: sectorCard.systems.map((systemCard) => (systemCard.system.id === systemId ? addFactionToSystem({ ...systemCard, system: scanDiscovery(systemCard.system) }, faction) : systemCard))
     }));
   }
 
@@ -4083,19 +4234,23 @@ export function SectorGeneratorWorkflow() {
     if (!progression.canScanSystem()) return;
     const sectorCard = cards.find((card) => card.sector.id === sectorId);
     const systemCard = sectorCard?.systems.find((system) => system.system.id === systemId);
+    const context = sectorCard && systemCard ? { galaxy, sector: sectorCard.sector, system: systemCard.system } : null;
+    const faction = context && systemCard && !discoveryAtLeast(systemCard.system.discoveryState, "scanned") ? factionForSystem(context, systemCard.system) : null;
     if (sectorCard && systemCard && !discoveryAtLeast(systemCard.system.discoveryState, "scanned")) {
       progression.awardDiscovery("system", systemCard.system.discoveryPoints);
       logSystemDiscovery(galaxy, sectorCard.sector, scanDiscovery(systemCard.system));
+      if (faction) logFactionDiscovery(faction);
     }
     updateSector(sectorId, (sectorCard) => ({
       ...sectorCard,
+      factions: mergeFactionList(sectorCard.factions, faction),
       systems: sectorCard.systems.map((systemCard) => {
         if (systemCard.system.id !== systemId) return systemCard;
         const context = { galaxy, sector: sectorCard.sector, system: systemCard.system };
         const bodies = generateCelestialBodies(systemCard.system)
           .filter((body) => !["Star", "Planet"].includes(body.celestial_body_type))
           .map((body, index) => withAssignment(body, context, body.orbit_position ?? index + 1));
-        return { ...systemCard, system: scanDiscovery(systemCard.system), bodies: append ? [...systemCard.bodies, ...bodies.slice(systemCard.bodies.length, systemCard.bodies.length + 1)] : bodies };
+        return addFactionToSystem({ ...systemCard, system: scanDiscovery(systemCard.system), bodies: append ? [...systemCard.bodies, ...bodies.slice(systemCard.bodies.length, systemCard.bodies.length + 1)] : bodies }, faction);
       })
     }));
   }
@@ -4123,14 +4278,19 @@ export function SectorGeneratorWorkflow() {
     const sectorCard = cards.find((card) => card.sector.id === sectorId);
     const systemCard = sectorCard?.systems.find((system) => system.system.id === systemId);
     const points = systemCard ? bodyDiscoveryPoints(systemCard, bodyId, source) : 0;
+    const context = sectorCard && systemCard ? { galaxy, sector: sectorCard.sector, system: systemCard.system } : null;
+    const currentBody = source === "planet" ? systemCard?.planets.find((planet) => planet.id === bodyId) : systemCard?.bodies.find((body) => body.id === bodyId);
+    const scannedBody = currentBody ? scanBodyState(source === "planet" ? planetToBodySnapshot(currentBody as AssignedPlanet) : (currentBody as BodyCardState)) : null;
+    const faction = context && scannedBody && points ? factionForBody(context, scannedBody) : null;
     if (points && sectorCard && systemCard) {
       progression.awardDiscovery("planet", points);
-      const currentBody = source === "planet" ? systemCard.planets.find((planet) => planet.id === bodyId) : systemCard.bodies.find((body) => body.id === bodyId);
-      if (currentBody) logBodyDiscovery({ galaxy, sector: sectorCard.sector, system: systemCard.system }, scanBodyState(source === "planet" ? planetToBodySnapshot(currentBody as AssignedPlanet) : (currentBody as BodyCardState)), "planet_scanned");
+      if (scannedBody) logBodyDiscovery({ galaxy, sector: sectorCard.sector, system: systemCard.system }, scannedBody, "planet_scanned");
+      if (faction) logFactionDiscovery(faction);
     }
     updateSector(sectorId, (sectorCard) => ({
       ...sectorCard,
-      systems: sectorCard.systems.map((systemCard) => (systemCard.system.id === systemId ? scanBodyInSystem(systemCard, bodyId, source) : systemCard))
+      factions: mergeFactionList(sectorCard.factions, faction),
+      systems: sectorCard.systems.map((systemCard) => (systemCard.system.id === systemId ? attachFactionToBody(scanBodyInSystem(systemCard, bodyId, source), bodyId, source, faction) : systemCard))
     }));
   }
 
@@ -4301,27 +4461,33 @@ export function StarSystemGeneratorWorkflow() {
   function generateBodies(systemId: string, append = false) {
     if (!progression.canScanSystem()) return;
     const current = cards.find((item) => item.system.id === systemId);
+    const context = current ? { galaxy, sector, system: current.system } : null;
+    const faction = context && current && !discoveryAtLeast(current.system.discoveryState, "scanned") ? factionForSystem(context, current.system) : null;
     if (current && !discoveryAtLeast(current.system.discoveryState, "scanned")) {
       progression.awardDiscovery("system", current.system.discoveryPoints);
       logSystemDiscovery(galaxy, sector, scanDiscovery(current.system));
+      if (faction) logFactionDiscovery(faction);
     }
     updateSystem(systemId, (card) => {
       const context = { galaxy, sector, system: card.system };
       const bodies = generateCelestialBodies(card.system)
         .filter((body) => !["Star", "Planet"].includes(body.celestial_body_type))
         .map((body, index) => withAssignment(body, context, body.orbit_position ?? index + 1));
-      return { ...card, system: scanDiscovery(card.system), bodies: append ? [...card.bodies, ...bodies.slice(card.bodies.length, card.bodies.length + 1)] : bodies };
+      return addFactionToSystem({ ...card, system: scanDiscovery(card.system), bodies: append ? [...card.bodies, ...bodies.slice(card.bodies.length, card.bodies.length + 1)] : bodies }, faction);
     });
   }
 
   function scanSystem(systemId: string) {
     if (!progression.canScanSystem()) return;
     const card = cards.find((item) => item.system.id === systemId);
+    const context = card ? { galaxy, sector, system: card.system } : null;
+    const faction = context && card && !discoveryAtLeast(card.system.discoveryState, "scanned") ? factionForSystem(context, card.system) : null;
     if (card && !discoveryAtLeast(card.system.discoveryState, "scanned")) {
       progression.awardDiscovery("system", card.system.discoveryPoints);
       logSystemDiscovery(galaxy, sector, scanDiscovery(card.system));
+      if (faction) logFactionDiscovery(faction);
     }
-    updateSystem(systemId, (card) => ({ ...card, system: scanDiscovery(card.system) }));
+    updateSystem(systemId, (card) => addFactionToSystem({ ...card, system: scanDiscovery(card.system) }, faction));
   }
 
   function addPlanets(systemId: string, planetIds: string[]) {
@@ -4336,12 +4502,16 @@ export function StarSystemGeneratorWorkflow() {
     if (!progression.canScanPlanet()) return;
     const card = cards.find((item) => item.system.id === systemId);
     const points = card ? bodyDiscoveryPoints(card, bodyId, source) : 0;
+    const context = card ? { galaxy, sector, system: card.system } : null;
+    const currentBody = source === "planet" ? card?.planets.find((planet) => planet.id === bodyId) : card?.bodies.find((body) => body.id === bodyId);
+    const scannedBody = currentBody ? scanBodyState(source === "planet" ? planetToBodySnapshot(currentBody as AssignedPlanet) : (currentBody as BodyCardState)) : null;
+    const faction = context && scannedBody && points ? factionForBody(context, scannedBody) : null;
     if (points && card) {
       progression.awardDiscovery("planet", points);
-      const currentBody = source === "planet" ? card.planets.find((planet) => planet.id === bodyId) : card.bodies.find((body) => body.id === bodyId);
-      if (currentBody) logBodyDiscovery({ galaxy, sector, system: card.system }, scanBodyState(source === "planet" ? planetToBodySnapshot(currentBody as AssignedPlanet) : (currentBody as BodyCardState)), "planet_scanned");
+      if (scannedBody) logBodyDiscovery({ galaxy, sector, system: card.system }, scannedBody, "planet_scanned");
+      if (faction) logFactionDiscovery(faction);
     }
-    updateSystem(systemId, (card) => scanBodyInSystem(card, bodyId, source));
+    updateSystem(systemId, (card) => attachFactionToBody(scanBodyInSystem(card, bodyId, source), bodyId, source, faction));
   }
 
   function claimBody(systemId: string, bodyId: string, source: "body" | "planet") {
