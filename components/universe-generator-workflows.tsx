@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import { ChevronRight, CirclePlus, Orbit, Plus, Search, Sparkles, Star, Trash2, Waypoints, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { handoffData } from "@/data/handoff";
 import { DEFAULT_UNIVERSE_SEED } from "@/lib/universe/fallback-data";
 import {
   generateCelestialBodies,
@@ -24,6 +25,7 @@ import { normalizeResourceNames, resourceNames } from "@/lib/resources/service";
 import type { GeneratedPlanet } from "@/types/schema";
 
 type DiscoveryState = "undiscovered" | "detected" | "scanned" | "charted" | "explored" | "colonized";
+type FeatureId = "sector_scan" | "system_scan" | "planet_scan" | "claim_planet" | "colony_claim" | "colonization" | "resource_scan" | "intergalactic_travel";
 
 type DiscoveryFields = {
   discoveryState: DiscoveryState;
@@ -33,6 +35,33 @@ type DiscoveryFields = {
   scanProgress: number;
   isClaimable: boolean;
   isColonizable: boolean;
+};
+
+type PlayerProgressionState = {
+  completedResearchIds: string[];
+  unlockedFeatureIds: FeatureId[];
+  discoveryPoints: number;
+  totalScannedSectors: number;
+  totalScannedSystems: number;
+  totalScannedPlanets: number;
+  totalClaimedPlanets: number;
+  totalColonizedPlanets: number;
+};
+
+type ProgressionApi = PlayerProgressionState & {
+  canUseFeature: (featureId: FeatureId) => boolean;
+  canScanSector: () => boolean;
+  canScanSystem: () => boolean;
+  canScanPlanet: () => boolean;
+  canClaimPlanet: () => boolean;
+  canColonizePlanet: () => boolean;
+  canTravelIntergalactic: () => boolean;
+  requirementText: (featureId: FeatureId) => string;
+  completeResearchForFeature: (featureId: FeatureId) => void;
+  resetProgression: () => void;
+  awardDiscovery: (kind: "sector" | "system" | "planet", points: number) => void;
+  recordClaim: () => void;
+  recordColonization: () => void;
 };
 
 type AssignmentContext = {
@@ -220,6 +249,57 @@ const sectorTypes = ["Any", "Core Worlds", "Civilized Space", "Outer Rim", "Anci
 const rarityOptions = ["Any", "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Relic", "Genesis"];
 const starCountRules = ["Generated", "Single Star", "Binary", "Trinary"];
 
+const featureGateCopy: Record<FeatureId, { label: string; requirement: string; researchNames: string[]; unlockTerms: string[] }> = {
+  sector_scan: {
+    label: "Sector Scanning",
+    requirement: "Requires Sector Scanning research",
+    researchNames: ["Astronomy", "Precision Optics"],
+    unlockTerms: ["sky mapping", "early detection", "Space research chain"]
+  },
+  system_scan: {
+    label: "Star System Scanning",
+    requirement: "Requires Star System Scanning research",
+    researchNames: ["Planetary Exploration", "Long-Range Sensors", "Interstellar Navigation"],
+    unlockTerms: ["home star system map", "nearby star system discovery", "deep scans", "interstellar surveys"]
+  },
+  planet_scan: {
+    label: "Planet Scanning",
+    requirement: "Requires Planet Scanning research",
+    researchNames: ["Satellites", "Planetary Exploration"],
+    unlockTerms: ["planet scanning", "planet cards", "scan data"]
+  },
+  claim_planet: {
+    label: "Planet Claim",
+    requirement: "Requires Planet Claim research",
+    researchNames: ["Planetary Exploration", "Colony Ships"],
+    unlockTerms: ["planet cards", "new colony deployment", "colonization workflow"]
+  },
+  colony_claim: {
+    label: "Colony Claim",
+    requirement: "Requires Colony Claim research",
+    researchNames: ["Colony Ships"],
+    unlockTerms: ["colony ships", "new colony deployment"]
+  },
+  colonization: {
+    label: "Colonization",
+    requirement: "Requires Colonization research",
+    researchNames: ["Planetary Colonization", "Interstellar Colonization"],
+    unlockTerms: ["colonization of landable planets", "colonization workflow", "nearby star colonization"]
+  },
+  resource_scan: {
+    label: "Resource Scan",
+    requirement: "Requires Resource Scanning research",
+    researchNames: ["Asteroid Mining", "Gas Giant Harvesting", "Autonomous Exploration", "Long-Range Sensors"],
+    unlockTerms: ["asteroid resource nodes", "gas refineries", "automated surveys", "deep scans"]
+  },
+  intergalactic_travel: {
+    label: "Intergalactic Travel",
+    requirement: "Requires Intergalactic Travel research",
+    researchNames: ["Artificial Wormholes", "Intergalactic Navigation"],
+    unlockTerms: ["intergalactic gates", "galaxy-to-galaxy travel", "new galaxies", "intergalactic map"]
+  }
+};
+
 const defaultGalaxyDNA: GalaxyDNA = {
   age: "Mature",
   metallicity: "Balanced",
@@ -283,6 +363,101 @@ const rarityClasses: Record<string, string> = {
 
 function formatNumber(value: number) {
   return new Intl.NumberFormat("en-US").format(value);
+}
+
+function featureResearchIds(featureId: FeatureId) {
+  const gate = featureGateCopy[featureId];
+  const names = gate.researchNames.map((name) => name.toLowerCase());
+  const terms = gate.unlockTerms.map((term) => term.toLowerCase());
+  const directResearch = handoffData.research
+    .filter((row) => {
+      const haystack = [row.id, row.name, row.unlock_summary, row.gameplay_effect, row.primary_unlock_type, row.design_purpose, ...row.unlocks].join(" ").toLowerCase();
+      return names.some((name) => row.name.toLowerCase() === name) || terms.some((term) => haystack.includes(term));
+    })
+    .map((row) => row.id);
+  const unlockSources = handoffData.unlock_matrix
+    .filter((row) => {
+      const haystack = [row.unlock_id, row.unlock_name, row.unlock_type, row.notes, row.source_name].join(" ").toLowerCase();
+      return terms.some((term) => haystack.includes(term)) || haystack.includes(featureId.replace(/_/g, " "));
+    })
+    .map((row) => row.source_id)
+    .filter(Boolean);
+
+  return [...new Set([...directResearch, ...unlockSources])];
+}
+
+const featureResearchIdMap = Object.fromEntries((Object.keys(featureGateCopy) as FeatureId[]).map((featureId) => [featureId, featureResearchIds(featureId)])) as Record<FeatureId, string[]>;
+
+const defaultCompletedResearchIds = [
+  ...featureResearchIdMap.sector_scan,
+  ...featureResearchIdMap.system_scan,
+  ...featureResearchIdMap.planet_scan
+];
+
+const defaultProgressionState: PlayerProgressionState = {
+  completedResearchIds: [...new Set(defaultCompletedResearchIds)],
+  unlockedFeatureIds: [],
+  discoveryPoints: 0,
+  totalScannedSectors: 0,
+  totalScannedSystems: 0,
+  totalScannedPlanets: 0,
+  totalClaimedPlanets: 0,
+  totalColonizedPlanets: 0
+};
+
+function hasFeatureResearch(featureId: FeatureId, completedResearchIds: string[]) {
+  const researchIds = featureResearchIdMap[featureId] ?? [];
+  return researchIds.some((id) => completedResearchIds.includes(id));
+}
+
+function usePlayerProgression(): ProgressionApi {
+  const [state, setState] = useState<PlayerProgressionState>(defaultProgressionState);
+
+  function canUseFeature(featureId: FeatureId) {
+    if (featureId === "intergalactic_travel" && state.totalScannedSystems < 12) return false;
+    if (state.unlockedFeatureIds.includes(featureId)) return true;
+    if (hasFeatureResearch(featureId, state.completedResearchIds)) return true;
+    if (featureId === "claim_planet" && hasFeatureResearch("colony_claim", state.completedResearchIds)) return true;
+    return false;
+  }
+
+  function completeResearchForFeature(featureId: FeatureId) {
+    setState((current) => ({
+      ...current,
+      completedResearchIds: [...new Set([...current.completedResearchIds, ...(featureResearchIdMap[featureId] ?? [])])],
+      unlockedFeatureIds: current.unlockedFeatureIds.includes(featureId) ? current.unlockedFeatureIds : [...current.unlockedFeatureIds, featureId]
+    }));
+  }
+
+  function awardDiscovery(kind: "sector" | "system" | "planet", points: number) {
+    setState((current) => ({
+      ...current,
+      discoveryPoints: current.discoveryPoints + points,
+      totalScannedSectors: current.totalScannedSectors + (kind === "sector" ? 1 : 0),
+      totalScannedSystems: current.totalScannedSystems + (kind === "system" ? 1 : 0),
+      totalScannedPlanets: current.totalScannedPlanets + (kind === "planet" ? 1 : 0)
+    }));
+  }
+
+  return {
+    ...state,
+    canUseFeature,
+    canScanSector: () => canUseFeature("sector_scan"),
+    canScanSystem: () => canUseFeature("system_scan"),
+    canScanPlanet: () => canUseFeature("planet_scan"),
+    canClaimPlanet: () => canUseFeature("claim_planet") || canUseFeature("colony_claim"),
+    canColonizePlanet: () => canUseFeature("colonization"),
+    canTravelIntergalactic: () => canUseFeature("intergalactic_travel") && state.totalScannedSystems >= 12,
+    requirementText: (featureId) => {
+      if (featureId === "intergalactic_travel" && state.totalScannedSystems < 12) return `${featureGateCopy[featureId].requirement}; scan 12 star systems first`;
+      return featureGateCopy[featureId].requirement;
+    },
+    completeResearchForFeature,
+    resetProgression: () => setState(defaultProgressionState),
+    awardDiscovery,
+    recordClaim: () => setState((current) => ({ ...current, totalClaimedPlanets: current.totalClaimedPlanets + 1 })),
+    recordColonization: () => setState((current) => ({ ...current, totalColonizedPlanets: current.totalColonizedPlanets + 1 }))
+  };
 }
 
 const discoveryOrder: DiscoveryState[] = ["undiscovered", "detected", "scanned", "charted", "explored", "colonized"];
@@ -1213,6 +1388,50 @@ function EmptyState({ children }: { children: React.ReactNode }) {
   return <div className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-6 text-sm font-semibold text-slate-400">{children}</div>;
 }
 
+function ProgressionGatePanel({ progression }: { progression: ProgressionApi }) {
+  const featureIds = Object.keys(featureGateCopy) as FeatureId[];
+
+  return (
+    <section className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-4 shadow-glow">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.22em] text-cyan-300">Progression Gates</p>
+          <h2 className="mt-1 text-xl font-black text-white">Research Unlock Matrix</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">Actions read from completed research and canonical feature IDs. Discovery Points earned here can feed future research spending.</p>
+        </div>
+        <div className="grid gap-2 sm:grid-cols-3 lg:min-w-[28rem]">
+          <StatChip label="Discovery Points" value={formatNumber(progression.discoveryPoints)} />
+          <StatChip label="Scanned Systems" value={progression.totalScannedSystems} />
+          <StatChip label="Claimed / Colonized" value={`${progression.totalClaimedPlanets} / ${progression.totalColonizedPlanets}`} />
+        </div>
+      </div>
+      <div className="mt-4 grid gap-2 md:grid-cols-2 xl:grid-cols-4">
+        {featureIds.map((featureId) => {
+          const unlocked = progression.canUseFeature(featureId);
+          const researchIds = featureResearchIdMap[featureId] ?? [];
+          return (
+            <div key={featureId} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <p className="text-sm font-black text-white">{featureGateCopy[featureId].label}</p>
+                  <p className="mt-1 text-xs leading-5 text-slate-400">{unlocked ? "Unlocked" : progression.requirementText(featureId)}</p>
+                  <p className="mt-1 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-slate-500">{researchIds.length} linked research rows</p>
+                </div>
+                <Badge className={unlocked ? "border-emerald-300/45 text-emerald-100" : "border-amber-300/45 text-amber-100"}>{unlocked ? "Open" : "Locked"}</Badge>
+              </div>
+              {!unlocked ? (
+                <Button type="button" className="mt-3 w-full border-slate-600 bg-slate-900/70 text-slate-100" onClick={() => progression.completeResearchForFeature(featureId)}>
+                  Complete Research
+                </Button>
+              ) : null}
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 function ModalPortal({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
 
@@ -1835,6 +2054,25 @@ function DiscoveryLockedPanel({ children }: { children: React.ReactNode }) {
   );
 }
 
+function GatedButton({
+  allowed,
+  requirement,
+  children,
+  className,
+  disabled,
+  title,
+  ...props
+}: React.ComponentProps<typeof Button> & {
+  allowed: boolean;
+  requirement: string;
+}) {
+  return (
+    <Button type="button" disabled={!allowed || disabled} title={allowed ? title : requirement} className={className} {...props}>
+      {children}
+    </Button>
+  );
+}
+
 function BodyCard({ body, onOpen, onDelete }: { body: BodyCardState; onOpen: () => void; onDelete: () => void }) {
   const scanned = discoveryAtLeast(body.discoveryState, "scanned");
   const displayName = maskName(body.name, body.discoveryState, "Detected Body");
@@ -1881,7 +2119,7 @@ function BodyCard({ body, onOpen, onDelete }: { body: BodyCardState; onOpen: () 
   );
 }
 
-function BodyDetailOverlay({ body, onClose, onScan, onClaim }: { body: BodyCardState; onClose: () => void; onScan: () => void; onClaim: () => void }) {
+function BodyDetailOverlay({ body, onClose, onScan, onClaim, progression }: { body: BodyCardState; onClose: () => void; onScan: () => void; onClaim: () => void; progression: ProgressionApi }) {
   const assignment = [
     { label: "System", value: body.assignedSystemName ?? body.orbit_parent ?? "Unassigned" },
     { label: "Sector", value: body.assignedSectorName ?? "Unassigned" },
@@ -1892,6 +2130,7 @@ function BodyDetailOverlay({ body, onClose, onScan, onClaim }: { body: BodyCardS
   ];
   const scanned = discoveryAtLeast(body.discoveryState, "scanned");
   const explored = discoveryAtLeast(body.discoveryState, "explored");
+  const canSeeResources = explored || progression.canUseFeature("resource_scan");
   const displayName = maskName(body.name, body.discoveryState, "Detected Body");
 
   return (
@@ -1910,15 +2149,15 @@ function BodyDetailOverlay({ body, onClose, onScan, onClaim }: { body: BodyCardS
             <p className="mt-2 font-mono text-sm text-slate-500">{body.seed_id ?? body.id}</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button type="button" onClick={onScan}>
+            <GatedButton allowed={progression.canScanPlanet()} requirement={progression.requirementText("planet_scan")} onClick={onScan}>
               <Sparkles className="h-4 w-4" />
               {scanned ? "Explore Planet" : "Scan Planet"}
-            </Button>
+            </GatedButton>
             {body.isClaimable ? (
-              <Button type="button" onClick={onClaim} className="border-emerald-300/35 bg-emerald-500/15 text-emerald-100">
+              <GatedButton allowed={progression.canClaimPlanet() && progression.canColonizePlanet()} requirement={progression.canClaimPlanet() ? progression.requirementText("colonization") : progression.requirementText("claim_planet")} onClick={onClaim} className="border-emerald-300/35 bg-emerald-500/15 text-emerald-100">
                 <Waypoints className="h-4 w-4" />
-                Claim Planet
-              </Button>
+                {body.discoveryState === "colonized" ? "Colonized" : "Claim / Colonize"}
+              </GatedButton>
             ) : null}
             <button
               type="button"
@@ -1970,7 +2209,7 @@ function BodyDetailOverlay({ body, onClose, onScan, onClaim }: { body: BodyCardS
               </div>
             </DetailSection>
             <DetailSection title="Resources">
-              {explored ? <ChipList values={body.resources} /> : <DiscoveryLockedPanel>Explore this body to unlock deeper resource details.</DiscoveryLockedPanel>}
+              {canSeeResources ? <ChipList values={body.resources} /> : <DiscoveryLockedPanel>{progression.requirementText("resource_scan")} or explore this body to unlock deeper resource details.</DiscoveryLockedPanel>}
             </DetailSection>
           </div>
         </div>
@@ -2094,14 +2333,16 @@ function AssignedPlanetDetailOverlay({
   planet,
   onClose,
   onScan,
-  onClaim
+  onClaim,
+  progression
 }: {
   planet: AssignedPlanet;
   onClose: () => void;
   onScan: () => void;
   onClaim: () => void;
+  progression: ProgressionApi;
 }) {
-  return <BodyDetailOverlay body={planetToBodySnapshot(planet)} onClose={onClose} onScan={onScan} onClaim={onClaim} />;
+  return <BodyDetailOverlay body={planetToBodySnapshot(planet)} onClose={onClose} onScan={onScan} onClaim={onClaim} progression={progression} />;
 }
 
 function StarSystemCard({
@@ -2177,6 +2418,7 @@ function StarSystemCard({
 function StarSystemDetailPanel({
   card,
   context,
+  progression,
   planetPool,
   assignedPlanetIds,
   planetPoolLoading,
@@ -2193,6 +2435,7 @@ function StarSystemDetailPanel({
 }: {
   card: StarSystemCardState;
   context: AssignmentContext;
+  progression: ProgressionApi;
   planetPool: GeneratedPlanet[];
   assignedPlanetIds: Set<string>;
   planetPoolLoading: boolean;
@@ -2248,10 +2491,10 @@ function StarSystemDetailPanel({
           </div>
         </div>
         <div className="flex gap-2">
-          <Button type="button" onClick={onScanSystem}>
+          <GatedButton allowed={progression.canScanSystem()} requirement={progression.requirementText("system_scan")} onClick={onScanSystem}>
             <Sparkles className="h-4 w-4" />
             {systemScanned ? "Chart System" : "Scan Star System"}
-          </Button>
+          </GatedButton>
           <button
             type="button"
             onClick={onClose}
@@ -2367,10 +2610,10 @@ function StarSystemDetailPanel({
             <p className="mt-1 text-sm font-semibold text-slate-400">Real assigned planets plus generated moons, asteroid belts, stations, and anomalies inside this star system.</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button type="button" onClick={onGenerateBodies}>
+            <GatedButton allowed={progression.canScanSystem()} requirement={progression.requirementText("system_scan")} onClick={onGenerateBodies}>
               <Sparkles className="h-4 w-4" />
               Generate / Reveal Planets
-            </Button>
+            </GatedButton>
             <Button
               type="button"
               onClick={() => {
@@ -2453,6 +2696,7 @@ function StarSystemDetailPanel({
       {selectedPlanet ? (
         <AssignedPlanetDetailOverlay
           planet={selectedPlanet}
+          progression={progression}
           onClose={() => setSelectedPlanet(null)}
           onScan={() => {
             const scanned = scanBodyState(withDiscovery(selectedPlanet as unknown as Record<string, unknown>, normalizeDiscoveryState(selectedPlanet.discoveryState, "detected"), selectedPlanet.discoveryPoints ?? selectedPlanet.discovery_points ?? 120, selectedPlanet.colonizable)) as AssignedPlanet;
@@ -2469,6 +2713,7 @@ function StarSystemDetailPanel({
       {selectedBody ? (
         <BodyDetailOverlay
           body={selectedBody}
+          progression={progression}
           onClose={() => setSelectedBody(null)}
           onScan={() => {
             const scanned = scanBodyState(selectedBody);
@@ -2489,6 +2734,7 @@ function StarSystemDetailPanel({
 function StarSystemDetailOverlay(props: {
   card: StarSystemCardState;
   context: AssignmentContext;
+  progression: ProgressionApi;
   planetPool: GeneratedPlanet[];
   assignedPlanetIds: Set<string>;
   planetPoolLoading: boolean;
@@ -2523,6 +2769,7 @@ function StarSystemDetailOverlay(props: {
 function SectorCard({
   card,
   galaxy,
+  progression,
   planetPool,
   assignedPlanetIds,
   planetPoolLoading,
@@ -2546,6 +2793,7 @@ function SectorCard({
 }: {
   card: SectorCardState;
   galaxy: GalaxyNode;
+  progression: ProgressionApi;
   planetPool: GeneratedPlanet[];
   assignedPlanetIds: Set<string>;
   planetPoolLoading: boolean;
@@ -2642,10 +2890,10 @@ function SectorCard({
               <p className="mt-1 font-mono text-sm text-slate-500">{model.seedId}</p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Button type="button" onClick={onScanSector}>
+              <GatedButton allowed={progression.canScanSector()} requirement={progression.requirementText("sector_scan")} onClick={onScanSector}>
                 <Sparkles className="h-4 w-4" />
                 {sectorScanned ? "Chart Sector" : "Scan Sector"}
-              </Button>
+              </GatedButton>
               <button
                 type="button"
                 onClick={onOpen}
@@ -2701,14 +2949,14 @@ function SectorCard({
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <Breadcrumbs items={["Galaxy", sector.sector_name, "Star Systems"]} />
             <div className="flex flex-wrap gap-2">
-              <Button type="button" onClick={onScanSector}>
+              <GatedButton allowed={progression.canScanSector()} requirement={progression.requirementText("sector_scan")} onClick={onScanSector}>
                 <Sparkles className="h-4 w-4" />
                 Scan Sector
-              </Button>
-              <Button type="button" onClick={onGenerateSystems}>
+              </GatedButton>
+              <GatedButton allowed={progression.canScanSector()} requirement={progression.requirementText("sector_scan")} onClick={onGenerateSystems}>
                 <Sparkles className="h-4 w-4" />
                 Generate Star Systems
-              </Button>
+              </GatedButton>
               <Button type="button" onClick={onAddSystem} className="border-slate-600 bg-slate-900/70 text-slate-100">
                 <CirclePlus className="h-4 w-4" />
                 Add Star System
@@ -2736,6 +2984,7 @@ function SectorCard({
             <StarSystemDetailOverlay
               card={selectedSystem}
               context={{ galaxy, sector, system: selectedSystem.system }}
+              progression={progression}
               planetPool={planetPool}
               assignedPlanetIds={assignedPlanetIds}
               planetPoolLoading={planetPoolLoading}
@@ -2764,6 +3013,7 @@ function SectorCard({
 
 function GalaxyCard({
   card,
+  progression,
   planetPool,
   assignedPlanetIds,
   planetPoolLoading,
@@ -2792,6 +3042,7 @@ function GalaxyCard({
   setOpenSystemId
 }: {
   card: GalaxyCardState;
+  progression: ProgressionApi;
   planetPool: GeneratedPlanet[];
   assignedPlanetIds: Set<string>;
   planetPoolLoading: boolean;
@@ -2981,6 +3232,10 @@ function GalaxyCard({
                     <CirclePlus className="h-4 w-4" />
                     {isMilkyWay(galaxy) ? "Continue Exploring Milky Way" : "Continue Exploring Galaxy"}
                   </Button>
+                  <GatedButton allowed={progression.canTravelIntergalactic()} requirement={progression.requirementText("intergalactic_travel")} onClick={onAddSector} className="border-violet-300/35 bg-violet-500/15 text-violet-100">
+                    <Waypoints className="h-4 w-4" />
+                    Intergalactic Travel
+                  </GatedButton>
                 </>
               ) : (
                 <Button type="button" onClick={onUnlock} className="border-amber-300/30 bg-amber-500/10 text-amber-100 hover:bg-amber-500/15">
@@ -3002,6 +3257,7 @@ function GalaxyCard({
                   key={sectorCard.sector.id}
                   card={sectorCard}
                   galaxy={galaxy}
+                  progression={progression}
                   planetPool={planetPool}
                   assignedPlanetIds={assignedPlanetIds}
                   planetPoolLoading={planetPoolLoading}
@@ -3095,6 +3351,18 @@ function claimBodyInSystem(card: StarSystemCardState, bodyId: string, source: "b
   };
 }
 
+function bodyDiscoveryPoints(card: StarSystemCardState, bodyId: string, source: "body" | "planet") {
+  if (source === "planet") {
+    const planet = card.planets.find((item) => item.id === bodyId);
+    if (!planet || discoveryAtLeast(normalizeDiscoveryState(planet.discoveryState, "detected"), "scanned")) return 0;
+    return planet.discoveryPoints ?? planet.discovery_points ?? 120;
+  }
+
+  const body = card.bodies.find((item) => item.id === bodyId);
+  if (!body || discoveryAtLeast(body.discoveryState, "scanned")) return 0;
+  return body.discoveryPoints;
+}
+
 export function GalaxyGeneratorWorkflow() {
   const [universeSeed, setUniverseSeed] = useState(DEFAULT_UNIVERSE_SEED);
   const [count, setCount] = useState(2);
@@ -3105,6 +3373,7 @@ export function GalaxyGeneratorWorkflow() {
   const [openSectorId, setOpenSectorId] = useState<string | null>(null);
   const [openSystemId, setOpenSystemId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const progression = usePlayerProgression();
   const universe = useMemo(() => generateUniverse(universeSeed), [universeSeed]);
   const planetPool = useGeneratedPlanetPool();
   const assignedPlanetIds = useMemo(() => assignedPlanetIdsInGalaxies(galaxies), [galaxies]);
@@ -3142,6 +3411,9 @@ export function GalaxyGeneratorWorkflow() {
   }
 
   function scanSectorInGalaxy(galaxyId: string, sectorId: string) {
+    if (!progression.canScanSector()) return;
+    const sectorCard = galaxies.find((card) => card.galaxy.id === galaxyId)?.sectors.find((sector) => sector.sector.id === sectorId);
+    if (sectorCard && !discoveryAtLeast(sectorCard.sector.discoveryState, "scanned")) progression.awardDiscovery("sector", sectorCard.sector.discoveryPoints);
     updateGalaxy(galaxyId, (card) => ({
       ...card,
       sectors: card.sectors.map((sectorCard) => (sectorCard.sector.id === sectorId ? { ...sectorCard, sector: scanDiscovery(sectorCard.sector) } : sectorCard))
@@ -3149,6 +3421,9 @@ export function GalaxyGeneratorWorkflow() {
   }
 
   function generateSystemsForSector(galaxyId: string, sectorId: string, append = false) {
+    if (!progression.canScanSector()) return;
+    const sectorCard = galaxies.find((card) => card.galaxy.id === galaxyId)?.sectors.find((sector) => sector.sector.id === sectorId);
+    if (sectorCard && !discoveryAtLeast(sectorCard.sector.discoveryState, "scanned")) progression.awardDiscovery("sector", sectorCard.sector.discoveryPoints);
     updateGalaxy(galaxyId, (galaxyCard) => ({
       ...galaxyCard,
       sectors: galaxyCard.sectors.map((sectorCard) => {
@@ -3164,6 +3439,9 @@ export function GalaxyGeneratorWorkflow() {
   }
 
   function scanSystemInGalaxy(galaxyId: string, sectorId: string, systemId: string) {
+    if (!progression.canScanSystem()) return;
+    const systemCard = galaxies.find((card) => card.galaxy.id === galaxyId)?.sectors.find((sector) => sector.sector.id === sectorId)?.systems.find((system) => system.system.id === systemId);
+    if (systemCard && !discoveryAtLeast(systemCard.system.discoveryState, "scanned")) progression.awardDiscovery("system", systemCard.system.discoveryPoints);
     updateGalaxy(galaxyId, (galaxyCard) => ({
       ...galaxyCard,
       sectors: galaxyCard.sectors.map((sectorCard) => ({
@@ -3186,6 +3464,9 @@ export function GalaxyGeneratorWorkflow() {
   }
 
   function generateBodiesForSystem(galaxyId: string, sectorId: string, systemId: string, append = false) {
+    if (!progression.canScanSystem()) return;
+    const systemCard = galaxies.find((card) => card.galaxy.id === galaxyId)?.sectors.find((sector) => sector.sector.id === sectorId)?.systems.find((system) => system.system.id === systemId);
+    if (systemCard && !discoveryAtLeast(systemCard.system.discoveryState, "scanned")) progression.awardDiscovery("system", systemCard.system.discoveryPoints);
     updateGalaxy(galaxyId, (galaxyCard) => ({
       ...galaxyCard,
       sectors: galaxyCard.sectors.map((sectorCard) => ({
@@ -3205,6 +3486,10 @@ export function GalaxyGeneratorWorkflow() {
   }
 
   function scanBodyInGalaxy(galaxyId: string, sectorId: string, systemId: string, bodyId: string, source: "body" | "planet") {
+    if (!progression.canScanPlanet()) return;
+    const systemCard = galaxies.find((card) => card.galaxy.id === galaxyId)?.sectors.find((sector) => sector.sector.id === sectorId)?.systems.find((system) => system.system.id === systemId);
+    const points = systemCard ? bodyDiscoveryPoints(systemCard, bodyId, source) : 0;
+    if (points) progression.awardDiscovery("planet", points);
     updateGalaxy(galaxyId, (card) => ({
       ...card,
       sectors: card.sectors.map((sector) => ({
@@ -3215,6 +3500,9 @@ export function GalaxyGeneratorWorkflow() {
   }
 
   function claimBodyInGalaxy(galaxyId: string, sectorId: string, systemId: string, bodyId: string, source: "body" | "planet") {
+    if (!progression.canClaimPlanet() || !progression.canColonizePlanet()) return;
+    progression.recordClaim();
+    progression.recordColonization();
     updateGalaxy(galaxyId, (card) => ({
       ...card,
       sectors: card.sectors.map((sector) => ({
@@ -3322,12 +3610,15 @@ export function GalaxyGeneratorWorkflow() {
         />
       </div>
 
+      <ProgressionGatePanel progression={progression} />
+
       {visibleGalaxies.length ? (
         <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {visibleGalaxies.map((card) => (
             <GalaxyCard
               key={card.galaxy.id}
               card={card}
+              progression={progression}
               planetPool={planetPool.planets}
               assignedPlanetIds={assignedPlanetIds}
               planetPoolLoading={planetPool.loading}
@@ -3374,6 +3665,7 @@ export function SectorGeneratorWorkflow() {
   const [openSectorId, setOpenSectorId] = useState<string | null>(null);
   const [openSystemId, setOpenSystemId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const progression = usePlayerProgression();
   const universe = useMemo(() => generateUniverse(universeSeed), [universeSeed]);
   const galaxy = useMemo(() => createExpansionGalaxy(universe.universe_seed, galaxyIndex), [galaxyIndex, universe.universe_seed]);
   const planetPool = useGeneratedPlanetPool();
@@ -3394,6 +3686,9 @@ export function SectorGeneratorWorkflow() {
   }
 
   function generateSystems(sectorId: string, append = false) {
+    if (!progression.canScanSector()) return;
+    const sectorCard = cards.find((item) => item.sector.id === sectorId);
+    if (sectorCard && !discoveryAtLeast(sectorCard.sector.discoveryState, "scanned")) progression.awardDiscovery("sector", sectorCard.sector.discoveryPoints);
     updateSector(sectorId, (card) => {
       const startIndex = append ? card.systems.length : 0;
       const generated = Array.from({ length: 6 }, (_, index) => {
@@ -3405,10 +3700,16 @@ export function SectorGeneratorWorkflow() {
   }
 
   function scanSector(sectorId: string) {
+    if (!progression.canScanSector()) return;
+    const card = cards.find((item) => item.sector.id === sectorId);
+    if (card && !discoveryAtLeast(card.sector.discoveryState, "scanned")) progression.awardDiscovery("sector", card.sector.discoveryPoints);
     updateSector(sectorId, (card) => ({ ...card, sector: scanDiscovery(card.sector) }));
   }
 
   function scanSystem(sectorId: string, systemId: string) {
+    if (!progression.canScanSystem()) return;
+    const systemCard = cards.find((card) => card.sector.id === sectorId)?.systems.find((system) => system.system.id === systemId);
+    if (systemCard && !discoveryAtLeast(systemCard.system.discoveryState, "scanned")) progression.awardDiscovery("system", systemCard.system.discoveryPoints);
     updateSector(sectorId, (sectorCard) => ({
       ...sectorCard,
       systems: sectorCard.systems.map((systemCard) => (systemCard.system.id === systemId ? { ...systemCard, system: scanDiscovery(systemCard.system) } : systemCard))
@@ -3416,6 +3717,9 @@ export function SectorGeneratorWorkflow() {
   }
 
   function generateBodies(sectorId: string, systemId: string, append = false) {
+    if (!progression.canScanSystem()) return;
+    const systemCard = cards.find((card) => card.sector.id === sectorId)?.systems.find((system) => system.system.id === systemId);
+    if (systemCard && !discoveryAtLeast(systemCard.system.discoveryState, "scanned")) progression.awardDiscovery("system", systemCard.system.discoveryPoints);
     updateSector(sectorId, (sectorCard) => ({
       ...sectorCard,
       systems: sectorCard.systems.map((systemCard) => {
@@ -3448,6 +3752,10 @@ export function SectorGeneratorWorkflow() {
   }
 
   function scanBody(sectorId: string, systemId: string, bodyId: string, source: "body" | "planet") {
+    if (!progression.canScanPlanet()) return;
+    const systemCard = cards.find((card) => card.sector.id === sectorId)?.systems.find((system) => system.system.id === systemId);
+    const points = systemCard ? bodyDiscoveryPoints(systemCard, bodyId, source) : 0;
+    if (points) progression.awardDiscovery("planet", points);
     updateSector(sectorId, (sectorCard) => ({
       ...sectorCard,
       systems: sectorCard.systems.map((systemCard) => (systemCard.system.id === systemId ? scanBodyInSystem(systemCard, bodyId, source) : systemCard))
@@ -3455,6 +3763,9 @@ export function SectorGeneratorWorkflow() {
   }
 
   function claimBody(sectorId: string, systemId: string, bodyId: string, source: "body" | "planet") {
+    if (!progression.canClaimPlanet() || !progression.canColonizePlanet()) return;
+    progression.recordClaim();
+    progression.recordColonization();
     updateSector(sectorId, (sectorCard) => ({
       ...sectorCard,
       systems: sectorCard.systems.map((systemCard) => (systemCard.system.id === systemId ? claimBodyInSystem(systemCard, bodyId, source) : systemCard))
@@ -3497,6 +3808,8 @@ export function SectorGeneratorWorkflow() {
         />
       </div>
 
+      <ProgressionGatePanel progression={progression} />
+
       {visibleCards.length ? (
         <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {visibleCards.map((card) => (
@@ -3504,6 +3817,7 @@ export function SectorGeneratorWorkflow() {
               key={card.sector.id}
               card={card}
               galaxy={galaxy}
+              progression={progression}
               planetPool={planetPool.planets}
               assignedPlanetIds={assignedPlanetIds}
               planetPoolLoading={planetPool.loading}
@@ -3557,6 +3871,7 @@ export function StarSystemGeneratorWorkflow() {
   const [cards, setCards] = useState<StarSystemCardState[]>(() => defaultSystemCards(DEFAULT_UNIVERSE_SEED, 0, 0));
   const [openSystemId, setOpenSystemId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const progression = usePlayerProgression();
   const universe = useMemo(() => generateUniverse(universeSeed), [universeSeed]);
   const galaxy = useMemo(() => createExpansionGalaxy(universe.universe_seed, galaxyIndex), [galaxyIndex, universe.universe_seed]);
   const sector = useMemo(() => {
@@ -3580,6 +3895,9 @@ export function StarSystemGeneratorWorkflow() {
   }
 
   function generateBodies(systemId: string, append = false) {
+    if (!progression.canScanSystem()) return;
+    const current = cards.find((item) => item.system.id === systemId);
+    if (current && !discoveryAtLeast(current.system.discoveryState, "scanned")) progression.awardDiscovery("system", current.system.discoveryPoints);
     updateSystem(systemId, (card) => {
       const context = { galaxy, sector, system: card.system };
       const bodies = generateCelestialBodies(card.system)
@@ -3590,6 +3908,9 @@ export function StarSystemGeneratorWorkflow() {
   }
 
   function scanSystem(systemId: string) {
+    if (!progression.canScanSystem()) return;
+    const card = cards.find((item) => item.system.id === systemId);
+    if (card && !discoveryAtLeast(card.system.discoveryState, "scanned")) progression.awardDiscovery("system", card.system.discoveryPoints);
     updateSystem(systemId, (card) => ({ ...card, system: scanDiscovery(card.system) }));
   }
 
@@ -3602,10 +3923,17 @@ export function StarSystemGeneratorWorkflow() {
   }
 
   function scanBody(systemId: string, bodyId: string, source: "body" | "planet") {
+    if (!progression.canScanPlanet()) return;
+    const card = cards.find((item) => item.system.id === systemId);
+    const points = card ? bodyDiscoveryPoints(card, bodyId, source) : 0;
+    if (points) progression.awardDiscovery("planet", points);
     updateSystem(systemId, (card) => scanBodyInSystem(card, bodyId, source));
   }
 
   function claimBody(systemId: string, bodyId: string, source: "body" | "planet") {
+    if (!progression.canClaimPlanet() || !progression.canColonizePlanet()) return;
+    progression.recordClaim();
+    progression.recordColonization();
     updateSystem(systemId, (card) => claimBodyInSystem(card, bodyId, source));
   }
 
@@ -3647,6 +3975,8 @@ export function StarSystemGeneratorWorkflow() {
         />
       </div>
 
+      <ProgressionGatePanel progression={progression} />
+
       {visibleCards.length ? (
         <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {visibleCards.map((card) => (
@@ -3670,6 +4000,7 @@ export function StarSystemGeneratorWorkflow() {
         <StarSystemDetailOverlay
           card={selectedSystem}
           context={{ galaxy, sector, system: selectedSystem.system }}
+          progression={progression}
           planetPool={planetPool.planets}
           assignedPlanetIds={assignedPlanetIds}
           planetPoolLoading={planetPool.loading}
