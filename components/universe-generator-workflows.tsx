@@ -7,7 +7,9 @@ import { DEFAULT_UNIVERSE_SEED } from "@/lib/universe/fallback-data";
 import {
   generateCelestialBodies,
   generateGalaxy,
+  generateSector,
   generateSectors,
+  generateStarSystem,
   generateStarSystems,
   generateUniverse,
   type CelestialBodyNode,
@@ -156,6 +158,8 @@ type GalaxyCardState = {
   sectors: SectorCardState[];
 };
 
+type GalaxyDNA = NonNullable<GalaxyNode["galaxy_dna"]>;
+
 type GalaxySeedModel = {
   id: string;
   seedId: string;
@@ -181,6 +185,11 @@ type GalaxySeedModel = {
   discoveredSystemCount: number;
   discoveredSectorCount: number;
   discoveryPercentDisplay: string;
+  generatedPlanetCount: number;
+  discoveredPlanetCount: number;
+  isUnlocked: boolean;
+  unlockRequirement: string;
+  galaxyDNA: GalaxyDNA;
   resources: string[];
   traits: string[];
   hazards: string[];
@@ -196,6 +205,56 @@ const galaxySizes = ["Any", "Small", "Medium", "Large"];
 const sectorTypes = ["Any", "Core Worlds", "Civilized Space", "Outer Rim", "Ancient Expanse", "Nebula", "Frontier", "Deep Space", "Void Region", "Harmony Region", "Uncharted Space"];
 const rarityOptions = ["Any", "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Relic", "Genesis"];
 const starCountRules = ["Generated", "Single Star", "Binary", "Trinary"];
+
+const defaultGalaxyDNA: GalaxyDNA = {
+  age: "Mature",
+  metallicity: "Balanced",
+  civilizationDensity: "Medium",
+  anomalyDensity: "Low",
+  resourceRichness: "Balanced",
+  hostility: "Moderate",
+  terraformDifficulty: "Standard",
+  technologyLevel: "Mixed",
+  dominantStarTypes: ["Yellow Main Sequence", "Red Dwarf"],
+  rarePhenomena: ["Ancient Ruins", "Rogue Planets"],
+  earthlikeWorldChance: "Medium",
+  ruinChance: "Low",
+  blackHoleChance: "Very Low"
+};
+
+const milkyWayGalaxyProfile: {
+  slug: string;
+  name: string;
+  galaxyClass: string;
+  galaxyScale: string;
+  unlocked: boolean;
+  discoveryState: string;
+  unlockRequirement: string;
+  dna: GalaxyDNA;
+} = {
+  slug: "milky-way",
+  name: "Milky Way",
+  galaxyClass: "Spiral Galaxy",
+  galaxyScale: "Mythic",
+  unlocked: true,
+  discoveryState: "Starting Galaxy",
+  unlockRequirement: "Unlocked by default as the Project Genesis origin galaxy.",
+  dna: defaultGalaxyDNA
+};
+
+const galaxyDnaPools = {
+  age: ["Young", "Mature", "Ancient", "Primeval"],
+  metallicity: ["Low", "Balanced", "Rich", "Exotic"],
+  civilizationDensity: ["Low", "Medium", "High", "Lost", "Unknown"],
+  anomalyDensity: ["Low", "Medium", "High", "Extreme"],
+  resourceRichness: ["Scarce", "Balanced", "High", "Exotic"],
+  hostility: ["Low", "Moderate", "High", "Variable", "Extreme"],
+  terraformDifficulty: ["Standard", "Hard", "Extreme", "Unknown"],
+  technologyLevel: ["Emerging", "Mixed", "Ancient", "Unknown"],
+  dominantStarTypes: ["Yellow Main Sequence", "Red Dwarf", "Blue Giant", "Binary Star", "White Dwarf", "Red Giant", "Neutron Star"],
+  rarePhenomena: ["Ancient Ruins", "Rogue Planets", "Megastructures", "Dark Matter Fields", "Nebula Storms", "Energy Anomalies", "Deep-Space Beacons", "Reality Fractures"],
+  chance: ["Very Low", "Low", "Medium", "High"]
+};
 
 const rarityClasses: Record<string, string> = {
   Common: "border-white/40 text-white",
@@ -225,6 +284,99 @@ function applyGalaxyBias(galaxy: GalaxyNode, type: string, size: string): Galaxy
     galaxy_size: nextSize ?? galaxy.galaxy_size,
     sector_count: nextSize === "Small" ? 1000 : nextSize === "Medium" ? 5000 : nextSize === "Large" ? 20000 : galaxy.sector_count
   };
+}
+
+function galaxyProfileFor(galaxy: GalaxyNode) {
+  return galaxy.name.toLowerCase() === milkyWayGalaxyProfile.name.toLowerCase() || galaxy.galaxy_seed.toLowerCase().includes(milkyWayGalaxyProfile.slug) ? milkyWayGalaxyProfile : null;
+}
+
+function galaxySeedSlug(galaxy: GalaxyNode) {
+  const profile = galaxyProfileFor(galaxy);
+  if (profile) return profile.slug;
+  return `galaxy-${galaxy.generation_index ?? hashText(galaxy.galaxy_seed)}-${slug(galaxy.name || galaxy.galaxy_seed)}`;
+}
+
+function seededPick<T>(seed: string, key: string, values: T[]) {
+  return values[hashText(`${seed}:${key}`) % values.length];
+}
+
+function seededPickMany<T>(seed: string, key: string, values: T[], count: number) {
+  const selected: T[] = [];
+  for (let index = 0; index < values.length && selected.length < count; index += 1) {
+    const value = values[(hashText(`${seed}:${key}:${index}`) + index) % values.length];
+    if (!selected.includes(value)) selected.push(value);
+  }
+  return selected;
+}
+
+function proceduralGalaxyDNA(galaxy: GalaxyNode): GalaxyDNA {
+  const seed = galaxy.galaxy_seed;
+  return {
+    age: seededPick(seed, "age", galaxyDnaPools.age),
+    metallicity: seededPick(seed, "metallicity", galaxyDnaPools.metallicity),
+    civilizationDensity: seededPick(seed, "civilization-density", galaxyDnaPools.civilizationDensity),
+    anomalyDensity: seededPick(seed, "anomaly-density", galaxyDnaPools.anomalyDensity),
+    resourceRichness: seededPick(seed, "resource-richness", galaxyDnaPools.resourceRichness),
+    hostility: seededPick(seed, "hostility", galaxyDnaPools.hostility),
+    terraformDifficulty: seededPick(seed, "terraform-difficulty", galaxyDnaPools.terraformDifficulty),
+    technologyLevel: seededPick(seed, "technology-level", galaxyDnaPools.technologyLevel),
+    dominantStarTypes: seededPickMany(seed, "dominant-star-types", galaxyDnaPools.dominantStarTypes, 3),
+    rarePhenomena: seededPickMany(seed, "rare-phenomena", galaxyDnaPools.rarePhenomena, 3),
+    earthlikeWorldChance: seededPick(seed, "earthlike-world-chance", galaxyDnaPools.chance),
+    ruinChance: seededPick(seed, "ruin-chance", galaxyDnaPools.chance),
+    blackHoleChance: seededPick(seed, "black-hole-chance", galaxyDnaPools.chance)
+  };
+}
+
+function withGalaxyExpansionProfile(galaxy: GalaxyNode, profile = galaxyProfileFor(galaxy)): GalaxyNode {
+  if (!profile) {
+    const generatedDna = galaxy.galaxy_dna ?? proceduralGalaxyDNA(galaxy);
+    return {
+      ...galaxy,
+      is_unlocked: galaxy.is_unlocked ?? false,
+      is_unlimited: true,
+      discovery_state: galaxy.discovery_state ?? "Locked",
+      discovery_percent_display: galaxy.discovery_percent_display ?? "0%",
+      generated_sector_count: galaxy.generated_sector_count ?? 0,
+      generated_system_count: galaxy.generated_system_count ?? 0,
+      generated_planet_count: galaxy.generated_planet_count ?? 0,
+      discovered_sector_count: galaxy.discovered_sector_count ?? 0,
+      discovered_system_count: galaxy.discovered_system_count ?? 0,
+      discovered_planet_count: galaxy.discovered_planet_count ?? 0,
+      sector_ids: galaxy.sector_ids ?? [],
+      galaxy_dna: generatedDna
+    };
+  }
+
+  return {
+    ...galaxy,
+    id: profile.slug === "milky-way" ? galaxy.id : `galaxy-${profile.slug}`,
+    galaxy_seed: `PROJECT-GENESIS:${profile.slug}`,
+    name: profile.name,
+    galaxy_type: profile.galaxyClass,
+    galaxy_size: profile.galaxyScale,
+    sector_count: 100000,
+    is_fixed: profile.slug === "milky-way" ? galaxy.is_fixed : false,
+    is_procedural: profile.slug !== "milky-way",
+    is_unlocked: galaxy.is_unlocked ?? profile.unlocked,
+    is_unlimited: true,
+    discovery_state: galaxy.discovery_state ?? profile.discoveryState,
+    discovery_percent_display: galaxy.discovery_percent_display ?? (profile.slug === "milky-way" ? "<0.0001%" : "0%"),
+    generated_sector_count: galaxy.generated_sector_count ?? 0,
+    generated_system_count: galaxy.generated_system_count ?? 0,
+    generated_planet_count: galaxy.generated_planet_count ?? 0,
+    discovered_sector_count: galaxy.discovered_sector_count ?? 0,
+    discovered_system_count: galaxy.discovered_system_count ?? 0,
+    discovered_planet_count: galaxy.discovered_planet_count ?? 0,
+    sector_ids: galaxy.sector_ids ?? [],
+    galaxy_dna: profile.dna
+  };
+}
+
+function createExpansionGalaxy(universeSeed: string, profileIndex: number): GalaxyNode {
+  const profile = profileIndex === 0 ? milkyWayGalaxyProfile : null;
+  const base = generateGalaxy(universeSeed, profileIndex);
+  return withGalaxyExpansionProfile(base, profile);
 }
 
 function applySectorBias(sector: SectorNode, sectorType: string, rarity: string): SectorNode {
@@ -325,35 +477,39 @@ function toSectorState(sector: SectorNode, galaxy?: GalaxyNode): SectorCardState
 }
 
 function toGalaxyState(galaxy: GalaxyNode): GalaxyCardState {
-  return { galaxy, sectors: [] };
+  return { galaxy: withGalaxyExpansionProfile(galaxy), sectors: [] };
 }
 
-function normalizeMilkyWaySector(galaxy: GalaxyNode, sector: SectorNode, sectorIndex: number): SectorNode {
-  if (!isMilkyWay(galaxy) || sector.is_fixed) return sector;
-  const sectorSeed = `PROJECT-GENESIS:milky-way:sector-${sectorIndex}`;
+function normalizeGalaxySector(galaxy: GalaxyNode, sector: SectorNode, sectorIndex: number): SectorNode {
+  if (!galaxy.is_unlimited || sector.is_fixed) return sector;
+  const galaxySlug = galaxySeedSlug(galaxy);
+  const sectorSeed = `PROJECT-GENESIS:${galaxySlug}:sector-${sectorIndex}`;
+  const sectorName = sectorIndex === 0 && isMilkyWay(galaxy) ? "Local Bubble" : `${sector.sector_name.replace(/-\d+$/, "")}-${String(sectorIndex).padStart(4, "0")}`;
 
   return {
     ...sector,
-    id: `sector-milky-way-${sectorIndex}`,
+    id: `sector-${galaxySlug}-${sectorIndex}`,
     galaxy_id: galaxy.id,
     sector_seed: sectorSeed,
-    sector_name: `${sector.sector_name.replace(/-\d+$/, "")}-${String(sectorIndex).padStart(4, "0")}`,
+    sector_name: sectorName,
     system_count: seededRange(sectorSeed, "system-capacity", 12, 50),
     generation_parent_seed: galaxy.galaxy_seed,
     generation_index: sectorIndex
   };
 }
 
-function normalizeMilkyWaySystem(sector: SectorNode, system: StarSystemNode, systemIndex: number): StarSystemNode {
-  if (!sector.sector_seed.includes("milky-way") || system.is_fixed) return system;
+function normalizeGalaxySystem(sector: SectorNode, system: StarSystemNode, systemIndex: number): StarSystemNode {
+  if (!sector.sector_seed.startsWith("PROJECT-GENESIS:") || system.is_fixed) return system;
   const systemSeed = `${sector.sector_seed}:system-${systemIndex}`;
+  const seedParts = sector.sector_seed.split(":");
+  const galaxySlug = seedParts[1] ?? "galaxy";
 
   return {
     ...system,
     id: `system-${slug(systemSeed)}`,
     sector_id: sector.id,
     system_seed: systemSeed,
-    catalog_designation: `MW-${String(sector.generation_index ?? 0).padStart(4, "0")}-${String(systemIndex).padStart(3, "0")}`,
+    catalog_designation: `${galaxySlug.slice(0, 3).toUpperCase()}-${String(sector.generation_index ?? 0).padStart(4, "0")}-${String(systemIndex).padStart(3, "0")}`,
     generation_parent_seed: sector.sector_seed,
     generation_index: systemIndex
   };
@@ -361,7 +517,7 @@ function normalizeMilkyWaySystem(sector: SectorNode, system: StarSystemNode, sys
 
 function defaultGalaxyCards(universeSeed: string) {
   const universe = generateUniverse(universeSeed);
-  const galaxy = generateGalaxy(universe.universe_seed, 0);
+  const galaxy = createExpansionGalaxy(universe.universe_seed, 0);
   const sector = generateSectors(galaxy, 1)[0];
   const system = sector ? generateStarSystems(sector, 1)[0] : null;
 
@@ -382,8 +538,8 @@ function defaultGalaxyCards(universeSeed: string) {
 
 function defaultSectorCards(universeSeed: string, galaxyIndex: number) {
   const universe = generateUniverse(universeSeed);
-  const galaxy = generateGalaxy(universe.universe_seed, galaxyIndex);
-  const sector = generateSectors(galaxy, 1)[0];
+  const galaxy = createExpansionGalaxy(universe.universe_seed, galaxyIndex);
+  const sector = normalizeGalaxySector(galaxy, generateSector(galaxy, 0), 0);
   const system = sector ? generateStarSystems(sector, 1)[0] : null;
 
   return sector
@@ -398,9 +554,9 @@ function defaultSectorCards(universeSeed: string, galaxyIndex: number) {
 
 function defaultSystemCards(universeSeed: string, galaxyIndex: number, sectorIndex: number) {
   const universe = generateUniverse(universeSeed);
-  const galaxy = generateGalaxy(universe.universe_seed, galaxyIndex);
-  const sector = generateSectors(galaxy, Math.max(sectorIndex + 1, 1))[sectorIndex] ?? generateSectors(galaxy, 1)[0];
-  const system = sector ? generateStarSystems(sector, 1)[0] : null;
+  const galaxy = createExpansionGalaxy(universe.universe_seed, galaxyIndex);
+  const sector = normalizeGalaxySector(galaxy, generateSector(galaxy, sectorIndex), sectorIndex);
+  const system = sector ? normalizeGalaxySystem(sector, generateStarSystem(sector, 0), 0) : null;
   return system && sector ? [toSystemState(system, galaxy, sector)] : [];
 }
 
@@ -1058,22 +1214,26 @@ function galaxySeedModel(card: GalaxyCardState): GalaxySeedModel {
   const { galaxy, sectors } = card;
   const sectorModels = sectors.map((sectorCard) => sectorSeedModel(sectorCard));
   const milkyWay = isMilkyWay(galaxy);
+  const galaxyDna = galaxy.galaxy_dna ?? (milkyWay ? defaultGalaxyDNA : proceduralGalaxyDNA(galaxy));
+  const unlocked = galaxy.is_unlocked ?? milkyWay;
   const discovered = sectors.filter((sector) => sector.sector.discovered).length;
-  const discoveryPercent = milkyWay ? 13 : sectors.length ? Math.min(95, Math.round((discovered / sectors.length) * 100)) : 0;
+  const discoveryPercent = milkyWay ? 13 : sectors.length ? Math.min(95, Math.round((discovered / Math.max(1, sectors.length)) * 100)) : 0;
   const generatedSystemCount = sectors.reduce((total, sector) => total + sector.systems.length, 0);
   const discoveredSystemCount = sectors.reduce(
     (total, sector) => total + sector.systems.filter((system) => system.system.discovered || system.system.discovery_state !== "Undetected").length,
     0
   );
-  const avgSystems = sectors.length ? Math.round(sectors.reduce((total, sector) => total + (sector.systems.length || sector.sector.system_count), 0) / sectors.length) : 0;
-  const estimatedSystems = milkyWay ? generatedSystemCount : avgSystems * galaxy.sector_count;
-  const estimatedBodies = estimatedSystems * 7;
+  const generatedPlanetCount = sectors.reduce((total, sector) => total + sector.systems.reduce((systemTotal, system) => systemTotal + system.planets.length + system.bodies.filter((body) => body.celestial_body_type === "Planet").length, 0), 0);
+  const discoveredPlanetCount = generatedPlanetCount;
+  const estimatedSystems = generatedSystemCount;
+  const estimatedBodies = generatedPlanetCount;
   const rarity = sectors.find((sector) => ["Genesis", "Relic", "Mythic", "Legendary"].includes(sector.sector.sector_rarity))?.sector.sector_rarity ?? (milkyWay ? "Common" : "Uncommon");
-  const galaxyClass = milkyWay ? "Spiral" : galaxy.galaxy_type;
-  const galaxyScale = milkyWay ? "Mythic" : galaxy.galaxy_size === "Large" ? "Vast" : galaxy.galaxy_size === "Small" ? "Local" : "Regional";
+  const galaxyClass = milkyWay ? "Spiral" : galaxy.galaxy_type.replace(" Galaxy", "");
+  const galaxyScale = milkyWay ? "Mythic" : galaxy.galaxy_size === "Large" ? "Vast" : galaxy.galaxy_size === "Small" ? "Local" : galaxy.galaxy_size === "Starting Galaxy" ? "Mythic" : "Regional";
   const startingSector = milkyWay ? "Local Bubble" : sectors[0]?.sector.sector_name ?? "None";
-  const resourceBias = sectorModels[0]?.resourceBias ?? "Mixed Resources";
-  const anomalyDensity = anomalyDensityLabel(sectorModels.reduce((total, model) => total + model.anomalies.length, 0), galaxy.galaxy_type.includes("Void") ? 80 : 20);
+  const resourceBias = sectorModels[0]?.resourceBias ?? `${galaxyDna.resourceRichness} Resources`;
+  const anomalyDensity = galaxyDna.anomalyDensity;
+  const discoveryDisplay = milkyWay ? "<0.0001%" : sectors.length ? `${discoveryPercent}%` : "0%";
 
   return {
     id: galaxy.id,
@@ -1081,7 +1241,7 @@ function galaxySeedModel(card: GalaxyCardState): GalaxySeedModel {
     name: galaxy.name,
     type: "Galaxy",
     rarity,
-    discoveryPoints: milkyWay ? 2500 : galaxy.sector_count + sectors.length * 500 + estimatedSystems,
+    discoveryPoints: milkyWay ? 2500 : 1000 + sectors.length * 500 + generatedSystemCount * 125 + generatedPlanetCount * 25,
     galaxyClass,
     galaxyScale,
     sectorCount: galaxy.sector_count,
@@ -1091,31 +1251,37 @@ function galaxySeedModel(card: GalaxyCardState): GalaxySeedModel {
     discoveryPercent,
     startingSector,
     resourceBias,
-    civilizationPresence: milkyWay ? "Established Origin" : sectors.some((sector) => sector.sector.colonized_worlds) ? "Settled Pockets" : "Unconfirmed",
-    explorationRisk: galaxy.galaxy_type.includes("Void") ? "High" : milkyWay ? "Moderate" : "Variable",
+    civilizationPresence: milkyWay ? "Established Origin" : galaxyDna.civilizationDensity,
+    explorationRisk: galaxyDna.hostility,
     anomalyDensity,
-    isUnlimited: milkyWay,
-    theoreticalSystemCapacity: milkyWay ? "Unlimited" : estimatedSystems ? formatNumber(estimatedSystems) : "Pending",
+    isUnlimited: true,
+    theoreticalSystemCapacity: "Unlimited",
     generatedSystemCount,
     discoveredSystemCount,
     discoveredSectorCount: discovered,
-    discoveryPercentDisplay: milkyWay ? "<0.0001%" : `${discoveryPercent}%`,
+    discoveryPercentDisplay: discoveryDisplay,
+    generatedPlanetCount,
+    discoveredPlanetCount,
+    isUnlocked: unlocked,
+    unlockRequirement: milkyWay ? milkyWayGalaxyProfile.unlockRequirement : "Requires intergalactic navigation research. Dev override is available for testing.",
+    galaxyDNA: galaxyDna,
     resources: uniqueValues([...sectorModels.flatMap((model) => model.resources), "Galactic Cartography", "Long Range Survey Data"]).slice(0, 10),
-    traits: uniqueValues([galaxyScale, galaxyClass, milkyWay ? "Sol Origin" : "Procedural Expansion", ...sectorModels.flatMap((model) => model.traits)]).slice(0, 8),
+    traits: uniqueValues([galaxyScale, galaxyClass, milkyWay ? "Sol Origin" : "Procedural Expansion", `${galaxyDna.age} Galaxy`, `${galaxyDna.resourceRichness} Resources`, ...sectorModels.flatMap((model) => model.traits)]).slice(0, 8),
     hazards: uniqueValues([...sectorModels.flatMap((model) => model.hazards), galaxy.galaxy_type.includes("Void") ? "Void Routes" : null]).slice(0, 8),
-    anomalies: uniqueValues([...sectorModels.flatMap((model) => model.anomalies), galaxy.galaxy_type.includes("Ancient") ? "Ancient Spiral Relics" : null]).slice(0, 8),
-    modifiers: uniqueValues([`${galaxy.galaxy_size} Scale`, `${galaxy.sector_count.toLocaleString()} Sector Capacity`, galaxy.is_fixed ? "Sol Origin" : "Procedural Expansion"]).slice(0, 8),
-    events: uniqueValues([galaxy.is_fixed ? "Milky Way Baseline Loaded" : "Galaxy Seed Generated", sectors.length ? "Sectors Available" : "Awaiting Sector Generation"]).slice(0, 8),
+    anomalies: uniqueValues([...sectorModels.flatMap((model) => model.anomalies), ...galaxyDna.rarePhenomena]).slice(0, 8),
+    modifiers: uniqueValues([`${galaxyScale} Scale`, "Unlimited System Capacity", galaxy.is_fixed ? "Sol Origin" : "Procedural Expansion", `${galaxyDna.terraformDifficulty} Terraforming`]).slice(0, 8),
+    events: uniqueValues([galaxy.is_fixed ? "Milky Way Baseline Loaded" : unlocked ? "Galaxy Unlocked" : "Galaxy Locked", sectors.length ? "Sectors Available" : "Awaiting Sector Generation"]).slice(0, 8),
     visualTheme: {
       "Galaxy Type": galaxy.galaxy_type,
       Scale: galaxyScale,
-      "System Capacity": milkyWay ? "Unlimited" : estimatedSystems ? estimatedSystems.toLocaleString() : "Pending",
+      "System Capacity": "Unlimited",
       "Generated Sectors": sectors.length,
-      "Generated Systems": generatedSystemCount
+      "Generated Systems": generatedSystemCount,
+      "Dominant Stars": galaxyDna.dominantStarTypes.join(", ")
     },
     description: milkyWay
       ? `${galaxy.name} is an effectively unlimited ${galaxyClass.toLowerCase()} galaxy with ${generatedSystemCount} generated systems and discovery still below measurable galactic scale.`
-      : `${galaxy.name} is a ${rarity.toLowerCase()} ${galaxyClass.toLowerCase()} galaxy at ${galaxyScale.toLowerCase()} scale with ${discoveryPercent}% charted. Its starting route begins in ${startingSector}.`
+      : `${galaxy.name} is a procedurally generated ${galaxyClass.toLowerCase()} galaxy with ${galaxyDna.age.toLowerCase()} stellar DNA, ${galaxyDna.resourceRichness.toLowerCase()} resources, and unlimited explorable sectors.`
   };
 }
 
@@ -2109,6 +2275,7 @@ function GalaxyCard({
   planetPoolError,
   open,
   onOpen,
+  onUnlock,
   onGenerateSectors,
   onAddSector,
   onDelete,
@@ -2132,6 +2299,7 @@ function GalaxyCard({
   planetPoolError: string;
   open: boolean;
   onOpen: () => void;
+  onUnlock: () => void;
   onGenerateSectors: () => void;
   onAddSector: () => void;
   onDelete: () => void;
@@ -2165,6 +2333,7 @@ function GalaxyCard({
               <p className="truncate text-xs font-black uppercase tracking-[0.22em] text-cyan-300">{model.type}</p>
               <Badge className={rarityClass}>{model.rarity}</Badge>
               {galaxy.is_fixed ? <Badge className="border-amber-300/45 text-amber-100">Starting</Badge> : null}
+              <Badge className={model.isUnlocked ? "border-emerald-300/45 text-emerald-100" : "border-slate-500/45 text-slate-300"}>{model.isUnlocked ? "Unlocked" : "Locked"}</Badge>
             </div>
             <h3 className="mt-2 truncate text-2xl font-bold text-white">{model.name}</h3>
             <p className="mt-1 truncate font-mono text-xs text-slate-500">{model.seedId}</p>
@@ -2229,6 +2398,8 @@ function GalaxyCard({
                   <StatChip label="Discovered Sectors" value={model.discoveredSectorCount} />
                   <StatChip label="Generated Systems" value={model.generatedSystemCount} />
                   <StatChip label="Discovered Systems" value={model.discoveredSystemCount} />
+                  <StatChip label="Generated Planets" value={model.generatedPlanetCount} />
+                  <StatChip label="Discovered Planets" value={model.discoveredPlanetCount} />
                   <StatChip label="Starting Sector" value={model.startingSector} />
                   <StatChip label="Resource Bias" value={model.resourceBias} />
                   <StatChip label="Civilization Presence" value={model.civilizationPresence} />
@@ -2238,6 +2409,25 @@ function GalaxyCard({
                   <StatChip label="Discovery" value={model.discoveryPercentDisplay} />
                   <StatChip label="Discovery Points" value={formatNumber(model.discoveryPoints)} />
                 </div>
+              </DetailSection>
+              <DetailSection title="Galaxy DNA">
+                <KeyValueGrid
+                  values={{
+                    Age: model.galaxyDNA.age,
+                    Metallicity: model.galaxyDNA.metallicity,
+                    "Civilization Density": model.galaxyDNA.civilizationDensity,
+                    "Anomaly Density": model.galaxyDNA.anomalyDensity,
+                    "Resource Richness": model.galaxyDNA.resourceRichness,
+                    Hostility: model.galaxyDNA.hostility,
+                    "Terraform Difficulty": model.galaxyDNA.terraformDifficulty,
+                    "Technology Level": model.galaxyDNA.technologyLevel,
+                    "Dominant Star Types": model.galaxyDNA.dominantStarTypes.join(", "),
+                    "Rare Phenomena": model.galaxyDNA.rarePhenomena.join(", "),
+                    "Earthlike Chance": model.galaxyDNA.earthlikeWorldChance,
+                    "Ruin Chance": model.galaxyDNA.ruinChance,
+                    "Black Hole Chance": model.galaxyDNA.blackHoleChance
+                  }}
+                />
               </DetailSection>
             </div>
             <div className="space-y-4">
@@ -2253,16 +2443,30 @@ function GalaxyCard({
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <Breadcrumbs items={["Universe", galaxy.name, "Sectors"]} />
             <div className="flex flex-wrap gap-2">
-              <Button type="button" onClick={model.isUnlimited ? onAddSector : onGenerateSectors}>
-                <Sparkles className="h-4 w-4" />
-                {model.isUnlimited ? "Generate New Sector" : "Generate Sectors"}
-              </Button>
-              <Button type="button" onClick={onAddSector} className="border-slate-600 bg-slate-900/70 text-slate-100">
-                <CirclePlus className="h-4 w-4" />
-                {model.isUnlimited ? "Continue Exploring Milky Way" : "Add Sector"}
-              </Button>
+              {model.isUnlocked ? (
+                <>
+                  <Button type="button" onClick={model.isUnlimited ? onAddSector : onGenerateSectors}>
+                    <Sparkles className="h-4 w-4" />
+                    Generate New Sector
+                  </Button>
+                  <Button type="button" onClick={onAddSector} className="border-slate-600 bg-slate-900/70 text-slate-100">
+                    <CirclePlus className="h-4 w-4" />
+                    Continue Exploring Galaxy
+                  </Button>
+                </>
+              ) : (
+                <Button type="button" onClick={onUnlock} className="border-amber-300/30 bg-amber-500/10 text-amber-100 hover:bg-amber-500/15">
+                  <Sparkles className="h-4 w-4" />
+                  Unlock Galaxy
+                </Button>
+              )}
             </div>
           </div>
+          {!model.isUnlocked ? (
+            <div className="rounded-md border border-amber-300/25 bg-amber-500/10 p-4 text-sm font-semibold leading-6 text-amber-100">
+              {model.unlockRequirement}
+            </div>
+          ) : null}
           {sectors.length ? (
             <div className="grid gap-4 xl:grid-cols-2">
               {sectors.map((sectorCard) => (
@@ -2317,7 +2521,7 @@ export function GalaxyGeneratorWorkflow() {
 
   function generateGalaxyCards() {
     const next = Array.from({ length: Math.max(1, count) }, (_, index) => {
-      const galaxy = generateGalaxy(universe.universe_seed, index);
+      const galaxy = createExpansionGalaxy(universe.universe_seed, index);
       return toGalaxyState(galaxy.is_fixed ? galaxy : applyGalaxyBias(galaxy, type, size));
     });
     setGalaxies(next);
@@ -2332,11 +2536,13 @@ export function GalaxyGeneratorWorkflow() {
 
   function generateSectorsForGalaxy(galaxyId: string, append = false) {
     updateGalaxy(galaxyId, (card) => {
+      if (card.galaxy.is_unlocked === false) return card;
       const startIndex = append ? card.sectors.length : 0;
-      const batchSize = isMilkyWay(card.galaxy) ? 1 : 6;
-      const generated = generateSectors(card.galaxy, startIndex + batchSize)
-        .slice(startIndex, startIndex + batchSize)
-        .map((sector, index) => toSectorState(normalizeMilkyWaySector(card.galaxy, sector, startIndex + index), card.galaxy));
+      const batchSize = card.galaxy.is_unlimited ? 1 : 6;
+      const generated = Array.from({ length: batchSize }, (_, index) => {
+        const sectorIndex = startIndex + index;
+        return toSectorState(normalizeGalaxySector(card.galaxy, generateSector(card.galaxy, sectorIndex), sectorIndex), card.galaxy);
+      });
       return { ...card, sectors: append ? [...card.sectors, ...generated] : generated };
     });
   }
@@ -2347,11 +2553,24 @@ export function GalaxyGeneratorWorkflow() {
       sectors: galaxyCard.sectors.map((sectorCard) => {
         if (sectorCard.sector.id !== sectorId) return sectorCard;
         const startIndex = append ? sectorCard.systems.length : 0;
-        const generated = generateStarSystems(sectorCard.sector, Math.min(sectorCard.sector.system_count, startIndex + 6))
-          .slice(startIndex, startIndex + 6)
-          .map((system, index) => toSystemState(normalizeMilkyWaySystem(sectorCard.sector, system, startIndex + index), galaxyCard.galaxy, sectorCard.sector));
+        const generated = Array.from({ length: 6 }, (_, index) => {
+          const systemIndex = startIndex + index;
+          return toSystemState(normalizeGalaxySystem(sectorCard.sector, generateStarSystem(sectorCard.sector, systemIndex), systemIndex), galaxyCard.galaxy, sectorCard.sector);
+        });
         return { ...sectorCard, systems: append ? [...sectorCard.systems, ...generated] : generated };
       })
+    }));
+  }
+
+  function unlockGalaxy(galaxyId: string) {
+    updateGalaxy(galaxyId, (card) => ({
+      ...card,
+      galaxy: {
+        ...card.galaxy,
+        is_unlocked: true,
+        discovery_state: "Unlocked",
+        discovery_percent_display: card.sectors.length ? card.galaxy.discovery_percent_display : "0%"
+      }
     }));
   }
 
@@ -2461,6 +2680,7 @@ export function GalaxyGeneratorWorkflow() {
               planetPoolError={planetPool.error}
               open={openGalaxyId === card.galaxy.id}
               onOpen={() => setOpenGalaxyId(openGalaxyId === card.galaxy.id ? null : card.galaxy.id)}
+              onUnlock={() => unlockGalaxy(card.galaxy.id)}
               onDelete={() => deleteGalaxy(card.galaxy.id)}
               onGenerateSectors={() => generateSectorsForGalaxy(card.galaxy.id)}
               onAddSector={() => generateSectorsForGalaxy(card.galaxy.id, true)}
@@ -2497,13 +2717,13 @@ export function SectorGeneratorWorkflow() {
   const [openSystemId, setOpenSystemId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const universe = useMemo(() => generateUniverse(universeSeed), [universeSeed]);
-  const galaxy = useMemo(() => generateGalaxy(universe.universe_seed, galaxyIndex), [galaxyIndex, universe.universe_seed]);
+  const galaxy = useMemo(() => createExpansionGalaxy(universe.universe_seed, galaxyIndex), [galaxyIndex, universe.universe_seed]);
   const planetPool = useGeneratedPlanetPool();
   const assignedPlanetIds = useMemo(() => assignedPlanetIdsInSectors(cards), [cards]);
 
   function generateSectorCards() {
-    const next = generateSectors(galaxy, Math.max(1, count)).map((sector, index) => {
-      const normalizedSector = normalizeMilkyWaySector(galaxy, sector, index);
+    const next = Array.from({ length: Math.max(1, count) }, (_, index) => {
+      const normalizedSector = normalizeGalaxySector(galaxy, generateSector(galaxy, index), index);
       return toSectorState(normalizedSector.is_fixed ? normalizedSector : applySectorBias(normalizedSector, sectorType, rarity), galaxy);
     });
     setCards(next);
@@ -2518,9 +2738,10 @@ export function SectorGeneratorWorkflow() {
   function generateSystems(sectorId: string, append = false) {
     updateSector(sectorId, (card) => {
       const startIndex = append ? card.systems.length : 0;
-      const generated = generateStarSystems(card.sector, Math.min(card.sector.system_count, startIndex + 6))
-        .slice(startIndex, startIndex + 6)
-        .map((system, index) => toSystemState(normalizeMilkyWaySystem(card.sector, system, startIndex + index), galaxy, card.sector));
+      const generated = Array.from({ length: 6 }, (_, index) => {
+        const systemIndex = startIndex + index;
+        return toSystemState(normalizeGalaxySystem(card.sector, generateStarSystem(card.sector, systemIndex), systemIndex), galaxy, card.sector);
+      });
       return { ...card, systems: append ? [...card.systems, ...generated] : generated };
     });
   }
@@ -2643,17 +2864,16 @@ export function StarSystemGeneratorWorkflow() {
   const [openSystemId, setOpenSystemId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const universe = useMemo(() => generateUniverse(universeSeed), [universeSeed]);
-  const galaxy = useMemo(() => generateGalaxy(universe.universe_seed, galaxyIndex), [galaxyIndex, universe.universe_seed]);
+  const galaxy = useMemo(() => createExpansionGalaxy(universe.universe_seed, galaxyIndex), [galaxyIndex, universe.universe_seed]);
   const sector = useMemo(() => {
-    const generatedSector = generateSectors(galaxy, Math.max(sectorIndex + 1, 1))[sectorIndex] ?? generateSectors(galaxy, 1)[0];
-    return normalizeMilkyWaySector(galaxy, generatedSector, sectorIndex);
+    return normalizeGalaxySector(galaxy, generateSector(galaxy, sectorIndex), sectorIndex);
   }, [galaxy, sectorIndex]);
   const planetPool = useGeneratedPlanetPool();
   const assignedPlanetIds = useMemo(() => assignedPlanetIdsInSystems(cards), [cards]);
 
   function generateSystemCards() {
-    const next = generateStarSystems(sector, Math.max(1, count)).map((system, index) => {
-      const normalizedSystem = normalizeMilkyWaySystem(sector, system, index);
+    const next = Array.from({ length: Math.max(1, count) }, (_, index) => {
+      const normalizedSystem = normalizeGalaxySystem(sector, generateStarSystem(sector, index), index);
       const biasedSystem = normalizedSystem.is_fixed ? normalizedSystem : applySystemBias(normalizedSystem, rarity, starRule);
       return toSystemState(biasedSystem, galaxy, sector);
     });

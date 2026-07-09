@@ -35,6 +35,32 @@ export type GalaxyNode = {
   generation_version?: string;
   is_fixed?: boolean;
   is_procedural?: boolean;
+  is_unlocked?: boolean;
+  is_unlimited?: boolean;
+  discovery_state?: string;
+  discovery_percent_display?: string;
+  generated_sector_count?: number;
+  generated_system_count?: number;
+  generated_planet_count?: number;
+  discovered_sector_count?: number;
+  discovered_system_count?: number;
+  discovered_planet_count?: number;
+  sector_ids?: string[];
+  galaxy_dna?: {
+    age: string;
+    metallicity: string;
+    civilizationDensity: string;
+    anomalyDensity: string;
+    resourceRichness: string;
+    hostility: string;
+    terraformDifficulty: string;
+    technologyLevel: string;
+    dominantStarTypes: string[];
+    rarePhenomena: string[];
+    earthlikeWorldChance: string;
+    ruinChance: string;
+    blackHoleChance: string;
+  };
 };
 
 export type SectorNode = {
