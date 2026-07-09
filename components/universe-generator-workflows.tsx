@@ -710,6 +710,27 @@ function planetImageUrl(planet: GeneratedPlanet) {
   return largest?.url ?? planet.image_url ?? planet.orbit_view_image_url ?? null;
 }
 
+function hydrateAssignedPlanetArtwork(planet: AssignedPlanet, planetPool: GeneratedPlanet[]): AssignedPlanet {
+  const libraryPlanet = planetPool.find((candidate) => candidate.id === planet.id || candidate.seed === planet.seed);
+
+  if (!libraryPlanet) {
+    return planet;
+  }
+
+  return {
+    ...libraryPlanet,
+    ...planet,
+    image_url: libraryPlanet.image_url ?? planet.image_url,
+    orbit_view_image_url: libraryPlanet.orbit_view_image_url ?? planet.orbit_view_image_url,
+    surface_landscape_image_url: libraryPlanet.surface_landscape_image_url ?? planet.surface_landscape_image_url,
+    surface_landscape_status: libraryPlanet.surface_landscape_status ?? planet.surface_landscape_status,
+    image_status: libraryPlanet.image_status ?? planet.image_status,
+    image_variants: libraryPlanet.image_variants ?? planet.image_variants,
+    image_prompt: libraryPlanet.image_prompt ?? planet.image_prompt,
+    orbit_view_prompt: libraryPlanet.orbit_view_prompt ?? planet.orbit_view_prompt
+  };
+}
+
 function planetPlaceholderStyle(planet: GeneratedPlanet): CSSProperties {
   const text = [planet.planet_class, planet.planet_subclass, planet.primary_biome, planet.climate, planet.atmosphere].join(" ").toLowerCase();
   if (text.includes("lava") || text.includes("volcanic")) return { background: "radial-gradient(circle at 35% 28%, #ffb26b, #f97316 28%, #42110b 72%)" };
@@ -1889,6 +1910,7 @@ function StarSystemDetailPanel({
   const stats = systemStats(card);
   const model = systemSeedModel(card);
   const availablePlanets = planetPool.filter((planet) => !assignedPlanetIds.has(planet.id));
+  const assignedPlanets = card.planets.map((planet) => hydrateAssignedPlanetArtwork(planet, planetPool));
   const composition = [
     { label: "Inner Planets", value: Math.min(stats.planetCount, 4) },
     { label: "Habitable Planets", value: stats.habitablePlanets.length },
@@ -2089,9 +2111,9 @@ function StarSystemDetailPanel({
             {!planetPoolLoading && !availablePlanets.length ? <EmptyState>No unassigned generated planets are available. Generate more planets first.</EmptyState> : null}
           </div>
         ) : null}
-        {card.planets.length || card.bodies.length ? (
+        {assignedPlanets.length || card.bodies.length ? (
           <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
-            {card.planets.map((planet) => (
+            {assignedPlanets.map((planet) => (
               <AssignedPlanetCard key={planet.id} planet={planet} onOpen={() => setSelectedPlanet(planet)} onUnassign={() => onUnassignPlanet(planet.id)} />
             ))}
             {card.bodies.map((body) => (
