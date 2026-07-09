@@ -405,7 +405,7 @@ function slug(value: string) {
     .replace(/^-+|-+$/g, "");
 }
 
-const solPlanetNames = new Set(["Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"]);
+const solMajorPlanetNames = new Set(["Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"]);
 
 function withAssignment(body: CelestialBodyNode, context: AssignmentContext, orbitIndex: number, assignedPlanetId?: string): BodyCardState {
   return {
@@ -445,6 +445,76 @@ function assignPlanetToContext(planet: GeneratedPlanet, context: AssignmentConte
   };
 }
 
+function fixedSolBodyType(planet: GeneratedPlanet) {
+  if (planet.traits.includes("Moon") || planet.distance_from_star.startsWith("Moon of ")) return "Moon";
+  if (planet.traits.includes("Dwarf Planet") || planet.planet_class === "Dwarf Planet") return "Dwarf Planet";
+  if (planet.traits.includes("Asteroid Belt") || planet.planet_subclass.includes("Belt")) return "Asteroid Belt";
+  return "Planet";
+}
+
+function fixedSolOrbitParent(planet: GeneratedPlanet) {
+  if (planet.distance_from_star.startsWith("Moon of ")) return planet.distance_from_star.replace("Moon of ", "");
+  return planet.star_system || "Sol";
+}
+
+function fixedSolCelestialBodyToCard(body: CelestialBodyNode, context: AssignmentContext, sourcePlanet?: GeneratedPlanet): BodyCardState {
+  const assigned = sourcePlanet ? assignPlanetToContext(sourcePlanet, context, sourcePlanet.orbit_position) : undefined;
+  const gasGiant = body.uses_orbital_gameplay || body.planet_class === "Gas Giant";
+  const orbitIndex = body.orbit_position ?? sourcePlanet?.orbit_position ?? body.generation_index ?? 0;
+
+  return {
+    ...body,
+    id: sourcePlanet?.id ?? body.id,
+    system_id: context.system.id,
+    name: body.name,
+    celestial_body_type: sourcePlanet ? fixedSolBodyType(sourcePlanet) : body.celestial_body_type,
+    planet_class: sourcePlanet?.planet_class ?? body.planet_class,
+    planet_subclass: sourcePlanet?.planet_subclass ?? body.planet_subclass,
+    planet_rarity: sourcePlanet?.rarity ?? body.planet_rarity,
+    biome: sourcePlanet?.primary_biome ?? body.biome,
+    atmosphere: sourcePlanet?.atmosphere ?? body.atmosphere,
+    gravity: sourcePlanet?.gravity ?? body.gravity,
+    orbit_position: orbitIndex,
+    orbit_parent: sourcePlanet ? fixedSolOrbitParent(sourcePlanet) : body.orbit_parent,
+    landable: sourcePlanet?.landable ?? body.landable,
+    colonizable: sourcePlanet?.colonizable ?? body.colonizable,
+    colonizable_status: sourcePlanet
+      ? sourcePlanet.colonized
+        ? "Already Colonized"
+        : sourcePlanet.colonizable
+          ? "Colonizable"
+          : "Not Colonizable"
+      : body.colonizable_status,
+    uses_orbital_gameplay: gasGiant,
+    is_fixed: true,
+    is_starting_body: body.is_starting_body || sourcePlanet?.name === "Earth" || Boolean(sourcePlanet?.modifiers.includes("Starting Body")),
+    is_procedural: false,
+    unlock_requirement: sourcePlanet?.required_technology?.[0] ?? body.unlock_requirement ?? "Survey Required",
+    resources: sourcePlanet?.resources ?? body.resources,
+    notes: sourcePlanet?.notes ?? body.notes,
+    seed: sourcePlanet?.seed ?? body.seed,
+    generation_parent_seed: context.system.system_seed,
+    generation_index: orbitIndex,
+    generation_version: "fixed-sol-v1",
+    assignedPlanetId: sourcePlanet?.id,
+    assignedSystemId: context.system.id,
+    assignedSystemName: context.system.system_name,
+    assignedSectorId: context.sector.id,
+    assignedSectorName: context.sector.sector_name,
+    assignedGalaxyId: context.galaxy.id,
+    assignedGalaxyName: context.galaxy.name,
+    orbitIndex,
+    orbitalRole: "Planet",
+    parentStarClass: context.system.star_type,
+    parentStarSeed: context.system.system_seed,
+    image_url: sourcePlanet ? planetImageUrl(sourcePlanet) : null,
+    seed_id: sourcePlanet?.seed ?? body.seed ?? body.id,
+    story: sourcePlanet?.story ?? body.notes,
+    discovery_points: sourcePlanet?.discovery_points,
+    source_planet: assigned
+  };
+}
+
 function linkSystemToPlanets(system: StarSystemNode, context: AssignmentContext, planets: AssignedPlanet[]): LinkedStarSystemNode {
   return {
     ...system,
@@ -460,15 +530,25 @@ function linkSystemToPlanets(system: StarSystemNode, context: AssignmentContext,
 
 function toSystemState(system: StarSystemNode, galaxy?: GalaxyNode, sector?: SectorNode): StarSystemCardState {
   const context = galaxy && sector ? { galaxy, sector, system } : null;
+  const fixedSolPlanets = context && system.is_fixed ? fixedSolGeneratedPlanets() : [];
+  const fixedSolBodies = context && system.is_fixed ? generateCelestialBodies(system).filter((body) => body.celestial_body_type !== "Star") : [];
+  const fixedSolPlanetByName = new Map(fixedSolPlanets.map((planet) => [planet.name, planet]));
   const planets =
     context && system.is_fixed
-      ? fixedSolGeneratedPlanets()
-          .filter((planet) => solPlanetNames.has(planet.name))
+      ? fixedSolPlanets
+          .filter((planet) => solMajorPlanetNames.has(planet.name))
           .sort((left, right) => left.orbit_position - right.orbit_position)
           .map((planet) => assignPlanetToContext(planet, context, planet.orbit_position))
       : [];
+  const bodies =
+    context && system.is_fixed
+      ? fixedSolBodies
+          .filter((body) => !solMajorPlanetNames.has(body.name))
+          .sort((left, right) => (left.orbit_position ?? 99) - (right.orbit_position ?? 99) || left.name.localeCompare(right.name))
+          .map((body) => fixedSolCelestialBodyToCard(body, context, fixedSolPlanetByName.get(body.name)))
+      : [];
 
-  return { system: context ? linkSystemToPlanets(system, context, planets) : system, bodies: [], planets };
+  return { system: context ? linkSystemToPlanets(system, context, planets) : system, bodies, planets };
 }
 
 function toSectorState(sector: SectorNode, galaxy?: GalaxyNode): SectorCardState {
@@ -728,6 +808,22 @@ function hydrateAssignedPlanetArtwork(planet: AssignedPlanet, planetPool: Genera
     image_variants: libraryPlanet.image_variants ?? planet.image_variants,
     image_prompt: libraryPlanet.image_prompt ?? planet.image_prompt,
     orbit_view_prompt: libraryPlanet.orbit_view_prompt ?? planet.orbit_view_prompt
+  };
+}
+
+function hydrateBodyArtwork(body: BodyCardState, planetPool: GeneratedPlanet[]): BodyCardState {
+  const libraryPlanet = planetPool.find((candidate) => candidate.id === body.assignedPlanetId || candidate.seed === body.seed);
+
+  if (!libraryPlanet) {
+    return body;
+  }
+
+  const imageUrl = planetImageUrl(libraryPlanet);
+
+  return {
+    ...body,
+    image_url: imageUrl ?? body.image_url,
+    source_planet: body.source_planet ? hydrateAssignedPlanetArtwork(body.source_planet as AssignedPlanet, planetPool) : libraryPlanet
   };
 }
 
@@ -1911,6 +2007,7 @@ function StarSystemDetailPanel({
   const model = systemSeedModel(card);
   const availablePlanets = planetPool.filter((planet) => !assignedPlanetIds.has(planet.id));
   const assignedPlanets = card.planets.map((planet) => hydrateAssignedPlanetArtwork(planet, planetPool));
+  const assignedBodies = card.bodies.map((body) => hydrateBodyArtwork(body, planetPool));
   const composition = [
     { label: "Inner Planets", value: Math.min(stats.planetCount, 4) },
     { label: "Habitable Planets", value: stats.habitablePlanets.length },
@@ -2111,12 +2208,12 @@ function StarSystemDetailPanel({
             {!planetPoolLoading && !availablePlanets.length ? <EmptyState>No unassigned generated planets are available. Generate more planets first.</EmptyState> : null}
           </div>
         ) : null}
-        {assignedPlanets.length || card.bodies.length ? (
+        {assignedPlanets.length || assignedBodies.length ? (
           <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
             {assignedPlanets.map((planet) => (
               <AssignedPlanetCard key={planet.id} planet={planet} onOpen={() => setSelectedPlanet(planet)} onUnassign={() => onUnassignPlanet(planet.id)} />
             ))}
-            {card.bodies.map((body) => (
+            {assignedBodies.map((body) => (
               <BodyCard key={body.id} body={body} onOpen={() => setSelectedBody(body)} onDelete={() => onDeleteBody(body.id)} />
             ))}
           </div>
