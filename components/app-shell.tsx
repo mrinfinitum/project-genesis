@@ -88,6 +88,7 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/discovery-journal", label: "Discovery Journal", icon: ScrollText },
       { href: "/universe-timeline", label: "Universe Timeline", icon: History },
       { href: "/factions", label: "Factions", icon: Landmark },
+      { href: "/colonies", label: "Colonies", icon: Building2 },
       { href: "/planetary-rules", label: "Rules", icon: GitBranch }
     ]
   },

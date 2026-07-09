@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { ChevronRight, CirclePlus, Orbit, Pencil, Plus, Search, Sparkles, Star, Trash2, Waypoints, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { handoffData } from "@/data/handoff";
+import { createColonyRecord, upsertDiscoveredColony, type ColonyRecord } from "@/lib/colonies/procedural";
 import { appendTimelineEvent, renameDiscoveryObject, upsertDiscoveryJournalEntry, type DiscoveryObjectType, type TimelineImportance, type TimelineEventType } from "@/lib/explorer/discovery-log";
 import { generateFaction, upsertDiscoveredFaction, type FactionRecord } from "@/lib/factions/procedural";
 import { DEFAULT_UNIVERSE_SEED } from "@/lib/universe/fallback-data";
@@ -42,6 +43,9 @@ type DiscoveryFields = {
   factionIds?: string[];
   factionPresence?: FactionRecord[];
   faction?: FactionRecord;
+  colonyId?: string;
+  colony?: ColonyRecord;
+  colonizationStatus?: string;
 };
 
 type PlayerProgressionState = {
@@ -110,6 +114,9 @@ type PlanetAssignmentFields = Partial<DiscoveryFields> & {
   parentStarClass?: string;
   parentStarSeed?: string;
   faction?: FactionRecord;
+  colonyId?: string;
+  colony?: ColonyRecord;
+  colonizationStatus?: string;
 };
 
 type AssignedPlanet = GeneratedPlanet & PlanetAssignmentFields;
@@ -1214,6 +1221,9 @@ function planetToBodySnapshot(planet: AssignedPlanet): BodyCardState {
     faction: planet.faction,
     factionIds: planet.faction ? [planet.faction.id] : [],
     factionPresence: planet.faction ? [planet.faction] : [],
+    colonyId: planet.colonyId,
+    colony: planet.colony,
+    colonizationStatus: planet.colonizationStatus,
     source_planet: planet
   }, normalizeDiscoveryState(planet.discoveryState, "detected"), planet.discoveryPoints ?? planet.discovery_points ?? 120, planet.colonizable);
 }
@@ -1235,6 +1245,17 @@ function FactionBadges({ factions, compact = false }: { factions?: FactionRecord
           {compact ? faction.type : `${faction.name} - ${faction.type}`}
         </Badge>
       ))}
+    </div>
+  );
+}
+
+function ColonyBadge({ colony, compact = false }: { colony?: ColonyRecord; compact?: boolean }) {
+  if (!colony) return null;
+  return (
+    <div className="flex flex-wrap gap-2">
+      <Badge className="border-emerald-300/45 bg-emerald-400/10 text-emerald-100">
+        {compact ? `Colony ${colony.colonyLevel}` : `${colony.name} - ${colony.status}`}
+      </Badge>
     </div>
   );
 }
@@ -2162,6 +2183,7 @@ function BodyCard({ body, onOpen, onDelete }: { body: BodyCardState; onOpen: () 
           {body.uses_orbital_gameplay ? <Badge className="border-cyan-300/45 text-cyan-100">Orbital World</Badge> : null}
         </div>
         <FactionBadges factions={body.factionPresence ?? (body.faction ? [body.faction] : [])} compact />
+        <ColonyBadge colony={body.colony} compact />
       </div>
     </article>
   );
@@ -2287,6 +2309,18 @@ function BodyDetailOverlay({
             <DetailSection title="Faction Presence">
               {body.factionPresence?.length || body.faction ? <FactionBadges factions={body.factionPresence ?? (body.faction ? [body.faction] : [])} /> : <p className="text-sm font-semibold text-slate-500">No faction presence detected.</p>}
             </DetailSection>
+            <DetailSection title="Colony Summary">
+              {body.colony ? (
+                <div className="grid gap-3">
+                  <StatChip label="Colony" value={body.colony.name} />
+                  <StatChip label="Status" value={body.colony.status} />
+                  <StatChip label="Population" value={body.colony.population.toLocaleString()} />
+                  <StatChip label="Production" value={body.colony.productionRating} />
+                </div>
+              ) : (
+                <p className="text-sm font-semibold text-slate-500">No colony founded on this world.</p>
+              )}
+            </DetailSection>
           </div>
         </div>
       </article>
@@ -2401,6 +2435,7 @@ function AssignedPlanetCard({ planet, onOpen, onUnassign }: { planet: AssignedPl
           </p>
         </div>
         <FactionBadges factions={planet.factionPresence ?? (planet.faction ? [planet.faction] : [])} compact />
+        <ColonyBadge colony={planet.colony} compact />
       </div>
     </article>
   );
@@ -2807,7 +2842,8 @@ function StarSystemDetailPanel({
           }}
           onClaim={() => {
             const claimed = claimDiscovery(withDiscovery(selectedPlanet as unknown as Record<string, unknown>, normalizeDiscoveryState(selectedPlanet.discoveryState, "scanned"), selectedPlanet.discoveryPoints ?? selectedPlanet.discovery_points ?? 120, selectedPlanet.colonizable)) as AssignedPlanet;
-            setSelectedPlanet({ ...selectedPlanet, ...claimed, colonized: true });
+            const colony = createColonyForBody(context, planetToBodySnapshot({ ...selectedPlanet, ...claimed } as AssignedPlanet));
+            setSelectedPlanet({ ...selectedPlanet, ...claimed, colonized: true, colonizationStatus: "colonized", colonyId: colony.id, colony });
             onClaimBody(selectedPlanet.id, "planet");
           }}
         />
@@ -2828,7 +2864,8 @@ function StarSystemDetailPanel({
           }}
           onClaim={() => {
             const claimed = { ...claimDiscovery(selectedBody), colonizable_status: "Colonized" };
-            setSelectedBody(claimed);
+            const colony = createColonyForBody(context, claimed);
+            setSelectedBody({ ...claimed, colonizationStatus: "colonized", colonyId: colony.id, colony });
             onClaimBody(selectedBody.id, "body");
           }}
         />
@@ -3528,7 +3565,7 @@ function scanBodyInSystem(card: StarSystemCardState, bodyId: string, source: "bo
   };
 }
 
-function claimBodyInSystem(card: StarSystemCardState, bodyId: string, source: "body" | "planet") {
+function claimBodyInSystem(card: StarSystemCardState, bodyId: string, source: "body" | "planet", colony?: ColonyRecord) {
   if (source === "planet") {
     return {
       ...card,
@@ -3537,7 +3574,10 @@ function claimBodyInSystem(card: StarSystemCardState, bodyId: string, source: "b
           ? {
               ...planet,
               ...claimDiscovery(withDiscovery(planet as unknown as Record<string, unknown>, normalizeDiscoveryState(planet.discoveryState, "scanned"), planet.discoveryPoints ?? planet.discovery_points ?? 120, planet.colonizable)),
-              colonized: true
+              colonized: true,
+              colonizationStatus: "colonized",
+              colonyId: colony?.id,
+              colony
             }
           : planet
       )
@@ -3546,7 +3586,7 @@ function claimBodyInSystem(card: StarSystemCardState, bodyId: string, source: "b
 
   return {
     ...card,
-    bodies: card.bodies.map((body) => (body.id === bodyId ? { ...claimDiscovery(body), colonizable_status: "Colonized" } : body))
+    bodies: card.bodies.map((body) => (body.id === bodyId ? { ...claimDiscovery(body), colonizable_status: "Colonized", colonizationStatus: "colonized", colonyId: colony?.id, colony } : body))
   };
 }
 
@@ -3712,6 +3752,56 @@ function logFactionDiscovery(faction: FactionRecord) {
     starSystemId: faction.homeStarSystemId,
     planetId: faction.homePlanetId,
     importance: faction.type === "Ancient Remnant" || faction.type === "Alien Civilization" || faction.type === "AI Collective" ? "high" : "medium"
+  });
+}
+
+function createColonyForBody(context: AssignmentContext, body: BodyCardState) {
+  return createColonyRecord({
+    planetId: body.id,
+    planetName: namedValue(body, body.name),
+    galaxyId: context.galaxy.id,
+    sectorId: context.sector.id,
+    starSystemId: context.system.id,
+    planetClass: body.planet_class,
+    biome: body.biome,
+    rarity: body.planet_rarity,
+    resources: body.resources,
+    resourceIds: body.source_planet?.resourceIds ?? (body as unknown as { resourceIds?: string[] }).resourceIds,
+    hazards: body.source_planet?.hazards,
+    colonizable: body.colonizable,
+    landable: body.landable,
+    faction: body.factionPresence?.[0] ?? body.faction
+  });
+}
+
+function logColonyFounded(context: AssignmentContext, body: BodyCardState, colony: ColonyRecord) {
+  upsertDiscoveredColony(colony);
+  upsertDiscoveryJournalEntry({
+    objectId: colony.id,
+    objectType: "colony",
+    objectName: colony.name,
+    generatedName: colony.name,
+    discoveryState: "colonized",
+    discoveredBy: "Studio Explorer",
+    discoveryPoints: Math.max(400, body.discoveryPoints + colony.colonyLevel * 120),
+    galaxyId: context.galaxy.id,
+    sectorId: context.sector.id,
+    starSystemId: context.system.id,
+    rarity: body.planet_rarity ?? colony.status,
+    tags: ["Colony", colony.status, colony.ownerType, body.planet_class ?? "World"],
+    notes: colony.description
+  });
+  logTimeline({
+    eventType: "colony_founded",
+    title: `${colony.name} Founded`,
+    description: `${colony.name} was founded on ${namedValue(body, body.name)} with ${colony.population.toLocaleString()} settlers.`,
+    relatedObjectId: colony.id,
+    relatedObjectType: "colony",
+    galaxyId: context.galaxy.id,
+    sectorId: context.sector.id,
+    starSystemId: context.system.id,
+    planetId: body.id,
+    importance: colony.status === "growing" || colony.colonyLevel > 1 ? "high" : "medium"
   });
 }
 
@@ -3965,16 +4055,21 @@ export function GalaxyGeneratorWorkflow() {
     const sectorCard = galaxyCard?.sectors.find((sector) => sector.sector.id === sectorId);
     const systemCard = sectorCard?.systems.find((system) => system.system.id === systemId);
     const currentBody = source === "planet" ? systemCard?.planets.find((planet) => planet.id === bodyId) : systemCard?.bodies.find((body) => body.id === bodyId);
+    let colony: ColonyRecord | undefined;
     if (galaxyCard && sectorCard && systemCard && currentBody) {
+      const context = { galaxy: galaxyCard.galaxy, sector: sectorCard.sector, system: systemCard.system };
       const claimed = claimDiscovery(source === "planet" ? planetToBodySnapshot(currentBody as AssignedPlanet) : (currentBody as BodyCardState));
-      logBodyDiscovery({ galaxy: galaxyCard.galaxy, sector: sectorCard.sector, system: systemCard.system }, claimed, "planet_claimed", "high");
-      logBodyDiscovery({ galaxy: galaxyCard.galaxy, sector: sectorCard.sector, system: systemCard.system }, claimed, "planet_colonized", "high");
+      colony = createColonyForBody(context, claimed);
+      const claimedWithColony = { ...claimed, colonizable_status: "Colonized", colonizationStatus: "colonized", colonyId: colony.id, colony };
+      logBodyDiscovery(context, claimedWithColony, "planet_claimed", "high");
+      logBodyDiscovery(context, claimedWithColony, "planet_colonized", "high");
+      logColonyFounded(context, claimedWithColony, colony);
     }
     updateGalaxy(galaxyId, (card) => ({
       ...card,
       sectors: card.sectors.map((sector) => ({
         ...sector,
-        systems: sector.sector.id === sectorId ? sector.systems.map((system) => (system.system.id === systemId ? claimBodyInSystem(system, bodyId, source) : system)) : sector.systems
+        systems: sector.sector.id === sectorId ? sector.systems.map((system) => (system.system.id === systemId ? claimBodyInSystem(system, bodyId, source, colony) : system)) : sector.systems
       }))
     }));
   }
@@ -4301,14 +4396,19 @@ export function SectorGeneratorWorkflow() {
     const sectorCard = cards.find((card) => card.sector.id === sectorId);
     const systemCard = sectorCard?.systems.find((system) => system.system.id === systemId);
     const currentBody = source === "planet" ? systemCard?.planets.find((planet) => planet.id === bodyId) : systemCard?.bodies.find((body) => body.id === bodyId);
+    let colony: ColonyRecord | undefined;
     if (sectorCard && systemCard && currentBody) {
+      const context = { galaxy, sector: sectorCard.sector, system: systemCard.system };
       const claimed = claimDiscovery(source === "planet" ? planetToBodySnapshot(currentBody as AssignedPlanet) : (currentBody as BodyCardState));
-      logBodyDiscovery({ galaxy, sector: sectorCard.sector, system: systemCard.system }, claimed, "planet_claimed", "high");
-      logBodyDiscovery({ galaxy, sector: sectorCard.sector, system: systemCard.system }, claimed, "planet_colonized", "high");
+      colony = createColonyForBody(context, claimed);
+      const claimedWithColony = { ...claimed, colonizable_status: "Colonized", colonizationStatus: "colonized", colonyId: colony.id, colony };
+      logBodyDiscovery(context, claimedWithColony, "planet_claimed", "high");
+      logBodyDiscovery(context, claimedWithColony, "planet_colonized", "high");
+      logColonyFounded(context, claimedWithColony, colony);
     }
     updateSector(sectorId, (sectorCard) => ({
       ...sectorCard,
-      systems: sectorCard.systems.map((systemCard) => (systemCard.system.id === systemId ? claimBodyInSystem(systemCard, bodyId, source) : systemCard))
+      systems: sectorCard.systems.map((systemCard) => (systemCard.system.id === systemId ? claimBodyInSystem(systemCard, bodyId, source, colony) : systemCard))
     }));
   }
 
@@ -4520,12 +4620,17 @@ export function StarSystemGeneratorWorkflow() {
     progression.recordColonization();
     const card = cards.find((item) => item.system.id === systemId);
     const currentBody = source === "planet" ? card?.planets.find((planet) => planet.id === bodyId) : card?.bodies.find((body) => body.id === bodyId);
+    let colony: ColonyRecord | undefined;
     if (card && currentBody) {
+      const context = { galaxy, sector, system: card.system };
       const claimed = claimDiscovery(source === "planet" ? planetToBodySnapshot(currentBody as AssignedPlanet) : (currentBody as BodyCardState));
-      logBodyDiscovery({ galaxy, sector, system: card.system }, claimed, "planet_claimed", "high");
-      logBodyDiscovery({ galaxy, sector, system: card.system }, claimed, "planet_colonized", "high");
+      colony = createColonyForBody(context, claimed);
+      const claimedWithColony = { ...claimed, colonizable_status: "Colonized", colonizationStatus: "colonized", colonyId: colony.id, colony };
+      logBodyDiscovery(context, claimedWithColony, "planet_claimed", "high");
+      logBodyDiscovery(context, claimedWithColony, "planet_colonized", "high");
+      logColonyFounded(context, claimedWithColony, colony);
     }
-    updateSystem(systemId, (card) => claimBodyInSystem(card, bodyId, source));
+    updateSystem(systemId, (card) => claimBodyInSystem(card, bodyId, source, colony));
   }
 
   function renameSystem(systemId: string, displayName: string) {

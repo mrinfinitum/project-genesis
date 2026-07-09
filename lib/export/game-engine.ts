@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getGameData } from "@/lib/data";
 import { discoveryJournalSchema, sampleDiscoveryJournal, sampleTimelineEvents, timelineEventSchema } from "@/lib/explorer/discovery-log";
+import { createColonyRecord, generateFallbackColonies, type ColonyRecord } from "@/lib/colonies/procedural";
 import { generateFaction, generateFallbackFactions, type FactionRecord } from "@/lib/factions/procedural";
 import { getLocalBubbleSystems, generatedCelestialBodyRows, generatedStarSystemRows } from "@/lib/universe/fallback-data";
 import { normalizePlanetResourceProfiles, validatePlanetResourceProfiles } from "@/lib/resources/planet-resource-profiles";
@@ -109,7 +110,7 @@ type CanonicalModules = {
   discovery_journal: typeof sampleDiscoveryJournal;
   timeline_events: typeof sampleTimelineEvents;
   explorer_schemas: Array<Record<string, unknown>>;
-  colonies: Array<Record<string, unknown>>;
+  colonies: ColonyRecord[];
   economy: Array<Record<string, unknown>>;
   factions: FactionRecord[];
   missions: Array<Record<string, unknown>>;
@@ -328,6 +329,37 @@ function buildExportFactions(
   return [...factions.values()];
 }
 
+function buildExportColonies(planets: ExportGeneratedPlanet[], factions: FactionRecord[]) {
+  const factionByPlanet = new Map(factions.flatMap((faction) => faction.controlledPlanetIds.map((planetId) => [planetId, faction] as const)));
+  const colonies = planets
+    .filter((planet) => planet.colonized || planet.isColonizable || planet.colonizable || /earth|terran|temperate|ocean|garden/i.test(`${planet.name} ${planet.planet_class} ${planet.primary_biome}`))
+    .slice(0, 24)
+    .map((planet) => {
+      const faction = factionByPlanet.get(planet.id);
+      return createColonyRecord({
+        planetId: planet.id,
+        planetName: planet.displayName || planet.name,
+        galaxyId: planet.galaxyId,
+        sectorId: planet.sectorId,
+        starSystemId: planet.starSystemId,
+        ownerType: faction ? "faction" : "player",
+        ownerFactionId: faction?.id,
+        planetClass: planet.planet_class,
+        biome: planet.primary_biome,
+        rarity: planet.rarity,
+        resources: planet.resources,
+        resourceIds: planet.resourceIds,
+        hazards: planet.hazards,
+        colonizable: planet.colonized || planet.isColonizable,
+        landable: true,
+        faction,
+        foundedAt: "derived"
+      });
+    });
+
+  return colonies.length ? colonies : generateFallbackColonies();
+}
+
 function buildCanonicalModules(data: GameData): CanonicalModules {
   const localBubble = getLocalBubbleSystems(24);
   const starSystems = data.star_systems.length ? data.star_systems : (generatedStarSystemRows(24) as GameData["star_systems"]);
@@ -336,6 +368,7 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
   const celestialBodies = data.celestial_bodies.length ? data.celestial_bodies : (generatedCelestialBodyRows(5) as GameData["celestial_bodies"]);
   const normalizedPlanets = normalizeExportPlanets(data.generated_planets, galaxies, sectors, starSystems);
   const factions = buildExportFactions(galaxies, sectors, starSystems, normalizedPlanets.assigned);
+  const colonies = buildExportColonies(normalizedPlanets.assigned, factions);
 
   return {
     resource_catalog: ResourceService.catalog,
@@ -367,7 +400,7 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
         fields: timelineEventSchema
       }
     ],
-    colonies: placeholderModule("colonies"),
+    colonies,
     economy: placeholderModule("economy"),
     factions,
     missions: placeholderModule("missions")
@@ -384,6 +417,8 @@ function buildRelationshipMap(modules: CanonicalModules) {
   const bodiesBySystem: Record<string, string[]> = {};
   const planetsBySystem: Record<string, string[]> = {};
   const factionsBySystem: Record<string, string[]> = {};
+  const coloniesByPlanet: Record<string, string[]> = {};
+  const coloniesBySystem: Record<string, string[]> = {};
 
   for (const sector of modules.sectors) {
     const galaxyId = String(sector.galaxy_id ?? "");
@@ -409,12 +444,19 @@ function buildRelationshipMap(modules: CanonicalModules) {
     factionsBySystem[faction.homeStarSystemId] = [...(factionsBySystem[faction.homeStarSystemId] ?? []), faction.id];
   }
 
+  for (const colony of modules.colonies) {
+    coloniesByPlanet[colony.planetId] = [...(coloniesByPlanet[colony.planetId] ?? []), colony.id];
+    coloniesBySystem[colony.starSystemId] = [...(coloniesBySystem[colony.starSystemId] ?? []), colony.id];
+  }
+
   return {
     sectorsByGalaxy,
     systemsBySector,
     bodiesBySystem,
     planetsBySystem,
-    factionsBySystem
+    factionsBySystem,
+    coloniesByPlanet,
+    coloniesBySystem
   };
 }
 
@@ -618,14 +660,14 @@ function targetArtifacts(target: EngineTarget, modules: CanonicalModules) {
     return {
       "ResourceCatalogModule.lua": `local ResourceCatalog = ${luaValue(modules.resource_catalog)}\n\nreturn ResourceCatalog\n`,
       "ResearchUnlockModule.lua": `local ResearchUnlocks = ${luaValue({ research: modules.research, unlocks: modules.unlock_matrix })}\n\nreturn ResearchUnlocks\n`,
-      "UniverseDataModule.lua": `local UniverseData = ${luaValue({ galaxies: modules.galaxies, sectors: modules.sectors, starSystems: modules.star_systems, planets: modules.planets, celestialBodies: modules.celestial_bodies, factions: modules.factions })}\n\nreturn UniverseData\n`,
+      "UniverseDataModule.lua": `local UniverseData = ${luaValue({ galaxies: modules.galaxies, sectors: modules.sectors, starSystems: modules.star_systems, planets: modules.planets, celestialBodies: modules.celestial_bodies, factions: modules.factions, colonies: modules.colonies })}\n\nreturn UniverseData\n`,
       "ApiService.lua": "local HttpService = game:GetService(\"HttpService\")\n\nlocal ApiService = {}\nApiService.BaseUrl = \"https://your-studio-host.example.com/api/export\"\n\nfunction ApiService.FetchGeneric()\n  local response = HttpService:GetAsync(ApiService.BaseUrl .. \"/generic\")\n  return HttpService:JSONDecode(response)\nend\n\nreturn ApiService\n"
     };
   }
 
   if (target === "web") {
     return {
-      "project-genesis.types.ts": "export type GenesisId = string;\n\nexport interface GenesisResource { id: GenesisId; resource_name: string; category: string; rarity: string; }\nexport interface GenesisResearchNode { id: GenesisId; name: string; era: string; status: string; }\nexport interface GenesisFaction { id: GenesisId; name: string; type: string; disposition: string; homeStarSystemId: GenesisId; controlledPlanetIds: GenesisId[]; }\nexport interface GenesisExportPayload { target: string; canonical: Record<string, unknown>; relationshipMap: Record<string, unknown>; }\n",
+      "project-genesis.types.ts": "export type GenesisId = string;\n\nexport interface GenesisResource { id: GenesisId; resource_name: string; category: string; rarity: string; }\nexport interface GenesisResearchNode { id: GenesisId; name: string; era: string; status: string; }\nexport interface GenesisFaction { id: GenesisId; name: string; type: string; disposition: string; homeStarSystemId: GenesisId; controlledPlanetIds: GenesisId[]; }\nexport interface GenesisColony { id: GenesisId; name: string; planetId: GenesisId; starSystemId: GenesisId; population: number; status: string; resourceOutputIds: GenesisId[]; }\nexport interface GenesisExportPayload { target: string; canonical: Record<string, unknown>; relationshipMap: Record<string, unknown>; }\n",
       "projectGenesisClient.ts": "export async function fetchProjectGenesisExport(target = 'generic') {\n  const response = await fetch(`/api/export/${target}`);\n  if (!response.ok) throw new Error(`Project Genesis export failed: ${response.status}`);\n  return response.json();\n}\n",
       "projectGenesisStore.ts": "import { create } from 'zustand';\n\ntype GenesisStore = { data: unknown | null; setData: (data: unknown) => void };\nexport const useGenesisStore = create<GenesisStore>((set) => ({ data: null, setData: (data) => set({ data }) }));\n"
     };

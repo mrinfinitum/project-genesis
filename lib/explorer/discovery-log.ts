@@ -17,6 +17,7 @@ export type TimelineEventType =
   | "planet_scanned"
   | "planet_claimed"
   | "planet_colonized"
+  | "colony_founded"
   | "rare_resource_found"
   | "faction_discovered"
   | "research_completed"
@@ -95,7 +96,7 @@ export const discoveryJournalSchema = {
 
 export const timelineEventSchema = {
   id: "string",
-  eventType: "sector_detected | sector_scanned | star_system_discovered | planet_scanned | planet_claimed | planet_colonized | rare_resource_found | faction_discovered | research_completed | intergalactic_travel_unlocked",
+  eventType: "sector_detected | sector_scanned | star_system_discovered | planet_scanned | planet_claimed | planet_colonized | colony_founded | rare_resource_found | faction_discovered | research_completed | intergalactic_travel_unlocked",
   title: "string",
   description: "string",
   timestamp: "ISO timestamp",
