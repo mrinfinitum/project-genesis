@@ -85,16 +85,21 @@ type StarSystemSeedModel = {
   discoveryPoints: number;
   starClass: string;
   starColor: string;
-  systemArchetype: string;
+  systemType: string;
   stability: string;
   gravityProfile: string;
   radiationLevel: string;
   habitableZone: string;
   planetCount: number;
+  habitableWorlds: number;
+  gasGiants: number;
   moonCount: number;
   asteroidBelts: number;
   resourceValue: string;
   dangerLevel: number;
+  colonizationPotential: string;
+  explorationRisk: string;
+  anomalyDensity: string;
   resources: string[];
   traits: string[];
   hazards: string[];
@@ -123,13 +128,19 @@ type SectorSeedModel = {
   rarity: string;
   discoveryPoints: number;
   sectorClass: string;
-  sectorArchetype: string;
-  stability: string;
+  systemDensity: string;
   coordinates: string;
   difficulty: number;
+  systemCapacity: number;
+  generatedSystems: number;
   systemCount: number;
   resourceBias: string;
   dangerLevel: string;
+  discoveryLevel: string;
+  colonizationPotential: string;
+  tradeValue: string;
+  patrolRisk: string;
+  anomalyDensity: string;
   resources: string[];
   traits: string[];
   hazards: string[];
@@ -153,15 +164,23 @@ type GalaxySeedModel = {
   rarity: string;
   discoveryPoints: number;
   galaxyClass: string;
-  galaxyArchetype: string;
-  stability: string;
-  galaxySize: string;
+  galaxyScale: string;
   sectorCount: number;
   generatedSectors: number;
   estimatedSystems: number;
   estimatedBodies: number;
   discoveryPercent: number;
   startingSector: string;
+  resourceBias: string;
+  civilizationPresence: string;
+  explorationRisk: string;
+  anomalyDensity: string;
+  isUnlimited: boolean;
+  theoreticalSystemCapacity: string;
+  generatedSystemCount: number;
+  discoveredSystemCount: number;
+  discoveredSectorCount: number;
+  discoveryPercentDisplay: string;
   resources: string[];
   traits: string[];
   hazards: string[];
@@ -307,6 +326,37 @@ function toSectorState(sector: SectorNode, galaxy?: GalaxyNode): SectorCardState
 
 function toGalaxyState(galaxy: GalaxyNode): GalaxyCardState {
   return { galaxy, sectors: [] };
+}
+
+function normalizeMilkyWaySector(galaxy: GalaxyNode, sector: SectorNode, sectorIndex: number): SectorNode {
+  if (!isMilkyWay(galaxy) || sector.is_fixed) return sector;
+  const sectorSeed = `PROJECT-GENESIS:milky-way:sector-${sectorIndex}`;
+
+  return {
+    ...sector,
+    id: `sector-milky-way-${sectorIndex}`,
+    galaxy_id: galaxy.id,
+    sector_seed: sectorSeed,
+    sector_name: `${sector.sector_name.replace(/-\d+$/, "")}-${String(sectorIndex).padStart(4, "0")}`,
+    system_count: seededRange(sectorSeed, "system-capacity", 12, 50),
+    generation_parent_seed: galaxy.galaxy_seed,
+    generation_index: sectorIndex
+  };
+}
+
+function normalizeMilkyWaySystem(sector: SectorNode, system: StarSystemNode, systemIndex: number): StarSystemNode {
+  if (!sector.sector_seed.includes("milky-way") || system.is_fixed) return system;
+  const systemSeed = `${sector.sector_seed}:system-${systemIndex}`;
+
+  return {
+    ...system,
+    id: `system-${slug(systemSeed)}`,
+    sector_id: sector.id,
+    system_seed: systemSeed,
+    catalog_designation: `MW-${String(sector.generation_index ?? 0).padStart(4, "0")}-${String(systemIndex).padStart(3, "0")}`,
+    generation_parent_seed: sector.sector_seed,
+    generation_index: systemIndex
+  };
 }
 
 function defaultGalaxyCards(universeSeed: string) {
@@ -728,9 +778,42 @@ function starColor(system: StarSystemNode) {
   return "Yellow";
 }
 
+function isSolSystem(system: StarSystemNode) {
+  return system.starting_system || system.system_name.toLowerCase() === "sol";
+}
+
+function isLocalBubble(sector: SectorNode) {
+  return sector.is_fixed || sector.sector_name.toLowerCase() === "local bubble";
+}
+
+function isMilkyWay(galaxy: GalaxyNode) {
+  return galaxy.is_fixed || galaxy.name.toLowerCase() === "milky way";
+}
+
+function dangerLabel(value: number) {
+  if (value >= 85) return "Extreme";
+  if (value >= 65) return "High";
+  if (value >= 35) return "Moderate";
+  return "Low";
+}
+
+function densityLabel(value: number) {
+  if (value >= 9) return "Dense";
+  if (value >= 4) return "Balanced";
+  return "Sparse";
+}
+
+function anomalyDensityLabel(count: number, danger = 0) {
+  if (count >= 6 || danger >= 85) return "High";
+  if (count >= 3 || danger >= 55) return "Moderate";
+  if (count >= 1 || danger >= 25) return "Low";
+  return "None";
+}
+
 function starStability(system: StarSystemNode) {
-  if (system.danger_level >= 85) return "Critical";
-  if (system.danger_level >= 65) return "Unstable";
+  if (isSolSystem(system)) return "Stable";
+  if (system.danger_level >= 85) return "Collapsing";
+  if (system.danger_level >= 65) return "Volatile";
   if (system.danger_level >= 40) return "Variable";
   return "Stable";
 }
@@ -790,15 +873,14 @@ function systemStats(card: StarSystemCardState) {
   };
 }
 
-function systemArchetype(system: StarSystemNode) {
-  if (system.starting_system) return "Civilized Core";
+function systemType(system: StarSystemNode) {
+  if (isSolSystem(system)) return "Home System";
   const source = `${system.system_role} ${system.system_type} ${system.resource_bias}`.toLowerCase();
-  if (source.includes("frontier") || source.includes("outer")) return "Frontier Reach";
-  if (source.includes("ancient") || source.includes("relic")) return "Ancient Archive";
-  if (source.includes("resource") || source.includes("mineral")) return "Resource Corridor";
-  if (source.includes("void") || source.includes("hazard")) return "Hazard Expanse";
-  if (source.includes("trade") || source.includes("civilized")) return "Trade Nexus";
-  return system.system_role || system.system_type || "Uncharted System";
+  if (source.includes("trade") || source.includes("civilized")) return "Trade Hub";
+  if (source.includes("ancient") || source.includes("relic")) return "Ancient System";
+  if (source.includes("resource") || source.includes("mineral") || source.includes("mining")) return "Mining System";
+  if (source.includes("void") || source.includes("hazard") || system.danger_level >= 70) return "Hostile System";
+  return "Frontier System";
 }
 
 function gravityProfile(system: StarSystemNode) {
@@ -809,6 +891,7 @@ function gravityProfile(system: StarSystemNode) {
 }
 
 function systemDiscoveryPoints(system: StarSystemNode, stats: ReturnType<typeof systemStats>) {
+  if (isSolSystem(system)) return 250;
   const rarityBase: Record<string, number> = {
     Common: 250,
     Uncommon: 500,
@@ -838,10 +921,18 @@ function systemSeedModel(card: StarSystemCardState): StarSystemSeedModel {
   const { system } = card;
   const stats = systemStats(card);
   const discoveryPoints = systemDiscoveryPoints(system, stats);
-  const archetype = systemArchetype(system);
+  const systemTypeValue = systemType(system);
   const resources = inferredResources(card);
   const hazards = inferredHazards(card);
   const traits = inferredTraits(card);
+  const anomalies = inferredAnomalies(card);
+  const sol = isSolSystem(system);
+  const planetCount = sol ? 8 : stats.planetCount;
+  const habitableWorlds = sol ? 1 : stats.habitablePlanets.length;
+  const gasGiants = sol ? 4 : stats.gasGiants.length;
+  const asteroidBelts = sol ? 1 : stats.beltCount;
+  const explorationRisk = dangerLabel(system.danger_level);
+  const colonizationPotential = sol ? "High" : habitableWorlds >= 2 ? "High" : habitableWorlds === 1 ? "Moderate" : "Low";
 
   return {
     id: system.id,
@@ -852,20 +943,25 @@ function systemSeedModel(card: StarSystemCardState): StarSystemSeedModel {
     discoveryPoints,
     starClass: system.star_type,
     starColor: stats.starColor,
-    systemArchetype: archetype,
+    systemType: systemTypeValue,
     stability: stats.stability,
     gravityProfile: gravityProfile(system),
     radiationLevel: stats.radiation,
     habitableZone: stats.habitableZone,
-    planetCount: stats.planetCount,
+    planetCount,
+    habitableWorlds,
+    gasGiants,
     moonCount: stats.moonCount,
-    asteroidBelts: stats.beltCount,
+    asteroidBelts,
     resourceValue: stats.resourceValue,
     dangerLevel: system.danger_level,
+    colonizationPotential,
+    explorationRisk,
+    anomalyDensity: anomalyDensityLabel(anomalies.length, system.danger_level),
     resources,
     traits,
     hazards,
-    anomalies: inferredAnomalies(card),
+    anomalies,
     modifiers: inferredModifiers(card),
     collectibles: inferredCollectibles(card),
     events: inferredEvents(card),
@@ -881,15 +977,15 @@ function systemSeedModel(card: StarSystemCardState): StarSystemSeedModel {
       "Discovery Status": stats.discoveryStatus,
       "Survey Value": discoveryPoints,
       "Radiation Level": stats.radiation,
-      "Known Anomalies": inferredAnomalies(card).length,
+      "Known Anomalies": anomalies.length,
       "Star Signature": system.known_star_signature ?? system.primary_star
     },
     economy: {
       "Resource Bias": system.resource_bias,
       "Resource Value": stats.resourceValue,
-      "Fuel Potential": stats.gasGiants.length ? "High" : "Moderate",
-      "Mining Corridors": stats.beltCount,
-      "Trade Potential": archetype.includes("Trade") || system.starting_system ? "High" : "Developing"
+      "Fuel Potential": gasGiants ? "High" : "Moderate",
+      "Mining Corridors": asteroidBelts,
+      "Trade Potential": systemTypeValue === "Trade Hub" || sol ? "High" : "Developing"
     },
     visualTheme: {
       "Star Color": stats.starColor,
@@ -905,16 +1001,20 @@ function systemSeedModel(card: StarSystemCardState): StarSystemSeedModel {
 function sectorSeedModel(card: SectorCardState): SectorSeedModel {
   const { sector, systems } = card;
   const systemModels = systems.map((systemCard) => systemSeedModel(systemCard));
+  const localBubble = isLocalBubble(sector);
+  const systemCapacity = localBubble ? 24 : sector.system_count;
+  const generatedSystems = localBubble ? Math.max(systems.length, 1) : systems.length;
   const resources = uniqueValues([sector.resource_signal, ...systemModels.flatMap((model) => model.resources), "Survey Data"]).slice(0, 10);
   const hazards = uniqueValues([
     sector.difficulty >= 70 ? "Hostile Navigation" : null,
     sector.difficulty >= 45 ? "Patrol Risk" : "Low Navigation Risk",
     ...systemModels.flatMap((model) => model.hazards)
   ]).slice(0, 8);
-  const traits = uniqueValues([sector.modifier, sector.discovery_level, `${sector.system_count} System Capacity`, ...systemModels.flatMap((model) => model.traits)]).slice(0, 8);
+  const traits = uniqueValues([sector.modifier, sector.discovery_level, `${systemCapacity} System Capacity`, ...systemModels.flatMap((model) => model.traits)]).slice(0, 8);
   const anomalies = uniqueValues([...systemModels.flatMap((model) => model.anomalies), sector.sector_rarity === "Relic" ? "Relic Signal" : null]).slice(0, 8);
-  const stability = sector.difficulty >= 75 ? "Volatile" : sector.difficulty >= 45 ? "Contested" : "Stable";
-  const discoveryPoints = sector.discovery_value + systems.length * 100;
+  const discoveryPoints = sector.discovery_value + generatedSystems * 100;
+  const dangerLevel = localBubble ? "Low" : dangerLabel(sector.difficulty);
+  const systemDensity = localBubble ? "Balanced" : densityLabel(systemCapacity);
 
   return {
     id: sector.id,
@@ -923,14 +1023,20 @@ function sectorSeedModel(card: SectorCardState): SectorSeedModel {
     type: "Sector",
     rarity: sector.sector_rarity,
     discoveryPoints,
-    sectorClass: sector.sector_type,
-    sectorArchetype: sector.modifier || sector.discovery_level,
-    stability,
+    sectorClass: localBubble ? "Civilized Space" : sector.sector_type,
+    systemDensity,
     coordinates: `${sector.coordinates_x}, ${sector.coordinates_y}, ${sector.coordinates_z}`,
     difficulty: sector.difficulty,
-    systemCount: systems.length || sector.system_count,
+    systemCapacity,
+    generatedSystems,
+    systemCount: generatedSystems || systemCapacity,
     resourceBias: sector.resource_signal,
-    dangerLevel: sector.difficulty >= 70 ? "High" : sector.difficulty >= 40 ? "Moderate" : "Low",
+    dangerLevel,
+    discoveryLevel: sector.discovery_level,
+    colonizationPotential: localBubble ? "High" : sector.colonized_worlds ? "High" : sector.difficulty >= 65 ? "Low" : "Moderate",
+    tradeValue: localBubble ? "High" : sector.resource_signal.toLowerCase().includes("trade") || sector.colonized_worlds ? "High" : "Developing",
+    patrolRisk: localBubble ? "Low" : sector.difficulty >= 70 ? "High" : sector.difficulty >= 40 ? "Moderate" : "Low",
+    anomalyDensity: anomalyDensityLabel(anomalies.length, sector.difficulty),
     resources,
     traits,
     hazards,
@@ -942,22 +1048,32 @@ function sectorSeedModel(card: SectorCardState): SectorSeedModel {
       "Sector Type": sector.sector_type,
       "Discovery Level": sector.discovery_level,
       "Resource Signal": sector.resource_signal,
-      "System Density": sector.system_count >= 9 ? "Dense" : sector.system_count >= 5 ? "Balanced" : "Sparse"
+      "System Density": systemDensity
     },
-    description: `${sector.sector_name} is a ${sector.sector_rarity.toLowerCase()} ${sector.sector_type.toLowerCase()} sector at coordinates ${sector.coordinates_x}, ${sector.coordinates_y}, ${sector.coordinates_z}. Its ${sector.resource_signal.toLowerCase()} signal, ${sector.modifier.toLowerCase()} modifier, and ${stability.toLowerCase()} operating conditions make it a ${sector.discovery_value.toLocaleString()} point discovery region.`
+    description: `${sector.sector_name} is a ${sector.sector_rarity.toLowerCase()} ${localBubble ? "civilized space" : sector.sector_type.toLowerCase()} sector with ${systemDensity.toLowerCase()} system density and ${dangerLevel.toLowerCase()} danger. Its ${sector.resource_signal.toLowerCase()} signal supports ${sector.discovery_value.toLocaleString()} baseline discovery value.`
   };
 }
 
 function galaxySeedModel(card: GalaxyCardState): GalaxySeedModel {
   const { galaxy, sectors } = card;
   const sectorModels = sectors.map((sectorCard) => sectorSeedModel(sectorCard));
+  const milkyWay = isMilkyWay(galaxy);
   const discovered = sectors.filter((sector) => sector.sector.discovered).length;
-  const discoveryPercent = sectors.length ? Math.round((discovered / sectors.length) * 100) : 0;
+  const discoveryPercent = milkyWay ? 13 : sectors.length ? Math.min(95, Math.round((discovered / sectors.length) * 100)) : 0;
+  const generatedSystemCount = sectors.reduce((total, sector) => total + sector.systems.length, 0);
+  const discoveredSystemCount = sectors.reduce(
+    (total, sector) => total + sector.systems.filter((system) => system.system.discovered || system.system.discovery_state !== "Undetected").length,
+    0
+  );
   const avgSystems = sectors.length ? Math.round(sectors.reduce((total, sector) => total + (sector.systems.length || sector.sector.system_count), 0) / sectors.length) : 0;
-  const estimatedSystems = avgSystems * galaxy.sector_count;
+  const estimatedSystems = milkyWay ? generatedSystemCount : avgSystems * galaxy.sector_count;
   const estimatedBodies = estimatedSystems * 7;
-  const rarity = sectors.find((sector) => ["Genesis", "Relic", "Mythic", "Legendary"].includes(sector.sector.sector_rarity))?.sector.sector_rarity ?? (galaxy.is_fixed ? "Common" : "Uncommon");
-  const stability = galaxy.galaxy_type.includes("Void") ? "Volatile" : galaxy.galaxy_type.includes("Ancient") ? "Unstable" : "Stable";
+  const rarity = sectors.find((sector) => ["Genesis", "Relic", "Mythic", "Legendary"].includes(sector.sector.sector_rarity))?.sector.sector_rarity ?? (milkyWay ? "Common" : "Uncommon");
+  const galaxyClass = milkyWay ? "Spiral" : galaxy.galaxy_type;
+  const galaxyScale = milkyWay ? "Mythic" : galaxy.galaxy_size === "Large" ? "Vast" : galaxy.galaxy_size === "Small" ? "Local" : "Regional";
+  const startingSector = milkyWay ? "Local Bubble" : sectors[0]?.sector.sector_name ?? "None";
+  const resourceBias = sectorModels[0]?.resourceBias ?? "Mixed Resources";
+  const anomalyDensity = anomalyDensityLabel(sectorModels.reduce((total, model) => total + model.anomalies.length, 0), galaxy.galaxy_type.includes("Void") ? 80 : 20);
 
   return {
     id: galaxy.id,
@@ -965,36 +1081,48 @@ function galaxySeedModel(card: GalaxyCardState): GalaxySeedModel {
     name: galaxy.name,
     type: "Galaxy",
     rarity,
-    discoveryPoints: galaxy.sector_count + sectors.length * 500 + estimatedSystems,
-    galaxyClass: galaxy.galaxy_type,
-    galaxyArchetype: galaxy.is_fixed ? "Starting Galaxy" : galaxy.galaxy_type,
-    stability,
-    galaxySize: galaxy.galaxy_size,
+    discoveryPoints: milkyWay ? 2500 : galaxy.sector_count + sectors.length * 500 + estimatedSystems,
+    galaxyClass,
+    galaxyScale,
     sectorCount: galaxy.sector_count,
     generatedSectors: sectors.length,
     estimatedSystems,
     estimatedBodies,
     discoveryPercent,
-    startingSector: sectors[0]?.sector.sector_name ?? "None",
+    startingSector,
+    resourceBias,
+    civilizationPresence: milkyWay ? "Established Origin" : sectors.some((sector) => sector.sector.colonized_worlds) ? "Settled Pockets" : "Unconfirmed",
+    explorationRisk: galaxy.galaxy_type.includes("Void") ? "High" : milkyWay ? "Moderate" : "Variable",
+    anomalyDensity,
+    isUnlimited: milkyWay,
+    theoreticalSystemCapacity: milkyWay ? "Unlimited" : estimatedSystems ? formatNumber(estimatedSystems) : "Pending",
+    generatedSystemCount,
+    discoveredSystemCount,
+    discoveredSectorCount: discovered,
+    discoveryPercentDisplay: milkyWay ? "<0.0001%" : `${discoveryPercent}%`,
     resources: uniqueValues([...sectorModels.flatMap((model) => model.resources), "Galactic Cartography", "Long Range Survey Data"]).slice(0, 10),
-    traits: uniqueValues([galaxy.galaxy_size, galaxy.galaxy_type, galaxy.is_fixed ? "Starting Galaxy" : "Procedural Galaxy", ...sectorModels.flatMap((model) => model.traits)]).slice(0, 8),
+    traits: uniqueValues([galaxyScale, galaxyClass, milkyWay ? "Sol Origin" : "Procedural Expansion", ...sectorModels.flatMap((model) => model.traits)]).slice(0, 8),
     hazards: uniqueValues([...sectorModels.flatMap((model) => model.hazards), galaxy.galaxy_type.includes("Void") ? "Void Routes" : null]).slice(0, 8),
     anomalies: uniqueValues([...sectorModels.flatMap((model) => model.anomalies), galaxy.galaxy_type.includes("Ancient") ? "Ancient Spiral Relics" : null]).slice(0, 8),
     modifiers: uniqueValues([`${galaxy.galaxy_size} Scale`, `${galaxy.sector_count.toLocaleString()} Sector Capacity`, galaxy.is_fixed ? "Sol Origin" : "Procedural Expansion"]).slice(0, 8),
     events: uniqueValues([galaxy.is_fixed ? "Milky Way Baseline Loaded" : "Galaxy Seed Generated", sectors.length ? "Sectors Available" : "Awaiting Sector Generation"]).slice(0, 8),
     visualTheme: {
       "Galaxy Type": galaxy.galaxy_type,
-      Size: galaxy.galaxy_size,
-      "Sector Capacity": galaxy.sector_count.toLocaleString(),
+      Scale: galaxyScale,
+      "System Capacity": milkyWay ? "Unlimited" : estimatedSystems ? estimatedSystems.toLocaleString() : "Pending",
       "Generated Sectors": sectors.length,
-      "Estimated Systems": estimatedSystems ? estimatedSystems.toLocaleString() : "Pending"
+      "Generated Systems": generatedSystemCount
     },
-    description: `${galaxy.name} is a ${rarity.toLowerCase()} ${galaxy.galaxy_type.toLowerCase()} with ${galaxy.sector_count.toLocaleString()} planned sectors and ${discoveryPercent}% of generated sectors discovered. It serves as a ${galaxy.is_fixed ? "starting civilization anchor" : "procedural expansion space"} with ${estimatedSystems ? estimatedSystems.toLocaleString() : "pending"} estimated star systems.`
+    description: milkyWay
+      ? `${galaxy.name} is an effectively unlimited ${galaxyClass.toLowerCase()} galaxy with ${generatedSystemCount} generated systems and discovery still below measurable galactic scale.`
+      : `${galaxy.name} is a ${rarity.toLowerCase()} ${galaxyClass.toLowerCase()} galaxy at ${galaxyScale.toLowerCase()} scale with ${discoveryPercent}% charted. Its starting route begins in ${startingSector}.`
   };
 }
 
 function inferredResources(card: StarSystemCardState) {
-  return uniqueValues([...card.planets.flatMap((planet) => planet.resources), ...card.bodies.flatMap((body) => body.resources), card.system.resource_bias, "Fusion Fuel", "Survey Data"]).slice(0, 10);
+  return uniqueValues([...card.planets.flatMap((planet) => planet.resources), ...card.bodies.flatMap((body) => body.resources), card.system.resource_bias, "Fusion Fuel", "Survey Data"])
+    .filter((value) => value !== "All Earth Resources")
+    .slice(0, 10);
 }
 
 function inferredHazards(card: StarSystemCardState) {
@@ -1483,23 +1611,16 @@ function StarSystemCard({
       <div className="space-y-3 p-3">
         <div className="grid grid-cols-3 gap-2">
           <StatChip label="Star Class" value={model.starClass} />
-          <StatChip label="System Archetype" value={model.systemArchetype} />
-          <StatChip label="Stability" value={model.stability} tone={model.stability === "Critical" ? "text-red-200" : "text-slate-100"} />
+          <StatChip label="System Type" value={model.systemType} />
+          <StatChip label="Stability" value={model.stability} tone={model.stability === "Collapsing" || model.stability === "Volatile" ? "text-red-200" : "text-slate-100"} />
         </div>
         <p className="line-clamp-2 text-xs leading-5 text-slate-300">{model.description}</p>
-        <div className="space-y-1 text-xs text-slate-400">
-          <p className="truncate">
-            <span className="text-slate-500">Resources:</span> {model.resources.join(", ")}
-          </p>
-          <p className="truncate">
-            <span className="text-slate-500">Traits:</span> {model.traits.join(", ")}
-          </p>
-          <p className="truncate">
-            <span className="text-slate-500">Hazards:</span> {model.hazards.join(", ")}
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <span className="rounded border border-cyan-300/20 bg-cyan-400/10 px-2 py-1 text-xs text-cyan-100">{model.discoveryPoints} discovery pts</span>
+          <span className="inline-flex items-center gap-1 rounded border border-cyan-300/10 bg-slate-950/40 px-2 py-1 text-xs font-semibold text-slate-300">
+            <Eye className="h-3.5 w-3.5" />
+            Open / View
+          </span>
         </div>
       </div>
     </article>
@@ -1600,24 +1721,18 @@ function StarSystemDetailPanel({
           <DetailSection title="Star System Specs">
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
               <StatChip label="Star Class" value={model.starClass} />
-              <StatChip label="Star Color" value={model.starColor} />
-              <StatChip label="Star Age" value={stats.starAge} />
-              <StatChip label="Star Mass" value={stats.starMass} />
-              <StatChip label="Star Radius" value={stats.starRadius} />
-              <StatChip label="Temperature" value={stats.temperature} />
-              <StatChip label="Luminosity" value={stats.luminosity} />
+              <StatChip label="System Type" value={model.systemType} />
               <StatChip label="Stability" value={model.stability} />
-              <StatChip label="Gravity Profile" value={model.gravityProfile} />
-              <StatChip label="Radiation Level" value={model.radiationLevel} />
-              <StatChip label="Habitable Zone" value={model.habitableZone} />
               <StatChip label="Planet Count" value={model.planetCount} />
-              <StatChip label="Moon Count" value={model.moonCount} />
+              <StatChip label="Habitable Worlds" value={model.habitableWorlds} />
+              <StatChip label="Gas Giants" value={model.gasGiants} />
               <StatChip label="Asteroid Belts" value={model.asteroidBelts} />
+              <StatChip label="Radiation Level" value={model.radiationLevel} />
               <StatChip label="Resource Value" value={model.resourceValue} />
-              <StatChip label="Danger Level" value={model.dangerLevel} tone={model.dangerLevel > 70 ? "text-red-200" : "text-slate-100"} />
-              <StatChip label="Discovery Status" value={stats.discoveryStatus} />
-              <StatChip label="Colonization Status" value={stats.colonizationStatus} />
               <StatChip label="Discovery Points" value={model.discoveryPoints} />
+              <StatChip label="Colonization Potential" value={model.colonizationPotential} />
+              <StatChip label="Exploration Risk" value={model.explorationRisk} />
+              <StatChip label="Anomaly Density" value={model.anomalyDensity} />
             </div>
           </DetailSection>
 
@@ -1886,23 +2001,16 @@ function SectorCard({
       <div className="space-y-3 p-3">
         <div className="grid grid-cols-3 gap-2">
           <StatChip label="Sector Class" value={model.sectorClass} />
-          <StatChip label="Sector Archetype" value={model.sectorArchetype} />
-          <StatChip label="Stability" value={model.stability} tone={model.stability === "Volatile" ? "text-red-200" : "text-slate-100"} />
+          <StatChip label="System Density" value={model.systemDensity} />
+          <StatChip label="Danger Level" value={model.dangerLevel} tone={model.dangerLevel === "High" || model.dangerLevel === "Extreme" ? "text-red-200" : "text-slate-100"} />
         </div>
         <p className="line-clamp-2 text-xs leading-5 text-slate-300">{model.description}</p>
-        <div className="space-y-1 text-xs text-slate-400">
-          <p className="truncate">
-            <span className="text-slate-500">Resources:</span> {model.resources.join(", ")}
-          </p>
-          <p className="truncate">
-            <span className="text-slate-500">Traits:</span> {model.traits.join(", ")}
-          </p>
-          <p className="truncate">
-            <span className="text-slate-500">Hazards:</span> {model.hazards.join(", ")}
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <span className="rounded border border-cyan-300/20 bg-cyan-400/10 px-2 py-1 text-xs text-cyan-100">{model.discoveryPoints} discovery pts</span>
+          <span className="inline-flex items-center gap-1 rounded border border-cyan-300/10 bg-slate-950/40 px-2 py-1 text-xs font-semibold text-slate-300">
+            <Eye className="h-3.5 w-3.5" />
+            Open / View
+          </span>
         </div>
       </div>
       {open ? (
@@ -1916,11 +2024,16 @@ function SectorCard({
               <DetailSection title="Sector Specs">
                 <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                   <StatChip label="Sector Class" value={model.sectorClass} />
-                  <StatChip label="Sector Archetype" value={model.sectorArchetype} />
+                  <StatChip label="System Density" value={model.systemDensity} />
                   <StatChip label="Coordinates" value={model.coordinates} />
-                  <StatChip label="Difficulty" value={model.difficulty} />
-                  <StatChip label="Systems" value={model.systemCount} />
+                  <StatChip label="System Capacity" value={model.systemCapacity} />
+                  <StatChip label="Generated Systems" value={model.generatedSystems} />
                   <StatChip label="Resource Bias" value={model.resourceBias} />
+                  <StatChip label="Discovery Level" value={model.discoveryLevel} />
+                  <StatChip label="Colonization Potential" value={model.colonizationPotential} />
+                  <StatChip label="Trade Value" value={model.tradeValue} />
+                  <StatChip label="Patrol Risk" value={model.patrolRisk} />
+                  <StatChip label="Anomaly Density" value={model.anomalyDensity} />
                   <StatChip label="Danger Level" value={model.dangerLevel} />
                   <StatChip label="Discovery Points" value={model.discoveryPoints} />
                 </div>
@@ -2087,23 +2200,16 @@ function GalaxyCard({
       <div className="space-y-3 p-3">
         <div className="grid grid-cols-3 gap-2">
           <StatChip label="Galaxy Class" value={model.galaxyClass} />
-          <StatChip label="Galaxy Archetype" value={model.galaxyArchetype} />
-          <StatChip label="Stability" value={model.stability} tone={model.stability === "Volatile" ? "text-red-200" : "text-slate-100"} />
+          <StatChip label="Galaxy Scale" value={model.galaxyScale} />
+          <StatChip label="Discovery" value={model.discoveryPercentDisplay} />
         </div>
         <p className="line-clamp-2 text-xs leading-5 text-slate-300">{model.description}</p>
-        <div className="space-y-1 text-xs text-slate-400">
-          <p className="truncate">
-            <span className="text-slate-500">Resources:</span> {model.resources.join(", ")}
-          </p>
-          <p className="truncate">
-            <span className="text-slate-500">Traits:</span> {model.traits.join(", ")}
-          </p>
-          <p className="truncate">
-            <span className="text-slate-500">Hazards:</span> {model.hazards.join(", ")}
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <span className="rounded border border-cyan-300/20 bg-cyan-400/10 px-2 py-1 text-xs text-cyan-100">{formatNumber(model.discoveryPoints)} discovery pts</span>
+          <span className="inline-flex items-center gap-1 rounded border border-cyan-300/10 bg-slate-950/40 px-2 py-1 text-xs font-semibold text-slate-300">
+            <Eye className="h-3.5 w-3.5" />
+            Open / View
+          </span>
         </div>
       </div>
       {open ? (
@@ -2117,14 +2223,19 @@ function GalaxyCard({
               <DetailSection title="Galaxy Specs">
                 <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                   <StatChip label="Galaxy Class" value={model.galaxyClass} />
-                  <StatChip label="Galaxy Archetype" value={model.galaxyArchetype} />
-                  <StatChip label="Galaxy Size" value={model.galaxySize} />
-                  <StatChip label="Sector Count" value={formatNumber(model.sectorCount)} />
+                  <StatChip label="Galaxy Scale" value={model.galaxyScale} />
+                  <StatChip label="System Capacity" value={model.theoreticalSystemCapacity} />
                   <StatChip label="Generated Sectors" value={model.generatedSectors} />
+                  <StatChip label="Discovered Sectors" value={model.discoveredSectorCount} />
+                  <StatChip label="Generated Systems" value={model.generatedSystemCount} />
+                  <StatChip label="Discovered Systems" value={model.discoveredSystemCount} />
                   <StatChip label="Starting Sector" value={model.startingSector} />
-                  <StatChip label="Estimated Systems" value={model.estimatedSystems ? formatNumber(model.estimatedSystems) : "Pending"} />
+                  <StatChip label="Resource Bias" value={model.resourceBias} />
+                  <StatChip label="Civilization Presence" value={model.civilizationPresence} />
+                  <StatChip label="Exploration Risk" value={model.explorationRisk} />
+                  <StatChip label="Anomaly Density" value={model.anomalyDensity} />
                   <StatChip label="Estimated Bodies" value={model.estimatedBodies ? formatNumber(model.estimatedBodies) : "Pending"} />
-                  <StatChip label="Discovery" value={`${model.discoveryPercent}%`} />
+                  <StatChip label="Discovery" value={model.discoveryPercentDisplay} />
                   <StatChip label="Discovery Points" value={formatNumber(model.discoveryPoints)} />
                 </div>
               </DetailSection>
@@ -2142,13 +2253,13 @@ function GalaxyCard({
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <Breadcrumbs items={["Universe", galaxy.name, "Sectors"]} />
             <div className="flex flex-wrap gap-2">
-              <Button type="button" onClick={onGenerateSectors}>
+              <Button type="button" onClick={model.isUnlimited ? onAddSector : onGenerateSectors}>
                 <Sparkles className="h-4 w-4" />
-                Generate Sectors
+                {model.isUnlimited ? "Generate New Sector" : "Generate Sectors"}
               </Button>
               <Button type="button" onClick={onAddSector} className="border-slate-600 bg-slate-900/70 text-slate-100">
                 <CirclePlus className="h-4 w-4" />
-                Add Sector
+                {model.isUnlimited ? "Continue Exploring Milky Way" : "Add Sector"}
               </Button>
             </div>
           </div>
@@ -2222,9 +2333,10 @@ export function GalaxyGeneratorWorkflow() {
   function generateSectorsForGalaxy(galaxyId: string, append = false) {
     updateGalaxy(galaxyId, (card) => {
       const startIndex = append ? card.sectors.length : 0;
-      const generated = generateSectors(card.galaxy, Math.min(card.galaxy.sector_count, startIndex + 6))
-        .slice(startIndex, startIndex + 6)
-        .map((sector) => toSectorState(sector, card.galaxy));
+      const batchSize = isMilkyWay(card.galaxy) ? 1 : 6;
+      const generated = generateSectors(card.galaxy, startIndex + batchSize)
+        .slice(startIndex, startIndex + batchSize)
+        .map((sector, index) => toSectorState(normalizeMilkyWaySector(card.galaxy, sector, startIndex + index), card.galaxy));
       return { ...card, sectors: append ? [...card.sectors, ...generated] : generated };
     });
   }
@@ -2237,7 +2349,7 @@ export function GalaxyGeneratorWorkflow() {
         const startIndex = append ? sectorCard.systems.length : 0;
         const generated = generateStarSystems(sectorCard.sector, Math.min(sectorCard.sector.system_count, startIndex + 6))
           .slice(startIndex, startIndex + 6)
-          .map((system) => toSystemState(system, galaxyCard.galaxy, sectorCard.sector));
+          .map((system, index) => toSystemState(normalizeMilkyWaySystem(sectorCard.sector, system, startIndex + index), galaxyCard.galaxy, sectorCard.sector));
         return { ...sectorCard, systems: append ? [...sectorCard.systems, ...generated] : generated };
       })
     }));
@@ -2390,7 +2502,10 @@ export function SectorGeneratorWorkflow() {
   const assignedPlanetIds = useMemo(() => assignedPlanetIdsInSectors(cards), [cards]);
 
   function generateSectorCards() {
-    const next = generateSectors(galaxy, Math.max(1, count)).map((sector) => toSectorState(sector.is_fixed ? sector : applySectorBias(sector, sectorType, rarity), galaxy));
+    const next = generateSectors(galaxy, Math.max(1, count)).map((sector, index) => {
+      const normalizedSector = normalizeMilkyWaySector(galaxy, sector, index);
+      return toSectorState(normalizedSector.is_fixed ? normalizedSector : applySectorBias(normalizedSector, sectorType, rarity), galaxy);
+    });
     setCards(next);
     setOpenSectorId(next[0]?.sector.id ?? null);
     setOpenSystemId(null);
@@ -2405,7 +2520,7 @@ export function SectorGeneratorWorkflow() {
       const startIndex = append ? card.systems.length : 0;
       const generated = generateStarSystems(card.sector, Math.min(card.sector.system_count, startIndex + 6))
         .slice(startIndex, startIndex + 6)
-        .map((system) => toSystemState(system, galaxy, card.sector));
+        .map((system, index) => toSystemState(normalizeMilkyWaySystem(card.sector, system, startIndex + index), galaxy, card.sector));
       return { ...card, systems: append ? [...card.systems, ...generated] : generated };
     });
   }
@@ -2529,13 +2644,17 @@ export function StarSystemGeneratorWorkflow() {
   const [search, setSearch] = useState("");
   const universe = useMemo(() => generateUniverse(universeSeed), [universeSeed]);
   const galaxy = useMemo(() => generateGalaxy(universe.universe_seed, galaxyIndex), [galaxyIndex, universe.universe_seed]);
-  const sector = useMemo(() => generateSectors(galaxy, Math.max(sectorIndex + 1, 1))[sectorIndex] ?? generateSectors(galaxy, 1)[0], [galaxy, sectorIndex]);
+  const sector = useMemo(() => {
+    const generatedSector = generateSectors(galaxy, Math.max(sectorIndex + 1, 1))[sectorIndex] ?? generateSectors(galaxy, 1)[0];
+    return normalizeMilkyWaySector(galaxy, generatedSector, sectorIndex);
+  }, [galaxy, sectorIndex]);
   const planetPool = useGeneratedPlanetPool();
   const assignedPlanetIds = useMemo(() => assignedPlanetIdsInSystems(cards), [cards]);
 
   function generateSystemCards() {
-    const next = generateStarSystems(sector, Math.max(1, count)).map((system) => {
-      const biasedSystem = system.is_fixed ? system : applySystemBias(system, rarity, starRule);
+    const next = generateStarSystems(sector, Math.max(1, count)).map((system, index) => {
+      const normalizedSystem = normalizeMilkyWaySystem(sector, system, index);
+      const biasedSystem = normalizedSystem.is_fixed ? normalizedSystem : applySystemBias(normalizedSystem, rarity, starRule);
       return toSystemState(biasedSystem, galaxy, sector);
     });
     setCards(next);
