@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
-import { ChevronRight, CirclePlus, Eye, Orbit, Plus, Search, Sparkles, Star, Trash2, Waypoints, X } from "lucide-react";
+import { ChevronRight, CirclePlus, Orbit, Plus, Search, Sparkles, Star, Trash2, Waypoints, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DEFAULT_UNIVERSE_SEED } from "@/lib/universe/fallback-data";
 import {
@@ -1749,18 +1749,6 @@ function StarSystemCard({
           <div className="relative flex shrink-0 gap-2">
             <button
               type="button"
-              className="grid h-10 w-10 place-items-center rounded-md border border-cyan-300/20 text-cyan-100 opacity-80 transition hover:bg-cyan-400/10 group-hover:opacity-100"
-              onClick={(event) => {
-                event.stopPropagation();
-                onOpen();
-              }}
-              aria-label={`Open ${model.name}`}
-              title={`Open ${model.name}`}
-            >
-              <Eye className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
               className="grid h-10 w-10 place-items-center rounded-md border border-red-300/20 text-red-200 opacity-80 transition hover:bg-red-400/10 group-hover:opacity-100"
               onClick={(event) => {
                 event.stopPropagation();
@@ -1783,10 +1771,6 @@ function StarSystemCard({
         <p className="line-clamp-2 text-xs leading-5 text-slate-300">{model.description}</p>
         <div className="flex flex-wrap items-center justify-between gap-2">
           <span className="rounded border border-cyan-300/20 bg-cyan-400/10 px-2 py-1 text-xs text-cyan-100">{model.discoveryPoints} discovery pts</span>
-          <span className="inline-flex items-center gap-1 rounded border border-cyan-300/10 bg-slate-950/40 px-2 py-1 text-xs font-semibold text-slate-300">
-            <Eye className="h-3.5 w-3.5" />
-            Open / View
-          </span>
         </div>
       </div>
     </article>
@@ -2139,18 +2123,6 @@ function SectorCard({
           <div className="relative flex shrink-0 gap-2">
             <button
               type="button"
-              className="grid h-10 w-10 place-items-center rounded-md border border-cyan-300/20 text-cyan-100 opacity-80 transition hover:bg-cyan-400/10 group-hover:opacity-100"
-              onClick={(event) => {
-                event.stopPropagation();
-                onOpen();
-              }}
-              aria-label={`Open ${model.name}`}
-              title={`Open ${model.name}`}
-            >
-              <Eye className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
               className="grid h-10 w-10 place-items-center rounded-md border border-red-300/20 text-red-200 opacity-80 transition hover:bg-red-400/10 group-hover:opacity-100"
               onClick={(event) => {
                 event.stopPropagation();
@@ -2173,14 +2145,11 @@ function SectorCard({
         <p className="line-clamp-2 text-xs leading-5 text-slate-300">{model.description}</p>
         <div className="flex flex-wrap items-center justify-between gap-2">
           <span className="rounded border border-cyan-300/20 bg-cyan-400/10 px-2 py-1 text-xs text-cyan-100">{model.discoveryPoints} discovery pts</span>
-          <span className="inline-flex items-center gap-1 rounded border border-cyan-300/10 bg-slate-950/40 px-2 py-1 text-xs font-semibold text-slate-300">
-            <Eye className="h-3.5 w-3.5" />
-            Open / View
-          </span>
         </div>
       </div>
       {open ? (
-        <div className="space-y-4 border-t border-cyan-300/15 p-5" onClick={(event) => event.stopPropagation()}>
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/82 px-4 py-8 backdrop-blur-sm" onClick={onOpen}>
+          <div className="mx-auto w-full max-w-[78rem] space-y-4 rounded-md border border-cyan-300/20 bg-genesis-panel/95 p-5 shadow-[0_0_60px_rgba(8,47,73,0.5)]" onClick={(event) => event.stopPropagation()}>
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
             <div className="space-y-4">
               <DetailSection title="Sector Specs">
@@ -2257,6 +2226,7 @@ function SectorCard({
           onUnassignPlanet={(planetId) => onUnassignPlanet(selectedSystem.system.id, planetId)}
         />
       ) : null}
+          </div>
         </div>
       ) : null}
     </article>
@@ -2337,18 +2307,6 @@ function GalaxyCard({
           <div className="relative flex shrink-0 gap-2">
             <button
               type="button"
-              className="grid h-10 w-10 place-items-center rounded-md border border-cyan-300/20 text-cyan-100 opacity-80 transition hover:bg-cyan-400/10 group-hover:opacity-100"
-              onClick={(event) => {
-                event.stopPropagation();
-                onOpen();
-              }}
-              aria-label={`Open ${model.name}`}
-              title={`Open ${model.name}`}
-            >
-              <Eye className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
               className="grid h-10 w-10 place-items-center rounded-md border border-red-300/20 text-red-200 opacity-80 transition hover:bg-red-400/10 group-hover:opacity-100"
               onClick={(event) => {
                 event.stopPropagation();
@@ -2371,14 +2329,11 @@ function GalaxyCard({
         <p className="line-clamp-2 text-xs leading-5 text-slate-300">{model.description}</p>
         <div className="flex flex-wrap items-center justify-between gap-2">
           <span className="rounded border border-cyan-300/20 bg-cyan-400/10 px-2 py-1 text-xs text-cyan-100">{formatNumber(model.discoveryPoints)} discovery pts</span>
-          <span className="inline-flex items-center gap-1 rounded border border-cyan-300/10 bg-slate-950/40 px-2 py-1 text-xs font-semibold text-slate-300">
-            <Eye className="h-3.5 w-3.5" />
-            Open / View
-          </span>
         </div>
       </div>
       {open ? (
-        <div className="space-y-4 border-t border-cyan-300/15 p-5" onClick={(event) => event.stopPropagation()}>
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/82 px-4 py-8 backdrop-blur-sm" onClick={onOpen}>
+          <div className="mx-auto w-full max-w-[78rem] space-y-4 rounded-md border border-cyan-300/20 bg-genesis-panel/95 p-5 shadow-[0_0_60px_rgba(8,47,73,0.5)]" onClick={(event) => event.stopPropagation()}>
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
             <div className="space-y-4">
               <DetailSection title="Galaxy Specs">
@@ -2460,7 +2415,7 @@ function GalaxyCard({
             </div>
           ) : null}
           {sectors.length ? (
-            <div className="grid gap-4 xl:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {sectors.map((sectorCard) => (
                 <SectorCard
                   key={sectorCard.sector.id}
@@ -2488,6 +2443,7 @@ function GalaxyCard({
           ) : (
             <EmptyState>No sectors yet. Generate sectors to populate this galaxy.</EmptyState>
           )}
+          </div>
         </div>
       ) : null}
     </article>
@@ -2504,7 +2460,7 @@ export function GalaxyGeneratorWorkflow() {
   const [type, setType] = useState("Any");
   const [size, setSize] = useState("Any");
   const [galaxies, setGalaxies] = useState<GalaxyCardState[]>(() => defaultGalaxyCards(DEFAULT_UNIVERSE_SEED));
-  const [openGalaxyId, setOpenGalaxyId] = useState<string | null>(() => defaultGalaxyCards(DEFAULT_UNIVERSE_SEED)[0]?.galaxy.id ?? null);
+  const [openGalaxyId, setOpenGalaxyId] = useState<string | null>(null);
   const [openSectorId, setOpenSectorId] = useState<string | null>(null);
   const [openSystemId, setOpenSystemId] = useState<string | null>(null);
   const universe = useMemo(() => generateUniverse(universeSeed), [universeSeed]);
@@ -2517,7 +2473,7 @@ export function GalaxyGeneratorWorkflow() {
       return toGalaxyState(galaxy.is_fixed ? galaxy : applyGalaxyBias(galaxy, type, size));
     });
     setGalaxies(next);
-    setOpenGalaxyId(next[0]?.galaxy.id ?? null);
+    setOpenGalaxyId(null);
     setOpenSectorId(null);
     setOpenSystemId(null);
   }
@@ -2661,7 +2617,7 @@ export function GalaxyGeneratorWorkflow() {
       </GeneratorPanel>
 
       {galaxies.length ? (
-        <section className="grid gap-5 2xl:grid-cols-2">
+        <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {galaxies.map((card) => (
             <GalaxyCard
               key={card.galaxy.id}
@@ -2705,7 +2661,7 @@ export function SectorGeneratorWorkflow() {
   const [sectorType, setSectorType] = useState("Any");
   const [rarity, setRarity] = useState("Any");
   const [cards, setCards] = useState<SectorCardState[]>(() => defaultSectorCards(DEFAULT_UNIVERSE_SEED, 0));
-  const [openSectorId, setOpenSectorId] = useState<string | null>(() => defaultSectorCards(DEFAULT_UNIVERSE_SEED, 0)[0]?.sector.id ?? null);
+  const [openSectorId, setOpenSectorId] = useState<string | null>(null);
   const [openSystemId, setOpenSystemId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const universe = useMemo(() => generateUniverse(universeSeed), [universeSeed]);
@@ -2719,7 +2675,7 @@ export function SectorGeneratorWorkflow() {
       return toSectorState(normalizedSector.is_fixed ? normalizedSector : applySectorBias(normalizedSector, sectorType, rarity), galaxy);
     });
     setCards(next);
-    setOpenSectorId(next[0]?.sector.id ?? null);
+    setOpenSectorId(null);
     setOpenSystemId(null);
   }
 
@@ -2800,7 +2756,7 @@ export function SectorGeneratorWorkflow() {
       </div>
 
       {visibleCards.length ? (
-        <section className="grid gap-5 2xl:grid-cols-2">
+        <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {visibleCards.map((card) => (
             <SectorCard
               key={card.sector.id}
