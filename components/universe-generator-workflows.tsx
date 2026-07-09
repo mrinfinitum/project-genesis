@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { createPortal } from "react-dom";
 import { ChevronRight, CirclePlus, Orbit, Plus, Search, Sparkles, Star, Trash2, Waypoints, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DEFAULT_UNIVERSE_SEED } from "@/lib/universe/fallback-data";
@@ -1093,6 +1094,16 @@ function EmptyState({ children }: { children: React.ReactNode }) {
   return <div className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-6 text-sm font-semibold text-slate-400">{children}</div>;
 }
 
+function ModalPortal({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  return mounted ? createPortal(children, document.body) : null;
+}
+
 function hashText(value: string) {
   let hash = 2166136261;
   for (let index = 0; index < value.length; index += 1) {
@@ -1591,7 +1602,7 @@ function StarSystemVisual({ model, large = false }: { model: StarSystemSeedModel
   }));
 
   return (
-    <div className={cn("relative overflow-hidden border-cyan-300/10 bg-black", large ? "min-h-[28rem] rounded-md border" : "h-36 border-b")}>
+    <div className={cn("relative overflow-hidden border-cyan-300/10 bg-black", large ? "h-[clamp(18rem,42vh,26rem)] rounded-md border" : "h-36 border-b")}>
       <div className={cn("absolute inset-0 bg-gradient-to-br opacity-80", systemVisual({ star_type: model.starClass } as StarSystemNode))} />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_38%_42%,rgba(34,211,238,0.14),transparent_24%),radial-gradient(circle_at_62%_54%,rgba(147,51,234,0.1),transparent_30%)]" />
       <div className="absolute left-1/2 top-1/2 aspect-square w-[72%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-100/5" />
@@ -1632,7 +1643,7 @@ function SectorVisual({ model, large = false }: { model: SectorSeedModel; large?
   }));
 
   return (
-    <div className={cn("relative overflow-hidden border-cyan-300/10 bg-black", large ? "min-h-[28rem] rounded-md border" : "h-36 border-b")}>
+    <div className={cn("relative overflow-hidden border-cyan-300/10 bg-black", large ? "h-[clamp(18rem,42vh,26rem)] rounded-md border" : "h-36 border-b")}>
       <div className={cn("absolute inset-0 bg-gradient-to-br opacity-85", sectorVisual({ sector_type: model.sectorClass } as SectorNode))} />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_34%_34%,rgba(34,211,238,0.18),transparent_22%),radial-gradient(circle_at_68%_58%,rgba(168,85,247,0.13),transparent_28%)]" />
       <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.04)_1px,transparent_1px)] bg-[size:38px_38px] opacity-50" />
@@ -1660,7 +1671,7 @@ function GalaxyVisual({ model, large = false }: { model: GalaxySeedModel; large?
   }));
 
   return (
-    <div className={cn("relative overflow-hidden border-cyan-300/10 bg-black", large ? "min-h-[28rem] rounded-md border" : "h-36 border-b")}>
+    <div className={cn("relative overflow-hidden border-cyan-300/10 bg-black", large ? "h-[clamp(18rem,42vh,26rem)] rounded-md border" : "h-36 border-b")}>
       <div className={cn("absolute inset-0 bg-gradient-to-br opacity-85", galaxyVisual({ galaxy_type: model.galaxyClass } as GalaxyNode))} />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.22),transparent_5%),radial-gradient(circle_at_50%_50%,rgba(34,211,238,0.2),transparent_21%),radial-gradient(circle_at_50%_50%,rgba(147,51,234,0.14),transparent_38%)]" />
       {arms.map((arm, index) => (
@@ -1733,7 +1744,8 @@ function BodyDetailOverlay({ body, onClose }: { body: BodyCardState; onClose: ()
   ];
 
   return (
-    <div className="fixed inset-0 z-[60] overflow-y-auto bg-slate-950/86 px-4 py-8 backdrop-blur-sm" onClick={onClose} role="dialog" aria-modal="true">
+    <ModalPortal>
+      <div className="fixed inset-0 z-[60] overflow-y-auto bg-slate-950/86 px-4 py-8 backdrop-blur-sm" onClick={onClose} role="dialog" aria-modal="true">
       <article className="mx-auto max-w-5xl overflow-hidden rounded-md border border-cyan-300/20 bg-genesis-panel/95 shadow-[0_0_50px_rgba(8,145,178,0.1)]" onClick={(event) => event.stopPropagation()}>
         <header className="flex items-start justify-between gap-4 border-b border-cyan-300/15 p-6">
           <div>
@@ -1791,7 +1803,8 @@ function BodyDetailOverlay({ body, onClose }: { body: BodyCardState; onClose: ()
           </div>
         </div>
       </article>
-    </div>
+      </div>
+    </ModalPortal>
   );
 }
 
@@ -2250,17 +2263,19 @@ function StarSystemDetailOverlay(props: {
   onUnassignPlanet: (planetId: string) => void;
 }) {
   return (
-    <div
-      className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/82 px-4 py-8 backdrop-blur-sm"
-      onClick={props.onClose}
-      role="dialog"
-      aria-modal="true"
-      aria-label={`${props.card.system.system_name} star system details`}
-    >
-      <div className="mx-auto w-full max-w-[78rem]" onClick={(event) => event.stopPropagation()}>
-        <StarSystemDetailPanel {...props} />
+    <ModalPortal>
+      <div
+        className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/82 px-4 py-8 backdrop-blur-sm"
+        onClick={props.onClose}
+        role="dialog"
+        aria-modal="true"
+        aria-label={`${props.card.system.system_name} star system details`}
+      >
+        <div className="mx-auto w-full max-w-[78rem]" onClick={(event) => event.stopPropagation()}>
+          <StarSystemDetailPanel {...props} />
+        </div>
       </div>
-    </div>
+    </ModalPortal>
   );
 }
 
@@ -2309,59 +2324,62 @@ function SectorCard({
   const rarityClass = rarityClasses[model.rarity] ?? "border-cyan-300/25 text-cyan-100";
 
   return (
-    <article
-      className={cn("group relative cursor-pointer overflow-hidden rounded-md border bg-[#07101e]/85 shadow-glow transition hover:border-cyan-300/55", open ? "border-cyan-300/65" : "border-cyan-400/15")}
-      onClick={onOpen}
-    >
-      <SectorVisual model={model} />
-      <div className="border-b border-cyan-300/10 bg-slate-950/45 p-3">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <p className="truncate text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-cyan-300">{model.type}</p>
-            <h3 className="mt-1 truncate text-base font-bold text-white">{model.name}</h3>
-            <div className="mt-1 flex min-w-0 flex-wrap items-center gap-2">
-              <span className="min-w-0 truncate font-mono text-xs text-slate-500">{model.seedId}</span>
-              <Badge className={rarityClass}>{model.rarity}</Badge>
+    <>
+      <article
+        className={cn("group relative cursor-pointer overflow-hidden rounded-md border bg-[#07101e]/85 shadow-glow transition hover:border-cyan-300/55", open ? "border-cyan-300/65" : "border-cyan-400/15")}
+        onClick={onOpen}
+      >
+        <SectorVisual model={model} />
+        <div className="border-b border-cyan-300/10 bg-slate-950/45 p-3">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <p className="truncate text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-cyan-300">{model.type}</p>
+              <h3 className="mt-1 truncate text-base font-bold text-white">{model.name}</h3>
+              <div className="mt-1 flex min-w-0 flex-wrap items-center gap-2">
+                <span className="min-w-0 truncate font-mono text-xs text-slate-500">{model.seedId}</span>
+                <Badge className={rarityClass}>{model.rarity}</Badge>
+              </div>
+            </div>
+            <div className="relative flex shrink-0 gap-2">
+              <button
+                type="button"
+                className="grid h-8 w-8 place-items-center rounded-md border border-red-300/20 text-red-200 opacity-80 transition hover:bg-red-400/10 group-hover:opacity-100"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onDelete();
+                }}
+                aria-label={`Delete ${model.name}`}
+                title={`Delete ${model.name}`}
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
             </div>
           </div>
-          <div className="relative flex shrink-0 gap-2">
-            <button
-              type="button"
-              className="grid h-8 w-8 place-items-center rounded-md border border-red-300/20 text-red-200 opacity-80 transition hover:bg-red-400/10 group-hover:opacity-100"
-              onClick={(event) => {
-                event.stopPropagation();
-                onDelete();
-              }}
-              aria-label={`Delete ${model.name}`}
-              title={`Delete ${model.name}`}
-            >
-              <Trash2 className="h-4 w-4" />
-            </button>
+        </div>
+        <div className="space-y-3 p-3">
+          <div className="grid grid-cols-3 gap-2">
+            <CardStatChip label="Sector Class" value={model.sectorClass} />
+            <CardStatChip label="System Density" value={model.systemDensity} />
+            <CardStatChip label="Danger Level" value={model.dangerLevel} tone={model.dangerLevel === "High" || model.dangerLevel === "Extreme" ? "text-red-200" : "text-slate-100"} />
+          </div>
+          <p className="line-clamp-2 text-xs leading-5 text-slate-300">{model.description}</p>
+          <div className="space-y-1 text-xs text-slate-400">
+            <p className="truncate">
+              <span className="text-slate-500">Resources:</span> {cardList(model.resources)}
+            </p>
+            <p className="truncate">
+              <span className="text-slate-500">Traits:</span> {cardList(model.traits)}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <span className="rounded border border-cyan-300/20 bg-cyan-400/10 px-2 py-1 text-xs text-cyan-100">{model.discoveryPoints} discovery pts</span>
           </div>
         </div>
-      </div>
-      <div className="space-y-3 p-3">
-        <div className="grid grid-cols-3 gap-2">
-          <CardStatChip label="Sector Class" value={model.sectorClass} />
-          <CardStatChip label="System Density" value={model.systemDensity} />
-          <CardStatChip label="Danger Level" value={model.dangerLevel} tone={model.dangerLevel === "High" || model.dangerLevel === "Extreme" ? "text-red-200" : "text-slate-100"} />
-        </div>
-        <p className="line-clamp-2 text-xs leading-5 text-slate-300">{model.description}</p>
-        <div className="space-y-1 text-xs text-slate-400">
-          <p className="truncate">
-            <span className="text-slate-500">Resources:</span> {cardList(model.resources)}
-          </p>
-          <p className="truncate">
-            <span className="text-slate-500">Traits:</span> {cardList(model.traits)}
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <span className="rounded border border-cyan-300/20 bg-cyan-400/10 px-2 py-1 text-xs text-cyan-100">{model.discoveryPoints} discovery pts</span>
-        </div>
-      </div>
+      </article>
       {open ? (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/82 px-4 py-8 backdrop-blur-sm" onClick={onOpen}>
-          <div className="mx-auto w-full max-w-[78rem] space-y-4 rounded-md border border-cyan-300/20 bg-genesis-panel/95 p-5 shadow-[0_0_60px_rgba(8,47,73,0.5)]" onClick={(event) => event.stopPropagation()}>
+        <ModalPortal>
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/86 px-4 py-8 backdrop-blur-sm" onClick={onOpen} role="dialog" aria-modal="true" aria-label={`${model.name} sector details`}>
+          <div className="mx-auto w-full max-w-6xl space-y-5 overflow-hidden rounded-md border border-cyan-300/20 bg-[#07101e]/95 p-5 shadow-[0_0_60px_rgba(8,47,73,0.5)]" onClick={(event) => event.stopPropagation()}>
           <header className="flex flex-col gap-4 border-b border-cyan-300/15 pb-5 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <div className="flex flex-wrap gap-2">
@@ -2462,8 +2480,9 @@ function SectorCard({
       ) : null}
           </div>
         </div>
+        </ModalPortal>
       ) : null}
-    </article>
+    </>
   );
 }
 
@@ -2521,61 +2540,64 @@ function GalaxyCard({
   const rarityClass = rarityClasses[model.rarity] ?? "border-cyan-300/25 text-cyan-100";
 
   return (
-    <article
-      className={cn("group relative cursor-pointer overflow-hidden rounded-md border bg-[#07101e]/85 shadow-glow transition hover:border-cyan-300/55", open ? "border-cyan-300/65" : "border-cyan-400/15")}
-      onClick={onOpen}
-    >
-      <GalaxyVisual model={model} />
-      <div className="border-b border-cyan-300/10 bg-slate-950/45 p-3">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <p className="truncate text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-cyan-300">{model.type}</p>
-            <h3 className="mt-1 truncate text-base font-bold text-white">{model.name}</h3>
-            <div className="mt-1 flex min-w-0 flex-wrap items-center gap-2">
-              <span className="min-w-0 truncate font-mono text-xs text-slate-500">{model.seedId}</span>
-              <Badge className={rarityClass}>{model.rarity}</Badge>
-              {galaxy.is_fixed ? <Badge className="border-amber-300/45 text-amber-100">Starting</Badge> : null}
-              <Badge className={model.isUnlocked ? "border-emerald-300/45 text-emerald-100" : "border-slate-500/45 text-slate-300"}>{model.isUnlocked ? "Unlocked" : "Locked"}</Badge>
+    <>
+      <article
+        className={cn("group relative cursor-pointer overflow-hidden rounded-md border bg-[#07101e]/85 shadow-glow transition hover:border-cyan-300/55", open ? "border-cyan-300/65" : "border-cyan-400/15")}
+        onClick={onOpen}
+      >
+        <GalaxyVisual model={model} />
+        <div className="border-b border-cyan-300/10 bg-slate-950/45 p-3">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <p className="truncate text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-cyan-300">{model.type}</p>
+              <h3 className="mt-1 truncate text-base font-bold text-white">{model.name}</h3>
+              <div className="mt-1 flex min-w-0 flex-wrap items-center gap-2">
+                <span className="min-w-0 truncate font-mono text-xs text-slate-500">{model.seedId}</span>
+                <Badge className={rarityClass}>{model.rarity}</Badge>
+                {galaxy.is_fixed ? <Badge className="border-amber-300/45 text-amber-100">Starting</Badge> : null}
+                <Badge className={model.isUnlocked ? "border-emerald-300/45 text-emerald-100" : "border-slate-500/45 text-slate-300"}>{model.isUnlocked ? "Unlocked" : "Locked"}</Badge>
+              </div>
+            </div>
+            <div className="relative flex shrink-0 gap-2">
+              <button
+                type="button"
+                className="grid h-8 w-8 place-items-center rounded-md border border-red-300/20 text-red-200 opacity-80 transition hover:bg-red-400/10 group-hover:opacity-100"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onDelete();
+                }}
+                aria-label={`Delete ${model.name}`}
+                title={`Delete ${model.name}`}
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
             </div>
           </div>
-          <div className="relative flex shrink-0 gap-2">
-            <button
-              type="button"
-              className="grid h-8 w-8 place-items-center rounded-md border border-red-300/20 text-red-200 opacity-80 transition hover:bg-red-400/10 group-hover:opacity-100"
-              onClick={(event) => {
-                event.stopPropagation();
-                onDelete();
-              }}
-              aria-label={`Delete ${model.name}`}
-              title={`Delete ${model.name}`}
-            >
-              <Trash2 className="h-4 w-4" />
-            </button>
+        </div>
+        <div className="space-y-3 p-3">
+          <div className="grid grid-cols-3 gap-2">
+            <CardStatChip label="Galaxy Class" value={model.galaxyClass} />
+            <CardStatChip label="Galaxy Scale" value={model.galaxyScale} />
+            <CardStatChip label="Discovery" value={model.discoveryPercentDisplay} />
+          </div>
+          <p className="line-clamp-2 text-xs leading-5 text-slate-300">{model.description}</p>
+          <div className="space-y-1 text-xs text-slate-400">
+            <p className="truncate">
+              <span className="text-slate-500">Resources:</span> {cardList(model.resources)}
+            </p>
+            <p className="truncate">
+              <span className="text-slate-500">Traits:</span> {cardList(model.traits)}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <span className="rounded border border-cyan-300/20 bg-cyan-400/10 px-2 py-1 text-xs text-cyan-100">{formatNumber(model.discoveryPoints)} discovery pts</span>
           </div>
         </div>
-      </div>
-      <div className="space-y-3 p-3">
-        <div className="grid grid-cols-3 gap-2">
-          <CardStatChip label="Galaxy Class" value={model.galaxyClass} />
-          <CardStatChip label="Galaxy Scale" value={model.galaxyScale} />
-          <CardStatChip label="Discovery" value={model.discoveryPercentDisplay} />
-        </div>
-        <p className="line-clamp-2 text-xs leading-5 text-slate-300">{model.description}</p>
-        <div className="space-y-1 text-xs text-slate-400">
-          <p className="truncate">
-            <span className="text-slate-500">Resources:</span> {cardList(model.resources)}
-          </p>
-          <p className="truncate">
-            <span className="text-slate-500">Traits:</span> {cardList(model.traits)}
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <span className="rounded border border-cyan-300/20 bg-cyan-400/10 px-2 py-1 text-xs text-cyan-100">{formatNumber(model.discoveryPoints)} discovery pts</span>
-        </div>
-      </div>
+      </article>
       {open ? (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/82 px-4 py-8 backdrop-blur-sm" onClick={onOpen}>
-          <div className="mx-auto w-full max-w-[78rem] space-y-4 rounded-md border border-cyan-300/20 bg-genesis-panel/95 p-5 shadow-[0_0_60px_rgba(8,47,73,0.5)]" onClick={(event) => event.stopPropagation()}>
+        <ModalPortal>
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/86 px-4 py-8 backdrop-blur-sm" onClick={onOpen} role="dialog" aria-modal="true" aria-label={`${model.name} galaxy details`}>
+          <div className="mx-auto w-full max-w-6xl space-y-5 overflow-hidden rounded-md border border-cyan-300/20 bg-[#07101e]/95 p-5 shadow-[0_0_60px_rgba(8,47,73,0.5)]" onClick={(event) => event.stopPropagation()}>
           <header className="flex flex-col gap-4 border-b border-cyan-300/15 pb-5 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <div className="flex flex-wrap gap-2">
@@ -2711,8 +2733,9 @@ function GalaxyCard({
           )}
           </div>
         </div>
+        </ModalPortal>
       ) : null}
-    </article>
+    </>
   );
 }
 
