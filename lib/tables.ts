@@ -655,8 +655,8 @@ export const tableConfigs: Record<TableName, TableConfig> = {
   },
   codex_readiness_items: {
     table: "codex_readiness_items",
-    title: "Codex Readiness Items",
-    description: "Handoff-ready exports and specs prepared for Codex implementation work.",
+    title: "ChatGPT Readiness Items",
+    description: "Handoff-ready exports and specs prepared for ChatGPT planning and review work.",
     statusKey: "status",
     typeKey: "system",
     searchKeys: ["title", "system", "status", "description", "related_tables", "notes"],
@@ -692,8 +692,8 @@ export const tableConfigs: Record<TableName, TableConfig> = {
   },
   codex_tasks: {
     table: "codex_tasks",
-    title: "Codex Tasks",
-    description: "Actionable implementation tasks created from command center handoff and production queue items.",
+    title: "ChatGPT Tasks",
+    description: "Copy-ready planning tasks created from command center handoff and production queue items.",
     statusKey: "status",
     typeKey: "system",
     searchKeys: ["title", "source_type", "source_id", "system", "priority", "status", "description", "related_tables", "notes"],

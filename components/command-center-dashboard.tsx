@@ -259,7 +259,7 @@ function SystemHealthBars({ systems }: { systems: ProjectSystem[] }) {
   const bars = [
     { label: "Content", value: average },
     { label: "Data Quality", value: Math.max(0, 100 - Math.round((missing / totalRecords) * 100)) },
-    { label: "Codex Readiness", value: Math.min(100, codexReady * 14) },
+    { label: "ChatGPT Readiness", value: Math.min(100, codexReady * 14) },
     { label: "Assets", value: Math.round((completeRecords / totalRecords) * 100) },
     { label: "Gameplay Integration", value: Math.max(12, average - 8) }
   ];
@@ -493,7 +493,7 @@ function CodexReadinessPanel({
   onCreateTask: (task: TaskDraft) => Promise<void>;
 }) {
   return (
-    <Panel title="Ready for Codex" eyebrow="Handoff Queue">
+    <Panel title="Ready for ChatGPT" eyebrow="Handoff Queue">
       <div className="space-y-3">
         {items.map((item) => (
           <div key={item.id} className="rounded-md border border-cyan-400/10 bg-slate-950/45 p-3">
@@ -527,7 +527,7 @@ function CodexReadinessPanel({
                   })
                 }
               >
-                {createdTasks.has(`task-codex-${item.id}`) ? "Task Created" : creatingTaskId === `task-codex-${item.id}` ? "Creating..." : "Codex Task"}
+                {createdTasks.has(`task-codex-${item.id}`) ? "Task Created" : creatingTaskId === `task-codex-${item.id}` ? "Creating..." : "ChatGPT Task"}
               </Button>
             </div>
           </div>
@@ -610,7 +610,7 @@ function SystemDetailModal({
                   <p className="text-sm text-slate-400">No active checks for this system.</p>
                 )}
               </Panel>
-              <Panel title="Related Codex Tasks" eyebrow="Handoff">
+              <Panel title="Related ChatGPT Tasks" eyebrow="Handoff">
                 {relatedCodex.length ? (
                   <div className="space-y-3">
                     {relatedCodex.map((item) => (
@@ -661,7 +661,7 @@ export function CommandCenterDashboard({ systems, history, healthChecks, codexIt
     { label: "Database Version", value: metricValue(metrics, "Database Version", "v0.4.0") },
     { label: "Total Records", value: totalRecords.toLocaleString() },
     { label: "Critical Issues", value: String(criticalIssues) },
-    { label: "Ready for Codex", value: String(readyForCodex) }
+    { label: "Ready for ChatGPT", value: String(readyForCodex) }
   ];
 
   async function createCodexTask(task: TaskDraft) {

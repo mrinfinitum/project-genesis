@@ -151,7 +151,7 @@ const navigationGroups: NavigationGroup[] = [
     fallbackProgress: 52,
     systemIds: ["tasks", "release-notes", "changelog", "codex-handoffs"],
     items: [
-      { href: "/tasks", label: "Tasks", icon: ListChecks, activePaths: [] },
+      { href: "/tasks", label: "ChatGPT Tasks", icon: ListChecks, activePaths: [] },
       { href: "/database", label: "Database", icon: Database },
       { href: "/settings#imports-exports", label: "Imports / Exports", icon: UploadCloud, activePaths: [] },
       { href: "/universe-explorer", label: "Developer Seed Explorer", icon: Compass },
