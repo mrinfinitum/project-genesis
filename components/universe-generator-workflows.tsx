@@ -850,6 +850,51 @@ function SelectInput({ label, value, options, onChange }: { label: string; value
   );
 }
 
+function HeaderTextInput({
+  label,
+  value,
+  onChange,
+  placeholder,
+  type = "text",
+  min
+}: {
+  label: string;
+  value: string | number;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  type?: "text" | "number";
+  min?: number;
+}) {
+  return (
+    <input
+      aria-label={label}
+      type={type}
+      min={min}
+      value={value}
+      onChange={(event) => onChange(event.target.value)}
+      placeholder={placeholder}
+      className="h-11 rounded-md border border-cyan-300/20 bg-slate-950/70 px-3 text-sm font-semibold text-white outline-none placeholder:text-slate-600 focus:border-cyan-300/65"
+    />
+  );
+}
+
+function HeaderSelectInput({ label, value, options, onChange }: { label: string; value: string; options: string[]; onChange: (value: string) => void }) {
+  return (
+    <select
+      aria-label={label}
+      value={value}
+      onChange={(event) => onChange(event.target.value)}
+      className="h-11 rounded-md border border-cyan-300/20 bg-slate-950/70 px-3 text-sm font-semibold text-white outline-none focus:border-cyan-300/65"
+    >
+      {options.map((option) => (
+        <option key={option} value={option}>
+          {option}
+        </option>
+      ))}
+    </select>
+  );
+}
+
 function Breadcrumbs({ items }: { items: string[] }) {
   return (
     <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
@@ -863,7 +908,19 @@ function Breadcrumbs({ items }: { items: string[] }) {
   );
 }
 
-function GeneratorShell({ eyebrow, title, description, children }: { eyebrow: string; title: string; description: string; children: React.ReactNode }) {
+function GeneratorShell({
+  eyebrow,
+  title,
+  description,
+  actions,
+  children
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  actions?: React.ReactNode;
+  children: React.ReactNode;
+}) {
   return (
     <div className="space-y-6">
       <section className="flex flex-col justify-between gap-4 xl:flex-row xl:items-end">
@@ -872,14 +929,11 @@ function GeneratorShell({ eyebrow, title, description, children }: { eyebrow: st
           <h1 className="mt-2 text-3xl font-bold text-white">{title}</h1>
           <p className="mt-2 max-w-3xl text-sm text-slate-300">{description}</p>
         </div>
+        {actions ? <div className="w-full xl:max-w-[82rem]">{actions}</div> : null}
       </section>
       {children}
     </div>
   );
-}
-
-function GeneratorPanel({ children }: { children: React.ReactNode }) {
-  return <section className="rounded-md border border-cyan-400/15 bg-genesis-panel/90 p-4">{children}</section>;
 }
 
 function DeleteButton({ label, onDelete }: { label: string; onDelete: () => void }) {
@@ -2502,6 +2556,7 @@ export function GalaxyGeneratorWorkflow() {
   const [openGalaxyId, setOpenGalaxyId] = useState<string | null>(null);
   const [openSectorId, setOpenSectorId] = useState<string | null>(null);
   const [openSystemId, setOpenSystemId] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
   const universe = useMemo(() => generateUniverse(universeSeed), [universeSeed]);
   const planetPool = useGeneratedPlanetPool();
   const assignedPlanetIds = useMemo(() => assignedPlanetIdsInGalaxies(galaxies), [galaxies]);
@@ -2640,24 +2695,44 @@ export function GalaxyGeneratorWorkflow() {
     }));
   }
 
+  const visibleGalaxies = galaxies.filter((card) => {
+    const query = search.trim().toLowerCase();
+    if (!query) return true;
+    const model = galaxySeedModel(card);
+    return [model.name, model.seedId, model.type, model.rarity, model.galaxyClass, model.galaxyScale, model.description].some((value) => String(value).toLowerCase().includes(query));
+  });
+
   return (
-    <GeneratorShell eyebrow="Universe Workflow" title="Galaxies" description="Generate visual galaxy cards, drill into sectors, and shape the content hierarchy before it moves into the game app.">
-      <GeneratorPanel>
-        <div className="grid gap-3 lg:grid-cols-[minmax(14rem,1fr)_9rem_13rem_12rem_auto] lg:items-end">
-          <TextInput label="Universe Seed" value={universeSeed} onChange={setUniverseSeed} placeholder="PROJECT-GENESIS-UNIVERSE" />
-          <TextInput label="Galaxy Count" value={count} onChange={(value) => setCount(Math.max(1, Number(value) || 1))} type="number" min={1} />
-          <SelectInput label="Galaxy Type" value={type} options={galaxyTypes} onChange={setType} />
-          <SelectInput label="Galaxy Size" value={size} options={galaxySizes} onChange={setSize} />
+    <GeneratorShell
+      eyebrow="Universe Workflow"
+      title="Galaxies"
+      description="Generate visual galaxy cards, drill into sectors, and shape the content hierarchy before it moves into the game app."
+      actions={
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(12rem,1fr)_6rem_11rem_10rem_auto] xl:items-center">
+          <HeaderTextInput label="Universe Seed" value={universeSeed} onChange={setUniverseSeed} placeholder="Universe seed" />
+          <HeaderTextInput label="Galaxy Count" value={count} onChange={(value) => setCount(Math.max(1, Number(value) || 1))} type="number" min={1} />
+          <HeaderSelectInput label="Galaxy Type" value={type} options={galaxyTypes} onChange={setType} />
+          <HeaderSelectInput label="Galaxy Size" value={size} options={galaxySizes} onChange={setSize} />
           <Button type="button" onClick={generateGalaxyCards} className="h-11 px-5">
             <Plus className="h-4 w-4" />
             Generate Galaxies
           </Button>
         </div>
-      </GeneratorPanel>
+      }
+    >
+      <div className="flex flex-col gap-3 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-3 sm:flex-row sm:items-center">
+        <Search className="h-4 w-4 text-slate-500" />
+        <input
+          className="h-10 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-slate-500"
+          placeholder="Search galaxies"
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+        />
+      </div>
 
-      {galaxies.length ? (
+      {visibleGalaxies.length ? (
         <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-          {galaxies.map((card) => (
+          {visibleGalaxies.map((card) => (
             <GalaxyCard
               key={card.galaxy.id}
               card={card}
@@ -2769,27 +2844,31 @@ export function SectorGeneratorWorkflow() {
   });
 
   return (
-    <GeneratorShell eyebrow="Universe Workflow" title="Sectors" description="Generate sector cards, drill into their star systems, and curate what belongs in the selected galaxy.">
-      <GeneratorPanel>
-        <div className="grid gap-3 lg:grid-cols-[minmax(14rem,1fr)_9rem_9rem_13rem_11rem_auto] lg:items-end">
-          <TextInput label="Universe Seed" value={universeSeed} onChange={setUniverseSeed} placeholder="PROJECT-GENESIS-UNIVERSE" />
-          <TextInput label="Galaxy" value={galaxyIndex} onChange={(value) => setGalaxyIndex(Math.max(0, Number(value) || 0))} type="number" min={0} />
-          <TextInput label="Sectors" value={count} onChange={(value) => setCount(Math.max(1, Number(value) || 1))} type="number" min={1} />
-          <SelectInput label="Sector Bias" value={sectorType} options={sectorTypes} onChange={setSectorType} />
-          <SelectInput label="Rarity Bias" value={rarity} options={rarityOptions} onChange={setRarity} />
+    <GeneratorShell
+      eyebrow="Universe Workflow"
+      title="Sectors"
+      description="Generate sector cards, drill into their star systems, and curate what belongs in the selected galaxy."
+      actions={
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(12rem,1fr)_5rem_6rem_11rem_10rem_auto] xl:items-center">
+          <HeaderTextInput label="Universe Seed" value={universeSeed} onChange={setUniverseSeed} placeholder="Universe seed" />
+          <HeaderTextInput label="Galaxy" value={galaxyIndex} onChange={(value) => setGalaxyIndex(Math.max(0, Number(value) || 0))} type="number" min={0} />
+          <HeaderTextInput label="Sectors" value={count} onChange={(value) => setCount(Math.max(1, Number(value) || 1))} type="number" min={1} />
+          <HeaderSelectInput label="Sector Bias" value={sectorType} options={sectorTypes} onChange={setSectorType} />
+          <HeaderSelectInput label="Rarity Bias" value={rarity} options={rarityOptions} onChange={setRarity} />
           <Button type="button" onClick={generateSectorCards} className="h-11 px-5">
             <Plus className="h-4 w-4" />
             Generate Sectors
           </Button>
         </div>
-      </GeneratorPanel>
+      }
+    >
 
-      <div className="relative">
-        <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-500" />
+      <div className="flex flex-col gap-3 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-3 sm:flex-row sm:items-center">
+        <Search className="h-4 w-4 text-slate-500" />
         <input
           value={search}
           onChange={(event) => setSearch(event.target.value)}
-          className="h-14 w-full rounded-md border border-cyan-300/15 bg-genesis-panel/90 pl-12 pr-4 text-sm font-semibold text-white outline-none placeholder:text-slate-600 focus:border-cyan-300/60"
+          className="h-10 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-slate-500"
           placeholder={`Search sectors in ${galaxy.name}`}
         />
       </div>
@@ -2895,32 +2974,32 @@ export function StarSystemGeneratorWorkflow() {
   const selectedSystem = cards.find((card) => card.system.id === openSystemId);
 
   return (
-    <GeneratorShell eyebrow="Universe Workflow" title="Star Systems" description="Generate collectible star-system cards, then open them to populate planets, moons, belts, and orbital worlds.">
-      <GeneratorPanel>
-        <div className="grid gap-3 lg:grid-cols-[minmax(14rem,1fr)_8rem_8rem_9rem_11rem_11rem_auto] lg:items-end">
-          <TextInput label="Universe Seed" value={universeSeed} onChange={setUniverseSeed} placeholder="PROJECT-GENESIS-UNIVERSE" />
-          <TextInput label="Galaxy" value={galaxyIndex} onChange={(value) => setGalaxyIndex(Math.max(0, Number(value) || 0))} type="number" min={0} />
-          <TextInput label="Sector" value={sectorIndex} onChange={(value) => setSectorIndex(Math.max(0, Number(value) || 0))} type="number" min={0} />
-          <TextInput label="Systems" value={count} onChange={(value) => setCount(Math.max(1, Number(value) || 1))} type="number" min={1} />
-          <SelectInput label="Rarity Bias" value={rarity} options={rarityOptions} onChange={setRarity} />
-          <SelectInput label="Star Rules" value={starRule} options={starCountRules} onChange={setStarRule} />
+    <GeneratorShell
+      eyebrow="Universe Workflow"
+      title="Star Systems"
+      description="Generate collectible star-system cards, then open them to populate planets, moons, belts, and orbital worlds."
+      actions={
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(12rem,1fr)_5rem_5rem_6rem_10rem_10rem_auto] xl:items-center">
+          <HeaderTextInput label="Universe Seed" value={universeSeed} onChange={setUniverseSeed} placeholder="Universe seed" />
+          <HeaderTextInput label="Galaxy" value={galaxyIndex} onChange={(value) => setGalaxyIndex(Math.max(0, Number(value) || 0))} type="number" min={0} />
+          <HeaderTextInput label="Sector" value={sectorIndex} onChange={(value) => setSectorIndex(Math.max(0, Number(value) || 0))} type="number" min={0} />
+          <HeaderTextInput label="Systems" value={count} onChange={(value) => setCount(Math.max(1, Number(value) || 1))} type="number" min={1} />
+          <HeaderSelectInput label="Rarity Bias" value={rarity} options={rarityOptions} onChange={setRarity} />
+          <HeaderSelectInput label="Star Rules" value={starRule} options={starCountRules} onChange={setStarRule} />
           <Button type="button" onClick={generateSystemCards} className="h-11 px-5">
             <Plus className="h-4 w-4" />
             Generate Star Systems
           </Button>
         </div>
-      </GeneratorPanel>
+      }
+    >
 
-      <div className="rounded-md border border-cyan-300/15 bg-slate-950/35 p-4">
-        <Breadcrumbs items={["Universe", galaxy.name, sector.sector_name]} />
-      </div>
-
-      <div className="relative">
-        <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-500" />
+      <div className="flex flex-col gap-3 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-3 sm:flex-row sm:items-center">
+        <Search className="h-4 w-4 text-slate-500" />
         <input
           value={search}
           onChange={(event) => setSearch(event.target.value)}
-          className="h-14 w-full rounded-md border border-cyan-300/15 bg-genesis-panel/90 pl-12 pr-4 text-sm font-semibold text-white outline-none placeholder:text-slate-600 focus:border-cyan-300/60"
+          className="h-10 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-slate-500"
           placeholder={`Search star systems in ${sector.sector_name}`}
         />
       </div>
