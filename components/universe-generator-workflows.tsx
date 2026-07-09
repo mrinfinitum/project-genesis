@@ -2025,7 +2025,7 @@ function StarSystemDetailPanel({
                 ))}
               </div>
             ) : null}
-            {!planetPoolLoading && !availablePlanets.length ? <EmptyState>No unassigned generated planets are available. Generate more planets in Planet Designer first.</EmptyState> : null}
+            {!planetPoolLoading && !availablePlanets.length ? <EmptyState>No unassigned generated planets are available. Generate more planets first.</EmptyState> : null}
           </div>
         ) : null}
         {card.planets.length || card.bodies.length ? (
@@ -2183,10 +2183,6 @@ function SectorCard({
         <div className="space-y-4 border-t border-cyan-300/15 p-5" onClick={(event) => event.stopPropagation()}>
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
             <div className="space-y-4">
-              <SectorVisual model={model} large />
-              <div className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-5">
-                <p className="text-base font-semibold leading-8 text-slate-200">{model.description}</p>
-              </div>
               <DetailSection title="Sector Specs">
                 <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                   <StatChip label="Sector Class" value={model.sectorClass} />
@@ -2385,10 +2381,6 @@ function GalaxyCard({
         <div className="space-y-4 border-t border-cyan-300/15 p-5" onClick={(event) => event.stopPropagation()}>
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
             <div className="space-y-4">
-              <GalaxyVisual model={model} large />
-              <div className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-5">
-                <p className="text-base font-semibold leading-8 text-slate-200">{model.description}</p>
-              </div>
               <DetailSection title="Galaxy Specs">
                 <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                   <StatChip label="Galaxy Class" value={model.galaxyClass} />
@@ -2654,7 +2646,7 @@ export function GalaxyGeneratorWorkflow() {
   }
 
   return (
-    <GeneratorShell eyebrow="Universe Workflow" title="Galaxy Generator" description="Generate visual galaxy cards, drill into sectors, and shape the content hierarchy before it moves into the game app.">
+    <GeneratorShell eyebrow="Universe Workflow" title="Galaxies" description="Generate visual galaxy cards, drill into sectors, and shape the content hierarchy before it moves into the game app.">
       <GeneratorPanel>
         <div className="grid gap-3 lg:grid-cols-[minmax(14rem,1fr)_9rem_13rem_12rem_auto] lg:items-end">
           <TextInput label="Universe Seed" value={universeSeed} onChange={setUniverseSeed} placeholder="PROJECT-GENESIS-UNIVERSE" />
@@ -2782,7 +2774,7 @@ export function SectorGeneratorWorkflow() {
   });
 
   return (
-    <GeneratorShell eyebrow="Universe Workflow" title="Sector Generator" description="Generate sector cards, drill into their star systems, and curate what belongs in the selected galaxy.">
+    <GeneratorShell eyebrow="Universe Workflow" title="Sectors" description="Generate sector cards, drill into their star systems, and curate what belongs in the selected galaxy.">
       <GeneratorPanel>
         <div className="grid gap-3 lg:grid-cols-[minmax(14rem,1fr)_9rem_9rem_13rem_11rem_auto] lg:items-end">
           <TextInput label="Universe Seed" value={universeSeed} onChange={setUniverseSeed} placeholder="PROJECT-GENESIS-UNIVERSE" />
@@ -2908,7 +2900,7 @@ export function StarSystemGeneratorWorkflow() {
   const selectedSystem = cards.find((card) => card.system.id === openSystemId);
 
   return (
-    <GeneratorShell eyebrow="Universe Workflow" title="Star System Generator" description="Generate collectible star-system cards, then open them to populate planets, moons, belts, and orbital worlds.">
+    <GeneratorShell eyebrow="Universe Workflow" title="Star Systems" description="Generate collectible star-system cards, then open them to populate planets, moons, belts, and orbital worlds.">
       <GeneratorPanel>
         <div className="grid gap-3 lg:grid-cols-[minmax(14rem,1fr)_8rem_8rem_9rem_11rem_11rem_auto] lg:items-end">
           <TextInput label="Universe Seed" value={universeSeed} onChange={setUniverseSeed} placeholder="PROJECT-GENESIS-UNIVERSE" />

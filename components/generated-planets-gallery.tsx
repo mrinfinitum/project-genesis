@@ -504,7 +504,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
       <section className="flex flex-col justify-between gap-4 xl:flex-row xl:items-end">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">Universe Workflow</p>
-          <h2 className="mt-2 text-3xl font-bold text-white">Planet Designer</h2>
+          <h2 className="mt-2 text-3xl font-bold text-white">Planets</h2>
           <p className="mt-2 max-w-3xl text-sm text-slate-300">
             Generate, preview, validate, and lock persistent planet cards with stats, resources, artwork, and story output.
           </p>

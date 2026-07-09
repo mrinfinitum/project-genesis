@@ -79,12 +79,12 @@ const navigationGroups: NavigationGroup[] = [
     fallbackProgress: 58,
     systemIds: ["planet-generation", "ancient-civilizations", "planet-traits", "anomalies", "hazards", "expeditions"],
     items: [
-      { href: "/galaxy", label: "Galaxy Generator", icon: Star },
-      { href: "/sector-map", label: "Sector Generator", icon: Map },
-      { href: "/star-system-map", label: "Star System Generator", icon: Radar },
-      { href: "/celestial-bodies", label: "Celestial Body Designer", icon: CircleDot },
-      { href: "/planets", label: "Planet Designer", icon: Orbit },
-      { href: "/planetary-rules", label: "Generation Rules", icon: GitBranch }
+      { href: "/galaxy", label: "Galaxies", icon: Star },
+      { href: "/sector-map", label: "Sectors", icon: Map },
+      { href: "/star-system-map", label: "Star Systems", icon: Radar },
+      { href: "/celestial-bodies", label: "Celestial Bodies", icon: CircleDot },
+      { href: "/planets", label: "Planets", icon: Orbit },
+      { href: "/planetary-rules", label: "Rules", icon: GitBranch }
     ]
   },
   {

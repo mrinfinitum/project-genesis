@@ -322,7 +322,7 @@ export function CelestialBodyDesigner({ rows }: { rows: Body[] }) {
       <section className="grid gap-5 xl:grid-cols-[1fr_26rem]">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Universe Workflow</p>
-          <h1 className="mt-3 text-5xl font-bold text-white">Celestial Body Designer</h1>
+          <h1 className="mt-3 text-5xl font-bold text-white">Celestial Bodies</h1>
           <p className="mt-3 max-w-4xl text-lg leading-8 text-slate-300">
             Design stars, planets, moons, dwarf planets, orbital worlds, belts, and fixed Sol bodies as a nested system hierarchy.
           </p>
