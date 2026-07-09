@@ -43,7 +43,7 @@ function errorMessage(error: unknown, fallback: string) {
 
 function isMissingGeneratedPlanetOptionalColumn(error: unknown) {
   const message = errorMessage(error, "");
-  return message.includes("generated_planets") && /(image_(url|prompt|status|variants)|orbit_view_(prompt|image_url)|surface_landscape_(prompt|image_url|status|notes)|rarity|planet_subclass|anomalies|colonizable|landable|surface_exploration|terrain_generation|uses_orbital_gameplay|orbital_slot_count|orbital_platforms_built|atmospheric_harvest_rate|gas_giant_hazard_level|required_technology|resource_transport_options)/.test(message);
+  return message.includes("generated_planets") && /(resource_ids|image_(url|prompt|status|variants)|orbit_view_(prompt|image_url)|surface_landscape_(prompt|image_url|status|notes)|rarity|planet_subclass|anomalies|colonizable|landable|surface_exploration|terrain_generation|uses_orbital_gameplay|orbital_slot_count|orbital_platforms_built|atmospheric_harvest_rate|gas_giant_hazard_level|required_technology|resource_transport_options)/.test(message);
 }
 
 function unsupportedGeneratedPlanetColumn(error: unknown) {
@@ -58,7 +58,12 @@ function unsupportedGeneratedPlanetColumn(error: unknown) {
 
 async function upsertGeneratedPlanet(planet: GeneratedPlanet) {
   const row = { ...(planet as unknown as Record<string, unknown>) };
+  if (planet.resourceIds) {
+    row.resource_ids = planet.resourceIds;
+    delete row.resourceIds;
+  }
   const unsupportedColumns = new Set([
+    "resource_ids",
     "image_url",
     "image_prompt",
     "image_status",
@@ -102,10 +107,17 @@ async function upsertGeneratedPlanet(planet: GeneratedPlanet) {
   return upsertRow("generated_planets", row);
 }
 
+function hydrateGeneratedPlanet(row: GeneratedPlanet & { resource_ids?: string[] }) {
+  return {
+    ...row,
+    resourceIds: row.resourceIds ?? row.resource_ids
+  } as GeneratedPlanet;
+}
+
 export async function GET() {
   try {
     const [rows, renderLibrary] = await Promise.all([getRows("generated_planets"), getRows("planet_render_library").catch(() => [])]);
-    return NextResponse.json({ rows: sortRows(withFixedSolGeneratedPlanets(rows as GeneratedPlanet[], renderLibrary as PlanetRenderLibraryRecord[])) });
+    return NextResponse.json({ rows: sortRows(withFixedSolGeneratedPlanets((rows as Array<GeneratedPlanet & { resource_ids?: string[] }>).map(hydrateGeneratedPlanet), renderLibrary as PlanetRenderLibraryRecord[])) });
   } catch (error) {
     const message = errorMessage(error, "Could not load generated planets.");
     return NextResponse.json({ error: message }, { status: 500 });
@@ -134,7 +146,7 @@ export async function POST(request: Request) {
       primaryBiome: body.primaryBiome,
       resourceProfiles: profileRows as PlanetResourceProfile[]
     });
-    const existingPlanet = (existingRows as GeneratedPlanet[]).find((row) => row.id === planet.id);
+    const existingPlanet = (existingRows as Array<GeneratedPlanet & { resource_ids?: string[] }>).map(hydrateGeneratedPlanet).find((row) => row.id === planet.id);
 
     if (existingPlanet && hasLockedPlanetRender(existingPlanet)) {
       return NextResponse.json({ row: existingPlanet, preserved: true }, { status: 200 });

@@ -9,7 +9,8 @@ import {
 } from "@/lib/planets/class-model";
 import { generatePlanetRarity } from "@/lib/planets/rarity";
 import { buildOrbitViewPrompt } from "@/lib/planets/artwork-prompts";
-import { normalizeResourceNames, resourceNames } from "@/lib/resources/service";
+import { normalizePlanetResourceProfile, resourceNamesForIds, type NormalizedPlanetResourceProfile } from "@/lib/resources/planet-resource-profiles";
+import { ResourceService, resourceNames } from "@/lib/resources/service";
 
 type RandomSource = () => number;
 type GeneratePlanetOptions = {
@@ -359,39 +360,75 @@ function fillResourcePool(selected: string[], candidates: string[], random: Rand
   }
 }
 
-function pickProfileResources(
-  profile: PlanetResourceProfile,
-  rarityName: string,
-  random: RandomSource,
-  min: number,
-  max: number,
-  fallbackResources: string[]
-) {
-  const target = Math.max(min, Math.min(max, min + Math.floor(random() * (max - min + 1))));
-  const rank = rarityRank(rarityName);
-  const selected = normalizeResourceNames(profile.guaranteed_resources).slice(0, target);
-  const candidates = [
-    ...normalizeResourceNames(profile.common_resources),
-    ...(rank >= 3 ? normalizeResourceNames(profile.rare_resources) : []),
-    ...(rank >= 5 ? normalizeResourceNames(profile.exotic_resources) : []),
-    ...(rank >= 7 ? normalizeResourceNames(profile.exotic_resources) : []),
-    ...fallbackResources
-  ];
+function fillWeightedResourcePool(selected: string[], candidates: string[], weights: Record<string, number>, random: RandomSource, target: number) {
+  const uniqueCandidates = [...new Set(candidates.filter(Boolean))].filter((resource) => !selected.includes(resource));
 
-  fillResourcePool(selected, candidates, random, target);
-  return selected.length ? selected : fallbackResources;
+  while (selected.length < target && uniqueCandidates.length) {
+    const totalWeight = uniqueCandidates.reduce((total, resource) => total + Math.max(1, weights[resource] ?? 1), 0);
+    let roll = random() * totalWeight;
+    let index = 0;
+
+    for (; index < uniqueCandidates.length; index += 1) {
+      roll -= Math.max(1, weights[uniqueCandidates[index] ?? ""] ?? 1);
+      if (roll <= 0) break;
+    }
+
+    const [resource] = uniqueCandidates.splice(Math.min(index, uniqueCandidates.length - 1), 1);
+    if (resource) {
+      selected.push(resource);
+    }
+  }
 }
 
-function pickGasGiantResources(subclass: string, rarityName: string, random: RandomSource, min: number, max: number) {
+function resourceIdsFromValues(values: string[]) {
+  return [
+    ...new Set(
+      values
+        .map((value) => ResourceService.resolveId(value))
+        .filter((id): id is string => Boolean(id))
+    )
+  ];
+}
+
+function pickProfileResourceIds(
+  profile: NormalizedPlanetResourceProfile,
+  rarityName: string,
+  random: RandomSource,
+  fallbackResourceIds: string[]
+) {
+  const rank = rarityRank(rarityName);
+  const primaryTarget = numericRange(random, 2, 4);
+  const secondaryTarget = numericRange(random, 1, 4);
+  const rareTarget = rank >= 3 ? numericRange(random, 0, 2) : 0;
+  const exoticTarget = rank >= 5 ? numericRange(random, 0, 1) : 0;
+  const selected: string[] = [];
+  const candidates = [
+    ...profile.primaryResourceIds,
+    ...profile.secondaryResourceIds,
+    ...(rank >= 3 ? profile.rareResourceIds : []),
+    ...(rank >= 5 ? profile.exoticResourceIds : []),
+    ...(rank >= 7 ? profile.exoticResourceIds : []),
+    ...fallbackResourceIds
+  ];
+
+  fillWeightedResourcePool(selected, profile.primaryResourceIds, profile.resourceWeights, random, primaryTarget);
+  fillWeightedResourcePool(selected, profile.secondaryResourceIds, profile.resourceWeights, random, primaryTarget + secondaryTarget);
+  fillWeightedResourcePool(selected, rank >= 3 ? profile.rareResourceIds : [], profile.resourceWeights, random, primaryTarget + secondaryTarget + rareTarget);
+  fillWeightedResourcePool(selected, rank >= 5 ? profile.exoticResourceIds : [], profile.resourceWeights, random, primaryTarget + secondaryTarget + rareTarget + exoticTarget);
+  fillWeightedResourcePool(selected, candidates, profile.resourceWeights, random, primaryTarget + secondaryTarget);
+  return selected.length ? selected : fallbackResourceIds;
+}
+
+function pickGasGiantResourceIds(subclass: string, rarityName: string, random: RandomSource) {
   const profile = gasGiantResources[subclass] ?? gasGiantResources.Banded;
   const rank = rarityRank(rarityName);
-  const target = Math.max(min, Math.min(max, min + Math.floor(random() * (max - min + 1))));
-  const selected = [...profile.guaranteed];
+  const target = numericRange(random, 3, 6);
+  const selected = resourceIdsFromValues(profile.guaranteed);
   const candidates = [
-    ...profile.common,
-    ...(rank >= 3 ? profile.rare : []),
-    ...(rank >= 5 ? profile.exotic : []),
-    ...(rank >= 7 ? profile.exotic : [])
+    ...resourceIdsFromValues(profile.common),
+    ...(rank >= 3 ? resourceIdsFromValues(profile.rare) : []),
+    ...(rank >= 5 ? resourceIdsFromValues(profile.exotic) : []),
+    ...(rank >= 7 ? resourceIdsFromValues(profile.exotic) : [])
   ];
 
   fillResourcePool(selected, candidates, random, target);
@@ -507,18 +544,20 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
     ? forcedPrimaryBiome
     : planetClass;
   const resourceProfile = findResourceProfile(options.resourceProfiles ?? [], planetClass, planetSubclass);
+  const normalizedResourceProfile = resourceProfile ? normalizePlanetResourceProfile(resourceProfile) : null;
   const anomalyRange = anomalyCountForRarity(rarity.name);
   const hasAncientCivilization = random() < rarity.ancientCivilizationChance;
   const ancientCivilization = hasAncientCivilization ? pickRuleExcluding(rules, "Ancient Civilization", random, "Ancient", ["None"]) : "None";
   const ruins = pickRule(rules, "Ruins", random, "None");
   const traits = pickMany(rules, "Trait", random, rarity.traitCount[0], rarity.traitCount[1]);
   const anomalies = pickManyValues(PLANET_ANOMALIES, random, anomalyRange[0], anomalyRange[1]);
-  const fallbackResources = normalizeResourceNames(pickMany(rules, "Resource", random, rarity.resourceCount[0], rarity.resourceCount[1]));
-  const resources = isGasGiant
-    ? pickGasGiantResources(planetSubclass, rarity.name, random, rarity.resourceCount[0], rarity.resourceCount[1])
-    : resourceProfile
-    ? pickProfileResources(resourceProfile, rarity.name, random, rarity.resourceCount[0], rarity.resourceCount[1], fallbackResources)
-    : fallbackResources;
+  const fallbackResourceIds = resourceIdsFromValues(pickMany(rules, "Resource", random, rarity.resourceCount[0], rarity.resourceCount[1]));
+  const resourceIds = isGasGiant
+    ? pickGasGiantResourceIds(planetSubclass, rarity.name, random)
+    : normalizedResourceProfile
+      ? pickProfileResourceIds(normalizedResourceProfile, rarity.name, random, fallbackResourceIds)
+      : fallbackResourceIds;
+  const resources = resourceNamesForIds(resourceIds);
   const hazards = isGasGiant ? pickManyValues(gasGiantHazards, random, 3, 6) : pickMany(rules, "Hazard", random, 2, 6);
   const collectiblePools = pickMany(rules, "Collectible Pool", random, rarity.collectibleCount[0], rarity.collectibleCount[1]);
   const eventPool = pickMany(rules, "Event Pool", random, 2, 5);
@@ -526,8 +565,8 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
   const artifact = collectiblePools[0] ?? "Planet Relic";
   const resource = resources[0] ?? resourceNames(["RES-0001"])[0];
   const trait = traits[0] ?? "Terraformable";
-  const miningDifficulty = resourceProfile?.mining_difficulty ?? numericRange(random, 1, 10);
-  const densityScore = resourceProfile ? resourceDensityScore(resourceProfile.resource_density, random) : numericRange(random, 0, 100);
+  const miningDifficulty = normalizedResourceProfile?.miningDifficultyModifier ?? numericRange(random, 1, 10);
+  const densityScore = normalizedResourceProfile ? numericRange(random, normalizedResourceProfile.abundanceRange.min, normalizedResourceProfile.abundanceRange.max) : numericRange(random, 0, 100);
   const orbitalOnly = isGasGiant || (resourceProfile?.colonizable.toLowerCase().includes("orbital") ?? false);
   const civilizationFragment = ancientCivilization === "None" ? "unknown explorers" : ancientCivilization.toLowerCase();
   const worldIdentity = planetSubclass.toLowerCase().includes("world") ? planetSubclass : `${planetSubclass} ${planetClass}`;
@@ -562,6 +601,7 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
     gravity: pickRule(rules, "Gravity", random, "Standard"),
     water_coverage: pickRule(rules, "Water Coverage", random, "50%"),
     moons: pickRule(rules, "Moons", random, "1"),
+    resourceIds,
     resources,
     flora: pickRule(rules, "Flora", random, "Normal"),
     fauna: pickRule(rules, "Fauna", random, "Neutral"),
@@ -635,7 +675,7 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
     image_status: "Not Rendered",
     image_variants: [],
     created_at: new Date().toISOString(),
-    notes: resourceProfile?.scientific_notes ?? ""
+    notes: normalizedResourceProfile?.notes ?? ""
   };
 
   generatedPlanet.orbit_view_prompt = buildOrbitViewPrompt(generatedPlanet);

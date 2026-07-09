@@ -509,12 +509,12 @@ export const handoffDataHealthChecks: DataHealthCheck[] = [
     system: "Planet Resources",
     issue: "Planet resource profiles contain unknown resource names",
     severity: "Critical",
-    affected_count: 18,
-    description: "Several generated profile rows reference resource labels that need canonical resource IDs.",
-    recommended_action: "Normalize profile resources against the Resource Catalog v2 table.",
-    resolved: false,
+    affected_count: 0,
+    description: "Planet resource profiles are normalized into canonical resource ID buckets for deterministic generation.",
+    recommended_action: "Resolved. Keep new profile resources catalog-backed before economy, mining, crafting, colonies, or trading work.",
+    resolved: true,
     created_at: "2026-07-06T00:00:00.000Z",
-    resolved_at: null
+    resolved_at: "2026-07-09T00:00:00.000Z"
   },
   {
     id: "health-building-unlocks",
@@ -583,13 +583,13 @@ export const handoffCodexReadinessItems: CodexReadinessItem[] = [
     id: "codex-planet-resource-profiles-v2",
     title: "Planet Resource Profiles v2.0",
     system: "Planet Resources",
-    status: "Needs Review",
-    description: "Profile data is structurally ready but needs resource ID normalization.",
+    status: "Complete",
+    description: "Planet resource profiles export canonical resource ID buckets and deterministic planet generation stores resource IDs.",
     related_tables: ["planet_resource_profiles", "resource_catalog"],
     export_path: "/api/export/planet_resource_profiles.json",
     priority: "Critical",
     created_at: "2026-07-06T00:00:00.000Z",
-    notes: "Blocker for deterministic planet resource generation."
+    notes: "Completed with normalized ID export, strict validation, deterministic weighted generation, and generated planet resourceIds."
   },
   {
     id: "codex-research-unlocks",
@@ -626,6 +626,21 @@ export const handoffCodexTasks: CodexTask[] = [
     created_at: "2026-07-06T00:00:00.000Z",
     updated_at: "2026-07-09T00:00:00.000Z",
     notes: "Completed by centralizing resource catalog access through ResourceService/resource_catalog and removing hardcoded resource names from generation paths. Evidence: commit 4dbdc24 Centralize resource catalog access."
+  },
+  {
+    id: "task-codex-planet-resource-profiles-v2",
+    title: "Planet Resource Profiles v2.0",
+    source_type: "codex_readiness_item",
+    source_id: "codex-planet-resource-profiles-v2",
+    system: "Planet Resources",
+    priority: "Critical",
+    status: "Complete",
+    description: "Normalize all planet resource profile data so deterministic planet resource generation can reliably reference the canonical Resource Catalog.",
+    related_tables: ["planet_resource_profiles", "resource_catalog"],
+    export_path: "/api/export/planet_resource_profiles.json",
+    created_at: "2026-07-09T00:00:00.000Z",
+    updated_at: "2026-07-09T00:00:00.000Z",
+    notes: "Completed: profiles export primaryResourceIds, secondaryResourceIds, rareResourceIds, exoticResourceIds; validation rejects invalid/missing/duplicate IDs; generation stores resourceIds and resolves display names from ResourceService."
   }
 ];
 export const handoffPlanetPromptLibrary: PlanetPromptLibraryRecord[] = [];

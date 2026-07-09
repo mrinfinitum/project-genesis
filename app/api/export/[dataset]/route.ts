@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { getGameData } from "@/lib/data";
 import { toCsv } from "@/lib/export/csv";
+import { normalizePlanetResourceProfiles, validatePlanetResourceProfiles } from "@/lib/resources/planet-resource-profiles";
+import { ResourceService } from "@/lib/resources/service";
 import { editableTables } from "@/lib/tables";
+import type { PlanetResourceProfile } from "@/types/schema";
 
 type Params = {
   params: Promise<{ dataset: string }>;
@@ -131,11 +134,23 @@ export async function GET(request: Request, { params }: Params) {
   }
 
   if (normalized === "all") {
-    return NextResponse.json(data);
+    return NextResponse.json({
+      ...data,
+      resource_catalog: ResourceService.catalog,
+      planet_resource_profiles: normalizePlanetResourceProfiles(data.planet_resource_profiles as PlanetResourceProfile[])
+    });
   }
 
   if (!jsonDatasets.has(dataset) || !(normalized in data)) {
     return NextResponse.json({ error: "Unknown export dataset." }, { status: 404 });
+  }
+
+  if (normalized === "planet_resource_profiles") {
+    return NextResponse.json(validatePlanetResourceProfiles(data.planet_resource_profiles as PlanetResourceProfile[]));
+  }
+
+  if (normalized === "resource_catalog") {
+    return NextResponse.json(ResourceService.catalog);
   }
 
   return NextResponse.json(data[normalized as keyof typeof data]);

@@ -1,4 +1,5 @@
 import { handoffResourceCatalog } from "@/data/handoff";
+import planetResourceProfilesRaw from "@/data/handoff/json/Planet_Resource_Profiles.json";
 import type { ResourceCatalogItem } from "@/types/schema";
 
 type ResourceLookup = {
@@ -8,6 +9,25 @@ type ResourceLookup = {
 
 function normalize(value: string) {
   return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, " ");
+}
+
+function slug(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function text(value: unknown) {
+  return String(value ?? "").trim();
+}
+
+function list(value: unknown) {
+  return text(value)
+    .split(";")
+    .map((item) => item.trim())
+    .filter(Boolean);
 }
 
 function buildLookup(catalog: ResourceCatalogItem[]): ResourceLookup {
@@ -56,7 +76,58 @@ const supplementalResourceCatalog: ResourceCatalogItem[] = [
   updated_at: "2026-07-09T00:00:00.000Z"
 }));
 
-const resourceCatalog = [...handoffResourceCatalog, ...supplementalResourceCatalog];
+const knownSupplementalNames = new Set([...handoffResourceCatalog, ...supplementalResourceCatalog].map((resource) => normalize(resource.resource_name)));
+const profileSupplementalResourceCatalog: ResourceCatalogItem[] = [
+  ...new Set(
+    (planetResourceProfilesRaw as Array<Record<string, unknown>>).flatMap((row) => [
+      ...list(row["Guaranteed Resources"]),
+      ...list(row["Common Resources"]),
+      ...list(row["Rare Resources"]),
+      ...list(row["Exotic Resources"])
+    ])
+  )
+]
+  .filter((resourceName) => !knownSupplementalNames.has(normalize(resourceName)))
+  .sort((left, right) => left.localeCompare(right))
+  .map((resourceName) => {
+    const normalizedName = normalize(resourceName);
+    const category = normalizedName.includes("gas")
+      ? "Gas"
+      : normalizedName.includes("water") || normalizedName.includes("ice") || normalizedName.includes("snow")
+        ? "Volatile"
+        : normalizedName.includes("core") || normalizedName.includes("energy") || normalizedName.includes("storm") || normalizedName.includes("ion")
+          ? "Energy"
+          : normalizedName.includes("relic") || normalizedName.includes("fragment") || normalizedName.includes("fossil")
+            ? "Archaeology"
+            : normalizedName.includes("bio") || normalizedName.includes("organics") || normalizedName.includes("tissue") || normalizedName.includes("spore")
+              ? "Organic"
+              : normalizedName.includes("crystal")
+                ? "Crystal"
+                : "Planetary";
+    const rarity = normalizedName.includes("trace") || normalizedName.includes("exotic") || normalizedName.includes("genesis") || normalizedName.includes("infinite") ? "Exotic" : "Uncommon";
+
+    return {
+      id: `RES-PROFILE-${slug(resourceName).toUpperCase()}`,
+      resource_name: resourceName,
+      category,
+      rarity,
+      rarity_color: rarity === "Exotic" ? "#F39C12" : "#2ECC71",
+      discovery_tier: "Planetary",
+      earth_available: "No",
+      first_unlock_requirement: "Planetary Survey",
+      typical_planet_classes: ["Terrestrial", "Ocean", "Desert", "Ice", "Lava", "Gas Giant", "Crystal", "Toxic", "Artificial", "Void", "Living", "Bio", "Ancient", "Energy", "Primordial", "Dead"],
+      primary_uses: ["planet generation", "resource profiles", "exploration"],
+      base_trade_value: rarity === "Exotic" ? 250 : 45,
+      stack_size: 9999,
+      description: `${resourceName} is a profile-normalized canonical resource used by deterministic planet generation.`,
+      science_lore_notes: "Supplemental canonical resource inferred from Planet Resource Profiles v2.0 normalization.",
+      codex_implementation_notes: "Stable generated ID. Keep for save compatibility unless migrated through an explicit ID remap.",
+      created_at: "2026-07-09T00:00:00.000Z",
+      updated_at: "2026-07-09T00:00:00.000Z"
+    };
+  });
+
+const resourceCatalog = [...handoffResourceCatalog, ...supplementalResourceCatalog, ...profileSupplementalResourceCatalog];
 const lookup = buildLookup(resourceCatalog);
 
 const resourceAliases = new Map<string, string>([

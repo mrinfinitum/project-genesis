@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { PLANET_CLASS_MODEL } from "@/lib/planets/class-model";
 import { normalizePlanetRarity } from "@/lib/planets/rarity";
 import { hasLockedPlanetRender } from "@/lib/planets/render-lock";
+import { ResourceService } from "@/lib/resources/service";
 import type { GeneratedPlanet } from "@/types/schema";
 
 type PlanetImageVariant = NonNullable<GeneratedPlanet["image_variants"]>[number];
@@ -22,6 +23,10 @@ function asList(values: string[] | null | undefined) {
 
 function listText(values: string[] | null | undefined) {
   return asList(values).join(", ");
+}
+
+function displayResourceNames(row: GeneratedPlanet) {
+  return row.resourceIds?.length ? ResourceService.namesForIds(row.resourceIds) : asList(row.resources);
 }
 
 function compactText(values: string[] | null | undefined) {
@@ -53,7 +58,7 @@ function placeholderStyle(row: GeneratedPlanet): CSSProperties {
     .toLowerCase();
   const detailText = [
     row.temperature,
-    compactText(row.resources),
+    displayResourceNames(row).join(" ").toLowerCase(),
     compactText(row.hazards),
     compactText(row.traits),
     compactText(row.weather)
@@ -141,7 +146,7 @@ function planetSearchText(row: GeneratedPlanet) {
     row.ancient_civilization,
     row.ruins,
     row.story,
-    ...asList(row.resources),
+    ...displayResourceNames(row),
     ...asList(row.hazards),
     ...asList(row.traits),
     ...asList(row.anomalies),
@@ -669,7 +674,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                 <p className="line-clamp-2 text-xs leading-5 text-slate-300">{row.story}</p>
                 <div className="space-y-1 text-xs text-slate-400">
                   <p className="truncate">
-                    <span className="text-slate-500">Resources:</span> {listText(row.resources)}
+                    <span className="text-slate-500">Resources:</span> {listText(displayResourceNames(row))}
                   </p>
                   <p className="truncate">
                     <span className="text-slate-500">{isGasGiant(row) ? "Hazards:" : "Traits:"}</span> {isGasGiant(row) ? listText(row.hazards) : listText(row.traits)}
@@ -814,7 +819,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
               </div>
               <div className="space-y-4">
                 {[
-                  [isGasGiant(selectedPlanet) ? "Atmospheric Resources" : "Resources", selectedPlanet.resources],
+                  [isGasGiant(selectedPlanet) ? "Atmospheric Resources" : "Resources", displayResourceNames(selectedPlanet)],
                   ["Hazards", selectedPlanet.hazards],
                   ["Traits", selectedPlanet.traits],
                   ...(isGasGiant(selectedPlanet)

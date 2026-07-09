@@ -30,6 +30,10 @@ function stringifyValue(value: unknown) {
     return "";
   }
 
+  if (typeof value === "object") {
+    return JSON.stringify(value);
+  }
+
   return String(value);
 }
 
@@ -47,6 +51,14 @@ function normalizeValue(value: string, field: FieldConfig) {
 
   if (field.type === "boolean") {
     return value === "true" || value === "on";
+  }
+
+  if (field.key === "resource_weights" || field.key === "abundance_range") {
+    try {
+      return value ? JSON.parse(value) : {};
+    } catch {
+      return {};
+    }
   }
 
   return value === "" ? null : value;
