@@ -1,4 +1,5 @@
 import { buildPlanetPrompt, planetTypeFeaturePrompt, PLANET_PROMPT_LIBRARY } from "@/data/planet-generation-prompts";
+import { resourceNames } from "@/lib/resources/service";
 import type { PlanetPromptTemplate } from "@/data/planet-generation-prompts";
 import type { GeneratedPlanet } from "@/types/schema";
 
@@ -156,6 +157,8 @@ function buildSurfaceLandscapePromptForInput(input: PlanetArtworkPromptInput, op
 }
 
 function buildOrbitalPlatformPromptForInput(input: PlanetArtworkPromptInput, referenceImageUrl = "", resources = "", hazards = "") {
+  const defaultAtmosphericResources = resourceNames(["RES-0177", "RES-0178", "RES-0147"]).join(", ");
+
   return [
     "Reference Image",
     "@img1",
@@ -173,7 +176,7 @@ function buildOrbitalPlatformPromptForInput(input: PlanetArtworkPromptInput, ref
     "Show believable orbital resource infrastructure such as atmospheric collectors, orbital harvesters, gas refineries, fusion fuel platforms, storm research stations, orbital depots, skyhook platforms, or floating platforms.",
     "",
     "RESOURCES",
-    `Atmospheric resources: ${resources || "Hydrogen, Helium, exotic gases"}.`,
+    `Atmospheric resources: ${resources || defaultAtmosphericResources}.`,
     `Hazards: ${hazards || "extreme winds, high pressure, lightning storms, radiation belts"}.`,
     "",
     "COMPOSITION",

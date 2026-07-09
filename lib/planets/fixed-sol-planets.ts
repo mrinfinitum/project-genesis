@@ -1,6 +1,7 @@
 import { getLocalBubbleSystems } from "@/lib/universe/fallback-data";
 import { imageVariantsFromRender, matchPlanetRender } from "@/lib/planets/render-library";
 import { generateCelestialBodies, type CelestialBodyNode } from "@/lib/universe/generator";
+import { ResourceService } from "@/lib/resources/service";
 import type { GeneratedPlanet, PlanetRenderLibraryRecord } from "@/types/schema";
 
 const SOL_SEED_PREFIX = "PROJECT-GENESIS-UNIVERSE:milky-way:local-bubble:sol";
@@ -35,6 +36,11 @@ function fallbackStory(body: CelestialBodyNode) {
   return `${body.name} is a fixed Sol System ${classText}${parentText}. ${body.notes}`;
 }
 
+function hasResourceId(resources: string[], ids: string[]) {
+  const resourceIds = new Set(resources.map((resource) => ResourceService.resolveId(resource)).filter(Boolean));
+  return ids.some((id) => resourceIds.has(id));
+}
+
 function visualTheme(body: CelestialBodyNode): Record<string, string> {
   if (body.uses_orbital_gameplay || body.planet_class === "Gas Giant") {
     return {
@@ -55,7 +61,7 @@ function visualTheme(body: CelestialBodyNode): Record<string, string> {
     fog_color: body.atmosphere ?? "None",
     rock_color: body.biome ?? body.planet_subclass ?? "Mixed",
     ground_color: body.biome ?? body.planet_class ?? "Mixed",
-    water_color: body.resources.includes("Water Ice") ? "Frozen" : "None",
+    water_color: hasResourceId(body.resources, ["RES-0041"]) ? "Frozen" : "None",
     vegetation_color: body.name === "Earth" ? "Temperate" : "None",
     lighting: "Sol",
     cloud_density: body.atmosphere && body.atmosphere !== "None" ? "Variable" : "None",
@@ -87,7 +93,7 @@ function generatedPlanetFromSolBody(body: CelestialBodyNode, allBodies: Celestia
     atmosphere: body.atmosphere ?? "None",
     temperature: gasGiant ? "Variable Atmospheric Layers" : body.planet_class === "Lava" ? "Extreme Heat" : body.planet_class === "Ice" ? "Frozen" : "Variable",
     gravity: body.gravity ?? "Standard",
-    water_coverage: body.resources.some((resource) => /water|ice|ocean/i.test(resource)) ? "Trace / Ice" : "Low",
+    water_coverage: hasResourceId(body.resources, ["RES-0041", "RES-0044", "RES-0045", "RES-0047", "RES-0186"]) ? "Trace / Ice" : "Low",
     moons: moonCount ? String(moonCount) : body.celestial_body_type === "Moon" ? "0" : "None",
     resources: body.resources,
     flora: body.name === "Earth" ? "Established Biosphere" : "None Confirmed",
@@ -122,7 +128,7 @@ function generatedPlanetFromSolBody(body: CelestialBodyNode, allBodies: Celestia
       mining_value: body.resources.length * 12,
       trade_value: gasGiant ? 80 : 35,
       colony_value: body.colonizable ? 55 : 0,
-      fuel_value: gasGiant ? 95 : body.resources.some((resource) => /helium|methane|hydrogen/i.test(resource)) ? 60 : 15
+      fuel_value: gasGiant ? 95 : hasResourceId(body.resources, ["RES-0177", "RES-0178", "RES-0180", "RES-0049", "RES-0048"]) ? 60 : 15
     },
     event_pool: gasGiant ? ["Survey Atmosphere", "Deploy Harvester", "Fuel Economy Discovery"] : ["Survey Surface", "Resource Scan", "Outpost Planning"],
     story: fallbackStory(body),

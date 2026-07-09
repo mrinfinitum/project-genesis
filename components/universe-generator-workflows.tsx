@@ -19,6 +19,7 @@ import {
 } from "@/lib/universe/generator";
 import { cn } from "@/lib/utils";
 import { fixedSolGeneratedPlanets } from "@/lib/planets/fixed-sol-planets";
+import { normalizeResourceNames, resourceNames } from "@/lib/resources/service";
 import type { GeneratedPlanet } from "@/types/schema";
 
 type AssignmentContext = {
@@ -1346,7 +1347,7 @@ function sectorSeedModel(card: SectorCardState): SectorSeedModel {
   const localBubble = isLocalBubble(sector);
   const systemCapacity = localBubble ? 24 : sector.system_count;
   const generatedSystems = localBubble ? Math.max(systems.length, 1) : systems.length;
-  const resources = uniqueValues([sector.resource_signal, ...systemModels.flatMap((model) => model.resources), "Survey Data"]).slice(0, 10);
+  const resources = normalizeResourceNames([...systemModels.flatMap((model) => model.resources), ...resourceNames(["RES-0192"])]).slice(0, 10);
   const hazards = uniqueValues([
     sector.difficulty >= 70 ? "Hostile Navigation" : null,
     sector.difficulty >= 45 ? "Patrol Risk" : "Low Navigation Risk",
@@ -1451,7 +1452,7 @@ function galaxySeedModel(card: GalaxyCardState): GalaxySeedModel {
     isUnlocked: unlocked,
     unlockRequirement: milkyWay ? milkyWayGalaxyProfile.unlockRequirement : "Requires intergalactic navigation research. Dev override is available for testing.",
     galaxyDNA: galaxyDna,
-    resources: uniqueValues([...sectorModels.flatMap((model) => model.resources), "Galactic Cartography", "Long Range Survey Data"]).slice(0, 10),
+    resources: normalizeResourceNames([...sectorModels.flatMap((model) => model.resources), ...resourceNames(["RES-0193", "RES-0194"])]).slice(0, 10),
     traits: uniqueValues([galaxyScale, galaxyClass, milkyWay ? "Sol Origin" : "Procedural Expansion", `${galaxyDna.age} Galaxy`, `${galaxyDna.resourceRichness} Resources`, ...sectorModels.flatMap((model) => model.traits)]).slice(0, 8),
     hazards: uniqueValues([...sectorModels.flatMap((model) => model.hazards), galaxy.galaxy_type.includes("Void") ? "Void Routes" : null]).slice(0, 8),
     anomalies: uniqueValues([...sectorModels.flatMap((model) => model.anomalies), ...galaxyDna.rarePhenomena]).slice(0, 8),
@@ -1472,9 +1473,11 @@ function galaxySeedModel(card: GalaxyCardState): GalaxySeedModel {
 }
 
 function inferredResources(card: StarSystemCardState) {
-  return uniqueValues([...card.planets.flatMap((planet) => planet.resources), ...card.bodies.flatMap((body) => body.resources), card.system.resource_bias, "Fusion Fuel", "Survey Data"])
-    .filter((value) => value !== "All Earth Resources")
-    .slice(0, 10);
+  return normalizeResourceNames([
+    ...card.planets.flatMap((planet) => planet.resources),
+    ...card.bodies.flatMap((body) => body.resources),
+    ...resourceNames(["RES-0191", "RES-0192"])
+  ]).slice(0, 10);
 }
 
 function inferredHazards(card: StarSystemCardState) {

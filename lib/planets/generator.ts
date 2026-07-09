@@ -9,6 +9,7 @@ import {
 } from "@/lib/planets/class-model";
 import { generatePlanetRarity } from "@/lib/planets/rarity";
 import { buildOrbitViewPrompt } from "@/lib/planets/artwork-prompts";
+import { normalizeResourceNames, resourceNames } from "@/lib/resources/service";
 
 type RandomSource = () => number;
 type GeneratePlanetOptions = {
@@ -83,7 +84,7 @@ const visualPalettes: Record<string, VisualPalette> = {
     sky: ["Storm Blue", "Amber", "Emerald", "Pearl"],
     fog: ["Layered Clouds", "Storm Haze", "Ammonia", "Methane"],
     water: ["None", "Atmospheric", "Methane", "Ammonia"],
-    rock: ["None", "Metallic Hydrogen", "Cloud Core", "Storm Core"],
+    rock: ["None", "Metallic Sheen", "Cloud Core", "Storm Bands"],
     vegetation: ["None"]
   },
   Crystal: {
@@ -186,52 +187,52 @@ const gasGiantRequiredTechnology = [
 const gasGiantTransportOptions = ["Orbital Depot", "Fuel Tanker Route", "Cargo Shuttle", "Skyhook Transfer"];
 const gasGiantResources: Record<string, GasGiantResourceProfile> = {
   Banded: {
-    guaranteed: ["Hydrogen", "Helium"],
-    common: ["Methane", "Ammonia"],
-    rare: ["Helium-3", "Deuterium"],
-    exotic: ["Exotic Gas"]
+    guaranteed: resourceNames(["RES-0177", "RES-0178"]),
+    common: resourceNames(["RES-0180", "RES-0179"]),
+    rare: resourceNames(["RES-0049", "RES-0048"]),
+    exotic: resourceNames(["RES-0147"])
   },
   "Storm Giant": {
-    guaranteed: ["Hydrogen", "Helium"],
-    common: ["Storm Plasma", "Methane"],
-    rare: ["Helium-3", "Deuterium", "Ion Gas"],
-    exotic: ["Storm Core"]
+    guaranteed: resourceNames(["RES-0177", "RES-0178"]),
+    common: resourceNames(["RES-0144", "RES-0180"]),
+    rare: resourceNames(["RES-0049", "RES-0048", "RES-0146"]),
+    exotic: resourceNames(["RES-0185"])
   },
   "Ice Giant": {
-    guaranteed: ["Hydrogen", "Methane"],
-    common: ["Ammonia", "Helium", "Nitrogen Ice"],
-    rare: ["Helium-3", "Deuterium"],
-    exotic: ["Exotic Ice", "Quantum Gas Trace"]
+    guaranteed: resourceNames(["RES-0177", "RES-0180"]),
+    common: resourceNames(["RES-0179", "RES-0178", "RES-0045"]),
+    rare: resourceNames(["RES-0049", "RES-0048"]),
+    exotic: resourceNames(["RES-0186", "RES-0187"])
   },
   "Metallic Giant": {
-    guaranteed: ["Hydrogen", "Metallic Hydrogen"],
-    common: ["Helium", "Ammonia"],
-    rare: ["Helium-3", "Deuterium"],
-    exotic: ["Quantum Gas", "Gravitonium Trace"]
+    guaranteed: resourceNames(["RES-0177", "RES-0050"]),
+    common: resourceNames(["RES-0178", "RES-0179"]),
+    rare: resourceNames(["RES-0049", "RES-0048"]),
+    exotic: resourceNames(["RES-0149", "RES-0188"])
   },
   "Amber Giant": {
-    guaranteed: ["Hydrogen", "Helium"],
-    common: ["Hydrocarbons", "Methane"],
-    rare: ["Helium-3", "Deuterium"],
-    exotic: ["Exotic Gas"]
+    guaranteed: resourceNames(["RES-0177", "RES-0178"]),
+    common: resourceNames(["RES-0181", "RES-0180"]),
+    rare: resourceNames(["RES-0049", "RES-0048"]),
+    exotic: resourceNames(["RES-0147"])
   },
   "Emerald Giant": {
-    guaranteed: ["Hydrogen", "Methane"],
-    common: ["Ammonia", "Alien Gas"],
-    rare: ["Helium-3", "Deuterium"],
-    exotic: ["Exotic Gas", "Bio Gas Trace"]
+    guaranteed: resourceNames(["RES-0177", "RES-0180"]),
+    common: resourceNames(["RES-0179", "RES-0148"]),
+    rare: resourceNames(["RES-0049", "RES-0048"]),
+    exotic: resourceNames(["RES-0147", "RES-0184"])
   },
   "Striped Giant": {
-    guaranteed: ["Hydrogen", "Helium"],
-    common: ["Ammonia", "Methane"],
-    rare: ["Helium-3", "Deuterium"],
-    exotic: ["Storm Plasma"]
+    guaranteed: resourceNames(["RES-0177", "RES-0178"]),
+    common: resourceNames(["RES-0179", "RES-0180"]),
+    rare: resourceNames(["RES-0049", "RES-0048"]),
+    exotic: resourceNames(["RES-0144"])
   },
   "Cyclone Giant": {
-    guaranteed: ["Hydrogen", "Helium"],
-    common: ["Storm Plasma", "Methane"],
-    rare: ["Helium-3", "Deuterium"],
-    exotic: ["Storm Core", "Exotic Gas"]
+    guaranteed: resourceNames(["RES-0177", "RES-0178"]),
+    common: resourceNames(["RES-0144", "RES-0180"]),
+    rare: resourceNames(["RES-0049", "RES-0048"]),
+    exotic: resourceNames(["RES-0185", "RES-0147"])
   }
 };
 
@@ -368,12 +369,12 @@ function pickProfileResources(
 ) {
   const target = Math.max(min, Math.min(max, min + Math.floor(random() * (max - min + 1))));
   const rank = rarityRank(rarityName);
-  const selected = [...new Set(profile.guaranteed_resources.filter(Boolean))].slice(0, target);
+  const selected = normalizeResourceNames(profile.guaranteed_resources).slice(0, target);
   const candidates = [
-    ...profile.common_resources,
-    ...(rank >= 3 ? profile.rare_resources : []),
-    ...(rank >= 5 ? profile.exotic_resources : []),
-    ...(rank >= 7 ? profile.exotic_resources : []),
+    ...normalizeResourceNames(profile.common_resources),
+    ...(rank >= 3 ? normalizeResourceNames(profile.rare_resources) : []),
+    ...(rank >= 5 ? normalizeResourceNames(profile.exotic_resources) : []),
+    ...(rank >= 7 ? normalizeResourceNames(profile.exotic_resources) : []),
     ...fallbackResources
   ];
 
@@ -512,7 +513,7 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
   const ruins = pickRule(rules, "Ruins", random, "None");
   const traits = pickMany(rules, "Trait", random, rarity.traitCount[0], rarity.traitCount[1]);
   const anomalies = pickManyValues(PLANET_ANOMALIES, random, anomalyRange[0], anomalyRange[1]);
-  const fallbackResources = pickMany(rules, "Resource", random, rarity.resourceCount[0], rarity.resourceCount[1]);
+  const fallbackResources = normalizeResourceNames(pickMany(rules, "Resource", random, rarity.resourceCount[0], rarity.resourceCount[1]));
   const resources = isGasGiant
     ? pickGasGiantResources(planetSubclass, rarity.name, random, rarity.resourceCount[0], rarity.resourceCount[1])
     : resourceProfile
@@ -523,7 +524,7 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
   const eventPool = pickMany(rules, "Event Pool", random, 2, 5);
   const name = planetName(seed, random, planetClass);
   const artifact = collectiblePools[0] ?? "Planet Relic";
-  const resource = resources[0] ?? "Stone";
+  const resource = resources[0] ?? resourceNames(["RES-0001"])[0];
   const trait = traits[0] ?? "Terraformable";
   const miningDifficulty = resourceProfile?.mining_difficulty ?? numericRange(random, 1, 10);
   const densityScore = resourceProfile ? resourceDensityScore(resourceProfile.resource_density, random) : numericRange(random, 0, 100);

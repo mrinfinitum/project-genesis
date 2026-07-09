@@ -14,7 +14,7 @@ import type {
   UnlockMatrixRow,
   Wonder
 } from "@/types/schema";
-import { handoffPlanetResourceProfiles, handoffResourceCatalog } from "@/data/handoff";
+import { handoffPlanetResourceProfiles } from "@/data/handoff";
 import {
   civilizationAlignmentHistory,
   civilizationAlignmentScores,
@@ -39,6 +39,7 @@ import {
 } from "@/data/handoff";
 import { planetSystemVariables } from "@/data/handoff/planet-system";
 import { generatedCelestialBodyRows, generatedStarSystemRows } from "@/lib/universe/fallback-data";
+import { ResourceService } from "@/lib/resources/service";
 
 export const civilizations = [
   "Eco-Green Utopia",
@@ -289,7 +290,7 @@ export const changelog: ChangelogEntry[] = [
 
 export const planets: PlanetVariable[] = planetSystemVariables;
 export const planetResourceProfiles: PlanetResourceProfile[] = handoffPlanetResourceProfiles;
-export const resourceCatalog: ResourceCatalogItem[] = handoffResourceCatalog;
+export const resourceCatalog: ResourceCatalogItem[] = ResourceService.catalog;
 
 export const seedData: GameData = {
   research_branches: researchBranchesWithSpaceProgression,
