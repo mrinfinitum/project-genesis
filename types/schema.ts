@@ -404,6 +404,13 @@ export type GeneratedPlanet = {
   orbitIndex?: number;
   parentStarClass?: string;
   parentStarSeed?: string;
+  discoveryState?: "undiscovered" | "detected" | "scanned" | "charted" | "explored" | "colonized" | string;
+  discoveryPoints?: number;
+  discoveredAt?: string | null;
+  discoveredBy?: string;
+  scanProgress?: number;
+  isClaimable?: boolean;
+  isColonizable?: boolean;
   discovery_order: number;
   rarity: string;
   star_type: string;

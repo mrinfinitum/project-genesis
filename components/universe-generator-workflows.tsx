@@ -23,6 +23,18 @@ import { fixedSolGeneratedPlanets } from "@/lib/planets/fixed-sol-planets";
 import { normalizeResourceNames, resourceNames } from "@/lib/resources/service";
 import type { GeneratedPlanet } from "@/types/schema";
 
+type DiscoveryState = "undiscovered" | "detected" | "scanned" | "charted" | "explored" | "colonized";
+
+type DiscoveryFields = {
+  discoveryState: DiscoveryState;
+  discoveryPoints: number;
+  discoveredAt: string | null;
+  discoveredBy: string;
+  scanProgress: number;
+  isClaimable: boolean;
+  isColonizable: boolean;
+};
+
 type AssignmentContext = {
   galaxy: GalaxyNode;
   sector: SectorNode;
@@ -48,9 +60,9 @@ type PlanetAssignmentData = {
   source_planet?: GeneratedPlanet;
 };
 
-type BodyCardState = CelestialBodyNode & PlanetAssignmentData;
+type BodyCardState = CelestialBodyNode & PlanetAssignmentData & DiscoveryFields;
 
-type PlanetAssignmentFields = {
+type PlanetAssignmentFields = Partial<DiscoveryFields> & {
   galaxyId?: string;
   galaxyName?: string;
   sectorId?: string;
@@ -65,7 +77,7 @@ type PlanetAssignmentFields = {
 
 type AssignedPlanet = GeneratedPlanet & PlanetAssignmentFields;
 
-type LinkedStarSystemNode = StarSystemNode & {
+type LinkedStarSystemNode = StarSystemNode & DiscoveryFields & {
   galaxyId?: string;
   galaxyName?: string;
   sectorId?: string;
@@ -120,7 +132,7 @@ type StarSystemSeedModel = {
 };
 
 type SectorCardState = {
-  sector: SectorNode;
+  sector: SectorNode & DiscoveryFields;
   systems: StarSystemCardState[];
 };
 
@@ -156,7 +168,7 @@ type SectorSeedModel = {
 };
 
 type GalaxyCardState = {
-  galaxy: GalaxyNode;
+  galaxy: GalaxyNode & DiscoveryFields;
   sectors: SectorCardState[];
 };
 
@@ -271,6 +283,108 @@ const rarityClasses: Record<string, string> = {
 
 function formatNumber(value: number) {
   return new Intl.NumberFormat("en-US").format(value);
+}
+
+const discoveryOrder: DiscoveryState[] = ["undiscovered", "detected", "scanned", "charted", "explored", "colonized"];
+
+function normalizeDiscoveryState(value: unknown, fallback: DiscoveryState = "undiscovered"): DiscoveryState {
+  const normalized = String(value ?? fallback).toLowerCase().replace(/\s+/g, "-");
+  if (normalized === "undetected") return "undiscovered";
+  if (normalized === "discovered" || normalized === "surveyed") return "scanned";
+  if (normalized === "starting-galaxy" || normalized === "unlocked") return "charted";
+  return discoveryOrder.includes(normalized as DiscoveryState) ? (normalized as DiscoveryState) : fallback;
+}
+
+function discoveryAtLeast(value: DiscoveryState, minimum: DiscoveryState) {
+  return discoveryOrder.indexOf(value) >= discoveryOrder.indexOf(minimum);
+}
+
+function scanProgressFor(state: DiscoveryState) {
+  return {
+    undiscovered: 0,
+    detected: 25,
+    scanned: 60,
+    charted: 75,
+    explored: 100,
+    colonized: 100
+  }[state];
+}
+
+function discoveryLabel(state: DiscoveryState) {
+  return state.charAt(0).toUpperCase() + state.slice(1);
+}
+
+function discoveryBadgeClass(state: DiscoveryState) {
+  if (state === "colonized") return "border-emerald-300/55 text-emerald-100";
+  if (state === "explored") return "border-cyan-300/55 text-cyan-100";
+  if (state === "charted") return "border-sky-300/55 text-sky-100";
+  if (state === "scanned") return "border-amber-300/55 text-amber-100";
+  if (state === "detected") return "border-slate-400/60 text-slate-200";
+  return "border-slate-600/55 text-slate-400";
+}
+
+function withDiscovery<T extends Record<string, unknown>>(
+  value: T,
+  fallbackState: DiscoveryState,
+  discoveryPoints: number,
+  isColonizable = false
+): T & DiscoveryFields {
+  const state = normalizeDiscoveryState(value.discoveryState ?? value.discovery_state, fallbackState);
+  const points = Number(value.discoveryPoints ?? value.discovery_points ?? value.discovery_value ?? discoveryPoints) || discoveryPoints;
+  return {
+    ...value,
+    discoveryState: state,
+    discoveryPoints: points,
+    discoveredAt: typeof value.discoveredAt === "string" ? value.discoveredAt : typeof value.discovered_at === "string" ? value.discovered_at : state === "undiscovered" ? null : null,
+    discoveredBy: typeof value.discoveredBy === "string" ? value.discoveredBy : "",
+    scanProgress: Number(value.scanProgress ?? scanProgressFor(state)) || scanProgressFor(state),
+    isClaimable: Boolean(value.isClaimable ?? discoveryAtLeast(state, "charted")),
+    isColonizable: Boolean(value.isColonizable ?? isColonizable)
+  };
+}
+
+function withDiscoveredAt<T extends DiscoveryFields>(value: T, state: DiscoveryState): T {
+  return {
+    ...value,
+    discoveryState: state,
+    scanProgress: scanProgressFor(state),
+    discoveredAt: value.discoveredAt ?? new Date().toISOString(),
+    discoveredBy: value.discoveredBy || "Studio Explorer",
+    isClaimable: value.isClaimable || discoveryAtLeast(state, "charted")
+  };
+}
+
+function maskName(value: string, state: DiscoveryState, fallback: string) {
+  if (state === "undiscovered") return fallback;
+  return value;
+}
+
+function explorationSummary(sectors: SectorCardState[]) {
+  const systems = sectors.flatMap((sector) => sector.systems);
+  const bodies = systems.flatMap((system) => [...system.bodies, ...system.planets.map((planet) => planetToBodySnapshot(planet as AssignedPlanet))]);
+  return {
+    sectors: sectors.length,
+    detectedSectors: sectors.filter((sector) => discoveryAtLeast(sector.sector.discoveryState, "detected")).length,
+    scannedSectors: sectors.filter((sector) => discoveryAtLeast(sector.sector.discoveryState, "scanned")).length,
+    systems: systems.length,
+    scannedSystems: systems.filter((system) => discoveryAtLeast(system.system.discoveryState, "scanned")).length,
+    bodies: bodies.length,
+    scannedBodies: bodies.filter((body) => discoveryAtLeast(body.discoveryState, "scanned")).length,
+    discoveryPoints: sectors.reduce(
+      (total, sector) =>
+        total +
+        (discoveryAtLeast(sector.sector.discoveryState, "scanned") ? sector.sector.discoveryPoints : 0) +
+        sector.systems.reduce(
+          (systemTotal, system) =>
+            systemTotal +
+            (discoveryAtLeast(system.system.discoveryState, "scanned") ? system.system.discoveryPoints : 0) +
+            system.bodies.reduce((bodyTotal, body) => bodyTotal + (discoveryAtLeast(body.discoveryState, "scanned") ? body.discoveryPoints : 0), 0) +
+            system.planets.reduce((planetTotal, planet) => planetTotal + (discoveryAtLeast(normalizeDiscoveryState(planet.discoveryState), "scanned") ? (planet.discoveryPoints ?? planet.discovery_points ?? 0) : 0), 0),
+          0
+        ),
+      0
+    )
+  };
 }
 
 function optionValue(value: string) {
@@ -410,7 +524,7 @@ function slug(value: string) {
 const solMajorPlanetNames = new Set(["Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"]);
 
 function withAssignment(body: CelestialBodyNode, context: AssignmentContext, orbitIndex: number, assignedPlanetId?: string): BodyCardState {
-  return {
+  return withDiscovery({
     ...body,
     assignedPlanetId,
     assignedSystemId: context.system.id,
@@ -424,12 +538,14 @@ function withAssignment(body: CelestialBodyNode, context: AssignmentContext, orb
     parentStarClass: context.system.star_type,
     parentStarSeed: context.system.system_seed,
     seed_id: body.seed ?? body.id
-  };
+  }, "detected", seededRange(body.seed ?? body.id, "body-discovery-points", 25, 180), body.colonizable);
 }
 
 function assignPlanetToContext(planet: GeneratedPlanet, context: AssignmentContext, orbitIndex: number): AssignedPlanet {
+  const discovery = withDiscovery(planet as unknown as Record<string, unknown>, normalizeDiscoveryState(planet.discoveryState, "detected"), planet.discovery_points ?? 120, planet.colonizable);
   return {
     ...planet,
+    ...discovery,
     galaxyId: context.galaxy.id,
     galaxyName: context.galaxy.name,
     sectorId: context.sector.id,
@@ -443,7 +559,8 @@ function assignPlanetToContext(planet: GeneratedPlanet, context: AssignmentConte
     galaxy_sector: context.sector.sector_name,
     star_system: context.system.system_name,
     orbit_position: orbitIndex,
-    star_type: context.system.star_type
+    star_type: context.system.star_type,
+    discovery_points: discovery.discoveryPoints
   };
 }
 
@@ -464,7 +581,7 @@ function fixedSolCelestialBodyToCard(body: CelestialBodyNode, context: Assignmen
   const gasGiant = body.uses_orbital_gameplay || body.planet_class === "Gas Giant";
   const orbitIndex = body.orbit_position ?? sourcePlanet?.orbit_position ?? body.generation_index ?? 0;
 
-  return {
+  return withDiscovery({
     ...body,
     id: sourcePlanet?.id ?? body.id,
     system_id: context.system.id,
@@ -514,11 +631,11 @@ function fixedSolCelestialBodyToCard(body: CelestialBodyNode, context: Assignmen
     story: sourcePlanet?.story ?? body.notes,
     discovery_points: sourcePlanet?.discovery_points,
     source_planet: assigned
-  };
+  }, "charted", sourcePlanet?.discovery_points ?? seededRange(body.seed ?? body.id, "body-discovery-points", 75, 240), sourcePlanet?.colonizable ?? body.colonizable);
 }
 
 function linkSystemToPlanets(system: StarSystemNode, context: AssignmentContext, planets: AssignedPlanet[]): LinkedStarSystemNode {
-  return {
+  return withDiscovery({
     ...system,
     galaxyId: context.galaxy.id,
     galaxyName: context.galaxy.name,
@@ -527,7 +644,7 @@ function linkSystemToPlanets(system: StarSystemNode, context: AssignmentContext,
     planetIds: planets.map((planet) => planet.id),
     planets,
     planet_count: planets.length || system.planet_count
-  };
+  }, isSolSystem(system) ? "charted" : normalizeDiscoveryState(system.discoveryState ?? system.discovery_state, "detected"), seededRange(system.system_seed, "system-discovery-points", 200, 900), false);
 }
 
 function toSystemState(system: StarSystemNode, galaxy?: GalaxyNode, sector?: SectorNode): StarSystemCardState {
@@ -550,16 +667,21 @@ function toSystemState(system: StarSystemNode, galaxy?: GalaxyNode, sector?: Sec
           .map((body) => fixedSolCelestialBodyToCard(body, context, fixedSolPlanetByName.get(body.name)))
       : [];
 
-  return { system: context ? linkSystemToPlanets(system, context, planets) : system, bodies, planets };
+  return {
+    system: context ? linkSystemToPlanets(system, context, planets) : withDiscovery(system, isSolSystem(system) ? "charted" : "detected", seededRange(system.system_seed, "system-discovery-points", 200, 900)),
+    bodies,
+    planets
+  };
 }
 
 function toSectorState(sector: SectorNode, galaxy?: GalaxyNode): SectorCardState {
   const system = galaxy && sector.is_fixed ? generateStarSystems(sector, 1)[0] : null;
-  return { sector, systems: system ? [toSystemState(system, galaxy, sector)] : [] };
+  return { sector: withDiscovery(sector, sector.is_fixed ? "charted" : "detected", sector.discovery_value, sector.colonized_worlds > 0), systems: system ? [toSystemState(system, galaxy, sector)] : [] };
 }
 
 function toGalaxyState(galaxy: GalaxyNode): GalaxyCardState {
-  return { galaxy: withGalaxyExpansionProfile(galaxy), sectors: [] };
+  const expanded = withGalaxyExpansionProfile(galaxy);
+  return { galaxy: withDiscovery(expanded, isMilkyWay(expanded) ? "charted" : "undiscovered", isMilkyWay(expanded) ? 2500 : 1000, false), sectors: [] };
 }
 
 function normalizeGalaxySector(galaxy: GalaxyNode, sector: SectorNode, sectorIndex: number): SectorNode {
@@ -602,18 +724,13 @@ function defaultGalaxyCards(universeSeed: string) {
   const galaxy = createExpansionGalaxy(universe.universe_seed, 0);
   const sector = generateSectors(galaxy, 1)[0];
   const system = sector ? generateStarSystems(sector, 1)[0] : null;
+  const galaxyState = toGalaxyState(galaxy);
+  const sectorState = sector ? toSectorState(sector, galaxyState.galaxy) : null;
 
   return [
     {
-      galaxy,
-      sectors: sector
-        ? [
-            {
-              sector,
-              systems: system ? [toSystemState(system, galaxy, sector)] : []
-            }
-          ]
-        : []
+      galaxy: galaxyState.galaxy,
+      sectors: sectorState ? [{ ...sectorState, systems: system ? [toSystemState(system, galaxyState.galaxy, sectorState.sector)] : [] }] : []
     }
   ];
 }
@@ -623,12 +740,13 @@ function defaultSectorCards(universeSeed: string, galaxyIndex: number) {
   const galaxy = createExpansionGalaxy(universe.universe_seed, galaxyIndex);
   const sector = normalizeGalaxySector(galaxy, generateSector(galaxy, 0), 0);
   const system = sector ? generateStarSystems(sector, 1)[0] : null;
+  const sectorState = sector ? toSectorState(sector, galaxy) : null;
 
-  return sector
+  return sectorState
     ? [
         {
-          sector,
-          systems: system ? [toSystemState(system, galaxy, sector)] : []
+          ...sectorState,
+          systems: system ? [toSystemState(system, galaxy, sectorState.sector)] : []
         }
       ]
     : [];
@@ -802,6 +920,7 @@ function hydrateAssignedPlanetArtwork(planet: AssignedPlanet, planetPool: Genera
   return {
     ...libraryPlanet,
     ...planet,
+    discoveryState: normalizeDiscoveryState(planet.discoveryState ?? libraryPlanet.discoveryState, "detected"),
     image_url: libraryPlanet.image_url ?? planet.image_url,
     orbit_view_image_url: libraryPlanet.orbit_view_image_url ?? planet.orbit_view_image_url,
     surface_landscape_image_url: libraryPlanet.surface_landscape_image_url ?? planet.surface_landscape_image_url,
@@ -843,7 +962,7 @@ function planetPlaceholderStyle(planet: GeneratedPlanet): CSSProperties {
 function planetToBodySnapshot(planet: AssignedPlanet): BodyCardState {
   const gasGiant = planet.uses_orbital_gameplay || planet.planet_class === "Gas Giant";
   const orbitIndex = planet.orbitIndex ?? planet.orbit_position ?? 0;
-  return {
+  return withDiscovery({
     id: planet.id,
     system_id: planet.starSystemId ?? "",
     parent_body_id: null,
@@ -887,7 +1006,7 @@ function planetToBodySnapshot(planet: AssignedPlanet): BodyCardState {
     story: planet.story,
     discovery_points: planet.discovery_points,
     source_planet: planet
-  };
+  }, normalizeDiscoveryState(planet.discoveryState, "detected"), planet.discoveryPoints ?? planet.discovery_points ?? 120, planet.colonizable);
 }
 
 function Badge({ children, className }: { children: React.ReactNode; className?: string }) {
@@ -1696,7 +1815,29 @@ function systemDescription(card: StarSystemCardState) {
   return `${system.system_name} is a ${system.star_type.toLowerCase()} system with a ${stats.habitableZone.toLowerCase()} habitable zone, ${density}, and ${risk}. Its resource profile leans toward ${system.resource_bias.toLowerCase()}, while ${outerBodies}.`;
 }
 
+function DiscoveryProgress({ value }: { value: number }) {
+  return (
+    <div className="h-2 overflow-hidden rounded-full bg-slate-900">
+      <div className="h-full rounded-full bg-cyan-300" style={{ width: `${Math.max(0, Math.min(100, value))}%` }} />
+    </div>
+  );
+}
+
+function DiscoveryStatusBadge({ state }: { state: DiscoveryState }) {
+  return <Badge className={discoveryBadgeClass(state)}>{discoveryLabel(state)}</Badge>;
+}
+
+function DiscoveryLockedPanel({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="rounded-md border border-amber-300/20 bg-amber-400/10 p-4 text-sm font-semibold leading-6 text-amber-100">
+      {children}
+    </div>
+  );
+}
+
 function BodyCard({ body, onOpen, onDelete }: { body: BodyCardState; onOpen: () => void; onDelete: () => void }) {
+  const scanned = discoveryAtLeast(body.discoveryState, "scanned");
+  const displayName = maskName(body.name, body.discoveryState, "Detected Body");
   return (
     <article
       className="relative cursor-pointer overflow-hidden rounded-md border border-cyan-300/15 bg-genesis-panel/95 transition hover:border-cyan-300/55 hover:shadow-[0_0_24px_rgba(34,211,238,0.12)]"
@@ -1713,16 +1854,23 @@ function BodyCard({ body, onOpen, onDelete }: { body: BodyCardState; onOpen: () 
       <div className="space-y-4 p-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">{body.planet_class ?? body.celestial_body_type}</p>
-          <h4 className="mt-2 truncate text-2xl font-bold text-white">{body.name}</h4>
+          <h4 className="mt-2 truncate text-2xl font-bold text-white">{displayName}</h4>
           <p className="mt-1 truncate font-mono text-xs text-slate-500">{body.seed_id ?? body.id}</p>
+        </div>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between gap-3">
+            <DiscoveryStatusBadge state={body.discoveryState} />
+            <span className="text-xs font-bold text-cyan-100">{body.discoveryPoints} pts</span>
+          </div>
+          <DiscoveryProgress value={body.scanProgress} />
         </div>
         <div className="grid grid-cols-2 gap-2">
           <StatChip label="System" value={body.assignedSystemName ?? body.orbit_parent ?? "Unassigned"} />
           <StatChip label="Orbit" value={body.orbitIndex ?? body.orbit_position ?? "Pending"} />
-          <StatChip label="Subclass" value={body.planet_subclass ?? "None"} />
+          <StatChip label="Subclass" value={scanned ? body.planet_subclass ?? "None" : "Scan Required"} />
           <StatChip label="Rarity" value={body.planet_rarity ?? "Body"} tone={rarityClasses[body.planet_rarity ?? ""]?.split(" ")[1]} />
-          <StatChip label="Biome" value={body.biome ?? "Unknown"} />
-          <StatChip label="Gravity" value={body.gravity ?? "Unknown"} />
+          <StatChip label="Biome" value={scanned ? body.biome ?? "Unknown" : "Hidden"} />
+          <StatChip label="Gravity" value={scanned ? body.gravity ?? "Unknown" : "Hidden"} />
         </div>
         <div className="flex flex-wrap gap-2">
           {body.landable ? <Badge className="border-emerald-300/45 text-emerald-100">Landable</Badge> : <Badge className="border-amber-300/45 text-amber-100">Not Landable</Badge>}
@@ -1733,7 +1881,7 @@ function BodyCard({ body, onOpen, onDelete }: { body: BodyCardState; onOpen: () 
   );
 }
 
-function BodyDetailOverlay({ body, onClose }: { body: BodyCardState; onClose: () => void }) {
+function BodyDetailOverlay({ body, onClose, onScan, onClaim }: { body: BodyCardState; onClose: () => void; onScan: () => void; onClaim: () => void }) {
   const assignment = [
     { label: "System", value: body.assignedSystemName ?? body.orbit_parent ?? "Unassigned" },
     { label: "Sector", value: body.assignedSectorName ?? "Unassigned" },
@@ -1742,6 +1890,9 @@ function BodyDetailOverlay({ body, onClose }: { body: BodyCardState; onClose: ()
     { label: "Parent Star", value: body.parentStarClass ?? "Unknown" },
     { label: "Parent Star Seed", value: body.parentStarSeed ?? "Unknown" }
   ];
+  const scanned = discoveryAtLeast(body.discoveryState, "scanned");
+  const explored = discoveryAtLeast(body.discoveryState, "explored");
+  const displayName = maskName(body.name, body.discoveryState, "Detected Body");
 
   return (
     <ModalPortal>
@@ -1753,18 +1904,31 @@ function BodyDetailOverlay({ body, onClose }: { body: BodyCardState; onClose: ()
               <Badge className="border-cyan-300/35 text-cyan-100">{body.planet_class ?? body.celestial_body_type}</Badge>
               <Badge className={rarityClasses[body.planet_rarity ?? ""] ?? "border-cyan-300/25 text-cyan-100"}>{body.planet_rarity ?? "Body"}</Badge>
               {body.is_fixed ? <Badge className="border-amber-300/45 text-amber-100">Fixed Sol Body</Badge> : null}
+              <DiscoveryStatusBadge state={body.discoveryState} />
             </div>
-            <h3 className="mt-3 text-4xl font-black text-white">{body.name}</h3>
+            <h3 className="mt-3 text-4xl font-black text-white">{displayName}</h3>
             <p className="mt-2 font-mono text-sm text-slate-500">{body.seed_id ?? body.id}</p>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="grid h-11 w-11 place-items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 text-cyan-100 transition hover:border-cyan-200/60 hover:bg-cyan-300/20"
-            aria-label="Close planet detail"
-          >
-            <X className="h-5 w-5" />
-          </button>
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" onClick={onScan}>
+              <Sparkles className="h-4 w-4" />
+              {scanned ? "Explore Planet" : "Scan Planet"}
+            </Button>
+            {body.isClaimable ? (
+              <Button type="button" onClick={onClaim} className="border-emerald-300/35 bg-emerald-500/15 text-emerald-100">
+                <Waypoints className="h-4 w-4" />
+                Claim Planet
+              </Button>
+            ) : null}
+            <button
+              type="button"
+              onClick={onClose}
+              className="grid h-11 w-11 place-items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 text-cyan-100 transition hover:border-cyan-200/60 hover:bg-cyan-300/20"
+              aria-label="Close planet detail"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
         </header>
         <div className="grid gap-6 p-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
           <div className="space-y-5">
@@ -1776,7 +1940,15 @@ function BodyDetailOverlay({ body, onClose }: { body: BodyCardState; onClose: ()
               )}
             </div>
             <div className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-5">
-              <p className="text-base font-semibold leading-8 text-slate-200">{body.story ?? body.notes}</p>
+              <p className="text-base font-semibold leading-8 text-slate-200">{scanned ? body.story ?? body.notes : "Long-range sensors have detected a body here. Scan it to resolve surface data, resources, and claim eligibility."}</p>
+            </div>
+            <div className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-4">
+              <div className="mb-2 flex items-center justify-between text-xs font-bold uppercase tracking-[0.18em] text-cyan-200">
+                <span>{discoveryLabel(body.discoveryState)}</span>
+                <span>{body.scanProgress}%</span>
+              </div>
+              <DiscoveryProgress value={body.scanProgress} />
+              <p className="mt-3 text-sm font-semibold text-slate-300">Earned Discovery Points: {discoveryAtLeast(body.discoveryState, "scanned") ? body.discoveryPoints : 0}</p>
             </div>
           </div>
           <div className="space-y-4">
@@ -1789,16 +1961,16 @@ function BodyDetailOverlay({ body, onClose }: { body: BodyCardState; onClose: ()
             </DetailSection>
             <DetailSection title="Planet Specs">
               <div className="grid gap-3">
-                <StatChip label="Subclass" value={body.planet_subclass ?? "None"} />
-                <StatChip label="Biome" value={body.biome ?? "Unknown"} />
-                <StatChip label="Gravity" value={body.gravity ?? "Unknown"} />
-                <StatChip label="Atmosphere" value={body.atmosphere ?? "Unknown"} />
+                <StatChip label="Subclass" value={scanned ? body.planet_subclass ?? "None" : "Scan Required"} />
+                <StatChip label="Biome" value={scanned ? body.biome ?? "Unknown" : "Hidden"} />
+                <StatChip label="Gravity" value={scanned ? body.gravity ?? "Unknown" : "Hidden"} />
+                <StatChip label="Atmosphere" value={scanned ? body.atmosphere ?? "Unknown" : "Hidden"} />
                 <StatChip label="Colonization" value={body.colonizable_status} />
-                <StatChip label="Discovery Points" value={body.discovery_points ?? "Pending"} />
+                <StatChip label="Discovery Points" value={body.discoveryPoints} />
               </div>
             </DetailSection>
             <DetailSection title="Resources">
-              <ChipList values={body.resources} />
+              {explored ? <ChipList values={body.resources} /> : <DiscoveryLockedPanel>Explore this body to unlock deeper resource details.</DiscoveryLockedPanel>}
             </DetailSection>
           </div>
         </div>
@@ -1871,6 +2043,8 @@ function PlanetPickerCard({
 function AssignedPlanetCard({ planet, onOpen, onUnassign }: { planet: AssignedPlanet; onOpen: () => void; onUnassign: () => void }) {
   const imageUrl = planetImageUrl(planet);
   const rarityClass = rarityClasses[planet.rarity] ?? "border-cyan-300/25 text-cyan-100";
+  const discoveryState = normalizeDiscoveryState(planet.discoveryState, "detected");
+  const scanned = discoveryAtLeast(discoveryState, "scanned");
 
   return (
     <article
@@ -1890,8 +2064,9 @@ function AssignedPlanetCard({ planet, onOpen, onUnassign }: { planet: AssignedPl
           <div className="flex flex-wrap items-center gap-2">
             <p className="text-xs font-black uppercase tracking-[0.22em] text-cyan-300">{planet.planet_class}</p>
             <Badge className={rarityClass}>{planet.rarity}</Badge>
+            <DiscoveryStatusBadge state={discoveryState} />
           </div>
-          <h4 className="mt-2 truncate text-2xl font-bold text-white">{planet.name}</h4>
+          <h4 className="mt-2 truncate text-2xl font-bold text-white">{maskName(planet.name, discoveryState, "Detected Planet")}</h4>
           <p className="mt-1 truncate font-mono text-xs text-slate-500">{planet.seed}</p>
         </div>
         <div className="grid grid-cols-2 gap-2">
@@ -1899,12 +2074,12 @@ function AssignedPlanetCard({ planet, onOpen, onUnassign }: { planet: AssignedPl
           <StatChip label="Orbit" value={planet.orbitIndex ?? planet.orbit_position ?? "Pending"} />
           <StatChip label="Sector" value={planet.sectorName ?? planet.galaxy_sector ?? "Unassigned"} />
           <StatChip label="Galaxy" value={planet.galaxyName ?? "Unassigned"} />
-          <StatChip label="Biome" value={planet.primary_biome} />
+          <StatChip label="Biome" value={scanned ? planet.primary_biome : "Hidden"} />
           <StatChip label="Parent Star" value={planet.parentStarClass ?? planet.star_type ?? "Unknown"} />
         </div>
         <div className="space-y-1 text-xs text-slate-400">
           <p className="truncate">
-            <span className="text-slate-500">Resources:</span> {planet.resources.join(", ")}
+            <span className="text-slate-500">Resources:</span> {discoveryAtLeast(discoveryState, "explored") ? planet.resources.join(", ") : "Explore required"}
           </p>
           <p className="truncate">
             <span className="text-slate-500">Traits:</span> {planet.traits.join(", ")}
@@ -1915,8 +2090,18 @@ function AssignedPlanetCard({ planet, onOpen, onUnassign }: { planet: AssignedPl
   );
 }
 
-function AssignedPlanetDetailOverlay({ planet, onClose }: { planet: AssignedPlanet; onClose: () => void }) {
-  return <BodyDetailOverlay body={planetToBodySnapshot(planet)} onClose={onClose} />;
+function AssignedPlanetDetailOverlay({
+  planet,
+  onClose,
+  onScan,
+  onClaim
+}: {
+  planet: AssignedPlanet;
+  onClose: () => void;
+  onScan: () => void;
+  onClaim: () => void;
+}) {
+  return <BodyDetailOverlay body={planetToBodySnapshot(planet)} onClose={onClose} onScan={onScan} onClaim={onClaim} />;
 }
 
 function StarSystemCard({
@@ -1931,6 +2116,7 @@ function StarSystemCard({
   const { system } = card;
   const model = systemSeedModel(card);
   const rarityClass = rarityClasses[model.rarity] ?? "border-cyan-300/25 text-cyan-100";
+  const scanned = discoveryAtLeast(system.discoveryState, "scanned");
 
   return (
     <article
@@ -1946,6 +2132,7 @@ function StarSystemCard({
             <div className="mt-1 flex min-w-0 flex-wrap items-center gap-2">
               <span className="min-w-0 truncate font-mono text-xs text-slate-500">{model.seedId}</span>
               <Badge className={rarityClass}>{model.rarity}</Badge>
+              <DiscoveryStatusBadge state={system.discoveryState} />
             </div>
           </div>
           <div className="relative flex shrink-0 gap-2">
@@ -1967,13 +2154,13 @@ function StarSystemCard({
       <div className="space-y-3 p-3">
         <div className="grid grid-cols-3 gap-2">
           <CardStatChip label="Star Class" value={model.starClass} />
-          <CardStatChip label="System Type" value={model.systemType} />
-          <CardStatChip label="Stability" value={model.stability} tone={model.stability === "Collapsing" || model.stability === "Volatile" ? "text-red-200" : "text-slate-100"} />
+          <CardStatChip label="System Type" value={scanned ? model.systemType : "Signal"} />
+          <CardStatChip label="Stability" value={scanned ? model.stability : "Scan Required"} tone={model.stability === "Collapsing" || model.stability === "Volatile" ? "text-red-200" : "text-slate-100"} />
         </div>
-        <p className="line-clamp-2 text-xs leading-5 text-slate-300">{model.description}</p>
+        <p className="line-clamp-2 text-xs leading-5 text-slate-300">{scanned ? model.description : "Detected stellar signal. Scan this star system to resolve orbital data."}</p>
         <div className="space-y-1 text-xs text-slate-400">
           <p className="truncate">
-            <span className="text-slate-500">Resources:</span> {cardList(model.resources)}
+            <span className="text-slate-500">Resources:</span> {scanned ? cardList(model.resources) : "Hidden"}
           </p>
           <p className="truncate">
             <span className="text-slate-500">Traits:</span> {cardList(model.traits)}
@@ -1996,10 +2183,13 @@ function StarSystemDetailPanel({
   planetPoolError,
   onClose,
   onDelete,
+  onScanSystem,
   onGenerateBodies,
   onAddBody,
   onDeleteBody,
-  onUnassignPlanet
+  onUnassignPlanet,
+  onScanBody,
+  onClaimBody
 }: {
   card: StarSystemCardState;
   context: AssignmentContext;
@@ -2009,10 +2199,13 @@ function StarSystemDetailPanel({
   planetPoolError: string;
   onClose: () => void;
   onDelete: () => void;
+  onScanSystem: () => void;
   onGenerateBodies: () => void;
   onAddBody: (planetIds: string[]) => void;
   onDeleteBody: (bodyId: string) => void;
   onUnassignPlanet: (planetId: string) => void;
+  onScanBody: (bodyId: string, source: "body" | "planet") => void;
+  onClaimBody: (bodyId: string, source: "body" | "planet") => void;
 }) {
   const { system } = card;
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -2021,6 +2214,7 @@ function StarSystemDetailPanel({
   const [selectedPlanet, setSelectedPlanet] = useState<AssignedPlanet | null>(null);
   const stats = systemStats(card);
   const model = systemSeedModel(card);
+  const systemScanned = discoveryAtLeast(system.discoveryState, "scanned");
   const availablePlanets = planetPool.filter((planet) => !assignedPlanetIds.has(planet.id));
   const assignedPlanets = card.planets.map((planet) => hydrateAssignedPlanetArtwork(planet, planetPool));
   const assignedBodies = card.bodies.map((body) => hydrateBodyArtwork(body, planetPool));
@@ -2045,6 +2239,7 @@ function StarSystemDetailPanel({
             {system.starting_system ? <Badge className="border-emerald-300/45 text-emerald-100">Starting</Badge> : null}
             {system.colonized_at || stats.colonizedWorlds.length ? <Badge className="border-emerald-300/45 text-emerald-100">Colonized</Badge> : null}
             {system.discovered || system.discovery_state !== "Undetected" ? <Badge className="border-cyan-300/45 text-cyan-100">Discovered</Badge> : null}
+            <DiscoveryStatusBadge state={system.discoveryState} />
           </div>
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">{model.starClass}</p>
@@ -2053,6 +2248,10 @@ function StarSystemDetailPanel({
           </div>
         </div>
         <div className="flex gap-2">
+          <Button type="button" onClick={onScanSystem}>
+            <Sparkles className="h-4 w-4" />
+            {systemScanned ? "Chart System" : "Scan Star System"}
+          </Button>
           <button
             type="button"
             onClick={onClose}
@@ -2073,8 +2272,17 @@ function StarSystemDetailPanel({
       </header>
 
       <div className="space-y-6 p-6">
+        <div className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-4">
+          <div className="mb-2 flex items-center justify-between text-xs font-bold uppercase tracking-[0.18em] text-cyan-200">
+            <span>{discoveryLabel(system.discoveryState)}</span>
+            <span>{system.scanProgress}%</span>
+          </div>
+          <DiscoveryProgress value={system.scanProgress} />
+          <p className="mt-3 text-sm font-semibold text-slate-300">Earned Discovery Points: {systemScanned ? model.discoveryPoints : 0}</p>
+        </div>
+        {!systemScanned ? <DiscoveryLockedPanel>Scan this star system to reveal full stats, planets, moons, resources, and orbital hazards.</DiscoveryLockedPanel> : null}
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1.05fr)_minmax(24rem,0.95fr)]">
-          <div className="space-y-5">
+          <div className={cn("space-y-5", !systemScanned && "select-none blur-sm")}>
             <StarSystemVisual model={model} large />
 
             <div className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-5">
@@ -2082,7 +2290,7 @@ function StarSystemDetailPanel({
             </div>
           </div>
 
-          <div className="grid content-start gap-5 md:grid-cols-2 xl:grid-cols-1">
+          <div className={cn("grid content-start gap-5 md:grid-cols-2 xl:grid-cols-1", !systemScanned && "select-none blur-sm")}>
             <DetailSection title="Resources">
               <ChipList values={model.resources} />
             </DetailSection>
@@ -2110,7 +2318,7 @@ function StarSystemDetailPanel({
           </div>
         </div>
 
-        <div className="grid gap-5 xl:grid-cols-2">
+        <div className={cn("grid gap-5 xl:grid-cols-2", !systemScanned && "select-none blur-sm")}>
           <DetailSection title="Star System Specs">
             <div className="grid gap-3 sm:grid-cols-2 2xl:grid-cols-3">
               <StatChip label="Star Class" value={model.starClass} />
@@ -2161,7 +2369,7 @@ function StarSystemDetailPanel({
           <div className="flex flex-wrap gap-2">
             <Button type="button" onClick={onGenerateBodies}>
               <Sparkles className="h-4 w-4" />
-              Generate Bodies
+              Generate / Reveal Planets
             </Button>
             <Button
               type="button"
@@ -2230,7 +2438,7 @@ function StarSystemDetailPanel({
           </div>
         ) : null}
         {assignedPlanets.length || assignedBodies.length ? (
-          <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
+          <div className={cn("grid gap-4 md:grid-cols-2 2xl:grid-cols-3", !systemScanned && "select-none blur-sm")}>
             {assignedPlanets.map((planet) => (
               <AssignedPlanetCard key={planet.id} planet={planet} onOpen={() => setSelectedPlanet(planet)} onUnassign={() => onUnassignPlanet(planet.id)} />
             ))}
@@ -2242,8 +2450,38 @@ function StarSystemDetailPanel({
           <EmptyState>No planets yet. Generate planets to populate this star system.</EmptyState>
         )}
       </section>
-      {selectedPlanet ? <AssignedPlanetDetailOverlay planet={selectedPlanet} onClose={() => setSelectedPlanet(null)} /> : null}
-      {selectedBody ? <BodyDetailOverlay body={selectedBody} onClose={() => setSelectedBody(null)} /> : null}
+      {selectedPlanet ? (
+        <AssignedPlanetDetailOverlay
+          planet={selectedPlanet}
+          onClose={() => setSelectedPlanet(null)}
+          onScan={() => {
+            const scanned = scanBodyState(withDiscovery(selectedPlanet as unknown as Record<string, unknown>, normalizeDiscoveryState(selectedPlanet.discoveryState, "detected"), selectedPlanet.discoveryPoints ?? selectedPlanet.discovery_points ?? 120, selectedPlanet.colonizable)) as AssignedPlanet;
+            setSelectedPlanet({ ...selectedPlanet, ...scanned });
+            onScanBody(selectedPlanet.id, "planet");
+          }}
+          onClaim={() => {
+            const claimed = claimDiscovery(withDiscovery(selectedPlanet as unknown as Record<string, unknown>, normalizeDiscoveryState(selectedPlanet.discoveryState, "scanned"), selectedPlanet.discoveryPoints ?? selectedPlanet.discovery_points ?? 120, selectedPlanet.colonizable)) as AssignedPlanet;
+            setSelectedPlanet({ ...selectedPlanet, ...claimed, colonized: true });
+            onClaimBody(selectedPlanet.id, "planet");
+          }}
+        />
+      ) : null}
+      {selectedBody ? (
+        <BodyDetailOverlay
+          body={selectedBody}
+          onClose={() => setSelectedBody(null)}
+          onScan={() => {
+            const scanned = scanBodyState(selectedBody);
+            setSelectedBody(scanned);
+            onScanBody(selectedBody.id, "body");
+          }}
+          onClaim={() => {
+            const claimed = { ...claimDiscovery(selectedBody), colonizable_status: "Colonized" };
+            setSelectedBody(claimed);
+            onClaimBody(selectedBody.id, "body");
+          }}
+        />
+      ) : null}
     </article>
   );
 }
@@ -2257,10 +2495,13 @@ function StarSystemDetailOverlay(props: {
   planetPoolError: string;
   onClose: () => void;
   onDelete: () => void;
+  onScanSystem: () => void;
   onGenerateBodies: () => void;
   onAddBody: (planetIds: string[]) => void;
   onDeleteBody: (bodyId: string) => void;
   onUnassignPlanet: (planetId: string) => void;
+  onScanBody: (bodyId: string, source: "body" | "planet") => void;
+  onClaimBody: (bodyId: string, source: "body" | "planet") => void;
 }) {
   return (
     <ModalPortal>
@@ -2288,14 +2529,18 @@ function SectorCard({
   planetPoolError,
   open,
   onOpen,
+  onScanSector,
   onGenerateSystems,
   onAddSystem,
   onDelete,
   onDeleteSystem,
+  onScanSystem,
   onGenerateBodies,
   onAddBody,
   onDeleteBody,
   onUnassignPlanet,
+  onScanBody,
+  onClaimBody,
   openSystemId,
   setOpenSystemId
 }: {
@@ -2307,14 +2552,18 @@ function SectorCard({
   planetPoolError: string;
   open: boolean;
   onOpen: () => void;
+  onScanSector: () => void;
   onGenerateSystems: () => void;
   onAddSystem: () => void;
   onDelete: () => void;
   onDeleteSystem: (systemId: string) => void;
+  onScanSystem: (systemId: string) => void;
   onGenerateBodies: (systemId: string) => void;
   onAddBody: (systemId: string, planetIds: string[]) => void;
   onDeleteBody: (systemId: string, bodyId: string) => void;
   onUnassignPlanet: (systemId: string, planetId: string) => void;
+  onScanBody: (systemId: string, bodyId: string, source: "body" | "planet") => void;
+  onClaimBody: (systemId: string, bodyId: string, source: "body" | "planet") => void;
   openSystemId: string | null;
   setOpenSystemId: (systemId: string | null) => void;
 }) {
@@ -2322,6 +2571,7 @@ function SectorCard({
   const model = sectorSeedModel(card);
   const selectedSystem = systems.find((systemCard) => systemCard.system.id === openSystemId);
   const rarityClass = rarityClasses[model.rarity] ?? "border-cyan-300/25 text-cyan-100";
+  const sectorScanned = discoveryAtLeast(sector.discoveryState, "scanned");
 
   return (
     <>
@@ -2338,6 +2588,7 @@ function SectorCard({
               <div className="mt-1 flex min-w-0 flex-wrap items-center gap-2">
                 <span className="min-w-0 truncate font-mono text-xs text-slate-500">{model.seedId}</span>
                 <Badge className={rarityClass}>{model.rarity}</Badge>
+                <DiscoveryStatusBadge state={sector.discoveryState} />
               </div>
             </div>
             <div className="relative flex shrink-0 gap-2">
@@ -2385,19 +2636,34 @@ function SectorCard({
               <div className="flex flex-wrap gap-2">
                 <Badge className="border-cyan-300/35 text-cyan-100">{model.type}</Badge>
                 <Badge className={rarityClass}>{model.rarity}</Badge>
+                <DiscoveryStatusBadge state={sector.discoveryState} />
               </div>
               <h2 className="mt-3 text-3xl font-black text-white">{model.name}</h2>
               <p className="mt-1 font-mono text-sm text-slate-500">{model.seedId}</p>
             </div>
-            <button
-              type="button"
-              onClick={onOpen}
-              className="grid h-10 w-10 place-items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 text-cyan-100 transition hover:border-cyan-200/60 hover:bg-cyan-300/20"
-              aria-label="Close sector detail"
-            >
-              <X className="h-5 w-5" />
-            </button>
+            <div className="flex flex-wrap gap-2">
+              <Button type="button" onClick={onScanSector}>
+                <Sparkles className="h-4 w-4" />
+                {sectorScanned ? "Chart Sector" : "Scan Sector"}
+              </Button>
+              <button
+                type="button"
+                onClick={onOpen}
+                className="grid h-10 w-10 place-items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 text-cyan-100 transition hover:border-cyan-200/60 hover:bg-cyan-300/20"
+                aria-label="Close sector detail"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
           </header>
+          <div className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-4">
+            <div className="mb-2 flex items-center justify-between text-xs font-bold uppercase tracking-[0.18em] text-cyan-200">
+              <span>{discoveryLabel(sector.discoveryState)}</span>
+              <span>{sector.scanProgress}%</span>
+            </div>
+            <DiscoveryProgress value={sector.scanProgress} />
+            <p className="mt-3 text-sm font-semibold text-slate-300">Earned Discovery Points: {sectorScanned ? model.discoveryPoints : 0}</p>
+          </div>
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
             <div className="space-y-4">
               <SectorVisual model={model} large />
@@ -2435,6 +2701,10 @@ function SectorCard({
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <Breadcrumbs items={["Galaxy", sector.sector_name, "Star Systems"]} />
             <div className="flex flex-wrap gap-2">
+              <Button type="button" onClick={onScanSector}>
+                <Sparkles className="h-4 w-4" />
+                Scan Sector
+              </Button>
               <Button type="button" onClick={onGenerateSystems}>
                 <Sparkles className="h-4 w-4" />
                 Generate Star Systems
@@ -2446,12 +2716,14 @@ function SectorCard({
             </div>
           </div>
           {systems.length ? (
-            <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
+            <div className={cn("grid gap-4 md:grid-cols-2 2xl:grid-cols-3", !sectorScanned && "select-none blur-sm")}>
               {systems.map((systemCard) => (
                 <StarSystemCard
                   key={systemCard.system.id}
                   card={systemCard}
-                  onOpen={() => setOpenSystemId(systemCard.system.id)}
+                  onOpen={() => {
+                    if (sectorScanned) setOpenSystemId(systemCard.system.id);
+                  }}
                   onDelete={() => onDeleteSystem(systemCard.system.id)}
                 />
               ))}
@@ -2459,6 +2731,7 @@ function SectorCard({
           ) : (
             <EmptyState>No star systems yet. Generate star systems to populate this sector.</EmptyState>
           )}
+          {!sectorScanned && systems.length ? <DiscoveryLockedPanel>Scan this sector to resolve star system cards and open individual system scans.</DiscoveryLockedPanel> : null}
           {selectedSystem ? (
             <StarSystemDetailOverlay
               card={selectedSystem}
@@ -2472,11 +2745,14 @@ function SectorCard({
                 onDeleteSystem(selectedSystem.system.id);
                 setOpenSystemId(null);
               }}
-          onGenerateBodies={() => onGenerateBodies(selectedSystem.system.id)}
-          onAddBody={(planetIds) => onAddBody(selectedSystem.system.id, planetIds)}
-          onDeleteBody={(bodyId) => onDeleteBody(selectedSystem.system.id, bodyId)}
-          onUnassignPlanet={(planetId) => onUnassignPlanet(selectedSystem.system.id, planetId)}
-        />
+              onScanSystem={() => onScanSystem(selectedSystem.system.id)}
+              onGenerateBodies={() => onGenerateBodies(selectedSystem.system.id)}
+              onAddBody={(planetIds) => onAddBody(selectedSystem.system.id, planetIds)}
+              onDeleteBody={(bodyId) => onDeleteBody(selectedSystem.system.id, bodyId)}
+              onUnassignPlanet={(planetId) => onUnassignPlanet(selectedSystem.system.id, planetId)}
+              onScanBody={(bodyId, source) => onScanBody(selectedSystem.system.id, bodyId, source)}
+              onClaimBody={(bodyId, source) => onClaimBody(selectedSystem.system.id, bodyId, source)}
+            />
       ) : null}
           </div>
         </div>
@@ -2499,13 +2775,17 @@ function GalaxyCard({
   onAddSector,
   onDelete,
   onDeleteSector,
+  onScanSector,
   onGenerateSystems,
   onAddSystem,
   onDeleteSystem,
+  onScanSystem,
   onGenerateBodies,
   onAddBody,
   onDeleteBody,
   onUnassignPlanet,
+  onScanBody,
+  onClaimBody,
   openSectorId,
   setOpenSectorId,
   openSystemId,
@@ -2523,13 +2803,17 @@ function GalaxyCard({
   onAddSector: () => void;
   onDelete: () => void;
   onDeleteSector: (sectorId: string) => void;
+  onScanSector: (sectorId: string) => void;
   onGenerateSystems: (sectorId: string) => void;
   onAddSystem: (sectorId: string) => void;
   onDeleteSystem: (sectorId: string, systemId: string) => void;
+  onScanSystem: (sectorId: string, systemId: string) => void;
   onGenerateBodies: (sectorId: string, systemId: string) => void;
   onAddBody: (sectorId: string, systemId: string, planetIds: string[]) => void;
   onDeleteBody: (sectorId: string, systemId: string, bodyId: string) => void;
   onUnassignPlanet: (sectorId: string, systemId: string, planetId: string) => void;
+  onScanBody: (sectorId: string, systemId: string, bodyId: string, source: "body" | "planet") => void;
+  onClaimBody: (sectorId: string, systemId: string, bodyId: string, source: "body" | "planet") => void;
   openSectorId: string | null;
   setOpenSectorId: (sectorId: string | null) => void;
   openSystemId: string | null;
@@ -2538,6 +2822,7 @@ function GalaxyCard({
   const { galaxy, sectors } = card;
   const model = galaxySeedModel(card);
   const rarityClass = rarityClasses[model.rarity] ?? "border-cyan-300/25 text-cyan-100";
+  const summary = explorationSummary(sectors);
 
   return (
     <>
@@ -2556,6 +2841,7 @@ function GalaxyCard({
                 <Badge className={rarityClass}>{model.rarity}</Badge>
                 {galaxy.is_fixed ? <Badge className="border-amber-300/45 text-amber-100">Starting</Badge> : null}
                 <Badge className={model.isUnlocked ? "border-emerald-300/45 text-emerald-100" : "border-slate-500/45 text-slate-300"}>{model.isUnlocked ? "Unlocked" : "Locked"}</Badge>
+                <DiscoveryStatusBadge state={galaxy.discoveryState} />
               </div>
             </div>
             <div className="relative flex shrink-0 gap-2">
@@ -2605,6 +2891,7 @@ function GalaxyCard({
                 <Badge className={rarityClass}>{model.rarity}</Badge>
                 {galaxy.is_fixed ? <Badge className="border-amber-300/45 text-amber-100">Starting</Badge> : null}
                 <Badge className={model.isUnlocked ? "border-emerald-300/45 text-emerald-100" : "border-slate-500/45 text-slate-300"}>{model.isUnlocked ? "Unlocked" : "Locked"}</Badge>
+                <DiscoveryStatusBadge state={galaxy.discoveryState} />
               </div>
               <h2 className="mt-3 text-3xl font-black text-white">{model.name}</h2>
               <p className="mt-1 font-mono text-sm text-slate-500">{model.seedId}</p>
@@ -2618,6 +2905,12 @@ function GalaxyCard({
               <X className="h-5 w-5" />
             </button>
           </header>
+          <div className="grid gap-3 md:grid-cols-4">
+            <StatChip label="Detected Sectors" value={`${summary.detectedSectors} / ${summary.sectors}`} />
+            <StatChip label="Scanned Systems" value={`${summary.scannedSystems} / ${summary.systems}`} />
+            <StatChip label="Scanned Bodies" value={`${summary.scannedBodies} / ${summary.bodies}`} />
+            <StatChip label="Earned Discovery Points" value={formatNumber(summary.discoveryPoints)} />
+          </div>
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
             <div className="space-y-4">
               <GalaxyVisual model={model} large />
@@ -2686,7 +2979,7 @@ function GalaxyCard({
                   </Button>
                   <Button type="button" onClick={onAddSector} className="border-slate-600 bg-slate-900/70 text-slate-100">
                     <CirclePlus className="h-4 w-4" />
-                    Continue Exploring Galaxy
+                    {isMilkyWay(galaxy) ? "Continue Exploring Milky Way" : "Continue Exploring Galaxy"}
                   </Button>
                 </>
               ) : (
@@ -2715,14 +3008,18 @@ function GalaxyCard({
                   planetPoolError={planetPoolError}
                   open={openSectorId === sectorCard.sector.id}
                   onOpen={() => setOpenSectorId(openSectorId === sectorCard.sector.id ? null : sectorCard.sector.id)}
+                  onScanSector={() => onScanSector(sectorCard.sector.id)}
                   onDelete={() => onDeleteSector(sectorCard.sector.id)}
                   onGenerateSystems={() => onGenerateSystems(sectorCard.sector.id)}
                   onAddSystem={() => onAddSystem(sectorCard.sector.id)}
                   onDeleteSystem={(systemId) => onDeleteSystem(sectorCard.sector.id, systemId)}
+                  onScanSystem={(systemId) => onScanSystem(sectorCard.sector.id, systemId)}
                   onGenerateBodies={(systemId) => onGenerateBodies(sectorCard.sector.id, systemId)}
                   onAddBody={(systemId, planetIds) => onAddBody(sectorCard.sector.id, systemId, planetIds)}
                   onDeleteBody={(systemId, bodyId) => onDeleteBody(sectorCard.sector.id, systemId, bodyId)}
                   onUnassignPlanet={(systemId, planetId) => onUnassignPlanet(sectorCard.sector.id, systemId, planetId)}
+                  onScanBody={(systemId, bodyId, source) => onScanBody(sectorCard.sector.id, systemId, bodyId, source)}
+                  onClaimBody={(systemId, bodyId, source) => onClaimBody(sectorCard.sector.id, systemId, bodyId, source)}
                   openSystemId={openSystemId}
                   setOpenSystemId={setOpenSystemId}
                 />
@@ -2741,6 +3038,61 @@ function GalaxyCard({
 
 function LayersIcon(props: React.ComponentProps<typeof Waypoints>) {
   return <Waypoints {...props} />;
+}
+
+function scanState(current: DiscoveryState, scannedNext: DiscoveryState = "scanned") {
+  if (current === "undiscovered" || current === "detected") return scannedNext;
+  if (current === "scanned") return "charted";
+  if (current === "charted") return "explored";
+  return current;
+}
+
+function scanDiscovery<T extends DiscoveryFields>(value: T, scannedNext: DiscoveryState = "scanned"): T {
+  return withDiscoveredAt(value, scanState(value.discoveryState, scannedNext));
+}
+
+function scanBodyState<T extends DiscoveryFields>(value: T): T {
+  return withDiscoveredAt(value, value.discoveryState === "scanned" || value.discoveryState === "charted" ? "explored" : "scanned");
+}
+
+function claimDiscovery<T extends DiscoveryFields>(value: T): T {
+  return withDiscoveredAt({ ...value, isClaimable: true, isColonizable: true }, "colonized");
+}
+
+function scanBodyInSystem(card: StarSystemCardState, bodyId: string, source: "body" | "planet") {
+  if (source === "planet") {
+    return {
+      ...card,
+      planets: card.planets.map((planet) => (planet.id === bodyId ? { ...planet, ...scanBodyState(withDiscovery(planet as unknown as Record<string, unknown>, normalizeDiscoveryState(planet.discoveryState, "detected"), planet.discoveryPoints ?? planet.discovery_points ?? 120, planet.colonizable)) } : planet))
+    };
+  }
+
+  return {
+    ...card,
+    bodies: card.bodies.map((body) => (body.id === bodyId ? scanBodyState(body) : body))
+  };
+}
+
+function claimBodyInSystem(card: StarSystemCardState, bodyId: string, source: "body" | "planet") {
+  if (source === "planet") {
+    return {
+      ...card,
+      planets: card.planets.map((planet) =>
+        planet.id === bodyId
+          ? {
+              ...planet,
+              ...claimDiscovery(withDiscovery(planet as unknown as Record<string, unknown>, normalizeDiscoveryState(planet.discoveryState, "scanned"), planet.discoveryPoints ?? planet.discovery_points ?? 120, planet.colonizable)),
+              colonized: true
+            }
+          : planet
+      )
+    };
+  }
+
+  return {
+    ...card,
+    bodies: card.bodies.map((body) => (body.id === bodyId ? { ...claimDiscovery(body), colonizable_status: "Colonized" } : body))
+  };
 }
 
 export function GalaxyGeneratorWorkflow() {
@@ -2781,8 +3133,19 @@ export function GalaxyGeneratorWorkflow() {
         const sectorIndex = startIndex + index;
         return toSectorState(normalizeGalaxySector(card.galaxy, generateSector(card.galaxy, sectorIndex), sectorIndex), card.galaxy);
       });
-      return { ...card, sectors: append ? [...card.sectors, ...generated] : generated };
+      return {
+        ...card,
+        galaxy: withDiscoveredAt(card.galaxy, card.galaxy.discoveryState === "undiscovered" ? "detected" : card.galaxy.discoveryState),
+        sectors: append ? [...card.sectors, ...generated] : generated
+      };
     });
+  }
+
+  function scanSectorInGalaxy(galaxyId: string, sectorId: string) {
+    updateGalaxy(galaxyId, (card) => ({
+      ...card,
+      sectors: card.sectors.map((sectorCard) => (sectorCard.sector.id === sectorId ? { ...sectorCard, sector: scanDiscovery(sectorCard.sector) } : sectorCard))
+    }));
   }
 
   function generateSystemsForSector(galaxyId: string, sectorId: string, append = false) {
@@ -2795,8 +3158,18 @@ export function GalaxyGeneratorWorkflow() {
           const systemIndex = startIndex + index;
           return toSystemState(normalizeGalaxySystem(sectorCard.sector, generateStarSystem(sectorCard.sector, systemIndex), systemIndex), galaxyCard.galaxy, sectorCard.sector);
         });
-        return { ...sectorCard, systems: append ? [...sectorCard.systems, ...generated] : generated };
+        return { ...sectorCard, sector: scanDiscovery(sectorCard.sector), systems: append ? [...sectorCard.systems, ...generated] : generated };
       })
+    }));
+  }
+
+  function scanSystemInGalaxy(galaxyId: string, sectorId: string, systemId: string) {
+    updateGalaxy(galaxyId, (galaxyCard) => ({
+      ...galaxyCard,
+      sectors: galaxyCard.sectors.map((sectorCard) => ({
+        ...sectorCard,
+        systems: sectorCard.sector.id === sectorId ? sectorCard.systems.map((systemCard) => (systemCard.system.id === systemId ? { ...systemCard, system: scanDiscovery(systemCard.system) } : systemCard)) : sectorCard.systems
+      }))
     }));
   }
 
@@ -2820,10 +3193,33 @@ export function GalaxyGeneratorWorkflow() {
         systems: sectorCard.sector.id === sectorId
           ? sectorCard.systems.map((systemCard) => {
               if (systemCard.system.id !== systemId) return systemCard;
-              const bodies = generateCelestialBodies(systemCard.system).filter((body) => !["Star", "Planet"].includes(body.celestial_body_type));
-              return { ...systemCard, bodies: append ? [...systemCard.bodies, ...bodies.slice(systemCard.bodies.length, systemCard.bodies.length + 1)] : bodies };
+              const context = { galaxy: galaxyCard.galaxy, sector: sectorCard.sector, system: systemCard.system };
+              const bodies = generateCelestialBodies(systemCard.system)
+                .filter((body) => !["Star", "Planet"].includes(body.celestial_body_type))
+                .map((body, index) => withAssignment(body, context, body.orbit_position ?? index + 1, undefined));
+              return { ...systemCard, system: scanDiscovery(systemCard.system), bodies: append ? [...systemCard.bodies, ...bodies.slice(systemCard.bodies.length, systemCard.bodies.length + 1)] : bodies };
             })
           : sectorCard.systems
+      }))
+    }));
+  }
+
+  function scanBodyInGalaxy(galaxyId: string, sectorId: string, systemId: string, bodyId: string, source: "body" | "planet") {
+    updateGalaxy(galaxyId, (card) => ({
+      ...card,
+      sectors: card.sectors.map((sector) => ({
+        ...sector,
+        systems: sector.sector.id === sectorId ? sector.systems.map((system) => (system.system.id === systemId ? scanBodyInSystem(system, bodyId, source) : system)) : sector.systems
+      }))
+    }));
+  }
+
+  function claimBodyInGalaxy(galaxyId: string, sectorId: string, systemId: string, bodyId: string, source: "body" | "planet") {
+    updateGalaxy(galaxyId, (card) => ({
+      ...card,
+      sectors: card.sectors.map((sector) => ({
+        ...sector,
+        systems: sector.sector.id === sectorId ? sector.systems.map((system) => (system.system.id === systemId ? claimBodyInSystem(system, bodyId, source) : system)) : sector.systems
       }))
     }));
   }
@@ -2940,16 +3336,20 @@ export function GalaxyGeneratorWorkflow() {
               onOpen={() => setOpenGalaxyId(openGalaxyId === card.galaxy.id ? null : card.galaxy.id)}
               onUnlock={() => unlockGalaxy(card.galaxy.id)}
               onDelete={() => deleteGalaxy(card.galaxy.id)}
+              onScanSector={(sectorId) => scanSectorInGalaxy(card.galaxy.id, sectorId)}
               onGenerateSectors={() => generateSectorsForGalaxy(card.galaxy.id)}
               onAddSector={() => generateSectorsForGalaxy(card.galaxy.id, true)}
               onDeleteSector={(sectorId) => deleteSector(card.galaxy.id, sectorId)}
               onGenerateSystems={(sectorId) => generateSystemsForSector(card.galaxy.id, sectorId)}
               onAddSystem={(sectorId) => generateSystemsForSector(card.galaxy.id, sectorId, true)}
               onDeleteSystem={(sectorId, systemId) => deleteSystem(card.galaxy.id, sectorId, systemId)}
+              onScanSystem={(sectorId, systemId) => scanSystemInGalaxy(card.galaxy.id, sectorId, systemId)}
               onGenerateBodies={(sectorId, systemId) => generateBodiesForSystem(card.galaxy.id, sectorId, systemId)}
               onAddBody={(sectorId, systemId, planetIds) => addPlanetsToSystem(card.galaxy.id, sectorId, systemId, planetIds)}
               onDeleteBody={(sectorId, systemId, bodyId) => deleteBody(card.galaxy.id, sectorId, systemId, bodyId)}
               onUnassignPlanet={(sectorId, systemId, planetId) => unassignPlanet(card.galaxy.id, sectorId, systemId, planetId)}
+              onScanBody={(sectorId, systemId, bodyId, source) => scanBodyInGalaxy(card.galaxy.id, sectorId, systemId, bodyId, source)}
+              onClaimBody={(sectorId, systemId, bodyId, source) => claimBodyInGalaxy(card.galaxy.id, sectorId, systemId, bodyId, source)}
               openSectorId={openSectorId}
               setOpenSectorId={setOpenSectorId}
               openSystemId={openSystemId}
@@ -3000,8 +3400,19 @@ export function SectorGeneratorWorkflow() {
         const systemIndex = startIndex + index;
         return toSystemState(normalizeGalaxySystem(card.sector, generateStarSystem(card.sector, systemIndex), systemIndex), galaxy, card.sector);
       });
-      return { ...card, systems: append ? [...card.systems, ...generated] : generated };
+      return { ...card, sector: scanDiscovery(card.sector), systems: append ? [...card.systems, ...generated] : generated };
     });
+  }
+
+  function scanSector(sectorId: string) {
+    updateSector(sectorId, (card) => ({ ...card, sector: scanDiscovery(card.sector) }));
+  }
+
+  function scanSystem(sectorId: string, systemId: string) {
+    updateSector(sectorId, (sectorCard) => ({
+      ...sectorCard,
+      systems: sectorCard.systems.map((systemCard) => (systemCard.system.id === systemId ? { ...systemCard, system: scanDiscovery(systemCard.system) } : systemCard))
+    }));
   }
 
   function generateBodies(sectorId: string, systemId: string, append = false) {
@@ -3009,8 +3420,11 @@ export function SectorGeneratorWorkflow() {
       ...sectorCard,
       systems: sectorCard.systems.map((systemCard) => {
         if (systemCard.system.id !== systemId) return systemCard;
-        const bodies = generateCelestialBodies(systemCard.system).filter((body) => !["Star", "Planet"].includes(body.celestial_body_type));
-        return { ...systemCard, bodies: append ? [...systemCard.bodies, ...bodies.slice(systemCard.bodies.length, systemCard.bodies.length + 1)] : bodies };
+        const context = { galaxy, sector: sectorCard.sector, system: systemCard.system };
+        const bodies = generateCelestialBodies(systemCard.system)
+          .filter((body) => !["Star", "Planet"].includes(body.celestial_body_type))
+          .map((body, index) => withAssignment(body, context, body.orbit_position ?? index + 1));
+        return { ...systemCard, system: scanDiscovery(systemCard.system), bodies: append ? [...systemCard.bodies, ...bodies.slice(systemCard.bodies.length, systemCard.bodies.length + 1)] : bodies };
       })
     }));
   }
@@ -3030,6 +3444,20 @@ export function SectorGeneratorWorkflow() {
     updateSector(sectorId, (sectorCard) => ({
       ...sectorCard,
       systems: sectorCard.systems.map((systemCard) => (systemCard.system.id === systemId ? removePlanetFromSystem(systemCard, planetId) : systemCard))
+    }));
+  }
+
+  function scanBody(sectorId: string, systemId: string, bodyId: string, source: "body" | "planet") {
+    updateSector(sectorId, (sectorCard) => ({
+      ...sectorCard,
+      systems: sectorCard.systems.map((systemCard) => (systemCard.system.id === systemId ? scanBodyInSystem(systemCard, bodyId, source) : systemCard))
+    }));
+  }
+
+  function claimBody(sectorId: string, systemId: string, bodyId: string, source: "body" | "planet") {
+    updateSector(sectorId, (sectorCard) => ({
+      ...sectorCard,
+      systems: sectorCard.systems.map((systemCard) => (systemCard.system.id === systemId ? claimBodyInSystem(systemCard, bodyId, source) : systemCard))
     }));
   }
 
@@ -3082,6 +3510,7 @@ export function SectorGeneratorWorkflow() {
               planetPoolError={planetPool.error}
               open={openSectorId === card.sector.id}
               onOpen={() => setOpenSectorId(openSectorId === card.sector.id ? null : card.sector.id)}
+              onScanSector={() => scanSector(card.sector.id)}
               onDelete={() => {
                 if (window.confirm(`Delete ${card.sector.sector_name} and all generated star systems inside it?`)) {
                   setCards((current) => current.filter((item) => item.sector.id !== card.sector.id));
@@ -3094,6 +3523,7 @@ export function SectorGeneratorWorkflow() {
                 if (!system || !window.confirm(`Delete ${system.system.system_name} and all generated planets/bodies inside it?`)) return;
                 updateSector(card.sector.id, (sectorCard) => ({ ...sectorCard, systems: sectorCard.systems.filter((item) => item.system.id !== systemId) }));
               }}
+              onScanSystem={(systemId) => scanSystem(card.sector.id, systemId)}
               onGenerateBodies={(systemId) => generateBodies(card.sector.id, systemId)}
               onAddBody={(systemId, planetIds) => addPlanets(card.sector.id, systemId, planetIds)}
               onDeleteBody={(systemId, bodyId) =>
@@ -3103,6 +3533,8 @@ export function SectorGeneratorWorkflow() {
                 }))
               }
               onUnassignPlanet={(systemId, planetId) => unassignPlanet(card.sector.id, systemId, planetId)}
+              onScanBody={(systemId, bodyId, source) => scanBody(card.sector.id, systemId, bodyId, source)}
+              onClaimBody={(systemId, bodyId, source) => claimBody(card.sector.id, systemId, bodyId, source)}
               openSystemId={openSystemId}
               setOpenSystemId={setOpenSystemId}
             />
@@ -3149,9 +3581,16 @@ export function StarSystemGeneratorWorkflow() {
 
   function generateBodies(systemId: string, append = false) {
     updateSystem(systemId, (card) => {
-      const bodies = generateCelestialBodies(card.system).filter((body) => !["Star", "Planet"].includes(body.celestial_body_type));
-      return { ...card, bodies: append ? [...card.bodies, ...bodies.slice(card.bodies.length, card.bodies.length + 1)] : bodies };
+      const context = { galaxy, sector, system: card.system };
+      const bodies = generateCelestialBodies(card.system)
+        .filter((body) => !["Star", "Planet"].includes(body.celestial_body_type))
+        .map((body, index) => withAssignment(body, context, body.orbit_position ?? index + 1));
+      return { ...card, system: scanDiscovery(card.system), bodies: append ? [...card.bodies, ...bodies.slice(card.bodies.length, card.bodies.length + 1)] : bodies };
     });
+  }
+
+  function scanSystem(systemId: string) {
+    updateSystem(systemId, (card) => ({ ...card, system: scanDiscovery(card.system) }));
   }
 
   function addPlanets(systemId: string, planetIds: string[]) {
@@ -3160,6 +3599,14 @@ export function StarSystemGeneratorWorkflow() {
 
   function unassignPlanet(systemId: string, planetId: string) {
     updateSystem(systemId, (card) => removePlanetFromSystem(card, planetId));
+  }
+
+  function scanBody(systemId: string, bodyId: string, source: "body" | "planet") {
+    updateSystem(systemId, (card) => scanBodyInSystem(card, bodyId, source));
+  }
+
+  function claimBody(systemId: string, bodyId: string, source: "body" | "planet") {
+    updateSystem(systemId, (card) => claimBodyInSystem(card, bodyId, source));
   }
 
   const visibleCards = cards.filter((card) => {
@@ -3234,10 +3681,13 @@ export function StarSystemGeneratorWorkflow() {
               setOpenSystemId(null);
             }
           }}
+          onScanSystem={() => scanSystem(selectedSystem.system.id)}
           onGenerateBodies={() => generateBodies(selectedSystem.system.id)}
           onAddBody={(planetIds) => addPlanets(selectedSystem.system.id, planetIds)}
           onDeleteBody={(bodyId) => updateSystem(selectedSystem.system.id, (systemCard) => ({ ...systemCard, bodies: systemCard.bodies.filter((body) => body.id !== bodyId) }))}
           onUnassignPlanet={(planetId) => unassignPlanet(selectedSystem.system.id, planetId)}
+          onScanBody={(bodyId, source) => scanBody(selectedSystem.system.id, bodyId, source)}
+          onClaimBody={(bodyId, source) => claimBody(selectedSystem.system.id, bodyId, source)}
         />
       ) : null}
     </GeneratorShell>
