@@ -2235,8 +2235,30 @@ function SectorCard({
       {open ? (
         <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/82 px-4 py-8 backdrop-blur-sm" onClick={onOpen}>
           <div className="mx-auto w-full max-w-[78rem] space-y-4 rounded-md border border-cyan-300/20 bg-genesis-panel/95 p-5 shadow-[0_0_60px_rgba(8,47,73,0.5)]" onClick={(event) => event.stopPropagation()}>
+          <header className="flex flex-col gap-4 border-b border-cyan-300/15 pb-5 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <div className="flex flex-wrap gap-2">
+                <Badge className="border-cyan-300/35 text-cyan-100">{model.type}</Badge>
+                <Badge className={rarityClass}>{model.rarity}</Badge>
+              </div>
+              <h2 className="mt-3 text-3xl font-black text-white">{model.name}</h2>
+              <p className="mt-1 font-mono text-sm text-slate-500">{model.seedId}</p>
+            </div>
+            <button
+              type="button"
+              onClick={onOpen}
+              className="grid h-10 w-10 place-items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 text-cyan-100 transition hover:border-cyan-200/60 hover:bg-cyan-300/20"
+              aria-label="Close sector detail"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </header>
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
             <div className="space-y-4">
+              <SectorVisual model={model} large />
+              <div className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-4">
+                <p className="text-sm font-semibold leading-7 text-slate-200">{model.description}</p>
+              </div>
               <DetailSection title="Sector Specs">
                 <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                   <StatChip label="Sector Class" value={model.sectorClass} />
@@ -2427,8 +2449,32 @@ function GalaxyCard({
       {open ? (
         <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/82 px-4 py-8 backdrop-blur-sm" onClick={onOpen}>
           <div className="mx-auto w-full max-w-[78rem] space-y-4 rounded-md border border-cyan-300/20 bg-genesis-panel/95 p-5 shadow-[0_0_60px_rgba(8,47,73,0.5)]" onClick={(event) => event.stopPropagation()}>
+          <header className="flex flex-col gap-4 border-b border-cyan-300/15 pb-5 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <div className="flex flex-wrap gap-2">
+                <Badge className="border-cyan-300/35 text-cyan-100">{model.type}</Badge>
+                <Badge className={rarityClass}>{model.rarity}</Badge>
+                {galaxy.is_fixed ? <Badge className="border-amber-300/45 text-amber-100">Starting</Badge> : null}
+                <Badge className={model.isUnlocked ? "border-emerald-300/45 text-emerald-100" : "border-slate-500/45 text-slate-300"}>{model.isUnlocked ? "Unlocked" : "Locked"}</Badge>
+              </div>
+              <h2 className="mt-3 text-3xl font-black text-white">{model.name}</h2>
+              <p className="mt-1 font-mono text-sm text-slate-500">{model.seedId}</p>
+            </div>
+            <button
+              type="button"
+              onClick={onOpen}
+              className="grid h-10 w-10 place-items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 text-cyan-100 transition hover:border-cyan-200/60 hover:bg-cyan-300/20"
+              aria-label="Close galaxy detail"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </header>
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
             <div className="space-y-4">
+              <GalaxyVisual model={model} large />
+              <div className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-4">
+                <p className="text-sm font-semibold leading-7 text-slate-200">{model.description}</p>
+              </div>
               <DetailSection title="Galaxy Specs">
                 <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                   <StatChip label="Galaxy Class" value={model.galaxyClass} />
