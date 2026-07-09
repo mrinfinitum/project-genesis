@@ -100,13 +100,34 @@ type CanonicalModules = {
   galaxies: Array<Record<string, unknown>>;
   sectors: Array<Record<string, unknown>>;
   star_systems: GameData["star_systems"];
-  planets: GameData["generated_planets"];
+  planets: ExportGeneratedPlanet[];
+  unassigned_planets: ExportUnassignedPlanet[];
   planet_rules: GameData["planets"];
   celestial_bodies: GameData["celestial_bodies"];
   colonies: Array<Record<string, unknown>>;
   economy: Array<Record<string, unknown>>;
   factions: Array<Record<string, unknown>>;
   missions: Array<Record<string, unknown>>;
+};
+
+type ExportGeneratedPlanet = GeneratedPlanet & {
+  galaxyId: string;
+  galaxyName: string;
+  sectorId: string;
+  sectorName: string;
+  starSystemId: string;
+  starSystemName: string;
+  galaxy_id: string;
+  sector_id: string;
+  star_system_id: string;
+  orbitIndex: number;
+  parentStarClass: string;
+  parentStarSeed: string;
+};
+
+type ExportUnassignedPlanet = GeneratedPlanet & {
+  export_status: "unassigned";
+  unassigned_reason: string;
 };
 
 export function getEngineTargets() {
@@ -161,12 +182,105 @@ function ensureSectorsForSystems(baseGalaxy: Record<string, unknown>, baseSector
   return sectors;
 }
 
+function asString(value: unknown) {
+  return typeof value === "string" ? value : "";
+}
+
+function galaxyName(galaxy: Record<string, unknown>) {
+  return asString(galaxy.name) || asString(galaxy.galaxy_name) || String(galaxy.id);
+}
+
+function systemReferenceCandidates(planet: GeneratedPlanet) {
+  return [planet.starSystemId, planet.star_system_id, planet.star_system].filter(Boolean) as string[];
+}
+
+function findUnambiguousStarSystem(planet: GeneratedPlanet, starSystems: GameData["star_systems"]) {
+  for (const candidate of systemReferenceCandidates(planet)) {
+    const matches = starSystems.filter((system) => system.id === candidate || system.system_name === candidate);
+    if (matches.length === 1) return matches[0];
+    if (matches.length > 1) return null;
+  }
+
+  return null;
+}
+
+function normalizeExportPlanets(
+  planets: GameData["generated_planets"],
+  galaxies: Array<Record<string, unknown>>,
+  sectors: Array<Record<string, unknown>>,
+  starSystems: GameData["star_systems"]
+) {
+  const galaxyById = new Map(galaxies.map((galaxy) => [String(galaxy.id), galaxy]));
+  const sectorById = new Map(sectors.map((sector) => [String(sector.id), sector]));
+  const assigned: ExportGeneratedPlanet[] = [];
+  const unassigned: ExportUnassignedPlanet[] = [];
+
+  for (const planet of planets) {
+    const system = findUnambiguousStarSystem(planet, starSystems);
+    if (!system) {
+      unassigned.push({
+        ...planet,
+        export_status: "unassigned",
+        unassigned_reason: "No unambiguous star system parent could be resolved from starSystemId, star_system_id, or star_system."
+      });
+      continue;
+    }
+
+    const sector = sectorById.get(system.sector_id);
+    if (!sector) {
+      unassigned.push({
+        ...planet,
+        export_status: "unassigned",
+        unassigned_reason: `Resolved star system ${system.id} but its sector ${system.sector_id} is not exported.`
+      });
+      continue;
+    }
+
+    const galaxy = galaxyById.get(String(sector.galaxy_id));
+    if (!galaxy) {
+      unassigned.push({
+        ...planet,
+        export_status: "unassigned",
+        unassigned_reason: `Resolved sector ${String(sector.id)} but its galaxy ${String(sector.galaxy_id)} is not exported.`
+      });
+      continue;
+    }
+
+    const sectorName = asString(sector.sector_name) || String(sector.id);
+    const orbitIndex = Number(planet.orbitIndex ?? planet.orbit_position) || 0;
+    const starType = system.star_type ?? planet.star_type ?? "Unknown";
+
+    assigned.push({
+      ...planet,
+      galaxyId: String(galaxy.id),
+      galaxyName: galaxyName(galaxy),
+      sectorId: String(sector.id),
+      sectorName,
+      starSystemId: system.id,
+      starSystemName: system.system_name,
+      galaxy_id: String(galaxy.id),
+      sector_id: String(sector.id),
+      star_system_id: system.id,
+      galaxy_sector: sectorName,
+      star_system: system.system_name,
+      orbit_position: orbitIndex,
+      orbitIndex,
+      star_type: starType,
+      parentStarClass: starType,
+      parentStarSeed: system.system_seed
+    });
+  }
+
+  return { assigned, unassigned };
+}
+
 function buildCanonicalModules(data: GameData): CanonicalModules {
   const localBubble = getLocalBubbleSystems(24);
   const starSystems = data.star_systems.length ? data.star_systems : (generatedStarSystemRows(24) as GameData["star_systems"]);
   const galaxies = [localBubble.galaxy];
   const sectors = ensureSectorsForSystems(localBubble.galaxy, localBubble.sector, starSystems);
   const celestialBodies = data.celestial_bodies.length ? data.celestial_bodies : (generatedCelestialBodyRows(5) as GameData["celestial_bodies"]);
+  const normalizedPlanets = normalizeExportPlanets(data.generated_planets, galaxies, sectors, starSystems);
 
   return {
     resource_catalog: ResourceService.catalog,
@@ -176,7 +290,8 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
     galaxies,
     sectors,
     star_systems: starSystems,
-    planets: data.generated_planets,
+    planets: normalizedPlanets.assigned,
+    unassigned_planets: normalizedPlanets.unassigned,
     planet_rules: data.planets,
     celestial_bodies: celestialBodies,
     colonies: placeholderModule("colonies"),
@@ -225,10 +340,17 @@ function buildRelationshipMap(modules: CanonicalModules) {
 }
 
 function planetSystemReference(planet: GeneratedPlanet, starSystems: GameData["star_systems"]) {
-  const record = planet as GeneratedPlanet & { starSystemId?: string; star_system_id?: string };
-  if (record.starSystemId) return record.starSystemId;
-  if (record.star_system_id) return record.star_system_id;
+  if (planet.starSystemId) return planet.starSystemId;
+  if (planet.star_system_id) return planet.star_system_id;
   return starSystems.find((system) => system.system_name === planet.star_system || system.id === planet.star_system)?.id ?? "";
+}
+
+function planetSectorReference(planet: GeneratedPlanet) {
+  return planet.sectorId ?? planet.sector_id ?? "";
+}
+
+function planetGalaxyReference(planet: GeneratedPlanet) {
+  return planet.galaxyId ?? planet.galaxy_id ?? "";
 }
 
 function addIssue(issues: ExportValidationIssue[], severity: ExportIssueSeverity, code: string, message: string, records: string[] = []) {
@@ -304,7 +426,17 @@ function validateHierarchy(issues: ExportValidationIssue[], modules: CanonicalMo
 
   const planetsMissingSystems = modules.planets.filter((row) => !planetSystemReference(row, modules.star_systems));
   if (planetsMissingSystems.length) {
-    addIssue(issues, "warning", "planet_parent_missing", "Some generated planets do not include a resolvable star system link.", planetsMissingSystems.map((row) => row.id));
+    addIssue(issues, "error", "planet_parent_missing", "Some exported planets do not include a resolvable star system link.", planetsMissingSystems.map((row) => row.id));
+  }
+
+  const planetsMissingSectors = modules.planets.filter((row) => !sectorIds.has(planetSectorReference(row)));
+  if (planetsMissingSectors.length) {
+    addIssue(issues, "error", "planet_sector_missing", "Some exported planets do not include a resolvable sector link.", planetsMissingSectors.map((row) => row.id));
+  }
+
+  const planetsMissingGalaxies = modules.planets.filter((row) => !galaxyIds.has(planetGalaxyReference(row)));
+  if (planetsMissingGalaxies.length) {
+    addIssue(issues, "error", "planet_galaxy_missing", "Some exported planets do not include a resolvable galaxy link.", planetsMissingGalaxies.map((row) => row.id));
   }
 }
 
@@ -340,6 +472,8 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
       "parent/child links exist",
       "schema matches selected engine target",
       "planets link to star systems",
+      "planets link to sectors",
+      "planets link to galaxies",
       "star systems link to sectors",
       "sectors link to galaxies"
     ],
@@ -388,6 +522,7 @@ function compactModules(modules: CanonicalModules) {
     sectors: modules.sectors,
     star_systems: modules.star_systems,
     planets: modules.planets,
+    unassigned_planets: modules.unassigned_planets,
     celestial_bodies: modules.celestial_bodies,
     colonies: modules.colonies,
     economy: modules.economy,
