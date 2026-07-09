@@ -2056,16 +2056,47 @@ function StarSystemDetailPanel({
         </div>
       </header>
 
-      <div className="grid gap-6 p-6 xl:grid-cols-[minmax(0,1.1fr)_minmax(24rem,0.9fr)]">
-        <div className="space-y-5">
-          <StarSystemVisual model={model} large />
+      <div className="space-y-6 p-6">
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1.05fr)_minmax(24rem,0.95fr)]">
+          <div className="space-y-5">
+            <StarSystemVisual model={model} large />
 
-          <div className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-5">
-            <p className="text-base font-semibold leading-8 text-slate-200">{model.description}</p>
+            <div className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-5">
+              <p className="text-base font-semibold leading-8 text-slate-200">{model.description}</p>
+            </div>
           </div>
 
+          <div className="grid content-start gap-5 md:grid-cols-2 xl:grid-cols-1">
+            <DetailSection title="Resources">
+              <ChipList values={model.resources} />
+            </DetailSection>
+            <DetailSection title="Hazards">
+              <ChipList values={model.hazards} />
+            </DetailSection>
+            <DetailSection title="Traits">
+              <ChipList values={model.traits} />
+            </DetailSection>
+            <DetailSection title="Anomalies">
+              <ChipList values={model.anomalies} />
+            </DetailSection>
+            <DetailSection title="Modifiers">
+              <ChipList values={model.modifiers} />
+            </DetailSection>
+            <DetailSection title="Collectibles">
+              <ChipList values={model.collectibles} />
+            </DetailSection>
+            <DetailSection title="Weather / Space Conditions">
+              <ChipList values={model.spaceConditions} />
+            </DetailSection>
+            <DetailSection title="Events">
+              <ChipList values={model.events} />
+            </DetailSection>
+          </div>
+        </div>
+
+        <div className="grid gap-5 xl:grid-cols-2">
           <DetailSection title="Star System Specs">
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-2 2xl:grid-cols-3">
               <StatChip label="Star Class" value={model.starClass} />
               <StatChip label="System Type" value={model.systemType} />
               <StatChip label="Stability" value={model.stability} />
@@ -2083,39 +2114,13 @@ function StarSystemDetailPanel({
           </DetailSection>
 
           <DetailSection title="System Composition">
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="grid gap-3 sm:grid-cols-2 2xl:grid-cols-4">
               {composition.map((item) => (
                 <StatChip key={item.label} label={item.label} value={item.value} />
               ))}
             </div>
           </DetailSection>
-        </div>
 
-        <div className="space-y-5">
-          <DetailSection title="Resources">
-            <ChipList values={model.resources} />
-          </DetailSection>
-          <DetailSection title="Hazards">
-            <ChipList values={model.hazards} />
-          </DetailSection>
-          <DetailSection title="Traits">
-            <ChipList values={model.traits} />
-          </DetailSection>
-          <DetailSection title="Anomalies">
-            <ChipList values={model.anomalies} />
-          </DetailSection>
-          <DetailSection title="Modifiers">
-            <ChipList values={model.modifiers} />
-          </DetailSection>
-          <DetailSection title="Collectibles">
-            <ChipList values={model.collectibles} />
-          </DetailSection>
-          <DetailSection title="Weather / Space Conditions">
-            <ChipList values={model.spaceConditions} />
-          </DetailSection>
-          <DetailSection title="Events">
-            <ChipList values={model.events} />
-          </DetailSection>
           <DetailSection title="Colonization">
             <KeyValueGrid values={model.colonization} />
           </DetailSection>
