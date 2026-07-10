@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getGameData } from "@/lib/data";
 import { discoveryJournalSchema, sampleDiscoveryJournal, sampleTimelineEvents, timelineEventSchema } from "@/lib/explorer/discovery-log";
-import { createColonyRecord, generateFallbackColonies, type ColonyRecord } from "@/lib/colonies/procedural";
+import { colonyBuildingTemplates, colonyFocusDefinitions, colonyLevelDefinitions, colonySchema, createColonyRecord, generateFallbackColonies, type ColonyBuilding, type ColonyRecord } from "@/lib/colonies/procedural";
 import { generateFaction, generateFallbackFactions, type FactionRecord } from "@/lib/factions/procedural";
 import { getLocalBubbleSystems, generatedCelestialBodyRows, generatedStarSystemRows } from "@/lib/universe/fallback-data";
 import { normalizePlanetResourceProfiles, validatePlanetResourceProfiles } from "@/lib/resources/planet-resource-profiles";
@@ -111,6 +111,10 @@ type CanonicalModules = {
   timeline_events: typeof sampleTimelineEvents;
   explorer_schemas: Array<Record<string, unknown>>;
   colonies: ColonyRecord[];
+  colony_buildings: ColonyBuilding[];
+  colony_level_definitions: Array<(typeof colonyLevelDefinitions)[number] & { id: string }>;
+  colony_focus_definitions: typeof colonyFocusDefinitions;
+  colony_building_templates: typeof colonyBuildingTemplates;
   economy: Array<Record<string, unknown>>;
   factions: FactionRecord[];
   missions: Array<Record<string, unknown>>;
@@ -398,9 +402,20 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
         playerSpecific: true,
         staticExportRule: "Static exports include schema and sample mock data only. Runtime/player timeline data remains client or save scoped.",
         fields: timelineEventSchema
+      },
+      {
+        id: "colony_management_schema",
+        module: "colonies",
+        playerSpecific: false,
+        staticExportRule: "Static exports include canonical colony state, starter buildings, level definitions, focus definitions, and relationship maps.",
+        fields: colonySchema
       }
     ],
     colonies,
+    colony_buildings: colonies.flatMap((colony) => colony.buildings),
+    colony_level_definitions: colonyLevelDefinitions.map((definition) => ({ id: `colony_level_${definition.level}`, ...definition })),
+    colony_focus_definitions: colonyFocusDefinitions,
+    colony_building_templates: colonyBuildingTemplates,
     economy: placeholderModule("economy"),
     factions,
     missions: placeholderModule("missions")
@@ -419,6 +434,7 @@ function buildRelationshipMap(modules: CanonicalModules) {
   const factionsBySystem: Record<string, string[]> = {};
   const coloniesByPlanet: Record<string, string[]> = {};
   const coloniesBySystem: Record<string, string[]> = {};
+  const colonyBuildingsByColony: Record<string, string[]> = {};
 
   for (const sector of modules.sectors) {
     const galaxyId = String(sector.galaxy_id ?? "");
@@ -447,6 +463,7 @@ function buildRelationshipMap(modules: CanonicalModules) {
   for (const colony of modules.colonies) {
     coloniesByPlanet[colony.planetId] = [...(coloniesByPlanet[colony.planetId] ?? []), colony.id];
     coloniesBySystem[colony.starSystemId] = [...(coloniesBySystem[colony.starSystemId] ?? []), colony.id];
+    colonyBuildingsByColony[colony.id] = colony.buildings.map((building) => building.id);
   }
 
   return {
@@ -456,7 +473,8 @@ function buildRelationshipMap(modules: CanonicalModules) {
     planetsBySystem,
     factionsBySystem,
     coloniesByPlanet,
-    coloniesBySystem
+    coloniesBySystem,
+    colonyBuildingsByColony
   };
 }
 
@@ -559,6 +577,26 @@ function validateHierarchy(issues: ExportValidationIssue[], modules: CanonicalMo
   if (planetsMissingGalaxies.length) {
     addIssue(issues, "error", "planet_galaxy_missing", "Some exported planets do not include a resolvable galaxy link.", planetsMissingGalaxies.map((row) => row.id));
   }
+
+  const coloniesMissingPlanets = modules.colonies.filter((row) => !row.planetId);
+  if (coloniesMissingPlanets.length) {
+    addIssue(issues, "error", "colony_planet_missing", "Some colonies do not include a planet link.", coloniesMissingPlanets.map((row) => row.id));
+  }
+
+  const coloniesMissingSystems = modules.colonies.filter((row) => !systemIds.has(row.starSystemId));
+  if (coloniesMissingSystems.length) {
+    addIssue(issues, "error", "colony_system_missing", "Some colonies do not link to an exported star system.", coloniesMissingSystems.map((row) => row.id));
+  }
+
+  const coloniesMissingSectors = modules.colonies.filter((row) => !sectorIds.has(row.sectorId));
+  if (coloniesMissingSectors.length) {
+    addIssue(issues, "error", "colony_sector_missing", "Some colonies do not link to an exported sector.", coloniesMissingSectors.map((row) => row.id));
+  }
+
+  const coloniesMissingGalaxies = modules.colonies.filter((row) => !galaxyIds.has(row.galaxyId));
+  if (coloniesMissingGalaxies.length) {
+    addIssue(issues, "error", "colony_galaxy_missing", "Some colonies do not link to an exported galaxy.", coloniesMissingGalaxies.map((row) => row.id));
+  }
 }
 
 function validateTargetSchema(issues: ExportValidationIssue[], target: EngineTarget) {
@@ -595,6 +633,10 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
       "planets link to star systems",
       "planets link to sectors",
       "planets link to galaxies",
+      "colonies link to planets",
+      "colonies link to star systems",
+      "colonies link to sectors",
+      "colonies link to galaxies",
       "star systems link to sectors",
       "sectors link to galaxies"
     ],
@@ -611,6 +653,7 @@ function schemaNotes(target: EngineTarget) {
     ids: "IDs are stable and should be treated as save-compatible identifiers.",
     resources: "Resource display data must be resolved through resource_catalog/ResourceService.",
     hierarchy: "Preserve Galaxy -> Sector -> Star System -> Planet. Do not add Region or Cluster layers.",
+    colonies: "Colony state, growth inputs, buildings, levels, and focus definitions are canonical Studio data shared by every engine target.",
     mapping: config.schemaMapping
   };
 }
@@ -649,6 +692,10 @@ function compactModules(modules: CanonicalModules) {
     timeline_events: modules.timeline_events,
     explorer_schemas: modules.explorer_schemas,
     colonies: modules.colonies,
+    colony_buildings: modules.colony_buildings,
+    colony_level_definitions: modules.colony_level_definitions,
+    colony_focus_definitions: modules.colony_focus_definitions,
+    colony_building_templates: modules.colony_building_templates,
     economy: modules.economy,
     factions: modules.factions,
     missions: modules.missions
@@ -660,14 +707,14 @@ function targetArtifacts(target: EngineTarget, modules: CanonicalModules) {
     return {
       "ResourceCatalogModule.lua": `local ResourceCatalog = ${luaValue(modules.resource_catalog)}\n\nreturn ResourceCatalog\n`,
       "ResearchUnlockModule.lua": `local ResearchUnlocks = ${luaValue({ research: modules.research, unlocks: modules.unlock_matrix })}\n\nreturn ResearchUnlocks\n`,
-      "UniverseDataModule.lua": `local UniverseData = ${luaValue({ galaxies: modules.galaxies, sectors: modules.sectors, starSystems: modules.star_systems, planets: modules.planets, celestialBodies: modules.celestial_bodies, factions: modules.factions, colonies: modules.colonies })}\n\nreturn UniverseData\n`,
+      "UniverseDataModule.lua": `local UniverseData = ${luaValue({ galaxies: modules.galaxies, sectors: modules.sectors, starSystems: modules.star_systems, planets: modules.planets, celestialBodies: modules.celestial_bodies, factions: modules.factions, colonies: modules.colonies, colonyBuildings: modules.colony_buildings, colonyLevels: modules.colony_level_definitions, colonyFocus: modules.colony_focus_definitions })}\n\nreturn UniverseData\n`,
       "ApiService.lua": "local HttpService = game:GetService(\"HttpService\")\n\nlocal ApiService = {}\nApiService.BaseUrl = \"https://your-studio-host.example.com/api/export\"\n\nfunction ApiService.FetchGeneric()\n  local response = HttpService:GetAsync(ApiService.BaseUrl .. \"/generic\")\n  return HttpService:JSONDecode(response)\nend\n\nreturn ApiService\n"
     };
   }
 
   if (target === "web") {
     return {
-      "project-genesis.types.ts": "export type GenesisId = string;\n\nexport interface GenesisResource { id: GenesisId; resource_name: string; category: string; rarity: string; }\nexport interface GenesisResearchNode { id: GenesisId; name: string; era: string; status: string; }\nexport interface GenesisFaction { id: GenesisId; name: string; type: string; disposition: string; homeStarSystemId: GenesisId; controlledPlanetIds: GenesisId[]; }\nexport interface GenesisColony { id: GenesisId; name: string; planetId: GenesisId; starSystemId: GenesisId; population: number; status: string; resourceOutputIds: GenesisId[]; }\nexport interface GenesisExportPayload { target: string; canonical: Record<string, unknown>; relationshipMap: Record<string, unknown>; }\n",
+      "project-genesis.types.ts": "export type GenesisId = string;\n\nexport interface GenesisResource { id: GenesisId; resource_name: string; category: string; rarity: string; }\nexport interface GenesisResearchNode { id: GenesisId; name: string; era: string; status: string; }\nexport interface GenesisFaction { id: GenesisId; name: string; type: string; disposition: string; homeStarSystemId: GenesisId; controlledPlanetIds: GenesisId[]; }\nexport interface GenesisColonyBuilding { id: GenesisId; name: string; category: string; colonyId: GenesisId; constructionStatus: string; modifiers: Record<string, number>; }\nexport interface GenesisColony { id: GenesisId; name: string; planetId: GenesisId; starSystemId: GenesisId; population: number; populationCapacity: number; populationGrowthRate: number; colonyLevel: number; focus: string; status: string; resourceOutputIds: GenesisId[]; resourceOutputRates: Record<string, number>; buildingIds: GenesisId[]; }\nexport interface GenesisExportPayload { target: string; canonical: Record<string, unknown>; relationshipMap: Record<string, unknown>; }\n",
       "projectGenesisClient.ts": "export async function fetchProjectGenesisExport(target = 'generic') {\n  const response = await fetch(`/api/export/${target}`);\n  if (!response.ok) throw new Error(`Project Genesis export failed: ${response.status}`);\n  return response.json();\n}\n",
       "projectGenesisStore.ts": "import { create } from 'zustand';\n\ntype GenesisStore = { data: unknown | null; setData: (data: unknown) => void };\nexport const useGenesisStore = create<GenesisStore>((set) => ({ data: null, setData: (data) => set({ data }) }));\n"
     };
