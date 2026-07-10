@@ -77,33 +77,44 @@ const navigationGroups: NavigationGroup[] = [
   },
   {
     id: "universe",
-    label: "Universe",
+    label: "Universe Explorer",
     icon: Star,
     fallbackProgress: 58,
     systemIds: ["planet-generation", "ancient-civilizations", "planet-traits", "anomalies", "hazards", "expeditions"],
     items: [
-      { href: "/galaxy", label: "Galaxies", icon: Star },
-      { href: "/sector-map", label: "Sectors", icon: Map },
-      { href: "/star-system-map", label: "Star Systems", icon: Radar },
-      { href: "/celestial-bodies", label: "Celestial Bodies", icon: CircleDot },
-      { href: "/planets", label: "Planets", icon: Orbit },
+      { href: "/galaxy", label: "Explore Galaxies", icon: Star },
+      { href: "/sector-map", label: "Sector Map", icon: Map },
+      { href: "/star-system-map", label: "Star System Map", icon: Radar },
+      { href: "/planets", label: "Planet Library", icon: Orbit },
       { href: "/discovery-journal", label: "Discovery Journal", icon: ScrollText },
       { href: "/universe-timeline", label: "Universe Timeline", icon: History },
       { href: "/missions", label: "Missions", icon: ClipboardList },
-      { href: "/factions", label: "Factions", icon: Landmark },
-      { href: "/colonies", label: "Colonies", icon: Building2 },
       { href: "/planetary-rules", label: "Rules", icon: GitBranch }
     ]
   },
   {
+    id: "operations",
+    label: "World & Operations",
+    icon: BadgeDollarSign,
+    fallbackProgress: 52,
+    systemIds: ["resources", "collectibles", "ancient-civilizations"],
+    items: [
+      { href: "/factions", label: "Factions", icon: Landmark },
+      { href: "/colonies", label: "Colonies", icon: Building2 },
+      { href: "/economy", label: "Economy & Trade", icon: BadgeDollarSign },
+      { href: "/celestial-bodies", label: "Celestial Bodies", icon: CircleDot }
+    ]
+  },
+  {
     id: "civilization",
-    label: "Civilization",
+    label: "Progression Design",
     icon: Landmark,
     fallbackProgress: 84,
-    systemIds: ["research", "buildings", "upgrades", "districts", "wonders"],
+    systemIds: ["research", "unlock-matrix", "buildings", "upgrades", "districts", "wonders"],
     items: [
       { href: "/civilizations", label: "Civilization Design Studio", icon: Landmark },
       { href: "/research", label: "Research Designer", icon: FlaskConical },
+      { href: "/unlock-matrix", label: "Unlock Matrix", icon: GitBranch },
       { href: "/upgrades", label: "Upgrade Designer", icon: Gauge },
       { href: "/buildings", label: "Building Designer", icon: Building2 },
       { href: "/wonders", label: "Wonder Designer", icon: Sparkles },
@@ -111,13 +122,12 @@ const navigationGroups: NavigationGroup[] = [
     ]
   },
   {
-    id: "economy",
-    label: "Economy",
+    id: "resources",
+    label: "Resources",
     icon: Gem,
     fallbackProgress: 47,
     systemIds: ["resources", "collectibles"],
     items: [
-      { href: "/economy", label: "Economy & Trade", icon: BadgeDollarSign },
       { href: "/resource-catalog", label: "Resource Catalog", icon: Gem },
       { href: "/planet-resource-profiles", label: "Planet Resource Profiles", icon: CircleDot },
       { label: "Resource Distribution", icon: Pickaxe, future: true },
@@ -141,12 +151,11 @@ const navigationGroups: NavigationGroup[] = [
   },
   {
     id: "engine",
-    label: "Engine",
+    label: "Engine & Validation",
     icon: GitBranch,
     fallbackProgress: 61,
     systemIds: ["unlock-matrix"],
     items: [
-      { href: "/unlock-matrix", label: "Unlock Matrix", icon: GitBranch },
       { href: "/game-engine-exports", label: "Game Engine Exports", icon: FileCode2 },
       { href: "/building-relationships", label: "Relationship Graph", icon: Network },
       { href: "/validation-engine", label: "Validation Center", icon: Database },

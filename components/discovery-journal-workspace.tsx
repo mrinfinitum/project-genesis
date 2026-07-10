@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { BookOpen, CalendarClock, Filter, History, Search, Sparkles, Trophy } from "lucide-react";
+import { BookOpen, CalendarClock, Filter, History, Sparkles, Trophy } from "lucide-react";
 import {
   DISCOVERY_LOG_UPDATED_EVENT,
   readDiscoveryJournal,
@@ -13,6 +13,7 @@ import {
   type TimelineEvent,
   type TimelineEventType
 } from "@/lib/explorer/discovery-log";
+import { WorkspaceHeader, WorkspaceSearchBar, WorkspaceStatTile as StatTile } from "@/components/ui/workspace";
 
 type ExplorerLogMode = "journal" | "timeline";
 
@@ -31,15 +32,6 @@ function badgeClass(value: string) {
   if (value === "high" || value === "explored" || value === "charted") return "border-cyan-300/45 text-cyan-100";
   if (value === "medium" || value === "scanned") return "border-emerald-300/45 text-emerald-100";
   return "border-slate-500/45 text-slate-300";
-}
-
-function StatTile({ label, value }: { label: string; value: string | number }) {
-  return (
-    <div className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-4">
-      <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">{label}</p>
-      <p className="mt-2 text-2xl font-black text-white">{value}</p>
-    </div>
-  );
 }
 
 function EmptyLogState({ mode }: { mode: ExplorerLogMode }) {
@@ -97,29 +89,24 @@ export function DiscoveryJournalWorkspace({ mode = "journal" }: { mode?: Explore
 
   return (
     <main className="space-y-6">
-      <section className="grid gap-5 xl:grid-cols-[1fr_28rem]">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Explorer Update v0.5</p>
-          <h1 className="mt-3 text-5xl font-black tracking-tight text-white">{mode === "journal" ? "Discovery Journal" : "Universe Timeline"}</h1>
-          <p className="mt-4 max-w-4xl text-lg leading-8 text-slate-300">
-            {mode === "journal"
-              ? "Track named discoveries, discovery states, score, parent links, rarity, tags, and notes as the exploration loop resolves the universe."
-              : "Review major exploration milestones from scans, claims, colonization, research completion, and intergalactic unlocks."}
-          </p>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <StatTile label="Discovery Score" value={totalScore.toLocaleString()} />
-          <StatTile label="Journal Entries" value={visibleJournal.length} />
-          <StatTile label="Timeline Events" value={visibleTimeline.length} />
-          <StatTile label="Live Browser Log" value={hasLiveRows ? "Active" : "Sample"} />
-        </div>
-      </section>
+      <WorkspaceHeader
+        eyebrow="Explorer Update v0.5"
+        title={mode === "journal" ? "Discovery Journal" : "Universe Timeline"}
+        description={
+          mode === "journal"
+            ? "Track named discoveries, discovery states, score, parent links, rarity, tags, and notes as the exploration loop resolves the universe."
+            : "Review major exploration milestones from scans, claims, colonization, research completion, and intergalactic unlocks."
+        }
+        stats={[
+          { label: "Discovery Score", value: totalScore.toLocaleString() },
+          { label: "Journal Entries", value: visibleJournal.length },
+          { label: "Timeline Events", value: visibleTimeline.length },
+          { label: "Live Browser Log", value: hasLiveRows ? "Active" : "Sample" }
+        ]}
+      />
 
       <section className="grid gap-3 md:grid-cols-[1fr_16rem]">
-        <div className="flex items-center gap-3 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-3">
-          <Search className="h-4 w-4 text-slate-500" />
-          <input value={query} onChange={(event) => setQuery(event.target.value)} className="h-10 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-slate-500" placeholder="Search discoveries" />
-        </div>
+        <WorkspaceSearchBar value={query} onChange={setQuery} placeholder="Search discoveries" />
         <label className="flex items-center gap-3 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-3">
           <Filter className="h-4 w-4 text-cyan-200" />
           <select value={typeFilter} onChange={(event) => setTypeFilter(event.target.value)} className="h-10 flex-1 bg-transparent text-sm font-bold text-white outline-none">

@@ -1,23 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Search, Shield, Sparkles, Swords, Waypoints } from "lucide-react";
+import { Shield, Sparkles, Swords, Waypoints } from "lucide-react";
 import { FACTIONS_UPDATED_EVENT, generateFallbackFactions, readDiscoveredFactions, type FactionRecord } from "@/lib/factions/procedural";
-
-function badgeClass(value: string) {
-  if (/pirate|hostile|overwhelming|ancient|remnant/i.test(value)) return "border-rose-300/35 bg-rose-400/10 text-rose-100";
-  if (/friendly|science|trade|coalition|order/i.test(value)) return "border-emerald-300/35 bg-emerald-400/10 text-emerald-100";
-  return "border-cyan-300/35 bg-cyan-400/10 text-cyan-100";
-}
-
-function StatTile({ label, value }: { label: string; value: string | number }) {
-  return (
-    <div className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-4">
-      <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">{label}</p>
-      <p className="mt-2 text-2xl font-black text-white">{value}</p>
-    </div>
-  );
-}
+import { WorkspaceBadge as Badge, WorkspaceHeader, WorkspaceSearchBar, WorkspaceStatTile as StatTile, workspaceBadgeClass } from "@/components/ui/workspace";
 
 function FactionCard({ faction, selected, onSelect }: { faction: FactionRecord; selected: boolean; onSelect: () => void }) {
   return (
@@ -29,8 +15,8 @@ function FactionCard({ faction, selected, onSelect }: { faction: FactionRecord; 
       <div className="flex items-start justify-between gap-3">
         <div>
           <div className="flex flex-wrap gap-2">
-            <span className={`rounded-md border px-2.5 py-1 text-xs font-black uppercase tracking-[0.16em] ${badgeClass(faction.type)}`}>{faction.type}</span>
-            <span className={`rounded-md border px-2.5 py-1 text-xs font-black uppercase tracking-[0.16em] ${badgeClass(faction.disposition)}`}>{faction.disposition}</span>
+            <Badge value={faction.type} />
+            <Badge value={faction.disposition} />
           </div>
           <h2 className="mt-3 text-2xl font-black text-white">{faction.name}</h2>
           <p className="mt-1 font-mono text-xs text-slate-500">{faction.id}</p>
@@ -82,24 +68,19 @@ export function FactionsWorkspace() {
 
   return (
     <main className="space-y-6">
-      <section className="grid gap-5 xl:grid-cols-[1fr_28rem]">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Living Universe Layer</p>
-          <h1 className="mt-3 text-5xl font-black tracking-tight text-white">Factions</h1>
-          <p className="mt-4 max-w-4xl text-lg leading-8 text-slate-300">Procedurally discovered colonies, guilds, coalitions, remnants, clans, orders, and alien civilizations tied to the existing galaxy hierarchy.</p>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <StatTile label="Tracked Factions" value={factions.length} />
-          <StatTile label="Controlled Systems" value={new Set(factions.flatMap((faction) => faction.controlledSystemIds)).size} />
-          <StatTile label="Controlled Planets" value={new Set(factions.flatMap((faction) => faction.controlledPlanetIds)).size} />
-          <StatTile label="Faction Types" value={Object.keys(countsByType).length} />
-        </div>
-      </section>
+      <WorkspaceHeader
+        eyebrow="Living Universe Layer"
+        title="Factions"
+        description="Procedurally discovered colonies, guilds, coalitions, remnants, clans, orders, and alien civilizations tied to the existing galaxy hierarchy."
+        stats={[
+          { label: "Tracked Factions", value: factions.length },
+          { label: "Controlled Systems", value: new Set(factions.flatMap((faction) => faction.controlledSystemIds)).size },
+          { label: "Controlled Planets", value: new Set(factions.flatMap((faction) => faction.controlledPlanetIds)).size },
+          { label: "Faction Types", value: Object.keys(countsByType).length }
+        ]}
+      />
 
-      <div className="flex items-center gap-3 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-3">
-        <Search className="h-4 w-4 text-slate-500" />
-        <input value={query} onChange={(event) => setQuery(event.target.value)} className="h-10 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-slate-500" placeholder="Search factions" />
-      </div>
+      <WorkspaceSearchBar value={query} onChange={setQuery} placeholder="Search factions" />
 
       <section className="grid gap-5 xl:grid-cols-[1fr_26rem]">
         <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
@@ -135,7 +116,7 @@ export function FactionsWorkspace() {
               </div>
               <div className="flex flex-wrap gap-2">
                 {selected.relationshipTags.map((tag) => (
-                  <span key={tag} className={`rounded-md border px-2.5 py-1 text-xs font-bold ${badgeClass(tag)}`}>{tag}</span>
+                  <span key={tag} className={`rounded-md border px-2.5 py-1 text-xs font-bold ${workspaceBadgeClass(tag)}`}>{tag}</span>
                 ))}
               </div>
             </>

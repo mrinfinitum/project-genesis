@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ClipboardList, Eye, Flag, Play, RotateCcw, Search, Target, Trophy, XCircle } from "lucide-react";
+import { ClipboardList, Eye, Flag, Play, RotateCcw, Target, Trophy, XCircle } from "lucide-react";
 import {
   MISSIONS_UPDATED_EVENT,
   abandonMission,
@@ -15,6 +15,7 @@ import {
   type MissionReward
 } from "@/lib/missions/procedural";
 import { ResourceService } from "@/lib/resources/service";
+import { WorkspaceBadge as Badge, WorkspaceHeader, WorkspacePanel, WorkspaceProgressBar as ProgressBar, WorkspaceSearchBar, WorkspaceStatTile as StatTile, WorkspaceTabs } from "@/components/ui/workspace";
 
 type MissionTab = "available" | "active" | "completed" | "failed";
 
@@ -24,34 +25,6 @@ const tabCopy: Record<MissionTab, string> = {
   completed: "Completed",
   failed: "Failed / Expired"
 };
-
-function badgeClass(value: string) {
-  if (/failed|expired|abandoned|hard|extreme|legendary/i.test(value)) return "border-rose-300/35 bg-rose-400/10 text-rose-100";
-  if (/complete|accepted|active|easy|trivial/i.test(value)) return "border-emerald-300/35 bg-emerald-400/10 text-emerald-100";
-  if (/moderate|available|uncommon|rare/i.test(value)) return "border-amber-300/35 bg-amber-400/10 text-amber-100";
-  return "border-cyan-300/35 bg-cyan-400/10 text-cyan-100";
-}
-
-function Badge({ value }: { value: string }) {
-  return <span className={`rounded-md border px-2.5 py-1 text-xs font-black uppercase tracking-[0.16em] ${badgeClass(value)}`}>{value.replaceAll("_", " ")}</span>;
-}
-
-function StatTile({ label, value }: { label: string; value: string | number }) {
-  return (
-    <div className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-4">
-      <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">{label}</p>
-      <p className="mt-2 text-2xl font-black text-white">{value}</p>
-    </div>
-  );
-}
-
-function ProgressBar({ value }: { value: number }) {
-  return (
-    <div className="h-2 overflow-hidden rounded-full bg-slate-900">
-      <div className="h-full rounded-full bg-cyan-300" style={{ width: `${Math.max(0, Math.min(100, value))}%` }} />
-    </div>
-  );
-}
 
 function missionProgress(mission: MissionRecord, objectives: MissionObjective[]) {
   const rows = objectives.filter((objective) => mission.objectiveIds.includes(objective.id) && !objective.optional);
@@ -98,12 +71,8 @@ function MissionCard({ mission, objectives, selected, onSelect }: { mission: Mis
 function Tracker({ bundle, onSelect }: { bundle: MissionBundle; onSelect: (id: string) => void }) {
   const tracked = bundle.missions.filter((mission) => bundle.trackedMissionIds.includes(mission.id) || mission.tracked).slice(0, 3);
   return (
-    <section className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-4 shadow-glow">
-      <div className="flex items-center gap-2">
-        <Target className="h-5 w-5 text-cyan-200" />
-        <h3 className="text-lg font-black text-white">Active Tracker</h3>
-      </div>
-      <div className="mt-4 grid gap-3">
+    <WorkspacePanel title="Active Tracker" icon={Target}>
+      <div className="grid gap-3">
         {tracked.length ? tracked.map((mission) => (
           <button key={mission.id} type="button" onClick={() => onSelect(mission.id)} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3 text-left transition hover:border-cyan-300/45">
             <div className="flex items-center justify-between gap-3">
@@ -114,7 +83,7 @@ function Tracker({ bundle, onSelect }: { bundle: MissionBundle; onSelect: (id: s
           </button>
         )) : <p className="text-sm font-semibold text-slate-500">Track accepted missions to pin them here.</p>}
       </div>
-    </section>
+    </WorkspacePanel>
   );
 }
 
@@ -173,25 +142,20 @@ export function MissionsWorkspace() {
 
   return (
     <main className="space-y-6">
-      <section className="grid gap-5 xl:grid-cols-[1fr_28rem]">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Procedural Mission Layer</p>
-          <h1 className="mt-3 text-5xl font-black tracking-tight text-white">Missions</h1>
-          <p className="mt-4 max-w-4xl text-lg leading-8 text-slate-300">Deterministic missions generated from discovery, factions, colonies, resources, markets, trade routes, research, and timeline state.</p>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <StatTile label="Available" value={totals.available} />
-          <StatTile label="Active" value={totals.active} />
-          <StatTile label="Completed" value={totals.completed} />
-          <StatTile label="Reward Value" value={totals.rewards} />
-        </div>
-      </section>
+      <WorkspaceHeader
+        eyebrow="Procedural Mission Layer"
+        title="Missions"
+        description="Deterministic missions generated from discovery, factions, colonies, resources, markets, trade routes, research, and timeline state."
+        stats={[
+          { label: "Available", value: totals.available },
+          { label: "Active", value: totals.active },
+          { label: "Completed", value: totals.completed },
+          { label: "Reward Value", value: totals.rewards }
+        ]}
+      />
 
       <div className="grid gap-4 xl:grid-cols-[1fr_28rem]">
-        <div className="flex items-center gap-3 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-3">
-          <Search className="h-4 w-4 text-slate-500" />
-          <input value={query} onChange={(event) => setQuery(event.target.value)} className="h-10 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-slate-500" placeholder="Search missions, objectives, factions, routes" />
-        </div>
+        <WorkspaceSearchBar value={query} onChange={setQuery} placeholder="Search missions, objectives, factions, routes" />
         <button type="button" onClick={() => run(resetGeneratedMissions)} className="inline-flex h-16 items-center justify-center gap-2 rounded-md border border-cyan-300/30 bg-cyan-400/10 px-4 text-sm font-bold text-cyan-100">
           <RotateCcw className="h-4 w-4" />
           Regenerate Missions
@@ -200,13 +164,7 @@ export function MissionsWorkspace() {
 
       <Tracker bundle={bundle} onSelect={setSelectedId} />
 
-      <div className="flex flex-wrap gap-2 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-2">
-        {(Object.keys(tabCopy) as MissionTab[]).map((item) => (
-          <button key={item} type="button" onClick={() => setTab(item)} className={`rounded-md px-3 py-2 text-sm font-bold transition ${tab === item ? "bg-cyan-300/20 text-white" : "text-slate-400 hover:bg-cyan-300/10 hover:text-slate-100"}`}>
-            {tabCopy[item]}
-          </button>
-        ))}
-      </div>
+      <WorkspaceTabs tabs={Object.keys(tabCopy) as MissionTab[]} active={tab} onChange={setTab} labels={tabCopy} />
 
       <section className="grid gap-5 xl:grid-cols-[minmax(20rem,0.78fr)_minmax(0,1.22fr)]">
         <div className="grid content-start gap-4">
@@ -260,12 +218,8 @@ export function MissionsWorkspace() {
             </section>
 
             <section className="grid gap-4 lg:grid-cols-2">
-              <div className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-4 shadow-glow">
-                <div className="flex items-center gap-2">
-                  <Target className="h-5 w-5 text-cyan-200" />
-                  <h3 className="text-lg font-black text-white">Objectives</h3>
-                </div>
-                <div className="mt-4 grid gap-3">
+              <WorkspacePanel title="Objectives" icon={Target}>
+                <div className="grid gap-3">
                   {selectedObjectives.map((objective) => (
                     <div key={objective.id} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
                       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -277,14 +231,10 @@ export function MissionsWorkspace() {
                     </div>
                   ))}
                 </div>
-              </div>
+              </WorkspacePanel>
 
-              <div className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-4 shadow-glow">
-                <div className="flex items-center gap-2">
-                  <Trophy className="h-5 w-5 text-cyan-200" />
-                  <h3 className="text-lg font-black text-white">Rewards</h3>
-                </div>
-                <div className="mt-4 grid gap-3">
+              <WorkspacePanel title="Rewards" icon={Trophy}>
+                <div className="grid gap-3">
                   {selectedRewards.map((reward) => (
                     <div key={reward.id} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
                       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -295,21 +245,17 @@ export function MissionsWorkspace() {
                     </div>
                   ))}
                 </div>
-              </div>
+              </WorkspacePanel>
             </section>
 
-            <section className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-4 shadow-glow">
-              <div className="flex items-center gap-2">
-                <Flag className="h-5 w-5 text-cyan-200" />
-                <h3 className="text-lg font-black text-white">Mission Links</h3>
-              </div>
-              <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <WorkspacePanel title="Mission Links" icon={Flag}>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <StatTile label="Faction" value={selected.issuingFactionId ?? "None"} />
                 <StatTile label="System" value={selected.starSystemId ?? "Any"} />
                 <StatTile label="Colony" value={selected.colonyId ?? "Any"} />
                 <StatTile label="Market" value={selected.marketId ?? selected.tradeRouteId ?? "Any"} />
               </div>
-            </section>
+            </WorkspacePanel>
 
             <section className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-4 shadow-glow">
               <h3 className="text-lg font-black text-white">History</h3>

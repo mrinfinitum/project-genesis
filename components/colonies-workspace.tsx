@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Building2, Check, CirclePause, Hammer, Pencil, Search, Shield, Sparkles, Trash2, TrendingUp, Waypoints } from "lucide-react";
+import { Building2, Check, CirclePause, Hammer, Pencil, Shield, Sparkles, Trash2, TrendingUp, Waypoints } from "lucide-react";
 import { marketForColony, readEconomyState } from "@/lib/economy/trade";
 import { recordMissionProgress } from "@/lib/missions/procedural";
 import { ResourceService } from "@/lib/resources/service";
+import { WorkspaceBadge as Badge, WorkspaceHeader, WorkspaceMiniStat as MiniStat, WorkspacePanel as Section, WorkspaceProgressBar as ProgressBar, WorkspaceSearchBar, WorkspaceStatTile as StatTile, WorkspaceTabs } from "@/components/ui/workspace";
 import {
   COLONIES_UPDATED_EVENT,
   abandonColony,
@@ -26,46 +27,10 @@ import {
 } from "@/lib/colonies/procedural";
 
 type ColonyTab = "overview" | "needs" | "economy" | "buildings" | "development" | "history";
-
-function badgeClass(value: string) {
-  if (/critical|shortage|struggling|abandoned|locked/i.test(value)) return "border-rose-300/35 bg-rose-400/10 text-rose-100";
-  if (/surplus|growing|active|complete|player/i.test(value)) return "border-emerald-300/35 bg-emerald-400/10 text-emerald-100";
-  if (/planned|building|paused/i.test(value)) return "border-amber-300/35 bg-amber-400/10 text-amber-100";
-  return "border-cyan-300/35 bg-cyan-400/10 text-cyan-100";
-}
+const colonyTabs: ColonyTab[] = ["overview", "needs", "economy", "buildings", "development", "history"];
 
 function levelName(level: number) {
   return colonyLevelDefinitions.find((definition) => definition.level === level)?.name ?? `Level ${level}`;
-}
-
-function StatTile({ label, value }: { label: string; value: string | number }) {
-  return (
-    <div className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-4">
-      <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">{label}</p>
-      <p className="mt-2 text-2xl font-black text-white">{value}</p>
-    </div>
-  );
-}
-
-function MiniStat({ label, value }: { label: string; value: string | number }) {
-  return (
-    <div className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
-      <p className="text-[0.65rem] uppercase tracking-[0.16em] text-slate-500">{label}</p>
-      <p className="mt-1 truncate text-sm font-bold text-slate-100">{value}</p>
-    </div>
-  );
-}
-
-function Badge({ value }: { value: string }) {
-  return <span className={`rounded-md border px-2.5 py-1 text-xs font-black uppercase tracking-[0.16em] ${badgeClass(value)}`}>{value}</span>;
-}
-
-function ProgressBar({ value }: { value: number }) {
-  return (
-    <div className="h-2 overflow-hidden rounded-full bg-slate-900">
-      <div className="h-full rounded-full bg-cyan-300" style={{ width: `${Math.max(0, Math.min(100, value))}%` }} />
-    </div>
-  );
 }
 
 function ColonyCard({ colony, selected, onSelect }: { colony: ColonyRecord; selected: boolean; onSelect: () => void }) {
@@ -102,15 +67,6 @@ function ColonyCard({ colony, selected, onSelect }: { colony: ColonyRecord; sele
         <ProgressBar value={nextLevelProgress} />
       </div>
     </button>
-  );
-}
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <section className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-4 shadow-glow">
-      <h3 className="text-lg font-black text-white">{title}</h3>
-      <div className="mt-4">{children}</div>
-    </section>
   );
 }
 
@@ -205,24 +161,19 @@ export function ColoniesWorkspace() {
 
   return (
     <main className="space-y-6">
-      <section className="grid gap-5 xl:grid-cols-[1fr_28rem]">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Colony Management Layer</p>
-          <h1 className="mt-3 text-5xl font-black tracking-tight text-white">Colonies</h1>
-          <p className="mt-4 max-w-4xl text-lg leading-8 text-slate-300">Manage claimed worlds as persistent settlements with deterministic growth, needs, buildings, focus, history, and export-ready state.</p>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <StatTile label="Tracked Colonies" value={colonies.length} />
-          <StatTile label="Population" value={totals.population.toLocaleString()} />
-          <StatTile label="Avg Production" value={totals.production} />
-          <StatTile label="Systems Held" value={totals.systems} />
-        </div>
-      </section>
+      <WorkspaceHeader
+        eyebrow="Colony Management Layer"
+        title="Colonies"
+        description="Manage claimed worlds as persistent settlements with deterministic growth, needs, buildings, focus, history, and export-ready state."
+        stats={[
+          { label: "Tracked Colonies", value: colonies.length },
+          { label: "Population", value: totals.population.toLocaleString() },
+          { label: "Avg Production", value: totals.production },
+          { label: "Systems Held", value: totals.systems }
+        ]}
+      />
 
-      <div className="flex items-center gap-3 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-3">
-        <Search className="h-4 w-4 text-slate-500" />
-        <input value={query} onChange={(event) => setQuery(event.target.value)} className="h-10 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-slate-500" placeholder="Search colonies" />
-      </div>
+      <WorkspaceSearchBar value={query} onChange={setQuery} placeholder="Search colonies" />
 
       <section className="grid gap-5 xl:grid-cols-[minmax(20rem,0.75fr)_minmax(0,1.25fr)]">
         <div className="grid content-start gap-4">
@@ -280,13 +231,7 @@ export function ColoniesWorkspace() {
               </div>
             </section>
 
-            <div className="flex flex-wrap gap-2 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-2">
-              {(["overview", "needs", "economy", "buildings", "development", "history"] as ColonyTab[]).map((item) => (
-                <button key={item} type="button" onClick={() => setTab(item)} className={`rounded-md px-3 py-2 text-sm font-bold capitalize transition ${tab === item ? "bg-cyan-300/20 text-white" : "text-slate-400 hover:bg-cyan-300/10 hover:text-slate-100"}`}>
-                  {item}
-                </button>
-              ))}
-            </div>
+            <WorkspaceTabs tabs={colonyTabs} active={tab} onChange={setTab} />
 
             {tab === "overview" ? (
               <div className="grid gap-4 lg:grid-cols-2">

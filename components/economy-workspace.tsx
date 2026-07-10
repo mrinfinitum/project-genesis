@@ -1,42 +1,15 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ArrowRightLeft, BadgeDollarSign, LineChart, Plus, Search, Shield, TrendingDown, TrendingUp } from "lucide-react";
+import { ArrowRightLeft, BadgeDollarSign, LineChart, Plus, Shield, TrendingDown, TrendingUp } from "lucide-react";
 import { ResourceService } from "@/lib/resources/service";
 import { COLONIES_UPDATED_EVENT } from "@/lib/colonies/procedural";
 import { ECONOMY_UPDATED_EVENT, createStoredTradeRoute, readEconomyState, type EconomyState, type MarketRecord, type ResourceListing } from "@/lib/economy/trade";
 import { recordMissionProgress } from "@/lib/missions/procedural";
+import { WorkspaceBadge as Badge, WorkspaceHeader, WorkspacePanel as Section, WorkspaceSearchBar, WorkspaceStatTile as StatTile, WorkspaceTabs } from "@/components/ui/workspace";
 
 type EconomyTab = "overview" | "markets" | "prices" | "routes" | "opportunities";
-
-function badgeClass(value: string) {
-  if (/critical|scarce|volatile|disrupted|blockaded|high/i.test(value)) return "border-rose-300/35 bg-rose-400/10 text-rose-100";
-  if (/abundant|active|surplus|falling|low/i.test(value)) return "border-emerald-300/35 bg-emerald-400/10 text-emerald-100";
-  if (/limited|rising|proposed/i.test(value)) return "border-amber-300/35 bg-amber-400/10 text-amber-100";
-  return "border-cyan-300/35 bg-cyan-400/10 text-cyan-100";
-}
-
-function Badge({ value }: { value: string }) {
-  return <span className={`rounded-md border px-2.5 py-1 text-xs font-black uppercase tracking-[0.16em] ${badgeClass(value)}`}>{value}</span>;
-}
-
-function StatTile({ label, value }: { label: string; value: string | number }) {
-  return (
-    <div className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-4">
-      <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">{label}</p>
-      <p className="mt-2 text-2xl font-black text-white">{value}</p>
-    </div>
-  );
-}
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <section className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-4 shadow-glow">
-      <h3 className="text-lg font-black text-white">{title}</h3>
-      <div className="mt-4">{children}</div>
-    </section>
-  );
-}
+const economyTabs: EconomyTab[] = ["overview", "markets", "prices", "routes", "opportunities"];
 
 function resourceName(id: string) {
   return ResourceService.nameForId(id);
@@ -115,32 +88,21 @@ export function EconomyWorkspace() {
 
   return (
     <main className="space-y-6">
-      <section className="grid gap-5 xl:grid-cols-[1fr_30rem]">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Canonical Economy Layer</p>
-          <h1 className="mt-3 text-5xl font-black tracking-tight text-white">Economy & Trade</h1>
-          <p className="mt-4 max-w-4xl text-lg leading-8 text-slate-300">Colony production and upkeep become market supply, demand, prices, shortages, surpluses, routes, and trade opportunities.</p>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <StatTile label="Markets" value={totals.markets} />
-          <StatTile label="Trade Volume" value={totals.volume} />
-          <StatTile label="Active Routes" value={totals.routes} />
-          <StatTile label="Shortages" value={totals.shortages} />
-        </div>
-      </section>
+      <WorkspaceHeader
+        eyebrow="Canonical Economy Layer"
+        title="Economy & Trade"
+        description="Colony production and upkeep become market supply, demand, prices, shortages, surpluses, routes, and trade opportunities."
+        stats={[
+          { label: "Markets", value: totals.markets },
+          { label: "Trade Volume", value: totals.volume },
+          { label: "Active Routes", value: totals.routes },
+          { label: "Shortages", value: totals.shortages }
+        ]}
+      />
 
-      <div className="flex items-center gap-3 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-3">
-        <Search className="h-4 w-4 text-slate-500" />
-        <input value={query} onChange={(event) => setQuery(event.target.value)} className="h-10 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-slate-500" placeholder="Search markets, systems, colonies" />
-      </div>
+      <WorkspaceSearchBar value={query} onChange={setQuery} placeholder="Search markets, systems, colonies" />
 
-      <div className="flex flex-wrap gap-2 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-2">
-        {(["overview", "markets", "prices", "routes", "opportunities"] as EconomyTab[]).map((item) => (
-          <button key={item} type="button" onClick={() => setTab(item)} className={`rounded-md px-3 py-2 text-sm font-bold capitalize transition ${tab === item ? "bg-cyan-300/20 text-white" : "text-slate-400 hover:bg-cyan-300/10 hover:text-slate-100"}`}>
-            {item}
-          </button>
-        ))}
-      </div>
+      <WorkspaceTabs tabs={economyTabs} active={tab} onChange={setTab} />
 
       {tab === "overview" ? (
         <div className="grid gap-4 xl:grid-cols-2">
