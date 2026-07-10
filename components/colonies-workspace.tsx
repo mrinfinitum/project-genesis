@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Building2, Check, CirclePause, Hammer, Pencil, Search, Shield, Sparkles, Trash2, TrendingUp, Waypoints } from "lucide-react";
 import { marketForColony, readEconomyState } from "@/lib/economy/trade";
+import { recordMissionProgress } from "@/lib/missions/procedural";
 import { ResourceService } from "@/lib/resources/service";
 import {
   COLONIES_UPDATED_EVENT,
@@ -406,7 +407,18 @@ export function ColoniesWorkspace() {
                 <Section title="Add Building">
                   <div className="grid gap-3 md:grid-cols-2">
                     {colonyBuildingTemplates.map((template) => (
-                      <button key={template.id} type="button" onClick={() => runAction((colony) => addColonyBuilding(colony.id, template.id))} className="rounded-md border border-cyan-300/15 bg-slate-950/45 p-3 text-left transition hover:border-cyan-300/50">
+                      <button
+                        key={template.id}
+                        type="button"
+                        onClick={() =>
+                          runAction((colony) => {
+                            const next = addColonyBuilding(colony.id, template.id);
+                            recordMissionProgress({ objectiveType: "construct_building", targetId: template.id, targetType: "building", locationId: colony.id });
+                            return next;
+                          })
+                        }
+                        className="rounded-md border border-cyan-300/15 bg-slate-950/45 p-3 text-left transition hover:border-cyan-300/50"
+                      >
                         <div className="flex items-center gap-2">
                           <Hammer className="h-4 w-4 text-cyan-200" />
                           <span className="font-black text-white">{template.name}</span>
@@ -419,7 +431,18 @@ export function ColoniesWorkspace() {
                 <Section title="Current Buildings">
                   <div className="grid gap-3">
                     {selected.buildings.map((building) => (
-                      <BuildingRow key={building.id} building={building} onComplete={() => runAction((colony) => completeColonyBuilding(colony.id, building.id))} onUpgrade={() => runAction((colony) => upgradeColonyBuilding(colony.id, building.id))} />
+                      <BuildingRow
+                        key={building.id}
+                        building={building}
+                        onComplete={() =>
+                          runAction((colony) => {
+                            const next = completeColonyBuilding(colony.id, building.id);
+                            recordMissionProgress({ objectiveType: "construct_building", targetId: building.id, targetType: "building", locationId: colony.id });
+                            return next;
+                          })
+                        }
+                        onUpgrade={() => runAction((colony) => upgradeColonyBuilding(colony.id, building.id))}
+                      />
                     ))}
                   </div>
                 </Section>

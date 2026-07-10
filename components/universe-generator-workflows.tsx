@@ -8,6 +8,7 @@ import { handoffData } from "@/data/handoff";
 import { createColonyRecord, upsertDiscoveredColony, type ColonyRecord } from "@/lib/colonies/procedural";
 import { appendTimelineEvent, renameDiscoveryObject, upsertDiscoveryJournalEntry, type DiscoveryObjectType, type TimelineImportance, type TimelineEventType } from "@/lib/explorer/discovery-log";
 import { generateFaction, upsertDiscoveredFaction, type FactionRecord } from "@/lib/factions/procedural";
+import { recordMissionProgress } from "@/lib/missions/procedural";
 import { DEFAULT_UNIVERSE_SEED } from "@/lib/universe/fallback-data";
 import {
   generateCelestialBodies,
@@ -24,7 +25,7 @@ import {
 } from "@/lib/universe/generator";
 import { cn } from "@/lib/utils";
 import { fixedSolGeneratedPlanets } from "@/lib/planets/fixed-sol-planets";
-import { normalizeResourceNames, resourceNames } from "@/lib/resources/service";
+import { normalizeResourceNames, ResourceService, resourceNames } from "@/lib/resources/service";
 import type { GeneratedPlanet } from "@/types/schema";
 
 type DiscoveryState = "undiscovered" | "detected" | "scanned" | "charted" | "explored" | "colonized";
@@ -452,6 +453,10 @@ function usePlayerProgression(): ProgressionApi {
       completedResearchIds: [...new Set([...current.completedResearchIds, ...(featureResearchIdMap[featureId] ?? [])])],
       unlockedFeatureIds: current.unlockedFeatureIds.includes(featureId) ? current.unlockedFeatureIds : [...current.unlockedFeatureIds, featureId]
     }));
+    recordMissionProgress({ objectiveType: "complete_research", targetId: featureId, targetType: "research" });
+    for (const researchId of featureResearchIdMap[featureId] ?? []) {
+      recordMissionProgress({ objectiveType: "complete_research", targetId: researchId, targetType: "research" });
+    }
   }
 
   function awardDiscovery(kind: "sector" | "system" | "planet", points: number) {
@@ -3643,6 +3648,10 @@ function logSectorDiscovery(galaxy: GalaxyNode, sector: SectorNode & DiscoveryFi
     sectorId: sector.id,
     importance: sector.sector_rarity === "Legendary" || sector.sector_rarity === "Mythic" ? "legendary" : "medium"
   });
+  if (eventType === "sector_scanned") {
+    recordMissionProgress({ objectiveType: "scan_sector", targetId: sector.id, targetType: "sector", locationId: galaxy.id });
+    recordMissionProgress({ objectiveType: "chart_location", targetId: sector.id, targetType: "sector", locationId: galaxy.id });
+  }
 }
 
 function logSystemDiscovery(galaxy: GalaxyNode, sector: SectorNode, system: LinkedStarSystemNode) {
@@ -3674,6 +3683,7 @@ function logSystemDiscovery(galaxy: GalaxyNode, sector: SectorNode, system: Link
     starSystemId: system.id,
     importance: system.system_rarity === "Legendary" || system.system_rarity === "Mythic" || system.system_rarity === "Genesis" ? "legendary" : "medium"
   });
+  recordMissionProgress({ objectiveType: "scan_star_system", targetId: system.id, targetType: "star_system", locationId: sector.id });
 }
 
 function logBodyDiscovery(context: AssignmentContext, body: BodyCardState, eventType: TimelineEventType, importance: TimelineImportance = "medium") {
@@ -3708,6 +3718,23 @@ function logBodyDiscovery(context: AssignmentContext, body: BodyCardState, event
     planetId: objectType === "planet" ? body.id : undefined,
     importance
   });
+  if (eventType === "planet_scanned") {
+    recordMissionProgress({ objectiveType: "scan_planet", targetId: body.id, targetType: objectType, locationId: context.system.id });
+    const resourceIds = [
+      ...((body as unknown as { resourceIds?: string[] }).resourceIds ?? []),
+      ...(body.source_planet?.resourceIds ?? []),
+      ...body.resources.map((resource) => ResourceService.resolveId(resource)).filter((id): id is string => Boolean(id))
+    ];
+    for (const resourceId of [...new Set(resourceIds)].slice(0, 3)) {
+      recordMissionProgress({ objectiveType: "discover_resource", targetId: resourceId, targetType: "resource", locationId: body.id });
+    }
+  }
+  if (eventType === "planet_claimed") {
+    recordMissionProgress({ objectiveType: "claim_planet", targetId: body.id, targetType: objectType, locationId: context.system.id });
+  }
+  if (eventType === "planet_colonized") {
+    recordMissionProgress({ objectiveType: "colonize_planet", targetId: body.id, targetType: objectType, locationId: context.system.id });
+  }
   if (eventType === "planet_scanned" && ["Rare", "Epic", "Legendary", "Mythic", "Relic", "Genesis"].includes(body.planet_rarity ?? "")) {
     logTimeline({
       eventType: "rare_resource_found",
@@ -3753,6 +3780,7 @@ function logFactionDiscovery(faction: FactionRecord) {
     planetId: faction.homePlanetId,
     importance: faction.type === "Ancient Remnant" || faction.type === "Alien Civilization" || faction.type === "AI Collective" ? "high" : "medium"
   });
+  recordMissionProgress({ objectiveType: "discover_faction", targetId: faction.id, targetType: "faction", locationId: faction.homeStarSystemId });
 }
 
 function createColonyForBody(context: AssignmentContext, body: BodyCardState) {
@@ -3806,6 +3834,7 @@ function logColonyFounded(context: AssignmentContext, body: BodyCardState, colon
     planetId: body.id,
     importance: colony.status === "growing" || colony.colonyLevel > 1 ? "high" : "medium"
   });
+  recordMissionProgress({ objectiveType: "establish_colony", targetId: colony.planetId, targetType: "planet", locationId: colony.id });
 }
 
 function factionForSystem(context: AssignmentContext, system: LinkedStarSystemNode) {

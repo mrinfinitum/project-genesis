@@ -5,6 +5,7 @@ import { ArrowRightLeft, BadgeDollarSign, LineChart, Plus, Search, Shield, Trend
 import { ResourceService } from "@/lib/resources/service";
 import { COLONIES_UPDATED_EVENT } from "@/lib/colonies/procedural";
 import { ECONOMY_UPDATED_EVENT, createStoredTradeRoute, readEconomyState, type EconomyState, type MarketRecord, type ResourceListing } from "@/lib/economy/trade";
+import { recordMissionProgress } from "@/lib/missions/procedural";
 
 type EconomyTab = "overview" | "markets" | "prices" | "routes" | "opportunities";
 
@@ -265,7 +266,16 @@ export function EconomyWorkspace() {
                     <StatTile label="Distance" value={opportunity.distance} />
                     <StatTile label="Risk" value={opportunity.risk} />
                   </div>
-                  <button type="button" onClick={() => { createStoredTradeRoute(opportunity); refresh(); }} className="inline-flex h-10 items-center gap-2 rounded-md border border-emerald-300/35 bg-emerald-400/10 px-3 text-sm font-bold text-emerald-100">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const route = createStoredTradeRoute(opportunity);
+                      recordMissionProgress({ objectiveType: "establish_trade_route", targetId: route.id, targetType: "trade_route" });
+                      recordMissionProgress({ objectiveType: "deliver_resource", targetId: opportunity.resourceId, targetType: "resource", locationId: route.id });
+                      refresh();
+                    }}
+                    className="inline-flex h-10 items-center gap-2 rounded-md border border-emerald-300/35 bg-emerald-400/10 px-3 text-sm font-bold text-emerald-100"
+                  >
                     <Plus className="h-4 w-4" />
                     Create Route
                   </button>

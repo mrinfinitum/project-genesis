@@ -4,6 +4,19 @@ import { discoveryJournalSchema, sampleDiscoveryJournal, sampleTimelineEvents, t
 import { colonyBuildingTemplates, colonyFocusDefinitions, colonyLevelDefinitions, colonySchema, createColonyRecord, generateFallbackColonies, type ColonyBuilding, type ColonyRecord } from "@/lib/colonies/procedural";
 import { buildEconomyState, economySchemas, priceClamps, type MarketRecord, type ResourceListing, type TradeOpportunity, type TradeRoute } from "@/lib/economy/trade";
 import { generateFaction, generateFallbackFactions, type FactionRecord } from "@/lib/factions/procedural";
+import {
+  generateMissionBundle,
+  missionDifficulties,
+  missionGenerationMetadata,
+  missionSchemas,
+  missionStatuses,
+  missionTypes,
+  objectiveTypes,
+  rewardTypes,
+  type MissionObjective,
+  type MissionRecord,
+  type MissionReward
+} from "@/lib/missions/procedural";
 import { getLocalBubbleSystems, generatedCelestialBodyRows, generatedStarSystemRows } from "@/lib/universe/fallback-data";
 import { normalizePlanetResourceProfiles, validatePlanetResourceProfiles } from "@/lib/resources/planet-resource-profiles";
 import { ResourceService } from "@/lib/resources/service";
@@ -125,7 +138,16 @@ type CanonicalModules = {
   market_level_definitions: ReturnType<typeof buildEconomyState>["marketLevelDefinitions"];
   economy: Array<Record<string, unknown>>;
   factions: FactionRecord[];
-  missions: Array<Record<string, unknown>>;
+  missions: MissionRecord[];
+  mission_objectives: MissionObjective[];
+  mission_rewards: MissionReward[];
+  mission_type_definitions: Array<{ id: string; missionType: string }>;
+  mission_status_definitions: Array<{ id: string; status: string }>;
+  mission_difficulty_definitions: Array<{ id: string; difficulty: string }>;
+  mission_objective_type_definitions: Array<{ id: string; objectiveType: string }>;
+  mission_reward_type_definitions: Array<{ id: string; rewardType: string }>;
+  mission_generation_metadata: Array<{ id: string; metadata: typeof missionGenerationMetadata }>;
+  mission_schemas: Array<{ id: string; schemas: typeof missionSchemas }>;
 };
 
 type ExportGeneratedPlanet = GeneratedPlanet & {
@@ -382,6 +404,20 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
   const factions = buildExportFactions(galaxies, sectors, starSystems, normalizedPlanets.assigned);
   const colonies = buildExportColonies(normalizedPlanets.assigned, factions);
   const economyState = buildEconomyState(colonies, factions, [], "derived");
+  const missionBundle = generateMissionBundle({
+    missionSeed: "project-genesis-export-missions-v1",
+    galaxies,
+    sectors,
+    starSystems,
+    planets: normalizedPlanets.assigned,
+    celestialBodies,
+    factions,
+    colonies,
+    markets: economyState.markets,
+    tradeRoutes: economyState.tradeRoutes,
+    research: data.research,
+    generatedAt: "derived"
+  });
 
   return {
     resource_catalog: ResourceService.catalog,
@@ -443,7 +479,16 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
       }
     ],
     factions,
-    missions: placeholderModule("missions")
+    missions: missionBundle.missions,
+    mission_objectives: missionBundle.objectives,
+    mission_rewards: missionBundle.rewards,
+    mission_type_definitions: missionTypes.map((missionType) => ({ id: `mission_type_${missionType.toLowerCase()}`, missionType })),
+    mission_status_definitions: missionStatuses.map((status) => ({ id: `mission_status_${status}`, status })),
+    mission_difficulty_definitions: missionDifficulties.map((difficulty) => ({ id: `mission_difficulty_${difficulty}`, difficulty })),
+    mission_objective_type_definitions: objectiveTypes.map((objectiveType) => ({ id: `mission_objective_type_${objectiveType}`, objectiveType })),
+    mission_reward_type_definitions: rewardTypes.map((rewardType) => ({ id: `mission_reward_type_${rewardType}`, rewardType })),
+    mission_generation_metadata: [{ id: "mission_generation_metadata_v1", metadata: missionGenerationMetadata }],
+    mission_schemas: [{ id: "mission_schemas_v1", schemas: missionSchemas }]
   };
 }
 
@@ -465,6 +510,13 @@ function buildRelationshipMap(modules: CanonicalModules) {
   const marketsBySector: Record<string, string[]> = {};
   const listingsByMarket: Record<string, string[]> = {};
   const tradeRoutesByMarket: Record<string, string[]> = {};
+  const objectivesByMission: Record<string, string[]> = {};
+  const rewardsByMission: Record<string, string[]> = {};
+  const missionsByFaction: Record<string, string[]> = {};
+  const missionsByColony: Record<string, string[]> = {};
+  const missionsByMarket: Record<string, string[]> = {};
+  const missionsByTradeRoute: Record<string, string[]> = {};
+  const missionsBySystem: Record<string, string[]> = {};
 
   for (const sector of modules.sectors) {
     const galaxyId = String(sector.galaxy_id ?? "");
@@ -508,6 +560,23 @@ function buildRelationshipMap(modules: CanonicalModules) {
     tradeRoutesByMarket[route.destinationMarketId] = [...(tradeRoutesByMarket[route.destinationMarketId] ?? []), route.id];
   }
 
+  for (const objective of modules.mission_objectives) {
+    objectivesByMission[objective.missionId] = [...(objectivesByMission[objective.missionId] ?? []), objective.id];
+  }
+
+  for (const reward of modules.mission_rewards) {
+    rewardsByMission[reward.missionId] = [...(rewardsByMission[reward.missionId] ?? []), reward.id];
+  }
+
+  for (const mission of modules.missions) {
+    if (mission.issuingFactionId) missionsByFaction[mission.issuingFactionId] = [...(missionsByFaction[mission.issuingFactionId] ?? []), mission.id];
+    if (mission.targetFactionId && mission.targetFactionId !== mission.issuingFactionId) missionsByFaction[mission.targetFactionId] = [...(missionsByFaction[mission.targetFactionId] ?? []), mission.id];
+    if (mission.colonyId) missionsByColony[mission.colonyId] = [...(missionsByColony[mission.colonyId] ?? []), mission.id];
+    if (mission.marketId) missionsByMarket[mission.marketId] = [...(missionsByMarket[mission.marketId] ?? []), mission.id];
+    if (mission.tradeRouteId) missionsByTradeRoute[mission.tradeRouteId] = [...(missionsByTradeRoute[mission.tradeRouteId] ?? []), mission.id];
+    if (mission.starSystemId) missionsBySystem[mission.starSystemId] = [...(missionsBySystem[mission.starSystemId] ?? []), mission.id];
+  }
+
   return {
     sectorsByGalaxy,
     systemsBySector,
@@ -521,7 +590,14 @@ function buildRelationshipMap(modules: CanonicalModules) {
     marketsBySystem,
     marketsBySector,
     listingsByMarket,
-    tradeRoutesByMarket
+    tradeRoutesByMarket,
+    objectivesByMission,
+    rewardsByMission,
+    missionsByFaction,
+    missionsByColony,
+    missionsByMarket,
+    missionsByTradeRoute,
+    missionsBySystem
   };
 }
 
@@ -691,6 +767,102 @@ function validateEconomy(issues: ExportValidationIssue[], modules: CanonicalModu
   }
 }
 
+function missionTargetExists(targetType: string, targetId: string, modules: CanonicalModules) {
+  const type = targetType.toLowerCase();
+  const galaxyIds = new Set(modules.galaxies.map((row) => String(row.id)));
+  const sectorIds = new Set(modules.sectors.map((row) => String(row.id)));
+  const systemIds = new Set(modules.star_systems.map((row) => row.id));
+  const planetIds = new Set([...modules.planets.map((row) => row.id), ...modules.celestial_bodies.map((row) => row.id)]);
+  const colonyIds = new Set(modules.colonies.map((row) => row.id));
+  const marketIds = new Set(modules.markets.map((row) => row.id));
+  const tradeRouteIds = new Set(modules.trade_routes.map((row) => row.id));
+  const factionIds = new Set(modules.factions.map((row) => row.id));
+  const researchIds = new Set(modules.research.map((row) => row.id));
+  const buildingIds = new Set([...modules.colony_buildings.map((row) => row.id), ...modules.colony_building_templates.map((row) => row.id)]);
+
+  if (type === "galaxy") return galaxyIds.has(targetId);
+  if (type === "sector") return sectorIds.has(targetId);
+  if (type === "star_system") return systemIds.has(targetId);
+  if (type === "planet" || type === "celestial_body") return planetIds.has(targetId);
+  if (type === "colony") return colonyIds.has(targetId);
+  if (type === "market") return marketIds.has(targetId);
+  if (type === "trade_route") return tradeRouteIds.has(targetId);
+  if (type === "faction") return factionIds.has(targetId);
+  if (type === "research") return researchIds.has(targetId);
+  if (type === "resource") return Boolean(ResourceService.getById(targetId));
+  if (type === "building") return buildingIds.has(targetId);
+
+  return galaxyIds.has(targetId) || sectorIds.has(targetId) || systemIds.has(targetId) || planetIds.has(targetId) || colonyIds.has(targetId) || marketIds.has(targetId) || tradeRouteIds.has(targetId) || factionIds.has(targetId) || researchIds.has(targetId) || buildingIds.has(targetId) || Boolean(ResourceService.getById(targetId));
+}
+
+function validateMissions(issues: ExportValidationIssue[], modules: CanonicalModules) {
+  const missionIds = new Set(modules.missions.map((mission) => mission.id));
+  const objectiveIds = new Set(modules.mission_objectives.map((objective) => objective.id));
+  const rewardIds = new Set(modules.mission_rewards.map((reward) => reward.id));
+  const factionIds = new Set(modules.factions.map((faction) => faction.id));
+  const colonyIds = new Set(modules.colonies.map((colony) => colony.id));
+  const marketIds = new Set(modules.markets.map((market) => market.id));
+  const tradeRouteIds = new Set(modules.trade_routes.map((route) => route.id));
+  const systemIds = new Set(modules.star_systems.map((system) => system.id));
+  const planetIds = new Set([...modules.planets.map((planet) => planet.id), ...modules.celestial_bodies.map((body) => body.id)]);
+  const researchIds = new Set(modules.research.map((row) => row.id));
+
+  const objectivesMissingMissions = modules.mission_objectives.filter((objective) => !missionIds.has(objective.missionId));
+  if (objectivesMissingMissions.length) {
+    addIssue(issues, "error", "mission_objective_parent_missing", "Some mission objectives reference missing missions.", objectivesMissingMissions.map((objective) => objective.id));
+  }
+
+  const rewardsMissingMissions = modules.mission_rewards.filter((reward) => !missionIds.has(reward.missionId));
+  if (rewardsMissingMissions.length) {
+    addIssue(issues, "error", "mission_reward_parent_missing", "Some mission rewards reference missing missions.", rewardsMissingMissions.map((reward) => reward.id));
+  }
+
+  const missionsMissingObjectives = modules.missions.filter((mission) => mission.objectiveIds.some((objectiveId) => !objectiveIds.has(objectiveId)));
+  if (missionsMissingObjectives.length) {
+    addIssue(issues, "error", "mission_objective_missing", "Some missions reference missing objective IDs.", missionsMissingObjectives.map((mission) => mission.id));
+  }
+
+  const missionsMissingRewards = modules.missions.filter((mission) => mission.rewardIds.some((rewardId) => !rewardIds.has(rewardId)));
+  if (missionsMissingRewards.length) {
+    addIssue(issues, "error", "mission_reward_missing", "Some missions reference missing reward IDs.", missionsMissingRewards.map((mission) => mission.id));
+  }
+
+  const badObjectiveTargets = modules.mission_objectives.filter((objective) => !missionTargetExists(objective.targetType, objective.targetId, modules));
+  if (badObjectiveTargets.length) {
+    addIssue(issues, "error", "mission_objective_target_missing", "Some mission objectives reference missing targets.", badObjectiveTargets.map((objective) => `${objective.id}:${objective.targetId}`));
+  }
+
+  const badMissionLinks = modules.missions.filter(
+    (mission) =>
+      (mission.issuingFactionId && !factionIds.has(mission.issuingFactionId)) ||
+      (mission.targetFactionId && !factionIds.has(mission.targetFactionId)) ||
+      (mission.colonyId && !colonyIds.has(mission.colonyId)) ||
+      (mission.marketId && !marketIds.has(mission.marketId)) ||
+      (mission.tradeRouteId && !tradeRouteIds.has(mission.tradeRouteId)) ||
+      (mission.starSystemId && !systemIds.has(mission.starSystemId)) ||
+      (mission.planetId && !planetIds.has(mission.planetId)) ||
+      mission.prerequisiteResearchIds.some((researchId) => !researchIds.has(researchId))
+  );
+  if (badMissionLinks.length) {
+    addIssue(issues, "error", "mission_link_missing", "Some missions reference missing factions, locations, markets, routes, planets, or research prerequisites.", badMissionLinks.map((mission) => mission.id));
+  }
+
+  const badRewards = modules.mission_rewards.filter((reward) => (reward.resourceId && !ResourceService.getById(reward.resourceId)) || (reward.researchId && !researchIds.has(reward.researchId)) || (reward.factionId && !factionIds.has(reward.factionId)));
+  if (badRewards.length) {
+    addIssue(issues, "error", "mission_reward_target_missing", "Some mission rewards reference missing resource, research, or faction IDs.", badRewards.map((reward) => reward.id));
+  }
+
+  const completedIncomplete = modules.missions.filter((mission) => mission.status === "completed" && modules.mission_objectives.some((objective) => objective.missionId === mission.id && !objective.optional && !objective.completed));
+  if (completedIncomplete.length) {
+    addIssue(issues, "error", "mission_completed_with_incomplete_objectives", "Some completed missions still have incomplete required objectives.", completedIncomplete.map((mission) => mission.id));
+  }
+
+  const rewardsClaimedEarly = modules.missions.filter((mission) => mission.rewardsClaimed && mission.status !== "completed");
+  if (rewardsClaimedEarly.length) {
+    addIssue(issues, "error", "mission_rewards_claimed_before_completion", "Some missions have rewards claimed before completion.", rewardsClaimedEarly.map((mission) => mission.id));
+  }
+}
+
 function validateTargetSchema(issues: ExportValidationIssue[], target: EngineTarget) {
   const config = getEngineTargetConfig(target);
   if (!config.generatedModules.length || !config.schemaMapping.length) {
@@ -705,6 +877,7 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
   validateUnlocks(issues, modules);
   validateHierarchy(issues, modules);
   validateEconomy(issues, modules);
+  validateMissions(issues, modules);
   validateTargetSchema(issues, target);
 
   const errorCount = issues.filter((issue) => issue.severity === "error").length;
@@ -735,6 +908,12 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
       "trade route market links resolve",
       "colonies connect to markets",
       "market prices are non-negative and clamped",
+      "mission objectives link to missions",
+      "mission rewards link to missions",
+      "mission targets resolve",
+      "mission faction/resource/research links resolve",
+      "completed missions have completed objectives",
+      "mission rewards are claimed only once",
       "star systems link to sectors",
       "sectors link to galaxies"
     ],
@@ -753,6 +932,7 @@ function schemaNotes(target: EngineTarget) {
     hierarchy: "Preserve Galaxy -> Sector -> Star System -> Planet. Do not add Region or Cluster layers.",
     colonies: "Colony state, growth inputs, buildings, levels, and focus definitions are canonical Studio data shared by every engine target.",
     economy: "Markets, resource listings, trade routes, and opportunities are engine-agnostic canonical data. Pricing uses ResourceService base trade values and deterministic modifiers.",
+    missions: "Missions, objectives, rewards, statuses, and generation metadata are deterministic canonical Studio data. Engine targets consume mission state and report progress back through objective IDs.",
     mapping: config.schemaMapping
   };
 }
@@ -804,7 +984,16 @@ function compactModules(modules: CanonicalModules) {
     market_level_definitions: modules.market_level_definitions,
     economy: modules.economy,
     factions: modules.factions,
-    missions: modules.missions
+    missions: modules.missions,
+    mission_objectives: modules.mission_objectives,
+    mission_rewards: modules.mission_rewards,
+    mission_type_definitions: modules.mission_type_definitions,
+    mission_status_definitions: modules.mission_status_definitions,
+    mission_difficulty_definitions: modules.mission_difficulty_definitions,
+    mission_objective_type_definitions: modules.mission_objective_type_definitions,
+    mission_reward_type_definitions: modules.mission_reward_type_definitions,
+    mission_generation_metadata: modules.mission_generation_metadata,
+    mission_schemas: modules.mission_schemas
   };
 }
 
@@ -813,14 +1002,14 @@ function targetArtifacts(target: EngineTarget, modules: CanonicalModules) {
     return {
       "ResourceCatalogModule.lua": `local ResourceCatalog = ${luaValue(modules.resource_catalog)}\n\nreturn ResourceCatalog\n`,
       "ResearchUnlockModule.lua": `local ResearchUnlocks = ${luaValue({ research: modules.research, unlocks: modules.unlock_matrix })}\n\nreturn ResearchUnlocks\n`,
-      "UniverseDataModule.lua": `local UniverseData = ${luaValue({ galaxies: modules.galaxies, sectors: modules.sectors, starSystems: modules.star_systems, planets: modules.planets, celestialBodies: modules.celestial_bodies, factions: modules.factions, colonies: modules.colonies, colonyBuildings: modules.colony_buildings, colonyLevels: modules.colony_level_definitions, colonyFocus: modules.colony_focus_definitions, markets: modules.markets, tradeRoutes: modules.trade_routes, tradeOpportunities: modules.trade_opportunities })}\n\nreturn UniverseData\n`,
+      "UniverseDataModule.lua": `local UniverseData = ${luaValue({ galaxies: modules.galaxies, sectors: modules.sectors, starSystems: modules.star_systems, planets: modules.planets, celestialBodies: modules.celestial_bodies, factions: modules.factions, colonies: modules.colonies, colonyBuildings: modules.colony_buildings, colonyLevels: modules.colony_level_definitions, colonyFocus: modules.colony_focus_definitions, markets: modules.markets, tradeRoutes: modules.trade_routes, tradeOpportunities: modules.trade_opportunities, missions: modules.missions, missionObjectives: modules.mission_objectives, missionRewards: modules.mission_rewards })}\n\nreturn UniverseData\n`,
       "ApiService.lua": "local HttpService = game:GetService(\"HttpService\")\n\nlocal ApiService = {}\nApiService.BaseUrl = \"https://your-studio-host.example.com/api/export\"\n\nfunction ApiService.FetchGeneric()\n  local response = HttpService:GetAsync(ApiService.BaseUrl .. \"/generic\")\n  return HttpService:JSONDecode(response)\nend\n\nreturn ApiService\n"
     };
   }
 
   if (target === "web") {
     return {
-      "project-genesis.types.ts": "export type GenesisId = string;\n\nexport interface GenesisResource { id: GenesisId; resource_name: string; category: string; rarity: string; }\nexport interface GenesisResearchNode { id: GenesisId; name: string; era: string; status: string; }\nexport interface GenesisFaction { id: GenesisId; name: string; type: string; disposition: string; homeStarSystemId: GenesisId; controlledPlanetIds: GenesisId[]; }\nexport interface GenesisColonyBuilding { id: GenesisId; name: string; category: string; colonyId: GenesisId; constructionStatus: string; modifiers: Record<string, number>; }\nexport interface GenesisColony { id: GenesisId; name: string; planetId: GenesisId; starSystemId: GenesisId; population: number; populationCapacity: number; populationGrowthRate: number; colonyLevel: number; focus: string; status: string; resourceOutputIds: GenesisId[]; resourceOutputRates: Record<string, number>; buildingIds: GenesisId[]; }\nexport interface GenesisMarketListing { resourceId: GenesisId; basePrice: number; currentPrice: number; supply: number; demand: number; priceTrend: string; availability: string; }\nexport interface GenesisMarket { id: GenesisId; name: string; marketType: string; colonyId?: GenesisId; childMarketIds: GenesisId[]; resourceListings: GenesisMarketListing[]; tradeVolume: number; prosperity: number; security: number; }\nexport interface GenesisTradeRoute { id: GenesisId; originMarketId: GenesisId; destinationMarketId: GenesisId; resourceIds: GenesisId[]; profitability: number; risk: number; status: string; }\nexport interface GenesisExportPayload { target: string; canonical: Record<string, unknown>; relationshipMap: Record<string, unknown>; }\n",
+      "project-genesis.types.ts": "export type GenesisId = string;\n\nexport interface GenesisResource { id: GenesisId; resource_name: string; category: string; rarity: string; }\nexport interface GenesisResearchNode { id: GenesisId; name: string; era: string; status: string; }\nexport interface GenesisFaction { id: GenesisId; name: string; type: string; disposition: string; homeStarSystemId: GenesisId; controlledPlanetIds: GenesisId[]; }\nexport interface GenesisColonyBuilding { id: GenesisId; name: string; category: string; colonyId: GenesisId; constructionStatus: string; modifiers: Record<string, number>; }\nexport interface GenesisColony { id: GenesisId; name: string; planetId: GenesisId; starSystemId: GenesisId; population: number; populationCapacity: number; populationGrowthRate: number; colonyLevel: number; focus: string; status: string; resourceOutputIds: GenesisId[]; resourceOutputRates: Record<string, number>; buildingIds: GenesisId[]; }\nexport interface GenesisMarketListing { resourceId: GenesisId; basePrice: number; currentPrice: number; supply: number; demand: number; priceTrend: string; availability: string; }\nexport interface GenesisMarket { id: GenesisId; name: string; marketType: string; colonyId?: GenesisId; childMarketIds: GenesisId[]; resourceListings: GenesisMarketListing[]; tradeVolume: number; prosperity: number; security: number; }\nexport interface GenesisTradeRoute { id: GenesisId; originMarketId: GenesisId; destinationMarketId: GenesisId; resourceIds: GenesisId[]; profitability: number; risk: number; status: string; }\nexport interface GenesisMissionObjective { id: GenesisId; missionId: GenesisId; objectiveType: string; targetId: GenesisId; targetCount: number; currentCount: number; completed: boolean; }\nexport interface GenesisMission { id: GenesisId; title: string; missionType: string; status: string; difficulty: string; objectiveIds: GenesisId[]; rewardIds: GenesisId[]; rewardsClaimed: boolean; tracked: boolean; }\nexport interface GenesisExportPayload { target: string; canonical: Record<string, unknown>; relationshipMap: Record<string, unknown>; }\n",
       "projectGenesisClient.ts": "export async function fetchProjectGenesisExport(target = 'generic') {\n  const response = await fetch(`/api/export/${target}`);\n  if (!response.ok) throw new Error(`Project Genesis export failed: ${response.status}`);\n  return response.json();\n}\n",
       "projectGenesisStore.ts": "import { create } from 'zustand';\n\ntype GenesisStore = { data: unknown | null; setData: (data: unknown) => void };\nexport const useGenesisStore = create<GenesisStore>((set) => ({ data: null, setData: (data) => set({ data }) }));\n"
     };

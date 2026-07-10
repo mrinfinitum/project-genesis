@@ -10,6 +10,7 @@ import {
   ChevronDown,
   ChevronRight,
   CircleDot,
+  ClipboardList,
   Compass,
   Cpu,
   Database,
@@ -88,6 +89,7 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/planets", label: "Planets", icon: Orbit },
       { href: "/discovery-journal", label: "Discovery Journal", icon: ScrollText },
       { href: "/universe-timeline", label: "Universe Timeline", icon: History },
+      { href: "/missions", label: "Missions", icon: ClipboardList },
       { href: "/factions", label: "Factions", icon: Landmark },
       { href: "/colonies", label: "Colonies", icon: Building2 },
       { href: "/planetary-rules", label: "Rules", icon: GitBranch }
