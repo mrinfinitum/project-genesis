@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import {
   Archive,
+  BadgeDollarSign,
   Building2,
   ChevronDown,
   ChevronRight,
@@ -114,6 +115,7 @@ const navigationGroups: NavigationGroup[] = [
     fallbackProgress: 47,
     systemIds: ["resources", "collectibles"],
     items: [
+      { href: "/economy", label: "Economy & Trade", icon: BadgeDollarSign },
       { href: "/resource-catalog", label: "Resource Catalog", icon: Gem },
       { href: "/planet-resource-profiles", label: "Planet Resource Profiles", icon: CircleDot },
       { label: "Resource Distribution", icon: Pickaxe, future: true },

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getGameData } from "@/lib/data";
 import { discoveryJournalSchema, sampleDiscoveryJournal, sampleTimelineEvents, timelineEventSchema } from "@/lib/explorer/discovery-log";
 import { colonyBuildingTemplates, colonyFocusDefinitions, colonyLevelDefinitions, colonySchema, createColonyRecord, generateFallbackColonies, type ColonyBuilding, type ColonyRecord } from "@/lib/colonies/procedural";
+import { buildEconomyState, economySchemas, priceClamps, type MarketRecord, type ResourceListing, type TradeOpportunity, type TradeRoute } from "@/lib/economy/trade";
 import { generateFaction, generateFallbackFactions, type FactionRecord } from "@/lib/factions/procedural";
 import { getLocalBubbleSystems, generatedCelestialBodyRows, generatedStarSystemRows } from "@/lib/universe/fallback-data";
 import { normalizePlanetResourceProfiles, validatePlanetResourceProfiles } from "@/lib/resources/planet-resource-profiles";
@@ -115,6 +116,13 @@ type CanonicalModules = {
   colony_level_definitions: Array<(typeof colonyLevelDefinitions)[number] & { id: string }>;
   colony_focus_definitions: typeof colonyFocusDefinitions;
   colony_building_templates: typeof colonyBuildingTemplates;
+  markets: MarketRecord[];
+  resource_listings: Array<ResourceListing & { id: string; marketId: string }>;
+  trade_routes: TradeRoute[];
+  trade_opportunities: TradeOpportunity[];
+  economy_schemas: typeof economySchemas;
+  pricing_rules: ReturnType<typeof buildEconomyState>["pricingRules"];
+  market_level_definitions: ReturnType<typeof buildEconomyState>["marketLevelDefinitions"];
   economy: Array<Record<string, unknown>>;
   factions: FactionRecord[];
   missions: Array<Record<string, unknown>>;
@@ -373,6 +381,7 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
   const normalizedPlanets = normalizeExportPlanets(data.generated_planets, galaxies, sectors, starSystems);
   const factions = buildExportFactions(galaxies, sectors, starSystems, normalizedPlanets.assigned);
   const colonies = buildExportColonies(normalizedPlanets.assigned, factions);
+  const economyState = buildEconomyState(colonies, factions, [], "derived");
 
   return {
     resource_catalog: ResourceService.catalog,
@@ -416,7 +425,23 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
     colony_level_definitions: colonyLevelDefinitions.map((definition) => ({ id: `colony_level_${definition.level}`, ...definition })),
     colony_focus_definitions: colonyFocusDefinitions,
     colony_building_templates: colonyBuildingTemplates,
-    economy: placeholderModule("economy"),
+    markets: economyState.markets,
+    resource_listings: economyState.markets.flatMap((market) => market.resourceListings.map((listing) => ({ ...listing, id: `${market.id}-${listing.resourceId}`, marketId: market.id }))),
+    trade_routes: economyState.tradeRoutes,
+    trade_opportunities: economyState.tradeOpportunities,
+    economy_schemas: economySchemas,
+    pricing_rules: economyState.pricingRules,
+    market_level_definitions: economyState.marketLevelDefinitions,
+    economy: [
+      {
+        id: "economy_canonical_summary",
+        status: "canonical",
+        markets: economyState.markets.length,
+        tradeRoutes: economyState.tradeRoutes.length,
+        tradeOpportunities: economyState.tradeOpportunities.length,
+        pricingRule: economyState.pricingRules.formula
+      }
+    ],
     factions,
     missions: placeholderModule("missions")
   };
@@ -435,6 +460,11 @@ function buildRelationshipMap(modules: CanonicalModules) {
   const coloniesByPlanet: Record<string, string[]> = {};
   const coloniesBySystem: Record<string, string[]> = {};
   const colonyBuildingsByColony: Record<string, string[]> = {};
+  const marketsByColony: Record<string, string[]> = {};
+  const marketsBySystem: Record<string, string[]> = {};
+  const marketsBySector: Record<string, string[]> = {};
+  const listingsByMarket: Record<string, string[]> = {};
+  const tradeRoutesByMarket: Record<string, string[]> = {};
 
   for (const sector of modules.sectors) {
     const galaxyId = String(sector.galaxy_id ?? "");
@@ -466,6 +496,18 @@ function buildRelationshipMap(modules: CanonicalModules) {
     colonyBuildingsByColony[colony.id] = colony.buildings.map((building) => building.id);
   }
 
+  for (const market of modules.markets) {
+    if (market.colonyId) marketsByColony[market.colonyId] = [...(marketsByColony[market.colonyId] ?? []), market.id];
+    if (market.starSystemId) marketsBySystem[market.starSystemId] = [...(marketsBySystem[market.starSystemId] ?? []), market.id];
+    marketsBySector[market.sectorId] = [...(marketsBySector[market.sectorId] ?? []), market.id];
+    listingsByMarket[market.id] = market.resourceListings.map((listing) => `${market.id}-${listing.resourceId}`);
+  }
+
+  for (const route of modules.trade_routes) {
+    tradeRoutesByMarket[route.originMarketId] = [...(tradeRoutesByMarket[route.originMarketId] ?? []), route.id];
+    tradeRoutesByMarket[route.destinationMarketId] = [...(tradeRoutesByMarket[route.destinationMarketId] ?? []), route.id];
+  }
+
   return {
     sectorsByGalaxy,
     systemsBySector,
@@ -474,7 +516,12 @@ function buildRelationshipMap(modules: CanonicalModules) {
     factionsBySystem,
     coloniesByPlanet,
     coloniesBySystem,
-    colonyBuildingsByColony
+    colonyBuildingsByColony,
+    marketsByColony,
+    marketsBySystem,
+    marketsBySector,
+    listingsByMarket,
+    tradeRoutesByMarket
   };
 }
 
@@ -599,6 +646,51 @@ function validateHierarchy(issues: ExportValidationIssue[], modules: CanonicalMo
   }
 }
 
+function validateEconomy(issues: ExportValidationIssue[], modules: CanonicalModules) {
+  const marketIds = new Set(modules.markets.map((market) => market.id));
+  const colonyIds = new Set(modules.colonies.map((colony) => colony.id));
+
+  const invalidListings = modules.resource_listings.filter((listing) => !ResourceService.getById(listing.resourceId));
+  if (invalidListings.length) {
+    addIssue(issues, "error", "invalid_market_resource_id", "Some market resource listings reference resources outside resource_catalog.", invalidListings.map((listing) => listing.id));
+  }
+
+  const negativeListings = modules.resource_listings.filter((listing) => [listing.basePrice, listing.currentPrice, listing.supply, listing.demand, listing.stock, listing.stockCapacity].some((value) => value < 0));
+  if (negativeListings.length) {
+    addIssue(issues, "error", "negative_market_listing_value", "Some market listings contain negative price, supply, demand, or stock values.", negativeListings.map((listing) => listing.id));
+  }
+
+  const outOfClamp = modules.resource_listings.filter((listing) => listing.currentPrice < priceClamps.min || listing.currentPrice > priceClamps.max);
+  if (outOfClamp.length) {
+    addIssue(issues, "error", "market_price_out_of_bounds", "Some market listings have currentPrice outside configured clamps.", outOfClamp.map((listing) => listing.id));
+  }
+
+  const brokenMarketParents = modules.markets.filter((market) => market.parentMarketId && !marketIds.has(market.parentMarketId));
+  if (brokenMarketParents.length) {
+    addIssue(issues, "error", "market_parent_missing", "Some markets reference missing parent markets.", brokenMarketParents.map((market) => market.id));
+  }
+
+  const brokenMarketChildren = modules.markets.filter((market) => market.childMarketIds.some((childId) => !marketIds.has(childId)));
+  if (brokenMarketChildren.length) {
+    addIssue(issues, "error", "market_child_missing", "Some markets reference missing child markets.", brokenMarketChildren.map((market) => market.id));
+  }
+
+  const brokenRoutes = modules.trade_routes.filter((route) => !marketIds.has(route.originMarketId) || !marketIds.has(route.destinationMarketId));
+  if (brokenRoutes.length) {
+    addIssue(issues, "error", "trade_route_market_missing", "Some trade routes reference missing markets.", brokenRoutes.map((route) => route.id));
+  }
+
+  const coloniesWithoutMarkets = modules.colonies.filter((colony) => !modules.markets.some((market) => market.colonyId === colony.id));
+  if (coloniesWithoutMarkets.length) {
+    addIssue(issues, "error", "colony_market_missing", "Some colonies do not have a linked colony market.", coloniesWithoutMarkets.map((colony) => colony.id));
+  }
+
+  const marketsWithBadColonies = modules.markets.filter((market) => market.colonyId && !colonyIds.has(market.colonyId));
+  if (marketsWithBadColonies.length) {
+    addIssue(issues, "error", "market_colony_missing", "Some colony markets reference missing colonies.", marketsWithBadColonies.map((market) => market.id));
+  }
+}
+
 function validateTargetSchema(issues: ExportValidationIssue[], target: EngineTarget) {
   const config = getEngineTargetConfig(target);
   if (!config.generatedModules.length || !config.schemaMapping.length) {
@@ -612,6 +704,7 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
   validateResourceReferences(issues, modules);
   validateUnlocks(issues, modules);
   validateHierarchy(issues, modules);
+  validateEconomy(issues, modules);
   validateTargetSchema(issues, target);
 
   const errorCount = issues.filter((issue) => issue.severity === "error").length;
@@ -637,6 +730,11 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
       "colonies link to star systems",
       "colonies link to sectors",
       "colonies link to galaxies",
+      "market resource IDs exist",
+      "market parent/child links resolve",
+      "trade route market links resolve",
+      "colonies connect to markets",
+      "market prices are non-negative and clamped",
       "star systems link to sectors",
       "sectors link to galaxies"
     ],
@@ -654,6 +752,7 @@ function schemaNotes(target: EngineTarget) {
     resources: "Resource display data must be resolved through resource_catalog/ResourceService.",
     hierarchy: "Preserve Galaxy -> Sector -> Star System -> Planet. Do not add Region or Cluster layers.",
     colonies: "Colony state, growth inputs, buildings, levels, and focus definitions are canonical Studio data shared by every engine target.",
+    economy: "Markets, resource listings, trade routes, and opportunities are engine-agnostic canonical data. Pricing uses ResourceService base trade values and deterministic modifiers.",
     mapping: config.schemaMapping
   };
 }
@@ -696,6 +795,13 @@ function compactModules(modules: CanonicalModules) {
     colony_level_definitions: modules.colony_level_definitions,
     colony_focus_definitions: modules.colony_focus_definitions,
     colony_building_templates: modules.colony_building_templates,
+    markets: modules.markets,
+    resource_listings: modules.resource_listings,
+    trade_routes: modules.trade_routes,
+    trade_opportunities: modules.trade_opportunities,
+    economy_schemas: modules.economy_schemas,
+    pricing_rules: modules.pricing_rules,
+    market_level_definitions: modules.market_level_definitions,
     economy: modules.economy,
     factions: modules.factions,
     missions: modules.missions
@@ -707,14 +813,14 @@ function targetArtifacts(target: EngineTarget, modules: CanonicalModules) {
     return {
       "ResourceCatalogModule.lua": `local ResourceCatalog = ${luaValue(modules.resource_catalog)}\n\nreturn ResourceCatalog\n`,
       "ResearchUnlockModule.lua": `local ResearchUnlocks = ${luaValue({ research: modules.research, unlocks: modules.unlock_matrix })}\n\nreturn ResearchUnlocks\n`,
-      "UniverseDataModule.lua": `local UniverseData = ${luaValue({ galaxies: modules.galaxies, sectors: modules.sectors, starSystems: modules.star_systems, planets: modules.planets, celestialBodies: modules.celestial_bodies, factions: modules.factions, colonies: modules.colonies, colonyBuildings: modules.colony_buildings, colonyLevels: modules.colony_level_definitions, colonyFocus: modules.colony_focus_definitions })}\n\nreturn UniverseData\n`,
+      "UniverseDataModule.lua": `local UniverseData = ${luaValue({ galaxies: modules.galaxies, sectors: modules.sectors, starSystems: modules.star_systems, planets: modules.planets, celestialBodies: modules.celestial_bodies, factions: modules.factions, colonies: modules.colonies, colonyBuildings: modules.colony_buildings, colonyLevels: modules.colony_level_definitions, colonyFocus: modules.colony_focus_definitions, markets: modules.markets, tradeRoutes: modules.trade_routes, tradeOpportunities: modules.trade_opportunities })}\n\nreturn UniverseData\n`,
       "ApiService.lua": "local HttpService = game:GetService(\"HttpService\")\n\nlocal ApiService = {}\nApiService.BaseUrl = \"https://your-studio-host.example.com/api/export\"\n\nfunction ApiService.FetchGeneric()\n  local response = HttpService:GetAsync(ApiService.BaseUrl .. \"/generic\")\n  return HttpService:JSONDecode(response)\nend\n\nreturn ApiService\n"
     };
   }
 
   if (target === "web") {
     return {
-      "project-genesis.types.ts": "export type GenesisId = string;\n\nexport interface GenesisResource { id: GenesisId; resource_name: string; category: string; rarity: string; }\nexport interface GenesisResearchNode { id: GenesisId; name: string; era: string; status: string; }\nexport interface GenesisFaction { id: GenesisId; name: string; type: string; disposition: string; homeStarSystemId: GenesisId; controlledPlanetIds: GenesisId[]; }\nexport interface GenesisColonyBuilding { id: GenesisId; name: string; category: string; colonyId: GenesisId; constructionStatus: string; modifiers: Record<string, number>; }\nexport interface GenesisColony { id: GenesisId; name: string; planetId: GenesisId; starSystemId: GenesisId; population: number; populationCapacity: number; populationGrowthRate: number; colonyLevel: number; focus: string; status: string; resourceOutputIds: GenesisId[]; resourceOutputRates: Record<string, number>; buildingIds: GenesisId[]; }\nexport interface GenesisExportPayload { target: string; canonical: Record<string, unknown>; relationshipMap: Record<string, unknown>; }\n",
+      "project-genesis.types.ts": "export type GenesisId = string;\n\nexport interface GenesisResource { id: GenesisId; resource_name: string; category: string; rarity: string; }\nexport interface GenesisResearchNode { id: GenesisId; name: string; era: string; status: string; }\nexport interface GenesisFaction { id: GenesisId; name: string; type: string; disposition: string; homeStarSystemId: GenesisId; controlledPlanetIds: GenesisId[]; }\nexport interface GenesisColonyBuilding { id: GenesisId; name: string; category: string; colonyId: GenesisId; constructionStatus: string; modifiers: Record<string, number>; }\nexport interface GenesisColony { id: GenesisId; name: string; planetId: GenesisId; starSystemId: GenesisId; population: number; populationCapacity: number; populationGrowthRate: number; colonyLevel: number; focus: string; status: string; resourceOutputIds: GenesisId[]; resourceOutputRates: Record<string, number>; buildingIds: GenesisId[]; }\nexport interface GenesisMarketListing { resourceId: GenesisId; basePrice: number; currentPrice: number; supply: number; demand: number; priceTrend: string; availability: string; }\nexport interface GenesisMarket { id: GenesisId; name: string; marketType: string; colonyId?: GenesisId; childMarketIds: GenesisId[]; resourceListings: GenesisMarketListing[]; tradeVolume: number; prosperity: number; security: number; }\nexport interface GenesisTradeRoute { id: GenesisId; originMarketId: GenesisId; destinationMarketId: GenesisId; resourceIds: GenesisId[]; profitability: number; risk: number; status: string; }\nexport interface GenesisExportPayload { target: string; canonical: Record<string, unknown>; relationshipMap: Record<string, unknown>; }\n",
       "projectGenesisClient.ts": "export async function fetchProjectGenesisExport(target = 'generic') {\n  const response = await fetch(`/api/export/${target}`);\n  if (!response.ok) throw new Error(`Project Genesis export failed: ${response.status}`);\n  return response.json();\n}\n",
       "projectGenesisStore.ts": "import { create } from 'zustand';\n\ntype GenesisStore = { data: unknown | null; setData: (data: unknown) => void };\nexport const useGenesisStore = create<GenesisStore>((set) => ({ data: null, setData: (data) => set({ data }) }));\n"
     };

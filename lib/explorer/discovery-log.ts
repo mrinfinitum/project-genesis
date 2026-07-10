@@ -7,6 +7,8 @@ export type DiscoveryObjectType =
   | "resource"
   | "anomaly"
   | "colony"
+  | "market"
+  | "trade_route"
   | "faction"
   | "civilization";
 
@@ -26,6 +28,15 @@ export type TimelineEventType =
   | "colony_abandoned"
   | "colony_focus_changed"
   | "development_paused"
+  | "market_established"
+  | "trade_route_created"
+  | "trade_route_disrupted"
+  | "major_shortage"
+  | "major_surplus"
+  | "price_spike"
+  | "price_crash"
+  | "blockade"
+  | "trade_agreement"
   | "rare_resource_found"
   | "faction_discovered"
   | "research_completed"
@@ -86,7 +97,7 @@ export const DISCOVERY_LOG_UPDATED_EVENT = "project-genesis-discovery-log-update
 export const discoveryJournalSchema = {
   id: "string",
   objectId: "string",
-  objectType: "galaxy | sector | star_system | planet | celestial_body | resource | anomaly | colony | faction | civilization",
+  objectType: "galaxy | sector | star_system | planet | celestial_body | resource | anomaly | colony | market | trade_route | faction | civilization",
   objectName: "string",
   generatedName: "string",
   displayName: "string",
@@ -104,7 +115,7 @@ export const discoveryJournalSchema = {
 
 export const timelineEventSchema = {
   id: "string",
-  eventType: "sector_detected | sector_scanned | star_system_discovered | planet_scanned | planet_claimed | planet_colonized | colony_founded | colony_renamed | building_started | building_completed | colony_level_increased | colony_shortage | colony_abandoned | colony_focus_changed | development_paused | rare_resource_found | faction_discovered | research_completed | intergalactic_travel_unlocked",
+  eventType: "sector_detected | sector_scanned | star_system_discovered | planet_scanned | planet_claimed | planet_colonized | colony_founded | colony_renamed | building_started | building_completed | colony_level_increased | colony_shortage | colony_abandoned | colony_focus_changed | development_paused | market_established | trade_route_created | trade_route_disrupted | major_shortage | major_surplus | price_spike | price_crash | blockade | trade_agreement | rare_resource_found | faction_discovered | research_completed | intergalactic_travel_unlocked",
   title: "string",
   description: "string",
   timestamp: "ISO timestamp",
@@ -113,7 +124,7 @@ export const timelineEventSchema = {
   starSystemId: "string",
   planetId: "string",
   relatedObjectId: "string",
-  relatedObjectType: "galaxy | sector | star_system | planet | celestial_body | resource | anomaly | colony | faction | civilization",
+  relatedObjectType: "galaxy | sector | star_system | planet | celestial_body | resource | anomaly | colony | market | trade_route | faction | civilization",
   importance: "low | medium | high | legendary"
 };
 

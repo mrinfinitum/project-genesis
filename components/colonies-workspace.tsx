@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Building2, Check, CirclePause, Hammer, Pencil, Search, Shield, Sparkles, Trash2, TrendingUp, Waypoints } from "lucide-react";
+import { marketForColony, readEconomyState } from "@/lib/economy/trade";
+import { ResourceService } from "@/lib/resources/service";
 import {
   COLONIES_UPDATED_EVENT,
   abandonColony,
@@ -22,7 +24,7 @@ import {
   type ColonyRecord
 } from "@/lib/colonies/procedural";
 
-type ColonyTab = "overview" | "needs" | "buildings" | "development" | "history";
+type ColonyTab = "overview" | "needs" | "economy" | "buildings" | "development" | "history";
 
 function badgeClass(value: string) {
   if (/critical|shortage|struggling|abandoned|locked/i.test(value)) return "border-rose-300/35 bg-rose-400/10 text-rose-100";
@@ -175,6 +177,9 @@ export function ColoniesWorkspace() {
     return !query.trim() || haystack.includes(query.toLowerCase());
   });
   const selected = colonies.find((colony) => colony.id === selectedId) ?? filtered[0];
+  const economyState = useMemo(() => readEconomyState(), [colonies]);
+  const localMarket = selected ? marketForColony(economyState, selected.id) : undefined;
+  const connectedRoutes = localMarket ? economyState.tradeRoutes.filter((route) => route.originMarketId === localMarket.id || route.destinationMarketId === localMarket.id) : [];
   const totals = useMemo(
     () => ({
       population: colonies.reduce((sum, colony) => sum + colony.population, 0),
@@ -275,7 +280,7 @@ export function ColoniesWorkspace() {
             </section>
 
             <div className="flex flex-wrap gap-2 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-2">
-              {(["overview", "needs", "buildings", "development", "history"] as ColonyTab[]).map((item) => (
+              {(["overview", "needs", "economy", "buildings", "development", "history"] as ColonyTab[]).map((item) => (
                 <button key={item} type="button" onClick={() => setTab(item)} className={`rounded-md px-3 py-2 text-sm font-bold capitalize transition ${tab === item ? "bg-cyan-300/20 text-white" : "text-slate-400 hover:bg-cyan-300/10 hover:text-slate-100"}`}>
                   {item}
                 </button>
@@ -330,6 +335,68 @@ export function ColoniesWorkspace() {
                       </div>
                     ))}
                   </div>
+                </Section>
+              </div>
+            ) : null}
+
+            {tab === "economy" ? (
+              <div className="grid gap-4 lg:grid-cols-2">
+                <Section title="Local Market">
+                  {localMarket ? (
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <MiniStat label="Market" value={localMarket.name} />
+                      <MiniStat label="Trade Volume" value={localMarket.tradeVolume} />
+                      <MiniStat label="Prosperity" value={localMarket.prosperity} />
+                      <MiniStat label="Security" value={localMarket.security} />
+                      <MiniStat label="Tax" value={`${localMarket.taxRate}%`} />
+                      <MiniStat label="Tariff" value={`${localMarket.tariffRate}%`} />
+                    </div>
+                  ) : (
+                    <p className="text-sm font-semibold text-slate-500">No market connected yet.</p>
+                  )}
+                </Section>
+                <Section title="Exports / Imports">
+                  {localMarket ? (
+                    <div className="grid gap-2">
+                      {localMarket.resourceListings.slice(0, 8).map((listing) => (
+                        <div key={listing.resourceId} className="grid gap-2 rounded-md border border-cyan-300/10 bg-slate-950/45 p-3 sm:grid-cols-[1fr_5rem_5rem_6rem] sm:items-center">
+                          <span className="font-bold text-white">{ResourceService.nameForId(listing.resourceId)}</span>
+                          <span className="text-sm text-slate-300">S {listing.supply}</span>
+                          <span className="text-sm text-slate-300">D {listing.demand}</span>
+                          <Badge value={listing.availability} />
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
+                </Section>
+                <Section title="Top Prices">
+                  {localMarket ? (
+                    <div className="grid gap-2">
+                      {[...localMarket.resourceListings].sort((left, right) => right.currentPrice - left.currentPrice).slice(0, 6).map((listing) => (
+                        <div key={listing.resourceId} className="flex items-center justify-between rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2">
+                          <span className="text-sm font-bold text-slate-200">{ResourceService.nameForId(listing.resourceId)}</span>
+                          <span className="text-sm font-black text-cyan-100">{listing.currentPrice}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
+                </Section>
+                <Section title="Connected Trade Routes">
+                  {connectedRoutes.length ? (
+                    <div className="grid gap-2">
+                      {connectedRoutes.map((route) => (
+                        <div key={route.id} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <span className="font-black text-white">{route.name}</span>
+                            <Badge value={route.status} />
+                          </div>
+                          <p className="mt-2 text-sm text-slate-400">Profit {route.profitability} · Risk {route.risk} · Capacity {route.capacity}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm font-semibold text-slate-500">No trade routes connected to this colony market yet.</p>
+                  )}
                 </Section>
               </div>
             ) : null}

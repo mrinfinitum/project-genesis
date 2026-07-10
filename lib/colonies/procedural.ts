@@ -53,6 +53,7 @@ export type ColonyRecord = {
   galaxyId: string;
   sectorId: string;
   starSystemId: string;
+  marketId?: string;
   ownerType: string;
   ownerFactionId?: string;
   ownerPlayerId?: string;
@@ -508,17 +509,19 @@ export function createColonyRecord(context: ColonyContext): ColonyRecord {
   const population = Math.max(120, Math.round((habitability * 175 + (hashText(seed) % 2400)) / 10) * 10);
   const colonyLevel = habitability >= 80 || rarity >= 80 ? 2 : 1;
   const name = `${context.planetName} Colony`;
+  const colonyId = `colony-${slug(`${context.planetId}-${name}`)}`;
   const outputs = resourceOutputIds(context);
   const populationCapacity = Math.max(population + 600, Math.round(population * 1.8));
-  const buildings = starterBuildings(`colony-${slug(`${context.planetId}-${name}`)}`, habitability, context.completedResearchIds);
+  const buildings = starterBuildings(colonyId, habitability, context.completedResearchIds);
   const base: ColonyRecord = {
-    id: `colony-${slug(`${context.planetId}-${name}`)}`,
+    id: colonyId,
     name,
     planetId: context.planetId,
     planetName: context.planetName,
     galaxyId: context.galaxyId,
     sectorId: context.sectorId,
     starSystemId: context.starSystemId,
+    marketId: `market-colony-${slug(colonyId)}`,
     ownerType: context.ownerType ?? "player",
     ownerFactionId: context.ownerFactionId ?? context.faction?.id,
     ownerPlayerId: context.ownerPlayerId ?? "studio-explorer",
@@ -558,7 +561,7 @@ export function createColonyRecord(context: ColonyContext): ColonyRecord {
     lastUpdatedAt: foundedAt,
     status,
     description: `${name} is a ${status} player settlement founded on ${context.planetName}. Habitability, resources, hazards, and local faction presence determine its starting ratings.`,
-    history: [createHistoryEvent(`colony-${slug(`${context.planetId}-${name}`)}`, "colony_founded", `${name} Founded`, `${name} was founded on ${context.planetName}.`, foundedAt)]
+    history: [createHistoryEvent(colonyId, "colony_founded", `${name} Founded`, `${name} was founded on ${context.planetName}.`, foundedAt)]
   };
   return recalculateColony(base);
 }
