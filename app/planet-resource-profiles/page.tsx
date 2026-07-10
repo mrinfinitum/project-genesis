@@ -1,4 +1,4 @@
-import { AdminTable } from "@/components/admin-table";
+import { DataWorkspace } from "@/components/data-workspace";
 import { handoffData } from "@/data/handoff";
 import { getRows } from "@/lib/data";
 import { normalizePlanetResourceProfile } from "@/lib/resources/planet-resource-profiles";
@@ -25,5 +25,14 @@ export default async function PlanetResourceProfilesPage() {
     };
   });
 
-  return <AdminTable config={tableConfigs.planet_resource_profiles} initialRows={normalizedRows} />;
+  return (
+    <DataWorkspace
+      config={tableConfigs.planet_resource_profiles}
+      initialRows={normalizedRows}
+      eyebrow="Planet Resource System"
+      title="Planet Resource Profiles"
+      description="Class and subclass resource pools, discovery tiers, mining difficulty, density, rarity bias, and canonical resource ID buckets."
+      intent="Compare planet resource profiles as generation cards. Resource IDs remain visible for validation, but display names should resolve through the Resource Catalog."
+    />
+  );
 }

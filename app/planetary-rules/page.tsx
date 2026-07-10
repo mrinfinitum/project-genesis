@@ -1,4 +1,4 @@
-import { AdminTable } from "@/components/admin-table";
+import { DataWorkspace } from "@/components/data-workspace";
 import { handoffData } from "@/data/handoff";
 import { getRows } from "@/lib/data";
 import { planetaryRulesDisplayRows } from "@/lib/planets/rule-rows";
@@ -10,9 +10,13 @@ export const dynamic = "force-dynamic";
 export default async function PlanetaryRulesPage() {
   const rows = await getRows("planets");
   return (
-    <AdminTable
+    <DataWorkspace
       config={tableConfigs.planets}
       initialRows={planetaryRulesDisplayRows(rows as PlanetVariable[], handoffData.planets)}
+      eyebrow="Generation Rules"
+      title="Planetary Rules"
+      description="Procedural planet generation variables, biome pools, trait rules, resources, hazards, and tuning weights."
+      intent="Review generation rules as reusable rule cards. Keep advanced row editing available without making the table the primary workspace."
     />
   );
 }
