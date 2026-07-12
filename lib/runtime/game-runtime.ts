@@ -24,6 +24,19 @@ import type {
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
 
+export type CanonicalRuntimeExportPayload = GameRuntimeData;
+
+export type RobloxRuntimeExportPayload = {
+  metadata: RuntimeMetadata & { target: "roblox"; sourceSchemaVersion: string };
+  eras: EraDefinition[];
+  resources: ResourceDefinition[];
+  upgradeTabs: Array<UpgradeCategory & { tabId: string; label: string }>;
+  upgrades: Array<UpgradeDefinition & { tabId: string }>;
+  assets: Array<AssetDefinition & { robloxAssetId: string | null }>;
+  balance: BalanceDefinition;
+  clientHints: ClientProfile;
+};
+
 type ImportStore = {
   appliedRuntimeData: GameRuntimeData | null;
   history: ImportResult[];
@@ -355,6 +368,37 @@ function duplicateIds<T extends { id: string }>(rows: T[]) {
   return [...duplicates];
 }
 
+function byId<T extends { id: string }>(left: T, right: T) {
+  return left.id.localeCompare(right.id);
+}
+
+function byOrderThenId<T extends { id: string; order?: number; index?: number }>(left: T, right: T) {
+  return (left.order ?? left.index ?? 0) - (right.order ?? right.index ?? 0) || left.id.localeCompare(right.id);
+}
+
+function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
+  return {
+    ...runtimeData,
+    eras: [...runtimeData.eras].sort(byOrderThenId),
+    resources: [...runtimeData.resources].sort(byId),
+    upgradeCategories: [...runtimeData.upgradeCategories].sort(byOrderThenId),
+    upgrades: [...runtimeData.upgrades].sort(byOrderThenId),
+    assets: [...runtimeData.assets].sort(byId),
+    clientProfiles: {
+      default: runtimeData.clientProfiles.default,
+      roblox: runtimeData.clientProfiles.roblox,
+      web: runtimeData.clientProfiles.web,
+      unity: runtimeData.clientProfiles.unity,
+      unreal: runtimeData.clientProfiles.unreal,
+      godot: runtimeData.clientProfiles.godot
+    }
+  };
+}
+
+export async function buildCanonicalRuntimeExportPayload(): Promise<CanonicalRuntimeExportPayload> {
+  return sortRuntimeData(await getGameRuntimeData());
+}
+
 export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   const issues: ImportIssue[] = [];
   const eraIds = new Set(runtimeData.eras.map((row) => row.id));
@@ -420,6 +464,99 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
           issues.push({ severity: "error", code: "invalid_asset_mapping", message: "Platform asset mappings must use strings.", records: [asset.id, platform, field] });
         }
       }
+    }
+  }
+
+  const errorCount = issues.filter((issue) => issue.severity === "error").length;
+  const warningCount = issues.filter((issue) => issue.severity === "warning").length;
+  return {
+    valid: errorCount === 0,
+    status: errorCount ? "Blocked" as const : warningCount ? "Ready With Warnings" as const : "Ready" as const,
+    errorCount,
+    warningCount,
+    checkedAt: new Date().toISOString(),
+    issues
+  };
+}
+
+export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxRuntimeExportPayload {
+  const sorted = sortRuntimeData(runtimeData);
+  return {
+    metadata: {
+      ...sorted.metadata,
+      target: "roblox",
+      sourceSchemaVersion: sorted.metadata.schemaVersion
+    },
+    eras: sorted.eras,
+    resources: sorted.resources,
+    upgradeTabs: sorted.upgradeCategories.map((category) => ({
+      ...category,
+      tabId: category.id,
+      label: category.displayName
+    })),
+    upgrades: sorted.upgrades.map((upgrade) => ({
+      ...upgrade,
+      tabId: upgrade.categoryId
+    })),
+    assets: sorted.assets.map((asset) => ({
+      ...asset,
+      robloxAssetId: asset.platformMappings.roblox?.assetId ?? null
+    })),
+    balance: sorted.balance,
+    clientHints: sorted.clientProfiles.roblox ?? sorted.clientProfiles.default
+  };
+}
+
+export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload) {
+  const issues: ImportIssue[] = [];
+  const eraIds = new Set(payload.eras.map((era) => era.id));
+  const resourceIds = new Set(payload.resources.map((resource) => resource.id));
+  const tabIds = new Set(payload.upgradeTabs.map((tab) => tab.tabId));
+  const assetKeys = new Set(payload.assets.flatMap((asset) => [asset.artKey, asset.id]));
+
+  if (!payload.metadata.schemaVersion) {
+    issues.push({ severity: "error", code: "metadata_schema_missing", message: "metadata.schemaVersion is required.", records: ["metadata"] });
+  }
+  if (!payload.metadata.contentVersion) {
+    issues.push({ severity: "error", code: "metadata_version_missing", message: "metadata.contentVersion is required.", records: ["metadata"] });
+  }
+  if (payload.upgradeTabs.length !== 4) {
+    issues.push({ severity: "error", code: "invalid_upgrade_tab_count", message: "Roblox runtime payload must expose exactly four upgrade tabs.", records: payload.upgradeTabs.map((tab) => tab.tabId) });
+  }
+
+  const duplicateTabs = duplicateIds(payload.upgradeTabs.map((tab) => ({ id: tab.tabId })));
+  if (duplicateTabs.length) {
+    issues.push({ severity: "error", code: "duplicate_tab_id", message: "Roblox upgrade tabs must have unique tabId values.", records: duplicateTabs });
+  }
+
+  for (const upgrade of payload.upgrades) {
+    if (!tabIds.has(upgrade.tabId)) {
+      issues.push({ severity: "error", code: "upgrade_tab_missing", message: "Every Roblox upgrade tabId must resolve to an upgrade tab.", records: [upgrade.id, upgrade.tabId] });
+    }
+    if (!eraIds.has(upgrade.eraId)) {
+      issues.push({ severity: "error", code: "upgrade_era_missing", message: "Every Roblox upgrade eraId must resolve to an era.", records: [upgrade.id, upgrade.eraId] });
+    }
+    if (upgrade.costResourceId && !resourceIds.has(upgrade.costResourceId)) {
+      issues.push({ severity: "error", code: "upgrade_resource_missing", message: "Every Roblox upgrade costResourceId must resolve to a resource.", records: [upgrade.id, upgrade.costResourceId] });
+    }
+    if (payload.assets.length && upgrade.iconKey && !assetKeys.has(upgrade.iconKey)) {
+      issues.push({ severity: "warning", code: "upgrade_icon_unmapped", message: "Upgrade iconKey does not resolve to an exported Roblox asset mapping.", records: [upgrade.id, upgrade.iconKey] });
+    }
+  }
+
+  for (const resource of payload.resources) {
+    if (resource.discoveredEraId && !eraIds.has(resource.discoveredEraId)) {
+      issues.push({ severity: "error", code: "resource_discovery_era_missing", message: "Resource discoveredEraId must resolve to an era.", records: [resource.id, resource.discoveredEraId] });
+    }
+    if (resource.usableEraId && !eraIds.has(resource.usableEraId)) {
+      issues.push({ severity: "error", code: "resource_usable_era_missing", message: "Resource usableEraId must resolve to an era.", records: [resource.id, resource.usableEraId] });
+    }
+  }
+
+  for (const asset of payload.assets) {
+    const mapping = asset.platformMappings.roblox;
+    if (mapping && typeof mapping.assetId !== "string") {
+      issues.push({ severity: "error", code: "invalid_roblox_asset_mapping", message: "Roblox asset mappings must use string assetId values.", records: [asset.id] });
     }
   }
 
