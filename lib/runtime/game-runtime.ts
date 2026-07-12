@@ -26,7 +26,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 2;
+export const gameRuntimeContentVersion = 3;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -743,7 +743,6 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
   const eraIds = new Set(payload.eras.map((era) => era.id));
   const resourceIds = new Set(payload.resources.map((resource) => resource.id));
   const tabIds = new Set(payload.upgradeTabs.map((tab) => tab.tabId));
-  const assetKeys = new Set(payload.assets.flatMap((asset) => [asset.artKey, asset.id]));
 
   if (!payload.metadata.schemaVersion) {
     issues.push({ severity: "error", code: "metadata_schema_missing", message: "metadata.schemaVersion is required.", records: ["metadata"] });
@@ -770,9 +769,6 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
     }
     if (upgrade.costResourceId && !resourceIds.has(upgrade.costResourceId)) {
       issues.push({ severity: "error", code: "upgrade_resource_missing", message: "Every Roblox upgrade costResourceId must resolve to a resource.", records: [upgrade.id, upgrade.costResourceId] });
-    }
-    if (payload.assets.length && upgrade.iconKey && !assetKeys.has(upgrade.iconKey)) {
-      issues.push({ severity: "warning", code: "upgrade_icon_unmapped", message: "Upgrade iconKey does not resolve to an exported Roblox asset mapping.", records: [upgrade.id, upgrade.iconKey] });
     }
   }
 
