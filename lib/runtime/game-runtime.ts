@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { civilizationAges } from "@/data/civilization-identity";
+import { getAppliedGameArtAssets } from "@/lib/assets/game-art-import";
 import { getGameData } from "@/lib/data";
 import { ResourceService } from "@/lib/resources/service";
 import type { GameData, ResourceCatalogItem, Upgrade } from "@/types/schema";
@@ -650,7 +651,7 @@ async function writeImportStore(store: ImportStore) {
 }
 
 export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
-  const data = await getGameData();
+  const [data, importedAssets] = await Promise.all([getGameData(), getAppliedGameArtAssets()]);
   const categories = new Map(defaultCategories().map((row) => [row.id, row]));
   const upgrades = data.upgrades.map(upgradeToRuntime);
 
@@ -675,7 +676,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     resources: ResourceService.catalog.map(resourceToRuntime),
     upgradeCategories: [...categories.values()].sort((left, right) => left.order - right.order),
     upgrades,
-    assets: data.assets.map(assetToRuntime),
+    assets: [...data.assets.map(assetToRuntime), ...importedAssets],
     balance: gameConstantsBalance(data.game_constants),
     clientProfiles: defaultClientProfiles()
   };

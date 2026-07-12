@@ -90,7 +90,7 @@ export type UpgradeDefinition = {
 
 export type PlatformAssetMappings = {
   web?: { path: string };
-  roblox?: { assetId: string };
+  roblox?: { assetId: string; assetType?: string; notes?: string };
   unity?: { addressableKey: string };
   unreal?: { assetPath: string };
   godot?: { resourcePath: string };
@@ -102,11 +102,23 @@ export type AssetDefinition = {
   type: "image" | "icon" | "audio" | "video" | "animation" | "model" | string;
   category: string;
   artKey: string;
+  iconKey?: string;
+  sourceFileName?: string;
+  sourceExtension?: string;
+  mimeType?: string;
+  fileSizeBytes?: number;
   width: number | null;
   height: number | null;
   aspectRatio: string | null;
   status: string;
   notes: string;
+  previewUrl?: string;
+  storagePath?: string;
+  aliases?: string[];
+  tags?: string[];
+  importedFrom?: string;
+  importedAt?: string;
+  updatedAt?: string;
   platformMappings: PlatformAssetMappings;
 };
 

@@ -1,11 +1,11 @@
 import { DataWorkspace } from "@/components/data-workspace";
-import { getRows } from "@/lib/data";
+import { getMergedAssetLibraryRows } from "@/lib/assets/game-art-import";
 import { tableConfigs } from "@/lib/tables";
 
 export const dynamic = "force-dynamic";
 
 export default async function AssetsPage() {
-  const rows = await getRows("assets");
+  const { rows } = await getMergedAssetLibraryRows();
   return (
     <DataWorkspace
       config={tableConfigs.assets}
@@ -13,7 +13,8 @@ export default async function AssetsPage() {
       eyebrow="Creative Asset System"
       title="Asset Library"
       description="Art prompts, generated references, Roblox asset IDs, file URLs, export status, and production notes."
-      intent="Browse assets visually as production objects. Upload, generate, and raw asset maintenance remain available in the advanced editor."
+      intent="Browse imported and legacy assets as production objects with previews, art keys, platform mappings, source status, and usage counts."
+      rawEditorEnabled={false}
     />
   );
 }

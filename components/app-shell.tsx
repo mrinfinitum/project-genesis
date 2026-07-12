@@ -146,6 +146,7 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/surface-landscapes", label: "Surface Landscapes", icon: Palette },
       { href: "/hero-discovery-shots", label: "Hero Discovery", icon: Star },
       { href: "/prompt-library", label: "Prompt Library", icon: ScrollText },
+      { href: "/game-art-import", label: "Game Art Import", icon: UploadCloud },
       { href: "/assets", label: "Asset Library", icon: Archive },
       { href: "/conceptual-art", label: "Concept Art", icon: Palette }
     ]

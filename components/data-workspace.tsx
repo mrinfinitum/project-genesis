@@ -51,6 +51,7 @@ type DataWorkspaceProps = {
   description?: string;
   intent?: string;
   standard?: string;
+  rawEditorEnabled?: boolean;
 };
 
 const tableIcons: Partial<Record<string, LucideIcon>> = {
@@ -204,6 +205,7 @@ function DataCard({
   const status = statusForRow(row, config);
   const statKeys = statKeysFor(config);
   const accent = accentClasses[config.table] ?? "from-cyan-300/20 via-blue-300/10 to-transparent text-cyan-100 border-cyan-300/30";
+  const previewUrl = config.table === "assets" ? pickFirst(row, ["preview_url", "file_url"]) : "";
 
   return (
     <button
@@ -214,10 +216,14 @@ function DataCard({
         selected ? "border-cyan-300/55 ring-1 ring-cyan-300/30" : "border-cyan-300/15"
       )}
     >
-      <div className={cn("flex h-16 items-center justify-between rounded-md border bg-gradient-to-br p-3", accent)}>
-        <span className="grid h-10 w-10 place-items-center rounded-md border border-current/25 bg-slate-950/45">
-          <Icon className="h-5 w-5" />
-        </span>
+      <div className={cn("flex h-16 items-center justify-between overflow-hidden rounded-md border bg-gradient-to-br p-3", accent)}>
+        {previewUrl ? (
+          <img src={previewUrl} alt="" className="h-12 w-16 rounded-md border border-current/25 bg-slate-950/45 object-cover" />
+        ) : (
+          <span className="grid h-10 w-10 place-items-center rounded-md border border-current/25 bg-slate-950/45">
+            <Icon className="h-5 w-5" />
+          </span>
+        )}
         <span className={cn("rounded-md border px-2.5 py-1 text-[0.65rem] font-black uppercase tracking-[0.16em]", workspaceBadgeClass(status))}>
           {status.replaceAll("_", " ")}
         </span>
@@ -295,7 +301,8 @@ export function DataWorkspace({
   title = config.title,
   description = config.description,
   intent = "Card-first authoring workspace with raw data tools preserved for advanced edits.",
-  standard = "Planet workspace visual standard"
+  standard = "Planet workspace visual standard",
+  rawEditorEnabled = true
 }: DataWorkspaceProps) {
   const [query, setQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
@@ -333,11 +340,13 @@ export function DataWorkspace({
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-300">{standard}</p>
             <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-300">{intent}</p>
           </div>
-          <Button type="button" onClick={() => setRawEditorOpen((value) => !value)} className="h-11 shrink-0">
-            <Table2 className="h-4 w-4" />
-            {rawEditorOpen ? "Hide Raw Editor" : "Advanced Data Editor"}
-            {rawEditorOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-          </Button>
+          {rawEditorEnabled ? (
+            <Button type="button" onClick={() => setRawEditorOpen((value) => !value)} className="h-11 shrink-0">
+              <Table2 className="h-4 w-4" />
+              {rawEditorOpen ? "Hide Raw Editor" : "Advanced Data Editor"}
+              {rawEditorOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            </Button>
+          ) : null}
         </div>
       </WorkspacePanel>
 
