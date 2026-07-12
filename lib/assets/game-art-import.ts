@@ -473,6 +473,60 @@ export async function getAppliedGameArtAssets() {
   return (await readStore()).assets;
 }
 
+export async function upsertAppliedGameArtAssets(
+  assets: AssetDefinition[],
+  history?: Omit<GameArtImportHistoryEntry, "importId" | "timestamp" | "user"> & Partial<Pick<GameArtImportHistoryEntry, "importId" | "timestamp" | "user">>
+) {
+  const store = await readStore();
+  const byId = new Map(store.assets.map((asset) => [asset.id, asset]));
+  let createdAssets = 0;
+  let updatedAssets = 0;
+  const now = new Date().toISOString();
+
+  for (const asset of assets) {
+    const existing = byId.get(asset.id);
+    byId.set(asset.id, {
+      ...(existing ?? {}),
+      ...asset,
+      platformMappings: {
+        ...(existing?.platformMappings ?? {}),
+        ...asset.platformMappings
+      },
+      aliases: [...new Set([...(existing?.aliases ?? []), ...(asset.aliases ?? [])].filter(Boolean))],
+      tags: [...new Set([...(existing?.tags ?? []), ...(asset.tags ?? [])].filter(Boolean))],
+      usageReferences: [...(existing?.usageReferences ?? []), ...(asset.usageReferences ?? [])]
+        .filter((item, index, rows) => rows.findIndex((candidate) => candidate.type === item.type && candidate.id === item.id && candidate.name === item.name) === index),
+      importedAt: existing?.importedAt ?? asset.importedAt ?? now,
+      updatedAt: now
+    });
+    if (existing) updatedAssets += 1;
+    else createdAssets += 1;
+  }
+
+  const historyEntry: GameArtImportHistoryEntry | null = history ? {
+    importId: history.importId ?? `game-art-import-${Date.now()}`,
+    sourceProject: history.sourceProject,
+    sourceType: history.sourceType,
+    timestamp: history.timestamp ?? now,
+    importedFiles: history.importedFiles,
+    matchedAssets: history.matchedAssets,
+    createdAssets: history.createdAssets ?? createdAssets,
+    updatedAssets: history.updatedAssets ?? updatedAssets,
+    ignoredFiles: history.ignoredFiles,
+    conflicts: history.conflicts,
+    warnings: history.warnings,
+    user: history.user ?? "studio"
+  } : null;
+
+  await writeStore({
+    assets: [...byId.values()].sort((left, right) => left.id.localeCompare(right.id)),
+    variants: store.variants,
+    history: historyEntry ? [historyEntry, ...store.history].slice(0, 50) : store.history
+  });
+
+  return { createdAssets, updatedAssets };
+}
+
 function legacyAssetToLibraryRow(asset: AssetRecord): Record<string, unknown> {
   const artKey = slug(asset.name || asset.id);
   return {
@@ -522,6 +576,7 @@ function importedAssetToLibraryRow(asset: AssetDefinition, usageCount = 0): Reco
     preview_url: asset.previewUrl ?? "",
     storage_path: asset.storagePath ?? "",
     platform_mappings: asset.platformMappings,
+    usage_references: asset.usageReferences ?? [],
     aliases: asset.aliases ?? [],
     tags: asset.tags ?? [],
     imported_from: asset.importedFrom ?? "",

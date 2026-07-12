@@ -1,0 +1,5066 @@
+{
+  "assets": [
+    {
+      "id": "asset_active_event_panel",
+      "name": "Active Event Panel",
+      "type": "image",
+      "category": "event_visual",
+      "artKey": "active_event_panel",
+      "mimeType": "image/png",
+      "width": 1005,
+      "height": 510,
+      "aspectRatio": "1005:510",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://88733035792020",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://88733035792020",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/UI/current-event.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Event",
+          "id": "dashboard.active_event",
+          "name": "dashboard.active_event"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:167 ActiveEventPanel",
+          "name": "src/client/CityHud.client.lua:167 ActiveEventPanel / Image"
+        }
+      ],
+      "aliases": [
+        "active_event_panel",
+        "Active Event Panel",
+        "assets/UI/current-event.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "event_visual",
+        "Event"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_active_event_sub_layer",
+      "name": "Active Event Sub Layer",
+      "type": "image",
+      "category": "event_visual",
+      "artKey": "active_event_sub_layer",
+      "mimeType": "image/png",
+      "width": 390,
+      "height": 149,
+      "aspectRatio": "390:149",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://75304753948939",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://75304753948939",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/UI/event-layer-2.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Event",
+          "id": "dashboard.active_event",
+          "name": "dashboard.active_event"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:168 ActiveEventSubLayer",
+          "name": "src/client/CityHud.client.lua:168 ActiveEventSubLayer / Image"
+        }
+      ],
+      "aliases": [
+        "active_event_sub_layer",
+        "Active Event Sub Layer",
+        "assets/UI/event-layer-2.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "event_visual",
+        "Event"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_advanced_infrastructure",
+      "name": "Advanced Infrastructure",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "advanced_infrastructure",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://77794096019474",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://77794096019474",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/modern-07-advanced-infrastructure-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1133 Advanced Infrastructure",
+          "name": "src/client/CityHud.client.lua:1133 Advanced Infrastructure / Image"
+        }
+      ],
+      "aliases": [
+        "advanced_infrastructure",
+        "Advanced Infrastructure",
+        "assets/icons/technology/modern-07-advanced-infrastructure-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_advanced_logistics",
+      "name": "Advanced Logistics",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "advanced_logistics",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://125829145516762",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://125829145516762",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/industry-10-advanced-logistics-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1126 Advanced Logistics",
+          "name": "src/client/CityHud.client.lua:1126 Advanced Logistics / Image"
+        }
+      ],
+      "aliases": [
+        "advanced_logistics",
+        "Advanced Logistics",
+        "assets/icons/technology/industry-10-advanced-logistics-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_aiassistant_icon",
+      "name": "Aiassistant Icon",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "aiassistant_icon",
+      "mimeType": "image/png",
+      "width": 112,
+      "height": 96,
+      "aspectRatio": "112:96",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://139063281430574",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://139063281430574",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/UI/ai-assistent-logo-upgrade.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:145 AIAssistantIcon",
+          "name": "src/client/CityHud.client.lua:145 AIAssistantIcon / Image"
+        }
+      ],
+      "aliases": [
+        "aiassistant_icon",
+        "Aiassistant Icon",
+        "assets/UI/ai-assistent-logo-upgrade.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_alignment_panel",
+      "name": "Alignment Panel",
+      "type": "image",
+      "category": "alignment_visual",
+      "artKey": "alignment_panel",
+      "mimeType": "image/png",
+      "width": 1000,
+      "height": 929,
+      "aspectRatio": "1000:929",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://133827934088512",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://133827934088512",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/UI/alignment-background.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "UI",
+          "id": "dashboard.alignment",
+          "name": "dashboard.alignment"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:169 AlignmentPanel",
+          "name": "src/client/CityHud.client.lua:169 AlignmentPanel / Image"
+        }
+      ],
+      "aliases": [
+        "alignment_panel",
+        "Alignment Panel",
+        "assets/UI/alignment-background.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "alignment_visual",
+        "UI"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_auto_button_off",
+      "name": "Auto Button Off",
+      "type": "image",
+      "category": "automation_visual",
+      "artKey": "auto_button_off",
+      "mimeType": "image/png",
+      "width": 329,
+      "height": 62,
+      "aspectRatio": "329:62",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://106944699002340",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://106944699002340",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/buttons/click_auto_off.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "UI",
+          "id": "hud.auto_click",
+          "name": "hud.auto_click"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:143 AutoButtonOff",
+          "name": "src/client/CityHud.client.lua:143 AutoButtonOff / Image"
+        }
+      ],
+      "aliases": [
+        "auto_button_off",
+        "Auto Button Off",
+        "assets/buttons/click_auto_off.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "automation_visual",
+        "UI"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_auto_button_on",
+      "name": "Auto Button On",
+      "type": "image",
+      "category": "automation_visual",
+      "artKey": "auto_button_on",
+      "mimeType": "image/png",
+      "width": 329,
+      "height": 62,
+      "aspectRatio": "329:62",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://139841618767256",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://139841618767256",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/buttons/click_auto_on.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "UI",
+          "id": "hud.auto_click",
+          "name": "hud.auto_click"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:142 AutoButtonOn",
+          "name": "src/client/CityHud.client.lua:142 AutoButtonOn / Image"
+        }
+      ],
+      "aliases": [
+        "auto_button_on",
+        "Auto Button On",
+        "assets/buttons/click_auto_on.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "automation_visual",
+        "UI"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_auto_robot_blink_icon",
+      "name": "Auto Robot Blink Icon",
+      "type": "image",
+      "category": "automation_visual",
+      "artKey": "auto_robot_blink_icon",
+      "mimeType": "image/png",
+      "width": 432,
+      "height": 432,
+      "aspectRatio": "432:432",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://76501991568176",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://76501991568176",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/UI/click-robot-eyes-blink.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "UI",
+          "id": "hud.auto_click",
+          "name": "hud.auto_click"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:140 AutoRobotBlinkIcon",
+          "name": "src/client/CityHud.client.lua:140 AutoRobotBlinkIcon / Image"
+        }
+      ],
+      "aliases": [
+        "auto_robot_blink_icon",
+        "Auto Robot Blink Icon",
+        "assets/UI/click-robot-eyes-blink.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "automation_visual",
+        "UI"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_auto_robot_circle",
+      "name": "Auto Robot Circle",
+      "type": "image",
+      "category": "automation_visual",
+      "artKey": "auto_robot_circle",
+      "mimeType": "image/png",
+      "width": 432,
+      "height": 432,
+      "aspectRatio": "432:432",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://117040601543803",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://117040601543803",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/UI/click-robot-circle-outer.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "UI",
+          "id": "hud.auto_click",
+          "name": "hud.auto_click"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:141 AutoRobotCircle",
+          "name": "src/client/CityHud.client.lua:141 AutoRobotCircle / Image"
+        }
+      ],
+      "aliases": [
+        "auto_robot_circle",
+        "Auto Robot Circle",
+        "assets/UI/click-robot-circle-outer.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "automation_visual",
+        "UI"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_auto_robot_icon",
+      "name": "Auto Robot Icon",
+      "type": "image",
+      "category": "automation_visual",
+      "artKey": "auto_robot_icon",
+      "mimeType": "image/png",
+      "width": 432,
+      "height": 432,
+      "aspectRatio": "432:432",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://72298597001681",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://72298597001681",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/UI/click-robot-eyes-open.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "UI",
+          "id": "hud.auto_click",
+          "name": "hud.auto_click"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:139 AutoRobotIcon",
+          "name": "src/client/CityHud.client.lua:139 AutoRobotIcon / Image"
+        }
+      ],
+      "aliases": [
+        "auto_robot_icon",
+        "Auto Robot Icon",
+        "assets/UI/click-robot-eyes-open.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "automation_visual",
+        "UI"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_basic_administration",
+      "name": "Basic Administration",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "basic_administration",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://118805963317609",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://118805963317609",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/survival-07-basic-administration-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1096 Basic Administration",
+          "name": "src/client/CityHud.client.lua:1096 Basic Administration / Image"
+        }
+      ],
+      "aliases": [
+        "basic_administration",
+        "Basic Administration",
+        "assets/icons/technology/survival-07-basic-administration-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_basic_commerce",
+      "name": "Basic Commerce",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "basic_commerce",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://105007343380224",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://105007343380224",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/survival-03-basic-commerce-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1092 Basic Commerce",
+          "name": "src/client/CityHud.client.lua:1092 Basic Commerce / Image"
+        }
+      ],
+      "aliases": [
+        "basic_commerce",
+        "Basic Commerce",
+        "assets/icons/technology/survival-03-basic-commerce-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_buildings_icon",
+      "name": "Buildings Icon",
+      "type": "image",
+      "category": "navigation_icon",
+      "artKey": "buildings_icon",
+      "mimeType": "image/png",
+      "width": 96,
+      "height": 96,
+      "aspectRatio": "96:96",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://82915516332061",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://82915516332061",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/menu/icon_buildings_96x96.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Building",
+          "id": "navigation.buildings",
+          "name": "navigation.buildings"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:120 BuildingsIcon",
+          "name": "src/client/CityHud.client.lua:120 BuildingsIcon / Image"
+        }
+      ],
+      "aliases": [
+        "buildings_icon",
+        "Buildings Icon",
+        "assets/menu/icon_buildings_96x96.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "navigation_icon",
+        "Building"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_calendar_icon",
+      "name": "Calendar Icon",
+      "type": "image",
+      "category": "resource_icon",
+      "artKey": "calendar_icon",
+      "mimeType": "image/png",
+      "width": 80,
+      "height": 80,
+      "aspectRatio": "80:80",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://124831656845168",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://124831656845168",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/topbar/icon_calendar_80x80.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Resource",
+          "id": "hud.resource.calendar",
+          "name": "hud.resource.calendar"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/shared/Modules/UI/TopBarAssetManifest.lua:86 CalendarIcon",
+          "name": "src/shared/Modules/UI/TopBarAssetManifest.lua:86 CalendarIcon / Image"
+        }
+      ],
+      "aliases": [
+        "calendar_icon",
+        "Calendar Icon",
+        "assets/topbar/icon_calendar_80x80.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "resource_icon",
+        "Resource"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_city_preview",
+      "name": "City Preview",
+      "type": "image",
+      "category": "panel_texture",
+      "artKey": "city_preview",
+      "mimeType": "image/png",
+      "width": 910,
+      "height": 517,
+      "aspectRatio": "910:517",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://140425686512251",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://140425686512251",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/UI/cityimage-1.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "UI",
+          "id": "dashboard.panel",
+          "name": "dashboard.panel"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:164 CityPreview",
+          "name": "src/client/CityHud.client.lua:164 CityPreview / Image"
+        }
+      ],
+      "aliases": [
+        "city_preview",
+        "City Preview",
+        "assets/UI/cityimage-1.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "panel_texture",
+        "UI"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_civilization_energy_icon",
+      "name": "Civilization Energy Icon",
+      "type": "image",
+      "category": "resource_icon",
+      "artKey": "civilization_energy_icon",
+      "mimeType": "image/png",
+      "width": 96,
+      "height": 96,
+      "aspectRatio": "96:96",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://117874545529859",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://117874545529859",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/topbar/icon_civilization_energy_96x96.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Resource",
+          "id": "hud.resource.civilization_energy",
+          "name": "hud.resource.civilization_energy"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/shared/Modules/UI/TopBarAssetManifest.lua:82 CivilizationEnergyIcon",
+          "name": "src/shared/Modules/UI/TopBarAssetManifest.lua:82 CivilizationEnergyIcon / Image"
+        }
+      ],
+      "aliases": [
+        "civilization_energy_icon",
+        "Civilization Energy Icon",
+        "assets/topbar/icon_civilization_energy_96x96.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "resource_icon",
+        "Resource"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_civilization_points_icon",
+      "name": "Civilization Points Icon",
+      "type": "image",
+      "category": "resource_icon",
+      "artKey": "civilization_points_icon",
+      "mimeType": "image/png",
+      "width": 96,
+      "height": 96,
+      "aspectRatio": "96:96",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://85260889782155",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://85260889782155",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/topbar/icon_civilization_points_crystal_96x96.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Resource",
+          "id": "hud.resource.civilization_points",
+          "name": "hud.resource.civilization_points"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/shared/Modules/UI/TopBarAssetManifest.lua:85 CivilizationPointsIcon",
+          "name": "src/shared/Modules/UI/TopBarAssetManifest.lua:85 CivilizationPointsIcon / Image"
+        }
+      ],
+      "aliases": [
+        "civilization_points_icon",
+        "Civilization Points Icon",
+        "assets/topbar/icon_civilization_points_crystal_96x96.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "resource_icon",
+        "Resource"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_clean_energy",
+      "name": "Clean Energy",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "clean_energy",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://70824446972015",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://70824446972015",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/modern-06-clean-energy-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1132 Clean Energy",
+          "name": "src/client/CityHud.client.lua:1132 Clean Energy / Image"
+        }
+      ],
+      "aliases": [
+        "clean_energy",
+        "Clean Energy",
+        "assets/icons/technology/modern-06-clean-energy-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_click_button",
+      "name": "Click Button",
+      "type": "image",
+      "category": "manual_click_visual",
+      "artKey": "click_button",
+      "mimeType": "image/png",
+      "width": 329,
+      "height": 81,
+      "aspectRatio": "329:81",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://97243708870036",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://97243708870036",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/buttons/click_button-main.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "UI",
+          "id": "hud.clicker",
+          "name": "hud.clicker"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:137 ClickButton",
+          "name": "src/client/CityHud.client.lua:137 ClickButton / Image"
+        }
+      ],
+      "aliases": [
+        "click_button",
+        "Click Button",
+        "assets/buttons/click_button-main.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "manual_click_visual",
+        "UI"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_click_button_tapped",
+      "name": "Click Button Tapped",
+      "type": "image",
+      "category": "manual_click_visual",
+      "artKey": "click_button_tapped",
+      "mimeType": "image/png",
+      "width": 329,
+      "height": 81,
+      "aspectRatio": "329:81",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://119403047246277",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://119403047246277",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/buttons/click_button-hover.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "UI",
+          "id": "hud.clicker",
+          "name": "hud.clicker"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:138 ClickButtonTapped",
+          "name": "src/client/CityHud.client.lua:138 ClickButtonTapped / Image"
+        }
+      ],
+      "aliases": [
+        "click_button_tapped",
+        "Click Button Tapped",
+        "assets/buttons/click_button-hover.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "manual_click_visual",
+        "UI"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_click_hand_icon",
+      "name": "Click Hand Icon",
+      "type": "image",
+      "category": "manual_click_visual",
+      "artKey": "click_hand_icon",
+      "mimeType": "image/png",
+      "width": 256,
+      "height": 256,
+      "aspectRatio": "256:256",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://70836319761875",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://70836319761875",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/UI/click-interface-hand-256.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "UI",
+          "id": "hud.clicker",
+          "name": "hud.clicker"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:132 ClickHandIcon",
+          "name": "src/client/CityHud.client.lua:132 ClickHandIcon / Image"
+        }
+      ],
+      "aliases": [
+        "click_hand_icon",
+        "Click Hand Icon",
+        "assets/UI/click-interface-hand-256.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "manual_click_visual",
+        "UI"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_click_interface_circle",
+      "name": "Click Interface Circle",
+      "type": "image",
+      "category": "manual_click_visual",
+      "artKey": "click_interface_circle",
+      "mimeType": "image/png",
+      "width": null,
+      "height": null,
+      "aspectRatio": null,
+      "fileSizeBytes": 0,
+      "status": "source_missing",
+      "notes": "Imported from Roblox art manifest as Roblox-ID-only; source file is missing.",
+      "previewUrl": "rbxassetid://109831483704097",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://109831483704097",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "UI",
+          "id": "hud.clicker",
+          "name": "hud.clicker"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:133 ClickInterfaceCircle",
+          "name": "src/client/CityHud.client.lua:133 ClickInterfaceCircle / Image"
+        }
+      ],
+      "aliases": [
+        "click_interface_circle",
+        "Click Interface Circle"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "manual_click_visual",
+        "UI"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_click_ring_inner",
+      "name": "Click Ring Inner",
+      "type": "image",
+      "category": "manual_click_visual",
+      "artKey": "click_ring_inner",
+      "mimeType": "image/png",
+      "width": 432,
+      "height": 432,
+      "aspectRatio": "432:432",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://111306940360008",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://111306940360008",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/UI/click-interface-circle-inner.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "UI",
+          "id": "hud.clicker",
+          "name": "hud.clicker"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:136 ClickRingInner",
+          "name": "src/client/CityHud.client.lua:136 ClickRingInner / Image"
+        }
+      ],
+      "aliases": [
+        "click_ring_inner",
+        "Click Ring Inner",
+        "assets/UI/click-interface-circle-inner.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "manual_click_visual",
+        "UI"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_click_ring_middle",
+      "name": "Click Ring Middle",
+      "type": "image",
+      "category": "manual_click_visual",
+      "artKey": "click_ring_middle",
+      "mimeType": "image/png",
+      "width": 432,
+      "height": 432,
+      "aspectRatio": "432:432",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://101968959721215",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://101968959721215",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/UI/click-interface-circle-middle.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "UI",
+          "id": "hud.clicker",
+          "name": "hud.clicker"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:135 ClickRingMiddle",
+          "name": "src/client/CityHud.client.lua:135 ClickRingMiddle / Image"
+        }
+      ],
+      "aliases": [
+        "click_ring_middle",
+        "Click Ring Middle",
+        "assets/UI/click-interface-circle-middle.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "manual_click_visual",
+        "UI"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_click_ring_outer",
+      "name": "Click Ring Outer",
+      "type": "image",
+      "category": "manual_click_visual",
+      "artKey": "click_ring_outer",
+      "mimeType": "image/png",
+      "width": 432,
+      "height": 432,
+      "aspectRatio": "432:432",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://105751787246060",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://105751787246060",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/UI/click-interface-circle-outer.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "UI",
+          "id": "hud.clicker",
+          "name": "hud.clicker"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:134 ClickRingOuter",
+          "name": "src/client/CityHud.client.lua:134 ClickRingOuter / Image"
+        }
+      ],
+      "aliases": [
+        "click_ring_outer",
+        "Click Ring Outer",
+        "assets/UI/click-interface-circle-outer.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "manual_click_visual",
+        "UI"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_clicker_hud_background",
+      "name": "Clicker Hud Background",
+      "type": "image",
+      "category": "manual_click_visual",
+      "artKey": "clicker_hud_background",
+      "mimeType": "image/png",
+      "width": 350,
+      "height": 780,
+      "aspectRatio": "350:780",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://76675288800216",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://76675288800216",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/UI/hud_clicker_350x823.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "UI",
+          "id": "hud.clicker",
+          "name": "hud.clicker"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:161 ClickerHudBackground",
+          "name": "src/client/CityHud.client.lua:161 ClickerHudBackground / Image"
+        }
+      ],
+      "aliases": [
+        "clicker_hud_background",
+        "Clicker Hud Background",
+        "assets/UI/hud_clicker_350x823.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "manual_click_visual",
+        "UI"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_cloud_infrastructure",
+      "name": "Cloud Infrastructure",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "cloud_infrastructure",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://75314042027150",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://75314042027150",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/modern-11-cloud-infrastructure-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1137 Cloud Infrastructure",
+          "name": "src/client/CityHud.client.lua:1137 Cloud Infrastructure / Image"
+        }
+      ],
+      "aliases": [
+        "cloud_infrastructure",
+        "Cloud Infrastructure",
+        "assets/icons/technology/modern-11-cloud-infrastructure-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_commercial_infrastructure",
+      "name": "Commercial Infrastructure",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "commercial_infrastructure",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://89906330006902",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://89906330006902",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/town-08-commercial-infrastructure-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1115 Commercial Infrastructure",
+          "name": "src/client/CityHud.client.lua:1115 Commercial Infrastructure / Image"
+        }
+      ],
+      "aliases": [
+        "commercial_infrastructure",
+        "Commercial Infrastructure",
+        "assets/icons/technology/town-08-commercial-infrastructure-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_communication_networks",
+      "name": "Communication Networks",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "communication_networks",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://123931333481718",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://123931333481718",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/town-09-communication-networks-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1116 Communication Networks",
+          "name": "src/client/CityHud.client.lua:1116 Communication Networks / Image"
+        }
+      ],
+      "aliases": [
+        "communication_networks",
+        "Communication Networks",
+        "assets/icons/technology/town-09-communication-networks-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_construction_methods",
+      "name": "Construction Methods",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "construction_methods",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://102411316315556",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://102411316315556",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/survival-08-construction-methods-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1097 Construction Methods",
+          "name": "src/client/CityHud.client.lua:1097 Construction Methods / Image"
+        }
+      ],
+      "aliases": [
+        "construction_methods",
+        "Construction Methods",
+        "assets/icons/technology/survival-08-construction-methods-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_corporate_investment",
+      "name": "Corporate Investment",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "corporate_investment",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://99086220865577",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://99086220865577",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/industry-02-corporate-nvestment-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1118 Corporate Investment",
+          "name": "src/client/CityHud.client.lua:1118 Corporate Investment / Image"
+        }
+      ],
+      "aliases": [
+        "corporate_investment",
+        "Corporate Investment",
+        "assets/icons/technology/industry-02-corporate-nvestment-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_cpuchip_icon",
+      "name": "Cpuchip Icon",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "cpuchip_icon",
+      "mimeType": "image/png",
+      "width": 112,
+      "height": 96,
+      "aspectRatio": "112:96",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://137440372153768",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://137440372153768",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/UI/planetary-cpu-logo-upgrade.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:149 CPUChipIcon",
+          "name": "src/client/CityHud.client.lua:149 CPUChipIcon / Image"
+        }
+      ],
+      "aliases": [
+        "cpuchip_icon",
+        "Cpuchip Icon",
+        "assets/UI/planetary-cpu-logo-upgrade.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_credits_icon",
+      "name": "Credits Icon",
+      "type": "image",
+      "category": "resource_icon",
+      "artKey": "credits_icon",
+      "mimeType": "image/png",
+      "width": 96,
+      "height": 96,
+      "aspectRatio": "96:96",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://87083558682098",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://87083558682098",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/topbar/icon_credits_coin_96x96.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Resource",
+          "id": "hud.resource.credits",
+          "name": "hud.resource.credits"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/shared/Modules/UI/TopBarAssetManifest.lua:80 CreditsIcon",
+          "name": "src/shared/Modules/UI/TopBarAssetManifest.lua:80 CreditsIcon / Image"
+        }
+      ],
+      "aliases": [
+        "credits_icon",
+        "Credits Icon",
+        "assets/topbar/icon_credits_coin_96x96.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "resource_icon",
+        "Resource"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_critical_star_icon",
+      "name": "Critical Star Icon",
+      "type": "image",
+      "category": "critical_visual",
+      "artKey": "critical_star_icon",
+      "mimeType": "image/png",
+      "width": 96,
+      "height": 96,
+      "aspectRatio": "96:96",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://84002014642489",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://84002014642489",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/UI/critical-star-96x96.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "UI",
+          "id": "hud.critical",
+          "name": "hud.critical"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:144 CriticalStarIcon",
+          "name": "src/client/CityHud.client.lua:144 CriticalStarIcon / Image"
+        }
+      ],
+      "aliases": [
+        "critical_star_icon",
+        "Critical Star Icon",
+        "assets/UI/critical-star-96x96.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "critical_visual",
+        "UI"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_cyber_security",
+      "name": "Cyber Security",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "cyber_security",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://138274774662038",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://138274774662038",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/modern-10-cyber-security-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1136 Cyber Security",
+          "name": "src/client/CityHud.client.lua:1136 Cyber Security / Image"
+        }
+      ],
+      "aliases": [
+        "cyber_security",
+        "Cyber Security",
+        "assets/icons/technology/modern-10-cyber-security-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_dashboard_background",
+      "name": "Dashboard Background",
+      "type": "image",
+      "category": "panel_texture",
+      "artKey": "dashboard_background",
+      "mimeType": "image/png",
+      "width": 1920,
+      "height": 1080,
+      "aspectRatio": "1920:1080",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://120850482047860",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://120850482047860",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/UI/hud_background_1920x1080.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "UI",
+          "id": "dashboard.panel",
+          "name": "dashboard.panel"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:159 DashboardBackground",
+          "name": "src/client/CityHud.client.lua:159 DashboardBackground / Image"
+        }
+      ],
+      "aliases": [
+        "dashboard_background",
+        "Dashboard Background",
+        "assets/UI/hud_background_1920x1080.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "panel_texture",
+        "UI"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_digital_commerce",
+      "name": "Digital Commerce",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "digital_commerce",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://104717454384162",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://104717454384162",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/modern-09-digital-xommerce-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1135 Digital Commerce",
+          "name": "src/client/CityHud.client.lua:1135 Digital Commerce / Image"
+        }
+      ],
+      "aliases": [
+        "digital_commerce",
+        "Digital Commerce",
+        "assets/icons/technology/modern-09-digital-xommerce-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_digital_government",
+      "name": "Digital Government",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "digital_government",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://104309497191373",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://104309497191373",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/modern-02-digital-government-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1128 Digital Government",
+          "name": "src/client/CityHud.client.lua:1128 Digital Government / Image"
+        }
+      ],
+      "aliases": [
+        "digital_government",
+        "Digital Government",
+        "assets/icons/technology/modern-02-digital-government-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_economic_growth",
+      "name": "Economic Growth",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "economic_growth",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://90840547181684",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://90840547181684",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/industry-06-economic-growth-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1122 Economic Growth",
+          "name": "src/client/CityHud.client.lua:1122 Economic Growth / Image"
+        }
+      ],
+      "aliases": [
+        "economic_growth",
+        "Economic Growth",
+        "assets/icons/technology/industry-06-economic-growth-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_entertainment",
+      "name": "Entertainment",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "entertainment",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://132303144769447",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://132303144769447",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/town-04-entertainment-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1111 Entertainment",
+          "name": "src/client/CityHud.client.lua:1111 Entertainment / Image"
+        }
+      ],
+      "aliases": [
+        "entertainment",
+        "Entertainment",
+        "assets/icons/technology/town-04-entertainment-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_environmental_protection",
+      "name": "Environmental Protection",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "environmental_protection",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://93497038448066",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://93497038448066",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/industry-05-environmental-protection-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1121 Environmental Protection",
+          "name": "src/client/CityHud.client.lua:1121 Environmental Protection / Image"
+        }
+      ],
+      "aliases": [
+        "environmental_protection",
+        "Environmental Protection",
+        "assets/icons/technology/industry-05-environmental-protection-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_era_progression_hex",
+      "name": "Era Progression Hex",
+      "type": "image",
+      "category": "era_progression",
+      "artKey": "era_progression_hex",
+      "mimeType": "image/png",
+      "width": 58,
+      "height": 58,
+      "aspectRatio": "58:58",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://134713324945792",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://134713324945792",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/UI/hex-progression-shape.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Era",
+          "id": "dashboard.era_progression",
+          "name": "dashboard.era_progression"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:163 EraProgressionHex",
+          "name": "src/client/CityHud.client.lua:163 EraProgressionHex / Image"
+        }
+      ],
+      "aliases": [
+        "era_progression_hex",
+        "Era Progression Hex",
+        "assets/UI/hex-progression-shape.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "era_progression",
+        "Era"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_event_activate_button",
+      "name": "Event Activate Button",
+      "type": "image",
+      "category": "event_visual",
+      "artKey": "event_activate_button",
+      "mimeType": "image/png",
+      "width": 358,
+      "height": 53,
+      "aspectRatio": "358:53",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://136020107961949",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://136020107961949",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/buttons/event-button.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Event",
+          "id": "dashboard.active_event",
+          "name": "dashboard.active_event"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:146 EventActivateButton",
+          "name": "src/client/CityHud.client.lua:146 EventActivateButton / Image"
+        }
+      ],
+      "aliases": [
+        "event_activate_button",
+        "Event Activate Button",
+        "assets/buttons/event-button.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "event_visual",
+        "Event"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_events_icon",
+      "name": "Events Icon",
+      "type": "image",
+      "category": "navigation_icon",
+      "artKey": "events_icon",
+      "mimeType": "image/png",
+      "width": 96,
+      "height": 96,
+      "aspectRatio": "96:96",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://109412483529666",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://109412483529666",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/menu/icon_events_96x96.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Event",
+          "id": "navigation.events",
+          "name": "navigation.events"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:124 EventsIcon",
+          "name": "src/client/CityHud.client.lua:124 EventsIcon / Image"
+        }
+      ],
+      "aliases": [
+        "events_icon",
+        "Events Icon",
+        "assets/menu/icon_events_96x96.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "navigation_icon",
+        "Event"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_financial_planning",
+      "name": "Financial Planning",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "financial_planning",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://83547638582175",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://83547638582175",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/town-05-financial-planning-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1112 Financial Planning",
+          "name": "src/client/CityHud.client.lua:1112 Financial Planning / Image"
+        }
+      ],
+      "aliases": [
+        "financial_planning",
+        "Financial Planning",
+        "assets/icons/technology/town-05-financial-planning-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_galaxy_icon",
+      "name": "Galaxy Icon",
+      "type": "image",
+      "category": "navigation_icon",
+      "artKey": "galaxy_icon",
+      "mimeType": "image/png",
+      "width": 96,
+      "height": 96,
+      "aspectRatio": "96:96",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://92678951819674",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://92678951819674",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/menu/icon_galaxy_96x96.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Roblox",
+          "id": "navigation.galaxy",
+          "name": "navigation.galaxy"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:125 GalaxyIcon",
+          "name": "src/client/CityHud.client.lua:125 GalaxyIcon / Image"
+        }
+      ],
+      "aliases": [
+        "galaxy_icon",
+        "Galaxy Icon",
+        "assets/menu/icon_galaxy_96x96.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "navigation_icon",
+        "Roblox"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_global_commerce",
+      "name": "Global Commerce",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "global_commerce",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://131250396616167",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://131250396616167",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/industry-08-global-commerce-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1124 Global Commerce",
+          "name": "src/client/CityHud.client.lua:1124 Global Commerce / Image"
+        }
+      ],
+      "aliases": [
+        "global_commerce",
+        "Global Commerce",
+        "assets/icons/technology/industry-08-global-commerce-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_global_finance",
+      "name": "Global Finance",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "global_finance",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://120384757449319",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://120384757449319",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/modern-05-global-finance-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1131 Global Finance",
+          "name": "src/client/CityHud.client.lua:1131 Global Finance / Image"
+        }
+      ],
+      "aliases": [
+        "global_finance",
+        "Global Finance",
+        "assets/icons/technology/modern-05-global-finance-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_government_administration",
+      "name": "Government Administration",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "government_administration",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://98576635416101",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://98576635416101",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/town-06-government-administration-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1113 Government Administration",
+          "name": "src/client/CityHud.client.lua:1113 Government Administration / Image"
+        }
+      ],
+      "aliases": [
+        "government_administration",
+        "Government Administration",
+        "assets/icons/technology/town-06-government-administration-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_healthcare_systems",
+      "name": "Healthcare Systems",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "healthcare_systems",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://108726917401449",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://108726917401449",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/town-03-healthcare-systems-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1110 Healthcare Systems",
+          "name": "src/client/CityHud.client.lua:1110 Healthcare Systems / Image"
+        }
+      ],
+      "aliases": [
+        "healthcare_systems",
+        "Healthcare Systems",
+        "assets/icons/technology/town-03-healthcare-systems-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_housing_expansion",
+      "name": "Housing Expansion",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "housing_expansion",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://84631615141565",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://84631615141565",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/village-07-housing-expansion-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1105 Housing Expansion",
+          "name": "src/client/CityHud.client.lua:1105 Housing Expansion / Image"
+        }
+      ],
+      "aliases": [
+        "housing_expansion",
+        "Housing Expansion",
+        "assets/icons/technology/village-07-housing-expansion-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_industrial_management",
+      "name": "Industrial Management",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "industrial_management",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://104134111956286",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://104134111956286",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/industry-09-industrial-management-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1125 Industrial Management",
+          "name": "src/client/CityHud.client.lua:1125 Industrial Management / Image"
+        }
+      ],
+      "aliases": [
+        "industrial_management",
+        "Industrial Management",
+        "assets/icons/technology/industry-09-industrial-management-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_infrastructure_expansion",
+      "name": "Infrastructure Expansion",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "infrastructure_expansion",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://75101836183786",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://75101836183786",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/industry-03-infrastructure-expansion-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1119 Infrastructure Expansion",
+          "name": "src/client/CityHud.client.lua:1119 Infrastructure Expansion / Image"
+        }
+      ],
+      "aliases": [
+        "infrastructure_expansion",
+        "Infrastructure Expansion",
+        "assets/icons/technology/industry-03-infrastructure-expansion-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_infrastructure_planning",
+      "name": "Infrastructure Planning",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "infrastructure_planning",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://126532334627395",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://126532334627395",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/village-08-Infrastructure-planning-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1106 Infrastructure Planning",
+          "name": "src/client/CityHud.client.lua:1106 Infrastructure Planning / Image"
+        }
+      ],
+      "aliases": [
+        "infrastructure_planning",
+        "Infrastructure Planning",
+        "assets/icons/technology/village-08-Infrastructure-planning-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_innovation_economy",
+      "name": "Innovation Economy",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "innovation_economy",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://83834775278107",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://83834775278107",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/modern-03-innovation-economy-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1129 Innovation Economy",
+          "name": "src/client/CityHud.client.lua:1129 Innovation Economy / Image"
+        }
+      ],
+      "aliases": [
+        "innovation_economy",
+        "Innovation Economy",
+        "assets/icons/technology/modern-03-innovation-economy-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_leaderboard_panel",
+      "name": "Leaderboard Panel",
+      "type": "image",
+      "category": "leaderboard_panel",
+      "artKey": "leaderboard_panel",
+      "mimeType": "image/png",
+      "width": 852,
+      "height": 606,
+      "aspectRatio": "852:606",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://130675384010731",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://130675384010731",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/UI/leaderboard-main.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "UI",
+          "id": "dashboard.leaderboard",
+          "name": "dashboard.leaderboard"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:166 LeaderboardPanel",
+          "name": "src/client/CityHud.client.lua:166 LeaderboardPanel / Image"
+        }
+      ],
+      "aliases": [
+        "leaderboard_panel",
+        "Leaderboard Panel",
+        "assets/UI/leaderboard-main.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "leaderboard_panel",
+        "UI"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_leadership",
+      "name": "Leadership",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "leadership",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://127230194744643",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://127230194744643",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/survival-04-leadership-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1093 Leadership",
+          "name": "src/client/CityHud.client.lua:1093 Leadership / Image"
+        }
+      ],
+      "aliases": [
+        "leadership",
+        "Leadership",
+        "assets/icons/technology/survival-04-leadership-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_mass_transit",
+      "name": "Mass Transit",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "mass_transit",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://111806218755421",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://111806218755421",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/industry-04-mass-transit-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1120 Mass Transit",
+          "name": "src/client/CityHud.client.lua:1120 Mass Transit / Image"
+        }
+      ],
+      "aliases": [
+        "mass_transit",
+        "Mass Transit",
+        "assets/icons/technology/industry-04-mass-transit-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_merchant_economy",
+      "name": "Merchant Economy",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "merchant_economy",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://131564402562271",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://131564402562271",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/village-03-merchant-economy-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1101 Merchant Economy",
+          "name": "src/client/CityHud.client.lua:1101 Merchant Economy / Image"
+        }
+      ],
+      "aliases": [
+        "merchant_economy",
+        "Merchant Economy",
+        "assets/icons/technology/village-03-merchant-economy-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_national_banking",
+      "name": "National Banking",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "national_banking",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://133469573754562",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://133469573754562",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/town-01-national-banking-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1108 National Banking",
+          "name": "src/client/CityHud.client.lua:1108 National Banking / Image"
+        }
+      ],
+      "aliases": [
+        "national_banking",
+        "National Banking",
+        "assets/icons/technology/town-01-national-banking-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_national_projects",
+      "name": "National Projects",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "national_projects",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://85219866228006",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://85219866228006",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/industry-07-national-projects-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1123 National Projects",
+          "name": "src/client/CityHud.client.lua:1123 National Projects / Image"
+        }
+      ],
+      "aliases": [
+        "national_projects",
+        "National Projects",
+        "assets/icons/technology/industry-07-national-projects-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_objective_panel",
+      "name": "Objective Panel",
+      "type": "image",
+      "category": "panel_texture",
+      "artKey": "objective_panel",
+      "mimeType": "image/png",
+      "width": 351,
+      "height": 105,
+      "aspectRatio": "351:105",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://139560217216021",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://139560217216021",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/UI/objective-351x105.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "UI",
+          "id": "dashboard.panel",
+          "name": "dashboard.panel"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:162 ObjectivePanel",
+          "name": "src/client/CityHud.client.lua:162 ObjectivePanel / Image"
+        }
+      ],
+      "aliases": [
+        "objective_panel",
+        "Objective Panel",
+        "assets/UI/objective-351x105.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "panel_texture",
+        "UI"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_organization",
+      "name": "Organization",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "organization",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://97325323858284",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://97325323858284",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/survival-05-lorganization-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1094 Organization",
+          "name": "src/client/CityHud.client.lua:1094 Organization / Image"
+        }
+      ],
+      "aliases": [
+        "organization",
+        "Organization",
+        "assets/icons/technology/survival-05-lorganization-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_overview_icon",
+      "name": "Overview Icon",
+      "type": "image",
+      "category": "navigation_icon",
+      "artKey": "overview_icon",
+      "mimeType": "image/png",
+      "width": 100,
+      "height": 100,
+      "aspectRatio": "100:100",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://79397960883593",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://79397960883593",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/menu/icon_overview_96x96.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Roblox",
+          "id": "navigation.overview",
+          "name": "navigation.overview"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:119 OverviewIcon",
+          "name": "src/client/CityHud.client.lua:119 OverviewIcon / Image"
+        }
+      ],
+      "aliases": [
+        "overview_icon",
+        "Overview Icon",
+        "assets/menu/icon_overview_96x96.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "navigation_icon",
+        "Roblox"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_population_icon",
+      "name": "Population Icon",
+      "type": "image",
+      "category": "resource_icon",
+      "artKey": "population_icon",
+      "mimeType": "image/png",
+      "width": 96,
+      "height": 96,
+      "aspectRatio": "96:96",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://85080367725697",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://85080367725697",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/topbar/icon_population_96x96.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Resource",
+          "id": "hud.resource.population",
+          "name": "hud.resource.population"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/shared/Modules/UI/TopBarAssetManifest.lua:81 PopulationIcon",
+          "name": "src/shared/Modules/UI/TopBarAssetManifest.lua:81 PopulationIcon / Image"
+        }
+      ],
+      "aliases": [
+        "population_icon",
+        "Population Icon",
+        "assets/topbar/icon_population_96x96.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "resource_icon",
+        "Resource"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_power_grid",
+      "name": "Power Grid",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "power_grid",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://87944610525351",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://87944610525351",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/industry-01-power-grid-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1117 Power Grid",
+          "name": "src/client/CityHud.client.lua:1117 Power Grid / Image"
+        }
+      ],
+      "aliases": [
+        "power_grid",
+        "Power Grid",
+        "assets/icons/technology/industry-01-power-grid-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_public_services",
+      "name": "Public Services",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "public_services",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://71291561916561",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://71291561916561",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/village-06-public-services-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1104 Public Services",
+          "name": "src/client/CityHud.client.lua:1104 Public Services / Image"
+        }
+      ],
+      "aliases": [
+        "public_services",
+        "Public Services",
+        "assets/icons/technology/village-06-public-services-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_public_transportation",
+      "name": "Public Transportation",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "public_transportation",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://138496074113455",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://138496074113455",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/town-02-public-tansportation-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1109 Public Transportation",
+          "name": "src/client/CityHud.client.lua:1109 Public Transportation / Image"
+        }
+      ],
+      "aliases": [
+        "public_transportation",
+        "Public Transportation",
+        "assets/icons/technology/town-02-public-tansportation-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_quantum_processor_icon",
+      "name": "Quantum Processor Icon",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "quantum_processor_icon",
+      "mimeType": "image/png",
+      "width": 112,
+      "height": 96,
+      "aspectRatio": "112:96",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://83729850570707",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://83729850570707",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/UI/quantum-processor-logo-upgrade.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:148 QuantumProcessorIcon",
+          "name": "src/client/CityHud.client.lua:148 QuantumProcessorIcon / Image"
+        }
+      ],
+      "aliases": [
+        "quantum_processor_icon",
+        "Quantum Processor Icon",
+        "assets/UI/quantum-processor-logo-upgrade.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_regional_development",
+      "name": "Regional Development",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "regional_development",
+      "mimeType": "image/png",
+      "width": 238,
+      "height": 238,
+      "aspectRatio": "238:238",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://106005399969785",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://106005399969785",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/town-07-regional-development-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1114 Regional Development",
+          "name": "src/client/CityHud.client.lua:1114 Regional Development / Image"
+        }
+      ],
+      "aliases": [
+        "regional_development",
+        "Regional Development",
+        "assets/icons/technology/town-07-regional-development-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_research_icon",
+      "name": "Research Icon",
+      "type": "image",
+      "category": "resource_icon",
+      "artKey": "research_icon",
+      "mimeType": "image/png",
+      "width": 96,
+      "height": 96,
+      "aspectRatio": "96:96",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://79646906444906",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://79646906444906",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/menu/icon_research_96x96.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Resource",
+          "id": "hud.resource.research",
+          "name": "hud.resource.research"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/shared/Modules/UI/TopBarAssetManifest.lua:83 ResearchIcon",
+          "name": "src/shared/Modules/UI/TopBarAssetManifest.lua:83 ResearchIcon / Image"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:121 ResearchIcon",
+          "name": "src/client/CityHud.client.lua:121 ResearchIcon / Image"
+        }
+      ],
+      "aliases": [
+        "research_icon",
+        "Research Icon",
+        "assets/topbar/icon_research_flask_96x96.png",
+        "assets/menu/icon_research_96x96.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "resource_icon",
+        "Resource"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_resource_management",
+      "name": "Resource Management",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "resource_management",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://71161540355608",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://71161540355608",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/survival-01-resource-management-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1090 Resource Management",
+          "name": "src/client/CityHud.client.lua:1090 Resource Management / Image"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/shared/ProjectGenesis/Data/MockGameData.lua:147 visibilityRules",
+          "name": "src/shared/ProjectGenesis/Data/MockGameData.lua:147 visibilityRules / AssetId"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/shared/ProjectGenesis/Data/MockGameData.lua:168 assets",
+          "name": "src/shared/ProjectGenesis/Data/MockGameData.lua:168 assets / AssetId"
+        }
+      ],
+      "aliases": [
+        "resource_management",
+        "Resource Management",
+        "assets/icons/technology/survival-01-resource-management-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_road_systems",
+      "name": "Road Systems",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "road_systems",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://130489632888756",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://130489632888756",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/village-01-road-systems-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1099 Road Systems",
+          "name": "src/client/CityHud.client.lua:1099 Road Systems / Image"
+        }
+      ],
+      "aliases": [
+        "road_systems",
+        "Road Systems",
+        "assets/icons/technology/village-01-road-systems-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_settings_icon",
+      "name": "Settings Icon",
+      "type": "image",
+      "category": "resource_icon",
+      "artKey": "settings_icon",
+      "mimeType": "image/png",
+      "width": 80,
+      "height": 80,
+      "aspectRatio": "80:80",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://134568742596537",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://134568742596537",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/topbar/icon_settings_80x80.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Resource",
+          "id": "hud.resource.settings",
+          "name": "hud.resource.settings"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/shared/Modules/UI/TopBarAssetManifest.lua:88 SettingsIcon",
+          "name": "src/shared/Modules/UI/TopBarAssetManifest.lua:88 SettingsIcon / Image"
+        }
+      ],
+      "aliases": [
+        "settings_icon",
+        "Settings Icon",
+        "assets/topbar/icon_settings_80x80.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "resource_icon",
+        "Resource"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_settlement_planning",
+      "name": "Settlement Planning",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "settlement_planning",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://72998323173395",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://72998323173395",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/survival-06-lsettlement-planning-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1095 Settlement Planning",
+          "name": "src/client/CityHud.client.lua:1095 Settlement Planning / Image"
+        }
+      ],
+      "aliases": [
+        "settlement_planning",
+        "Settlement Planning",
+        "assets/icons/technology/survival-06-lsettlement-planning-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_sidebar_frame",
+      "name": "Sidebar Frame",
+      "type": "image",
+      "category": "panel_texture",
+      "artKey": "sidebar_frame",
+      "mimeType": "image/png",
+      "width": 160,
+      "height": 790,
+      "aspectRatio": "160:790",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://133332255744133",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://133332255744133",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/UI/sidebar_frame_160x790.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "UI",
+          "id": "dashboard.panel",
+          "name": "dashboard.panel"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:160 SidebarFrame",
+          "name": "src/client/CityHud.client.lua:160 SidebarFrame / Image"
+        }
+      ],
+      "aliases": [
+        "sidebar_frame",
+        "Sidebar Frame",
+        "assets/UI/sidebar_frame_160x790.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "panel_texture",
+        "UI"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_singularity_core_icon",
+      "name": "Singularity Core Icon",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "singularity_core_icon",
+      "mimeType": "image/png",
+      "width": 112,
+      "height": 96,
+      "aspectRatio": "112:96",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://84534528591144",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://84534528591144",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/UI/singularity-core-logo-upgrade.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:150 SingularityCoreIcon",
+          "name": "src/client/CityHud.client.lua:150 SingularityCoreIcon / Image"
+        }
+      ],
+      "aliases": [
+        "singularity_core_icon",
+        "Singularity Core Icon",
+        "assets/UI/singularity-core-logo-upgrade.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_smart_cities",
+      "name": "Smart Cities",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "smart_cities",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://129537784382945",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://129537784382945",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/modern-01-smart-cities-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1127 Smart Cities",
+          "name": "src/client/CityHud.client.lua:1127 Smart Cities / Image"
+        }
+      ],
+      "aliases": [
+        "smart_cities",
+        "Smart Cities",
+        "assets/icons/technology/modern-01-smart-cities-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_spaceport_icon",
+      "name": "Spaceport Icon",
+      "type": "image",
+      "category": "navigation_icon",
+      "artKey": "spaceport_icon",
+      "mimeType": "image/png",
+      "width": 96,
+      "height": 96,
+      "aspectRatio": "96:96",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://105730152289089",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://105730152289089",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/menu/icon_spaceports_96x96.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Roblox",
+          "id": "navigation.spaceport",
+          "name": "navigation.spaceport"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:126 SpaceportIcon",
+          "name": "src/client/CityHud.client.lua:126 SpaceportIcon / Image"
+        }
+      ],
+      "aliases": [
+        "spaceport_icon",
+        "Spaceport Icon",
+        "assets/menu/icon_spaceports_96x96.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "navigation_icon",
+        "Roblox"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_storage_systems",
+      "name": "Storage Systems",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "storage_systems",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://100606187619905",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://100606187619905",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/survival-02-storage-systems-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1091 Storage Systems",
+          "name": "src/client/CityHud.client.lua:1091 Storage Systems / Image"
+        }
+      ],
+      "aliases": [
+        "storage_systems",
+        "Storage Systems",
+        "assets/icons/technology/survival-02-storage-systems-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_supply_organization",
+      "name": "Supply Organization",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "supply_organization",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://122042085477203",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://122042085477203",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/village-09-supply-organization-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1107 Supply Organization",
+          "name": "src/client/CityHud.client.lua:1107 Supply Organization / Image"
+        }
+      ],
+      "aliases": [
+        "supply_organization",
+        "Supply Organization",
+        "assets/icons/technology/village-09-supply-organization-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_tax_collection",
+      "name": "Tax Collection",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "tax_collection",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://89908673111529",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://89908673111529",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/village-04-tax-collecton-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1102 Tax Collection",
+          "name": "src/client/CityHud.client.lua:1102 Tax Collection / Image"
+        }
+      ],
+      "aliases": [
+        "tax_collection",
+        "Tax Collection",
+        "assets/icons/technology/village-04-tax-collecton-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_technology_parks",
+      "name": "Technology Parks",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "technology_parks",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://131907904739587",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://131907904739587",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/modern-04-technology-parks-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1130 Technology Parks",
+          "name": "src/client/CityHud.client.lua:1130 Technology Parks / Image"
+        }
+      ],
+      "aliases": [
+        "technology_parks",
+        "Technology Parks",
+        "assets/icons/technology/modern-04-technology-parks-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_top_bar_hex_button",
+      "name": "Top Bar Hex Button",
+      "type": "image",
+      "category": "resource_icon",
+      "artKey": "top_bar_hex_button",
+      "mimeType": "image/png",
+      "width": 96,
+      "height": 96,
+      "aspectRatio": "96:96",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://120486747670611",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://120486747670611",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/topbar/topbar_hex_button_80x80.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Resource",
+          "id": "hud.resource.top_bar_hex_button",
+          "name": "hud.resource.top_bar_hex_button"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/shared/Modules/UI/TopBarAssetManifest.lua:60 TopBarHexButton",
+          "name": "src/shared/Modules/UI/TopBarAssetManifest.lua:60 TopBarHexButton / AssetId"
+        }
+      ],
+      "aliases": [
+        "top_bar_hex_button",
+        "Top Bar Hex Button",
+        "assets/topbar/topbar_hex_button_80x80.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "resource_icon",
+        "Resource"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_top_bar_plus_button",
+      "name": "Top Bar Plus Button",
+      "type": "image",
+      "category": "resource_icon",
+      "artKey": "top_bar_plus_button",
+      "mimeType": "image/png",
+      "width": 56,
+      "height": 56,
+      "aspectRatio": "56:56",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://82799868570489",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://82799868570489",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/topbar/topbar_plus_button_56x56.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Resource",
+          "id": "hud.resource.top_bar_plus_button",
+          "name": "hud.resource.top_bar_plus_button"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/shared/Modules/UI/TopBarAssetManifest.lua:56 TopBarPlusButton",
+          "name": "src/shared/Modules/UI/TopBarAssetManifest.lua:56 TopBarPlusButton / AssetId"
+        }
+      ],
+      "aliases": [
+        "top_bar_plus_button",
+        "Top Bar Plus Button",
+        "assets/topbar/topbar_plus_button_56x56.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "resource_icon",
+        "Resource"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_top_bar_resource_panel_strip",
+      "name": "Top Bar Resource Panel Strip",
+      "type": "image",
+      "category": "resource_icon",
+      "artKey": "top_bar_resource_panel_strip",
+      "mimeType": "image/png",
+      "width": 1920,
+      "height": 104,
+      "aspectRatio": "1920:104",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://81516206378414",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://81516206378414",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/topbar/topbar_resource_panel_1920x104a.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Resource",
+          "id": "hud.resource.top_bar_resource_panel_strip",
+          "name": "hud.resource.top_bar_resource_panel_strip"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/shared/Modules/UI/TopBarAssetManifest.lua:27 TopBarResourcePanelStrip",
+          "name": "src/shared/Modules/UI/TopBarAssetManifest.lua:27 TopBarResourcePanelStrip / AssetId"
+        }
+      ],
+      "aliases": [
+        "top_bar_resource_panel_strip",
+        "Top Bar Resource Panel Strip",
+        "assets/topbar/topbar_resource_panel_1920x104a.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "resource_icon",
+        "Resource"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_town_planning",
+      "name": "Town Planning",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "town_planning",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://91748088891408",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://91748088891408",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/village-02-town-planning-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1100 Town Planning",
+          "name": "src/client/CityHud.client.lua:1100 Town Planning / Image"
+        }
+      ],
+      "aliases": [
+        "town_planning",
+        "Town Planning",
+        "assets/icons/technology/village-02-town-planning-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_trophy_icon",
+      "name": "Trophy Icon",
+      "type": "image",
+      "category": "resource_icon",
+      "artKey": "trophy_icon",
+      "mimeType": "image/png",
+      "width": 80,
+      "height": 80,
+      "aspectRatio": "80:80",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://136305496385375",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://136305496385375",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/topbar/icon_trophy_80x80.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Resource",
+          "id": "hud.resource.trophy",
+          "name": "hud.resource.trophy"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/shared/Modules/UI/TopBarAssetManifest.lua:87 TrophyIcon",
+          "name": "src/shared/Modules/UI/TopBarAssetManifest.lua:87 TrophyIcon / Image"
+        }
+      ],
+      "aliases": [
+        "trophy_icon",
+        "Trophy Icon",
+        "assets/topbar/icon_trophy_80x80.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "resource_icon",
+        "Resource"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_upgrade_button",
+      "name": "Upgrade Button",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "upgrade_button",
+      "mimeType": "image/png",
+      "width": 310,
+      "height": 94,
+      "aspectRatio": "310:94",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://118768043950365",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://118768043950365",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/UI/upgrade-button-primary.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:147 UpgradeButton",
+          "name": "src/client/CityHud.client.lua:147 UpgradeButton / Image"
+        }
+      ],
+      "aliases": [
+        "upgrade_button",
+        "Upgrade Button",
+        "assets/UI/upgrade-button-primary.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_upgrade_panel_structure",
+      "name": "Upgrade Panel Structure",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "upgrade_panel_structure",
+      "mimeType": "image/png",
+      "width": 920,
+      "height": 420,
+      "aspectRatio": "920:420",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://137465475952770",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://137465475952770",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/UI/folder-tabs-base-920.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:165 UpgradePanelStructure",
+          "name": "src/client/CityHud.client.lua:165 UpgradePanelStructure / Image"
+        }
+      ],
+      "aliases": [
+        "upgrade_panel_structure",
+        "Upgrade Panel Structure",
+        "assets/UI/folder-tabs-base-920.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_upgrades_icon",
+      "name": "Upgrades Icon",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "upgrades_icon",
+      "mimeType": "image/png",
+      "width": 96,
+      "height": 96,
+      "aspectRatio": "96:96",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://128289681864521",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://128289681864521",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/menu/icon_upgrades_96x96.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:122 UpgradesIcon",
+          "name": "src/client/CityHud.client.lua:122 UpgradesIcon / Image"
+        }
+      ],
+      "aliases": [
+        "upgrades_icon",
+        "Upgrades Icon",
+        "assets/menu/icon_upgrades_96x96.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_urban_ai",
+      "name": "Urban Ai",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "urban_ai",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://125663802888322",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://125663802888322",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/modern-08-urban-ai-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1134 Urban AI",
+          "name": "src/client/CityHud.client.lua:1134 Urban AI / Image"
+        }
+      ],
+      "aliases": [
+        "urban_ai",
+        "Urban Ai",
+        "assets/icons/technology/modern-08-urban-ai-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_village_administration",
+      "name": "Village Administration",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "village_administration",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://79740861850613",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://79740861850613",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/village-05-village-administration-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1103 Village Administration",
+          "name": "src/client/CityHud.client.lua:1103 Village Administration / Image"
+        }
+      ],
+      "aliases": [
+        "village_administration",
+        "Village Administration",
+        "assets/icons/technology/village-05-village-administration-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_village_records",
+      "name": "Village Records",
+      "type": "image",
+      "category": "upgrade_icon",
+      "artKey": "village_records",
+      "mimeType": "image/png",
+      "width": 230,
+      "height": 230,
+      "aspectRatio": "230:230",
+      "fileSizeBytes": 0,
+      "status": "mapped",
+      "notes": "Imported from Roblox art manifest. Web publish is pending.",
+      "previewUrl": "rbxassetid://83673803316095",
+      "storagePath": "",
+      "platformMappings": {
+        "roblox": {
+          "assetId": "rbxassetid://83673803316095",
+          "status": "mapped",
+          "publishedAt": "2026-07-12T23:38:23.912Z"
+        },
+        "web": {
+          "path": "",
+          "status": "Needs Web Publish",
+          "sourceFile": "assets/icons/technology/survival-09-village-records-128.png"
+        }
+      },
+      "usageReferences": [
+        {
+          "type": "Research",
+          "id": "upgrades.list",
+          "name": "upgrades.list"
+        },
+        {
+          "type": "roblox_instance",
+          "id": "src/client/CityHud.client.lua:1098 Village Records",
+          "name": "src/client/CityHud.client.lua:1098 Village Records / Image"
+        }
+      ],
+      "aliases": [
+        "village_records",
+        "Village Records",
+        "assets/icons/technology/survival-09-village-records-128.png"
+      ],
+      "tags": [
+        "roblox_manifest",
+        "upgrade_icon",
+        "Research"
+      ],
+      "importedFrom": "Project Genesis Roblox",
+      "importedAt": "2026-07-12T23:38:23.912Z",
+      "updatedAt": "2026-07-12T23:38:23.918Z"
+    }
+  ],
+  "variants": [],
+  "history": [
+    {
+      "importId": "game-art-import-1783899503919",
+      "sourceProject": "Project Genesis Roblox",
+      "sourceType": "roblox_project",
+      "timestamp": "2026-07-12T23:38:23.918Z",
+      "importedFiles": 96,
+      "matchedAssets": 0,
+      "createdAssets": 95,
+      "updatedAssets": 0,
+      "ignoredFiles": 0,
+      "conflicts": 1,
+      "warnings": 14,
+      "user": "studio"
+    }
+  ]
+}

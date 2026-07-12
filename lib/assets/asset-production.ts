@@ -1,8 +1,9 @@
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { getGameData } from "@/lib/data";
-import { applyGameArtImport, getGameArtImportWorkspaceState, getMergedAssetLibraryRows } from "@/lib/assets/game-art-import";
+import { getGameData, getRows } from "@/lib/data";
+import { applyGameArtImport, getGameArtImportWorkspaceState, getMergedAssetLibraryRows, upsertAppliedGameArtAssets } from "@/lib/assets/game-art-import";
+import type { AssetDefinition } from "@/types/runtime";
 
 type Row = Record<string, unknown>;
 
@@ -198,6 +199,7 @@ export type AssetProductionState = {
   importHistory: Awaited<ReturnType<typeof getGameArtImportWorkspaceState>>["history"];
   derivativePresets: AssetDerivativePreset[];
   requirementProfiles: AssetRequirementProfile[];
+  robloxManifestReports: RobloxArtManifestImportReport[];
   audit: Array<{
     category: string;
     recordsRequiringAssets: number;
@@ -217,6 +219,64 @@ export type AssetProductionState = {
     failedProcessingJobs: number;
     engineMappingsIncomplete: number;
   };
+};
+
+export type RobloxArtManifestAsset = {
+  id?: string;
+  name?: string;
+  category?: string;
+  usage?: string[];
+  robloxAssetId?: string | number | null;
+  robloxUri?: string;
+  sourceFile?: string | null;
+  artKey?: string | null;
+  iconKey?: string | null;
+  width?: number | null;
+  height?: number | null;
+  status?: string;
+  instances?: Array<{ path?: string; property?: string }>;
+};
+
+export type RobloxArtManifest = {
+  schemaVersion?: string;
+  generatedAt?: string;
+  sourceRoot?: string;
+  summary?: Record<string, number>;
+  assets?: RobloxArtManifestAsset[];
+  unusedManifestEntries?: Array<Record<string, unknown>>;
+  unusedLocalSourceFiles?: string[];
+  brokenEmptyReferences?: Array<Record<string, unknown>>;
+  audioReferencesExcluded?: Array<Record<string, unknown>>;
+};
+
+export type RobloxArtManifestImportReport = {
+  id: string;
+  schemaVersion: string;
+  importedAt: string;
+  generatedAt: string;
+  sourceProject: string;
+  sourceRoot: string;
+  manifestPath: string;
+  importedAssets: number;
+  matchedAssets: number;
+  newAssets: number;
+  duplicateAssets: number;
+  sourceFilesCreated: number;
+  robloxOnlyAssets: number;
+  placeholderAssets: Array<{ asset: string; usage: string; replacementRequired: string }>;
+  unusedStudioAssets: Array<{ id: string; name: string; artKey: string; reason: string; action: "merge" | "archive" | "ignore" }>;
+  unusedLocalFiles: Array<{ path: string; action: "merge" | "archive" | "ignore" }>;
+  conflicts: Array<{ assetId: string; artKey: string; existingRobloxAssetId: string; incomingRobloxAssetId: string; resolution: string }>;
+  matched: Array<{ manifestId: string; assetId: string; matchedBy: string; robloxAssetId: string }>;
+  created: Array<{ manifestId: string; assetId: string; artKey: string; robloxAssetId: string }>;
+  updatedEraCompletion: Array<{ eraId: string; completionPercent: number; status: string }>;
+  updatedProductionDashboard: {
+    totalAssets: number;
+    sourceFilesUploaded: number;
+    missingAssets: number;
+    engineMappingsIncomplete: number;
+  };
+  notes: string[];
 };
 
 export type AssetReviewEvent = {
@@ -249,6 +309,7 @@ type AssetProductionOverride = {
   status?: string;
   productionStatus?: AssetProductionStatus;
   approvalStatus?: AssetApprovalStatus;
+  notes?: string;
   approvedAt?: string;
   publishedAt?: string;
   reviewEvents?: AssetReviewEvent[];
@@ -275,6 +336,7 @@ type AssetProductionStore = {
   missingRequirements: Record<string, MissingRequirementOverride>;
   processingJobs: ProcessingJobRecord[];
   productionTasks: ProductionTaskRecord[];
+  robloxManifestReports?: RobloxArtManifestImportReport[];
 };
 
 export type AssetProductionActionInput = {
@@ -338,10 +400,11 @@ async function readProductionStore(): Promise<AssetProductionStore> {
       derivativePresets: Array.isArray(parsed.derivativePresets) ? parsed.derivativePresets : [],
       missingRequirements: parsed.missingRequirements && typeof parsed.missingRequirements === "object" ? parsed.missingRequirements : {},
       processingJobs: Array.isArray(parsed.processingJobs) ? parsed.processingJobs : [],
-      productionTasks: Array.isArray(parsed.productionTasks) ? parsed.productionTasks : []
+      productionTasks: Array.isArray(parsed.productionTasks) ? parsed.productionTasks : [],
+      robloxManifestReports: Array.isArray(parsed.robloxManifestReports) ? parsed.robloxManifestReports : []
     };
   } catch {
-    return { assets: {}, derivativePresets: [], missingRequirements: {}, processingJobs: [], productionTasks: [] };
+    return { assets: {}, derivativePresets: [], missingRequirements: {}, processingJobs: [], productionTasks: [], robloxManifestReports: [] };
   }
 }
 
@@ -551,7 +614,14 @@ function approvalStatusFor(row: Row): AssetApprovalStatus {
 function usageForAsset(row: Row, usage: Awaited<ReturnType<typeof getMergedAssetLibraryRows>>["usage"]) {
   const art = artKeyFor(row);
   const icon = iconKeyFor(row);
-  return [...(usage.assetUsageByArtKey[art] ?? []), ...(icon ? usage.assetUsageByIconKey[icon] ?? [] : [])];
+  const manifestUsage = Array.isArray(row.usage_references)
+    ? row.usage_references
+        .map((item) => item && typeof item === "object" ? item as Record<string, unknown> : null)
+        .filter(Boolean)
+        .map((item) => ({ type: text(item!.type, "roblox"), id: text(item!.id, text(item!.name)), name: text(item!.name, text(item!.id)) }))
+    : [];
+  return [...(usage.assetUsageByArtKey[art] ?? []), ...(icon ? usage.assetUsageByIconKey[icon] ?? [] : []), ...manifestUsage]
+    .filter((item, index, rows) => rows.findIndex((candidate) => candidate.type === item.type && candidate.id === item.id && candidate.name === item.name) === index);
 }
 
 function completion(profile: AssetRequirementProfile, derivatives: AssetDerivativeRecord[]) {
@@ -622,7 +692,7 @@ function productionAssetFor(row: Row, usage: Awaited<ReturnType<typeof getMerged
     requirementProfileId: profile.id,
     tags: list(row.tags),
     aliases: list(row.aliases),
-    notes: text(row.notes),
+    notes: text(override.notes ?? row.notes),
     completionPercent: readiness.percent,
     missingRequirements: readiness.missing,
     createdAt: text(row.created_at ?? row.imported_at),
@@ -761,6 +831,7 @@ export async function getAssetProductionState(): Promise<AssetProductionState> {
     importHistory: importState.history,
     derivativePresets: presets,
     requirementProfiles,
+    robloxManifestReports: store.robloxManifestReports ?? [],
     audit,
     dashboard: {
       totalAssets: assets.length,
@@ -822,6 +893,343 @@ function normalizedRobloxAssetId(value: unknown) {
     throw new Error("Roblox asset ID must include a numeric ID.");
   }
   return `rbxassetid://${digits}`;
+}
+
+function safeRobloxAssetId(value: unknown) {
+  try {
+    return normalizedRobloxAssetId(value);
+  } catch {
+    return "";
+  }
+}
+
+function platformRobloxId(row: Row) {
+  const mappings = (row.platform_mappings ?? row.platformMappings ?? {}) as Record<string, Record<string, unknown> | undefined>;
+  return safeRobloxAssetId(row.roblox_asset_id ?? row.robloxAssetId ?? mappings.roblox?.assetId);
+}
+
+function manifestArtKey(asset: RobloxArtManifestAsset) {
+  return text(asset.artKey) || slug(text(asset.name ?? asset.id));
+}
+
+function manifestIconKey(asset: RobloxArtManifestAsset) {
+  return text(asset.iconKey);
+}
+
+function manifestAssetId(asset: RobloxArtManifestAsset) {
+  return text(asset.id) || assetIdForArtKey(manifestArtKey(asset));
+}
+
+function manifestUsageReferences(asset: RobloxArtManifestAsset) {
+  const usage = (asset.usage ?? []).map((item) => ({ type: usageType(item), id: item, name: item }));
+  const instances = (asset.instances ?? []).map((item) => ({
+    type: "roblox_instance",
+    id: text(item.path),
+    name: [text(item.path), text(item.property)].filter(Boolean).join(" / ")
+  }));
+  return [...usage, ...instances].filter((item) => item.id || item.name);
+}
+
+function usageType(value: string) {
+  const normalized = slug(value);
+  if (normalized.includes("era")) return "Era";
+  if (normalized.includes("resource")) return "Resource";
+  if (normalized.includes("building")) return "Building";
+  if (normalized.includes("research") || normalized.includes("upgrade") || normalized.includes("technology")) return "Research";
+  if (normalized.includes("mission")) return "Mission";
+  if (normalized.includes("planet")) return "Planet";
+  if (normalized.includes("event")) return "Event";
+  if (normalized.includes("hud") || normalized.includes("ui") || normalized.includes("dashboard") || normalized.includes("topbar")) return "UI";
+  return "Roblox";
+}
+
+function derivativeTypeForManifest(asset: RobloxArtManifestAsset) {
+  const category = slug(text(asset.category));
+  const key = slug(`${asset.artKey ?? ""} ${asset.name ?? ""}`);
+  if (category.includes("icon") || key.includes("icon") || (Number(asset.width) <= 256 && Number(asset.height) <= 256)) return "icon";
+  if (category.includes("button") || key.includes("button")) return "button";
+  if (category.includes("banner")) return "banner";
+  if (category.includes("background") || key.includes("background")) return "background";
+  if (category.includes("panel") || key.includes("panel")) return "card";
+  return "card";
+}
+
+function sourceRecordForManifest(assetId: string, asset: RobloxArtManifestAsset, now: string, existing: SourceFileRecord[]) {
+  const sourceFile = text(asset.sourceFile);
+  if (!sourceFile) return null;
+  const filename = sourceFile.split(/[\\/]/).pop() || sourceFile;
+  const extension = extensionFor(filename);
+  const existingMatch = existing.find((source) => source.storagePath === sourceFile || source.filename === filename);
+  if (existingMatch) return { record: { ...existingMatch, isCurrent: true }, created: false };
+  const record: SourceFileRecord = {
+    id: `source_${assetId}_${hash(sourceFile)}`,
+    assetId,
+    filename,
+    extension,
+    mimeType: mimeFor(extension),
+    storagePath: sourceFile,
+    fileSizeBytes: 0,
+    checksum: hash(sourceFile),
+    version: existing.length ? Math.max(...existing.map((source) => source.version)) + 1 : 1,
+    versionLabel: existing.length ? `v${Math.max(...existing.map((source) => source.version)) + 1}` : "v1",
+    uploadedAt: now,
+    uploadedBy: "roblox-manifest",
+    isCurrent: true,
+    archived: false,
+    previewUrl: "",
+    previewStatus: "missing",
+    width: Number(asset.width) || null,
+    height: Number(asset.height) || null,
+    notes: "Imported from Roblox art manifest. Source file exists in the Roblox project and needs Studio-managed Web derivative publishing."
+  };
+  return { record, created: true };
+}
+
+function derivativeForManifest(assetId: string, asset: RobloxArtManifestAsset, sourceFileId: string | null, robloxAssetId: string, now: string): AssetDerivativeRecord {
+  const width = Number(asset.width) || null;
+  const height = Number(asset.height) || null;
+  return {
+    id: `derivative_${assetId}_roblox_${hash(robloxAssetId)}`,
+    assetId,
+    sourceFileId,
+    derivativeType: derivativeTypeForManifest(asset),
+    format: "PNG",
+    width,
+    height,
+    aspectRatio: width && height ? `${width}:${height}` : null,
+    quality: null,
+    storagePath: robloxAssetId,
+    publicUrl: robloxAssetId,
+    checksum: hash(robloxAssetId),
+    generatedAt: now,
+    generationMethod: "roblox_manifest_import",
+    status: "imported",
+    approvalStatus: "pending",
+    publishStatus: "draft",
+    platformMappings: { roblox: { assetId: robloxAssetId } },
+    archived: false
+  };
+}
+
+function assetDefinitionForManifest(assetId: string, asset: RobloxArtManifestAsset, robloxAssetId: string, sourceProject: string, now: string): AssetDefinition {
+  const artKey = manifestArtKey(asset);
+  const iconKey = manifestIconKey(asset);
+  const width = Number(asset.width) || null;
+  const height = Number(asset.height) || null;
+  const sourceFile = text(asset.sourceFile);
+  return {
+    id: assetId,
+    name: text(asset.name, artKey.replaceAll("_", " ")),
+    type: "image",
+    category: text(asset.category, "roblox-art"),
+    artKey,
+    iconKey: iconKey || undefined,
+    sourceFileName: undefined,
+    sourceExtension: undefined,
+    mimeType: "image/png",
+    width,
+    height,
+    aspectRatio: width && height ? `${width}:${height}` : null,
+    fileSizeBytes: 0,
+    status: sourceFile ? "mapped" : "source_missing",
+    notes: sourceFile ? "Imported from Roblox art manifest. Web publish is pending." : "Imported from Roblox art manifest as Roblox-ID-only; source file is missing.",
+    previewUrl: robloxAssetId,
+    storagePath: "",
+    platformMappings: {
+      roblox: { assetId: robloxAssetId, status: "mapped", publishedAt: now },
+      ...(sourceFile ? { web: { path: "", status: "Needs Web Publish", sourceFile } as unknown as AssetDefinition["platformMappings"]["web"] } : {})
+    },
+    usageReferences: manifestUsageReferences(asset),
+    aliases: [...new Set([manifestAssetId(asset), text(asset.name), text(asset.sourceFile)].filter(Boolean))],
+    tags: [...new Set(["roblox_manifest", text(asset.category), ...((asset.usage ?? []).map(usageType))].filter(Boolean))],
+    importedFrom: sourceProject,
+    importedAt: now,
+    updatedAt: now
+  };
+}
+
+function matchRobloxManifestAsset(asset: RobloxArtManifestAsset, rows: Row[]) {
+  const artKey = slug(manifestArtKey(asset));
+  const iconKey = slug(manifestIconKey(asset));
+  const robloxAssetId = safeRobloxAssetId(asset.robloxUri ?? asset.robloxAssetId);
+  const canonicalIds = new Set([manifestAssetId(asset), assetIdForArtKey(manifestArtKey(asset))].map(slug));
+  const checks: Array<[string, (row: Row) => boolean]> = [
+    ["canonical artKey", (row) => slug(artKeyFor(row)) === artKey],
+    ["iconKey", (row) => Boolean(iconKey) && slug(iconKeyFor(row)) === iconKey],
+    ["existing Roblox asset ID", (row) => Boolean(robloxAssetId) && platformRobloxId(row) === robloxAssetId],
+    ["canonical asset ID", (row) => canonicalIds.has(slug(text(row.id)))]
+  ];
+
+  for (const [matchedBy, predicate] of checks) {
+    const match = rows.find(predicate);
+    if (match) return { assetId: text(match.id), matchedBy, row: match };
+  }
+
+  return null;
+}
+
+export async function importRobloxArtManifest(manifest: RobloxArtManifest, options: { manifestPath?: string; sourceProject?: string } = {}) {
+  const now = new Date().toISOString();
+  const store = await readProductionStore();
+  const [{ rows }, legacyAssets] = await Promise.all([getMergedAssetLibraryRows(), getRows("assets")]);
+  const legacyAssetIds = new Set((legacyAssets as Row[]).map((row) => text(row.id)));
+  const manifestAssets = manifest.assets ?? [];
+  const importedDefinitions: AssetDefinition[] = [];
+  const matched: RobloxArtManifestImportReport["matched"] = [];
+  const created: RobloxArtManifestImportReport["created"] = [];
+  const conflicts: RobloxArtManifestImportReport["conflicts"] = [];
+  const notes: string[] = [];
+  const seenAssetIds = new Set<string>();
+  let matchedAssets = 0;
+  let newAssets = 0;
+  let duplicateAssets = 0;
+  let sourceFilesCreated = 0;
+  let robloxOnlyAssets = 0;
+
+  for (const manifestAsset of manifestAssets) {
+    const robloxAssetId = safeRobloxAssetId(manifestAsset.robloxUri ?? manifestAsset.robloxAssetId);
+    if (!robloxAssetId) {
+      notes.push(`Skipped ${manifestAsset.id ?? manifestAsset.name ?? "unknown"} because it has no Roblox asset ID.`);
+      continue;
+    }
+
+    const match = matchRobloxManifestAsset(manifestAsset, rows);
+    const assetId = match?.assetId ?? assetIdForArtKey(manifestArtKey(manifestAsset));
+    const wasDuplicate = seenAssetIds.has(assetId);
+    if (wasDuplicate) duplicateAssets += 1;
+    seenAssetIds.add(assetId);
+
+    if (match) {
+      matchedAssets += 1;
+      matched.push({ manifestId: manifestAssetId(manifestAsset), assetId, matchedBy: match.matchedBy, robloxAssetId });
+    } else if (!wasDuplicate) {
+      newAssets += 1;
+      created.push({ manifestId: manifestAssetId(manifestAsset), assetId, artKey: manifestArtKey(manifestAsset), robloxAssetId });
+    }
+
+    const override = assetOverrideFor(store, assetId);
+    const existingRobloxId = safeRobloxAssetId((override.platformMappings?.roblox as Record<string, unknown> | undefined)?.assetId ?? platformRobloxId(match?.row ?? {}));
+    const mappingConflict = existingRobloxId && existingRobloxId !== robloxAssetId;
+    const sourceResult = sourceRecordForManifest(assetId, manifestAsset, now, override.sourceFiles ?? []);
+    const sourceFiles = sourceResult
+      ? (override.sourceFiles ?? []).map((source) => ({ ...source, isCurrent: false })).filter((source) => source.id !== sourceResult.record.id).concat(sourceResult.record)
+      : override.sourceFiles ?? [];
+    const sourceFileId = sourceResult?.record.id ?? null;
+    if (sourceResult?.created) sourceFilesCreated += 1;
+    if (!text(manifestAsset.sourceFile)) robloxOnlyAssets += 1;
+
+    const incomingDerivative = derivativeForManifest(assetId, manifestAsset, sourceFileId, robloxAssetId, now);
+    const derivatives = (override.derivatives ?? []).filter((derivative) => derivative.id !== incomingDerivative.id).concat(incomingDerivative);
+    const nextPlatformMappings = { ...(override.platformMappings ?? {}) };
+
+    if (mappingConflict) {
+      conflicts.push({
+        assetId,
+        artKey: manifestArtKey(manifestAsset),
+        existingRobloxAssetId: existingRobloxId,
+        incomingRobloxAssetId: robloxAssetId,
+        resolution: "Kept existing mapping; incoming Roblox ID requires review."
+      });
+    } else {
+      nextPlatformMappings.roblox = { assetId: robloxAssetId, status: "mapped", publishedAt: now };
+    }
+
+    if (text(manifestAsset.sourceFile) && !(nextPlatformMappings.web as Record<string, unknown> | undefined)?.path) {
+      nextPlatformMappings.web = { path: "", status: "Needs Web Publish", sourceFile: text(manifestAsset.sourceFile) };
+    }
+
+    saveAssetOverride(store, assetId, {
+      sourceFiles,
+      derivatives,
+      platformMappings: nextPlatformMappings,
+      productionStatus: text(manifestAsset.sourceFile) ? "mapping_required" : "blocked",
+      status: text(manifestAsset.sourceFile) ? "mapped" : "source_missing",
+      notes: [
+        text(override.notes),
+        "Imported from Roblox art manifest.",
+        text(manifestAsset.sourceFile) ? "Source Uploaded; Web publish pending." : "Source Missing; Roblox-ID-only asset."
+      ].filter(Boolean).join("\n"),
+      historyEvents: [
+        productionEvent(assetId, "roblox_manifest_imported", "Imported Roblox art manifest mapping", robloxAssetId),
+        ...(override.historyEvents ?? [])
+      ]
+    });
+
+    if (!legacyAssetIds.has(assetId)) {
+      importedDefinitions.push(assetDefinitionForManifest(assetId, manifestAsset, robloxAssetId, options.sourceProject ?? "Project Genesis Roblox", now));
+    }
+  }
+
+  const history = await upsertAppliedGameArtAssets(importedDefinitions, {
+    sourceProject: options.sourceProject ?? "Project Genesis Roblox",
+    sourceType: "roblox_project",
+    importedFiles: manifestAssets.length,
+    matchedAssets,
+    createdAssets: newAssets,
+    updatedAssets: matchedAssets,
+    ignoredFiles: 0,
+    conflicts: conflicts.length,
+    warnings: (manifest.brokenEmptyReferences?.length ?? 0) + robloxOnlyAssets
+  });
+
+  const placeholderAssets = (manifest.brokenEmptyReferences ?? []).map((item) => ({
+    asset: text(item.assetId, "0"),
+    usage: [text(item.key), text(item.path), text(item.property)].filter(Boolean).join(" / "),
+    replacementRequired: text(item.reason, "replacement required")
+  }));
+  const unusedStudioAssets = (manifest.unusedManifestEntries ?? []).map((item) => ({
+    id: text(item.id),
+    name: text(item.name),
+    artKey: text(item.artKey),
+    reason: text(item.reason, "unused Studio asset record"),
+    action: "ignore" as const
+  }));
+  const unusedLocalFiles = (manifest.unusedLocalSourceFiles ?? []).map((sourcePath) => ({ path: sourcePath, action: "ignore" as const }));
+
+  store.robloxManifestReports = [{
+    id: `roblox-art-import-${Date.now()}`,
+    schemaVersion: text(manifest.schemaVersion, "unknown"),
+    importedAt: now,
+    generatedAt: text(manifest.generatedAt),
+    sourceProject: options.sourceProject ?? "Project Genesis Roblox",
+    sourceRoot: text(manifest.sourceRoot, "Roblox"),
+    manifestPath: privatePath(options.manifestPath ?? "") ? "[external-roblox-art-manifest]" : options.manifestPath ?? "",
+    importedAssets: manifestAssets.length,
+    matchedAssets,
+    newAssets,
+    duplicateAssets,
+    sourceFilesCreated,
+    robloxOnlyAssets,
+    placeholderAssets,
+    unusedStudioAssets,
+    unusedLocalFiles,
+    conflicts,
+    matched,
+    created,
+    updatedEraCompletion: [],
+    updatedProductionDashboard: {
+      totalAssets: 0,
+      sourceFilesUploaded: 0,
+      missingAssets: 0,
+      engineMappingsIncomplete: 0
+    },
+    notes: [
+      `Upserted ${importedDefinitions.length} imported asset library records (${history.createdAssets} created, ${history.updatedAssets} updated).`,
+      ...notes
+    ]
+  }, ...(store.robloxManifestReports ?? [])].slice(0, 20);
+
+  await writeProductionStore(store);
+  const state = await getAssetProductionState();
+  store.robloxManifestReports[0].updatedProductionDashboard = {
+    totalAssets: state.dashboard.totalAssets,
+    sourceFilesUploaded: state.dashboard.sourceFilesUploaded,
+    missingAssets: state.dashboard.missingAssets,
+    engineMappingsIncomplete: state.dashboard.engineMappingsIncomplete
+  };
+  await writeProductionStore(store);
+
+  return store.robloxManifestReports[0];
 }
 
 function sourceVersion(input: AssetProductionActionInput, currentVersions: SourceFileRecord[]): SourceFileRecord {
@@ -925,8 +1333,18 @@ export async function applyAssetProductionAction(input: AssetProductionActionInp
   const assetId = text(input.assetId);
   const now = new Date().toISOString();
 
-  if (!assetId && !input.action.startsWith("preset.") && !input.action.startsWith("queue.") && !input.action.startsWith("missing.") && !input.action.startsWith("requirement.") && !input.action.startsWith("task.") && !input.action.startsWith("bulk.")) {
+  if (!assetId && !input.action.startsWith("preset.") && !input.action.startsWith("queue.") && !input.action.startsWith("missing.") && !input.action.startsWith("requirement.") && !input.action.startsWith("task.") && !input.action.startsWith("bulk.") && input.action !== "roblox_manifest.import") {
     throw new Error("assetId is required for this production action.");
+  }
+
+  if (input.action === "roblox_manifest.import") {
+    const payload = input.payload ?? {};
+    const manifest = payload.manifest as RobloxArtManifest | undefined;
+    if (!manifest || typeof manifest !== "object") throw new Error("A Roblox art manifest payload is required.");
+    return importRobloxArtManifest(manifest, {
+      manifestPath: text(payload.manifestPath),
+      sourceProject: text(payload.sourceProject, "Project Genesis Roblox")
+    });
   }
 
   if (input.action === "requirement.create_asset") {

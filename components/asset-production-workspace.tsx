@@ -191,6 +191,43 @@ function AssetCard({ asset }: { asset: ProductionAsset }) {
   );
 }
 
+function RobloxManifestReport({ state }: { state: AssetProductionState }) {
+  const report = state.robloxManifestReports[0];
+  if (!report) {
+    return (
+      <WorkspacePanel title="Roblox Art Manifest" icon={GitBranch}>
+        <p className="text-sm leading-6 text-slate-400">No Roblox art manifest has been imported yet.</p>
+      </WorkspacePanel>
+    );
+  }
+
+  return (
+    <WorkspacePanel title="Roblox Art Manifest" icon={GitBranch}>
+      <div className="grid gap-3 sm:grid-cols-3">
+        <WorkspaceMiniStat label="Imported" value={report.importedAssets} />
+        <WorkspaceMiniStat label="Matched" value={report.matchedAssets} />
+        <WorkspaceMiniStat label="New" value={report.newAssets} />
+        <WorkspaceMiniStat label="Sources" value={report.sourceFilesCreated} />
+        <WorkspaceMiniStat label="Placeholders" value={report.placeholderAssets.length} />
+        <WorkspaceMiniStat label="Conflicts" value={report.conflicts.length} />
+      </div>
+      <p className="mt-3 break-all text-xs leading-5 text-slate-500">{report.manifestPath || report.sourceRoot}</p>
+      {report.placeholderAssets.length ? (
+        <div className="mt-4 rounded-md border border-amber-300/20 bg-amber-400/10 p-3">
+          <p className="text-sm font-black text-amber-100">Placeholder cleanup required</p>
+          <p className="mt-1 text-sm text-slate-300">{report.placeholderAssets.length} references still use rbxassetid://0.</p>
+        </div>
+      ) : null}
+      {report.conflicts.length ? (
+        <div className="mt-3 rounded-md border border-rose-300/20 bg-rose-400/10 p-3">
+          <p className="text-sm font-black text-rose-100">Mapping review required</p>
+          <p className="mt-1 text-sm text-slate-300">{report.conflicts.length} existing Roblox mappings were preserved because the incoming IDs differed.</p>
+        </div>
+      ) : null}
+    </WorkspacePanel>
+  );
+}
+
 function Dashboard({ state }: { state: AssetProductionState }) {
   return (
     <div className="grid gap-5 xl:grid-cols-[1fr_26rem]">
@@ -262,6 +299,8 @@ function Dashboard({ state }: { state: AssetProductionState }) {
             {!state.importHistory.length ? <p className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3 text-sm font-semibold text-slate-300">No imports recorded yet.</p> : null}
           </div>
         </WorkspacePanel>
+
+        <RobloxManifestReport state={state} />
       </aside>
     </div>
   );
@@ -384,19 +423,46 @@ function ProcessingQueue({ state }: { state: AssetProductionState }) {
 
 function ImportHistory({ state }: { state: AssetProductionState }) {
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
-      {state.importHistory.map((entry) => (
-        <WorkspacePanel key={entry.importId} title={entry.sourceProject} icon={UploadCloud}>
-          <div className="grid gap-3 sm:grid-cols-4">
-            <WorkspaceMiniStat label="Files" value={entry.importedFiles} />
-            <WorkspaceMiniStat label="Matched" value={entry.matchedAssets} />
-            <WorkspaceMiniStat label="Created" value={entry.createdAssets} />
-            <WorkspaceMiniStat label="Warnings" value={entry.warnings} />
-          </div>
-          <p className="mt-3 text-sm text-slate-400">{entry.sourceType} / {new Date(entry.timestamp).toLocaleString()}</p>
-        </WorkspacePanel>
-      ))}
-      {!state.importHistory.length ? <WorkspacePanel><p className="text-sm font-semibold text-slate-300">No import history yet.</p></WorkspacePanel> : null}
+    <div className="space-y-5">
+      <div className="grid gap-4 lg:grid-cols-2">
+        {state.importHistory.map((entry) => (
+          <WorkspacePanel key={entry.importId} title={entry.sourceProject} icon={UploadCloud}>
+            <div className="grid gap-3 sm:grid-cols-4">
+              <WorkspaceMiniStat label="Files" value={entry.importedFiles} />
+              <WorkspaceMiniStat label="Matched" value={entry.matchedAssets} />
+              <WorkspaceMiniStat label="Created" value={entry.createdAssets} />
+              <WorkspaceMiniStat label="Warnings" value={entry.warnings} />
+            </div>
+            <p className="mt-3 text-sm text-slate-400">{entry.sourceType} / {new Date(entry.timestamp).toLocaleString()}</p>
+          </WorkspacePanel>
+        ))}
+        {!state.importHistory.length ? <WorkspacePanel><p className="text-sm font-semibold text-slate-300">No import history yet.</p></WorkspacePanel> : null}
+      </div>
+
+      <WorkspacePanel title="Roblox Manifest Reports" icon={GitBranch}>
+        <div className="grid gap-3 lg:grid-cols-2">
+          {state.robloxManifestReports.map((report) => (
+            <div key={report.id} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="font-black text-white">{report.sourceProject}</p>
+                  <p className="mt-1 text-xs text-slate-500">{new Date(report.importedAt).toLocaleString()}</p>
+                </div>
+                <WorkspaceBadge value={report.conflicts.length ? "review" : "imported"} />
+              </div>
+              <div className="mt-4 grid grid-cols-3 gap-2">
+                <WorkspaceMiniStat label="Imported" value={report.importedAssets} />
+                <WorkspaceMiniStat label="Matched" value={report.matchedAssets} />
+                <WorkspaceMiniStat label="New" value={report.newAssets} />
+                <WorkspaceMiniStat label="Placeholders" value={report.placeholderAssets.length} />
+                <WorkspaceMiniStat label="Unused Studio" value={report.unusedStudioAssets.length} />
+                <WorkspaceMiniStat label="Unused Local" value={report.unusedLocalFiles.length} />
+              </div>
+            </div>
+          ))}
+          {!state.robloxManifestReports.length ? <p className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3 text-sm font-semibold text-slate-300">No Roblox manifest reports yet.</p> : null}
+        </div>
+      </WorkspacePanel>
     </div>
   );
 }

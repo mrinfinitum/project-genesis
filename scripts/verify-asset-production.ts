@@ -180,7 +180,7 @@ async function main() {
       dueDate: "2026-08-01",
       productionNotes: "Created from verification requirement."
     }
-  });
+  }) as { assetId: string; existing: boolean };
   const duplicateRequirement = await assetProduction.applyAssetProductionAction({
     action: "requirement.create_asset",
     missingRequirementId: requirementId,
@@ -189,7 +189,7 @@ async function main() {
       artKey: "verify_era_icon_requirement",
       iconKey: "verify_era_icon_requirement"
     }
-  });
+  }) as { assetId: string; existing: boolean };
   assert(createdRequirement.assetId === duplicateRequirement.assetId, "Requirement asset duplicate prevention returned a different asset ID.");
   assert(duplicateRequirement.existing === true, "Requirement asset duplicate prevention did not report an existing asset.");
 
