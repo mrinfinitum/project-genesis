@@ -35,6 +35,12 @@ function isPublishedGameContentRead(request: NextRequest) {
   return pathname === "/api/game-content/manifest" || pathname === "/api/game-content/snapshot" || pathname === "/api/game-content/prototype-snapshot";
 }
 
+function isPublicPublishedRuntimeExportRead(request: NextRequest) {
+  if (request.method !== "GET") return false;
+  const { pathname } = request.nextUrl;
+  return pathname === "/api/export/game-runtime-data.json" || pathname === "/api/export/roblox-game-data.json";
+}
+
 function jsonError(message: string, status: number) {
   return NextResponse.json({ error: message }, { status });
 }
@@ -42,7 +48,7 @@ function jsonError(message: string, status: number) {
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  if (!hasSupabaseAuthConfig() || exportTokenAllows(request) || isPublishedGameContentRead(request)) {
+  if (!hasSupabaseAuthConfig() || exportTokenAllows(request) || isPublishedGameContentRead(request) || isPublicPublishedRuntimeExportRead(request)) {
     return NextResponse.next();
   }
 

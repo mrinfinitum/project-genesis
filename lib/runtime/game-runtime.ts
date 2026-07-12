@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { civilizationAges } from "@/data/civilization-identity";
@@ -329,6 +330,8 @@ function metadata(overrides: Partial<RuntimeMetadata> = {}): RuntimeMetadata {
   return {
     schemaVersion: gameRuntimeSchemaVersion,
     contentVersion: 1,
+    checksum: "",
+    accessLevel: "studio-internal",
     importedAt: new Date().toISOString(),
     importedFrom: "existing_project_migration",
     sourceProject: "Project Genesis Studio",
@@ -395,8 +398,62 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
   };
 }
 
+function stableStringify(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map(stableStringify).join(",")}]`;
+  if (value && typeof value === "object") {
+    return `{${Object.entries(value as Record<string, unknown>)
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([key, item]) => `${JSON.stringify(key)}:${stableStringify(item)}`)
+      .join(",")}}`;
+  }
+  return JSON.stringify(value);
+}
+
+function checksumFor(value: unknown) {
+  return createHash("sha256").update(stableStringify(value)).digest("hex");
+}
+
+function publicAsset(asset: AssetDefinition): AssetDefinition {
+  return {
+    ...asset,
+    notes: "",
+    platformMappings: {
+      ...(asset.platformMappings.roblox?.assetId ? { roblox: { assetId: asset.platformMappings.roblox.assetId } } : {})
+    }
+  };
+}
+
+function withPublicMetadata<T extends GameRuntimeData | RobloxRuntimeExportPayload>(
+  payload: T,
+  validationStatus: RuntimeMetadata["validationStatus"]
+): T {
+  const withoutChecksum = {
+    ...payload,
+    metadata: {
+      ...payload.metadata,
+      checksum: "",
+      accessLevel: "public-published" as const,
+      environment: "published",
+      validationStatus
+    }
+  };
+  return {
+    ...withoutChecksum,
+    metadata: {
+      ...withoutChecksum.metadata,
+      checksum: checksumFor(withoutChecksum)
+    }
+  };
+}
+
 export async function buildCanonicalRuntimeExportPayload(): Promise<CanonicalRuntimeExportPayload> {
-  return sortRuntimeData(await getGameRuntimeData());
+  const sorted = sortRuntimeData(await getGameRuntimeData());
+  const safePayload = {
+    ...sorted,
+    assets: sorted.assets.map(publicAsset)
+  };
+  const validation = validateGameRuntimeData(safePayload);
+  return withPublicMetadata(safePayload, validation.status);
 }
 
 export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
@@ -481,7 +538,7 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
 
 export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxRuntimeExportPayload {
   const sorted = sortRuntimeData(runtimeData);
-  return {
+  const payload: RobloxRuntimeExportPayload = {
     metadata: {
       ...sorted.metadata,
       target: "roblox",
@@ -505,6 +562,8 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     balance: sorted.balance,
     clientHints: sorted.clientProfiles.roblox ?? sorted.clientProfiles.default
   };
+  const validation = validateRobloxRuntimePayload(payload);
+  return withPublicMetadata(payload, validation.status);
 }
 
 export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload) {
