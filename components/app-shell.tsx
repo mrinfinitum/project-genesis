@@ -15,6 +15,7 @@ import {
   Cpu,
   Database,
   FileCode2,
+  FileCheck2,
   FlaskConical,
   Gauge,
   Gem,
@@ -157,6 +158,7 @@ const navigationGroups: NavigationGroup[] = [
     systemIds: ["unlock-matrix"],
     items: [
       { href: "/game-engine-exports", label: "Game Engine Exports", icon: FileCode2 },
+      { href: "/content-releases", label: "Content Releases", icon: FileCheck2 },
       { href: "/building-relationships", label: "Relationship Graph", icon: Network },
       { href: "/validation-engine", label: "Validation Center", icon: Database },
       { href: "/building-chains", label: "Balance Designer", icon: Gauge },
