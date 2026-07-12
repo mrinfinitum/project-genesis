@@ -94,7 +94,7 @@ export type UpgradeDefinition = {
 };
 
 export type PlatformAssetMappings = {
-  web?: { path: string };
+  web?: { path: string; status?: string; publishedAt?: string };
   roblox?: { assetId: string; assetType?: string; notes?: string; status?: string; publishedAt?: string };
   unity?: { addressableKey: string; status?: string };
   unreal?: { assetPath: string; status?: string };

@@ -26,7 +26,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 3;
+export const gameRuntimeContentVersion = 4;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -593,7 +593,16 @@ function publicAsset(asset: AssetDefinition): AssetDefinition {
     ...safeAsset,
     notes: "",
     platformMappings: {
-      ...(asset.platformMappings.roblox?.assetId ? { roblox: { assetId: asset.platformMappings.roblox.assetId } } : {})
+      ...(asset.platformMappings.roblox?.assetId ? { roblox: { assetId: asset.platformMappings.roblox.assetId } } : {}),
+      ...(asset.platformMappings.web?.path && !asset.platformMappings.web.path.includes("/Users/") && !asset.platformMappings.web.path.includes("studio-private://")
+        ? {
+            web: {
+              path: asset.platformMappings.web.path,
+              ...(asset.platformMappings.web.status ? { status: asset.platformMappings.web.status } : {}),
+              ...(asset.platformMappings.web.publishedAt ? { publishedAt: asset.platformMappings.web.publishedAt } : {})
+            }
+          }
+        : {})
     }
   };
 }

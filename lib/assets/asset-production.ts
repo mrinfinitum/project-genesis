@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { getGameData, getRows } from "@/lib/data";
 import { applyGameArtImport, getGameArtImportWorkspaceState, getMergedAssetLibraryRows, upsertAppliedGameArtAssets } from "@/lib/assets/game-art-import";
@@ -200,6 +200,7 @@ export type AssetProductionState = {
   derivativePresets: AssetDerivativePreset[];
   requirementProfiles: AssetRequirementProfile[];
   robloxManifestReports: RobloxArtManifestImportReport[];
+  webPublishReports: RobloxArtWebPublishReport[];
   audit: Array<{
     category: string;
     recordsRequiringAssets: number;
@@ -279,6 +280,25 @@ export type RobloxArtManifestImportReport = {
   notes: string[];
 };
 
+export type RobloxArtWebPublishReport = {
+  id: string;
+  publishedAt: string;
+  sourceRoot: string;
+  webMappingsCreated: number;
+  dashboardAssetsWebReady: number;
+  dashboardAssetsTotal: number;
+  missingWebDerivatives: Array<{ assetId: string; artKey: string; reason: string; robloxAssetId: string }>;
+  placeholders: Array<{ asset: string; usage: string; replacementRequired: string }>;
+  sourceMissingTasks: Array<{ taskId: string; assetId: string; title: string }>;
+  placeholderTasks: Array<{ taskId: string; title: string; usage: string }>;
+  unresolvedConflicts: RobloxArtManifestImportReport["conflicts"];
+  dashboardReadiness: Array<{ assetId: string; artKey: string; category: string; priorityGroup: string; webReady: boolean; path: string; reason: string }>;
+  copiedFiles: Array<{ assetId: string; from: string; to: string; publicPath: string; width: number | null; height: number | null; mimeType: string }>;
+  skippedFiles: Array<{ assetId: string; sourceFile: string; reason: string }>;
+  contentVersion: number;
+  notes: string[];
+};
+
 export type AssetReviewEvent = {
   id: string;
   assetId: string;
@@ -337,6 +357,7 @@ type AssetProductionStore = {
   processingJobs: ProcessingJobRecord[];
   productionTasks: ProductionTaskRecord[];
   robloxManifestReports?: RobloxArtManifestImportReport[];
+  webPublishReports?: RobloxArtWebPublishReport[];
 };
 
 export type AssetProductionActionInput = {
@@ -401,10 +422,11 @@ async function readProductionStore(): Promise<AssetProductionStore> {
       missingRequirements: parsed.missingRequirements && typeof parsed.missingRequirements === "object" ? parsed.missingRequirements : {},
       processingJobs: Array.isArray(parsed.processingJobs) ? parsed.processingJobs : [],
       productionTasks: Array.isArray(parsed.productionTasks) ? parsed.productionTasks : [],
-      robloxManifestReports: Array.isArray(parsed.robloxManifestReports) ? parsed.robloxManifestReports : []
+      robloxManifestReports: Array.isArray(parsed.robloxManifestReports) ? parsed.robloxManifestReports : [],
+      webPublishReports: Array.isArray(parsed.webPublishReports) ? parsed.webPublishReports : []
     };
   } catch {
-    return { assets: {}, derivativePresets: [], missingRequirements: {}, processingJobs: [], productionTasks: [], robloxManifestReports: [] };
+    return { assets: {}, derivativePresets: [], missingRequirements: {}, processingJobs: [], productionTasks: [], robloxManifestReports: [], webPublishReports: [] };
   }
 }
 
@@ -832,6 +854,7 @@ export async function getAssetProductionState(): Promise<AssetProductionState> {
     derivativePresets: presets,
     requirementProfiles,
     robloxManifestReports: store.robloxManifestReports ?? [],
+    webPublishReports: store.webPublishReports ?? [],
     audit,
     dashboard: {
       totalAssets: assets.length,
@@ -1009,6 +1032,256 @@ function derivativeForManifest(assetId: string, asset: RobloxArtManifestAsset, s
     platformMappings: { roblox: { assetId: robloxAssetId } },
     archived: false
   };
+}
+
+const webPublishableExtensions = new Set([".png", ".jpg", ".jpeg", ".webp", ".svg"]);
+const blockedSourceExtensions = new Set([".psd", ".psb", ".ai"]);
+
+function safePublicFilename(assetId: string, source: SourceFileRecord) {
+  const extension = source.extension || extensionFor(source.filename) || ".png";
+  return `${slug(assetId)}${extension.toLowerCase()}`;
+}
+
+function webDerivativeType(assetId: string, source: SourceFileRecord) {
+  const key = slug(`${assetId} ${source.filename}`);
+  if (key.includes("icon") || (Number(source.width) <= 256 && Number(source.height) <= 256)) return "icon";
+  if (key.includes("button")) return "button";
+  if (key.includes("background")) return "background";
+  return "web";
+}
+
+function dashboardPriorityGroup(assetId: string, category: string, usageReferences: Array<{ type: string; id: string; name: string }>) {
+  const haystack = slug([assetId, category, ...usageReferences.flatMap((usage) => [usage.type, usage.id, usage.name])].join(" "));
+  if (/civilization|crest|identity/.test(haystack)) return "civilization crest";
+  if (/dashboard|hero|background/.test(haystack)) return "dashboard hero";
+  if (/topbar|resource|credits|population|research|energy/.test(haystack)) return "top HUD resource icons";
+  if (/menu|navigation|sidebar|overview|buildings|events|galaxy|spaceport|upgrades/.test(haystack)) return "navigation icons";
+  if (/click|ring|interface|hand/.test(haystack)) return "click interface";
+  if (/auto|automation|robot/.test(haystack)) return "automation icon";
+  if (/critical|star/.test(haystack)) return "critical star";
+  if (/era|progression|hex/.test(haystack)) return "era nodes/icons";
+  if (/upgrade|technology|science/.test(haystack)) return "upgrade icons";
+  if (/event/.test(haystack)) return "event art";
+  if (/alignment/.test(haystack)) return "alignment icons";
+  if (/boost/.test(haystack)) return "boost icons";
+  if (/panel|frame|decorative|hud/.test(haystack)) return "panel decorative art";
+  return "";
+}
+
+function webPublishedDerivative(input: {
+  assetId: string;
+  source: SourceFileRecord;
+  publicPath: string;
+  diskPath: string;
+  now: string;
+}): AssetDerivativeRecord {
+  return {
+    id: `derivative_${input.assetId}_web_${hash(input.publicPath)}`,
+    assetId: input.assetId,
+    sourceFileId: input.source.id,
+    derivativeType: webDerivativeType(input.assetId, input.source),
+    format: input.source.extension.replace(".", "").toUpperCase() || "PNG",
+    width: input.source.width ?? null,
+    height: input.source.height ?? null,
+    aspectRatio: input.source.width && input.source.height ? `${input.source.width}:${input.source.height}` : null,
+    quality: null,
+    storagePath: input.diskPath,
+    publicUrl: input.publicPath,
+    checksum: hash(input.publicPath),
+    generatedAt: input.now,
+    generationMethod: "web_derivative_publish",
+    status: "approved",
+    approvalStatus: "approved",
+    publishStatus: "published",
+    platformMappings: { web: { path: input.publicPath } },
+    archived: false
+  };
+}
+
+function taskExists(tasks: ProductionTaskRecord[], id: string) {
+  return tasks.some((task) => task.id === id || task.requirementId === id);
+}
+
+function replacementTask(input: { id: string; title: string; linkedObject: string; notes: string; priority?: MissingAssetRequirement["priority"] }): ProductionTaskRecord {
+  const now = new Date().toISOString();
+  return {
+    id: input.id,
+    requirementId: input.id,
+    era: "Dashboard",
+    linkedObject: input.linkedObject,
+    requirementType: "web-art",
+    dimensions: "TBD",
+    format: "PNG/WebP",
+    priority: input.priority ?? "high",
+    assignedArtist: "",
+    dueDate: "",
+    assetLink: "/assets/missing",
+    sourceUploadLink: "/game-art-import",
+    status: "open",
+    createdAt: now,
+    updatedAt: now,
+    notes: input.notes
+  };
+}
+
+export async function publishImportedRobloxArtForWeb(options: { sourceRoot?: string; publicRoot?: string } = {}) {
+  const now = new Date().toISOString();
+  const sourceRoot = path.resolve(options.sourceRoot ?? path.join(process.cwd(), "Roblox"));
+  const publicRoot = path.resolve(options.publicRoot ?? path.join(process.cwd(), "public", "assets", "roblox-art"));
+  const store = await readProductionStore();
+  const latestManifestReport = store.robloxManifestReports?.[0];
+  const copiedFiles: RobloxArtWebPublishReport["copiedFiles"] = [];
+  const skippedFiles: RobloxArtWebPublishReport["skippedFiles"] = [];
+  const missingWebDerivatives: RobloxArtWebPublishReport["missingWebDerivatives"] = [];
+  const dashboardReadiness: RobloxArtWebPublishReport["dashboardReadiness"] = [];
+  const sourceMissingTasks: RobloxArtWebPublishReport["sourceMissingTasks"] = [];
+  const placeholderTasks: RobloxArtWebPublishReport["placeholderTasks"] = [];
+  const assetRows = Object.entries(store.assets).sort(([left], [right]) => left.localeCompare(right));
+
+  for (const [assetId, override] of assetRows) {
+    const robloxAssetId = safeRobloxAssetId((override.platformMappings?.roblox as Record<string, unknown> | undefined)?.assetId);
+    if (!robloxAssetId) continue;
+
+    const currentSource = (override.sourceFiles ?? []).find((source) => source.isCurrent && !source.archived) ?? (override.sourceFiles ?? []).find((source) => !source.archived);
+    if (!currentSource) {
+      missingWebDerivatives.push({ assetId, artKey: assetId.replace(/^asset_/, ""), reason: "Source Missing", robloxAssetId });
+      const taskId = `task_source_missing_${assetId}`;
+      if (!taskExists(store.productionTasks, taskId)) {
+        const title = `Create source art for ${assetId}`;
+        const task = replacementTask({
+          id: taskId,
+          title,
+          linkedObject: assetId,
+          notes: "Roblox-ID-only asset requires source art before Web publishing.",
+          priority: "critical"
+        });
+        store.productionTasks.push(task);
+        sourceMissingTasks.push({ taskId, assetId, title });
+      }
+      continue;
+    }
+
+    const extension = currentSource.extension || extensionFor(currentSource.filename);
+    if (blockedSourceExtensions.has(extension) || !webPublishableExtensions.has(extension)) {
+      skippedFiles.push({ assetId, sourceFile: currentSource.storagePath, reason: `Unsupported Web publish format ${extension || "(none)"}` });
+      missingWebDerivatives.push({ assetId, artKey: assetId.replace(/^asset_/, ""), reason: "Web Derivative Missing", robloxAssetId });
+      continue;
+    }
+
+    const sourcePath = path.resolve(sourceRoot, currentSource.storagePath);
+    let sourceStat;
+    try {
+      sourceStat = await stat(sourcePath);
+    } catch {
+      skippedFiles.push({ assetId, sourceFile: currentSource.storagePath, reason: "Source file not found under configured Roblox source root." });
+      missingWebDerivatives.push({ assetId, artKey: assetId.replace(/^asset_/, ""), reason: "Source file missing", robloxAssetId });
+      continue;
+    }
+    if (!sourceStat.isFile()) {
+      skippedFiles.push({ assetId, sourceFile: currentSource.storagePath, reason: "Source path is not a file." });
+      missingWebDerivatives.push({ assetId, artKey: assetId.replace(/^asset_/, ""), reason: "Source path is not a file", robloxAssetId });
+      continue;
+    }
+
+    const filename = safePublicFilename(assetId, currentSource);
+    const outputDir = path.join(publicRoot, assetId);
+    const outputPath = path.join(outputDir, filename);
+    const publicPath = `/assets/roblox-art/${assetId}/${filename}`;
+    await mkdir(outputDir, { recursive: true });
+    await copyFile(sourcePath, outputPath);
+
+    const webDerivative = webPublishedDerivative({ assetId, source: currentSource, publicPath, diskPath: path.relative(process.cwd(), outputPath), now });
+    const historyEvents = override.historyEvents ?? [];
+    const hasPublishedHistory = historyEvents.some((event) => event.eventType === "web_derivative_published" && event.notes === publicPath);
+    saveAssetOverride(store, assetId, {
+      derivatives: (override.derivatives ?? []).filter((derivative) => derivative.id !== webDerivative.id).concat(webDerivative),
+      platformMappings: {
+        ...(override.platformMappings ?? {}),
+        web: { path: publicPath, status: "published", publishedAt: now }
+      },
+      status: "web_published",
+      productionStatus: "published",
+      approvalStatus: "approved",
+      publishedAt: now,
+      historyEvents: hasPublishedHistory
+        ? historyEvents
+        : [
+            productionEvent(assetId, "web_derivative_published", "Published Web derivative from Roblox art source", publicPath),
+            ...historyEvents
+          ]
+    });
+    copiedFiles.push({
+      assetId,
+      from: currentSource.storagePath,
+      to: path.relative(process.cwd(), outputPath),
+      publicPath,
+      width: currentSource.width ?? null,
+      height: currentSource.height ?? null,
+      mimeType: currentSource.mimeType
+    });
+  }
+
+  for (const placeholder of latestManifestReport?.placeholderAssets ?? []) {
+    const taskId = `task_placeholder_${hash(`${placeholder.usage}:${placeholder.replacementRequired}`)}`;
+    if (!taskExists(store.productionTasks, taskId)) {
+      const title = `Replace placeholder art: ${placeholder.usage || placeholder.asset}`;
+      const task = replacementTask({
+        id: taskId,
+        title,
+        linkedObject: placeholder.usage || placeholder.asset,
+        notes: placeholder.replacementRequired,
+        priority: "high"
+      });
+      store.productionTasks.push(task);
+      placeholderTasks.push({ taskId, title, usage: placeholder.usage });
+    }
+  }
+
+  await writeProductionStore(store);
+  const state = await getAssetProductionState();
+  for (const asset of state.assets.filter((asset) => asset.platformMappings.roblox)) {
+    const priorityGroup = dashboardPriorityGroup(asset.id, asset.category, asset.usageReferences);
+    if (!priorityGroup) continue;
+    const webPath = (asset.platformMappings.web as Record<string, unknown> | undefined)?.path;
+    const webReady = typeof webPath === "string" && webPath.startsWith("/assets/roblox-art/");
+    dashboardReadiness.push({
+      assetId: asset.id,
+      artKey: asset.artKey,
+      category: asset.category,
+      priorityGroup,
+      webReady,
+      path: webReady ? webPath : "",
+      reason: webReady ? "Published Web derivative" : asset.sourceFiles.length ? "Web derivative missing" : "Source missing"
+    });
+  }
+
+  const report: RobloxArtWebPublishReport = {
+    id: `roblox-web-publish-${Date.now()}`,
+    publishedAt: now,
+    sourceRoot: privatePath(sourceRoot) ? "[external-roblox-source-root]" : sourceRoot,
+    webMappingsCreated: copiedFiles.length,
+    dashboardAssetsWebReady: dashboardReadiness.filter((item) => item.webReady).length,
+    dashboardAssetsTotal: dashboardReadiness.length,
+    missingWebDerivatives,
+    placeholders: latestManifestReport?.placeholderAssets ?? [],
+    sourceMissingTasks,
+    placeholderTasks,
+    unresolvedConflicts: latestManifestReport?.conflicts ?? [],
+    dashboardReadiness,
+    copiedFiles,
+    skippedFiles,
+    contentVersion: 4,
+    notes: [
+      "Published PNG/JPG/WebP/SVG Roblox art sources as public Studio Web derivatives.",
+      "Roblox IDs were preserved and not modified.",
+      "PSD/PSB/AI/private source masters are not published."
+    ]
+  };
+
+  const nextStore = await readProductionStore();
+  nextStore.webPublishReports = [report, ...(nextStore.webPublishReports ?? [])].slice(0, 20);
+  await writeProductionStore(nextStore);
+  return report;
 }
 
 function assetDefinitionForManifest(assetId: string, asset: RobloxArtManifestAsset, robloxAssetId: string, sourceProject: string, now: string): AssetDefinition {
@@ -1333,7 +1606,7 @@ export async function applyAssetProductionAction(input: AssetProductionActionInp
   const assetId = text(input.assetId);
   const now = new Date().toISOString();
 
-  if (!assetId && !input.action.startsWith("preset.") && !input.action.startsWith("queue.") && !input.action.startsWith("missing.") && !input.action.startsWith("requirement.") && !input.action.startsWith("task.") && !input.action.startsWith("bulk.") && input.action !== "roblox_manifest.import") {
+  if (!assetId && !input.action.startsWith("preset.") && !input.action.startsWith("queue.") && !input.action.startsWith("missing.") && !input.action.startsWith("requirement.") && !input.action.startsWith("task.") && !input.action.startsWith("bulk.") && input.action !== "roblox_manifest.import" && input.action !== "roblox_web.publish") {
     throw new Error("assetId is required for this production action.");
   }
 
@@ -1344,6 +1617,15 @@ export async function applyAssetProductionAction(input: AssetProductionActionInp
     return importRobloxArtManifest(manifest, {
       manifestPath: text(payload.manifestPath),
       sourceProject: text(payload.sourceProject, "Project Genesis Roblox")
+    });
+  }
+
+  if (input.action === "roblox_web.publish") {
+    const sourceRoot = text(input.payload?.sourceRoot);
+    const publicRoot = text(input.payload?.publicRoot);
+    return publishImportedRobloxArtForWeb({
+      sourceRoot: sourceRoot || undefined,
+      publicRoot: publicRoot || undefined
     });
   }
 

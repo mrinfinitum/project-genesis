@@ -193,6 +193,7 @@ function AssetCard({ asset }: { asset: ProductionAsset }) {
 
 function RobloxManifestReport({ state }: { state: AssetProductionState }) {
   const report = state.robloxManifestReports[0];
+  const webReport = state.webPublishReports[0];
   if (!report) {
     return (
       <WorkspacePanel title="Roblox Art Manifest" icon={GitBranch}>
@@ -222,6 +223,16 @@ function RobloxManifestReport({ state }: { state: AssetProductionState }) {
         <div className="mt-3 rounded-md border border-rose-300/20 bg-rose-400/10 p-3">
           <p className="text-sm font-black text-rose-100">Mapping review required</p>
           <p className="mt-1 text-sm text-slate-300">{report.conflicts.length} existing Roblox mappings were preserved because the incoming IDs differed.</p>
+        </div>
+      ) : null}
+      {webReport ? (
+        <div className="mt-4 rounded-md border border-emerald-300/20 bg-emerald-400/10 p-3">
+          <p className="text-sm font-black text-emerald-100">Web publish readiness</p>
+          <div className="mt-3 grid grid-cols-3 gap-2">
+            <WorkspaceMiniStat label="Web Maps" value={webReport.webMappingsCreated} />
+            <WorkspaceMiniStat label="Dash Ready" value={`${webReport.dashboardAssetsWebReady}/${webReport.dashboardAssetsTotal}`} />
+            <WorkspaceMiniStat label="Missing" value={webReport.missingWebDerivatives.length} />
+          </div>
         </div>
       ) : null}
     </WorkspacePanel>
@@ -462,6 +473,35 @@ function ImportHistory({ state }: { state: AssetProductionState }) {
           ))}
           {!state.robloxManifestReports.length ? <p className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3 text-sm font-semibold text-slate-300">No Roblox manifest reports yet.</p> : null}
         </div>
+      </WorkspacePanel>
+
+      <WorkspacePanel title="Dashboard Web Readiness" icon={PackageCheck}>
+        {state.webPublishReports[0] ? (
+          <div className="space-y-3">
+            <div className="grid gap-3 md:grid-cols-4">
+              <WorkspaceStatTile label="Web Mappings" value={state.webPublishReports[0].webMappingsCreated} />
+              <WorkspaceStatTile label="Dashboard Ready" value={`${state.webPublishReports[0].dashboardAssetsWebReady}/${state.webPublishReports[0].dashboardAssetsTotal}`} />
+              <WorkspaceStatTile label="Missing Web" value={state.webPublishReports[0].missingWebDerivatives.length} />
+              <WorkspaceStatTile label="Placeholders" value={state.webPublishReports[0].placeholders.length} />
+            </div>
+            <div className="grid gap-3 lg:grid-cols-2">
+              {state.webPublishReports[0].dashboardReadiness.slice(0, 24).map((item) => (
+                <div key={item.assetId} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="truncate font-black text-white">{item.artKey}</p>
+                      <p className="mt-1 text-xs uppercase tracking-[0.14em] text-cyan-200">{item.priorityGroup}</p>
+                    </div>
+                    <WorkspaceBadge value={item.webReady ? "web ready" : "missing web"} />
+                  </div>
+                  <p className="mt-2 break-all text-xs text-slate-500">{item.path || item.reason}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <p className="text-sm font-semibold text-slate-300">No Web publish report yet.</p>
+        )}
       </WorkspacePanel>
     </div>
   );
