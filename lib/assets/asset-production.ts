@@ -2,18 +2,23 @@ import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { getGameData } from "@/lib/data";
-import { getGameArtImportWorkspaceState, getMergedAssetLibraryRows } from "@/lib/assets/game-art-import";
+import { applyGameArtImport, getGameArtImportWorkspaceState, getMergedAssetLibraryRows } from "@/lib/assets/game-art-import";
 
 type Row = Record<string, unknown>;
 
 export type AssetProductionStatus =
   | "not_started"
   | "source_uploaded"
+  | "in_progress"
+  | "in_review"
+  | "changes_requested"
+  | "approved"
   | "processing"
   | "derivatives_ready"
   | "mapping_required"
   | "ready_to_publish"
   | "published"
+  | "blocked"
   | "error";
 
 export type AssetApprovalStatus = "pending" | "approved" | "changes_requested" | "rejected";
@@ -124,6 +129,25 @@ export type ProcessingJobRecord = {
   retryCount: number;
 };
 
+export type ProductionTaskRecord = {
+  id: string;
+  requirementId: string;
+  era: string;
+  linkedObject: string;
+  requirementType: string;
+  dimensions: string;
+  format: string;
+  priority: MissingAssetRequirement["priority"];
+  assignedArtist: string;
+  dueDate: string;
+  assetLink: string;
+  sourceUploadLink: string;
+  status: "open" | "in_progress" | "in_review" | "complete" | "cancelled";
+  createdAt: string;
+  updatedAt: string;
+  notes: string;
+};
+
 export type ProductionAsset = {
   id: string;
   name: string;
@@ -165,6 +189,7 @@ export type AssetProductionState = {
   publishedAssets: ProductionAsset[];
   missingRequirements: MissingAssetRequirement[];
   processingJobs: ProcessingJobRecord[];
+  productionTasks: ProductionTaskRecord[];
   importHistory: Awaited<ReturnType<typeof getGameArtImportWorkspaceState>>["history"];
   derivativePresets: AssetDerivativePreset[];
   requirementProfiles: AssetRequirementProfile[];
@@ -232,6 +257,11 @@ type MissingRequirementOverride = {
   priority?: MissingAssetRequirement["priority"];
   notRequired?: boolean;
   requirementProfileId?: string;
+  productionNotes?: string;
+  status?: AssetProductionStatus | "missing";
+  approvalStatus?: AssetApprovalStatus;
+  publishStatus?: "draft" | "ready" | "published" | "stale" | "archived";
+  assetId?: string;
 };
 
 type AssetProductionStore = {
@@ -239,6 +269,7 @@ type AssetProductionStore = {
   derivativePresets: AssetDerivativePreset[];
   missingRequirements: Record<string, MissingRequirementOverride>;
   processingJobs: ProcessingJobRecord[];
+  productionTasks: ProductionTaskRecord[];
 };
 
 export type AssetProductionActionInput = {
@@ -301,10 +332,11 @@ async function readProductionStore(): Promise<AssetProductionStore> {
       assets: parsed.assets && typeof parsed.assets === "object" ? parsed.assets : {},
       derivativePresets: Array.isArray(parsed.derivativePresets) ? parsed.derivativePresets : [],
       missingRequirements: parsed.missingRequirements && typeof parsed.missingRequirements === "object" ? parsed.missingRequirements : {},
-      processingJobs: Array.isArray(parsed.processingJobs) ? parsed.processingJobs : []
+      processingJobs: Array.isArray(parsed.processingJobs) ? parsed.processingJobs : [],
+      productionTasks: Array.isArray(parsed.productionTasks) ? parsed.productionTasks : []
     };
   } catch {
-    return { assets: {}, derivativePresets: [], missingRequirements: {}, processingJobs: [] };
+    return { assets: {}, derivativePresets: [], missingRequirements: {}, processingJobs: [], productionTasks: [] };
   }
 }
 
@@ -376,6 +408,10 @@ function slug(value: string) {
 
 function hash(value: string) {
   return createHash("sha1").update(value).digest("hex").slice(0, 12);
+}
+
+function assetIdForArtKey(artKey: string) {
+  return `asset_${slug(artKey)}`;
 }
 
 function privatePath(value: string) {
@@ -716,6 +752,7 @@ export async function getAssetProductionState(): Promise<AssetProductionState> {
     publishedAssets,
     missingRequirements: missingRequirements.sort((left, right) => left.objectType.localeCompare(right.objectType) || left.objectName.localeCompare(right.objectName)),
     processingJobs,
+    productionTasks: store.productionTasks,
     importHistory: importState.history,
     derivativePresets: presets,
     requirementProfiles,
@@ -731,6 +768,14 @@ export async function getAssetProductionState(): Promise<AssetProductionState> {
       failedProcessingJobs: processingJobs.filter((job) => job.status === "failed").length,
       engineMappingsIncomplete: assets.filter((asset) => !Object.keys(asset.platformMappings).length).length
     }
+  };
+}
+
+export async function getAssetProductionRequirementMetadata() {
+  const store = await readProductionStore();
+  return {
+    missingRequirements: store.missingRequirements,
+    productionTasks: store.productionTasks
   };
 }
 
@@ -838,8 +883,56 @@ export async function applyAssetProductionAction(input: AssetProductionActionInp
   const assetId = text(input.assetId);
   const now = new Date().toISOString();
 
-  if (!assetId && !input.action.startsWith("preset.") && !input.action.startsWith("queue.") && !input.action.startsWith("missing.")) {
+  if (!assetId && !input.action.startsWith("preset.") && !input.action.startsWith("queue.") && !input.action.startsWith("missing.") && !input.action.startsWith("requirement.") && !input.action.startsWith("task.") && !input.action.startsWith("bulk.")) {
     throw new Error("assetId is required for this production action.");
+  }
+
+  if (input.action === "requirement.create_asset") {
+    const payload = input.payload ?? {};
+    const artKey = slug(text(payload.artKey));
+    if (!artKey) throw new Error("artKey is required.");
+    const iconKey = slug(text(payload.iconKey, artKey));
+    const proposedAssetId = text(payload.assetId) || assetIdForArtKey(artKey);
+    const state = await getAssetProductionState();
+    const existing = state.assets.find((asset) => asset.id === proposedAssetId || slug(asset.artKey) === artKey || slug(asset.iconKey) === iconKey);
+    const missingRequirementId = text(input.missingRequirementId ?? payload.missingRequirementId);
+
+    if (!existing) {
+      const result = await applyGameArtImport({
+        sourceProject: "Era Art Inventory",
+        sourceType: "generic_assets",
+        inputType: "json_asset_manifest",
+        files: [{
+          filename: `${artKey}.png`,
+          name: text(payload.assetName, artKey.replaceAll("_", " ")),
+          category: text(payload.category, "eras"),
+          type: text(payload.assetType, "image"),
+          artKey,
+          iconKey,
+          width: numeric(payload.width) || undefined,
+          height: numeric(payload.height) || undefined,
+          notes: text(payload.notes, "Created from Era Art requirement."),
+          tags: ["era-art", text(payload.eraId), text(payload.linkedObjectType), text(payload.requirementType)].filter(Boolean)
+        }]
+      });
+      if (!result.ok) throw new Error("Could not create asset record from requirement.");
+    }
+
+    if (missingRequirementId) {
+      const existingMissing = store.missingRequirements[missingRequirementId] ?? { id: missingRequirementId };
+      store.missingRequirements[missingRequirementId] = {
+        ...existingMissing,
+        assetId: existing?.id ?? proposedAssetId,
+        status: existingMissing.status ?? "not_started",
+        priority: (text(payload.priority, existingMissing.priority ?? "medium") as MissingAssetRequirement["priority"]),
+        assignedArtist: text(payload.assignedArtist, existingMissing.assignedArtist),
+        dueDate: text(payload.dueDate, existingMissing.dueDate),
+        productionNotes: text(payload.productionNotes, existingMissing.productionNotes)
+      };
+      await writeProductionStore(store);
+    }
+
+    return { ok: true, action: input.action, assetId: existing?.id ?? proposedAssetId, existing: Boolean(existing) };
   }
 
   if (input.action.startsWith("preset.")) {
@@ -886,10 +979,74 @@ export async function applyAssetProductionAction(input: AssetProductionActionInp
       dueDate: text(input.payload?.dueDate, existing.dueDate),
       priority: (text(input.payload?.priority, existing.priority ?? "medium") as MissingAssetRequirement["priority"]),
       notRequired: input.action === "missing.mark_not_required" ? true : existing.notRequired,
-      requirementProfileId: text(input.payload?.requirementProfileId, existing.requirementProfileId)
+      requirementProfileId: text(input.payload?.requirementProfileId, existing.requirementProfileId),
+      productionNotes: text(input.payload?.productionNotes ?? input.payload?.notes, existing.productionNotes),
+      status: (text(input.payload?.status, existing.status ?? "missing") as MissingRequirementOverride["status"]),
+      approvalStatus: (text(input.payload?.approvalStatus, existing.approvalStatus ?? "pending") as AssetApprovalStatus),
+      publishStatus: (text(input.payload?.publishStatus, existing.publishStatus ?? "draft") as MissingRequirementOverride["publishStatus"]),
+      assetId: text(input.payload?.assetId, existing.assetId)
     };
     await writeProductionStore(store);
     return { ok: true, action: input.action, missingRequirement: store.missingRequirements[missingRequirementId] };
+  }
+
+  if (input.action === "task.generate_missing") {
+    const payload = input.payload ?? {};
+    const requirements = Array.isArray(payload.requirements) ? payload.requirements as Record<string, unknown>[] : [];
+    const ids = new Set(Array.isArray(payload.missingRequirementIds) ? payload.missingRequirementIds.map(String) : []);
+    const requested = requirements.filter((requirement) => ids.size === 0 || ids.has(text(requirement.id)));
+    const openTaskRequirementIds = new Set(store.productionTasks.filter((task) => !["complete", "cancelled"].includes(task.status)).map((task) => task.requirementId));
+    const createdTasks: ProductionTaskRecord[] = [];
+
+    for (const requirement of requested) {
+      const requirementId = text(requirement.id);
+      if (!requirementId || openTaskRequirementIds.has(requirementId)) continue;
+      const task: ProductionTaskRecord = {
+        id: `task_${requirementId}_${hash(`${requirementId}:${now}`)}`,
+        requirementId,
+        era: text(requirement.era),
+        linkedObject: text(requirement.linkedObject),
+        requirementType: text(requirement.requirementType),
+        dimensions: text(requirement.dimensions),
+        format: text(requirement.format),
+        priority: (text(requirement.priority, "medium") as MissingAssetRequirement["priority"]),
+        assignedArtist: text(requirement.assignedArtist),
+        dueDate: text(requirement.dueDate),
+        assetLink: text(requirement.assetLink),
+        sourceUploadLink: text(requirement.sourceUploadLink),
+        status: "open",
+        createdAt: now,
+        updatedAt: now,
+        notes: text(requirement.notes)
+      };
+      store.productionTasks.push(task);
+      createdTasks.push(task);
+      openTaskRequirementIds.add(requirementId);
+    }
+
+    await writeProductionStore(store);
+    return { ok: true, action: input.action, createdTasks, skippedDuplicates: requested.length - createdTasks.length };
+  }
+
+  if (input.action === "bulk.missing_update") {
+    const payload = input.payload ?? {};
+    const ids = Array.isArray(payload.missingRequirementIds) ? payload.missingRequirementIds.map(String) : [];
+    for (const missingRequirementId of ids) {
+      const existing = store.missingRequirements[missingRequirementId] ?? { id: missingRequirementId };
+      store.missingRequirements[missingRequirementId] = {
+        ...existing,
+        assignedArtist: text(payload.assignedArtist, existing.assignedArtist),
+        dueDate: text(payload.dueDate, existing.dueDate),
+        priority: (text(payload.priority, existing.priority ?? "medium") as MissingAssetRequirement["priority"]),
+        productionNotes: text(payload.productionNotes ?? payload.notes, existing.productionNotes),
+        status: (text(payload.status, existing.status ?? "missing") as MissingRequirementOverride["status"]),
+        approvalStatus: (text(payload.approvalStatus, existing.approvalStatus ?? "pending") as AssetApprovalStatus),
+        publishStatus: (text(payload.publishStatus, existing.publishStatus ?? "draft") as MissingRequirementOverride["publishStatus"]),
+        notRequired: payload.notRequired === true ? true : existing.notRequired
+      };
+    }
+    await writeProductionStore(store);
+    return { ok: true, action: input.action, updated: ids.length };
   }
 
   if (input.action.startsWith("queue.")) {

@@ -2,6 +2,7 @@ import { civilizationAges } from "@/data/civilization-identity";
 import { getGameData } from "@/lib/data";
 import {
   getAssetProductionState,
+  getAssetProductionRequirementMetadata,
   requirementProfiles,
   type AssetDerivativePreset,
   type AssetProductionState,
@@ -61,10 +62,26 @@ export type EraArtRequirementCard = {
   completionPercent: number;
   previewUrl: string;
   assetId: string | null;
+  latestDerivativeId: string;
   requiredDimensions: string;
   assignedArtist: string;
   dueDate: string;
   notes: string;
+  currentSourceFilename: string;
+  currentSourceFileId: string;
+  sourceType: string;
+  sourceVersionCount: number;
+  previewStatus: string;
+  derivativeCount: number;
+  productionNotes: string;
+  latestUpdateAt: string;
+  engineReadiness: {
+    web: string;
+    roblox: string;
+    unity: string;
+    unreal: string;
+    godot: string;
+  };
 };
 
 export type EraArtInventory = {
@@ -180,6 +197,15 @@ function statusFor(asset: ProductionAsset | null, derivativeType: string, requir
   return "Draft";
 }
 
+function statusLabel(value: string): EraArtStatus {
+  if (value === "source_uploaded") return "Source Uploaded";
+  if (value === "in_review") return "In Review";
+  if (value === "approved") return "Approved";
+  if (value === "published") return "Published";
+  if (value === "changes_requested" || value === "in_progress" || value === "not_started") return "Draft";
+  return "Missing";
+}
+
 function isComplete(card: EraArtRequirementCard) {
   return ["Approved", "Published", "Needs Roblox Mapping", "Needs Web Publish"].includes(card.status);
 }
@@ -196,6 +222,7 @@ function resourceEraId(discoveryTier: string) {
 
 function cardFromRequirement(input: {
   state: AssetProductionState;
+  metadata: Awaited<ReturnType<typeof getAssetProductionRequirementMetadata>>;
   eraId: string;
   eraName: string;
   group: EraArtGroup;
@@ -210,50 +237,77 @@ function cardFromRequirement(input: {
   notes?: string;
 }): EraArtRequirementCard {
   const asset = assetForKey(input.state.assets, input.key);
+  const cardId = `${input.eraId}:${input.group}:${input.linkedObjectType}:${input.linkedObjectId}:${input.requirement.derivativeType}`;
+  const override = input.metadata.missingRequirements[cardId];
+  const assignedAsset = override?.assetId ? input.state.assets.find((item) => item.id === override.assetId) ?? null : null;
+  const resolvedAsset = assignedAsset ?? asset;
   const preset = presetById(input.state, input.requirement.presetId);
-  const derivative = asset?.derivatives.find((item) => item.derivativeType === input.requirement.derivativeType);
-  const status = statusFor(asset, input.requirement.derivativeType, input.requirement.required);
-  const source = asset?.sourceFiles.find((item) => item.isCurrent) ?? asset?.sourceFiles[0];
+  const derivative = resolvedAsset?.derivatives.find((item) => item.derivativeType === input.requirement.derivativeType);
+  const baseStatus = statusFor(resolvedAsset, input.requirement.derivativeType, input.requirement.required);
+  const status = override?.status ? statusLabel(override.status) : baseStatus;
+  const source = resolvedAsset?.sourceFiles.find((item) => item.isCurrent) ?? resolvedAsset?.sourceFiles[0];
+  const sourceType = source?.extension ? source.extension.replace(".", "").toUpperCase() : "None";
+  const sourceVersionCount = resolvedAsset?.sourceFiles.length ?? 0;
+  const previewStatus = source?.previewStatus ?? (source?.previewUrl ? "ready" : "missing");
+  const platformMappings = resolvedAsset?.platformMappings ?? {};
+  const mappingStatus = (target: string) => platformMappings[target] ? "Ready" : input.requirement.required ? "Missing" : "Optional";
   return {
-    id: `${input.eraId}:${input.group}:${input.linkedObjectType}:${input.linkedObjectId}:${input.requirement.derivativeType}`,
+    id: cardId,
     eraId: input.eraId,
     eraName: input.eraName,
     group: input.group,
-    assetName: asset?.name ?? input.fallbackName,
-    canonicalAssetId: asset?.id ?? `asset_${assetSlug(input.key)}`,
+    assetName: resolvedAsset?.name ?? input.fallbackName,
+    canonicalAssetId: resolvedAsset?.id ?? `asset_${assetSlug(input.key)}`,
     linkedObjectId: input.linkedObjectId,
     linkedObjectName: input.linkedObjectName,
     linkedObjectType: input.linkedObjectType,
-    artKey: asset?.artKey || input.key,
-    iconKey: asset?.iconKey || input.key,
+    artKey: resolvedAsset?.artKey || input.key,
+    iconKey: resolvedAsset?.iconKey || input.key,
     requirementType: input.requirement.derivativeType,
     required: input.requirement.required,
-    priority: input.requirement.priority,
+    priority: override?.priority ?? input.requirement.priority,
     dimensions: derivative?.width && derivative.height ? `${derivative.width} x ${derivative.height}` : preset ? `${preset.width} x ${preset.height}` : "TBD",
     format: derivative?.format || preset?.format || "TBD",
     aspectRatio: derivative?.aspectRatio || preset?.aspectRatio || "TBD",
     derivativePreset: preset?.name ?? input.requirement.presetId,
-    sourcePsdStatus: sourceStatus(asset),
+    sourcePsdStatus: sourceStatus(resolvedAsset),
     sourceVersion: source?.versionLabel ?? "None",
-    derivativeStatus: derivativeStatus(asset, input.requirement.derivativeType),
-    approvalStatus: asset?.approvalStatus ?? "pending",
-    publishStatus: derivative?.publishStatus ?? asset?.productionStatus ?? "missing",
-    robloxMapping: robloxMapping(asset) || "Unmapped",
-    webMapping: webMapping(asset) || "Unpublished",
-    usageCount: asset?.usageReferences.length ?? 0,
+    derivativeStatus: derivativeStatus(resolvedAsset, input.requirement.derivativeType),
+    approvalStatus: override?.approvalStatus ?? resolvedAsset?.approvalStatus ?? "pending",
+    publishStatus: override?.publishStatus ?? derivative?.publishStatus ?? resolvedAsset?.productionStatus ?? "missing",
+    robloxMapping: robloxMapping(resolvedAsset) || "Unmapped",
+    webMapping: webMapping(resolvedAsset) || "Unpublished",
+    usageCount: resolvedAsset?.usageReferences.length ?? 0,
     status,
-    completionPercent: asset?.completionPercent ?? 0,
-    previewUrl: derivative?.publicUrl || asset?.derivatives.find((item) => item.publicUrl)?.publicUrl || source?.previewUrl || "",
-    assetId: asset?.id ?? null,
+    completionPercent: resolvedAsset?.completionPercent ?? 0,
+    previewUrl: derivative?.publicUrl || resolvedAsset?.derivatives.find((item) => item.publicUrl)?.publicUrl || source?.previewUrl || "",
+    assetId: resolvedAsset?.id ?? null,
+    latestDerivativeId: derivative?.id ?? "",
     requiredDimensions: preset ? `${preset.width} x ${preset.height}` : "TBD",
-    assignedArtist: input.assignedArtist ?? "",
-    dueDate: input.dueDate ?? "",
-    notes: input.notes ?? ""
+    assignedArtist: override?.assignedArtist ?? input.assignedArtist ?? "",
+    dueDate: override?.dueDate ?? input.dueDate ?? "",
+    notes: override?.productionNotes ?? input.notes ?? "",
+    currentSourceFilename: source?.filename ?? "No source",
+    currentSourceFileId: source?.id ?? "",
+    sourceType,
+    sourceVersionCount,
+    previewStatus,
+    derivativeCount: resolvedAsset?.derivatives.length ?? 0,
+    productionNotes: override?.productionNotes ?? input.notes ?? "",
+    latestUpdateAt: resolvedAsset?.updatedAt || source?.uploadedAt || derivative?.generatedAt || "",
+    engineReadiness: {
+      web: mappingStatus("web"),
+      roblox: mappingStatus("roblox"),
+      unity: mappingStatus("unity"),
+      unreal: mappingStatus("unreal"),
+      godot: mappingStatus("godot")
+    }
   };
 }
 
 function addProfileCards(cards: EraArtRequirementCard[], input: {
   state: AssetProductionState;
+  metadata: Awaited<ReturnType<typeof getAssetProductionRequirementMetadata>>;
   eraId: string;
   eraName: string;
   group: EraArtGroup;
@@ -268,6 +322,7 @@ function addProfileCards(cards: EraArtRequirementCard[], input: {
   for (const requirement of profile.requirements) {
     cards.push(cardFromRequirement({
       state: input.state,
+      metadata: input.metadata,
       eraId: input.eraId,
       eraName: input.eraName,
       group: input.group,
@@ -283,7 +338,7 @@ function addProfileCards(cards: EraArtRequirementCard[], input: {
 
 export async function getEraArtInventory(eraId: string): Promise<EraArtInventory | null> {
   const normalizedEraId = eraIdFor(eraId);
-  const [state, data] = await Promise.all([getAssetProductionState(), getGameData()]);
+  const [state, data, metadata] = await Promise.all([getAssetProductionState(), getGameData(), getAssetProductionRequirementMetadata()]);
   const eraIndex = civilizationAges.findIndex((era) => eraIdFor(era.name) === normalizedEraId);
   const era = civilizationAges[eraIndex];
   if (!era) return null;
@@ -297,6 +352,7 @@ export async function getEraArtInventory(eraId: string): Promise<EraArtInventory
     const group: EraArtGroup = ["music", "ambient", "cinematic"].includes(requirement.derivativeType) ? "Audio/Video" : "Era Identity";
     cards.push(cardFromRequirement({
       state,
+      metadata,
       eraId: normalizedEraId,
       eraName,
       group,
@@ -313,6 +369,7 @@ export async function getEraArtInventory(eraId: string): Promise<EraArtInventory
   for (const row of researchRows) {
     addProfileCards(cards, {
       state,
+      metadata,
       eraId: normalizedEraId,
       eraName,
       group: "Research",
@@ -328,6 +385,7 @@ export async function getEraArtInventory(eraId: string): Promise<EraArtInventory
   for (const row of buildingRows) {
     addProfileCards(cards, {
       state,
+      metadata,
       eraId: normalizedEraId,
       eraName,
       group: "Buildings",
@@ -343,6 +401,7 @@ export async function getEraArtInventory(eraId: string): Promise<EraArtInventory
   for (const row of resourceRows) {
     addProfileCards(cards, {
       state,
+      metadata,
       eraId: normalizedEraId,
       eraName,
       group: "Resources",
@@ -364,6 +423,7 @@ export async function getEraArtInventory(eraId: string): Promise<EraArtInventory
   for (const requirement of uiRequirements) {
     cards.push(cardFromRequirement({
       state,
+      metadata,
       eraId: normalizedEraId,
       eraName,
       group: "UI",
@@ -386,6 +446,7 @@ export async function getEraArtInventory(eraId: string): Promise<EraArtInventory
     for (const requirement of groupRequirements) {
       cards.push(cardFromRequirement({
         state,
+        metadata,
         eraId: normalizedEraId,
         eraName,
         group,
@@ -399,21 +460,22 @@ export async function getEraArtInventory(eraId: string): Promise<EraArtInventory
     }
   }
 
-  const requiredCards = cards.filter((card) => card.required);
-  const optionalCards = cards.filter((card) => !card.required);
+  const activeCards = cards.filter((card) => !metadata.missingRequirements[card.id]?.notRequired);
+  const requiredCards = activeCards.filter((card) => card.required);
+  const optionalCards = activeCards.filter((card) => !card.required);
   const completedRequired = requiredCards.filter(isComplete);
   const completedOptional = optionalCards.filter(isComplete);
-  const missingCards = cards.filter((card) => card.status === "Missing");
-  const draftCards = cards.filter((card) => card.status === "Draft" || card.status === "Source Uploaded");
-  const inReviewCards = cards.filter((card) => card.status === "In Review");
-  const approvedCards = cards.filter((card) => card.status === "Approved" || card.status === "Needs Roblox Mapping" || card.status === "Needs Web Publish");
-  const publishedCards = cards.filter((card) => card.status === "Published");
+  const missingCards = activeCards.filter((card) => card.status === "Missing");
+  const draftCards = activeCards.filter((card) => card.status === "Draft" || card.status === "Source Uploaded");
+  const inReviewCards = activeCards.filter((card) => card.status === "In Review");
+  const approvedCards = activeCards.filter((card) => card.status === "Approved" || card.status === "Needs Roblox Mapping" || card.status === "Needs Web Publish");
+  const publishedCards = activeCards.filter((card) => card.status === "Published");
   const requiredCompletionPercent = requiredCards.length ? Math.round((completedRequired.length / requiredCards.length) * 100) : 100;
   const optionalCompletionPercent = optionalCards.length ? Math.round((completedOptional.length / optionalCards.length) * 100) : 100;
-  const overallProductionCompletion = cards.length ? Math.round(((completedRequired.length + completedOptional.length) / cards.length) * 100) : 100;
+  const overallProductionCompletion = activeCards.length ? Math.round(((completedRequired.length + completedOptional.length) / activeCards.length) * 100) : 100;
 
   const groups = eraGroups.map((group) => {
-    const groupCards = cards.filter((card) => card.group === group);
+    const groupCards = activeCards.filter((card) => card.group === group);
     return {
       group,
       total: groupCards.length,
@@ -435,7 +497,7 @@ export async function getEraArtInventory(eraId: string): Promise<EraArtInventory
       shortDisplayName: eraName === "Space Age" ? "Space" : eraName,
       description: era.description
     },
-    cards,
+    cards: activeCards,
     groups,
     summary: {
       completionPercent: requiredCompletionPercent,
@@ -453,10 +515,10 @@ export async function getEraArtInventory(eraId: string): Promise<EraArtInventory
       requiredCompletionPercent,
       optionalCompletionPercent,
       overallProductionCompletion,
-      needsRobloxMapping: cards.filter((card) => card.status === "Needs Roblox Mapping" || card.robloxMapping === "Unmapped").length,
-      needsWebPublish: cards.filter((card) => card.status === "Needs Web Publish" || card.webMapping === "Unpublished").length
+      needsRobloxMapping: activeCards.filter((card) => card.status === "Needs Roblox Mapping" || card.robloxMapping === "Unmapped").length,
+      needsWebPublish: activeCards.filter((card) => card.status === "Needs Web Publish" || card.webMapping === "Unpublished").length
     },
-    checklist: cards.map((card) => ({
+    checklist: activeCards.map((card) => ({
       era: eraName,
       group: card.group,
       linkedObject: `${card.linkedObjectType}:${card.linkedObjectId}`,
@@ -471,7 +533,11 @@ export async function getEraArtInventory(eraId: string): Promise<EraArtInventory
       webMapping: card.webMapping,
       assignedArtist: card.assignedArtist,
       dueDate: card.dueDate,
-      notes: card.notes
+      notes: card.notes,
+      currentSourceFilename: card.currentSourceFilename,
+      sourceVersionCount: card.sourceVersionCount,
+      derivativeCount: card.derivativeCount,
+      engineReadiness: JSON.stringify(card.engineReadiness)
     }))
   };
 }
