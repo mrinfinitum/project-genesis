@@ -1,10 +1,18 @@
 import { CommandCenterDashboard } from "@/components/command-center-dashboard";
+import { getAssetProductionState } from "@/lib/assets/asset-production";
+import { getEraArtSummaryByEra } from "@/lib/assets/era-art-inventory";
 import { getGameData } from "@/lib/data";
+import { buildProductionPlan } from "@/lib/production/planner";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const data = await getGameData();
+  const [data, assetProductionState, eraArtSummary] = await Promise.all([
+    getGameData(),
+    getAssetProductionState(),
+    getEraArtSummaryByEra()
+  ]);
+  const productionPlan = buildProductionPlan(data, assetProductionState, eraArtSummary);
   const totalRecords = [
     data.research,
     data.buildings,
@@ -32,6 +40,7 @@ export default async function DashboardPage() {
       metrics={data.dashboard_metrics}
       totalRecords={totalRecords}
       currentCivilizationAge={data.civilization_identity[0]?.current_age}
+      productionPlan={productionPlan}
     />
   );
 }

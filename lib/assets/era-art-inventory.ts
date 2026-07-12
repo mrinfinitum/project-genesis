@@ -117,6 +117,16 @@ export type EraArtInventory = {
   checklist: Array<Record<string, string | number | boolean>>;
 };
 
+export type EraArtSummaryByEra = Record<string, {
+  required: number;
+  complete: number;
+  missing: number;
+  inReview: number;
+  published: number;
+  needsMapping: number;
+  status: string;
+}>;
+
 const eraGroups: EraArtGroup[] = ["Era Identity", "Research", "Buildings", "Resources", "Events", "Missions", "UI", "Audio/Video"];
 
 function slug(value: string) {
@@ -542,7 +552,7 @@ export async function getEraArtInventory(eraId: string): Promise<EraArtInventory
   };
 }
 
-export async function getEraArtSummaryByEra() {
+export async function getEraArtSummaryByEra(): Promise<EraArtSummaryByEra> {
   const inventories = await Promise.all(civilizationAges.map((era) => getEraArtInventory(eraIdFor(era.name))));
   return Object.fromEntries(inventories.filter(Boolean).map((inventory) => [
     inventory!.era.id,

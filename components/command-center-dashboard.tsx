@@ -38,7 +38,9 @@ import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CurrentEraJourney, createDefaultTimeline } from "@/components/civilization-timeline";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { WorkspaceBadge } from "@/components/ui/workspace";
 import { cn } from "@/lib/utils";
+import type { ProductionPlan, ProductionPriority, ProductionQueueItem } from "@/lib/production/planner";
 import type { CodexReadinessItem, CodexTask, DashboardMetric, DataHealthCheck, ProjectSystem, ProjectSystemHistory } from "@/types/schema";
 
 type CommandCenterDashboardProps = {
@@ -49,6 +51,7 @@ type CommandCenterDashboardProps = {
   metrics: DashboardMetric[];
   totalRecords: number;
   currentCivilizationAge?: string;
+  productionPlan?: ProductionPlan;
 };
 
 const groupOrder = ["Core Foundation", "Planet Generation", "Gameplay Database", "Galaxy Content", "Production"];
@@ -549,6 +552,219 @@ function Panel({ title, eyebrow, children }: { title: string; eyebrow: string; c
   );
 }
 
+function priorityTone(priority: ProductionPriority) {
+  return severityStyles[priority] ?? "border-cyan-300/25 bg-cyan-300/10 text-cyan-100";
+}
+
+function fallbackProductionPlan(overallCompletion: number): ProductionPlan {
+  return {
+    overallCompletion,
+    metrics: [
+      { label: "Overall Game Completion", value: overallCompletion, complete: 0, total: 0, detail: "Generated production plan unavailable in this copy." }
+    ],
+    workQueue: { Critical: [], High: [], Medium: [], Low: [] },
+    kanban: ["backlog", "ready", "in_progress", "review", "approved", "published", "done"].map((id) => ({ id: id as ProductionPlan["kanban"][number]["id"], title: id.replaceAll("_", " "), cards: [] })),
+    blockers: [],
+    heatmap: [],
+    timeline: [
+      { label: "Yesterday", assetsCompleted: 0, researchCompleted: 0, buildingsCompleted: 0, artPublished: 0 },
+      { label: "Today", assetsCompleted: 0, researchCompleted: 0, buildingsCompleted: 0, artPublished: 0 },
+      { label: "This Week", assetsCompleted: 0, researchCompleted: 0, buildingsCompleted: 0, artPublished: 0 },
+      { label: "This Month", assetsCompleted: 0, researchCompleted: 0, buildingsCompleted: 0, artPublished: 0 }
+    ],
+    reports: [],
+    generatedAt: new Date().toISOString()
+  };
+}
+
+function ProductionMetricGrid({ plan }: { plan: ProductionPlan }) {
+  return (
+    <section className="grid gap-3 md:grid-cols-3 xl:grid-cols-5">
+      {plan.metrics.map((metric) => (
+        <div key={metric.label} className="rounded-md border border-cyan-400/15 bg-[#07101f]/85 p-4 shadow-[0_0_32px_rgba(56,213,255,0.08)]">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-[0.65rem] font-black uppercase tracking-[0.18em] text-slate-500">{metric.label}</p>
+              <p className="mt-2 text-3xl font-black text-white">{metric.value}%</p>
+            </div>
+            <MiniRing value={metric.value} />
+          </div>
+          <div className="mt-3">
+            <GlowingProgressBar value={metric.value} />
+          </div>
+          <p className="mt-3 text-xs leading-5 text-slate-400">{metric.detail}</p>
+          <p className="mt-2 text-xs font-bold text-cyan-100">{metric.complete} / {metric.total} complete</p>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+function WorkItemRow({ item }: { item: ProductionQueueItem }) {
+  return (
+    <Link href={item.href} className="block rounded-md border border-cyan-300/10 bg-slate-950/45 p-3 transition hover:border-cyan-300/35 hover:bg-cyan-300/5">
+      <div className="flex items-start gap-3">
+        <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded border border-cyan-300/25 text-xs text-cyan-100">□</span>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className={cn("rounded-full border px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-[0.14em]", priorityTone(item.priority))}>{item.priority}</span>
+            <WorkspaceBadge value={item.type} />
+            <span className="text-xs text-slate-500">{item.era}</span>
+          </div>
+          <p className="mt-2 font-semibold text-white">{item.title}</p>
+          <p className="mt-1 text-sm leading-5 text-slate-400">{item.reason}</p>
+          {item.blockers.length ? <p className="mt-2 text-xs font-semibold text-amber-100">Blocked by: {item.blockers.join(", ")}</p> : null}
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+function TodaysWorkPanel({ plan }: { plan: ProductionPlan }) {
+  const priorities: ProductionPriority[] = ["Critical", "High", "Medium", "Low"];
+  return (
+    <Panel title="Today's Work" eyebrow="Auto-prioritized Queue">
+      <div className="grid gap-4 xl:grid-cols-4">
+        {priorities.map((priority) => (
+          <div key={priority}>
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h3 className="text-sm font-black uppercase tracking-[0.18em] text-white">{priority}</h3>
+              <span className={cn("rounded-full border px-2 py-0.5 text-xs", priorityTone(priority))}>{plan.workQueue[priority].length}</span>
+            </div>
+            <div className="space-y-2">
+              {plan.workQueue[priority].slice(0, 6).map((item) => <WorkItemRow key={item.id} item={item} />)}
+              {!plan.workQueue[priority].length ? <p className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3 text-sm text-slate-400">No {priority.toLowerCase()} work right now.</p> : null}
+            </div>
+          </div>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
+function ProductionKanbanPanel({ plan }: { plan: ProductionPlan }) {
+  return (
+    <Panel title="Production Kanban" eyebrow="Backlog / Ready / In Progress / Review / Approved / Published / Done">
+      <div className="grid gap-3 lg:grid-cols-7">
+        {plan.kanban.map((column) => (
+          <div key={column.id} className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-2">
+            <div className="mb-2 flex items-center justify-between gap-2 px-1">
+              <h3 className="text-xs font-black uppercase tracking-[0.14em] text-cyan-100">{column.title}</h3>
+              <span className="text-xs font-bold text-slate-500">{column.cards.length}</span>
+            </div>
+            <div className="space-y-2">
+              {column.cards.map((card) => (
+                <Link key={card.id} href={card.href} className="block rounded-md border border-slate-700/70 bg-[#07101f] p-2 text-sm transition hover:border-cyan-300/35">
+                  <p className="line-clamp-2 font-semibold text-white">{card.title}</p>
+                  <div className="mt-2 flex flex-wrap gap-1">
+                    <WorkspaceBadge value={card.type} />
+                    <WorkspaceBadge value={card.priority} />
+                  </div>
+                </Link>
+              ))}
+              {!column.cards.length ? <p className="rounded-md border border-slate-700/50 p-2 text-xs text-slate-500">Empty</p> : null}
+            </div>
+          </div>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
+function DependencyGraphPanel({ plan }: { plan: ProductionPlan }) {
+  return (
+    <Panel title="Dependency Graph" eyebrow="Blockers">
+      <div className="grid gap-3 lg:grid-cols-2">
+        {plan.blockers.map((blocker) => (
+          <div key={blocker.id} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h3 className="font-black text-white">{blocker.title}</h3>
+                <p className="mt-1 text-xs uppercase tracking-[0.16em] text-cyan-200">{blocker.type} / {blocker.era}</p>
+              </div>
+              <WorkspaceBadge value={blocker.blockers.every((item) => item.done) ? "clear" : "blocked"} />
+            </div>
+            <div className="mt-4 space-y-2">
+              {blocker.blockers.map((item) => (
+                <div key={item.label} className="flex items-center gap-2 text-sm">
+                  <span className={cn("grid h-5 w-5 place-items-center rounded border text-xs", item.done ? "border-emerald-300/35 bg-emerald-300/10 text-emerald-100" : "border-amber-300/35 bg-amber-300/10 text-amber-100")}>{item.done ? "✓" : "✗"}</span>
+                  <span className={item.done ? "text-slate-300" : "font-semibold text-amber-100"}>{item.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
+function HeatmapBlocks({ value }: { value: number }) {
+  const blocks = 10;
+  const filled = Math.round((clampPercent(value) / 100) * blocks);
+  return <span className="font-mono text-cyan-200">{"█".repeat(filled)}{"░".repeat(blocks - filled)}</span>;
+}
+
+function ProductionHeatmapPanel({ plan }: { plan: ProductionPlan }) {
+  return (
+    <Panel title="Production Heatmap" eyebrow="By Era">
+      <div className="space-y-3">
+        {plan.heatmap.map((era) => (
+          <div key={era.id} className="grid gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 p-3 md:grid-cols-[9rem_1fr_4rem] md:items-center">
+            <p className="font-black text-white">{era.displayName}</p>
+            <div>
+              <div className="flex items-center justify-between gap-3 text-sm">
+                <HeatmapBlocks value={era.completion} />
+                <span className="text-slate-400">R {era.research}% / B {era.buildings}% / Art {era.art}%</span>
+              </div>
+              <div className="mt-2"><GlowingProgressBar value={era.completion} /></div>
+            </div>
+            <p className="text-right text-xl font-black text-cyan-100">{era.completion}%</p>
+          </div>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
+function ProgressTimelinePanel({ plan }: { plan: ProductionPlan }) {
+  return (
+    <Panel title="Progress Timeline" eyebrow="Recent Output">
+      <div className="grid gap-3 md:grid-cols-4">
+        {plan.timeline.map((row) => (
+          <div key={row.label} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
+            <h3 className="font-black text-white">{row.label}</h3>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <StatTile label="Assets" value={row.assetsCompleted} />
+              <StatTile label="Research" value={row.researchCompleted} />
+              <StatTile label="Buildings" value={row.buildingsCompleted} />
+              <StatTile label="Published" value={row.artPublished} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
+function ProductionReportsPanel({ plan }: { plan: ProductionPlan }) {
+  return (
+    <Panel title="Reports" eyebrow="Missing Content">
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        {plan.reports.map((report) => (
+          <Link key={report.label} href={report.href} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3 transition hover:border-cyan-300/35">
+            <div className="flex items-center justify-between gap-3">
+              <p className="font-black text-white">{report.label}</p>
+              <span className={cn("rounded-full border px-2 py-0.5 text-xs", priorityTone(report.severity))}>{report.count}</span>
+            </div>
+            <p className="mt-2 text-sm leading-5 text-slate-400">{report.description}</p>
+          </Link>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
 function SystemDetailModal({
   system,
   trend,
@@ -631,15 +847,17 @@ function SystemDetailModal({
   );
 }
 
-export function CommandCenterDashboard({ systems, history, healthChecks, codexItems, metrics, totalRecords, currentCivilizationAge = "Survival Age" }: CommandCenterDashboardProps) {
+export function CommandCenterDashboard({ systems, history, healthChecks, codexItems, metrics, totalRecords, currentCivilizationAge = "Survival Age", productionPlan }: CommandCenterDashboardProps) {
   const [selectedSystem, setSelectedSystem] = useState<ProjectSystem | null>(null);
   const [creatingTaskId, setCreatingTaskId] = useState<string | null>(null);
   const [createdTasks, setCreatedTasks] = useState<Set<string>>(new Set());
   const [taskMessage, setTaskMessage] = useState("");
   const [taskError, setTaskError] = useState("");
-  const overallCompletion = systems.length
+  const systemCompletion = systems.length
     ? Math.round(systems.reduce((sum, system) => sum + system.completion_percent, 0) / systems.length)
     : 0;
+  const activeProductionPlan = productionPlan ?? fallbackProductionPlan(systemCompletion);
+  const overallCompletion = activeProductionPlan.overallCompletion || systemCompletion;
   const groupedSystems = useMemo(
     () =>
       groupOrder.map((groupName) => ({
@@ -716,7 +934,7 @@ export function CommandCenterDashboard({ systems, history, healthChecks, codexIt
             <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-300">Studio Mission Control</p>
             <h2 className="mt-3 text-4xl font-black tracking-tight text-white sm:text-5xl">Project Genesis Command Center</h2>
             <p className="mt-3 max-w-3xl text-base text-slate-300">
-              Universe authoring IDE for creating, previewing, validating, and exporting the Project Genesis game database.
+              Daily production command center for deciding what should be built next across gameplay data, art, research, buildings, resources, missions, events, and exports.
             </p>
             <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
               {heroMetrics.map((metric) => (
@@ -728,6 +946,23 @@ export function CommandCenterDashboard({ systems, history, healthChecks, codexIt
             </div>
           </div>
         </div>
+      </section>
+
+      <ProductionMetricGrid plan={activeProductionPlan} />
+
+      <TodaysWorkPanel plan={activeProductionPlan} />
+
+      <section className="grid gap-5 xl:grid-cols-[1fr_420px]">
+        <ProductionKanbanPanel plan={activeProductionPlan} />
+        <div className="space-y-5">
+          <ProductionHeatmapPanel plan={activeProductionPlan} />
+          <ProgressTimelinePanel plan={activeProductionPlan} />
+        </div>
+      </section>
+
+      <section className="grid gap-5 xl:grid-cols-[1fr_1fr]">
+        <DependencyGraphPanel plan={activeProductionPlan} />
+        <ProductionReportsPanel plan={activeProductionPlan} />
       </section>
 
       <StudioWorkflowPanel />

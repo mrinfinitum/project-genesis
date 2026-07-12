@@ -1,0 +1,526 @@
+import { civilizationAges } from "@/data/civilization-identity";
+import type { AssetProductionState, MissingAssetRequirement, ProductionAsset, ProductionTaskRecord } from "@/lib/assets/asset-production";
+import type { EraArtSummaryByEra } from "@/lib/assets/era-art-inventory";
+import type { Building, BuildingChain, GameData, ResearchNode, ResourceCatalogItem, UnlockMatrixRow } from "@/types/schema";
+
+export type ProductionPriority = "Critical" | "High" | "Medium" | "Low";
+export type ProductionQueueItem = {
+  id: string;
+  title: string;
+  priority: ProductionPriority;
+  type: "Asset" | "Research" | "Building" | "Resource" | "Mission" | "Event" | "Production Chain";
+  status: string;
+  era: string;
+  href: string;
+  reason: string;
+  blockers: string[];
+};
+
+export type ProductionMetric = {
+  label: string;
+  value: number;
+  complete: number;
+  total: number;
+  detail: string;
+};
+
+export type ProductionKanbanColumn = {
+  id: "backlog" | "ready" | "in_progress" | "review" | "approved" | "published" | "done";
+  title: string;
+  cards: ProductionQueueItem[];
+};
+
+export type ProductionBlocker = {
+  id: string;
+  title: string;
+  type: string;
+  era: string;
+  blockers: Array<{ label: string; done: boolean }>;
+};
+
+export type ProductionReport = {
+  label: string;
+  count: number;
+  href: string;
+  severity: ProductionPriority;
+  description: string;
+};
+
+export type ProductionTimeline = {
+  label: "Yesterday" | "Today" | "This Week" | "This Month";
+  assetsCompleted: number;
+  researchCompleted: number;
+  buildingsCompleted: number;
+  artPublished: number;
+};
+
+export type EraProductionHeatmap = {
+  id: string;
+  displayName: string;
+  completion: number;
+  research: number;
+  buildings: number;
+  art: number;
+};
+
+export type ProductionPlan = {
+  overallCompletion: number;
+  metrics: ProductionMetric[];
+  workQueue: Record<ProductionPriority, ProductionQueueItem[]>;
+  kanban: ProductionKanbanColumn[];
+  blockers: ProductionBlocker[];
+  heatmap: EraProductionHeatmap[];
+  timeline: ProductionTimeline[];
+  reports: ProductionReport[];
+  generatedAt: string;
+};
+
+const kanbanColumns: ProductionKanbanColumn["id"][] = ["backlog", "ready", "in_progress", "review", "approved", "published", "done"];
+
+function clamp(value: number) {
+  return Math.min(100, Math.max(0, Number.isFinite(value) ? Math.round(value) : 0));
+}
+
+function percent(complete: number, total: number) {
+  return total ? clamp((complete / total) * 100) : 0;
+}
+
+function ageId(value: string) {
+  const normalized = value.toLowerCase().replace(/\s+age$/i, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  return normalized === "space" ? "space-age" : normalized;
+}
+
+function displayAge(value: string) {
+  return value.replace(/\s+age$/i, "") || value;
+}
+
+function isCompleteStatus(value: string | null | undefined) {
+  const status = String(value ?? "").toLowerCase();
+  return Boolean(status) && !/(missing|blocked|draft|open|todo|needs|pending)/.test(status);
+}
+
+function assetComplete(asset: ProductionAsset) {
+  return asset.productionStatus === "published" || asset.approvalStatus === "approved" || asset.completionPercent >= 100;
+}
+
+function priorityFor(item: { required?: boolean; blocker?: boolean; optional?: boolean; status?: string }): ProductionPriority {
+  if (item.blocker) return "Critical";
+  if (item.required) return "High";
+  if (item.optional) return "Medium";
+  return item.status?.toLowerCase().includes("enhancement") ? "Low" : "Low";
+}
+
+function queueItem(input: Omit<ProductionQueueItem, "priority"> & { priority?: ProductionPriority; required?: boolean; blocker?: boolean; optional?: boolean }): ProductionQueueItem {
+  return {
+    ...input,
+    priority: input.priority ?? priorityFor(input)
+  };
+}
+
+function groupQueue(items: ProductionQueueItem[]) {
+  const grouped: Record<ProductionPriority, ProductionQueueItem[]> = { Critical: [], High: [], Medium: [], Low: [] };
+  for (const item of items.sort((left, right) => priorityRank(left.priority) - priorityRank(right.priority))) {
+    grouped[item.priority].push(item);
+  }
+  return grouped;
+}
+
+function priorityRank(priority: ProductionPriority) {
+  return { Critical: 0, High: 1, Medium: 2, Low: 3 }[priority];
+}
+
+function chainComplete(chain: BuildingChain) {
+  return [chain.level_1, chain.level_2, chain.level_3, chain.level_4, chain.level_5].every(Boolean);
+}
+
+function resourceComplete(resource: ResourceCatalogItem) {
+  return Boolean(resource.id && resource.resource_name && resource.description && resource.category && resource.rarity);
+}
+
+function researchComplete(research: ResearchNode) {
+  return isCompleteStatus(research.status) && Boolean(research.icon_name || research.asset_id);
+}
+
+function buildingComplete(building: Building) {
+  return Boolean(building.name && building.description && (building.icon_name || building.asset_id) && building.unlock_research_id);
+}
+
+function unlockComplete(row: UnlockMatrixRow) {
+  return isCompleteStatus(row.implementation_status) && Boolean(row.unlock_id || row.unlock_name);
+}
+
+function assetStatusToKanban(asset: ProductionAsset): ProductionKanbanColumn["id"] {
+  if (asset.productionStatus === "published" || asset.status.toLowerCase() === "published") return "published";
+  if (asset.approvalStatus === "approved") return "approved";
+  if (asset.status.toLowerCase() === "review" || asset.productionStatus === "in_review") return "review";
+  if (asset.sourceFiles.length || asset.derivatives.length) return "in_progress";
+  return "backlog";
+}
+
+function taskStatusToKanban(task: ProductionTaskRecord): ProductionKanbanColumn["id"] {
+  if (task.status === "complete") return "done";
+  if (task.status === "in_review") return "review";
+  if (task.status === "in_progress") return "in_progress";
+  return "ready";
+}
+
+function missingRequirementTitle(requirement: MissingAssetRequirement) {
+  return `${requirement.objectName} ${requirement.requiredDerivative}`;
+}
+
+function assetWorkItems(assetState: AssetProductionState) {
+  const items: ProductionQueueItem[] = [];
+
+  for (const requirement of assetState.missingRequirements.slice(0, 80)) {
+    items.push(queueItem({
+      id: `missing-asset-${requirement.id}`,
+      title: `Create ${missingRequirementTitle(requirement)}`,
+      type: "Asset",
+      status: requirement.currentStatus,
+      era: "Art",
+      href: "/assets/missing",
+      reason: "Required artwork is missing from the production profile.",
+      blockers: [`Missing ${requirement.requiredDerivative}`],
+      required: true
+    }));
+  }
+
+  for (const asset of assetState.assets) {
+    if (asset.approvalStatus === "pending" && asset.derivatives.length) {
+      items.push(queueItem({
+        id: `review-${asset.id}`,
+        title: `Review ${asset.name}`,
+        type: "Asset",
+        status: "Review",
+        era: "Art",
+        href: `/assets/${asset.id}?tab=review`,
+        reason: "Derivative exists but has not been approved.",
+        blockers: [],
+        required: true
+      }));
+    }
+    if (asset.approvalStatus === "approved" && !asset.platformMappings.roblox) {
+      items.push(queueItem({
+        id: `roblox-${asset.id}`,
+        title: `Map ${asset.name} to Roblox`,
+        type: "Asset",
+        status: "Approved",
+        era: "Art",
+        href: `/assets/${asset.id}?tab=engine_mappings`,
+        reason: "Approved art still needs Roblox mapping.",
+        blockers: ["Roblox asset ID missing"],
+        required: true
+      }));
+    }
+    if (asset.approvalStatus === "approved" && !asset.platformMappings.web) {
+      items.push(queueItem({
+        id: `web-${asset.id}`,
+        title: `Publish ${asset.name} to Web`,
+        type: "Asset",
+        status: "Approved",
+        era: "Art",
+        href: `/assets/${asset.id}?tab=engine_mappings`,
+        reason: "Approved art needs a public web derivative.",
+        blockers: ["Web publish path missing"],
+        required: true
+      }));
+    }
+  }
+
+  return items;
+}
+
+function contentWorkItems(data: GameData) {
+  const items: ProductionQueueItem[] = [];
+
+  for (const row of data.research.filter((item) => !researchComplete(item)).slice(0, 40)) {
+    items.push(queueItem({
+      id: `research-${row.id}`,
+      title: `Finish ${row.name}`,
+      type: "Research",
+      status: row.status || "Missing",
+      era: displayAge(row.era),
+      href: "/research",
+      reason: "Research node needs complete status and usable art/link data.",
+      blockers: [row.status ? "" : "Status missing", row.icon_name || row.asset_id ? "" : "Icon or asset missing"].filter(Boolean),
+      blocker: !row.status
+    }));
+  }
+
+  for (const row of data.buildings.filter((item) => !buildingComplete(item)).slice(0, 40)) {
+    items.push(queueItem({
+      id: `building-${row.id}`,
+      title: `Finish ${row.name}`,
+      type: "Building",
+      status: "Needs Work",
+      era: displayAge(row.era),
+      href: "/buildings",
+      reason: "Building needs unlock and art/model readiness.",
+      blockers: [row.unlock_research_id ? "" : "Unlock research missing", row.icon_name || row.asset_id ? "" : "Card/icon art missing"].filter(Boolean),
+      blocker: !row.unlock_research_id
+    }));
+  }
+
+  for (const row of data.building_chains.filter((item) => !chainComplete(item)).slice(0, 20)) {
+    items.push(queueItem({
+      id: `chain-${row.id}`,
+      title: `Complete ${row.chain}`,
+      type: "Production Chain",
+      status: "Needs Work",
+      era: "Systems",
+      href: "/building-chains",
+      reason: "Production chain has empty level slots.",
+      blockers: ["Missing chain level"],
+      blocker: true
+    }));
+  }
+
+  if (!("missions" in data)) {
+    items.push(queueItem({
+      id: "mission-table",
+      title: "Create canonical mission production records",
+      type: "Mission",
+      status: "Missing",
+      era: "Studio",
+      href: "/missions",
+      reason: "Missions exist as procedural workspace output, but no canonical mission table is present.",
+      blockers: ["Canonical mission table missing"],
+      blocker: true
+    }));
+  }
+
+  items.push(queueItem({
+    id: "event-table",
+    title: "Create canonical event production records",
+    type: "Event",
+    status: "Missing",
+    era: "Studio",
+    href: "/universe-timeline",
+    reason: "Timeline events exist, but production events are not tracked as content records yet.",
+    blockers: ["Canonical event content table missing"],
+    blocker: true
+  }));
+
+  return items;
+}
+
+function buildKanban(items: ProductionQueueItem[], assetState: AssetProductionState): ProductionKanbanColumn[] {
+  const columnMap = new Map<ProductionKanbanColumn["id"], ProductionQueueItem[]>();
+  for (const column of kanbanColumns) columnMap.set(column, []);
+
+  for (const task of assetState.productionTasks) {
+    columnMap.get(taskStatusToKanban(task))?.push(queueItem({
+      id: task.id,
+      title: task.requirementType ? `${task.linkedObject} ${task.requirementType}` : task.linkedObject,
+      type: "Asset",
+      status: task.status,
+      era: task.era,
+      href: task.assetLink || "/assets",
+      reason: task.notes || "Generated production task.",
+      blockers: [],
+      priority: task.priority === "critical" ? "Critical" : task.priority === "high" ? "High" : task.priority === "medium" ? "Medium" : "Low"
+    }));
+  }
+
+  for (const asset of assetState.assets.slice(0, 80)) {
+    columnMap.get(assetStatusToKanban(asset))?.push(queueItem({
+      id: `asset-${asset.id}`,
+      title: asset.name,
+      type: "Asset",
+      status: asset.productionStatus,
+      era: asset.category,
+      href: `/assets/${asset.id}`,
+      reason: asset.publishBlockers[0] ?? "Asset production status.",
+      blockers: asset.publishBlockers,
+      priority: asset.publishBlockers.length ? "High" : asset.approvalStatus === "approved" ? "Medium" : "Low"
+    }));
+  }
+
+  for (const item of items) {
+    const column: ProductionKanbanColumn["id"] = item.priority === "Critical" ? "backlog" : item.status.toLowerCase().includes("review") ? "review" : "ready";
+    columnMap.get(column)?.push(item);
+  }
+
+  return kanbanColumns.map((id) => ({
+    id,
+    title: id.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase()),
+    cards: (columnMap.get(id) ?? []).slice(0, 8)
+  }));
+}
+
+function buildHeatmap(data: GameData, eraSummary: EraArtSummaryByEra): EraProductionHeatmap[] {
+  return civilizationAges.map((age) => {
+    const id = ageId(age.name);
+    const researchRows = data.research.filter((row) => ageId(row.era) === id);
+    const buildingRows = data.buildings.filter((row) => ageId(row.era) === id);
+    const research = percent(researchRows.filter(researchComplete).length, researchRows.length);
+    const buildings = percent(buildingRows.filter(buildingComplete).length, buildingRows.length);
+    const art = eraSummary[id]?.required ? percent(eraSummary[id].complete, eraSummary[id].required) : 0;
+    return {
+      id,
+      displayName: displayAge(age.name),
+      completion: clamp((research + buildings + art) / 3),
+      research,
+      buildings,
+      art
+    };
+  });
+}
+
+function buildBlockers(data: GameData, assetState: AssetProductionState): ProductionBlocker[] {
+  const resources = new Set(data.resource_catalog.map((resource) => resource.id));
+  const research = new Set(data.research.map((item) => item.id));
+  const missingAsset = assetState.missingRequirements[0];
+  const building = data.buildings.find((row) => !buildingComplete(row)) ?? data.buildings[0];
+  const chain = data.building_chains.find((row) => !chainComplete(row)) ?? data.building_chains[0];
+
+  return [
+    building ? {
+      id: `blocker-${building.id}`,
+      title: building.name,
+      type: "Building",
+      era: displayAge(building.era),
+      blockers: [
+        { label: "Unlock research", done: Boolean(building.unlock_research_id && research.has(building.unlock_research_id)) },
+        { label: "Building icon/card art", done: Boolean(building.icon_name || building.asset_id) },
+        { label: "Production chain", done: Boolean(building.upgrade_chain || building.district_id) },
+        { label: "Model/render", done: Boolean(building.model_name || building.asset_id) }
+      ]
+    } : null,
+    chain ? {
+      id: `blocker-${chain.id}`,
+      title: chain.chain,
+      type: "Production Chain",
+      era: chain.district || "Systems",
+      blockers: [
+        { label: "Level 1 building", done: Boolean(chain.level_1) },
+        { label: "Level 2 building", done: Boolean(chain.level_2) },
+        { label: "Level 3 building", done: Boolean(chain.level_3) },
+        { label: "Level 4 building", done: Boolean(chain.level_4) },
+        { label: "Level 5 building", done: Boolean(chain.level_5) }
+      ]
+    } : null,
+    missingAsset ? {
+      id: `blocker-${missingAsset.id}`,
+      title: missingAsset.objectName,
+      type: "Asset",
+      era: missingAsset.objectType,
+      blockers: [
+        { label: "Canonical record", done: true },
+        { label: `${missingAsset.requiredDerivative} derivative`, done: false },
+        { label: "Review approval", done: false },
+        { label: "Engine mapping", done: false }
+      ]
+    } : null,
+    {
+      id: "blocker-resource-chain",
+      title: "Resource Production Chain",
+      type: "Resource",
+      era: "Economy",
+      blockers: [
+        { label: "Resource catalog", done: resources.size > 0 },
+        { label: "Production chains", done: data.building_chains.some(chainComplete) },
+        { label: "Mission rewards", done: false },
+        { label: "Event hooks", done: false }
+      ]
+    }
+  ].filter(Boolean) as ProductionBlocker[];
+}
+
+function buildReports(data: GameData, assetState: AssetProductionState): ProductionReport[] {
+  const missingResearch = data.research.filter((row) => !researchComplete(row)).length;
+  const missingBuildings = data.buildings.filter((row) => !buildingComplete(row)).length;
+  const missingChains = data.building_chains.filter((row) => !chainComplete(row)).length;
+  const missingResources = data.resource_catalog.filter((row) => !resourceComplete(row)).length;
+
+  return [
+    { label: "Missing Assets", count: assetState.missingRequirements.length, href: "/assets/missing", severity: "High", description: "Required derivatives or source artwork still missing." },
+    { label: "Missing Research", count: missingResearch, href: "/research", severity: missingResearch ? "High" : "Low", description: "Research nodes needing status, icon, or asset completion." },
+    { label: "Missing Buildings", count: missingBuildings, href: "/buildings", severity: missingBuildings ? "High" : "Low", description: "Buildings missing unlocks or visual production links." },
+    { label: "Missing Missions", count: 1, href: "/missions", severity: "Critical", description: "Canonical mission content table/workflow needs production records." },
+    { label: "Missing Events", count: 1, href: "/universe-timeline", severity: "Critical", description: "Canonical event content records are not yet tracked." },
+    { label: "Missing Production Chains", count: missingChains, href: "/building-chains", severity: missingChains ? "Critical" : "Low", description: "Building chains with missing level definitions." },
+    { label: "Missing Collectibles", count: 1, href: "/collectibles", severity: "Medium", description: "Collectible production tracking is not yet canonical." },
+    { label: "Missing Resources", count: missingResources, href: "/resource-catalog", severity: missingResources ? "High" : "Low", description: "Resource catalog records with incomplete required fields." }
+  ];
+}
+
+function dateWindow(now: Date, label: ProductionTimeline["label"]) {
+  const start = new Date(now);
+  if (label === "Today") start.setHours(0, 0, 0, 0);
+  if (label === "Yesterday") {
+    start.setDate(start.getDate() - 1);
+    start.setHours(0, 0, 0, 0);
+  }
+  if (label === "This Week") start.setDate(start.getDate() - 7);
+  if (label === "This Month") start.setDate(start.getDate() - 30);
+  const end = new Date(now);
+  if (label === "Yesterday") {
+    end.setHours(0, 0, 0, 0);
+  }
+  return { start, end };
+}
+
+function inWindow(value: string | undefined, start: Date, end: Date) {
+  if (!value) return false;
+  const date = new Date(value);
+  return Number.isFinite(date.getTime()) && date >= start && date <= end;
+}
+
+function buildTimeline(data: GameData, assetState: AssetProductionState): ProductionTimeline[] {
+  const now = new Date();
+  return (["Yesterday", "Today", "This Week", "This Month"] as ProductionTimeline["label"][]).map((label) => {
+    const { start, end } = dateWindow(now, label);
+    return {
+      label,
+      assetsCompleted: assetState.assets.filter((asset) => inWindow(asset.approvedAt || asset.publishedAt, start, end)).length,
+      researchCompleted: data.research.filter((row) => researchComplete(row) && inWindow(row.notes?.match(/\d{4}-\d{2}-\d{2}/)?.[0], start, end)).length,
+      buildingsCompleted: data.buildings.filter((row) => buildingComplete(row) && inWindow(row.notes?.match(/\d{4}-\d{2}-\d{2}/)?.[0], start, end)).length,
+      artPublished: assetState.assets.filter((asset) => inWindow(asset.publishedAt, start, end)).length
+    };
+  });
+}
+
+export function buildProductionPlan(data: GameData, assetState: AssetProductionState, eraSummary: EraArtSummaryByEra): ProductionPlan {
+  const artComplete = assetState.assets.filter(assetComplete).length;
+  const artTotal = Math.max(1, assetState.assets.length + assetState.missingRequirements.length);
+  const researchCompleteCount = data.research.filter(researchComplete).length;
+  const buildingCompleteCount = data.buildings.filter(buildingComplete).length;
+  const chainCompleteCount = data.building_chains.filter(chainComplete).length;
+  const resourceCompleteCount = data.resource_catalog.filter(resourceComplete).length;
+  const unlockCompleteCount = data.unlock_matrix.filter(unlockComplete).length;
+
+  const metrics: ProductionMetric[] = [
+    { label: "Overall Game Completion", complete: 0, total: 0, value: 0, detail: "Average of all production systems." },
+    { label: "Era Completion", complete: civilizationAges.filter((age) => (eraSummary[ageId(age.name)]?.complete ?? 0) > 0).length, total: civilizationAges.length, value: 0, detail: "Era research/building/art readiness." },
+    { label: "Art Completion", complete: artComplete, total: artTotal, value: percent(artComplete, artTotal), detail: `${artComplete} complete assets, ${assetState.missingRequirements.length} missing requirements.` },
+    { label: "Research Completion", complete: researchCompleteCount, total: data.research.length, value: percent(researchCompleteCount, data.research.length), detail: "Complete research nodes with usable icon/asset links." },
+    { label: "Building Completion", complete: buildingCompleteCount, total: data.buildings.length, value: percent(buildingCompleteCount, data.buildings.length), detail: "Buildings with unlocks and visual references." },
+    { label: "Production Chain Completion", complete: chainCompleteCount, total: data.building_chains.length, value: percent(chainCompleteCount, data.building_chains.length), detail: "Building chains with all level slots filled." },
+    { label: "Resource Completion", complete: resourceCompleteCount, total: data.resource_catalog.length, value: percent(resourceCompleteCount, data.resource_catalog.length), detail: "Canonical resources with required identity fields." },
+    { label: "Mission Completion", complete: 0, total: 1, value: 0, detail: "Mission production records are not canonical yet." },
+    { label: "Event Completion", complete: 0, total: 1, value: 0, detail: "Event production records are not canonical yet." }
+  ];
+
+  const heatmap = buildHeatmap(data, eraSummary);
+  const eraMetric = metrics.find((metric) => metric.label === "Era Completion");
+  if (eraMetric) {
+    eraMetric.value = heatmap.length ? clamp(heatmap.reduce((sum, era) => sum + era.completion, 0) / heatmap.length) : 0;
+    eraMetric.detail = `${heatmap.filter((era) => era.completion >= 80).length} eras are production-ready.`;
+  }
+  const overall = clamp(metrics.filter((metric) => metric.label !== "Overall Game Completion").reduce((sum, metric) => sum + metric.value, 0) / Math.max(1, metrics.length - 1));
+  metrics[0] = { ...metrics[0], complete: metrics.reduce((sum, metric) => sum + metric.complete, 0), total: metrics.reduce((sum, metric) => sum + metric.total, 0), value: overall };
+
+  const queue = [...assetWorkItems(assetState), ...contentWorkItems(data)].slice(0, 220);
+  return {
+    overallCompletion: overall,
+    metrics,
+    workQueue: groupQueue(queue),
+    kanban: buildKanban(queue, assetState),
+    blockers: buildBlockers(data, assetState),
+    heatmap,
+    timeline: buildTimeline(data, assetState),
+    reports: buildReports(data, assetState),
+    generatedAt: new Date().toISOString()
+  };
+}
