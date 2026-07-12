@@ -43,6 +43,7 @@ export type SourceFileRecord = {
   width?: number | null;
   height?: number | null;
   notes: string;
+  isPrimaryPreview?: boolean;
 };
 
 export type AssetDerivativeRecord = {
@@ -66,6 +67,10 @@ export type AssetDerivativeRecord = {
   platformMappings?: Record<string, unknown>;
   archived?: boolean;
   staleSince?: string;
+  staleReason?: string;
+  presetId?: string;
+  cropMode?: string;
+  focalPoint?: string;
 };
 
 export type AssetDerivativePreset = {
@@ -217,7 +222,7 @@ export type AssetProductionState = {
 export type AssetReviewEvent = {
   id: string;
   assetId: string;
-  action: "submit_review" | "approve" | "request_changes" | "reject" | "publish" | "unpublish";
+  action: "submit_review" | "approve" | "request_changes" | "reject" | "publish" | "unpublish" | "reopen";
   reviewer: string;
   timestamp: string;
   notes: string;
@@ -874,8 +879,45 @@ function derivativeRecord(input: AssetProductionActionInput, currentSources: Sou
     approvalStatus: "pending",
     publishStatus: "draft",
     platformMappings: {},
-    archived: false
+    archived: false,
+    presetId: text(payload.presetId),
+    cropMode: text(payload.cropMode),
+    focalPoint: text(payload.focalPoint)
   };
+}
+
+function staleDerivativesForSourceChange(derivatives: AssetDerivativeRecord[], currentSourceFileId: string, reason: string, timestamp: string): AssetDerivativeRecord[] {
+  return derivatives.map((derivative) => {
+    if (derivative.archived || derivative.sourceFileId === currentSourceFileId) return derivative;
+    return {
+      ...derivative,
+      publishStatus: derivative.publishStatus === "published" ? derivative.publishStatus : "stale" as const,
+      staleSince: derivative.staleSince ?? timestamp,
+      staleReason: reason
+    };
+  });
+}
+
+function processingJob(input: {
+  assetId: string;
+  sourceFileId: string | null;
+  presetId: string;
+  status?: ProcessingJobRecord["status"];
+  progress?: number;
+  errorMessage?: string;
+}) {
+  return {
+    id: `job_${input.assetId}_${input.presetId}_${Date.now()}_${hash(`${input.sourceFileId}:${input.presetId}`)}`,
+    assetId: input.assetId,
+    sourceFileId: input.sourceFileId,
+    presetId: input.presetId,
+    status: input.status ?? "queued",
+    progress: input.progress ?? 0,
+    startedAt: null,
+    completedAt: null,
+    errorMessage: input.errorMessage ?? "",
+    retryCount: 0
+  } satisfies ProcessingJobRecord;
 }
 
 export async function applyAssetProductionAction(input: AssetProductionActionInput) {
@@ -1076,6 +1118,7 @@ export async function applyAssetProductionAction(input: AssetProductionActionInp
     const next = sourceVersion(input, sourceFiles);
     saveAssetOverride(store, assetId, {
       sourceFiles: sourceFiles.map((source) => ({ ...source, isCurrent: false })).concat(next),
+      derivatives: staleDerivativesForSourceChange(derivatives, next.id, "New source version uploaded", now),
       productionStatus: "source_uploaded",
       historyEvents: [productionEvent(assetId, "source_version_uploaded", `Uploaded ${next.versionLabel}`, input.notes), ...historyEvents]
     });
@@ -1087,12 +1130,21 @@ export async function applyAssetProductionAction(input: AssetProductionActionInp
     if (!allSources.some((source) => source.isCurrent)) throw new Error("Source version was not found.");
     saveAssetOverride(store, assetId, {
       sourceFiles: allSources,
-      historyEvents: [productionEvent(assetId, input.action, "Changed current source version", input.notes), ...historyEvents]
+      derivatives: staleDerivativesForSourceChange(derivatives, sourceFileId, input.action === "source.restore" ? "Source version restored" : "Current source version changed", now),
+      historyEvents: [productionEvent(assetId, input.action, input.action === "source.restore" ? "Restored source version" : "Changed current source version", input.notes), ...historyEvents]
     });
   }
 
   if (input.action === "source.archive") {
     const sourceFileId = text(input.sourceFileId);
+    if (!sourceFileId) throw new Error("sourceFileId is required.");
+    const activeSources = sourceFiles.filter((source) => !source.archived);
+    const targetSource = activeSources.find((source) => source.id === sourceFileId);
+    if (!targetSource) throw new Error("Source version was not found.");
+    const remainingStoredSources = activeSources.filter((source) => source.id !== sourceFileId && source.storagePath);
+    if (targetSource.storagePath && remainingStoredSources.length === 0) {
+      throw new Error("Cannot archive the only stored source version.");
+    }
     saveAssetOverride(store, assetId, {
       sourceFiles: sourceFiles.map((source) => source.id === sourceFileId ? { ...source, archived: true, isCurrent: false } : source),
       historyEvents: [productionEvent(assetId, "source_archived", "Archived source version", input.notes), ...historyEvents]
@@ -1101,9 +1153,21 @@ export async function applyAssetProductionAction(input: AssetProductionActionInp
 
   if (input.action === "source.preview") {
     const sourceFileId = text(input.sourceFileId);
+    const primary = Boolean(input.payload?.isPrimaryPreview);
+    const previewUrl = text(input.payload?.previewUrl);
     saveAssetOverride(store, assetId, {
-      sourceFiles: sourceFiles.map((source) => source.id === sourceFileId ? { ...source, previewUrl: text(input.payload?.previewUrl), previewStatus: "ready" } : source),
+      sourceFiles: sourceFiles.map((source) => source.id === sourceFileId
+        ? { ...source, previewUrl, previewStatus: previewUrl ? "ready" : "missing", isPrimaryPreview: previewUrl ? primary || source.isPrimaryPreview : false }
+        : primary ? { ...source, isPrimaryPreview: false } : source),
       historyEvents: [productionEvent(assetId, "source_preview_uploaded", "Uploaded source preview", input.notes), ...historyEvents]
+    });
+  }
+
+  if (input.action === "source.notes") {
+    const sourceFileId = text(input.sourceFileId);
+    saveAssetOverride(store, assetId, {
+      sourceFiles: sourceFiles.map((source) => source.id === sourceFileId ? { ...source, notes: text(input.notes ?? input.payload?.notes, source.notes) } : source),
+      historyEvents: [productionEvent(assetId, "source_notes_updated", "Updated source notes", input.notes), ...historyEvents]
     });
   }
 
@@ -1131,6 +1195,24 @@ export async function applyAssetProductionAction(input: AssetProductionActionInp
     });
   }
 
+  if (input.action === "derivative.reprocess_stale" || input.action === "derivative.generate" || input.action === "preview.regenerate") {
+    const currentSource = sourceFiles.find((source) => source.isCurrent) ?? sourceFiles[0] ?? null;
+    const presetId = text(input.presetId ?? input.payload?.presetId ?? input.payload?.derivativeType, "manual_derivative");
+    const selectedDerivativeId = text(input.derivativeId);
+    const jobs = [...store.processingJobs, processingJob({ assetId, sourceFileId: currentSource?.id ?? null, presetId })];
+    store.processingJobs = jobs;
+    if (selectedDerivativeId) {
+      saveAssetOverride(store, assetId, {
+        derivatives: derivatives.map((derivative) => derivative.id === selectedDerivativeId ? { ...derivative, status: "queued", staleReason: derivative.staleReason || "Queued for reprocess" } : derivative),
+        historyEvents: [productionEvent(assetId, input.action, "Queued derivative processing", input.notes), ...historyEvents]
+      });
+    } else {
+      saveAssetOverride(store, assetId, {
+        historyEvents: [productionEvent(assetId, input.action, "Queued derivative processing", input.notes), ...historyEvents]
+      });
+    }
+  }
+
   if (input.action.startsWith("review.")) {
     const action = input.action.replace("review.", "") as AssetReviewEvent["action"];
     const reviewEvent: AssetReviewEvent = {
@@ -1146,10 +1228,16 @@ export async function applyAssetProductionAction(input: AssetProductionActionInp
       adminOverride: Boolean(input.adminOverride)
     };
     const approvalStatus: AssetApprovalStatus = action === "approve" || action === "publish" ? "approved" : action === "request_changes" ? "changes_requested" : action === "reject" ? "rejected" : "pending";
+    if (action === "publish") {
+      const asset = await getProductionAsset(assetId);
+      if (asset?.publishBlockers.length && !input.adminOverride) {
+        throw new Error(`Cannot publish: ${asset.publishBlockers.join(", ")}`);
+      }
+    }
     saveAssetOverride(store, assetId, {
       approvalStatus,
-      status: action === "publish" ? "published" : action === "submit_review" ? "review" : approvalStatus,
-      productionStatus: action === "publish" ? "published" : override.productionStatus,
+      status: action === "publish" ? "published" : action === "submit_review" ? "review" : action === "reopen" ? "draft" : approvalStatus,
+      productionStatus: action === "publish" ? "published" : action === "reopen" ? "in_progress" : override.productionStatus,
       approvedAt: action === "approve" ? now : override.approvedAt,
       publishedAt: action === "publish" ? now : override.publishedAt,
       reviewEvents: [reviewEvent, ...(override.reviewEvents ?? [])],
@@ -1180,6 +1268,19 @@ export async function applyAssetProductionAction(input: AssetProductionActionInp
     saveAssetOverride(store, assetId, {
       platformMappings: { ...(override.platformMappings ?? {}), roblox: { assetId: robloxAssetId, status: "mapped", publishedAt: now } },
       historyEvents: [productionEvent(assetId, "roblox_mapped", "Mapped Roblox asset ID", robloxAssetId), ...historyEvents]
+    });
+  }
+
+  if (input.action === "mapping.unity" || input.action === "mapping.unreal" || input.action === "mapping.godot") {
+    const target = input.action.replace("mapping.", "");
+    const key = text(input.payload?.path ?? input.payload?.key);
+    if (!key) throw new Error(`${target} mapping path/key is required.`);
+    if (target === "unity" && /\s/.test(key)) throw new Error("Unity addressable keys cannot contain spaces.");
+    if (target === "unreal" && !key.startsWith("/")) throw new Error("Unreal asset paths should start with /.");
+    if (target === "godot" && !key.startsWith("res://")) throw new Error("Godot resource paths should start with res://.");
+    saveAssetOverride(store, assetId, {
+      platformMappings: { ...(override.platformMappings ?? {}), [target]: { path: key, status: "mapped", updatedAt: now, notes: text(input.notes ?? input.payload?.notes) } },
+      historyEvents: [productionEvent(assetId, `${target}_mapped`, `Mapped ${target} asset`, key), ...historyEvents]
     });
   }
 

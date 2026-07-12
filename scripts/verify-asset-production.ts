@@ -102,6 +102,49 @@ async function main() {
   await assetProduction.applyAssetProductionAction({ action: "review.approve", assetId, reviewer: "verify" });
   await assetProduction.applyAssetProductionAction({ action: "mapping.web_publish", assetId, derivativeId: derivative.id, adminOverride: true, payload: { path: "/assets/published/verify-card.png" } });
   await assetProduction.applyAssetProductionAction({ action: "mapping.roblox", assetId, payload: { assetId: "123456789" } });
+  await assetProduction.applyAssetProductionAction({ action: "mapping.unity", assetId, payload: { key: "ProjectGenesis/UI/VerifyCard" } });
+  await assetProduction.applyAssetProductionAction({ action: "mapping.unreal", assetId, payload: { path: "/Game/ProjectGenesis/UI/VerifyCard" } });
+  await assetProduction.applyAssetProductionAction({ action: "mapping.godot", assetId, payload: { path: "res://project_genesis/ui/verify_card.png" } });
+  let invalidMappingBlocked = false;
+  try {
+    await assetProduction.applyAssetProductionAction({ action: "mapping.godot", assetId, payload: { path: "/bad/godot/path.png" } });
+  } catch {
+    invalidMappingBlocked = true;
+  }
+  assert(invalidMappingBlocked, "Invalid Godot mapping was not rejected.");
+
+  await assetProduction.applyAssetProductionAction({
+    action: "source.upload_version",
+    assetId,
+    notes: "Third source should stale existing derivatives.",
+    payload: {
+      filename: "verify-card-master-v3.psd",
+      storagePath: "studio-private://assets/game-assets/source/ui/verify-card-master-v3.psd",
+      previewUrl: "/assets/verify-card-preview-v3.png"
+    }
+  });
+  state = await assetProduction.getAssetProductionState();
+  asset = state.assets.find((item) => item.id === assetId);
+  const staleDerivative = asset?.derivatives.find((item) => item.id === derivative.id);
+  assert(staleDerivative?.staleSince, "Derivative was not marked stale after a new source version.");
+  assert(staleDerivative?.staleReason === "New source version uploaded", "Stale derivative reason was not recorded.");
+
+  const latestSource = asset?.sourceFiles.find((source) => source.isCurrent);
+  if (!latestSource) throw new Error("Latest source version was not current.");
+  await assetProduction.applyAssetProductionAction({
+    action: "source.preview",
+    assetId,
+    sourceFileId: latestSource.id,
+    payload: { previewUrl: "/assets/verify-card-primary-preview.png", isPrimaryPreview: true }
+  });
+  await assetProduction.applyAssetProductionAction({
+    action: "derivative.reprocess_stale",
+    assetId,
+    derivativeId: derivative.id,
+    presetId: "loading"
+  });
+  await assetProduction.applyAssetProductionAction({ action: "source.restore", assetId, sourceFileId: previousSource.id, notes: "Restore verification." });
+
   await assetProduction.applyAssetProductionAction({
     action: "preset.upsert",
     payload: {
@@ -176,6 +219,40 @@ async function main() {
   const requirementAsset = state.assets.find((item) => item.id === requirementAssetId);
   const requirementDerivative = requirementAsset?.derivatives.find((item) => item.derivativeType === "icon");
   if (!requirementAsset || !requirementDerivative) throw new Error("Requirement asset source or derivative did not persist.");
+
+  await gameArtImport.applyGameArtImport({
+    sourceProject: "Asset Production Verify",
+    sourceType: "generic_assets",
+    inputType: "json_asset_manifest",
+    files: [
+      {
+        filename: "single-source-check.png",
+        name: "Single Source Check",
+        category: "ui",
+        artKey: "single_source_check",
+        iconKey: "single_source_check"
+      }
+    ]
+  });
+  const singleSourceAssetId = "asset_single_source_check";
+  await assetProduction.applyAssetProductionAction({
+    action: "source.upload_version",
+    assetId: singleSourceAssetId,
+    payload: {
+      filename: "single-source-check.psd",
+      storagePath: "studio-private://assets/game-assets/source/ui/single-source-check.psd"
+    }
+  });
+  state = await assetProduction.getAssetProductionState();
+  const singleSourceAsset = state.assets.find((item) => item.id === singleSourceAssetId);
+  if (!singleSourceAsset?.sourceFiles[0]) throw new Error("Single-source verification asset was not created.");
+  let onlySourceArchiveBlocked = false;
+  try {
+    await assetProduction.applyAssetProductionAction({ action: "source.archive", assetId: singleSourceAssetId, sourceFileId: singleSourceAsset.sourceFiles[0].id });
+  } catch {
+    onlySourceArchiveBlocked = true;
+  }
+  assert(onlySourceArchiveBlocked, "Archiving the only source version should be blocked.");
 
   let publishBlocked = false;
   try {
@@ -284,9 +361,15 @@ async function main() {
   if (!asset) throw new Error("Verification asset disappeared after actions.");
   assert(asset.sourceFiles.find((source) => source.id === previousSource.id)?.isCurrent, "Source restore did not set current version.");
   assert(asset.sourceFiles.find((source) => source.id === previousSource.id)?.previewStatus === "ready", "Manual preview upload was not persisted.");
+  assert(asset.sourceFiles.some((source) => source.isPrimaryPreview), "Primary preview switching did not persist.");
   assert(asset.approvalStatus === "approved", "Review approval did not persist.");
   assert(JSON.stringify(asset.platformMappings).includes("rbxassetid://123456789"), "Roblox ID normalization failed.");
   assert(JSON.stringify(asset.platformMappings).includes("/assets/published/verify-card.png"), "Web publication mapping failed.");
+  assert(JSON.stringify(asset.platformMappings).includes("ProjectGenesis/UI/VerifyCard"), "Unity mapping failed.");
+  assert(JSON.stringify(asset.platformMappings).includes("/Game/ProjectGenesis/UI/VerifyCard"), "Unreal mapping failed.");
+  assert(JSON.stringify(asset.platformMappings).includes("res://project_genesis/ui/verify_card.png"), "Godot mapping failed.");
+  assert(state.processingJobs.some((job) => job.assetId === assetId && job.presetId === "loading"), "Stale derivative reprocess job was not queued.");
+  assert(asset.historyEvents.some((event) => event.eventType === "source_version_uploaded"), "Source version audit history was not recorded.");
   assert(state.derivativePresets.some((preset) => preset.name === "Verify Preset"), "Preset edit/create failed.");
 
   const presetIds = new Set(state.derivativePresets.map((preset) => preset.id));
