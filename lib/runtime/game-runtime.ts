@@ -291,7 +291,7 @@ function upgradeToRuntime(upgrade: Upgrade, index: number): UpgradeDefinition {
 }
 
 function assetToRuntime(asset: GameData["assets"][number]): AssetDefinition {
-  const webPath = asset.file_url || asset.source_file_url || "";
+  const webPath = asset.file_url || "";
   return {
     id: asset.id,
     name: asset.name,
@@ -415,8 +415,24 @@ function checksumFor(value: unknown) {
 }
 
 function publicAsset(asset: AssetDefinition): AssetDefinition {
+  const {
+    sourceFileName: _sourceFileName,
+    sourceExtension: _sourceExtension,
+    mimeType: _mimeType,
+    fileSizeBytes: _fileSizeBytes,
+    storagePath: _storagePath,
+    aliases: _aliases,
+    tags: _tags,
+    importedFrom: _importedFrom,
+    importedAt: _importedAt,
+    updatedAt: _updatedAt,
+    variants: _variants,
+    derivatives: _derivatives,
+    usageReferences: _usageReferences,
+    ...safeAsset
+  } = asset;
   return {
-    ...asset,
+    ...safeAsset,
     notes: "",
     platformMappings: {
       ...(asset.platformMappings.roblox?.assetId ? { roblox: { assetId: asset.platformMappings.roblox.assetId } } : {})
@@ -556,7 +572,7 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
       ...upgrade,
       tabId: upgrade.categoryId
     })),
-    assets: sorted.assets.map((asset) => ({
+    assets: sorted.assets.map(publicAsset).map((asset) => ({
       ...asset,
       robloxAssetId: asset.platformMappings.roblox?.assetId ?? null
     })),

@@ -15,6 +15,7 @@
     "sync:space-research": "tsx scripts/sync-space-research.ts",
     "regenerate:assets": "tsx scripts/regenerate-asset-variants.ts",
     "verify:runtime-routes": "tsx scripts/verify-runtime-export-routes.ts",
+    "verify:asset-production": "tsx scripts/verify-asset-production.ts",
     "cleanup:remote-psd": "tsx scripts/cleanup-remote-psd-sources.ts"
   },
   "dependencies": {

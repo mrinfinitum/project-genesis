@@ -90,10 +90,45 @@ export type UpgradeDefinition = {
 
 export type PlatformAssetMappings = {
   web?: { path: string };
-  roblox?: { assetId: string; assetType?: string; notes?: string };
-  unity?: { addressableKey: string };
-  unreal?: { assetPath: string };
-  godot?: { resourcePath: string };
+  roblox?: { assetId: string; assetType?: string; notes?: string; status?: string; publishedAt?: string };
+  unity?: { addressableKey: string; status?: string };
+  unreal?: { assetPath: string; status?: string };
+  godot?: { resourcePath: string; status?: string };
+};
+
+export type AssetSourceFileDefinition = {
+  id: string;
+  assetId: string;
+  filename: string;
+  extension: string;
+  mimeType: string;
+  storagePath: string;
+  fileSizeBytes: number;
+  checksum: string;
+  version: number;
+  versionLabel: string;
+  uploadedAt: string;
+  uploadedBy: string;
+  isCurrent: boolean;
+  notes: string;
+};
+
+export type AssetDerivativeDefinition = {
+  id: string;
+  assetId: string;
+  sourceFileId: string | null;
+  derivativeType: string;
+  format: string;
+  width: number | null;
+  height: number | null;
+  aspectRatio: string | null;
+  quality: number | null;
+  storagePath: string;
+  publicUrl: string;
+  checksum: string;
+  generatedAt: string;
+  generationMethod: string;
+  status: string;
 };
 
 export type AssetDefinition = {
@@ -103,6 +138,15 @@ export type AssetDefinition = {
   category: string;
   artKey: string;
   iconKey?: string;
+  audioKey?: string;
+  modelKey?: string;
+  description?: string;
+  productionStatus?: string;
+  approvalStatus?: string;
+  variants?: AssetDerivativeDefinition[];
+  derivatives?: AssetDerivativeDefinition[];
+  usageReferences?: Array<{ type: string; id: string; name: string }>;
+  requirementProfileId?: string;
   sourceFileName?: string;
   sourceExtension?: string;
   mimeType?: string;

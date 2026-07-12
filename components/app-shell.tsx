@@ -16,6 +16,7 @@ import {
   Database,
   FileCode2,
   FileCheck2,
+  FileImage,
   FlaskConical,
   Gauge,
   Gem,
@@ -28,12 +29,14 @@ import {
   Network,
   Orbit,
   Palette,
+  PackageCheck,
   Pickaxe,
   Radar,
   ScrollText,
   Settings,
   Sparkles,
   Star,
+  Timer,
   UploadCloud
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -147,7 +150,13 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/hero-discovery-shots", label: "Hero Discovery", icon: Star },
       { href: "/prompt-library", label: "Prompt Library", icon: ScrollText },
       { href: "/game-art-import", label: "Game Art Import", icon: UploadCloud },
-      { href: "/assets", label: "Asset Library", icon: Archive },
+      { href: "/assets", label: "Asset Dashboard", icon: PackageCheck },
+      { href: "/assets/source", label: "Source Art", icon: FileImage },
+      { href: "/assets/generated", label: "Generated Assets", icon: Sparkles },
+      { href: "/assets/published", label: "Published Assets", icon: FileCheck2 },
+      { href: "/assets/missing", label: "Missing Assets", icon: Archive },
+      { href: "/assets/processing", label: "Processing Queue", icon: Timer },
+      { href: "/assets/import-history", label: "Import History", icon: History },
       { href: "/conceptual-art", label: "Concept Art", icon: Palette }
     ]
   },

@@ -7,6 +7,8 @@ import type { TableName } from "@/types/schema";
 
 export const runtime = "nodejs";
 
+const supportedSourceExtensions = new Set([".psd", ".psb", ".ai", ".svg", ".png", ".jpg", ".jpeg", ".webp", ".tiff", ".tif", ".pdf", ".blend", ".mp3", ".wav", ".ogg", ".mp4", ".mov"]);
+
 function safeFilename(filename: string) {
   return filename.toLowerCase().replace(/[^a-z0-9._-]+/g, "-").replace(/^-+|-+$/g, "") || "asset.png";
 }
@@ -17,6 +19,11 @@ function fileBaseName(filename: string) {
 
 function safeId(value: string) {
   return value.replace(/[^a-zA-Z0-9_-]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
+function extensionFor(filename: string) {
+  const match = filename.match(/\.[^.]+$/);
+  return match?.[0]?.toLowerCase() ?? "";
 }
 
 function sourceTableFor(value: string) {
@@ -59,10 +66,6 @@ export async function POST(request: Request) {
   const requestedAssetId = String(formData.get("asset_id") ?? "").trim();
   const uploadKind = String(formData.get("upload_kind") ?? "export").trim();
 
-  if (uploadKind === "source") {
-    return NextResponse.json({ error: "PSD source files are local-only. Upload a generated PNG export instead." }, { status: 400 });
-  }
-
   if (!sourceId && !requestedAssetId && uploadKind !== "source") {
     return NextResponse.json({ error: "source_id or asset_id is required." }, { status: 400 });
   }
@@ -72,11 +75,11 @@ export async function POST(request: Request) {
   }
 
   const filename = file.name.toLowerCase();
-  const isPsd = filename.endsWith(".psd") || file.type === "image/vnd.adobe.photoshop";
+  const extension = extensionFor(filename);
   const isPng = filename.endsWith(".png") && file.type === "image/png";
 
-  if (uploadKind === "source" && !isPsd) {
-    return NextResponse.json({ error: "Only PSD files are supported for source uploads." }, { status: 400 });
+  if (uploadKind === "source" && !supportedSourceExtensions.has(extension)) {
+    return NextResponse.json({ error: "Source format is not supported yet." }, { status: 400 });
   }
 
   if (uploadKind !== "source" && !isPng) {
@@ -88,14 +91,16 @@ export async function POST(request: Request) {
   const generatedSourceId = `asset-source-${Date.now()}-${safeId(fileBaseName(file.name).toLowerCase())}`;
   const assetId = requestedAssetId || (safeSourceTable === "assets" ? sourceId || generatedSourceId : `asset-${safeSourceTable}-${safeId(sourceId)}`);
   const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-  const storagePath = `${assetId}/${uploadKind === "source" ? "source" : "exports"}/${timestamp}-${safeFilename(file.name)}`;
+  const storagePath = uploadKind === "source"
+    ? `game-assets/source/${safeId(safeSourceTable)}/${safeId(assetId)}/${timestamp}-${safeFilename(file.name)}`
+    : `${assetId}/exports/${timestamp}-${safeFilename(file.name)}`;
   const buffer = Buffer.from(await file.arrayBuffer());
   const assetName = String(formData.get("asset_name") ?? file.name).trim() || file.name;
   const buildAssetPatch = (fileUrl: string) =>
     uploadKind === "source"
       ? {
           source_file_url: fileUrl,
-          source_file_type: "PSD",
+          source_file_type: extension.replace(".", "").toUpperCase(),
           export_status: "Source Uploaded",
           status: "Source Uploaded"
         }
@@ -106,12 +111,14 @@ export async function POST(request: Request) {
         };
 
   if (!hasSupabaseServerConfig()) {
-    const localRoot = nodePath.join(process.cwd(), "public", "uploads", bucket);
+    const localRoot = uploadKind === "source"
+      ? nodePath.join(process.cwd(), ".local-data", "private-assets")
+      : nodePath.join(process.cwd(), "public", "uploads", bucket);
     const localPath = nodePath.join(localRoot, storagePath);
     await mkdir(nodePath.dirname(localPath), { recursive: true });
     await writeFile(localPath, buffer);
 
-    const fileUrl = `/uploads/${bucket}/${storagePath}`;
+    const fileUrl = uploadKind === "source" ? `studio-private://assets/${storagePath}` : `/uploads/${bucket}/${storagePath}`;
     const existingAssets = await getRows("assets");
     const existingAsset = existingAssets.find((row) => row.id === assetId) ?? {};
     const assetRow = await upsertRow("assets", {
@@ -164,7 +171,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: uploadError.message }, { status: 500 });
   }
 
-  const { data: publicUrlData } = supabase.storage.from(bucket).getPublicUrl(storagePath);
+  const { data: publicUrlData } = uploadKind === "source" ? { data: { publicUrl: `studio-private://supabase/${bucket}/${storagePath}` } } : supabase.storage.from(bucket).getPublicUrl(storagePath);
   const fileUrl = publicUrlData.publicUrl;
 
   const { error: assetUpsertError } = await supabase.from("assets").upsert({

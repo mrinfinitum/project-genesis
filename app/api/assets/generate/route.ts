@@ -57,6 +57,24 @@ function normalizeSizes(value: unknown, sourceTable: string) {
 }
 
 async function readStoredFile(fileUrl: string) {
+  if (fileUrl.startsWith("studio-private://assets/")) {
+    const storagePath = fileUrl.replace("studio-private://assets/", "");
+    return readFile(nodePath.join(process.cwd(), ".local-data", "private-assets", storagePath));
+  }
+
+  if (fileUrl.startsWith("studio-private://supabase/")) {
+    const [, rest] = fileUrl.split("studio-private://supabase/");
+    const [bucket, ...pathParts] = rest.split("/");
+    const storagePath = pathParts.join("/");
+    const { data, error } = await createSupabaseAdminClient().storage.from(bucket).download(storagePath);
+
+    if (error || !data) {
+      throw new Error(error?.message ?? "Could not read private source file from Supabase.");
+    }
+
+    return Buffer.from(await data.arrayBuffer());
+  }
+
   if (fileUrl.startsWith("/uploads/")) {
     return readFile(nodePath.join(process.cwd(), "public", fileUrl));
   }
