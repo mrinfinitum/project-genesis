@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getGameData } from "@/lib/data";
 import { toCsv } from "@/lib/export/csv";
+import { getGameRuntimeData, validateGameRuntimeData } from "@/lib/runtime/game-runtime";
 import { normalizePlanetResourceProfiles, validatePlanetResourceProfiles } from "@/lib/resources/planet-resource-profiles";
 import { ResourceService } from "@/lib/resources/service";
 import { editableTables } from "@/lib/tables";
@@ -13,6 +14,8 @@ type Params = {
 const jsonDatasets = new Set([
   "all",
   "game-data",
+  "game_runtime_data",
+  "game-runtime-data",
   "research",
   "buildings",
   "unlock_matrix",
@@ -54,6 +57,8 @@ const jsonDatasets = new Set([
   "civilization_bonuses",
   "civilization-bonuses",
   "research.json",
+  "game_runtime_data.json",
+  "game-runtime-data.json",
   "buildings.json",
   "unlock_matrix.json",
   "unlock-matrix.json",
@@ -138,6 +143,14 @@ export async function GET(request: Request, { params }: Params) {
       ...data,
       resource_catalog: ResourceService.catalog,
       planet_resource_profiles: normalizePlanetResourceProfiles(data.planet_resource_profiles as PlanetResourceProfile[])
+    });
+  }
+
+  if (normalized === "game_runtime_data") {
+    const runtimeData = await getGameRuntimeData();
+    return NextResponse.json({
+      ...runtimeData,
+      validation: validateGameRuntimeData(runtimeData)
     });
   }
 

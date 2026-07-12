@@ -158,6 +158,7 @@ const navigationGroups: NavigationGroup[] = [
     systemIds: ["unlock-matrix"],
     items: [
       { href: "/game-engine-exports", label: "Game Engine Exports", icon: FileCode2 },
+      { href: "/game-data-import", label: "Game Data Import", icon: UploadCloud },
       { href: "/content-releases", label: "Content Releases", icon: FileCheck2 },
       { href: "/prototype-content", label: "Prototype Content", icon: ClipboardList },
       { href: "/building-relationships", label: "Relationship Graph", icon: Network },
