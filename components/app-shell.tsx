@@ -159,6 +159,7 @@ const navigationGroups: NavigationGroup[] = [
     items: [
       { href: "/game-engine-exports", label: "Game Engine Exports", icon: FileCode2 },
       { href: "/content-releases", label: "Content Releases", icon: FileCheck2 },
+      { href: "/prototype-content", label: "Prototype Content", icon: ClipboardList },
       { href: "/building-relationships", label: "Relationship Graph", icon: Network },
       { href: "/validation-engine", label: "Validation Center", icon: Database },
       { href: "/building-chains", label: "Balance Designer", icon: Gauge },

@@ -29,8 +29,10 @@ function exportTokenAllows(request: NextRequest) {
   return request.headers.get("authorization") === `Bearer ${token}`;
 }
 
-function isPublishedGameContentRead(pathname: string) {
-  return pathname === "/api/game-content/manifest" || pathname === "/api/game-content/snapshot";
+function isPublishedGameContentRead(request: NextRequest) {
+  if (request.method !== "GET") return false;
+  const { pathname } = request.nextUrl;
+  return pathname === "/api/game-content/manifest" || pathname === "/api/game-content/snapshot" || pathname === "/api/game-content/prototype-snapshot";
 }
 
 function jsonError(message: string, status: number) {
@@ -40,7 +42,7 @@ function jsonError(message: string, status: number) {
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  if (!hasSupabaseAuthConfig() || exportTokenAllows(request) || isPublishedGameContentRead(pathname)) {
+  if (!hasSupabaseAuthConfig() || exportTokenAllows(request) || isPublishedGameContentRead(request)) {
     return NextResponse.next();
   }
 
