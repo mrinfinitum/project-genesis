@@ -11,7 +11,7 @@ type RuntimeClientProfile = {
 
 type RuntimePayload = {
   metadata?: { schemaVersion?: string; contentVersion?: number; checksum?: string; accessLevel?: string; validationStatus?: string };
-  eras?: Array<{ id: string; displayName?: string; shortDisplayName?: string }>;
+  eras?: Array<{ id: string; index?: number; name?: string; displayName?: string; shortDisplayName?: string }>;
   resources?: Array<{ id: string }>;
   upgradeCategories?: Array<{ id: string }>;
   upgrades?: Array<{ id: string; categoryId?: string; tabId?: string; eraId?: string; costResourceId?: string | null }>;
@@ -72,11 +72,16 @@ function validateRuntimeReferences(payload: RuntimePayload) {
 function validateEraNavigation(payload: RuntimePayload | RobloxPayload, label: string) {
   const eras = payload.eras ?? [];
   const eraNames = eras.map((era) => era.displayName ?? era.id);
+  const expectedIds = ["survival", "ancient", "medieval", "renaissance", "industrial", "modern", "space-age", "interstellar", "galactic"];
   const eraNavigation = "clientHints" in payload ? payload.clientHints?.eraNavigation : payload.clientProfiles?.default?.eraNavigation;
 
   assert(eras.length === 9, `${label} payload must include exactly nine eras; received ${eras.length}.`);
   assert(eraNames.join("|") === "Survival|Ancient|Medieval|Renaissance|Industrial|Modern|Space Age|Interstellar|Galactic", `${label} eras are not in canonical order: ${eraNames.join(", ")}.`);
-  assert(eras.some((era) => era.id === "renaissance"), `${label} payload is missing Renaissance.`);
+  assert(eras.map((era) => era.id).join("|") === expectedIds.join("|"), `${label} era IDs are not in canonical order: ${eras.map((era) => era.id).join(", ")}.`);
+  assert(eras.every((era, index) => era.index === index + 1), `${label} era indexes must be unique, sequential, and one-based.`);
+  assert(eras[3]?.id === "renaissance", `${label} payload is missing Renaissance at position 4.`);
+  assert(eras[3]?.index === 4 && eras[3]?.name === "renaissance" && eras[3]?.displayName === "Renaissance" && eras[3]?.shortDisplayName === "Renaissance", `${label} Renaissance record is not canonical.`);
+  assert(eras[2]?.id === "medieval" && eras[4]?.id === "industrial", `${label} Renaissance must immediately follow Medieval and precede Industrial.`);
   assert(eras.some((era) => era.id === "space-age" && era.shortDisplayName === "Space"), `${label} payload is missing Space Age shortDisplayName.`);
   assert(eraNavigation?.dashboardMode === "current_journey", `${label} eraNavigation.dashboardMode must be current_journey.`);
   assert(eraNavigation?.visibleEraCount === 3, `${label} eraNavigation.visibleEraCount must be 3.`);
@@ -129,6 +134,8 @@ async function main() {
   assert(roblox.payload.metadata?.accessLevel === "public-published", "Roblox accessLevel must be public-published.");
   assert(roblox.payload.metadata?.validationStatus, "Roblox validation status is missing.");
   assert((canonical.payload.eras?.length ?? 0) > 0, "Canonical payload must include at least one era.");
+  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 2, "Canonical contentVersion must be at least 2 after adding Renaissance.");
+  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 2, "Roblox contentVersion must be at least 2 after adding Renaissance.");
 
   validateEraNavigation(canonical.payload, "Canonical");
   validateEraNavigation(roblox.payload, "Roblox");

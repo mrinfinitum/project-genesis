@@ -26,6 +26,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
+export const gameRuntimeContentVersion = 2;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -61,10 +62,18 @@ const importStorePath = process.env.PROJECT_GENESIS_RUNTIME_IMPORT_STORE
   ? path.resolve(process.env.PROJECT_GENESIS_RUNTIME_IMPORT_STORE)
   : path.join(process.cwd(), "data", "game-runtime-imports.local.json");
 
-const requiredEraNames = ["Survival", "Ancient", "Medieval", "Renaissance", "Industrial", "Modern", "Space Age", "Interstellar", "Galactic"];
-const shortEraNames = new Map<string, string>([
-  ["space-age", "Space"]
-]);
+const canonicalEraDefinitions = [
+  { id: "survival", name: "survival", displayName: "Survival", shortDisplayName: "Survival" },
+  { id: "ancient", name: "ancient", displayName: "Ancient", shortDisplayName: "Ancient" },
+  { id: "medieval", name: "medieval", displayName: "Medieval", shortDisplayName: "Medieval" },
+  { id: "renaissance", name: "renaissance", displayName: "Renaissance", shortDisplayName: "Renaissance" },
+  { id: "industrial", name: "industrial", displayName: "Industrial", shortDisplayName: "Industrial" },
+  { id: "modern", name: "modern", displayName: "Modern", shortDisplayName: "Modern" },
+  { id: "space-age", name: "space-age", displayName: "Space Age", shortDisplayName: "Space" },
+  { id: "interstellar", name: "interstellar", displayName: "Interstellar", shortDisplayName: "Interstellar" },
+  { id: "galactic", name: "galactic", displayName: "Galactic", shortDisplayName: "Galactic" }
+] as const;
+const requiredEraNames = canonicalEraDefinitions.map((era) => era.displayName);
 const requiredCategoryIds = ["workforce", "industry", "science", "technology"];
 const legacyEraAliases = new Map<string, string>([
   ["survival", "survival"],
@@ -176,20 +185,19 @@ function resourceToRuntime(resource: ResourceCatalogItem): ResourceDefinition {
 }
 
 function defaultEras(): EraDefinition[] {
-  return requiredEraNames.map((name, index) => {
-    const age = civilizationAges.find((item) => stripAge(item.name) === stripAge(name));
-    const id = eraId(name);
+  return canonicalEraDefinitions.map((definition, index) => {
+    const age = civilizationAges.find((item) => stripAge(item.name) === stripAge(definition.displayName));
     return {
-      id,
+      id: definition.id,
       index: index + 1,
-      name: stripAge(name),
-      displayName: name,
-      shortDisplayName: shortEraNames.get(id) ?? stripAge(name),
-      description: age?.description ?? `${name} progression era.`,
-      unlockRequirements: index === 0 ? { start: true } : { previousEraId: eraId(requiredEraNames[index - 1]) },
-      iconKey: `era-${id}`,
-      artKey: `era-${id}`,
-      themeKey: `theme-${id}`,
+      name: definition.name,
+      displayName: definition.displayName,
+      shortDisplayName: definition.shortDisplayName,
+      description: age?.description ?? `${definition.displayName} progression era.`,
+      unlockRequirements: index === 0 ? { start: true } : { previousEraId: canonicalEraDefinitions[index - 1].id },
+      iconKey: `era-${definition.id}`,
+      artKey: `era-${definition.id}`,
+      themeKey: `theme-${definition.id}`,
       masteryRequirements: {},
       completionPercent: index === 0 ? 100 : index === 1 ? 72 : index === 2 ? 38 : 0,
       researchProgress: index <= 2 ? Math.max(15, 100 - index * 28) : 0,
@@ -346,10 +354,10 @@ function gameConstantsBalance(constants: GameData["game_constants"]): BalanceDef
 function metadata(overrides: Partial<RuntimeMetadata> = {}): RuntimeMetadata {
   return {
     schemaVersion: gameRuntimeSchemaVersion,
-    contentVersion: 1,
+    contentVersion: gameRuntimeContentVersion,
     checksum: "",
     accessLevel: "studio-internal",
-    importedAt: new Date().toISOString(),
+    importedAt: "2026-07-12T00:00:00.000Z",
     importedFrom: "existing_project_migration",
     sourceProject: "Project Genesis Studio",
     sourceFormat: "studio",
@@ -388,6 +396,16 @@ function duplicateIds<T extends { id: string }>(rows: T[]) {
   return [...duplicates];
 }
 
+function duplicateNumbers(rows: number[]) {
+  const seen = new Set<number>();
+  const duplicates = new Set<number>();
+  for (const row of rows) {
+    if (seen.has(row)) duplicates.add(row);
+    seen.add(row);
+  }
+  return [...duplicates];
+}
+
 function byId<T extends { id: string }>(left: T, right: T) {
   return left.id.localeCompare(right.id);
 }
@@ -413,6 +431,130 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
       godot: runtimeData.clientProfiles.godot
     }
   };
+}
+
+function withCanonicalEraDefinitions(runtimeData: GameRuntimeData): GameRuntimeData {
+  const currentById = new Map(runtimeData.eras.map((era) => [era.id, era]));
+  return {
+    ...runtimeData,
+    metadata: {
+      ...runtimeData.metadata,
+      contentVersion: Math.max(runtimeData.metadata.contentVersion, gameRuntimeContentVersion)
+    },
+    eras: canonicalEraDefinitions.map((definition, index) => {
+      const current = currentById.get(definition.id);
+      const fallbackDescription = civilizationAges.find((item) => stripAge(item.name) === stripAge(definition.displayName))?.description ?? `${definition.displayName} progression era.`;
+      return {
+        ...(current ?? {}),
+        id: definition.id,
+        index: index + 1,
+        name: definition.name,
+        displayName: definition.displayName,
+        shortDisplayName: definition.shortDisplayName,
+        description: current?.description ?? fallbackDescription,
+        unlockRequirements: index === 0 ? { start: true } : { previousEraId: canonicalEraDefinitions[index - 1].id },
+        iconKey: current?.iconKey ?? `era-${definition.id}`,
+        artKey: current?.artKey ?? `era-${definition.id}`,
+        themeKey: current?.themeKey ?? `theme-${definition.id}`,
+        masteryRequirements: current?.masteryRequirements ?? {},
+        tags: current?.tags ?? ["canonical", "runtime"]
+      };
+    })
+  };
+}
+
+function validateCanonicalEraProgression(eras: EraDefinition[], issues: ImportIssue[], context: string) {
+  const sortedEras = [...eras].sort(byOrderThenId);
+  const expectedIds = canonicalEraDefinitions.map((era) => era.id);
+  const duplicateIndexes = duplicateNumbers(eras.map((era) => era.index));
+
+  if (eras.length !== canonicalEraDefinitions.length) {
+    issues.push({
+      severity: "error",
+      code: "invalid_canonical_era_count",
+      message: `${context} must contain exactly nine canonical eras.`,
+      records: [`expected:${canonicalEraDefinitions.length}`, `received:${eras.length}`]
+    });
+  }
+
+  if (duplicateIndexes.length) {
+    issues.push({
+      severity: "error",
+      code: "duplicate_era_index",
+      message: `${context} era indexes must be unique.`,
+      records: duplicateIndexes.map(String)
+    });
+  }
+
+  for (let index = 0; index < canonicalEraDefinitions.length; index += 1) {
+    const expected = canonicalEraDefinitions[index];
+    const era = sortedEras[index];
+    const expectedIndex = index + 1;
+
+    if (!era || era.id !== expected.id) {
+      issues.push({
+        severity: "error",
+        code: "invalid_canonical_era_order",
+        message: `${context} eras must follow the canonical progression order.`,
+        records: [`position:${expectedIndex}`, `expected:${expected.id}`, `received:${era?.id ?? "(missing)"}`]
+      });
+      continue;
+    }
+
+    if (era.index !== expectedIndex) {
+      issues.push({
+        severity: "error",
+        code: "invalid_era_index",
+        message: `${context} era indexes must be sequential and one-based.`,
+        records: [era.id, `expected:${expectedIndex}`, `received:${era.index}`]
+      });
+    }
+
+    if (era.displayName !== expected.displayName || era.shortDisplayName !== expected.shortDisplayName) {
+      issues.push({
+        severity: "error",
+        code: "invalid_era_display_metadata",
+        message: `${context} era display metadata must match the canonical progression.`,
+        records: [era.id]
+      });
+    }
+  }
+
+  const renaissanceIndex = sortedEras.findIndex((era) => era.id === "renaissance");
+  if (renaissanceIndex !== 3 || sortedEras[2]?.id !== "medieval" || sortedEras[4]?.id !== "industrial") {
+    issues.push({
+      severity: "error",
+      code: "invalid_renaissance_position",
+      message: `${context} must place Renaissance immediately after Medieval and before Industrial.`,
+      records: sortedEras.map((era) => era.id)
+    });
+  }
+
+  const renaissance = eras.find((era) => era.id === "renaissance");
+  if (!renaissance || renaissance.index !== 4 || renaissance.name !== "renaissance" || renaissance.displayName !== "Renaissance" || renaissance.shortDisplayName !== "Renaissance") {
+    issues.push({
+      severity: "error",
+      code: "invalid_renaissance_record",
+      message: `${context} Renaissance era record must use the canonical id, index, name, displayName, and shortDisplayName.`,
+      records: renaissance ? [JSON.stringify({
+        id: renaissance.id,
+        index: renaissance.index,
+        name: renaissance.name,
+        displayName: renaissance.displayName,
+        shortDisplayName: renaissance.shortDisplayName
+      })] : ["renaissance"]
+    });
+  }
+
+  const missingExpectedIds = expectedIds.filter((id) => !eras.some((era) => era.id === id));
+  if (missingExpectedIds.length) {
+    issues.push({
+      severity: "error",
+      code: "missing_canonical_eras",
+      message: `${context} must include every canonical era.`,
+      records: missingExpectedIds
+    });
+  }
 }
 
 function stableStringify(value: unknown): string {
@@ -507,10 +649,7 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
     }
   }
 
-  const missingEras = requiredEraNames.map(eraId).filter((id) => !eraIds.has(id));
-  if (missingEras.length) {
-    issues.push({ severity: "error", code: "missing_canonical_eras", message: "All canonical eras must be present.", records: missingEras });
-  }
+  validateCanonicalEraProgression(runtimeData.eras, issues, "Canonical runtime");
 
   const missingCategories = requiredCategoryIds.filter((id) => !categoryIds.has(id));
   if (missingCategories.length) {
@@ -615,6 +754,7 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
   if (payload.upgradeTabs.length !== 4) {
     issues.push({ severity: "error", code: "invalid_upgrade_tab_count", message: "Roblox runtime payload must expose exactly four upgrade tabs.", records: payload.upgradeTabs.map((tab) => tab.tabId) });
   }
+  validateCanonicalEraProgression(payload.eras, issues, "Roblox runtime");
 
   const duplicateTabs = duplicateIds(payload.upgradeTabs.map((tab) => ({ id: tab.tabId })));
   if (duplicateTabs.length) {
@@ -716,7 +856,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     }
   }
 
-  return {
+  return withCanonicalEraDefinitions({
     metadata: metadata(),
     eras: defaultEras(),
     resources: ResourceService.catalog.map(resourceToRuntime),
@@ -725,21 +865,28 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     assets,
     balance: gameConstantsBalance(data.game_constants),
     clientProfiles: defaultClientProfiles()
-  };
+  });
 }
 
 export async function getGameRuntimeData() {
   const [base, store] = await Promise.all([buildBaseGameRuntimeData(), readImportStore()]);
   if (!store.appliedRuntimeData) return base;
 
-  return {
+  const merged = withCanonicalEraDefinitions({
     ...base,
     ...store.appliedRuntimeData,
     metadata: {
       ...store.appliedRuntimeData.metadata,
-      validationStatus: validateGameRuntimeData(store.appliedRuntimeData).status
+      contentVersion: Math.max(store.appliedRuntimeData.metadata.contentVersion, gameRuntimeContentVersion)
     },
     resources: base.resources
+  });
+  return {
+    ...merged,
+    metadata: {
+      ...merged.metadata,
+      validationStatus: validateGameRuntimeData(merged).status
+    }
   };
 }
 
