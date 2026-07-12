@@ -1,4 +1,6 @@
 import { createHash } from "node:crypto";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import path from "node:path";
 import { getGameData } from "@/lib/data";
 import { getGameArtImportWorkspaceState, getMergedAssetLibraryRows } from "@/lib/assets/game-art-import";
 
@@ -30,6 +32,11 @@ export type SourceFileRecord = {
   uploadedAt: string;
   uploadedBy: string;
   isCurrent: boolean;
+  archived?: boolean;
+  previewUrl?: string;
+  previewStatus?: "ready" | "missing" | "failed" | "manual_required";
+  width?: number | null;
+  height?: number | null;
   notes: string;
 };
 
@@ -49,6 +56,11 @@ export type AssetDerivativeRecord = {
   generatedAt: string;
   generationMethod: string;
   status: string;
+  approvalStatus?: AssetApprovalStatus;
+  publishStatus?: "draft" | "ready" | "published" | "stale" | "archived";
+  platformMappings?: Record<string, unknown>;
+  archived?: boolean;
+  staleSince?: string;
 };
 
 export type AssetDerivativePreset = {
@@ -60,6 +72,14 @@ export type AssetDerivativePreset = {
   height: number;
   aspectRatio: string;
   format: "PNG" | "WebP" | "JPG" | "SVG";
+  quality?: number;
+  cropMode?: "contain" | "cover" | "crop" | "manual";
+  focalPoint?: string;
+  transparentBackground?: boolean;
+  engineTargets?: string[];
+  notes?: string;
+  archived?: boolean;
+  updatedAt?: string;
   required: boolean;
 };
 
@@ -117,6 +137,7 @@ export type ProductionAsset = {
   status: string;
   productionStatus: AssetProductionStatus;
   approvalStatus: AssetApprovalStatus;
+  reviewEvents: AssetReviewEvent[];
   sourceFiles: SourceFileRecord[];
   variants: AssetDerivativeRecord[];
   derivatives: AssetDerivativeRecord[];
@@ -132,6 +153,9 @@ export type ProductionAsset = {
   updatedAt: string;
   approvedAt: string;
   publishedAt: string;
+  publishBlockers: string[];
+  optionalMissingRequirements: string[];
+  historyEvents: AssetHistoryEvent[];
 };
 
 export type AssetProductionState = {
@@ -165,6 +189,75 @@ export type AssetProductionState = {
   };
 };
 
+export type AssetReviewEvent = {
+  id: string;
+  assetId: string;
+  action: "submit_review" | "approve" | "request_changes" | "reject" | "publish" | "unpublish";
+  reviewer: string;
+  timestamp: string;
+  notes: string;
+  approvedSourceVersionId?: string;
+  approvedDerivativeIds?: string[];
+  publicationTargets?: string[];
+  adminOverride?: boolean;
+};
+
+export type AssetHistoryEvent = {
+  id: string;
+  assetId: string;
+  eventType: string;
+  title: string;
+  timestamp: string;
+  notes: string;
+};
+
+type AssetProductionOverride = {
+  sourceFiles?: SourceFileRecord[];
+  derivatives?: AssetDerivativeRecord[];
+  platformMappings?: Record<string, unknown>;
+  requirementProfileId?: string;
+  status?: string;
+  productionStatus?: AssetProductionStatus;
+  approvalStatus?: AssetApprovalStatus;
+  approvedAt?: string;
+  publishedAt?: string;
+  reviewEvents?: AssetReviewEvent[];
+  historyEvents?: AssetHistoryEvent[];
+};
+
+type MissingRequirementOverride = {
+  id: string;
+  assignedArtist?: string;
+  dueDate?: string;
+  priority?: MissingAssetRequirement["priority"];
+  notRequired?: boolean;
+  requirementProfileId?: string;
+};
+
+type AssetProductionStore = {
+  assets: Record<string, AssetProductionOverride>;
+  derivativePresets: AssetDerivativePreset[];
+  missingRequirements: Record<string, MissingRequirementOverride>;
+  processingJobs: ProcessingJobRecord[];
+};
+
+export type AssetProductionActionInput = {
+  action: string;
+  assetId?: string;
+  sourceFileId?: string;
+  derivativeId?: string;
+  presetId?: string;
+  missingRequirementId?: string;
+  reviewer?: string;
+  notes?: string;
+  adminOverride?: boolean;
+  payload?: Record<string, unknown>;
+};
+
+const productionStorePath = process.env.PROJECT_GENESIS_ASSET_PRODUCTION_STORE
+  ? path.resolve(process.env.PROJECT_GENESIS_ASSET_PRODUCTION_STORE)
+  : path.join(process.cwd(), "data", "asset-production.local.json");
+
 export const derivativePresets: AssetDerivativePreset[] = [
   { id: "planet_icon", name: "Planet Icon", category: "planets", derivativeType: "icon", width: 256, height: 256, aspectRatio: "1:1", format: "PNG", required: true },
   { id: "planet_card", name: "Planet Card", category: "planets", derivativeType: "card", width: 1024, height: 1024, aspectRatio: "1:1", format: "WebP", required: true },
@@ -190,6 +283,56 @@ export const requirementProfiles: AssetRequirementProfile[] = [
   { id: "star_system_requirement_profile", objectType: "star_system", label: "Star System", requirements: requirements(["planet_card", "planet_hero"], "medium") },
   { id: "ui_requirement_profile", objectType: "ui", label: "UI", requirements: requirements(["loading_screen"], "low") }
 ];
+
+async function readProductionStore(): Promise<AssetProductionStore> {
+  try {
+    const raw = await readFile(productionStorePath, "utf8");
+    const parsed = JSON.parse(raw) as Partial<AssetProductionStore>;
+    return {
+      assets: parsed.assets && typeof parsed.assets === "object" ? parsed.assets : {},
+      derivativePresets: Array.isArray(parsed.derivativePresets) ? parsed.derivativePresets : [],
+      missingRequirements: parsed.missingRequirements && typeof parsed.missingRequirements === "object" ? parsed.missingRequirements : {},
+      processingJobs: Array.isArray(parsed.processingJobs) ? parsed.processingJobs : []
+    };
+  } catch {
+    return { assets: {}, derivativePresets: [], missingRequirements: {}, processingJobs: [] };
+  }
+}
+
+async function writeProductionStore(store: AssetProductionStore) {
+  await mkdir(path.dirname(productionStorePath), { recursive: true });
+  await writeFile(productionStorePath, `${JSON.stringify(store, null, 2)}\n`, "utf8");
+}
+
+function activePresets(store: AssetProductionStore) {
+  const merged = new Map(derivativePresets.map((preset) => [preset.id, preset]));
+  for (const preset of store.derivativePresets) {
+    merged.set(preset.id, preset);
+  }
+  return [...merged.values()].filter((preset) => !preset.archived);
+}
+
+function productionEvent(assetId: string, eventType: string, title: string, notes = ""): AssetHistoryEvent {
+  return {
+    id: `history_${assetId}_${Date.now()}_${hash(`${eventType}:${notes}`)}`,
+    assetId,
+    eventType,
+    title,
+    timestamp: new Date().toISOString(),
+    notes
+  };
+}
+
+function assetOverrideFor(store: AssetProductionStore, assetId: string): AssetProductionOverride {
+  return store.assets[assetId] ?? {};
+}
+
+function saveAssetOverride(store: AssetProductionStore, assetId: string, override: AssetProductionOverride) {
+  store.assets[assetId] = {
+    ...assetOverrideFor(store, assetId),
+    ...override
+  };
+}
 
 function requirements(presetIds: string[], priority: "low" | "medium" | "high" | "critical") {
   return presetIds.map((presetId) => {
@@ -289,6 +432,11 @@ function sourceFileFor(row: Row): SourceFileRecord | null {
     uploadedAt: text(row.imported_at ?? row.created_at ?? row.updated_at, ""),
     uploadedBy: "studio",
     isCurrent: true,
+    archived: false,
+    previewUrl: text(row.preview_url ?? row.file_url),
+    previewStatus: text(row.preview_url ?? row.file_url) ? "ready" : extension === ".psd" || extension === ".psb" ? "manual_required" : "missing",
+    width: numeric(String(row.dimensions ?? "").split("x")[0]) || null,
+    height: numeric(String(row.dimensions ?? "").split("x")[1]) || null,
     notes: text(row.notes)
   };
 }
@@ -313,7 +461,11 @@ function derivativeFor(row: Row, sourceFileId: string | null): AssetDerivativeRe
     checksum: hash(publicUrl || storagePath),
     generatedAt: text(row.imported_at ?? row.updated_at, ""),
     generationMethod: text(row.imported_from) ? "imported" : "manual_upload",
-    status: text(row.status, "draft")
+    status: text(row.status, "draft"),
+    approvalStatus: approvalStatusFor(row),
+    publishStatus: slug(text(row.status ?? row.export_status)).includes("published") ? "published" : "draft",
+    platformMappings: (row.platform_mappings ?? row.platformMappings ?? {}) as Record<string, unknown>,
+    archived: false
   };
 }
 
@@ -363,18 +515,44 @@ function completion(profile: AssetRequirementProfile, derivatives: AssetDerivati
   };
 }
 
-function productionAssetFor(row: Row, usage: Awaited<ReturnType<typeof getMergedAssetLibraryRows>>["usage"]): ProductionAsset {
+function profileById(profileId: string) {
+  return requirementProfiles.find((profile) => profile.id === profileId) ?? profileForCategory(profileId);
+}
+
+function productionAssetFor(row: Row, usage: Awaited<ReturnType<typeof getMergedAssetLibraryRows>>["usage"], store: AssetProductionStore): ProductionAsset {
+  const assetId = text(row.id);
+  const override = assetOverrideFor(store, assetId);
   const sourceFile = sourceFileFor(row);
-  const sourceFiles = sourceFile ? [sourceFile] : [];
+  const hasOverrideCurrentSource = Boolean(override.sourceFiles?.some((source) => source.isCurrent && !source.archived));
+  const sourceFiles = [...(sourceFile ? [{ ...sourceFile, isCurrent: hasOverrideCurrentSource ? false : sourceFile.isCurrent }] : []), ...(override.sourceFiles ?? [])]
+    .filter((source) => !source.archived)
+    .sort((left, right) => right.version - left.version);
   const derivative = derivativeFor(row, sourceFile?.id ?? null);
-  const derivatives = derivative ? [derivative] : [];
-  const profile = profileForCategory(rowCategory(row));
+  const derivatives = [...(derivative ? [derivative] : []), ...(override.derivatives ?? [])]
+    .filter((item) => !item.archived)
+    .sort((left, right) => left.derivativeType.localeCompare(right.derivativeType));
+  const profile = override.requirementProfileId ? profileById(override.requirementProfileId) : profileForCategory(rowCategory(row));
   const readiness = completion(profile, derivatives);
-  const status = text(row.status ?? row.export_status, "draft");
+  const optionalMissing = profile.requirements
+    .filter((requirement) => !requirement.required && !derivatives.some((derivativeItem) => derivativeItem.derivativeType === requirement.derivativeType))
+    .map((requirement) => requirement.derivativeType);
+  const status = override.status ?? text(row.status ?? row.export_status, "draft");
+  const approvalStatus = override.approvalStatus ?? approvalStatusFor(row);
+  const productionStatus = override.productionStatus ?? productionStatusFor(row, sourceFiles, derivatives, readiness.missing);
+  const platformMappings = {
+    ...((row.platform_mappings ?? row.platformMappings ?? {}) as Record<string, unknown>),
+    ...(override.platformMappings ?? {})
+  };
+  const approvedRequiredDerivatives = derivatives.filter((item) => item.approvalStatus === "approved" || item.status.toLowerCase().includes("approved"));
+  const publishBlockers = readiness.missing.length
+    ? readiness.missing.map((item) => `Missing required ${item}`)
+    : approvedRequiredDerivatives.length < profile.requirements.filter((requirement) => requirement.required).length
+      ? ["Required derivatives need approval before publishing"]
+      : [];
 
   return {
-    id: text(row.id),
-    name: text(row.name, text(row.id)),
+    id: assetId,
+    name: text(row.name, assetId),
     type: text(row.type, "image"),
     category: text(row.category, "game-assets"),
     artKey: artKeyFor(row),
@@ -383,12 +561,13 @@ function productionAssetFor(row: Row, usage: Awaited<ReturnType<typeof getMerged
     modelKey: text(row.model_key ?? row.modelKey),
     description: text(row.description ?? row.prompt),
     status,
-    productionStatus: productionStatusFor(row, sourceFiles, derivatives, readiness.missing),
-    approvalStatus: approvalStatusFor(row),
+    productionStatus,
+    approvalStatus,
+    reviewEvents: override.reviewEvents ?? [],
     sourceFiles,
     variants: derivatives,
     derivatives,
-    platformMappings: (row.platform_mappings ?? row.platformMappings ?? {}) as Record<string, unknown>,
+    platformMappings,
     usageReferences: usageForAsset(row, usage),
     requirementProfileId: profile.id,
     tags: list(row.tags),
@@ -398,8 +577,11 @@ function productionAssetFor(row: Row, usage: Awaited<ReturnType<typeof getMerged
     missingRequirements: readiness.missing,
     createdAt: text(row.created_at ?? row.imported_at),
     updatedAt: text(row.updated_at ?? row.imported_at),
-    approvedAt: text(row.approved_at),
-    publishedAt: text(row.published_at)
+    approvedAt: override.approvedAt ?? text(row.approved_at),
+    publishedAt: override.publishedAt ?? text(row.published_at),
+    publishBlockers,
+    optionalMissingRequirements: optionalMissing,
+    historyEvents: override.historyEvents ?? []
   };
 }
 
@@ -484,8 +666,9 @@ function auditRows(label: string, records: Array<{ missing: MissingAssetRequirem
 }
 
 export async function getAssetProductionState(): Promise<AssetProductionState> {
-  const [{ rows, usage }, data, importState] = await Promise.all([getMergedAssetLibraryRows(), getGameData(), getGameArtImportWorkspaceState()]);
-  const assets = rows.map((row) => productionAssetFor(row, usage)).sort((left, right) => left.name.localeCompare(right.name));
+  const [{ rows, usage }, data, importState, store] = await Promise.all([getMergedAssetLibraryRows(), getGameData(), getGameArtImportWorkspaceState(), readProductionStore()]);
+  const assets = rows.map((row) => productionAssetFor(row, usage, store)).sort((left, right) => left.name.localeCompare(right.name));
+  const presets = activePresets(store);
   const profiles = canonicalRequirementsByObject();
   const missingRequirements: MissingAssetRequirement[] = [];
 
@@ -502,14 +685,17 @@ export async function getAssetProductionState(): Promise<AssetProductionState> {
   const audit = Object.entries(groups).map(([category, records]) => {
     const profile = profiles[category as keyof typeof profiles];
     const checked = records.map((record) => {
-      const missing = missingForRecord({ objectType: category, objectId: record.id, objectName: record.name, key: record.key, profile, assets });
-      missingRequirements.push(...missing);
+      const missing = missingForRecord({ objectType: category, objectId: record.id, objectName: record.name, key: record.key, profile, assets })
+        .map((item) => ({ ...item, ...(store.missingRequirements[item.id] ?? {}) }))
+        .filter((item) => !item.notRequired);
+      missingRequirements.push(...missing as MissingAssetRequirement[]);
       return { missing };
     });
     return auditRows(category, checked, profile);
   });
 
-  const processingJobs = processingJobsFor(assets);
+  const processingJobs = [...processingJobsFor(assets), ...store.processingJobs]
+    .filter((job, index, rows) => rows.findIndex((item) => item.id === job.id) === index);
   const sourceFiles = assets.flatMap((asset) => asset.sourceFiles);
   const generatedAssets = assets.filter((asset) => asset.derivatives.length);
   const publishedAssets = assets.filter((asset) => asset.productionStatus === "published" || asset.status.toLowerCase() === "published");
@@ -522,7 +708,7 @@ export async function getAssetProductionState(): Promise<AssetProductionState> {
     missingRequirements: missingRequirements.sort((left, right) => left.objectType.localeCompare(right.objectType) || left.objectName.localeCompare(right.objectName)),
     processingJobs,
     importHistory: importState.history,
-    derivativePresets,
+    derivativePresets: presets,
     requirementProfiles,
     audit,
     dashboard: {
@@ -537,4 +723,300 @@ export async function getAssetProductionState(): Promise<AssetProductionState> {
       engineMappingsIncomplete: assets.filter((asset) => !Object.keys(asset.platformMappings).length).length
     }
   };
+}
+
+export async function getProductionAsset(assetId: string) {
+  const state = await getAssetProductionState();
+  return state.assets.find((asset) => asset.id === assetId) ?? null;
+}
+
+export async function getProductionSourceFile(sourceFileId: string) {
+  const state = await getAssetProductionState();
+  for (const asset of state.assets) {
+    const sourceFile = asset.sourceFiles.find((source) => source.id === sourceFileId);
+    if (sourceFile) return sourceFile;
+  }
+  return null;
+}
+
+export async function getAssetProductionRuntimeOverrides() {
+  const store = await readProductionStore();
+  return Object.fromEntries(
+    Object.entries(store.assets)
+      .filter(([, override]) => override.platformMappings || override.status || override.productionStatus || override.approvalStatus)
+      .map(([assetId, override]) => [
+        assetId,
+        {
+          status: override.status ?? override.productionStatus,
+          productionStatus: override.productionStatus,
+          approvalStatus: override.approvalStatus,
+          platformMappings: override.platformMappings ?? {}
+        }
+      ])
+  );
+}
+
+function normalizedRobloxAssetId(value: unknown) {
+  const raw = text(value);
+  const digits = raw.replace(/^rbxassetid:\/\//, "").replace(/\D/g, "");
+  if (!digits) {
+    throw new Error("Roblox asset ID must include a numeric ID.");
+  }
+  return `rbxassetid://${digits}`;
+}
+
+function sourceVersion(input: AssetProductionActionInput, currentVersions: SourceFileRecord[]): SourceFileRecord {
+  const payload = input.payload ?? {};
+  const filename = text(payload.filename, "source-art.psd");
+  const extension = extensionFor(filename) || text(payload.extension, ".psd");
+  const version = currentVersions.length ? Math.max(...currentVersions.map((item) => item.version)) + 1 : 1;
+  return {
+    id: `source_${input.assetId}_${Date.now()}_${hash(filename)}`,
+    assetId: text(input.assetId),
+    filename,
+    extension,
+    mimeType: text(payload.mimeType, mimeFor(extension)),
+    storagePath: text(payload.storagePath, "studio-private://pending-source-upload"),
+    fileSizeBytes: numeric(payload.fileSizeBytes),
+    checksum: text(payload.checksum) || hash(`${filename}:${Date.now()}`),
+    version,
+    versionLabel: text(payload.versionLabel, `v${version}`),
+    uploadedAt: new Date().toISOString(),
+    uploadedBy: text(payload.uploadedBy, "studio"),
+    isCurrent: true,
+    archived: false,
+    previewUrl: text(payload.previewUrl),
+    previewStatus: text(payload.previewUrl) ? "ready" : extension === ".psd" || extension === ".psb" ? "manual_required" : "missing",
+    width: numeric(payload.width) || null,
+    height: numeric(payload.height) || null,
+    notes: text(input.notes ?? payload.notes)
+  };
+}
+
+function derivativeRecord(input: AssetProductionActionInput, currentSources: SourceFileRecord[]): AssetDerivativeRecord {
+  const payload = input.payload ?? {};
+  const width = numeric(payload.width) || null;
+  const height = numeric(payload.height) || null;
+  const derivativeType = text(payload.derivativeType, "card");
+  const format = text(payload.format, "PNG");
+  const publicUrl = text(payload.publicUrl);
+  const storagePath = text(payload.storagePath, publicUrl);
+  return {
+    id: text(input.derivativeId) || `derivative_${input.assetId}_${derivativeType}_${Date.now()}`,
+    assetId: text(input.assetId),
+    sourceFileId: text(payload.sourceFileId) || currentSources.find((source) => source.isCurrent)?.id || null,
+    derivativeType,
+    format,
+    width,
+    height,
+    aspectRatio: width && height ? `${width}:${height}` : text(payload.aspectRatio),
+    quality: numeric(payload.quality) || null,
+    storagePath,
+    publicUrl,
+    checksum: text(payload.checksum) || hash(`${publicUrl}:${storagePath}:${Date.now()}`),
+    generatedAt: new Date().toISOString(),
+    generationMethod: text(payload.generationMethod, "manual_upload"),
+    status: text(payload.status, "draft"),
+    approvalStatus: "pending",
+    publishStatus: "draft",
+    platformMappings: {},
+    archived: false
+  };
+}
+
+export async function applyAssetProductionAction(input: AssetProductionActionInput) {
+  const store = await readProductionStore();
+  const assetId = text(input.assetId);
+  const now = new Date().toISOString();
+
+  if (!assetId && !input.action.startsWith("preset.") && !input.action.startsWith("queue.") && !input.action.startsWith("missing.")) {
+    throw new Error("assetId is required for this production action.");
+  }
+
+  if (input.action.startsWith("preset.")) {
+    const payload = input.payload ?? {};
+    const presetId = text(input.presetId ?? payload.id) || `preset_${Date.now()}`;
+    const existing = activePresets(store).find((preset) => preset.id === presetId);
+    const nextPreset: AssetDerivativePreset = {
+      id: presetId,
+      name: text(payload.name, existing?.name ?? "New Preset"),
+      category: text(payload.category, existing?.category ?? "game-assets"),
+      derivativeType: text(payload.derivativeType, existing?.derivativeType ?? "card"),
+      width: numeric(payload.width) || existing?.width || 1024,
+      height: numeric(payload.height) || existing?.height || 1024,
+      aspectRatio: text(payload.aspectRatio, existing?.aspectRatio ?? "1:1"),
+      format: (text(payload.outputFormat ?? payload.format, existing?.format ?? "PNG") as AssetDerivativePreset["format"]),
+      quality: numeric(payload.quality) || existing?.quality || 90,
+      cropMode: (text(payload.cropMode, existing?.cropMode ?? "contain") as AssetDerivativePreset["cropMode"]),
+      focalPoint: text(payload.focalPoint, existing?.focalPoint ?? "center"),
+      transparentBackground: typeof payload.transparentBackground === "boolean" ? payload.transparentBackground : existing?.transparentBackground ?? true,
+      engineTargets: Array.isArray(payload.engineTargets) ? payload.engineTargets.map(String) : existing?.engineTargets ?? ["web", "roblox"],
+      notes: text(input.notes ?? payload.notes, existing?.notes ?? ""),
+      archived: input.action === "preset.archive",
+      required: typeof payload.required === "boolean" ? payload.required : existing?.required ?? true,
+      updatedAt: now
+    };
+    store.derivativePresets = [...store.derivativePresets.filter((preset) => preset.id !== presetId), nextPreset].sort((left, right) => left.name.localeCompare(right.name));
+
+    if (input.action === "preset.duplicate") {
+      const duplicate = { ...nextPreset, id: `preset_${Date.now()}_${hash(nextPreset.id)}`, name: `${nextPreset.name} Copy`, updatedAt: now };
+      store.derivativePresets.push(duplicate);
+    }
+
+    await writeProductionStore(store);
+    return { ok: true, action: input.action, preset: nextPreset };
+  }
+
+  if (input.action.startsWith("missing.")) {
+    const missingRequirementId = text(input.missingRequirementId);
+    if (!missingRequirementId) throw new Error("missingRequirementId is required.");
+    const existing = store.missingRequirements[missingRequirementId] ?? { id: missingRequirementId };
+    store.missingRequirements[missingRequirementId] = {
+      ...existing,
+      assignedArtist: text(input.payload?.assignedArtist, existing.assignedArtist),
+      dueDate: text(input.payload?.dueDate, existing.dueDate),
+      priority: (text(input.payload?.priority, existing.priority ?? "medium") as MissingAssetRequirement["priority"]),
+      notRequired: input.action === "missing.mark_not_required" ? true : existing.notRequired,
+      requirementProfileId: text(input.payload?.requirementProfileId, existing.requirementProfileId)
+    };
+    await writeProductionStore(store);
+    return { ok: true, action: input.action, missingRequirement: store.missingRequirements[missingRequirementId] };
+  }
+
+  if (input.action.startsWith("queue.")) {
+    const jobId = text(input.payload?.jobId);
+    if (!jobId && input.action !== "queue.clear_completed") throw new Error("jobId is required.");
+    if (input.action === "queue.clear_completed") {
+      store.processingJobs = store.processingJobs.filter((job) => job.status !== "completed");
+    } else {
+      store.processingJobs = store.processingJobs.map((job) => {
+        if (job.id !== jobId) return job;
+        if (input.action === "queue.retry") return { ...job, status: "queued", progress: 0, errorMessage: "", retryCount: job.retryCount + 1 };
+        if (input.action === "queue.cancel") return { ...job, status: "cancelled", completedAt: now };
+        if (input.action === "queue.reprocess") return { ...job, status: "queued", progress: 0, startedAt: null, completedAt: null, errorMessage: "", retryCount: job.retryCount + 1 };
+        return job;
+      });
+    }
+    await writeProductionStore(store);
+    return { ok: true, action: input.action };
+  }
+
+  const override = assetOverrideFor(store, assetId);
+  const historyEvents = override.historyEvents ?? [];
+  const sourceFiles = override.sourceFiles ?? [];
+  const derivatives = override.derivatives ?? [];
+
+  if (input.action === "source.upload_version") {
+    const next = sourceVersion(input, sourceFiles);
+    saveAssetOverride(store, assetId, {
+      sourceFiles: sourceFiles.map((source) => ({ ...source, isCurrent: false })).concat(next),
+      productionStatus: "source_uploaded",
+      historyEvents: [productionEvent(assetId, "source_version_uploaded", `Uploaded ${next.versionLabel}`, input.notes), ...historyEvents]
+    });
+  }
+
+  if (input.action === "source.set_current" || input.action === "source.restore") {
+    const sourceFileId = text(input.sourceFileId);
+    const allSources = sourceFiles.map((source) => ({ ...source, isCurrent: source.id === sourceFileId }));
+    if (!allSources.some((source) => source.isCurrent)) throw new Error("Source version was not found.");
+    saveAssetOverride(store, assetId, {
+      sourceFiles: allSources,
+      historyEvents: [productionEvent(assetId, input.action, "Changed current source version", input.notes), ...historyEvents]
+    });
+  }
+
+  if (input.action === "source.archive") {
+    const sourceFileId = text(input.sourceFileId);
+    saveAssetOverride(store, assetId, {
+      sourceFiles: sourceFiles.map((source) => source.id === sourceFileId ? { ...source, archived: true, isCurrent: false } : source),
+      historyEvents: [productionEvent(assetId, "source_archived", "Archived source version", input.notes), ...historyEvents]
+    });
+  }
+
+  if (input.action === "source.preview") {
+    const sourceFileId = text(input.sourceFileId);
+    saveAssetOverride(store, assetId, {
+      sourceFiles: sourceFiles.map((source) => source.id === sourceFileId ? { ...source, previewUrl: text(input.payload?.previewUrl), previewStatus: "ready" } : source),
+      historyEvents: [productionEvent(assetId, "source_preview_uploaded", "Uploaded source preview", input.notes), ...historyEvents]
+    });
+  }
+
+  if (input.action === "derivative.upload" || input.action === "derivative.replace") {
+    const nextDerivative = derivativeRecord(input, sourceFiles);
+    saveAssetOverride(store, assetId, {
+      derivatives: derivatives.filter((derivative) => derivative.id !== nextDerivative.id).concat(nextDerivative),
+      productionStatus: "derivatives_ready",
+      historyEvents: [productionEvent(assetId, input.action, `Saved ${nextDerivative.derivativeType} derivative`, input.notes), ...historyEvents]
+    });
+  }
+
+  if (input.action === "derivative.approve" || input.action === "derivative.needs_changes" || input.action === "derivative.archive") {
+    const derivativeId = text(input.derivativeId);
+    saveAssetOverride(store, assetId, {
+      derivatives: derivatives.map((derivative) => derivative.id === derivativeId
+        ? {
+            ...derivative,
+            approvalStatus: input.action === "derivative.approve" ? "approved" : input.action === "derivative.needs_changes" ? "changes_requested" : derivative.approvalStatus,
+            status: input.action === "derivative.approve" ? "approved" : input.action === "derivative.needs_changes" ? "changes_requested" : derivative.status,
+            archived: input.action === "derivative.archive" ? true : derivative.archived
+          }
+        : derivative),
+      historyEvents: [productionEvent(assetId, input.action, "Updated derivative review state", input.notes), ...historyEvents]
+    });
+  }
+
+  if (input.action.startsWith("review.")) {
+    const action = input.action.replace("review.", "") as AssetReviewEvent["action"];
+    const reviewEvent: AssetReviewEvent = {
+      id: `review_${assetId}_${Date.now()}`,
+      assetId,
+      action,
+      reviewer: text(input.reviewer, "studio"),
+      timestamp: now,
+      notes: text(input.notes),
+      approvedSourceVersionId: sourceFiles.find((source) => source.isCurrent)?.id,
+      approvedDerivativeIds: derivatives.filter((derivative) => derivative.approvalStatus === "approved").map((derivative) => derivative.id),
+      publicationTargets: Array.isArray(input.payload?.publicationTargets) ? input.payload.publicationTargets.map(String) : [],
+      adminOverride: Boolean(input.adminOverride)
+    };
+    const approvalStatus: AssetApprovalStatus = action === "approve" || action === "publish" ? "approved" : action === "request_changes" ? "changes_requested" : action === "reject" ? "rejected" : "pending";
+    saveAssetOverride(store, assetId, {
+      approvalStatus,
+      status: action === "publish" ? "published" : action === "submit_review" ? "review" : approvalStatus,
+      productionStatus: action === "publish" ? "published" : override.productionStatus,
+      approvedAt: action === "approve" ? now : override.approvedAt,
+      publishedAt: action === "publish" ? now : override.publishedAt,
+      reviewEvents: [reviewEvent, ...(override.reviewEvents ?? [])],
+      historyEvents: [productionEvent(assetId, input.action, `Review action: ${action}`, input.notes), ...historyEvents]
+    });
+  }
+
+  if (input.action === "mapping.web_publish") {
+    const asset = await getProductionAsset(assetId);
+    if (asset?.publishBlockers.length && !input.adminOverride) {
+      throw new Error(`Cannot publish: ${asset.publishBlockers.join(", ")}`);
+    }
+    const derivativeId = text(input.derivativeId);
+    const derivative = derivatives.find((item) => item.id === derivativeId) ?? asset?.derivatives.find((item) => item.id === derivativeId);
+    const webPath = text(input.payload?.path, derivative?.publicUrl || derivative?.storagePath || "");
+    if (!webPath) throw new Error("A public Web path is required.");
+    saveAssetOverride(store, assetId, {
+      platformMappings: { ...(override.platformMappings ?? {}), web: { path: webPath, status: "published", publishedAt: now } },
+      derivatives: derivatives.map((item) => item.id === derivativeId ? { ...item, publishStatus: "published", platformMappings: { ...(item.platformMappings ?? {}), web: { path: webPath } } } : item),
+      productionStatus: "published",
+      publishedAt: now,
+      historyEvents: [productionEvent(assetId, "web_published", "Published Web asset mapping", webPath), ...historyEvents]
+    });
+  }
+
+  if (input.action === "mapping.roblox") {
+    const robloxAssetId = normalizedRobloxAssetId(input.payload?.assetId);
+    saveAssetOverride(store, assetId, {
+      platformMappings: { ...(override.platformMappings ?? {}), roblox: { assetId: robloxAssetId, status: "mapped", publishedAt: now } },
+      historyEvents: [productionEvent(assetId, "roblox_mapped", "Mapped Roblox asset ID", robloxAssetId), ...historyEvents]
+    });
+  }
+
+  await writeProductionStore(store);
+  return { ok: true, action: input.action, assetId };
 }

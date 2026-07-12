@@ -22,7 +22,7 @@ function isApiPath(pathname: string) {
 function exportTokenAllows(request: NextRequest) {
   const token = process.env.PROJECT_GENESIS_EXPORT_TOKEN;
 
-  if (!token || !(request.nextUrl.pathname.startsWith("/api/export") || request.nextUrl.pathname.startsWith("/api/game-content") || request.nextUrl.pathname.startsWith("/api/game-runtime") || request.nextUrl.pathname.startsWith("/api/game-art"))) {
+  if (!token || !(request.nextUrl.pathname.startsWith("/api/export") || request.nextUrl.pathname.startsWith("/api/game-content") || request.nextUrl.pathname.startsWith("/api/game-runtime") || request.nextUrl.pathname.startsWith("/api/game-art") || request.nextUrl.pathname.startsWith("/api/assets/production"))) {
     return false;
   }
 

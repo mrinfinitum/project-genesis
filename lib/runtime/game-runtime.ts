@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { civilizationAges } from "@/data/civilization-identity";
+import { getAssetProductionRuntimeOverrides } from "@/lib/assets/asset-production";
 import { getAppliedGameArtAssets } from "@/lib/assets/game-art-import";
 import { getGameData } from "@/lib/data";
 import { ResourceService } from "@/lib/resources/service";
@@ -667,9 +668,23 @@ async function writeImportStore(store: ImportStore) {
 }
 
 export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
-  const [data, importedAssets] = await Promise.all([getGameData(), getAppliedGameArtAssets()]);
+  const [data, importedAssets, productionOverrides] = await Promise.all([getGameData(), getAppliedGameArtAssets(), getAssetProductionRuntimeOverrides()]);
   const categories = new Map(defaultCategories().map((row) => [row.id, row]));
   const upgrades = data.upgrades.map(upgradeToRuntime);
+  const assets = [...data.assets.map(assetToRuntime), ...importedAssets].map((asset) => {
+    const override = productionOverrides[asset.id];
+    if (!override) return asset;
+    return {
+      ...asset,
+      status: override.status ?? asset.status,
+      productionStatus: override.productionStatus,
+      approvalStatus: override.approvalStatus,
+      platformMappings: {
+        ...asset.platformMappings,
+        ...override.platformMappings
+      }
+    };
+  });
 
   for (const upgrade of upgrades) {
     if (!categories.has(upgrade.categoryId)) {
@@ -692,7 +707,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     resources: ResourceService.catalog.map(resourceToRuntime),
     upgradeCategories: [...categories.values()].sort((left, right) => left.order - right.order),
     upgrades,
-    assets: [...data.assets.map(assetToRuntime), ...importedAssets],
+    assets,
     balance: gameConstantsBalance(data.game_constants),
     clientProfiles: defaultClientProfiles()
   };

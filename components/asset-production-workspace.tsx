@@ -1,5 +1,9 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import { Archive, CheckCircle2, FileImage, GitBranch, History, ImageIcon, Layers3, PackageCheck, Timer, UploadCloud } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, WorkspaceProgressBar, WorkspaceStatTile } from "@/components/ui/workspace";
 import type { AssetProductionState, ProductionAsset } from "@/lib/assets/asset-production";
 
@@ -73,10 +77,89 @@ function platformCount(asset: ProductionAsset) {
   return Object.keys(asset.platformMappings ?? {}).length;
 }
 
+async function postProductionAction(body: Record<string, unknown>) {
+  const response = await fetch("/api/assets/production/action", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body)
+  });
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.error ?? "Production action failed.");
+  window.location.reload();
+}
+
+function ActionButton({ children, body }: { children: React.ReactNode; body: Record<string, unknown> }) {
+  const [busy, setBusy] = useState(false);
+  return (
+    <Button
+      type="button"
+      disabled={busy}
+      onClick={async () => {
+        setBusy(true);
+        try {
+          await postProductionAction(body);
+        } finally {
+          setBusy(false);
+        }
+      }}
+    >
+      {children}
+    </Button>
+  );
+}
+
+function PresetEditor() {
+  const [busy, setBusy] = useState(false);
+  return (
+    <form
+      onSubmit={async (event) => {
+        event.preventDefault();
+        setBusy(true);
+        const form = new FormData(event.currentTarget);
+        try {
+          await postProductionAction({
+            action: "preset.upsert",
+            payload: {
+              name: String(form.get("name") ?? ""),
+              category: String(form.get("category") ?? ""),
+              derivativeType: String(form.get("derivativeType") ?? ""),
+              width: String(form.get("width") ?? ""),
+              height: String(form.get("height") ?? ""),
+              outputFormat: String(form.get("outputFormat") ?? "PNG"),
+              cropMode: String(form.get("cropMode") ?? "contain"),
+              focalPoint: String(form.get("focalPoint") ?? "center"),
+              notes: String(form.get("notes") ?? "")
+            }
+          });
+        } finally {
+          setBusy(false);
+        }
+      }}
+      className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3"
+    >
+      <p className="font-black text-white">Create / Edit Preset</p>
+      <div className="mt-3 grid gap-2">
+        <input name="name" placeholder="Preset name" className="h-10 rounded-md border border-cyan-300/15 bg-slate-950/60 px-3 text-sm text-white outline-none" />
+        <div className="grid gap-2 sm:grid-cols-2">
+          <input name="category" placeholder="Category" className="h-10 rounded-md border border-cyan-300/15 bg-slate-950/60 px-3 text-sm text-white outline-none" />
+          <input name="derivativeType" placeholder="icon/card/hero" className="h-10 rounded-md border border-cyan-300/15 bg-slate-950/60 px-3 text-sm text-white outline-none" />
+          <input name="width" placeholder="Width" type="number" className="h-10 rounded-md border border-cyan-300/15 bg-slate-950/60 px-3 text-sm text-white outline-none" />
+          <input name="height" placeholder="Height" type="number" className="h-10 rounded-md border border-cyan-300/15 bg-slate-950/60 px-3 text-sm text-white outline-none" />
+          <input name="outputFormat" placeholder="PNG/WebP/JPG" className="h-10 rounded-md border border-cyan-300/15 bg-slate-950/60 px-3 text-sm text-white outline-none" />
+          <input name="cropMode" placeholder="contain/cover/crop" className="h-10 rounded-md border border-cyan-300/15 bg-slate-950/60 px-3 text-sm text-white outline-none" />
+        </div>
+        <input name="focalPoint" placeholder="center/top-left/manual" className="h-10 rounded-md border border-cyan-300/15 bg-slate-950/60 px-3 text-sm text-white outline-none" />
+        <textarea name="notes" placeholder="Preset notes" className="min-h-16 rounded-md border border-cyan-300/15 bg-slate-950/60 p-3 text-sm text-white outline-none" />
+      </div>
+      <Button type="submit" disabled={busy} className="mt-3">{busy ? "Saving..." : "Save Preset"}</Button>
+    </form>
+  );
+}
+
 function AssetCard({ asset }: { asset: ProductionAsset }) {
   const preview = asset.derivatives[0]?.publicUrl;
   return (
-    <div className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-4 shadow-glow">
+    <Link href={`/assets/${encodeURIComponent(asset.id)}`} className="block rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-4 shadow-glow transition hover:border-cyan-300/40 hover:bg-[#0a1728]">
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 gap-3">
           <div className="grid h-16 w-20 shrink-0 place-items-center overflow-hidden rounded-md border border-cyan-300/15 bg-slate-950/55">
@@ -104,7 +187,7 @@ function AssetCard({ asset }: { asset: ProductionAsset }) {
       {asset.missingRequirements.length ? (
         <p className="mt-3 text-sm leading-6 text-amber-100">Missing {asset.missingRequirements.join(", ")}</p>
       ) : null}
-    </div>
+    </Link>
   );
 }
 
@@ -156,8 +239,15 @@ function Dashboard({ state }: { state: AssetProductionState }) {
                   <WorkspaceBadge value={preset.format} />
                 </div>
                 <p className="mt-1 text-sm text-slate-400">{preset.width} x {preset.height} / {preset.derivativeType}</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <ActionButton body={{ action: "preset.duplicate", presetId: preset.id }}>Duplicate</ActionButton>
+                  <ActionButton body={{ action: "preset.archive", presetId: preset.id }}>Archive</ActionButton>
+                </div>
               </div>
             ))}
+          </div>
+          <div className="mt-4">
+            <PresetEditor />
           </div>
         </WorkspacePanel>
 
@@ -210,17 +300,53 @@ function SourceFiles({ state }: { state: AssetProductionState }) {
 function MissingAssets({ state }: { state: AssetProductionState }) {
   return (
     <div className="space-y-3">
-      {state.missingRequirements.slice(0, 120).map((item) => (
-        <div key={item.id} className="grid gap-3 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-4 shadow-glow md:grid-cols-[1fr_9rem_9rem_7rem] md:items-center">
-          <div className="min-w-0">
-            <p className="truncate text-lg font-black text-white">{item.objectName}</p>
-            <p className="mt-1 text-sm text-slate-400">{item.objectType.replaceAll("_", " ")} / {item.requiredDerivative} / {item.artKey}</p>
+      {state.missingRequirements.slice(0, 120).map((item) => {
+        const linkedAsset = state.assets.find((asset) => asset.artKey === item.artKey || asset.iconKey === item.iconKey || asset.id === item.artKey);
+        return (
+          <div key={item.id} className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-4 shadow-glow">
+            <div className="grid gap-3 md:grid-cols-[1fr_9rem_9rem_7rem] md:items-center">
+              <div className="min-w-0">
+                <p className="truncate text-lg font-black text-white">{item.objectName}</p>
+                <p className="mt-1 text-sm text-slate-400">{item.objectType.replaceAll("_", " ")} / {item.requiredDerivative} / {item.artKey}</p>
+              </div>
+              <WorkspaceBadge value={item.currentStatus} />
+              <WorkspaceBadge value={item.priority} />
+              <p className="text-sm font-black text-cyan-100">{item.completionPercent}%</p>
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {linkedAsset ? <Link href={`/assets/${encodeURIComponent(linkedAsset.id)}`} className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Open Asset</Link> : null}
+              <Link href={linkedAsset ? `/assets/${encodeURIComponent(linkedAsset.id)}?tab=source_files` : "/game-art-import"} className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Upload Source</Link>
+              <ActionButton body={{ action: "missing.mark_not_required", missingRequirementId: item.id }}>Mark Not Required</ActionButton>
+            </div>
+            <form
+              onSubmit={async (event) => {
+                event.preventDefault();
+                const form = new FormData(event.currentTarget);
+                await postProductionAction({
+                  action: "missing.update",
+                  missingRequirementId: item.id,
+                  payload: {
+                    priority: String(form.get("priority") ?? item.priority),
+                    assignedArtist: String(form.get("assignedArtist") ?? ""),
+                    dueDate: String(form.get("dueDate") ?? "")
+                  }
+                });
+              }}
+              className="mt-3 grid gap-2 md:grid-cols-[10rem_1fr_10rem_8rem]"
+            >
+              <select name="priority" defaultValue={item.priority} className="h-10 rounded-md border border-cyan-300/15 bg-slate-950/60 px-3 text-sm text-white outline-none">
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="critical">Critical</option>
+              </select>
+              <input name="assignedArtist" placeholder="Assigned artist" defaultValue={item.assignedArtist} className="h-10 rounded-md border border-cyan-300/15 bg-slate-950/60 px-3 text-sm text-white outline-none" />
+              <input name="dueDate" type="date" defaultValue={item.dueDate} className="h-10 rounded-md border border-cyan-300/15 bg-slate-950/60 px-3 text-sm text-white outline-none" />
+              <Button type="submit">Save</Button>
+            </form>
           </div>
-          <WorkspaceBadge value={item.currentStatus} />
-          <WorkspaceBadge value={item.priority} />
-          <p className="text-sm font-black text-cyan-100">{item.completionPercent}%</p>
-        </div>
-      ))}
+        );
+      })}
       {!state.missingRequirements.length ? <WorkspacePanel><p className="text-sm font-semibold text-emerald-100">No required asset gaps detected.</p></WorkspacePanel> : null}
     </div>
   );
@@ -228,18 +354,30 @@ function MissingAssets({ state }: { state: AssetProductionState }) {
 
 function ProcessingQueue({ state }: { state: AssetProductionState }) {
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
-      {state.processingJobs.map((job) => (
-        <WorkspacePanel key={job.id} title={job.id} icon={Timer}>
-          <div className="grid gap-3 sm:grid-cols-3">
-            <WorkspaceMiniStat label="Status" value={job.status} />
-            <WorkspaceMiniStat label="Preset" value={job.presetId} />
-            <WorkspaceMiniStat label="Retries" value={job.retryCount} />
-          </div>
-          <WorkspaceProgressBar value={job.progress} className="mt-4" />
-        </WorkspacePanel>
-      ))}
-      {!state.processingJobs.length ? <WorkspacePanel><p className="text-sm font-semibold text-slate-300">No derivative jobs are queued.</p></WorkspacePanel> : null}
+    <div className="space-y-4">
+      <div className="flex flex-wrap gap-2">
+        <ActionButton body={{ action: "queue.clear_completed" }}>Clear Completed</ActionButton>
+      </div>
+      <div className="grid gap-4 lg:grid-cols-2">
+        {state.processingJobs.map((job) => (
+          <WorkspacePanel key={job.id} title={job.id} icon={Timer}>
+            <div className="grid gap-3 sm:grid-cols-3">
+              <WorkspaceMiniStat label="Status" value={job.status} />
+              <WorkspaceMiniStat label="Preset" value={job.presetId} />
+              <WorkspaceMiniStat label="Retries" value={job.retryCount} />
+            </div>
+            <WorkspaceProgressBar value={job.progress} className="mt-4" />
+            {job.errorMessage ? <p className="mt-3 text-sm leading-6 text-rose-100">{job.errorMessage}</p> : null}
+            <div className="mt-4 flex flex-wrap gap-2">
+              <ActionButton body={{ action: "queue.retry", payload: { jobId: job.id } }}>Retry</ActionButton>
+              <ActionButton body={{ action: "queue.cancel", payload: { jobId: job.id } }}>Cancel</ActionButton>
+              <ActionButton body={{ action: "queue.reprocess", payload: { jobId: job.id } }}>Reprocess</ActionButton>
+              <Link href={`/assets/${encodeURIComponent(job.assetId)}`} className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Open Asset</Link>
+            </div>
+          </WorkspacePanel>
+        ))}
+        {!state.processingJobs.length ? <WorkspacePanel><p className="text-sm font-semibold text-slate-300">No derivative jobs are queued.</p></WorkspacePanel> : null}
+      </div>
     </div>
   );
 }
