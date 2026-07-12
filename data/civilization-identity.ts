@@ -25,6 +25,10 @@ export const civilizationAges = [
     description: "Road networks, markets, guilds, organized labor, engineering, navigation, and regional civilization growth."
   },
   {
+    name: "Renaissance Age",
+    description: "Humanism, navigation, banking, printing, art, science, and early global exchange accelerate civilization systems."
+  },
+  {
     name: "Industrial Age",
     description: "Factories, electricity, mass production, railroads, machines, and population expansion."
   },
@@ -132,6 +136,8 @@ const milestoneRows: Array<[string, string, string, string, string, string, stri
   ["established-first-trade-route", "Established First Trade Route", "Medieval Age", "Regional exchange begins Corporate alignment growth.", "Trade Research", "Route", "High"],
   ["built-first-city", "Built First City", "Medieval Age", "Labor, districts, and civic systems support large-scale growth.", "District Unlocks", "City", "Critical"],
   ["formed-first-guild", "Formed First Guild", "Medieval Age", "Specialized labor and logistics begin the long production-chain loop.", "Guild Research", "Landmark", "High"],
+  ["sparked-renaissance", "Sparked the Renaissance", "Renaissance Age", "Art, finance, navigation, and science begin reinforcing each other as connected systems.", "Printing + Banking + Navigation", "Sparkles", "Critical"],
+  ["charted-ocean-routes", "Charted Ocean Routes", "Renaissance Age", "Long-range navigation expands trade, exploration, and resource exchange.", "Navigation Research", "Compass", "High"],
   ["entered-industrial-age", "Entered Industrial Age", "Industrial Age", "Factories and machines reshape output, labor, and expansion speed.", "Manufacturing Research", "Factory", "Critical"],
   ["unlocked-electricity", "Unlocked Electricity", "Industrial Age", "Power grids enable scalable production and modern systems.", "Energy Research", "Zap", "Critical"],
   ["launched-first-satellite", "Launched First Satellite", "Modern Age", "Orbit becomes part of the main progression loop.", "Space Research", "Satellite", "Critical"],
@@ -180,6 +186,7 @@ export const civilizationTitles: CivilizationTitle[] = [
   ["The Survivors", "Early title for Survival Age.", "Survival Age", "", "", "Default title in Survival Age.", "Baseline survival stability.", 10],
   ["The Settlers", "Ancient settlement growth identity.", "Ancient Age", "", "", "Default title for early settlement growth.", "Improves early population and storage planning.", 20],
   ["The Builders", "High buildings and Industry identity.", "Medieval Age", "Industry", "", "Industry is dominant and building completion passes threshold.", "Construction and building production bonuses.", 40],
+  ["The Patrons", "Renaissance civic and artistic identity.", "Renaissance Age", "Corporate", "Technology", "Renaissance reached with trade, art, and science systems active.", "Culture, banking, navigation, and research synergy.", 45],
   ["The Engineers", "Technology plus Industry identity.", "Industrial Age", "Technology", "Industry", "Technology and Industry are top alignments.", "Engineering, construction, and automation synergy.", 50],
   ["High-Tech Singularity", "Technology-dominant civilization identity.", "Modern Age", "Technology", "", "Technology is dominant and innovation systems pass threshold.", "Research output, scientific discovery, and breakthrough chance.", 75],
   ["The Industrialists", "Manufacturing and production identity.", "Industrial Age", "Industry", "", "Industry and manufacturing systems dominate.", "Manufacturing and extraction bonuses.", 65],

@@ -18,12 +18,17 @@ export type EraDefinition = {
   index: number;
   name: string;
   displayName: string;
+  shortDisplayName?: string;
   description: string;
   unlockRequirements: RequirementMap;
   iconKey: string;
   artKey: string;
   themeKey: string;
   masteryRequirements: RequirementMap;
+  completionPercent?: number;
+  researchProgress?: number;
+  buildingProgress?: number;
+  missingArtwork?: boolean;
   tags: string[];
 };
 
@@ -186,6 +191,12 @@ export type ClientProfile = {
   showUnknownUpgradeSlots: boolean;
   lockedOpacity: number;
   availableGlowEnabled: boolean;
+  eraNavigation?: {
+    dashboardMode: "current_journey";
+    visibleEraCount: number;
+    fullTimelineEnabled: boolean;
+    allowPrimaryHorizontalScroll: boolean;
+  };
 };
 
 export type ClientProfiles = {

@@ -61,12 +61,16 @@ const importStorePath = process.env.PROJECT_GENESIS_RUNTIME_IMPORT_STORE
   ? path.resolve(process.env.PROJECT_GENESIS_RUNTIME_IMPORT_STORE)
   : path.join(process.cwd(), "data", "game-runtime-imports.local.json");
 
-const requiredEraNames = ["Survival", "Ancient", "Medieval", "Industrial", "Modern", "Space Age", "Interstellar", "Galactic"];
+const requiredEraNames = ["Survival", "Ancient", "Medieval", "Renaissance", "Industrial", "Modern", "Space Age", "Interstellar", "Galactic"];
+const shortEraNames = new Map<string, string>([
+  ["space-age", "Space"]
+]);
 const requiredCategoryIds = ["workforce", "industry", "science", "technology"];
 const legacyEraAliases = new Map<string, string>([
   ["survival", "survival"],
   ["village", "ancient"],
   ["town", "medieval"],
+  ["renaissance", "renaissance"],
   ["industrial", "industrial"],
   ["industrial-empire", "industrial"],
   ["modern", "modern"],
@@ -180,12 +184,17 @@ function defaultEras(): EraDefinition[] {
       index: index + 1,
       name: stripAge(name),
       displayName: name,
+      shortDisplayName: shortEraNames.get(id) ?? stripAge(name),
       description: age?.description ?? `${name} progression era.`,
       unlockRequirements: index === 0 ? { start: true } : { previousEraId: eraId(requiredEraNames[index - 1]) },
       iconKey: `era-${id}`,
       artKey: `era-${id}`,
       themeKey: `theme-${id}`,
       masteryRequirements: {},
+      completionPercent: index === 0 ? 100 : index === 1 ? 72 : index === 2 ? 38 : 0,
+      researchProgress: index <= 2 ? Math.max(15, 100 - index * 28) : 0,
+      buildingProgress: index <= 2 ? Math.max(10, 100 - index * 32) : 0,
+      missingArtwork: true,
       tags: ["canonical", "runtime"]
     };
   });
@@ -216,6 +225,12 @@ function defaultProfile(overrides: Partial<ClientProfile> = {}): ClientProfile {
     showUnknownUpgradeSlots: true,
     lockedOpacity: 0.45,
     availableGlowEnabled: true,
+    eraNavigation: {
+      dashboardMode: "current_journey",
+      visibleEraCount: 3,
+      fullTimelineEnabled: true,
+      allowPrimaryHorizontalScroll: false
+    },
     ...overrides
   };
 }
@@ -741,12 +756,17 @@ function normalizeImportedEras(payload: Record<string, unknown>, fallback: EraDe
       index: asNumber(row.index ?? row.order, index + 1),
       name: display(row.name, stripAge(displayName)),
       displayName,
+      shortDisplayName: display(row.shortDisplayName, stripAge(displayName)),
       description: display(row.description, `${displayName} progression era.`),
       unlockRequirements: asRecord(row.unlockRequirements),
       iconKey: display(row.iconKey, `era-${slug(displayName)}`),
       artKey: display(row.artKey, `era-${slug(displayName)}`),
       themeKey: display(row.themeKey, `theme-${slug(displayName)}`),
       masteryRequirements: asRecord(row.masteryRequirements),
+      completionPercent: asNumber(row.completionPercent, 0),
+      researchProgress: asNumber(row.researchProgress, 0),
+      buildingProgress: asNumber(row.buildingProgress, 0),
+      missingArtwork: asBoolean(row.missingArtwork, true),
       tags: asStringArray(row.tags)
     };
   });

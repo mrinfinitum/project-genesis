@@ -31,6 +31,7 @@ export default async function DashboardPage() {
       codexItems={data.codex_readiness_items}
       metrics={data.dashboard_metrics}
       totalRecords={totalRecords}
+      currentCivilizationAge={data.civilization_identity[0]?.current_age}
     />
   );
 }

@@ -15,6 +15,7 @@ import {
   ShieldAlert,
   Sparkles
 } from "lucide-react";
+import { FullCivilizationTimeline, type TimelineEra } from "@/components/civilization-timeline";
 import { civilizationAges } from "@/data/civilization-identity";
 import { getRows } from "@/lib/data";
 import type { Building, ProjectSystem, ResearchNode, UnlockMatrixRow, Upgrade, Wonder } from "@/types/schema";
@@ -57,6 +58,7 @@ const ageTargets: Record<string, { research: number; buildings: number; upgrades
   Survival: { research: 16, buildings: 12, upgrades: 12, unlocks: 18, bonuses: 3, artwork: 8, events: 8, wonders: 1 },
   Ancient: { research: 18, buildings: 16, upgrades: 14, unlocks: 20, bonuses: 3, artwork: 10, events: 10, wonders: 1 },
   Medieval: { research: 22, buildings: 18, upgrades: 16, unlocks: 24, bonuses: 4, artwork: 12, events: 12, wonders: 2 },
+  Renaissance: { research: 24, buildings: 20, upgrades: 16, unlocks: 26, bonuses: 4, artwork: 12, events: 12, wonders: 2 },
   Industrial: { research: 26, buildings: 22, upgrades: 18, unlocks: 28, bonuses: 4, artwork: 14, events: 12, wonders: 2 },
   Modern: { research: 40, buildings: 25, upgrades: 30, unlocks: 36, bonuses: 5, artwork: 18, events: 15, wonders: 6 },
   Space: { research: 42, buildings: 28, upgrades: 32, unlocks: 40, bonuses: 6, artwork: 20, events: 16, wonders: 6 },
@@ -73,6 +75,11 @@ const alignmentDesignRows = [
 ];
 
 const dependencyGraph = [
+  {
+    title: "Renaissance Age",
+    dependsOn: ["Writing", "Trade", "Navigation", "Banking"],
+    note: "Renaissance bridges regional medieval systems into science, finance, and exploration."
+  },
   {
     title: "Modern Age",
     dependsOn: ["Satellites", "Computing", "Global Networks", "Orbital Launch"],
@@ -203,6 +210,10 @@ function ageCompletion(metric: AgeMetric) {
   ]);
 }
 
+function eraId(value: string) {
+  return value.replace(/\s+age$/i, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
 export default async function CivilizationsPage() {
   const [researchRows, buildingRows, upgradeRows, unlockRows, wonderRows, projectSystemRows] = await Promise.all([
     getRows("research") as Promise<ResearchNode[]>,
@@ -255,6 +266,26 @@ export default async function CivilizationsPage() {
   });
 
   const frameworkCompletion = average(ageMetrics.map((metric) => metric.completion));
+  const firstIncompleteEraIndex = ageMetrics.findIndex((metric) => metric.completion < 82 || metric.validationStatus !== "Complete");
+  const activeEraIndex = firstIncompleteEraIndex >= 0 ? firstIncompleteEraIndex : Math.max(0, ageMetrics.length - 1);
+  const timelineEras: TimelineEra[] = ageMetrics.map((metric, index) => ({
+    id: eraId(metric.age),
+    eraNumber: index + 1,
+    displayName: metric.shortAge === "Space" ? "Space Age" : metric.shortAge,
+    shortDisplayName: metric.shortAge,
+    state: metric.completion >= 96 ? "mastered" : index < activeEraIndex ? "completed" : index === activeEraIndex ? "active" : "locked",
+    completionPercent: metric.completion,
+    researchProgress: percent(metric.researchLinked, metric.researchTarget),
+    buildingProgress: percent(metric.buildingsLinked, metric.buildingTarget),
+    unlockRequirements: metric.missingDependencies.length ? metric.missingDependencies.map((item) => `Connect ${item}`) : ["Previous era complete"],
+    masteryRequirements: [
+      `${metric.researchTarget} research links`,
+      `${metric.buildingTarget} building links`,
+      `${metric.unlockTarget} unlock rules`
+    ],
+    missingArtwork: metric.artwork < metric.artworkTarget,
+    iconKey: `era-${eraId(metric.age)}`
+  }));
   const researchIntegration = percent(researchRows.filter((node) => node.unlock_summary || node.space_system_unlocked || node.primary_unlock_type).length, Math.max(1, researchRows.length));
   const buildingsConnected = percent(buildingRows.filter((building) => building.unlock_research_id || building.district_id || building.upgrade_chain).length, Math.max(1, buildingRows.length));
   const unlockCompleteness = percent(unlockRows.filter((row) => row.implementation_status !== "Missing" && row.implementation_status !== "Blocked").length, Math.max(1, unlockRows.length));
@@ -346,6 +377,8 @@ export default async function CivilizationsPage() {
         </div>
       </section>
 
+      <FullCivilizationTimeline eras={timelineEras} />
+
       <section className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-5 shadow-glow">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -356,7 +389,7 @@ export default async function CivilizationsPage() {
         </div>
         <div className="mt-5 grid gap-4 xl:grid-cols-3">
           {ageMetrics.map((metric) => (
-            <div key={metric.age} className="rounded-md border border-cyan-300/15 bg-slate-950/40 p-4">
+            <div id={`era-${eraId(metric.age)}`} key={metric.age} className="rounded-md border border-cyan-300/15 bg-slate-950/40 p-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <p className="text-[0.66rem] font-bold uppercase tracking-[0.18em] text-cyan-300">{metric.shortAge}</p>

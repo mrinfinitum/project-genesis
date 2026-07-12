@@ -36,6 +36,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CurrentEraJourney, createDefaultTimeline } from "@/components/civilization-timeline";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { cn } from "@/lib/utils";
 import type { CodexReadinessItem, CodexTask, DashboardMetric, DataHealthCheck, ProjectSystem, ProjectSystemHistory } from "@/types/schema";
@@ -47,6 +48,7 @@ type CommandCenterDashboardProps = {
   codexItems: CodexReadinessItem[];
   metrics: DashboardMetric[];
   totalRecords: number;
+  currentCivilizationAge?: string;
 };
 
 const groupOrder = ["Core Foundation", "Planet Generation", "Gameplay Database", "Galaxy Content", "Production"];
@@ -629,7 +631,7 @@ function SystemDetailModal({
   );
 }
 
-export function CommandCenterDashboard({ systems, history, healthChecks, codexItems, metrics, totalRecords }: CommandCenterDashboardProps) {
+export function CommandCenterDashboard({ systems, history, healthChecks, codexItems, metrics, totalRecords, currentCivilizationAge = "Survival Age" }: CommandCenterDashboardProps) {
   const [selectedSystem, setSelectedSystem] = useState<ProjectSystem | null>(null);
   const [creatingTaskId, setCreatingTaskId] = useState<string | null>(null);
   const [createdTasks, setCreatedTasks] = useState<Set<string>>(new Set());
@@ -663,6 +665,7 @@ export function CommandCenterDashboard({ systems, history, healthChecks, codexIt
     { label: "Critical Issues", value: String(criticalIssues) },
     { label: "Ready for ChatGPT", value: String(readyForCodex) }
   ];
+  const eraTimeline = useMemo(() => createDefaultTimeline(currentCivilizationAge), [currentCivilizationAge]);
 
   async function createCodexTask(task: TaskDraft) {
     setCreatingTaskId(task.id);
@@ -728,6 +731,8 @@ export function CommandCenterDashboard({ systems, history, healthChecks, codexIt
       </section>
 
       <StudioWorkflowPanel />
+
+      <CurrentEraJourney eras={eraTimeline} />
 
       <section className="grid gap-5 xl:grid-cols-[1fr_1fr_1fr]">
         <Panel title="Status Breakdown" eyebrow="Systems">

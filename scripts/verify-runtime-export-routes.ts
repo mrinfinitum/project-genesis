@@ -1,15 +1,30 @@
+type EraNavigationHints = {
+  dashboardMode?: string;
+  visibleEraCount?: number;
+  fullTimelineEnabled?: boolean;
+  allowPrimaryHorizontalScroll?: boolean;
+};
+
+type RuntimeClientProfile = {
+  eraNavigation?: EraNavigationHints;
+};
+
 type RuntimePayload = {
   metadata?: { schemaVersion?: string; contentVersion?: number; checksum?: string; accessLevel?: string; validationStatus?: string };
-  eras?: Array<{ id: string }>;
+  eras?: Array<{ id: string; displayName?: string; shortDisplayName?: string }>;
   resources?: Array<{ id: string }>;
   upgradeCategories?: Array<{ id: string }>;
   upgrades?: Array<{ id: string; categoryId?: string; tabId?: string; eraId?: string; costResourceId?: string | null }>;
+  clientProfiles?: {
+    default?: RuntimeClientProfile;
+  };
 };
 
 export {};
 
 type RobloxPayload = RuntimePayload & {
   upgradeTabs?: Array<{ tabId: string }>;
+  clientHints?: RuntimeClientProfile;
 };
 
 const baseUrl = process.env.PROJECT_GENESIS_STUDIO_URL ?? "http://127.0.0.1:3000";
@@ -52,6 +67,21 @@ function validateRuntimeReferences(payload: RuntimePayload) {
     if (upgrade.eraId) assert(eraIds.has(upgrade.eraId), `Upgrade ${upgrade.id} has unresolved eraId ${upgrade.eraId}.`);
     if (upgrade.costResourceId) assert(resourceIds.has(upgrade.costResourceId), `Upgrade ${upgrade.id} has unresolved costResourceId ${upgrade.costResourceId}.`);
   }
+}
+
+function validateEraNavigation(payload: RuntimePayload | RobloxPayload, label: string) {
+  const eras = payload.eras ?? [];
+  const eraNames = eras.map((era) => era.displayName ?? era.id);
+  const eraNavigation = "clientHints" in payload ? payload.clientHints?.eraNavigation : payload.clientProfiles?.default?.eraNavigation;
+
+  assert(eras.length === 9, `${label} payload must include exactly nine eras; received ${eras.length}.`);
+  assert(eraNames.join("|") === "Survival|Ancient|Medieval|Renaissance|Industrial|Modern|Space Age|Interstellar|Galactic", `${label} eras are not in canonical order: ${eraNames.join(", ")}.`);
+  assert(eras.some((era) => era.id === "renaissance"), `${label} payload is missing Renaissance.`);
+  assert(eras.some((era) => era.id === "space-age" && era.shortDisplayName === "Space"), `${label} payload is missing Space Age shortDisplayName.`);
+  assert(eraNavigation?.dashboardMode === "current_journey", `${label} eraNavigation.dashboardMode must be current_journey.`);
+  assert(eraNavigation?.visibleEraCount === 3, `${label} eraNavigation.visibleEraCount must be 3.`);
+  assert(eraNavigation?.fullTimelineEnabled === true, `${label} eraNavigation.fullTimelineEnabled must be true.`);
+  assert(eraNavigation?.allowPrimaryHorizontalScroll === false, `${label} eraNavigation.allowPrimaryHorizontalScroll must be false.`);
 }
 
 function validateRobloxReferences(payload: RobloxPayload) {
@@ -100,6 +130,8 @@ async function main() {
   assert(roblox.payload.metadata?.validationStatus, "Roblox validation status is missing.");
   assert((canonical.payload.eras?.length ?? 0) > 0, "Canonical payload must include at least one era.");
 
+  validateEraNavigation(canonical.payload, "Canonical");
+  validateEraNavigation(roblox.payload, "Roblox");
   validateRuntimeReferences(canonical.payload);
   validateRobloxReferences(roblox.payload);
 
