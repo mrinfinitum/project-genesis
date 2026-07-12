@@ -55,24 +55,21 @@ type ValidationIssue = {
 
 const ageTargets: Record<string, { research: number; buildings: number; upgrades: number; unlocks: number; bonuses: number; artwork: number; events: number; wonders: number }> = {
   Survival: { research: 16, buildings: 12, upgrades: 12, unlocks: 18, bonuses: 3, artwork: 8, events: 8, wonders: 1 },
-  Village: { research: 18, buildings: 16, upgrades: 14, unlocks: 20, bonuses: 3, artwork: 10, events: 10, wonders: 1 },
-  Town: { research: 22, buildings: 18, upgrades: 16, unlocks: 24, bonuses: 4, artwork: 12, events: 12, wonders: 2 },
+  Ancient: { research: 18, buildings: 16, upgrades: 14, unlocks: 20, bonuses: 3, artwork: 10, events: 10, wonders: 1 },
+  Medieval: { research: 22, buildings: 18, upgrades: 16, unlocks: 24, bonuses: 4, artwork: 12, events: 12, wonders: 2 },
   Industrial: { research: 26, buildings: 22, upgrades: 18, unlocks: 28, bonuses: 4, artwork: 14, events: 12, wonders: 2 },
   Modern: { research: 40, buildings: 25, upgrades: 30, unlocks: 36, bonuses: 5, artwork: 18, events: 15, wonders: 6 },
-  Future: { research: 42, buildings: 28, upgrades: 32, unlocks: 40, bonuses: 6, artwork: 20, events: 16, wonders: 6 },
+  Space: { research: 42, buildings: 28, upgrades: 32, unlocks: 40, bonuses: 6, artwork: 20, events: 16, wonders: 6 },
   Interstellar: { research: 36, buildings: 22, upgrades: 26, unlocks: 34, bonuses: 6, artwork: 18, events: 14, wonders: 5 },
-  Galactic: { research: 32, buildings: 20, upgrades: 24, unlocks: 30, bonuses: 6, artwork: 18, events: 14, wonders: 5 },
-  Genesis: { research: 20, buildings: 12, upgrades: 16, unlocks: 22, bonuses: 8, artwork: 16, events: 12, wonders: 4 }
+  Galactic: { research: 44, buildings: 28, upgrades: 34, unlocks: 44, bonuses: 8, artwork: 22, events: 18, wonders: 7 }
 };
 
 const alignmentDesignRows = [
-  { name: "Technology", status: "Rules Complete", detail: "Research and automation hooks are represented.", percent: 82 },
-  { name: "Industry", status: "Needs Bonus Definitions", detail: "Production bonuses need final values and unlock sources.", percent: 58 },
-  { name: "Harmony", status: "Missing Event Rules", detail: "Harmony needs event triggers and escalation rules.", percent: 35 },
-  { name: "Nature", status: "Needs Building Modifiers", detail: "Nature needs building and terraforming modifiers.", percent: 44 },
-  { name: "Exploration", status: "Needs Reward Scaling", detail: "Discovery point scaling needs validation.", percent: 52 },
-  { name: "Commerce", status: "Needs Trade Bonuses", detail: "Trade, market, and export bonuses need definitions.", percent: 28 },
-  { name: "Science", status: "Complete", detail: "Research bonuses and discovery hooks are usable.", percent: 90 }
+  { name: "Industry", status: "Needs Bonus Definitions", detail: "Manufacturing, mining, infrastructure, and megaproject bonuses need final values.", percent: 62 },
+  { name: "Technology", status: "Rules Complete", detail: "Research, science, discovery, and innovation hooks are represented.", percent: 82 },
+  { name: "Cyber", status: "Needs Event Rules", detail: "Automation, robotics, AI, and machine integration need more choice triggers.", percent: 48 },
+  { name: "Nature", status: "Needs Building Modifiers", detail: "Biology, terraforming, living ecosystems, and environmental harmony need building modifiers.", percent: 44 },
+  { name: "Corporate", status: "Needs Trade Bonuses", detail: "Trade, economy, commerce, influence, and logistics bonuses need definitions.", percent: 35 }
 ];
 
 const dependencyGraph = [
@@ -82,9 +79,9 @@ const dependencyGraph = [
     note: "Modern establishes the first orbital production bridge."
   },
   {
-    title: "Future Age",
+    title: "Space Age",
     dependsOn: ["Fusion Power", "Terraforming", "Orbital Habitats", "Gas Giant Harvesting"],
-    note: "Future connects home-system industry to off-world settlement."
+    note: "Space Age connects home-system industry to off-world settlement."
   },
   {
     title: "Interstellar Age",
@@ -92,9 +89,9 @@ const dependencyGraph = [
     note: "Interstellar must not unlock until colony and propulsion chains are connected."
   },
   {
-    title: "Genesis Age",
-    dependsOn: ["Genesis Gate", "Reality Engineering", "Harmony Ascendant", "Universal Navigation"],
-    note: "Genesis is the endgame validation layer."
+    title: "Galactic Age",
+    dependsOn: ["Galaxy Mapping", "Megastructures", "Genesis Gate", "Universal Navigation"],
+    note: "Galactic is the endgame validation layer, not a separate rush-only destination."
   }
 ];
 
@@ -267,7 +264,7 @@ export default async function CivilizationsPage() {
 
   const validationIssues: ValidationIssue[] = [
     ...ageMetrics
-      .filter((metric) => metric.wonders === 0 && ["Future", "Interstellar", "Galactic", "Genesis"].includes(metric.shortAge))
+      .filter((metric) => metric.wonders === 0 && ["Space", "Interstellar", "Galactic"].includes(metric.shortAge))
       .map((metric): ValidationIssue => ({
         severity: "High",
         title: `${metric.shortAge} age has no Wonder definition.`,
@@ -288,7 +285,7 @@ export default async function CivilizationsPage() {
         .filter((dependency) => !hasDependency(researchRows, unlockRows, dependency))
         .slice(0, 2)
         .map((dependency): ValidationIssue => ({
-          severity: group.title === "Genesis Age" ? "Critical" : "High",
+          severity: group.title === "Galactic Age" ? "Critical" : "High",
           title: `${dependency} dependency is not connected.`,
           affectedRecords: group.title,
           action: "Open Research"
