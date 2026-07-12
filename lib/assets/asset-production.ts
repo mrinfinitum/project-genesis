@@ -71,7 +71,7 @@ export type AssetDerivativePreset = {
   width: number;
   height: number;
   aspectRatio: string;
-  format: "PNG" | "WebP" | "JPG" | "SVG";
+  format: "PNG" | "WebP" | "JPG" | "SVG" | "MP3" | "WAV" | "OGG" | "MP4";
   quality?: number;
   cropMode?: "contain" | "cover" | "crop" | "manual";
   focalPoint?: string;
@@ -268,8 +268,17 @@ export const derivativePresets: AssetDerivativePreset[] = [
   { id: "building_hero", name: "Building Hero", category: "buildings", derivativeType: "hero", width: 1920, height: 1080, aspectRatio: "16:9", format: "WebP", required: false },
   { id: "research_icon", name: "Research Icon", category: "research", derivativeType: "icon", width: 256, height: 256, aspectRatio: "1:1", format: "PNG", required: true },
   { id: "research_card", name: "Research Card", category: "research", derivativeType: "card", width: 768, height: 768, aspectRatio: "1:1", format: "WebP", required: false },
+  { id: "era_icon", name: "Era Icon", category: "eras", derivativeType: "icon", width: 256, height: 256, aspectRatio: "1:1", format: "PNG", required: true },
   { id: "era_banner", name: "Era Banner", category: "eras", derivativeType: "banner", width: 1920, height: 640, aspectRatio: "3:1", format: "WebP", required: true },
-  { id: "loading_screen", name: "Loading Screen", category: "ui", derivativeType: "loading", width: 1920, height: 1080, aspectRatio: "16:9", format: "WebP", required: false }
+  { id: "era_background", name: "Era Background", category: "eras", derivativeType: "background", width: 1920, height: 1080, aspectRatio: "16:9", format: "WebP", required: true },
+  { id: "era_hero", name: "Era Hero", category: "eras", derivativeType: "hero", width: 1920, height: 1080, aspectRatio: "16:9", format: "WebP", required: true },
+  { id: "era_timeline_card", name: "Timeline Card Art", category: "eras", derivativeType: "timeline", width: 1280, height: 720, aspectRatio: "16:9", format: "WebP", required: true },
+  { id: "loading_screen", name: "Loading Screen", category: "ui", derivativeType: "loading", width: 1920, height: 1080, aspectRatio: "16:9", format: "WebP", required: false },
+  { id: "era_loading_screen", name: "Era Loading Screen", category: "eras", derivativeType: "loading", width: 1920, height: 1080, aspectRatio: "16:9", format: "WebP", required: false },
+  { id: "era_transition_art", name: "Era Transition Art", category: "eras", derivativeType: "transition", width: 1920, height: 1080, aspectRatio: "16:9", format: "WebP", required: false },
+  { id: "era_music", name: "Era Music", category: "eras", derivativeType: "music", width: 0, height: 0, aspectRatio: "audio", format: "MP3", required: false },
+  { id: "era_ambient_audio", name: "Era Ambient Audio", category: "eras", derivativeType: "ambient", width: 0, height: 0, aspectRatio: "audio", format: "OGG", required: false },
+  { id: "era_cinematic", name: "Era Cinematic", category: "eras", derivativeType: "cinematic", width: 1920, height: 1080, aspectRatio: "16:9", format: "MP4", required: false }
 ];
 
 export const requirementProfiles: AssetRequirementProfile[] = [
@@ -277,7 +286,7 @@ export const requirementProfiles: AssetRequirementProfile[] = [
   { id: "resource_requirement_profile", objectType: "resource", label: "Resource", requirements: requirements(["resource_icon", "resource_card"], "medium") },
   { id: "building_requirement_profile", objectType: "building", label: "Building", requirements: requirements(["building_card", "building_hero"], "high") },
   { id: "research_requirement_profile", objectType: "research", label: "Research", requirements: requirements(["research_icon", "research_card"], "medium") },
-  { id: "era_requirement_profile", objectType: "era", label: "Era", requirements: requirements(["era_banner"], "high") },
+  { id: "era_requirement_profile", objectType: "era", label: "Era", requirements: requirements(["era_icon", "era_banner", "era_background", "era_hero", "era_timeline_card", "era_loading_screen", "era_transition_art", "era_music", "era_ambient_audio", "era_cinematic"], "high") },
   { id: "galaxy_requirement_profile", objectType: "galaxy", label: "Galaxy", requirements: requirements(["planet_card", "planet_hero"], "medium") },
   { id: "sector_requirement_profile", objectType: "sector", label: "Sector", requirements: requirements(["planet_card", "planet_hero"], "medium") },
   { id: "star_system_requirement_profile", objectType: "star_system", label: "Star System", requirements: requirements(["planet_card", "planet_hero"], "medium") },

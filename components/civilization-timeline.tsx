@@ -18,6 +18,15 @@ export type TimelineEra = {
   masteryRequirements: string[];
   missingArtwork: boolean;
   iconKey?: string;
+  artSummary?: {
+    required: number;
+    complete: number;
+    missing: number;
+    inReview: number;
+    published: number;
+    needsMapping: number;
+    status: string;
+  };
 };
 
 export const canonicalTimelineEras = [
@@ -168,7 +177,11 @@ export function TimelineEraCard({ era }: { era: TimelineEra }) {
         </div>
         <div className="flex flex-wrap gap-2">
           <WorkspaceBadge value={era.state} />
-          <WorkspaceBadge value={era.missingArtwork ? "art missing" : "art ready"} />
+          <WorkspaceBadge value={era.artSummary ? `${era.artSummary.complete} / ${era.artSummary.required} art complete` : era.missingArtwork ? "art missing" : "art ready"} />
+          {era.artSummary?.missing ? <WorkspaceBadge value={`${era.artSummary.missing} missing`} /> : null}
+          {era.artSummary?.inReview ? <WorkspaceBadge value={`${era.artSummary.inReview} in review`} /> : null}
+          {era.artSummary?.published ? <WorkspaceBadge value="published" /> : null}
+          {era.artSummary?.needsMapping ? <WorkspaceBadge value="needs mapping" /> : null}
         </div>
       </div>
 
@@ -177,9 +190,14 @@ export function TimelineEraCard({ era }: { era: TimelineEra }) {
         <p><span className="font-bold text-cyan-100">Mastery:</span> {era.masteryRequirements.join(", ")}</p>
       </div>
 
-      <Link href={`/civilizations#era-${era.id}`} className="mt-4 inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100 hover:bg-cyan-300/20">
-        Open Era
-      </Link>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <Link href={`/assets/eras/${era.id}`} className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100 hover:bg-cyan-300/20">
+          View Era Art
+        </Link>
+        <Link href={`/civilizations#era-${era.id}`} className="inline-flex h-10 items-center rounded-md border border-slate-600/70 bg-slate-950/40 px-3 text-sm font-bold text-slate-200 hover:bg-slate-900">
+          Edit Era Content
+        </Link>
+      </div>
     </article>
   );
 }

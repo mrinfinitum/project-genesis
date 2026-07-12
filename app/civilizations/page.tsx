@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { FullCivilizationTimeline, type TimelineEra } from "@/components/civilization-timeline";
 import { civilizationAges } from "@/data/civilization-identity";
+import { getEraArtSummaryByEra } from "@/lib/assets/era-art-inventory";
 import { getRows } from "@/lib/data";
 import type { Building, ProjectSystem, ResearchNode, UnlockMatrixRow, Upgrade, Wonder } from "@/types/schema";
 
@@ -215,13 +216,14 @@ function eraId(value: string) {
 }
 
 export default async function CivilizationsPage() {
-  const [researchRows, buildingRows, upgradeRows, unlockRows, wonderRows, projectSystemRows] = await Promise.all([
+  const [researchRows, buildingRows, upgradeRows, unlockRows, wonderRows, projectSystemRows, eraArtSummaryByEra] = await Promise.all([
     getRows("research") as Promise<ResearchNode[]>,
     getRows("buildings") as Promise<Building[]>,
     getRows("upgrades") as Promise<Upgrade[]>,
     getRows("unlock_matrix") as Promise<UnlockMatrixRow[]>,
     getRows("wonders") as Promise<Wonder[]>,
-    getRows("project_systems") as Promise<ProjectSystem[]>
+    getRows("project_systems") as Promise<ProjectSystem[]>,
+    getEraArtSummaryByEra()
   ]);
 
   const ageMetrics: AgeMetric[] = civilizationAges.map((ageEntry) => {
@@ -284,7 +286,8 @@ export default async function CivilizationsPage() {
       `${metric.unlockTarget} unlock rules`
     ],
     missingArtwork: metric.artwork < metric.artworkTarget,
-    iconKey: `era-${eraId(metric.age)}`
+    iconKey: `era-${eraId(metric.age)}`,
+    artSummary: eraArtSummaryByEra[eraId(metric.age)]
   }));
   const researchIntegration = percent(researchRows.filter((node) => node.unlock_summary || node.space_system_unlocked || node.primary_unlock_type).length, Math.max(1, researchRows.length));
   const buildingsConnected = percent(buildingRows.filter((building) => building.unlock_research_id || building.district_id || building.upgrade_chain).length, Math.max(1, buildingRows.length));
