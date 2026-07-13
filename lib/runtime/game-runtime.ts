@@ -38,7 +38,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 7;
+export const gameRuntimeContentVersion = 8;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -354,12 +354,13 @@ function assetToRuntime(asset: GameData["assets"][number]): AssetDefinition {
 function gameConstantsBalance(constants: GameData["game_constants"]): BalanceDefinition {
   const byKey = new Map(constants.map((row) => [slug(row.constant), row.value]));
   const economyById = new Map(canonicalEconomyDefinitions.map((definition) => [definition.id, definition]));
+  const populationDefault = economyById.get("ECON-POPULATION")?.startingAmount ?? 5;
   return {
     version: "balance-v1",
     startingCivilizationEnergy: asNumber(byKey.get("starting-civilization-energy"), economyById.get("ECON-CIVILIZATION-ENERGY")?.startingAmount ?? 0),
     startingCoins: asNumber(byKey.get("starting-coins"), economyById.get("ECON-CREDITS")?.startingAmount ?? 0),
     startingResearch: asNumber(byKey.get("starting-research"), economyById.get("ECON-RESEARCH")?.startingAmount ?? 0),
-    startingPopulation: asNumber(byKey.get("starting-population"), economyById.get("ECON-POPULATION")?.startingAmount ?? 125),
+    startingPopulation: asNumber(byKey.get("starting-population"), populationDefault),
     baseClickPower: asNumber(byKey.get("base-click-power"), 1),
     baseAutoClickPower: asNumber(byKey.get("base-auto-click-power"), 0),
     autosaveSeconds: asNumber(byKey.get("autosave-seconds"), 30),
@@ -381,6 +382,19 @@ function metadata(overrides: Partial<RuntimeMetadata> = {}): RuntimeMetadata {
     sourceFormat: "studio",
     environment: "development",
     validationStatus: "Ready",
+    saveMigrationHints: [
+      {
+        id: "migration_population_default_125_to_5",
+        targetId: "ECON-POPULATION",
+        field: "startingAmount",
+        previousDefault: 125,
+        currentDefault: 5,
+        applyOnlyWhen: "A save has no activity/progression markers and Population exactly equals the old untouched starter default of 125.",
+        preserveRule: "Preserve Population 125 or higher when the save has earned resources, completed research, built structures, manual changes, or any other sign of established play.",
+        introducedContentVersion: 8,
+        notes: "Population is citizen/workforce capacity, not a spendable manual-click currency. Clients should not silently reset established saves."
+      }
+    ],
     ...overrides
   };
 }
@@ -614,7 +628,8 @@ function validateEraEconomyProfiles(runtimeData: Pick<GameRuntimeData, "eras" | 
       issues.push({ severity: "error", code: "era_economy_primary_not_listed", message: "The active primary economy must also be listed in primaryEconomyIds.", records: [profile.id, profile.activePrimaryEconomyId] });
     }
 
-    const allReferencedEconomyIds = [...profile.primaryEconomyIds, ...profile.secondaryEconomyIds, ...profile.visibleHudEconomyIds, ...profile.hudSlots.map((slot) => slot.economyId)];
+    const displayOverrideEconomyIds = Object.keys(profile.displayOverrides ?? {});
+    const allReferencedEconomyIds = [...profile.primaryEconomyIds, ...profile.secondaryEconomyIds, ...profile.visibleHudEconomyIds, ...profile.hudSlots.map((slot) => slot.economyId), ...displayOverrideEconomyIds];
     const unresolvedEconomyIds = allReferencedEconomyIds.filter((economyId) => !economyIds.has(economyId));
     if (unresolvedEconomyIds.length) {
       issues.push({ severity: "error", code: "era_economy_profile_economy_missing", message: "Era economy profile references must resolve to canonical economy definitions.", records: [profile.id, ...new Set(unresolvedEconomyIds)] });
@@ -634,6 +649,41 @@ function validateEraEconomyProfiles(runtimeData: Pick<GameRuntimeData, "eras" | 
     if (duplicateHudOrders.length) {
       issues.push({ severity: "error", code: "duplicate_era_hud_slot_order", message: "Era HUD slot order values must be unique inside a profile.", records: [profile.id, ...duplicateHudOrders.map(String)] });
     }
+  }
+}
+
+function validateEconomyDefaults(runtimeData: Pick<GameRuntimeData, "economyDefinitions" | "eraEconomyProfiles" | "balance">, issues: ImportIssue[], context: string) {
+  const byId = new Map(runtimeData.economyDefinitions.map((definition) => [definition.id, definition]));
+  const labor = byId.get("ECON-LABOR");
+  const population = byId.get("ECON-POPULATION");
+  const research = byId.get("ECON-RESEARCH");
+  const premiumCrystals = byId.get("ECON-PREMIUM-CRYSTALS");
+  const civilizationPoints = byId.get("ECON-CIVILIZATION-POINTS");
+  const survival = runtimeData.eraEconomyProfiles.find((profile) => profile.eraId === "survival");
+
+  if (labor?.startingAmount !== 0) {
+    issues.push({ severity: "error", code: "labor_starting_amount_invalid", message: `${context} ECON-LABOR must start at 0.`, records: [`received:${labor?.startingAmount ?? "missing"}`] });
+  }
+  if (labor?.manualClickTarget !== true) {
+    issues.push({ severity: "error", code: "labor_click_target_invalid", message: `${context} ECON-LABOR must remain the manual click target.`, records: ["ECON-LABOR"] });
+  }
+  if (population?.startingAmount !== 5 || runtimeData.balance.startingPopulation !== 5) {
+    issues.push({ severity: "error", code: "population_starting_amount_invalid", message: `${context} Population must use the Survival starter default of 5.`, records: [`economy:${population?.startingAmount ?? "missing"}`, `balance:${runtimeData.balance.startingPopulation}`] });
+  }
+  if (population?.startingRate !== 0 || population?.spendable !== false || population?.premium !== false || population?.manualClickTarget === true) {
+    issues.push({ severity: "error", code: "population_semantics_invalid", message: `${context} Population must be non-premium, non-clicked, non-spendable workforce capacity with no starting rate.`, records: ["ECON-POPULATION"] });
+  }
+  if (research?.startingAmount !== 0 || research?.startingRate !== 0) {
+    issues.push({ severity: "error", code: "research_starting_value_invalid", message: `${context} ECON-RESEARCH must start at 0 with no starting rate.`, records: ["ECON-RESEARCH"] });
+  }
+  if (premiumCrystals?.startingAmount !== 0 || premiumCrystals?.startingRate !== 0) {
+    issues.push({ severity: "error", code: "premium_crystals_starting_value_invalid", message: `${context} ECON-PREMIUM-CRYSTALS must start at 0 with no starting rate.`, records: ["ECON-PREMIUM-CRYSTALS"] });
+  }
+  if (civilizationPoints?.startingAmount !== 0 || civilizationPoints?.startingRate !== 0) {
+    issues.push({ severity: "error", code: "civilization_points_starting_value_invalid", message: `${context} ECON-CIVILIZATION-POINTS must start at 0 with no starting rate.`, records: ["ECON-CIVILIZATION-POINTS"] });
+  }
+  if (survival?.activePrimaryEconomyId !== "ECON-LABOR" || survival?.visibleHudEconomyIds.includes("ECON-CREDITS")) {
+    issues.push({ severity: "error", code: "survival_economy_profile_invalid", message: `${context} Survival must use Labor as primary economy and must not show Credits in the HUD.`, records: [survival?.id ?? "missing_survival_profile"] });
   }
 }
 
@@ -741,6 +791,7 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
 
   validateCanonicalEraProgression(runtimeData.eras, issues, "Canonical runtime");
   validateEraEconomyProfiles(runtimeData, issues, "Canonical runtime");
+  validateEconomyDefaults(runtimeData, issues, "Canonical runtime");
 
   const missingCategories = requiredCategoryIds.filter((id) => !categoryIds.has(id));
   if (missingCategories.length) {
@@ -916,6 +967,11 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
     economyDefinitions: payload.economyDefinitions,
     eraEconomyProfiles: payload.eraEconomyProfiles
   }, issues, "Roblox runtime");
+  validateEconomyDefaults({
+    economyDefinitions: payload.economyDefinitions,
+    eraEconomyProfiles: payload.eraEconomyProfiles,
+    balance: payload.balance
+  }, issues, "Roblox runtime");
 
   const duplicateTabs = duplicateIds(payload.upgradeTabs.map((tab) => ({ id: tab.tabId })));
   if (duplicateTabs.length) {
@@ -1041,14 +1097,20 @@ export async function getGameRuntimeData() {
     ...base,
     ...store.appliedRuntimeData,
     metadata: {
+      ...base.metadata,
       ...store.appliedRuntimeData.metadata,
-      contentVersion: Math.max(store.appliedRuntimeData.metadata.contentVersion, gameRuntimeContentVersion)
+      contentVersion: Math.max(store.appliedRuntimeData.metadata.contentVersion, gameRuntimeContentVersion),
+      saveMigrationHints: base.metadata.saveMigrationHints
     },
     economyDefinitions: base.economyDefinitions,
     eraEconomyProfiles: base.eraEconomyProfiles,
     economyUsageRelationships: base.economyUsageRelationships,
     inventoryResourceMetadata: base.inventoryResourceMetadata,
-    resources: base.resources
+    resources: base.resources,
+    balance: {
+      ...store.appliedRuntimeData.balance,
+      startingPopulation: base.balance.startingPopulation
+    }
   });
   return {
     ...merged,

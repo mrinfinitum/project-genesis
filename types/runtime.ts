@@ -9,6 +9,17 @@ export type RuntimeMetadata = {
   sourceFormat: string;
   environment: string;
   validationStatus: "Ready" | "Ready With Warnings" | "Blocked";
+  saveMigrationHints?: Array<{
+    id: string;
+    targetId: string;
+    field: string;
+    previousDefault: number;
+    currentDefault: number;
+    applyOnlyWhen: string;
+    preserveRule: string;
+    introducedContentVersion: number;
+    notes: string;
+  }>;
 };
 
 export type RequirementMap = Record<string, unknown>;
@@ -99,6 +110,7 @@ export type EconomyValueDefinition = {
   name: string;
   displayName: string;
   description: string;
+  playerFacingHelpText?: string;
   valueType: "currency" | "counter" | "rate" | "capacity";
   category: "global_economy";
   iconKey: string;
@@ -117,6 +129,10 @@ export type EconomyValueDefinition = {
   maximum: number | null;
   visibility: "always" | "when_unlocked" | "premium_store";
   usage: string[];
+  semantics?: string[];
+  manualClickTarget?: boolean;
+  progressionRelevant?: boolean;
+  supportsCaps?: boolean;
   status: "canonical" | "draft" | "deprecated";
 };
 
@@ -140,6 +156,13 @@ export type EraEconomyProfile = {
   secondaryEconomyIds: string[];
   visibleHudEconomyIds: string[];
   hudSlots: HudResourceSlot[];
+  displayOverrides: Record<string, { displayName: string; compactLabel?: string; description?: string }>;
+  visibilityRules: {
+    useEraHud: boolean;
+    creditsVisible: boolean;
+    materialResourcesInHud: boolean;
+    notes: string;
+  };
   notes: string;
 };
 

@@ -783,6 +783,32 @@ function validateEconomy(issues: ExportValidationIssue[], modules: CanonicalModu
     addIssue(issues, "error", "invalid_economy_number", "Economy starting amounts, rates, and minimums must be finite.", invalidEconomyNumbers.map((definition) => definition.id));
   }
 
+  const labor = modules.economy_definitions.find((definition) => definition.id === "ECON-LABOR");
+  const population = modules.economy_definitions.find((definition) => definition.id === "ECON-POPULATION");
+  const research = modules.economy_definitions.find((definition) => definition.id === "ECON-RESEARCH");
+  const premiumCrystals = modules.economy_definitions.find((definition) => definition.id === "ECON-PREMIUM-CRYSTALS");
+  const civilizationPoints = modules.economy_definitions.find((definition) => definition.id === "ECON-CIVILIZATION-POINTS");
+
+  if (labor?.startingAmount !== 0 || labor?.manualClickTarget !== true) {
+    addIssue(issues, "error", "labor_click_economy_invalid", "ECON-LABOR must start at 0 and remain the manual click economy.", ["ECON-LABOR"]);
+  }
+
+  if (population?.startingAmount !== 5 || population?.startingRate !== 0 || population?.spendable !== false || population?.premium !== false || population?.manualClickTarget === true) {
+    addIssue(issues, "error", "population_default_invalid", "ECON-POPULATION must start at 5 and remain non-spendable, non-premium, non-clicked workforce capacity.", ["ECON-POPULATION"]);
+  }
+
+  if (research?.startingAmount !== 0 || research?.startingRate !== 0) {
+    addIssue(issues, "error", "research_starting_value_invalid", "ECON-RESEARCH must start at 0 with no starting rate.", ["ECON-RESEARCH"]);
+  }
+
+  if (premiumCrystals?.startingAmount !== 0 || premiumCrystals?.startingRate !== 0) {
+    addIssue(issues, "error", "premium_crystals_starting_value_invalid", "ECON-PREMIUM-CRYSTALS must start at 0 with no starting rate.", ["ECON-PREMIUM-CRYSTALS"]);
+  }
+
+  if (civilizationPoints?.startingAmount !== 0 || civilizationPoints?.startingRate !== 0) {
+    addIssue(issues, "error", "civilization_points_starting_value_invalid", "ECON-CIVILIZATION-POINTS must start at 0 with no starting rate.", ["ECON-CIVILIZATION-POINTS"]);
+  }
+
   const premiumWithoutMarker = modules.economy_definitions.filter((definition) => definition.premium && !/premium/i.test(definition.id));
   if (premiumWithoutMarker.length) {
     addIssue(issues, "warning", "premium_economy_marker", "Premium economy values should be explicitly marked.", premiumWithoutMarker.map((definition) => definition.id));
@@ -814,7 +840,7 @@ function validateEconomy(issues: ExportValidationIssue[], modules: CanonicalModu
     addIssue(issues, "error", "era_economy_profiles_missing", "Engine exports must include one era economy profile per canonical era.", missingEraProfiles.length ? missingEraProfiles : [`received:${modules.era_economy_profiles.length}`]);
   }
   for (const profile of modules.era_economy_profiles) {
-    const referencedEconomyIds = [...profile.primaryEconomyIds, ...profile.secondaryEconomyIds, ...profile.visibleHudEconomyIds, ...profile.hudSlots.map((slot) => slot.economyId)];
+    const referencedEconomyIds = [...profile.primaryEconomyIds, ...profile.secondaryEconomyIds, ...profile.visibleHudEconomyIds, ...profile.hudSlots.map((slot) => slot.economyId), ...Object.keys(profile.displayOverrides ?? {})];
     const unresolved = referencedEconomyIds.filter((economyId) => !economyIds.has(economyId));
     if (unresolved.length) {
       addIssue(issues, "error", "era_economy_profile_reference_missing", "Era economy profile references must resolve to economy definitions.", [profile.id, ...new Set(unresolved)]);
@@ -822,6 +848,11 @@ function validateEconomy(issues: ExportValidationIssue[], modules: CanonicalModu
     if (profile.hudSlots.map((slot) => slot.economyId).join("|") !== profile.visibleHudEconomyIds.join("|")) {
       addIssue(issues, "error", "era_economy_hud_slots_mismatch", "Era economy profile HUD slots must match visibleHudEconomyIds.", [profile.id]);
     }
+  }
+
+  const survivalProfile = modules.era_economy_profiles.find((profile) => profile.eraId === "survival");
+  if (survivalProfile?.activePrimaryEconomyId !== "ECON-LABOR" || survivalProfile.visibleHudEconomyIds.includes("ECON-CREDITS")) {
+    addIssue(issues, "error", "survival_economy_profile_invalid", "Survival must use Labor as the primary economy and must not show Credits in the HUD.", [survivalProfile?.id ?? "missing_survival_profile"]);
   }
 
   const invalidListings = modules.resource_listings.filter((listing) => !ResourceService.getById(listing.resourceId));

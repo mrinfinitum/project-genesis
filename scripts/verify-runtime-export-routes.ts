@@ -17,10 +17,10 @@ type RuntimeClientProfile = {
 };
 
 type RuntimePayload = {
-  metadata?: { schemaVersion?: string; contentVersion?: number; checksum?: string; accessLevel?: string; validationStatus?: string };
+  metadata?: { schemaVersion?: string; contentVersion?: number; checksum?: string; accessLevel?: string; validationStatus?: string; saveMigrationHints?: Array<{ id: string; targetId: string; previousDefault: number; currentDefault: number }> };
   eras?: Array<{ id: string; index?: number; name?: string; displayName?: string; shortDisplayName?: string }>;
-  economyDefinitions?: Array<{ id: string; startingAmount?: number; startingRate?: number; premium?: boolean }>;
-  eraEconomyProfiles?: Array<{ id: string; eraId: string; eraIndex: number; activePrimaryEconomyId: string; primaryEconomyIds: string[]; secondaryEconomyIds: string[]; visibleHudEconomyIds: string[]; hudSlots: Array<{ economyId: string; order: number }> }>;
+  economyDefinitions?: Array<{ id: string; startingAmount?: number; startingRate?: number; premium?: boolean; spendable?: boolean; manualClickTarget?: boolean; playerFacingHelpText?: string }>;
+  eraEconomyProfiles?: Array<{ id: string; eraId: string; eraIndex: number; activePrimaryEconomyId: string; primaryEconomyIds: string[]; secondaryEconomyIds: string[]; visibleHudEconomyIds: string[]; hudSlots: Array<{ economyId: string; order: number }>; displayOverrides?: Record<string, { displayName?: string }> }>;
   economyUsageRelationships?: { unresolved?: Array<unknown> };
   inventoryResourceMetadata?: Array<{ resourceId: string; classification?: string }>;
   resources?: Array<{ id: string }>;
@@ -34,6 +34,7 @@ type RuntimePayload = {
     unreal?: RuntimeClientProfile;
     godot?: RuntimeClientProfile;
   };
+  balance?: { startingPopulation?: number };
 };
 
 export {};
@@ -108,6 +109,20 @@ function validateEconomy(payload: RuntimePayload | RobloxPayload, label: string)
   assert(hud.every((id) => economyIds.has(id) && !materialIds.has(id)), `${label} HUD IDs must resolve only to economy definitions, not material resources.`);
   assert(economyDefinitions.every((definition) => Number.isFinite(definition.startingAmount) && Number.isFinite(definition.startingRate)), `${label} economy starting amounts and rates must be finite.`);
   assert(economyDefinitions.find((definition) => definition.id === "ECON-PREMIUM-CRYSTALS")?.premium === true, `${label} Premium Crystals must be explicitly premium.`);
+  assert(economyDefinitions.find((definition) => definition.id === "ECON-LABOR")?.startingAmount === 0, `${label} Labor must start at 0.`);
+  assert(economyDefinitions.find((definition) => definition.id === "ECON-LABOR")?.manualClickTarget === true, `${label} Labor must remain the manual click target.`);
+  const population = economyDefinitions.find((definition) => definition.id === "ECON-POPULATION");
+  assert(population?.startingAmount === 5, `${label} Population must start at 5.`);
+  assert(population?.startingRate === 0, `${label} Population must not have a starting rate.`);
+  assert(population?.spendable === false, `${label} Population must not be spendable.`);
+  assert(population?.premium === false, `${label} Population must not be premium.`);
+  assert(population?.manualClickTarget !== true, `${label} Population must not be the manual click target.`);
+  assert(Boolean(population?.playerFacingHelpText), `${label} Population must include player-facing help text.`);
+  assert(economyDefinitions.find((definition) => definition.id === "ECON-RESEARCH")?.startingAmount === 0, `${label} Research must start at 0.`);
+  assert(economyDefinitions.find((definition) => definition.id === "ECON-PREMIUM-CRYSTALS")?.startingAmount === 0, `${label} Premium Crystals must start at 0.`);
+  assert(economyDefinitions.find((definition) => definition.id === "ECON-CIVILIZATION-POINTS")?.startingAmount === 0, `${label} Civilization Points must start at 0.`);
+  assert(payload.balance?.startingPopulation === 5, `${label} balance.startingPopulation must be 5.`);
+  assert(payload.metadata?.saveMigrationHints?.some((hint) => hint.id === "migration_population_default_125_to_5" && hint.targetId === "ECON-POPULATION" && hint.previousDefault === 125 && hint.currentDefault === 5), `${label} must expose the Population default migration hint.`);
   assert((payload.inventoryResourceMetadata?.length ?? 0) > 0, `${label} must include inventory resource metadata for the resources screen.`);
   assert(payload.inventoryResourceMetadata?.every((row) => row.classification === "inventory_resource"), `${label} inventory metadata must be classified as inventory_resource.`);
 }
@@ -138,10 +153,20 @@ function validateEraEconomyProfiles(payload: RuntimePayload | RobloxPayload, lab
     assert(profile.secondaryEconomyIds.join("|") === secondary.join("|"), `${label} ${eraId} secondary economy IDs are invalid: ${profile.secondaryEconomyIds.join(", ")}.`);
     assert(profile.visibleHudEconomyIds.join("|") === visibleHud.join("|"), `${label} ${eraId} visible HUD IDs are invalid: ${profile.visibleHudEconomyIds.join(", ")}.`);
     assert(profile.hudSlots.map((slot) => slot.economyId).join("|") === visibleHud.join("|"), `${label} ${eraId} HUD slots do not match visible HUD IDs.`);
+    for (const economyId of Object.keys(profile.displayOverrides ?? {})) {
+      assert(economyIds.has(economyId), `${label} ${eraId} display override economy ID does not resolve: ${economyId}.`);
+    }
     for (const economyId of [...profile.primaryEconomyIds, ...profile.secondaryEconomyIds, ...profile.visibleHudEconomyIds]) {
       assert(economyIds.has(economyId), `${label} ${eraId} economy ID does not resolve: ${economyId}.`);
     }
   }
+  const laborLabels = Object.fromEntries(profiles.map((profile) => [profile.eraId, profile.displayOverrides?.["ECON-LABOR"]?.displayName]));
+  assert(laborLabels.survival === "Labor", `${label} Survival Labor display override is missing.`);
+  assert(laborLabels.medieval === "Workforce", `${label} Medieval Labor display override must be Workforce.`);
+  assert(laborLabels.industrial === "Industrial Workforce", `${label} Industrial Labor display override must be Industrial Workforce.`);
+  assert(laborLabels.modern === "Human Capital", `${label} Modern Labor display override must be Human Capital.`);
+  assert(laborLabels.interstellar === "Civilization Output", `${label} Interstellar Labor display override must be Civilization Output.`);
+  assert(laborLabels.galactic === "Galactic Output", `${label} Galactic Labor display override must be Galactic Output.`);
 }
 
 function validateEraNavigation(payload: RuntimePayload | RobloxPayload, label: string) {
@@ -231,8 +256,8 @@ async function main() {
   assert(roblox.payload.metadata?.accessLevel === "public-published", "Roblox accessLevel must be public-published.");
   assert(roblox.payload.metadata?.validationStatus, "Roblox validation status is missing.");
   assert((canonical.payload.eras?.length ?? 0) > 0, "Canonical payload must include at least one era.");
-  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 2, "Canonical contentVersion must be at least 2 after adding Renaissance.");
-  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 2, "Roblox contentVersion must be at least 2 after adding Renaissance.");
+  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 8, "Canonical contentVersion must be at least 8 after the Population/Labor correction.");
+  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 8, "Roblox contentVersion must be at least 8 after the Population/Labor correction.");
 
   validateEraNavigation(canonical.payload, "Canonical");
   validateEraNavigation(roblox.payload, "Roblox");
