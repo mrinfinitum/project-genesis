@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getGameData } from "@/lib/data";
 import { discoveryJournalSchema, sampleDiscoveryJournal, sampleTimelineEvents, timelineEventSchema } from "@/lib/explorer/discovery-log";
 import { colonyBuildingTemplates, colonyFocusDefinitions, colonyLevelDefinitions, colonySchema, createColonyRecord, generateFallbackColonies, type ColonyBuilding, type ColonyRecord } from "@/lib/colonies/procedural";
-import { buildEconomyUsageRelationships, buildInventoryResourceMetadata, buildPrimaryHudSlots, canonicalEconomyDefinitions, primaryHudEconomyIds } from "@/lib/economy/definitions";
+import { buildEconomyUsageRelationships, buildEraEconomyProfiles, buildInventoryResourceMetadata, buildPrimaryHudSlots, canonicalEconomyDefinitions, primaryHudEconomyIds } from "@/lib/economy/definitions";
 import { buildEconomyState, economySchemas, priceClamps, type MarketRecord, type ResourceListing, type TradeOpportunity, type TradeRoute } from "@/lib/economy/trade";
 import { generateFaction, generateFallbackFactions, type FactionRecord } from "@/lib/factions/procedural";
 import { defaultEraNavigationProfile, engineEraNavigationOverrides, resolveEraNavigationProfile, supportedEraNavigationBoundaryModes, supportedEraNavigationDashboardModes } from "@/lib/runtime/client-profiles";
@@ -136,6 +136,7 @@ type CanonicalModules = {
   trade_routes: TradeRoute[];
   trade_opportunities: TradeOpportunity[];
   economy_definitions: typeof canonicalEconomyDefinitions;
+  era_economy_profiles: ReturnType<typeof buildEraEconomyProfiles>;
   hud_profile: Array<ReturnType<typeof buildPrimaryHudSlots>[number]>;
   primary_hud_resources: string[];
   era_navigation_profiles: Array<{ id: string; profileName: string; eraNavigation: ReturnType<typeof resolveEraNavigationProfile>; inheritsFrom: string | null; notes: string }>;
@@ -474,6 +475,7 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
     trade_routes: economyState.tradeRoutes,
     trade_opportunities: economyState.tradeOpportunities,
     economy_definitions: canonicalEconomyDefinitions,
+    era_economy_profiles: buildEraEconomyProfiles(),
     hud_profile: buildPrimaryHudSlots(),
     primary_hud_resources: [...primaryHudEconomyIds],
     era_navigation_profiles: [
@@ -503,6 +505,7 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
         status: "canonical",
         globalEconomyDefinitions: canonicalEconomyDefinitions.length,
         primaryHudResources: [...primaryHudEconomyIds],
+        eraEconomyProfiles: buildEraEconomyProfiles().length,
         markets: economyState.markets.length,
         tradeRoutes: economyState.tradeRoutes.length,
         tradeOpportunities: economyState.tradeOpportunities.length,
@@ -804,6 +807,23 @@ function validateEconomy(issues: ExportValidationIssue[], modules: CanonicalModu
     addIssue(issues, "error", "material_resource_in_hud", "Material resources must not be used as global HUD currencies.", materialHudIds);
   }
 
+  const expectedEraIds = ["survival", "ancient", "medieval", "renaissance", "industrial", "modern", "space-age", "interstellar", "galactic"];
+  const profileEraIds = new Set(modules.era_economy_profiles.map((profile) => profile.eraId));
+  const missingEraProfiles = expectedEraIds.filter((eraId) => !profileEraIds.has(eraId));
+  if (modules.era_economy_profiles.length !== expectedEraIds.length || missingEraProfiles.length) {
+    addIssue(issues, "error", "era_economy_profiles_missing", "Engine exports must include one era economy profile per canonical era.", missingEraProfiles.length ? missingEraProfiles : [`received:${modules.era_economy_profiles.length}`]);
+  }
+  for (const profile of modules.era_economy_profiles) {
+    const referencedEconomyIds = [...profile.primaryEconomyIds, ...profile.secondaryEconomyIds, ...profile.visibleHudEconomyIds, ...profile.hudSlots.map((slot) => slot.economyId)];
+    const unresolved = referencedEconomyIds.filter((economyId) => !economyIds.has(economyId));
+    if (unresolved.length) {
+      addIssue(issues, "error", "era_economy_profile_reference_missing", "Era economy profile references must resolve to economy definitions.", [profile.id, ...new Set(unresolved)]);
+    }
+    if (profile.hudSlots.map((slot) => slot.economyId).join("|") !== profile.visibleHudEconomyIds.join("|")) {
+      addIssue(issues, "error", "era_economy_hud_slots_mismatch", "Era economy profile HUD slots must match visibleHudEconomyIds.", [profile.id]);
+    }
+  }
+
   const invalidListings = modules.resource_listings.filter((listing) => !ResourceService.getById(listing.resourceId));
   if (invalidListings.length) {
     addIssue(issues, "error", "invalid_market_resource_id", "Some market resource listings reference resources outside resource_catalog.", invalidListings.map((listing) => listing.id));
@@ -1100,6 +1120,7 @@ function compactModules(modules: CanonicalModules) {
     trade_routes: modules.trade_routes,
     trade_opportunities: modules.trade_opportunities,
     economy_definitions: modules.economy_definitions,
+    era_economy_profiles: modules.era_economy_profiles,
     hud_profile: modules.hud_profile,
     primary_hud_resources: modules.primary_hud_resources,
     era_navigation_profiles: modules.era_navigation_profiles,
@@ -1127,7 +1148,7 @@ function targetArtifacts(target: EngineTarget, modules: CanonicalModules) {
   if (target === "roblox") {
     return {
       "ResourceCatalogModule.lua": `local ResourceCatalog = ${luaValue(modules.resource_catalog)}\n\nreturn ResourceCatalog\n`,
-      "EconomyDefinitionsModule.lua": `local EconomyDefinitions = ${luaValue({ economyDefinitions: modules.economy_definitions, hudProfile: modules.hud_profile, primaryHudResources: modules.primary_hud_resources })}\n\nreturn EconomyDefinitions\n`,
+      "EconomyDefinitionsModule.lua": `local EconomyDefinitions = ${luaValue({ economyDefinitions: modules.economy_definitions, eraEconomyProfiles: modules.era_economy_profiles, hudProfile: modules.hud_profile, primaryHudResources: modules.primary_hud_resources })}\n\nreturn EconomyDefinitions\n`,
       "EraNavigationProfileModule.lua": `local EraNavigationProfiles = ${luaValue(modules.era_navigation_profiles)}\n\nreturn EraNavigationProfiles\n`,
       "ResearchUnlockModule.lua": `local ResearchUnlocks = ${luaValue({ research: modules.research, unlocks: modules.unlock_matrix })}\n\nreturn ResearchUnlocks\n`,
       "UniverseDataModule.lua": `local UniverseData = ${luaValue({ galaxies: modules.galaxies, sectors: modules.sectors, starSystems: modules.star_systems, planets: modules.planets, celestialBodies: modules.celestial_bodies, factions: modules.factions, colonies: modules.colonies, colonyBuildings: modules.colony_buildings, colonyLevels: modules.colony_level_definitions, colonyFocus: modules.colony_focus_definitions, markets: modules.markets, tradeRoutes: modules.trade_routes, tradeOpportunities: modules.trade_opportunities, missions: modules.missions, missionObjectives: modules.mission_objectives, missionRewards: modules.mission_rewards })}\n\nreturn UniverseData\n`,

@@ -7,6 +7,7 @@ import { getAppliedGameArtAssets } from "@/lib/assets/game-art-import";
 import { getGameData } from "@/lib/data";
 import {
   buildEconomyUsageRelationships,
+  buildEraEconomyProfiles,
   buildInventoryResourceMetadata,
   buildPrimaryHudSlots,
   canonicalEconomyDefinitions,
@@ -37,7 +38,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 6;
+export const gameRuntimeContentVersion = 7;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -45,6 +46,7 @@ export type RobloxRuntimeExportPayload = {
   metadata: RuntimeMetadata & { target: "roblox"; sourceSchemaVersion: string };
   eras: EraDefinition[];
   economyDefinitions: GameRuntimeData["economyDefinitions"];
+  eraEconomyProfiles: GameRuntimeData["eraEconomyProfiles"];
   economyUsageRelationships: GameRuntimeData["economyUsageRelationships"];
   inventoryResourceMetadata: GameRuntimeData["inventoryResourceMetadata"];
   resources: ResourceDefinition[];
@@ -435,6 +437,7 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
     ...runtimeData,
     eras: [...runtimeData.eras].sort(byOrderThenId),
     economyDefinitions: [...runtimeData.economyDefinitions].sort(byId),
+    eraEconomyProfiles: [...runtimeData.eraEconomyProfiles].sort((left, right) => left.eraIndex - right.eraIndex || left.eraId.localeCompare(right.eraId)),
     inventoryResourceMetadata: [...runtimeData.inventoryResourceMetadata].sort(byId),
     resources: [...runtimeData.resources].sort(byId),
     upgradeCategories: [...runtimeData.upgradeCategories].sort(byOrderThenId),
@@ -575,6 +578,65 @@ function validateCanonicalEraProgression(eras: EraDefinition[], issues: ImportIs
   }
 }
 
+function validateEraEconomyProfiles(runtimeData: Pick<GameRuntimeData, "eras" | "economyDefinitions" | "eraEconomyProfiles">, issues: ImportIssue[], context: string) {
+  const eraIds = new Set(runtimeData.eras.map((era) => era.id));
+  const economyIds = new Set(runtimeData.economyDefinitions.map((definition) => definition.id));
+  const profileEraIds = new Set(runtimeData.eraEconomyProfiles.map((profile) => profile.eraId));
+  const duplicateProfileIds = duplicateIds(runtimeData.eraEconomyProfiles);
+  const expectedEraIds = canonicalEraDefinitions.map((era) => era.id);
+  const missingProfiles = expectedEraIds.filter((eraIdValue) => !profileEraIds.has(eraIdValue));
+
+  if (runtimeData.eraEconomyProfiles.length !== canonicalEraDefinitions.length) {
+    issues.push({
+      severity: "error",
+      code: "invalid_era_economy_profile_count",
+      message: `${context} must include one eraEconomyProfile per canonical era.`,
+      records: [`expected:${canonicalEraDefinitions.length}`, `received:${runtimeData.eraEconomyProfiles.length}`]
+    });
+  }
+
+  if (duplicateProfileIds.length) {
+    issues.push({ severity: "error", code: "duplicate_era_economy_profile_id", message: `${context} eraEconomyProfiles must use unique IDs.`, records: duplicateProfileIds });
+  }
+
+  if (missingProfiles.length) {
+    issues.push({ severity: "error", code: "missing_era_economy_profiles", message: `${context} is missing era economy profiles.`, records: missingProfiles });
+  }
+
+  for (const profile of runtimeData.eraEconomyProfiles) {
+    if (!eraIds.has(profile.eraId)) {
+      issues.push({ severity: "error", code: "era_economy_profile_era_missing", message: "eraEconomyProfile.eraId must resolve to a canonical era.", records: [profile.id, profile.eraId] });
+    }
+    if (!economyIds.has(profile.activePrimaryEconomyId)) {
+      issues.push({ severity: "error", code: "era_economy_primary_missing", message: "eraEconomyProfile.activePrimaryEconomyId must resolve to a canonical economy definition.", records: [profile.id, profile.activePrimaryEconomyId] });
+    }
+    if (!profile.primaryEconomyIds.includes(profile.activePrimaryEconomyId)) {
+      issues.push({ severity: "error", code: "era_economy_primary_not_listed", message: "The active primary economy must also be listed in primaryEconomyIds.", records: [profile.id, profile.activePrimaryEconomyId] });
+    }
+
+    const allReferencedEconomyIds = [...profile.primaryEconomyIds, ...profile.secondaryEconomyIds, ...profile.visibleHudEconomyIds, ...profile.hudSlots.map((slot) => slot.economyId)];
+    const unresolvedEconomyIds = allReferencedEconomyIds.filter((economyId) => !economyIds.has(economyId));
+    if (unresolvedEconomyIds.length) {
+      issues.push({ severity: "error", code: "era_economy_profile_economy_missing", message: "Era economy profile references must resolve to canonical economy definitions.", records: [profile.id, ...new Set(unresolvedEconomyIds)] });
+    }
+
+    const duplicateHudEconomyIds = profile.visibleHudEconomyIds.filter((economyId, index, ids) => ids.indexOf(economyId) !== index);
+    if (duplicateHudEconomyIds.length) {
+      issues.push({ severity: "error", code: "duplicate_era_hud_economy", message: "Era HUD economy IDs must be unique inside a profile.", records: [profile.id, ...duplicateHudEconomyIds] });
+    }
+
+    const hudSlotEconomyIds = profile.hudSlots.map((slot) => slot.economyId);
+    if (hudSlotEconomyIds.join("|") !== profile.visibleHudEconomyIds.join("|")) {
+      issues.push({ severity: "error", code: "era_hud_slots_do_not_match_profile", message: "Era HUD slots must match visibleHudEconomyIds in order.", records: [profile.id] });
+    }
+
+    const duplicateHudOrders = duplicateNumbers(profile.hudSlots.map((slot) => slot.order));
+    if (duplicateHudOrders.length) {
+      issues.push({ severity: "error", code: "duplicate_era_hud_slot_order", message: "Era HUD slot order values must be unique inside a profile.", records: [profile.id, ...duplicateHudOrders.map(String)] });
+    }
+  }
+}
+
 function stableStringify(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(stableStringify).join(",")}]`;
   if (value && typeof value === "object") {
@@ -670,7 +732,7 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
     issues.push({ severity: "error", code: "metadata_missing", message: "metadata.schemaVersion is required.", records: ["metadata"] });
   }
 
-  for (const [moduleName, rows] of Object.entries({ eras: runtimeData.eras, economyDefinitions: runtimeData.economyDefinitions, inventoryResourceMetadata: runtimeData.inventoryResourceMetadata, resources: runtimeData.resources, upgradeCategories: runtimeData.upgradeCategories, upgrades: runtimeData.upgrades, assets: runtimeData.assets })) {
+  for (const [moduleName, rows] of Object.entries({ eras: runtimeData.eras, economyDefinitions: runtimeData.economyDefinitions, eraEconomyProfiles: runtimeData.eraEconomyProfiles, inventoryResourceMetadata: runtimeData.inventoryResourceMetadata, resources: runtimeData.resources, upgradeCategories: runtimeData.upgradeCategories, upgrades: runtimeData.upgrades, assets: runtimeData.assets })) {
     const duplicates = duplicateIds(rows as Array<{ id: string }>);
     if (duplicates.length) {
       issues.push({ severity: "error", code: "duplicate_id", message: `${moduleName} contains duplicate IDs.`, records: duplicates });
@@ -678,6 +740,7 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   }
 
   validateCanonicalEraProgression(runtimeData.eras, issues, "Canonical runtime");
+  validateEraEconomyProfiles(runtimeData, issues, "Canonical runtime");
 
   const missingCategories = requiredCategoryIds.filter((id) => !categoryIds.has(id));
   if (missingCategories.length) {
@@ -807,6 +870,7 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     },
     eras: sorted.eras,
     economyDefinitions: sorted.economyDefinitions,
+    eraEconomyProfiles: sorted.eraEconomyProfiles,
     economyUsageRelationships: sorted.economyUsageRelationships,
     inventoryResourceMetadata: sorted.inventoryResourceMetadata,
     resources: sorted.resources,
@@ -847,6 +911,11 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
     issues.push({ severity: "error", code: "invalid_upgrade_tab_count", message: "Roblox runtime payload must expose exactly four upgrade tabs.", records: payload.upgradeTabs.map((tab) => tab.tabId) });
   }
   validateCanonicalEraProgression(payload.eras, issues, "Roblox runtime");
+  validateEraEconomyProfiles({
+    eras: payload.eras,
+    economyDefinitions: payload.economyDefinitions,
+    eraEconomyProfiles: payload.eraEconomyProfiles
+  }, issues, "Roblox runtime");
 
   const duplicateTabs = duplicateIds(payload.upgradeTabs.map((tab) => ({ id: tab.tabId })));
   if (duplicateTabs.length) {
@@ -952,6 +1021,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     metadata: metadata(),
     eras: defaultEras(),
     economyDefinitions: canonicalEconomyDefinitions,
+    eraEconomyProfiles: buildEraEconomyProfiles(),
     economyUsageRelationships: buildEconomyUsageRelationships(data),
     inventoryResourceMetadata: buildInventoryResourceMetadata(data),
     resources: ResourceService.catalog.map(resourceToRuntime),
@@ -975,6 +1045,7 @@ export async function getGameRuntimeData() {
       contentVersion: Math.max(store.appliedRuntimeData.metadata.contentVersion, gameRuntimeContentVersion)
     },
     economyDefinitions: base.economyDefinitions,
+    eraEconomyProfiles: base.eraEconomyProfiles,
     economyUsageRelationships: base.economyUsageRelationships,
     inventoryResourceMetadata: base.inventoryResourceMetadata,
     resources: base.resources
@@ -1151,6 +1222,7 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     }),
     eras: normalizeImportedEras(payload, base.eras),
     economyDefinitions: base.economyDefinitions,
+    eraEconomyProfiles: base.eraEconomyProfiles,
     economyUsageRelationships: base.economyUsageRelationships,
     inventoryResourceMetadata: base.inventoryResourceMetadata,
     resources: base.resources,

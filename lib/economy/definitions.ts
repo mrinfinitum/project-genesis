@@ -1,8 +1,28 @@
 import { ResourceService } from "@/lib/resources/service";
 import type { GameData, ResourceCatalogItem } from "@/types/schema";
-import type { EconomyUsageRelationships, EconomyValueDefinition, HudResourceSlot, InventoryResourceMetadata } from "@/types/runtime";
+import type { EconomyUsageRelationships, EconomyValueDefinition, EraEconomyProfile, HudResourceSlot, InventoryResourceMetadata } from "@/types/runtime";
 
 export const canonicalEconomyDefinitions: EconomyValueDefinition[] = [
+  {
+    id: "ECON-LABOR",
+    name: "labor",
+    displayName: "Labor",
+    description: "Early and mid-game work capacity used for manual production, construction pacing, and civilization effort before mature credit economies dominate.",
+    valueType: "currency",
+    category: "global_economy",
+    iconKey: "economy_labor",
+    color: "#f59e0b",
+    formatting: { style: "compact", prefix: "", suffix: "", decimals: 0 },
+    spendable: true,
+    premium: false,
+    startingAmount: 0,
+    startingRate: 1,
+    minimum: 0,
+    maximum: null,
+    visibility: "always",
+    usage: ["early construction", "manual production", "building costs", "survival progression", "ancient progression", "medieval progression"],
+    status: "canonical"
+  },
   {
     id: "ECON-CREDITS",
     name: "credits",
@@ -84,6 +104,26 @@ export const canonicalEconomyDefinitions: EconomyValueDefinition[] = [
     status: "canonical"
   },
   {
+    id: "ECON-TRADE",
+    name: "trade",
+    displayName: "Trade",
+    description: "Renaissance-era trade economy used for routes, markets, diplomacy, commerce, and pre-industrial economic expansion.",
+    valueType: "currency",
+    category: "global_economy",
+    iconKey: "economy_trade",
+    color: "#38bdf8",
+    formatting: { style: "compact", prefix: "", suffix: "", decimals: 0 },
+    spendable: true,
+    premium: false,
+    startingAmount: 0,
+    startingRate: 0,
+    minimum: 0,
+    maximum: null,
+    visibility: "when_unlocked",
+    usage: ["trade routes", "markets", "renaissance progression", "diplomacy", "commerce missions"],
+    status: "canonical"
+  },
+  {
     id: "ECON-PREMIUM-CRYSTALS",
     name: "premium_crystals",
     displayName: "Premium Crystals",
@@ -122,13 +162,32 @@ export const canonicalEconomyDefinitions: EconomyValueDefinition[] = [
     visibility: "when_unlocked",
     usage: ["era mastery", "milestones", "progression rewards", "achievements"],
     status: "canonical"
+  },
+  {
+    id: "ECON-INFLUENCE",
+    name: "influence",
+    displayName: "Influence",
+    description: "Galactic-scale diplomatic and civilization reach used for alliances, governance, federation scale, and endgame expansion.",
+    valueType: "currency",
+    category: "global_economy",
+    iconKey: "economy_influence",
+    color: "#c084fc",
+    formatting: { style: "compact", prefix: "", suffix: "", decimals: 0 },
+    spendable: true,
+    premium: false,
+    startingAmount: 0,
+    startingRate: 0,
+    minimum: 0,
+    maximum: null,
+    visibility: "when_unlocked",
+    usage: ["galactic diplomacy", "alliances", "federation scale", "endgame governance", "galactic missions"],
+    status: "canonical"
   }
 ];
 
 export const primaryHudEconomyIds = [
-  "ECON-CREDITS",
+  "ECON-LABOR",
   "ECON-POPULATION",
-  "ECON-CIVILIZATION-ENERGY",
   "ECON-RESEARCH",
   "ECON-PREMIUM-CRYSTALS"
 ] as const;
@@ -141,12 +200,16 @@ const economyAliasEntries = [
   ["cash", "ECON-CREDITS"],
   ["population", "ECON-POPULATION"],
   ["pop", "ECON-POPULATION"],
-  ["labor", "ECON-POPULATION"],
-  ["workforce", "ECON-POPULATION"],
+  ["labor", "ECON-LABOR"],
+  ["workforce", "ECON-LABOR"],
+  ["work", "ECON-LABOR"],
+  ["trade", "ECON-TRADE"],
+  ["commerce", "ECON-TRADE"],
   ["civilization energy", "ECON-CIVILIZATION-ENERGY"],
   ["energy", "ECON-CIVILIZATION-ENERGY"],
   ["civilization points", "ECON-CIVILIZATION-POINTS"],
   ["civ points", "ECON-CIVILIZATION-POINTS"],
+  ["influence", "ECON-INFLUENCE"],
   ["research", "ECON-RESEARCH"],
   ["experimental", "ECON-RESEARCH"],
   ["science", "ECON-RESEARCH"],
@@ -173,9 +236,9 @@ export function isEconomyId(value: string) {
   return economyIds.has(value);
 }
 
-export function buildPrimaryHudSlots(): HudResourceSlot[] {
+export function buildHudSlots(economyIdsForHud: readonly string[]): HudResourceSlot[] {
   const byId = new Map(canonicalEconomyDefinitions.map((definition) => [definition.id, definition]));
-  return primaryHudEconomyIds.map((economyId, index) => {
+  return economyIdsForHud.map((economyId, index) => {
     const definition = byId.get(economyId);
     if (!definition) throw new Error(`Missing economy definition for HUD slot ${economyId}.`);
     return {
@@ -187,6 +250,47 @@ export function buildPrimaryHudSlots(): HudResourceSlot[] {
       iconKey: definition.iconKey,
       formatting: definition.formatting,
       premium: definition.premium
+    };
+  });
+}
+
+export function buildPrimaryHudSlots(): HudResourceSlot[] {
+  return buildHudSlots(primaryHudEconomyIds);
+}
+
+type EraEconomyProfileSeed = {
+  eraId: string;
+  primary: readonly string[];
+  secondary: readonly string[];
+  visibleHud?: readonly string[];
+  notes?: string;
+};
+
+const eraEconomyProfileSeeds: readonly EraEconomyProfileSeed[] = [
+  { eraId: "survival", primary: ["ECON-LABOR"], secondary: ["ECON-POPULATION"], visibleHud: ["ECON-LABOR", "ECON-POPULATION", "ECON-RESEARCH", "ECON-PREMIUM-CRYSTALS"], notes: "Survival starts with Labor as the active economy while population, research, and premium crystals remain visible." },
+  { eraId: "ancient", primary: ["ECON-LABOR"], secondary: ["ECON-POPULATION", "ECON-RESEARCH"] },
+  { eraId: "medieval", primary: ["ECON-LABOR"], secondary: ["ECON-POPULATION", "ECON-RESEARCH"] },
+  { eraId: "renaissance", primary: ["ECON-LABOR", "ECON-TRADE", "ECON-POPULATION", "ECON-RESEARCH"], secondary: [] },
+  { eraId: "industrial", primary: ["ECON-CREDITS", "ECON-POPULATION", "ECON-RESEARCH", "ECON-LABOR"], secondary: [] },
+  { eraId: "modern", primary: ["ECON-CREDITS", "ECON-RESEARCH", "ECON-POPULATION"], secondary: [] },
+  { eraId: "space-age", primary: ["ECON-CIVILIZATION-ENERGY", "ECON-RESEARCH", "ECON-POPULATION"], secondary: [] },
+  { eraId: "interstellar", primary: ["ECON-CIVILIZATION-POINTS", "ECON-RESEARCH"], secondary: [] },
+  { eraId: "galactic", primary: ["ECON-CIVILIZATION-POINTS", "ECON-INFLUENCE", "ECON-RESEARCH"], secondary: [] }
+];
+
+export function buildEraEconomyProfiles(): EraEconomyProfile[] {
+  return eraEconomyProfileSeeds.map((profile, index) => {
+    const visibleHudEconomyIds = [...(profile.visibleHud ?? [...profile.primary, ...profile.secondary])];
+    return {
+      id: `era_economy_profile_${profile.eraId}`,
+      eraId: profile.eraId,
+      eraIndex: index + 1,
+      activePrimaryEconomyId: profile.primary[0],
+      primaryEconomyIds: [...profile.primary],
+      secondaryEconomyIds: [...profile.secondary],
+      visibleHudEconomyIds,
+      hudSlots: buildHudSlots(visibleHudEconomyIds),
+      notes: profile.notes ?? "Studio-owned era economy profile. Clients switch HUD and economy emphasis from this data instead of hardcoding era rules."
     };
   });
 }
@@ -213,7 +317,7 @@ export function buildEconomyUsageRelationships(data: GameData): EconomyUsageRela
 
   for (const building of data.buildings) {
     if (Number(building.cost_credits) > 0) relationshipPush(buildingCosts, "ECON-CREDITS", building.id);
-    if (Number(building.cost_labor) > 0) relationshipPush(buildingCosts, "ECON-POPULATION", building.id);
+    if (Number(building.cost_labor) > 0) relationshipPush(buildingCosts, "ECON-LABOR", building.id);
     if (Number(building.cost_experimental) > 0) relationshipPush(buildingCosts, "ECON-RESEARCH", building.id);
     if (Number(building.population_bonus) > 0) relationshipPush(eraUnlocks, "ECON-POPULATION", building.id);
   }
@@ -233,7 +337,9 @@ export function buildEconomyUsageRelationships(data: GameData): EconomyUsageRela
     progressionRewards: {
       "ECON-CIVILIZATION-POINTS": ["era_mastery", "major_milestones"],
       "ECON-RESEARCH": ["research_missions"],
-      "ECON-CREDITS": ["trade_missions"]
+      "ECON-CREDITS": ["trade_missions"],
+      "ECON-TRADE": ["market_milestones"],
+      "ECON-INFLUENCE": ["galactic_diplomacy_milestones"]
     },
     unresolved
   };

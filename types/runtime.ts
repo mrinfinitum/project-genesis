@@ -131,6 +131,18 @@ export type HudResourceSlot = {
   premium: boolean;
 };
 
+export type EraEconomyProfile = {
+  id: string;
+  eraId: string;
+  eraIndex: number;
+  activePrimaryEconomyId: string;
+  primaryEconomyIds: string[];
+  secondaryEconomyIds: string[];
+  visibleHudEconomyIds: string[];
+  hudSlots: HudResourceSlot[];
+  notes: string;
+};
+
 export type EconomyUsageRelationships = {
   upgradeCosts: Record<string, string[]>;
   buildingCosts: Record<string, string[]>;
@@ -290,6 +302,7 @@ export type GameRuntimeData = {
   metadata: RuntimeMetadata;
   eras: EraDefinition[];
   economyDefinitions: EconomyValueDefinition[];
+  eraEconomyProfiles: EraEconomyProfile[];
   economyUsageRelationships: EconomyUsageRelationships;
   inventoryResourceMetadata: InventoryResourceMetadata[];
   resources: ResourceDefinition[];

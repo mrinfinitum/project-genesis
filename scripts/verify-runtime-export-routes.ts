@@ -20,6 +20,7 @@ type RuntimePayload = {
   metadata?: { schemaVersion?: string; contentVersion?: number; checksum?: string; accessLevel?: string; validationStatus?: string };
   eras?: Array<{ id: string; index?: number; name?: string; displayName?: string; shortDisplayName?: string }>;
   economyDefinitions?: Array<{ id: string; startingAmount?: number; startingRate?: number; premium?: boolean }>;
+  eraEconomyProfiles?: Array<{ id: string; eraId: string; eraIndex: number; activePrimaryEconomyId: string; primaryEconomyIds: string[]; secondaryEconomyIds: string[]; visibleHudEconomyIds: string[]; hudSlots: Array<{ economyId: string; order: number }> }>;
   economyUsageRelationships?: { unresolved?: Array<unknown> };
   inventoryResourceMetadata?: Array<{ resourceId: string; classification?: string }>;
   resources?: Array<{ id: string }>;
@@ -91,13 +92,13 @@ function validateEconomy(payload: RuntimePayload | RobloxPayload, label: string)
   const economyIds = new Set(economyDefinitions.map((definition) => definition.id));
   const materialIds = new Set((payload.resources ?? []).map((resource) => resource.id));
   const profile = "clientHints" in payload ? payload.clientHints : payload.clientProfiles?.default;
-  const expectedHud = ["ECON-CREDITS", "ECON-POPULATION", "ECON-CIVILIZATION-ENERGY", "ECON-RESEARCH", "ECON-PREMIUM-CRYSTALS"];
+  const expectedHud = ["ECON-LABOR", "ECON-POPULATION", "ECON-RESEARCH", "ECON-PREMIUM-CRYSTALS"];
   const hud = profile?.primaryHudResources ?? [];
   const slots = profile?.primaryHudSlots ?? [];
   const slotOrders = slots.map((slot) => slot.order);
 
-  assert(economyDefinitions.length >= 6, `${label} must include canonical economy definitions.`);
-  for (const id of ["ECON-CIVILIZATION-ENERGY", "ECON-CREDITS", "ECON-RESEARCH", "ECON-POPULATION", "ECON-CIVILIZATION-POINTS", "ECON-PREMIUM-CRYSTALS"]) {
+  assert(economyDefinitions.length >= 9, `${label} must include canonical economy definitions.`);
+  for (const id of ["ECON-LABOR", "ECON-TRADE", "ECON-INFLUENCE", "ECON-CIVILIZATION-ENERGY", "ECON-CREDITS", "ECON-RESEARCH", "ECON-POPULATION", "ECON-CIVILIZATION-POINTS", "ECON-PREMIUM-CRYSTALS"]) {
     assert(economyIds.has(id), `${label} is missing economy definition ${id}.`);
   }
   assert(hud.join("|") === expectedHud.join("|"), `${label} primaryHudResources order is incorrect: ${hud.join(", ")}.`);
@@ -109,6 +110,38 @@ function validateEconomy(payload: RuntimePayload | RobloxPayload, label: string)
   assert(economyDefinitions.find((definition) => definition.id === "ECON-PREMIUM-CRYSTALS")?.premium === true, `${label} Premium Crystals must be explicitly premium.`);
   assert((payload.inventoryResourceMetadata?.length ?? 0) > 0, `${label} must include inventory resource metadata for the resources screen.`);
   assert(payload.inventoryResourceMetadata?.every((row) => row.classification === "inventory_resource"), `${label} inventory metadata must be classified as inventory_resource.`);
+}
+
+function validateEraEconomyProfiles(payload: RuntimePayload | RobloxPayload, label: string) {
+  const profiles = payload.eraEconomyProfiles ?? [];
+  const economyIds = new Set((payload.economyDefinitions ?? []).map((definition) => definition.id));
+  const expected = [
+    ["survival", ["ECON-LABOR"], ["ECON-POPULATION"], ["ECON-LABOR", "ECON-POPULATION", "ECON-RESEARCH", "ECON-PREMIUM-CRYSTALS"]],
+    ["ancient", ["ECON-LABOR"], ["ECON-POPULATION", "ECON-RESEARCH"], ["ECON-LABOR", "ECON-POPULATION", "ECON-RESEARCH"]],
+    ["medieval", ["ECON-LABOR"], ["ECON-POPULATION", "ECON-RESEARCH"], ["ECON-LABOR", "ECON-POPULATION", "ECON-RESEARCH"]],
+    ["renaissance", ["ECON-LABOR", "ECON-TRADE", "ECON-POPULATION", "ECON-RESEARCH"], [], ["ECON-LABOR", "ECON-TRADE", "ECON-POPULATION", "ECON-RESEARCH"]],
+    ["industrial", ["ECON-CREDITS", "ECON-POPULATION", "ECON-RESEARCH", "ECON-LABOR"], [], ["ECON-CREDITS", "ECON-POPULATION", "ECON-RESEARCH", "ECON-LABOR"]],
+    ["modern", ["ECON-CREDITS", "ECON-RESEARCH", "ECON-POPULATION"], [], ["ECON-CREDITS", "ECON-RESEARCH", "ECON-POPULATION"]],
+    ["space-age", ["ECON-CIVILIZATION-ENERGY", "ECON-RESEARCH", "ECON-POPULATION"], [], ["ECON-CIVILIZATION-ENERGY", "ECON-RESEARCH", "ECON-POPULATION"]],
+    ["interstellar", ["ECON-CIVILIZATION-POINTS", "ECON-RESEARCH"], [], ["ECON-CIVILIZATION-POINTS", "ECON-RESEARCH"]],
+    ["galactic", ["ECON-CIVILIZATION-POINTS", "ECON-INFLUENCE", "ECON-RESEARCH"], [], ["ECON-CIVILIZATION-POINTS", "ECON-INFLUENCE", "ECON-RESEARCH"]]
+  ] as const;
+
+  assert(profiles.length === expected.length, `${label} must include one eraEconomyProfile per canonical era; received ${profiles.length}.`);
+  for (const [index, [eraId, primary, secondary, visibleHud]] of expected.entries()) {
+    const profile = profiles.find((item) => item.eraId === eraId);
+    assert(profile, `${label} is missing era economy profile for ${eraId}.`);
+    if (!profile) throw new Error(`${label} is missing era economy profile for ${eraId}.`);
+    assert(profile.eraIndex === index + 1, `${label} ${eraId} era economy profile has invalid eraIndex.`);
+    assert(profile.activePrimaryEconomyId === primary[0], `${label} ${eraId} active primary economy is invalid.`);
+    assert(profile.primaryEconomyIds.join("|") === primary.join("|"), `${label} ${eraId} primary economy IDs are invalid: ${profile.primaryEconomyIds.join(", ")}.`);
+    assert(profile.secondaryEconomyIds.join("|") === secondary.join("|"), `${label} ${eraId} secondary economy IDs are invalid: ${profile.secondaryEconomyIds.join(", ")}.`);
+    assert(profile.visibleHudEconomyIds.join("|") === visibleHud.join("|"), `${label} ${eraId} visible HUD IDs are invalid: ${profile.visibleHudEconomyIds.join(", ")}.`);
+    assert(profile.hudSlots.map((slot) => slot.economyId).join("|") === visibleHud.join("|"), `${label} ${eraId} HUD slots do not match visible HUD IDs.`);
+    for (const economyId of [...profile.primaryEconomyIds, ...profile.secondaryEconomyIds, ...profile.visibleHudEconomyIds]) {
+      assert(economyIds.has(economyId), `${label} ${eraId} economy ID does not resolve: ${economyId}.`);
+    }
+  }
 }
 
 function validateEraNavigation(payload: RuntimePayload | RobloxPayload, label: string) {
@@ -205,6 +238,8 @@ async function main() {
   validateEraNavigation(roblox.payload, "Roblox");
   validateEconomy(canonical.payload, "Canonical");
   validateEconomy(roblox.payload, "Roblox");
+  validateEraEconomyProfiles(canonical.payload, "Canonical");
+  validateEraEconomyProfiles(roblox.payload, "Roblox");
   validateRuntimeReferences(canonical.payload);
   validateRobloxReferences(roblox.payload);
 
@@ -219,6 +254,7 @@ async function main() {
       cacheControl: canonical.headers.get("cache-control"),
       eraCount: canonical.payload.eras?.length ?? 0,
       economyDefinitionCount: canonical.payload.economyDefinitions?.length ?? 0,
+      eraEconomyProfileCount: canonical.payload.eraEconomyProfiles?.length ?? 0,
       primaryHudResources: canonical.payload.clientProfiles?.default?.primaryHudResources ?? [],
       resourceCount: canonical.payload.resources?.length ?? 0,
       upgradeCount: canonical.payload.upgrades?.length ?? 0
@@ -233,6 +269,7 @@ async function main() {
       cacheControl: roblox.headers.get("cache-control"),
       eraCount: roblox.payload.eras?.length ?? 0,
       economyDefinitionCount: roblox.payload.economyDefinitions?.length ?? 0,
+      eraEconomyProfileCount: roblox.payload.eraEconomyProfiles?.length ?? 0,
       primaryHudResources: roblox.payload.clientHints?.primaryHudResources ?? [],
       resourceCount: roblox.payload.resources?.length ?? 0,
       upgradeTabCount: roblox.payload.upgradeTabs?.length ?? 0,
