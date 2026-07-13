@@ -15,10 +15,12 @@ import {
   ShieldAlert,
   Sparkles
 } from "lucide-react";
+import { cache } from "react";
 import { FullCivilizationTimeline, canonicalTimelineEraId, type TimelineEra } from "@/components/civilization-timeline";
 import { civilizationAges } from "@/data/civilization-identity";
 import { getEraArtSummaryByEra } from "@/lib/assets/era-art-inventory";
 import { getRows } from "@/lib/data";
+import { measureAsync, measureSync } from "@/lib/performance/diagnostics";
 import type { Building, ProjectSystem, ResearchNode, UnlockMatrixRow, Upgrade, Wonder } from "@/types/schema";
 
 export const dynamic = "force-dynamic";
@@ -148,6 +150,19 @@ function hasDependency(research: ResearchNode[], unlocks: UnlockMatrixRow[], dep
   );
 }
 
+const loadCivilizationDesignData = cache(async () => measureAsync("loadCivilizationSummary", async () => {
+  const [researchRows, buildingRows, upgradeRows, unlockRows, wonderRows, projectSystemRows, eraArtSummaryByEra] = await Promise.all([
+    getRows("research") as Promise<ResearchNode[]>,
+    getRows("buildings") as Promise<Building[]>,
+    getRows("upgrades") as Promise<Upgrade[]>,
+    getRows("unlock_matrix") as Promise<UnlockMatrixRow[]>,
+    getRows("wonders") as Promise<Wonder[]>,
+    getRows("project_systems") as Promise<ProjectSystem[]>,
+    getEraArtSummaryByEra()
+  ]);
+  return { researchRows, buildingRows, upgradeRows, unlockRows, wonderRows, projectSystemRows, eraArtSummaryByEra };
+}));
+
 function progressRing(label: string, value: number, helper: string) {
   return (
     <div className="rounded-md border border-cyan-300/15 bg-slate-950/45 p-4">
@@ -212,17 +227,12 @@ function ageCompletion(metric: AgeMetric) {
 }
 
 export default async function CivilizationsPage() {
-  const [researchRows, buildingRows, upgradeRows, unlockRows, wonderRows, projectSystemRows, eraArtSummaryByEra] = await Promise.all([
-    getRows("research") as Promise<ResearchNode[]>,
-    getRows("buildings") as Promise<Building[]>,
-    getRows("upgrades") as Promise<Upgrade[]>,
-    getRows("unlock_matrix") as Promise<UnlockMatrixRow[]>,
-    getRows("wonders") as Promise<Wonder[]>,
-    getRows("project_systems") as Promise<ProjectSystem[]>,
-    getEraArtSummaryByEra()
-  ]);
+  const { researchRows, buildingRows, upgradeRows, unlockRows, wonderRows, projectSystemRows, eraArtSummaryByEra } = await loadCivilizationDesignData();
+  const dependencyStatus = measureSync("buildCivilizationDependencyIndex", () => new Map(
+    dependencyGraph.flatMap((group) => group.dependsOn).map((dependency) => [dependency, hasDependency(researchRows, unlockRows, dependency)])
+  ), { dependencies: dependencyGraph.flatMap((group) => group.dependsOn).length });
 
-  const ageMetrics: AgeMetric[] = civilizationAges.map((ageEntry) => {
+  const ageMetrics: AgeMetric[] = measureSync("buildCivilizationAgeMetrics", () => civilizationAges.map((ageEntry) => {
     const shortAge = shortAgeName(ageEntry.name);
     const target = ageTargets[shortAge] ?? ageTargets.Survival;
     const researchLinked = countByAge(researchRows, ageEntry.name, (row) => row.era);
@@ -233,7 +243,7 @@ export default async function CivilizationsPage() {
     const bonuses = Math.max(0, Math.round((researchLinked + buildingsLinked + upgradesLinked) / 18));
     const artwork = Math.max(0, Math.round((buildingsLinked + wonders) / 2.5));
     const events = 0;
-    const missingDependencies = dependencyGraph.find((item) => item.title === ageEntry.name)?.dependsOn.filter((dependency) => !hasDependency(researchRows, unlockRows, dependency)) ?? [];
+    const missingDependencies = dependencyGraph.find((item) => item.title === ageEntry.name)?.dependsOn.filter((dependency) => !dependencyStatus.get(dependency)) ?? [];
     const metric: AgeMetric = {
       age: ageEntry.name,
       shortAge,
@@ -261,7 +271,7 @@ export default async function CivilizationsPage() {
     metric.completion = ageCompletion(metric);
     metric.validationStatus = metric.completion >= 82 && !missingDependencies.length ? "Complete" : metric.completion < 45 || missingDependencies.length > 2 ? "Needs Work" : "Partial";
     return metric;
-  });
+  }), { eras: civilizationAges.length });
 
   const frameworkCompletion = average(ageMetrics.map((metric) => metric.completion));
   const firstIncompleteEraIndex = ageMetrics.findIndex((metric) => metric.completion < 82 || metric.validationStatus !== "Complete");
@@ -312,7 +322,7 @@ export default async function CivilizationsPage() {
       })),
     ...dependencyGraph.flatMap((group) =>
       group.dependsOn
-        .filter((dependency) => !hasDependency(researchRows, unlockRows, dependency))
+        .filter((dependency) => !dependencyStatus.get(dependency))
         .slice(0, 2)
         .map((dependency): ValidationIssue => ({
           severity: group.title === "Galactic Age" ? "Critical" : "High",
@@ -464,7 +474,7 @@ export default async function CivilizationsPage() {
                 </div>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {group.dependsOn.map((dependency) => {
-                    const connected = hasDependency(researchRows, unlockRows, dependency);
+                    const connected = Boolean(dependencyStatus.get(dependency));
                     return (
                       <span
                         key={dependency}

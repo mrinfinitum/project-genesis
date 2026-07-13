@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { civilizationAges } from "@/data/civilization-identity";
 import { getGameData } from "@/lib/data";
 import {
@@ -8,6 +9,7 @@ import {
   type AssetProductionState,
   type ProductionAsset
 } from "@/lib/assets/asset-production";
+import { measureAsync, measureSync } from "@/lib/performance/diagnostics";
 
 type RequirementPriority = "low" | "medium" | "high" | "critical";
 
@@ -146,6 +148,41 @@ export type EraArtSummaryByEra = Record<string, {
 
 const eraGroups: EraArtGroup[] = ["Era Identity", "Research", "Buildings", "Resources", "Events", "Missions", "UI", "Audio/Video"];
 
+type EraArtInventoryContext = {
+  state: AssetProductionState;
+  data: Awaited<ReturnType<typeof getGameData>>;
+  metadata: Awaited<ReturnType<typeof getAssetProductionRequirementMetadata>>;
+  assetByLookupKey: Map<string, ProductionAsset>;
+  assetById: Map<string, ProductionAsset>;
+  presetById: Map<string, AssetDerivativePreset>;
+  robloxMappedAssets: ProductionAsset[];
+  importedCardsByEra: Map<string, EraArtRequirementCard[]>;
+};
+
+const loadEraArtInventoryContext = cache(async (): Promise<EraArtInventoryContext> => measureAsync("loadEraArtInventoryContext", async () => {
+  const [state, data, metadata] = await Promise.all([getAssetProductionState(), getGameData(), getAssetProductionRequirementMetadata()]);
+  const assetByLookupKey = new Map<string, ProductionAsset>();
+  const assetById = new Map<string, ProductionAsset>();
+  for (const asset of state.assets) {
+    assetById.set(asset.id, asset);
+    for (const candidate of [asset.id, asset.artKey, asset.iconKey, asset.audioKey, asset.modelKey, ...asset.aliases].filter(Boolean)) {
+      assetByLookupKey.set(assetSlug(String(candidate)), asset);
+    }
+  }
+  const context: EraArtInventoryContext = {
+    state,
+    data,
+    metadata,
+    assetByLookupKey,
+    assetById,
+    presetById: new Map(state.derivativePresets.map((preset) => [preset.id, preset])),
+    robloxMappedAssets: state.assets.filter((item) => item.platformMappings.roblox),
+    importedCardsByEra: new Map()
+  };
+  context.importedCardsByEra = buildImportedCardsByEra(context);
+  return context;
+}));
+
 function slug(value: string) {
   return value
     .toLowerCase()
@@ -180,17 +217,12 @@ function profileFor(objectType: string) {
   return requirementProfiles.find((profile) => profile.objectType === objectType) ?? requirementProfiles.find((profile) => profile.objectType === "ui")!;
 }
 
-function presetById(state: AssetProductionState, presetId: string): AssetDerivativePreset | undefined {
-  return state.derivativePresets.find((preset) => preset.id === presetId);
+function presetById(context: EraArtInventoryContext, presetId: string): AssetDerivativePreset | undefined {
+  return context.presetById.get(presetId);
 }
 
-function assetForKey(assets: ProductionAsset[], key: string) {
-  const normalized = assetSlug(key);
-  return assets.find((asset) =>
-    [asset.id, asset.artKey, asset.iconKey, asset.audioKey, asset.modelKey, ...asset.aliases]
-      .filter(Boolean)
-      .some((candidate) => assetSlug(candidate) === normalized)
-  ) ?? null;
+function assetForKey(context: EraArtInventoryContext, key: string) {
+  return context.assetByLookupKey.get(assetSlug(key)) ?? null;
 }
 
 function keyMatchesAsset(asset: ProductionAsset, keys: Array<string | null | undefined>) {
@@ -289,7 +321,7 @@ function resourceEraId(discoveryTier: string) {
 }
 
 function cardFromRequirement(input: {
-  state: AssetProductionState;
+  context: EraArtInventoryContext;
   metadata: Awaited<ReturnType<typeof getAssetProductionRequirementMetadata>>;
   eraId: string;
   eraName: string;
@@ -304,12 +336,12 @@ function cardFromRequirement(input: {
   dueDate?: string;
   notes?: string;
 }): EraArtRequirementCard {
-  const asset = assetForKey(input.state.assets, input.key);
+  const asset = assetForKey(input.context, input.key);
   const cardId = `${input.eraId}:${input.group}:${input.linkedObjectType}:${input.linkedObjectId}:${input.requirement.derivativeType}`;
   const override = input.metadata.missingRequirements[cardId];
-  const assignedAsset = override?.assetId ? input.state.assets.find((item) => item.id === override.assetId) ?? null : null;
+  const assignedAsset = override?.assetId ? input.context.assetById.get(override.assetId) ?? null : null;
   const resolvedAsset = assignedAsset ?? asset;
-  const preset = presetById(input.state, input.requirement.presetId);
+  const preset = presetById(input.context, input.requirement.presetId);
   const derivative = bestDerivative(resolvedAsset, input.requirement.derivativeType);
   const baseStatus = statusFor(resolvedAsset, input.requirement.derivativeType, input.requirement.required);
   const status = override?.status ? statusLabel(override.status) : baseStatus;
@@ -381,7 +413,7 @@ function cardFromRequirement(input: {
 }
 
 function addProfileCards(cards: EraArtRequirementCard[], input: {
-  state: AssetProductionState;
+  context: EraArtInventoryContext;
   metadata: Awaited<ReturnType<typeof getAssetProductionRequirementMetadata>>;
   eraId: string;
   eraName: string;
@@ -396,7 +428,7 @@ function addProfileCards(cards: EraArtRequirementCard[], input: {
   const profile = profileFor(input.profileObjectType);
   for (const requirement of profile.requirements) {
     cards.push(cardFromRequirement({
-      state: input.state,
+      context: input.context,
       metadata: input.metadata,
       eraId: input.eraId,
       eraName: input.eraName,
@@ -558,14 +590,14 @@ function canonicalArtTargets(asset: ProductionAsset, data: Awaited<ReturnType<ty
 }
 
 function cardFromImportedAsset(input: {
-  state: AssetProductionState;
+  context: EraArtInventoryContext;
   metadata: Awaited<ReturnType<typeof getAssetProductionRequirementMetadata>>;
   asset: ProductionAsset;
   target: ReconciledArtTarget;
   eraName: string;
 }): EraArtRequirementCard {
   const derivative = bestDerivative(input.asset, input.target.requirementType);
-  const preset = presetById(input.state, requirementPresetFor(input.target.requirementType));
+  const preset = presetById(input.context, requirementPresetFor(input.target.requirementType));
   const cardId = `${input.target.eraId}:Imported Roblox Art:${input.target.linkedObjectType}:${input.target.linkedObjectId}:${input.asset.id}:${input.target.requirementType}`;
   const override = input.metadata.missingRequirements[cardId];
   const status = override?.status ? statusLabel(override.status) : statusFor(input.asset, input.target.requirementType, input.target.required);
@@ -635,6 +667,29 @@ function cardFromImportedAsset(input: {
   };
 }
 
+function buildImportedCardsByEra(context: EraArtInventoryContext) {
+  const cardsByEra = new Map<string, EraArtRequirementCard[]>();
+  const eraNamesById = new Map(civilizationAges.map((item) => [eraIdFor(item.name), eraIdFor(item.name) === "space-age" ? "Space Age" : displayEraName(item.name)]));
+  const seen = new Set<string>();
+
+  for (const asset of context.robloxMappedAssets) {
+    for (const target of canonicalArtTargets(asset, context.data)) {
+      const card = cardFromImportedAsset({
+        context,
+        metadata: context.metadata,
+        asset,
+        target,
+        eraName: eraNamesById.get(target.eraId) ?? target.eraId
+      });
+      if (seen.has(card.id)) continue;
+      seen.add(card.id);
+      cardsByEra.set(card.eraId, [...(cardsByEra.get(card.eraId) ?? []), card]);
+    }
+  }
+
+  return cardsByEra;
+}
+
 function cardFromPlaceholder(input: {
   placeholder: { asset: string; usage: string; replacementRequired: string };
   eraId: string;
@@ -702,9 +757,9 @@ function cardFromPlaceholder(input: {
   };
 }
 
-export async function getEraArtInventory(eraId: string): Promise<EraArtInventory | null> {
+function buildEraArtInventory(eraId: string, context: EraArtInventoryContext): EraArtInventory | null {
   const normalizedEraId = eraIdFor(eraId);
-  const [state, data, metadata] = await Promise.all([getAssetProductionState(), getGameData(), getAssetProductionRequirementMetadata()]);
+  const { data, metadata } = context;
   const eraIndex = civilizationAges.findIndex((era) => eraIdFor(era.name) === normalizedEraId);
   const era = civilizationAges[eraIndex];
   if (!era) return null;
@@ -717,7 +772,7 @@ export async function getEraArtInventory(eraId: string): Promise<EraArtInventory
   for (const requirement of eraProfile.requirements) {
     const group: EraArtGroup = ["music", "ambient", "cinematic"].includes(requirement.derivativeType) ? "Audio/Video" : "Era Identity";
     cards.push(cardFromRequirement({
-      state,
+      context,
       metadata,
       eraId: normalizedEraId,
       eraName,
@@ -734,7 +789,7 @@ export async function getEraArtInventory(eraId: string): Promise<EraArtInventory
   const researchRows = data.research.filter((row) => eraIdFor(row.era) === normalizedEraId);
   for (const row of researchRows) {
     addProfileCards(cards, {
-      state,
+      context,
       metadata,
       eraId: normalizedEraId,
       eraName,
@@ -750,7 +805,7 @@ export async function getEraArtInventory(eraId: string): Promise<EraArtInventory
   const buildingRows = data.buildings.filter((row) => eraIdFor(row.era) === normalizedEraId);
   for (const row of buildingRows) {
     addProfileCards(cards, {
-      state,
+      context,
       metadata,
       eraId: normalizedEraId,
       eraName,
@@ -766,7 +821,7 @@ export async function getEraArtInventory(eraId: string): Promise<EraArtInventory
   const resourceRows = data.resource_catalog.filter((row) => resourceEraId(row.discovery_tier) === normalizedEraId);
   for (const row of resourceRows) {
     addProfileCards(cards, {
-      state,
+      context,
       metadata,
       eraId: normalizedEraId,
       eraName,
@@ -788,7 +843,7 @@ export async function getEraArtInventory(eraId: string): Promise<EraArtInventory
   ];
   for (const requirement of uiRequirements) {
     cards.push(cardFromRequirement({
-      state,
+      context,
       metadata,
       eraId: normalizedEraId,
       eraName,
@@ -811,7 +866,7 @@ export async function getEraArtInventory(eraId: string): Promise<EraArtInventory
     ];
     for (const requirement of groupRequirements) {
       cards.push(cardFromRequirement({
-        state,
+        context,
         metadata,
         eraId: normalizedEraId,
         eraName,
@@ -826,25 +881,10 @@ export async function getEraArtInventory(eraId: string): Promise<EraArtInventory
     }
   }
 
-  const reconciledCards = new Map<string, EraArtRequirementCard>();
-  const eraNamesById = new Map(civilizationAges.map((item) => [eraIdFor(item.name), eraIdFor(item.name) === "space-age" ? "Space Age" : displayEraName(item.name)]));
-  for (const asset of state.assets.filter((item) => item.platformMappings.roblox)) {
-    for (const target of canonicalArtTargets(asset, data)) {
-      if (target.eraId !== normalizedEraId) continue;
-      const card = cardFromImportedAsset({
-        state,
-        metadata,
-        asset,
-        target,
-        eraName: eraNamesById.get(target.eraId) ?? eraName
-      });
-      reconciledCards.set(card.id, card);
-    }
-  }
-  cards.push(...reconciledCards.values());
+  cards.push(...(context.importedCardsByEra.get(normalizedEraId) ?? []));
 
   if (normalizedEraId === "survival") {
-    for (const placeholder of state.robloxManifestReports[0]?.placeholderAssets ?? []) {
+    for (const placeholder of context.state.robloxManifestReports[0]?.placeholderAssets ?? []) {
       cards.push(cardFromPlaceholder({ placeholder, eraId: normalizedEraId, eraName }));
     }
   }
@@ -915,47 +955,30 @@ export async function getEraArtInventory(eraId: string): Promise<EraArtInventory
       mappingIncompleteCount: mappingIncompleteCards.length,
       placeholderCount: placeholderCards.length
     },
-    checklist: activeCards.map((card) => ({
-      era: eraName,
-      group: card.group,
-      linkedObject: `${card.linkedObjectType}:${card.linkedObjectId}`,
-      assetRequirement: card.assetName,
-      required: card.required,
-      dimensions: card.requiredDimensions,
-      format: card.format,
-      status: card.status,
-      sourceStatus: card.sourcePsdStatus,
-      approvalStatus: card.approvalStatus,
-      robloxMapping: card.robloxMapping,
-      webMapping: card.webMapping,
-      assignedArtist: card.assignedArtist,
-      dueDate: card.dueDate,
-      notes: card.notes,
-      currentSourceFilename: card.currentSourceFilename,
-      sourceVersionCount: card.sourceVersionCount,
-      derivativeCount: card.derivativeCount,
-      engineReadiness: JSON.stringify(card.engineReadiness),
-      linkedAssetId: card.linkedAssetId ?? "",
-      requirementProfileId: card.requirementProfileId,
-      dashboardPriorityGroup: card.dashboardPriorityGroup,
-      readinessStage: card.readinessStage,
-      placeholder: card.placeholder
-    }))
+    checklist: []
   };
 }
 
+export async function getEraArtInventory(eraId: string): Promise<EraArtInventory | null> {
+  const context = await loadEraArtInventoryContext();
+  return measureSync("loadEraArtInventory", () => buildEraArtInventory(eraId, context), { eraId });
+}
+
 export async function getEraArtSummaryByEra(): Promise<EraArtSummaryByEra> {
-  const inventories = await Promise.all(civilizationAges.map((era) => getEraArtInventory(eraIdFor(era.name))));
-  return Object.fromEntries(inventories.filter(Boolean).map((inventory) => [
-    inventory!.era.id,
-    {
-      required: inventory!.summary.requiredAssetCount,
-      complete: inventory!.summary.requiredComplete,
-      missing: inventory!.summary.missingAssetCount,
-      inReview: inventory!.summary.inReviewCount,
-      published: inventory!.summary.publishedCount,
-      needsMapping: inventory!.summary.needsRobloxMapping + inventory!.summary.needsWebPublish,
-      status: inventory!.summary.artReadinessStatus
-    }
-  ]));
+  const context = await loadEraArtInventoryContext();
+  return measureSync("loadEraArtSummaryByEra", () => {
+    const inventories = civilizationAges.map((era) => buildEraArtInventory(eraIdFor(era.name), context));
+    return Object.fromEntries(inventories.filter(Boolean).map((inventory) => [
+      inventory!.era.id,
+      {
+        required: inventory!.summary.requiredAssetCount,
+        complete: inventory!.summary.requiredComplete,
+        missing: inventory!.summary.missingAssetCount,
+        inReview: inventory!.summary.inReviewCount,
+        published: inventory!.summary.publishedCount,
+        needsMapping: inventory!.summary.needsRobloxMapping + inventory!.summary.needsWebPublish,
+        status: inventory!.summary.artReadinessStatus
+      }
+    ]));
+  });
 }

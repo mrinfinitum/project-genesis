@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { memo, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { CheckCircle2, CheckSquare, ClipboardList, Download, FileJson, ImageIcon, Printer, Search, UploadCloud } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, WorkspaceProgressBar, WorkspaceStatTile } from "@/components/ui/workspace";
@@ -27,6 +27,7 @@ type StatusFilter =
 
 const statusFilters: StatusFilter[] = ["All", "Missing", "Draft", "In Review", "Source Ready", "Derivative Ready", "Needs Review", "Approved", "Published", "Complete", "Required", "Optional", "Source Missing", "PSD Uploaded", "Roblox Unmapped", "Web Unpublished"];
 const groupFilters: Array<"All Groups" | EraArtGroup> = ["All Groups", "Era Identity", "Research", "Buildings", "Resources", "Events", "Missions", "UI", "Audio/Video"];
+const initialCardPageSize = 24;
 
 function csvEscape(value: unknown) {
   const text = String(value ?? "");
@@ -73,6 +74,35 @@ function requirementPayload(card: EraArtRequirementCard) {
   };
 }
 
+function checklistRows(cards: EraArtRequirementCard[]) {
+  return cards.map((card) => ({
+    era: card.eraName,
+    group: card.group,
+    linkedObject: `${card.linkedObjectType}:${card.linkedObjectId}`,
+    assetRequirement: card.assetName,
+    required: card.required,
+    dimensions: card.requiredDimensions,
+    format: card.format,
+    status: card.status,
+    sourceStatus: card.sourcePsdStatus,
+    approvalStatus: card.approvalStatus,
+    robloxMapping: card.robloxMapping,
+    webMapping: card.webMapping,
+    assignedArtist: card.assignedArtist,
+    dueDate: card.dueDate,
+    notes: card.notes,
+    currentSourceFilename: card.currentSourceFilename,
+    sourceVersionCount: card.sourceVersionCount,
+    derivativeCount: card.derivativeCount,
+    engineReadiness: JSON.stringify(card.engineReadiness),
+    linkedAssetId: card.linkedAssetId ?? "",
+    requirementProfileId: card.requirementProfileId,
+    dashboardPriorityGroup: card.dashboardPriorityGroup,
+    readinessStage: card.readinessStage,
+    placeholder: card.placeholder
+  }));
+}
+
 function statusMatches(card: EraArtRequirementCard, filter: StatusFilter) {
   if (filter === "All") return true;
   if (filter === "Required") return card.required;
@@ -88,7 +118,7 @@ function statusMatches(card: EraArtRequirementCard, filter: StatusFilter) {
 function AssetPreview({ card }: { card: EraArtRequirementCard }) {
   return (
     <div className="grid aspect-[16/10] place-items-center overflow-hidden rounded-md border border-cyan-300/15 bg-slate-950/60">
-      {card.previewUrl ? <img src={card.previewUrl} alt="" className="h-full w-full object-cover" /> : (
+      {card.previewUrl ? <img src={card.previewUrl} alt="" loading="lazy" decoding="async" width={512} height={320} className="h-full w-full object-cover" /> : (
         <div className="grid h-full w-full place-items-center bg-[linear-gradient(135deg,rgba(34,211,238,0.12),rgba(15,23,42,0.95))]">
           <div className="text-center">
             <ImageIcon className="mx-auto h-8 w-8 text-cyan-200" />
@@ -284,6 +314,8 @@ function RequirementCard({
   );
 }
 
+const MemoizedRequirementCard = memo(RequirementCard);
+
 function BulkActions({
   inventory,
   cards,
@@ -307,12 +339,13 @@ function BulkActions({
   const hasUnapprovedRequired = actionCards.some((card) => card.required && !["Approved", "Published", "Needs Roblox Mapping", "Needs Web Publish"].includes(card.status));
 
   function exportJson() {
-    downloadFile(`project-genesis-${inventory.era.id}-art-checklist.json`, "application/json", JSON.stringify(inventory.checklist, null, 2));
+    downloadFile(`project-genesis-${inventory.era.id}-art-checklist.json`, "application/json", JSON.stringify(checklistRows(cards), null, 2));
   }
 
   function exportCsv() {
-    const headers = Object.keys(inventory.checklist[0] ?? {});
-    const rows = [headers.join(","), ...inventory.checklist.map((row) => headers.map((header) => csvEscape(row[header])).join(","))];
+    const checklist = checklistRows(cards);
+    const headers = Object.keys(checklist[0] ?? {});
+    const rows = [headers.join(","), ...checklist.map((row) => headers.map((header) => csvEscape(row[header as keyof typeof row])).join(","))];
     downloadFile(`project-genesis-${inventory.era.id}-art-checklist.csv`, "text/csv", `${rows.join("\n")}\n`);
   }
 
@@ -402,6 +435,8 @@ export function EraArtInventoryWorkspace({ inventory }: { inventory: EraArtInven
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("All");
   const [groupFilter, setGroupFilter] = useState<(typeof groupFilters)[number]>("All Groups");
   const [query, setQuery] = useState("");
+  const deferredQuery = useDeferredValue(query);
+  const [visibleCardCount, setVisibleCardCount] = useState(initialCardPageSize);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [message, setMessage] = useState("");
   const [reviewCard, setReviewCard] = useState<EraArtRequirementCard | null>(null);
@@ -619,7 +654,7 @@ export function EraArtInventoryWorkspace({ inventory }: { inventory: EraArtInven
   }
 
   const filteredCards = useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase();
+    const normalizedQuery = deferredQuery.trim().toLowerCase();
     return inventory.cards.filter((card) => {
       const groupOk = groupFilter === "All Groups" || card.group === groupFilter;
       const statusOk = statusMatches(card, statusFilter);
@@ -629,7 +664,14 @@ export function EraArtInventoryWorkspace({ inventory }: { inventory: EraArtInven
         .includes(normalizedQuery);
       return groupOk && statusOk && searchOk;
     });
-  }, [groupFilter, inventory.cards, query, statusFilter]);
+  }, [deferredQuery, groupFilter, inventory.cards, statusFilter]);
+
+  useEffect(() => {
+    setVisibleCardCount(initialCardPageSize);
+  }, [deferredQuery, groupFilter, statusFilter]);
+
+  const visibleCards = useMemo(() => filteredCards.slice(0, visibleCardCount), [filteredCards, visibleCardCount]);
+  const selectedIdSet = useMemo(() => new Set(selectedIds), [selectedIds]);
 
   const stats = [
     { label: "Completion", value: `${inventory.summary.completionPercent}%` },
@@ -800,11 +842,11 @@ export function EraArtInventoryWorkspace({ inventory }: { inventory: EraArtInven
       </section>
 
       <section className="grid gap-4 xl:grid-cols-2 2xl:grid-cols-3">
-        {filteredCards.map((card) => (
-          <RequirementCard
+        {visibleCards.map((card) => (
+          <MemoizedRequirementCard
             key={card.id}
             card={card}
-            selected={selectedIds.includes(card.id)}
+            selected={selectedIdSet.has(card.id)}
             onToggle={() => toggleCard(card.id)}
             onCreateAsset={createAssetRecord}
             onUploadSource={uploadSource}
@@ -822,6 +864,18 @@ export function EraArtInventoryWorkspace({ inventory }: { inventory: EraArtInven
           />
         ))}
       </section>
+
+      {visibleCards.length < filteredCards.length ? (
+        <div className="flex justify-center">
+          <button
+            type="button"
+            onClick={() => setVisibleCardCount((count) => Math.min(filteredCards.length, count + initialCardPageSize))}
+            className="inline-flex h-11 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-4 text-sm font-bold text-cyan-100 hover:bg-cyan-300/20"
+          >
+            Load More Art Cards ({visibleCards.length} / {filteredCards.length})
+          </button>
+        </div>
+      ) : null}
 
       {reviewCard ? (
         <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/80 p-4 backdrop-blur-sm">

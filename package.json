@@ -16,6 +16,7 @@
     "regenerate:assets": "tsx scripts/regenerate-asset-variants.ts",
     "verify:runtime-routes": "tsx scripts/verify-runtime-export-routes.ts",
     "verify:asset-production": "tsx scripts/verify-asset-production.ts",
+    "verify:civilization-performance": "tsx scripts/verify-civilization-performance.ts",
     "cleanup:remote-psd": "tsx scripts/cleanup-remote-psd-sources.ts"
   },
   "dependencies": {
