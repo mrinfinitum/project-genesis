@@ -13,15 +13,30 @@ function manifestPath() {
 
 async function main() {
   const inputPath = manifestPath();
+  const previewOnly = process.argv.includes("--preview");
+  const sourceRoot = path.resolve(path.dirname(inputPath), "..");
   const manifest = JSON.parse(await readFile(inputPath, "utf8")) as RobloxArtManifest;
-  const report = await applyAssetProductionAction({
-    action: "roblox_manifest.import",
+  const preview = await applyAssetProductionAction({
+    action: "roblox_manifest.import.preview",
     payload: {
       manifest,
       manifestPath: inputPath,
+      sourceRoot,
       sourceProject: "Project Genesis Roblox"
     }
   }) as RobloxArtManifestImportReport;
+
+  const report = previewOnly
+    ? preview
+    : await applyAssetProductionAction({
+        action: "roblox_manifest.import",
+        payload: {
+          manifest,
+          manifestPath: inputPath,
+          sourceRoot,
+          sourceProject: "Project Genesis Roblox"
+        }
+      }) as RobloxArtManifestImportReport;
 
   const [eraCompletion, productionState, data] = await Promise.all([
     getEraArtSummaryByEra(),
@@ -32,12 +47,28 @@ async function main() {
 
   console.log(JSON.stringify({
     importedAssets: report.importedAssets,
+    previewedBeforeMutation: true,
+    applied: !previewOnly,
+    preview: {
+      importedAssets: preview.importedAssets,
+      matchedAssets: preview.matchedAssets,
+      newAssets: preview.newAssets,
+      duplicateAssets: preview.duplicateAssets,
+      sourceFilesCreated: preview.sourceFilesCreated,
+      robloxOnlyAssets: preview.robloxOnlyAssets,
+      placeholderAssets: preview.placeholderAssets.length,
+      missingSourceFiles: preview.missingSourceFiles?.length ?? 0,
+      assetsNeedingWebPublication: preview.assetsNeedingWebPublication?.length ?? 0,
+      conflicts: preview.conflicts.length
+    },
     matchedAssets: report.matchedAssets,
     newAssets: report.newAssets,
     duplicateAssets: report.duplicateAssets,
     sourceFilesCreated: report.sourceFilesCreated,
     robloxOnlyAssets: report.robloxOnlyAssets,
     placeholderAssets: report.placeholderAssets.length,
+    missingSourceFiles: report.missingSourceFiles?.length ?? 0,
+    assetsNeedingWebPublication: report.assetsNeedingWebPublication?.length ?? 0,
     unusedStudioAssets: report.unusedStudioAssets.length,
     unusedLocalFiles: report.unusedLocalFiles.length,
     conflicts: report.conflicts.length,
