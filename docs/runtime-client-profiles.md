@@ -26,7 +26,7 @@ The canonical runtime export includes:
 }
 ```
 
-`dashboardMode: "current_journey"` means dashboards should focus on the player's current era and nearby eras instead of showing all nine canonical eras at once. In Studio this is rendered as the cinematic `CivilizationEraCarousel`: previous/current/next context cards, controlled preview navigation, and a compact nine-step journey track.
+`dashboardMode: "current_journey"` means dashboards should focus on the player's current era and nearby eras instead of showing all nine canonical eras at once. In Studio this is rendered as the compact cinematic `CivilizationEraCarousel`: a lightweight hero-bottom HUD with one emphasized current-era hex, smaller adjacent context nodes, and a compact nine-step journey track.
 
 `visibleEraCount` is a presentation preference, not a gameplay rule. Clients should derive visible records from canonical era order plus the player's current `currentEraId`.
 
