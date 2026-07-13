@@ -725,7 +725,11 @@ function ProductionHeatmapPanel({ plan }: { plan: ProductionPlan }) {
                 <div className="flex items-center justify-between gap-3 text-sm">
                   <HeatmapBlocks value={era.completion} />
                   <span className={cn("text-right", complete ? "font-semibold text-emerald-100" : "text-slate-400")}>
-                    {era.contentPackId ? `${era.outstandingWork ?? 0} outstanding / Pack ${era.contentPackCompletion}%` : `R ${era.research}% / B ${era.buildings}% / Art ${era.art}%`}
+                    {era.contentPackId
+                      ? `${era.outstandingWork ?? 0} outstanding / Pack ${era.contentPackCompletion}%`
+                      : era.draftScaffoldId
+                        ? `${era.draftItemCount ?? 0} draft items / ${era.estimatedHours ?? 0}h estimate`
+                        : `R ${era.research}% / B ${era.buildings}% / Art ${era.art}%`}
                   </span>
                 </div>
                 <div className="mt-2"><GlowingProgressBar value={era.completion} /></div>

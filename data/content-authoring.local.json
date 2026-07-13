@@ -1,0 +1,2393 @@
+{
+  "scaffolds": [
+    {
+      "id": "scaffold_ancient_starter_kit",
+      "eraId": "ancient",
+      "eraName": "Ancient",
+      "status": "Draft",
+      "mode": "starter_kit",
+      "createdAt": "2026-07-13T00:57:30.329Z",
+      "updatedAt": "2026-07-13T00:57:30.329Z",
+      "items": [
+        {
+          "id": "draft_ancient_resource_grain",
+          "type": "resource",
+          "name": "Grain",
+          "status": "Draft",
+          "templateId": "template_resource",
+          "description": "Grain draft generated from resource template.",
+          "linkedIds": [],
+          "requirementProfileId": "resource_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_resource_grain_icon",
+            "asset_req_draft_ancient_resource_grain_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "unique name",
+            "category selected",
+            "era selected",
+            "production uses linked"
+          ],
+          "productionTaskId": "task_draft_ancient_resource_grain"
+        },
+        {
+          "id": "draft_ancient_resource_copper",
+          "type": "resource",
+          "name": "Copper",
+          "status": "Draft",
+          "templateId": "template_resource",
+          "description": "Copper draft generated from resource template.",
+          "linkedIds": [],
+          "requirementProfileId": "resource_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_resource_copper_icon",
+            "asset_req_draft_ancient_resource_copper_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "unique name",
+            "category selected",
+            "era selected",
+            "production uses linked"
+          ],
+          "productionTaskId": "task_draft_ancient_resource_copper"
+        },
+        {
+          "id": "draft_ancient_resource_bronze",
+          "type": "resource",
+          "name": "Bronze",
+          "status": "Draft",
+          "templateId": "template_resource",
+          "description": "Bronze draft generated from resource template.",
+          "linkedIds": [],
+          "requirementProfileId": "resource_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_resource_bronze_icon",
+            "asset_req_draft_ancient_resource_bronze_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "unique name",
+            "category selected",
+            "era selected",
+            "production uses linked"
+          ],
+          "productionTaskId": "task_draft_ancient_resource_bronze"
+        },
+        {
+          "id": "draft_ancient_resource_pottery",
+          "type": "resource",
+          "name": "Pottery",
+          "status": "Draft",
+          "templateId": "template_resource",
+          "description": "Pottery draft generated from resource template.",
+          "linkedIds": [],
+          "requirementProfileId": "resource_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_resource_pottery_icon",
+            "asset_req_draft_ancient_resource_pottery_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "unique name",
+            "category selected",
+            "era selected",
+            "production uses linked"
+          ],
+          "productionTaskId": "task_draft_ancient_resource_pottery"
+        },
+        {
+          "id": "draft_ancient_resource_papyrus",
+          "type": "resource",
+          "name": "Papyrus",
+          "status": "Draft",
+          "templateId": "template_resource",
+          "description": "Papyrus draft generated from resource template.",
+          "linkedIds": [],
+          "requirementProfileId": "resource_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_resource_papyrus_icon",
+            "asset_req_draft_ancient_resource_papyrus_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "unique name",
+            "category selected",
+            "era selected",
+            "production uses linked"
+          ],
+          "productionTaskId": "task_draft_ancient_resource_papyrus"
+        },
+        {
+          "id": "draft_ancient_resource_salt",
+          "type": "resource",
+          "name": "Salt",
+          "status": "Draft",
+          "templateId": "template_resource",
+          "description": "Salt draft generated from resource template.",
+          "linkedIds": [],
+          "requirementProfileId": "resource_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_resource_salt_icon",
+            "asset_req_draft_ancient_resource_salt_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "unique name",
+            "category selected",
+            "era selected",
+            "production uses linked"
+          ],
+          "productionTaskId": "task_draft_ancient_resource_salt"
+        },
+        {
+          "id": "draft_ancient_resource_limestone",
+          "type": "resource",
+          "name": "Limestone",
+          "status": "Draft",
+          "templateId": "template_resource",
+          "description": "Limestone draft generated from resource template.",
+          "linkedIds": [],
+          "requirementProfileId": "resource_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_resource_limestone_icon",
+            "asset_req_draft_ancient_resource_limestone_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "unique name",
+            "category selected",
+            "era selected",
+            "production uses linked"
+          ],
+          "productionTaskId": "task_draft_ancient_resource_limestone"
+        },
+        {
+          "id": "draft_ancient_resource_olive_oil",
+          "type": "resource",
+          "name": "Olive Oil",
+          "status": "Draft",
+          "templateId": "template_resource",
+          "description": "Olive Oil draft generated from resource template.",
+          "linkedIds": [],
+          "requirementProfileId": "resource_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_resource_olive_oil_icon",
+            "asset_req_draft_ancient_resource_olive_oil_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "unique name",
+            "category selected",
+            "era selected",
+            "production uses linked"
+          ],
+          "productionTaskId": "task_draft_ancient_resource_olive_oil"
+        },
+        {
+          "id": "draft_ancient_resource_livestock",
+          "type": "resource",
+          "name": "Livestock",
+          "status": "Draft",
+          "templateId": "template_resource",
+          "description": "Livestock draft generated from resource template.",
+          "linkedIds": [],
+          "requirementProfileId": "resource_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_resource_livestock_icon",
+            "asset_req_draft_ancient_resource_livestock_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "unique name",
+            "category selected",
+            "era selected",
+            "production uses linked"
+          ],
+          "productionTaskId": "task_draft_ancient_resource_livestock"
+        },
+        {
+          "id": "draft_ancient_resource_charcoal",
+          "type": "resource",
+          "name": "Charcoal",
+          "status": "Draft",
+          "templateId": "template_resource",
+          "description": "Charcoal draft generated from resource template.",
+          "linkedIds": [],
+          "requirementProfileId": "resource_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_resource_charcoal_icon",
+            "asset_req_draft_ancient_resource_charcoal_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "unique name",
+            "category selected",
+            "era selected",
+            "production uses linked"
+          ],
+          "productionTaskId": "task_draft_ancient_resource_charcoal"
+        },
+        {
+          "id": "draft_ancient_building_granary",
+          "type": "building",
+          "name": "Granary",
+          "status": "Draft",
+          "templateId": "template_building",
+          "description": "Granary draft generated from building template.",
+          "linkedIds": [
+            "draft_ancient_research_agriculture",
+            "draft_ancient_resource_grain"
+          ],
+          "requirementProfileId": "building_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_building_granary_icon",
+            "asset_req_draft_ancient_building_granary_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "unlock exists",
+            "inputs resolve",
+            "outputs resolve",
+            "upgrade path defined"
+          ],
+          "productionTaskId": "task_draft_ancient_building_granary"
+        },
+        {
+          "id": "draft_ancient_building_farmstead",
+          "type": "building",
+          "name": "Farmstead",
+          "status": "Draft",
+          "templateId": "template_building",
+          "description": "Farmstead draft generated from building template.",
+          "linkedIds": [
+            "draft_ancient_research_pottery",
+            "draft_ancient_resource_copper"
+          ],
+          "requirementProfileId": "building_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_building_farmstead_icon",
+            "asset_req_draft_ancient_building_farmstead_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "unlock exists",
+            "inputs resolve",
+            "outputs resolve",
+            "upgrade path defined"
+          ],
+          "productionTaskId": "task_draft_ancient_building_farmstead"
+        },
+        {
+          "id": "draft_ancient_building_pottery_kiln",
+          "type": "building",
+          "name": "Pottery Kiln",
+          "status": "Draft",
+          "templateId": "template_building",
+          "description": "Pottery Kiln draft generated from building template.",
+          "linkedIds": [
+            "draft_ancient_research_irrigation",
+            "draft_ancient_resource_bronze"
+          ],
+          "requirementProfileId": "building_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_building_pottery_kiln_icon",
+            "asset_req_draft_ancient_building_pottery_kiln_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "unlock exists",
+            "inputs resolve",
+            "outputs resolve",
+            "upgrade path defined"
+          ],
+          "productionTaskId": "task_draft_ancient_building_pottery_kiln"
+        },
+        {
+          "id": "draft_ancient_building_copper_mine",
+          "type": "building",
+          "name": "Copper Mine",
+          "status": "Draft",
+          "templateId": "template_building",
+          "description": "Copper Mine draft generated from building template.",
+          "linkedIds": [
+            "draft_ancient_research_bronze_working",
+            "draft_ancient_resource_pottery"
+          ],
+          "requirementProfileId": "building_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_building_copper_mine_icon",
+            "asset_req_draft_ancient_building_copper_mine_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "unlock exists",
+            "inputs resolve",
+            "outputs resolve",
+            "upgrade path defined"
+          ],
+          "productionTaskId": "task_draft_ancient_building_copper_mine"
+        },
+        {
+          "id": "draft_ancient_building_bronze_workshop",
+          "type": "building",
+          "name": "Bronze Workshop",
+          "status": "Draft",
+          "templateId": "template_building",
+          "description": "Bronze Workshop draft generated from building template.",
+          "linkedIds": [
+            "draft_ancient_research_writing",
+            "draft_ancient_resource_papyrus"
+          ],
+          "requirementProfileId": "building_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_building_bronze_workshop_icon",
+            "asset_req_draft_ancient_building_bronze_workshop_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "unlock exists",
+            "inputs resolve",
+            "outputs resolve",
+            "upgrade path defined"
+          ],
+          "productionTaskId": "task_draft_ancient_building_bronze_workshop"
+        },
+        {
+          "id": "draft_ancient_building_irrigation_canal",
+          "type": "building",
+          "name": "Irrigation Canal",
+          "status": "Draft",
+          "templateId": "template_building",
+          "description": "Irrigation Canal draft generated from building template.",
+          "linkedIds": [
+            "draft_ancient_research_mathematics",
+            "draft_ancient_resource_salt"
+          ],
+          "requirementProfileId": "building_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_building_irrigation_canal_icon",
+            "asset_req_draft_ancient_building_irrigation_canal_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "unlock exists",
+            "inputs resolve",
+            "outputs resolve",
+            "upgrade path defined"
+          ],
+          "productionTaskId": "task_draft_ancient_building_irrigation_canal"
+        },
+        {
+          "id": "draft_ancient_building_marketplace",
+          "type": "building",
+          "name": "Marketplace",
+          "status": "Draft",
+          "templateId": "template_building",
+          "description": "Marketplace draft generated from building template.",
+          "linkedIds": [
+            "draft_ancient_research_trade_routes",
+            "draft_ancient_resource_limestone"
+          ],
+          "requirementProfileId": "building_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_building_marketplace_icon",
+            "asset_req_draft_ancient_building_marketplace_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "unlock exists",
+            "inputs resolve",
+            "outputs resolve",
+            "upgrade path defined"
+          ],
+          "productionTaskId": "task_draft_ancient_building_marketplace"
+        },
+        {
+          "id": "draft_ancient_building_scribe_hall",
+          "type": "building",
+          "name": "Scribe Hall",
+          "status": "Draft",
+          "templateId": "template_building",
+          "description": "Scribe Hall draft generated from building template.",
+          "linkedIds": [
+            "draft_ancient_research_masonry",
+            "draft_ancient_resource_olive_oil"
+          ],
+          "requirementProfileId": "building_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_building_scribe_hall_icon",
+            "asset_req_draft_ancient_building_scribe_hall_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "unlock exists",
+            "inputs resolve",
+            "outputs resolve",
+            "upgrade path defined"
+          ],
+          "productionTaskId": "task_draft_ancient_building_scribe_hall"
+        },
+        {
+          "id": "draft_ancient_building_stone_road",
+          "type": "building",
+          "name": "Stone Road",
+          "status": "Draft",
+          "templateId": "template_building",
+          "description": "Stone Road draft generated from building template.",
+          "linkedIds": [
+            "draft_ancient_research_animal_husbandry",
+            "draft_ancient_resource_livestock"
+          ],
+          "requirementProfileId": "building_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_building_stone_road_icon",
+            "asset_req_draft_ancient_building_stone_road_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "unlock exists",
+            "inputs resolve",
+            "outputs resolve",
+            "upgrade path defined"
+          ],
+          "productionTaskId": "task_draft_ancient_building_stone_road"
+        },
+        {
+          "id": "draft_ancient_building_shrine",
+          "type": "building",
+          "name": "Shrine",
+          "status": "Draft",
+          "templateId": "template_building",
+          "description": "Shrine draft generated from building template.",
+          "linkedIds": [
+            "draft_ancient_research_civic_rituals",
+            "draft_ancient_resource_charcoal"
+          ],
+          "requirementProfileId": "building_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_building_shrine_icon",
+            "asset_req_draft_ancient_building_shrine_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "unlock exists",
+            "inputs resolve",
+            "outputs resolve",
+            "upgrade path defined"
+          ],
+          "productionTaskId": "task_draft_ancient_building_shrine"
+        },
+        {
+          "id": "draft_ancient_research_agriculture",
+          "type": "research",
+          "name": "Agriculture",
+          "status": "Draft",
+          "templateId": "template_research",
+          "description": "Agriculture draft generated from research template.",
+          "linkedIds": [
+            "draft_ancient_resource_grain"
+          ],
+          "requirementProfileId": "research_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_research_agriculture_icon",
+            "asset_req_draft_ancient_research_agriculture_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "era exists",
+            "dependencies resolve",
+            "unlock rows exist",
+            "icon key present"
+          ],
+          "productionTaskId": "task_draft_ancient_research_agriculture"
+        },
+        {
+          "id": "draft_ancient_research_pottery",
+          "type": "research",
+          "name": "Pottery",
+          "status": "Draft",
+          "templateId": "template_research",
+          "description": "Pottery draft generated from research template.",
+          "linkedIds": [
+            "draft_ancient_resource_grain",
+            "draft_ancient_resource_copper"
+          ],
+          "requirementProfileId": "research_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_research_pottery_icon",
+            "asset_req_draft_ancient_research_pottery_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "era exists",
+            "dependencies resolve",
+            "unlock rows exist",
+            "icon key present"
+          ],
+          "productionTaskId": "task_draft_ancient_research_pottery"
+        },
+        {
+          "id": "draft_ancient_research_irrigation",
+          "type": "research",
+          "name": "Irrigation",
+          "status": "Draft",
+          "templateId": "template_research",
+          "description": "Irrigation draft generated from research template.",
+          "linkedIds": [
+            "draft_ancient_resource_grain",
+            "draft_ancient_resource_copper",
+            "draft_ancient_resource_bronze"
+          ],
+          "requirementProfileId": "research_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_research_irrigation_icon",
+            "asset_req_draft_ancient_research_irrigation_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "era exists",
+            "dependencies resolve",
+            "unlock rows exist",
+            "icon key present"
+          ],
+          "productionTaskId": "task_draft_ancient_research_irrigation"
+        },
+        {
+          "id": "draft_ancient_research_bronze_working",
+          "type": "research",
+          "name": "Bronze Working",
+          "status": "Draft",
+          "templateId": "template_research",
+          "description": "Bronze Working draft generated from research template.",
+          "linkedIds": [
+            "draft_ancient_resource_copper",
+            "draft_ancient_resource_bronze",
+            "draft_ancient_resource_pottery"
+          ],
+          "requirementProfileId": "research_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_research_bronze_working_icon",
+            "asset_req_draft_ancient_research_bronze_working_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "era exists",
+            "dependencies resolve",
+            "unlock rows exist",
+            "icon key present"
+          ],
+          "productionTaskId": "task_draft_ancient_research_bronze_working"
+        },
+        {
+          "id": "draft_ancient_research_writing",
+          "type": "research",
+          "name": "Writing",
+          "status": "Draft",
+          "templateId": "template_research",
+          "description": "Writing draft generated from research template.",
+          "linkedIds": [
+            "draft_ancient_resource_bronze",
+            "draft_ancient_resource_pottery",
+            "draft_ancient_resource_papyrus"
+          ],
+          "requirementProfileId": "research_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_research_writing_icon",
+            "asset_req_draft_ancient_research_writing_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "era exists",
+            "dependencies resolve",
+            "unlock rows exist",
+            "icon key present"
+          ],
+          "productionTaskId": "task_draft_ancient_research_writing"
+        },
+        {
+          "id": "draft_ancient_research_mathematics",
+          "type": "research",
+          "name": "Mathematics",
+          "status": "Draft",
+          "templateId": "template_research",
+          "description": "Mathematics draft generated from research template.",
+          "linkedIds": [
+            "draft_ancient_resource_pottery",
+            "draft_ancient_resource_papyrus",
+            "draft_ancient_resource_salt"
+          ],
+          "requirementProfileId": "research_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_research_mathematics_icon",
+            "asset_req_draft_ancient_research_mathematics_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "era exists",
+            "dependencies resolve",
+            "unlock rows exist",
+            "icon key present"
+          ],
+          "productionTaskId": "task_draft_ancient_research_mathematics"
+        },
+        {
+          "id": "draft_ancient_research_trade_routes",
+          "type": "research",
+          "name": "Trade Routes",
+          "status": "Draft",
+          "templateId": "template_research",
+          "description": "Trade Routes draft generated from research template.",
+          "linkedIds": [
+            "draft_ancient_resource_papyrus",
+            "draft_ancient_resource_salt",
+            "draft_ancient_resource_limestone"
+          ],
+          "requirementProfileId": "research_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_research_trade_routes_icon",
+            "asset_req_draft_ancient_research_trade_routes_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "era exists",
+            "dependencies resolve",
+            "unlock rows exist",
+            "icon key present"
+          ],
+          "productionTaskId": "task_draft_ancient_research_trade_routes"
+        },
+        {
+          "id": "draft_ancient_research_masonry",
+          "type": "research",
+          "name": "Masonry",
+          "status": "Draft",
+          "templateId": "template_research",
+          "description": "Masonry draft generated from research template.",
+          "linkedIds": [
+            "draft_ancient_resource_salt",
+            "draft_ancient_resource_limestone",
+            "draft_ancient_resource_olive_oil"
+          ],
+          "requirementProfileId": "research_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_research_masonry_icon",
+            "asset_req_draft_ancient_research_masonry_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "era exists",
+            "dependencies resolve",
+            "unlock rows exist",
+            "icon key present"
+          ],
+          "productionTaskId": "task_draft_ancient_research_masonry"
+        },
+        {
+          "id": "draft_ancient_research_animal_husbandry",
+          "type": "research",
+          "name": "Animal Husbandry",
+          "status": "Draft",
+          "templateId": "template_research",
+          "description": "Animal Husbandry draft generated from research template.",
+          "linkedIds": [
+            "draft_ancient_resource_limestone",
+            "draft_ancient_resource_olive_oil",
+            "draft_ancient_resource_livestock"
+          ],
+          "requirementProfileId": "research_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_research_animal_husbandry_icon",
+            "asset_req_draft_ancient_research_animal_husbandry_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "era exists",
+            "dependencies resolve",
+            "unlock rows exist",
+            "icon key present"
+          ],
+          "productionTaskId": "task_draft_ancient_research_animal_husbandry"
+        },
+        {
+          "id": "draft_ancient_research_civic_rituals",
+          "type": "research",
+          "name": "Civic Rituals",
+          "status": "Draft",
+          "templateId": "template_research",
+          "description": "Civic Rituals draft generated from research template.",
+          "linkedIds": [
+            "draft_ancient_resource_olive_oil",
+            "draft_ancient_resource_livestock",
+            "draft_ancient_resource_charcoal"
+          ],
+          "requirementProfileId": "research_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_research_civic_rituals_icon",
+            "asset_req_draft_ancient_research_civic_rituals_card"
+          ],
+          "validationDefaults": [
+            "stable id",
+            "era exists",
+            "dependencies resolve",
+            "unlock rows exist",
+            "icon key present"
+          ],
+          "productionTaskId": "task_draft_ancient_research_civic_rituals"
+        },
+        {
+          "id": "draft_ancient_production_chain_grain_to_population",
+          "type": "production_chain",
+          "name": "Grain to Population",
+          "status": "Draft",
+          "templateId": "template_production_chain",
+          "description": "Grain to Population draft generated from production chain template.",
+          "linkedIds": [
+            "draft_ancient_resource_grain",
+            "draft_ancient_building_granary"
+          ],
+          "requirementProfileId": "production_chain_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_production_chain_grain_to_population_icon",
+            "asset_req_draft_ancient_production_chain_grain_to_population_card"
+          ],
+          "validationDefaults": [
+            "input IDs resolve",
+            "output IDs resolve",
+            "consumer exists",
+            "no circular missing links"
+          ],
+          "productionTaskId": "task_draft_ancient_production_chain_grain_to_population"
+        },
+        {
+          "id": "draft_ancient_production_chain_clay_to_pottery",
+          "type": "production_chain",
+          "name": "Clay to Pottery",
+          "status": "Draft",
+          "templateId": "template_production_chain",
+          "description": "Clay to Pottery draft generated from production chain template.",
+          "linkedIds": [
+            "draft_ancient_resource_copper",
+            "draft_ancient_building_farmstead"
+          ],
+          "requirementProfileId": "production_chain_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_production_chain_clay_to_pottery_icon",
+            "asset_req_draft_ancient_production_chain_clay_to_pottery_card"
+          ],
+          "validationDefaults": [
+            "input IDs resolve",
+            "output IDs resolve",
+            "consumer exists",
+            "no circular missing links"
+          ],
+          "productionTaskId": "task_draft_ancient_production_chain_clay_to_pottery"
+        },
+        {
+          "id": "draft_ancient_production_chain_copper_and_tin_to_bronze",
+          "type": "production_chain",
+          "name": "Copper and Tin to Bronze",
+          "status": "Draft",
+          "templateId": "template_production_chain",
+          "description": "Copper and Tin to Bronze draft generated from production chain template.",
+          "linkedIds": [
+            "draft_ancient_resource_bronze",
+            "draft_ancient_building_pottery_kiln"
+          ],
+          "requirementProfileId": "production_chain_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_production_chain_copper_and_tin_to_bronze_icon",
+            "asset_req_draft_ancient_production_chain_copper_and_tin_to_bronze_card"
+          ],
+          "validationDefaults": [
+            "input IDs resolve",
+            "output IDs resolve",
+            "consumer exists",
+            "no circular missing links"
+          ],
+          "productionTaskId": "task_draft_ancient_production_chain_copper_and_tin_to_bronze"
+        },
+        {
+          "id": "draft_ancient_production_chain_limestone_to_masonry",
+          "type": "production_chain",
+          "name": "Limestone to Masonry",
+          "status": "Draft",
+          "templateId": "template_production_chain",
+          "description": "Limestone to Masonry draft generated from production chain template.",
+          "linkedIds": [
+            "draft_ancient_resource_pottery",
+            "draft_ancient_building_copper_mine"
+          ],
+          "requirementProfileId": "production_chain_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_production_chain_limestone_to_masonry_icon",
+            "asset_req_draft_ancient_production_chain_limestone_to_masonry_card"
+          ],
+          "validationDefaults": [
+            "input IDs resolve",
+            "output IDs resolve",
+            "consumer exists",
+            "no circular missing links"
+          ],
+          "productionTaskId": "task_draft_ancient_production_chain_limestone_to_masonry"
+        },
+        {
+          "id": "draft_ancient_upgrade_chain_farm_efficiency",
+          "type": "upgrade_chain",
+          "name": "Farm Efficiency",
+          "status": "Draft",
+          "templateId": "template_upgrade_chain",
+          "description": "Farm Efficiency draft generated from upgrade chain template.",
+          "linkedIds": [
+            "draft_ancient_research_agriculture",
+            "draft_ancient_building_granary"
+          ],
+          "requirementProfileId": "upgrade_chain_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_upgrade_chain_farm_efficiency_icon",
+            "asset_req_draft_ancient_upgrade_chain_farm_efficiency_card"
+          ],
+          "validationDefaults": [
+            "tab exists",
+            "cost resource exists",
+            "era exists",
+            "levels are sequential"
+          ],
+          "productionTaskId": "task_draft_ancient_upgrade_chain_farm_efficiency"
+        },
+        {
+          "id": "draft_ancient_upgrade_chain_bronze_tooling",
+          "type": "upgrade_chain",
+          "name": "Bronze Tooling",
+          "status": "Draft",
+          "templateId": "template_upgrade_chain",
+          "description": "Bronze Tooling draft generated from upgrade chain template.",
+          "linkedIds": [
+            "draft_ancient_research_pottery",
+            "draft_ancient_building_farmstead"
+          ],
+          "requirementProfileId": "upgrade_chain_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_upgrade_chain_bronze_tooling_icon",
+            "asset_req_draft_ancient_upgrade_chain_bronze_tooling_card"
+          ],
+          "validationDefaults": [
+            "tab exists",
+            "cost resource exists",
+            "era exists",
+            "levels are sequential"
+          ],
+          "productionTaskId": "task_draft_ancient_upgrade_chain_bronze_tooling"
+        },
+        {
+          "id": "draft_ancient_upgrade_chain_road_logistics",
+          "type": "upgrade_chain",
+          "name": "Road Logistics",
+          "status": "Draft",
+          "templateId": "template_upgrade_chain",
+          "description": "Road Logistics draft generated from upgrade chain template.",
+          "linkedIds": [
+            "draft_ancient_research_irrigation",
+            "draft_ancient_building_pottery_kiln"
+          ],
+          "requirementProfileId": "upgrade_chain_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_upgrade_chain_road_logistics_icon",
+            "asset_req_draft_ancient_upgrade_chain_road_logistics_card"
+          ],
+          "validationDefaults": [
+            "tab exists",
+            "cost resource exists",
+            "era exists",
+            "levels are sequential"
+          ],
+          "productionTaskId": "task_draft_ancient_upgrade_chain_road_logistics"
+        },
+        {
+          "id": "draft_ancient_upgrade_chain_market_trade",
+          "type": "upgrade_chain",
+          "name": "Market Trade",
+          "status": "Draft",
+          "templateId": "template_upgrade_chain",
+          "description": "Market Trade draft generated from upgrade chain template.",
+          "linkedIds": [
+            "draft_ancient_research_bronze_working",
+            "draft_ancient_building_copper_mine"
+          ],
+          "requirementProfileId": "upgrade_chain_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_upgrade_chain_market_trade_icon",
+            "asset_req_draft_ancient_upgrade_chain_market_trade_card"
+          ],
+          "validationDefaults": [
+            "tab exists",
+            "cost resource exists",
+            "era exists",
+            "levels are sequential"
+          ],
+          "productionTaskId": "task_draft_ancient_upgrade_chain_market_trade"
+        },
+        {
+          "id": "draft_ancient_mission_plant_first_fields",
+          "type": "mission",
+          "name": "Plant First Fields",
+          "status": "Draft",
+          "templateId": "template_mission",
+          "description": "Plant First Fields draft generated from mission template.",
+          "linkedIds": [
+            "draft_ancient_research_agriculture",
+            "draft_ancient_building_granary",
+            "draft_ancient_production_chain_grain_to_population"
+          ],
+          "requirementProfileId": "mission_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_mission_plant_first_fields_icon",
+            "asset_req_draft_ancient_mission_plant_first_fields_card"
+          ],
+          "validationDefaults": [
+            "objectives exist",
+            "rewards resolve",
+            "prerequisites resolve",
+            "completion path exists"
+          ],
+          "productionTaskId": "task_draft_ancient_mission_plant_first_fields"
+        },
+        {
+          "id": "draft_ancient_mission_build_granary",
+          "type": "mission",
+          "name": "Build Granary",
+          "status": "Draft",
+          "templateId": "template_mission",
+          "description": "Build Granary draft generated from mission template.",
+          "linkedIds": [
+            "draft_ancient_research_pottery",
+            "draft_ancient_building_farmstead",
+            "draft_ancient_production_chain_clay_to_pottery"
+          ],
+          "requirementProfileId": "mission_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_mission_build_granary_icon",
+            "asset_req_draft_ancient_mission_build_granary_card"
+          ],
+          "validationDefaults": [
+            "objectives exist",
+            "rewards resolve",
+            "prerequisites resolve",
+            "completion path exists"
+          ],
+          "productionTaskId": "task_draft_ancient_mission_build_granary"
+        },
+        {
+          "id": "draft_ancient_mission_fire_pottery_kiln",
+          "type": "mission",
+          "name": "Fire Pottery Kiln",
+          "status": "Draft",
+          "templateId": "template_mission",
+          "description": "Fire Pottery Kiln draft generated from mission template.",
+          "linkedIds": [
+            "draft_ancient_research_irrigation",
+            "draft_ancient_building_pottery_kiln",
+            "draft_ancient_production_chain_copper_and_tin_to_bronze"
+          ],
+          "requirementProfileId": "mission_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_mission_fire_pottery_kiln_icon",
+            "asset_req_draft_ancient_mission_fire_pottery_kiln_card"
+          ],
+          "validationDefaults": [
+            "objectives exist",
+            "rewards resolve",
+            "prerequisites resolve",
+            "completion path exists"
+          ],
+          "productionTaskId": "task_draft_ancient_mission_fire_pottery_kiln"
+        },
+        {
+          "id": "draft_ancient_mission_mine_copper",
+          "type": "mission",
+          "name": "Mine Copper",
+          "status": "Draft",
+          "templateId": "template_mission",
+          "description": "Mine Copper draft generated from mission template.",
+          "linkedIds": [
+            "draft_ancient_research_bronze_working",
+            "draft_ancient_building_copper_mine",
+            "draft_ancient_production_chain_limestone_to_masonry"
+          ],
+          "requirementProfileId": "mission_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_mission_mine_copper_icon",
+            "asset_req_draft_ancient_mission_mine_copper_card"
+          ],
+          "validationDefaults": [
+            "objectives exist",
+            "rewards resolve",
+            "prerequisites resolve",
+            "completion path exists"
+          ],
+          "productionTaskId": "task_draft_ancient_mission_mine_copper"
+        },
+        {
+          "id": "draft_ancient_mission_forge_bronze_tools",
+          "type": "mission",
+          "name": "Forge Bronze Tools",
+          "status": "Draft",
+          "templateId": "template_mission",
+          "description": "Forge Bronze Tools draft generated from mission template.",
+          "linkedIds": [
+            "draft_ancient_research_writing",
+            "draft_ancient_building_bronze_workshop",
+            "draft_ancient_production_chain_grain_to_population"
+          ],
+          "requirementProfileId": "mission_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_mission_forge_bronze_tools_icon",
+            "asset_req_draft_ancient_mission_forge_bronze_tools_card"
+          ],
+          "validationDefaults": [
+            "objectives exist",
+            "rewards resolve",
+            "prerequisites resolve",
+            "completion path exists"
+          ],
+          "productionTaskId": "task_draft_ancient_mission_forge_bronze_tools"
+        },
+        {
+          "id": "draft_ancient_mission_write_first_records",
+          "type": "mission",
+          "name": "Write First Records",
+          "status": "Draft",
+          "templateId": "template_mission",
+          "description": "Write First Records draft generated from mission template.",
+          "linkedIds": [
+            "draft_ancient_research_mathematics",
+            "draft_ancient_building_irrigation_canal",
+            "draft_ancient_production_chain_clay_to_pottery"
+          ],
+          "requirementProfileId": "mission_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_mission_write_first_records_icon",
+            "asset_req_draft_ancient_mission_write_first_records_card"
+          ],
+          "validationDefaults": [
+            "objectives exist",
+            "rewards resolve",
+            "prerequisites resolve",
+            "completion path exists"
+          ],
+          "productionTaskId": "task_draft_ancient_mission_write_first_records"
+        },
+        {
+          "id": "draft_ancient_mission_open_marketplace",
+          "type": "mission",
+          "name": "Open Marketplace",
+          "status": "Draft",
+          "templateId": "template_mission",
+          "description": "Open Marketplace draft generated from mission template.",
+          "linkedIds": [
+            "draft_ancient_research_trade_routes",
+            "draft_ancient_building_marketplace",
+            "draft_ancient_production_chain_copper_and_tin_to_bronze"
+          ],
+          "requirementProfileId": "mission_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_mission_open_marketplace_icon",
+            "asset_req_draft_ancient_mission_open_marketplace_card"
+          ],
+          "validationDefaults": [
+            "objectives exist",
+            "rewards resolve",
+            "prerequisites resolve",
+            "completion path exists"
+          ],
+          "productionTaskId": "task_draft_ancient_mission_open_marketplace"
+        },
+        {
+          "id": "draft_ancient_mission_reach_medieval_era",
+          "type": "mission",
+          "name": "Reach Medieval Era",
+          "status": "Draft",
+          "templateId": "template_mission",
+          "description": "Reach Medieval Era draft generated from mission template.",
+          "linkedIds": [
+            "draft_ancient_research_masonry",
+            "draft_ancient_building_scribe_hall",
+            "draft_ancient_production_chain_limestone_to_masonry"
+          ],
+          "requirementProfileId": "mission_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_mission_reach_medieval_era_icon",
+            "asset_req_draft_ancient_mission_reach_medieval_era_card"
+          ],
+          "validationDefaults": [
+            "objectives exist",
+            "rewards resolve",
+            "prerequisites resolve",
+            "completion path exists"
+          ],
+          "productionTaskId": "task_draft_ancient_mission_reach_medieval_era"
+        },
+        {
+          "id": "draft_ancient_event_river_flood",
+          "type": "event",
+          "name": "River Flood",
+          "status": "Draft",
+          "templateId": "template_event",
+          "description": "River Flood draft generated from event template.",
+          "linkedIds": [
+            "draft_ancient_building_granary",
+            "draft_ancient_research_agriculture"
+          ],
+          "requirementProfileId": "event_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_event_river_flood_icon",
+            "asset_req_draft_ancient_event_river_flood_card"
+          ],
+          "validationDefaults": [
+            "trigger exists",
+            "counter exists",
+            "effect target exists",
+            "severity selected"
+          ],
+          "productionTaskId": "task_draft_ancient_event_river_flood"
+        },
+        {
+          "id": "draft_ancient_event_locust_swarm",
+          "type": "event",
+          "name": "Locust Swarm",
+          "status": "Draft",
+          "templateId": "template_event",
+          "description": "Locust Swarm draft generated from event template.",
+          "linkedIds": [
+            "draft_ancient_building_farmstead",
+            "draft_ancient_research_pottery"
+          ],
+          "requirementProfileId": "event_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_event_locust_swarm_icon",
+            "asset_req_draft_ancient_event_locust_swarm_card"
+          ],
+          "validationDefaults": [
+            "trigger exists",
+            "counter exists",
+            "effect target exists",
+            "severity selected"
+          ],
+          "productionTaskId": "task_draft_ancient_event_locust_swarm"
+        },
+        {
+          "id": "draft_ancient_event_harvest_festival",
+          "type": "event",
+          "name": "Harvest Festival",
+          "status": "Draft",
+          "templateId": "template_event",
+          "description": "Harvest Festival draft generated from event template.",
+          "linkedIds": [
+            "draft_ancient_building_pottery_kiln",
+            "draft_ancient_research_irrigation"
+          ],
+          "requirementProfileId": "event_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_event_harvest_festival_icon",
+            "asset_req_draft_ancient_event_harvest_festival_card"
+          ],
+          "validationDefaults": [
+            "trigger exists",
+            "counter exists",
+            "effect target exists",
+            "severity selected"
+          ],
+          "productionTaskId": "task_draft_ancient_event_harvest_festival"
+        },
+        {
+          "id": "draft_ancient_event_bronze_shortage",
+          "type": "event",
+          "name": "Bronze Shortage",
+          "status": "Draft",
+          "templateId": "template_event",
+          "description": "Bronze Shortage draft generated from event template.",
+          "linkedIds": [
+            "draft_ancient_building_copper_mine",
+            "draft_ancient_research_bronze_working"
+          ],
+          "requirementProfileId": "event_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_event_bronze_shortage_icon",
+            "asset_req_draft_ancient_event_bronze_shortage_card"
+          ],
+          "validationDefaults": [
+            "trigger exists",
+            "counter exists",
+            "effect target exists",
+            "severity selected"
+          ],
+          "productionTaskId": "task_draft_ancient_event_bronze_shortage"
+        },
+        {
+          "id": "draft_ancient_event_market_boom",
+          "type": "event",
+          "name": "Market Boom",
+          "status": "Draft",
+          "templateId": "template_event",
+          "description": "Market Boom draft generated from event template.",
+          "linkedIds": [
+            "draft_ancient_building_bronze_workshop",
+            "draft_ancient_research_writing"
+          ],
+          "requirementProfileId": "event_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_event_market_boom_icon",
+            "asset_req_draft_ancient_event_market_boom_card"
+          ],
+          "validationDefaults": [
+            "trigger exists",
+            "counter exists",
+            "effect target exists",
+            "severity selected"
+          ],
+          "productionTaskId": "task_draft_ancient_event_market_boom"
+        },
+        {
+          "id": "draft_ancient_event_temple_omen",
+          "type": "event",
+          "name": "Temple Omen",
+          "status": "Draft",
+          "templateId": "template_event",
+          "description": "Temple Omen draft generated from event template.",
+          "linkedIds": [
+            "draft_ancient_building_irrigation_canal",
+            "draft_ancient_research_mathematics"
+          ],
+          "requirementProfileId": "event_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_event_temple_omen_icon",
+            "asset_req_draft_ancient_event_temple_omen_card"
+          ],
+          "validationDefaults": [
+            "trigger exists",
+            "counter exists",
+            "effect target exists",
+            "severity selected"
+          ],
+          "productionTaskId": "task_draft_ancient_event_temple_omen"
+        },
+        {
+          "id": "draft_ancient_collectible_ceremonial_seal",
+          "type": "collectible",
+          "name": "Ceremonial Seal",
+          "status": "Draft",
+          "templateId": "template_collectible",
+          "description": "Ceremonial Seal draft generated from collectible template.",
+          "linkedIds": [
+            "draft_ancient_resource_grain",
+            "draft_ancient_event_river_flood"
+          ],
+          "requirementProfileId": "collectible_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_collectible_ceremonial_seal_icon",
+            "asset_req_draft_ancient_collectible_ceremonial_seal_card"
+          ],
+          "validationDefaults": [
+            "rarity selected",
+            "source exists",
+            "journal tag exists",
+            "art key present"
+          ],
+          "productionTaskId": "task_draft_ancient_collectible_ceremonial_seal"
+        },
+        {
+          "id": "draft_ancient_collectible_bronze_idol",
+          "type": "collectible",
+          "name": "Bronze Idol",
+          "status": "Draft",
+          "templateId": "template_collectible",
+          "description": "Bronze Idol draft generated from collectible template.",
+          "linkedIds": [
+            "draft_ancient_resource_copper",
+            "draft_ancient_event_locust_swarm"
+          ],
+          "requirementProfileId": "collectible_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_collectible_bronze_idol_icon",
+            "asset_req_draft_ancient_collectible_bronze_idol_card"
+          ],
+          "validationDefaults": [
+            "rarity selected",
+            "source exists",
+            "journal tag exists",
+            "art key present"
+          ],
+          "productionTaskId": "task_draft_ancient_collectible_bronze_idol"
+        },
+        {
+          "id": "draft_ancient_collectible_clay_tablet",
+          "type": "collectible",
+          "name": "Clay Tablet",
+          "status": "Draft",
+          "templateId": "template_collectible",
+          "description": "Clay Tablet draft generated from collectible template.",
+          "linkedIds": [
+            "draft_ancient_resource_bronze",
+            "draft_ancient_event_harvest_festival"
+          ],
+          "requirementProfileId": "collectible_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_collectible_clay_tablet_icon",
+            "asset_req_draft_ancient_collectible_clay_tablet_card"
+          ],
+          "validationDefaults": [
+            "rarity selected",
+            "source exists",
+            "journal tag exists",
+            "art key present"
+          ],
+          "productionTaskId": "task_draft_ancient_collectible_clay_tablet"
+        },
+        {
+          "id": "draft_ancient_collectible_royal_scarab",
+          "type": "collectible",
+          "name": "Royal Scarab",
+          "status": "Draft",
+          "templateId": "template_collectible",
+          "description": "Royal Scarab draft generated from collectible template.",
+          "linkedIds": [
+            "draft_ancient_resource_pottery",
+            "draft_ancient_event_bronze_shortage"
+          ],
+          "requirementProfileId": "collectible_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_collectible_royal_scarab_icon",
+            "asset_req_draft_ancient_collectible_royal_scarab_card"
+          ],
+          "validationDefaults": [
+            "rarity selected",
+            "source exists",
+            "journal tag exists",
+            "art key present"
+          ],
+          "productionTaskId": "task_draft_ancient_collectible_royal_scarab"
+        },
+        {
+          "id": "draft_ancient_collectible_ancient_coin",
+          "type": "collectible",
+          "name": "Ancient Coin",
+          "status": "Draft",
+          "templateId": "template_collectible",
+          "description": "Ancient Coin draft generated from collectible template.",
+          "linkedIds": [
+            "draft_ancient_resource_papyrus",
+            "draft_ancient_event_market_boom"
+          ],
+          "requirementProfileId": "collectible_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_collectible_ancient_coin_icon",
+            "asset_req_draft_ancient_collectible_ancient_coin_card"
+          ],
+          "validationDefaults": [
+            "rarity selected",
+            "source exists",
+            "journal tag exists",
+            "art key present"
+          ],
+          "productionTaskId": "task_draft_ancient_collectible_ancient_coin"
+        },
+        {
+          "id": "draft_ancient_art_requirement_ancient_hero",
+          "type": "art_requirement",
+          "name": "Ancient Hero",
+          "status": "Draft",
+          "templateId": "template_era",
+          "description": "Ancient Hero draft generated from era template.",
+          "linkedIds": [],
+          "requirementProfileId": "era_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_art_requirement_ancient_hero_icon",
+            "asset_req_draft_ancient_art_requirement_ancient_hero_card"
+          ],
+          "validationDefaults": [
+            "era id unique",
+            "canonical order preserved",
+            "draft items unique",
+            "tasks generated"
+          ],
+          "productionTaskId": "task_draft_ancient_art_requirement_ancient_hero"
+        },
+        {
+          "id": "draft_ancient_art_requirement_ancient_banner",
+          "type": "art_requirement",
+          "name": "Ancient Banner",
+          "status": "Draft",
+          "templateId": "template_era",
+          "description": "Ancient Banner draft generated from era template.",
+          "linkedIds": [],
+          "requirementProfileId": "era_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_art_requirement_ancient_banner_icon",
+            "asset_req_draft_ancient_art_requirement_ancient_banner_card"
+          ],
+          "validationDefaults": [
+            "era id unique",
+            "canonical order preserved",
+            "draft items unique",
+            "tasks generated"
+          ],
+          "productionTaskId": "task_draft_ancient_art_requirement_ancient_banner"
+        },
+        {
+          "id": "draft_ancient_art_requirement_ancient_loading_screen",
+          "type": "art_requirement",
+          "name": "Ancient Loading Screen",
+          "status": "Draft",
+          "templateId": "template_era",
+          "description": "Ancient Loading Screen draft generated from era template.",
+          "linkedIds": [],
+          "requirementProfileId": "era_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_art_requirement_ancient_loading_screen_icon",
+            "asset_req_draft_ancient_art_requirement_ancient_loading_screen_card"
+          ],
+          "validationDefaults": [
+            "era id unique",
+            "canonical order preserved",
+            "draft items unique",
+            "tasks generated"
+          ],
+          "productionTaskId": "task_draft_ancient_art_requirement_ancient_loading_screen"
+        },
+        {
+          "id": "draft_ancient_art_requirement_ancient_resource_icons",
+          "type": "art_requirement",
+          "name": "Ancient Resource Icons",
+          "status": "Draft",
+          "templateId": "template_era",
+          "description": "Ancient Resource Icons draft generated from era template.",
+          "linkedIds": [],
+          "requirementProfileId": "era_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_art_requirement_ancient_resource_icons_icon",
+            "asset_req_draft_ancient_art_requirement_ancient_resource_icons_card"
+          ],
+          "validationDefaults": [
+            "era id unique",
+            "canonical order preserved",
+            "draft items unique",
+            "tasks generated"
+          ],
+          "productionTaskId": "task_draft_ancient_art_requirement_ancient_resource_icons"
+        },
+        {
+          "id": "draft_ancient_art_requirement_ancient_building_cards",
+          "type": "art_requirement",
+          "name": "Ancient Building Cards",
+          "status": "Draft",
+          "templateId": "template_era",
+          "description": "Ancient Building Cards draft generated from era template.",
+          "linkedIds": [],
+          "requirementProfileId": "era_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_art_requirement_ancient_building_cards_icon",
+            "asset_req_draft_ancient_art_requirement_ancient_building_cards_card"
+          ],
+          "validationDefaults": [
+            "era id unique",
+            "canonical order preserved",
+            "draft items unique",
+            "tasks generated"
+          ],
+          "productionTaskId": "task_draft_ancient_art_requirement_ancient_building_cards"
+        },
+        {
+          "id": "draft_ancient_audio_ancient_theme",
+          "type": "audio",
+          "name": "Ancient Theme",
+          "status": "Draft",
+          "templateId": "template_era",
+          "description": "Ancient Theme draft generated from era template.",
+          "linkedIds": [],
+          "requirementProfileId": "era_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_audio_ancient_theme_icon",
+            "asset_req_draft_ancient_audio_ancient_theme_card"
+          ],
+          "validationDefaults": [
+            "era id unique",
+            "canonical order preserved",
+            "draft items unique",
+            "tasks generated"
+          ],
+          "productionTaskId": "task_draft_ancient_audio_ancient_theme"
+        },
+        {
+          "id": "draft_ancient_audio_marketplace_loop",
+          "type": "audio",
+          "name": "Marketplace Loop",
+          "status": "Draft",
+          "templateId": "template_era",
+          "description": "Marketplace Loop draft generated from era template.",
+          "linkedIds": [],
+          "requirementProfileId": "era_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_audio_marketplace_loop_icon",
+            "asset_req_draft_ancient_audio_marketplace_loop_card"
+          ],
+          "validationDefaults": [
+            "era id unique",
+            "canonical order preserved",
+            "draft items unique",
+            "tasks generated"
+          ],
+          "productionTaskId": "task_draft_ancient_audio_marketplace_loop"
+        },
+        {
+          "id": "draft_ancient_audio_temple_chime",
+          "type": "audio",
+          "name": "Temple Chime",
+          "status": "Draft",
+          "templateId": "template_era",
+          "description": "Temple Chime draft generated from era template.",
+          "linkedIds": [],
+          "requirementProfileId": "era_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_audio_temple_chime_icon",
+            "asset_req_draft_ancient_audio_temple_chime_card"
+          ],
+          "validationDefaults": [
+            "era id unique",
+            "canonical order preserved",
+            "draft items unique",
+            "tasks generated"
+          ],
+          "productionTaskId": "task_draft_ancient_audio_temple_chime"
+        },
+        {
+          "id": "draft_ancient_audio_river_ambience",
+          "type": "audio",
+          "name": "River Ambience",
+          "status": "Draft",
+          "templateId": "template_era",
+          "description": "River Ambience draft generated from era template.",
+          "linkedIds": [],
+          "requirementProfileId": "era_draft_profile_v1",
+          "assetRequirementIds": [
+            "asset_req_draft_ancient_audio_river_ambience_icon",
+            "asset_req_draft_ancient_audio_river_ambience_card"
+          ],
+          "validationDefaults": [
+            "era id unique",
+            "canonical order preserved",
+            "draft items unique",
+            "tasks generated"
+          ],
+          "productionTaskId": "task_draft_ancient_audio_river_ambience"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "rel_draft_ancient_building_granary_to_draft_ancient_research_agriculture",
+          "fromId": "draft_ancient_building_granary",
+          "toId": "draft_ancient_research_agriculture",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_building"
+        },
+        {
+          "id": "rel_draft_ancient_building_granary_to_draft_ancient_resource_grain",
+          "fromId": "draft_ancient_building_granary",
+          "toId": "draft_ancient_resource_grain",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_building"
+        },
+        {
+          "id": "rel_draft_ancient_building_farmstead_to_draft_ancient_research_pottery",
+          "fromId": "draft_ancient_building_farmstead",
+          "toId": "draft_ancient_research_pottery",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_building"
+        },
+        {
+          "id": "rel_draft_ancient_building_farmstead_to_draft_ancient_resource_copper",
+          "fromId": "draft_ancient_building_farmstead",
+          "toId": "draft_ancient_resource_copper",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_building"
+        },
+        {
+          "id": "rel_draft_ancient_building_pottery_kiln_to_draft_ancient_research_irrigation",
+          "fromId": "draft_ancient_building_pottery_kiln",
+          "toId": "draft_ancient_research_irrigation",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_building"
+        },
+        {
+          "id": "rel_draft_ancient_building_pottery_kiln_to_draft_ancient_resource_bronze",
+          "fromId": "draft_ancient_building_pottery_kiln",
+          "toId": "draft_ancient_resource_bronze",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_building"
+        },
+        {
+          "id": "rel_draft_ancient_building_copper_mine_to_draft_ancient_research_bronze_working",
+          "fromId": "draft_ancient_building_copper_mine",
+          "toId": "draft_ancient_research_bronze_working",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_building"
+        },
+        {
+          "id": "rel_draft_ancient_building_copper_mine_to_draft_ancient_resource_pottery",
+          "fromId": "draft_ancient_building_copper_mine",
+          "toId": "draft_ancient_resource_pottery",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_building"
+        },
+        {
+          "id": "rel_draft_ancient_building_bronze_workshop_to_draft_ancient_research_writing",
+          "fromId": "draft_ancient_building_bronze_workshop",
+          "toId": "draft_ancient_research_writing",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_building"
+        },
+        {
+          "id": "rel_draft_ancient_building_bronze_workshop_to_draft_ancient_resource_papyrus",
+          "fromId": "draft_ancient_building_bronze_workshop",
+          "toId": "draft_ancient_resource_papyrus",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_building"
+        },
+        {
+          "id": "rel_draft_ancient_building_irrigation_canal_to_draft_ancient_research_mathematics",
+          "fromId": "draft_ancient_building_irrigation_canal",
+          "toId": "draft_ancient_research_mathematics",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_building"
+        },
+        {
+          "id": "rel_draft_ancient_building_irrigation_canal_to_draft_ancient_resource_salt",
+          "fromId": "draft_ancient_building_irrigation_canal",
+          "toId": "draft_ancient_resource_salt",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_building"
+        },
+        {
+          "id": "rel_draft_ancient_building_marketplace_to_draft_ancient_research_trade_routes",
+          "fromId": "draft_ancient_building_marketplace",
+          "toId": "draft_ancient_research_trade_routes",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_building"
+        },
+        {
+          "id": "rel_draft_ancient_building_marketplace_to_draft_ancient_resource_limestone",
+          "fromId": "draft_ancient_building_marketplace",
+          "toId": "draft_ancient_resource_limestone",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_building"
+        },
+        {
+          "id": "rel_draft_ancient_building_scribe_hall_to_draft_ancient_research_masonry",
+          "fromId": "draft_ancient_building_scribe_hall",
+          "toId": "draft_ancient_research_masonry",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_building"
+        },
+        {
+          "id": "rel_draft_ancient_building_scribe_hall_to_draft_ancient_resource_olive_oil",
+          "fromId": "draft_ancient_building_scribe_hall",
+          "toId": "draft_ancient_resource_olive_oil",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_building"
+        },
+        {
+          "id": "rel_draft_ancient_building_stone_road_to_draft_ancient_research_animal_husbandry",
+          "fromId": "draft_ancient_building_stone_road",
+          "toId": "draft_ancient_research_animal_husbandry",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_building"
+        },
+        {
+          "id": "rel_draft_ancient_building_stone_road_to_draft_ancient_resource_livestock",
+          "fromId": "draft_ancient_building_stone_road",
+          "toId": "draft_ancient_resource_livestock",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_building"
+        },
+        {
+          "id": "rel_draft_ancient_building_shrine_to_draft_ancient_research_civic_rituals",
+          "fromId": "draft_ancient_building_shrine",
+          "toId": "draft_ancient_research_civic_rituals",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_building"
+        },
+        {
+          "id": "rel_draft_ancient_building_shrine_to_draft_ancient_resource_charcoal",
+          "fromId": "draft_ancient_building_shrine",
+          "toId": "draft_ancient_resource_charcoal",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_building"
+        },
+        {
+          "id": "rel_draft_ancient_research_agriculture_to_draft_ancient_resource_grain",
+          "fromId": "draft_ancient_research_agriculture",
+          "toId": "draft_ancient_resource_grain",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_research"
+        },
+        {
+          "id": "rel_draft_ancient_research_pottery_to_draft_ancient_resource_grain",
+          "fromId": "draft_ancient_research_pottery",
+          "toId": "draft_ancient_resource_grain",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_research"
+        },
+        {
+          "id": "rel_draft_ancient_research_pottery_to_draft_ancient_resource_copper",
+          "fromId": "draft_ancient_research_pottery",
+          "toId": "draft_ancient_resource_copper",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_research"
+        },
+        {
+          "id": "rel_draft_ancient_research_irrigation_to_draft_ancient_resource_grain",
+          "fromId": "draft_ancient_research_irrigation",
+          "toId": "draft_ancient_resource_grain",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_research"
+        },
+        {
+          "id": "rel_draft_ancient_research_irrigation_to_draft_ancient_resource_copper",
+          "fromId": "draft_ancient_research_irrigation",
+          "toId": "draft_ancient_resource_copper",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_research"
+        },
+        {
+          "id": "rel_draft_ancient_research_irrigation_to_draft_ancient_resource_bronze",
+          "fromId": "draft_ancient_research_irrigation",
+          "toId": "draft_ancient_resource_bronze",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_research"
+        },
+        {
+          "id": "rel_draft_ancient_research_bronze_working_to_draft_ancient_resource_copper",
+          "fromId": "draft_ancient_research_bronze_working",
+          "toId": "draft_ancient_resource_copper",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_research"
+        },
+        {
+          "id": "rel_draft_ancient_research_bronze_working_to_draft_ancient_resource_bronze",
+          "fromId": "draft_ancient_research_bronze_working",
+          "toId": "draft_ancient_resource_bronze",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_research"
+        },
+        {
+          "id": "rel_draft_ancient_research_bronze_working_to_draft_ancient_resource_pottery",
+          "fromId": "draft_ancient_research_bronze_working",
+          "toId": "draft_ancient_resource_pottery",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_research"
+        },
+        {
+          "id": "rel_draft_ancient_research_writing_to_draft_ancient_resource_bronze",
+          "fromId": "draft_ancient_research_writing",
+          "toId": "draft_ancient_resource_bronze",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_research"
+        },
+        {
+          "id": "rel_draft_ancient_research_writing_to_draft_ancient_resource_pottery",
+          "fromId": "draft_ancient_research_writing",
+          "toId": "draft_ancient_resource_pottery",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_research"
+        },
+        {
+          "id": "rel_draft_ancient_research_writing_to_draft_ancient_resource_papyrus",
+          "fromId": "draft_ancient_research_writing",
+          "toId": "draft_ancient_resource_papyrus",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_research"
+        },
+        {
+          "id": "rel_draft_ancient_research_mathematics_to_draft_ancient_resource_pottery",
+          "fromId": "draft_ancient_research_mathematics",
+          "toId": "draft_ancient_resource_pottery",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_research"
+        },
+        {
+          "id": "rel_draft_ancient_research_mathematics_to_draft_ancient_resource_papyrus",
+          "fromId": "draft_ancient_research_mathematics",
+          "toId": "draft_ancient_resource_papyrus",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_research"
+        },
+        {
+          "id": "rel_draft_ancient_research_mathematics_to_draft_ancient_resource_salt",
+          "fromId": "draft_ancient_research_mathematics",
+          "toId": "draft_ancient_resource_salt",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_research"
+        },
+        {
+          "id": "rel_draft_ancient_research_trade_routes_to_draft_ancient_resource_papyrus",
+          "fromId": "draft_ancient_research_trade_routes",
+          "toId": "draft_ancient_resource_papyrus",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_research"
+        },
+        {
+          "id": "rel_draft_ancient_research_trade_routes_to_draft_ancient_resource_salt",
+          "fromId": "draft_ancient_research_trade_routes",
+          "toId": "draft_ancient_resource_salt",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_research"
+        },
+        {
+          "id": "rel_draft_ancient_research_trade_routes_to_draft_ancient_resource_limestone",
+          "fromId": "draft_ancient_research_trade_routes",
+          "toId": "draft_ancient_resource_limestone",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_research"
+        },
+        {
+          "id": "rel_draft_ancient_research_masonry_to_draft_ancient_resource_salt",
+          "fromId": "draft_ancient_research_masonry",
+          "toId": "draft_ancient_resource_salt",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_research"
+        },
+        {
+          "id": "rel_draft_ancient_research_masonry_to_draft_ancient_resource_limestone",
+          "fromId": "draft_ancient_research_masonry",
+          "toId": "draft_ancient_resource_limestone",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_research"
+        },
+        {
+          "id": "rel_draft_ancient_research_masonry_to_draft_ancient_resource_olive_oil",
+          "fromId": "draft_ancient_research_masonry",
+          "toId": "draft_ancient_resource_olive_oil",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_research"
+        },
+        {
+          "id": "rel_draft_ancient_research_animal_husbandry_to_draft_ancient_resource_limestone",
+          "fromId": "draft_ancient_research_animal_husbandry",
+          "toId": "draft_ancient_resource_limestone",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_research"
+        },
+        {
+          "id": "rel_draft_ancient_research_animal_husbandry_to_draft_ancient_resource_olive_oil",
+          "fromId": "draft_ancient_research_animal_husbandry",
+          "toId": "draft_ancient_resource_olive_oil",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_research"
+        },
+        {
+          "id": "rel_draft_ancient_research_animal_husbandry_to_draft_ancient_resource_livestock",
+          "fromId": "draft_ancient_research_animal_husbandry",
+          "toId": "draft_ancient_resource_livestock",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_research"
+        },
+        {
+          "id": "rel_draft_ancient_research_civic_rituals_to_draft_ancient_resource_olive_oil",
+          "fromId": "draft_ancient_research_civic_rituals",
+          "toId": "draft_ancient_resource_olive_oil",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_research"
+        },
+        {
+          "id": "rel_draft_ancient_research_civic_rituals_to_draft_ancient_resource_livestock",
+          "fromId": "draft_ancient_research_civic_rituals",
+          "toId": "draft_ancient_resource_livestock",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_research"
+        },
+        {
+          "id": "rel_draft_ancient_research_civic_rituals_to_draft_ancient_resource_charcoal",
+          "fromId": "draft_ancient_research_civic_rituals",
+          "toId": "draft_ancient_resource_charcoal",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_research"
+        },
+        {
+          "id": "rel_draft_ancient_production_chain_grain_to_population_to_draft_ancient_resource_grain",
+          "fromId": "draft_ancient_production_chain_grain_to_population",
+          "toId": "draft_ancient_resource_grain",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_production_chain"
+        },
+        {
+          "id": "rel_draft_ancient_production_chain_grain_to_population_to_draft_ancient_building_granary",
+          "fromId": "draft_ancient_production_chain_grain_to_population",
+          "toId": "draft_ancient_building_granary",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_production_chain"
+        },
+        {
+          "id": "rel_draft_ancient_production_chain_clay_to_pottery_to_draft_ancient_resource_copper",
+          "fromId": "draft_ancient_production_chain_clay_to_pottery",
+          "toId": "draft_ancient_resource_copper",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_production_chain"
+        },
+        {
+          "id": "rel_draft_ancient_production_chain_clay_to_pottery_to_draft_ancient_building_farmstead",
+          "fromId": "draft_ancient_production_chain_clay_to_pottery",
+          "toId": "draft_ancient_building_farmstead",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_production_chain"
+        },
+        {
+          "id": "rel_draft_ancient_production_chain_copper_and_tin_to_bronze_to_draft_ancient_resource_bronze",
+          "fromId": "draft_ancient_production_chain_copper_and_tin_to_bronze",
+          "toId": "draft_ancient_resource_bronze",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_production_chain"
+        },
+        {
+          "id": "rel_draft_ancient_production_chain_copper_and_tin_to_bronze_to_draft_ancient_building_pottery_kiln",
+          "fromId": "draft_ancient_production_chain_copper_and_tin_to_bronze",
+          "toId": "draft_ancient_building_pottery_kiln",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_production_chain"
+        },
+        {
+          "id": "rel_draft_ancient_production_chain_limestone_to_masonry_to_draft_ancient_resource_pottery",
+          "fromId": "draft_ancient_production_chain_limestone_to_masonry",
+          "toId": "draft_ancient_resource_pottery",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_production_chain"
+        },
+        {
+          "id": "rel_draft_ancient_production_chain_limestone_to_masonry_to_draft_ancient_building_copper_mine",
+          "fromId": "draft_ancient_production_chain_limestone_to_masonry",
+          "toId": "draft_ancient_building_copper_mine",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_production_chain"
+        },
+        {
+          "id": "rel_draft_ancient_upgrade_chain_farm_efficiency_to_draft_ancient_research_agriculture",
+          "fromId": "draft_ancient_upgrade_chain_farm_efficiency",
+          "toId": "draft_ancient_research_agriculture",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_upgrade_chain"
+        },
+        {
+          "id": "rel_draft_ancient_upgrade_chain_farm_efficiency_to_draft_ancient_building_granary",
+          "fromId": "draft_ancient_upgrade_chain_farm_efficiency",
+          "toId": "draft_ancient_building_granary",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_upgrade_chain"
+        },
+        {
+          "id": "rel_draft_ancient_upgrade_chain_bronze_tooling_to_draft_ancient_research_pottery",
+          "fromId": "draft_ancient_upgrade_chain_bronze_tooling",
+          "toId": "draft_ancient_research_pottery",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_upgrade_chain"
+        },
+        {
+          "id": "rel_draft_ancient_upgrade_chain_bronze_tooling_to_draft_ancient_building_farmstead",
+          "fromId": "draft_ancient_upgrade_chain_bronze_tooling",
+          "toId": "draft_ancient_building_farmstead",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_upgrade_chain"
+        },
+        {
+          "id": "rel_draft_ancient_upgrade_chain_road_logistics_to_draft_ancient_research_irrigation",
+          "fromId": "draft_ancient_upgrade_chain_road_logistics",
+          "toId": "draft_ancient_research_irrigation",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_upgrade_chain"
+        },
+        {
+          "id": "rel_draft_ancient_upgrade_chain_road_logistics_to_draft_ancient_building_pottery_kiln",
+          "fromId": "draft_ancient_upgrade_chain_road_logistics",
+          "toId": "draft_ancient_building_pottery_kiln",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_upgrade_chain"
+        },
+        {
+          "id": "rel_draft_ancient_upgrade_chain_market_trade_to_draft_ancient_research_bronze_working",
+          "fromId": "draft_ancient_upgrade_chain_market_trade",
+          "toId": "draft_ancient_research_bronze_working",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_upgrade_chain"
+        },
+        {
+          "id": "rel_draft_ancient_upgrade_chain_market_trade_to_draft_ancient_building_copper_mine",
+          "fromId": "draft_ancient_upgrade_chain_market_trade",
+          "toId": "draft_ancient_building_copper_mine",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_upgrade_chain"
+        },
+        {
+          "id": "rel_draft_ancient_mission_plant_first_fields_to_draft_ancient_research_agriculture",
+          "fromId": "draft_ancient_mission_plant_first_fields",
+          "toId": "draft_ancient_research_agriculture",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_mission"
+        },
+        {
+          "id": "rel_draft_ancient_mission_plant_first_fields_to_draft_ancient_building_granary",
+          "fromId": "draft_ancient_mission_plant_first_fields",
+          "toId": "draft_ancient_building_granary",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_mission"
+        },
+        {
+          "id": "rel_draft_ancient_mission_plant_first_fields_to_draft_ancient_production_chain_grain_to_population",
+          "fromId": "draft_ancient_mission_plant_first_fields",
+          "toId": "draft_ancient_production_chain_grain_to_population",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_mission"
+        },
+        {
+          "id": "rel_draft_ancient_mission_build_granary_to_draft_ancient_research_pottery",
+          "fromId": "draft_ancient_mission_build_granary",
+          "toId": "draft_ancient_research_pottery",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_mission"
+        },
+        {
+          "id": "rel_draft_ancient_mission_build_granary_to_draft_ancient_building_farmstead",
+          "fromId": "draft_ancient_mission_build_granary",
+          "toId": "draft_ancient_building_farmstead",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_mission"
+        },
+        {
+          "id": "rel_draft_ancient_mission_build_granary_to_draft_ancient_production_chain_clay_to_pottery",
+          "fromId": "draft_ancient_mission_build_granary",
+          "toId": "draft_ancient_production_chain_clay_to_pottery",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_mission"
+        },
+        {
+          "id": "rel_draft_ancient_mission_fire_pottery_kiln_to_draft_ancient_research_irrigation",
+          "fromId": "draft_ancient_mission_fire_pottery_kiln",
+          "toId": "draft_ancient_research_irrigation",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_mission"
+        },
+        {
+          "id": "rel_draft_ancient_mission_fire_pottery_kiln_to_draft_ancient_building_pottery_kiln",
+          "fromId": "draft_ancient_mission_fire_pottery_kiln",
+          "toId": "draft_ancient_building_pottery_kiln",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_mission"
+        },
+        {
+          "id": "rel_draft_ancient_mission_fire_pottery_kiln_to_draft_ancient_production_chain_copper_and_tin_to_bronze",
+          "fromId": "draft_ancient_mission_fire_pottery_kiln",
+          "toId": "draft_ancient_production_chain_copper_and_tin_to_bronze",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_mission"
+        },
+        {
+          "id": "rel_draft_ancient_mission_mine_copper_to_draft_ancient_research_bronze_working",
+          "fromId": "draft_ancient_mission_mine_copper",
+          "toId": "draft_ancient_research_bronze_working",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_mission"
+        },
+        {
+          "id": "rel_draft_ancient_mission_mine_copper_to_draft_ancient_building_copper_mine",
+          "fromId": "draft_ancient_mission_mine_copper",
+          "toId": "draft_ancient_building_copper_mine",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_mission"
+        },
+        {
+          "id": "rel_draft_ancient_mission_mine_copper_to_draft_ancient_production_chain_limestone_to_masonry",
+          "fromId": "draft_ancient_mission_mine_copper",
+          "toId": "draft_ancient_production_chain_limestone_to_masonry",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_mission"
+        },
+        {
+          "id": "rel_draft_ancient_mission_forge_bronze_tools_to_draft_ancient_research_writing",
+          "fromId": "draft_ancient_mission_forge_bronze_tools",
+          "toId": "draft_ancient_research_writing",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_mission"
+        },
+        {
+          "id": "rel_draft_ancient_mission_forge_bronze_tools_to_draft_ancient_building_bronze_workshop",
+          "fromId": "draft_ancient_mission_forge_bronze_tools",
+          "toId": "draft_ancient_building_bronze_workshop",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_mission"
+        },
+        {
+          "id": "rel_draft_ancient_mission_forge_bronze_tools_to_draft_ancient_production_chain_grain_to_population",
+          "fromId": "draft_ancient_mission_forge_bronze_tools",
+          "toId": "draft_ancient_production_chain_grain_to_population",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_mission"
+        },
+        {
+          "id": "rel_draft_ancient_mission_write_first_records_to_draft_ancient_research_mathematics",
+          "fromId": "draft_ancient_mission_write_first_records",
+          "toId": "draft_ancient_research_mathematics",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_mission"
+        },
+        {
+          "id": "rel_draft_ancient_mission_write_first_records_to_draft_ancient_building_irrigation_canal",
+          "fromId": "draft_ancient_mission_write_first_records",
+          "toId": "draft_ancient_building_irrigation_canal",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_mission"
+        },
+        {
+          "id": "rel_draft_ancient_mission_write_first_records_to_draft_ancient_production_chain_clay_to_pottery",
+          "fromId": "draft_ancient_mission_write_first_records",
+          "toId": "draft_ancient_production_chain_clay_to_pottery",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_mission"
+        },
+        {
+          "id": "rel_draft_ancient_mission_open_marketplace_to_draft_ancient_research_trade_routes",
+          "fromId": "draft_ancient_mission_open_marketplace",
+          "toId": "draft_ancient_research_trade_routes",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_mission"
+        },
+        {
+          "id": "rel_draft_ancient_mission_open_marketplace_to_draft_ancient_building_marketplace",
+          "fromId": "draft_ancient_mission_open_marketplace",
+          "toId": "draft_ancient_building_marketplace",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_mission"
+        },
+        {
+          "id": "rel_draft_ancient_mission_open_marketplace_to_draft_ancient_production_chain_copper_and_tin_to_bronze",
+          "fromId": "draft_ancient_mission_open_marketplace",
+          "toId": "draft_ancient_production_chain_copper_and_tin_to_bronze",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_mission"
+        },
+        {
+          "id": "rel_draft_ancient_mission_reach_medieval_era_to_draft_ancient_research_masonry",
+          "fromId": "draft_ancient_mission_reach_medieval_era",
+          "toId": "draft_ancient_research_masonry",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_mission"
+        },
+        {
+          "id": "rel_draft_ancient_mission_reach_medieval_era_to_draft_ancient_building_scribe_hall",
+          "fromId": "draft_ancient_mission_reach_medieval_era",
+          "toId": "draft_ancient_building_scribe_hall",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_mission"
+        },
+        {
+          "id": "rel_draft_ancient_mission_reach_medieval_era_to_draft_ancient_production_chain_limestone_to_masonry",
+          "fromId": "draft_ancient_mission_reach_medieval_era",
+          "toId": "draft_ancient_production_chain_limestone_to_masonry",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_mission"
+        },
+        {
+          "id": "rel_draft_ancient_event_river_flood_to_draft_ancient_building_granary",
+          "fromId": "draft_ancient_event_river_flood",
+          "toId": "draft_ancient_building_granary",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_event"
+        },
+        {
+          "id": "rel_draft_ancient_event_river_flood_to_draft_ancient_research_agriculture",
+          "fromId": "draft_ancient_event_river_flood",
+          "toId": "draft_ancient_research_agriculture",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_event"
+        },
+        {
+          "id": "rel_draft_ancient_event_locust_swarm_to_draft_ancient_building_farmstead",
+          "fromId": "draft_ancient_event_locust_swarm",
+          "toId": "draft_ancient_building_farmstead",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_event"
+        },
+        {
+          "id": "rel_draft_ancient_event_locust_swarm_to_draft_ancient_research_pottery",
+          "fromId": "draft_ancient_event_locust_swarm",
+          "toId": "draft_ancient_research_pottery",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_event"
+        },
+        {
+          "id": "rel_draft_ancient_event_harvest_festival_to_draft_ancient_building_pottery_kiln",
+          "fromId": "draft_ancient_event_harvest_festival",
+          "toId": "draft_ancient_building_pottery_kiln",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_event"
+        },
+        {
+          "id": "rel_draft_ancient_event_harvest_festival_to_draft_ancient_research_irrigation",
+          "fromId": "draft_ancient_event_harvest_festival",
+          "toId": "draft_ancient_research_irrigation",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_event"
+        },
+        {
+          "id": "rel_draft_ancient_event_bronze_shortage_to_draft_ancient_building_copper_mine",
+          "fromId": "draft_ancient_event_bronze_shortage",
+          "toId": "draft_ancient_building_copper_mine",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_event"
+        },
+        {
+          "id": "rel_draft_ancient_event_bronze_shortage_to_draft_ancient_research_bronze_working",
+          "fromId": "draft_ancient_event_bronze_shortage",
+          "toId": "draft_ancient_research_bronze_working",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_event"
+        },
+        {
+          "id": "rel_draft_ancient_event_market_boom_to_draft_ancient_building_bronze_workshop",
+          "fromId": "draft_ancient_event_market_boom",
+          "toId": "draft_ancient_building_bronze_workshop",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_event"
+        },
+        {
+          "id": "rel_draft_ancient_event_market_boom_to_draft_ancient_research_writing",
+          "fromId": "draft_ancient_event_market_boom",
+          "toId": "draft_ancient_research_writing",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_event"
+        },
+        {
+          "id": "rel_draft_ancient_event_temple_omen_to_draft_ancient_building_irrigation_canal",
+          "fromId": "draft_ancient_event_temple_omen",
+          "toId": "draft_ancient_building_irrigation_canal",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_event"
+        },
+        {
+          "id": "rel_draft_ancient_event_temple_omen_to_draft_ancient_research_mathematics",
+          "fromId": "draft_ancient_event_temple_omen",
+          "toId": "draft_ancient_research_mathematics",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_event"
+        },
+        {
+          "id": "rel_draft_ancient_collectible_ceremonial_seal_to_draft_ancient_resource_grain",
+          "fromId": "draft_ancient_collectible_ceremonial_seal",
+          "toId": "draft_ancient_resource_grain",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_collectible"
+        },
+        {
+          "id": "rel_draft_ancient_collectible_ceremonial_seal_to_draft_ancient_event_river_flood",
+          "fromId": "draft_ancient_collectible_ceremonial_seal",
+          "toId": "draft_ancient_event_river_flood",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_collectible"
+        },
+        {
+          "id": "rel_draft_ancient_collectible_bronze_idol_to_draft_ancient_resource_copper",
+          "fromId": "draft_ancient_collectible_bronze_idol",
+          "toId": "draft_ancient_resource_copper",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_collectible"
+        },
+        {
+          "id": "rel_draft_ancient_collectible_bronze_idol_to_draft_ancient_event_locust_swarm",
+          "fromId": "draft_ancient_collectible_bronze_idol",
+          "toId": "draft_ancient_event_locust_swarm",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_collectible"
+        },
+        {
+          "id": "rel_draft_ancient_collectible_clay_tablet_to_draft_ancient_resource_bronze",
+          "fromId": "draft_ancient_collectible_clay_tablet",
+          "toId": "draft_ancient_resource_bronze",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_collectible"
+        },
+        {
+          "id": "rel_draft_ancient_collectible_clay_tablet_to_draft_ancient_event_harvest_festival",
+          "fromId": "draft_ancient_collectible_clay_tablet",
+          "toId": "draft_ancient_event_harvest_festival",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_collectible"
+        },
+        {
+          "id": "rel_draft_ancient_collectible_royal_scarab_to_draft_ancient_resource_pottery",
+          "fromId": "draft_ancient_collectible_royal_scarab",
+          "toId": "draft_ancient_resource_pottery",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_collectible"
+        },
+        {
+          "id": "rel_draft_ancient_collectible_royal_scarab_to_draft_ancient_event_bronze_shortage",
+          "fromId": "draft_ancient_collectible_royal_scarab",
+          "toId": "draft_ancient_event_bronze_shortage",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_collectible"
+        },
+        {
+          "id": "rel_draft_ancient_collectible_ancient_coin_to_draft_ancient_resource_papyrus",
+          "fromId": "draft_ancient_collectible_ancient_coin",
+          "toId": "draft_ancient_resource_papyrus",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_collectible"
+        },
+        {
+          "id": "rel_draft_ancient_collectible_ancient_coin_to_draft_ancient_event_market_boom",
+          "fromId": "draft_ancient_collectible_ancient_coin",
+          "toId": "draft_ancient_event_market_boom",
+          "relationship": "suggested_dependency",
+          "suggestedBy": "template_collectible"
+        }
+      ],
+      "estimates": {
+        "hours": 214,
+        "assets": 132,
+        "research": 10,
+        "buildings": 10,
+        "production": 8,
+        "art": 5,
+        "audio": 4,
+        "overallCompletion": 0
+      },
+      "validation": {
+        "status": "Valid Draft",
+        "duplicateIds": [],
+        "missingLinks": [],
+        "missingRequirementProfiles": [],
+        "missingProductionTasks": [],
+        "checks": [
+          {
+            "label": "stable canonical draft IDs",
+            "passed": true
+          },
+          {
+            "label": "no duplicate IDs",
+            "passed": true
+          },
+          {
+            "label": "relationships generated",
+            "passed": true
+          },
+          {
+            "label": "requirement profiles created",
+            "passed": true
+          },
+          {
+            "label": "production tasks created",
+            "passed": true
+          }
+        ]
+      },
+      "notes": "Ancient starter kit generated from reusable content templates."
+    }
+  ],
+  "updatedAt": "2026-07-13T00:57:30.329Z"
+}

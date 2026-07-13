@@ -1,18 +1,20 @@
 import { CommandCenterDashboard } from "@/components/command-center-dashboard";
 import { getAssetProductionState } from "@/lib/assets/asset-production";
 import { getEraArtSummaryByEra } from "@/lib/assets/era-art-inventory";
+import { getContentAuthoringState } from "@/lib/content-authoring/store";
 import { getGameData } from "@/lib/data";
 import { buildProductionPlan } from "@/lib/production/planner";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const [data, assetProductionState, eraArtSummary] = await Promise.all([
+  const [data, assetProductionState, eraArtSummary, contentAuthoringState] = await Promise.all([
     getGameData(),
     getAssetProductionState(),
-    getEraArtSummaryByEra()
+    getEraArtSummaryByEra(),
+    getContentAuthoringState()
   ]);
-  const productionPlan = buildProductionPlan(data, assetProductionState, eraArtSummary);
+  const productionPlan = buildProductionPlan(data, assetProductionState, eraArtSummary, contentAuthoringState);
   const totalRecords = [
     data.research,
     data.buildings,

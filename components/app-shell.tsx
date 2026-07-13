@@ -12,6 +12,7 @@ import {
   CircleDot,
   ClipboardList,
   Compass,
+  CopyPlus,
   Cpu,
   Database,
   FileCode2,
@@ -117,6 +118,7 @@ const navigationGroups: NavigationGroup[] = [
     systemIds: ["research", "unlock-matrix", "buildings", "upgrades", "districts", "wonders"],
     items: [
       { href: "/civilizations", label: "Civilization Design Studio", icon: Landmark },
+      { href: "/content-authoring", label: "Content Authoring", icon: CopyPlus },
       { href: "/research", label: "Research Designer", icon: FlaskConical },
       { href: "/unlock-matrix", label: "Unlock Matrix", icon: GitBranch },
       { href: "/upgrades", label: "Upgrade Designer", icon: Gauge },
