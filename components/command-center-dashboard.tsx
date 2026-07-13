@@ -36,7 +36,8 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CurrentEraJourney, createDefaultTimeline } from "@/components/civilization-timeline";
+import { CivilizationEraCarousel } from "@/components/civilization-era-carousel";
+import { createDefaultTimeline } from "@/components/civilization-timeline";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { WorkspaceBadge } from "@/components/ui/workspace";
 import { cn } from "@/lib/utils";
@@ -969,6 +970,7 @@ export function CommandCenterDashboard({ systems, history, healthChecks, codexIt
                 </div>
               ))}
             </div>
+            <CivilizationEraCarousel eras={eraTimeline} className="mt-6" />
           </div>
         </div>
       </section>
@@ -991,8 +993,6 @@ export function CommandCenterDashboard({ systems, history, healthChecks, codexIt
       </section>
 
       <StudioWorkflowPanel />
-
-      <CurrentEraJourney eras={eraTimeline} />
 
       <section className="grid gap-5 xl:grid-cols-[1fr_1fr_1fr]">
         <Panel title="Status Breakdown" eyebrow="Systems">

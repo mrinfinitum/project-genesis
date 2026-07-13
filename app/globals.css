@@ -74,6 +74,30 @@ select {
   }
 }
 
+@keyframes era-carousel-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 42px rgba(56, 213, 255, 0.14), inset 0 0 24px rgba(56, 213, 255, 0.05);
+  }
+  50% {
+    box-shadow: 0 0 68px rgba(56, 213, 255, 0.24), inset 0 0 34px rgba(94, 242, 161, 0.07);
+  }
+}
+
+@keyframes era-carousel-sweep {
+  0% {
+    transform: translateX(-40%);
+    opacity: 0;
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(360%);
+    opacity: 0;
+  }
+}
+
 .rarity-glow {
   animation: rarity-glow 2.4s ease-in-out infinite;
 }
@@ -88,4 +112,29 @@ select {
 
 .rarity-shimmer {
   animation: rarity-shimmer 2.2s ease-in-out infinite;
+}
+
+.era-carousel-pulse {
+  animation: era-carousel-pulse 4.5s ease-in-out infinite;
+}
+
+.era-carousel-sweep {
+  animation: era-carousel-sweep 5.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rarity-glow,
+  .rarity-pulse,
+  .rarity-cosmic,
+  .rarity-shimmer,
+  .era-carousel-pulse,
+  .era-carousel-sweep {
+    animation: none;
+  }
+
+  *,
+  ::before,
+  ::after {
+    scroll-behavior: auto !important;
+  }
 }

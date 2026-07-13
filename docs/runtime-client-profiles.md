@@ -26,13 +26,15 @@ The canonical runtime export includes:
 }
 ```
 
-`dashboardMode: "current_journey"` means dashboards should focus on the player's current era and nearby eras instead of showing all nine canonical eras at once.
+`dashboardMode: "current_journey"` means dashboards should focus on the player's current era and nearby eras instead of showing all nine canonical eras at once. In Studio this is rendered as the cinematic `CivilizationEraCarousel`: previous/current/next context cards, controlled preview navigation, and a compact nine-step journey track.
 
 `visibleEraCount` is a presentation preference, not a gameplay rule. Clients should derive visible records from canonical era order plus the player's current `currentEraId`.
 
 `fullTimelineEnabled` confirms that clients should offer a separate full Civilization Timeline view with all canonical eras, completion, mastery, research, buildings, unlocks, art readiness, and production status.
 
 `allowPrimaryHorizontalScroll: false` means the primary dashboard should not rely on a long horizontally scrolling nine-era rail.
+
+Preview navigation in the dashboard carousel must not change player progression. Clients should keep `player.currentEraId` separate from any temporary preview index.
 
 Boundary behavior communicates intent only:
 
