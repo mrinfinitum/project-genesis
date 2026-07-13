@@ -262,11 +262,18 @@ export type ClientProfile = {
   availableGlowEnabled: boolean;
   primaryHudResources?: string[];
   primaryHudSlots?: HudResourceSlot[];
-  eraNavigation?: {
-    dashboardMode: "current_journey";
-    visibleEraCount: number;
-    fullTimelineEnabled: boolean;
-    allowPrimaryHorizontalScroll: boolean;
+  eraNavigation?: EraNavigationProfile;
+};
+
+export type EraNavigationProfile = {
+  dashboardMode: "current_journey" | "compact_timeline" | "full_timeline";
+  visibleEraCount: number;
+  fullTimelineEnabled: boolean;
+  allowPrimaryHorizontalScroll: boolean;
+  boundaryBehavior?: {
+    firstEraMode: "current_and_next";
+    middleEraMode: "previous_current_next";
+    lastEraMode: "previous_and_current";
   };
 };
 

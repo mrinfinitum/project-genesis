@@ -5,6 +5,7 @@ import { colonyBuildingTemplates, colonyFocusDefinitions, colonyLevelDefinitions
 import { buildEconomyUsageRelationships, buildInventoryResourceMetadata, buildPrimaryHudSlots, canonicalEconomyDefinitions, primaryHudEconomyIds } from "@/lib/economy/definitions";
 import { buildEconomyState, economySchemas, priceClamps, type MarketRecord, type ResourceListing, type TradeOpportunity, type TradeRoute } from "@/lib/economy/trade";
 import { generateFaction, generateFallbackFactions, type FactionRecord } from "@/lib/factions/procedural";
+import { defaultEraNavigationProfile, engineEraNavigationOverrides, resolveEraNavigationProfile, supportedEraNavigationBoundaryModes, supportedEraNavigationDashboardModes } from "@/lib/runtime/client-profiles";
 import {
   generateMissionBundle,
   missionDifficulties,
@@ -137,6 +138,7 @@ type CanonicalModules = {
   economy_definitions: typeof canonicalEconomyDefinitions;
   hud_profile: Array<ReturnType<typeof buildPrimaryHudSlots>[number]>;
   primary_hud_resources: string[];
+  era_navigation_profiles: Array<{ id: string; profileName: string; eraNavigation: ReturnType<typeof resolveEraNavigationProfile>; inheritsFrom: string | null; notes: string }>;
   economy_usage_relationships: ReturnType<typeof buildEconomyUsageRelationships>;
   inventory_resource_metadata: ReturnType<typeof buildInventoryResourceMetadata>;
   economy_schemas: typeof economySchemas;
@@ -474,6 +476,22 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
     economy_definitions: canonicalEconomyDefinitions,
     hud_profile: buildPrimaryHudSlots(),
     primary_hud_resources: [...primaryHudEconomyIds],
+    era_navigation_profiles: [
+      {
+        id: "era_navigation_default",
+        profileName: "default",
+        eraNavigation: defaultEraNavigationProfile,
+        inheritsFrom: null,
+        notes: "Studio-owned engine-agnostic navigation intent. Clients own layout and rendering."
+      },
+      ...Object.entries(engineEraNavigationOverrides).map(([profileName, overrides]) => ({
+        id: `era_navigation_${profileName}`,
+        profileName,
+        eraNavigation: resolveEraNavigationProfile(overrides),
+        inheritsFrom: "default",
+        notes: "Engine override inherits unspecified eraNavigation fields from clientProfiles.default."
+      }))
+    ],
     economy_usage_relationships: buildEconomyUsageRelationships(data),
     inventory_resource_metadata: buildInventoryResourceMetadata(data),
     economy_schemas: economySchemas,
@@ -827,6 +845,37 @@ function validateEconomy(issues: ExportValidationIssue[], modules: CanonicalModu
   }
 }
 
+function validateEraNavigationProfiles(issues: ExportValidationIssue[], modules: CanonicalModules) {
+  const canonicalEraCount = 9;
+  const defaultProfile = modules.era_navigation_profiles.find((profile) => profile.profileName === "default");
+  if (!defaultProfile) {
+    addIssue(issues, "error", "era_navigation_default_missing", "Engine exports must include the default era navigation profile.");
+  }
+
+  for (const profile of modules.era_navigation_profiles) {
+    const eraNavigation = profile.eraNavigation;
+    if (!supportedEraNavigationDashboardModes.includes(eraNavigation.dashboardMode)) {
+      addIssue(issues, "error", "era_navigation_mode_invalid", "Era navigation dashboardMode is not supported.", [`${profile.profileName}:${eraNavigation.dashboardMode}`]);
+    }
+    if (!Number.isInteger(eraNavigation.visibleEraCount) || eraNavigation.visibleEraCount <= 0 || eraNavigation.visibleEraCount > canonicalEraCount) {
+      addIssue(issues, "error", "era_navigation_visible_count_invalid", "Era navigation visibleEraCount must be a positive integer no larger than the canonical era count.", [`${profile.profileName}:${eraNavigation.visibleEraCount}`]);
+    }
+    if (typeof eraNavigation.fullTimelineEnabled !== "boolean" || typeof eraNavigation.allowPrimaryHorizontalScroll !== "boolean") {
+      addIssue(issues, "error", "era_navigation_flags_invalid", "Era navigation timeline and scroll flags must be boolean.", [profile.profileName]);
+    }
+    const boundaryBehavior = eraNavigation.boundaryBehavior;
+    if (!boundaryBehavior) {
+      addIssue(issues, "error", "era_navigation_boundary_missing", "Era navigation profiles must include boundary behavior hints.", [profile.profileName]);
+      continue;
+    }
+    for (const [key, value] of Object.entries(boundaryBehavior)) {
+      if (!supportedEraNavigationBoundaryModes.includes(value)) {
+        addIssue(issues, "error", "era_navigation_boundary_invalid", "Era navigation boundary behavior is not supported.", [`${profile.profileName}:${key}:${value}`]);
+      }
+    }
+  }
+}
+
 function missionTargetExists(targetType: string, targetId: string, modules: CanonicalModules) {
   const type = targetType.toLowerCase();
   const galaxyIds = new Set(modules.galaxies.map((row) => String(row.id)));
@@ -937,6 +986,7 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
   validateUnlocks(issues, modules);
   validateHierarchy(issues, modules);
   validateEconomy(issues, modules);
+  validateEraNavigationProfiles(issues, modules);
   validateMissions(issues, modules);
   validateTargetSchema(issues, target);
 
@@ -974,6 +1024,9 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
       "starting amounts and rates are finite",
       "premium values are explicitly marked",
       "material resources are excluded from HUD",
+      "era navigation profiles resolve",
+      "era navigation boundary behavior is supported",
+      "dashboard era count does not exceed canonical eras",
       "mission objectives link to missions",
       "mission rewards link to missions",
       "mission targets resolve",
@@ -998,6 +1051,7 @@ function schemaNotes(target: EngineTarget) {
     hierarchy: "Preserve Galaxy -> Sector -> Star System -> Planet. Do not add Region or Cluster layers.",
     colonies: "Colony state, growth inputs, buildings, levels, and focus definitions are canonical Studio data shared by every engine target.",
     economy: "Global economy definitions, HUD slots, markets, resource listings, trade routes, and opportunities are engine-agnostic canonical data. HUD slots use economy IDs only; inventory materials stay in resource_catalog.",
+    eraNavigation: "Studio owns navigation intent only. Dashboards should use current_journey with compact labels; clients own layout and rendering. The full Civilization Timeline remains the all-era view.",
     missions: "Missions, objectives, rewards, statuses, and generation metadata are deterministic canonical Studio data. Engine targets consume mission state and report progress back through objective IDs.",
     mapping: config.schemaMapping
   };
@@ -1048,6 +1102,7 @@ function compactModules(modules: CanonicalModules) {
     economy_definitions: modules.economy_definitions,
     hud_profile: modules.hud_profile,
     primary_hud_resources: modules.primary_hud_resources,
+    era_navigation_profiles: modules.era_navigation_profiles,
     economy_usage_relationships: modules.economy_usage_relationships,
     inventory_resource_metadata: modules.inventory_resource_metadata,
     economy_schemas: modules.economy_schemas,
@@ -1073,6 +1128,7 @@ function targetArtifacts(target: EngineTarget, modules: CanonicalModules) {
     return {
       "ResourceCatalogModule.lua": `local ResourceCatalog = ${luaValue(modules.resource_catalog)}\n\nreturn ResourceCatalog\n`,
       "EconomyDefinitionsModule.lua": `local EconomyDefinitions = ${luaValue({ economyDefinitions: modules.economy_definitions, hudProfile: modules.hud_profile, primaryHudResources: modules.primary_hud_resources })}\n\nreturn EconomyDefinitions\n`,
+      "EraNavigationProfileModule.lua": `local EraNavigationProfiles = ${luaValue(modules.era_navigation_profiles)}\n\nreturn EraNavigationProfiles\n`,
       "ResearchUnlockModule.lua": `local ResearchUnlocks = ${luaValue({ research: modules.research, unlocks: modules.unlock_matrix })}\n\nreturn ResearchUnlocks\n`,
       "UniverseDataModule.lua": `local UniverseData = ${luaValue({ galaxies: modules.galaxies, sectors: modules.sectors, starSystems: modules.star_systems, planets: modules.planets, celestialBodies: modules.celestial_bodies, factions: modules.factions, colonies: modules.colonies, colonyBuildings: modules.colony_buildings, colonyLevels: modules.colony_level_definitions, colonyFocus: modules.colony_focus_definitions, markets: modules.markets, tradeRoutes: modules.trade_routes, tradeOpportunities: modules.trade_opportunities, missions: modules.missions, missionObjectives: modules.mission_objectives, missionRewards: modules.mission_rewards })}\n\nreturn UniverseData\n`,
       "ApiService.lua": "local HttpService = game:GetService(\"HttpService\")\n\nlocal ApiService = {}\nApiService.BaseUrl = \"https://your-studio-host.example.com/api/export\"\n\nfunction ApiService.FetchGeneric()\n  local response = HttpService:GetAsync(ApiService.BaseUrl .. \"/generic\")\n  return HttpService:JSONDecode(response)\nend\n\nreturn ApiService\n"
@@ -1081,7 +1137,7 @@ function targetArtifacts(target: EngineTarget, modules: CanonicalModules) {
 
   if (target === "web") {
     return {
-      "project-genesis.types.ts": "export type GenesisId = string;\n\nexport interface GenesisResource { id: GenesisId; resource_name: string; category: string; rarity: string; }\nexport interface GenesisResearchNode { id: GenesisId; name: string; era: string; status: string; }\nexport interface GenesisFaction { id: GenesisId; name: string; type: string; disposition: string; homeStarSystemId: GenesisId; controlledPlanetIds: GenesisId[]; }\nexport interface GenesisColonyBuilding { id: GenesisId; name: string; category: string; colonyId: GenesisId; constructionStatus: string; modifiers: Record<string, number>; }\nexport interface GenesisColony { id: GenesisId; name: string; planetId: GenesisId; starSystemId: GenesisId; population: number; populationCapacity: number; populationGrowthRate: number; colonyLevel: number; focus: string; status: string; resourceOutputIds: GenesisId[]; resourceOutputRates: Record<string, number>; buildingIds: GenesisId[]; }\nexport interface GenesisMarketListing { resourceId: GenesisId; basePrice: number; currentPrice: number; supply: number; demand: number; priceTrend: string; availability: string; }\nexport interface GenesisMarket { id: GenesisId; name: string; marketType: string; colonyId?: GenesisId; childMarketIds: GenesisId[]; resourceListings: GenesisMarketListing[]; tradeVolume: number; prosperity: number; security: number; }\nexport interface GenesisTradeRoute { id: GenesisId; originMarketId: GenesisId; destinationMarketId: GenesisId; resourceIds: GenesisId[]; profitability: number; risk: number; status: string; }\nexport interface GenesisMissionObjective { id: GenesisId; missionId: GenesisId; objectiveType: string; targetId: GenesisId; targetCount: number; currentCount: number; completed: boolean; }\nexport interface GenesisMission { id: GenesisId; title: string; missionType: string; status: string; difficulty: string; objectiveIds: GenesisId[]; rewardIds: GenesisId[]; rewardsClaimed: boolean; tracked: boolean; }\nexport interface GenesisExportPayload { target: string; canonical: Record<string, unknown>; relationshipMap: Record<string, unknown>; }\n",
+      "project-genesis.types.ts": "export type GenesisId = string;\n\nexport interface GenesisResource { id: GenesisId; resource_name: string; category: string; rarity: string; }\nexport interface GenesisEraNavigationProfile { dashboardMode: 'current_journey' | 'compact_timeline' | 'full_timeline'; visibleEraCount: number; fullTimelineEnabled: boolean; allowPrimaryHorizontalScroll: boolean; boundaryBehavior: { firstEraMode: string; middleEraMode: string; lastEraMode: string }; }\nexport interface GenesisResearchNode { id: GenesisId; name: string; era: string; status: string; }\nexport interface GenesisFaction { id: GenesisId; name: string; type: string; disposition: string; homeStarSystemId: GenesisId; controlledPlanetIds: GenesisId[]; }\nexport interface GenesisColonyBuilding { id: GenesisId; name: string; category: string; colonyId: GenesisId; constructionStatus: string; modifiers: Record<string, number>; }\nexport interface GenesisColony { id: GenesisId; name: string; planetId: GenesisId; starSystemId: GenesisId; population: number; populationCapacity: number; populationGrowthRate: number; colonyLevel: number; focus: string; status: string; resourceOutputIds: GenesisId[]; resourceOutputRates: Record<string, number>; buildingIds: GenesisId[]; }\nexport interface GenesisMarketListing { resourceId: GenesisId; basePrice: number; currentPrice: number; supply: number; demand: number; priceTrend: string; availability: string; }\nexport interface GenesisMarket { id: GenesisId; name: string; marketType: string; colonyId?: GenesisId; childMarketIds: GenesisId[]; resourceListings: GenesisMarketListing[]; tradeVolume: number; prosperity: number; security: number; }\nexport interface GenesisTradeRoute { id: GenesisId; originMarketId: GenesisId; destinationMarketId: GenesisId; resourceIds: GenesisId[]; profitability: number; risk: number; status: string; }\nexport interface GenesisMissionObjective { id: GenesisId; missionId: GenesisId; objectiveType: string; targetId: GenesisId; targetCount: number; currentCount: number; completed: boolean; }\nexport interface GenesisMission { id: GenesisId; title: string; missionType: string; status: string; difficulty: string; objectiveIds: GenesisId[]; rewardIds: GenesisId[]; rewardsClaimed: boolean; tracked: boolean; }\nexport interface GenesisExportPayload { target: string; canonical: Record<string, unknown>; relationshipMap: Record<string, unknown>; }\n",
       "projectGenesisClient.ts": "export async function fetchProjectGenesisExport(target = 'generic') {\n  const response = await fetch(`/api/export/${target}`);\n  if (!response.ok) throw new Error(`Project Genesis export failed: ${response.status}`);\n  return response.json();\n}\n",
       "projectGenesisStore.ts": "import { create } from 'zustand';\n\ntype GenesisStore = { data: unknown | null; setData: (data: unknown) => void };\nexport const useGenesisStore = create<GenesisStore>((set) => ({ data: null, setData: (data) => set({ data }) }));\n"
     };

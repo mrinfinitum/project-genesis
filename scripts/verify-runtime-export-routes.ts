@@ -3,6 +3,11 @@ type EraNavigationHints = {
   visibleEraCount?: number;
   fullTimelineEnabled?: boolean;
   allowPrimaryHorizontalScroll?: boolean;
+  boundaryBehavior?: {
+    firstEraMode?: string;
+    middleEraMode?: string;
+    lastEraMode?: string;
+  };
 };
 
 type RuntimeClientProfile = {
@@ -22,6 +27,11 @@ type RuntimePayload = {
   upgrades?: Array<{ id: string; categoryId?: string; tabId?: string; eraId?: string; costResourceId?: string | null; costEconomyId?: string | null }>;
   clientProfiles?: {
     default?: RuntimeClientProfile;
+    roblox?: RuntimeClientProfile;
+    web?: RuntimeClientProfile;
+    unity?: RuntimeClientProfile;
+    unreal?: RuntimeClientProfile;
+    godot?: RuntimeClientProfile;
   };
 };
 
@@ -106,6 +116,8 @@ function validateEraNavigation(payload: RuntimePayload | RobloxPayload, label: s
   const eraNames = eras.map((era) => era.displayName ?? era.id);
   const expectedIds = ["survival", "ancient", "medieval", "renaissance", "industrial", "modern", "space-age", "interstellar", "galactic"];
   const eraNavigation = "clientHints" in payload ? payload.clientHints?.eraNavigation : payload.clientProfiles?.default?.eraNavigation;
+  const supportedModes = new Set(["current_journey", "compact_timeline", "full_timeline"]);
+  const supportedBoundaryModes = new Set(["current_and_next", "previous_current_next", "previous_and_current"]);
 
   assert(eras.length === 9, `${label} payload must include exactly nine eras; received ${eras.length}.`);
   assert(eraNames.join("|") === "Survival|Ancient|Medieval|Renaissance|Industrial|Modern|Space Age|Interstellar|Galactic", `${label} eras are not in canonical order: ${eraNames.join(", ")}.`);
@@ -114,11 +126,29 @@ function validateEraNavigation(payload: RuntimePayload | RobloxPayload, label: s
   assert(eras[3]?.id === "renaissance", `${label} payload is missing Renaissance at position 4.`);
   assert(eras[3]?.index === 4 && eras[3]?.name === "renaissance" && eras[3]?.displayName === "Renaissance" && eras[3]?.shortDisplayName === "Renaissance", `${label} Renaissance record is not canonical.`);
   assert(eras[2]?.id === "medieval" && eras[4]?.id === "industrial", `${label} Renaissance must immediately follow Medieval and precede Industrial.`);
-  assert(eras.some((era) => era.id === "space-age" && era.shortDisplayName === "Space"), `${label} payload is missing Space Age shortDisplayName.`);
+  assert(eras.every((era) => era.shortDisplayName), `${label} every era must expose shortDisplayName.`);
+  assert(eras.map((era) => `${era.id}:${era.shortDisplayName}`).join("|") === "survival:Survival|ancient:Ancient|medieval:Medieval|renaissance:Renaissance|industrial:Industrial|modern:Modern|space-age:Space|interstellar:Interstellar|galactic:Galactic", `${label} shortDisplayName values are not canonical.`);
+  assert(supportedModes.has(String(eraNavigation?.dashboardMode)), `${label} eraNavigation.dashboardMode is not supported.`);
   assert(eraNavigation?.dashboardMode === "current_journey", `${label} eraNavigation.dashboardMode must be current_journey.`);
+  assert(Number.isInteger(eraNavigation?.visibleEraCount) && (eraNavigation?.visibleEraCount ?? 0) > 0 && (eraNavigation?.visibleEraCount ?? 0) <= eras.length, `${label} eraNavigation.visibleEraCount must be a positive integer no larger than era count.`);
   assert(eraNavigation?.visibleEraCount === 3, `${label} eraNavigation.visibleEraCount must be 3.`);
   assert(eraNavigation?.fullTimelineEnabled === true, `${label} eraNavigation.fullTimelineEnabled must be true.`);
   assert(eraNavigation?.allowPrimaryHorizontalScroll === false, `${label} eraNavigation.allowPrimaryHorizontalScroll must be false.`);
+  assert(eraNavigation?.boundaryBehavior?.firstEraMode === "current_and_next", `${label} boundary firstEraMode must be current_and_next.`);
+  assert(eraNavigation?.boundaryBehavior?.middleEraMode === "previous_current_next", `${label} boundary middleEraMode must be previous_current_next.`);
+  assert(eraNavigation?.boundaryBehavior?.lastEraMode === "previous_and_current", `${label} boundary lastEraMode must be previous_and_current.`);
+  for (const value of Object.values(eraNavigation?.boundaryBehavior ?? {})) {
+    assert(supportedBoundaryModes.has(String(value)), `${label} boundary behavior value is not supported: ${value}.`);
+  }
+
+  if (!("clientHints" in payload)) {
+    for (const profileName of ["roblox", "web", "unity", "unreal", "godot"] as const) {
+      const profileNavigation = payload.clientProfiles?.[profileName]?.eraNavigation;
+      assert(profileNavigation?.visibleEraCount === 3, `${label} ${profileName} eraNavigation override must inherit visibleEraCount 3.`);
+      assert(profileNavigation?.dashboardMode === "current_journey", `${label} ${profileName} eraNavigation must inherit dashboardMode.`);
+      assert(profileNavigation?.boundaryBehavior?.middleEraMode === "previous_current_next", `${label} ${profileName} eraNavigation must inherit boundary behavior.`);
+    }
+  }
 }
 
 function validateRobloxReferences(payload: RobloxPayload) {

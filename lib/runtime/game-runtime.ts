@@ -16,6 +16,7 @@ import {
   resolveEconomyId
 } from "@/lib/economy/definitions";
 import { ResourceService } from "@/lib/resources/service";
+import { engineEraNavigationOverrides, resolveEraNavigationProfile, supportedEraNavigationBoundaryModes, supportedEraNavigationDashboardModes } from "@/lib/runtime/client-profiles";
 import type { GameData, ResourceCatalogItem, Upgrade } from "@/types/schema";
 import type {
   AssetDefinition,
@@ -36,7 +37,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 5;
+export const gameRuntimeContentVersion = 6;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -249,12 +250,7 @@ function defaultProfile(overrides: Partial<ClientProfile> = {}): ClientProfile {
     availableGlowEnabled: true,
     primaryHudResources: [...primaryHudEconomyIds],
     primaryHudSlots,
-    eraNavigation: {
-      dashboardMode: "current_journey",
-      visibleEraCount: 3,
-      fullTimelineEnabled: true,
-      allowPrimaryHorizontalScroll: false
-    },
+    eraNavigation: resolveEraNavigationProfile(),
     ...overrides
   };
 }
@@ -262,11 +258,11 @@ function defaultProfile(overrides: Partial<ClientProfile> = {}): ClientProfile {
 function defaultClientProfiles(): ClientProfiles {
   return {
     default: defaultProfile(),
-    roblox: defaultProfile(),
-    web: defaultProfile({ defaultUpgradeRowsVisible: 6, futureUpgradeTeaserCount: 3, lockedOpacity: 0.55 }),
-    unity: defaultProfile({ defaultUpgradeRowsVisible: 5 }),
-    unreal: defaultProfile({ defaultUpgradeRowsVisible: 5 }),
-    godot: defaultProfile({ defaultUpgradeRowsVisible: 5 })
+    roblox: defaultProfile({ eraNavigation: resolveEraNavigationProfile(engineEraNavigationOverrides.roblox) }),
+    web: defaultProfile({ defaultUpgradeRowsVisible: 6, futureUpgradeTeaserCount: 3, lockedOpacity: 0.55, eraNavigation: resolveEraNavigationProfile(engineEraNavigationOverrides.web) }),
+    unity: defaultProfile({ defaultUpgradeRowsVisible: 5, eraNavigation: resolveEraNavigationProfile(engineEraNavigationOverrides.unity) }),
+    unreal: defaultProfile({ defaultUpgradeRowsVisible: 5, eraNavigation: resolveEraNavigationProfile(engineEraNavigationOverrides.unreal) }),
+    godot: defaultProfile({ defaultUpgradeRowsVisible: 5, eraNavigation: resolveEraNavigationProfile(engineEraNavigationOverrides.godot) })
   };
 }
 
@@ -719,6 +715,28 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
     if (profile.defaultUpgradeRowsVisible < 0 || profile.futureUpgradeTeaserCount < 0 || profile.lockedOpacity < 0 || profile.lockedOpacity > 1) {
       issues.push({ severity: "error", code: "invalid_client_profile", message: "Client profile fields must be valid.", records: [profileName] });
     }
+    const eraNavigation = profile.eraNavigation;
+    if (!eraNavigation) {
+      issues.push({ severity: "error", code: "era_navigation_missing", message: "Client profiles must expose eraNavigation presentation intent.", records: [profileName] });
+    } else {
+      if (!supportedEraNavigationDashboardModes.includes(eraNavigation.dashboardMode)) {
+        issues.push({ severity: "error", code: "invalid_era_navigation_mode", message: "eraNavigation.dashboardMode is not supported.", records: [profileName, eraNavigation.dashboardMode] });
+      }
+      if (!Number.isInteger(eraNavigation.visibleEraCount) || eraNavigation.visibleEraCount <= 0 || eraNavigation.visibleEraCount > runtimeData.eras.length) {
+        issues.push({ severity: "error", code: "invalid_era_navigation_visible_count", message: "eraNavigation.visibleEraCount must be a positive integer no larger than the canonical era count.", records: [profileName, String(eraNavigation.visibleEraCount)] });
+      }
+      if (typeof eraNavigation.fullTimelineEnabled !== "boolean" || typeof eraNavigation.allowPrimaryHorizontalScroll !== "boolean") {
+        issues.push({ severity: "error", code: "invalid_era_navigation_flags", message: "eraNavigation timeline and scroll flags must be boolean.", records: [profileName] });
+      }
+      const boundaryBehavior = eraNavigation.boundaryBehavior;
+      if (boundaryBehavior) {
+        for (const [key, value] of Object.entries(boundaryBehavior)) {
+          if (!supportedEraNavigationBoundaryModes.includes(value)) {
+            issues.push({ severity: "error", code: "invalid_era_navigation_boundary", message: "eraNavigation.boundaryBehavior values are not supported.", records: [profileName, key, value] });
+          }
+        }
+      }
+    }
     const slots = profile.primaryHudSlots ?? [];
     const hudIds = profile.primaryHudResources ?? [];
     const slotOrders = slots.map((slot) => slot.order);
@@ -739,6 +757,11 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
         issues.push({ severity: "error", code: "hud_slot_economy_missing", message: "HUD slot economyId must resolve to canonical economy definitions.", records: [profileName, slot.id, slot.economyId] });
       }
     }
+  }
+
+  const missingShortLabels = runtimeData.eras.filter((era) => !era.shortDisplayName);
+  if (missingShortLabels.length) {
+    issues.push({ severity: "error", code: "era_short_label_missing", message: "All eras must expose shortDisplayName for constrained client UI.", records: missingShortLabels.map((era) => era.id) });
   }
 
   for (const definition of runtimeData.economyDefinitions) {
@@ -1094,7 +1117,18 @@ function normalizeClientProfiles(payload: Record<string, unknown>, fallback: Cli
   const profiles = asRecord(payload.clientProfiles ?? payload.clientHints);
   if (!Object.keys(profiles).length) return fallback;
 
-  const mergeProfile = (key: keyof ClientProfiles): ClientProfile => ({ ...fallback[key], ...asRecord(profiles[key]) });
+  const mergeProfile = (key: keyof ClientProfiles): ClientProfile => {
+    const incoming = asRecord(profiles[key]);
+    const inherited = key === "default" ? fallback.default.eraNavigation : fallback[key].eraNavigation ?? fallback.default.eraNavigation;
+    return {
+      ...fallback[key],
+      ...incoming,
+      eraNavigation: resolveEraNavigationProfile({
+        ...(inherited ?? {}),
+        ...asRecord(incoming.eraNavigation)
+      })
+    };
+  };
   return {
     default: mergeProfile("default"),
     roblox: mergeProfile("roblox"),
