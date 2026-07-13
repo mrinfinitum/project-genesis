@@ -5,6 +5,16 @@ import { civilizationAges } from "@/data/civilization-identity";
 import { getAssetProductionRuntimeOverrides } from "@/lib/assets/asset-production";
 import { getAppliedGameArtAssets } from "@/lib/assets/game-art-import";
 import { getGameData } from "@/lib/data";
+import {
+  buildEconomyUsageRelationships,
+  buildInventoryResourceMetadata,
+  buildPrimaryHudSlots,
+  canonicalEconomyDefinitions,
+  isEconomyId,
+  materialResourceIdsThatMustNotBeHud,
+  primaryHudEconomyIds,
+  resolveEconomyId
+} from "@/lib/economy/definitions";
 import { ResourceService } from "@/lib/resources/service";
 import type { GameData, ResourceCatalogItem, Upgrade } from "@/types/schema";
 import type {
@@ -26,13 +36,16 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 4;
+export const gameRuntimeContentVersion = 5;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
 export type RobloxRuntimeExportPayload = {
   metadata: RuntimeMetadata & { target: "roblox"; sourceSchemaVersion: string };
   eras: EraDefinition[];
+  economyDefinitions: GameRuntimeData["economyDefinitions"];
+  economyUsageRelationships: GameRuntimeData["economyUsageRelationships"];
+  inventoryResourceMetadata: GameRuntimeData["inventoryResourceMetadata"];
   resources: ResourceDefinition[];
   upgradeTabs: Array<UpgradeCategory & { tabId: string; label: string }>;
   upgrades: Array<UpgradeDefinition & { tabId: string }>;
@@ -227,12 +240,15 @@ function defaultCategories(): UpgradeCategory[] {
 }
 
 function defaultProfile(overrides: Partial<ClientProfile> = {}): ClientProfile {
+  const primaryHudSlots = buildPrimaryHudSlots();
   return {
     defaultUpgradeRowsVisible: 4,
     futureUpgradeTeaserCount: 2,
     showUnknownUpgradeSlots: true,
     lockedOpacity: 0.45,
     availableGlowEnabled: true,
+    primaryHudResources: [...primaryHudEconomyIds],
+    primaryHudSlots,
     eraNavigation: {
       dashboardMode: "current_journey",
       visibleEraCount: 3,
@@ -263,6 +279,7 @@ function parseEffectValue(value: unknown) {
 function resolveResourceId(value: unknown) {
   const text = String(value ?? "").trim();
   if (!text || text === "None" || text === "-") return null;
+  if (resolveEconomyId(text)) return null;
   return ResourceService.resolveId(text);
 }
 
@@ -289,6 +306,7 @@ function upgradeCategoryId(value: unknown) {
 function upgradeToRuntime(upgrade: Upgrade, index: number): UpgradeDefinition {
   const categoryId = upgradeCategoryId(upgrade.type);
   const era = eraIdFor(upgrade.era);
+  const costEconomyId = resolveEconomyId(upgrade.cost_resource);
   return {
     id: upgrade.id,
     categoryId,
@@ -303,6 +321,7 @@ function upgradeToRuntime(upgrade: Upgrade, index: number): UpgradeDefinition {
     maxLevel: Math.max(1, Number(upgrade.max_level) || 1),
     baseCost: Math.max(0, Number(upgrade.base_cost) || 0),
     costResourceId: resolveResourceId(upgrade.cost_resource),
+    costEconomyId,
     costGrowthRate: Math.max(1, Number(upgrade.cost_multiplier) || 1),
     effectType: upgrade.bonus_type || "modifier",
     baseEffectValue: parseEffectValue(upgrade.bonus_value),
@@ -336,12 +355,13 @@ function assetToRuntime(asset: GameData["assets"][number]): AssetDefinition {
 
 function gameConstantsBalance(constants: GameData["game_constants"]): BalanceDefinition {
   const byKey = new Map(constants.map((row) => [slug(row.constant), row.value]));
+  const economyById = new Map(canonicalEconomyDefinitions.map((definition) => [definition.id, definition]));
   return {
     version: "balance-v1",
-    startingCivilizationEnergy: asNumber(byKey.get("starting-civilization-energy"), 0),
-    startingCoins: asNumber(byKey.get("starting-coins"), 0),
-    startingResearch: asNumber(byKey.get("starting-research"), 0),
-    startingPopulation: asNumber(byKey.get("starting-population"), 125),
+    startingCivilizationEnergy: asNumber(byKey.get("starting-civilization-energy"), economyById.get("ECON-CIVILIZATION-ENERGY")?.startingAmount ?? 0),
+    startingCoins: asNumber(byKey.get("starting-coins"), economyById.get("ECON-CREDITS")?.startingAmount ?? 0),
+    startingResearch: asNumber(byKey.get("starting-research"), economyById.get("ECON-RESEARCH")?.startingAmount ?? 0),
+    startingPopulation: asNumber(byKey.get("starting-population"), economyById.get("ECON-POPULATION")?.startingAmount ?? 125),
     baseClickPower: asNumber(byKey.get("base-click-power"), 1),
     baseAutoClickPower: asNumber(byKey.get("base-auto-click-power"), 0),
     autosaveSeconds: asNumber(byKey.get("autosave-seconds"), 30),
@@ -418,6 +438,8 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
   return {
     ...runtimeData,
     eras: [...runtimeData.eras].sort(byOrderThenId),
+    economyDefinitions: [...runtimeData.economyDefinitions].sort(byId),
+    inventoryResourceMetadata: [...runtimeData.inventoryResourceMetadata].sort(byId),
     resources: [...runtimeData.resources].sort(byId),
     upgradeCategories: [...runtimeData.upgradeCategories].sort(byOrderThenId),
     upgrades: [...runtimeData.upgrades].sort(byOrderThenId),
@@ -644,6 +666,7 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   const issues: ImportIssue[] = [];
   const eraIds = new Set(runtimeData.eras.map((row) => row.id));
   const categoryIds = new Set(runtimeData.upgradeCategories.map((row) => row.id));
+  const economyIds = new Set(runtimeData.economyDefinitions.map((row) => row.id));
   const resourceIds = new Set(runtimeData.resources.map((row) => row.id));
   const upgradeIds = new Set(runtimeData.upgrades.map((row) => row.id));
 
@@ -651,7 +674,7 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
     issues.push({ severity: "error", code: "metadata_missing", message: "metadata.schemaVersion is required.", records: ["metadata"] });
   }
 
-  for (const [moduleName, rows] of Object.entries({ eras: runtimeData.eras, resources: runtimeData.resources, upgradeCategories: runtimeData.upgradeCategories, upgrades: runtimeData.upgrades, assets: runtimeData.assets })) {
+  for (const [moduleName, rows] of Object.entries({ eras: runtimeData.eras, economyDefinitions: runtimeData.economyDefinitions, inventoryResourceMetadata: runtimeData.inventoryResourceMetadata, resources: runtimeData.resources, upgradeCategories: runtimeData.upgradeCategories, upgrades: runtimeData.upgrades, assets: runtimeData.assets })) {
     const duplicates = duplicateIds(rows as Array<{ id: string }>);
     if (duplicates.length) {
       issues.push({ severity: "error", code: "duplicate_id", message: `${moduleName} contains duplicate IDs.`, records: duplicates });
@@ -675,6 +698,9 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
     if (upgrade.costResourceId && !resourceIds.has(upgrade.costResourceId)) {
       issues.push({ severity: "error", code: "upgrade_resource_missing", message: "Upgrade cost resources must resolve to the Resource Catalog.", records: [upgrade.id, upgrade.costResourceId] });
     }
+    if (upgrade.costEconomyId && !economyIds.has(upgrade.costEconomyId)) {
+      issues.push({ severity: "error", code: "upgrade_economy_missing", message: "Upgrade cost economy IDs must resolve to canonical economy definitions.", records: [upgrade.id, upgrade.costEconomyId] });
+    }
     for (const nextId of upgrade.nextUpgradeIds) {
       if (!upgradeIds.has(nextId)) {
         issues.push({ severity: "error", code: "next_upgrade_missing", message: "nextUpgradeIds must resolve.", records: [upgrade.id, nextId] });
@@ -692,6 +718,37 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   for (const [profileName, profile] of Object.entries(runtimeData.clientProfiles)) {
     if (profile.defaultUpgradeRowsVisible < 0 || profile.futureUpgradeTeaserCount < 0 || profile.lockedOpacity < 0 || profile.lockedOpacity > 1) {
       issues.push({ severity: "error", code: "invalid_client_profile", message: "Client profile fields must be valid.", records: [profileName] });
+    }
+    const slots = profile.primaryHudSlots ?? [];
+    const hudIds = profile.primaryHudResources ?? [];
+    const slotOrders = slots.map((slot) => slot.order);
+    const duplicateHudOrders = duplicateNumbers(slotOrders);
+    if (duplicateHudOrders.length) {
+      issues.push({ severity: "error", code: "duplicate_hud_order", message: "HUD slot order values must be unique.", records: [profileName, ...duplicateHudOrders.map(String)] });
+    }
+    for (const economyId of hudIds) {
+      if (!economyIds.has(economyId)) {
+        issues.push({ severity: "error", code: "hud_economy_missing", message: "HUD resources must resolve to canonical economy definitions.", records: [profileName, economyId] });
+      }
+      if (resourceIds.has(economyId) || materialResourceIdsThatMustNotBeHud().has(economyId)) {
+        issues.push({ severity: "error", code: "material_resource_in_hud", message: "Material resources must not be used as global HUD economy IDs.", records: [profileName, economyId] });
+      }
+    }
+    for (const slot of slots) {
+      if (!economyIds.has(slot.economyId)) {
+        issues.push({ severity: "error", code: "hud_slot_economy_missing", message: "HUD slot economyId must resolve to canonical economy definitions.", records: [profileName, slot.id, slot.economyId] });
+      }
+    }
+  }
+
+  for (const definition of runtimeData.economyDefinitions) {
+    for (const key of ["startingAmount", "startingRate", "minimum"] as const) {
+      if (!Number.isFinite(definition[key])) {
+        issues.push({ severity: "error", code: "invalid_economy_number", message: "Economy starting values, rates, and minimums must be finite.", records: [definition.id, key] });
+      }
+    }
+    if (definition.premium && !/premium/i.test(definition.id)) {
+      issues.push({ severity: "warning", code: "premium_economy_marker", message: "Premium economy values should be explicitly identifiable.", records: [definition.id] });
     }
   }
 
@@ -726,6 +783,9 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
       sourceSchemaVersion: sorted.metadata.schemaVersion
     },
     eras: sorted.eras,
+    economyDefinitions: sorted.economyDefinitions,
+    economyUsageRelationships: sorted.economyUsageRelationships,
+    inventoryResourceMetadata: sorted.inventoryResourceMetadata,
     resources: sorted.resources,
     upgradeTabs: sorted.upgradeCategories.map((category) => ({
       ...category,
@@ -751,6 +811,7 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
   const issues: ImportIssue[] = [];
   const eraIds = new Set(payload.eras.map((era) => era.id));
   const resourceIds = new Set(payload.resources.map((resource) => resource.id));
+  const economyIds = new Set(payload.economyDefinitions.map((definition) => definition.id));
   const tabIds = new Set(payload.upgradeTabs.map((tab) => tab.tabId));
 
   if (!payload.metadata.schemaVersion) {
@@ -778,6 +839,9 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
     }
     if (upgrade.costResourceId && !resourceIds.has(upgrade.costResourceId)) {
       issues.push({ severity: "error", code: "upgrade_resource_missing", message: "Every Roblox upgrade costResourceId must resolve to a resource.", records: [upgrade.id, upgrade.costResourceId] });
+    }
+    if (upgrade.costEconomyId && !economyIds.has(upgrade.costEconomyId)) {
+      issues.push({ severity: "error", code: "upgrade_economy_missing", message: "Every Roblox upgrade costEconomyId must resolve to an economy definition.", records: [upgrade.id, upgrade.costEconomyId] });
     }
   }
 
@@ -864,6 +928,9 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
   return withCanonicalEraDefinitions({
     metadata: metadata(),
     eras: defaultEras(),
+    economyDefinitions: canonicalEconomyDefinitions,
+    economyUsageRelationships: buildEconomyUsageRelationships(data),
+    inventoryResourceMetadata: buildInventoryResourceMetadata(data),
     resources: ResourceService.catalog.map(resourceToRuntime),
     upgradeCategories: [...categories.values()].sort((left, right) => left.order - right.order),
     upgrades,
@@ -884,6 +951,9 @@ export async function getGameRuntimeData() {
       ...store.appliedRuntimeData.metadata,
       contentVersion: Math.max(store.appliedRuntimeData.metadata.contentVersion, gameRuntimeContentVersion)
     },
+    economyDefinitions: base.economyDefinitions,
+    economyUsageRelationships: base.economyUsageRelationships,
+    inventoryResourceMetadata: base.inventoryResourceMetadata,
     resources: base.resources
   });
   return {
@@ -1046,6 +1116,9 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
       environment: request.environment ?? "development"
     }),
     eras: normalizeImportedEras(payload, base.eras),
+    economyDefinitions: base.economyDefinitions,
+    economyUsageRelationships: base.economyUsageRelationships,
+    inventoryResourceMetadata: base.inventoryResourceMetadata,
     resources: base.resources,
     upgradeCategories: normalizeImportedCategories(payload, base.upgradeCategories),
     upgrades: normalizeImportedUpgrades(payload, base.upgrades),

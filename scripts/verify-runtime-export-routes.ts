@@ -7,14 +7,19 @@ type EraNavigationHints = {
 
 type RuntimeClientProfile = {
   eraNavigation?: EraNavigationHints;
+  primaryHudResources?: string[];
+  primaryHudSlots?: Array<{ economyId: string; order: number; showRate: boolean; compactLabel: string; premium: boolean }>;
 };
 
 type RuntimePayload = {
   metadata?: { schemaVersion?: string; contentVersion?: number; checksum?: string; accessLevel?: string; validationStatus?: string };
   eras?: Array<{ id: string; index?: number; name?: string; displayName?: string; shortDisplayName?: string }>;
+  economyDefinitions?: Array<{ id: string; startingAmount?: number; startingRate?: number; premium?: boolean }>;
+  economyUsageRelationships?: { unresolved?: Array<unknown> };
+  inventoryResourceMetadata?: Array<{ resourceId: string; classification?: string }>;
   resources?: Array<{ id: string }>;
   upgradeCategories?: Array<{ id: string }>;
-  upgrades?: Array<{ id: string; categoryId?: string; tabId?: string; eraId?: string; costResourceId?: string | null }>;
+  upgrades?: Array<{ id: string; categoryId?: string; tabId?: string; eraId?: string; costResourceId?: string | null; costEconomyId?: string | null }>;
   clientProfiles?: {
     default?: RuntimeClientProfile;
   };
@@ -60,13 +65,40 @@ function authHeaders(): Record<string, string> {
 function validateRuntimeReferences(payload: RuntimePayload) {
   const eraIds = new Set((payload.eras ?? []).map((era) => era.id));
   const resourceIds = new Set((payload.resources ?? []).map((resource) => resource.id));
+  const economyIds = new Set((payload.economyDefinitions ?? []).map((definition) => definition.id));
   const categoryIds = new Set((payload.upgradeCategories ?? []).map((category) => category.id));
 
   for (const upgrade of payload.upgrades ?? []) {
     if (upgrade.categoryId) assert(categoryIds.has(upgrade.categoryId), `Upgrade ${upgrade.id} has unresolved categoryId ${upgrade.categoryId}.`);
     if (upgrade.eraId) assert(eraIds.has(upgrade.eraId), `Upgrade ${upgrade.id} has unresolved eraId ${upgrade.eraId}.`);
     if (upgrade.costResourceId) assert(resourceIds.has(upgrade.costResourceId), `Upgrade ${upgrade.id} has unresolved costResourceId ${upgrade.costResourceId}.`);
+    if (upgrade.costEconomyId) assert(economyIds.has(upgrade.costEconomyId), `Upgrade ${upgrade.id} has unresolved costEconomyId ${upgrade.costEconomyId}.`);
   }
+}
+
+function validateEconomy(payload: RuntimePayload | RobloxPayload, label: string) {
+  const economyDefinitions = payload.economyDefinitions ?? [];
+  const economyIds = new Set(economyDefinitions.map((definition) => definition.id));
+  const materialIds = new Set((payload.resources ?? []).map((resource) => resource.id));
+  const profile = "clientHints" in payload ? payload.clientHints : payload.clientProfiles?.default;
+  const expectedHud = ["ECON-CREDITS", "ECON-POPULATION", "ECON-CIVILIZATION-ENERGY", "ECON-RESEARCH", "ECON-PREMIUM-CRYSTALS"];
+  const hud = profile?.primaryHudResources ?? [];
+  const slots = profile?.primaryHudSlots ?? [];
+  const slotOrders = slots.map((slot) => slot.order);
+
+  assert(economyDefinitions.length >= 6, `${label} must include canonical economy definitions.`);
+  for (const id of ["ECON-CIVILIZATION-ENERGY", "ECON-CREDITS", "ECON-RESEARCH", "ECON-POPULATION", "ECON-CIVILIZATION-POINTS", "ECON-PREMIUM-CRYSTALS"]) {
+    assert(economyIds.has(id), `${label} is missing economy definition ${id}.`);
+  }
+  assert(hud.join("|") === expectedHud.join("|"), `${label} primaryHudResources order is incorrect: ${hud.join(", ")}.`);
+  assert(slots.length === expectedHud.length, `${label} must include slot metadata for every primary HUD economy ID.`);
+  assert(new Set(slotOrders).size === slotOrders.length, `${label} HUD slot order values must be unique.`);
+  assert(slots.every((slot) => economyIds.has(slot.economyId)), `${label} HUD slot economy IDs must resolve.`);
+  assert(hud.every((id) => economyIds.has(id) && !materialIds.has(id)), `${label} HUD IDs must resolve only to economy definitions, not material resources.`);
+  assert(economyDefinitions.every((definition) => Number.isFinite(definition.startingAmount) && Number.isFinite(definition.startingRate)), `${label} economy starting amounts and rates must be finite.`);
+  assert(economyDefinitions.find((definition) => definition.id === "ECON-PREMIUM-CRYSTALS")?.premium === true, `${label} Premium Crystals must be explicitly premium.`);
+  assert((payload.inventoryResourceMetadata?.length ?? 0) > 0, `${label} must include inventory resource metadata for the resources screen.`);
+  assert(payload.inventoryResourceMetadata?.every((row) => row.classification === "inventory_resource"), `${label} inventory metadata must be classified as inventory_resource.`);
 }
 
 function validateEraNavigation(payload: RuntimePayload | RobloxPayload, label: string) {
@@ -92,6 +124,7 @@ function validateEraNavigation(payload: RuntimePayload | RobloxPayload, label: s
 function validateRobloxReferences(payload: RobloxPayload) {
   const eraIds = new Set((payload.eras ?? []).map((era) => era.id));
   const resourceIds = new Set((payload.resources ?? []).map((resource) => resource.id));
+  const economyIds = new Set((payload.economyDefinitions ?? []).map((definition) => definition.id));
   const tabIds = new Set((payload.upgradeTabs ?? []).map((tab) => tab.tabId));
 
   assert(payload.upgradeTabs?.length === 4, `Expected exactly four Roblox upgrade tabs; received ${payload.upgradeTabs?.length ?? 0}.`);
@@ -100,6 +133,7 @@ function validateRobloxReferences(payload: RobloxPayload) {
     assert(upgrade.tabId && tabIds.has(upgrade.tabId), `Upgrade ${upgrade.id} has unresolved tabId ${upgrade.tabId ?? "(missing)"}.`);
     assert(upgrade.eraId && eraIds.has(upgrade.eraId), `Upgrade ${upgrade.id} has unresolved eraId ${upgrade.eraId ?? "(missing)"}.`);
     if (upgrade.costResourceId) assert(resourceIds.has(upgrade.costResourceId), `Upgrade ${upgrade.id} has unresolved costResourceId ${upgrade.costResourceId}.`);
+    if (upgrade.costEconomyId) assert(economyIds.has(upgrade.costEconomyId), `Upgrade ${upgrade.id} has unresolved costEconomyId ${upgrade.costEconomyId}.`);
   }
 }
 
@@ -139,6 +173,8 @@ async function main() {
 
   validateEraNavigation(canonical.payload, "Canonical");
   validateEraNavigation(roblox.payload, "Roblox");
+  validateEconomy(canonical.payload, "Canonical");
+  validateEconomy(roblox.payload, "Roblox");
   validateRuntimeReferences(canonical.payload);
   validateRobloxReferences(roblox.payload);
 
@@ -152,6 +188,8 @@ async function main() {
       validationStatus: canonical.payload.metadata?.validationStatus,
       cacheControl: canonical.headers.get("cache-control"),
       eraCount: canonical.payload.eras?.length ?? 0,
+      economyDefinitionCount: canonical.payload.economyDefinitions?.length ?? 0,
+      primaryHudResources: canonical.payload.clientProfiles?.default?.primaryHudResources ?? [],
       resourceCount: canonical.payload.resources?.length ?? 0,
       upgradeCount: canonical.payload.upgrades?.length ?? 0
     },
@@ -164,6 +202,8 @@ async function main() {
       validationStatus: roblox.payload.metadata?.validationStatus,
       cacheControl: roblox.headers.get("cache-control"),
       eraCount: roblox.payload.eras?.length ?? 0,
+      economyDefinitionCount: roblox.payload.economyDefinitions?.length ?? 0,
+      primaryHudResources: roblox.payload.clientHints?.primaryHudResources ?? [],
       resourceCount: roblox.payload.resources?.length ?? 0,
       upgradeTabCount: roblox.payload.upgradeTabs?.length ?? 0,
       upgradeCount: roblox.payload.upgrades?.length ?? 0

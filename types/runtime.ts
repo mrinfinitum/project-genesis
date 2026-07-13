@@ -83,6 +83,7 @@ export type UpgradeDefinition = {
   maxLevel: number;
   baseCost: number;
   costResourceId: string | null;
+  costEconomyId?: string | null;
   costGrowthRate: number;
   effectType: string;
   baseEffectValue: number;
@@ -91,6 +92,74 @@ export type UpgradeDefinition = {
   nextUpgradeIds: string[];
   visibilityRules: VisibilityRules;
   tags: string[];
+};
+
+export type EconomyValueDefinition = {
+  id: string;
+  name: string;
+  displayName: string;
+  description: string;
+  valueType: "currency" | "counter" | "rate" | "capacity";
+  category: "global_economy";
+  iconKey: string;
+  color: string;
+  formatting: {
+    style: "integer" | "decimal" | "compact" | "percent";
+    prefix?: string;
+    suffix?: string;
+    decimals: number;
+  };
+  spendable: boolean;
+  premium: boolean;
+  startingAmount: number;
+  startingRate: number;
+  minimum: number;
+  maximum: number | null;
+  visibility: "always" | "when_unlocked" | "premium_store";
+  usage: string[];
+  status: "canonical" | "draft" | "deprecated";
+};
+
+export type HudResourceSlot = {
+  id: string;
+  economyId: string;
+  order: number;
+  showRate: boolean;
+  compactLabel: string;
+  iconKey: string;
+  formatting: EconomyValueDefinition["formatting"];
+  premium: boolean;
+};
+
+export type EconomyUsageRelationships = {
+  upgradeCosts: Record<string, string[]>;
+  buildingCosts: Record<string, string[]>;
+  researchCosts: Record<string, string[]>;
+  eraUnlocks: Record<string, string[]>;
+  boosts: Record<string, string[]>;
+  missions: Record<string, string[]>;
+  events: Record<string, string[]>;
+  progressionRewards: Record<string, string[]>;
+  unresolved: Array<{ sourceType: string; sourceId: string; value: string; reason: string }>;
+};
+
+export type InventoryResourceMetadata = {
+  id: string;
+  resourceId: string;
+  displayName: string;
+  classification: "inventory_resource";
+  productionSources: string[];
+  consumptionUses: string[];
+  storageRules: {
+    stackSize: number;
+    storageLimit: number | null;
+    unavailableReason?: string;
+  };
+  buildingRelationships: string[];
+  researchRelationships: string[];
+  planetAvailability: string[];
+  eraAvailability: string[];
+  relationshipStatus: "resolved" | "partial" | "unavailable";
 };
 
 export type PlatformAssetMappings = {
@@ -191,6 +260,8 @@ export type ClientProfile = {
   showUnknownUpgradeSlots: boolean;
   lockedOpacity: number;
   availableGlowEnabled: boolean;
+  primaryHudResources?: string[];
+  primaryHudSlots?: HudResourceSlot[];
   eraNavigation?: {
     dashboardMode: "current_journey";
     visibleEraCount: number;
@@ -211,6 +282,9 @@ export type ClientProfiles = {
 export type GameRuntimeData = {
   metadata: RuntimeMetadata;
   eras: EraDefinition[];
+  economyDefinitions: EconomyValueDefinition[];
+  economyUsageRelationships: EconomyUsageRelationships;
+  inventoryResourceMetadata: InventoryResourceMetadata[];
   resources: ResourceDefinition[];
   upgradeCategories: UpgradeCategory[];
   upgrades: UpgradeDefinition[];

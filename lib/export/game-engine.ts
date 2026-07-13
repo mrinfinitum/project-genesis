@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getGameData } from "@/lib/data";
 import { discoveryJournalSchema, sampleDiscoveryJournal, sampleTimelineEvents, timelineEventSchema } from "@/lib/explorer/discovery-log";
 import { colonyBuildingTemplates, colonyFocusDefinitions, colonyLevelDefinitions, colonySchema, createColonyRecord, generateFallbackColonies, type ColonyBuilding, type ColonyRecord } from "@/lib/colonies/procedural";
+import { buildEconomyUsageRelationships, buildInventoryResourceMetadata, buildPrimaryHudSlots, canonicalEconomyDefinitions, primaryHudEconomyIds } from "@/lib/economy/definitions";
 import { buildEconomyState, economySchemas, priceClamps, type MarketRecord, type ResourceListing, type TradeOpportunity, type TradeRoute } from "@/lib/economy/trade";
 import { generateFaction, generateFallbackFactions, type FactionRecord } from "@/lib/factions/procedural";
 import {
@@ -133,6 +134,11 @@ type CanonicalModules = {
   resource_listings: Array<ResourceListing & { id: string; marketId: string }>;
   trade_routes: TradeRoute[];
   trade_opportunities: TradeOpportunity[];
+  economy_definitions: typeof canonicalEconomyDefinitions;
+  hud_profile: Array<ReturnType<typeof buildPrimaryHudSlots>[number]>;
+  primary_hud_resources: string[];
+  economy_usage_relationships: ReturnType<typeof buildEconomyUsageRelationships>;
+  inventory_resource_metadata: ReturnType<typeof buildInventoryResourceMetadata>;
   economy_schemas: typeof economySchemas;
   pricing_rules: ReturnType<typeof buildEconomyState>["pricingRules"];
   market_level_definitions: ReturnType<typeof buildEconomyState>["marketLevelDefinitions"];
@@ -465,6 +471,11 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
     resource_listings: economyState.markets.flatMap((market) => market.resourceListings.map((listing) => ({ ...listing, id: `${market.id}-${listing.resourceId}`, marketId: market.id }))),
     trade_routes: economyState.tradeRoutes,
     trade_opportunities: economyState.tradeOpportunities,
+    economy_definitions: canonicalEconomyDefinitions,
+    hud_profile: buildPrimaryHudSlots(),
+    primary_hud_resources: [...primaryHudEconomyIds],
+    economy_usage_relationships: buildEconomyUsageRelationships(data),
+    inventory_resource_metadata: buildInventoryResourceMetadata(data),
     economy_schemas: economySchemas,
     pricing_rules: economyState.pricingRules,
     market_level_definitions: economyState.marketLevelDefinitions,
@@ -472,6 +483,8 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
       {
         id: "economy_canonical_summary",
         status: "canonical",
+        globalEconomyDefinitions: canonicalEconomyDefinitions.length,
+        primaryHudResources: [...primaryHudEconomyIds],
         markets: economyState.markets.length,
         tradeRoutes: economyState.tradeRoutes.length,
         tradeOpportunities: economyState.tradeOpportunities.length,
@@ -517,6 +530,7 @@ function buildRelationshipMap(modules: CanonicalModules) {
   const missionsByMarket: Record<string, string[]> = {};
   const missionsByTradeRoute: Record<string, string[]> = {};
   const missionsBySystem: Record<string, string[]> = {};
+  const economyUsage: Record<string, Record<string, string[]>> = {};
 
   for (const sector of modules.sectors) {
     const galaxyId = String(sector.galaxy_id ?? "");
@@ -577,6 +591,12 @@ function buildRelationshipMap(modules: CanonicalModules) {
     if (mission.starSystemId) missionsBySystem[mission.starSystemId] = [...(missionsBySystem[mission.starSystemId] ?? []), mission.id];
   }
 
+  for (const [relationshipType, rows] of Object.entries(modules.economy_usage_relationships)) {
+    if (rows && typeof rows === "object" && !Array.isArray(rows)) {
+      economyUsage[relationshipType] = rows as Record<string, string[]>;
+    }
+  }
+
   return {
     sectorsByGalaxy,
     systemsBySector,
@@ -597,7 +617,8 @@ function buildRelationshipMap(modules: CanonicalModules) {
     missionsByColony,
     missionsByMarket,
     missionsByTradeRoute,
-    missionsBySystem
+    missionsBySystem,
+    economyUsage
   };
 }
 
@@ -622,15 +643,17 @@ function addIssue(issues: ExportValidationIssue[], severity: ExportIssueSeverity
 function validateStableIds(issues: ExportValidationIssue[], modules: CanonicalModules) {
   for (const [moduleName, rows] of Object.entries(modules)) {
     if (!Array.isArray(rows)) continue;
-    const missing = rows.map((row, index) => ({ row, index })).filter(({ row }) => !row?.id || typeof row.id !== "string");
+    const objectRows = rows.filter((row): row is Record<string, unknown> => Boolean(row) && typeof row === "object" && !Array.isArray(row));
+    if (!objectRows.length) continue;
+    const missing = objectRows.map((row, index) => ({ row, index })).filter(({ row }) => typeof row.id !== "string");
     if (missing.length) {
       addIssue(issues, "error", "missing_id", `${moduleName} has records without stable string IDs.`, missing.map(({ index }) => `${moduleName}[${index}]`));
     }
 
     const seen = new Set<string>();
     const duplicates = new Set<string>();
-    for (const row of rows) {
-      const id = typeof row?.id === "string" ? row.id : "";
+    for (const row of objectRows) {
+      const id = typeof row.id === "string" ? row.id : "";
       if (!id) continue;
       if (seen.has(id)) duplicates.add(id);
       seen.add(id);
@@ -725,6 +748,43 @@ function validateHierarchy(issues: ExportValidationIssue[], modules: CanonicalMo
 function validateEconomy(issues: ExportValidationIssue[], modules: CanonicalModules) {
   const marketIds = new Set(modules.markets.map((market) => market.id));
   const colonyIds = new Set(modules.colonies.map((colony) => colony.id));
+  const economyIds = new Set(modules.economy_definitions.map((definition) => definition.id));
+  const duplicateEconomyIds = modules.economy_definitions.map((definition) => definition.id).filter((id, index, ids) => ids.indexOf(id) !== index);
+  const hudOrders = modules.hud_profile.map((slot) => slot.order);
+  const duplicateHudOrders = hudOrders.filter((order, index, orders) => orders.indexOf(order) !== index);
+
+  if (duplicateEconomyIds.length) {
+    addIssue(issues, "error", "duplicate_economy_id", "Economy definitions must use unique IDs.", duplicateEconomyIds);
+  }
+
+  const invalidEconomyNumbers = modules.economy_definitions.filter((definition) => !Number.isFinite(definition.startingAmount) || !Number.isFinite(definition.startingRate) || !Number.isFinite(definition.minimum));
+  if (invalidEconomyNumbers.length) {
+    addIssue(issues, "error", "invalid_economy_number", "Economy starting amounts, rates, and minimums must be finite.", invalidEconomyNumbers.map((definition) => definition.id));
+  }
+
+  const premiumWithoutMarker = modules.economy_definitions.filter((definition) => definition.premium && !/premium/i.test(definition.id));
+  if (premiumWithoutMarker.length) {
+    addIssue(issues, "warning", "premium_economy_marker", "Premium economy values should be explicitly marked.", premiumWithoutMarker.map((definition) => definition.id));
+  }
+
+  const unresolvedHudIds = modules.primary_hud_resources.filter((economyId) => !economyIds.has(economyId));
+  if (unresolvedHudIds.length) {
+    addIssue(issues, "error", "hud_economy_missing", "Primary HUD resources must resolve to economy definitions.", unresolvedHudIds);
+  }
+
+  const invalidHudSlots = modules.hud_profile.filter((slot) => !economyIds.has(slot.economyId));
+  if (invalidHudSlots.length) {
+    addIssue(issues, "error", "hud_slot_economy_missing", "HUD slot economy IDs must resolve to economy definitions.", invalidHudSlots.map((slot) => slot.id));
+  }
+
+  if (duplicateHudOrders.length) {
+    addIssue(issues, "error", "duplicate_hud_order", "HUD slot order must be unique.", duplicateHudOrders.map(String));
+  }
+
+  const materialHudIds = modules.primary_hud_resources.filter((id) => Boolean(ResourceService.getById(id)) || /stone|wood|water|quartz|clay|sand|soil|coal/i.test(id));
+  if (materialHudIds.length) {
+    addIssue(issues, "error", "material_resource_in_hud", "Material resources must not be used as global HUD currencies.", materialHudIds);
+  }
 
   const invalidListings = modules.resource_listings.filter((listing) => !ResourceService.getById(listing.resourceId));
   if (invalidListings.length) {
@@ -908,6 +968,12 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
       "trade route market links resolve",
       "colonies connect to markets",
       "market prices are non-negative and clamped",
+      "economy IDs are unique",
+      "HUD economy IDs resolve",
+      "HUD order is unique",
+      "starting amounts and rates are finite",
+      "premium values are explicitly marked",
+      "material resources are excluded from HUD",
       "mission objectives link to missions",
       "mission rewards link to missions",
       "mission targets resolve",
@@ -931,7 +997,7 @@ function schemaNotes(target: EngineTarget) {
     resources: "Resource display data must be resolved through resource_catalog/ResourceService.",
     hierarchy: "Preserve Galaxy -> Sector -> Star System -> Planet. Do not add Region or Cluster layers.",
     colonies: "Colony state, growth inputs, buildings, levels, and focus definitions are canonical Studio data shared by every engine target.",
-    economy: "Markets, resource listings, trade routes, and opportunities are engine-agnostic canonical data. Pricing uses ResourceService base trade values and deterministic modifiers.",
+    economy: "Global economy definitions, HUD slots, markets, resource listings, trade routes, and opportunities are engine-agnostic canonical data. HUD slots use economy IDs only; inventory materials stay in resource_catalog.",
     missions: "Missions, objectives, rewards, statuses, and generation metadata are deterministic canonical Studio data. Engine targets consume mission state and report progress back through objective IDs.",
     mapping: config.schemaMapping
   };
@@ -979,6 +1045,11 @@ function compactModules(modules: CanonicalModules) {
     resource_listings: modules.resource_listings,
     trade_routes: modules.trade_routes,
     trade_opportunities: modules.trade_opportunities,
+    economy_definitions: modules.economy_definitions,
+    hud_profile: modules.hud_profile,
+    primary_hud_resources: modules.primary_hud_resources,
+    economy_usage_relationships: modules.economy_usage_relationships,
+    inventory_resource_metadata: modules.inventory_resource_metadata,
     economy_schemas: modules.economy_schemas,
     pricing_rules: modules.pricing_rules,
     market_level_definitions: modules.market_level_definitions,
@@ -1001,6 +1072,7 @@ function targetArtifacts(target: EngineTarget, modules: CanonicalModules) {
   if (target === "roblox") {
     return {
       "ResourceCatalogModule.lua": `local ResourceCatalog = ${luaValue(modules.resource_catalog)}\n\nreturn ResourceCatalog\n`,
+      "EconomyDefinitionsModule.lua": `local EconomyDefinitions = ${luaValue({ economyDefinitions: modules.economy_definitions, hudProfile: modules.hud_profile, primaryHudResources: modules.primary_hud_resources })}\n\nreturn EconomyDefinitions\n`,
       "ResearchUnlockModule.lua": `local ResearchUnlocks = ${luaValue({ research: modules.research, unlocks: modules.unlock_matrix })}\n\nreturn ResearchUnlocks\n`,
       "UniverseDataModule.lua": `local UniverseData = ${luaValue({ galaxies: modules.galaxies, sectors: modules.sectors, starSystems: modules.star_systems, planets: modules.planets, celestialBodies: modules.celestial_bodies, factions: modules.factions, colonies: modules.colonies, colonyBuildings: modules.colony_buildings, colonyLevels: modules.colony_level_definitions, colonyFocus: modules.colony_focus_definitions, markets: modules.markets, tradeRoutes: modules.trade_routes, tradeOpportunities: modules.trade_opportunities, missions: modules.missions, missionObjectives: modules.mission_objectives, missionRewards: modules.mission_rewards })}\n\nreturn UniverseData\n`,
       "ApiService.lua": "local HttpService = game:GetService(\"HttpService\")\n\nlocal ApiService = {}\nApiService.BaseUrl = \"https://your-studio-host.example.com/api/export\"\n\nfunction ApiService.FetchGeneric()\n  local response = HttpService:GetAsync(ApiService.BaseUrl .. \"/generic\")\n  return HttpService:JSONDecode(response)\nend\n\nreturn ApiService\n"
