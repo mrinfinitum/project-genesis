@@ -1,4 +1,5 @@
 import { civilizationAges } from "@/data/civilization-identity";
+import { contentPacks, type ContentPack, type ContentPackCategory, type ContentPackStatus } from "@/data/content-packs/survival";
 import type { AssetProductionState, MissingAssetRequirement, ProductionAsset, ProductionTaskRecord } from "@/lib/assets/asset-production";
 import type { EraArtSummaryByEra } from "@/lib/assets/era-art-inventory";
 import type { Building, BuildingChain, GameData, ResearchNode, ResourceCatalogItem, UnlockMatrixRow } from "@/types/schema";
@@ -61,6 +62,12 @@ export type EraProductionHeatmap = {
   research: number;
   buildings: number;
   art: number;
+  status?: "Complete" | "In Progress" | "Needs Work";
+  contentPackId?: string;
+  contentPackStatus?: ContentPackStatus;
+  contentPackCompletion?: number;
+  outstandingWork?: number;
+  categoryScores?: Array<{ label: string; value: number }>;
 };
 
 export type ProductionPlan = {
@@ -76,6 +83,21 @@ export type ProductionPlan = {
 };
 
 const kanbanColumns: ProductionKanbanColumn["id"][] = ["backlog", "ready", "in_progress", "review", "approved", "published", "done"];
+const completePackStatuses: ContentPackStatus[] = ["Complete", "Approved", "Published", "Ready"];
+const contentPackCategoryLabels: Record<ContentPackCategory, string> = {
+  resources: "Resources",
+  buildings: "Buildings",
+  research: "Research",
+  productionChains: "Chains",
+  missions: "Missions",
+  events: "Events",
+  collectibles: "Collectibles",
+  art: "Art",
+  audio: "Audio",
+  ui: "UI",
+  balance: "Balance",
+  progression: "Progression"
+};
 
 function clamp(value: number) {
   return Math.min(100, Math.max(0, Number.isFinite(value) ? Math.round(value) : 0));
@@ -97,6 +119,42 @@ function displayAge(value: string) {
 function isCompleteStatus(value: string | null | undefined) {
   const status = String(value ?? "").toLowerCase();
   return Boolean(status) && !/(missing|blocked|draft|open|todo|needs|pending)/.test(status);
+}
+
+function contentPackItemComplete(status: ContentPackStatus) {
+  return completePackStatuses.includes(status);
+}
+
+function contentPackItems(pack: ContentPack) {
+  return Object.values(pack.categories).flat();
+}
+
+function contentPackCategoryScores(pack: ContentPack) {
+  return Object.entries(pack.categories).map(([category, items]) => ({
+    category: category as ContentPackCategory,
+    label: contentPackCategoryLabels[category as ContentPackCategory],
+    complete: items.filter((item) => contentPackItemComplete(item.status)).length,
+    total: items.length,
+    value: percent(items.filter((item) => contentPackItemComplete(item.status)).length, items.length)
+  }));
+}
+
+function contentPackScore(pack: ContentPack) {
+  const items = contentPackItems(pack);
+  return {
+    complete: items.filter((item) => contentPackItemComplete(item.status)).length,
+    total: items.length,
+    value: percent(items.filter((item) => contentPackItemComplete(item.status)).length, items.length)
+  };
+}
+
+function completeContentPackForEra(eraId: string) {
+  return contentPacks.find((pack) => pack.eraId === eraId && contentPackScore(pack).value >= 100);
+}
+
+function isCoveredByCompleteContentPack(item: ProductionQueueItem) {
+  const eraId = ageId(item.era);
+  return Boolean(completeContentPackForEra(eraId) || contentPacks.some((pack) => contentPackScore(pack).value >= 100 && item.title.toLowerCase().includes(pack.eraName.toLowerCase())));
 }
 
 function assetComplete(asset: ProductionAsset) {
@@ -356,13 +414,33 @@ function buildHeatmap(data: GameData, eraSummary: EraArtSummaryByEra): EraProduc
     const research = percent(researchRows.filter(researchComplete).length, researchRows.length);
     const buildings = percent(buildingRows.filter(buildingComplete).length, buildingRows.length);
     const art = eraSummary[id]?.required ? percent(eraSummary[id].complete, eraSummary[id].required) : 0;
+    const pack = contentPacks.find((contentPack) => contentPack.eraId === id);
+    if (pack) {
+      const packScore = contentPackScore(pack);
+      const categoryScores = contentPackCategoryScores(pack);
+      return {
+        id,
+        displayName: displayAge(age.name),
+        completion: packScore.value,
+        research: categoryScores.find((score) => score.category === "research")?.value ?? research,
+        buildings: categoryScores.find((score) => score.category === "buildings")?.value ?? buildings,
+        art: categoryScores.find((score) => score.category === "art")?.value ?? art,
+        status: packScore.value >= 100 ? "Complete" : "In Progress",
+        contentPackId: pack.id,
+        contentPackStatus: pack.status,
+        contentPackCompletion: packScore.value,
+        outstandingWork: Math.max(0, packScore.total - packScore.complete),
+        categoryScores: categoryScores.map((score) => ({ label: score.label, value: score.value }))
+      };
+    }
     return {
       id,
       displayName: displayAge(age.name),
       completion: clamp((research + buildings + art) / 3),
       research,
       buildings,
-      art
+      art,
+      status: clamp((research + buildings + art) / 3) >= 100 ? "Complete" : "Needs Work"
     };
   });
 }
@@ -370,6 +448,7 @@ function buildHeatmap(data: GameData, eraSummary: EraArtSummaryByEra): EraProduc
 function buildBlockers(data: GameData, assetState: AssetProductionState): ProductionBlocker[] {
   const resources = new Set(data.resource_catalog.map((resource) => resource.id));
   const research = new Set(data.research.map((item) => item.id));
+  const survivalPackComplete = Boolean(completeContentPackForEra("survival"));
   const missingAsset = assetState.missingRequirements[0];
   const building = data.buildings.find((row) => !buildingComplete(row)) ?? data.buildings[0];
   const chain = data.building_chains.find((row) => !chainComplete(row)) ?? data.building_chains[0];
@@ -420,8 +499,8 @@ function buildBlockers(data: GameData, assetState: AssetProductionState): Produc
       blockers: [
         { label: "Resource catalog", done: resources.size > 0 },
         { label: "Production chains", done: data.building_chains.some(chainComplete) },
-        { label: "Mission rewards", done: false },
-        { label: "Event hooks", done: false }
+        { label: "Mission rewards", done: survivalPackComplete },
+        { label: "Event hooks", done: survivalPackComplete }
       ]
     }
   ].filter(Boolean) as ProductionBlocker[];
@@ -432,15 +511,24 @@ function buildReports(data: GameData, assetState: AssetProductionState): Product
   const missingBuildings = data.buildings.filter((row) => !buildingComplete(row)).length;
   const missingChains = data.building_chains.filter((row) => !chainComplete(row)).length;
   const missingResources = data.resource_catalog.filter((row) => !resourceComplete(row)).length;
+  const survivalPack = contentPacks.find((pack) => pack.eraId === "survival");
+  const survivalScores = survivalPack ? contentPackCategoryScores(survivalPack) : [];
+  const survivalCategoryMissing = (category: ContentPackCategory) => {
+    const score = survivalScores.find((item) => item.category === category);
+    return score ? Math.max(0, score.total - score.complete) : 1;
+  };
+  const missingMissions = survivalCategoryMissing("missions");
+  const missingEvents = survivalCategoryMissing("events");
+  const missingCollectibles = survivalCategoryMissing("collectibles");
 
   return [
     { label: "Missing Assets", count: assetState.missingRequirements.length, href: "/assets/missing", severity: "High", description: "Required derivatives or source artwork still missing." },
     { label: "Missing Research", count: missingResearch, href: "/research", severity: missingResearch ? "High" : "Low", description: "Research nodes needing status, icon, or asset completion." },
     { label: "Missing Buildings", count: missingBuildings, href: "/buildings", severity: missingBuildings ? "High" : "Low", description: "Buildings missing unlocks or visual production links." },
-    { label: "Missing Missions", count: 1, href: "/missions", severity: "Critical", description: "Canonical mission content table/workflow needs production records." },
-    { label: "Missing Events", count: 1, href: "/universe-timeline", severity: "Critical", description: "Canonical event content records are not yet tracked." },
+    { label: "Missing Missions", count: missingMissions, href: "/missions", severity: missingMissions ? "Critical" : "Low", description: "Active content-pack mission records needing production completion." },
+    { label: "Missing Events", count: missingEvents, href: "/universe-timeline", severity: missingEvents ? "Critical" : "Low", description: "Active content-pack event records needing production completion." },
     { label: "Missing Production Chains", count: missingChains, href: "/building-chains", severity: missingChains ? "Critical" : "Low", description: "Building chains with missing level definitions." },
-    { label: "Missing Collectibles", count: 1, href: "/collectibles", severity: "Medium", description: "Collectible production tracking is not yet canonical." },
+    { label: "Missing Collectibles", count: missingCollectibles, href: "/collectibles", severity: missingCollectibles ? "Medium" : "Low", description: "Active content-pack collectible records needing production completion." },
     { label: "Missing Resources", count: missingResources, href: "/resource-catalog", severity: missingResources ? "High" : "Low", description: "Resource catalog records with incomplete required fields." }
   ];
 }
@@ -489,6 +577,12 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
   const chainCompleteCount = data.building_chains.filter(chainComplete).length;
   const resourceCompleteCount = data.resource_catalog.filter(resourceComplete).length;
   const unlockCompleteCount = data.unlock_matrix.filter(unlockComplete).length;
+  const survivalPack = contentPacks.find((pack) => pack.eraId === "survival");
+  const survivalScore = survivalPack ? contentPackScore(survivalPack) : { complete: 0, total: 0, value: 0 };
+  const survivalMissionTotal = survivalPack?.categories.missions.length ?? 0;
+  const survivalEventTotal = survivalPack?.categories.events.length ?? 0;
+  const survivalMissionComplete = survivalPack?.categories.missions.filter((item) => contentPackItemComplete(item.status)).length ?? 0;
+  const survivalEventComplete = survivalPack?.categories.events.filter((item) => contentPackItemComplete(item.status)).length ?? 0;
 
   const metrics: ProductionMetric[] = [
     { label: "Overall Game Completion", complete: 0, total: 0, value: 0, detail: "Average of all production systems." },
@@ -498,20 +592,25 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
     { label: "Building Completion", complete: buildingCompleteCount, total: data.buildings.length, value: percent(buildingCompleteCount, data.buildings.length), detail: "Buildings with unlocks and visual references." },
     { label: "Production Chain Completion", complete: chainCompleteCount, total: data.building_chains.length, value: percent(chainCompleteCount, data.building_chains.length), detail: "Building chains with all level slots filled." },
     { label: "Resource Completion", complete: resourceCompleteCount, total: data.resource_catalog.length, value: percent(resourceCompleteCount, data.resource_catalog.length), detail: "Canonical resources with required identity fields." },
-    { label: "Mission Completion", complete: 0, total: 1, value: 0, detail: "Mission production records are not canonical yet." },
-    { label: "Event Completion", complete: 0, total: 1, value: 0, detail: "Event production records are not canonical yet." }
+    { label: "Mission Completion", complete: survivalMissionComplete, total: Math.max(1, survivalMissionTotal), value: percent(survivalMissionComplete, survivalMissionTotal), detail: "Authored mission content from active content packs." },
+    { label: "Event Completion", complete: survivalEventComplete, total: Math.max(1, survivalEventTotal), value: percent(survivalEventComplete, survivalEventTotal), detail: "Authored event content from active content packs." }
   ];
+  if (survivalPack) {
+    metrics.splice(2, 0, { label: "Survival Content Pack", complete: survivalScore.complete, total: survivalScore.total, value: survivalScore.value, detail: `${survivalPack.title} is ${survivalScore.value}% production-ready.` });
+  }
 
   const heatmap = buildHeatmap(data, eraSummary);
   const eraMetric = metrics.find((metric) => metric.label === "Era Completion");
   if (eraMetric) {
+    eraMetric.complete = heatmap.filter((era) => era.completion >= 100).length;
+    eraMetric.total = heatmap.length;
     eraMetric.value = heatmap.length ? clamp(heatmap.reduce((sum, era) => sum + era.completion, 0) / heatmap.length) : 0;
-    eraMetric.detail = `${heatmap.filter((era) => era.completion >= 80).length} eras are production-ready.`;
+    eraMetric.detail = `${eraMetric.complete} eras are 100% complete in the Production Dashboard.`;
   }
   const overall = clamp(metrics.filter((metric) => metric.label !== "Overall Game Completion").reduce((sum, metric) => sum + metric.value, 0) / Math.max(1, metrics.length - 1));
   metrics[0] = { ...metrics[0], complete: metrics.reduce((sum, metric) => sum + metric.complete, 0), total: metrics.reduce((sum, metric) => sum + metric.total, 0), value: overall };
 
-  const queue = [...assetWorkItems(assetState), ...contentWorkItems(data)].slice(0, 220);
+  const queue = [...assetWorkItems(assetState), ...contentWorkItems(data)].filter((item) => !isCoveredByCompleteContentPack(item)).slice(0, 220);
   return {
     overallCompletion: overall,
     metrics,

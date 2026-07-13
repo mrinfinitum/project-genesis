@@ -709,19 +709,40 @@ function ProductionHeatmapPanel({ plan }: { plan: ProductionPlan }) {
   return (
     <Panel title="Production Heatmap" eyebrow="By Era">
       <div className="space-y-3">
-        {plan.heatmap.map((era) => (
-          <div key={era.id} className="grid gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 p-3 md:grid-cols-[9rem_1fr_4rem] md:items-center">
-            <p className="font-black text-white">{era.displayName}</p>
-            <div>
-              <div className="flex items-center justify-between gap-3 text-sm">
-                <HeatmapBlocks value={era.completion} />
-                <span className="text-slate-400">R {era.research}% / B {era.buildings}% / Art {era.art}%</span>
+        {plan.heatmap.map((era) => {
+          const complete = era.completion >= 100;
+          return (
+            <div key={era.id} className={cn("grid gap-3 rounded-md border bg-slate-950/45 p-3 md:grid-cols-[9rem_1fr_4rem] md:items-center", complete ? "border-emerald-300/30 shadow-[0_0_18px_rgba(16,185,129,0.12)]" : "border-cyan-300/10")}>
+              <div>
+                <p className="font-black text-white">{era.displayName}</p>
+                {era.contentPackId ? (
+                  <p className={cn("mt-1 text-[0.65rem] font-black uppercase tracking-[0.18em]", complete ? "text-emerald-200" : "text-cyan-200")}>
+                    {complete ? "Complete" : era.contentPackStatus}
+                  </p>
+                ) : null}
               </div>
-              <div className="mt-2"><GlowingProgressBar value={era.completion} /></div>
+              <div>
+                <div className="flex items-center justify-between gap-3 text-sm">
+                  <HeatmapBlocks value={era.completion} />
+                  <span className={cn("text-right", complete ? "font-semibold text-emerald-100" : "text-slate-400")}>
+                    {era.contentPackId ? `${era.outstandingWork ?? 0} outstanding / Pack ${era.contentPackCompletion}%` : `R ${era.research}% / B ${era.buildings}% / Art ${era.art}%`}
+                  </span>
+                </div>
+                <div className="mt-2"><GlowingProgressBar value={era.completion} /></div>
+                {era.categoryScores?.length ? (
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {era.categoryScores.slice(0, 6).map((score) => (
+                      <span key={score.label} className={cn("rounded border px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-[0.12em]", score.value >= 100 ? "border-emerald-300/25 bg-emerald-300/10 text-emerald-100" : "border-cyan-300/15 bg-cyan-300/5 text-cyan-100")}>
+                        {score.label} {score.value}%
+                      </span>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+              <p className={cn("text-right text-xl font-black", complete ? "text-emerald-100" : "text-cyan-100")}>{era.completion}%</p>
             </div>
-            <p className="text-right text-xl font-black text-cyan-100">{era.completion}%</p>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </Panel>
   );
