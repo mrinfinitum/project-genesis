@@ -45,6 +45,8 @@ export type SourceFileRecord = {
   height?: number | null;
   notes: string;
   isPrimaryPreview?: boolean;
+  masterFormat?: "PSD" | "PSB" | "AI" | "SVG" | "TIFF" | "Raster" | "Audio" | "Video" | "Unknown";
+  sourceRole?: "master" | "preview" | "legacy_derivative" | "reference";
 };
 
 export type AssetDerivativeRecord = {
@@ -72,6 +74,21 @@ export type AssetDerivativeRecord = {
   presetId?: string;
   cropMode?: string;
   focalPoint?: string;
+  derivativeStatus?: "current" | "stale" | "generating" | "failed" | "published";
+  safeArea?: string;
+  padding?: string;
+  alignment?: string;
+  scale?: "1x" | "2x" | "3x" | "4x" | "4k";
+  outputProfileId?: string;
+  alphaRequired?: boolean;
+  verification?: {
+    dimensionsCorrect: boolean;
+    alphaCorrect: boolean;
+    fileSizeChecked: boolean;
+    hashChecked: boolean;
+    sourceMasterId: string | null;
+    notes: string[];
+  };
 };
 
 export type AssetDerivativePreset = {
@@ -92,6 +109,24 @@ export type AssetDerivativePreset = {
   archived?: boolean;
   updatedAt?: string;
   required: boolean;
+  profileGroup?: string;
+  scale?: "1x" | "2x" | "3x" | "4x" | "4k";
+  sourcePolicy?: "master_only" | "vector_or_master" | "audio" | "video";
+  safeArea?: string;
+  padding?: string;
+  alignment?: string;
+  outputRole?: "ui_icon" | "game_card" | "hero_art" | "loading_screen" | "button" | "thumbnail" | "engine" | "marketing" | "story";
+  webOptimized?: boolean;
+  robloxReady?: boolean;
+};
+
+export type AssetDerivativeProfile = {
+  id: string;
+  label: string;
+  description: string;
+  presetIds: string[];
+  engineTargets: string[];
+  masterFormats: string[];
 };
 
 export type AssetRequirementProfile = {
@@ -133,6 +168,9 @@ export type ProcessingJobRecord = {
   completedAt: string | null;
   errorMessage: string;
   retryCount: number;
+  queueLabel?: "Pending" | "Rendering" | "Completed" | "Failed" | "Cancelled";
+  requestedOutputs?: string[];
+  sourcePolicy?: "master_only" | "vector_or_master" | "audio" | "video";
 };
 
 export type ProductionTaskRecord = {
@@ -186,6 +224,37 @@ export type ProductionAsset = {
   publishBlockers: string[];
   optionalMissingRequirements: string[];
   historyEvents: AssetHistoryEvent[];
+  masterSourceStatus: "missing" | "current" | "legacy_raster" | "multiple_current" | "source_missing";
+  currentMasterSourceId: string | null;
+  derivativeCompleteness: {
+    required: number;
+    current: number;
+    stale: number;
+    missing: number;
+    published: number;
+  };
+  qualityIssues: AssetQualityIssue[];
+};
+
+export type AssetQualityIssueCode =
+  | "using_1x_asset"
+  | "needs_2x"
+  | "needs_4k"
+  | "upscaled"
+  | "missing_master"
+  | "missing_hero"
+  | "missing_thumbnail"
+  | "stale_derivative"
+  | "manual_png_source";
+
+export type AssetQualityIssue = {
+  id: string;
+  assetId: string;
+  severity: "low" | "medium" | "high" | "critical";
+  code: AssetQualityIssueCode;
+  title: string;
+  detail: string;
+  recommendedAction: string;
 };
 
 export type AssetProductionState = {
@@ -198,7 +267,21 @@ export type AssetProductionState = {
   productionTasks: ProductionTaskRecord[];
   importHistory: Awaited<ReturnType<typeof getGameArtImportWorkspaceState>>["history"];
   derivativePresets: AssetDerivativePreset[];
+  derivativeProfiles: AssetDerivativeProfile[];
   requirementProfiles: AssetRequirementProfile[];
+  assetQualityReport: {
+    totalIssues: number;
+    using1xAsset: number;
+    needs2x: number;
+    needs4k: number;
+    upscaled: number;
+    missingMaster: number;
+    missingHero: number;
+    missingThumbnail: number;
+    staleDerivatives: number;
+    manualPngSources: number;
+    issues: AssetQualityIssue[];
+  };
   robloxManifestReports: RobloxArtManifestImportReport[];
   webPublishReports: RobloxArtWebPublishReport[];
   audit: Array<{
@@ -219,6 +302,10 @@ export type AssetProductionState = {
     missingAssets: number;
     failedProcessingJobs: number;
     engineMappingsIncomplete: number;
+    masterSourcesCurrent: number;
+    missingMasterSources: number;
+    staleDerivatives: number;
+    qualityIssues: number;
   };
 };
 
@@ -375,6 +462,106 @@ export type AssetProductionActionInput = {
   payload?: Record<string, unknown>;
 };
 
+const masterSourceExtensions = new Set([".psd", ".psb", ".ai", ".svg", ".tiff", ".tif"]);
+const rasterSourceExtensions = new Set([".png", ".jpg", ".jpeg", ".webp"]);
+
+function preset(
+  id: string,
+  name: string,
+  profileGroup: string,
+  derivativeType: string,
+  width: number,
+  height: number,
+  aspectRatio: string,
+  format: AssetDerivativePreset["format"],
+  options: Partial<AssetDerivativePreset> = {}
+): AssetDerivativePreset {
+  return {
+    id,
+    name,
+    category: options.category ?? profileGroup,
+    derivativeType,
+    width,
+    height,
+    aspectRatio,
+    format,
+    quality: options.quality ?? (format === "JPG" ? 88 : format === "WebP" ? 92 : undefined),
+    cropMode: options.cropMode ?? (aspectRatio === "1:1" ? "cover" : "contain"),
+    focalPoint: options.focalPoint ?? "center",
+    transparentBackground: options.transparentBackground ?? ["PNG", "WebP", "SVG"].includes(format),
+    engineTargets: options.engineTargets ?? ["web"],
+    notes: options.notes,
+    required: options.required ?? false,
+    profileGroup,
+    scale: options.scale,
+    sourcePolicy: options.sourcePolicy ?? "master_only",
+    safeArea: options.safeArea ?? "center 90%",
+    padding: options.padding ?? "0",
+    alignment: options.alignment ?? "center",
+    outputRole: options.outputRole,
+    webOptimized: options.webOptimized ?? format === "WebP",
+    robloxReady: options.robloxReady ?? false
+  };
+}
+
+const psdV3DerivativePresets: AssetDerivativePreset[] = [
+  ...[64, 96, 128, 256, 512, 1024, 2048].flatMap((size) => [
+    preset(`ui_icon_${size}_png`, `UI Icon ${size} PNG`, "ui_icons", "icon", size, size, "1:1", "PNG", { outputRole: "ui_icon", engineTargets: ["roblox", "unity", "unreal", "godot"], robloxReady: true, required: size === 256, scale: size >= 1024 ? "4x" : size >= 512 ? "2x" : "1x" }),
+    preset(`ui_icon_${size}_webp`, `UI Icon ${size} WebP`, "ui_icons", "icon", size, size, "1:1", "WebP", { outputRole: "ui_icon", engineTargets: ["web"], required: size === 512, scale: size >= 1024 ? "4x" : size >= 512 ? "2x" : "1x" })
+  ]),
+  ...[512, 768, 1024, 2048].flatMap((size) => [
+    preset(`game_card_${size}_png`, `Game Card ${size} PNG`, "game_cards", "card", size, size, "1:1", "PNG", { outputRole: "game_card", engineTargets: ["roblox", "unity", "unreal", "godot"], robloxReady: true, required: size === 1024, scale: size >= 2048 ? "4x" : size >= 1024 ? "2x" : "1x" }),
+    preset(`game_card_${size}_webp`, `Game Card ${size} WebP`, "game_cards", "card", size, size, "1:1", "WebP", { outputRole: "game_card", engineTargets: ["web"], required: size === 1024, scale: size >= 2048 ? "4x" : size >= 1024 ? "2x" : "1x" })
+  ]),
+  ...[
+    [1280, 720],
+    [1600, 900],
+    [1920, 1080],
+    [2560, 1440],
+    [3840, 2160]
+  ].flatMap(([width, height]) => [
+    preset(`hero_${width}x${height}_webp`, `Hero Art ${width}x${height} WebP`, "hero_art", "hero", width, height, "16:9", "WebP", { outputRole: "hero_art", engineTargets: ["web"], required: width === 1920, scale: width >= 3840 ? "4k" : width >= 2560 ? "4x" : "2x" }),
+    preset(`hero_${width}x${height}_png`, `Hero Art ${width}x${height} PNG`, "hero_art", "hero", width, height, "16:9", "PNG", { outputRole: "hero_art", engineTargets: ["roblox", "unity", "unreal", "godot"], robloxReady: width <= 2048, scale: width >= 3840 ? "4k" : width >= 2560 ? "4x" : "2x" }),
+    preset(`hero_${width}x${height}_jpg`, `Hero Art ${width}x${height} JPEG`, "hero_art", "hero", width, height, "16:9", "JPG", { outputRole: "hero_art", engineTargets: ["marketing"], transparentBackground: false, scale: width >= 3840 ? "4k" : width >= 2560 ? "4x" : "2x" })
+  ]),
+  ...[
+    [1920, 1080],
+    [2560, 1440],
+    [3840, 2160]
+  ].flatMap(([width, height]) => [
+    preset(`loading_${width}x${height}_webp`, `Loading Screen ${width}x${height} WebP`, "loading_screens", "loading", width, height, "16:9", "WebP", { outputRole: "loading_screen", required: width === 1920, scale: width >= 3840 ? "4k" : width >= 2560 ? "4x" : "2x" }),
+    preset(`loading_${width}x${height}_png`, `Loading Screen ${width}x${height} PNG`, "loading_screens", "loading", width, height, "16:9", "PNG", { outputRole: "loading_screen", engineTargets: ["roblox", "unity", "unreal", "godot"], scale: width >= 3840 ? "4k" : width >= 2560 ? "4x" : "2x" })
+  ]),
+  ...["normal", "hover", "pressed", "disabled", "locked", "active", "selected"].flatMap((variant) =>
+    [1, 2, 3].map((scale) => preset(`button_${variant}_${scale}x_png`, `Button ${variant} ${scale}x`, "buttons", `button_${variant}`, 256 * scale, 96 * scale, "8:3", "PNG", { outputRole: "button", scale: `${scale}x` as AssetDerivativePreset["scale"], engineTargets: ["web", "roblox", "unity", "unreal", "godot"], robloxReady: true, transparentBackground: true }))
+  ),
+  ...[128, 256, 512].flatMap((size) => [
+    preset(`thumbnail_${size}_webp`, `Thumbnail ${size} WebP`, "thumbnails", "thumbnail", size, size, "1:1", "WebP", { outputRole: "thumbnail", required: size === 256 }),
+    preset(`thumbnail_${size}_png`, `Thumbnail ${size} PNG`, "thumbnails", "thumbnail", size, size, "1:1", "PNG", { outputRole: "thumbnail", engineTargets: ["roblox", "unity", "unreal", "godot"], robloxReady: true })
+  ]),
+  ...[
+    ["viewport_1366x768", 1366, 768],
+    ["viewport_1600x900", 1600, 900],
+    ["viewport_1920x1080", 1920, 1080],
+    ["viewport_2560x1440", 2560, 1440],
+    ["viewport_3440x1440", 3440, 1440],
+    ["viewport_3840x2160", 3840, 2160]
+  ].map(([id, width, height]) => preset(`${id}_webp`, `Game Viewport ${width}x${height}`, "viewport_profiles", "viewport", Number(width), Number(height), `${width}:${height}`, "WebP", { outputRole: "hero_art", engineTargets: ["web"], scale: Number(width) >= 3840 ? "4k" : Number(width) >= 2560 ? "4x" : "2x" })),
+  preset("roblox_png_1024", "Roblox PNG 1024", "engine_outputs", "roblox", 1024, 1024, "1:1", "PNG", { outputRole: "engine", engineTargets: ["roblox"], robloxReady: true, required: false }),
+  preset("web_responsive_webp_2x", "Web Responsive WebP 2x", "engine_outputs", "web", 2048, 2048, "source", "WebP", { outputRole: "engine", engineTargets: ["web"], scale: "2x" }),
+  preset("unity_sprite_atlas_png", "Unity Sprite Atlas PNG", "engine_outputs", "unity", 2048, 2048, "1:1", "PNG", { outputRole: "engine", engineTargets: ["unity"], transparentBackground: true }),
+  preset("unreal_ui_texture_png", "Unreal UI Texture PNG", "engine_outputs", "unreal", 2048, 2048, "1:1", "PNG", { outputRole: "engine", engineTargets: ["unreal"], transparentBackground: true }),
+  preset("godot_import_ready_png", "Godot Import Ready PNG", "engine_outputs", "godot", 2048, 2048, "1:1", "PNG", { outputRole: "engine", engineTargets: ["godot"], transparentBackground: true }),
+  preset("marketing_steam_capsule", "Steam Capsule", "marketing", "steam_capsule", 616, 353, "616:353", "JPG", { outputRole: "marketing", engineTargets: ["marketing"], transparentBackground: false }),
+  preset("marketing_epic_capsule", "Epic Capsule", "marketing", "epic_capsule", 1920, 1080, "16:9", "JPG", { outputRole: "marketing", engineTargets: ["marketing"], transparentBackground: false }),
+  preset("marketing_website_hero", "Website Hero", "marketing", "website_hero", 2560, 1440, "16:9", "WebP", { outputRole: "marketing", engineTargets: ["marketing", "web"] }),
+  preset("marketing_social_square", "Social Square", "marketing", "social_square", 1080, 1080, "1:1", "JPG", { outputRole: "marketing", engineTargets: ["marketing"], transparentBackground: false }),
+  preset("marketing_social_story", "Social Story", "marketing", "social_story", 1080, 1920, "9:16", "JPG", { outputRole: "marketing", engineTargets: ["marketing"], transparentBackground: false }),
+  preset("marketing_youtube_thumbnail", "YouTube Thumbnail", "marketing", "youtube_thumbnail", 1280, 720, "16:9", "JPG", { outputRole: "marketing", engineTargets: ["marketing"], transparentBackground: false }),
+  preset("marketing_discord_banner", "Discord Banner", "marketing", "discord_banner", 960, 540, "16:9", "WebP", { outputRole: "marketing", engineTargets: ["marketing"] }),
+  preset("storybook_preview_webp", "Storybook Preview", "storybook", "storybook", 1440, 900, "16:10", "WebP", { outputRole: "story", engineTargets: ["storybook", "web"] })
+];
+
 const productionStorePath = process.env.PROJECT_GENESIS_ASSET_PRODUCTION_STORE
   ? path.resolve(process.env.PROJECT_GENESIS_ASSET_PRODUCTION_STORE)
   : path.join(process.cwd(), "data", "asset-production.local.json");
@@ -399,7 +586,51 @@ export const derivativePresets: AssetDerivativePreset[] = [
   { id: "era_transition_art", name: "Era Transition Art", category: "eras", derivativeType: "transition", width: 1920, height: 1080, aspectRatio: "16:9", format: "WebP", required: false },
   { id: "era_music", name: "Era Music", category: "eras", derivativeType: "music", width: 0, height: 0, aspectRatio: "audio", format: "MP3", required: false },
   { id: "era_ambient_audio", name: "Era Ambient Audio", category: "eras", derivativeType: "ambient", width: 0, height: 0, aspectRatio: "audio", format: "OGG", required: false },
-  { id: "era_cinematic", name: "Era Cinematic", category: "eras", derivativeType: "cinematic", width: 1920, height: 1080, aspectRatio: "16:9", format: "MP4", required: false }
+  { id: "era_cinematic", name: "Era Cinematic", category: "eras", derivativeType: "cinematic", width: 1920, height: 1080, aspectRatio: "16:9", format: "MP4", required: false },
+  ...psdV3DerivativePresets
+];
+
+export const derivativeProfiles: AssetDerivativeProfile[] = [
+  {
+    id: "ui_icons",
+    label: "UI Icons",
+    description: "Icon derivatives from one master source at 64 through 2048 pixels in PNG and WebP.",
+    presetIds: psdV3DerivativePresets.filter((item) => item.profileGroup === "ui_icons").map((item) => item.id),
+    engineTargets: ["roblox", "web", "unity", "unreal", "godot"],
+    masterFormats: ["PSD", "PSB", "AI", "SVG", "TIFF"]
+  },
+  {
+    id: "game_cards",
+    label: "Game Cards",
+    description: "Square card artwork for gameplay surfaces, inventory, cards, and Roblox-ready image exports.",
+    presetIds: psdV3DerivativePresets.filter((item) => item.profileGroup === "game_cards").map((item) => item.id),
+    engineTargets: ["roblox", "web", "unity", "unreal", "godot"],
+    masterFormats: ["PSD", "PSB", "AI", "SVG", "TIFF"]
+  },
+  {
+    id: "hero_loading_viewports",
+    label: "Hero, Loading, and Viewports",
+    description: "16:9 and viewport-sized derivatives including 4K outputs regenerated from master files.",
+    presetIds: psdV3DerivativePresets.filter((item) => ["hero_art", "loading_screens", "viewport_profiles"].includes(item.profileGroup ?? "")).map((item) => item.id),
+    engineTargets: ["roblox", "web", "unity", "unreal", "godot", "marketing"],
+    masterFormats: ["PSD", "PSB", "AI", "SVG", "TIFF"]
+  },
+  {
+    id: "buttons_and_states",
+    label: "Buttons and States",
+    description: "Transparent 1x/2x/3x button derivatives for normal, hover, pressed, disabled, locked, active, and selected variants.",
+    presetIds: psdV3DerivativePresets.filter((item) => item.profileGroup === "buttons").map((item) => item.id),
+    engineTargets: ["roblox", "web", "unity", "unreal", "godot"],
+    masterFormats: ["PSD", "PSB", "AI", "SVG", "TIFF"]
+  },
+  {
+    id: "marketing_storybook",
+    label: "Marketing and Storybook",
+    description: "Steam, Epic, website, social, YouTube, Discord, and Storybook preview derivatives from the same master.",
+    presetIds: psdV3DerivativePresets.filter((item) => ["marketing", "storybook"].includes(item.profileGroup ?? "")).map((item) => item.id),
+    engineTargets: ["marketing", "storybook", "web"],
+    masterFormats: ["PSD", "PSB", "AI", "SVG", "TIFF"]
+  }
 ];
 
 export const requirementProfiles: AssetRequirementProfile[] = [
@@ -533,6 +764,53 @@ function mimeFor(extension: string) {
   return "application/octet-stream";
 }
 
+function masterFormatFor(extension: string): SourceFileRecord["masterFormat"] {
+  if (extension === ".psd") return "PSD";
+  if (extension === ".psb") return "PSB";
+  if (extension === ".ai") return "AI";
+  if (extension === ".svg") return "SVG";
+  if (extension === ".tiff" || extension === ".tif") return "TIFF";
+  if (rasterSourceExtensions.has(extension)) return "Raster";
+  if ([".mp3", ".wav", ".ogg"].includes(extension)) return "Audio";
+  if (extension === ".mp4") return "Video";
+  return "Unknown";
+}
+
+function sourceRoleFor(extension: string): SourceFileRecord["sourceRole"] {
+  return masterSourceExtensions.has(extension) ? "master" : rasterSourceExtensions.has(extension) ? "legacy_derivative" : "reference";
+}
+
+function derivativeStatusFor(derivative: AssetDerivativeRecord): NonNullable<AssetDerivativeRecord["derivativeStatus"]> {
+  if (derivative.staleSince || derivative.publishStatus === "stale") return "stale";
+  if (derivative.status === "queued" || derivative.status === "processing") return "generating";
+  if (derivative.status === "failed" || derivative.status === "error") return "failed";
+  if (derivative.publishStatus === "published" || derivative.status === "published") return "published";
+  return "current";
+}
+
+function presetForDerivative(derivative: AssetDerivativeRecord) {
+  return derivativePresets.find((preset) => preset.id === derivative.presetId)
+    ?? derivativePresets.find((preset) => preset.derivativeType === derivative.derivativeType && (!derivative.width || preset.width === derivative.width) && (!derivative.height || preset.height === derivative.height))
+    ?? derivativePresets.find((preset) => preset.derivativeType === derivative.derivativeType);
+}
+
+function verificationForDerivative(derivative: AssetDerivativeRecord, source: SourceFileRecord | undefined, preset?: AssetDerivativePreset): NonNullable<AssetDerivativeRecord["verification"]> {
+  const notes: string[] = [];
+  const dimensionsCorrect = !preset || !preset.width || !preset.height || (derivative.width === preset.width && derivative.height === preset.height);
+  if (!dimensionsCorrect) notes.push(`Expected ${preset?.width}x${preset?.height}, received ${derivative.width ?? "?"}x${derivative.height ?? "?"}.`);
+  const alphaCorrect = !(preset?.transparentBackground || derivative.alphaRequired) || ["PNG", "WebP", "SVG"].includes(derivative.format);
+  if (!alphaCorrect) notes.push("Derivative requires alpha but format may not preserve transparency.");
+  if (source?.width && derivative.width && derivative.width > source.width && source.masterFormat === "Raster") notes.push("Derivative appears larger than raster source and may be upscaled.");
+  return {
+    dimensionsCorrect,
+    alphaCorrect,
+    fileSizeChecked: derivative.storagePath.length > 0 || derivative.publicUrl.length > 0,
+    hashChecked: Boolean(derivative.checksum),
+    sourceMasterId: source?.sourceRole === "master" ? source.id : null,
+    notes
+  };
+}
+
 function rowCategory(row: Row) {
   return slug(text(row.category, "game-assets"));
 }
@@ -554,6 +832,7 @@ function sourceFileFor(row: Row): SourceFileRecord | null {
   const filename = sourceFilename || `${text(row.name ?? row.id)}-source`;
   const extension = text(row.source_file_type) ? `.${text(row.source_file_type).toLowerCase().replace(/^\./, "")}` : extensionFor(filename);
   const storagePath = privatePath(sourcePath) ? "[local-source-redacted]" : sourcePath;
+  const masterFormat = masterFormatFor(extension);
 
   return {
     id: `source_${text(row.id)}_${hash(`${sourcePath}:${filename}`)}`,
@@ -574,7 +853,9 @@ function sourceFileFor(row: Row): SourceFileRecord | null {
     previewStatus: text(row.preview_url ?? row.file_url) ? "ready" : extension === ".psd" || extension === ".psb" ? "manual_required" : "missing",
     width: numeric(String(row.dimensions ?? "").split("x")[0]) || null,
     height: numeric(String(row.dimensions ?? "").split("x")[1]) || null,
-    notes: text(row.notes)
+    notes: text(row.notes),
+    masterFormat,
+    sourceRole: sourceRoleFor(extension)
   };
 }
 
@@ -583,11 +864,14 @@ function derivativeFor(row: Row, sourceFileId: string | null): AssetDerivativeRe
   const storagePath = text(row.storage_path);
   if (!publicUrl && !storagePath) return null;
 
-  return {
+  const derivativeType = iconKeyFor(row) ? "icon" : "card";
+  const preset = derivativePresets.find((item) => item.derivativeType === derivativeType && item.width === (numeric(String(row.dimensions ?? "").split("x")[0]) || item.width))
+    ?? derivativePresets.find((item) => item.derivativeType === derivativeType);
+  const record: AssetDerivativeRecord = {
     id: `derivative_${text(row.id)}_${hash(publicUrl || storagePath)}`,
     assetId: text(row.id),
     sourceFileId,
-    derivativeType: iconKeyFor(row) ? "icon" : "card",
+    derivativeType,
     format: extensionFor(publicUrl || storagePath).replace(".", "").toUpperCase() || "PNG",
     width: numeric(String(row.dimensions ?? "").split("x")[0]) || null,
     height: numeric(String(row.dimensions ?? "").split("x")[1]) || null,
@@ -602,7 +886,19 @@ function derivativeFor(row: Row, sourceFileId: string | null): AssetDerivativeRe
     approvalStatus: approvalStatusFor(row),
     publishStatus: slug(text(row.status ?? row.export_status)).includes("published") ? "published" : "draft",
     platformMappings: (row.platform_mappings ?? row.platformMappings ?? {}) as Record<string, unknown>,
-    archived: false
+    archived: false,
+    derivativeStatus: "current",
+    safeArea: preset?.safeArea,
+    padding: preset?.padding,
+    alignment: preset?.alignment,
+    scale: preset?.scale,
+    outputProfileId: preset?.profileGroup,
+    alphaRequired: preset?.transparentBackground
+  };
+  return {
+    ...record,
+    derivativeStatus: derivativeStatusFor(record),
+    verification: verificationForDerivative(record, undefined, preset)
   };
 }
 
@@ -659,6 +955,192 @@ function completion(profile: AssetRequirementProfile, derivatives: AssetDerivati
   };
 }
 
+function normalizeSource(source: SourceFileRecord): SourceFileRecord {
+  const extension = source.extension || extensionFor(source.filename);
+  const masterFormat = source.masterFormat ?? masterFormatFor(extension);
+  return {
+    ...source,
+    extension,
+    masterFormat,
+    sourceRole: source.sourceRole ?? sourceRoleFor(extension)
+  };
+}
+
+function normalizeDerivative(derivative: AssetDerivativeRecord, sources: SourceFileRecord[]): AssetDerivativeRecord {
+  const preset = presetForDerivative(derivative);
+  const source = sources.find((item) => item.id === derivative.sourceFileId) ?? sources.find((item) => item.isCurrent);
+  const record: AssetDerivativeRecord = {
+    ...derivative,
+    derivativeStatus: derivative.derivativeStatus ?? derivativeStatusFor(derivative),
+    safeArea: derivative.safeArea ?? preset?.safeArea,
+    padding: derivative.padding ?? preset?.padding,
+    alignment: derivative.alignment ?? preset?.alignment,
+    scale: derivative.scale ?? preset?.scale,
+    outputProfileId: derivative.outputProfileId ?? preset?.profileGroup,
+    alphaRequired: derivative.alphaRequired ?? preset?.transparentBackground
+  };
+  return {
+    ...record,
+    derivativeStatus: derivativeStatusFor(record),
+    verification: derivative.verification ?? verificationForDerivative(record, source, preset)
+  };
+}
+
+function currentMasterSource(sourceFiles: SourceFileRecord[]) {
+  return sourceFiles.find((source) => source.isCurrent && source.sourceRole === "master" && !source.archived)
+    ?? sourceFiles.find((source) => source.sourceRole === "master" && !source.archived)
+    ?? null;
+}
+
+function masterSourceStatus(sourceFiles: SourceFileRecord[]): ProductionAsset["masterSourceStatus"] {
+  const activeSources = sourceFiles.filter((source) => !source.archived);
+  const currentSources = activeSources.filter((source) => source.isCurrent);
+  if (!activeSources.length) return "missing";
+  if (currentSources.length > 1) return "multiple_current";
+  if (currentSources.some((source) => source.sourceRole === "master")) return "current";
+  if (activeSources.some((source) => source.sourceRole === "master")) return "current";
+  if (currentSources.some((source) => source.sourceRole === "legacy_derivative") || activeSources.some((source) => source.sourceRole === "legacy_derivative")) return "legacy_raster";
+  return "source_missing";
+}
+
+function derivativeCompleteness(profile: AssetRequirementProfile, derivatives: AssetDerivativeRecord[]): ProductionAsset["derivativeCompleteness"] {
+  const requiredTypes = new Set(profile.requirements.filter((requirement) => requirement.required).map((requirement) => requirement.derivativeType));
+  const requiredDerivatives = derivatives.filter((derivative) => requiredTypes.has(derivative.derivativeType));
+  const current = requiredDerivatives.filter((derivative) => derivativeStatusFor(derivative) === "current" || derivativeStatusFor(derivative) === "published").length;
+  const stale = requiredDerivatives.filter((derivative) => derivativeStatusFor(derivative) === "stale").length;
+  const published = requiredDerivatives.filter((derivative) => derivativeStatusFor(derivative) === "published").length;
+  return {
+    required: requiredTypes.size,
+    current,
+    stale,
+    missing: Math.max(0, requiredTypes.size - new Set(requiredDerivatives.map((derivative) => derivative.derivativeType)).size),
+    published
+  };
+}
+
+function qualityIssue(input: {
+  assetId: string;
+  code: AssetQualityIssueCode;
+  severity: AssetQualityIssue["severity"];
+  title: string;
+  detail: string;
+  recommendedAction: string;
+}): AssetQualityIssue {
+  return {
+    id: `quality_${input.assetId}_${input.code}`,
+    ...input
+  };
+}
+
+function qualityIssuesFor(assetId: string, profile: AssetRequirementProfile, sourceFiles: SourceFileRecord[], derivatives: AssetDerivativeRecord[]): AssetQualityIssue[] {
+  const issues: AssetQualityIssue[] = [];
+  const master = currentMasterSource(sourceFiles);
+  const currentSource = sourceFiles.find((source) => source.isCurrent) ?? sourceFiles[0];
+  const derivativeTypes = new Set(derivatives.map((derivative) => derivative.derivativeType));
+  const largestDerivative = Math.max(0, ...derivatives.map((derivative) => derivative.width ?? 0));
+
+  if (!master) {
+    issues.push(qualityIssue({
+      assetId,
+      code: "missing_master",
+      severity: "critical",
+      title: "Missing PSD-centric master",
+      detail: "No current PSD/PSB/AI/SVG/TIFF master source is linked to this asset.",
+      recommendedAction: "Upload one canonical master source and regenerate derivatives from it."
+    }));
+  }
+
+  if (currentSource?.sourceRole === "legacy_derivative") {
+    issues.push(qualityIssue({
+      assetId,
+      code: "manual_png_source",
+      severity: "high",
+      title: "Manual raster source in use",
+      detail: `${currentSource.filename} is a raster file and should become a generated derivative, not the master.`,
+      recommendedAction: "Replace the current source with a PSD/PSB/AI/SVG/TIFF master."
+    }));
+  }
+
+  if (derivatives.some((derivative) => derivativeStatusFor(derivative) === "stale")) {
+    issues.push(qualityIssue({
+      assetId,
+      code: "stale_derivative",
+      severity: "high",
+      title: "Stale derivative",
+      detail: "One or more derivatives were generated before the current master version.",
+      recommendedAction: "Regenerate stale outputs from the current master source."
+    }));
+  }
+
+  if (profile.requirements.some((requirement) => ["hero", "background", "banner", "loading"].includes(requirement.derivativeType)) && !["hero", "background", "banner", "loading"].some((type) => derivativeTypes.has(type))) {
+    issues.push(qualityIssue({
+      assetId,
+      code: "missing_hero",
+      severity: "medium",
+      title: "Missing hero-scale output",
+      detail: "This asset profile expects hero, background, banner, or loading artwork.",
+      recommendedAction: "Generate the required hero/loading derivative profile from the master."
+    }));
+  }
+
+  if (!["thumbnail", "icon", "card"].some((type) => derivativeTypes.has(type))) {
+    issues.push(qualityIssue({
+      assetId,
+      code: "missing_thumbnail",
+      severity: "medium",
+      title: "Missing thumbnail/card output",
+      detail: "No compact preview derivative exists for inventory, cards, dashboards, or asset review.",
+      recommendedAction: "Generate thumbnail, icon, or card derivatives from the master."
+    }));
+  }
+
+  if (derivatives.some((derivative) => (derivative.width ?? 0) <= 128) && largestDerivative <= 128) {
+    issues.push(qualityIssue({
+      assetId,
+      code: "using_1x_asset",
+      severity: "medium",
+      title: "Only 1x output available",
+      detail: "This asset has only low-resolution derivatives.",
+      recommendedAction: "Generate 2x and larger outputs from the master."
+    }));
+  }
+
+  if (derivatives.length && largestDerivative < 512) {
+    issues.push(qualityIssue({
+      assetId,
+      code: "needs_2x",
+      severity: "medium",
+      title: "Needs 2x output",
+      detail: "No derivative of at least 512px wide is available.",
+      recommendedAction: "Generate a 2x Web/engine derivative from the master."
+    }));
+  }
+
+  if (profile.requirements.some((requirement) => ["hero", "background", "loading"].includes(requirement.derivativeType)) && largestDerivative > 0 && largestDerivative < 3840) {
+    issues.push(qualityIssue({
+      assetId,
+      code: "needs_4k",
+      severity: "low",
+      title: "Needs 4K output",
+      detail: "Hero/loading artwork has no 4K derivative.",
+      recommendedAction: "Generate 3840x2160 output directly from the master."
+    }));
+  }
+
+  if (currentSource?.masterFormat === "Raster" && derivatives.some((derivative) => currentSource.width && derivative.width && derivative.width > currentSource.width)) {
+    issues.push(qualityIssue({
+      assetId,
+      code: "upscaled",
+      severity: "critical",
+      title: "Upscaled derivative risk",
+      detail: "A derivative is larger than the raster source it came from.",
+      recommendedAction: "Regenerate from the original PSD/vector master; do not upscale generated PNGs."
+    }));
+  }
+
+  return issues;
+}
+
 function profileById(profileId: string) {
   return requirementProfiles.find((profile) => profile.id === profileId) ?? profileForCategory(profileId);
 }
@@ -669,10 +1151,12 @@ function productionAssetFor(row: Row, usage: Awaited<ReturnType<typeof getMerged
   const sourceFile = sourceFileFor(row);
   const hasOverrideCurrentSource = Boolean(override.sourceFiles?.some((source) => source.isCurrent && !source.archived));
   const sourceFiles = [...(sourceFile ? [{ ...sourceFile, isCurrent: hasOverrideCurrentSource ? false : sourceFile.isCurrent }] : []), ...(override.sourceFiles ?? [])]
+    .map(normalizeSource)
     .filter((source) => !source.archived)
     .sort((left, right) => right.version - left.version);
   const derivative = derivativeFor(row, sourceFile?.id ?? null);
   const derivatives = [...(derivative ? [derivative] : []), ...(override.derivatives ?? [])]
+    .map((item) => normalizeDerivative(item, sourceFiles))
     .filter((item) => !item.archived)
     .sort((left, right) => left.derivativeType.localeCompare(right.derivativeType));
   const profile = override.requirementProfileId ? profileById(override.requirementProfileId) : profileForCategory(rowCategory(row));
@@ -693,6 +1177,10 @@ function productionAssetFor(row: Row, usage: Awaited<ReturnType<typeof getMerged
     : approvedRequiredDerivatives.length < profile.requirements.filter((requirement) => requirement.required).length
       ? ["Required derivatives need approval before publishing"]
       : [];
+  const masterStatus = masterSourceStatus(sourceFiles);
+  const masterSource = currentMasterSource(sourceFiles);
+  const completeness = derivativeCompleteness(profile, derivatives);
+  const qualityIssues = qualityIssuesFor(assetId, profile, sourceFiles, derivatives);
 
   return {
     id: assetId,
@@ -725,7 +1213,11 @@ function productionAssetFor(row: Row, usage: Awaited<ReturnType<typeof getMerged
     publishedAt: override.publishedAt ?? text(row.published_at),
     publishBlockers,
     optionalMissingRequirements: optionalMissing,
-    historyEvents: override.historyEvents ?? []
+    historyEvents: override.historyEvents ?? [],
+    masterSourceStatus: masterStatus,
+    currentMasterSourceId: masterSource?.id ?? null,
+    derivativeCompleteness: completeness,
+    qualityIssues
   };
 }
 
@@ -790,10 +1282,23 @@ function processingJobsFor(assets: ProductionAsset[]): ProcessingJobRecord[] {
           startedAt: null,
           completedAt: null,
           errorMessage: "",
-          retryCount: 0
+          retryCount: 0,
+          queueLabel: "Pending" as const,
+          requestedOutputs: preset ? [`${preset.name} ${preset.width}x${preset.height} ${preset.format}`] : [derivativeType],
+          sourcePolicy: preset?.sourcePolicy ?? "master_only" as const
         };
       })
     );
+}
+
+function normalizeProcessingJob(job: ProcessingJobRecord): ProcessingJobRecord {
+  const preset = derivativePresets.find((item) => item.id === job.presetId);
+  return {
+    ...job,
+    queueLabel: job.queueLabel ?? (job.status === "processing" ? "Rendering" : job.status === "completed" ? "Completed" : job.status === "failed" ? "Failed" : job.status === "cancelled" ? "Cancelled" : "Pending"),
+    requestedOutputs: job.requestedOutputs ?? (preset ? [`${preset.name} ${preset.width}x${preset.height} ${preset.format}`] : [job.presetId]),
+    sourcePolicy: job.sourcePolicy ?? preset?.sourcePolicy ?? "master_only"
+  };
 }
 
 function auditRows(label: string, records: Array<{ missing: MissingAssetRequirement[] }>, profile: AssetRequirementProfile) {
@@ -839,10 +1344,13 @@ export async function getAssetProductionState(): Promise<AssetProductionState> {
   });
 
   const processingJobs = [...processingJobsFor(assets), ...store.processingJobs]
-    .filter((job, index, rows) => rows.findIndex((item) => item.id === job.id) === index);
+    .filter((job, index, rows) => rows.findIndex((item) => item.id === job.id) === index)
+    .map(normalizeProcessingJob);
   const sourceFiles = assets.flatMap((asset) => asset.sourceFiles);
   const generatedAssets = assets.filter((asset) => asset.derivatives.length);
   const publishedAssets = assets.filter((asset) => asset.productionStatus === "published" || asset.status.toLowerCase() === "published");
+  const qualityIssues = assets.flatMap((asset) => asset.qualityIssues);
+  const staleDerivativeCount = assets.reduce((sum, asset) => sum + asset.derivativeCompleteness.stale, 0);
 
   return {
     assets,
@@ -854,7 +1362,24 @@ export async function getAssetProductionState(): Promise<AssetProductionState> {
     productionTasks: store.productionTasks,
     importHistory: importState.history,
     derivativePresets: presets,
+    derivativeProfiles,
     requirementProfiles,
+    assetQualityReport: {
+      totalIssues: qualityIssues.length,
+      using1xAsset: qualityIssues.filter((issue) => issue.code === "using_1x_asset").length,
+      needs2x: qualityIssues.filter((issue) => issue.code === "needs_2x").length,
+      needs4k: qualityIssues.filter((issue) => issue.code === "needs_4k").length,
+      upscaled: qualityIssues.filter((issue) => issue.code === "upscaled").length,
+      missingMaster: qualityIssues.filter((issue) => issue.code === "missing_master").length,
+      missingHero: qualityIssues.filter((issue) => issue.code === "missing_hero").length,
+      missingThumbnail: qualityIssues.filter((issue) => issue.code === "missing_thumbnail").length,
+      staleDerivatives: qualityIssues.filter((issue) => issue.code === "stale_derivative").length,
+      manualPngSources: qualityIssues.filter((issue) => issue.code === "manual_png_source").length,
+      issues: qualityIssues.sort((left, right) => {
+        const severityRank = { critical: 0, high: 1, medium: 2, low: 3 };
+        return severityRank[left.severity] - severityRank[right.severity] || left.title.localeCompare(right.title);
+      })
+    },
     robloxManifestReports: store.robloxManifestReports ?? [],
     webPublishReports: store.webPublishReports ?? [],
     audit,
@@ -867,7 +1392,11 @@ export async function getAssetProductionState(): Promise<AssetProductionState> {
       published: publishedAssets.length,
       missingAssets: missingRequirements.length,
       failedProcessingJobs: processingJobs.filter((job) => job.status === "failed").length,
-      engineMappingsIncomplete: assets.filter((asset) => !Object.keys(asset.platformMappings).length).length
+      engineMappingsIncomplete: assets.filter((asset) => !Object.keys(asset.platformMappings).length).length,
+      masterSourcesCurrent: assets.filter((asset) => asset.masterSourceStatus === "current").length,
+      missingMasterSources: assets.filter((asset) => asset.masterSourceStatus !== "current").length,
+      staleDerivatives: staleDerivativeCount,
+      qualityIssues: qualityIssues.length
     }
   };
 }
@@ -1009,7 +1538,9 @@ function sourceRecordForManifest(assetId: string, asset: RobloxArtManifestAsset,
     previewStatus: "missing",
     width: Number(asset.width) || null,
     height: Number(asset.height) || null,
-    notes: "Imported from Roblox art manifest. Source file exists in the Roblox project and needs Studio-managed Web derivative publishing."
+    notes: "Imported from Roblox art manifest. Source file exists in the Roblox project and needs Studio-managed Web derivative publishing.",
+    masterFormat: masterFormatFor(extension),
+    sourceRole: sourceRoleFor(extension)
   };
   return { record, created: true };
 }
@@ -1017,11 +1548,14 @@ function sourceRecordForManifest(assetId: string, asset: RobloxArtManifestAsset,
 function derivativeForManifest(assetId: string, asset: RobloxArtManifestAsset, sourceFileId: string | null, robloxAssetId: string, now: string): AssetDerivativeRecord {
   const width = Number(asset.width) || null;
   const height = Number(asset.height) || null;
-  return {
+  const derivativeType = derivativeTypeForManifest(asset);
+  const preset = derivativePresets.find((item) => item.derivativeType === derivativeType && (!width || item.width === width) && (!height || item.height === height))
+    ?? derivativePresets.find((item) => item.derivativeType === derivativeType);
+  const record: AssetDerivativeRecord = {
     id: `derivative_${assetId}_roblox_${hash(robloxAssetId)}`,
     assetId,
     sourceFileId,
-    derivativeType: derivativeTypeForManifest(asset),
+    derivativeType,
     format: "PNG",
     width,
     height,
@@ -1036,8 +1570,16 @@ function derivativeForManifest(assetId: string, asset: RobloxArtManifestAsset, s
     approvalStatus: "pending",
     publishStatus: "draft",
     platformMappings: { roblox: { assetId: robloxAssetId } },
-    archived: false
+    archived: false,
+    derivativeStatus: "current",
+    safeArea: preset?.safeArea,
+    padding: preset?.padding,
+    alignment: preset?.alignment,
+    scale: preset?.scale,
+    outputProfileId: preset?.profileGroup,
+    alphaRequired: true
   };
+  return { ...record, verification: verificationForDerivative(record, undefined, preset) };
 }
 
 const webPublishableExtensions = new Set([".png", ".jpg", ".jpeg", ".webp", ".svg"]);
@@ -1081,11 +1623,14 @@ function webPublishedDerivative(input: {
   diskPath: string;
   now: string;
 }): AssetDerivativeRecord {
-  return {
+  const derivativeType = webDerivativeType(input.assetId, input.source);
+  const preset = derivativePresets.find((item) => item.derivativeType === derivativeType && (!input.source.width || item.width === input.source.width) && (!input.source.height || item.height === input.source.height))
+    ?? derivativePresets.find((item) => item.derivativeType === derivativeType);
+  const record: AssetDerivativeRecord = {
     id: `derivative_${input.assetId}_web_${hash(input.publicPath)}`,
     assetId: input.assetId,
     sourceFileId: input.source.id,
-    derivativeType: webDerivativeType(input.assetId, input.source),
+    derivativeType,
     format: input.source.extension.replace(".", "").toUpperCase() || "PNG",
     width: input.source.width ?? null,
     height: input.source.height ?? null,
@@ -1100,8 +1645,16 @@ function webPublishedDerivative(input: {
     approvalStatus: "approved",
     publishStatus: "published",
     platformMappings: { web: { path: input.publicPath } },
-    archived: false
+    archived: false,
+    derivativeStatus: "published",
+    safeArea: preset?.safeArea,
+    padding: preset?.padding,
+    alignment: preset?.alignment,
+    scale: preset?.scale,
+    outputProfileId: preset?.profileGroup,
+    alphaRequired: preset?.transparentBackground
   };
+  return { ...record, verification: verificationForDerivative(record, input.source, preset) };
 }
 
 function taskExists(tasks: ProductionTaskRecord[], id: string) {
@@ -1559,6 +2112,7 @@ function sourceVersion(input: AssetProductionActionInput, currentVersions: Sourc
   const filename = text(payload.filename, "source-art.psd");
   const extension = extensionFor(filename) || text(payload.extension, ".psd");
   const version = currentVersions.length ? Math.max(...currentVersions.map((item) => item.version)) + 1 : 1;
+  const masterFormat = masterFormatFor(extension);
   return {
     id: `source_${input.assetId}_${Date.now()}_${hash(filename)}`,
     assetId: text(input.assetId),
@@ -1578,7 +2132,9 @@ function sourceVersion(input: AssetProductionActionInput, currentVersions: Sourc
     previewStatus: text(payload.previewUrl) ? "ready" : extension === ".psd" || extension === ".psb" ? "manual_required" : "missing",
     width: numeric(payload.width) || null,
     height: numeric(payload.height) || null,
-    notes: text(input.notes ?? payload.notes)
+    notes: text(input.notes ?? payload.notes),
+    masterFormat,
+    sourceRole: sourceRoleFor(extension)
   };
 }
 
@@ -1590,10 +2146,14 @@ function derivativeRecord(input: AssetProductionActionInput, currentSources: Sou
   const format = text(payload.format, "PNG");
   const publicUrl = text(payload.publicUrl);
   const storagePath = text(payload.storagePath, publicUrl);
-  return {
+  const preset = activePresets({ assets: {}, derivativePresets: [], missingRequirements: {}, processingJobs: [], productionTasks: [] }).find((item) => item.id === text(payload.presetId))
+    ?? derivativePresets.find((item) => item.derivativeType === derivativeType && (!width || item.width === width) && (!height || item.height === height))
+    ?? derivativePresets.find((item) => item.derivativeType === derivativeType);
+  const source = currentSources.find((item) => item.id === text(payload.sourceFileId)) ?? currentSources.find((item) => item.isCurrent);
+  const record: AssetDerivativeRecord = {
     id: text(input.derivativeId) || `derivative_${input.assetId}_${derivativeType}_${Date.now()}`,
     assetId: text(input.assetId),
-    sourceFileId: text(payload.sourceFileId) || currentSources.find((source) => source.isCurrent)?.id || null,
+    sourceFileId: text(payload.sourceFileId) || source?.id || null,
     derivativeType,
     format,
     width,
@@ -1612,7 +2172,19 @@ function derivativeRecord(input: AssetProductionActionInput, currentSources: Sou
     archived: false,
     presetId: text(payload.presetId),
     cropMode: text(payload.cropMode),
-    focalPoint: text(payload.focalPoint)
+    focalPoint: text(payload.focalPoint),
+    derivativeStatus: "current",
+    safeArea: text(payload.safeArea, preset?.safeArea),
+    padding: text(payload.padding, preset?.padding),
+    alignment: text(payload.alignment, preset?.alignment),
+    scale: (text(payload.scale, preset?.scale) as AssetDerivativeRecord["scale"]),
+    outputProfileId: text(payload.outputProfileId, preset?.profileGroup),
+    alphaRequired: typeof payload.alphaRequired === "boolean" ? payload.alphaRequired : preset?.transparentBackground
+  };
+  return {
+    ...record,
+    derivativeStatus: derivativeStatusFor(record),
+    verification: verificationForDerivative(record, source, preset)
   };
 }
 
@@ -1636,6 +2208,7 @@ function processingJob(input: {
   progress?: number;
   errorMessage?: string;
 }) {
+  const preset = derivativePresets.find((item) => item.id === input.presetId);
   return {
     id: `job_${input.assetId}_${input.presetId}_${Date.now()}_${hash(`${input.sourceFileId}:${input.presetId}`)}`,
     assetId: input.assetId,
@@ -1646,7 +2219,10 @@ function processingJob(input: {
     startedAt: null,
     completedAt: null,
     errorMessage: input.errorMessage ?? "",
-    retryCount: 0
+    retryCount: 0,
+    queueLabel: input.status === "processing" ? "Rendering" : input.status === "completed" ? "Completed" : input.status === "failed" ? "Failed" : input.status === "cancelled" ? "Cancelled" : "Pending",
+    requestedOutputs: preset ? [`${preset.name} ${preset.width}x${preset.height} ${preset.format}`] : [input.presetId],
+    sourcePolicy: preset?.sourcePolicy ?? "master_only"
   } satisfies ProcessingJobRecord;
 }
 
@@ -1759,7 +2335,16 @@ export async function applyAssetProductionAction(input: AssetProductionActionInp
       notes: text(input.notes ?? payload.notes, existing?.notes ?? ""),
       archived: input.action === "preset.archive",
       required: typeof payload.required === "boolean" ? payload.required : existing?.required ?? true,
-      updatedAt: now
+      updatedAt: now,
+      profileGroup: text(payload.profileGroup, existing?.profileGroup),
+      scale: (text(payload.scale, existing?.scale) as AssetDerivativePreset["scale"]),
+      sourcePolicy: (text(payload.sourcePolicy, existing?.sourcePolicy ?? "master_only") as AssetDerivativePreset["sourcePolicy"]),
+      safeArea: text(payload.safeArea, existing?.safeArea ?? "center 90%"),
+      padding: text(payload.padding, existing?.padding ?? "0"),
+      alignment: text(payload.alignment, existing?.alignment ?? "center"),
+      outputRole: (text(payload.outputRole, existing?.outputRole) as AssetDerivativePreset["outputRole"]),
+      webOptimized: typeof payload.webOptimized === "boolean" ? payload.webOptimized : existing?.webOptimized,
+      robloxReady: typeof payload.robloxReady === "boolean" ? payload.robloxReady : existing?.robloxReady
     };
     store.derivativePresets = [...store.derivativePresets.filter((preset) => preset.id !== presetId), nextPreset].sort((left, right) => left.name.localeCompare(right.name));
 
@@ -1860,9 +2445,9 @@ export async function applyAssetProductionAction(input: AssetProductionActionInp
     } else {
       store.processingJobs = store.processingJobs.map((job) => {
         if (job.id !== jobId) return job;
-        if (input.action === "queue.retry") return { ...job, status: "queued", progress: 0, errorMessage: "", retryCount: job.retryCount + 1 };
-        if (input.action === "queue.cancel") return { ...job, status: "cancelled", completedAt: now };
-        if (input.action === "queue.reprocess") return { ...job, status: "queued", progress: 0, startedAt: null, completedAt: null, errorMessage: "", retryCount: job.retryCount + 1 };
+        if (input.action === "queue.retry") return { ...job, status: "queued", queueLabel: "Pending" as const, progress: 0, errorMessage: "", retryCount: job.retryCount + 1 };
+        if (input.action === "queue.cancel") return { ...job, status: "cancelled", queueLabel: "Cancelled" as const, completedAt: now };
+        if (input.action === "queue.reprocess") return { ...job, status: "queued", queueLabel: "Pending" as const, progress: 0, startedAt: null, completedAt: null, errorMessage: "", retryCount: job.retryCount + 1 };
         return job;
       });
     }

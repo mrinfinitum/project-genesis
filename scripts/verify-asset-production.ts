@@ -156,7 +156,14 @@ async function main() {
       height: 180,
       outputFormat: "PNG",
       cropMode: "contain",
-      focalPoint: "center"
+      focalPoint: "center",
+      profileGroup: "loading_screens",
+      outputRole: "loading_screen",
+      sourcePolicy: "master_only",
+      scale: "1x",
+      safeArea: "center 90%",
+      padding: "0",
+      alignment: "center"
     }
   });
 
@@ -360,17 +367,29 @@ async function main() {
   asset = state.assets.find((item) => item.id === assetId);
   if (!asset) throw new Error("Verification asset disappeared after actions.");
   assert(asset.sourceFiles.find((source) => source.id === previousSource.id)?.isCurrent, "Source restore did not set current version.");
+  assert(asset.sourceFiles.find((source) => source.id === previousSource.id)?.masterFormat === "PSD", "PSD source master format was not detected.");
+  assert(asset.sourceFiles.find((source) => source.id === previousSource.id)?.sourceRole === "master", "PSD source role was not marked as master.");
   assert(asset.sourceFiles.find((source) => source.id === previousSource.id)?.previewStatus === "ready", "Manual preview upload was not persisted.");
   assert(asset.sourceFiles.some((source) => source.isPrimaryPreview), "Primary preview switching did not persist.");
+  assert(asset.masterSourceStatus === "current", "Asset master source status should be current.");
+  assert(asset.currentMasterSourceId === previousSource.id, "Current master source ID was not exposed.");
   assert(asset.approvalStatus === "approved", "Review approval did not persist.");
   assert(JSON.stringify(asset.platformMappings).includes("rbxassetid://123456789"), "Roblox ID normalization failed.");
   assert(JSON.stringify(asset.platformMappings).includes("/assets/published/verify-card.png"), "Web publication mapping failed.");
   assert(JSON.stringify(asset.platformMappings).includes("ProjectGenesis/UI/VerifyCard"), "Unity mapping failed.");
   assert(JSON.stringify(asset.platformMappings).includes("/Game/ProjectGenesis/UI/VerifyCard"), "Unreal mapping failed.");
   assert(JSON.stringify(asset.platformMappings).includes("res://project_genesis/ui/verify_card.png"), "Godot mapping failed.");
-  assert(state.processingJobs.some((job) => job.assetId === assetId && job.presetId === "loading"), "Stale derivative reprocess job was not queued.");
+  assert(state.processingJobs.some((job) => job.assetId === assetId && job.presetId === "loading" && job.queueLabel === "Pending"), "Stale derivative reprocess job was not queued with a v3 queue label.");
   assert(asset.historyEvents.some((event) => event.eventType === "source_version_uploaded"), "Source version audit history was not recorded.");
-  assert(state.derivativePresets.some((preset) => preset.name === "Verify Preset"), "Preset edit/create failed.");
+  const verifyPreset = state.derivativePresets.find((preset) => preset.name === "Verify Preset");
+  if (!verifyPreset) throw new Error("Preset edit/create failed.");
+  assert(verifyPreset.profileGroup === "loading_screens" && verifyPreset.sourcePolicy === "master_only", "PSD-centric preset metadata did not persist.");
+  assert(state.derivativeProfiles.length >= 5, "Derivative profile catalog was not exposed.");
+  assert(state.derivativePresets.some((preset) => preset.id === "ui_icon_2048_png"), "UI icon v3 presets were not registered.");
+  assert(state.derivativePresets.some((preset) => preset.id === "hero_3840x2160_webp"), "4K hero v3 preset was not registered.");
+  assert(state.derivativePresets.some((preset) => preset.id === "marketing_steam_capsule"), "Marketing v3 preset was not registered.");
+  assert(state.assetQualityReport.totalIssues >= state.assetQualityReport.missingMaster, "Asset quality report totals are inconsistent.");
+  assert(typeof state.dashboard.masterSourcesCurrent === "number" && typeof state.dashboard.qualityIssues === "number", "Dashboard v3 quality metrics were not exposed.");
 
   const presetIds = new Set(state.derivativePresets.map((preset) => preset.id));
   for (const profile of state.requirementProfiles) {

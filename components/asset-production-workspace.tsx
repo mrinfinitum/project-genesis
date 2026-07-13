@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Archive, CheckCircle2, FileImage, GitBranch, History, ImageIcon, Layers3, PackageCheck, Timer, UploadCloud } from "lucide-react";
+import { Archive, CheckCircle2, FileImage, GitBranch, History, ImageIcon, Layers3, PackageCheck, ShieldCheck, Timer, TriangleAlert, UploadCloud } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, WorkspaceProgressBar, WorkspaceStatTile } from "@/components/ui/workspace";
 import type { AssetProductionState, ProductionAsset } from "@/lib/assets/asset-production";
@@ -128,6 +128,13 @@ function PresetEditor() {
               outputFormat: String(form.get("outputFormat") ?? "PNG"),
               cropMode: String(form.get("cropMode") ?? "contain"),
               focalPoint: String(form.get("focalPoint") ?? "center"),
+              profileGroup: String(form.get("profileGroup") ?? ""),
+              outputRole: String(form.get("outputRole") ?? ""),
+              sourcePolicy: String(form.get("sourcePolicy") ?? "master_only"),
+              scale: String(form.get("scale") ?? ""),
+              safeArea: String(form.get("safeArea") ?? ""),
+              padding: String(form.get("padding") ?? ""),
+              alignment: String(form.get("alignment") ?? ""),
               notes: String(form.get("notes") ?? "")
             }
           });
@@ -149,6 +156,15 @@ function PresetEditor() {
           <input name="cropMode" placeholder="contain/cover/crop" className="h-10 rounded-md border border-cyan-300/15 bg-slate-950/60 px-3 text-sm text-white outline-none" />
         </div>
         <input name="focalPoint" placeholder="center/top-left/manual" className="h-10 rounded-md border border-cyan-300/15 bg-slate-950/60 px-3 text-sm text-white outline-none" />
+        <div className="grid gap-2 sm:grid-cols-2">
+          <input name="profileGroup" placeholder="profile group: ui_icons" className="h-10 rounded-md border border-cyan-300/15 bg-slate-950/60 px-3 text-sm text-white outline-none" />
+          <input name="outputRole" placeholder="output role: hero_art" className="h-10 rounded-md border border-cyan-300/15 bg-slate-950/60 px-3 text-sm text-white outline-none" />
+          <input name="sourcePolicy" placeholder="master_only" className="h-10 rounded-md border border-cyan-300/15 bg-slate-950/60 px-3 text-sm text-white outline-none" />
+          <input name="scale" placeholder="1x / 2x / 4k" className="h-10 rounded-md border border-cyan-300/15 bg-slate-950/60 px-3 text-sm text-white outline-none" />
+          <input name="safeArea" placeholder="safe area: center 90%" className="h-10 rounded-md border border-cyan-300/15 bg-slate-950/60 px-3 text-sm text-white outline-none" />
+          <input name="padding" placeholder="padding" className="h-10 rounded-md border border-cyan-300/15 bg-slate-950/60 px-3 text-sm text-white outline-none" />
+        </div>
+        <input name="alignment" placeholder="alignment: center" className="h-10 rounded-md border border-cyan-300/15 bg-slate-950/60 px-3 text-sm text-white outline-none" />
         <textarea name="notes" placeholder="Preset notes" className="min-h-16 rounded-md border border-cyan-300/15 bg-slate-950/60 p-3 text-sm text-white outline-none" />
       </div>
       <Button type="submit" disabled={busy} className="mt-3">{busy ? "Saving..." : "Save Preset"}</Button>
@@ -183,6 +199,11 @@ function AssetCard({ asset }: { asset: ProductionAsset }) {
         <WorkspaceMiniStat label="Source" value={asset.sourceFiles.length} />
         <WorkspaceMiniStat label="Deriv." value={asset.derivatives.length} />
         <WorkspaceMiniStat label="Engines" value={platformCount(asset)} />
+      </div>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <WorkspaceBadge value={`master ${asset.masterSourceStatus}`} />
+        <WorkspaceBadge value={`${asset.derivativeCompleteness.current}/${asset.derivativeCompleteness.required} current`} />
+        {asset.qualityIssues.length ? <WorkspaceBadge value={`${asset.qualityIssues.length} quality`} /> : null}
       </div>
       {asset.missingRequirements.length ? (
         <p className="mt-3 text-sm leading-6 text-amber-100">Missing {asset.missingRequirements.join(", ")}</p>
@@ -254,6 +275,56 @@ function Dashboard({ state }: { state: AssetProductionState }) {
             <WorkspaceStatTile label="Missing Requirements" value={state.dashboard.missingAssets} />
             <WorkspaceStatTile label="Queue Failures" value={state.dashboard.failedProcessingJobs} />
             <WorkspaceStatTile label="Mapping Gaps" value={state.dashboard.engineMappingsIncomplete} />
+            <WorkspaceStatTile label="Master Current" value={state.dashboard.masterSourcesCurrent} />
+            <WorkspaceStatTile label="Missing Masters" value={state.dashboard.missingMasterSources} />
+            <WorkspaceStatTile label="Quality Issues" value={state.dashboard.qualityIssues} />
+          </div>
+        </WorkspacePanel>
+
+        <WorkspacePanel title="PSD-Centric Pipeline v3" icon={ShieldCheck}>
+          <div className="grid gap-3 md:grid-cols-4">
+            <WorkspaceMiniStat label="Master Formats" value="PSD / PSB / AI / SVG / TIFF" />
+            <WorkspaceMiniStat label="Derivative Profiles" value={state.derivativeProfiles.length} />
+            <WorkspaceMiniStat label="Stale Outputs" value={state.dashboard.staleDerivatives} />
+            <WorkspaceMiniStat label="Missing 4K" value={state.assetQualityReport.needs4k} />
+          </div>
+          <div className="mt-4 grid gap-3 lg:grid-cols-2">
+            {state.derivativeProfiles.map((profile) => (
+              <div key={profile.id} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="font-black text-white">{profile.label}</p>
+                    <p className="mt-1 text-sm leading-6 text-slate-400">{profile.description}</p>
+                  </div>
+                  <WorkspaceBadge value={`${profile.presetIds.length} outputs`} />
+                </div>
+                <p className="mt-2 text-xs font-semibold uppercase tracking-[0.16em] text-cyan-200">{profile.engineTargets.join(" / ")}</p>
+              </div>
+            ))}
+          </div>
+        </WorkspacePanel>
+
+        <WorkspacePanel title="Asset Quality Report" icon={TriangleAlert}>
+          <div className="grid gap-3 md:grid-cols-3">
+            <WorkspaceMiniStat label="Missing Master" value={state.assetQualityReport.missingMaster} />
+            <WorkspaceMiniStat label="Manual Raster Sources" value={state.assetQualityReport.manualPngSources} />
+            <WorkspaceMiniStat label="Needs 2x" value={state.assetQualityReport.needs2x} />
+            <WorkspaceMiniStat label="Needs 4K" value={state.assetQualityReport.needs4k} />
+            <WorkspaceMiniStat label="Upscaled Risk" value={state.assetQualityReport.upscaled} />
+            <WorkspaceMiniStat label="Stale" value={state.assetQualityReport.staleDerivatives} />
+          </div>
+          <div className="mt-4 space-y-2">
+            {state.assetQualityReport.issues.slice(0, 8).map((issue) => (
+              <div key={issue.id} className="rounded-md border border-amber-300/15 bg-amber-400/5 p-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="font-black text-white">{issue.title}</p>
+                  <WorkspaceBadge value={issue.severity} />
+                </div>
+                <p className="mt-1 text-sm leading-6 text-slate-300">{issue.detail}</p>
+                <p className="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-amber-100">{issue.recommendedAction}</p>
+              </div>
+            ))}
+            {!state.assetQualityReport.issues.length ? <p className="rounded-md border border-emerald-300/15 bg-emerald-400/10 p-3 text-sm font-semibold text-emerald-100">No asset quality issues detected.</p> : null}
           </div>
         </WorkspacePanel>
 
@@ -287,6 +358,7 @@ function Dashboard({ state }: { state: AssetProductionState }) {
                   <WorkspaceBadge value={preset.format} />
                 </div>
                 <p className="mt-1 text-sm text-slate-400">{preset.width} x {preset.height} / {preset.derivativeType}</p>
+                <p className="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">{preset.profileGroup ?? "legacy"} / {preset.outputRole ?? preset.category}</p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   <ActionButton body={{ action: "preset.duplicate", presetId: preset.id }}>Duplicate</ActionButton>
                   <ActionButton body={{ action: "preset.archive", presetId: preset.id }}>Archive</ActionButton>
@@ -336,8 +408,12 @@ function SourceFiles({ state }: { state: AssetProductionState }) {
         <WorkspacePanel key={source.id} title={source.filename} icon={FileImage}>
           <div className="grid gap-3 sm:grid-cols-3">
             <WorkspaceMiniStat label="Version" value={source.versionLabel} />
-            <WorkspaceMiniStat label="Format" value={source.extension || "source"} />
+            <WorkspaceMiniStat label="Format" value={source.masterFormat ?? (source.extension || "source")} />
             <WorkspaceMiniStat label="Current" value={source.isCurrent ? "Yes" : "No"} />
+          </div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <WorkspaceBadge value={source.sourceRole ?? "source"} />
+            <WorkspaceBadge value={source.previewStatus ?? "preview pending"} />
           </div>
           <p className="mt-3 break-all text-sm leading-6 text-slate-400">{source.storagePath || "Private Studio storage pending."}</p>
         </WorkspacePanel>
@@ -413,10 +489,13 @@ function ProcessingQueue({ state }: { state: AssetProductionState }) {
           <WorkspacePanel key={job.id} title={job.id} icon={Timer}>
             <div className="grid gap-3 sm:grid-cols-3">
               <WorkspaceMiniStat label="Status" value={job.status} />
+              <WorkspaceMiniStat label="Queue" value={job.queueLabel ?? job.status} />
               <WorkspaceMiniStat label="Preset" value={job.presetId} />
               <WorkspaceMiniStat label="Retries" value={job.retryCount} />
             </div>
             <WorkspaceProgressBar value={job.progress} className="mt-4" />
+            {job.requestedOutputs?.length ? <p className="mt-3 text-sm leading-6 text-cyan-100">{job.requestedOutputs.join(", ")}</p> : null}
+            <p className="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Source policy: {job.sourcePolicy ?? "master_only"}</p>
             {job.errorMessage ? <p className="mt-3 text-sm leading-6 text-rose-100">{job.errorMessage}</p> : null}
             <div className="mt-4 flex flex-wrap gap-2">
               <ActionButton body={{ action: "queue.retry", payload: { jobId: job.id } }}>Retry</ActionButton>
