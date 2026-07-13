@@ -19,7 +19,8 @@
     "verify:component-library": "tsx scripts/verify-component-library.ts",
     "verify:screen-designer": "tsx scripts/verify-screen-designer.ts",
     "verify:civilization-performance": "tsx scripts/verify-civilization-performance.ts",
-    "cleanup:remote-psd": "tsx scripts/cleanup-remote-psd-sources.ts"
+    "cleanup:remote-psd": "tsx scripts/cleanup-remote-psd-sources.ts",
+    "verify:visual-previews": "tsx scripts/verify-visual-previews.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",

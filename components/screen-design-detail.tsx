@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { ArrowLeft, CheckCircle2, Clipboard, MonitorCog, Send, ShieldCheck, TriangleAlert } from "lucide-react";
+import { AssetPreview } from "@/components/asset-preview";
 import { WorkspaceBadge, WorkspaceMiniStat, WorkspacePanel, WorkspaceProgressBar, WorkspaceStatTile, WorkspaceTabs } from "@/components/ui/workspace";
+import type { VisualPreview } from "@/lib/assets/visual-previews";
 import type { ScreenDesignRecord } from "@/lib/screen-designer";
 
 type Tab = "overview" | "layout" | "components" | "data" | "assets" | "states" | "interactions" | "responsive" | "motion" | "accessibility" | "review" | "handoff" | "history";
@@ -75,10 +77,12 @@ type ScreenDesignValidation = {
 
 export function ScreenDesignDetail({
   record,
+  preview,
   validation,
   handoffs
 }: {
   record: ScreenDesignRecord;
+  preview: VisualPreview;
   validation: ScreenDesignValidation;
   handoffs: Record<"Game Codex" | "Roblox Codex", string>;
 }) {
@@ -88,6 +92,8 @@ export function ScreenDesignDetail({
   const [busy, setBusy] = useState<string | null>(null);
   const [comments, setComments] = useState("");
   const [error, setError] = useState("");
+  const [referenceUrl, setReferenceUrl] = useState("");
+  const [referenceViewport, setReferenceViewport] = useState(record.referenceViewport);
   const handoff = useMemo(() => handoffs[target], [handoffs, target]);
   const checklistPercent = Math.round((validation.checklist.complete / Math.max(1, validation.checklist.total)) * 100);
 
@@ -104,6 +110,35 @@ export function ScreenDesignDetail({
       await postWorkflow(record.screenId, action, comments);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Screen Designer action failed.");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function addReference() {
+    if (!referenceUrl.trim()) return;
+    setBusy("reference.add");
+    setError("");
+    try {
+      const response = await fetch("/api/screen-designer/action", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          screenId: record.screenId,
+          action: "reference.add",
+          payload: {
+            source: referenceUrl,
+            type: "reference UI",
+            viewport: referenceViewport,
+            notes: "Reference screenshot added from Screen Designer visual preview header."
+          }
+        })
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error ?? "Reference upload failed.");
+      window.location.reload();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Reference upload failed.");
     } finally {
       setBusy(null);
     }
@@ -142,6 +177,26 @@ export function ScreenDesignDetail({
               ))}
             </div>
           ) : null}
+        </WorkspacePanel>
+      </section>
+
+      <section className="grid gap-4 xl:grid-cols-[1fr_28rem]">
+        <AssetPreview preview={preview} />
+        <WorkspacePanel title="Visual Preview Header" icon={MonitorCog}>
+          <div className="grid gap-3">
+            <WorkspaceMiniStat label="Primary Preview" value={preview.status} />
+            <WorkspaceMiniStat label="Source" value={preview.source.replaceAll("_", " ")} />
+            <WorkspaceMiniStat label="Reference" value={preview.dimensionsLabel} />
+            <WorkspaceMiniStat label="Mode" value={preview.mode.replaceAll("_", " ")} />
+          </div>
+          <p className="mt-3 text-sm leading-6 text-slate-300">Use this header for reference screenshots, Studio design previews, Vite/Roblox captures, and parity review images. Missing previews stay Studio-only and become production work.</p>
+          <div className="mt-4 grid gap-2">
+            <input value={referenceUrl} onChange={(event) => setReferenceUrl(event.target.value)} placeholder="/assets/previews/dashboard-reference.webp" className="h-10 rounded-md border border-cyan-300/15 bg-slate-950/80 px-3 text-sm text-white outline-none" />
+            <input value={referenceViewport} onChange={(event) => setReferenceViewport(event.target.value)} placeholder="1920x1080" className="h-10 rounded-md border border-cyan-300/15 bg-slate-950/80 px-3 text-sm text-white outline-none" />
+            <button type="button" disabled={busy === "reference.add"} onClick={addReference} className="inline-flex h-10 items-center justify-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">
+              {busy === "reference.add" ? "Saving..." : "Add Reference Screenshot"}
+            </button>
+          </div>
         </WorkspacePanel>
       </section>
 

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { ScreenDesignDetail } from "@/components/screen-design-detail";
 import { getAssetProductionState } from "@/lib/assets/asset-production";
+import { resolveScreenPreview } from "@/lib/assets/visual-previews";
 import { getScreenDesignRecord, screenDesignerInitialRecords, screenHandoffText, validateScreenDesign } from "@/lib/screen-designer";
 
 export const dynamic = "force-dynamic";
@@ -17,6 +18,7 @@ export default async function ScreenDesignDetailPage({ params }: { params: Promi
   return (
     <ScreenDesignDetail
       record={record}
+      preview={resolveScreenPreview(record, assetState.assets)}
       validation={validateScreenDesign(record)}
       handoffs={{
         "Game Codex": screenHandoffText(record, "Game Codex"),

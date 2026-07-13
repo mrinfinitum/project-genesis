@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Archive, CheckCircle2, FileImage, GitBranch, History, ImageIcon, Layers3, PackageCheck, ShieldCheck, Timer, TriangleAlert, UploadCloud } from "lucide-react";
+import { AssetPreview } from "@/components/asset-preview";
 import { Button } from "@/components/ui/button";
 import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, WorkspaceProgressBar, WorkspaceStatTile } from "@/components/ui/workspace";
+import { resolveMissingRequirementPreview, resolveProductionAssetPreview, sanitizePreviewUrl } from "@/lib/assets/visual-previews";
 import type { AssetProductionState, ProductionAsset } from "@/lib/assets/asset-production";
 
 export type AssetProductionView = "dashboard" | "source" | "generated" | "published" | "missing" | "processing" | "import-history";
@@ -173,18 +175,14 @@ function PresetEditor() {
 }
 
 function AssetCard({ asset }: { asset: ProductionAsset }) {
-  const preview = asset.derivatives[0]?.publicUrl;
+  const preview = resolveProductionAssetPreview(asset, { size: "card", mode: asset.category.includes("hero") ? "hero" : "card" });
   return (
     <Link href={`/assets/${encodeURIComponent(asset.id)}`} className="block rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-4 shadow-glow transition hover:border-cyan-300/40 hover:bg-[#0a1728]">
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex min-w-0 gap-3">
-          <div className="grid h-16 w-20 shrink-0 place-items-center overflow-hidden rounded-md border border-cyan-300/15 bg-slate-950/55">
-            {preview ? <img src={preview} alt="" className="h-full w-full object-cover" /> : <ImageIcon className="h-6 w-6 text-cyan-200" />}
-          </div>
-          <div className="min-w-0">
-            <p className="truncate text-lg font-black text-white">{asset.name}</p>
-            <p className="mt-1 truncate text-sm text-cyan-200">{asset.artKey || asset.iconKey || asset.id}</p>
-          </div>
+      <AssetPreview preview={preview} allowFullscreen={false} />
+      <div className="mt-4 flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="truncate text-lg font-black text-white">{asset.name}</p>
+          <p className="mt-1 truncate text-sm text-cyan-200">{asset.artKey || asset.iconKey || asset.id}</p>
         </div>
         <WorkspaceBadge value={asset.productionStatus} />
       </div>
@@ -203,6 +201,7 @@ function AssetCard({ asset }: { asset: ProductionAsset }) {
       <div className="mt-3 flex flex-wrap gap-2">
         <WorkspaceBadge value={`master ${asset.masterSourceStatus}`} />
         <WorkspaceBadge value={`${asset.derivativeCompleteness.current}/${asset.derivativeCompleteness.required} current`} />
+        <WorkspaceBadge value={`preview ${preview.status}`} />
         {asset.qualityIssues.length ? <WorkspaceBadge value={`${asset.qualityIssues.length} quality`} /> : null}
       </div>
       {asset.missingRequirements.length ? (
@@ -278,6 +277,31 @@ function Dashboard({ state }: { state: AssetProductionState }) {
             <WorkspaceStatTile label="Master Current" value={state.dashboard.masterSourcesCurrent} />
             <WorkspaceStatTile label="Missing Masters" value={state.dashboard.missingMasterSources} />
             <WorkspaceStatTile label="Quality Issues" value={state.dashboard.qualityIssues} />
+            <WorkspaceStatTile label="Visual Records" value={state.dashboard.visualRecords} />
+            <WorkspaceStatTile label="Preview Ready" value={state.dashboard.previewReady} />
+            <WorkspaceStatTile label="Preview Missing" value={state.dashboard.previewMissing} />
+          </div>
+        </WorkspacePanel>
+
+        <WorkspacePanel title="Visual Preview Readiness" icon={ImageIcon}>
+          <div className="grid gap-3 md:grid-cols-3">
+            <WorkspaceMiniStat label="Ready" value={state.visualPreviewReport.previewReady} />
+            <WorkspaceMiniStat label="Missing" value={state.visualPreviewReport.previewMissing} />
+            <WorkspaceMiniStat label="Stale" value={state.visualPreviewReport.previewStale} />
+            <WorkspaceMiniStat label="Approved" value={state.visualPreviewReport.approvedPreview} />
+            <WorkspaceMiniStat label="Published" value={state.visualPreviewReport.publishedPreview} />
+            <WorkspaceMiniStat label="Low Res" value={state.visualPreviewReport.lowResolution} />
+          </div>
+          <div className="mt-4 grid gap-3 lg:grid-cols-2">
+            {state.visualPreviewReport.issues.slice(0, 8).map((issue) => (
+              <div key={issue.id} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="font-black text-white">{issue.title}</p>
+                  <WorkspaceBadge value={issue.status} />
+                </div>
+                <p className="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-cyan-200">{issue.objectType} / {issue.action}</p>
+              </div>
+            ))}
           </div>
         </WorkspacePanel>
 
@@ -390,9 +414,27 @@ function Dashboard({ state }: { state: AssetProductionState }) {
 }
 
 function AssetGrid({ assets, empty }: { assets: ProductionAsset[]; empty: string }) {
+  const [view, setView] = useState<"grid" | "compact" | "list" | "large">(() => {
+    if (typeof window === "undefined") return "grid";
+    return (window.localStorage.getItem("project-genesis-asset-preview-view") as "grid" | "compact" | "list" | "large" | null) ?? "grid";
+  });
+
+  function updateView(next: "grid" | "compact" | "list" | "large") {
+    setView(next);
+    window.localStorage.setItem("project-genesis-asset-preview-view", next);
+  }
+
   return assets.length ? (
-    <div className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
-      {assets.map((asset) => <AssetCard key={asset.id} asset={asset} />)}
+    <div className="space-y-4">
+      <div className="flex flex-wrap gap-2 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-2">
+        {(["grid", "compact", "list", "large"] as const).map((item) => (
+          <button key={item} type="button" onClick={() => updateView(item)} className={`rounded-md px-3 py-2 text-sm font-bold capitalize ${view === item ? "bg-cyan-300/20 text-white" : "text-slate-400 hover:bg-cyan-300/10 hover:text-slate-100"}`}>{item}</button>
+        ))}
+      </div>
+      <div className={view === "list" ? "grid gap-3" : view === "large" ? "grid gap-5 xl:grid-cols-2" : view === "compact" ? "grid gap-3 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4" : "grid gap-4 lg:grid-cols-2 2xl:grid-cols-3"}>
+        {assets.slice(0, 24).map((asset) => <AssetCard key={asset.id} asset={asset} />)}
+      </div>
+      {assets.length > 24 ? <p className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3 text-sm font-semibold text-slate-300">Showing first 24 assets for grid performance. Use filters or detail pages for deeper inspection.</p> : null}
     </div>
   ) : (
     <WorkspacePanel>
@@ -406,6 +448,29 @@ function SourceFiles({ state }: { state: AssetProductionState }) {
     <div className="grid gap-4 lg:grid-cols-2">
       {state.sourceFiles.map((source) => (
         <WorkspacePanel key={source.id} title={source.filename} icon={FileImage}>
+          <AssetPreview preview={{
+            id: `${source.assetId}:${source.id}`,
+            objectId: source.assetId,
+            objectType: "source",
+            title: source.filename,
+            status: source.previewStatus === "ready" ? "Generated" : source.previewStatus === "failed" ? "Error" : source.previewStatus === "manual_required" ? "Pending Generation" : "Missing",
+            mode: "thumbnail",
+            size: "card",
+            url: sanitizePreviewUrl(source.previewUrl),
+            alt: `${source.filename} source preview`,
+            source: sanitizePreviewUrl(source.previewUrl) ? "source_preview" : "missing",
+            mimeType: source.mimeType.startsWith("video/") ? "video" : source.mimeType.startsWith("audio/") ? "audio" : source.mimeType === "image/svg+xml" ? "svg" : source.mimeType.startsWith("image/") ? "image" : "unknown",
+            width: source.width ?? null,
+            height: source.height ?? null,
+            format: source.masterFormat ?? source.extension,
+            sourceVersion: source.versionLabel,
+            approvalStatus: "studio-only",
+            publishStatus: "private-source",
+            dimensionsLabel: source.width && source.height ? `${source.width}x${source.height}` : "Dimensions pending",
+            metadata: [{ label: "Source", value: source.sourceRole ?? "source" }, { label: "Preview", value: source.previewStatus ?? "missing" }],
+            safeForPublicRuntime: false,
+            sanitized: !sanitizePreviewUrl(source.previewUrl)
+          }} />
           <div className="grid gap-3 sm:grid-cols-3">
             <WorkspaceMiniStat label="Version" value={source.versionLabel} />
             <WorkspaceMiniStat label="Format" value={source.masterFormat ?? (source.extension || "source")} />
@@ -428,16 +493,22 @@ function MissingAssets({ state }: { state: AssetProductionState }) {
     <div className="space-y-3">
       {state.missingRequirements.slice(0, 120).map((item) => {
         const linkedAsset = state.assets.find((asset) => asset.artKey === item.artKey || asset.iconKey === item.iconKey || asset.id === item.artKey);
+        const preview = resolveMissingRequirementPreview(item, linkedAsset);
         return (
           <div key={item.id} className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-4 shadow-glow">
-            <div className="grid gap-3 md:grid-cols-[1fr_9rem_9rem_7rem] md:items-center">
+            <div className="grid gap-4 md:grid-cols-[14rem_1fr]">
+              <AssetPreview preview={preview} allowFullscreen={Boolean(preview.url)} />
               <div className="min-w-0">
-                <p className="truncate text-lg font-black text-white">{item.objectName}</p>
-                <p className="mt-1 text-sm text-slate-400">{item.objectType.replaceAll("_", " ")} / {item.requiredDerivative} / {item.artKey}</p>
+                <div className="grid gap-3 md:grid-cols-[1fr_9rem_9rem_7rem] md:items-center">
+                  <div className="min-w-0">
+                    <p className="truncate text-lg font-black text-white">{item.objectName}</p>
+                    <p className="mt-1 text-sm text-slate-400">{item.objectType.replaceAll("_", " ")} / {item.requiredDerivative} / {item.artKey}</p>
+                  </div>
+                  <WorkspaceBadge value={item.currentStatus} />
+                  <WorkspaceBadge value={item.priority} />
+                  <p className="text-sm font-black text-cyan-100">{item.completionPercent}%</p>
+                </div>
               </div>
-              <WorkspaceBadge value={item.currentStatus} />
-              <WorkspaceBadge value={item.priority} />
-              <p className="text-sm font-black text-cyan-100">{item.completionPercent}%</p>
             </div>
             <div className="mt-4 flex flex-wrap gap-2">
               {linkedAsset ? <Link href={`/assets/${encodeURIComponent(linkedAsset.id)}`} className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Open Asset</Link> : null}

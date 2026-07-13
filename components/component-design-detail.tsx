@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { ArrowLeft, Boxes, CheckCircle2, Clipboard, GitBranch, Send, ShieldCheck, TriangleAlert } from "lucide-react";
+import { AssetPreview } from "@/components/asset-preview";
 import { WorkspaceBadge, WorkspaceMiniStat, WorkspacePanel, WorkspaceProgressBar, WorkspaceStatTile, WorkspaceTabs } from "@/components/ui/workspace";
+import type { VisualPreview } from "@/lib/assets/visual-previews";
 import type { ComponentDesignRecord } from "@/lib/component-library";
 
 type Tab = "overview" | "anatomy" | "layout" | "tokens" | "assets" | "data" | "variants" | "states" | "interactions" | "responsive" | "motion" | "accessibility" | "usage" | "implementation" | "review" | "handoff" | "history";
@@ -65,10 +67,12 @@ async function postWorkflow(componentId: string, action: "ready_for_review" | "r
 
 export function ComponentDesignDetail({
   record,
+  preview,
   validation,
   handoffs
 }: {
   record: ComponentDesignRecord;
+  preview: VisualPreview;
   validation: Validation;
   handoffs: Record<"Game Codex" | "Roblox Codex", string>;
 }) {
@@ -78,6 +82,8 @@ export function ComponentDesignDetail({
   const [comments, setComments] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [referenceUrl, setReferenceUrl] = useState("");
+  const [referenceViewport, setReferenceViewport] = useState("1920x1080");
   const handoff = useMemo(() => handoffs[target], [handoffs, target]);
   const readiness = Math.round((validation.checklist.complete / Math.max(1, validation.checklist.total)) * 100);
 
@@ -94,6 +100,36 @@ export function ComponentDesignDetail({
       await postWorkflow(record.componentId, action, comments);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Component Library action failed.");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function addReference() {
+    if (!referenceUrl.trim()) return;
+    setBusy("reference.add");
+    setError("");
+    try {
+      const response = await fetch("/api/component-library/action", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          componentId: record.componentId,
+          action: "reference.add",
+          payload: {
+            source: referenceUrl,
+            type: "annotated reference",
+            viewport: referenceViewport,
+            version: record.version,
+            notes: "Reference preview added from Component Library visual preview header."
+          }
+        })
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error ?? "Reference upload failed.");
+      window.location.reload();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Reference upload failed.");
     } finally {
       setBusy(null);
     }
@@ -127,6 +163,26 @@ export function ComponentDesignDetail({
           </div>
           <WorkspaceProgressBar value={readiness} className="mt-4" />
           {validation.issues.length ? <div className="mt-4 grid gap-2">{validation.issues.map((issue) => <p key={issue} className="rounded-md border border-amber-300/20 bg-amber-400/10 p-3 text-sm font-semibold text-amber-100">{issue}</p>)}</div> : null}
+        </WorkspacePanel>
+      </section>
+
+      <section className="grid gap-4 xl:grid-cols-[1fr_28rem]">
+        <AssetPreview preview={preview} />
+        <WorkspacePanel title="Component Visual Preview" icon={Boxes}>
+          <div className="grid gap-3">
+            <WorkspaceMiniStat label="Preview" value={preview.status} />
+            <WorkspaceMiniStat label="Mode" value={preview.mode.replaceAll("_", " ")} />
+            <WorkspaceMiniStat label="Variants" value={record.variants.length} />
+            <WorkspaceMiniStat label="States" value={record.states.length} />
+          </div>
+          <p className="mt-3 text-sm leading-6 text-slate-300">Component previews represent anatomy, variants, implementation screenshots, or missing state requirements without exposing private source files.</p>
+          <div className="mt-4 grid gap-2">
+            <input value={referenceUrl} onChange={(event) => setReferenceUrl(event.target.value)} placeholder="/assets/previews/button-states.webp" className="h-10 rounded-md border border-cyan-300/15 bg-slate-950/80 px-3 text-sm text-white outline-none" />
+            <input value={referenceViewport} onChange={(event) => setReferenceViewport(event.target.value)} placeholder="1920x1080" className="h-10 rounded-md border border-cyan-300/15 bg-slate-950/80 px-3 text-sm text-white outline-none" />
+            <button type="button" disabled={busy === "reference.add"} onClick={addReference} className="inline-flex h-10 items-center justify-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">
+              {busy === "reference.add" ? "Saving..." : "Add Component Preview"}
+            </button>
+          </div>
         </WorkspacePanel>
       </section>
 

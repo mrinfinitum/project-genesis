@@ -1,6 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { AssetProductionState, ProductionAsset } from "@/lib/assets/asset-production";
+import { resolveScreenPreview, type VisualPreview } from "@/lib/assets/visual-previews";
 
 export type ScreenDesignStatus = "Not Started" | "Draft" | "In Design" | "Ready for Review" | "Approved" | "Implemented" | "Needs Revision";
 export type ScreenApprovalStatus = "Unreviewed" | "Changes Requested" | "Approved";
@@ -170,6 +171,8 @@ export type ScreenDesignSummary = Pick<ScreenDesignRecord, "id" | "screenId" | "
   responsivePreviewReady: boolean;
   checklistComplete: number;
   checklistTotal: number;
+  visualPreview: VisualPreview;
+  parityScore: number;
 };
 
 export type ScreenDesignerState = {
@@ -720,7 +723,7 @@ function enrichAssetRequirements(record: ScreenDesignRecord, assetState?: AssetP
 export async function getScreenDesignerState(assetState?: AssetProductionState): Promise<ScreenDesignerState> {
   const store = await readStore();
   const records = mergeRecords(store.records).map((record) => enrichAssetRequirements(record, assetState));
-  const screens = records.map(toSummary);
+  const screens = records.map((record) => toSummary(record, assetState?.assets));
   return {
     screens,
     records,
@@ -734,8 +737,10 @@ export async function getScreenDesignRecord(screenId: string, assetState?: Asset
   return state.records.find((record) => record.screenId === screenId) ?? null;
 }
 
-function toSummary(record: ScreenDesignRecord): ScreenDesignSummary {
+function toSummary(record: ScreenDesignRecord, assets?: ProductionAsset[]): ScreenDesignSummary {
   const score = checklistScore(record);
+  const implementedTargets = record.implementationTargets.filter((target) => target.status === "Implemented" || target.status === "Approved").length;
+  const parityScore = Math.round((implementedTargets / Math.max(1, record.implementationTargets.length)) * 100);
   return {
     id: record.id,
     screenId: record.screenId,
@@ -754,7 +759,9 @@ function toSummary(record: ScreenDesignRecord): ScreenDesignSummary {
     unresolvedDataRequirements: record.dataRequirements.filter((item) => item.required && item.status !== "Mapped").length,
     responsivePreviewReady: record.responsiveRules.length > 0 && record.responsiveRules.every((rule) => rule.status !== "Missing"),
     checklistComplete: score.complete,
-    checklistTotal: score.total
+    checklistTotal: score.total,
+    visualPreview: resolveScreenPreview(record, assets),
+    parityScore
   };
 }
 
@@ -888,6 +895,43 @@ export async function updateScreenDesignWorkflow(input: { screenId: string; acti
     next.frozenApprovedVersion = { ...next, frozenApprovedVersion: undefined };
   }
 
+  records[index] = next;
+  await writeStore({ records, updatedAt: now });
+  return next;
+}
+
+export async function addScreenReference(input: {
+  screenId: string;
+  source: string;
+  type?: ScreenReference["type"];
+  viewport?: string;
+  notes?: string;
+  approvalStatus?: ScreenApprovalStatus;
+}) {
+  const store = await readStore();
+  const records = mergeRecords(store.records);
+  const index = records.findIndex((record) => record.screenId === input.screenId);
+  if (index === -1) throw new Error(`Screen design not found: ${input.screenId}`);
+  const now = new Date().toISOString();
+  const source = input.source.trim();
+  if (!source) throw new Error("Reference source URL is required.");
+  const next: ScreenDesignRecord = {
+    ...records[index],
+    updatedAt: now,
+    references: [{
+      id: `screen-reference-${records[index].screenId}-${Date.now()}`,
+      type: input.type ?? "reference UI",
+      viewport: input.viewport?.trim() || records[index].referenceViewport,
+      source,
+      date: now,
+      notes: input.notes?.trim() || "Reference screenshot added from Visual Preview workflow.",
+      approvalStatus: input.approvalStatus ?? "Unreviewed"
+    }, ...records[index].references],
+    checklist: {
+      ...records[index].checklist,
+      referencesAttached: true
+    }
+  };
   records[index] = next;
   await writeStore({ records, updatedAt: now });
   return next;

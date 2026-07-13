@@ -3,6 +3,7 @@ import { copyFile, mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { getGameData, getRows } from "@/lib/data";
 import { applyGameArtImport, getGameArtImportWorkspaceState, getMergedAssetLibraryRows, upsertAppliedGameArtAssets } from "@/lib/assets/game-art-import";
+import { buildVisualPreviewReport, previewDerivativePresets, type VisualPreviewReport } from "@/lib/assets/visual-previews";
 import type { AssetDefinition } from "@/types/runtime";
 
 type Row = Record<string, unknown>;
@@ -282,6 +283,7 @@ export type AssetProductionState = {
     manualPngSources: number;
     issues: AssetQualityIssue[];
   };
+  visualPreviewReport: VisualPreviewReport;
   robloxManifestReports: RobloxArtManifestImportReport[];
   webPublishReports: RobloxArtWebPublishReport[];
   audit: Array<{
@@ -306,6 +308,13 @@ export type AssetProductionState = {
     missingMasterSources: number;
     staleDerivatives: number;
     qualityIssues: number;
+    visualRecords: number;
+    previewReady: number;
+    previewMissing: number;
+    previewStale: number;
+    approvedPreview: number;
+    publishedPreview: number;
+    lowResolutionPreviews: number;
   };
 };
 
@@ -567,6 +576,7 @@ const productionStorePath = process.env.PROJECT_GENESIS_ASSET_PRODUCTION_STORE
   : path.join(process.cwd(), "data", "asset-production.local.json");
 
 export const derivativePresets: AssetDerivativePreset[] = [
+  ...previewDerivativePresets.map((item) => preset(item.id, item.name, "visual_previews", "preview", item.width, item.height, item.height ? `${item.width}:${item.height}` : "source", item.format, { outputRole: "thumbnail", required: item.id === "preview_card_256_webp", notes: item.notes, webOptimized: item.format === "WebP" })),
   { id: "planet_icon", name: "Planet Icon", category: "planets", derivativeType: "icon", width: 256, height: 256, aspectRatio: "1:1", format: "PNG", required: true },
   { id: "planet_card", name: "Planet Card", category: "planets", derivativeType: "card", width: 1024, height: 1024, aspectRatio: "1:1", format: "WebP", required: true },
   { id: "planet_hero", name: "Planet Hero", category: "planets", derivativeType: "hero", width: 1920, height: 1080, aspectRatio: "16:9", format: "WebP", required: true },
@@ -1351,6 +1361,7 @@ export async function getAssetProductionState(): Promise<AssetProductionState> {
   const publishedAssets = assets.filter((asset) => asset.productionStatus === "published" || asset.status.toLowerCase() === "published");
   const qualityIssues = assets.flatMap((asset) => asset.qualityIssues);
   const staleDerivativeCount = assets.reduce((sum, asset) => sum + asset.derivativeCompleteness.stale, 0);
+  const visualPreviewReport = buildVisualPreviewReport({ assets, missingRequirements });
 
   return {
     assets,
@@ -1380,6 +1391,7 @@ export async function getAssetProductionState(): Promise<AssetProductionState> {
         return severityRank[left.severity] - severityRank[right.severity] || left.title.localeCompare(right.title);
       })
     },
+    visualPreviewReport,
     robloxManifestReports: store.robloxManifestReports ?? [],
     webPublishReports: store.webPublishReports ?? [],
     audit,
@@ -1396,7 +1408,14 @@ export async function getAssetProductionState(): Promise<AssetProductionState> {
       masterSourcesCurrent: assets.filter((asset) => asset.masterSourceStatus === "current").length,
       missingMasterSources: assets.filter((asset) => asset.masterSourceStatus !== "current").length,
       staleDerivatives: staleDerivativeCount,
-      qualityIssues: qualityIssues.length
+      qualityIssues: qualityIssues.length,
+      visualRecords: visualPreviewReport.totalVisualRecords,
+      previewReady: visualPreviewReport.previewReady,
+      previewMissing: visualPreviewReport.previewMissing,
+      previewStale: visualPreviewReport.previewStale,
+      approvedPreview: visualPreviewReport.approvedPreview,
+      publishedPreview: visualPreviewReport.publishedPreview,
+      lowResolutionPreviews: visualPreviewReport.lowResolution
     }
   };
 }

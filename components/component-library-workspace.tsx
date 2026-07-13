@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Boxes, Search, ShieldCheck, TriangleAlert } from "lucide-react";
+import { AssetPreview } from "@/components/asset-preview";
 import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, WorkspaceProgressBar, WorkspaceSearchBar, WorkspaceStatTile } from "@/components/ui/workspace";
 import type { ComponentApprovalStatus, ComponentCategory, ComponentDesignStatus, ComponentLibraryState, ComponentParityStatus } from "@/lib/component-library";
 
@@ -29,6 +30,7 @@ function ComponentCard({ component }: { component: ComponentLibraryState["compon
   const roblox = component.implementationTargets.find((target) => target.target === "Roblox")?.status ?? "Not Started";
   return (
     <Link href={`/component-library/${component.componentId}`} className="block rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-4 shadow-glow transition hover:border-cyan-300/50 hover:bg-[#0a1728]">
+      <AssetPreview preview={component.visualPreview} allowFullscreen={false} />
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap gap-2">
@@ -51,6 +53,7 @@ function ComponentCard({ component }: { component: ComponentLibraryState["compon
         <WorkspaceMiniStat label="Variants" value={component.variants.length} />
         <WorkspaceMiniStat label="Missing Assets" value={component.missingAssets} />
         <WorkspaceMiniStat label="Missing States" value={component.missingStates} />
+        <WorkspaceMiniStat label="Preview" value={component.visualPreview.status} />
       </div>
       <div className="mt-4">
         <div className="flex items-center justify-between text-xs font-bold uppercase tracking-[0.16em] text-slate-500">

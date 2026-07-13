@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { CheckCircle2, MonitorCog, Search, ShieldAlert } from "lucide-react";
+import { AssetPreview } from "@/components/asset-preview";
 import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, WorkspaceProgressBar, WorkspaceSearchBar, WorkspaceStatTile } from "@/components/ui/workspace";
 import type { ScreenDesignerState, ScreenDesignStatus, ScreenApprovalStatus } from "@/lib/screen-designer";
 
@@ -30,6 +31,7 @@ function ScreenCard({ screen }: { screen: ScreenDesignerState["screens"][number]
 
   return (
     <Link href={`/screen-designer/${screen.screenId}`} className="block rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-4 shadow-glow transition hover:border-cyan-300/50 hover:bg-[#0a1728]">
+      <AssetPreview preview={screen.visualPreview} allowFullscreen={false} />
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap gap-2">
@@ -51,6 +53,8 @@ function ScreenCard({ screen }: { screen: ScreenDesignerState["screens"][number]
         <WorkspaceMiniStat label="Data Gaps" value={screen.unresolvedDataRequirements} />
         <WorkspaceMiniStat label="Vite Impl." value={vite} />
         <WorkspaceMiniStat label="Roblox Impl." value={roblox} />
+        <WorkspaceMiniStat label="Preview" value={screen.visualPreview.status} />
+        <WorkspaceMiniStat label="Parity Score" value={`${screen.parityScore}%`} />
       </div>
       <div className="mt-4">
         <div className="flex items-center justify-between text-xs font-bold uppercase tracking-[0.16em] text-slate-500">

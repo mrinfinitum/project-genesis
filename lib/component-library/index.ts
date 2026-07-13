@@ -1,6 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { AssetProductionState, ProductionAsset } from "@/lib/assets/asset-production";
+import { resolveComponentPreview, type VisualPreview } from "@/lib/assets/visual-previews";
 import type { ScreenDesignRecord } from "@/lib/screen-designer";
 
 export type ComponentCategory = "Navigation" | "HUD" | "Panels" | "Buttons" | "Cards" | "Lists" | "Progress" | "Forms" | "Overlays" | "Feedback" | "Data Display" | "Game-Specific" | "Accessibility" | "Utility";
@@ -195,6 +196,7 @@ export type ComponentDesignSummary = Pick<ComponentDesignRecord, "id" | "compone
   parityStatus: ComponentParityStatus;
   checklistComplete: number;
   checklistTotal: number;
+  visualPreview: VisualPreview;
 };
 
 export type ComponentLibraryState = {
@@ -661,7 +663,7 @@ function checklistScore(record: ComponentDesignRecord) {
   return { checks, complete: values.filter(Boolean).length, total: values.length };
 }
 
-function summary(record: ComponentDesignRecord): ComponentDesignSummary {
+function summary(record: ComponentDesignRecord, assets?: ProductionAsset[]): ComponentDesignSummary {
   const score = checklistScore(record);
   const parityStatuses = record.implementationTargets.map((item) => item.parityStatus);
   const parityStatus: ComponentParityStatus = parityStatuses.includes("Needs Work")
@@ -690,7 +692,8 @@ function summary(record: ComponentDesignRecord): ComponentDesignSummary {
     missingStates: record.states.filter((item) => item.required && !item.designed).length,
     parityStatus,
     checklistComplete: score.complete,
-    checklistTotal: score.total
+    checklistTotal: score.total,
+    visualPreview: resolveComponentPreview(record, assets)
   };
 }
 
@@ -713,7 +716,7 @@ function buildStats(components: ComponentDesignSummary[]): ComponentLibraryState
 export async function getComponentLibraryState(assetState?: AssetProductionState): Promise<ComponentLibraryState> {
   const store = await readStore();
   const records = mergeRecords(store.records).map((record) => enrichAssets(record, assetState));
-  const components = records.map(summary);
+  const components = records.map((record) => summary(record, assetState?.assets));
   return { components, records, stats: buildStats(components), generatedAt: new Date().toISOString() };
 }
 
@@ -852,6 +855,41 @@ export async function updateComponentWorkflow(input: { componentId: string; acti
     };
   }
 
+  records[index] = next;
+  await writeStore({ records, updatedAt: now });
+  return next;
+}
+
+export async function addComponentReference(input: {
+  componentId: string;
+  source: string;
+  type?: ComponentReferenceAttachment["type"];
+  viewport?: string;
+  version?: number;
+  notes?: string;
+  approvalStatus?: ComponentApprovalStatus;
+}) {
+  const store = await readStore();
+  const records = mergeRecords(store.records);
+  const index = records.findIndex((record) => record.componentId === input.componentId);
+  if (index === -1) throw new Error(`Component not found: ${input.componentId}`);
+  const now = new Date().toISOString();
+  const source = input.source.trim();
+  if (!source) throw new Error("Reference source URL is required.");
+  const next: ComponentDesignRecord = {
+    ...records[index],
+    updatedAt: now,
+    references: [{
+      id: `component-reference-${slug(records[index].componentId)}-${Date.now()}`,
+      type: input.type ?? "annotated reference",
+      source,
+      viewport: input.viewport?.trim() || "1920x1080",
+      version: input.version ?? records[index].version,
+      crop: "full-frame",
+      notes: input.notes?.trim() || "Reference preview added from Visual Preview workflow.",
+      approvalStatus: input.approvalStatus ?? "Unreviewed"
+    }, ...records[index].references]
+  };
   records[index] = next;
   await writeStore({ records, updatedAt: now });
   return next;

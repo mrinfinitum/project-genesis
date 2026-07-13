@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { memo, useDeferredValue, useEffect, useMemo, useState } from "react";
-import { CheckCircle2, CheckSquare, ClipboardList, Download, FileJson, ImageIcon, Printer, Search, UploadCloud } from "lucide-react";
+import { CheckCircle2, CheckSquare, ClipboardList, Download, FileJson, Printer, Search, UploadCloud } from "lucide-react";
+import { AssetPreview as SharedAssetPreview } from "@/components/asset-preview";
 import { Button } from "@/components/ui/button";
 import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, WorkspaceProgressBar, WorkspaceStatTile } from "@/components/ui/workspace";
+import { sanitizePreviewUrl, type VisualPreview } from "@/lib/assets/visual-previews";
 import type { EraArtGroup, EraArtInventory, EraArtRequirementCard, EraArtStatus } from "@/lib/assets/era-art-inventory";
 
 type StatusFilter =
@@ -115,19 +117,43 @@ function statusMatches(card: EraArtRequirementCard, filter: StatusFilter) {
   return card.status === filter;
 }
 
-function AssetPreview({ card }: { card: EraArtRequirementCard }) {
-  return (
-    <div className="grid aspect-[16/10] place-items-center overflow-hidden rounded-md border border-cyan-300/15 bg-slate-950/60">
-      {card.previewUrl ? <img src={card.previewUrl} alt="" loading="lazy" decoding="async" width={512} height={320} className="h-full w-full object-cover" /> : (
-        <div className="grid h-full w-full place-items-center bg-[linear-gradient(135deg,rgba(34,211,238,0.12),rgba(15,23,42,0.95))]">
-          <div className="text-center">
-            <ImageIcon className="mx-auto h-8 w-8 text-cyan-200" />
-            <p className="mt-2 text-xs font-black uppercase tracking-[0.16em] text-cyan-100">Missing Art</p>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+function previewForEraCard(card: EraArtRequirementCard): VisualPreview {
+  const safeUrl = sanitizePreviewUrl(card.previewUrl);
+  return {
+    id: `${card.id}:preview`,
+    objectId: card.linkedObjectId,
+    objectType: card.linkedObjectType,
+    title: card.assetName,
+    status: safeUrl ? card.approvalStatus === "Approved" ? "Approved" : card.publishStatus === "published" ? "Published" : card.previewStatus === "Stale" ? "Stale" : "Generated" : "Missing",
+    mode: card.requirementType.includes("hero") || card.requirementType.includes("banner") ? "hero" : "card",
+    size: "card",
+    url: safeUrl,
+    alt: `${card.assetName} preview`,
+    source: safeUrl ? "studio_preview" : "missing",
+    mimeType: safeUrl.endsWith(".svg") ? "svg" : "image",
+    width: null,
+    height: null,
+    format: card.format,
+    sourceVersion: card.sourceVersion,
+    approvalStatus: card.approvalStatus,
+    publishStatus: card.publishStatus,
+    dimensionsLabel: card.requiredDimensions,
+    metadata: [
+      { label: "Requirement", value: card.requirementType },
+      { label: "Source", value: card.sourcePsdStatus },
+      { label: "Derivative", value: card.derivativeStatus }
+    ],
+    requirement: safeUrl ? undefined : {
+      label: card.assetName,
+      dimensions: card.requiredDimensions,
+      format: card.format,
+      required: card.required,
+      actionHref: card.assetId ? `/assets/${encodeURIComponent(card.assetId)}?tab=previews` : "/game-art-import",
+      actionLabel: card.assetId ? "Upload Preview" : "Create Asset"
+    },
+    safeForPublicRuntime: false,
+    sanitized: !safeUrl
+  };
 }
 
 function cardStatusTone(status: EraArtStatus) {
@@ -180,7 +206,7 @@ function RequirementCard({
       </div>
 
       <Link href={detailHref} className="block">
-        <AssetPreview card={card} />
+        <SharedAssetPreview preview={previewForEraCard(card)} allowFullscreen={false} />
         <div className="mt-4 flex items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="truncate text-lg font-black text-white">{card.assetName}</p>
@@ -881,7 +907,7 @@ export function EraArtInventoryWorkspace({ inventory }: { inventory: EraArtInven
         <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/80 p-4 backdrop-blur-sm">
           <div className="max-h-[90vh] w-full max-w-4xl overflow-auto rounded-md border border-cyan-300/20 bg-[#07101e] p-5 shadow-glow">
             <div className="grid gap-5 lg:grid-cols-[22rem_1fr]">
-              <AssetPreview card={reviewCard} />
+              <SharedAssetPreview preview={previewForEraCard(reviewCard)} />
               <div>
                 <div className="flex items-start justify-between gap-3">
                   <div>

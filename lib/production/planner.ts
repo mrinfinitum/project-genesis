@@ -250,6 +250,20 @@ function assetWorkItems(assetState: AssetProductionState) {
   }
 
   for (const asset of assetState.assets) {
+    const preview = assetState.visualPreviewReport.issues.find((issue) => issue.id.includes(asset.id));
+    if (preview) {
+      items.push(queueItem({
+        id: `preview-${asset.id}`,
+        title: `${preview.action} for ${asset.name}`,
+        type: "Asset",
+        status: preview.status,
+        era: "Art",
+        href: `/assets/${asset.id}?tab=previews`,
+        reason: "Visual-first Studio workspaces need an approved thumbnail or preview.",
+        blockers: [preview.status === "Stale" ? "Preview is stale" : "Preview is missing"],
+        required: true
+      }));
+    }
     if (asset.approvalStatus === "pending" && asset.derivatives.length) {
       items.push(queueItem({
         id: `review-${asset.id}`,
@@ -566,9 +580,11 @@ function buildReports(data: GameData, assetState: AssetProductionState, authorin
   const componentAssetBlockers = componentState?.stats.missingAssets ?? 0;
   const componentStateBlockers = componentState?.stats.missingStates ?? 0;
   const componentBreakingChanges = componentState?.stats.breakingChanges ?? 0;
+  const previewGaps = assetState.visualPreviewReport.previewMissing + assetState.visualPreviewReport.previewStale + assetState.visualPreviewReport.lowResolution;
 
   return [
     { label: "Missing Assets", count: assetState.missingRequirements.length, href: "/assets/missing", severity: "High", description: "Required derivatives or source artwork still missing." },
+    { label: "Preview Quality Gaps", count: previewGaps, href: "/assets", severity: previewGaps ? "High" : "Low", description: "Missing, stale, or low-resolution Studio thumbnails/previews." },
     { label: "Missing Research", count: missingResearch, href: "/research", severity: missingResearch ? "High" : "Low", description: "Research nodes needing status, icon, or asset completion." },
     { label: "Missing Buildings", count: missingBuildings, href: "/buildings", severity: missingBuildings ? "High" : "Low", description: "Buildings missing unlocks or visual production links." },
     { label: "Missing Missions", count: missingMissions, href: "/missions", severity: missingMissions ? "Critical" : "Low", description: "Active content-pack mission records needing production completion." },
@@ -761,11 +777,14 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
   const screenTotal = screenState?.screens.length ?? 0;
   const componentCompleteCount = componentState?.components.filter(componentComplete).length ?? 0;
   const componentTotal = componentState?.components.length ?? 0;
+  const previewReady = assetState.visualPreviewReport.previewReady;
+  const previewTotal = Math.max(1, assetState.visualPreviewReport.totalVisualRecords);
 
   const metrics: ProductionMetric[] = [
     { label: "Overall Game Completion", complete: 0, total: 0, value: 0, detail: "Average of all production systems." },
     { label: "Era Completion", complete: civilizationAges.filter((age) => (eraSummary[ageId(age.name)]?.complete ?? 0) > 0).length, total: civilizationAges.length, value: 0, detail: "Era research/building/art readiness." },
     { label: "Art Completion", complete: artComplete, total: artTotal, value: percent(artComplete, artTotal), detail: `${artComplete} complete assets, ${assetState.missingRequirements.length} missing requirements.` },
+    { label: "Preview Readiness", complete: previewReady, total: previewTotal, value: percent(previewReady, previewTotal), detail: `${assetState.visualPreviewReport.previewMissing} missing, ${assetState.visualPreviewReport.previewStale} stale, ${assetState.visualPreviewReport.lowResolution} low-resolution previews.` },
     { label: "Research Completion", complete: researchCompleteCount, total: data.research.length, value: percent(researchCompleteCount, data.research.length), detail: "Complete research nodes with usable icon/asset links." },
     { label: "Building Completion", complete: buildingCompleteCount, total: data.buildings.length, value: percent(buildingCompleteCount, data.buildings.length), detail: "Buildings with unlocks and visual references." },
     { label: "Production Chain Completion", complete: chainCompleteCount, total: data.building_chains.length, value: percent(chainCompleteCount, data.building_chains.length), detail: "Building chains with all level slots filled." },

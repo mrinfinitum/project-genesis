@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { ComponentDesignDetail } from "@/components/component-design-detail";
 import { getAssetProductionState } from "@/lib/assets/asset-production";
+import { resolveComponentPreview } from "@/lib/assets/visual-previews";
 import { componentHandoffText, componentLibraryInitialRecords, getComponentDesignRecord, validateComponentDesign } from "@/lib/component-library";
 
 export const dynamic = "force-dynamic";
@@ -17,6 +18,7 @@ export default async function ComponentDesignDetailPage({ params }: { params: Pr
   return (
     <ComponentDesignDetail
       record={record}
+      preview={resolveComponentPreview(record, assetState.assets)}
       validation={validateComponentDesign(record)}
       handoffs={{
         "Game Codex": componentHandoffText(record, "Game Codex"),
