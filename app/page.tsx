@@ -4,6 +4,7 @@ import { getEraArtSummaryByEra } from "@/lib/assets/era-art-inventory";
 import { getContentAuthoringState } from "@/lib/content-authoring/store";
 import { getGameData } from "@/lib/data";
 import { buildProductionPlan } from "@/lib/production/planner";
+import { getScreenDesignerState } from "@/lib/screen-designer";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +15,8 @@ export default async function DashboardPage() {
     getEraArtSummaryByEra(),
     getContentAuthoringState()
   ]);
-  const productionPlan = buildProductionPlan(data, assetProductionState, eraArtSummary, contentAuthoringState);
+  const screenDesignerState = await getScreenDesignerState(assetProductionState);
+  const productionPlan = buildProductionPlan(data, assetProductionState, eraArtSummary, contentAuthoringState, screenDesignerState);
   const totalRecords = [
     data.research,
     data.buildings,
