@@ -2,6 +2,7 @@ import { civilizationAges } from "@/data/civilization-identity";
 import { contentPacks, type ContentPack, type ContentPackCategory, type ContentPackStatus } from "@/data/content-packs/survival";
 import type { AssetProductionState, MissingAssetRequirement, ProductionAsset, ProductionTaskRecord } from "@/lib/assets/asset-production";
 import type { EraArtSummaryByEra } from "@/lib/assets/era-art-inventory";
+import type { ComponentDesignSummary, ComponentLibraryState } from "@/lib/component-library";
 import { productionTasksForScaffold, type ContentAuthoringState, type EraScaffold } from "@/lib/content-authoring/templates";
 import type { ScreenDesignerState, ScreenDesignSummary } from "@/lib/screen-designer";
 import type { Building, BuildingChain, GameData, ResearchNode, ResourceCatalogItem, UnlockMatrixRow } from "@/types/schema";
@@ -11,7 +12,7 @@ export type ProductionQueueItem = {
   id: string;
   title: string;
   priority: ProductionPriority;
-  type: "Asset" | "Research" | "Building" | "Resource" | "Mission" | "Event" | "Production Chain" | "Screen Design";
+  type: "Asset" | "Research" | "Building" | "Resource" | "Mission" | "Event" | "Production Chain" | "Screen Design" | "Component";
   status: string;
   era: string;
   href: string;
@@ -544,7 +545,7 @@ function buildBlockers(data: GameData, assetState: AssetProductionState): Produc
   ].filter(Boolean) as ProductionBlocker[];
 }
 
-function buildReports(data: GameData, assetState: AssetProductionState, authoringState?: ContentAuthoringState, screenState?: ScreenDesignerState): ProductionReport[] {
+function buildReports(data: GameData, assetState: AssetProductionState, authoringState?: ContentAuthoringState, screenState?: ScreenDesignerState, componentState?: ComponentLibraryState): ProductionReport[] {
   const missingResearch = data.research.filter((row) => !researchComplete(row)).length;
   const missingBuildings = data.buildings.filter((row) => !buildingComplete(row)).length;
   const missingChains = data.building_chains.filter((row) => !chainComplete(row)).length;
@@ -562,6 +563,9 @@ function buildReports(data: GameData, assetState: AssetProductionState, authorin
   const screenAssetBlockers = screenState?.stats.blockedByMissingAssets ?? 0;
   const screenDataBlockers = screenState?.stats.blockedByMissingData ?? 0;
   const screenInteractionBlockers = screenState?.stats.blockedByMissingInteractionSpecs ?? 0;
+  const componentAssetBlockers = componentState?.stats.missingAssets ?? 0;
+  const componentStateBlockers = componentState?.stats.missingStates ?? 0;
+  const componentBreakingChanges = componentState?.stats.breakingChanges ?? 0;
 
   return [
     { label: "Missing Assets", count: assetState.missingRequirements.length, href: "/assets/missing", severity: "High", description: "Required derivatives or source artwork still missing." },
@@ -575,7 +579,10 @@ function buildReports(data: GameData, assetState: AssetProductionState, authorin
     { label: "Draft Era Scaffolds", count: draftScaffoldCount, href: "/content-authoring", severity: draftScaffoldCount ? "Medium" : "Low", description: "Generated era starter kits waiting for authoring and promotion." },
     { label: "Screen Asset Blockers", count: screenAssetBlockers, href: "/screen-designer", severity: screenAssetBlockers ? "High" : "Low", description: "Screen designs blocked by missing, unpublished, or unapproved visual assets." },
     { label: "Screen Data Blockers", count: screenDataBlockers, href: "/screen-designer", severity: screenDataBlockers ? "Critical" : "Low", description: "Screen designs depending on missing or player-runtime data requirements." },
-    { label: "Screen Interaction Gaps", count: screenInteractionBlockers, href: "/screen-designer", severity: screenInteractionBlockers ? "Medium" : "Low", description: "Screen designs with incomplete states, interactions, motion, review, or accessibility checklist items." }
+    { label: "Screen Interaction Gaps", count: screenInteractionBlockers, href: "/screen-designer", severity: screenInteractionBlockers ? "Medium" : "Low", description: "Screen designs with incomplete states, interactions, motion, review, or accessibility checklist items." },
+    { label: "Component Asset Blockers", count: componentAssetBlockers, href: "/component-library", severity: componentAssetBlockers ? "High" : "Low", description: "Shared UI components with missing, unpublished, or unapproved semantic assets." },
+    { label: "Component State Gaps", count: componentStateBlockers, href: "/component-library", severity: componentStateBlockers ? "Medium" : "Low", description: "Shared UI components missing required state treatments." },
+    { label: "Component Breaking Changes", count: componentBreakingChanges, href: "/component-library", severity: componentBreakingChanges ? "Critical" : "Low", description: "Major component changes requiring dependent screen review." }
   ];
 }
 
@@ -684,7 +691,58 @@ function screenDesignWorkItems(screenState?: ScreenDesignerState) {
   return items;
 }
 
-export function buildProductionPlan(data: GameData, assetState: AssetProductionState, eraSummary: EraArtSummaryByEra, authoringState?: ContentAuthoringState, screenState?: ScreenDesignerState): ProductionPlan {
+function componentComplete(component: ComponentDesignSummary) {
+  return component.approvalStatus === "Approved" || component.status === "Implemented";
+}
+
+function componentWorkItems(componentState?: ComponentLibraryState) {
+  if (!componentState) return [];
+  const items: ProductionQueueItem[] = [];
+  for (const component of componentState.components) {
+    if (component.status === "Not Started" || component.status === "Draft") {
+      items.push(queueItem({
+        id: `component-start-${component.componentId}`,
+        title: `Finish ${component.displayName} component spec`,
+        type: "Component",
+        status: component.status,
+        era: "UI",
+        href: `/component-library/${component.componentId}`,
+        reason: "Reusable game UI component needs anatomy, state, interaction, responsive, and handoff coverage.",
+        blockers: [`${component.checklistTotal - component.checklistComplete} guardrails open`],
+        priority: "High"
+      }));
+    }
+    if (component.missingAssets > 0 || component.missingStates > 0) {
+      items.push(queueItem({
+        id: `component-blocker-${component.componentId}`,
+        title: `Resolve ${component.displayName} component blockers`,
+        type: "Component",
+        status: component.status,
+        era: "UI",
+        href: `/component-library/${component.componentId}`,
+        reason: "Component has missing assets or required states.",
+        blockers: [`${component.missingAssets} missing assets`, `${component.missingStates} missing states`].filter((item) => !item.startsWith("0 ")),
+        priority: component.missingAssets > 0 ? "High" : "Medium"
+      }));
+    }
+    if (component.breakingChanges.some((change) => !change.resolved)) {
+      items.push(queueItem({
+        id: `component-breaking-${component.componentId}`,
+        title: `Review ${component.displayName} breaking change`,
+        type: "Component",
+        status: "Breaking Change",
+        era: "UI",
+        href: `/component-library/${component.componentId}`,
+        reason: "Major component change can affect approved screen designs.",
+        blockers: component.breakingChanges.flatMap((change) => change.affectedScreenIds).slice(0, 4),
+        priority: "Critical"
+      }));
+    }
+  }
+  return items;
+}
+
+export function buildProductionPlan(data: GameData, assetState: AssetProductionState, eraSummary: EraArtSummaryByEra, authoringState?: ContentAuthoringState, screenState?: ScreenDesignerState, componentState?: ComponentLibraryState): ProductionPlan {
   const artComplete = assetState.assets.filter(assetComplete).length;
   const artTotal = Math.max(1, assetState.assets.length + assetState.missingRequirements.length);
   const researchCompleteCount = data.research.filter(researchComplete).length;
@@ -701,6 +759,8 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
   const draftScaffoldItems = authoringState?.stats.draftItemCount ?? 0;
   const screenCompleteCount = screenState?.screens.filter(screenDesignComplete).length ?? 0;
   const screenTotal = screenState?.screens.length ?? 0;
+  const componentCompleteCount = componentState?.components.filter(componentComplete).length ?? 0;
+  const componentTotal = componentState?.components.length ?? 0;
 
   const metrics: ProductionMetric[] = [
     { label: "Overall Game Completion", complete: 0, total: 0, value: 0, detail: "Average of all production systems." },
@@ -712,7 +772,8 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
     { label: "Resource Completion", complete: resourceCompleteCount, total: data.resource_catalog.length, value: percent(resourceCompleteCount, data.resource_catalog.length), detail: "Canonical resources with required identity fields." },
     { label: "Mission Completion", complete: survivalMissionComplete, total: Math.max(1, survivalMissionTotal), value: percent(survivalMissionComplete, survivalMissionTotal), detail: "Authored mission content from active content packs." },
     { label: "Event Completion", complete: survivalEventComplete, total: Math.max(1, survivalEventTotal), value: percent(survivalEventComplete, survivalEventTotal), detail: "Authored event content from active content packs." },
-    { label: "Screen Design Completion", complete: screenCompleteCount, total: Math.max(1, screenTotal), value: percent(screenCompleteCount, screenTotal), detail: "Major game screens with approved or implemented Studio design specifications." }
+    { label: "Screen Design Completion", complete: screenCompleteCount, total: Math.max(1, screenTotal), value: percent(screenCompleteCount, screenTotal), detail: "Major game screens with approved or implemented Studio design specifications." },
+    { label: "Component Library Completion", complete: componentCompleteCount, total: Math.max(1, componentTotal), value: percent(componentCompleteCount, componentTotal), detail: "Reusable game UI components with approved or implemented design-system specifications." }
   ];
   if (survivalPack) {
     metrics.splice(2, 0, { label: "Survival Content Pack", complete: survivalScore.complete, total: survivalScore.total, value: survivalScore.value, detail: `${survivalPack.title} is ${survivalScore.value}% production-ready.` });
@@ -732,7 +793,7 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
   const overall = clamp(metrics.filter((metric) => metric.label !== "Overall Game Completion").reduce((sum, metric) => sum + metric.value, 0) / Math.max(1, metrics.length - 1));
   metrics[0] = { ...metrics[0], complete: metrics.reduce((sum, metric) => sum + metric.complete, 0), total: metrics.reduce((sum, metric) => sum + metric.total, 0), value: overall };
 
-  const queue = [...screenDesignWorkItems(screenState), ...scaffoldWorkItems(authoringState), ...assetWorkItems(assetState), ...contentWorkItems(data)].filter((item) => !isCoveredByCompleteContentPack(item)).slice(0, 220);
+  const queue = [...componentWorkItems(componentState), ...screenDesignWorkItems(screenState), ...scaffoldWorkItems(authoringState), ...assetWorkItems(assetState), ...contentWorkItems(data)].filter((item) => !isCoveredByCompleteContentPack(item)).slice(0, 220);
   return {
     overallCompletion: overall,
     metrics,
@@ -741,7 +802,7 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
     blockers: buildBlockers(data, assetState),
     heatmap,
     timeline: buildTimeline(data, assetState),
-    reports: buildReports(data, assetState, authoringState, screenState),
+    reports: buildReports(data, assetState, authoringState, screenState, componentState),
     generatedAt: new Date().toISOString()
   };
 }

@@ -153,6 +153,7 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/hero-discovery-shots", label: "Hero Discovery", icon: Star },
       { href: "/prompt-library", label: "Prompt Library", icon: ScrollText },
       { href: "/screen-designer", label: "Screen Designer", icon: MonitorCog },
+      { href: "/component-library", label: "Component Library", icon: PackageCheck },
       { href: "/game-art-import", label: "Game Art Import", icon: UploadCloud },
       { href: "/assets", label: "Asset Dashboard", icon: PackageCheck },
       { href: "/assets/source", label: "Source Art", icon: FileImage },

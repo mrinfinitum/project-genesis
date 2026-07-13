@@ -27,6 +27,13 @@ export type ScreenLayoutSpec = {
 
 export type ScreenComponentSpec = {
   id: string;
+  componentLibraryId?: string;
+  variant?: string;
+  state?: string;
+  layoutOverride?: string;
+  assetOverride?: string;
+  dataBindings?: string[];
+  screenSpecificNotes?: string;
   displayName: string;
   purpose: string;
   dimensions: string;
@@ -362,6 +369,28 @@ const researchComponents: ScreenComponentSpec[] = [
   ["loading-state", "ResearchLoadingState", "Skeleton/loading treatment."]
 ].map(([id, displayName, purpose]) => ({
   id,
+  componentLibraryId: ({
+    "research-header": "BeveledGamePanel",
+    "era-selector": "EraProgressRail",
+    "category-tabs": "NavigationItem",
+    "research-tree": "BeveledGamePanel",
+    "search-filter": "UtilityIconButton",
+    "research-node": "ResearchCard",
+    "dependency-connectors": "EraProgressRail",
+    "detail-panel": "UpgradePanel",
+    "unlock-requirements": "UnlockRequirementList",
+    "cost-panel": "CostDisplay",
+    "art-preview": "ArtRequirementCard",
+    "empty-state": "EmptyState",
+    "locked-state": "LockedState",
+    "loading-state": "LoadingSkeleton"
+  } as Record<string, string>)[id],
+  variant: id === "research-node" ? "default" : id === "detail-panel" ? "standard" : "default",
+  state: "Default",
+  layoutOverride: "Screen-specific placement is defined by the Research layout spec.",
+  assetOverride: "",
+  dataBindings: ["research", "unlock_matrix", "player research progress"],
+  screenSpecificNotes: "Use the shared Component Library record for anatomy, states, tokens, and interaction baseline.",
   displayName,
   purpose,
   dimensions: id === "research-tree" ? "Fills primary workspace; min 960x640 at 1920 reference." : "Responsive to parent panel.",
@@ -414,6 +443,13 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
     componentSpecs: [
       {
         id: "dashboard-hero",
+        componentLibraryId: "HeroPanel",
+        variant: "default",
+        state: "Default",
+        layoutOverride: "Hero artwork remains dominant; compact progression occupies bottom 15-20%.",
+        assetOverride: "dashboard_hero",
+        dataBindings: ["eras", "clientProfiles.default.eraNavigation", "player era progress"],
+        screenSpecificNotes: "Dashboard-specific usage of the shared HeroPanel with compact EraNode children.",
         displayName: "DashboardHero",
         purpose: "Dominant first-screen hero artwork with compact era progression HUD.",
         dimensions: "Full hero stage with progression occupying bottom 15-20%.",

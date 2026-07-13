@@ -1,0 +1,860 @@
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import path from "node:path";
+import type { AssetProductionState, ProductionAsset } from "@/lib/assets/asset-production";
+import type { ScreenDesignRecord } from "@/lib/screen-designer";
+
+export type ComponentCategory = "Navigation" | "HUD" | "Panels" | "Buttons" | "Cards" | "Lists" | "Progress" | "Forms" | "Overlays" | "Feedback" | "Data Display" | "Game-Specific" | "Accessibility" | "Utility";
+export type ComponentDesignStatus = "Not Started" | "Draft" | "In Design" | "Ready for Review" | "Approved" | "Implemented" | "Needs Revision" | "Deprecated";
+export type ComponentApprovalStatus = "Unreviewed" | "Changes Requested" | "Approved";
+export type ComponentImplementationTarget = "Vite Web" | "Roblox" | "Unity" | "Unreal" | "Godot";
+export type ComponentImplementationStatus = "Not Started" | "In Progress" | "Implemented" | "Needs Parity Review" | "Approved" | "Deprecated";
+export type ComponentParityStatus = "Not Reviewed" | "Needs Work" | "Close" | "Approved";
+export type ComponentDataClassification = "Canonical Studio Definition" | "Player Runtime State" | "Service State" | "Presentation Hint" | "Local Interaction State";
+export type ComponentChangeType = "Patch" | "Minor" | "Major";
+
+export const componentCategories: ComponentCategory[] = ["Navigation", "HUD", "Panels", "Buttons", "Cards", "Lists", "Progress", "Forms", "Overlays", "Feedback", "Data Display", "Game-Specific", "Accessibility", "Utility"];
+
+export type ComponentAnatomyPart = {
+  id: string;
+  label: string;
+  source: "source art" | "CSS/layout" | "runtime data" | "interaction state";
+  required: boolean;
+  notes: string;
+};
+
+export type ComponentTokenReference = {
+  group: "typography" | "colors" | "spacing" | "sizing" | "borders" | "radii" | "shadows" | "glow" | "motion" | "z-index" | "opacity" | "icon scale";
+  tokenId: string;
+  usage: string;
+  override?: string;
+};
+
+export type ComponentAssetReference = {
+  id: string;
+  label: string;
+  assetKey: string;
+  required: boolean;
+  status: "Ready" | "Missing" | "Placeholder" | "Needs Approval" | "Needs Web Mapping" | "Needs Roblox Mapping" | "Needs Engine Mapping";
+  linkedAssetId?: string;
+  notes: string;
+};
+
+export type ComponentVariant = {
+  id: string;
+  displayName: string;
+  visualDifferences: string;
+  tokenOverrides: string[];
+  assetOverrides: string[];
+  behaviorDifferences: string;
+  allowedStates: string[];
+  usageGuidance: string;
+};
+
+export type ComponentStateSpec = {
+  id: string;
+  label: string;
+  required: boolean;
+  designed: boolean;
+  notes: string;
+};
+
+export type ComponentDataInput = {
+  id: string;
+  label: string;
+  type: string;
+  classification: ComponentDataClassification;
+  required: boolean;
+  notes: string;
+};
+
+export type ComponentInteraction = {
+  id: string;
+  trigger: string;
+  action: string;
+  stateTransition: string;
+  runtimeAction: string;
+  animation: string;
+  errorBehavior: string;
+  focusBehavior: string;
+  keyboardControllerBehavior: string;
+};
+
+export type ComponentResponsiveRule = {
+  viewport: string;
+  sizing: string;
+  scalingBehavior: string;
+  minMaxDimensions: string;
+  collapseBehavior: string;
+  textHandling: string;
+  touchTarget: string;
+};
+
+export type ComponentImplementationRecord = {
+  target: ComponentImplementationTarget;
+  status: ComponentImplementationStatus;
+  implementationPath: string;
+  moduleName: string;
+  lastVerifiedVersion?: number;
+  parityScore: number;
+  parityStatus: ComponentParityStatus;
+  notes: string;
+  knownDeviations: string[];
+};
+
+export type ComponentScreenUsage = {
+  screenId: string;
+  screenName: string;
+  variant: string;
+  state: string;
+  notes: string;
+};
+
+export type ComponentReferenceAttachment = {
+  id: string;
+  type: "Roblox screenshot" | "Vite screenshot" | "source PNG" | "PSD preview" | "wireframe" | "annotated reference" | "design notes";
+  source: string;
+  viewport: string;
+  version: number;
+  crop: string;
+  notes: string;
+  approvalStatus: ComponentApprovalStatus;
+};
+
+export type ComponentReviewEntry = {
+  id: string;
+  reviewer: string;
+  status: ComponentApprovalStatus;
+  comments: string;
+  requiredChanges: string[];
+  date: string;
+  approvedVersion?: number;
+  implementationTarget?: ComponentImplementationTarget;
+};
+
+export type ComponentBreakingChange = {
+  id: string;
+  type: ComponentChangeType;
+  title: string;
+  description: string;
+  createdAt: string;
+  affectedScreenIds: string[];
+  migrationNotes: string[];
+  resolved: boolean;
+};
+
+export type ComponentDesignChecklist = {
+  anatomyComplete: boolean;
+  tokenReferencesComplete: boolean;
+  assetsMapped: boolean;
+  requiredStatesComplete: boolean;
+  interactionContractComplete: boolean;
+  responsiveBehaviorComplete: boolean;
+  accessibilityReviewed: boolean;
+  implementationTargetsTracked: boolean;
+  reviewComplete: boolean;
+  approved: boolean;
+};
+
+export type ComponentDesignRecord = {
+  id: string;
+  componentId: string;
+  displayName: string;
+  description: string;
+  category: ComponentCategory;
+  status: ComponentDesignStatus;
+  approvalStatus: ComponentApprovalStatus;
+  version: number;
+  approvedVersion?: number;
+  assignedTo: string;
+  createdAt: string;
+  updatedAt: string;
+  designTokens: ComponentTokenReference[];
+  dimensions: string;
+  layoutRules: string[];
+  anatomy: ComponentAnatomyPart[];
+  assetKeys: ComponentAssetReference[];
+  dataInputs: ComponentDataInput[];
+  states: ComponentStateSpec[];
+  variants: ComponentVariant[];
+  interactions: ComponentInteraction[];
+  responsiveRules: ComponentResponsiveRule[];
+  motionRules: string[];
+  accessibilityRequirements: string[];
+  implementationTargets: ComponentImplementationRecord[];
+  screenUsages: ComponentScreenUsage[];
+  references: ComponentReferenceAttachment[];
+  reviewHistory: ComponentReviewEntry[];
+  breakingChanges: ComponentBreakingChange[];
+  notes: string[];
+  frozenApprovedVersion?: ComponentDesignRecord;
+};
+
+export type ComponentDesignSummary = Pick<ComponentDesignRecord, "id" | "componentId" | "displayName" | "description" | "category" | "status" | "approvalStatus" | "version" | "assignedTo" | "updatedAt" | "implementationTargets" | "screenUsages" | "variants" | "breakingChanges"> & {
+  missingAssets: number;
+  missingStates: number;
+  parityStatus: ComponentParityStatus;
+  checklistComplete: number;
+  checklistTotal: number;
+};
+
+export type ComponentLibraryState = {
+  components: ComponentDesignSummary[];
+  records: ComponentDesignRecord[];
+  stats: {
+    total: number;
+    notStarted: number;
+    inDesign: number;
+    approved: number;
+    implemented: number;
+    parityApproved: number;
+    missingAssets: number;
+    missingStates: number;
+    breakingChanges: number;
+    screensAffectedByPendingChanges: number;
+  };
+  generatedAt: string;
+};
+
+const storePath = process.env.PROJECT_GENESIS_COMPONENT_LIBRARY_STORE
+  ? path.resolve(process.env.PROJECT_GENESIS_COMPONENT_LIBRARY_STORE)
+  : path.join(process.cwd(), "data", "component-library.local.json");
+
+const viewports = ["1366x768", "1440x900", "1920x1080", "2560x1440", "3440x1440", "3840x2160"];
+const commonStates = ["Default", "Hover", "Pressed", "Focused", "Selected", "Active", "Disabled", "Locked", "Loading", "Empty", "Error", "Success", "Affordable", "Unaffordable", "Maxed", "Missing Data", "Reduced Motion"];
+
+function slug(value: string) {
+  return value.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
+function checklist(input: Partial<ComponentDesignChecklist>): ComponentDesignChecklist {
+  return {
+    anatomyComplete: false,
+    tokenReferencesComplete: false,
+    assetsMapped: false,
+    requiredStatesComplete: false,
+    interactionContractComplete: false,
+    responsiveBehaviorComplete: false,
+    accessibilityReviewed: false,
+    implementationTargetsTracked: false,
+    reviewComplete: false,
+    approved: false,
+    ...input
+  };
+}
+
+function token(group: ComponentTokenReference["group"], tokenId: string, usage: string): ComponentTokenReference {
+  return { group, tokenId, usage };
+}
+
+function anatomyPart(id: string, label: string, source: ComponentAnatomyPart["source"], notes = ""): ComponentAnatomyPart {
+  return { id, label, source, required: true, notes };
+}
+
+function assetRef(label: string, assetKey: string, status: ComponentAssetReference["status"] = "Missing"): ComponentAssetReference {
+  return { id: `asset-${assetKey}`, label, assetKey, required: true, status, notes: "Semantic asset key only; private source paths stay in Asset Production." };
+}
+
+function dataInput(id: string, label: string, type: string, classification: ComponentDataClassification, notes = ""): ComponentDataInput {
+  return { id, label, type, classification, required: true, notes };
+}
+
+function states(required: string[], designed: string[] = required) {
+  const designedSet = new Set(designed);
+  return required.map((label) => ({
+    id: slug(label),
+    label,
+    required: true,
+    designed: designedSet.has(label),
+    notes: designedSet.has(label) ? "State is included in the component spec." : "Required state still needs design treatment."
+  }));
+}
+
+function variant(id: string, displayName: string, allowedStates: string[], guidance = "Use where the screen-specific context matches this variant."): ComponentVariant {
+  return {
+    id,
+    displayName,
+    visualDifferences: `${displayName} treatment uses documented token and asset overrides.`,
+    tokenOverrides: [],
+    assetOverrides: [],
+    behaviorDifferences: "No gameplay rule changes; only presentation and interaction treatment differ.",
+    allowedStates,
+    usageGuidance: guidance
+  };
+}
+
+function interaction(id: string, trigger: string, action: string, runtimeAction = "Calls provided action callback."): ComponentInteraction {
+  return {
+    id,
+    trigger,
+    action,
+    stateTransition: "Default -> Focused/Hover -> Pressed/Active -> Default or Disabled.",
+    runtimeAction,
+    animation: "Use shared motion tokens and reduced-motion fallback.",
+    errorBehavior: "Do not drop focus; expose inline or toast feedback.",
+    focusBehavior: "Visible focus ring and deterministic focus return.",
+    keyboardControllerBehavior: "Support Tab/Shift+Tab plus Enter/Space where actionable; map controller confirm/cancel where relevant."
+  };
+}
+
+function responsiveRules(componentId: string): ComponentResponsiveRule[] {
+  return viewports.map((viewport) => ({
+    viewport,
+    sizing: "Uses component min/max sizing and screen layout slot constraints.",
+    scalingBehavior: viewport === "3440x1440" || viewport === "3840x2160" ? "Preserve readable density; do not stretch text beyond max content width." : "Scale within layout slot while preserving minimum touch targets.",
+    minMaxDimensions: componentId.includes("Button") ? "min 44x44 touch target; width driven by variant" : "Documented by consuming screen layout.",
+    collapseBehavior: "Use compact variant where available; otherwise preserve semantics and truncate secondary text.",
+    textHandling: "No viewport-width font scaling; truncate optional metadata only.",
+    touchTarget: "Minimum 44px interactive target for pointer/touch."
+  }));
+}
+
+function implementationTargets(componentId: string, viteStatus: ComponentImplementationStatus = "Not Started", robloxStatus: ComponentImplementationStatus = "Not Started"): ComponentImplementationRecord[] {
+  return [
+    { target: "Vite Web", status: viteStatus, implementationPath: viteStatus === "Not Started" ? "" : `components/game-ui/${componentId}.tsx`, moduleName: componentId, lastVerifiedVersion: viteStatus === "Approved" ? 1 : undefined, parityScore: viteStatus === "Approved" ? 100 : viteStatus === "Implemented" ? 80 : 0, parityStatus: viteStatus === "Approved" ? "Approved" : viteStatus === "Implemented" ? "Close" : "Not Reviewed", notes: "Tracked against the Vite prototype/client implementation.", knownDeviations: [] },
+    { target: "Roblox", status: robloxStatus, implementationPath: robloxStatus === "Not Started" ? "" : `ReplicatedStorage/UI/${componentId}`, moduleName: componentId, lastVerifiedVersion: robloxStatus === "Approved" ? 1 : undefined, parityScore: robloxStatus === "Approved" ? 100 : robloxStatus === "Implemented" ? 75 : 0, parityStatus: robloxStatus === "Approved" ? "Approved" : robloxStatus === "Implemented" ? "Close" : "Not Reviewed", notes: "Tracked against Roblox UI parity.", knownDeviations: [] },
+    { target: "Unity", status: "Not Started", implementationPath: "", moduleName: componentId, parityScore: 0, parityStatus: "Not Reviewed", notes: "Future client target.", knownDeviations: [] },
+    { target: "Unreal", status: "Not Started", implementationPath: "", moduleName: componentId, parityScore: 0, parityStatus: "Not Reviewed", notes: "Future client target.", knownDeviations: [] },
+    { target: "Godot", status: "Not Started", implementationPath: "", moduleName: componentId, parityScore: 0, parityStatus: "Not Reviewed", notes: "Future client target.", knownDeviations: [] }
+  ];
+}
+
+function baseRecord(input: {
+  componentId: string;
+  displayName?: string;
+  description: string;
+  category: ComponentCategory;
+  status?: ComponentDesignStatus;
+  approvalStatus?: ComponentApprovalStatus;
+  assignedTo?: string;
+  dimensions?: string;
+  anatomy?: ComponentAnatomyPart[];
+  assetKeys?: ComponentAssetReference[];
+  dataInputs?: ComponentDataInput[];
+  states?: ComponentStateSpec[];
+  variants?: ComponentVariant[];
+  interactions?: ComponentInteraction[];
+  screenUsages?: ComponentScreenUsage[];
+  viteStatus?: ComponentImplementationStatus;
+  robloxStatus?: ComponentImplementationStatus;
+  checklist?: Partial<ComponentDesignChecklist>;
+  notes?: string[];
+}): ComponentDesignRecord {
+  const now = "2026-07-13T00:00:00.000Z";
+  const status = input.status ?? "Draft";
+  const approvalStatus = input.approvalStatus ?? "Unreviewed";
+  const displayName = input.displayName ?? input.componentId;
+  return {
+    id: `component-design-${slug(input.componentId)}`,
+    componentId: input.componentId,
+    displayName,
+    description: input.description,
+    category: input.category,
+    status,
+    approvalStatus,
+    version: 1,
+    approvedVersion: approvalStatus === "Approved" ? 1 : undefined,
+    assignedTo: input.assignedTo ?? "Design Systems",
+    createdAt: now,
+    updatedAt: now,
+    designTokens: [
+      token("typography", "game-ui.body", "Readable component copy"),
+      token("colors", "game-ui.surface", "Base surface and foreground pairing"),
+      token("spacing", "game-ui.gap-md", "Internal spacing"),
+      token("radii", "game-ui.radius-md", "Default component radius"),
+      token("motion", "game-ui.motion-fast", "Interactive state transitions")
+    ],
+    dimensions: input.dimensions ?? "Responsive to parent layout slot with documented min/max dimensions.",
+    layoutRules: ["Use semantic layout slots from Screen Designer.", "Do not hardcode player data in component records.", "Preserve minimum touch target and focus affordances."],
+    anatomy: input.anatomy ?? [
+      anatomyPart("container", "Container", "CSS/layout"),
+      anatomyPart("content", "Content layer", "runtime data"),
+      anatomyPart("state-layer", "Interactive state layer", "interaction state")
+    ],
+    assetKeys: input.assetKeys ?? [],
+    dataInputs: input.dataInputs ?? [dataInput("presentationState", "Presentation state", "ComponentState", "Local Interaction State")],
+    states: input.states ?? states(["Default", "Hover", "Focused", "Disabled", "Loading", "Error"], ["Default", "Hover", "Focused"]),
+    variants: input.variants ?? [variant("default", "Default", ["Default", "Hover", "Focused", "Disabled"])],
+    interactions: input.interactions ?? [interaction("activate", "Pointer/touch/Enter/Space", "Invoke provided component action")],
+    responsiveRules: responsiveRules(input.componentId),
+    motionRules: ["Use shared motion duration/easing tokens.", "Reduced motion removes nonessential transforms.", "Do not encode pixel-specific animation into canonical game data."],
+    accessibilityRequirements: ["Visible focus state.", "Keyboard reachable when interactive.", "Controller behavior documented where applicable.", "Accessible label or text alternative required for icon-only controls."],
+    implementationTargets: implementationTargets(input.componentId, input.viteStatus, input.robloxStatus),
+    screenUsages: input.screenUsages ?? [],
+    references: [],
+    reviewHistory: approvalStatus === "Approved" ? [{ id: `review-${slug(input.componentId)}-initial`, reviewer: "Design Systems", status: "Approved", comments: "Seeded approved baseline from existing Studio implementation.", requiredChanges: [], date: now, approvedVersion: 1, implementationTarget: "Vite Web" }] : [],
+    breakingChanges: [],
+    notes: input.notes ?? ["Starter component record created by Component Library v1.0."],
+    frozenApprovedVersion: undefined,
+    ...(approvalStatus === "Approved" ? { frozenApprovedVersion: undefined } : {}),
+  };
+}
+
+function usage(screenId: string, screenName: string, variantId = "default", state = "Default", notes = "Referenced by seeded Screen Designer starter records."): ComponentScreenUsage {
+  return { screenId, screenName, variant: variantId, state, notes };
+}
+
+const buttonStates = ["Default", "Hover", "Pressed", "Focused", "Disabled", "Loading", "Error", "Reduced Motion"];
+const drawerStates = ["Closed", "Opening", "Open", "Closing", "Empty", "Populated", "Reduced Motion"];
+
+function namedComponent(componentId: string, category: ComponentCategory, description: string, screenUsages: ComponentScreenUsage[] = []) {
+  return baseRecord({ componentId, category, description, screenUsages });
+}
+
+const dashboardComponentRecords: ComponentDesignRecord[] = [
+  baseRecord({
+    componentId: "SideNavigationRail",
+    description: "Persistent Studio/game navigation rail with active/inactive, locked, and notification states.",
+    category: "Navigation",
+    status: "Implemented",
+    approvalStatus: "Unreviewed",
+    viteStatus: "Implemented",
+    robloxStatus: "Needs Parity Review",
+    anatomy: [anatomyPart("rail-background", "Rail background", "CSS/layout"), anatomyPart("nav-section", "Navigation section", "runtime data"), anatomyPart("active-indicator", "Active item indicator", "interaction state"), anatomyPart("collapse-control", "Collapse control", "interaction state")],
+    assetKeys: [assetRef("Navigation background", "dashboard_nav_background", "Needs Web Mapping")],
+    states: states(["Default", "Hover", "Focused", "Selected", "Active", "Disabled", "Locked", "Missing Data", "Reduced Motion"], ["Default", "Hover", "Focused", "Selected", "Active", "Disabled"]),
+    variants: [variant("expanded", "Expanded", ["Default", "Active", "Locked"]), variant("compact", "Compact", ["Default", "Active", "Locked"]), variant("notification", "Notification", ["Default", "Active"])],
+    interactions: [interaction("select-nav-item", "Click/tap/Enter a navigation item", "Navigate to selected screen", "Client router navigation."), interaction("collapse-rail", "Click collapse control", "Toggle compact rail", "Local preference update.")],
+    screenUsages: [usage("dashboard", "Dashboard"), usage("settings", "Settings")]
+  }),
+  baseRecord({
+    componentId: "TopHudBar",
+    description: "Top HUD strip for key resource/economy counters and utility controls.",
+    category: "HUD",
+    status: "In Design",
+    viteStatus: "In Progress",
+    robloxStatus: "In Progress",
+    anatomy: [anatomyPart("hud-surface", "HUD surface", "CSS/layout"), anatomyPart("economy-slots", "Economy slots", "runtime data"), anatomyPart("utility-controls", "Utility controls", "interaction state")],
+    dataInputs: [dataInput("primaryHudResources", "Primary HUD resource IDs", "string[]", "Presentation Hint"), dataInput("economyBalances", "Economy balances and rates", "EconomyState[]", "Player Runtime State")],
+    screenUsages: [usage("dashboard", "Dashboard"), usage("resources", "Resources")]
+  }),
+  baseRecord({
+    componentId: "HudEconomySlot",
+    description: "Compact HUD resource/economy slot with icon, balance, rate, and premium state.",
+    category: "HUD",
+    status: "In Design",
+    viteStatus: "In Progress",
+    robloxStatus: "In Progress",
+    assetKeys: [assetRef("Economy icon", "economy_counter_icon", "Needs Approval")],
+    dataInputs: [dataInput("definitionId", "Economy definition ID", "GenesisId", "Canonical Studio Definition"), dataInput("balance", "Current balance", "number", "Player Runtime State"), dataInput("rate", "Current rate", "number", "Player Runtime State"), dataInput("premium", "Premium flag", "boolean", "Canonical Studio Definition")],
+    states: states(["Default", "Hover", "Focused", "Loading", "Error", "Success", "Missing Data", "Reduced Motion"], ["Default", "Hover", "Focused", "Loading", "Missing Data"]),
+    screenUsages: [usage("dashboard", "Dashboard"), usage("resources", "Resources")]
+  }),
+  baseRecord({
+    componentId: "UtilityIconButton",
+    description: "Icon-only utility action button with tooltip, focus label, and disabled prevention.",
+    category: "Navigation",
+    status: "Implemented",
+    viteStatus: "Implemented",
+    robloxStatus: "Needs Parity Review",
+    states: states(buttonStates, ["Default", "Hover", "Pressed", "Focused", "Disabled"]),
+    variants: [variant("default", "Default", buttonStates), variant("danger", "Danger", buttonStates), variant("subtle", "Subtle", buttonStates)],
+    interactions: [interaction("activate", "Pointer/touch/Enter/Space", "Invoke utility action"), interaction("show-tooltip", "Hover/focus", "Show tooltip without stealing focus", "Local interaction state only.")],
+    screenUsages: [usage("dashboard", "Dashboard"), usage("settings", "Settings")]
+  }),
+  baseRecord({
+    componentId: "ClickPowerControl",
+    description: "Primary click-power control with ring, icon/hand artwork, press feedback, cooldown, and gain state.",
+    category: "Game-Specific",
+    status: "In Design",
+    viteStatus: "In Progress",
+    robloxStatus: "In Progress",
+    anatomy: [anatomyPart("click-ring", "Click ring", "source art"), anatomyPart("button-plate", "Button plate", "source art"), anatomyPart("hit-area", "Interactive hit area", "CSS/layout"), anatomyPart("gain-feedback", "Gain feedback", "interaction state"), anatomyPart("cooldown-state", "Cooldown layer", "runtime data")],
+    assetKeys: [assetRef("Click ring", "dashboard_click_ring", "Needs Approval"), assetRef("Click button", "dashboard_click_button", "Needs Web Mapping")],
+    dataInputs: [dataInput("clickPower", "Current click power", "number", "Player Runtime State"), dataInput("cooldown", "Cooldown state", "number", "Local Interaction State"), dataInput("gainState", "Gain feedback state", "GainState", "Local Interaction State")],
+    states: states(["Default", "Hover", "Pressed", "Focused", "Active", "Disabled", "Loading", "Error", "Success", "Reduced Motion"], ["Default", "Hover", "Pressed", "Focused", "Active"]),
+    variants: [variant("default", "Default", buttonStates), variant("boosted", "Boosted", ["Default", "Hover", "Pressed", "Active"]), variant("locked", "Locked", ["Locked", "Disabled"])],
+    interactions: [interaction("click-power", "Pointer/touch/Enter/Space", "Trigger click gain feedback", "Player runtime click action supplied by game client.")],
+    screenUsages: [usage("dashboard", "Dashboard")]
+  }),
+  baseRecord({
+    componentId: "AutoClickControl",
+    description: "Automation toggle with on/off state, robot/ring assets, and disabled/locked treatment.",
+    category: "Game-Specific",
+    status: "In Design",
+    viteStatus: "In Progress",
+    robloxStatus: "In Progress",
+    assetKeys: [assetRef("Automation ring", "dashboard_auto_ring", "Needs Approval"), assetRef("Automation on button", "dashboard_auto_button_on", "Needs Web Mapping"), assetRef("Automation off button", "dashboard_auto_button_off", "Needs Web Mapping")],
+    dataInputs: [dataInput("automationUnlocked", "Automation unlock state", "boolean", "Player Runtime State"), dataInput("automationActive", "Automation active state", "boolean", "Player Runtime State")],
+    states: states(["Default", "Hover", "Pressed", "Focused", "Active", "Disabled", "Locked", "Loading", "Error", "Reduced Motion"], ["Default", "Hover", "Pressed", "Focused", "Active", "Locked"]),
+    variants: [variant("off", "Off", ["Default", "Hover", "Pressed"]), variant("on", "On", ["Active", "Hover", "Pressed"]), variant("locked", "Locked", ["Locked", "Disabled"])],
+    interactions: [interaction("toggle-auto-click", "Pointer/touch/Enter/Space", "Toggle automation state", "Player runtime automation toggle callback.")],
+    screenUsages: [usage("dashboard", "Dashboard")]
+  }),
+  baseRecord({
+    componentId: "BottomDrawer",
+    description: "Bottom anchored drawer used for boosts, inventory, notifications, and compact contextual content.",
+    category: "Overlays",
+    status: "Draft",
+    anatomy: [anatomyPart("scrim", "Optional scrim", "CSS/layout"), anatomyPart("drawer-surface", "Drawer surface", "CSS/layout"), anatomyPart("drag-handle", "Drag handle", "interaction state"), anatomyPart("content-slot", "Content slot", "runtime data")],
+    states: states(drawerStates, ["Closed", "Opening", "Open", "Closing", "Reduced Motion"]),
+    variants: [variant("compact", "Compact", drawerStates), variant("full", "Full", drawerStates), variant("boosts", "Boosts", drawerStates), variant("inventory", "Inventory", drawerStates)],
+    interactions: [interaction("open-drawer", "Launcher click/tap", "Closed -> Opening -> Open", "Local presentation state."), interaction("close-drawer", "Escape/outside click/cancel", "Open -> Closing -> Closed", "Local presentation state.")],
+    screenUsages: [usage("dashboard", "Dashboard"), usage("resources", "Resources")]
+  }),
+  baseRecord({
+    componentId: "EraNode",
+    description: "Era progression node with frame, number/icon, lock state, glow, label, progress accent, and connector anchor.",
+    category: "Game-Specific",
+    status: "In Design",
+    viteStatus: "In Progress",
+    robloxStatus: "Needs Parity Review",
+    anatomy: [anatomyPart("outer-frame", "Outer frame", "source art"), anatomyPart("inner-plate", "Inner plate", "source art"), anatomyPart("number-icon", "Number or icon", "runtime data"), anatomyPart("lock-state", "Lock state", "interaction state"), anatomyPart("current-glow", "Current-state glow", "CSS/layout"), anatomyPart("label", "Label", "runtime data"), anatomyPart("progress-accent", "Progress accent", "runtime data"), anatomyPart("connector-anchor", "Connector anchor", "CSS/layout")],
+    assetKeys: [assetRef("Era node frame", "dashboard_era_node_frame", "Needs Approval"), assetRef("Era lock icon", "dashboard_era_lock_icon", "Needs Web Mapping")],
+    dataInputs: [dataInput("eraId", "Era ID", "GenesisId", "Canonical Studio Definition"), dataInput("completion", "Era completion", "number", "Player Runtime State"), dataInput("unlockState", "Unlock state", "EraUnlockState", "Player Runtime State")],
+    states: states(["Default", "Hover", "Focused", "Selected", "Active", "Locked", "Loading", "Missing Data", "Reduced Motion"], ["Default", "Hover", "Focused", "Selected", "Active", "Locked", "Reduced Motion"]),
+    variants: [variant("completed", "Completed", ["Default", "Hover", "Focused"]), variant("current", "Current", ["Active", "Hover", "Focused"]), variant("next", "Next", ["Default", "Locked"]), variant("locked", "Locked", ["Locked", "Disabled"]), variant("mystery", "Mystery", ["Locked", "Missing Data"]), variant("preview", "Preview", ["Default", "Hover"])],
+    screenUsages: [usage("dashboard", "Dashboard", "current", "Active"), usage("civilization", "Civilization", "default", "Default")]
+  })
+];
+
+const initialComponentRecords: ComponentDesignRecord[] = [
+  ...dashboardComponentRecords,
+  namedComponent("NavigationItem", "Navigation", "Reusable navigation item with icon, label, active state, locked state, and notification treatment.", [usage("dashboard", "Dashboard"), usage("settings", "Settings")]),
+  namedComponent("BeveledGamePanel", "Panels", "Shared beveled game surface for dense HUD and management panels.", [usage("dashboard", "Dashboard"), usage("research", "Research")]),
+  namedComponent("HeroPanel", "Panels", "Large visual panel anchored by hero artwork and minimal overlay controls.", [usage("dashboard", "Dashboard"), usage("civilization", "Civilization")]),
+  namedComponent("ObjectivePanel", "Panels", "Objective/task panel with status list and action affordances.", [usage("events", "Events")]),
+  namedComponent("StatsPanel", "Panels", "Compact metric group panel for resource, colony, or screen readiness stats.", [usage("dashboard", "Dashboard"), usage("resources", "Resources")]),
+  namedComponent("EventPanel", "Panels", "Event content panel with image, time, rewards, and status treatment.", [usage("events", "Events")]),
+  namedComponent("AlignmentPanel", "Panels", "Civilization alignment panel for current path and effects.", [usage("civilization", "Civilization")]),
+  namedComponent("LeaderboardPanel", "Panels", "Leaderboard surface for ranked rows and empty/error states."),
+  namedComponent("UpgradePanel", "Panels", "Upgrade detail panel with cost, requirements, and action state.", [usage("upgrades", "Upgrades")]),
+  baseRecord({ componentId: "PrimaryActionButton", category: "Buttons", description: "Primary game action button with required focus, disabled, hover, and pressed states.", states: states(buttonStates, ["Default", "Hover", "Pressed", "Focused", "Disabled"]), variants: [variant("default", "Default", buttonStates), variant("compact", "Compact", buttonStates), variant("large", "Large", buttonStates), variant("destructive", "Destructive", buttonStates), variant("premium", "Premium", buttonStates), variant("image-backed", "Image-backed", buttonStates)], screenUsages: [usage("dashboard", "Dashboard"), usage("research", "Research"), usage("buildings", "Buildings"), usage("resources", "Resources"), usage("events", "Events"), usage("settings", "Settings")] }),
+  baseRecord({ componentId: "SecondaryActionButton", category: "Buttons", description: "Secondary action button for supporting commands.", states: states(buttonStates, ["Default", "Hover", "Pressed", "Focused", "Disabled"]), screenUsages: [usage("research", "Research"), usage("settings", "Settings")] }),
+  baseRecord({ componentId: "ImageBackedActionButton", category: "Buttons", description: "Image-backed action button with frame, optional text overlay, state layers, and focus indicator.", anatomy: [anatomyPart("base-image", "Base image", "source art"), anatomyPart("text-overlay", "Optional text overlay", "runtime data"), anatomyPart("hit-area", "Interactive hit area", "CSS/layout"), anatomyPart("hover-layer", "Hover layer", "interaction state"), anatomyPart("pressed-layer", "Pressed layer", "interaction state"), anatomyPart("disabled-layer", "Disabled layer", "interaction state"), anatomyPart("focus-indicator", "Focus indicator", "CSS/layout"), anatomyPart("optional-icon", "Optional icon", "runtime data")], assetKeys: [assetRef("Button primary frame", "button_primary_frame", "Needs Approval")], states: states(buttonStates, ["Default", "Hover", "Pressed", "Focused", "Disabled"]), screenUsages: [usage("dashboard", "Dashboard")] }),
+  namedComponent("ToggleButton", "Buttons", "Binary or segmented toggle button with selected and disabled states."),
+  namedComponent("IconButton", "Buttons", "Icon button with accessible label and tooltip requirement.", [usage("settings", "Settings")]),
+  namedComponent("CloseButton", "Buttons", "Standard close/dismiss button for overlays and drawers."),
+  namedComponent("BoostLauncherButton", "Buttons", "Boost launcher with availability, cooldown, and premium states.", [usage("dashboard", "Dashboard")]),
+  namedComponent("ResourceCard", "Cards", "Resource card with icon, rarity, rate, source, storage, and usage affordances.", [usage("resources", "Resources")]),
+  namedComponent("BuildingCard", "Cards", "Building card with art, unlock state, cost, production, and owned count.", [usage("buildings", "Buildings")]),
+  namedComponent("ResearchCard", "Cards", "Research card/node with cost, affordability, progress, icon, and unlock state.", [usage("research", "Research")]),
+  namedComponent("UpgradeRow", "Cards", "Upgrade row in tabbed upgrade lists with status and cost.", [usage("upgrades", "Upgrades")]),
+  namedComponent("MissionCard", "Cards", "Mission card with objectives, rewards, state, and tracking action.", [usage("events", "Events")]),
+  namedComponent("EventCard", "Cards", "Event card with art, timer, reward preview, and status.", [usage("events", "Events")]),
+  namedComponent("EraCard", "Cards", "Full civilization timeline era card with art, requirements, and progress.", [usage("civilization", "Civilization")]),
+  namedComponent("ArtRequirementCard", "Cards", "Production asset requirement card with source, derivative, approval, and mapping state.", [usage("dashboard", "Dashboard")]),
+  namedComponent("ProgressBar", "Progress", "Linear progress bar with label, status, and reduced-motion treatment.", [usage("dashboard", "Dashboard")]),
+  namedComponent("EraProgressRail", "Progress", "Compact era progression rail for current journey and full timeline.", [usage("dashboard", "Dashboard"), usage("civilization", "Civilization")]),
+  namedComponent("CircularProgress", "Progress", "Circular/ring progress indicator for compact HUD surfaces.", [usage("dashboard", "Dashboard")]),
+  namedComponent("SegmentedProgress", "Progress", "Segmented progress meter for milestones or multi-step requirements."),
+  namedComponent("ResourceRateIndicator", "Progress", "Resource rate and trend indicator with gain/loss state.", [usage("resources", "Resources")]),
+  namedComponent("Modal", "Overlays", "Centered modal with focus trap, confirmation flows, and accessible dismissal.", [usage("settings", "Settings")]),
+  namedComponent("Tooltip", "Overlays", "Tooltip with keyboard/focus trigger and screen-reader safe behavior."),
+  namedComponent("ContextMenu", "Overlays", "Context menu with roving focus and command list behavior."),
+  namedComponent("Popover", "Overlays", "Small anchored contextual popover."),
+  namedComponent("ReviewDrawer", "Overlays", "Review and approval drawer used by Studio production workflows."),
+  namedComponent("Toast", "Overlays", "Non-blocking feedback message surface."),
+  namedComponent("LoadingSkeleton", "Feedback", "Skeleton loading pattern with reduced-motion treatment."),
+  namedComponent("EmptyState", "Feedback", "Empty content state with optional action and illustration.", [usage("research", "Research")]),
+  namedComponent("ErrorState", "Feedback", "Recoverable error state with clear action and accessibility copy."),
+  namedComponent("LockedState", "Feedback", "Locked content state with requirement explanation.", [usage("research", "Research")]),
+  namedComponent("MissingDataState", "Feedback", "Design-safe missing data state for unresolved runtime/service inputs.", [usage("research", "Research")]),
+  namedComponent("SuccessState", "Feedback", "Success confirmation state."),
+  namedComponent("CriticalStatsDisplay", "Game-Specific", "Critical stats panel for high-importance production/game metrics.", [usage("dashboard", "Dashboard")]),
+  namedComponent("BoostSlot", "Game-Specific", "Boost slot with availability, cooldown, rarity, and timer.", [usage("dashboard", "Dashboard")]),
+  baseRecord({ componentId: "EconomyCounter", category: "Game-Specific", description: "Economy/resource counter with icon, balance, rate, formatting, premium flag, and gain state.", dataInputs: [dataInput("definitionId", "Definition ID", "GenesisId", "Canonical Studio Definition"), dataInput("displayName", "Display name", "string", "Canonical Studio Definition"), dataInput("iconKey", "Icon key", "string", "Presentation Hint"), dataInput("balance", "Balance", "number", "Player Runtime State"), dataInput("rate", "Rate", "number", "Player Runtime State"), dataInput("formatting", "Formatting", "EconomyFormat", "Presentation Hint"), dataInput("premium", "Premium", "boolean", "Canonical Studio Definition"), dataInput("gainState", "Gain state", "GainState", "Local Interaction State")], screenUsages: [usage("dashboard", "Dashboard"), usage("resources", "Resources")] }),
+  namedComponent("AlignmentBar", "Game-Specific", "Alignment progress bar for civilization path and effects.", [usage("civilization", "Civilization")]),
+  baseRecord({ componentId: "CostDisplay", category: "Game-Specific", description: "Cost display for research, building, upgrades, and actions.", dataInputs: [dataInput("cost", "Cost rows", "CostRow[]", "Canonical Studio Definition"), dataInput("affordability", "Affordability", "boolean", "Player Runtime State")], screenUsages: [usage("research", "Research"), usage("buildings", "Buildings"), usage("upgrades", "Upgrades")] }),
+  baseRecord({ componentId: "UnlockRequirementList", category: "Game-Specific", description: "Unlock requirement list with met/unmet treatment and linked canonical IDs.", dataInputs: [dataInput("requirements", "Requirements", "UnlockRequirement[]", "Canonical Studio Definition"), dataInput("playerProgress", "Player progress", "PlayerUnlockState", "Player Runtime State")], screenUsages: [usage("research", "Research"), usage("buildings", "Buildings"), usage("upgrades", "Upgrades")] })
+];
+
+type ComponentLibraryStore = {
+  records: ComponentDesignRecord[];
+  updatedAt: string;
+};
+
+async function readStore(): Promise<ComponentLibraryStore> {
+  try {
+    const raw = await readFile(storePath, "utf8");
+    const parsed = JSON.parse(raw) as Partial<ComponentLibraryStore>;
+    return {
+      records: Array.isArray(parsed.records) ? parsed.records : [],
+      updatedAt: typeof parsed.updatedAt === "string" ? parsed.updatedAt : new Date().toISOString()
+    };
+  } catch {
+    return { records: [], updatedAt: new Date().toISOString() };
+  }
+}
+
+async function writeStore(store: ComponentLibraryStore) {
+  await mkdir(path.dirname(storePath), { recursive: true });
+  await writeFile(storePath, `${JSON.stringify(store, null, 2)}\n`, "utf8");
+}
+
+function normalize(record: ComponentDesignRecord): ComponentDesignRecord {
+  return {
+    ...record,
+    designTokens: record.designTokens ?? [],
+    layoutRules: record.layoutRules ?? [],
+    anatomy: record.anatomy ?? [],
+    assetKeys: record.assetKeys ?? [],
+    dataInputs: record.dataInputs ?? [],
+    states: record.states ?? [],
+    variants: record.variants ?? [],
+    interactions: record.interactions ?? [],
+    responsiveRules: record.responsiveRules ?? responsiveRules(record.componentId),
+    motionRules: record.motionRules ?? [],
+    accessibilityRequirements: record.accessibilityRequirements ?? [],
+    implementationTargets: record.implementationTargets ?? implementationTargets(record.componentId),
+    screenUsages: record.screenUsages ?? [],
+    references: record.references ?? [],
+    reviewHistory: record.reviewHistory ?? [],
+    breakingChanges: record.breakingChanges ?? [],
+    notes: record.notes ?? []
+  };
+}
+
+function mergeRecords(stored: ComponentDesignRecord[]) {
+  const map = new Map(initialComponentRecords.map((record) => [record.componentId, record]));
+  for (const record of stored) {
+    if (record?.componentId) map.set(record.componentId, normalize(record));
+  }
+  return [...map.values()].sort((left, right) => left.category.localeCompare(right.category) || left.displayName.localeCompare(right.displayName));
+}
+
+function assetByKey(assets: ProductionAsset[]) {
+  const map = new Map<string, ProductionAsset>();
+  for (const asset of assets) {
+    for (const key of [asset.id, asset.artKey, asset.iconKey].filter(Boolean)) {
+      map.set(String(key), asset);
+    }
+  }
+  return map;
+}
+
+function enrichAssets(record: ComponentDesignRecord, assetState?: AssetProductionState): ComponentDesignRecord {
+  if (!assetState) return record;
+  const assets = assetByKey(assetState.assets);
+  return {
+    ...record,
+    assetKeys: record.assetKeys.map((reference) => {
+      const match = assets.get(reference.assetKey) ?? [...assets.values()].find((asset) => asset.id.includes(reference.assetKey) || asset.artKey?.includes(reference.assetKey) || asset.iconKey?.includes(reference.assetKey));
+      if (!match) return reference;
+      const hasWeb = Boolean(match.platformMappings.web);
+      const hasRoblox = Boolean(match.platformMappings.roblox);
+      const status: ComponentAssetReference["status"] = match.approvalStatus !== "approved"
+        ? "Needs Approval"
+        : !hasWeb
+          ? "Needs Web Mapping"
+          : !hasRoblox
+            ? "Needs Roblox Mapping"
+            : "Ready";
+      return { ...reference, linkedAssetId: match.id, status };
+    })
+  };
+}
+
+function checklistScore(record: ComponentDesignRecord) {
+  const checks: ComponentDesignChecklist = {
+    anatomyComplete: record.anatomy.length > 0 && record.anatomy.every((part) => part.label && part.source),
+    tokenReferencesComplete: record.designTokens.length > 0 && record.designTokens.every((item) => item.tokenId && item.group),
+    assetsMapped: record.assetKeys.every((item) => !item.required || item.status === "Ready"),
+    requiredStatesComplete: record.states.length > 0 && record.states.every((item) => !item.required || item.designed),
+    interactionContractComplete: record.interactions.length > 0,
+    responsiveBehaviorComplete: record.responsiveRules.length >= viewports.length,
+    accessibilityReviewed: record.accessibilityRequirements.length > 0,
+    implementationTargetsTracked: record.implementationTargets.length >= 5,
+    reviewComplete: record.reviewHistory.some((entry) => entry.status === "Approved") || record.status !== "Approved",
+    approved: record.approvalStatus === "Approved" ? Boolean(record.approvedVersion) : true
+  };
+  const values = Object.values(checks);
+  return { checks, complete: values.filter(Boolean).length, total: values.length };
+}
+
+function summary(record: ComponentDesignRecord): ComponentDesignSummary {
+  const score = checklistScore(record);
+  const parityStatuses = record.implementationTargets.map((item) => item.parityStatus);
+  const parityStatus: ComponentParityStatus = parityStatuses.includes("Needs Work")
+    ? "Needs Work"
+    : parityStatuses.includes("Close")
+      ? "Close"
+      : parityStatuses.every((status) => status === "Approved")
+        ? "Approved"
+        : "Not Reviewed";
+  return {
+    id: record.id,
+    componentId: record.componentId,
+    displayName: record.displayName,
+    description: record.description,
+    category: record.category,
+    status: record.status,
+    approvalStatus: record.approvalStatus,
+    version: record.version,
+    assignedTo: record.assignedTo,
+    updatedAt: record.updatedAt,
+    implementationTargets: record.implementationTargets,
+    screenUsages: record.screenUsages,
+    variants: record.variants,
+    breakingChanges: record.breakingChanges,
+    missingAssets: record.assetKeys.filter((item) => item.required && item.status !== "Ready").length,
+    missingStates: record.states.filter((item) => item.required && !item.designed).length,
+    parityStatus,
+    checklistComplete: score.complete,
+    checklistTotal: score.total
+  };
+}
+
+function buildStats(components: ComponentDesignSummary[]): ComponentLibraryState["stats"] {
+  const pendingMajor = components.flatMap((component) => component.breakingChanges.filter((change) => change.type === "Major" && !change.resolved));
+  return {
+    total: components.length,
+    notStarted: components.filter((component) => component.status === "Not Started").length,
+    inDesign: components.filter((component) => ["Draft", "In Design", "Ready for Review", "Needs Revision"].includes(component.status)).length,
+    approved: components.filter((component) => component.approvalStatus === "Approved").length,
+    implemented: components.filter((component) => component.status === "Implemented").length,
+    parityApproved: components.filter((component) => component.parityStatus === "Approved").length,
+    missingAssets: components.filter((component) => component.missingAssets > 0).length,
+    missingStates: components.filter((component) => component.missingStates > 0).length,
+    breakingChanges: pendingMajor.length,
+    screensAffectedByPendingChanges: new Set(pendingMajor.flatMap((change) => change.affectedScreenIds)).size
+  };
+}
+
+export async function getComponentLibraryState(assetState?: AssetProductionState): Promise<ComponentLibraryState> {
+  const store = await readStore();
+  const records = mergeRecords(store.records).map((record) => enrichAssets(record, assetState));
+  const components = records.map(summary);
+  return { components, records, stats: buildStats(components), generatedAt: new Date().toISOString() };
+}
+
+export async function getComponentDesignRecord(componentId: string, assetState?: AssetProductionState) {
+  const state = await getComponentLibraryState(assetState);
+  return state.records.find((record) => record.componentId === componentId) ?? null;
+}
+
+export function validateComponentDesign(record: ComponentDesignRecord) {
+  const issues: string[] = [];
+  const score = checklistScore(record);
+  if (!componentCategories.includes(record.category)) issues.push(`Invalid component category: ${record.category}.`);
+  if (!record.componentId || record.componentId !== record.componentId.trim()) issues.push("Component ID is missing or invalid.");
+  if (!record.anatomy.length) issues.push("Component anatomy is missing.");
+  if (!record.designTokens.length) issues.push("Design token references are missing.");
+  if (!record.states.length || record.states.some((state) => state.required && !state.designed && record.approvalStatus === "Approved")) issues.push("Approved components cannot omit required states.");
+  if (!record.interactions.length) issues.push("Interaction contract is missing.");
+  if (record.responsiveRules.length < viewports.length) issues.push("Responsive rules are incomplete.");
+  if (!record.accessibilityRequirements.length) issues.push("Accessibility requirements are missing.");
+  if (record.implementationTargets.length < 5) issues.push("Implementation targets are incomplete.");
+  if (record.approvalStatus === "Approved" && score.complete < score.total) issues.push("Approved components must pass every checklist guardrail.");
+  if (JSON.stringify(record).includes("/Users/") || JSON.stringify(record).includes("studio-private://")) issues.push("Private source path leaked into component record.");
+  return { valid: issues.length === 0, issues, checklist: { complete: score.complete, total: score.total, checks: score.checks } };
+}
+
+export function componentHandoffText(record: ComponentDesignRecord, target: "Game Codex" | "Roblox Codex" = "Game Codex") {
+  return [
+    `PROJECT GENESIS COMPONENT IMPLEMENTATION HANDOFF — ${record.displayName}`,
+    "",
+    `Target: ${target}`,
+    `Canonical component ID: ${record.componentId}`,
+    `Category: ${record.category}`,
+    `Version: ${record.version}`,
+    `Approved version: ${record.approvedVersion ?? "not approved"}`,
+    `Status: ${record.status}`,
+    `Approval: ${record.approvalStatus}`,
+    "",
+    "Anatomy:",
+    ...record.anatomy.map((part) => `- ${part.id}: ${part.label} [${part.source}]`),
+    "",
+    "Dimensions:",
+    `- ${record.dimensions}`,
+    "",
+    "Token references:",
+    ...record.designTokens.map((item) => `- ${item.group}:${item.tokenId} — ${item.usage}${item.override ? ` (override: ${item.override})` : ""}`),
+    "",
+    "Semantic asset keys:",
+    ...record.assetKeys.map((item) => `- ${item.assetKey}: ${item.status}`),
+    "",
+    "Variants:",
+    ...record.variants.map((item) => `- ${item.id}: ${item.displayName}; states: ${item.allowedStates.join(", ")}`),
+    "",
+    "State matrix:",
+    ...record.states.map((item) => `- ${item.label}: ${item.designed ? "designed" : "missing"}`),
+    "",
+    "Data contract:",
+    ...record.dataInputs.map((item) => `- ${item.id}: ${item.type} [${item.classification}]`),
+    "",
+    "Interaction rules:",
+    ...record.interactions.map((item) => `- ${item.trigger} -> ${item.action}; runtime: ${item.runtimeAction}`),
+    "",
+    "Responsive rules:",
+    ...record.responsiveRules.map((item) => `- ${item.viewport}: ${item.scalingBehavior}; ${item.textHandling}`),
+    "",
+    "Accessibility requirements:",
+    ...record.accessibilityRequirements.map((item) => `- ${item}`),
+    "",
+    "Implementation checklist:",
+    ...Object.entries(checklistScore(record).checks).map(([key, done]) => `- ${done ? "[x]" : "[ ]"} ${key}`),
+    "",
+    "Screen usage:",
+    ...record.screenUsages.map((usage) => `- ${usage.screenName} (${usage.screenId}) variant=${usage.variant} state=${usage.state}`)
+  ].join("\n");
+}
+
+export function affectedScreenIdsForMajorChange(record: ComponentDesignRecord) {
+  return [...new Set(record.screenUsages.map((usage) => usage.screenId))];
+}
+
+export function screenNeedsReviewForComponentChange(screen: ScreenDesignRecord, componentId: string, changeType: ComponentChangeType) {
+  const usesComponent = screen.componentSpecs.some((component) => component.componentLibraryId === componentId);
+  return usesComponent && changeType === "Major" && screen.approvalStatus === "Approved";
+}
+
+export async function updateComponentWorkflow(input: { componentId: string; action: "ready_for_review" | "request_changes" | "approve" | "record_major_change"; reviewer?: string; comments?: string; changeTitle?: string }) {
+  const store = await readStore();
+  const records = mergeRecords(store.records);
+  const index = records.findIndex((record) => record.componentId === input.componentId);
+  if (index === -1) throw new Error(`Component not found: ${input.componentId}`);
+  const now = new Date().toISOString();
+  const reviewer = input.reviewer?.trim() || "Design Systems";
+  const comments = input.comments?.trim() || "";
+  let next = { ...records[index], updatedAt: now };
+
+  if (input.action === "ready_for_review") {
+    next = { ...next, status: "Ready for Review", approvalStatus: "Unreviewed" };
+  }
+  if (input.action === "request_changes") {
+    next = {
+      ...next,
+      status: "Needs Revision",
+      approvalStatus: "Changes Requested",
+      version: next.version + 1,
+      reviewHistory: [{ id: `review-${slug(next.componentId)}-${Date.now()}`, reviewer, status: "Changes Requested", comments: comments || "Changes requested.", requiredChanges: ["Resolve incomplete guardrails before approval."], date: now }, ...next.reviewHistory]
+    };
+  }
+  if (input.action === "approve") {
+    const validation = validateComponentDesign({ ...next, status: "Approved", approvalStatus: "Approved", approvedVersion: next.version });
+    if (!validation.valid) throw new Error(`Cannot approve component: ${validation.issues.join(" ")}`);
+    next = {
+      ...next,
+      status: "Approved",
+      approvalStatus: "Approved",
+      approvedVersion: next.version,
+      reviewHistory: [{ id: `review-${slug(next.componentId)}-${Date.now()}`, reviewer, status: "Approved", comments: comments || "Component approved.", requiredChanges: [], date: now, approvedVersion: next.version, implementationTarget: "Vite Web" }, ...next.reviewHistory]
+    };
+    next.frozenApprovedVersion = { ...next, frozenApprovedVersion: undefined };
+  }
+  if (input.action === "record_major_change") {
+    const affected = affectedScreenIdsForMajorChange(next);
+    next = {
+      ...next,
+      version: next.version + 1,
+      status: "Needs Revision",
+      approvalStatus: "Changes Requested",
+      breakingChanges: [{
+        id: `change-${slug(next.componentId)}-${Date.now()}`,
+        type: "Major",
+        title: input.changeTitle || "Major component change",
+        description: comments || "Major anatomy, input, interaction, or layout change requires dependent screen review.",
+        createdAt: now,
+        affectedScreenIds: affected,
+        migrationNotes: ["Review affected approved screen designs before implementation.", "Preserve old approved component version for existing clients."],
+        resolved: false
+      }, ...next.breakingChanges]
+    };
+  }
+
+  records[index] = next;
+  await writeStore({ records, updatedAt: now });
+  return next;
+}
+
+export const componentLibraryInitialRecords = initialComponentRecords;

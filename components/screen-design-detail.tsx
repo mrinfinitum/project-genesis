@@ -213,7 +213,10 @@ export function ScreenDesignDetail({
                     <p className="font-mono text-xs text-cyan-200">{component.id}</p>
                     <h2 className="mt-1 text-xl font-black text-white">{component.displayName}</h2>
                   </div>
-                  <WorkspaceBadge value={component.dimensions} />
+                  <div className="flex flex-wrap gap-2">
+                    {component.componentLibraryId ? <WorkspaceBadge value={component.componentLibraryId} /> : null}
+                    <WorkspaceBadge value={component.dimensions} />
+                  </div>
                 </div>
                 <p className="mt-3 text-sm leading-6 text-slate-300">{component.purpose}</p>
                 <div className="mt-3 grid gap-2 md:grid-cols-2">
@@ -222,6 +225,11 @@ export function ScreenDesignDetail({
                   <WorkspaceMiniStat label="Data Inputs" value={component.dataInputs.join(", ") || "None"} />
                   <WorkspaceMiniStat label="Asset Keys" value={component.assetKeys.join(", ") || "None"} />
                 </div>
+                {component.componentLibraryId ? (
+                  <Link href={`/component-library/${component.componentLibraryId}`} className="mt-3 inline-flex rounded-md border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-sm font-bold text-cyan-100 hover:bg-cyan-300/20">
+                    Open Shared Component
+                  </Link>
+                ) : null}
               </article>
             )}
           />

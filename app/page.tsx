@@ -1,6 +1,7 @@
 import { CommandCenterDashboard } from "@/components/command-center-dashboard";
 import { getAssetProductionState } from "@/lib/assets/asset-production";
 import { getEraArtSummaryByEra } from "@/lib/assets/era-art-inventory";
+import { getComponentLibraryState } from "@/lib/component-library";
 import { getContentAuthoringState } from "@/lib/content-authoring/store";
 import { getGameData } from "@/lib/data";
 import { buildProductionPlan } from "@/lib/production/planner";
@@ -16,7 +17,8 @@ export default async function DashboardPage() {
     getContentAuthoringState()
   ]);
   const screenDesignerState = await getScreenDesignerState(assetProductionState);
-  const productionPlan = buildProductionPlan(data, assetProductionState, eraArtSummary, contentAuthoringState, screenDesignerState);
+  const componentLibraryState = await getComponentLibraryState(assetProductionState);
+  const productionPlan = buildProductionPlan(data, assetProductionState, eraArtSummary, contentAuthoringState, screenDesignerState, componentLibraryState);
   const totalRecords = [
     data.research,
     data.buildings,
