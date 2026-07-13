@@ -144,6 +144,22 @@ async function main() {
   assert(missingPreview.url === "", "Missing preview must not emit a broken image URL.");
   assert(Boolean(missingPreview.requirement?.actionLabel), "Missing preview should include a direct action.");
 
+  const webMappedPreview = visual.resolveProductionAssetPreview(mockAsset({
+    platformMappings: { web: { path: "/assets/roblox-art/asset_dashboard_background/asset_dashboard_background.png", status: "published" } }
+  }));
+  assert(webMappedPreview.status === "Published", "A valid Web mapping must be enough to render a preview.");
+  assert(webMappedPreview.url.includes("asset_dashboard_background"), "Web-mapped preview should use the published path.");
+
+  const aliasAsset = mockAsset({
+    id: "asset_dashboard_background",
+    name: "Dashboard Background",
+    artKey: "dashboard_background",
+    aliases: ["assets/UI/hud_background_1920x1080.png"],
+    platformMappings: { web: { path: "/assets/roblox-art/asset_dashboard_background/asset_dashboard_background.png" } }
+  });
+  const aliasMatch = visual.findAssetForPreviewKeys([aliasAsset], ["dashboard_hero"]);
+  assert(aliasMatch?.id === "asset_dashboard_background", "Screen design aliases should resolve to imported canonical assets.");
+
   const assetState = await assetProduction.getAssetProductionState();
   assert(assetState.visualPreviewReport.totalVisualRecords >= assetState.assets.length, "Visual preview report must cover asset records.");
   assert(assetState.derivativePresets.some((preset) => preset.id === "preview_card_256_webp"), "Preview derivative presets must be registered.");

@@ -16,7 +16,7 @@ export type VisualPreview = {
   size: PreviewSize;
   url: string;
   alt: string;
-  source: "approved_primary_preview" | "approved_derivative" | "current_derivative" | "source_preview" | "web_mapping" | "studio_preview" | "missing";
+  source: "approved_primary_preview" | "approved_derivative" | "thumbnail" | "generated_preview" | "source_preview" | "web_mapping" | "roblox_png" | "source_png" | "studio_preview" | "placeholder" | "missing";
   mimeType: "image" | "video" | "audio" | "svg" | "unknown";
   width: number | null;
   height: number | null;
@@ -67,6 +67,65 @@ export const previewDerivativePresets = [
 const forbiddenPreviewPrefixes = [/^\/Users\//i, /^\/Volumes\//i, /^[A-Za-z]:\\/i, /^studio-private:\/\//i, /^rbxassetid:\/\//i];
 const approvedDerivativeStatuses = new Set(["approved", "published"]);
 const staleStatuses = new Set(["stale", "archived"]);
+const genericPreviewTokens = new Set([
+  "asset",
+  "art",
+  "arts",
+  "background",
+  "card",
+  "cards",
+  "dashboard",
+  "frame",
+  "hero",
+  "icon",
+  "icons",
+  "image",
+  "node",
+  "panel",
+  "preview",
+  "screen",
+  "state",
+  "states",
+  "ui",
+  "visual"
+]);
+
+const previewAliasMap: Record<string, string[]> = {
+  building_cards: ["buildings_icon", "upgrade_panel_structure"],
+  button_primary_frame: ["upgrade_button", "top_bar_hex_button"],
+  dashboard_auto_button_off: ["auto_button_off"],
+  dashboard_auto_button_on: ["auto_button_on"],
+  dashboard_auto_ring: ["auto_robot_circle", "auto_robot_icon"],
+  dashboard_click_button: ["click_button"],
+  dashboard_click_ring: ["click_ring_outer", "click_ring_middle", "click_ring_inner"],
+  dashboard_era_lock_icon: ["critical_star_icon", "era_progression_hex"],
+  dashboard_era_node_frame: ["era_progression_hex"],
+  dashboard_hero: ["dashboard_background", "city_preview"],
+  dashboard_nav_background: ["sidebar_frame"],
+  discovery_icons: ["overview_icon", "trophy_icon", "galaxy_icon"],
+  earth_background: ["city_preview", "dashboard_background"],
+  economy_counter_icon: ["credits_icon", "population_icon", "civilization_energy_icon", "civilization_points_icon"],
+  era_hero_art: ["era_progression_hex", "dashboard_background"],
+  era_navigation_icons: ["era_progression_hex"],
+  event_art: ["active_event_panel", "event_activate_button", "events_icon"],
+  galaxy_map_art: ["galaxy_icon"],
+  production_icons: ["resource_management", "financial_planning", "buildings_icon"],
+  research_category_icons: ["research_icon"],
+  research_empty_state: ["research_icon"],
+  research_node_frame: ["upgrade_button", "era_progression_hex"],
+  resource_icons: ["credits_icon", "population_icon", "civilization_energy_icon", "civilization_points_icon"],
+  settings_icons: ["settings_icon"],
+  sol_body_art: ["galaxy_icon", "spaceport_icon"],
+  spaceport_hero: ["spaceport_icon"],
+  upgrade_icons: ["upgrades_icon"]
+};
+
+function previewAliasesFor(key: string) {
+  const direct = previewAliasMap[key];
+  if (direct) return direct;
+  const entry = Object.entries(previewAliasMap).find(([aliasKey]) => normalizePreviewKey(aliasKey) === key);
+  return entry?.[1] ?? [];
+}
 
 export function sanitizePreviewUrl(value: unknown) {
   const url = String(value ?? "").trim();
@@ -74,6 +133,109 @@ export function sanitizePreviewUrl(value: unknown) {
   if (forbiddenPreviewPrefixes.some((pattern) => pattern.test(url))) return "";
   if (/token=|signature=|expires=/i.test(url)) return "";
   return url;
+}
+
+function text(value: unknown) {
+  return String(value ?? "").trim();
+}
+
+function normalizePreviewKey(value: unknown) {
+  return text(value)
+    .replace(/([a-z0-9])([A-Z])/g, "$1_$2")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^asset_/, "")
+    .replace(/^icon_/, "")
+    .replace(/^ui_/, "")
+    .replace(/^dashboard_/, "")
+    .replace(/_asset$/, "")
+    .replace(/_art$/, "")
+    .replace(/_image$/, "")
+    .replace(/_visual$/, "")
+    .replace(/^_+|_+$/g, "");
+}
+
+function previewTokens(value: unknown) {
+  return normalizePreviewKey(value).split("_").filter((token) => token && !genericPreviewTokens.has(token));
+}
+
+function expandedPreviewKeys(keys: Array<string | undefined>) {
+  const expanded = new Set<string>();
+  for (const raw of keys) {
+    const key = normalizePreviewKey(raw);
+    if (!key) continue;
+    expanded.add(key);
+    for (const alias of previewAliasesFor(key)) expanded.add(normalizePreviewKey(alias));
+  }
+  return [...expanded];
+}
+
+function assetSearchValues(asset: ProductionAsset) {
+  return [
+    asset.id,
+    asset.name,
+    asset.artKey,
+    asset.iconKey,
+    asset.category,
+    asset.type,
+    ...asset.aliases,
+    ...asset.tags,
+    ...asset.usageReferences.flatMap((usage) => [usage.id, usage.name, usage.type])
+  ].filter(Boolean);
+}
+
+function previewUrlForWebMapping(asset: ProductionAsset) {
+  const mapping = asset.platformMappings?.web;
+  if (typeof mapping === "string") return sanitizePreviewUrl(mapping);
+  if (mapping && typeof mapping === "object") {
+    const record = mapping as { path?: unknown; url?: unknown; publicUrl?: unknown; fileUrl?: unknown };
+    return sanitizePreviewUrl(record.path ?? record.url ?? record.publicUrl ?? record.fileUrl);
+  }
+  return "";
+}
+
+function inferredRobloxPngUrl(asset: ProductionAsset) {
+  const webUrl = previewUrlForWebMapping(asset);
+  if (webUrl) return webUrl;
+  const hasRobloxMapping = Boolean(asset.platformMappings?.roblox);
+  if (!hasRobloxMapping) return "";
+  return sanitizePreviewUrl(`/assets/roblox-art/${asset.id}/${asset.id}.png`);
+}
+
+export function findAssetForPreviewKeys(assets: ProductionAsset[] | undefined, keys: Array<string | undefined>) {
+  const expandedKeys = expandedPreviewKeys(keys);
+  if (!assets?.length || !expandedKeys.length) return null;
+
+  const indexed = assets.map((asset) => {
+    const values = assetSearchValues(asset);
+    const normalized = new Set(values.map(normalizePreviewKey).filter(Boolean));
+    return { asset, normalized, tokenSets: values.map(previewTokens).filter((tokens) => tokens.length) };
+  });
+
+  for (const key of expandedKeys) {
+    const exact = indexed.find((item) => item.normalized.has(key));
+    if (exact) return exact.asset;
+  }
+
+  let best: { asset: ProductionAsset; score: number } | null = null;
+  for (const key of expandedKeys) {
+    const keyTokens = previewTokens(key);
+    if (!keyTokens.length) continue;
+    for (const item of indexed) {
+      const score = Math.max(
+        ...item.tokenSets.map((tokens) => {
+          const overlap = keyTokens.filter((token) => tokens.includes(token)).length;
+          if (!overlap) return 0;
+          const coverage = overlap / Math.max(1, keyTokens.length);
+          const reverseCoverage = overlap / Math.max(1, tokens.length);
+          return Math.round((coverage * 60) + (reverseCoverage * 30) + overlap);
+        })
+      );
+      if (score >= 45 && (!best || score > best.score)) best = { asset: item.asset, score };
+    }
+  }
+
+  return best?.asset ?? null;
 }
 
 function mimeTypeFor(url: string, format = ""): VisualPreview["mimeType"] {
@@ -136,6 +298,46 @@ function previewFromDerivative(asset: ProductionAsset, derivative: AssetDerivati
     safeForPublicRuntime: source === "approved_derivative" || source === "web_mapping",
     sanitized: !url,
     staleReason: derivative.staleReason
+  };
+}
+
+function previewFromUrl(input: {
+  asset: ProductionAsset;
+  url: string;
+  source: VisualPreview["source"];
+  status: PreviewStatus;
+  size: PreviewSize;
+  mode: PreviewMode;
+  format?: string;
+  sourceVersion?: string;
+  safeForPublicRuntime?: boolean;
+}): VisualPreview {
+  return {
+    id: `${input.asset.id}:${input.source}`,
+    objectId: input.asset.id,
+    objectType: input.asset.category || input.asset.type || "asset",
+    title: input.asset.name,
+    status: input.status,
+    mode: input.mode,
+    size: input.size,
+    url: input.url,
+    alt: `${input.asset.name} ${input.source.replaceAll("_", " ")} preview`,
+    source: input.source,
+    mimeType: mimeTypeFor(input.url, input.format),
+    width: null,
+    height: null,
+    format: input.format ?? (input.url.split(".").pop()?.split("?")[0]?.toUpperCase() ?? "PNG"),
+    sourceVersion: input.sourceVersion ?? input.source.replaceAll("_", " "),
+    approvalStatus: input.asset.approvalStatus,
+    publishStatus: input.source === "web_mapping" || input.source === "roblox_png" ? "published" : input.asset.productionStatus,
+    dimensionsLabel: "Dimensions pending",
+    metadata: [
+      { label: "Asset", value: input.asset.name },
+      { label: "Source", value: input.source.replaceAll("_", " ") },
+      { label: "artKey", value: input.asset.artKey || input.asset.id }
+    ],
+    safeForPublicRuntime: input.safeForPublicRuntime ?? (input.source === "web_mapping" || input.source === "roblox_png"),
+    sanitized: !input.url
   };
 }
 
@@ -215,29 +417,29 @@ export function resolveProductionAssetPreview(asset: ProductionAsset, options: {
   const approvedDerivative = asset.derivatives.find((derivative) => sanitizePreviewUrl(derivative.publicUrl || derivative.storagePath) && approvedDerivativeStatuses.has(String(derivative.approvalStatus ?? derivative.publishStatus ?? derivative.status).toLowerCase()) && !staleStatuses.has(String(derivative.derivativeStatus ?? derivative.publishStatus).toLowerCase()));
   if (approvedDerivative) return previewFromDerivative(asset, approvedDerivative, "approved_derivative", size, mode);
 
+  const thumbnail = asset.derivatives.find((derivative) => {
+    const derivativeType = String(derivative.derivativeType ?? "").toLowerCase();
+    const presetId = String(derivative.presetId ?? "").toLowerCase();
+    return sanitizePreviewUrl(derivative.publicUrl || derivative.storagePath)
+      && !derivative.staleSince
+      && !staleStatuses.has(String(derivative.derivativeStatus ?? derivative.publishStatus).toLowerCase())
+      && (derivativeType === "thumbnail" || derivativeType === "icon" || derivativeType === "card" || presetId.includes("thumbnail") || presetId.includes("preview"));
+  });
+  if (thumbnail) return previewFromDerivative(asset, thumbnail, "thumbnail", size, mode);
+
   const currentDerivative = asset.derivatives.find((derivative) => sanitizePreviewUrl(derivative.publicUrl || derivative.storagePath) && !derivative.staleSince && !staleStatuses.has(String(derivative.derivativeStatus ?? derivative.publishStatus).toLowerCase()));
-  if (currentDerivative) return previewFromDerivative(asset, currentDerivative, "current_derivative", size, mode);
+  if (currentDerivative) return previewFromDerivative(asset, currentDerivative, "generated_preview", size, mode);
+
+  const webUrl = previewUrlForWebMapping(asset);
+  if (webUrl) return previewFromUrl({ asset, url: webUrl, source: "web_mapping", status: "Published", size, mode });
+
+  const robloxPng = inferredRobloxPngUrl(asset);
+  if (robloxPng) return previewFromUrl({ asset, url: robloxPng, source: "roblox_png", status: "Published", size, mode, format: "PNG", sourceVersion: "Imported Roblox PNG" });
 
   const currentSource = asset.sourceFiles.find((source) => source.isCurrent && sanitizePreviewUrl(source.previewUrl)) ?? asset.sourceFiles.find((source) => sanitizePreviewUrl(source.previewUrl));
-  if (currentSource) return previewFromSource(asset, currentSource, "source_preview", size, mode);
+  if (currentSource) return previewFromSource(asset, currentSource, currentSource.masterFormat === "Raster" ? "source_png" : "source_preview", size, mode);
 
-  const webMapping = asset.platformMappings?.web && typeof asset.platformMappings.web === "object" ? asset.platformMappings.web as { path?: unknown } : null;
-  const webUrl = sanitizePreviewUrl(webMapping?.path);
-  if (webUrl) {
-    return {
-      ...missingPreview({ objectId: asset.id, objectType: asset.category || "asset", title: asset.name, size, mode }),
-      status: "Published",
-      url: webUrl,
-      source: "web_mapping",
-      mimeType: mimeTypeFor(webUrl),
-      approvalStatus: asset.approvalStatus,
-      publishStatus: "published",
-      safeForPublicRuntime: true,
-      sanitized: false
-    };
-  }
-
-  return missingPreview({
+  const fallback = missingPreview({
     objectId: asset.id,
     objectType: asset.category || asset.type || "asset",
     title: asset.name,
@@ -257,6 +459,12 @@ export function resolveProductionAssetPreview(asset: ProductionAsset, options: {
       { label: "Requirement", value: asset.missingRequirements[0] ?? "preview" }
     ]
   });
+  return {
+    ...fallback,
+    status: asset.platformMappings?.roblox ? "Pending Generation" : "Missing",
+    source: asset.platformMappings?.roblox ? "placeholder" : "missing",
+    sourceVersion: asset.platformMappings?.roblox ? "Roblox mapping present; Web preview/source required" : fallback.sourceVersion
+  };
 }
 
 export function resolveMissingRequirementPreview(requirement: MissingAssetRequirement, asset?: ProductionAsset | null): VisualPreview {
@@ -283,12 +491,6 @@ export function resolveMissingRequirementPreview(requirement: MissingAssetRequir
   });
 }
 
-function findAssetForKeys(assets: ProductionAsset[] | undefined, keys: Array<string | undefined>) {
-  const normalized = keys.filter(Boolean).map(String);
-  if (!assets?.length || !normalized.length) return null;
-  return assets.find((asset) => normalized.some((key) => asset.id === key || asset.artKey === key || asset.iconKey === key || asset.aliases.includes(key))) ?? null;
-}
-
 export function resolveScreenPreview(record: ScreenDesignRecord, assets?: ProductionAsset[]): VisualPreview {
   const reference = record.references.find((item) => sanitizePreviewUrl(item.source) && item.approvalStatus === "Approved")
     ?? record.references.find((item) => sanitizePreviewUrl(item.source));
@@ -312,7 +514,17 @@ export function resolveScreenPreview(record: ScreenDesignRecord, assets?: Produc
       sanitized: false
     };
   }
-  const linkedAsset = findAssetForKeys(assets, record.assetRequirements.flatMap((item) => [item.linkedAssetId, item.artKey, item.iconKey]));
+  for (const requirement of record.assetRequirements) {
+    const linkedAsset = findAssetForPreviewKeys(assets, [requirement.linkedAssetId, requirement.artKey, requirement.iconKey, requirement.id, requirement.label]);
+    if (!linkedAsset) continue;
+    const preview = resolveProductionAssetPreview(linkedAsset, { size: "large", mode: "screenshot" });
+    if (preview.url) return { ...preview, objectId: record.screenId, objectType: "screen", title: record.displayName };
+  }
+  const linkedAsset = findAssetForPreviewKeys(assets, [
+    ...record.componentSpecs.flatMap((item) => [item.assetOverride, ...item.assetKeys]),
+    record.screenId,
+    record.displayName
+  ]);
   if (linkedAsset) return { ...resolveProductionAssetPreview(linkedAsset, { size: "large", mode: "screenshot" }), objectId: record.screenId, objectType: "screen", title: record.displayName };
   return missingPreview({
     objectId: record.screenId,
@@ -358,9 +570,13 @@ export function resolveComponentPreview(record: ComponentDesignRecord, assets?: 
       sanitized: false
     };
   }
-  const linkedAsset = findAssetForKeys(assets, record.assetKeys.flatMap((item) => [item.linkedAssetId, item.assetKey]));
+  const linkedAsset = findAssetForPreviewKeys(assets, [
+    ...record.assetKeys.flatMap((item) => [item.linkedAssetId, item.assetKey, item.label]),
+    record.componentId,
+    record.displayName
+  ]);
   if (linkedAsset) return { ...resolveProductionAssetPreview(linkedAsset, { size: "card", mode: "variant_grid" }), objectId: record.componentId, objectType: "component", title: record.displayName };
-  return missingPreview({
+  const fallback = missingPreview({
     objectId: record.componentId,
     objectType: "component",
     title: record.displayName,
@@ -380,6 +596,18 @@ export function resolveComponentPreview(record: ComponentDesignRecord, assets?: 
       { label: "Missing States", value: record.states.filter((item) => item.required && !item.designed).length }
     ]
   });
+  return record.assetKeys.length
+    ? fallback
+    : {
+        ...fallback,
+        status: "Pending Generation",
+        source: "placeholder",
+        sourceVersion: "Component screenshot pending",
+        requirement: {
+          ...fallback.requirement!,
+          actionLabel: "Generate Component Preview"
+        }
+      };
 }
 
 export function buildVisualPreviewReport(input: {

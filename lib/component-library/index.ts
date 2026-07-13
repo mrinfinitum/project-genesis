@@ -1,7 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { AssetProductionState, ProductionAsset } from "@/lib/assets/asset-production";
-import { resolveComponentPreview, type VisualPreview } from "@/lib/assets/visual-previews";
+import { findAssetForPreviewKeys, resolveComponentPreview, type VisualPreview } from "@/lib/assets/visual-previews";
 import type { ScreenDesignRecord } from "@/lib/screen-designer";
 
 export type ComponentCategory = "Navigation" | "HUD" | "Panels" | "Buttons" | "Cards" | "Lists" | "Progress" | "Forms" | "Overlays" | "Feedback" | "Data Display" | "Game-Specific" | "Accessibility" | "Utility";
@@ -626,11 +626,10 @@ function assetByKey(assets: ProductionAsset[]) {
 
 function enrichAssets(record: ComponentDesignRecord, assetState?: AssetProductionState): ComponentDesignRecord {
   if (!assetState) return record;
-  const assets = assetByKey(assetState.assets);
   return {
     ...record,
     assetKeys: record.assetKeys.map((reference) => {
-      const match = assets.get(reference.assetKey) ?? [...assets.values()].find((asset) => asset.id.includes(reference.assetKey) || asset.artKey?.includes(reference.assetKey) || asset.iconKey?.includes(reference.assetKey));
+      const match = findAssetForPreviewKeys(assetState.assets, [reference.linkedAssetId, reference.assetKey, reference.label]);
       if (!match) return reference;
       const hasWeb = Boolean(match.platformMappings.web);
       const hasRoblox = Boolean(match.platformMappings.roblox);

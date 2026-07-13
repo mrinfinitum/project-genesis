@@ -1,7 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { AssetProductionState, ProductionAsset } from "@/lib/assets/asset-production";
-import { resolveScreenPreview, type VisualPreview } from "@/lib/assets/visual-previews";
+import { findAssetForPreviewKeys, resolveScreenPreview, type VisualPreview } from "@/lib/assets/visual-previews";
 
 export type ScreenDesignStatus = "Not Started" | "Draft" | "In Design" | "Ready for Review" | "Approved" | "Implemented" | "Needs Revision";
 export type ScreenApprovalStatus = "Unreviewed" | "Changes Requested" | "Approved";
@@ -699,12 +699,11 @@ function assetByKey(assets: ProductionAsset[]) {
 
 function enrichAssetRequirements(record: ScreenDesignRecord, assetState?: AssetProductionState): ScreenDesignRecord {
   if (!assetState) return record;
-  const assets = assetByKey(assetState.assets);
   return {
     ...record,
     assetRequirements: record.assetRequirements.map((requirement) => {
       const key = requirement.artKey ?? requirement.iconKey ?? requirement.id;
-      const match = assets.get(key) ?? [...assets.values()].find((item) => item.artKey?.includes(key) || item.iconKey?.includes(key) || item.id.includes(key));
+      const match = findAssetForPreviewKeys(assetState.assets, [requirement.linkedAssetId, requirement.artKey, requirement.iconKey, requirement.id, requirement.label, key]);
       if (!match) return requirement;
       const hasWeb = Boolean(match.platformMappings.web);
       const hasRoblox = Boolean(match.platformMappings.roblox);

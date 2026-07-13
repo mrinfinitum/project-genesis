@@ -29,13 +29,14 @@ const modeLabel: Record<PreviewMode, string> = {
 };
 
 function MissingPreview({ preview }: { preview: VisualPreview }) {
+  const label = preview.status === "Error" ? "Preview Error" : preview.status === "Pending Generation" ? "Preview Pending" : preview.source === "placeholder" ? "Preview Placeholder" : "Missing Preview";
   return (
     <div className="grid h-full w-full place-items-center bg-[linear-gradient(135deg,rgba(34,211,238,0.12),rgba(15,23,42,0.96))] p-4 text-center">
       <div>
         <div className="mx-auto grid h-12 w-12 place-items-center rounded-md border border-cyan-300/20 bg-cyan-300/10">
           {preview.status === "Error" ? <AlertTriangle className="h-6 w-6 text-amber-100" /> : <ImageIcon className="h-6 w-6 text-cyan-100" />}
         </div>
-        <p className="mt-3 text-xs font-black uppercase tracking-[0.18em] text-cyan-100">{preview.status === "Error" ? "Preview Error" : "Missing Preview"}</p>
+        <p className="mt-3 text-xs font-black uppercase tracking-[0.18em] text-cyan-100">{label}</p>
         <p className="mt-2 text-sm font-semibold text-slate-300">{preview.requirement?.label ?? "Visual required"}</p>
         <p className="mt-1 text-xs text-slate-500">{preview.requirement?.dimensions ?? preview.dimensionsLabel} / {preview.requirement?.format ?? preview.format}</p>
       </div>
@@ -44,7 +45,7 @@ function MissingPreview({ preview }: { preview: VisualPreview }) {
 }
 
 function PreviewMedia({ preview, className = "" }: { preview: VisualPreview; className?: string }) {
-  if (!preview.url || preview.sanitized || preview.status === "Missing") return <MissingPreview preview={preview} />;
+  if (!preview.url || preview.sanitized || preview.status === "Missing" || preview.source === "placeholder") return <MissingPreview preview={preview} />;
   if (preview.mimeType === "video") return <video src={preview.url} controls preload="metadata" className={cn("h-full w-full object-contain", className)} />;
   if (preview.mimeType === "audio") {
     return (
