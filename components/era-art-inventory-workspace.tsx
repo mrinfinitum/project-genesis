@@ -12,8 +12,12 @@ type StatusFilter =
   | "Missing"
   | "Draft"
   | "In Review"
+  | "Source Ready"
+  | "Derivative Ready"
+  | "Needs Review"
   | "Approved"
   | "Published"
+  | "Complete"
   | "Required"
   | "Optional"
   | "Source Missing"
@@ -21,7 +25,7 @@ type StatusFilter =
   | "Roblox Unmapped"
   | "Web Unpublished";
 
-const statusFilters: StatusFilter[] = ["All", "Missing", "Draft", "In Review", "Approved", "Published", "Required", "Optional", "Source Missing", "PSD Uploaded", "Roblox Unmapped", "Web Unpublished"];
+const statusFilters: StatusFilter[] = ["All", "Missing", "Draft", "In Review", "Source Ready", "Derivative Ready", "Needs Review", "Approved", "Published", "Complete", "Required", "Optional", "Source Missing", "PSD Uploaded", "Roblox Unmapped", "Web Unpublished"];
 const groupFilters: Array<"All Groups" | EraArtGroup> = ["All Groups", "Era Identity", "Research", "Buildings", "Resources", "Events", "Missions", "UI", "Audio/Video"];
 
 function csvEscape(value: unknown) {
@@ -98,7 +102,7 @@ function AssetPreview({ card }: { card: EraArtRequirementCard }) {
 
 function cardStatusTone(status: EraArtStatus) {
   if (status === "Missing" || status === "Needs Roblox Mapping" || status === "Needs Web Publish") return "border-amber-300/30";
-  if (status === "Published" || status === "Approved") return "border-emerald-300/25";
+  if (status === "Published" || status === "Approved" || status === "Complete" || status === "Roblox Ready" || status === "Web Ready") return "border-emerald-300/25";
   if (status === "In Review") return "border-cyan-300/30";
   return "border-slate-700/70";
 }
