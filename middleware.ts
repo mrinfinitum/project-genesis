@@ -41,6 +41,11 @@ function isPublicPublishedRuntimeExportRead(request: NextRequest) {
   return pathname === "/api/export/game-runtime-data.json" || pathname === "/api/export/roblox-game-data.json";
 }
 
+function isPublicEraArtInventoryHead(request: NextRequest) {
+  if (request.method !== "HEAD") return false;
+  return request.nextUrl.pathname.startsWith("/assets/eras/");
+}
+
 function jsonError(message: string, status: number) {
   return NextResponse.json({ error: message }, { status });
 }
@@ -48,7 +53,7 @@ function jsonError(message: string, status: number) {
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  if (!hasSupabaseAuthConfig() || exportTokenAllows(request) || isPublishedGameContentRead(request) || isPublicPublishedRuntimeExportRead(request)) {
+  if (!hasSupabaseAuthConfig() || exportTokenAllows(request) || isPublishedGameContentRead(request) || isPublicPublishedRuntimeExportRead(request) || isPublicEraArtInventoryHead(request)) {
     return NextResponse.next();
   }
 

@@ -41,15 +41,17 @@ export const canonicalTimelineEras = [
   "Galactic"
 ];
 
-function eraId(name: string) {
-  return name.toLowerCase().replace(/\s+age$/i, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+export function canonicalTimelineEraId(name: string) {
+  const normalized = name.toLowerCase().replace(/\s+age$/i, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  if (normalized === "space") return "space-age";
+  return normalized;
 }
 
 export function createDefaultTimeline(currentEraName = "Survival Age"): TimelineEra[] {
-  const normalizedCurrent = eraId(currentEraName);
-  const activeIndex = Math.max(0, canonicalTimelineEras.findIndex((name) => eraId(name) === normalizedCurrent));
+  const normalizedCurrent = canonicalTimelineEraId(currentEraName);
+  const activeIndex = Math.max(0, canonicalTimelineEras.findIndex((name) => canonicalTimelineEraId(name) === normalizedCurrent));
   return canonicalTimelineEras.map((name, index) => ({
-    id: eraId(name),
+    id: canonicalTimelineEraId(name),
     eraNumber: index + 1,
     displayName: name,
     shortDisplayName: name === "Space Age" ? "Space" : name,
@@ -60,7 +62,7 @@ export function createDefaultTimeline(currentEraName = "Survival Age"): Timeline
     unlockRequirements: index === 0 ? ["Start"] : [`Complete ${canonicalTimelineEras[index - 1]}`],
     masteryRequirements: ["Research complete", "Core buildings complete", "Era unlocks complete"],
     missingArtwork: true,
-    iconKey: `era-${eraId(name)}`
+    iconKey: `era-${canonicalTimelineEraId(name)}`
   }));
 }
 
@@ -191,7 +193,7 @@ export function TimelineEraCard({ era }: { era: TimelineEra }) {
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2">
-        <Link href={`/assets/eras/${era.id}`} className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100 hover:bg-cyan-300/20">
+        <Link href={`/assets/eras/${era.id}`} className="pointer-events-auto relative z-10 inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100 hover:bg-cyan-300/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200">
           View Era Art
         </Link>
         <Link href={`/civilizations#era-${era.id}`} className="inline-flex h-10 items-center rounded-md border border-slate-600/70 bg-slate-950/40 px-3 text-sm font-bold text-slate-200 hover:bg-slate-900">
