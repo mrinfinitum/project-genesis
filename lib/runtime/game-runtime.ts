@@ -38,7 +38,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 8;
+export const gameRuntimeContentVersion = 9;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -451,7 +451,12 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
     ...runtimeData,
     eras: [...runtimeData.eras].sort(byOrderThenId),
     economyDefinitions: [...runtimeData.economyDefinitions].sort(byId),
-    eraEconomyProfiles: [...runtimeData.eraEconomyProfiles].sort((left, right) => left.eraIndex - right.eraIndex || left.eraId.localeCompare(right.eraId)),
+    eraEconomyProfiles: [...runtimeData.eraEconomyProfiles]
+      .map((profile) => ({
+        ...profile,
+        primaryEconomyId: profile.primaryEconomyId ?? profile.activePrimaryEconomyId ?? profile.primaryEconomyIds[0]
+      }))
+      .sort((left, right) => left.eraIndex - right.eraIndex || left.eraId.localeCompare(right.eraId)),
     inventoryResourceMetadata: [...runtimeData.inventoryResourceMetadata].sort(byId),
     resources: [...runtimeData.resources].sort(byId),
     upgradeCategories: [...runtimeData.upgradeCategories].sort(byOrderThenId),
@@ -621,6 +626,18 @@ function validateEraEconomyProfiles(runtimeData: Pick<GameRuntimeData, "eras" | 
     if (!eraIds.has(profile.eraId)) {
       issues.push({ severity: "error", code: "era_economy_profile_era_missing", message: "eraEconomyProfile.eraId must resolve to a canonical era.", records: [profile.id, profile.eraId] });
     }
+    if (!profile.primaryEconomyId) {
+      issues.push({ severity: "error", code: "era_economy_primary_id_missing", message: "eraEconomyProfile.primaryEconomyId is required so clients do not infer the primary economy from manualClickTarget.", records: [profile.id] });
+    }
+    if (profile.primaryEconomyId && !economyIds.has(profile.primaryEconomyId)) {
+      issues.push({ severity: "error", code: "era_economy_primary_id_invalid", message: "eraEconomyProfile.primaryEconomyId must resolve to a canonical economy definition.", records: [profile.id, profile.primaryEconomyId] });
+    }
+    if (profile.primaryEconomyId && profile.activePrimaryEconomyId && profile.primaryEconomyId !== profile.activePrimaryEconomyId) {
+      issues.push({ severity: "error", code: "era_economy_primary_id_mismatch", message: "eraEconomyProfile.primaryEconomyId must match activePrimaryEconomyId during the v9 compatibility window.", records: [profile.id, profile.primaryEconomyId, profile.activePrimaryEconomyId] });
+    }
+    if (profile.primaryEconomyId && !profile.primaryEconomyIds.includes(profile.primaryEconomyId)) {
+      issues.push({ severity: "error", code: "era_economy_primary_id_not_listed", message: "eraEconomyProfile.primaryEconomyId must also be listed in primaryEconomyIds.", records: [profile.id, profile.primaryEconomyId] });
+    }
     if (!economyIds.has(profile.activePrimaryEconomyId)) {
       issues.push({ severity: "error", code: "era_economy_primary_missing", message: "eraEconomyProfile.activePrimaryEconomyId must resolve to a canonical economy definition.", records: [profile.id, profile.activePrimaryEconomyId] });
     }
@@ -629,7 +646,7 @@ function validateEraEconomyProfiles(runtimeData: Pick<GameRuntimeData, "eras" | 
     }
 
     const displayOverrideEconomyIds = Object.keys(profile.displayOverrides ?? {});
-    const allReferencedEconomyIds = [...profile.primaryEconomyIds, ...profile.secondaryEconomyIds, ...profile.visibleHudEconomyIds, ...profile.hudSlots.map((slot) => slot.economyId), ...displayOverrideEconomyIds];
+    const allReferencedEconomyIds = [profile.primaryEconomyId, profile.activePrimaryEconomyId, ...profile.primaryEconomyIds, ...profile.secondaryEconomyIds, ...profile.visibleHudEconomyIds, ...profile.hudSlots.map((slot) => slot.economyId), ...displayOverrideEconomyIds].filter(Boolean);
     const unresolvedEconomyIds = allReferencedEconomyIds.filter((economyId) => !economyIds.has(economyId));
     if (unresolvedEconomyIds.length) {
       issues.push({ severity: "error", code: "era_economy_profile_economy_missing", message: "Era economy profile references must resolve to canonical economy definitions.", records: [profile.id, ...new Set(unresolvedEconomyIds)] });
@@ -682,7 +699,7 @@ function validateEconomyDefaults(runtimeData: Pick<GameRuntimeData, "economyDefi
   if (civilizationPoints?.startingAmount !== 0 || civilizationPoints?.startingRate !== 0) {
     issues.push({ severity: "error", code: "civilization_points_starting_value_invalid", message: `${context} ECON-CIVILIZATION-POINTS must start at 0 with no starting rate.`, records: ["ECON-CIVILIZATION-POINTS"] });
   }
-  if (survival?.activePrimaryEconomyId !== "ECON-LABOR" || survival?.visibleHudEconomyIds.includes("ECON-CREDITS")) {
+  if (survival?.primaryEconomyId !== "ECON-LABOR" || survival?.activePrimaryEconomyId !== "ECON-LABOR" || survival?.visibleHudEconomyIds.includes("ECON-CREDITS")) {
     issues.push({ severity: "error", code: "survival_economy_profile_invalid", message: `${context} Survival must use Labor as primary economy and must not show Credits in the HUD.`, records: [survival?.id ?? "missing_survival_profile"] });
   }
 }

@@ -151,6 +151,7 @@ export type EraEconomyProfile = {
   id: string;
   eraId: string;
   eraIndex: number;
+  primaryEconomyId: string;
   activePrimaryEconomyId: string;
   primaryEconomyIds: string[];
   secondaryEconomyIds: string[];

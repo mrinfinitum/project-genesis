@@ -296,6 +296,7 @@ export function buildEraEconomyProfiles(): EraEconomyProfile[] {
       id: `era_economy_profile_${profile.eraId}`,
       eraId: profile.eraId,
       eraIndex: index + 1,
+      primaryEconomyId: profile.primary[0],
       activePrimaryEconomyId: profile.primary[0],
       primaryEconomyIds: [...profile.primary],
       secondaryEconomyIds: [...profile.secondary],

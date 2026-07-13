@@ -840,7 +840,16 @@ function validateEconomy(issues: ExportValidationIssue[], modules: CanonicalModu
     addIssue(issues, "error", "era_economy_profiles_missing", "Engine exports must include one era economy profile per canonical era.", missingEraProfiles.length ? missingEraProfiles : [`received:${modules.era_economy_profiles.length}`]);
   }
   for (const profile of modules.era_economy_profiles) {
-    const referencedEconomyIds = [...profile.primaryEconomyIds, ...profile.secondaryEconomyIds, ...profile.visibleHudEconomyIds, ...profile.hudSlots.map((slot) => slot.economyId), ...Object.keys(profile.displayOverrides ?? {})];
+    if (!profile.primaryEconomyId) {
+      addIssue(issues, "error", "era_economy_primary_id_missing", "Era economy profiles must export primaryEconomyId explicitly.", [profile.id]);
+    }
+    if (profile.primaryEconomyId && profile.primaryEconomyId !== profile.activePrimaryEconomyId) {
+      addIssue(issues, "error", "era_economy_primary_id_mismatch", "primaryEconomyId must match activePrimaryEconomyId.", [profile.id, profile.primaryEconomyId, profile.activePrimaryEconomyId]);
+    }
+    if (profile.primaryEconomyId && !profile.primaryEconomyIds.includes(profile.primaryEconomyId)) {
+      addIssue(issues, "error", "era_economy_primary_id_not_listed", "primaryEconomyId must be listed in primaryEconomyIds.", [profile.id, profile.primaryEconomyId]);
+    }
+    const referencedEconomyIds = [profile.primaryEconomyId, profile.activePrimaryEconomyId, ...profile.primaryEconomyIds, ...profile.secondaryEconomyIds, ...profile.visibleHudEconomyIds, ...profile.hudSlots.map((slot) => slot.economyId), ...Object.keys(profile.displayOverrides ?? {})].filter(Boolean);
     const unresolved = referencedEconomyIds.filter((economyId) => !economyIds.has(economyId));
     if (unresolved.length) {
       addIssue(issues, "error", "era_economy_profile_reference_missing", "Era economy profile references must resolve to economy definitions.", [profile.id, ...new Set(unresolved)]);
@@ -851,7 +860,7 @@ function validateEconomy(issues: ExportValidationIssue[], modules: CanonicalModu
   }
 
   const survivalProfile = modules.era_economy_profiles.find((profile) => profile.eraId === "survival");
-  if (survivalProfile?.activePrimaryEconomyId !== "ECON-LABOR" || survivalProfile.visibleHudEconomyIds.includes("ECON-CREDITS")) {
+  if (survivalProfile?.primaryEconomyId !== "ECON-LABOR" || survivalProfile?.activePrimaryEconomyId !== "ECON-LABOR" || survivalProfile.visibleHudEconomyIds.includes("ECON-CREDITS")) {
     addIssue(issues, "error", "survival_economy_profile_invalid", "Survival must use Labor as the primary economy and must not show Credits in the HUD.", [survivalProfile?.id ?? "missing_survival_profile"]);
   }
 

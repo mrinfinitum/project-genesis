@@ -20,7 +20,7 @@ type RuntimePayload = {
   metadata?: { schemaVersion?: string; contentVersion?: number; checksum?: string; accessLevel?: string; validationStatus?: string; saveMigrationHints?: Array<{ id: string; targetId: string; previousDefault: number; currentDefault: number }> };
   eras?: Array<{ id: string; index?: number; name?: string; displayName?: string; shortDisplayName?: string }>;
   economyDefinitions?: Array<{ id: string; startingAmount?: number; startingRate?: number; premium?: boolean; spendable?: boolean; manualClickTarget?: boolean; playerFacingHelpText?: string }>;
-  eraEconomyProfiles?: Array<{ id: string; eraId: string; eraIndex: number; activePrimaryEconomyId: string; primaryEconomyIds: string[]; secondaryEconomyIds: string[]; visibleHudEconomyIds: string[]; hudSlots: Array<{ economyId: string; order: number }>; displayOverrides?: Record<string, { displayName?: string }> }>;
+  eraEconomyProfiles?: Array<{ id: string; eraId: string; eraIndex: number; primaryEconomyId: string; activePrimaryEconomyId: string; primaryEconomyIds: string[]; secondaryEconomyIds: string[]; visibleHudEconomyIds: string[]; hudSlots: Array<{ economyId: string; order: number }>; displayOverrides?: Record<string, { displayName?: string }> }>;
   economyUsageRelationships?: { unresolved?: Array<unknown> };
   inventoryResourceMetadata?: Array<{ resourceId: string; classification?: string }>;
   resources?: Array<{ id: string }>;
@@ -148,7 +148,9 @@ function validateEraEconomyProfiles(payload: RuntimePayload | RobloxPayload, lab
     assert(profile, `${label} is missing era economy profile for ${eraId}.`);
     if (!profile) throw new Error(`${label} is missing era economy profile for ${eraId}.`);
     assert(profile.eraIndex === index + 1, `${label} ${eraId} era economy profile has invalid eraIndex.`);
+    assert(profile.primaryEconomyId === primary[0], `${label} ${eraId} primaryEconomyId is invalid.`);
     assert(profile.activePrimaryEconomyId === primary[0], `${label} ${eraId} active primary economy is invalid.`);
+    assert(profile.primaryEconomyId === profile.activePrimaryEconomyId, `${label} ${eraId} primaryEconomyId must match activePrimaryEconomyId.`);
     assert(profile.primaryEconomyIds.join("|") === primary.join("|"), `${label} ${eraId} primary economy IDs are invalid: ${profile.primaryEconomyIds.join(", ")}.`);
     assert(profile.secondaryEconomyIds.join("|") === secondary.join("|"), `${label} ${eraId} secondary economy IDs are invalid: ${profile.secondaryEconomyIds.join(", ")}.`);
     assert(profile.visibleHudEconomyIds.join("|") === visibleHud.join("|"), `${label} ${eraId} visible HUD IDs are invalid: ${profile.visibleHudEconomyIds.join(", ")}.`);
@@ -156,7 +158,7 @@ function validateEraEconomyProfiles(payload: RuntimePayload | RobloxPayload, lab
     for (const economyId of Object.keys(profile.displayOverrides ?? {})) {
       assert(economyIds.has(economyId), `${label} ${eraId} display override economy ID does not resolve: ${economyId}.`);
     }
-    for (const economyId of [...profile.primaryEconomyIds, ...profile.secondaryEconomyIds, ...profile.visibleHudEconomyIds]) {
+    for (const economyId of [profile.primaryEconomyId, profile.activePrimaryEconomyId, ...profile.primaryEconomyIds, ...profile.secondaryEconomyIds, ...profile.visibleHudEconomyIds]) {
       assert(economyIds.has(economyId), `${label} ${eraId} economy ID does not resolve: ${economyId}.`);
     }
   }
@@ -256,8 +258,8 @@ async function main() {
   assert(roblox.payload.metadata?.accessLevel === "public-published", "Roblox accessLevel must be public-published.");
   assert(roblox.payload.metadata?.validationStatus, "Roblox validation status is missing.");
   assert((canonical.payload.eras?.length ?? 0) > 0, "Canonical payload must include at least one era.");
-  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 8, "Canonical contentVersion must be at least 8 after the Population/Labor correction.");
-  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 8, "Roblox contentVersion must be at least 8 after the Population/Labor correction.");
+  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 9, "Canonical contentVersion must be at least 9 after explicit primaryEconomyId export.");
+  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 9, "Roblox contentVersion must be at least 9 after explicit primaryEconomyId export.");
 
   validateEraNavigation(canonical.payload, "Canonical");
   validateEraNavigation(roblox.payload, "Roblox");
