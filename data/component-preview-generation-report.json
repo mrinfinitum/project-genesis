@@ -1,0 +1,754 @@
+{
+  "generatedAt": "2026-07-13T00:00:00.000Z",
+  "pendingBefore": 26,
+  "pendingAfter": 0,
+  "previewStatus": "Needs Review",
+  "generatedComponentCount": 26,
+  "generatedOutputCount": 130,
+  "outputFormat": "SVG",
+  "captureBlockers": [
+    "Storybook capture unavailable in this Studio repository.",
+    "Browser screenshot capture tooling is not installed in package dependencies.",
+    "No approved Roblox reference screenshot is attached to this component."
+  ],
+  "components": [
+    {
+      "componentId": "BoostLauncherButton",
+      "displayName": "BoostLauncherButton",
+      "category": "Buttons",
+      "variants": [
+        "default"
+      ],
+      "requiredStates": [
+        "Default",
+        "Hover",
+        "Focused",
+        "Disabled",
+        "Loading",
+        "Error"
+      ],
+      "preferredPreviewViewport": "1440x900",
+      "expectedAspectRatio": "16:9 primary / 16:10 card-grid",
+      "existingImplementationReference": "No implementation screenshot attached.",
+      "viteImplementationPath": "Not mapped",
+      "robloxImplementationPath": "Not mapped",
+      "missingAssetsOrDataBlockers": [],
+      "captureSource": "Studio-rendered component specimen",
+      "captureBlockers": [
+        "Storybook capture unavailable in this Studio repository.",
+        "Browser screenshot capture tooling is not installed in package dependencies.",
+        "No approved Roblox reference screenshot is attached to this component."
+      ]
+    },
+    {
+      "componentId": "SecondaryActionButton",
+      "displayName": "SecondaryActionButton",
+      "category": "Buttons",
+      "variants": [
+        "default"
+      ],
+      "requiredStates": [
+        "Default",
+        "Hover",
+        "Pressed",
+        "Focused",
+        "Disabled",
+        "Loading",
+        "Error",
+        "Reduced Motion"
+      ],
+      "preferredPreviewViewport": "1440x900",
+      "expectedAspectRatio": "16:9 primary / 16:10 card-grid",
+      "existingImplementationReference": "No implementation screenshot attached.",
+      "viteImplementationPath": "Not mapped",
+      "robloxImplementationPath": "Not mapped",
+      "missingAssetsOrDataBlockers": [],
+      "captureSource": "Studio-rendered component specimen",
+      "captureBlockers": [
+        "Storybook capture unavailable in this Studio repository.",
+        "Browser screenshot capture tooling is not installed in package dependencies.",
+        "No approved Roblox reference screenshot is attached to this component."
+      ]
+    },
+    {
+      "componentId": "ArtRequirementCard",
+      "displayName": "ArtRequirementCard",
+      "category": "Cards",
+      "variants": [
+        "default"
+      ],
+      "requiredStates": [
+        "Default",
+        "Hover",
+        "Focused",
+        "Disabled",
+        "Loading",
+        "Error"
+      ],
+      "preferredPreviewViewport": "1440x900",
+      "expectedAspectRatio": "16:9 primary / 16:10 card-grid",
+      "existingImplementationReference": "No implementation screenshot attached.",
+      "viteImplementationPath": "Not mapped",
+      "robloxImplementationPath": "Not mapped",
+      "missingAssetsOrDataBlockers": [],
+      "captureSource": "Studio-rendered component specimen",
+      "captureBlockers": [
+        "Storybook capture unavailable in this Studio repository.",
+        "Browser screenshot capture tooling is not installed in package dependencies.",
+        "No approved Roblox reference screenshot is attached to this component."
+      ]
+    },
+    {
+      "componentId": "MissionCard",
+      "displayName": "MissionCard",
+      "category": "Cards",
+      "variants": [
+        "default"
+      ],
+      "requiredStates": [
+        "Default",
+        "Hover",
+        "Focused",
+        "Disabled",
+        "Loading",
+        "Error"
+      ],
+      "preferredPreviewViewport": "1440x900",
+      "expectedAspectRatio": "16:9 primary / 16:10 card-grid",
+      "existingImplementationReference": "No implementation screenshot attached.",
+      "viteImplementationPath": "Not mapped",
+      "robloxImplementationPath": "Not mapped",
+      "missingAssetsOrDataBlockers": [],
+      "captureSource": "Studio-rendered component specimen",
+      "captureBlockers": [
+        "Storybook capture unavailable in this Studio repository.",
+        "Browser screenshot capture tooling is not installed in package dependencies.",
+        "No approved Roblox reference screenshot is attached to this component."
+      ]
+    },
+    {
+      "componentId": "EmptyState",
+      "displayName": "EmptyState",
+      "category": "Feedback",
+      "variants": [
+        "default"
+      ],
+      "requiredStates": [
+        "Default",
+        "Hover",
+        "Focused",
+        "Disabled",
+        "Loading",
+        "Error"
+      ],
+      "preferredPreviewViewport": "1440x900",
+      "expectedAspectRatio": "16:9 primary / 16:10 card-grid",
+      "existingImplementationReference": "No implementation screenshot attached.",
+      "viteImplementationPath": "Not mapped",
+      "robloxImplementationPath": "Not mapped",
+      "missingAssetsOrDataBlockers": [],
+      "captureSource": "Studio-rendered component specimen",
+      "captureBlockers": [
+        "Storybook capture unavailable in this Studio repository.",
+        "Browser screenshot capture tooling is not installed in package dependencies.",
+        "No approved Roblox reference screenshot is attached to this component."
+      ]
+    },
+    {
+      "componentId": "ErrorState",
+      "displayName": "ErrorState",
+      "category": "Feedback",
+      "variants": [
+        "default"
+      ],
+      "requiredStates": [
+        "Default",
+        "Hover",
+        "Focused",
+        "Disabled",
+        "Loading",
+        "Error"
+      ],
+      "preferredPreviewViewport": "1440x900",
+      "expectedAspectRatio": "16:9 primary / 16:10 card-grid",
+      "existingImplementationReference": "No implementation screenshot attached.",
+      "viteImplementationPath": "Not mapped",
+      "robloxImplementationPath": "Not mapped",
+      "missingAssetsOrDataBlockers": [],
+      "captureSource": "Studio-rendered component specimen",
+      "captureBlockers": [
+        "Storybook capture unavailable in this Studio repository.",
+        "Browser screenshot capture tooling is not installed in package dependencies.",
+        "No approved Roblox reference screenshot is attached to this component."
+      ]
+    },
+    {
+      "componentId": "LoadingSkeleton",
+      "displayName": "LoadingSkeleton",
+      "category": "Feedback",
+      "variants": [
+        "default"
+      ],
+      "requiredStates": [
+        "Default",
+        "Hover",
+        "Focused",
+        "Disabled",
+        "Loading",
+        "Error"
+      ],
+      "preferredPreviewViewport": "1440x900",
+      "expectedAspectRatio": "16:9 primary / 16:10 card-grid",
+      "existingImplementationReference": "No implementation screenshot attached.",
+      "viteImplementationPath": "Not mapped",
+      "robloxImplementationPath": "Not mapped",
+      "missingAssetsOrDataBlockers": [],
+      "captureSource": "Studio-rendered component specimen",
+      "captureBlockers": [
+        "Storybook capture unavailable in this Studio repository.",
+        "Browser screenshot capture tooling is not installed in package dependencies.",
+        "No approved Roblox reference screenshot is attached to this component."
+      ]
+    },
+    {
+      "componentId": "LockedState",
+      "displayName": "LockedState",
+      "category": "Feedback",
+      "variants": [
+        "default"
+      ],
+      "requiredStates": [
+        "Default",
+        "Hover",
+        "Focused",
+        "Disabled",
+        "Loading",
+        "Error"
+      ],
+      "preferredPreviewViewport": "1440x900",
+      "expectedAspectRatio": "16:9 primary / 16:10 card-grid",
+      "existingImplementationReference": "No implementation screenshot attached.",
+      "viteImplementationPath": "Not mapped",
+      "robloxImplementationPath": "Not mapped",
+      "missingAssetsOrDataBlockers": [],
+      "captureSource": "Studio-rendered component specimen",
+      "captureBlockers": [
+        "Storybook capture unavailable in this Studio repository.",
+        "Browser screenshot capture tooling is not installed in package dependencies.",
+        "No approved Roblox reference screenshot is attached to this component."
+      ]
+    },
+    {
+      "componentId": "MissingDataState",
+      "displayName": "MissingDataState",
+      "category": "Feedback",
+      "variants": [
+        "default"
+      ],
+      "requiredStates": [
+        "Default",
+        "Hover",
+        "Focused",
+        "Disabled",
+        "Loading",
+        "Error"
+      ],
+      "preferredPreviewViewport": "1440x900",
+      "expectedAspectRatio": "16:9 primary / 16:10 card-grid",
+      "existingImplementationReference": "No implementation screenshot attached.",
+      "viteImplementationPath": "Not mapped",
+      "robloxImplementationPath": "Not mapped",
+      "missingAssetsOrDataBlockers": [],
+      "captureSource": "Studio-rendered component specimen",
+      "captureBlockers": [
+        "Storybook capture unavailable in this Studio repository.",
+        "Browser screenshot capture tooling is not installed in package dependencies.",
+        "No approved Roblox reference screenshot is attached to this component."
+      ]
+    },
+    {
+      "componentId": "SuccessState",
+      "displayName": "SuccessState",
+      "category": "Feedback",
+      "variants": [
+        "default"
+      ],
+      "requiredStates": [
+        "Default",
+        "Hover",
+        "Focused",
+        "Disabled",
+        "Loading",
+        "Error"
+      ],
+      "preferredPreviewViewport": "1440x900",
+      "expectedAspectRatio": "16:9 primary / 16:10 card-grid",
+      "existingImplementationReference": "No implementation screenshot attached.",
+      "viteImplementationPath": "Not mapped",
+      "robloxImplementationPath": "Not mapped",
+      "missingAssetsOrDataBlockers": [],
+      "captureSource": "Studio-rendered component specimen",
+      "captureBlockers": [
+        "Storybook capture unavailable in this Studio repository.",
+        "Browser screenshot capture tooling is not installed in package dependencies.",
+        "No approved Roblox reference screenshot is attached to this component."
+      ]
+    },
+    {
+      "componentId": "BoostSlot",
+      "displayName": "BoostSlot",
+      "category": "Game-Specific",
+      "variants": [
+        "default"
+      ],
+      "requiredStates": [
+        "Default",
+        "Hover",
+        "Focused",
+        "Disabled",
+        "Loading",
+        "Error"
+      ],
+      "preferredPreviewViewport": "1440x900",
+      "expectedAspectRatio": "16:9 primary / 16:10 card-grid",
+      "existingImplementationReference": "No implementation screenshot attached.",
+      "viteImplementationPath": "Not mapped",
+      "robloxImplementationPath": "Not mapped",
+      "missingAssetsOrDataBlockers": [],
+      "captureSource": "Studio-rendered component specimen",
+      "captureBlockers": [
+        "Storybook capture unavailable in this Studio repository.",
+        "Browser screenshot capture tooling is not installed in package dependencies.",
+        "No approved Roblox reference screenshot is attached to this component."
+      ]
+    },
+    {
+      "componentId": "CostDisplay",
+      "displayName": "CostDisplay",
+      "category": "Game-Specific",
+      "variants": [
+        "default"
+      ],
+      "requiredStates": [
+        "Default",
+        "Hover",
+        "Focused",
+        "Disabled",
+        "Loading",
+        "Error"
+      ],
+      "preferredPreviewViewport": "1440x900",
+      "expectedAspectRatio": "16:9 primary / 16:10 card-grid",
+      "existingImplementationReference": "No implementation screenshot attached.",
+      "viteImplementationPath": "Not mapped",
+      "robloxImplementationPath": "Not mapped",
+      "missingAssetsOrDataBlockers": [
+        "Affordability: runtime data required"
+      ],
+      "captureSource": "Studio-rendered component specimen",
+      "captureBlockers": [
+        "Storybook capture unavailable in this Studio repository.",
+        "Browser screenshot capture tooling is not installed in package dependencies.",
+        "No approved Roblox reference screenshot is attached to this component."
+      ]
+    },
+    {
+      "componentId": "UnlockRequirementList",
+      "displayName": "UnlockRequirementList",
+      "category": "Game-Specific",
+      "variants": [
+        "default"
+      ],
+      "requiredStates": [
+        "Default",
+        "Hover",
+        "Focused",
+        "Disabled",
+        "Loading",
+        "Error"
+      ],
+      "preferredPreviewViewport": "1440x900",
+      "expectedAspectRatio": "16:9 primary / 16:10 card-grid",
+      "existingImplementationReference": "No implementation screenshot attached.",
+      "viteImplementationPath": "Not mapped",
+      "robloxImplementationPath": "Not mapped",
+      "missingAssetsOrDataBlockers": [
+        "Player progress: runtime data required"
+      ],
+      "captureSource": "Studio-rendered component specimen",
+      "captureBlockers": [
+        "Storybook capture unavailable in this Studio repository.",
+        "Browser screenshot capture tooling is not installed in package dependencies.",
+        "No approved Roblox reference screenshot is attached to this component."
+      ]
+    },
+    {
+      "componentId": "BottomDrawer",
+      "displayName": "BottomDrawer",
+      "category": "Overlays",
+      "variants": [
+        "compact",
+        "full",
+        "boosts",
+        "inventory"
+      ],
+      "requiredStates": [
+        "Closed",
+        "Opening",
+        "Open",
+        "Closing",
+        "Empty",
+        "Populated",
+        "Reduced Motion"
+      ],
+      "preferredPreviewViewport": "1440x900",
+      "expectedAspectRatio": "16:9 primary / 16:10 card-grid",
+      "existingImplementationReference": "No implementation screenshot attached.",
+      "viteImplementationPath": "Not mapped",
+      "robloxImplementationPath": "Not mapped",
+      "missingAssetsOrDataBlockers": [],
+      "captureSource": "Studio-rendered component specimen",
+      "captureBlockers": [
+        "Storybook capture unavailable in this Studio repository.",
+        "Browser screenshot capture tooling is not installed in package dependencies.",
+        "No approved Roblox reference screenshot is attached to this component."
+      ]
+    },
+    {
+      "componentId": "ContextMenu",
+      "displayName": "ContextMenu",
+      "category": "Overlays",
+      "variants": [
+        "default"
+      ],
+      "requiredStates": [
+        "Default",
+        "Hover",
+        "Focused",
+        "Disabled",
+        "Loading",
+        "Error"
+      ],
+      "preferredPreviewViewport": "1440x900",
+      "expectedAspectRatio": "16:9 primary / 16:10 card-grid",
+      "existingImplementationReference": "No implementation screenshot attached.",
+      "viteImplementationPath": "Not mapped",
+      "robloxImplementationPath": "Not mapped",
+      "missingAssetsOrDataBlockers": [],
+      "captureSource": "Studio-rendered component specimen",
+      "captureBlockers": [
+        "Storybook capture unavailable in this Studio repository.",
+        "Browser screenshot capture tooling is not installed in package dependencies.",
+        "No approved Roblox reference screenshot is attached to this component."
+      ]
+    },
+    {
+      "componentId": "Modal",
+      "displayName": "Modal",
+      "category": "Overlays",
+      "variants": [
+        "default"
+      ],
+      "requiredStates": [
+        "Default",
+        "Hover",
+        "Focused",
+        "Disabled",
+        "Loading",
+        "Error"
+      ],
+      "preferredPreviewViewport": "1440x900",
+      "expectedAspectRatio": "16:9 primary / 16:10 card-grid",
+      "existingImplementationReference": "No implementation screenshot attached.",
+      "viteImplementationPath": "Not mapped",
+      "robloxImplementationPath": "Not mapped",
+      "missingAssetsOrDataBlockers": [],
+      "captureSource": "Studio-rendered component specimen",
+      "captureBlockers": [
+        "Storybook capture unavailable in this Studio repository.",
+        "Browser screenshot capture tooling is not installed in package dependencies.",
+        "No approved Roblox reference screenshot is attached to this component."
+      ]
+    },
+    {
+      "componentId": "Popover",
+      "displayName": "Popover",
+      "category": "Overlays",
+      "variants": [
+        "default"
+      ],
+      "requiredStates": [
+        "Default",
+        "Hover",
+        "Focused",
+        "Disabled",
+        "Loading",
+        "Error"
+      ],
+      "preferredPreviewViewport": "1440x900",
+      "expectedAspectRatio": "16:9 primary / 16:10 card-grid",
+      "existingImplementationReference": "No implementation screenshot attached.",
+      "viteImplementationPath": "Not mapped",
+      "robloxImplementationPath": "Not mapped",
+      "missingAssetsOrDataBlockers": [],
+      "captureSource": "Studio-rendered component specimen",
+      "captureBlockers": [
+        "Storybook capture unavailable in this Studio repository.",
+        "Browser screenshot capture tooling is not installed in package dependencies.",
+        "No approved Roblox reference screenshot is attached to this component."
+      ]
+    },
+    {
+      "componentId": "ReviewDrawer",
+      "displayName": "ReviewDrawer",
+      "category": "Overlays",
+      "variants": [
+        "default"
+      ],
+      "requiredStates": [
+        "Default",
+        "Hover",
+        "Focused",
+        "Disabled",
+        "Loading",
+        "Error"
+      ],
+      "preferredPreviewViewport": "1440x900",
+      "expectedAspectRatio": "16:9 primary / 16:10 card-grid",
+      "existingImplementationReference": "No implementation screenshot attached.",
+      "viteImplementationPath": "Not mapped",
+      "robloxImplementationPath": "Not mapped",
+      "missingAssetsOrDataBlockers": [],
+      "captureSource": "Studio-rendered component specimen",
+      "captureBlockers": [
+        "Storybook capture unavailable in this Studio repository.",
+        "Browser screenshot capture tooling is not installed in package dependencies.",
+        "No approved Roblox reference screenshot is attached to this component."
+      ]
+    },
+    {
+      "componentId": "Toast",
+      "displayName": "Toast",
+      "category": "Overlays",
+      "variants": [
+        "default"
+      ],
+      "requiredStates": [
+        "Default",
+        "Hover",
+        "Focused",
+        "Disabled",
+        "Loading",
+        "Error"
+      ],
+      "preferredPreviewViewport": "1440x900",
+      "expectedAspectRatio": "16:9 primary / 16:10 card-grid",
+      "existingImplementationReference": "No implementation screenshot attached.",
+      "viteImplementationPath": "Not mapped",
+      "robloxImplementationPath": "Not mapped",
+      "missingAssetsOrDataBlockers": [],
+      "captureSource": "Studio-rendered component specimen",
+      "captureBlockers": [
+        "Storybook capture unavailable in this Studio repository.",
+        "Browser screenshot capture tooling is not installed in package dependencies.",
+        "No approved Roblox reference screenshot is attached to this component."
+      ]
+    },
+    {
+      "componentId": "Tooltip",
+      "displayName": "Tooltip",
+      "category": "Overlays",
+      "variants": [
+        "default"
+      ],
+      "requiredStates": [
+        "Default",
+        "Hover",
+        "Focused",
+        "Disabled",
+        "Loading",
+        "Error"
+      ],
+      "preferredPreviewViewport": "1440x900",
+      "expectedAspectRatio": "16:9 primary / 16:10 card-grid",
+      "existingImplementationReference": "No implementation screenshot attached.",
+      "viteImplementationPath": "Not mapped",
+      "robloxImplementationPath": "Not mapped",
+      "missingAssetsOrDataBlockers": [],
+      "captureSource": "Studio-rendered component specimen",
+      "captureBlockers": [
+        "Storybook capture unavailable in this Studio repository.",
+        "Browser screenshot capture tooling is not installed in package dependencies.",
+        "No approved Roblox reference screenshot is attached to this component."
+      ]
+    },
+    {
+      "componentId": "BeveledGamePanel",
+      "displayName": "BeveledGamePanel",
+      "category": "Panels",
+      "variants": [
+        "default"
+      ],
+      "requiredStates": [
+        "Default",
+        "Hover",
+        "Focused",
+        "Disabled",
+        "Loading",
+        "Error"
+      ],
+      "preferredPreviewViewport": "1440x900",
+      "expectedAspectRatio": "16:9 primary / 16:10 card-grid",
+      "existingImplementationReference": "No implementation screenshot attached.",
+      "viteImplementationPath": "Not mapped",
+      "robloxImplementationPath": "Not mapped",
+      "missingAssetsOrDataBlockers": [],
+      "captureSource": "Studio-rendered component specimen",
+      "captureBlockers": [
+        "Storybook capture unavailable in this Studio repository.",
+        "Browser screenshot capture tooling is not installed in package dependencies.",
+        "No approved Roblox reference screenshot is attached to this component."
+      ]
+    },
+    {
+      "componentId": "HeroPanel",
+      "displayName": "HeroPanel",
+      "category": "Panels",
+      "variants": [
+        "default"
+      ],
+      "requiredStates": [
+        "Default",
+        "Hover",
+        "Focused",
+        "Disabled",
+        "Loading",
+        "Error"
+      ],
+      "preferredPreviewViewport": "1440x900",
+      "expectedAspectRatio": "16:9 primary / 16:10 card-grid",
+      "existingImplementationReference": "No implementation screenshot attached.",
+      "viteImplementationPath": "Not mapped",
+      "robloxImplementationPath": "Not mapped",
+      "missingAssetsOrDataBlockers": [],
+      "captureSource": "Studio-rendered component specimen",
+      "captureBlockers": [
+        "Storybook capture unavailable in this Studio repository.",
+        "Browser screenshot capture tooling is not installed in package dependencies.",
+        "No approved Roblox reference screenshot is attached to this component."
+      ]
+    },
+    {
+      "componentId": "StatsPanel",
+      "displayName": "StatsPanel",
+      "category": "Panels",
+      "variants": [
+        "default"
+      ],
+      "requiredStates": [
+        "Default",
+        "Hover",
+        "Focused",
+        "Disabled",
+        "Loading",
+        "Error"
+      ],
+      "preferredPreviewViewport": "1440x900",
+      "expectedAspectRatio": "16:9 primary / 16:10 card-grid",
+      "existingImplementationReference": "No implementation screenshot attached.",
+      "viteImplementationPath": "Not mapped",
+      "robloxImplementationPath": "Not mapped",
+      "missingAssetsOrDataBlockers": [],
+      "captureSource": "Studio-rendered component specimen",
+      "captureBlockers": [
+        "Storybook capture unavailable in this Studio repository.",
+        "Browser screenshot capture tooling is not installed in package dependencies.",
+        "No approved Roblox reference screenshot is attached to this component."
+      ]
+    },
+    {
+      "componentId": "CircularProgress",
+      "displayName": "CircularProgress",
+      "category": "Progress",
+      "variants": [
+        "default"
+      ],
+      "requiredStates": [
+        "Default",
+        "Hover",
+        "Focused",
+        "Disabled",
+        "Loading",
+        "Error"
+      ],
+      "preferredPreviewViewport": "1440x900",
+      "expectedAspectRatio": "16:9 primary / 16:10 card-grid",
+      "existingImplementationReference": "No implementation screenshot attached.",
+      "viteImplementationPath": "Not mapped",
+      "robloxImplementationPath": "Not mapped",
+      "missingAssetsOrDataBlockers": [],
+      "captureSource": "Studio-rendered component specimen",
+      "captureBlockers": [
+        "Storybook capture unavailable in this Studio repository.",
+        "Browser screenshot capture tooling is not installed in package dependencies.",
+        "No approved Roblox reference screenshot is attached to this component."
+      ]
+    },
+    {
+      "componentId": "ProgressBar",
+      "displayName": "ProgressBar",
+      "category": "Progress",
+      "variants": [
+        "default"
+      ],
+      "requiredStates": [
+        "Default",
+        "Hover",
+        "Focused",
+        "Disabled",
+        "Loading",
+        "Error"
+      ],
+      "preferredPreviewViewport": "1440x900",
+      "expectedAspectRatio": "16:9 primary / 16:10 card-grid",
+      "existingImplementationReference": "No implementation screenshot attached.",
+      "viteImplementationPath": "Not mapped",
+      "robloxImplementationPath": "Not mapped",
+      "missingAssetsOrDataBlockers": [],
+      "captureSource": "Studio-rendered component specimen",
+      "captureBlockers": [
+        "Storybook capture unavailable in this Studio repository.",
+        "Browser screenshot capture tooling is not installed in package dependencies.",
+        "No approved Roblox reference screenshot is attached to this component."
+      ]
+    },
+    {
+      "componentId": "SegmentedProgress",
+      "displayName": "SegmentedProgress",
+      "category": "Progress",
+      "variants": [
+        "default"
+      ],
+      "requiredStates": [
+        "Default",
+        "Hover",
+        "Focused",
+        "Disabled",
+        "Loading",
+        "Error"
+      ],
+      "preferredPreviewViewport": "1440x900",
+      "expectedAspectRatio": "16:9 primary / 16:10 card-grid",
+      "existingImplementationReference": "No implementation screenshot attached.",
+      "viteImplementationPath": "Not mapped",
+      "robloxImplementationPath": "Not mapped",
+      "missingAssetsOrDataBlockers": [],
+      "captureSource": "Studio-rendered component specimen",
+      "captureBlockers": [
+        "Storybook capture unavailable in this Studio repository.",
+        "Browser screenshot capture tooling is not installed in package dependencies.",
+        "No approved Roblox reference screenshot is attached to this component."
+      ]
+    }
+  ]
+}

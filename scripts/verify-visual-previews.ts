@@ -192,6 +192,15 @@ async function main() {
   const button = componentState.components.find((component) => component.componentId === "PrimaryActionButton");
   assert(button?.visualPreview.status !== "Missing", "Component card preview should resolve after adding reference metadata.");
   assert(button?.visualPreview.mode === "variant_grid", "Component preview mode should be variant grid.");
+  const missingComponentPreviews = componentState.components.filter((component) => component.visualPreview.status === "Missing");
+  for (const component of missingComponentPreviews) {
+    const record = componentState.records.find((item) => item.componentId === component.componentId);
+    const blockers = record?.assetKeys.filter((asset) => asset.required && asset.status !== "Ready") ?? [];
+    assert(blockers.length > 0, `Component Library should not contain false Missing Preview states: ${component.componentId}.`);
+  }
+  assert(componentState.stats.componentPreviewsPending === 0, "Generated component specimens should clear Pending Generation preview status.");
+  assert(componentState.stats.componentPreviewsGenerated === 26, `Expected 26 generated component specimens; received ${componentState.stats.componentPreviewsGenerated}.`);
+  assert(componentState.stats.componentPreviewsNeedsReview === 26, "Generated component specimens must remain Needs Review.");
 
   const report = visual.buildVisualPreviewReport({
     assets: assetState.assets,
@@ -209,6 +218,9 @@ async function main() {
     previewMissing: assetState.visualPreviewReport.previewMissing,
     screenPreview: dashboard?.visualPreview.status,
     componentPreview: button?.visualPreview.status,
+    componentPreviewsPending: componentState.stats.componentPreviewsPending,
+    componentPreviewsGenerated: componentState.stats.componentPreviewsGenerated,
+    componentPreviewsNeedsReview: componentState.stats.componentPreviewsNeedsReview,
     combinedReport: {
       totalVisualRecords: report.totalVisualRecords,
       missing: report.previewMissing,

@@ -51,6 +51,7 @@ function ComponentCard({ component }: { component: ComponentLibraryState["compon
         <WorkspaceMiniStat label="Roblox" value={roblox} />
         <WorkspaceMiniStat label="Screens" value={component.screenUsages.length} />
         <WorkspaceMiniStat label="Variants" value={component.variants.length} />
+        <WorkspaceMiniStat label="States" value={component.stateCount} />
         <WorkspaceMiniStat label="Missing Assets" value={component.missingAssets} />
         <WorkspaceMiniStat label="Missing States" value={component.missingStates} />
         <WorkspaceMiniStat label="Preview" value={component.visualPreview.status} />
@@ -116,6 +117,10 @@ export function ComponentLibraryWorkspace({ state }: { state: ComponentLibrarySt
             <WorkspaceStatTile label="Missing Assets" value={state.stats.missingAssets} />
             <WorkspaceStatTile label="Missing States" value={state.stats.missingStates} />
             <WorkspaceStatTile label="Breaking Changes" value={state.stats.breakingChanges} />
+            <WorkspaceStatTile label="Preview Pending" value={state.stats.componentPreviewsPending} />
+            <WorkspaceStatTile label="Preview Generated" value={state.stats.componentPreviewsGenerated} />
+            <WorkspaceStatTile label="Needs Review" value={state.stats.componentPreviewsNeedsReview} />
+            <WorkspaceStatTile label="Capture Blocked" value={state.stats.componentPreviewsBlockedByMissingBrowserCapture} />
           </div>
         </WorkspacePanel>
         <WorkspacePanel title="Export Safety" icon={TriangleAlert}>

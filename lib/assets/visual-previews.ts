@@ -561,11 +561,16 @@ export function resolveComponentPreview(record: ComponentDesignRecord, assets?: 
       sourceVersion: `v${reference.version}`,
       approvalStatus: reference.approvalStatus,
       publishStatus: "studio-only",
-      dimensionsLabel: reference.viewport,
+      width: reference.width ?? null,
+      height: reference.height ?? null,
+      format: reference.format ?? "Studio reference",
+      dimensionsLabel: reference.width && reference.height ? `${reference.width}x${reference.height}` : reference.viewport,
       metadata: [
         { label: "Target", value: reference.type },
         { label: "Viewport", value: reference.viewport },
-        { label: "Version", value: reference.version }
+        { label: "Version", value: reference.version },
+        ...(reference.captureSource ? [{ label: "Capture", value: reference.captureSource }] : []),
+        ...(reference.checksum ? [{ label: "Checksum", value: reference.checksum.slice(0, 12) }] : [])
       ],
       sanitized: false
     };

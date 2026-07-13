@@ -20,6 +20,7 @@
     "verify:screen-designer": "tsx scripts/verify-screen-designer.ts",
     "verify:civilization-performance": "tsx scripts/verify-civilization-performance.ts",
     "cleanup:remote-psd": "tsx scripts/cleanup-remote-psd-sources.ts",
+    "generate:component-previews": "tsx scripts/generate-component-preview-specimens.ts",
     "verify:visual-previews": "tsx scripts/verify-visual-previews.ts"
   },
   "dependencies": {

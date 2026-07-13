@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="320" viewBox="0 0 512 320" role="img" aria-label="EmptyState generated Studio component preview">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#020617"/>
+      <stop offset="55%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.55"/>
+    </linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="6" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#bg)"/>
+  <path d="M0 262.4 C 143.36 230.39999999999998, 317.44 300.79999999999995, 512 249.60000000000002 L 512 320 L 0 320 Z" fill="#f59e0b" opacity="0.08"/>
+  <rect x="41" y="64" width="430" height="154" rx="18" fill="#020617cc" stroke="#fbbf24" stroke-opacity="0.45"/>
+  <rect x="53" y="76" width="406" height="56" rx="12" fill="url(#accent)" opacity="0.18"/>
+  <circle cx="402" cy="123" r="26" fill="none" stroke="#fbbf24" stroke-width="6" opacity="0.85" filter="url(#glow)"/>
+  <rect x="93" y="135" width="215" height="14" rx="7" fill="#fbbf24" opacity="0.6"/>
+  <rect x="93" y="153" width="155" height="10" rx="5" fill="#94a3b8" opacity="0.45"/>
+  <text x="59" y="112" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="900" fill="#f8fafc">EmptyState</text>
+  <text x="59" y="142" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="800" letter-spacing="1.8" fill="#fbbf24">FEEDBACK / GENERATED SPECIMEN</text>
+  <g>
+      <rect x="53" y="238" width="94" height="32" rx="6" fill="#94a3b822" stroke="#94a3b888"/>
+      <text x="100" y="258" text-anchor="middle" font-size="10" font-weight="800" fill="#94a3b8">Default</text>
+    </g><g>
+      <rect x="155" y="238" width="94" height="32" rx="6" fill="#67e8f922" stroke="#67e8f988"/>
+      <text x="202" y="258" text-anchor="middle" font-size="10" font-weight="800" fill="#67e8f9">Hover</text>
+    </g><g>
+      <rect x="257" y="238" width="94" height="32" rx="6" fill="#67e8f922" stroke="#67e8f988"/>
+      <text x="304" y="258" text-anchor="middle" font-size="10" font-weight="800" fill="#67e8f9">Focused</text>
+    </g><g>
+      <rect x="359" y="238" width="94" height="32" rx="6" fill="#fb718522" stroke="#fb718588"/>
+      <text x="406" y="258" text-anchor="middle" font-size="10" font-weight="800" fill="#fb7185">Disabled</text>
+    </g><g>
+      <rect x="53" y="280" width="94" height="32" rx="6" fill="#fbbf2422" stroke="#fbbf2488"/>
+      <text x="100" y="300" text-anchor="middle" font-size="10" font-weight="800" fill="#fbbf24">Loading</text>
+    </g>
+  <text x="41" y="288" font-family="Inter, Arial, sans-serif" font-size="12" fill="#cbd5e1">Default</text>
+  <text x="471" y="288" text-anchor="end" font-family="Inter, Arial, sans-serif" font-size="12" fill="#64748b">grid preview 512</text>
+</svg>

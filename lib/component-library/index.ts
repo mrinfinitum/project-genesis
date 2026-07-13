@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { AssetProductionState, ProductionAsset } from "@/lib/assets/asset-production";
 import { findAssetForPreviewKeys, resolveComponentPreview, type VisualPreview } from "@/lib/assets/visual-previews";
+import { generatedComponentPreviewReferences, generatedComponentPreviewStats } from "@/lib/component-preview-generation";
 import type { ScreenDesignRecord } from "@/lib/screen-designer";
 
 export type ComponentCategory = "Navigation" | "HUD" | "Panels" | "Buttons" | "Cards" | "Lists" | "Progress" | "Forms" | "Overlays" | "Feedback" | "Data Display" | "Game-Specific" | "Accessibility" | "Utility";
@@ -112,13 +113,38 @@ export type ComponentScreenUsage = {
 
 export type ComponentReferenceAttachment = {
   id: string;
-  type: "Roblox screenshot" | "Vite screenshot" | "source PNG" | "PSD preview" | "wireframe" | "annotated reference" | "design notes";
+  type: "Roblox screenshot" | "Vite screenshot" | "source PNG" | "PSD preview" | "wireframe" | "annotated reference" | "design notes" | "Studio specimen";
   source: string;
   viewport: string;
   version: number;
   crop: string;
   notes: string;
   approvalStatus: ComponentApprovalStatus;
+  captureSource?: "captured Vite Storybook state" | "captured Roblox reference screenshot" | "Studio-rendered component specimen" | "manually uploaded screenshot";
+  previewStatus?: "Pending Generation" | "Generated" | "Needs Review" | "Approved" | "Published" | "Blocked";
+  width?: number;
+  height?: number;
+  format?: "WebP" | "PNG" | "JPG" | "SVG";
+  checksum?: string;
+  outputRole?: "primary" | "card_thumbnail_256" | "grid_preview_512" | "state_matrix" | "large_1024";
+  storybook?: {
+    storyId: string;
+    state: string;
+    variant: string;
+    theme: string;
+    reducedMotion: boolean;
+    captureCrop: string;
+    expectedOutputDimensions: string;
+  };
+  outputs?: Array<{
+    role: "primary" | "card_thumbnail_256" | "grid_preview_512" | "state_matrix" | "large_1024";
+    source: string;
+    width: number;
+    height: number;
+    format: "WebP" | "PNG" | "JPG" | "SVG";
+    checksum: string;
+  }>;
+  captureBlockers?: string[];
 };
 
 export type ComponentReviewEntry = {
@@ -193,6 +219,7 @@ export type ComponentDesignRecord = {
 export type ComponentDesignSummary = Pick<ComponentDesignRecord, "id" | "componentId" | "displayName" | "description" | "category" | "status" | "approvalStatus" | "version" | "assignedTo" | "updatedAt" | "implementationTargets" | "screenUsages" | "variants" | "breakingChanges"> & {
   missingAssets: number;
   missingStates: number;
+  stateCount: number;
   parityStatus: ComponentParityStatus;
   checklistComplete: number;
   checklistTotal: number;
@@ -213,6 +240,13 @@ export type ComponentLibraryState = {
     missingStates: number;
     breakingChanges: number;
     screensAffectedByPendingChanges: number;
+    componentPreviewsPending: number;
+    componentPreviewsGenerated: number;
+    componentPreviewsNeedsReview: number;
+    componentPreviewsApproved: number;
+    componentPreviewsBlockedByMissingImplementation: number;
+    componentPreviewsBlockedByMissingBrowserCapture: number;
+    componentPreviewsBlockedByMissingArt: number;
   };
   generatedAt: string;
 };
@@ -584,6 +618,7 @@ async function writeStore(store: ComponentLibraryStore) {
 }
 
 function normalize(record: ComponentDesignRecord): ComponentDesignRecord {
+  const references = record.references ?? [];
   return {
     ...record,
     designTokens: record.designTokens ?? [],
@@ -599,7 +634,7 @@ function normalize(record: ComponentDesignRecord): ComponentDesignRecord {
     accessibilityRequirements: record.accessibilityRequirements ?? [],
     implementationTargets: record.implementationTargets ?? implementationTargets(record.componentId),
     screenUsages: record.screenUsages ?? [],
-    references: record.references ?? [],
+    references: [...references, ...generatedComponentPreviewReferences(record).filter((reference) => !references.some((item) => item.id === reference.id || item.source === reference.source))],
     reviewHistory: record.reviewHistory ?? [],
     breakingChanges: record.breakingChanges ?? [],
     notes: record.notes ?? []
@@ -607,7 +642,7 @@ function normalize(record: ComponentDesignRecord): ComponentDesignRecord {
 }
 
 function mergeRecords(stored: ComponentDesignRecord[]) {
-  const map = new Map(initialComponentRecords.map((record) => [record.componentId, record]));
+  const map = new Map(initialComponentRecords.map((record) => [record.componentId, normalize(record)]));
   for (const record of stored) {
     if (record?.componentId) map.set(record.componentId, normalize(record));
   }
@@ -689,6 +724,7 @@ function summary(record: ComponentDesignRecord, assets?: ProductionAsset[]): Com
     breakingChanges: record.breakingChanges,
     missingAssets: record.assetKeys.filter((item) => item.required && item.status !== "Ready").length,
     missingStates: record.states.filter((item) => item.required && !item.designed).length,
+    stateCount: record.states.length,
     parityStatus,
     checklistComplete: score.complete,
     checklistTotal: score.total,
@@ -696,8 +732,9 @@ function summary(record: ComponentDesignRecord, assets?: ProductionAsset[]): Com
   };
 }
 
-function buildStats(components: ComponentDesignSummary[]): ComponentLibraryState["stats"] {
+function buildStats(components: ComponentDesignSummary[], records: ComponentDesignRecord[]): ComponentLibraryState["stats"] {
   const pendingMajor = components.flatMap((component) => component.breakingChanges.filter((change) => change.type === "Major" && !change.resolved));
+  const previewStats = generatedComponentPreviewStats(records);
   return {
     total: components.length,
     notStarted: components.filter((component) => component.status === "Not Started").length,
@@ -708,7 +745,8 @@ function buildStats(components: ComponentDesignSummary[]): ComponentLibraryState
     missingAssets: components.filter((component) => component.missingAssets > 0).length,
     missingStates: components.filter((component) => component.missingStates > 0).length,
     breakingChanges: pendingMajor.length,
-    screensAffectedByPendingChanges: new Set(pendingMajor.flatMap((change) => change.affectedScreenIds)).size
+    screensAffectedByPendingChanges: new Set(pendingMajor.flatMap((change) => change.affectedScreenIds)).size,
+    ...previewStats
   };
 }
 
@@ -716,7 +754,7 @@ export async function getComponentLibraryState(assetState?: AssetProductionState
   const store = await readStore();
   const records = mergeRecords(store.records).map((record) => enrichAssets(record, assetState));
   const components = records.map((record) => summary(record, assetState?.assets));
-  return { components, records, stats: buildStats(components), generatedAt: new Date().toISOString() };
+  return { components, records, stats: buildStats(components, records), generatedAt: new Date().toISOString() };
 }
 
 export async function getComponentDesignRecord(componentId: string, assetState?: AssetProductionState) {

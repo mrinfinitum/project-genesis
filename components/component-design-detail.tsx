@@ -86,6 +86,11 @@ export function ComponentDesignDetail({
   const [referenceViewport, setReferenceViewport] = useState("1920x1080");
   const handoff = useMemo(() => handoffs[target], [handoffs, target]);
   const readiness = Math.round((validation.checklist.complete / Math.max(1, validation.checklist.total)) * 100);
+  const primaryReference = record.references.find((reference) => reference.source === preview.url) ?? record.references[0];
+  const viteReference = record.references.find((reference) => reference.type === "Vite screenshot");
+  const robloxReference = record.references.find((reference) => reference.type === "Roblox screenshot");
+  const viteTarget = record.implementationTargets.find((item) => item.target === "Vite Web");
+  const robloxTarget = record.implementationTargets.find((item) => item.target === "Roblox");
 
   async function copyHandoff() {
     await navigator.clipboard.writeText(handoff);
@@ -174,7 +179,31 @@ export function ComponentDesignDetail({
             <WorkspaceMiniStat label="Mode" value={preview.mode.replaceAll("_", " ")} />
             <WorkspaceMiniStat label="Variants" value={record.variants.length} />
             <WorkspaceMiniStat label="States" value={record.states.length} />
+            <WorkspaceMiniStat label="Vite Ref" value={viteReference?.source ?? viteTarget?.implementationPath ?? "Not captured"} />
+            <WorkspaceMiniStat label="Roblox Ref" value={robloxReference?.source ?? robloxTarget?.implementationPath ?? "Not captured"} />
           </div>
+          {primaryReference?.outputs?.length ? (
+            <div className="mt-4 grid gap-2">
+              {primaryReference.outputs.map((output) => (
+                <div key={output.role} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <WorkspaceBadge value={output.role.replaceAll("_", " ")} />
+                    <span className="font-mono text-xs text-slate-400">{output.width}x{output.height} {output.format}</span>
+                  </div>
+                  <p className="mt-2 truncate font-mono text-[0.68rem] text-cyan-200">{output.source}</p>
+                </div>
+              ))}
+            </div>
+          ) : null}
+          <div className="mt-4 rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-200">Overlay Comparison</p>
+            <p className="mt-2 text-sm leading-6 text-slate-300">{viteReference && robloxReference ? "Vite and Roblox references are available for overlay review." : "Overlay comparison is pending until both Vite and Roblox reference screenshots exist."}</p>
+          </div>
+          {primaryReference?.captureBlockers?.length ? (
+            <div className="mt-4 grid gap-2">
+              {primaryReference.captureBlockers.map((blocker) => <p key={blocker} className="rounded-md border border-amber-300/20 bg-amber-400/10 p-2 text-xs font-semibold text-amber-100">{blocker}</p>)}
+            </div>
+          ) : null}
           <p className="mt-3 text-sm leading-6 text-slate-300">Component previews represent anatomy, variants, implementation screenshots, or missing state requirements without exposing private source files.</p>
           <div className="mt-4 grid gap-2">
             <input value={referenceUrl} onChange={(event) => setReferenceUrl(event.target.value)} placeholder="/assets/previews/button-states.webp" className="h-10 rounded-md border border-cyan-300/15 bg-slate-950/80 px-3 text-sm text-white outline-none" />

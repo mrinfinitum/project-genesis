@@ -580,6 +580,7 @@ function buildReports(data: GameData, assetState: AssetProductionState, authorin
   const componentAssetBlockers = componentState?.stats.missingAssets ?? 0;
   const componentStateBlockers = componentState?.stats.missingStates ?? 0;
   const componentBreakingChanges = componentState?.stats.breakingChanges ?? 0;
+  const componentPreviewReview = componentState?.stats.componentPreviewsNeedsReview ?? 0;
   const previewGaps = assetState.visualPreviewReport.previewMissing + assetState.visualPreviewReport.previewStale + assetState.visualPreviewReport.lowResolution;
 
   return [
@@ -598,6 +599,7 @@ function buildReports(data: GameData, assetState: AssetProductionState, authorin
     { label: "Screen Interaction Gaps", count: screenInteractionBlockers, href: "/screen-designer", severity: screenInteractionBlockers ? "Medium" : "Low", description: "Screen designs with incomplete states, interactions, motion, review, or accessibility checklist items." },
     { label: "Component Asset Blockers", count: componentAssetBlockers, href: "/component-library", severity: componentAssetBlockers ? "High" : "Low", description: "Shared UI components with missing, unpublished, or unapproved semantic assets." },
     { label: "Component State Gaps", count: componentStateBlockers, href: "/component-library", severity: componentStateBlockers ? "Medium" : "Low", description: "Shared UI components missing required state treatments." },
+    { label: "Component Preview Review", count: componentPreviewReview, href: "/component-library", severity: componentPreviewReview ? "Medium" : "Low", description: "Generated component specimens waiting for human review before approval." },
     { label: "Component Breaking Changes", count: componentBreakingChanges, href: "/component-library", severity: componentBreakingChanges ? "Critical" : "Low", description: "Major component changes requiring dependent screen review." }
   ];
 }
@@ -741,6 +743,19 @@ function componentWorkItems(componentState?: ComponentLibraryState) {
         priority: component.missingAssets > 0 ? "High" : "Medium"
       }));
     }
+    if (component.visualPreview.status === "Needs Review") {
+      items.push(queueItem({
+        id: `component-preview-review-${component.componentId}`,
+        title: `Review ${component.displayName} generated preview`,
+        type: "Component",
+        status: "Needs Review",
+        era: "UI",
+        href: `/component-library/${component.componentId}`,
+        reason: "Studio specimen preview was generated from component metadata and needs human review before approval or publication.",
+        blockers: ["Implementation screenshot capture unavailable", "Preview approval required"],
+        priority: "Medium"
+      }));
+    }
     if (component.breakingChanges.some((change) => !change.resolved)) {
       items.push(queueItem({
         id: `component-breaking-${component.componentId}`,
@@ -777,6 +792,8 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
   const screenTotal = screenState?.screens.length ?? 0;
   const componentCompleteCount = componentState?.components.filter(componentComplete).length ?? 0;
   const componentTotal = componentState?.components.length ?? 0;
+  const componentPreviewGenerated = componentState?.stats.componentPreviewsGenerated ?? 0;
+  const componentPreviewTotal = componentPreviewGenerated + (componentState?.stats.componentPreviewsPending ?? 0);
   const previewReady = assetState.visualPreviewReport.previewReady;
   const previewTotal = Math.max(1, assetState.visualPreviewReport.totalVisualRecords);
 
@@ -792,7 +809,8 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
     { label: "Mission Completion", complete: survivalMissionComplete, total: Math.max(1, survivalMissionTotal), value: percent(survivalMissionComplete, survivalMissionTotal), detail: "Authored mission content from active content packs." },
     { label: "Event Completion", complete: survivalEventComplete, total: Math.max(1, survivalEventTotal), value: percent(survivalEventComplete, survivalEventTotal), detail: "Authored event content from active content packs." },
     { label: "Screen Design Completion", complete: screenCompleteCount, total: Math.max(1, screenTotal), value: percent(screenCompleteCount, screenTotal), detail: "Major game screens with approved or implemented Studio design specifications." },
-    { label: "Component Library Completion", complete: componentCompleteCount, total: Math.max(1, componentTotal), value: percent(componentCompleteCount, componentTotal), detail: "Reusable game UI components with approved or implemented design-system specifications." }
+    { label: "Component Library Completion", complete: componentCompleteCount, total: Math.max(1, componentTotal), value: percent(componentCompleteCount, componentTotal), detail: "Reusable game UI components with approved or implemented design-system specifications." },
+    { label: "Component Preview Generation", complete: componentPreviewGenerated, total: Math.max(1, componentPreviewTotal), value: percent(componentPreviewGenerated, componentPreviewTotal), detail: `${componentState?.stats.componentPreviewsNeedsReview ?? 0} generated previews need review, ${componentState?.stats.componentPreviewsBlockedByMissingBrowserCapture ?? 0} blocked from implementation screenshot capture.` }
   ];
   if (survivalPack) {
     metrics.splice(2, 0, { label: "Survival Content Pack", complete: survivalScore.complete, total: survivalScore.total, value: survivalScore.value, detail: `${survivalPack.title} is ${survivalScore.value}% production-ready.` });
