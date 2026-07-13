@@ -25,6 +25,8 @@ async function main() {
   const gameArtImport = await import("@/lib/assets/game-art-import");
   const runtime = await import("@/lib/runtime/game-runtime");
   const eraArt = await import("@/lib/assets/era-art-inventory");
+  const data = await import("@/lib/data");
+  const upgradeArt = await import("@/lib/upgrades/art-previews");
 
   await gameArtImport.applyGameArtImport({
     sourceProject: "Asset Production Verify",
@@ -38,6 +40,16 @@ async function main() {
         width: 512,
         height: 512,
         webPath: "/assets/verify-card.png"
+      },
+      {
+        filename: "resource-management.png",
+        name: "Resource Management",
+        category: "upgrade_icon",
+        artKey: "resource_management",
+        iconKey: "resource_management",
+        width: 512,
+        height: 512,
+        webPath: "/assets/verify-upgrade-resource-management.png"
       }
     ]
   });
@@ -364,6 +376,16 @@ async function main() {
   });
 
   state = await assetProduction.getAssetProductionState();
+  const upgrades = await data.getRows("upgrades") as import("@/types/schema").Upgrade[];
+  const upgradeReport = upgradeArt.buildUpgradeArtReport(upgrades, state.assets);
+  const resourceManagementUpgrade = upgradeReport.items.find((item) => item.displayName === "Resource Management");
+  assert(resourceManagementUpgrade?.linkedAssetId === "asset_resource_management", "Upgrade art resolver did not link exact imported upgrade art.");
+  assert(Boolean(resourceManagementUpgrade?.resolvedPreviewUrl), "Linked upgrade art did not produce a usable preview URL.");
+  assert(resourceManagementUpgrade?.preview.source !== "missing" && resourceManagementUpgrade?.preview.source !== "placeholder", "Imported upgrade art must not remain a missing placeholder.");
+  const basicConstructionUpgrade = upgradeReport.items.find((item) => item.displayName === "Basic Construction");
+  assert(basicConstructionUpgrade?.linkedAssetId !== "asset_basic_administration", "Upgrade art resolver accepted an ambiguous fuzzy false-positive match.");
+  assertNoPrivateLeak("upgrade art report", upgradeReport);
+
   asset = state.assets.find((item) => item.id === assetId);
   if (!asset) throw new Error("Verification asset disappeared after actions.");
   assert(asset.sourceFiles.find((source) => source.id === previousSource.id)?.isCurrent, "Source restore did not set current version.");
@@ -418,6 +440,7 @@ async function main() {
     derivatives: asset.derivatives.length,
     derivativePresets: state.derivativePresets.length,
     missingRequirements: state.missingRequirements.length,
+    upgradeArt: upgradeReport.stats,
     productionTasks: metadata.productionTasks.length,
     eraArtCards: survivalInventory.cards.length,
     canonicalRuntime: canonical.metadata.validationStatus,

@@ -55,8 +55,10 @@ function mockAsset(overrides: Partial<ProductionAsset> = {}): ProductionAsset {
 async function main() {
   const visual = await import("@/lib/assets/visual-previews");
   const assetProduction = await import("@/lib/assets/asset-production");
+  const data = await import("@/lib/data");
   const screenDesigner = await import("@/lib/screen-designer");
   const componentLibrary = await import("@/lib/component-library");
+  const upgradeArt = await import("@/lib/upgrades/art-previews");
 
   assert(visual.sanitizePreviewUrl("/Users/geoff/private/source.png") === "", "Private /Users paths must be sanitized.");
   assert(visual.sanitizePreviewUrl("studio-private://asset/source.psd") === "", "studio-private URLs must be sanitized.");
@@ -164,6 +166,21 @@ async function main() {
   assert(assetState.visualPreviewReport.totalVisualRecords >= assetState.assets.length, "Visual preview report must cover asset records.");
   assert(assetState.derivativePresets.some((preset) => preset.id === "preview_card_256_webp"), "Preview derivative presets must be registered.");
 
+  const upgrades = await data.getRows("upgrades") as import("@/types/schema").Upgrade[];
+  const upgradeReport = upgradeArt.buildUpgradeArtReport(upgrades, assetState.assets);
+  assert(upgradeReport.stats.total === upgrades.length, "Upgrade art report must cover every upgrade.");
+  assert(upgradeReport.items.every((item) => item.resolvedPreviewUrl || item.missingRequirement), "Every upgrade must resolve to an image or actionable missing-art requirement.");
+  assert(upgradeReport.items.every((item) => !item.resolvedPreviewUrl || visual.sanitizePreviewUrl(item.resolvedPreviewUrl) === item.resolvedPreviewUrl), "Upgrade preview URLs must be sanitized.");
+  const matchedUpgrade = upgradeReport.items.find((item) => item.displayName === "Resource Management");
+  assert(matchedUpgrade?.linkedAssetId === "asset_resource_management", "Imported upgrade PNG should resolve by exact display-name/artKey match.");
+  assert(matchedUpgrade?.preview.source !== "missing" && matchedUpgrade?.preview.source !== "placeholder", "Resolved imported upgrade art must not render as a placeholder.");
+  const unrelatedConstruction = upgradeReport.items.find((item) => item.displayName === "Basic Construction");
+  assert(unrelatedConstruction?.linkedAssetId !== "asset_basic_administration", "Upgrade resolver must not use fuzzy false-positive imported-art matches.");
+  const upgradePageSource = await readFile(path.join(process.cwd(), "app", "upgrades", "page.tsx"), "utf8");
+  const upgradeWorkspaceSource = await readFile(path.join(process.cwd(), "components", "upgrade-art-workspace.tsx"), "utf8");
+  assert(!upgradePageSource.includes("DataWorkspace"), "Upgrades page should use the visual art workspace, not the generic table workspace.");
+  assert(!upgradeWorkspaceSource.includes("WandSparkles"), "Upgrade art workspace must not use the generic wand icon as final art.");
+
   const source = await readFile(path.join(process.cwd(), "components", "asset-preview.tsx"), "utf8");
   assert(source.includes('loading="lazy"'), "AssetPreview images must lazy-load.");
   assert(source.includes("MissingPreview"), "AssetPreview must render a missing state instead of broken images.");
@@ -218,6 +235,7 @@ async function main() {
     previewMissing: assetState.visualPreviewReport.previewMissing,
     screenPreview: dashboard?.visualPreview.status,
     componentPreview: button?.visualPreview.status,
+    upgradeArt: upgradeReport.stats,
     componentPreviewsPending: componentState.stats.componentPreviewsPending,
     componentPreviewsGenerated: componentState.stats.componentPreviewsGenerated,
     componentPreviewsNeedsReview: componentState.stats.componentPreviewsNeedsReview,

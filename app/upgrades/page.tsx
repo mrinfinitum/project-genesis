@@ -1,19 +1,14 @@
-import { DataWorkspace } from "@/components/data-workspace";
+import { UpgradeArtWorkspace } from "@/components/upgrade-art-workspace";
+import { getAssetProductionState } from "@/lib/assets/asset-production";
 import { getRows } from "@/lib/data";
-import { tableConfigs } from "@/lib/tables";
+import { buildUpgradeArtReport } from "@/lib/upgrades/art-previews";
+import type { Upgrade } from "@/types/schema";
 
 export const dynamic = "force-dynamic";
 
 export default async function UpgradesPage() {
-  const rows = await getRows("upgrades");
-  return (
-    <DataWorkspace
-      config={tableConfigs.upgrades}
-      initialRows={rows}
-      eyebrow="Progression Design"
-      title="Upgrade Designer"
-      description="Repeatable and level-based progression improvements across workforce, industry, science, and technology."
-      intent="Compare upgrades as progression cards with tier, unlock, cost, bonus, and asset metadata available on selection."
-    />
-  );
+  const [rows, assetState] = await Promise.all([getRows("upgrades"), getAssetProductionState()]);
+  const upgrades = rows as Upgrade[];
+  const report = buildUpgradeArtReport(upgrades, assetState.assets);
+  return <UpgradeArtWorkspace upgrades={upgrades} report={report} />;
 }

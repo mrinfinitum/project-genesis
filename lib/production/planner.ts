@@ -5,6 +5,7 @@ import type { EraArtSummaryByEra } from "@/lib/assets/era-art-inventory";
 import type { ComponentDesignSummary, ComponentLibraryState } from "@/lib/component-library";
 import { productionTasksForScaffold, type ContentAuthoringState, type EraScaffold } from "@/lib/content-authoring/templates";
 import type { ScreenDesignerState, ScreenDesignSummary } from "@/lib/screen-designer";
+import { buildUpgradeArtReport, type UpgradeArtReport } from "@/lib/upgrades/art-previews";
 import type { Building, BuildingChain, GameData, ResearchNode, ResourceCatalogItem, UnlockMatrixRow } from "@/types/schema";
 
 export type ProductionPriority = "Critical" | "High" | "Medium" | "Low";
@@ -308,6 +309,24 @@ function assetWorkItems(assetState: AssetProductionState) {
   return items;
 }
 
+function upgradeArtWorkItems(report: UpgradeArtReport) {
+  const items: ProductionQueueItem[] = [];
+  for (const item of report.items.filter((row) => row.matchStatus !== "matched" || !row.resolvedPreviewUrl).slice(0, 60)) {
+    items.push(queueItem({
+      id: `upgrade-art-${item.upgradeId}`,
+      title: item.matchStatus === "ambiguous" ? `Review upgrade icon candidates for ${item.displayName}` : `Create upgrade icon for ${item.displayName}`,
+      type: "Asset",
+      status: item.previewStatus,
+      era: "Upgrade Art",
+      href: "/upgrades",
+      reason: item.missingReason || "Upgrade workspace needs an actual icon preview instead of a generic placeholder.",
+      blockers: item.matchStatus === "ambiguous" ? ["Ambiguous imported-art match"] : ["Upgrade icon missing", "Preview derivative missing"],
+      priority: item.matchStatus === "ambiguous" ? "Medium" : "High"
+    }));
+  }
+  return items;
+}
+
 function contentWorkItems(data: GameData) {
   const items: ProductionQueueItem[] = [];
 
@@ -559,7 +578,7 @@ function buildBlockers(data: GameData, assetState: AssetProductionState): Produc
   ].filter(Boolean) as ProductionBlocker[];
 }
 
-function buildReports(data: GameData, assetState: AssetProductionState, authoringState?: ContentAuthoringState, screenState?: ScreenDesignerState, componentState?: ComponentLibraryState): ProductionReport[] {
+function buildReports(data: GameData, assetState: AssetProductionState, authoringState?: ContentAuthoringState, screenState?: ScreenDesignerState, componentState?: ComponentLibraryState, upgradeArtReport?: UpgradeArtReport): ProductionReport[] {
   const missingResearch = data.research.filter((row) => !researchComplete(row)).length;
   const missingBuildings = data.buildings.filter((row) => !buildingComplete(row)).length;
   const missingChains = data.building_chains.filter((row) => !chainComplete(row)).length;
@@ -582,10 +601,12 @@ function buildReports(data: GameData, assetState: AssetProductionState, authorin
   const componentBreakingChanges = componentState?.stats.breakingChanges ?? 0;
   const componentPreviewReview = componentState?.stats.componentPreviewsNeedsReview ?? 0;
   const previewGaps = assetState.visualPreviewReport.previewMissing + assetState.visualPreviewReport.previewStale + assetState.visualPreviewReport.lowResolution;
+  const upgradeArtGaps = (upgradeArtReport?.stats.missing ?? 0) + (upgradeArtReport?.stats.ambiguous ?? 0);
 
   return [
     { label: "Missing Assets", count: assetState.missingRequirements.length, href: "/assets/missing", severity: "High", description: "Required derivatives or source artwork still missing." },
     { label: "Preview Quality Gaps", count: previewGaps, href: "/assets", severity: previewGaps ? "High" : "Low", description: "Missing, stale, or low-resolution Studio thumbnails/previews." },
+    { label: "Upgrade Art Gaps", count: upgradeArtGaps, href: "/upgrades", severity: upgradeArtGaps ? "High" : "Low", description: "Upgrade records without a resolved real icon preview or needing candidate review." },
     { label: "Missing Research", count: missingResearch, href: "/research", severity: missingResearch ? "High" : "Low", description: "Research nodes needing status, icon, or asset completion." },
     { label: "Missing Buildings", count: missingBuildings, href: "/buildings", severity: missingBuildings ? "High" : "Low", description: "Buildings missing unlocks or visual production links." },
     { label: "Missing Missions", count: missingMissions, href: "/missions", severity: missingMissions ? "Critical" : "Low", description: "Active content-pack mission records needing production completion." },
@@ -774,6 +795,7 @@ function componentWorkItems(componentState?: ComponentLibraryState) {
 }
 
 export function buildProductionPlan(data: GameData, assetState: AssetProductionState, eraSummary: EraArtSummaryByEra, authoringState?: ContentAuthoringState, screenState?: ScreenDesignerState, componentState?: ComponentLibraryState): ProductionPlan {
+  const upgradeArtReport = buildUpgradeArtReport(data.upgrades, assetState.assets);
   const artComplete = assetState.assets.filter(assetComplete).length;
   const artTotal = Math.max(1, assetState.assets.length + assetState.missingRequirements.length);
   const researchCompleteCount = data.research.filter(researchComplete).length;
@@ -796,12 +818,15 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
   const componentPreviewTotal = componentPreviewGenerated + (componentState?.stats.componentPreviewsPending ?? 0);
   const previewReady = assetState.visualPreviewReport.previewReady;
   const previewTotal = Math.max(1, assetState.visualPreviewReport.totalVisualRecords);
+  const upgradeArtReady = upgradeArtReport.stats.previewReady;
+  const upgradeArtTotal = Math.max(1, upgradeArtReport.stats.total);
 
   const metrics: ProductionMetric[] = [
     { label: "Overall Game Completion", complete: 0, total: 0, value: 0, detail: "Average of all production systems." },
     { label: "Era Completion", complete: civilizationAges.filter((age) => (eraSummary[ageId(age.name)]?.complete ?? 0) > 0).length, total: civilizationAges.length, value: 0, detail: "Era research/building/art readiness." },
     { label: "Art Completion", complete: artComplete, total: artTotal, value: percent(artComplete, artTotal), detail: `${artComplete} complete assets, ${assetState.missingRequirements.length} missing requirements.` },
     { label: "Preview Readiness", complete: previewReady, total: previewTotal, value: percent(previewReady, previewTotal), detail: `${assetState.visualPreviewReport.previewMissing} missing, ${assetState.visualPreviewReport.previewStale} stale, ${assetState.visualPreviewReport.lowResolution} low-resolution previews.` },
+    { label: "Upgrade Art Readiness", complete: upgradeArtReady, total: upgradeArtTotal, value: percent(upgradeArtReady, upgradeArtTotal), detail: `${upgradeArtReport.stats.missing} missing, ${upgradeArtReport.stats.ambiguous} need review, ${upgradeArtReport.stats.webReady} web-ready upgrade icons.` },
     { label: "Research Completion", complete: researchCompleteCount, total: data.research.length, value: percent(researchCompleteCount, data.research.length), detail: "Complete research nodes with usable icon/asset links." },
     { label: "Building Completion", complete: buildingCompleteCount, total: data.buildings.length, value: percent(buildingCompleteCount, data.buildings.length), detail: "Buildings with unlocks and visual references." },
     { label: "Production Chain Completion", complete: chainCompleteCount, total: data.building_chains.length, value: percent(chainCompleteCount, data.building_chains.length), detail: "Building chains with all level slots filled." },
@@ -830,7 +855,7 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
   const overall = clamp(metrics.filter((metric) => metric.label !== "Overall Game Completion").reduce((sum, metric) => sum + metric.value, 0) / Math.max(1, metrics.length - 1));
   metrics[0] = { ...metrics[0], complete: metrics.reduce((sum, metric) => sum + metric.complete, 0), total: metrics.reduce((sum, metric) => sum + metric.total, 0), value: overall };
 
-  const queue = [...componentWorkItems(componentState), ...screenDesignWorkItems(screenState), ...scaffoldWorkItems(authoringState), ...assetWorkItems(assetState), ...contentWorkItems(data)].filter((item) => !isCoveredByCompleteContentPack(item)).slice(0, 220);
+  const queue = [...componentWorkItems(componentState), ...screenDesignWorkItems(screenState), ...scaffoldWorkItems(authoringState), ...upgradeArtWorkItems(upgradeArtReport), ...assetWorkItems(assetState), ...contentWorkItems(data)].filter((item) => !isCoveredByCompleteContentPack(item)).slice(0, 220);
   return {
     overallCompletion: overall,
     metrics,
@@ -839,7 +864,7 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
     blockers: buildBlockers(data, assetState),
     heatmap,
     timeline: buildTimeline(data, assetState),
-    reports: buildReports(data, assetState, authoringState, screenState, componentState),
+    reports: buildReports(data, assetState, authoringState, screenState, componentState, upgradeArtReport),
     generatedAt: new Date().toISOString()
   };
 }
