@@ -436,6 +436,15 @@ type AssetProductionOverride = {
 
 type MissingRequirementOverride = {
   id: string;
+  objectType?: string;
+  objectId?: string;
+  objectName?: string;
+  requiredDerivative?: string;
+  currentStatus?: MissingAssetRequirement["currentStatus"];
+  linkedCanonicalRecord?: string;
+  artKey?: string;
+  iconKey?: string;
+  completionPercent?: number;
   assignedArtist?: string;
   dueDate?: string;
   priority?: MissingAssetRequirement["priority"];
@@ -1352,6 +1361,8 @@ export async function getAssetProductionState(): Promise<AssetProductionState> {
     });
     return auditRows(category, checked, profile);
   });
+  const existingMissingRequirementIds = new Set(missingRequirements.map((item) => item.id));
+  missingRequirements.push(...Object.values(store.missingRequirements).filter((item) => item.id && item.objectType && item.objectName && !existingMissingRequirementIds.has(item.id)) as MissingAssetRequirement[]);
 
   const processingJobs = [...processingJobsFor(assets), ...store.processingJobs]
     .filter((job, index, rows) => rows.findIndex((item) => item.id === job.id) === index)

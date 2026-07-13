@@ -19,8 +19,8 @@ type RuntimeClientProfile = {
 type RuntimePayload = {
   metadata?: { schemaVersion?: string; contentVersion?: number; checksum?: string; accessLevel?: string; validationStatus?: string; saveMigrationHints?: Array<{ id: string; targetId: string; previousDefault: number; currentDefault: number }> };
   eras?: Array<{ id: string; index?: number; name?: string; displayName?: string; shortDisplayName?: string }>;
-  economyDefinitions?: Array<{ id: string; startingAmount?: number; startingRate?: number; premium?: boolean; spendable?: boolean; manualClickTarget?: boolean; playerFacingHelpText?: string }>;
-  eraEconomyProfiles?: Array<{ id: string; eraId: string; eraIndex: number; primaryEconomyId: string; activePrimaryEconomyId: string; primaryEconomyIds: string[]; secondaryEconomyIds: string[]; visibleHudEconomyIds: string[]; hudSlots: Array<{ economyId: string; order: number }>; displayOverrides?: Record<string, { displayName?: string }> }>;
+  economyDefinitions?: Array<{ id: string; iconKey?: string; startingAmount?: number; startingRate?: number; premium?: boolean; spendable?: boolean; manualClickTarget?: boolean; playerFacingHelpText?: string }>;
+  eraEconomyProfiles?: Array<{ id: string; eraId: string; eraIndex: number; primaryEconomyId: string; activePrimaryEconomyId: string; manualClickTarget?: string | null; primaryEconomyIds: string[]; secondaryEconomyIds: string[]; fixedHudSlots: string[]; visibleHudEconomyIds: string[]; hudSlots: Array<{ economyId: string; order: number }>; displayOverrides?: Record<string, { displayName?: string }>; visibilityRules?: { useEraHud?: boolean; fixedCoreHud?: boolean; creditsVisible?: boolean } }>;
   economyUsageRelationships?: { unresolved?: Array<unknown> };
   inventoryResourceMetadata?: Array<{ resourceId: string; classification?: string }>;
   resources?: Array<{ id: string }>;
@@ -34,7 +34,7 @@ type RuntimePayload = {
     unreal?: RuntimeClientProfile;
     godot?: RuntimeClientProfile;
   };
-  balance?: { startingPopulation?: number };
+  balance?: { startingPopulation?: number; startingCoins?: number };
 };
 
 export {};
@@ -51,6 +51,10 @@ function assert(condition: unknown, message: string) {
   if (!condition) {
     throw new Error(message);
   }
+}
+
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === "string" && value.length > 0;
 }
 
 async function requestJson<T>(path: string, init: RequestInit = {}): Promise<{ status: number; payload: T; headers: Headers }> {
@@ -93,10 +97,12 @@ function validateEconomy(payload: RuntimePayload | RobloxPayload, label: string)
   const economyIds = new Set(economyDefinitions.map((definition) => definition.id));
   const materialIds = new Set((payload.resources ?? []).map((resource) => resource.id));
   const profile = "clientHints" in payload ? payload.clientHints : payload.clientProfiles?.default;
-  const expectedHud = ["ECON-LABOR", "ECON-POPULATION", "ECON-RESEARCH", "ECON-PREMIUM-CRYSTALS"];
+  const expectedHud = ["ECON-LABOR", "ECON-CREDITS", "ECON-POPULATION", "ECON-RESEARCH", "ECON-PREMIUM-CRYSTALS"];
   const hud = profile?.primaryHudResources ?? [];
   const slots = profile?.primaryHudSlots ?? [];
   const slotOrders = slots.map((slot) => slot.order);
+  const labor = economyDefinitions.find((definition) => definition.id === "ECON-LABOR");
+  const credits = economyDefinitions.find((definition) => definition.id === "ECON-CREDITS");
 
   assert(economyDefinitions.length >= 9, `${label} must include canonical economy definitions.`);
   for (const id of ["ECON-LABOR", "ECON-TRADE", "ECON-INFLUENCE", "ECON-CIVILIZATION-ENERGY", "ECON-CREDITS", "ECON-RESEARCH", "ECON-POPULATION", "ECON-CIVILIZATION-POINTS", "ECON-PREMIUM-CRYSTALS"]) {
@@ -106,11 +112,19 @@ function validateEconomy(payload: RuntimePayload | RobloxPayload, label: string)
   assert(slots.length === expectedHud.length, `${label} must include slot metadata for every primary HUD economy ID.`);
   assert(new Set(slotOrders).size === slotOrders.length, `${label} HUD slot order values must be unique.`);
   assert(slots.every((slot) => economyIds.has(slot.economyId)), `${label} HUD slot economy IDs must resolve.`);
+  assert(slots.map((slot) => slot.economyId).join("|") === expectedHud.join("|"), `${label} primaryHudSlots order is incorrect: ${slots.map((slot) => slot.economyId).join(", ")}.`);
   assert(hud.every((id) => economyIds.has(id) && !materialIds.has(id)), `${label} HUD IDs must resolve only to economy definitions, not material resources.`);
   assert(economyDefinitions.every((definition) => Number.isFinite(definition.startingAmount) && Number.isFinite(definition.startingRate)), `${label} economy starting amounts and rates must be finite.`);
   assert(economyDefinitions.find((definition) => definition.id === "ECON-PREMIUM-CRYSTALS")?.premium === true, `${label} Premium Crystals must be explicitly premium.`);
-  assert(economyDefinitions.find((definition) => definition.id === "ECON-LABOR")?.startingAmount === 0, `${label} Labor must start at 0.`);
-  assert(economyDefinitions.find((definition) => definition.id === "ECON-LABOR")?.manualClickTarget === true, `${label} Labor must remain the manual click target.`);
+  assert(labor?.startingAmount === 0, `${label} Labor must start at 0.`);
+  assert(labor?.manualClickTarget === true, `${label} Labor must remain the manual click target.`);
+  assert(labor?.iconKey === "economy_labor", `${label} Labor must use economy_labor.`);
+  assert(labor?.iconKey !== credits?.iconKey, `${label} Labor and Credits must not share an icon key.`);
+  assert(labor?.iconKey !== "nature_leaf", `${label} Labor must not use the Nature leaf icon key.`);
+  assert(credits?.startingAmount === 0, `${label} Credits must start at 0.`);
+  assert(credits?.startingRate === 0, `${label} Credits must not passively generate at start.`);
+  assert(credits?.manualClickTarget !== true, `${label} Credits must not be the manual click target.`);
+  assert(credits?.iconKey === "economy_credits", `${label} Credits must use economy_credits.`);
   const population = economyDefinitions.find((definition) => definition.id === "ECON-POPULATION");
   assert(population?.startingAmount === 5, `${label} Population must start at 5.`);
   assert(population?.startingRate === 0, `${label} Population must not have a starting rate.`);
@@ -122,28 +136,37 @@ function validateEconomy(payload: RuntimePayload | RobloxPayload, label: string)
   assert(economyDefinitions.find((definition) => definition.id === "ECON-PREMIUM-CRYSTALS")?.startingAmount === 0, `${label} Premium Crystals must start at 0.`);
   assert(economyDefinitions.find((definition) => definition.id === "ECON-CIVILIZATION-POINTS")?.startingAmount === 0, `${label} Civilization Points must start at 0.`);
   assert(payload.balance?.startingPopulation === 5, `${label} balance.startingPopulation must be 5.`);
+  assert(payload.balance?.startingCoins === 0, `${label} balance.startingCoins must be 0.`);
   assert(payload.metadata?.saveMigrationHints?.some((hint) => hint.id === "migration_population_default_125_to_5" && hint.targetId === "ECON-POPULATION" && hint.previousDefault === 125 && hint.currentDefault === 5), `${label} must expose the Population default migration hint.`);
   assert((payload.inventoryResourceMetadata?.length ?? 0) > 0, `${label} must include inventory resource metadata for the resources screen.`);
   assert(payload.inventoryResourceMetadata?.every((row) => row.classification === "inventory_resource"), `${label} inventory metadata must be classified as inventory_resource.`);
+  if (!("clientHints" in payload)) {
+    for (const profileName of ["roblox", "web", "unity", "unreal", "godot"] as const) {
+      const engineProfile = payload.clientProfiles?.[profileName];
+      assert(engineProfile?.primaryHudResources?.join("|") === expectedHud.join("|"), `${label} ${profileName} must inherit the fixed HUD resource order.`);
+      assert(engineProfile?.primaryHudSlots?.map((slot) => slot.economyId).join("|") === expectedHud.join("|"), `${label} ${profileName} must inherit the fixed HUD slot order.`);
+    }
+  }
 }
 
 function validateEraEconomyProfiles(payload: RuntimePayload | RobloxPayload, label: string) {
   const profiles = payload.eraEconomyProfiles ?? [];
   const economyIds = new Set((payload.economyDefinitions ?? []).map((definition) => definition.id));
+  const fixedHud = ["ECON-LABOR", "ECON-CREDITS", "ECON-POPULATION", "ECON-RESEARCH", "ECON-PREMIUM-CRYSTALS"];
   const expected = [
-    ["survival", ["ECON-LABOR"], ["ECON-POPULATION"], ["ECON-LABOR", "ECON-POPULATION", "ECON-RESEARCH", "ECON-PREMIUM-CRYSTALS"]],
-    ["ancient", ["ECON-LABOR"], ["ECON-POPULATION", "ECON-RESEARCH"], ["ECON-LABOR", "ECON-POPULATION", "ECON-RESEARCH"]],
-    ["medieval", ["ECON-LABOR"], ["ECON-POPULATION", "ECON-RESEARCH"], ["ECON-LABOR", "ECON-POPULATION", "ECON-RESEARCH"]],
-    ["renaissance", ["ECON-LABOR", "ECON-TRADE", "ECON-POPULATION", "ECON-RESEARCH"], [], ["ECON-LABOR", "ECON-TRADE", "ECON-POPULATION", "ECON-RESEARCH"]],
-    ["industrial", ["ECON-CREDITS", "ECON-POPULATION", "ECON-RESEARCH", "ECON-LABOR"], [], ["ECON-CREDITS", "ECON-POPULATION", "ECON-RESEARCH", "ECON-LABOR"]],
-    ["modern", ["ECON-CREDITS", "ECON-RESEARCH", "ECON-POPULATION"], [], ["ECON-CREDITS", "ECON-RESEARCH", "ECON-POPULATION"]],
-    ["space-age", ["ECON-CIVILIZATION-ENERGY", "ECON-RESEARCH", "ECON-POPULATION"], [], ["ECON-CIVILIZATION-ENERGY", "ECON-RESEARCH", "ECON-POPULATION"]],
-    ["interstellar", ["ECON-CIVILIZATION-POINTS", "ECON-RESEARCH"], [], ["ECON-CIVILIZATION-POINTS", "ECON-RESEARCH"]],
-    ["galactic", ["ECON-CIVILIZATION-POINTS", "ECON-INFLUENCE", "ECON-RESEARCH"], [], ["ECON-CIVILIZATION-POINTS", "ECON-INFLUENCE", "ECON-RESEARCH"]]
+    ["survival", ["ECON-LABOR"], ["ECON-POPULATION"]],
+    ["ancient", ["ECON-LABOR"], ["ECON-POPULATION", "ECON-RESEARCH"]],
+    ["medieval", ["ECON-LABOR"], ["ECON-POPULATION", "ECON-RESEARCH"]],
+    ["renaissance", ["ECON-LABOR", "ECON-TRADE", "ECON-POPULATION", "ECON-RESEARCH"], []],
+    ["industrial", ["ECON-CREDITS", "ECON-POPULATION", "ECON-RESEARCH", "ECON-LABOR"], []],
+    ["modern", ["ECON-CREDITS", "ECON-RESEARCH", "ECON-POPULATION"], []],
+    ["space-age", ["ECON-CIVILIZATION-ENERGY", "ECON-RESEARCH", "ECON-POPULATION"], []],
+    ["interstellar", ["ECON-CIVILIZATION-POINTS", "ECON-RESEARCH"], []],
+    ["galactic", ["ECON-CIVILIZATION-POINTS", "ECON-INFLUENCE", "ECON-RESEARCH"], []]
   ] as const;
 
   assert(profiles.length === expected.length, `${label} must include one eraEconomyProfile per canonical era; received ${profiles.length}.`);
-  for (const [index, [eraId, primary, secondary, visibleHud]] of expected.entries()) {
+  for (const [index, [eraId, primary, secondary]] of expected.entries()) {
     const profile = profiles.find((item) => item.eraId === eraId);
     assert(profile, `${label} is missing era economy profile for ${eraId}.`);
     if (!profile) throw new Error(`${label} is missing era economy profile for ${eraId}.`);
@@ -153,12 +176,17 @@ function validateEraEconomyProfiles(payload: RuntimePayload | RobloxPayload, lab
     assert(profile.primaryEconomyId === profile.activePrimaryEconomyId, `${label} ${eraId} primaryEconomyId must match activePrimaryEconomyId.`);
     assert(profile.primaryEconomyIds.join("|") === primary.join("|"), `${label} ${eraId} primary economy IDs are invalid: ${profile.primaryEconomyIds.join(", ")}.`);
     assert(profile.secondaryEconomyIds.join("|") === secondary.join("|"), `${label} ${eraId} secondary economy IDs are invalid: ${profile.secondaryEconomyIds.join(", ")}.`);
-    assert(profile.visibleHudEconomyIds.join("|") === visibleHud.join("|"), `${label} ${eraId} visible HUD IDs are invalid: ${profile.visibleHudEconomyIds.join(", ")}.`);
-    assert(profile.hudSlots.map((slot) => slot.economyId).join("|") === visibleHud.join("|"), `${label} ${eraId} HUD slots do not match visible HUD IDs.`);
+    assert(profile.fixedHudSlots.join("|") === fixedHud.join("|"), `${label} ${eraId} fixed HUD slots are invalid: ${profile.fixedHudSlots.join(", ")}.`);
+    assert(profile.visibleHudEconomyIds.join("|") === fixedHud.join("|"), `${label} ${eraId} visible HUD IDs must preserve fixed order: ${profile.visibleHudEconomyIds.join(", ")}.`);
+    assert(profile.hudSlots.map((slot) => slot.economyId).join("|") === fixedHud.join("|"), `${label} ${eraId} HUD slots do not match fixed HUD IDs.`);
+    assert(profile.visibilityRules?.useEraHud === false && profile.visibilityRules?.fixedCoreHud === true && profile.visibilityRules?.creditsVisible === true, `${label} ${eraId} visibility rules must preserve fixed core HUD behavior.`);
+    if (eraId === "survival") {
+      assert(profile.manualClickTarget === "ECON-LABOR", `${label} Survival manualClickTarget must be ECON-LABOR.`);
+    }
     for (const economyId of Object.keys(profile.displayOverrides ?? {})) {
       assert(economyIds.has(economyId), `${label} ${eraId} display override economy ID does not resolve: ${economyId}.`);
     }
-    for (const economyId of [profile.primaryEconomyId, profile.activePrimaryEconomyId, ...profile.primaryEconomyIds, ...profile.secondaryEconomyIds, ...profile.visibleHudEconomyIds]) {
+    for (const economyId of [profile.primaryEconomyId, profile.activePrimaryEconomyId, profile.manualClickTarget, ...profile.primaryEconomyIds, ...profile.secondaryEconomyIds, ...profile.fixedHudSlots, ...profile.visibleHudEconomyIds].filter(isNonEmptyString)) {
       assert(economyIds.has(economyId), `${label} ${eraId} economy ID does not resolve: ${economyId}.`);
     }
   }

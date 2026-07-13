@@ -197,6 +197,7 @@ export const canonicalEconomyDefinitions: EconomyValueDefinition[] = [
 
 export const primaryHudEconomyIds = [
   "ECON-LABOR",
+  "ECON-CREDITS",
   "ECON-POPULATION",
   "ECON-RESEARCH",
   "ECON-PREMIUM-CRYSTALS"
@@ -272,13 +273,12 @@ type EraEconomyProfileSeed = {
   eraId: string;
   primary: readonly string[];
   secondary: readonly string[];
-  visibleHud?: readonly string[];
   displayOverrides?: Record<string, { displayName: string; compactLabel?: string; description?: string }>;
   notes?: string;
 };
 
 const eraEconomyProfileSeeds: readonly EraEconomyProfileSeed[] = [
-  { eraId: "survival", primary: ["ECON-LABOR"], secondary: ["ECON-POPULATION"], visibleHud: ["ECON-LABOR", "ECON-POPULATION", "ECON-RESEARCH", "ECON-PREMIUM-CRYSTALS"], displayOverrides: { "ECON-LABOR": { displayName: "Labor" } }, notes: "Survival starts with Labor as the active click economy while Population, Research, and Premium Crystals remain visible." },
+  { eraId: "survival", primary: ["ECON-LABOR"], secondary: ["ECON-POPULATION"], displayOverrides: { "ECON-LABOR": { displayName: "Labor" } }, notes: "Survival starts with Labor as the active click economy. Credits remain visible in the fixed HUD at zero but do not passively generate without an explicit canonical source." },
   { eraId: "ancient", primary: ["ECON-LABOR"], secondary: ["ECON-POPULATION", "ECON-RESEARCH"], displayOverrides: { "ECON-LABOR": { displayName: "Labor" } } },
   { eraId: "medieval", primary: ["ECON-LABOR"], secondary: ["ECON-POPULATION", "ECON-RESEARCH"], displayOverrides: { "ECON-LABOR": { displayName: "Workforce" } } },
   { eraId: "renaissance", primary: ["ECON-LABOR", "ECON-TRADE", "ECON-POPULATION", "ECON-RESEARCH"], secondary: [], displayOverrides: { "ECON-LABOR": { displayName: "Workforce" } } },
@@ -291,25 +291,28 @@ const eraEconomyProfileSeeds: readonly EraEconomyProfileSeed[] = [
 
 export function buildEraEconomyProfiles(): EraEconomyProfile[] {
   return eraEconomyProfileSeeds.map((profile, index) => {
-    const visibleHudEconomyIds = [...(profile.visibleHud ?? [...profile.primary, ...profile.secondary])];
+    const fixedHudSlots = [...primaryHudEconomyIds];
     return {
       id: `era_economy_profile_${profile.eraId}`,
       eraId: profile.eraId,
       eraIndex: index + 1,
       primaryEconomyId: profile.primary[0],
       activePrimaryEconomyId: profile.primary[0],
+      manualClickTarget: profile.eraId === "survival" ? "ECON-LABOR" : null,
       primaryEconomyIds: [...profile.primary],
       secondaryEconomyIds: [...profile.secondary],
-      visibleHudEconomyIds,
-      hudSlots: buildHudSlots(visibleHudEconomyIds),
+      fixedHudSlots,
+      visibleHudEconomyIds: fixedHudSlots,
+      hudSlots: buildHudSlots(fixedHudSlots),
       displayOverrides: profile.displayOverrides ?? {},
       visibilityRules: {
-        useEraHud: true,
-        creditsVisible: visibleHudEconomyIds.includes("ECON-CREDITS"),
+        useEraHud: false,
+        fixedCoreHud: true,
+        creditsVisible: true,
         materialResourcesInHud: false,
-        notes: "Use this era profile to decide HUD economy visibility. Do not show Credits in Survival unless the profile explicitly includes them."
+        notes: "All eras use the fixed canonical five-slot HUD order from clientProfiles.default.primaryHudSlots. Era profiles define economy behavior, labels, click targets, and progression emphasis, not top-bar slot order."
       },
-      notes: profile.notes ?? "Studio-owned era economy profile. Clients switch HUD and economy emphasis from this data instead of hardcoding era rules."
+      notes: profile.notes ?? "Studio-owned era economy profile. Clients use fixed HUD slots for top-bar order and this profile for primary economy, display overrides, and progression behavior."
     };
   });
 }

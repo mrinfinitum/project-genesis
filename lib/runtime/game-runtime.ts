@@ -38,7 +38,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 9;
+export const gameRuntimeContentVersion = 10;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -438,6 +438,10 @@ function duplicateNumbers(rows: number[]) {
   return [...duplicates];
 }
 
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === "string" && value.length > 0;
+}
+
 function byId<T extends { id: string }>(left: T, right: T) {
   return left.id.localeCompare(right.id);
 }
@@ -600,6 +604,7 @@ function validateCanonicalEraProgression(eras: EraDefinition[], issues: ImportIs
 function validateEraEconomyProfiles(runtimeData: Pick<GameRuntimeData, "eras" | "economyDefinitions" | "eraEconomyProfiles">, issues: ImportIssue[], context: string) {
   const eraIds = new Set(runtimeData.eras.map((era) => era.id));
   const economyIds = new Set(runtimeData.economyDefinitions.map((definition) => definition.id));
+  const expectedFixedHud = [...primaryHudEconomyIds];
   const profileEraIds = new Set(runtimeData.eraEconomyProfiles.map((profile) => profile.eraId));
   const duplicateProfileIds = duplicateIds(runtimeData.eraEconomyProfiles);
   const expectedEraIds = canonicalEraDefinitions.map((era) => era.id);
@@ -646,7 +651,7 @@ function validateEraEconomyProfiles(runtimeData: Pick<GameRuntimeData, "eras" | 
     }
 
     const displayOverrideEconomyIds = Object.keys(profile.displayOverrides ?? {});
-    const allReferencedEconomyIds = [profile.primaryEconomyId, profile.activePrimaryEconomyId, ...profile.primaryEconomyIds, ...profile.secondaryEconomyIds, ...profile.visibleHudEconomyIds, ...profile.hudSlots.map((slot) => slot.economyId), ...displayOverrideEconomyIds].filter(Boolean);
+    const allReferencedEconomyIds = [profile.primaryEconomyId, profile.activePrimaryEconomyId, profile.manualClickTarget, ...profile.primaryEconomyIds, ...profile.secondaryEconomyIds, ...profile.fixedHudSlots, ...profile.visibleHudEconomyIds, ...profile.hudSlots.map((slot) => slot.economyId), ...displayOverrideEconomyIds].filter(isNonEmptyString);
     const unresolvedEconomyIds = allReferencedEconomyIds.filter((economyId) => !economyIds.has(economyId));
     if (unresolvedEconomyIds.length) {
       issues.push({ severity: "error", code: "era_economy_profile_economy_missing", message: "Era economy profile references must resolve to canonical economy definitions.", records: [profile.id, ...new Set(unresolvedEconomyIds)] });
@@ -661,6 +666,15 @@ function validateEraEconomyProfiles(runtimeData: Pick<GameRuntimeData, "eras" | 
     if (hudSlotEconomyIds.join("|") !== profile.visibleHudEconomyIds.join("|")) {
       issues.push({ severity: "error", code: "era_hud_slots_do_not_match_profile", message: "Era HUD slots must match visibleHudEconomyIds in order.", records: [profile.id] });
     }
+    if (profile.fixedHudSlots.join("|") !== expectedFixedHud.join("|") || profile.visibleHudEconomyIds.join("|") !== expectedFixedHud.join("|") || hudSlotEconomyIds.join("|") !== expectedFixedHud.join("|")) {
+      issues.push({ severity: "error", code: "era_hud_slots_not_fixed", message: "Era economy profiles must preserve the fixed five-slot HUD order and must not reorder top-bar economies.", records: [profile.id, ...hudSlotEconomyIds] });
+    }
+    if (profile.hudSlots.length !== 5 || profile.fixedHudSlots.length !== 5 || profile.visibleHudEconomyIds.length !== 5) {
+      issues.push({ severity: "error", code: "fixed_hud_slot_count_invalid", message: "Era economy profiles must expose exactly five fixed core HUD slots.", records: [profile.id] });
+    }
+    if (profile.visibilityRules.useEraHud !== false || profile.visibilityRules.fixedCoreHud !== true) {
+      issues.push({ severity: "error", code: "era_hud_visibility_rule_invalid", message: "Era economy profiles must not own top-bar ordering; fixedCoreHud must be true.", records: [profile.id] });
+    }
 
     const duplicateHudOrders = duplicateNumbers(profile.hudSlots.map((slot) => slot.order));
     if (duplicateHudOrders.length) {
@@ -672,6 +686,7 @@ function validateEraEconomyProfiles(runtimeData: Pick<GameRuntimeData, "eras" | 
 function validateEconomyDefaults(runtimeData: Pick<GameRuntimeData, "economyDefinitions" | "eraEconomyProfiles" | "balance">, issues: ImportIssue[], context: string) {
   const byId = new Map(runtimeData.economyDefinitions.map((definition) => [definition.id, definition]));
   const labor = byId.get("ECON-LABOR");
+  const credits = byId.get("ECON-CREDITS");
   const population = byId.get("ECON-POPULATION");
   const research = byId.get("ECON-RESEARCH");
   const premiumCrystals = byId.get("ECON-PREMIUM-CRYSTALS");
@@ -683,6 +698,15 @@ function validateEconomyDefaults(runtimeData: Pick<GameRuntimeData, "economyDefi
   }
   if (labor?.manualClickTarget !== true) {
     issues.push({ severity: "error", code: "labor_click_target_invalid", message: `${context} ECON-LABOR must remain the manual click target.`, records: ["ECON-LABOR"] });
+  }
+  const laborIconKey = String(labor?.iconKey ?? "");
+  const creditsIconKey = String(credits?.iconKey ?? "");
+  const forbiddenLaborIconKeys = [creditsIconKey, "nature_leaf"].filter(Boolean);
+  if (laborIconKey !== "economy_labor" || forbiddenLaborIconKeys.includes(laborIconKey)) {
+    issues.push({ severity: "error", code: "labor_icon_key_invalid", message: `${context} ECON-LABOR must use its own labor icon key and must not use Credits or Nature icon semantics.`, records: [`labor:${labor?.iconKey ?? "missing"}`, `credits:${credits?.iconKey ?? "missing"}`] });
+  }
+  if (credits?.startingAmount !== 0 || credits?.startingRate !== 0 || credits?.manualClickTarget === true || credits?.iconKey !== "economy_credits") {
+    issues.push({ severity: "error", code: "credits_starting_value_invalid", message: `${context} Credits must be visible from Survival but start at 0, have no passive Survival rate, and must not be the manual click economy.`, records: ["ECON-CREDITS"] });
   }
   if (population?.startingAmount !== 5 || runtimeData.balance.startingPopulation !== 5) {
     issues.push({ severity: "error", code: "population_starting_amount_invalid", message: `${context} Population must use the Survival starter default of 5.`, records: [`economy:${population?.startingAmount ?? "missing"}`, `balance:${runtimeData.balance.startingPopulation}`] });
@@ -699,8 +723,8 @@ function validateEconomyDefaults(runtimeData: Pick<GameRuntimeData, "economyDefi
   if (civilizationPoints?.startingAmount !== 0 || civilizationPoints?.startingRate !== 0) {
     issues.push({ severity: "error", code: "civilization_points_starting_value_invalid", message: `${context} ECON-CIVILIZATION-POINTS must start at 0 with no starting rate.`, records: ["ECON-CIVILIZATION-POINTS"] });
   }
-  if (survival?.primaryEconomyId !== "ECON-LABOR" || survival?.activePrimaryEconomyId !== "ECON-LABOR" || survival?.visibleHudEconomyIds.includes("ECON-CREDITS")) {
-    issues.push({ severity: "error", code: "survival_economy_profile_invalid", message: `${context} Survival must use Labor as primary economy and must not show Credits in the HUD.`, records: [survival?.id ?? "missing_survival_profile"] });
+  if (survival?.primaryEconomyId !== "ECON-LABOR" || survival?.activePrimaryEconomyId !== "ECON-LABOR" || survival?.manualClickTarget !== "ECON-LABOR" || survival?.visibleHudEconomyIds.join("|") !== primaryHudEconomyIds.join("|")) {
+    issues.push({ severity: "error", code: "survival_economy_profile_invalid", message: `${context} Survival must use Labor as primary/click economy and expose the fixed five-slot HUD including Credits in slot 2.`, records: [survival?.id ?? "missing_survival_profile"] });
   }
 }
 
@@ -870,6 +894,7 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
     }
     const slots = profile.primaryHudSlots ?? [];
     const hudIds = profile.primaryHudResources ?? [];
+    const expectedFixedHud = [...primaryHudEconomyIds];
     const slotOrders = slots.map((slot) => slot.order);
     const duplicateHudOrders = duplicateNumbers(slotOrders);
     if (duplicateHudOrders.length) {
@@ -887,6 +912,15 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
       if (!economyIds.has(slot.economyId)) {
         issues.push({ severity: "error", code: "hud_slot_economy_missing", message: "HUD slot economyId must resolve to canonical economy definitions.", records: [profileName, slot.id, slot.economyId] });
       }
+    }
+    if (hudIds.length !== 5 || slots.length !== 5) {
+      issues.push({ severity: "error", code: "fixed_hud_count_invalid", message: "Client profiles must expose exactly five fixed core HUD slots.", records: [profileName, `resources:${hudIds.length}`, `slots:${slots.length}`] });
+    }
+    if (hudIds.join("|") !== expectedFixedHud.join("|") || slots.map((slot) => slot.economyId).join("|") !== expectedFixedHud.join("|")) {
+      issues.push({ severity: "error", code: "fixed_hud_order_invalid", message: "Client profiles must preserve the approved fixed HUD order.", records: [profileName, ...hudIds] });
+    }
+    if (hudIds[0] !== "ECON-LABOR" || hudIds[1] !== "ECON-CREDITS") {
+      issues.push({ severity: "error", code: "fixed_hud_labor_credits_order_invalid", message: "ECON-LABOR must be slot 1 and ECON-CREDITS must be slot 2.", records: [profileName, ...hudIds.slice(0, 2)] });
     }
   }
 

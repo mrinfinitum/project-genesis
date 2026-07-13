@@ -437,6 +437,7 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
     },
     dataRequirements: [
       data("dashboard-runtime", "Runtime era/economy/upgrade definitions", "Canonical Studio Definition", "game-runtime-data", "Mapped"),
+      data("dashboard-fixed-hud", "Fixed five-slot HUD order", "Canonical Studio Definition", "clientProfiles.default.primaryHudSlots", "Mapped"),
       data("dashboard-player-progress", "Player progression and era completion", "Player Runtime State", "game client", "Partial")
     ],
     assetRequirements: [
@@ -473,7 +474,11 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
     ],
     stateSpecs: states(requiredStates),
     responsiveStatus: "Ready",
-    notes: ["Existing dashboard is implemented but needs formal Vite/Roblox parity review against the compact hero HUD direction."]
+    notes: [
+      "Existing dashboard is implemented but needs formal Vite/Roblox parity review against the compact hero HUD direction.",
+      "Top HUD uses fixed canonical order: ECON-LABOR, ECON-CREDITS, ECON-POPULATION, ECON-RESEARCH, ECON-PREMIUM-CRYSTALS. Credits remain visible from Survival with zero starting amount/rate.",
+      "Labor label comes from era display overrides; economy identity and icon semantics come from economy ID, never slot position."
+    ]
   }),
   baseRecord({
     screenId: "production",

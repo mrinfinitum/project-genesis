@@ -10634,9 +10634,43 @@
     }
   },
   "derivativePresets": [],
-  "missingRequirements": {},
+  "missingRequirements": {
+    "missing_ui_economy_labor_icon": {
+      "id": "missing_ui_economy_labor_icon",
+      "objectType": "ui",
+      "objectId": "ECON-LABOR",
+      "objectName": "Labor Economy Icon",
+      "requiredDerivative": "ui_icon",
+      "currentStatus": "missing",
+      "priority": "high",
+      "linkedCanonicalRecord": "economy_definitions/ECON-LABOR",
+      "artKey": "economy_labor",
+      "iconKey": "economy_labor",
+      "assignedArtist": "",
+      "dueDate": "",
+      "completionPercent": 0
+    }
+  },
   "processingJobs": [],
   "productionTasks": [
+    {
+      "id": "task_missing_ui_economy_labor_icon",
+      "requirementId": "missing_ui_economy_labor_icon",
+      "era": "Survival",
+      "linkedObject": "ECON-LABOR",
+      "requirementType": "ui_icon",
+      "dimensions": "128x128 source, 64x64 and 32x32 HUD derivatives",
+      "format": "PNG/WebP/SVG",
+      "priority": "high",
+      "assignedArtist": "",
+      "dueDate": "",
+      "assetLink": "/assets/missing",
+      "sourceUploadLink": "/assets/source",
+      "status": "open",
+      "createdAt": "2026-07-13T00:00:00.000Z",
+      "updatedAt": "2026-07-13T00:00:00.000Z",
+      "notes": "Create canonical Labor icon for ECON-LABOR. Preferred concept: hammer, crossed tools, worker, gear, or production symbol. Do not use the Credits coin icon or Nature leaf icon."
+    },
     {
       "id": "task_source_missing_asset_click_interface_circle",
       "requirementId": "task_source_missing_asset_click_interface_circle",

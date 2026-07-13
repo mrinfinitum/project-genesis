@@ -153,13 +153,16 @@ export type EraEconomyProfile = {
   eraIndex: number;
   primaryEconomyId: string;
   activePrimaryEconomyId: string;
+  manualClickTarget: string | null;
   primaryEconomyIds: string[];
   secondaryEconomyIds: string[];
+  fixedHudSlots: string[];
   visibleHudEconomyIds: string[];
   hudSlots: HudResourceSlot[];
   displayOverrides: Record<string, { displayName: string; compactLabel?: string; description?: string }>;
   visibilityRules: {
     useEraHud: boolean;
+    fixedCoreHud: boolean;
     creditsVisible: boolean;
     materialResourcesInHud: boolean;
     notes: string;

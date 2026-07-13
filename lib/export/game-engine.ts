@@ -208,6 +208,10 @@ function uniqueById<T extends Record<string, unknown>>(rows: T[]) {
   return [...byId.values()];
 }
 
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === "string" && value.length > 0;
+}
+
 function ensureSectorsForSystems(baseGalaxy: Record<string, unknown>, baseSector: Record<string, unknown>, starSystems: GameData["star_systems"]) {
   const sectors = uniqueById([baseSector]);
   const sectorIds = new Set(sectors.map((sector) => String(sector.id)));
@@ -784,6 +788,7 @@ function validateEconomy(issues: ExportValidationIssue[], modules: CanonicalModu
   }
 
   const labor = modules.economy_definitions.find((definition) => definition.id === "ECON-LABOR");
+  const credits = modules.economy_definitions.find((definition) => definition.id === "ECON-CREDITS");
   const population = modules.economy_definitions.find((definition) => definition.id === "ECON-POPULATION");
   const research = modules.economy_definitions.find((definition) => definition.id === "ECON-RESEARCH");
   const premiumCrystals = modules.economy_definitions.find((definition) => definition.id === "ECON-PREMIUM-CRYSTALS");
@@ -791,6 +796,17 @@ function validateEconomy(issues: ExportValidationIssue[], modules: CanonicalModu
 
   if (labor?.startingAmount !== 0 || labor?.manualClickTarget !== true) {
     addIssue(issues, "error", "labor_click_economy_invalid", "ECON-LABOR must start at 0 and remain the manual click economy.", ["ECON-LABOR"]);
+  }
+
+  const laborIconKey = String(labor?.iconKey ?? "");
+  const creditsIconKey = String(credits?.iconKey ?? "");
+  const forbiddenLaborIconKeys = [creditsIconKey, "nature_leaf"].filter(Boolean);
+  if (laborIconKey !== "economy_labor" || forbiddenLaborIconKeys.includes(laborIconKey)) {
+    addIssue(issues, "error", "labor_icon_key_invalid", "ECON-LABOR must use economy_labor and must not use the Credits coin or Nature icon.", ["ECON-LABOR"]);
+  }
+
+  if (credits?.startingAmount !== 0 || credits?.startingRate !== 0 || credits?.manualClickTarget === true || credits?.iconKey !== "economy_credits") {
+    addIssue(issues, "error", "credits_default_invalid", "ECON-CREDITS must start at 0, have no passive Survival rate, use economy_credits, and must not be the click target.", ["ECON-CREDITS"]);
   }
 
   if (population?.startingAmount !== 5 || population?.startingRate !== 0 || population?.spendable !== false || population?.premium !== false || population?.manualClickTarget === true) {
@@ -828,6 +844,11 @@ function validateEconomy(issues: ExportValidationIssue[], modules: CanonicalModu
     addIssue(issues, "error", "duplicate_hud_order", "HUD slot order must be unique.", duplicateHudOrders.map(String));
   }
 
+  const expectedFixedHud = [...primaryHudEconomyIds];
+  if (modules.primary_hud_resources.join("|") !== expectedFixedHud.join("|") || modules.hud_profile.map((slot) => slot.economyId).join("|") !== expectedFixedHud.join("|")) {
+    addIssue(issues, "error", "fixed_hud_order_invalid", "Primary HUD resources must use the approved fixed five-slot order.", modules.primary_hud_resources);
+  }
+
   const materialHudIds = modules.primary_hud_resources.filter((id) => Boolean(ResourceService.getById(id)) || /stone|wood|water|quartz|clay|sand|soil|coal/i.test(id));
   if (materialHudIds.length) {
     addIssue(issues, "error", "material_resource_in_hud", "Material resources must not be used as global HUD currencies.", materialHudIds);
@@ -849,7 +870,7 @@ function validateEconomy(issues: ExportValidationIssue[], modules: CanonicalModu
     if (profile.primaryEconomyId && !profile.primaryEconomyIds.includes(profile.primaryEconomyId)) {
       addIssue(issues, "error", "era_economy_primary_id_not_listed", "primaryEconomyId must be listed in primaryEconomyIds.", [profile.id, profile.primaryEconomyId]);
     }
-    const referencedEconomyIds = [profile.primaryEconomyId, profile.activePrimaryEconomyId, ...profile.primaryEconomyIds, ...profile.secondaryEconomyIds, ...profile.visibleHudEconomyIds, ...profile.hudSlots.map((slot) => slot.economyId), ...Object.keys(profile.displayOverrides ?? {})].filter(Boolean);
+    const referencedEconomyIds = [profile.primaryEconomyId, profile.activePrimaryEconomyId, profile.manualClickTarget, ...profile.primaryEconomyIds, ...profile.secondaryEconomyIds, ...profile.fixedHudSlots, ...profile.visibleHudEconomyIds, ...profile.hudSlots.map((slot) => slot.economyId), ...Object.keys(profile.displayOverrides ?? {})].filter(isNonEmptyString);
     const unresolved = referencedEconomyIds.filter((economyId) => !economyIds.has(economyId));
     if (unresolved.length) {
       addIssue(issues, "error", "era_economy_profile_reference_missing", "Era economy profile references must resolve to economy definitions.", [profile.id, ...new Set(unresolved)]);
@@ -857,11 +878,17 @@ function validateEconomy(issues: ExportValidationIssue[], modules: CanonicalModu
     if (profile.hudSlots.map((slot) => slot.economyId).join("|") !== profile.visibleHudEconomyIds.join("|")) {
       addIssue(issues, "error", "era_economy_hud_slots_mismatch", "Era economy profile HUD slots must match visibleHudEconomyIds.", [profile.id]);
     }
+    if (profile.fixedHudSlots.join("|") !== expectedFixedHud.join("|") || profile.visibleHudEconomyIds.join("|") !== expectedFixedHud.join("|") || profile.hudSlots.map((slot) => slot.economyId).join("|") !== expectedFixedHud.join("|")) {
+      addIssue(issues, "error", "era_fixed_hud_order_invalid", "Era economy profiles must preserve the fixed five-slot HUD order.", [profile.id]);
+    }
+    if (profile.visibilityRules.useEraHud !== false || profile.visibilityRules.fixedCoreHud !== true) {
+      addIssue(issues, "error", "era_hud_rule_invalid", "Era profiles must not reorder the fixed core HUD.", [profile.id]);
+    }
   }
 
   const survivalProfile = modules.era_economy_profiles.find((profile) => profile.eraId === "survival");
-  if (survivalProfile?.primaryEconomyId !== "ECON-LABOR" || survivalProfile?.activePrimaryEconomyId !== "ECON-LABOR" || survivalProfile.visibleHudEconomyIds.includes("ECON-CREDITS")) {
-    addIssue(issues, "error", "survival_economy_profile_invalid", "Survival must use Labor as the primary economy and must not show Credits in the HUD.", [survivalProfile?.id ?? "missing_survival_profile"]);
+  if (survivalProfile?.primaryEconomyId !== "ECON-LABOR" || survivalProfile?.activePrimaryEconomyId !== "ECON-LABOR" || survivalProfile?.manualClickTarget !== "ECON-LABOR" || survivalProfile?.visibleHudEconomyIds.join("|") !== expectedFixedHud.join("|")) {
+    addIssue(issues, "error", "survival_economy_profile_invalid", "Survival must use Labor as primary/click economy and expose the fixed five-slot HUD including Credits in slot 2.", [survivalProfile?.id ?? "missing_survival_profile"]);
   }
 
   const invalidListings = modules.resource_listings.filter((listing) => !ResourceService.getById(listing.resourceId));

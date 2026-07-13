@@ -36,7 +36,7 @@ export type ComponentAssetReference = {
   label: string;
   assetKey: string;
   required: boolean;
-  status: "Ready" | "Missing" | "Placeholder" | "Needs Approval" | "Needs Web Mapping" | "Needs Roblox Mapping" | "Needs Engine Mapping";
+  status: "Ready" | "Missing" | "Placeholder" | "Pending Art" | "Needs Approval" | "Needs Web Mapping" | "Needs Roblox Mapping" | "Needs Engine Mapping";
   linkedAssetId?: string;
   notes: string;
 };
@@ -454,25 +454,35 @@ const dashboardComponentRecords: ComponentDesignRecord[] = [
   }),
   baseRecord({
     componentId: "TopHudBar",
-    description: "Top HUD strip for key resource/economy counters and utility controls.",
+    description: "Top HUD strip for the fixed five-slot economy order and utility controls. Slot order is canonical and does not change by era.",
     category: "HUD",
     status: "In Design",
     viteStatus: "In Progress",
     robloxStatus: "In Progress",
     anatomy: [anatomyPart("hud-surface", "HUD surface", "CSS/layout"), anatomyPart("economy-slots", "Economy slots", "runtime data"), anatomyPart("utility-controls", "Utility controls", "interaction state")],
-    dataInputs: [dataInput("primaryHudResources", "Primary HUD resource IDs", "string[]", "Presentation Hint"), dataInput("economyBalances", "Economy balances and rates", "EconomyState[]", "Player Runtime State")],
+    assetKeys: [assetRef("Labor icon", "economy_labor", "Pending Art")],
+    dataInputs: [dataInput("primaryHudResources", "Fixed HUD resource IDs", "string[]", "Presentation Hint"), dataInput("primaryHudSlots", "Fixed HUD slot metadata", "HudResourceSlot[]", "Presentation Hint"), dataInput("eraEconomyProfile", "Era economy behavior and display overrides", "EraEconomyProfile", "Canonical Studio Definition"), dataInput("economyBalances", "Economy balances and rates", "EconomyState[]", "Player Runtime State")],
+    notes: [
+      "Fixed order: ECON-LABOR, ECON-CREDITS, ECON-POPULATION, ECON-RESEARCH, ECON-PREMIUM-CRYSTALS.",
+      "Era profiles may change labels and primary/click behavior, but must not reorder these five slots.",
+      "First slot is Labor in Survival; Credits remains visible in slot 2 at zero and is not the click target."
+    ],
     screenUsages: [usage("dashboard", "Dashboard"), usage("resources", "Resources")]
   }),
   baseRecord({
     componentId: "HudEconomySlot",
-    description: "Compact HUD resource/economy slot with icon, balance, rate, and premium state.",
+    description: "Compact HUD resource/economy slot with icon, balance, rate, and premium state. Economy identity comes from economyId and never from slot position.",
     category: "HUD",
     status: "In Design",
     viteStatus: "In Progress",
     robloxStatus: "In Progress",
-    assetKeys: [assetRef("Economy icon", "economy_counter_icon", "Needs Approval")],
-    dataInputs: [dataInput("definitionId", "Economy definition ID", "GenesisId", "Canonical Studio Definition"), dataInput("balance", "Current balance", "number", "Player Runtime State"), dataInput("rate", "Current rate", "number", "Player Runtime State"), dataInput("premium", "Premium flag", "boolean", "Canonical Studio Definition")],
+    assetKeys: [assetRef("Economy icon", "economy_counter_icon", "Needs Approval"), assetRef("Labor icon", "economy_labor", "Pending Art")],
+    dataInputs: [dataInput("definitionId", "Economy definition ID", "GenesisId", "Canonical Studio Definition"), dataInput("displayNameOverride", "Era display label override", "string | null", "Canonical Studio Definition"), dataInput("iconKey", "Economy icon key", "string", "Presentation Hint"), dataInput("balance", "Current balance", "number", "Player Runtime State"), dataInput("rate", "Current rate", "number", "Player Runtime State"), dataInput("premium", "Premium flag", "boolean", "Canonical Studio Definition")],
     states: states(["Default", "Hover", "Focused", "Loading", "Error", "Success", "Missing Data", "Reduced Motion"], ["Default", "Hover", "Focused", "Loading", "Missing Data"]),
+    notes: [
+      "Resolve icon by economy definition iconKey. ECON-LABOR uses economy_labor and must not borrow the Credits coin icon.",
+      "Apply era display override for the label only; balances/rates come from Player Runtime."
+    ],
     screenUsages: [usage("dashboard", "Dashboard"), usage("resources", "Resources")]
   }),
   baseRecord({
@@ -588,7 +598,7 @@ const initialComponentRecords: ComponentDesignRecord[] = [
   namedComponent("SuccessState", "Feedback", "Success confirmation state."),
   namedComponent("CriticalStatsDisplay", "Game-Specific", "Critical stats panel for high-importance production/game metrics.", [usage("dashboard", "Dashboard")]),
   namedComponent("BoostSlot", "Game-Specific", "Boost slot with availability, cooldown, rarity, and timer.", [usage("dashboard", "Dashboard")]),
-  baseRecord({ componentId: "EconomyCounter", category: "Game-Specific", description: "Economy/resource counter with icon, balance, rate, formatting, premium flag, and gain state.", dataInputs: [dataInput("definitionId", "Definition ID", "GenesisId", "Canonical Studio Definition"), dataInput("displayName", "Display name", "string", "Canonical Studio Definition"), dataInput("iconKey", "Icon key", "string", "Presentation Hint"), dataInput("balance", "Balance", "number", "Player Runtime State"), dataInput("rate", "Rate", "number", "Player Runtime State"), dataInput("formatting", "Formatting", "EconomyFormat", "Presentation Hint"), dataInput("premium", "Premium", "boolean", "Canonical Studio Definition"), dataInput("gainState", "Gain state", "GainState", "Local Interaction State")], screenUsages: [usage("dashboard", "Dashboard"), usage("resources", "Resources")] }),
+  baseRecord({ componentId: "EconomyCounter", category: "Game-Specific", description: "Economy/resource counter with icon, balance, rate, formatting, premium flag, and gain state. Economy identity comes from definitionId; slot position is presentation only.", assetKeys: [assetRef("Labor icon", "economy_labor", "Pending Art")], dataInputs: [dataInput("definitionId", "Definition ID", "GenesisId", "Canonical Studio Definition"), dataInput("displayName", "Display name or era override", "string", "Canonical Studio Definition"), dataInput("iconKey", "Icon key", "string", "Presentation Hint"), dataInput("balance", "Balance", "number", "Player Runtime State"), dataInput("rate", "Rate", "number", "Player Runtime State"), dataInput("formatting", "Formatting", "EconomyFormat", "Presentation Hint"), dataInput("premium", "Premium", "boolean", "Canonical Studio Definition"), dataInput("gainState", "Gain state", "GainState", "Local Interaction State")], notes: ["Use ECON-LABOR + economy_labor for Labor/Workforce labels, ECON-CREDITS + economy_credits for Credits. Never infer economy identity from first slot or coin artwork."], screenUsages: [usage("dashboard", "Dashboard"), usage("resources", "Resources")] }),
   namedComponent("AlignmentBar", "Game-Specific", "Alignment progress bar for civilization path and effects.", [usage("civilization", "Civilization")]),
   baseRecord({ componentId: "CostDisplay", category: "Game-Specific", description: "Cost display for research, building, upgrades, and actions.", dataInputs: [dataInput("cost", "Cost rows", "CostRow[]", "Canonical Studio Definition"), dataInput("affordability", "Affordability", "boolean", "Player Runtime State")], screenUsages: [usage("research", "Research"), usage("buildings", "Buildings"), usage("upgrades", "Upgrades")] }),
   baseRecord({ componentId: "UnlockRequirementList", category: "Game-Specific", description: "Unlock requirement list with met/unmet treatment and linked canonical IDs.", dataInputs: [dataInput("requirements", "Requirements", "UnlockRequirement[]", "Canonical Studio Definition"), dataInput("playerProgress", "Player progress", "PlayerUnlockState", "Player Runtime State")], screenUsages: [usage("research", "Research"), usage("buildings", "Buildings"), usage("upgrades", "Upgrades")] })
