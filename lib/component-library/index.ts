@@ -685,7 +685,7 @@ const initialComponentRecords: ComponentDesignRecord[] = [
     componentId: "AiAgentSelector",
     category: "Game-Specific",
     description: "Selectable AI Agent cosmetic list for default, locked, selected, unavailable, and missing-art states.",
-    dataInputs: [dataInput("aiAgents", "AI Agent definitions", "AiAgentDefinition[]", "Canonical Studio Definition"), dataInput("selectedAiAgentId", "Selected AI Agent ID", "AiAgentId", "Player Runtime State")],
+    dataInputs: [dataInput("aiAgents", "AI Agent definitions", "AiAgentDefinition[]", "Canonical Studio Definition"), dataInput("aiAgentVariants", "AI Agent variant definitions", "AiAgentVariantDefinition[]", "Canonical Studio Definition"), dataInput("selectedAiAgentId", "Selected AI Agent ID", "AiAgentId", "Player Runtime State"), dataInput("selectedAiAgentVariantId", "Selected AI Agent variant ID", "AiAgentVariantId", "Player Runtime State")],
     states: states(["Default", "Selected", "Locked", "Unavailable", "Missing Art", "Focused", "Disabled"], ["Default", "Selected", "Locked", "Focused"]),
     variants: [variant("grid", "Grid", ["Default", "Selected", "Locked"]), variant("compact", "Compact", ["Default", "Selected"])],
     screenUsages: [usage("ai-agent-profile", "AI Agent Profile")]
@@ -697,6 +697,16 @@ const initialComponentRecords: ComponentDesignRecord[] = [
     dataInputs: [dataInput("aiAgentId", "AI Agent ID", "AiAgentId", "Canonical Studio Definition"), dataInput("aiAgent", "AI Agent definition", "AiAgentDefinition", "Canonical Studio Definition"), dataInput("unlockState", "Unlock state", "AgentUnlockState", "Player Runtime State")],
     states: states(["Default", "Selected", "Locked", "Unavailable", "Missing Art", "Focused"], ["Default", "Selected", "Locked"]),
     screenUsages: [usage("ai-agent-profile", "AI Agent Profile")]
+  }),
+  baseRecord({
+    componentId: "AiAgentVariantCard",
+    category: "Cards",
+    description: "Selectable AI Agent visual variant card for cosmetic skins, era-level appearance, unlock state, safe fallback art, and platform readiness.",
+    dataInputs: [dataInput("aiAgentVariantId", "AI Agent variant ID", "AiAgentVariantId", "Canonical Studio Definition"), dataInput("aiAgentVariant", "AI Agent variant definition", "AiAgentVariantDefinition", "Canonical Studio Definition"), dataInput("selectedAiAgentVariantId", "Selected variant ID", "AiAgentVariantId", "Player Runtime State"), dataInput("unlockState", "Variant unlock state", "VariantUnlockState", "Player Runtime State")],
+    states: states(["Default", "Selected", "Unlocked", "Locked", "Missing Art", "Online", "Offline", "Blinking", "Working", "Focused", "Disabled"], ["Default", "Selected", "Unlocked", "Locked", "Missing Art"]),
+    variants: [variant("grid", "Grid", ["Default", "Selected", "Locked"]), variant("compact", "Compact", ["Default", "Selected", "Missing Art"]), variant("profile", "Profile", ["Unlocked", "Online", "Offline", "Blinking", "Working"])],
+    screenUsages: [usage("ai-agent-profile", "AI Agent Profile")],
+    notes: ["Variant card is cosmetic. Labor Assistance strength continues to come from automation upgrade levels."]
   }),
   baseRecord({
     componentId: "AiAgentExpressionPreview",

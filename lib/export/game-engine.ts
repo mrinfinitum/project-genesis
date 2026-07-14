@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getAiAgentRuntimeModules } from "@/lib/ai-agents";
+import { defaultAiAgentVariantId, getAiAgentRuntimeModules } from "@/lib/ai-agents";
 import { ARCHITECTURE_VERSION } from "@/lib/architecture/version";
 import { getGameData } from "@/lib/data";
 import { discoveryJournalSchema, sampleDiscoveryJournal, sampleTimelineEvents, timelineEventSchema } from "@/lib/explorer/discovery-log";
@@ -147,6 +147,7 @@ type CanonicalModules = {
   client_profiles: Record<string, unknown>;
   mobile_asset_requirements: typeof mobileAssetRequirements;
   ai_agents: ReturnType<typeof getAiAgentRuntimeModules>["aiAgents"];
+  ai_agent_variants: ReturnType<typeof getAiAgentRuntimeModules>["aiAgentVariants"];
   ai_agent_personalities: ReturnType<typeof getAiAgentRuntimeModules>["aiAgentPersonalities"];
   ai_agent_animation_profiles: ReturnType<typeof getAiAgentRuntimeModules>["aiAgentAnimationProfiles"];
   automation_presentation: ReturnType<typeof getAiAgentRuntimeModules>["automationPresentation"];
@@ -537,6 +538,7 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
     })(),
     mobile_asset_requirements: mobileAssetRequirements,
     ai_agents: aiAgentModules.aiAgents,
+    ai_agent_variants: aiAgentModules.aiAgentVariants,
     ai_agent_personalities: aiAgentModules.aiAgentPersonalities,
     ai_agent_animation_profiles: aiAgentModules.aiAgentAnimationProfiles,
     automation_presentation: aiAgentModules.automationPresentation,
@@ -1009,6 +1011,7 @@ function validateEraNavigationProfiles(issues: ExportValidationIssue[], modules:
 
 function validateAiAgentModules(issues: ExportValidationIssue[], modules: CanonicalModules) {
   const agentIds = new Set(modules.ai_agents.map((agent) => agent.id));
+  const variantIds = new Set(modules.ai_agent_variants.map((variant) => variant.id));
   const personalityIds = new Set(modules.ai_agent_personalities.map((personality) => personality.id));
   const animationProfileIds = new Set(modules.ai_agent_animation_profiles.map((profile) => profile.id));
   const defaults = modules.ai_agents.filter((agent) => agent.defaultForNewPlayers);
@@ -1029,6 +1032,12 @@ function validateAiAgentModules(issues: ExportValidationIssue[], modules: Canoni
   if (modules.ai_agent_save_schema.selectedAiAgentIdDefault !== modules.default_ai_agent_id) {
     addIssue(issues, "error", "ai_agent_save_default_invalid", "AI Agent save schema default must resolve to the default AI Agent.", [modules.ai_agent_save_schema.id, modules.default_ai_agent_id]);
   }
+  if (!variantIds.has(defaultAiAgentVariantId)) {
+    addIssue(issues, "error", "ai_agent_default_variant_missing", "Engine exports must include the default AI Agent variant.", [defaultAiAgentVariantId]);
+  }
+  if (modules.ai_agent_save_schema.selectedAiAgentVariantIdDefault !== defaultAiAgentVariantId) {
+    addIssue(issues, "error", "ai_agent_variant_save_default_invalid", "AI Agent save schema default must resolve to the default AI Agent variant.", [modules.ai_agent_save_schema.id, defaultAiAgentVariantId]);
+  }
 
   for (const agent of modules.ai_agents) {
     if (!personalityIds.has(agent.personalityId)) {
@@ -1040,8 +1049,26 @@ function validateAiAgentModules(issues: ExportValidationIssue[], modules: Canoni
     if (Object.keys(agent.gameplayModifiers).length) {
       addIssue(issues, "error", "ai_agent_gameplay_modifier_forbidden", "AI Agents must not contain gameplay modifiers in v1.0.", [agent.id]);
     }
+    if (!variantIds.has(agent.baseVariantId)) {
+      addIssue(issues, "error", "ai_agent_base_variant_missing", "AI Agent baseVariantId must resolve.", [agent.id, agent.baseVariantId]);
+    }
+    for (const variantId of agent.availableVariantIds) {
+      if (!variantIds.has(variantId)) addIssue(issues, "error", "ai_agent_available_variant_missing", "AI Agent availableVariantIds must resolve.", [agent.id, variantId]);
+    }
     if (!agent.headAssetKey || !agent.eyesOpenAssetKey || !agent.eyesBlinkAssetKey || !agent.eyesClosedAssetKey) {
       addIssue(issues, "error", "ai_agent_required_asset_keys_missing", "AI Agents must include head, open-eye, blink, and offline/closed-eye asset keys.", [agent.id]);
+    }
+  }
+
+  for (const variant of modules.ai_agent_variants) {
+    if (!agentIds.has(variant.agentId)) {
+      addIssue(issues, "error", "ai_agent_variant_agent_missing", "AI Agent variant agentId must resolve.", [variant.id, variant.agentId]);
+    }
+    if (variant.progressionMapping.cosmeticIdentity !== true || variant.progressionMapping.automationPowerSource !== "automation_upgrade_levels") {
+      addIssue(issues, "error", "ai_agent_variant_progression_invalid", "AI Agent variants must remain cosmetic and use automation upgrade levels for Labor Assistance strength.", [variant.id]);
+    }
+    if (!variant.assetKeys.head || !variant.assetKeys.open || !variant.assetKeys.blink || !variant.assetKeys.offline) {
+      addIssue(issues, "error", "ai_agent_variant_assets_missing", "AI Agent variants must include head, open, blink, and offline asset keys.", [variant.id]);
     }
   }
 }
@@ -1211,6 +1238,8 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
       "mission faction/resource/research links resolve",
       "completed missions have completed objectives",
       "mission rewards are claimed only once",
+      "AI Agent variants resolve to published agents",
+      "AI Agent cosmetic variants do not alter automation strength",
       "star systems link to sectors",
       "sectors link to galaxies",
       "architectureVersion is sanitized semantic metadata only"
@@ -1241,7 +1270,7 @@ function schemaNotes(target: EngineTarget) {
     economy: "Global economy definitions, HUD slots, markets, resource listings, trade routes, and opportunities are engine-agnostic canonical data. HUD slots use economy IDs only; inventory materials stay in resource_catalog.",
     eraNavigation: "Studio owns navigation intent only. Dashboards should use current_journey with compact labels; clients own layout and rendering. The full Civilization Timeline remains the all-era view.",
     missions: "Missions, objectives, rewards, statuses, and generation metadata are deterministic canonical Studio data. Engine targets consume mission state and report progress back through objective IDs.",
-    aiAgents: "AI Agents are cosmetic/presentation companions layered over the existing automation mechanic. Stable automation IDs remain unchanged; clients use automation_presentation aliases for labels.",
+    aiAgents: "AI Agents are cosmetic/presentation companions layered over the existing automation mechanic. ai_agent_variants describe selectable visual skins only; stable automation IDs remain unchanged and clients use automation_presentation aliases for labels.",
     mapping: config.schemaMapping
   };
 }
@@ -1296,6 +1325,7 @@ function compactModules(modules: CanonicalModules) {
     client_profiles: modules.client_profiles,
     mobile_asset_requirements: modules.mobile_asset_requirements,
     ai_agents: modules.ai_agents,
+    ai_agent_variants: modules.ai_agent_variants,
     ai_agent_personalities: modules.ai_agent_personalities,
     ai_agent_animation_profiles: modules.ai_agent_animation_profiles,
     automation_presentation: modules.automation_presentation,
@@ -1326,7 +1356,7 @@ function targetArtifacts(target: EngineTarget, modules: CanonicalModules) {
     return {
       "ResourceCatalogModule.lua": `local ResourceCatalog = ${luaValue(modules.resource_catalog)}\n\nreturn ResourceCatalog\n`,
       "EconomyDefinitionsModule.lua": `local EconomyDefinitions = ${luaValue({ economyDefinitions: modules.economy_definitions, eraEconomyProfiles: modules.era_economy_profiles, hudProfile: modules.hud_profile, primaryHudResources: modules.primary_hud_resources })}\n\nreturn EconomyDefinitions\n`,
-      "AIAgentModule.lua": `local AIAgents = ${luaValue({ aiAgents: modules.ai_agents, personalities: modules.ai_agent_personalities, animationProfiles: modules.ai_agent_animation_profiles, automationPresentation: modules.automation_presentation, defaultAiAgentId: modules.default_ai_agent_id, saveSchema: modules.ai_agent_save_schema })}\n\nreturn AIAgents\n`,
+      "AIAgentModule.lua": `local AIAgents = ${luaValue({ aiAgents: modules.ai_agents, aiAgentVariants: modules.ai_agent_variants, personalities: modules.ai_agent_personalities, animationProfiles: modules.ai_agent_animation_profiles, automationPresentation: modules.automation_presentation, defaultAiAgentId: modules.default_ai_agent_id, defaultAiAgentVariantId, saveSchema: modules.ai_agent_save_schema })}\n\nreturn AIAgents\n`,
       "EraNavigationProfileModule.lua": `local EraNavigationProfiles = ${luaValue(modules.era_navigation_profiles)}\n\nreturn EraNavigationProfiles\n`,
       "ResearchUnlockModule.lua": `local ResearchUnlocks = ${luaValue({ research: modules.research, unlocks: modules.unlock_matrix })}\n\nreturn ResearchUnlocks\n`,
       "UniverseDataModule.lua": `local UniverseData = ${luaValue({ galaxies: modules.galaxies, sectors: modules.sectors, starSystems: modules.star_systems, planets: modules.planets, celestialBodies: modules.celestial_bodies, factions: modules.factions, colonies: modules.colonies, colonyBuildings: modules.colony_buildings, colonyLevels: modules.colony_level_definitions, colonyFocus: modules.colony_focus_definitions, markets: modules.markets, tradeRoutes: modules.trade_routes, tradeOpportunities: modules.trade_opportunities, missions: modules.missions, missionObjectives: modules.mission_objectives, missionRewards: modules.mission_rewards })}\n\nreturn UniverseData\n`,
@@ -1336,7 +1366,7 @@ function targetArtifacts(target: EngineTarget, modules: CanonicalModules) {
 
   if (target === "web") {
     return {
-      "project-genesis.types.ts": "export type GenesisId = string;\n\nexport interface GenesisResource { id: GenesisId; resource_name: string; category: string; rarity: string; }\nexport interface GenesisEraNavigationProfile { dashboardMode: 'current_journey' | 'compact_timeline' | 'full_timeline'; visibleEraCount: number; fullTimelineEnabled: boolean; allowPrimaryHorizontalScroll: boolean; boundaryBehavior: { firstEraMode: string; middleEraMode: string; lastEraMode: string }; }\nexport interface GenesisAiAgent { id: GenesisId; displayName: string; shortDisplayName: string; personalityId: GenesisId; defaultForNewPlayers: boolean; headAssetKey: string; eyesOpenAssetKey: string; eyesBlinkAssetKey: string; eyesClosedAssetKey: string; }\nexport interface GenesisResearchNode { id: GenesisId; name: string; era: string; status: string; }\nexport interface GenesisFaction { id: GenesisId; name: string; type: string; disposition: string; homeStarSystemId: GenesisId; controlledPlanetIds: GenesisId[]; }\nexport interface GenesisColonyBuilding { id: GenesisId; name: string; category: string; colonyId: GenesisId; constructionStatus: string; modifiers: Record<string, number>; }\nexport interface GenesisColony { id: GenesisId; name: string; planetId: GenesisId; starSystemId: GenesisId; population: number; populationCapacity: number; populationGrowthRate: number; colonyLevel: number; focus: string; status: string; resourceOutputIds: GenesisId[]; resourceOutputRates: Record<string, number>; buildingIds: GenesisId[]; }\nexport interface GenesisMarketListing { resourceId: GenesisId; basePrice: number; currentPrice: number; supply: number; demand: number; priceTrend: string; availability: string; }\nexport interface GenesisMarket { id: GenesisId; name: string; marketType: string; colonyId?: GenesisId; childMarketIds: GenesisId[]; resourceListings: GenesisMarketListing[]; tradeVolume: number; prosperity: number; security: number; }\nexport interface GenesisTradeRoute { id: GenesisId; originMarketId: GenesisId; destinationMarketId: GenesisId; resourceIds: GenesisId[]; profitability: number; risk: number; status: string; }\nexport interface GenesisMissionObjective { id: GenesisId; missionId: GenesisId; objectiveType: string; targetId: GenesisId; targetCount: number; currentCount: number; completed: boolean; }\nexport interface GenesisMission { id: GenesisId; title: string; missionType: string; status: string; difficulty: string; objectiveIds: GenesisId[]; rewardIds: GenesisId[]; rewardsClaimed: boolean; tracked: boolean; }\nexport interface GenesisExportPayload { target: string; canonical: Record<string, unknown>; relationshipMap: Record<string, unknown>; }\n",
+      "project-genesis.types.ts": "export type GenesisId = string;\n\nexport interface GenesisResource { id: GenesisId; resource_name: string; category: string; rarity: string; }\nexport interface GenesisEraNavigationProfile { dashboardMode: 'current_journey' | 'compact_timeline' | 'full_timeline'; visibleEraCount: number; fullTimelineEnabled: boolean; allowPrimaryHorizontalScroll: boolean; boundaryBehavior: { firstEraMode: string; middleEraMode: string; lastEraMode: string }; }\nexport interface GenesisAiAgent { id: GenesisId; displayName: string; shortDisplayName: string; personalityId: GenesisId; defaultForNewPlayers: boolean; baseVariantId: GenesisId; availableVariantIds: GenesisId[]; headAssetKey: string; eyesOpenAssetKey: string; eyesBlinkAssetKey: string; eyesClosedAssetKey: string; }\nexport interface GenesisAiAgentVariant { id: GenesisId; agentId: GenesisId; displayName: string; tier: number; variantType: string; assetKeys: Record<string, string>; unlockText: string; }\nexport interface GenesisResearchNode { id: GenesisId; name: string; era: string; status: string; }\nexport interface GenesisFaction { id: GenesisId; name: string; type: string; disposition: string; homeStarSystemId: GenesisId; controlledPlanetIds: GenesisId[]; }\nexport interface GenesisColonyBuilding { id: GenesisId; name: string; category: string; colonyId: GenesisId; constructionStatus: string; modifiers: Record<string, number>; }\nexport interface GenesisColony { id: GenesisId; name: string; planetId: GenesisId; starSystemId: GenesisId; population: number; populationCapacity: number; populationGrowthRate: number; colonyLevel: number; focus: string; status: string; resourceOutputIds: GenesisId[]; resourceOutputRates: Record<string, number>; buildingIds: GenesisId[]; }\nexport interface GenesisMarketListing { resourceId: GenesisId; basePrice: number; currentPrice: number; supply: number; demand: number; priceTrend: string; availability: string; }\nexport interface GenesisMarket { id: GenesisId; name: string; marketType: string; colonyId?: GenesisId; childMarketIds: GenesisId[]; resourceListings: GenesisMarketListing[]; tradeVolume: number; prosperity: number; security: number; }\nexport interface GenesisTradeRoute { id: GenesisId; originMarketId: GenesisId; destinationMarketId: GenesisId; resourceIds: GenesisId[]; profitability: number; risk: number; status: string; }\nexport interface GenesisMissionObjective { id: GenesisId; missionId: GenesisId; objectiveType: string; targetId: GenesisId; targetCount: number; currentCount: number; completed: boolean; }\nexport interface GenesisMission { id: GenesisId; title: string; missionType: string; status: string; difficulty: string; objectiveIds: GenesisId[]; rewardIds: GenesisId[]; rewardsClaimed: boolean; tracked: boolean; }\nexport interface GenesisExportPayload { target: string; canonical: Record<string, unknown>; relationshipMap: Record<string, unknown>; }\n",
       "projectGenesisClient.ts": "export async function fetchProjectGenesisExport(target = 'generic') {\n  const response = await fetch(`/api/export/${target}`);\n  if (!response.ok) throw new Error(`Project Genesis export failed: ${response.status}`);\n  return response.json();\n}\n",
       "projectGenesisStore.ts": "import { create } from 'zustand';\n\ntype GenesisStore = { data: unknown | null; setData: (data: unknown) => void };\nexport const useGenesisStore = create<GenesisStore>((set) => ({ data: null, setData: (data) => set({ data }) }));\n"
     };

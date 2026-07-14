@@ -533,8 +533,8 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
         variant: "dashboard",
         state: "Idle",
         layoutOverride: "Compact assistant panel adjacent to automation/Labor Assistance controls.",
-        assetOverride: "ai_agent_default_head",
-        dataBindings: ["selectedAiAgentId", "aiAgents", "automationPresentation", "automation power/rate"],
+        assetOverride: "auto_robot_circle",
+        dataBindings: ["selectedAiAgentId", "selectedAiAgentVariantId", "aiAgents", "aiAgentVariants", "automationPresentation", "automation power/rate"],
         screenSpecificNotes: "Player-facing copy uses AI Agent, Labor Assistance, Agent Online, and Agent Offline. Tap/click opens AI Agent Profile.",
         displayName: "DashboardAIAgentPanel",
         purpose: "Shows selected AI Agent companion, automation status, Labor Assistance, and profile entry.",
@@ -542,8 +542,8 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
         positioning: "Dashboard automation/control cluster.",
         typography: "Use AI Agent title and concise status labels.",
         colors: "Resolve color theme from selected AI Agent.",
-        assetKeys: ["ai_agent_default_head", "ai_agent_default_eyes_open", "ai_agent_default_eyes_blink", "ai_agent_default_eyes_closed"],
-        dataInputs: ["selectedAiAgentId", "aiAgents", "automationPresentation", "player automation state"],
+        assetKeys: ["auto_robot_circle", "auto_robot_icon", "auto_robot_blink_icon"],
+        dataInputs: ["selectedAiAgentId", "selectedAiAgentVariantId", "aiAgents", "aiAgentVariants", "automationPresentation", "player automation state"],
         states: ["Idle", "Blink", "Working", "Thinking", "Offline", "Warning", "Missing Art"],
         interactions: ["Open AI Agent Profile", "Toggle Agent Online/Offline"],
         responsiveBehavior: "Keep touch target >=48px; profile modal respects mobile safe areas.",
@@ -573,14 +573,17 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
     layoutMode: "full_screen_page",
     dataRequirements: [
       data("ai-agent-definitions", "AI Agent definitions", "Canonical Studio Definition", "aiAgents", "Mapped"),
+      data("ai-agent-variants", "AI Agent visual variant definitions", "Canonical Studio Definition", "aiAgentVariants", "Mapped"),
       data("ai-agent-personalities", "AI Agent personality definitions", "Canonical Studio Definition", "aiAgentPersonalities", "Mapped"),
       data("ai-agent-animation", "AI Agent blink animation profiles", "Canonical Studio Definition", "aiAgentAnimationProfiles", "Mapped"),
-      data("ai-agent-save-selection", "Selected AI Agent player preference", "Player Runtime State", "selectedAiAgentId", "Partial")
+      data("ai-agent-save-selection", "Selected AI Agent player preference", "Player Runtime State", "selectedAiAgentId", "Partial"),
+      data("ai-agent-variant-selection", "Selected AI Agent variant preference", "Player Runtime State", "selectedAiAgentVariantId", "Partial"),
+      data("ai-agent-unlocks", "Unlocked AI Agent and variant IDs", "Player Runtime State", "unlockedAiAgentIds/unlockedAiAgentVariantIds", "Partial")
     ],
     assetRequirements: [
-      asset("ai-agent-open-eyes", "Default AI Agent open-eye PNG", "ai_agent_default_eyes_open", "icon", "Missing", "Transparent 512 minimum, 1024 preferred."),
-      asset("ai-agent-blink", "Default AI Agent blink/closed-eye PNG", "ai_agent_default_eyes_blink", "icon", "Missing", "Transparent blink frame required for v1."),
-      asset("ai-agent-offline", "Default AI Agent offline PNG", "ai_agent_default_eyes_closed", "icon", "Missing", "Transparent offline state required for v1.")
+      asset("ai-agent-head", "Default AI Agent head PNG", "auto_robot_circle", "icon", "Ready", "Imported Roblox art can be used as safe public preview."),
+      asset("ai-agent-open-eyes", "Default AI Agent open-eye PNG", "auto_robot_icon", "icon", "Ready", "Transparent 512 minimum, 1024 preferred."),
+      asset("ai-agent-blink", "Default AI Agent blink/closed-eye PNG", "auto_robot_blink_icon", "icon", "Ready", "Transparent blink frame required for v1.")
     ],
     componentSpecs: [
       {
@@ -589,8 +592,8 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
         variant: "grid",
         state: "Default",
         layoutOverride: "Visual-first selectable agent grid.",
-        assetOverride: "ai_agent_default_head",
-        dataBindings: ["aiAgents", "selectedAiAgentId"],
+        assetOverride: "auto_robot_circle",
+        dataBindings: ["aiAgents", "aiAgentVariants", "selectedAiAgentId", "selectedAiAgentVariantId", "unlockedAiAgentIds", "unlockedAiAgentVariantIds"],
         screenSpecificNotes: "Cosmetic selection only; no gameplay modifiers in v1.",
         displayName: "AiAgentSelector",
         purpose: "Select the active AI Agent companion.",
@@ -598,12 +601,34 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
         positioning: "Primary profile content.",
         typography: "Agent name, rarity, personality, unlock status.",
         colors: "Use agent colorTheme accents.",
-        assetKeys: ["ai_agent_default_head"],
-        dataInputs: ["aiAgents", "selectedAiAgentId"],
+        assetKeys: ["auto_robot_circle", "auto_robot_icon", "auto_robot_blink_icon"],
+        dataInputs: ["aiAgents", "aiAgentVariants", "selectedAiAgentId", "selectedAiAgentVariantId"],
         states: ["Default", "Selected", "Locked", "Unavailable", "Missing Art"],
         interactions: ["Select agent", "Open detail"],
         responsiveBehavior: "Cards wrap; touch target >=48px.",
         implementationNotes: "Unknown selectedAiAgentId falls back visually to default while preserving unresolved diagnostic state."
+      },
+      {
+        id: "ai-agent-variant-card",
+        componentLibraryId: "AiAgentVariantCard",
+        variant: "grid",
+        state: "Selected",
+        layoutOverride: "Variant card grid inside the profile customization tab.",
+        assetOverride: "auto_robot_icon",
+        dataBindings: ["aiAgentVariants", "selectedAiAgentVariantId", "unlockedAiAgentVariantIds"],
+        screenSpecificNotes: "Variant selection is cosmetic only and must not change automation strength.",
+        displayName: "AiAgentVariantCard",
+        purpose: "Select the active AI Agent visual variant.",
+        dimensions: "Responsive compact card grid.",
+        positioning: "Customization/Variants tab.",
+        typography: "Variant name, unlock text, readiness.",
+        colors: "Use variant/agent color theme accents.",
+        assetKeys: ["auto_robot_circle", "auto_robot_icon", "auto_robot_blink_icon"],
+        dataInputs: ["aiAgentVariant", "selectedAiAgentVariantId", "unlockState"],
+        states: ["Default", "Selected", "Unlocked", "Locked", "Missing Art", "Online", "Offline", "Blinking", "Working"],
+        interactions: ["Select variant", "Open variant detail"],
+        responsiveBehavior: "Cards wrap; touch target >=48px.",
+        implementationNotes: "Use aiAgentSaveSchema selectedAiAgentVariantIdDefault when save state is missing."
       },
       {
         id: "ai-agent-blink-preview",
@@ -611,7 +636,7 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
         variant: "profile",
         state: "Blink",
         layoutOverride: "Preview specimen with play/pause, reduced motion, light/dark background, circular HUD crop, panel crop, and density previews.",
-        assetOverride: "ai_agent_default_eyes_blink",
+        assetOverride: "auto_robot_blink_icon",
         dataBindings: ["aiAgentAnimationProfiles", "selectedAiAgentId"],
         screenSpecificNotes: "Timing is Studio-configurable; no random animation logic in asset records.",
         displayName: "AiAgentBlinkPreview",
@@ -620,8 +645,8 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
         positioning: "Artwork/Animation tab.",
         typography: "Small labels only.",
         colors: "Light/dark preview backgrounds.",
-        assetKeys: ["ai_agent_default_eyes_open", "ai_agent_default_eyes_blink"],
-        dataInputs: ["aiAgentAnimationProfiles", "aiAgents"],
+        assetKeys: ["auto_robot_icon", "auto_robot_blink_icon"],
+        dataInputs: ["aiAgentAnimationProfiles", "aiAgents", "aiAgentVariants"],
         states: ["Idle", "Blink", "Paused", "Reduced Motion", "Missing Art"],
         interactions: ["Play/pause", "Toggle reduced motion"],
         responsiveBehavior: "Preserve crop preview sizes; wrap density samples.",
@@ -630,6 +655,7 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
     ],
     interactionSpecs: [
       interaction("select-ai-agent", "Select an agent card", "Selected state updates", "Update player selectedAiAgentId."),
+      interaction("select-ai-agent-variant", "Select a variant card", "Selected variant state updates", "Update player selectedAiAgentVariantId without changing automation strength."),
       interaction("preview-blink", "Play/pause blink preview", "Preview animation toggles", "Use AI-ANIM-BLINK-DEFAULT timing metadata."),
       interaction("toggle-reduced-motion", "Toggle reduced motion", "Static open-eye preview is shown", "Use reducedMotionBehavior from animation profile.")
     ],
@@ -638,7 +664,7 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
     mobileReadiness: { mobileDesignStatus: "Draft", safeAreaReadiness: "Needs Review", touchReadiness: "Needs Review", mobileAssetReadiness: "Missing" },
     notes: [
       "Detail view covers Overview, Artwork, Expressions, Animation, Personality, Unlocks, Dialogue, future Voice, Platform mappings, Review, Handoff, and History.",
-      "No player-owned progress is stored in Studio; this screen consumes definitions plus selectedAiAgentId from the game save."
+      "No player-owned progress is stored in Studio; this screen consumes definitions plus selectedAiAgentId/selectedAiAgentVariantId from the game save."
     ]
   }),
   baseRecord({

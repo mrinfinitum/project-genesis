@@ -337,11 +337,14 @@ function aiAgentWorkItems(aiAgentState?: AiAgentLibraryState) {
 
 function aiAgentComplete(agentState?: AiAgentLibraryState) {
   if (!agentState) return { complete: 0, total: 1, value: 0 };
-  const complete = agentState.records.filter((agent) =>
+  const completeAgents = agentState.records.filter((agent) =>
     agent.publishState === "published"
     && agent.artworkSlots.filter((slot) => slot.required).every((slot) => ["Approved", "Published"].includes(slot.status))
   ).length;
-  return { complete, total: Math.max(1, agentState.records.length), value: percent(complete, agentState.records.length) };
+  const completeVariants = agentState.variants.filter((variant) => variant.publishState === "published" && variant.platformReadiness.web === "ready" && variant.platformReadiness.roblox === "ready").length;
+  const complete = completeAgents + completeVariants;
+  const total = agentState.records.length + agentState.variants.length;
+  return { complete, total: Math.max(1, total), value: percent(complete, total) };
 }
 
 function upgradeArtWorkItems(report: UpgradeArtReport) {
@@ -961,7 +964,7 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
     { label: "Component Preview Generation", complete: componentPreviewGenerated, total: Math.max(1, componentPreviewTotal), value: percent(componentPreviewGenerated, componentPreviewTotal), detail: `${componentState?.stats.componentPreviewsNeedsReview ?? 0} generated previews need review, ${componentState?.stats.componentPreviewsBlockedByMissingBrowserCapture ?? 0} blocked from implementation screenshot capture.` },
     { label: "Mobile Screen Readiness", complete: mobileReadyScreens, total: Math.max(1, mobileScreenTotal), value: percent(mobileReadyScreens, mobileScreenTotal), detail: `${screenState?.stats.safeAreaBlockers ?? 0} safe-area blockers, ${screenState?.stats.touchBlockers ?? 0} touch blockers, ${screenState?.stats.iosBlockers ?? 0} iOS blockers, ${screenState?.stats.androidBlockers ?? 0} Android blockers.` },
     { label: "Mobile Component Readiness", complete: mobileReadyComponents, total: Math.max(1, mobileComponentTotal), value: percent(mobileReadyComponents, mobileComponentTotal), detail: `${componentState?.stats.touchBlockers ?? 0} touch blockers, ${componentState?.stats.safeAreaBlockers ?? 0} safe-area blockers, ${componentState?.stats.iosBlockers ?? 0} iOS blockers, ${componentState?.stats.androidBlockers ?? 0} Android blockers.` },
-    { label: "AI Agent Readiness", complete: aiAgentScore.complete, total: aiAgentScore.total, value: aiAgentScore.value, detail: `${aiAgentState?.stats.missingOpenEyeArt ?? 0} missing open-eye, ${aiAgentState?.stats.missingBlinkArt ?? 0} missing blink, ${aiAgentState?.stats.missingOfflineArt ?? 0} missing offline, ${aiAgentState?.stats.webReady ?? 0} web-ready, ${aiAgentState?.stats.robloxReady ?? 0} Roblox-ready, ${aiAgentState?.stats.mobileReady ?? 0} mobile-ready.` },
+    { label: "AI Agent Readiness", complete: aiAgentScore.complete, total: aiAgentScore.total, value: aiAgentScore.value, detail: `${aiAgentState?.stats.selectableAgents ?? 0} selectable agents, ${aiAgentState?.stats.selectableVariants ?? 0} selectable variants, ${aiAgentState?.stats.completeThreeStateArtSets ?? 0} complete open/blink/offline art sets, ${aiAgentState?.stats.missingOpenEyeArt ?? 0} missing open-eye, ${aiAgentState?.stats.missingBlinkArt ?? 0} missing blink, ${aiAgentState?.stats.missingOfflineArt ?? 0} missing offline.` },
     { label: "Architecture Health", complete: architectureSectionsCurrent, total: Math.max(1, architectureSectionsTotal), value: architectureState?.healthScore ?? 0, detail: `${architectureState?.outstandingDecisions.length ?? 0} outstanding decisions, architecture version ${architectureState?.architectureVersion.current ?? "not loaded"}.` }
   ];
   if (survivalPack) {

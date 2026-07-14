@@ -307,6 +307,23 @@ export type AiAgentDefinition = {
   defaultForNewPlayers: boolean;
   eraAvailability: Record<string, { available: boolean; visualTheme: string; skinId?: string }>;
   colorTheme: { primary: string; secondary: string; accent: string };
+  baseVariantId: string;
+  availableVariantIds: string[];
+  assetKeys: {
+    open: string;
+    blink: string;
+    offline: string;
+    working?: string;
+    thinking?: string;
+    warning?: string;
+    celebration?: string;
+  };
+  presentation: {
+    portraitShape: "circle" | "hex" | "square";
+    preferredPanelMode: "compact" | "profile" | "dialogue";
+    colorTheme: { primary: string; secondary: string; accent: string };
+    fallbackVariantId: string;
+  };
   headAssetKey: string;
   eyesOpenAssetKey: string;
   eyesBlinkAssetKey: string;
@@ -332,6 +349,45 @@ export type AiAgentDefinition = {
   aliases?: string[];
 };
 
+export type AiAgentVariantDefinition = {
+  id: string;
+  agentId: string;
+  displayName: string;
+  shortDisplayName: string;
+  description: string;
+  tier: number;
+  variantType: "base" | "era" | "premium" | "event" | "achievement";
+  unlockRequirements: RequirementMap;
+  unlockText: string;
+  progressionMapping: {
+    cosmeticIdentity: boolean;
+    automationPowerSource: "automation_upgrade_levels";
+    notes: string;
+  };
+  assetKeys: {
+    head: string;
+    open: string;
+    blink: string;
+    offline: string;
+    working?: string;
+    thinking?: string;
+    warning?: string;
+    celebration?: string;
+  };
+  safeFallbacks: Partial<Record<AiAgentVisualState | "head", string>>;
+  platformReadiness: {
+    web: "ready" | "missing";
+    roblox: "ready" | "missing";
+    ios: "ready" | "missing";
+    android: "ready" | "missing";
+    preview: "ready" | "missing";
+    transparency: "required";
+  };
+  status: "available" | "locked" | "retired";
+  approvalState: "draft" | "needs_review" | "approved";
+  publishState: "draft" | "published";
+};
+
 export type AiAgentPersonalityDefinition = {
   id: string;
   displayName: string;
@@ -353,6 +409,8 @@ export type AiAgentAnimationProfileDefinition = {
   blinkDurationMs: number;
   doubleBlinkChance: number;
   reducedMotionBehavior: "static_open";
+  visibleOnlyBehavior: "pause_when_hidden";
+  allowedStates: AiAgentVisualState[];
 };
 
 export type AutomationPresentationDefinition = {
@@ -371,8 +429,12 @@ export type AutomationPresentationDefinition = {
 export type AiAgentSaveSchemaDefinition = {
   id: string;
   selectedAiAgentIdDefault: string;
+  selectedAiAgentVariantIdDefault: string;
   fields: {
     selectedAiAgentId: { status: "active"; default: string; notes: string };
+    selectedAiAgentVariantId: { status: "active"; default: string; notes: string };
+    unlockedAiAgentIds: { status: "player_owned"; default: string[]; notes: string };
+    unlockedAiAgentVariantIds: { status: "player_owned"; default: string[]; notes: string };
     selectedAiAgentSkinId: { status: "future"; default: null; notes: string };
     selectedEyeColorId: { status: "future"; default: null; notes: string };
     selectedPersonalityId: { status: "future"; default: null; notes: string };
@@ -521,6 +583,7 @@ export type GameRuntimeData = {
   economyUsageRelationships: EconomyUsageRelationships;
   inventoryResourceMetadata: InventoryResourceMetadata[];
   aiAgents: AiAgentDefinition[];
+  aiAgentVariants: AiAgentVariantDefinition[];
   aiAgentPersonalities: AiAgentPersonalityDefinition[];
   aiAgentAnimationProfiles: AiAgentAnimationProfileDefinition[];
   automationPresentation: AutomationPresentationDefinition;

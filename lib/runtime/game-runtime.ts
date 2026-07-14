@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { civilizationAges } from "@/data/civilization-identity";
-import { defaultAiAgentId, getAiAgentRuntimeModules } from "@/lib/ai-agents";
+import { aiAgentSafePublishedDefaultArtKeys, defaultAiAgentId, defaultAiAgentVariantId, getAiAgentRuntimeModules } from "@/lib/ai-agents";
 import { ARCHITECTURE_VERSION } from "@/lib/architecture/version";
 import { getAssetProductionRuntimeOverrides } from "@/lib/assets/asset-production";
 import { getAppliedGameArtAssets } from "@/lib/assets/game-art-import";
@@ -41,7 +41,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 12;
+export const gameRuntimeContentVersion = 13;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -53,6 +53,7 @@ export type RobloxRuntimeExportPayload = {
   economyUsageRelationships: GameRuntimeData["economyUsageRelationships"];
   inventoryResourceMetadata: GameRuntimeData["inventoryResourceMetadata"];
   aiAgents: GameRuntimeData["aiAgents"];
+  aiAgentVariants: GameRuntimeData["aiAgentVariants"];
   aiAgentPersonalities: GameRuntimeData["aiAgentPersonalities"];
   aiAgentAnimationProfiles: GameRuntimeData["aiAgentAnimationProfiles"];
   automationPresentation: GameRuntimeData["automationPresentation"];
@@ -418,6 +419,17 @@ function metadata(overrides: Partial<RuntimeMetadata> = {}): RuntimeMetadata {
         preserveRule: "If a save contains an unknown selectedAiAgentId, clients should render the default AI Agent while preserving the unresolved value for diagnostics.",
         introducedContentVersion: 12,
         notes: "AI Agent is a cosmetic/presentation companion layer over the existing automation system."
+      },
+      {
+        id: "migration_selected_ai_agent_variant_default",
+        targetId: defaultAiAgentVariantId,
+        field: "selectedAiAgentVariantId",
+        previousDefault: null,
+        currentDefault: defaultAiAgentVariantId,
+        applyOnlyWhen: "A save does not contain selectedAiAgentVariantId.",
+        preserveRule: "If a save contains an unknown selectedAiAgentVariantId, clients should render the default variant while preserving the unresolved value for diagnostics.",
+        introducedContentVersion: 13,
+        notes: "AI Agent variant selection is cosmetic only. Automation upgrade levels remain the source of Labor Assistance strength."
       }
     ],
     ...overrides
@@ -488,6 +500,7 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
       .sort((left, right) => left.eraIndex - right.eraIndex || left.eraId.localeCompare(right.eraId)),
     inventoryResourceMetadata: [...runtimeData.inventoryResourceMetadata].sort(byId),
     aiAgents: [...runtimeData.aiAgents].sort(byId),
+    aiAgentVariants: [...runtimeData.aiAgentVariants].sort(byId),
     aiAgentPersonalities: [...runtimeData.aiAgentPersonalities].sort(byId),
     aiAgentAnimationProfiles: [...runtimeData.aiAgentAnimationProfiles].sort(byId),
     resources: [...runtimeData.resources].sort(byId),
@@ -806,9 +819,12 @@ function validateMobileClientProfiles(runtimeData: Pick<GameRuntimeData, "client
   }
 }
 
-function validateAiAgents(runtimeData: Pick<GameRuntimeData, "aiAgents" | "aiAgentPersonalities" | "aiAgentAnimationProfiles" | "automationPresentation" | "defaultAiAgentId" | "aiAgentSaveSchema" | "assets">, issues: ImportIssue[]) {
+function validateAiAgents(runtimeData: Pick<GameRuntimeData, "aiAgents" | "aiAgentVariants" | "aiAgentPersonalities" | "aiAgentAnimationProfiles" | "automationPresentation" | "defaultAiAgentId" | "aiAgentSaveSchema" | "assets">, issues: ImportIssue[]) {
   const agents = runtimeData.aiAgents;
   const agentIds = new Set(agents.map((agent) => agent.id));
+  const variants = runtimeData.aiAgentVariants;
+  const variantIds = new Set(variants.map((variant) => variant.id));
+  const safePublishedArtKeys = new Set<string>(aiAgentSafePublishedDefaultArtKeys);
   const personalityIds = new Set(runtimeData.aiAgentPersonalities.map((personality) => personality.id));
   const animationProfileIds = new Set(runtimeData.aiAgentAnimationProfiles.map((profile) => profile.id));
   const assetsByKey = new Set(runtimeData.assets.flatMap((asset) => [asset.artKey, asset.iconKey].filter(Boolean) as string[]));
@@ -827,8 +843,28 @@ function validateAiAgents(runtimeData: Pick<GameRuntimeData, "aiAgents" | "aiAge
   if (runtimeData.aiAgentSaveSchema.selectedAiAgentIdDefault !== runtimeData.defaultAiAgentId || runtimeData.aiAgentSaveSchema.fields.selectedAiAgentId.default !== runtimeData.defaultAiAgentId) {
     issues.push({ severity: "error", code: "ai_agent_save_default_invalid", message: "AI Agent save schema must default selectedAiAgentId to defaultAiAgentId.", records: [runtimeData.aiAgentSaveSchema.id, runtimeData.defaultAiAgentId] });
   }
+  if (!variantIds.has(defaultAiAgentVariantId)) {
+    issues.push({ severity: "error", code: "ai_agent_default_variant_missing", message: "Runtime must publish the default AI Agent variant.", records: [defaultAiAgentVariantId] });
+  }
+  if (runtimeData.aiAgentSaveSchema.selectedAiAgentVariantIdDefault !== defaultAiAgentVariantId || runtimeData.aiAgentSaveSchema.fields.selectedAiAgentVariantId.default !== defaultAiAgentVariantId) {
+    issues.push({ severity: "error", code: "ai_agent_variant_save_default_invalid", message: "AI Agent save schema must default selectedAiAgentVariantId to the default variant.", records: [runtimeData.aiAgentSaveSchema.id, defaultAiAgentVariantId] });
+  }
+  if (!runtimeData.aiAgentSaveSchema.fields.unlockedAiAgentIds.default.includes(runtimeData.defaultAiAgentId) || !runtimeData.aiAgentSaveSchema.fields.unlockedAiAgentVariantIds.default.includes(defaultAiAgentVariantId)) {
+    issues.push({ severity: "error", code: "ai_agent_unlock_defaults_invalid", message: "New-player AI Agent unlock defaults must include the default agent and default variant.", records: [runtimeData.defaultAiAgentId, defaultAiAgentVariantId] });
+  }
   if (runtimeData.automationPresentation.systemId !== "automation" || runtimeData.automationPresentation.displayName !== "AI Agent" || runtimeData.automationPresentation.powerLabel !== "Labor Assistance") {
     issues.push({ severity: "error", code: "automation_presentation_invalid", message: "Automation presentation must preserve automation system identity while exposing AI Agent labels.", records: [runtimeData.automationPresentation.id] });
+  }
+
+  for (const profile of runtimeData.aiAgentAnimationProfiles) {
+    if (profile.visibleOnlyBehavior !== "pause_when_hidden") {
+      issues.push({ severity: "error", code: "ai_agent_animation_visibility_invalid", message: "AI Agent blink profiles must pause when hidden for client performance.", records: [profile.id] });
+    }
+    for (const state of ["idle", "blink", "working", "thinking", "researching", "celebrating", "warning", "offline"] as const) {
+      if (!profile.allowedStates.includes(state)) {
+        issues.push({ severity: "error", code: "ai_agent_animation_state_missing", message: "AI Agent animation profile is missing a required visual state.", records: [profile.id, state] });
+      }
+    }
   }
 
   for (const agent of agents) {
@@ -841,11 +877,23 @@ function validateAiAgents(runtimeData: Pick<GameRuntimeData, "aiAgents" | "aiAge
     if (Object.keys(agent.gameplayModifiers).length) {
       issues.push({ severity: "error", code: "ai_agent_gameplay_modifier_forbidden", message: "Cosmetic AI Agents must not define gameplay modifiers in v1.0.", records: [agent.id] });
     }
+    if (!variantIds.has(agent.baseVariantId)) {
+      issues.push({ severity: "error", code: "ai_agent_base_variant_missing", message: "AI Agent baseVariantId must resolve to a published variant.", records: [agent.id, agent.baseVariantId] });
+    }
+    for (const variantId of agent.availableVariantIds) {
+      if (!variantIds.has(variantId)) {
+        issues.push({ severity: "error", code: "ai_agent_available_variant_missing", message: "AI Agent availableVariantIds must resolve to published variants.", records: [agent.id, variantId] });
+      }
+    }
+    if (agent.presentation.fallbackVariantId && !variantIds.has(agent.presentation.fallbackVariantId)) {
+      issues.push({ severity: "error", code: "ai_agent_fallback_variant_missing", message: "AI Agent presentation fallbackVariantId must resolve.", records: [agent.id, agent.presentation.fallbackVariantId] });
+    }
     const keyValues = [
       agent.headAssetKey,
       agent.eyesOpenAssetKey,
       agent.eyesBlinkAssetKey,
       agent.eyesClosedAssetKey,
+      ...Object.values(agent.assetKeys).filter(Boolean),
       ...Object.values(agent.expressionAssets).filter(Boolean)
     ];
     for (const assetKey of keyValues) {
@@ -853,13 +901,40 @@ function validateAiAgents(runtimeData: Pick<GameRuntimeData, "aiAgents" | "aiAge
         issues.push({ severity: "error", code: "ai_agent_asset_key_missing", message: "AI Agent asset keys must be populated or explicitly marked missing.", records: [agent.id] });
         continue;
       }
-      if (!assetsByKey.has(assetKey) && agent.assetReadiness[assetKey] !== "missing") {
+      if (!assetsByKey.has(assetKey) && !safePublishedArtKeys.has(assetKey) && agent.assetReadiness[assetKey] !== "missing") {
         issues.push({ severity: "error", code: "ai_agent_asset_reference_unresolved", message: "AI Agent asset keys must resolve to runtime assets or be explicitly marked missing.", records: [agent.id, assetKey] });
       }
     }
     const profile = runtimeData.aiAgentAnimationProfiles.find((item) => item.id === agent.animationProfileId);
     if (profile && (!agent.eyesOpenAssetKey || !agent.eyesBlinkAssetKey)) {
       issues.push({ severity: "error", code: "ai_agent_blink_assets_missing", message: "Blink animation profile requires valid open and blink asset keys.", records: [agent.id, profile.id] });
+    }
+  }
+
+  for (const variant of variants) {
+    if (!agentIds.has(variant.agentId)) {
+      issues.push({ severity: "error", code: "ai_agent_variant_agent_missing", message: "AI Agent variant agentId must resolve to a published agent.", records: [variant.id, variant.agentId] });
+    }
+    if (variant.progressionMapping.cosmeticIdentity !== true || variant.progressionMapping.automationPowerSource !== "automation_upgrade_levels") {
+      issues.push({ severity: "error", code: "ai_agent_variant_progression_invalid", message: "AI Agent variants must remain cosmetic and keep automation levels as the Labor Assistance power source.", records: [variant.id] });
+    }
+    for (const [slot, assetKey] of Object.entries(variant.assetKeys)) {
+      if (!assetKey) {
+        issues.push({ severity: "error", code: "ai_agent_variant_asset_key_missing", message: "AI Agent variant required asset keys must be populated.", records: [variant.id, slot] });
+        continue;
+      }
+      if (!assetsByKey.has(assetKey) && !safePublishedArtKeys.has(assetKey)) {
+        issues.push({ severity: "error", code: "ai_agent_variant_asset_reference_unresolved", message: "AI Agent variant asset keys must resolve to runtime assets.", records: [variant.id, slot, assetKey] });
+      }
+    }
+    for (const [state, assetKey] of Object.entries(variant.safeFallbacks)) {
+      if (assetKey && !assetsByKey.has(assetKey) && !safePublishedArtKeys.has(assetKey)) {
+        issues.push({ severity: "error", code: "ai_agent_variant_fallback_unresolved", message: "AI Agent variant safe fallbacks must resolve to runtime assets.", records: [variant.id, state, assetKey] });
+      }
+    }
+    const serialized = JSON.stringify(variant);
+    if (/\/Users\/|studio-private:\/\/|\.psd|\.psb|\.ai|SUPABASE|SERVICE_ROLE|PRIVATE_KEY/i.test(serialized)) {
+      issues.push({ severity: "error", code: "ai_agent_variant_private_leak", message: "AI Agent variants must not expose private paths, source masters, or credentials.", records: [variant.id] });
     }
   }
 }
@@ -962,7 +1037,7 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
     issues.push({ severity: "error", code: "metadata_architecture_version_invalid", message: "metadata.architectureVersion must be a valid semantic version matching the Architecture Workspace.", records: ["metadata", runtimeData.metadata.architectureVersion ?? "missing"] });
   }
 
-  for (const [moduleName, rows] of Object.entries({ eras: runtimeData.eras, economyDefinitions: runtimeData.economyDefinitions, eraEconomyProfiles: runtimeData.eraEconomyProfiles, inventoryResourceMetadata: runtimeData.inventoryResourceMetadata, resources: runtimeData.resources, upgradeCategories: runtimeData.upgradeCategories, upgrades: runtimeData.upgrades, assets: runtimeData.assets })) {
+  for (const [moduleName, rows] of Object.entries({ eras: runtimeData.eras, economyDefinitions: runtimeData.economyDefinitions, eraEconomyProfiles: runtimeData.eraEconomyProfiles, inventoryResourceMetadata: runtimeData.inventoryResourceMetadata, aiAgents: runtimeData.aiAgents, aiAgentVariants: runtimeData.aiAgentVariants, resources: runtimeData.resources, upgradeCategories: runtimeData.upgradeCategories, upgrades: runtimeData.upgrades, assets: runtimeData.assets })) {
     const duplicates = duplicateIds(rows as Array<{ id: string }>);
     if (duplicates.length) {
       issues.push({ severity: "error", code: "duplicate_id", message: `${moduleName} contains duplicate IDs.`, records: duplicates });
@@ -1117,6 +1192,7 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     economyUsageRelationships: sorted.economyUsageRelationships,
     inventoryResourceMetadata: sorted.inventoryResourceMetadata,
     aiAgents: sorted.aiAgents,
+    aiAgentVariants: sorted.aiAgentVariants,
     aiAgentPersonalities: sorted.aiAgentPersonalities,
     aiAgentAnimationProfiles: sorted.aiAgentAnimationProfiles,
     automationPresentation: sorted.automationPresentation,
@@ -1284,6 +1360,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     economyUsageRelationships: buildEconomyUsageRelationships(data),
     inventoryResourceMetadata: buildInventoryResourceMetadata(data),
     aiAgents: aiAgentModules.aiAgents,
+    aiAgentVariants: aiAgentModules.aiAgentVariants,
     aiAgentPersonalities: aiAgentModules.aiAgentPersonalities,
     aiAgentAnimationProfiles: aiAgentModules.aiAgentAnimationProfiles,
     automationPresentation: aiAgentModules.automationPresentation,
@@ -1316,6 +1393,7 @@ export async function getGameRuntimeData() {
     economyUsageRelationships: base.economyUsageRelationships,
     inventoryResourceMetadata: base.inventoryResourceMetadata,
     aiAgents: base.aiAgents,
+    aiAgentVariants: base.aiAgentVariants,
     aiAgentPersonalities: base.aiAgentPersonalities,
     aiAgentAnimationProfiles: base.aiAgentAnimationProfiles,
     automationPresentation: base.automationPresentation,
@@ -1510,6 +1588,7 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     assets: normalizeImportedAssets(payload, base.assets),
     balance: normalizeBalance(payload, base.balance),
     aiAgents: base.aiAgents,
+    aiAgentVariants: base.aiAgentVariants,
     aiAgentPersonalities: base.aiAgentPersonalities,
     aiAgentAnimationProfiles: base.aiAgentAnimationProfiles,
     automationPresentation: base.automationPresentation,

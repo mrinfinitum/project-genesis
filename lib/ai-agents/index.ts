@@ -5,6 +5,7 @@ import type {
   AiAgentDefinition,
   AiAgentPersonalityDefinition,
   AiAgentSaveSchemaDefinition,
+  AiAgentVariantDefinition,
   AiAgentVisualState,
   AutomationPresentationDefinition
 } from "@/types/runtime";
@@ -100,6 +101,7 @@ export type AiAgentSummary = Pick<AiAgentRecord, "id" | "displayName" | "shortDi
 export type AiAgentLibraryState = {
   agents: AiAgentSummary[];
   records: AiAgentRecord[];
+  variants: AiAgentVariantDefinition[];
   personalities: AiAgentPersonalityDefinition[];
   animationProfiles: AiAgentAnimationProfileDefinition[];
   automationPresentation: AutomationPresentationDefinition;
@@ -110,6 +112,10 @@ export type AiAgentLibraryState = {
   stats: {
     total: number;
     published: number;
+    publishedVariants: number;
+    selectableAgents: number;
+    selectableVariants: number;
+    completeThreeStateArtSets: number;
     approved: number;
     missingArtwork: number;
     missingOpenEyeArt: number;
@@ -127,9 +133,12 @@ export type AiAgentLibraryState = {
 };
 
 export const defaultAiAgentId = "AI-AGENT-DEFAULT";
+export const defaultAiAgentVariantId = "AI-VARIANT-DEFAULT-T1";
 export const defaultAiAgentPersonalityId = "AI-PERSONALITY-OPTIMIST";
 export const defaultAiAgentAnimationProfileId = "AI-ANIM-BLINK-DEFAULT";
 export const automationPresentationId = "AI-AUTOMATION-PRESENTATION-DEFAULT";
+export const aiAgentSafePublishedDefaultArtKeys = ["auto_robot_circle", "auto_robot_icon", "auto_robot_blink_icon"] as const;
+const safePublishedDefaultArtKeys = new Set<string>(aiAgentSafePublishedDefaultArtKeys);
 export const aiAgentStates: AiAgentState[] = ["Idle", "Blink", "Thinking", "Working", "Research", "Offline", "Warning", "Celebration", "Sleeping", "Surprised"];
 export const aiAgentRuntimeStates: AiAgentVisualState[] = ["idle", "blink", "working", "thinking", "researching", "celebrating", "warning", "offline", "sleeping", "surprised"];
 export const aiAgentDerivativeSizes = [64, 96, 128, 256, 512, 1024] as const;
@@ -156,7 +165,9 @@ export const aiAgentAnimationProfiles: AiAgentAnimationProfileDefinition[] = [
     maxIntervalMs: 7000,
     blinkDurationMs: 120,
     doubleBlinkChance: 0.12,
-    reducedMotionBehavior: "static_open"
+    reducedMotionBehavior: "static_open",
+    visibleOnlyBehavior: "pause_when_hidden",
+    allowedStates: ["idle", "blink", "working", "thinking", "researching", "celebrating", "warning", "offline"]
   }
 ];
 
@@ -176,8 +187,12 @@ export const automationPresentation: AutomationPresentationDefinition = {
 export const aiAgentSaveSchema: AiAgentSaveSchemaDefinition = {
   id: "AI-AGENT-SAVE-SCHEMA-V1",
   selectedAiAgentIdDefault: defaultAiAgentId,
+  selectedAiAgentVariantIdDefault: defaultAiAgentVariantId,
   fields: {
     selectedAiAgentId: { status: "active", default: defaultAiAgentId, notes: "Active v1 player preference. Studio exports definitions only, not player-owned state." },
+    selectedAiAgentVariantId: { status: "active", default: defaultAiAgentVariantId, notes: "Active v1 cosmetic variant preference. Variant selection does not alter automation power." },
+    unlockedAiAgentIds: { status: "player_owned", default: [defaultAiAgentId], notes: "Player-owned unlock state belongs to the Game save. Studio publishes only schema/default guidance." },
+    unlockedAiAgentVariantIds: { status: "player_owned", default: [defaultAiAgentVariantId], notes: "Player-owned variant unlock state belongs to the Game save." },
     selectedAiAgentSkinId: { status: "future", default: null, notes: "Reserved for future cosmetic skin selection." },
     selectedEyeColorId: { status: "future", default: null, notes: "Reserved for future eye-color cosmetic selection." },
     selectedPersonalityId: { status: "future", default: null, notes: "Reserved for future personality override selection." }
@@ -189,6 +204,13 @@ export const aiAgentSaveSchema: AiAgentSaveSchemaDefinition = {
       defaultValue: defaultAiAgentId,
       unknownIdBehavior: "Fall back to default for rendering, preserve unresolved value for diagnostics if the save contains an unknown agent ID.",
       notes: "Saves without selectedAiAgentId receive AI-AGENT-DEFAULT."
+    },
+    {
+      id: "migration_selected_ai_agent_variant_default",
+      field: "selectedAiAgentVariantId",
+      defaultValue: defaultAiAgentVariantId,
+      unknownIdBehavior: "Fall back to the default variant for rendering, preserve unresolved value for diagnostics if the save contains an unknown variant ID.",
+      notes: "Saves without selectedAiAgentVariantId receive AI-VARIANT-DEFAULT-T1."
     }
   ]
 };
@@ -266,24 +288,24 @@ const seedAgents: AiAgentRecord[] = [
     eraAvailability,
     supportedStates: aiAgentStates,
     artworkSlots: [
-      slot("head", "Head/Base Artwork", "ai_agent_default_head", "head", "idle"),
-      slot("eyes-open", "Eyes Open Artwork", "ai_agent_default_eyes_open", "eyes_open", "idle"),
-      slot("eyes-blink", "Blink / Eyes Closed Artwork", "ai_agent_default_eyes_blink", "eyes_blink", "blink"),
-      slot("eyes-closed", "Offline Eyes Closed Artwork", "ai_agent_default_eyes_closed", "eyes_closed", "offline"),
-      slot("idle", "Idle Animation", "ai_agent_default_idle", "idle_animation", "idle", false),
-      slot("blink", "Blink Animation", "ai_agent_default_blink", "blink_animation", "blink", false)
+      slot("head", "Head/Base Artwork", "auto_robot_circle", "head", "idle"),
+      slot("eyes-open", "Eyes Open Artwork", "auto_robot_icon", "eyes_open", "idle"),
+      slot("eyes-blink", "Blink / Eyes Closed Artwork", "auto_robot_blink_icon", "eyes_blink", "blink"),
+      slot("eyes-closed", "Offline Eyes Closed Artwork", "auto_robot_blink_icon", "eyes_closed", "offline"),
+      slot("idle", "Idle Animation", "auto_robot_icon", "idle_animation", "idle", false),
+      slot("blink", "Blink Animation", "auto_robot_blink_icon", "blink_animation", "blink", false)
     ],
     expressionVariants: [
-      expression("idle", "Idle/Open", ["Idle"], "ai_agent_default_expression_idle", true),
-      expression("blink", "Blink/Closed", ["Blink"], "ai_agent_default_expression_blink", true),
-      expression("offline", "Offline", ["Offline"], "ai_agent_default_expression_offline", true),
-      expression("thinking", "Thinking", ["Thinking", "Research"], "ai_agent_default_expression_thinking"),
-      expression("researching", "Research", ["Research"], "ai_agent_default_expression_researching"),
-      expression("working", "Working", ["Working"], "ai_agent_default_expression_working"),
-      expression("warning", "Warning", ["Warning"], "ai_agent_default_expression_warning"),
-      expression("celebrating", "Celebration", ["Celebration"], "ai_agent_default_expression_celebration"),
-      expression("surprised", "Surprised", ["Surprised"], "ai_agent_default_expression_surprised"),
-      expression("sleeping", "Sleeping", ["Sleeping"], "ai_agent_default_expression_sleeping")
+      expression("idle", "Idle/Open", ["Idle"], "auto_robot_icon", true),
+      expression("blink", "Blink/Closed", ["Blink"], "auto_robot_blink_icon", true),
+      expression("offline", "Offline", ["Offline"], "auto_robot_blink_icon", true),
+      expression("thinking", "Thinking", ["Thinking", "Research"], "auto_robot_icon"),
+      expression("researching", "Research", ["Research"], "auto_robot_icon"),
+      expression("working", "Working", ["Working"], "auto_robot_icon"),
+      expression("warning", "Warning", ["Warning"], "auto_robot_blink_icon"),
+      expression("celebrating", "Celebration", ["Celebration"], "auto_robot_icon"),
+      expression("surprised", "Surprised", ["Surprised"], "auto_robot_icon"),
+      expression("sleeping", "Sleeping", ["Sleeping"], "auto_robot_blink_icon")
     ],
     animationProfileId: defaultAiAgentAnimationProfileId,
     dialogueProfile: {
@@ -302,7 +324,7 @@ const seedAgents: AiAgentRecord[] = [
     approvalState: "approved",
     publishState: "published",
     aliases: ["ai_agent_nova", "auto_click_robot", "robot_head"],
-    componentLibraryReferences: ["AiAgentPortrait", "AiAgentPanel", "AiAgentStatus", "AiAgentSelector", "AiAgentCard", "AiAgentExpressionPreview", "AiAgentBlinkPreview"],
+    componentLibraryReferences: ["AiAgentPortrait", "AiAgentPanel", "AiAgentStatus", "AiAgentSelector", "AiAgentCard", "AiAgentVariantCard", "AiAgentExpressionPreview", "AiAgentBlinkPreview"],
     notes: ["Cosmetic v1 agent. No gameplay modifiers or balance changes."]
   },
   {
@@ -356,7 +378,7 @@ const seedAgents: AiAgentRecord[] = [
     approvalState: "draft",
     publishState: "draft",
     aliases: ["ai_agent_orion"],
-    componentLibraryReferences: ["AiAgentPortrait", "AiAgentPanel", "AiAgentStatus", "AiAgentSelector", "AiAgentCard", "AiAgentExpressionPreview", "AiAgentBlinkPreview"],
+    componentLibraryReferences: ["AiAgentPortrait", "AiAgentPanel", "AiAgentStatus", "AiAgentSelector", "AiAgentCard", "AiAgentVariantCard", "AiAgentExpressionPreview", "AiAgentBlinkPreview"],
     notes: ["Future cosmetic unlock. No gameplay modifiers or balance changes."]
   }
 ];
@@ -375,6 +397,11 @@ function runtimeReadiness(status: AiAgentArtworkStatus): AiAgentDefinition["asse
   if (status === "Approved" || status === "Needs Review") return "approved";
   if (status === "Source Uploaded" || status === "Derivatives Queued") return "source_uploaded";
   return "missing";
+}
+
+function runtimeReadinessFor(status: AiAgentArtworkStatus, artKey: string): AiAgentDefinition["assetReadiness"][string] {
+  if (safePublishedDefaultArtKeys.has(artKey)) return "published";
+  return runtimeReadiness(status);
 }
 
 function enrichSlot(slotRecord: AiAgentArtworkSlot, assets: ProductionAsset[] | undefined): AiAgentArtworkSlot {
@@ -437,10 +464,11 @@ function runtimeAgent(agent: AiAgentRecord): AiAgentDefinition {
   const eyesOpen = slotByKind.get("eyes_open");
   const eyesBlink = slotByKind.get("eyes_blink");
   const eyesClosed = slotByKind.get("eyes_closed");
+  const baseVariantId = agent.id === defaultAiAgentId ? defaultAiAgentVariantId : `AI-VARIANT-${agent.id.replace(/^AI-AGENT-/, "")}-T1`;
   const expressionAssets = Object.fromEntries(agent.expressionVariants.map((variant) => [variant.id, variant.artKey])) as AiAgentDefinition["expressionAssets"];
   const assetReadiness = Object.fromEntries([
-    ...agent.artworkSlots.map((slotRecord) => [slotRecord.artKey, runtimeReadiness(slotRecord.status)]),
-    ...agent.expressionVariants.map((variant) => [variant.artKey, runtimeReadiness(variant.status)])
+    ...agent.artworkSlots.map((slotRecord) => [slotRecord.artKey, runtimeReadinessFor(slotRecord.status, slotRecord.artKey)]),
+    ...agent.expressionVariants.map((variant) => [variant.artKey, runtimeReadinessFor(variant.status, variant.artKey)])
   ]);
   return {
     id: agent.id,
@@ -453,6 +481,23 @@ function runtimeAgent(agent: AiAgentRecord): AiAgentDefinition {
     defaultForNewPlayers: agent.defaultForNewPlayers,
     eraAvailability: agent.eraAvailability,
     colorTheme: agent.colorTheme,
+    baseVariantId,
+    availableVariantIds: [baseVariantId],
+    assetKeys: {
+      open: eyesOpen?.artKey ?? "",
+      blink: eyesBlink?.artKey ?? "",
+      offline: eyesClosed?.artKey ?? "",
+      working: expressionAssets.working ?? eyesOpen?.artKey ?? "",
+      thinking: expressionAssets.thinking ?? eyesOpen?.artKey ?? "",
+      warning: expressionAssets.warning ?? eyesClosed?.artKey ?? "",
+      celebration: expressionAssets.celebrating ?? eyesOpen?.artKey ?? ""
+    },
+    presentation: {
+      portraitShape: "circle",
+      preferredPanelMode: "compact",
+      colorTheme: agent.colorTheme,
+      fallbackVariantId: baseVariantId
+    },
     headAssetKey: head?.artKey ?? "",
     eyesOpenAssetKey: eyesOpen?.artKey ?? "",
     eyesBlinkAssetKey: eyesBlink?.artKey ?? "",
@@ -479,10 +524,76 @@ function runtimeAgent(agent: AiAgentRecord): AiAgentDefinition {
   };
 }
 
+function runtimeVariant(agent: AiAgentRecord): AiAgentVariantDefinition {
+  const slotByKind = new Map(agent.artworkSlots.map((slotRecord) => [slotRecord.kind, slotRecord]));
+  const readyKinds = ["head", "eyes_open", "eyes_blink", "eyes_closed"] as const;
+  const coreArtReady = readyKinds.every((kind) => {
+    const slotRecord = slotByKind.get(kind);
+    return Boolean(slotRecord && (["Approved", "Published"].includes(slotRecord.status) || safePublishedDefaultArtKeys.has(slotRecord.artKey)));
+  });
+  const open = slotByKind.get("eyes_open")?.artKey ?? "";
+  const blink = slotByKind.get("eyes_blink")?.artKey ?? open;
+  const offline = slotByKind.get("eyes_closed")?.artKey ?? blink;
+  const head = slotByKind.get("head")?.artKey ?? open;
+  const expressionAssets = Object.fromEntries(agent.expressionVariants.map((variant) => [variant.id, variant.artKey])) as Partial<Record<AiAgentVisualState, string>>;
+  return {
+    id: agent.id === defaultAiAgentId ? defaultAiAgentVariantId : `AI-VARIANT-${agent.id.replace(/^AI-AGENT-/, "")}-T1`,
+    agentId: agent.id,
+    displayName: `${agent.displayName} Mk I`,
+    shortDisplayName: `${agent.shortDisplayName} I`,
+    description: "Base cosmetic AI Agent visual variant. Automation level controls Labor Assistance separately.",
+    tier: 1,
+    variantType: "base",
+    unlockRequirements: agent.defaultForNewPlayers ? { default: true } : { anyOf: agent.unlockRequirements },
+    unlockText: agent.defaultForNewPlayers ? "Available by default" : "Requires linked progression unlocks",
+    progressionMapping: {
+      cosmeticIdentity: true,
+      automationPowerSource: "automation_upgrade_levels",
+      notes: "AI Agent variants are visual identity only. Automation upgrade levels continue to define Labor Assistance strength."
+    },
+    assetKeys: {
+      head,
+      open,
+      blink,
+      offline,
+      working: expressionAssets.working ?? open,
+      thinking: expressionAssets.thinking ?? open,
+      warning: expressionAssets.warning ?? offline,
+      celebration: expressionAssets.celebrating ?? open
+    },
+    safeFallbacks: {
+      working: open,
+      thinking: open,
+      researching: open,
+      warning: offline,
+      celebrating: open,
+      sleeping: offline,
+      surprised: open
+    },
+    platformReadiness: {
+      web: coreArtReady ? "ready" : "missing",
+      roblox: coreArtReady ? "ready" : "missing",
+      ios: coreArtReady ? "ready" : "missing",
+      android: coreArtReady ? "ready" : "missing",
+      preview: coreArtReady ? "ready" : "missing",
+      transparency: "required"
+    },
+    status: agent.status,
+    approvalState: agent.approvalState,
+    publishState: agent.publishState
+  };
+}
+
+function publishedAgentRecords(records: AiAgentRecord[]) {
+  return records.filter((agent) => agent.status === "available" && agent.approvalState === "approved" && agent.publishState === "published");
+}
+
 export function getAiAgentRuntimeModules(assetState?: AssetProductionState) {
   const records = seedAgents.map((agent) => enrichAgent(agent, assetState));
+  const publishedRecords = publishedAgentRecords(records);
   return {
-    aiAgents: records.map(runtimeAgent),
+    aiAgents: publishedRecords.map(runtimeAgent),
+    aiAgentVariants: publishedRecords.map(runtimeVariant),
     aiAgentPersonalities,
     aiAgentAnimationProfiles,
     automationPresentation,
@@ -494,9 +605,15 @@ export function getAiAgentRuntimeModules(assetState?: AssetProductionState) {
 export async function getAiAgentLibraryState(assetState?: AssetProductionState): Promise<AiAgentLibraryState> {
   const records = seedAgents.map((agent) => enrichAgent(agent, assetState));
   const agents = records.map(summarize);
+  const variants = records.map(runtimeVariant);
+  const completeThreeStateArtSets = records.filter((agent) => {
+    const requiredKinds = ["eyes_open", "eyes_blink", "eyes_closed"] as const;
+    return requiredKinds.every((kind) => ["Approved", "Published"].includes(agent.artworkSlots.find((slotRecord) => slotRecord.kind === kind)?.status ?? "Missing"));
+  }).length;
   return {
     agents,
     records,
+    variants,
     personalities: aiAgentPersonalities,
     animationProfiles: aiAgentAnimationProfiles,
     automationPresentation,
@@ -507,6 +624,10 @@ export async function getAiAgentLibraryState(assetState?: AssetProductionState):
     stats: {
       total: records.length,
       published: records.filter((agent) => agent.publishState === "published").length,
+      publishedVariants: variants.filter((variant) => variant.publishState === "published").length,
+      selectableAgents: records.filter((agent) => agent.status === "available" && agent.approvalState === "approved" && agent.publishState === "published").length,
+      selectableVariants: variants.filter((variant) => variant.status === "available" && variant.approvalState === "approved" && variant.publishState === "published").length,
+      completeThreeStateArtSets,
       approved: records.filter((agent) => agent.approvalState === "approved").length,
       missingArtwork: agents.filter((agent) => agent.blockers.length > 0).length,
       missingOpenEyeArt: records.filter((agent) => !["Approved", "Published"].includes(agent.artworkSlots.find((slotRecord) => slotRecord.kind === "eyes_open")?.status ?? "Missing")).length,
@@ -527,14 +648,20 @@ export async function getAiAgentLibraryState(assetState?: AssetProductionState):
 export function validateAiAgentLibrary(state: AiAgentLibraryState) {
   const issues: string[] = [];
   const ids = state.records.map((agent) => agent.id);
+  const variantIds = state.variants.map((variant) => variant.id);
   if (new Set(ids).size !== ids.length) issues.push("AI agent IDs must be unique.");
+  if (new Set(variantIds).size !== variantIds.length) issues.push("AI agent variant IDs must be unique.");
   if (!state.records.length) issues.push("At least one AI agent record is required.");
+  if (!state.variants.length) issues.push("At least one AI agent variant record is required.");
   const defaults = state.records.filter((agent) => agent.defaultForNewPlayers);
   if (defaults.length !== 1) issues.push("Exactly one AI agent must be defaultForNewPlayers.");
   if (state.defaultAiAgentId !== defaultAiAgentId) issues.push(`Default AI agent ID must be ${defaultAiAgentId}.`);
   const defaultAgent = state.records.find((agent) => agent.id === state.defaultAiAgentId);
   if (!defaultAgent) issues.push("Default AI agent record is missing.");
   if (defaultAgent && (defaultAgent.status !== "available" || defaultAgent.approvalState !== "approved" || defaultAgent.publishState !== "published")) issues.push("Default AI agent must be available, approved, and published.");
+  const defaultVariant = state.variants.find((variant) => variant.id === defaultAiAgentVariantId);
+  if (!defaultVariant) issues.push(`Default AI agent variant ${defaultAiAgentVariantId} is missing.`);
+  if (state.saveSchema.selectedAiAgentVariantIdDefault !== defaultAiAgentVariantId) issues.push(`Default AI agent variant save schema must be ${defaultAiAgentVariantId}.`);
   for (const agent of state.records) {
     if (!agent.artworkSlots.some((slotRecord) => slotRecord.kind === "head")) issues.push(`${agent.id} is missing head artwork.`);
     if (!agent.artworkSlots.some((slotRecord) => slotRecord.kind === "eyes_open")) issues.push(`${agent.id} is missing open-eye artwork.`);
@@ -548,7 +675,12 @@ export function validateAiAgentLibrary(state: AiAgentLibraryState) {
       if (!slotRecord.alphaRequired) issues.push(`${agent.id}/${slotRecord.id} must require alpha.`);
     }
     if (!agent.componentLibraryReferences.includes("AiAgentPortrait")) issues.push(`${agent.id} must reference AiAgentPortrait.`);
+    if (!agent.componentLibraryReferences.includes("AiAgentVariantCard")) issues.push(`${agent.id} must reference AiAgentVariantCard.`);
     if (JSON.stringify(agent).includes("/Users/") || JSON.stringify(agent).includes("studio-private://")) issues.push(`${agent.id} leaked a private source path.`);
+  }
+  for (const variantRecord of state.variants) {
+    if (!ids.includes(variantRecord.agentId)) issues.push(`${variantRecord.id} must resolve agentId ${variantRecord.agentId}.`);
+    if (!variantRecord.progressionMapping.cosmeticIdentity || variantRecord.progressionMapping.automationPowerSource !== "automation_upgrade_levels") issues.push(`${variantRecord.id} must remain cosmetic and use automation upgrade levels for Labor Assistance strength.`);
   }
   return { valid: issues.length === 0, issues };
 }

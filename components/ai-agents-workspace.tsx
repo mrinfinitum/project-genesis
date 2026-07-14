@@ -162,6 +162,32 @@ function AgentDetail({ record }: { record: AiAgentRecord }) {
   );
 }
 
+function VariantCard({ variant }: { variant: AiAgentLibraryState["variants"][number] }) {
+  return (
+    <article className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="font-black text-white">{variant.displayName}</p>
+          <p className="mt-1 font-mono text-xs text-cyan-200">{variant.id}</p>
+        </div>
+        <WorkspaceBadge value={variant.publishState} />
+      </div>
+      <p className="mt-3 text-sm leading-6 text-slate-300">{variant.description}</p>
+      <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+        <WorkspaceMiniStat label="Agent" value={variant.agentId} />
+        <WorkspaceMiniStat label="Unlock" value={variant.unlockText} />
+        <WorkspaceMiniStat label="Web" value={variant.platformReadiness.web} />
+        <WorkspaceMiniStat label="Roblox" value={variant.platformReadiness.roblox} />
+      </div>
+      <div className="mt-3 grid gap-2 sm:grid-cols-2">
+        {Object.entries(variant.assetKeys).map(([slot, artKey]) => (
+          <WorkspaceMiniStat key={slot} label={slot} value={artKey} />
+        ))}
+      </div>
+    </article>
+  );
+}
+
 export function AiAgentsWorkspace({ state }: { state: AiAgentLibraryState }) {
   const [query, setQuery] = useState("");
   const [rarity, setRarity] = useState<(typeof rarityOptions)[number]>("All");
@@ -186,6 +212,9 @@ export function AiAgentsWorkspace({ state }: { state: AiAgentLibraryState }) {
         stats={[
           { label: "Agents", value: state.stats.total },
           { label: "Published", value: state.stats.published },
+          { label: "Variants", value: state.variants.length },
+          { label: "Selectable", value: state.stats.selectableVariants },
+          { label: "3-State Art", value: state.stats.completeThreeStateArtSets },
           { label: "Missing Art", value: state.stats.missingArtwork },
           { label: "Outputs / Slot", value: state.stats.derivativeOutputsPerSlot }
         ]}
@@ -236,6 +265,19 @@ export function AiAgentsWorkspace({ state }: { state: AiAgentLibraryState }) {
       <section className="grid gap-4 xl:grid-cols-2">
         {filtered.map((agent) => <AgentCard key={agent.id} agent={agent} />)}
       </section>
+
+      <WorkspacePanel title="Published Variant Contract" icon={Sparkles}>
+        <div className="grid gap-3 sm:grid-cols-4">
+          <WorkspaceStatTile label="Published Variants" value={state.stats.publishedVariants} />
+          <WorkspaceStatTile label="Selectable Agents" value={state.stats.selectableAgents} />
+          <WorkspaceStatTile label="Selectable Variants" value={state.stats.selectableVariants} />
+          <WorkspaceStatTile label="Automation Power" value="Upgrade Levels" />
+        </div>
+        <p className="mt-4 text-sm leading-6 text-slate-300">Variants are visual identity only. Labor Assistance strength remains controlled by automation upgrade levels and existing automation IDs.</p>
+        <div className="mt-4 grid gap-3 xl:grid-cols-2">
+          {state.variants.map((variant) => <VariantCard key={variant.id} variant={variant} />)}
+        </div>
+      </WorkspacePanel>
 
       <section className="grid gap-4">
         {state.records.map((record) => <AgentDetail key={record.id} record={record} />)}

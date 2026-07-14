@@ -89,10 +89,10 @@ async function main() {
   for (const componentId of ["SideNavigationRail", "TopHudBar", "HudEconomySlot", "ClickPowerControl", "AutoClickControl", "BottomDrawer", "EraNode", "ImageBackedActionButton", "EconomyCounter", "UnlockRequirementList"]) {
     assert(componentState.records.some((record) => record.componentId === componentId), `Missing seeded Dashboard/shared component: ${componentId}.`);
   }
-  for (const componentId of ["AiAgentPortrait", "AiAgentPanel", "AiAgentStatus", "AiAgentSelector", "AiAgentCard", "AiAgentExpressionPreview", "AiAgentBlinkPreview"]) {
+  for (const componentId of ["AiAgentPortrait", "AiAgentPanel", "AiAgentStatus", "AiAgentSelector", "AiAgentCard", "AiAgentVariantCard", "AiAgentExpressionPreview", "AiAgentBlinkPreview"]) {
     const record = componentState.records.find((item) => item.componentId === componentId);
     assert(record, `Missing seeded AI Agent component: ${componentId}.`);
-    assert(record.dataInputs.some((input) => input.id === "aiAgentId" || input.id === "aiAgents" || input.id === "animationProfile"), `${componentId} must consume AI Agent canonical data.`);
+    assert(record.dataInputs.some((input) => input.id === "aiAgentId" || input.id === "aiAgents" || input.id === "aiAgentVariantId" || input.id === "aiAgentVariant" || input.id === "animationProfile"), `${componentId} must consume AI Agent canonical data.`);
   }
 
   const screenIds = new Set(screenState.screens.map((screen) => screen.screenId));

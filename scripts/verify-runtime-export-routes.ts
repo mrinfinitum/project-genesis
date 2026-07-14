@@ -19,7 +19,7 @@ type RuntimeClientProfile = {
 };
 
 type RuntimePayload = {
-  metadata?: { schemaVersion?: string; architectureVersion?: string; contentVersion?: number; checksum?: string; accessLevel?: string; validationStatus?: string; saveMigrationHints?: Array<{ id: string; targetId: string; previousDefault: number; currentDefault: number }> };
+  metadata?: { schemaVersion?: string; architectureVersion?: string; contentVersion?: number; checksum?: string; accessLevel?: string; validationStatus?: string; saveMigrationHints?: Array<{ id: string; targetId: string; previousDefault: unknown; currentDefault: unknown }> };
   eras?: Array<{ id: string; index?: number; name?: string; displayName?: string; shortDisplayName?: string }>;
   economyDefinitions?: Array<{ id: string; iconKey?: string; startingAmount?: number; startingRate?: number; premium?: boolean; spendable?: boolean; manualClickTarget?: boolean; playerFacingHelpText?: string }>;
   eraEconomyProfiles?: Array<{ id: string; eraId: string; eraIndex: number; primaryEconomyId: string; activePrimaryEconomyId: string; manualClickTarget?: string | null; primaryEconomyIds: string[]; secondaryEconomyIds: string[]; fixedHudSlots: string[]; visibleHudEconomyIds: string[]; hudSlots: Array<{ economyId: string; order: number }>; displayOverrides?: Record<string, { displayName?: string }>; visibilityRules?: { useEraHud?: boolean; fixedCoreHud?: boolean; creditsVisible?: boolean } }>;
@@ -28,6 +28,13 @@ type RuntimePayload = {
   resources?: Array<{ id: string }>;
   upgradeCategories?: Array<{ id: string }>;
   upgrades?: Array<{ id: string; categoryId?: string; tabId?: string; eraId?: string; costResourceId?: string | null; costEconomyId?: string | null }>;
+  aiAgents?: Array<{ id: string; defaultForNewPlayers?: boolean; baseVariantId?: string; availableVariantIds?: string[]; assetKeys?: Record<string, string>; gameplayModifiers?: Record<string, unknown> }>;
+  aiAgentVariants?: Array<{ id: string; agentId?: string; assetKeys?: Record<string, string>; progressionMapping?: { cosmeticIdentity?: boolean; automationPowerSource?: string } }>;
+  aiAgentPersonalities?: Array<{ id: string }>;
+  aiAgentAnimationProfiles?: Array<{ id: string; visibleOnlyBehavior?: string; allowedStates?: string[] }>;
+  automationPresentation?: { displayName?: string; powerLabel?: string; systemId?: string };
+  defaultAiAgentId?: string;
+  aiAgentSaveSchema?: { selectedAiAgentIdDefault?: string; selectedAiAgentVariantIdDefault?: string; fields?: { selectedAiAgentId?: { default?: string }; selectedAiAgentVariantId?: { default?: string }; unlockedAiAgentIds?: { default?: string[] }; unlockedAiAgentVariantIds?: { default?: string[] } } };
   clientProfiles?: {
     default?: RuntimeClientProfile;
     roblox?: RuntimeClientProfile;
@@ -100,6 +107,54 @@ function validateRuntimeReferences(payload: RuntimePayload) {
     if (upgrade.eraId) assert(eraIds.has(upgrade.eraId), `Upgrade ${upgrade.id} has unresolved eraId ${upgrade.eraId}.`);
     if (upgrade.costResourceId) assert(resourceIds.has(upgrade.costResourceId), `Upgrade ${upgrade.id} has unresolved costResourceId ${upgrade.costResourceId}.`);
     if (upgrade.costEconomyId) assert(economyIds.has(upgrade.costEconomyId), `Upgrade ${upgrade.id} has unresolved costEconomyId ${upgrade.costEconomyId}.`);
+  }
+}
+
+function validateAiAgentRuntime(payload: RuntimePayload | RobloxPayload, label: string) {
+  const agents = payload.aiAgents ?? [];
+  const variants = payload.aiAgentVariants ?? [];
+  const agentIds = new Set(agents.map((agent) => agent.id));
+  const variantIds = new Set(variants.map((variant) => variant.id));
+  const defaultAgentId = "AI-AGENT-DEFAULT";
+  const defaultVariantId = "AI-VARIANT-DEFAULT-T1";
+
+  assert(agents.length >= 1, `${label} must publish aiAgents.`);
+  assert(variants.length >= 1, `${label} must publish aiAgentVariants.`);
+  assert(payload.defaultAiAgentId === defaultAgentId, `${label} defaultAiAgentId must be ${defaultAgentId}.`);
+  assert(agentIds.has(defaultAgentId), `${label} default AI Agent is missing.`);
+  assert(variantIds.has(defaultVariantId), `${label} default AI Agent variant is missing.`);
+  assert((payload.aiAgentPersonalities?.length ?? 0) >= 8, `${label} must publish AI Agent personalities.`);
+  assert((payload.aiAgentAnimationProfiles?.length ?? 0) >= 1, `${label} must publish AI Agent animation profiles.`);
+  assert(payload.automationPresentation?.systemId === "automation", `${label} automationPresentation must remain linked to automation.`);
+  assert(payload.automationPresentation?.powerLabel === "Labor Assistance", `${label} automationPresentation must expose Labor Assistance.`);
+  assert(payload.aiAgentSaveSchema?.selectedAiAgentIdDefault === defaultAgentId, `${label} selectedAiAgentId default is invalid.`);
+  assert(payload.aiAgentSaveSchema?.selectedAiAgentVariantIdDefault === defaultVariantId, `${label} selectedAiAgentVariantId default is invalid.`);
+  assert(payload.aiAgentSaveSchema?.fields?.unlockedAiAgentIds?.default?.includes(defaultAgentId), `${label} new-player unlockedAiAgentIds must include default agent.`);
+  assert(payload.aiAgentSaveSchema?.fields?.unlockedAiAgentVariantIds?.default?.includes(defaultVariantId), `${label} new-player unlockedAiAgentVariantIds must include default variant.`);
+
+  const defaultAgent = agents.find((agent) => agent.id === defaultAgentId);
+  const defaultVariant = variants.find((variant) => variant.id === defaultVariantId);
+  assert(defaultAgent?.defaultForNewPlayers === true, `${label} default AI Agent must be defaultForNewPlayers.`);
+  assert(defaultAgent?.baseVariantId === defaultVariantId, `${label} default AI Agent baseVariantId must resolve to default variant.`);
+  assert(defaultAgent?.availableVariantIds?.includes(defaultVariantId), `${label} default AI Agent availableVariantIds must include default variant.`);
+  assert(defaultAgent?.assetKeys?.open === "auto_robot_icon", `${label} default AI Agent open asset must use imported robot art.`);
+  assert(defaultAgent?.assetKeys?.blink === "auto_robot_blink_icon", `${label} default AI Agent blink asset must use imported robot art.`);
+  assert(defaultVariant?.agentId === defaultAgentId, `${label} default AI Agent variant must resolve to default agent.`);
+  assert(defaultVariant?.assetKeys?.head === "auto_robot_circle", `${label} default AI Agent variant head asset must use imported robot art.`);
+  assert(defaultVariant?.assetKeys?.open === "auto_robot_icon", `${label} default AI Agent variant open asset must use imported robot art.`);
+  assert(defaultVariant?.assetKeys?.blink === "auto_robot_blink_icon", `${label} default AI Agent variant blink asset must use imported robot art.`);
+  assert(defaultVariant?.progressionMapping?.cosmeticIdentity === true, `${label} AI Agent variants must be cosmetic.`);
+  assert(defaultVariant?.progressionMapping?.automationPowerSource === "automation_upgrade_levels", `${label} AI Agent variants must not own automation power.`);
+
+  for (const agent of agents) {
+    assert(!agent.gameplayModifiers || Object.keys(agent.gameplayModifiers).length === 0, `${label} ${agent.id} must not define gameplay modifiers.`);
+    assert(agent.baseVariantId && variantIds.has(agent.baseVariantId), `${label} ${agent.id} has unresolved baseVariantId ${agent.baseVariantId ?? "(missing)"}.`);
+    for (const variantId of agent.availableVariantIds ?? []) {
+      assert(variantIds.has(variantId), `${label} ${agent.id} has unresolved availableVariantId ${variantId}.`);
+    }
+  }
+  for (const variant of variants) {
+    assert(variant.agentId && agentIds.has(variant.agentId), `${label} ${variant.id} has unresolved agentId ${variant.agentId ?? "(missing)"}.`);
   }
 }
 
@@ -299,8 +354,8 @@ async function main() {
   assert(roblox.payload.metadata?.accessLevel === "public-published", "Roblox accessLevel must be public-published.");
   assert(roblox.payload.metadata?.validationStatus, "Roblox validation status is missing.");
   assert((canonical.payload.eras?.length ?? 0) > 0, "Canonical payload must include at least one era.");
-  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 9, "Canonical contentVersion must be at least 9 after explicit primaryEconomyId export.");
-  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 9, "Roblox contentVersion must be at least 9 after explicit primaryEconomyId export.");
+  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 13, "Canonical contentVersion must be at least 13 after published AI Agent variants.");
+  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 13, "Roblox contentVersion must be at least 13 after published AI Agent variants.");
 
   validateEraNavigation(canonical.payload, "Canonical");
   validateEraNavigation(roblox.payload, "Roblox");
@@ -308,6 +363,8 @@ async function main() {
   validateEconomy(roblox.payload, "Roblox");
   validateEraEconomyProfiles(canonical.payload, "Canonical");
   validateEraEconomyProfiles(roblox.payload, "Roblox");
+  validateAiAgentRuntime(canonical.payload, "Canonical");
+  validateAiAgentRuntime(roblox.payload, "Roblox");
   validateRuntimeReferences(canonical.payload);
   validateRobloxReferences(roblox.payload);
   assertNoArchitectureLeak("Canonical runtime", canonical.payload);
@@ -327,6 +384,8 @@ async function main() {
       economyDefinitionCount: canonical.payload.economyDefinitions?.length ?? 0,
       eraEconomyProfileCount: canonical.payload.eraEconomyProfiles?.length ?? 0,
       primaryHudResources: canonical.payload.clientProfiles?.default?.primaryHudResources ?? [],
+      aiAgentCount: canonical.payload.aiAgents?.length ?? 0,
+      aiAgentVariantCount: canonical.payload.aiAgentVariants?.length ?? 0,
       resourceCount: canonical.payload.resources?.length ?? 0,
       upgradeCount: canonical.payload.upgrades?.length ?? 0
     },
@@ -343,6 +402,8 @@ async function main() {
       economyDefinitionCount: roblox.payload.economyDefinitions?.length ?? 0,
       eraEconomyProfileCount: roblox.payload.eraEconomyProfiles?.length ?? 0,
       primaryHudResources: roblox.payload.clientHints?.primaryHudResources ?? [],
+      aiAgentCount: roblox.payload.aiAgents?.length ?? 0,
+      aiAgentVariantCount: roblox.payload.aiAgentVariants?.length ?? 0,
       resourceCount: roblox.payload.resources?.length ?? 0,
       upgradeTabCount: roblox.payload.upgradeTabs?.length ?? 0,
       upgradeCount: roblox.payload.upgrades?.length ?? 0
