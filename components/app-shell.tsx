@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Archive,
   BadgeDollarSign,
+  Bot,
   Building2,
   ChevronDown,
   ChevronRight,
@@ -152,6 +153,7 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/surface-landscapes", label: "Surface Landscapes", icon: Palette },
       { href: "/hero-discovery-shots", label: "Hero Discovery", icon: Star },
       { href: "/prompt-library", label: "Prompt Library", icon: ScrollText },
+      { href: "/ai-agents", label: "AI Agents", icon: Bot },
       { href: "/screen-designer", label: "Screen Designer", icon: MonitorCog },
       { href: "/component-library", label: "Component Library", icon: PackageCheck },
       { href: "/game-art-import", label: "Game Art Import", icon: UploadCloud },

@@ -523,6 +523,18 @@ function preset(
 }
 
 const psdV3DerivativePresets: AssetDerivativePreset[] = [
+  ...[64, 96, 128, 256, 512, 1024].map((size) =>
+    preset(`ai_agent_${size}_png`, `AI Agent ${size} PNG`, "ai_agents", `ai_agent_${size}`, size, size, "1:1", "PNG", {
+      category: "ai_agents",
+      outputRole: "ui_icon",
+      engineTargets: ["web", "roblox", "unity", "unreal", "godot"],
+      robloxReady: size <= 1024,
+      required: true,
+      scale: size >= 1024 ? "4x" : size >= 512 ? "2x" : "1x",
+      transparentBackground: true,
+      notes: "Transparent AI agent portrait/expression derivative generated from layered PNG or PSD source."
+    })
+  ),
   ...[64, 96, 128, 256, 512, 1024, 2048].flatMap((size) => [
     preset(`ui_icon_${size}_png`, `UI Icon ${size} PNG`, "ui_icons", "icon", size, size, "1:1", "PNG", { outputRole: "ui_icon", engineTargets: ["roblox", "unity", "unreal", "godot"], robloxReady: true, required: size === 256, scale: size >= 1024 ? "4x" : size >= 512 ? "2x" : "1x" }),
     preset(`ui_icon_${size}_webp`, `UI Icon ${size} WebP`, "ui_icons", "icon", size, size, "1:1", "WebP", { outputRole: "ui_icon", engineTargets: ["web"], required: size === 512, scale: size >= 1024 ? "4x" : size >= 512 ? "2x" : "1x" })
@@ -611,6 +623,14 @@ export const derivativePresets: AssetDerivativePreset[] = [
 
 export const derivativeProfiles: AssetDerivativeProfile[] = [
   {
+    id: "ai_agents",
+    label: "AI Agents",
+    description: "Transparent head, eye, expression, idle, and blink derivatives for AI Agent Library records at 64 through 1024 pixels.",
+    presetIds: psdV3DerivativePresets.filter((item) => item.profileGroup === "ai_agents").map((item) => item.id),
+    engineTargets: ["roblox", "web", "unity", "unreal", "godot"],
+    masterFormats: ["PSD", "PNG"]
+  },
+  {
     id: "ui_icons",
     label: "UI Icons",
     description: "Icon derivatives from one master source at 64 through 2048 pixels in PNG and WebP.",
@@ -661,7 +681,8 @@ export const requirementProfiles: AssetRequirementProfile[] = [
   { id: "galaxy_requirement_profile", objectType: "galaxy", label: "Galaxy", requirements: requirements(["planet_card", "planet_hero"], "medium") },
   { id: "sector_requirement_profile", objectType: "sector", label: "Sector", requirements: requirements(["planet_card", "planet_hero"], "medium") },
   { id: "star_system_requirement_profile", objectType: "star_system", label: "Star System", requirements: requirements(["planet_card", "planet_hero"], "medium") },
-  { id: "ui_requirement_profile", objectType: "ui", label: "UI", requirements: requirements(["loading_screen"], "low") }
+  { id: "ui_requirement_profile", objectType: "ui", label: "UI", requirements: requirements(["loading_screen"], "low") },
+  { id: "ai_agent_requirement_profile", objectType: "ai_agent", label: "AI Agent", requirements: requirements(["ai_agent_64_png", "ai_agent_96_png", "ai_agent_128_png", "ai_agent_256_png", "ai_agent_512_png", "ai_agent_1024_png"], "high") }
 ];
 
 async function readProductionStore(): Promise<AssetProductionStore> {
