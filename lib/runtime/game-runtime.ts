@@ -18,6 +18,7 @@ import {
 } from "@/lib/economy/definitions";
 import { ResourceService } from "@/lib/resources/service";
 import { engineEraNavigationOverrides, resolveEraNavigationProfile, supportedEraNavigationBoundaryModes, supportedEraNavigationDashboardModes } from "@/lib/runtime/client-profiles";
+import { buildMobileClientProfile } from "@/lib/runtime/mobile-client-profiles";
 import type { GameData, ResourceCatalogItem, Upgrade } from "@/types/schema";
 import type {
   AssetDefinition,
@@ -38,7 +39,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 10;
+export const gameRuntimeContentVersion = 11;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -258,13 +259,17 @@ function defaultProfile(overrides: Partial<ClientProfile> = {}): ClientProfile {
 }
 
 function defaultClientProfiles(): ClientProfiles {
+  const defaultClientProfile = defaultProfile();
+  const webProfile = defaultProfile({ defaultUpgradeRowsVisible: 6, futureUpgradeTeaserCount: 3, lockedOpacity: 0.55, eraNavigation: resolveEraNavigationProfile(engineEraNavigationOverrides.web) });
   return {
-    default: defaultProfile(),
+    default: defaultClientProfile,
     roblox: defaultProfile({ eraNavigation: resolveEraNavigationProfile(engineEraNavigationOverrides.roblox) }),
-    web: defaultProfile({ defaultUpgradeRowsVisible: 6, futureUpgradeTeaserCount: 3, lockedOpacity: 0.55, eraNavigation: resolveEraNavigationProfile(engineEraNavigationOverrides.web) }),
+    web: webProfile,
     unity: defaultProfile({ defaultUpgradeRowsVisible: 5, eraNavigation: resolveEraNavigationProfile(engineEraNavigationOverrides.unity) }),
     unreal: defaultProfile({ defaultUpgradeRowsVisible: 5, eraNavigation: resolveEraNavigationProfile(engineEraNavigationOverrides.unreal) }),
-    godot: defaultProfile({ defaultUpgradeRowsVisible: 5, eraNavigation: resolveEraNavigationProfile(engineEraNavigationOverrides.godot) })
+    godot: defaultProfile({ defaultUpgradeRowsVisible: 5, eraNavigation: resolveEraNavigationProfile(engineEraNavigationOverrides.godot) }),
+    ios: buildMobileClientProfile("ios", webProfile),
+    android: buildMobileClientProfile("android", webProfile)
   };
 }
 
@@ -472,7 +477,9 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
       web: runtimeData.clientProfiles.web,
       unity: runtimeData.clientProfiles.unity,
       unreal: runtimeData.clientProfiles.unreal,
-      godot: runtimeData.clientProfiles.godot
+      godot: runtimeData.clientProfiles.godot,
+      ios: runtimeData.clientProfiles.ios,
+      android: runtimeData.clientProfiles.android
     }
   };
 }
@@ -728,6 +735,54 @@ function validateEconomyDefaults(runtimeData: Pick<GameRuntimeData, "economyDefi
   }
 }
 
+function validateMobileClientProfiles(runtimeData: Pick<GameRuntimeData, "clientProfiles">, issues: ImportIssue[]) {
+  const expectedHud = [...primaryHudEconomyIds];
+  for (const profileName of ["ios", "android"] as const) {
+    const profile = runtimeData.clientProfiles[profileName];
+    if (!profile) {
+      issues.push({ severity: "error", code: "mobile_profile_missing", message: `clientProfiles.${profileName} is required for mobile presentation exports.`, records: [profileName] });
+      continue;
+    }
+    if (profile.platform !== profileName) {
+      issues.push({ severity: "error", code: "mobile_profile_platform_invalid", message: "Mobile profile platform must match its profile key.", records: [profileName, String(profile.platform ?? "missing")] });
+    }
+    if (profile.orientation?.primary !== "landscape" || !profile.orientation?.supported.includes("landscape-left") || !profile.orientation?.supported.includes("landscape-right")) {
+      issues.push({ severity: "error", code: "mobile_orientation_invalid", message: "Mobile gameplay profiles must define landscape-left and landscape-right support.", records: [profileName] });
+    }
+    if (!profile.safeAreaPolicy || profile.safeAreaPolicy.minimumEdgePadding < 16 || !profile.safeAreaPolicy.supportsCameraCutout || !profile.safeAreaPolicy.supportsHomeIndicator) {
+      issues.push({ severity: "error", code: "mobile_safe_area_missing", message: "Mobile profiles must define notch/cutout/home-indicator safe-area metadata.", records: [profileName] });
+    }
+    if ((profile.supportedDeviceClasses?.length ?? 0) < 5 || !profile.supportedDeviceClasses?.some((item) => item.id === "phone_compact") || !profile.supportedDeviceClasses?.some((item) => item.id === "tablet_large")) {
+      issues.push({ severity: "error", code: "mobile_device_classes_missing", message: "Mobile profiles must define phone and tablet presentation classes.", records: [profileName] });
+    }
+    if (!profile.touchProfile || profile.touchProfile.minimumTouchTarget < 44 || profile.touchProfile.touchPadding < 0) {
+      issues.push({ severity: "error", code: "mobile_touch_profile_invalid", message: "Mobile profiles must define approved touch target and padding rules.", records: [profileName] });
+    }
+    if (!profile.hudProfile || profile.hudProfile.economyOrder.join("|") !== expectedHud.join("|") || profile.hudProfile.minimumTouchTarget < 44) {
+      issues.push({ severity: "error", code: "mobile_hud_profile_invalid", message: "Mobile HUD profile must preserve fixed economy order and mobile touch targets.", records: [profileName, ...(profile.hudProfile?.economyOrder ?? [])] });
+    }
+    if (profile.primaryHudResources?.join("|") !== expectedHud.join("|") || profile.primaryHudSlots?.map((slot) => slot.economyId).join("|") !== expectedHud.join("|")) {
+      issues.push({ severity: "error", code: "mobile_fixed_hud_order_invalid", message: "Mobile client profiles must inherit the canonical fixed HUD order.", records: [profileName, ...(profile.primaryHudResources ?? [])] });
+    }
+    if (!profile.assetDensityProfile || !profile.assetDensityProfile.requiredScales.includes("1x") || !profile.assetDensityProfile.requiredScales.includes("2x") || !profile.assetDensityProfile.requiredScales.includes("3x")) {
+      issues.push({ severity: "error", code: "mobile_asset_density_missing", message: "Mobile profiles must define 1x/2x/3x asset density requirements.", records: [profileName] });
+    }
+    if (!profile.authenticationProfile || profile.authenticationProfile.accountDeletionTracked !== true || profile.authenticationProfile.secretsExported !== false) {
+      issues.push({ severity: "error", code: "mobile_auth_profile_invalid", message: "Mobile auth profile must track account deletion and must not export secrets.", records: [profileName] });
+    }
+    if (!profile.purchaseProfile || profile.purchaseProfile.purchaseVerificationRequired !== true || profile.purchaseProfile.serverAuthoritative !== true || profile.purchaseProfile.secretsExported !== false) {
+      issues.push({ severity: "error", code: "mobile_purchase_profile_invalid", message: "Mobile purchase profile must require verification and must not export store secrets.", records: [profileName] });
+    }
+    if ((profile.mobileAssetRequirements?.length ?? 0) < 8) {
+      issues.push({ severity: "error", code: "mobile_asset_requirements_missing", message: "Mobile profiles must expose app brand/loading/store-art asset requirements.", records: [profileName] });
+    }
+    const serialized = JSON.stringify(profile);
+    if (/\/Users\/|studio-private:\/\/|SUPABASE|SERVICE_ROLE|PRIVATE_KEY|clientSecret|apiKey|storeSecret/i.test(serialized)) {
+      issues.push({ severity: "error", code: "mobile_profile_private_leak", message: "Mobile presentation profiles must not expose private paths, credentials, or secrets.", records: [profileName] });
+    }
+  }
+}
+
 function stableStringify(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(stableStringify).join(",")}]`;
   if (value && typeof value === "object") {
@@ -833,6 +888,7 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   validateCanonicalEraProgression(runtimeData.eras, issues, "Canonical runtime");
   validateEraEconomyProfiles(runtimeData, issues, "Canonical runtime");
   validateEconomyDefaults(runtimeData, issues, "Canonical runtime");
+  validateMobileClientProfiles(runtimeData, issues);
 
   const missingCategories = requiredCategoryIds.filter((id) => !categoryIds.has(id));
   if (missingCategories.length) {
@@ -1319,7 +1375,9 @@ function normalizeClientProfiles(payload: Record<string, unknown>, fallback: Cli
     web: mergeProfile("web"),
     unity: mergeProfile("unity"),
     unreal: mergeProfile("unreal"),
-    godot: mergeProfile("godot")
+    godot: mergeProfile("godot"),
+    ios: buildMobileClientProfile("ios", mergeProfile("ios")),
+    android: buildMobileClientProfile("android", mergeProfile("android"))
   };
 }
 

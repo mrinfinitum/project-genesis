@@ -6,6 +6,7 @@ import { buildEconomyUsageRelationships, buildEraEconomyProfiles, buildInventory
 import { buildEconomyState, economySchemas, priceClamps, type MarketRecord, type ResourceListing, type TradeOpportunity, type TradeRoute } from "@/lib/economy/trade";
 import { generateFaction, generateFallbackFactions, type FactionRecord } from "@/lib/factions/procedural";
 import { defaultEraNavigationProfile, engineEraNavigationOverrides, resolveEraNavigationProfile, supportedEraNavigationBoundaryModes, supportedEraNavigationDashboardModes } from "@/lib/runtime/client-profiles";
+import { buildMobileClientProfile, mobileAssetRequirements } from "@/lib/runtime/mobile-client-profiles";
 import {
   generateMissionBundle,
   missionDifficulties,
@@ -140,6 +141,8 @@ type CanonicalModules = {
   hud_profile: Array<ReturnType<typeof buildPrimaryHudSlots>[number]>;
   primary_hud_resources: string[];
   era_navigation_profiles: Array<{ id: string; profileName: string; eraNavigation: ReturnType<typeof resolveEraNavigationProfile>; inheritsFrom: string | null; notes: string }>;
+  client_profiles: Record<string, unknown>;
+  mobile_asset_requirements: typeof mobileAssetRequirements;
   economy_usage_relationships: ReturnType<typeof buildEconomyUsageRelationships>;
   inventory_resource_metadata: ReturnType<typeof buildInventoryResourceMetadata>;
   economy_schemas: typeof economySchemas;
@@ -498,6 +501,31 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
         notes: "Engine override inherits unspecified eraNavigation fields from clientProfiles.default."
       }))
     ],
+    client_profiles: (() => {
+      const baseProfile = {
+        defaultUpgradeRowsVisible: 6,
+        futureUpgradeTeaserCount: 3,
+        showUnknownUpgradeSlots: true,
+        lockedOpacity: 0.55,
+        availableGlowEnabled: true,
+        primaryHudResources: [...primaryHudEconomyIds],
+        primaryHudSlots: buildPrimaryHudSlots(),
+        eraNavigation: resolveEraNavigationProfile(engineEraNavigationOverrides.web)
+      };
+      return {
+        default: {
+          ...baseProfile,
+          defaultUpgradeRowsVisible: 4,
+          futureUpgradeTeaserCount: 2,
+          lockedOpacity: 0.45,
+          eraNavigation: defaultEraNavigationProfile
+        },
+        web: baseProfile,
+        ios: buildMobileClientProfile("ios", baseProfile),
+        android: buildMobileClientProfile("android", baseProfile)
+      };
+    })(),
+    mobile_asset_requirements: mobileAssetRequirements,
     economy_usage_relationships: buildEconomyUsageRelationships(data),
     inventory_resource_metadata: buildInventoryResourceMetadata(data),
     economy_schemas: economySchemas,
@@ -1191,6 +1219,8 @@ function compactModules(modules: CanonicalModules) {
     hud_profile: modules.hud_profile,
     primary_hud_resources: modules.primary_hud_resources,
     era_navigation_profiles: modules.era_navigation_profiles,
+    client_profiles: modules.client_profiles,
+    mobile_asset_requirements: modules.mobile_asset_requirements,
     economy_usage_relationships: modules.economy_usage_relationships,
     inventory_resource_metadata: modules.inventory_resource_metadata,
     economy_schemas: modules.economy_schemas,

@@ -5,7 +5,7 @@ import { findAssetForPreviewKeys, resolveScreenPreview, type VisualPreview } fro
 
 export type ScreenDesignStatus = "Not Started" | "Draft" | "In Design" | "Ready for Review" | "Approved" | "Implemented" | "Needs Revision";
 export type ScreenApprovalStatus = "Unreviewed" | "Changes Requested" | "Approved";
-export type ScreenImplementationTarget = "Vite Web" | "Roblox" | "Unity" | "Unreal" | "Godot";
+export type ScreenImplementationTarget = "Vite Web" | "Roblox" | "Unity" | "Unreal" | "Godot" | "iOS" | "Android";
 export type ScreenImplementationStatus = "Not Started" | "In Progress" | "Implemented" | "Needs Parity Review" | "Approved";
 export type ScreenParityStatus = "Not Started" | "Behind Design" | "Needs Parity Review" | "In Parity" | "Blocked";
 export type ScreenDataClassification = "Canonical Studio Definition" | "Player Runtime State" | "Service/Backend State" | "Presentation Hint" | "Prototype Fixture" | "Missing Definition";
@@ -133,6 +133,17 @@ export type ScreenDesignChecklist = {
   approved: boolean;
 };
 
+export type ScreenMobileReadiness = {
+  mobileDesignStatus: "Not Started" | "Draft" | "In Design" | "Ready for Review" | "Approved";
+  safeAreaReadiness: "Missing" | "Needs Review" | "Ready";
+  touchReadiness: "Missing" | "Needs Review" | "Ready";
+  mobileAssetReadiness: "Missing" | "Needs Review" | "Ready";
+  iosImplementationStatus: ScreenImplementationStatus;
+  androidImplementationStatus: ScreenImplementationStatus;
+  viewportPreviews: Array<{ platform: "ios" | "android"; viewport: string; status: "Missing" | "Needs Review" | "Ready"; notes: string }>;
+  notes: string[];
+};
+
 export type ScreenDesignRecord = {
   id: string;
   screenId: string;
@@ -162,6 +173,7 @@ export type ScreenDesignRecord = {
   reviewHistory: ScreenReviewEntry[];
   references: ScreenReference[];
   checklist: ScreenDesignChecklist;
+  mobileReadiness: ScreenMobileReadiness;
   frozenApprovedVersion?: ScreenDesignRecord;
 };
 
@@ -173,6 +185,7 @@ export type ScreenDesignSummary = Pick<ScreenDesignRecord, "id" | "screenId" | "
   checklistTotal: number;
   visualPreview: VisualPreview;
   parityScore: number;
+  mobileReadiness: ScreenMobileReadiness;
 };
 
 export type ScreenDesignerState = {
@@ -188,6 +201,13 @@ export type ScreenDesignerState = {
     blockedByMissingAssets: number;
     blockedByMissingData: number;
     blockedByMissingInteractionSpecs: number;
+    mobileReadyScreens: number;
+    safeAreaBlockers: number;
+    touchBlockers: number;
+    mobileAssetBlockers: number;
+    iosBlockers: number;
+    androidBlockers: number;
+    accountDeletionReadiness: number;
   };
   generatedAt: string;
 };
@@ -196,7 +216,7 @@ const storePath = process.env.PROJECT_GENESIS_SCREEN_DESIGNER_STORE
   ? path.resolve(process.env.PROJECT_GENESIS_SCREEN_DESIGNER_STORE)
   : path.join(process.cwd(), "data", "screen-designer.local.json");
 
-const supportedViewports = ["1366x768", "1440x900", "1920x1080", "2560x1440", "3440x1440", "3840x2160", "compact/tablet"];
+const supportedViewports = ["1366x768", "1440x900", "1920x1080", "2560x1440", "3440x1440", "3840x2160", "compact/tablet", "ios-phone-landscape", "android-phone-landscape", "ios-tablet-landscape", "android-tablet-landscape"];
 const requiredStates = ["Default", "Hover", "Pressed", "Selected", "Active", "Locked", "Disabled", "Affordable", "Unaffordable", "Empty", "Loading", "Error", "Missing Data", "Maxed", "Completed", "Preview", "Reduced Motion"];
 
 function checklist(values: Partial<ScreenDesignChecklist>): ScreenDesignChecklist {
@@ -247,8 +267,44 @@ function implementationTargets(web: ScreenImplementationStatus, roblox: ScreenIm
     { target: "Roblox" as const, status: roblox, notes: "Tracked against Roblox UI parity." },
     { target: "Unity" as const, status: "Not Started" as const, notes: "Future export consumer." },
     { target: "Unreal" as const, status: "Not Started" as const, notes: "Future export consumer." },
-    { target: "Godot" as const, status: "Not Started" as const, notes: "Future export consumer." }
+    { target: "Godot" as const, status: "Not Started" as const, notes: "Future export consumer." },
+    { target: "iOS" as const, status: "Not Started" as const, notes: "Future Capacitor shell around Vite build; Studio tracks presentation readiness only." },
+    { target: "Android" as const, status: "Not Started" as const, notes: "Future Capacitor shell around Vite build; Studio tracks presentation readiness only." }
   ];
+}
+
+function ensureImplementationTargets(targets: ScreenDesignRecord["implementationTargets"] | undefined) {
+  const existing = targets?.length ? targets : implementationTargets("Not Started");
+  const byTarget = new Map(existing.map((target) => [target.target, target]));
+  for (const target of implementationTargets("Not Started")) {
+    if (!byTarget.has(target.target)) byTarget.set(target.target, target);
+  }
+  return [...byTarget.values()];
+}
+
+function mobileReadiness(screenId: string, overrides: Partial<ScreenMobileReadiness> = {}): ScreenMobileReadiness {
+  const accountScreens = new Set(["welcome", "login", "signup", "account", "cloud-saves", "save-conflict", "settings"]);
+  const isAccountScreen = accountScreens.has(screenId);
+  return {
+    mobileDesignStatus: isAccountScreen ? "Draft" : "Not Started",
+    safeAreaReadiness: "Needs Review",
+    touchReadiness: "Needs Review",
+    mobileAssetReadiness: "Missing",
+    iosImplementationStatus: "Not Started",
+    androidImplementationStatus: "Not Started",
+    viewportPreviews: [
+      { platform: "ios", viewport: "ios-phone-landscape", status: "Missing", notes: "Needs safe-area screenshot/specimen." },
+      { platform: "android", viewport: "android-phone-landscape", status: "Missing", notes: "Needs display-cutout screenshot/specimen." },
+      { platform: "ios", viewport: "ios-tablet-landscape", status: "Missing", notes: "Needs tablet landscape preview." },
+      { platform: "android", viewport: "android-tablet-landscape", status: "Missing", notes: "Needs tablet landscape preview." }
+    ],
+    notes: [
+      "Mobile gameplay screens are landscape-first.",
+      "Portrait is reserved for explicitly approved account, login, or legal screens later.",
+      "No private design source paths are stored in this record."
+    ],
+    ...overrides
+  };
 }
 
 function states(designed: string[]) {
@@ -308,6 +364,7 @@ function baseRecord(input: {
   interactionSpecs?: ScreenInteractionSpec[];
   stateSpecs?: ScreenStateSpec[];
   responsiveStatus?: ScreenResponsiveRule["status"];
+  mobileReadiness?: Partial<ScreenMobileReadiness>;
   notes?: string[];
 }): ScreenDesignRecord {
   const now = "2026-07-13T00:00:00.000Z";
@@ -351,7 +408,8 @@ function baseRecord(input: {
       implementationTarget: "Vite Web"
     }] : [],
     references: [],
-    checklist: checklist(input.checklist ?? {})
+    checklist: checklist(input.checklist ?? {}),
+    mobileReadiness: mobileReadiness(input.screenId, input.mobileReadiness)
   };
 }
 
@@ -479,6 +537,86 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
       "Top HUD uses fixed canonical order: ECON-LABOR, ECON-CREDITS, ECON-POPULATION, ECON-RESEARCH, ECON-PREMIUM-CRYSTALS. Credits remain visible from Survival with zero starting amount/rate.",
       "Labor label comes from era display overrides; economy identity and icon semantics come from economy ID, never slot position."
     ]
+  }),
+  baseRecord({
+    screenId: "welcome",
+    displayName: "Welcome",
+    description: "Mobile-first welcome entry screen for NOVERIS.",
+    status: "Draft",
+    layoutMode: "modal",
+    dataRequirements: [data("welcome-profile", "Client presentation profile", "Presentation Hint", "clientProfiles.ios/android", "Mapped")],
+    assetRequirements: [asset("noveris-wordmark", "NOVERIS wordmark", "mobile_noveris_wordmark", "background", "Missing")],
+    interactionSpecs: [interaction("continue-guest", "Tap Continue", "Guest profile starts", "Client auth action; Studio tracks presentation only.")],
+    responsiveStatus: "Needs Review",
+    mobileReadiness: { mobileDesignStatus: "Draft" }
+  }),
+  baseRecord({
+    screenId: "login",
+    displayName: "Login",
+    description: "Account login screen with email, magic link, Google, and Sign in with Apple presentation requirements.",
+    status: "Draft",
+    layoutMode: "modal",
+    dataRequirements: [data("auth-profile", "Auth capability metadata", "Presentation Hint", "clientProfiles.ios/android.authenticationProfile", "Mapped")],
+    assetRequirements: [asset("login-background", "Login background", "mobile_login_background", "background", "Missing")],
+    interactionSpecs: [interaction("sign-in-apple", "Tap Sign in with Apple", "Auth callback starts", "Client auth action; no secrets in Studio.")],
+    responsiveStatus: "Needs Review",
+    mobileReadiness: { mobileDesignStatus: "Draft" }
+  }),
+  baseRecord({
+    screenId: "signup",
+    displayName: "Signup",
+    description: "Account creation and guest conversion screen.",
+    status: "Draft",
+    layoutMode: "modal",
+    dataRequirements: [data("account-conversion", "Account conversion capabilities", "Presentation Hint", "clientProfiles.ios/android.authenticationProfile", "Mapped")],
+    interactionSpecs: [interaction("create-account", "Tap Create Account", "Signup flow starts", "Client auth action.")],
+    responsiveStatus: "Needs Review",
+    mobileReadiness: { mobileDesignStatus: "Draft" }
+  }),
+  baseRecord({
+    screenId: "loading",
+    displayName: "Loading",
+    description: "Mobile loading and launch transition screen.",
+    status: "Draft",
+    layoutMode: "full_screen_page",
+    dataRequirements: [data("lifecycle-profile", "Mobile lifecycle presentation hints", "Presentation Hint", "clientProfiles.ios/android.lifecycleProfile", "Mapped")],
+    assetRequirements: [asset("mobile-loading", "Mobile loading screen", "mobile_loading_screen", "background", "Missing"), asset("mobile-launch-background", "Launch background", "mobile_launch_background", "background", "Missing")],
+    interactionSpecs: [interaction("retry-load", "Tap Retry", "Loading retry state", "Client network retry action.")],
+    responsiveStatus: "Needs Review",
+    mobileReadiness: { mobileDesignStatus: "Draft" }
+  }),
+  baseRecord({
+    screenId: "account",
+    displayName: "Account",
+    description: "Account management, conversion, password reset, and account deletion screen.",
+    status: "Draft",
+    layoutMode: "modal",
+    dataRequirements: [data("account-deletion", "Account deletion capability", "Presentation Hint", "clientProfiles.ios/android.authenticationProfile.accountDeletionTracked", "Mapped")],
+    interactionSpecs: [interaction("delete-account", "Tap Delete Account", "Confirmation and deletion flow opens", "Client account action; requires confirmation.")],
+    responsiveStatus: "Needs Review",
+    mobileReadiness: { mobileDesignStatus: "Draft" }
+  }),
+  baseRecord({
+    screenId: "cloud-saves",
+    displayName: "Cloud Saves",
+    description: "Cloud save sync, restore, and mobile lifecycle recovery screen.",
+    status: "Draft",
+    layoutMode: "modal",
+    dataRequirements: [data("cloud-sync", "Cloud sync lifecycle hints", "Presentation Hint", "clientProfiles.ios/android.lifecycleProfile", "Mapped")],
+    interactionSpecs: [interaction("restore-cloud-save", "Tap Restore", "Restore confirmation opens", "Client save-service action.")],
+    responsiveStatus: "Needs Review",
+    mobileReadiness: { mobileDesignStatus: "Draft" }
+  }),
+  baseRecord({
+    screenId: "save-conflict",
+    displayName: "Save Conflict",
+    description: "Cloud save conflict resolution screen.",
+    status: "Draft",
+    layoutMode: "modal",
+    dataRequirements: [data("save-conflict", "Save conflict notification/deep-link hints", "Presentation Hint", "clientProfiles.ios/android.notificationProfile", "Mapped")],
+    interactionSpecs: [interaction("resolve-conflict", "Tap Keep Local or Cloud", "Conflict resolution confirmation opens", "Client save-service action.")],
+    responsiveStatus: "Needs Review",
+    mobileReadiness: { mobileDesignStatus: "Draft" }
   }),
   baseRecord({
     screenId: "production",
@@ -661,7 +799,7 @@ function mergeRecords(stored: ScreenDesignRecord[]) {
 }
 
 function screenOrder(screenId: string) {
-  const order = ["dashboard", "production", "research", "buildings", "resources", "upgrades", "civilization", "events", "galaxy", "spaceport", "earth", "solar-system", "discovery", "settings"];
+  const order = ["dashboard", "welcome", "login", "signup", "loading", "account", "cloud-saves", "save-conflict", "production", "research", "buildings", "resources", "upgrades", "civilization", "events", "galaxy", "spaceport", "earth", "solar-system", "discovery", "settings"];
   const index = order.indexOf(screenId);
   return index === -1 ? order.length : index;
 }
@@ -679,11 +817,12 @@ function normalizeRecord(record: ScreenDesignRecord): ScreenDesignRecord {
     animationSpecs: record.animationSpecs ?? [],
     accessibilityRequirements: record.accessibilityRequirements ?? [],
     notes: record.notes ?? [],
-    implementationTargets: record.implementationTargets ?? implementationTargets("Not Started"),
+    implementationTargets: ensureImplementationTargets(record.implementationTargets),
     parityStatus: record.parityStatus ?? { vite: "Not Started", roblox: "Not Started" },
     reviewHistory: record.reviewHistory ?? [],
     references: record.references ?? [],
-    checklist: checklist(record.checklist ?? {})
+    checklist: checklist(record.checklist ?? {}),
+    mobileReadiness: record.mobileReadiness ?? mobileReadiness(record.screenId)
   };
 }
 
@@ -765,11 +904,13 @@ function toSummary(record: ScreenDesignRecord, assets?: ProductionAsset[]): Scre
     checklistComplete: score.complete,
     checklistTotal: score.total,
     visualPreview: resolveScreenPreview(record, assets),
-    parityScore
+    parityScore,
+    mobileReadiness: record.mobileReadiness
   };
 }
 
 function buildStats(screens: ScreenDesignSummary[]): ScreenDesignerState["stats"] {
+  const accountScreens = new Set(["account", "cloud-saves", "save-conflict", "settings"]);
   return {
     total: screens.length,
     notStarted: screens.filter((screen) => screen.status === "Not Started").length,
@@ -779,7 +920,14 @@ function buildStats(screens: ScreenDesignSummary[]): ScreenDesignerState["stats"
     implemented: screens.filter((screen) => screen.status === "Implemented").length,
     blockedByMissingAssets: screens.filter((screen) => screen.missingAssets > 0).length,
     blockedByMissingData: screens.filter((screen) => screen.unresolvedDataRequirements > 0).length,
-    blockedByMissingInteractionSpecs: screens.filter((screen) => screen.checklistComplete < screen.checklistTotal).length
+    blockedByMissingInteractionSpecs: screens.filter((screen) => screen.checklistComplete < screen.checklistTotal).length,
+    mobileReadyScreens: screens.filter((screen) => screen.mobileReadiness.mobileDesignStatus === "Approved" && screen.mobileReadiness.safeAreaReadiness === "Ready" && screen.mobileReadiness.touchReadiness === "Ready").length,
+    safeAreaBlockers: screens.filter((screen) => screen.mobileReadiness.safeAreaReadiness !== "Ready").length,
+    touchBlockers: screens.filter((screen) => screen.mobileReadiness.touchReadiness !== "Ready").length,
+    mobileAssetBlockers: screens.filter((screen) => screen.mobileReadiness.mobileAssetReadiness !== "Ready").length,
+    iosBlockers: screens.filter((screen) => screen.mobileReadiness.iosImplementationStatus !== "Implemented" && screen.mobileReadiness.iosImplementationStatus !== "Approved").length,
+    androidBlockers: screens.filter((screen) => screen.mobileReadiness.androidImplementationStatus !== "Implemented" && screen.mobileReadiness.androidImplementationStatus !== "Approved").length,
+    accountDeletionReadiness: screens.filter((screen) => accountScreens.has(screen.screenId) && screen.mobileReadiness.mobileDesignStatus !== "Not Started").length
   };
 }
 

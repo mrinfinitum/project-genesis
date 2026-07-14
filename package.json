@@ -18,6 +18,7 @@
     "verify:asset-production": "tsx scripts/verify-asset-production.ts",
     "verify:component-library": "tsx scripts/verify-component-library.ts",
     "verify:screen-designer": "tsx scripts/verify-screen-designer.ts",
+    "verify:mobile-profiles": "tsx scripts/verify-mobile-profiles.ts",
     "verify:civilization-performance": "tsx scripts/verify-civilization-performance.ts",
     "cleanup:remote-psd": "tsx scripts/cleanup-remote-psd-sources.ts",
     "generate:component-previews": "tsx scripts/generate-component-preview-specimens.ts",

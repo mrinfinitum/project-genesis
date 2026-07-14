@@ -302,6 +302,31 @@ export type ClientProfile = {
   primaryHudResources?: string[];
   primaryHudSlots?: HudResourceSlot[];
   eraNavigation?: EraNavigationProfile;
+  platform?: "default" | "roblox" | "web" | "unity" | "unreal" | "godot" | "ios" | "android";
+  orientation?: {
+    primary: "landscape" | "portrait";
+    supported: Array<"landscape-left" | "landscape-right" | "portrait" | "portrait-upside-down">;
+    portraitAllowedScreens: string[];
+    notes: string;
+  };
+  canonicalDesignSize?: { width: number; height: number; unit: "logical_px" };
+  scalingMode?: string;
+  supportedDeviceClasses?: MobileDeviceClass[];
+  safeAreaPolicy?: MobileSafeAreaPolicy;
+  hudProfile?: MobileHudProfile;
+  navigationProfile?: Record<string, unknown>;
+  touchProfile?: MobileTouchProfile;
+  inputCapabilities?: Record<string, unknown>;
+  typographyProfile?: Record<string, unknown>;
+  effectsProfile?: Record<string, unknown>;
+  assetDensityProfile?: MobileAssetDensityProfile;
+  lifecycleProfile?: Record<string, unknown>;
+  authenticationProfile?: Record<string, unknown>;
+  purchaseProfile?: Record<string, unknown>;
+  notificationProfile?: Record<string, unknown>;
+  accessibilityProfile?: Record<string, unknown>;
+  dashboardLayoutProfile?: Record<string, unknown>;
+  mobileAssetRequirements?: MobileAssetRequirement[];
 };
 
 export type EraNavigationProfile = {
@@ -316,6 +341,80 @@ export type EraNavigationProfile = {
   };
 };
 
+export type MobileDeviceClass = {
+  id: "phone_compact" | "phone_standard" | "phone_large" | "tablet_standard" | "tablet_large";
+  minimumLogicalWidth: number;
+  minimumLogicalHeight: number;
+  targetAspectRange: string;
+  hudScale: number;
+  typographyScale: number;
+  touchScale: number;
+  safeAreaPadding: { top: number; right: number; bottom: number; left: number };
+  compactLayoutRules: string[];
+};
+
+export type MobileSafeAreaPolicy = {
+  supportsTopInset: boolean;
+  supportsRightInset: boolean;
+  supportsBottomInset: boolean;
+  supportsLeftInset: boolean;
+  supportsCameraCutout: boolean;
+  supportsRoundedCorners: boolean;
+  supportsHomeIndicator: boolean;
+  supportsAndroidDisplayCutouts: boolean;
+  criticalControlSafeZone: string;
+  decorativeOverflowAllowance: string;
+  minimumEdgePadding: number;
+  modalSafeBounds: string;
+  bottomDrawerSafeOffset: number;
+  topHudSafeOffset: number;
+  notes: string;
+};
+
+export type MobileHudProfile = {
+  economyOrder: string[];
+  iconSize: number;
+  valueSize: number;
+  rateSize: number;
+  slotWidth: number;
+  slotCompression: "compact_numbers" | "icon_only_when_extreme";
+  compactNumberFormatting: boolean;
+  labelVisibility: "optional" | "visible" | "hidden";
+  overflowBehavior: string;
+  minimumTouchTarget: number;
+  rightSideUtilitySpacing: number;
+};
+
+export type MobileTouchProfile = {
+  minimumTouchTarget: number;
+  touchPadding: number;
+  tapFeedback: string;
+  longPressBehavior: string;
+  dragThreshold: number;
+  swipeThreshold: number;
+  doubleTapPolicy: string;
+  hoverFallback: string;
+  tooltipActivation: string;
+  gestureConflictRules: string[];
+};
+
+export type MobileAssetDensityProfile = {
+  requiredScales: Array<"1x" | "2x" | "3x">;
+  preferredFormats: Array<"WebP" | "PNG" | "JPG" | "SVG">;
+  sourcePolicy: string;
+  lowResolutionPolicy: string;
+  derivativeRules: Array<{ scale: "1x" | "2x" | "3x"; maxDimension: number; compression: string }>;
+};
+
+export type MobileAssetRequirement = {
+  id: string;
+  label: string;
+  category: string;
+  status: "Required" | "Pending Source Art" | "Ready" | "Blocked";
+  requiredFor: Array<"ios" | "android" | "web">;
+  notes: string;
+};
+
 export type ClientProfiles = {
   default: ClientProfile;
   roblox: ClientProfile;
@@ -323,6 +422,8 @@ export type ClientProfiles = {
   unity: ClientProfile;
   unreal: ClientProfile;
   godot: ClientProfile;
+  ios: ClientProfile;
+  android: ClientProfile;
 };
 
 export type GameRuntimeData = {

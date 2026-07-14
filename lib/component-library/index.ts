@@ -8,7 +8,7 @@ import type { ScreenDesignRecord } from "@/lib/screen-designer";
 export type ComponentCategory = "Navigation" | "HUD" | "Panels" | "Buttons" | "Cards" | "Lists" | "Progress" | "Forms" | "Overlays" | "Feedback" | "Data Display" | "Game-Specific" | "Accessibility" | "Utility";
 export type ComponentDesignStatus = "Not Started" | "Draft" | "In Design" | "Ready for Review" | "Approved" | "Implemented" | "Needs Revision" | "Deprecated";
 export type ComponentApprovalStatus = "Unreviewed" | "Changes Requested" | "Approved";
-export type ComponentImplementationTarget = "Vite Web" | "Roblox" | "Unity" | "Unreal" | "Godot";
+export type ComponentImplementationTarget = "Vite Web" | "Roblox" | "Unity" | "Unreal" | "Godot" | "iOS" | "Android";
 export type ComponentImplementationStatus = "Not Started" | "In Progress" | "Implemented" | "Needs Parity Review" | "Approved" | "Deprecated";
 export type ComponentParityStatus = "Not Reviewed" | "Needs Work" | "Close" | "Approved";
 export type ComponentDataClassification = "Canonical Studio Definition" | "Player Runtime State" | "Service State" | "Presentation Hint" | "Local Interaction State";
@@ -182,6 +182,17 @@ export type ComponentDesignChecklist = {
   approved: boolean;
 };
 
+export type ComponentMobileReadiness = {
+  touchVariantStatus: "Missing" | "Draft" | "Ready";
+  compactVariantStatus: "Missing" | "Draft" | "Ready";
+  safeAreaBehavior: "Not Applicable" | "Missing" | "Needs Review" | "Ready";
+  accessibilityStatus: "Missing" | "Needs Review" | "Ready";
+  iosImplementationStatus: ComponentImplementationStatus;
+  androidImplementationStatus: ComponentImplementationStatus;
+  minimumTouchTarget: number;
+  notes: string[];
+};
+
 export type ComponentDesignRecord = {
   id: string;
   componentId: string;
@@ -213,6 +224,7 @@ export type ComponentDesignRecord = {
   reviewHistory: ComponentReviewEntry[];
   breakingChanges: ComponentBreakingChange[];
   notes: string[];
+  mobileReadiness: ComponentMobileReadiness;
   frozenApprovedVersion?: ComponentDesignRecord;
 };
 
@@ -224,6 +236,7 @@ export type ComponentDesignSummary = Pick<ComponentDesignRecord, "id" | "compone
   checklistComplete: number;
   checklistTotal: number;
   visualPreview: VisualPreview;
+  mobileReadiness: ComponentMobileReadiness;
 };
 
 export type ComponentLibraryState = {
@@ -247,6 +260,11 @@ export type ComponentLibraryState = {
     componentPreviewsBlockedByMissingImplementation: number;
     componentPreviewsBlockedByMissingBrowserCapture: number;
     componentPreviewsBlockedByMissingArt: number;
+    mobileReadyComponents: number;
+    touchBlockers: number;
+    safeAreaBlockers: number;
+    iosBlockers: number;
+    androidBlockers: number;
   };
   generatedAt: string;
 };
@@ -255,8 +273,8 @@ const storePath = process.env.PROJECT_GENESIS_COMPONENT_LIBRARY_STORE
   ? path.resolve(process.env.PROJECT_GENESIS_COMPONENT_LIBRARY_STORE)
   : path.join(process.cwd(), "data", "component-library.local.json");
 
-const viewports = ["1366x768", "1440x900", "1920x1080", "2560x1440", "3440x1440", "3840x2160"];
-const commonStates = ["Default", "Hover", "Pressed", "Focused", "Selected", "Active", "Disabled", "Locked", "Loading", "Empty", "Error", "Success", "Affordable", "Unaffordable", "Maxed", "Missing Data", "Reduced Motion"];
+const viewports = ["1366x768", "1440x900", "1920x1080", "2560x1440", "3440x1440", "3840x2160", "ios-phone-landscape", "android-phone-landscape", "ios-tablet-landscape", "android-tablet-landscape"];
+const commonStates = ["Default", "Hover", "Pressed", "Focused", "Selected", "Active", "Disabled", "Locked", "Loading", "Empty", "Error", "Success", "Affordable", "Unaffordable", "Maxed", "Missing Data", "Reduced Motion", "Touch", "Compact"];
 
 function slug(value: string) {
   return value.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
@@ -350,8 +368,39 @@ function implementationTargets(componentId: string, viteStatus: ComponentImpleme
     { target: "Roblox", status: robloxStatus, implementationPath: robloxStatus === "Not Started" ? "" : `ReplicatedStorage/UI/${componentId}`, moduleName: componentId, lastVerifiedVersion: robloxStatus === "Approved" ? 1 : undefined, parityScore: robloxStatus === "Approved" ? 100 : robloxStatus === "Implemented" ? 75 : 0, parityStatus: robloxStatus === "Approved" ? "Approved" : robloxStatus === "Implemented" ? "Close" : "Not Reviewed", notes: "Tracked against Roblox UI parity.", knownDeviations: [] },
     { target: "Unity", status: "Not Started", implementationPath: "", moduleName: componentId, parityScore: 0, parityStatus: "Not Reviewed", notes: "Future client target.", knownDeviations: [] },
     { target: "Unreal", status: "Not Started", implementationPath: "", moduleName: componentId, parityScore: 0, parityStatus: "Not Reviewed", notes: "Future client target.", knownDeviations: [] },
-    { target: "Godot", status: "Not Started", implementationPath: "", moduleName: componentId, parityScore: 0, parityStatus: "Not Reviewed", notes: "Future client target.", knownDeviations: [] }
+    { target: "Godot", status: "Not Started", implementationPath: "", moduleName: componentId, parityScore: 0, parityStatus: "Not Reviewed", notes: "Future client target.", knownDeviations: [] },
+    { target: "iOS", status: "Not Started", implementationPath: "", moduleName: componentId, parityScore: 0, parityStatus: "Not Reviewed", notes: "Future Capacitor mobile target; presentation parity tracked by Studio.", knownDeviations: [] },
+    { target: "Android", status: "Not Started", implementationPath: "", moduleName: componentId, parityScore: 0, parityStatus: "Not Reviewed", notes: "Future Capacitor mobile target; presentation parity tracked by Studio.", knownDeviations: [] }
   ];
+}
+
+function ensureImplementationTargets(componentId: string, targets: ComponentImplementationRecord[] | undefined) {
+  const existing = targets?.length ? targets : implementationTargets(componentId);
+  const byTarget = new Map(existing.map((target) => [target.target, target]));
+  for (const target of implementationTargets(componentId)) {
+    if (!byTarget.has(target.target)) byTarget.set(target.target, target);
+  }
+  return [...byTarget.values()];
+}
+
+function mobileReadiness(componentId: string, overrides: Partial<ComponentMobileReadiness> = {}): ComponentMobileReadiness {
+  const safeAreaComponents = new Set(["TopHudBar", "SideNavigationRail", "BottomDrawer", "Modal", "SettingsNavigation"]);
+  const touchReadyByDefault = /Button|Control|Counter|Navigation|Drawer|Modal|Card/.test(componentId);
+  return {
+    touchVariantStatus: touchReadyByDefault ? "Draft" : "Missing",
+    compactVariantStatus: "Draft",
+    safeAreaBehavior: safeAreaComponents.has(componentId) ? "Needs Review" : "Not Applicable",
+    accessibilityStatus: "Needs Review",
+    iosImplementationStatus: "Not Started",
+    androidImplementationStatus: "Not Started",
+    minimumTouchTarget: 48,
+    notes: [
+      "Mobile presentation variant must not require hover for essential actions.",
+      "Use compact/touch variants for iOS and Android shells around the Vite client.",
+      "No private implementation paths or store credentials are tracked here."
+    ],
+    ...overrides
+  };
 }
 
 function baseRecord(input: {
@@ -373,6 +422,7 @@ function baseRecord(input: {
   viteStatus?: ComponentImplementationStatus;
   robloxStatus?: ComponentImplementationStatus;
   checklist?: Partial<ComponentDesignChecklist>;
+  mobileReadiness?: Partial<ComponentMobileReadiness>;
   notes?: string[];
 }): ComponentDesignRecord {
   const now = "2026-07-13T00:00:00.000Z";
@@ -420,6 +470,7 @@ function baseRecord(input: {
     reviewHistory: approvalStatus === "Approved" ? [{ id: `review-${slug(input.componentId)}-initial`, reviewer: "Design Systems", status: "Approved", comments: "Seeded approved baseline from existing Studio implementation.", requiredChanges: [], date: now, approvedVersion: 1, implementationTarget: "Vite Web" }] : [],
     breakingChanges: [],
     notes: input.notes ?? ["Starter component record created by Component Library v1.0."],
+    mobileReadiness: mobileReadiness(input.componentId, input.mobileReadiness),
     frozenApprovedVersion: undefined,
     ...(approvalStatus === "Approved" ? { frozenApprovedVersion: undefined } : {}),
   };
@@ -590,6 +641,9 @@ const initialComponentRecords: ComponentDesignRecord[] = [
   namedComponent("Popover", "Overlays", "Small anchored contextual popover."),
   namedComponent("ReviewDrawer", "Overlays", "Review and approval drawer used by Studio production workflows."),
   namedComponent("Toast", "Overlays", "Non-blocking feedback message surface."),
+  baseRecord({ componentId: "SettingsNavigation", category: "Navigation", description: "Mobile-safe Settings navigation for account, cloud saves, graphics, audio, gameplay, controls, and about panels.", screenUsages: [usage("settings", "Settings"), usage("account", "Account"), usage("cloud-saves", "Cloud Saves")], states: states(["Default", "Touch", "Focused", "Selected", "Disabled", "Compact", "Reduced Motion"], ["Default", "Touch", "Focused", "Compact"]), mobileReadiness: { touchVariantStatus: "Draft", compactVariantStatus: "Draft", safeAreaBehavior: "Needs Review" } }),
+  baseRecord({ componentId: "PlayerProfileCard", category: "Cards", description: "Account/profile summary card with guest, signed-in, cloud-sync, and account-deletion affordances.", screenUsages: [usage("account", "Account"), usage("settings", "Settings")], dataInputs: [dataInput("authState", "Authentication state", "AuthState", "Service State"), dataInput("cloudSyncState", "Cloud sync state", "CloudSyncState", "Service State")], states: states(["Default", "Touch", "Focused", "Loading", "Error", "Compact", "Missing Data"], ["Default", "Touch", "Focused", "Compact"]), mobileReadiness: { touchVariantStatus: "Draft", compactVariantStatus: "Draft", safeAreaBehavior: "Not Applicable" } }),
+  baseRecord({ componentId: "SaveConflictCard", category: "Cards", description: "Cloud save conflict resolution card with local/cloud comparison and safe destructive actions.", screenUsages: [usage("save-conflict", "Save Conflict"), usage("cloud-saves", "Cloud Saves")], dataInputs: [dataInput("localSave", "Local save summary", "SaveSummary", "Service State"), dataInput("cloudSave", "Cloud save summary", "SaveSummary", "Service State")], states: states(["Default", "Touch", "Focused", "Selected", "Loading", "Error", "Compact"], ["Default", "Touch", "Focused", "Compact"]), mobileReadiness: { touchVariantStatus: "Draft", compactVariantStatus: "Draft", safeAreaBehavior: "Not Applicable" } }),
   namedComponent("LoadingSkeleton", "Feedback", "Skeleton loading pattern with reduced-motion treatment."),
   namedComponent("EmptyState", "Feedback", "Empty content state with optional action and illustration.", [usage("research", "Research")]),
   namedComponent("ErrorState", "Feedback", "Recoverable error state with clear action and accessibility copy."),
@@ -642,12 +696,13 @@ function normalize(record: ComponentDesignRecord): ComponentDesignRecord {
     responsiveRules: record.responsiveRules ?? responsiveRules(record.componentId),
     motionRules: record.motionRules ?? [],
     accessibilityRequirements: record.accessibilityRequirements ?? [],
-    implementationTargets: record.implementationTargets ?? implementationTargets(record.componentId),
+    implementationTargets: ensureImplementationTargets(record.componentId, record.implementationTargets),
     screenUsages: record.screenUsages ?? [],
     references: [...references, ...generatedComponentPreviewReferences(record).filter((reference) => !references.some((item) => item.id === reference.id || item.source === reference.source))],
     reviewHistory: record.reviewHistory ?? [],
     breakingChanges: record.breakingChanges ?? [],
-    notes: record.notes ?? []
+    notes: record.notes ?? [],
+    mobileReadiness: record.mobileReadiness ?? mobileReadiness(record.componentId)
   };
 }
 
@@ -738,7 +793,8 @@ function summary(record: ComponentDesignRecord, assets?: ProductionAsset[]): Com
     parityStatus,
     checklistComplete: score.complete,
     checklistTotal: score.total,
-    visualPreview: resolveComponentPreview(record, assets)
+    visualPreview: resolveComponentPreview(record, assets),
+    mobileReadiness: record.mobileReadiness
   };
 }
 
@@ -756,6 +812,11 @@ function buildStats(components: ComponentDesignSummary[], records: ComponentDesi
     missingStates: components.filter((component) => component.missingStates > 0).length,
     breakingChanges: pendingMajor.length,
     screensAffectedByPendingChanges: new Set(pendingMajor.flatMap((change) => change.affectedScreenIds)).size,
+    mobileReadyComponents: components.filter((component) => component.mobileReadiness.touchVariantStatus === "Ready" && component.mobileReadiness.compactVariantStatus === "Ready").length,
+    touchBlockers: components.filter((component) => component.mobileReadiness.touchVariantStatus !== "Ready").length,
+    safeAreaBlockers: components.filter((component) => component.mobileReadiness.safeAreaBehavior === "Missing" || component.mobileReadiness.safeAreaBehavior === "Needs Review").length,
+    iosBlockers: components.filter((component) => component.mobileReadiness.iosImplementationStatus !== "Implemented" && component.mobileReadiness.iosImplementationStatus !== "Approved").length,
+    androidBlockers: components.filter((component) => component.mobileReadiness.androidImplementationStatus !== "Implemented" && component.mobileReadiness.androidImplementationStatus !== "Approved").length,
     ...previewStats
   };
 }

@@ -602,6 +602,8 @@ function buildReports(data: GameData, assetState: AssetProductionState, authorin
   const componentPreviewReview = componentState?.stats.componentPreviewsNeedsReview ?? 0;
   const previewGaps = assetState.visualPreviewReport.previewMissing + assetState.visualPreviewReport.previewStale + assetState.visualPreviewReport.lowResolution;
   const upgradeArtGaps = (upgradeArtReport?.stats.missing ?? 0) + (upgradeArtReport?.stats.ambiguous ?? 0);
+  const mobileScreenBlockers = (screenState?.stats.safeAreaBlockers ?? 0) + (screenState?.stats.touchBlockers ?? 0) + (screenState?.stats.mobileAssetBlockers ?? 0);
+  const mobileComponentBlockers = (componentState?.stats.touchBlockers ?? 0) + (componentState?.stats.safeAreaBlockers ?? 0);
 
   return [
     { label: "Missing Assets", count: assetState.missingRequirements.length, href: "/assets/missing", severity: "High", description: "Required derivatives or source artwork still missing." },
@@ -621,6 +623,9 @@ function buildReports(data: GameData, assetState: AssetProductionState, authorin
     { label: "Component Asset Blockers", count: componentAssetBlockers, href: "/component-library", severity: componentAssetBlockers ? "High" : "Low", description: "Shared UI components with missing, unpublished, or unapproved semantic assets." },
     { label: "Component State Gaps", count: componentStateBlockers, href: "/component-library", severity: componentStateBlockers ? "Medium" : "Low", description: "Shared UI components missing required state treatments." },
     { label: "Component Preview Review", count: componentPreviewReview, href: "/component-library", severity: componentPreviewReview ? "Medium" : "Low", description: "Generated component specimens waiting for human review before approval." },
+    { label: "Mobile Screen Blockers", count: mobileScreenBlockers, href: "/screen-designer", severity: mobileScreenBlockers ? "High" : "Low", description: "Screens needing safe-area, touch, iOS, Android, or mobile asset readiness." },
+    { label: "Mobile Component Blockers", count: mobileComponentBlockers, href: "/component-library", severity: mobileComponentBlockers ? "High" : "Low", description: "Shared components needing touch, compact, safe-area, or mobile implementation readiness." },
+    { label: "Store Art Readiness", count: assetState.missingRequirements.filter((item) => /store|app icon|splash|launch|wordmark|loading/i.test(`${item.objectName} ${item.requiredDerivative}`)).length, href: "/assets/missing", severity: "Medium", description: "Mobile store, app brand, launch, and loading artwork requirements needing source art." },
     { label: "Component Breaking Changes", count: componentBreakingChanges, href: "/component-library", severity: componentBreakingChanges ? "Critical" : "Low", description: "Major component changes requiring dependent screen review." }
   ];
 }
@@ -794,6 +799,45 @@ function componentWorkItems(componentState?: ComponentLibraryState) {
   return items;
 }
 
+function mobileReadinessWorkItems(screenState?: ScreenDesignerState, componentState?: ComponentLibraryState) {
+  const items: ProductionQueueItem[] = [];
+  for (const screen of screenState?.screens ?? []) {
+    if (screen.mobileReadiness.safeAreaReadiness !== "Ready" || screen.mobileReadiness.touchReadiness !== "Ready" || screen.mobileReadiness.mobileDesignStatus === "Not Started") {
+      items.push(queueItem({
+        id: `mobile-screen-${screen.screenId}`,
+        title: `Prepare ${screen.displayName} mobile layout`,
+        type: "Screen Design",
+        status: screen.mobileReadiness.mobileDesignStatus,
+        era: "Mobile",
+        href: `/screen-designer/${screen.screenId}`,
+        reason: "iOS and Android presentation need landscape, safe-area, touch, and asset readiness before client implementation.",
+        blockers: [
+          screen.mobileReadiness.safeAreaReadiness !== "Ready" ? "Safe-area review" : "",
+          screen.mobileReadiness.touchReadiness !== "Ready" ? "Touch readiness" : "",
+          screen.mobileReadiness.mobileAssetReadiness !== "Ready" ? "Mobile assets" : ""
+        ].filter(Boolean),
+        priority: ["welcome", "login", "dashboard", "settings", "account", "cloud-saves", "save-conflict"].includes(screen.screenId) ? "High" : "Medium"
+      }));
+    }
+  }
+  for (const component of componentState?.components ?? []) {
+    if (component.mobileReadiness.touchVariantStatus !== "Ready" || component.mobileReadiness.compactVariantStatus !== "Ready") {
+      items.push(queueItem({
+        id: `mobile-component-${component.componentId}`,
+        title: `Define ${component.displayName} mobile variants`,
+        type: "Component",
+        status: component.mobileReadiness.touchVariantStatus,
+        era: "Mobile UI",
+        href: `/component-library/${component.componentId}`,
+        reason: "Shared UI components need compact/touch variants for Capacitor iOS and Android shells.",
+        blockers: ["Touch variant", "Compact variant", component.mobileReadiness.safeAreaBehavior === "Needs Review" ? "Safe-area behavior" : ""].filter(Boolean),
+        priority: component.category === "HUD" || component.category === "Navigation" ? "High" : "Medium"
+      }));
+    }
+  }
+  return items.slice(0, 80);
+}
+
 export function buildProductionPlan(data: GameData, assetState: AssetProductionState, eraSummary: EraArtSummaryByEra, authoringState?: ContentAuthoringState, screenState?: ScreenDesignerState, componentState?: ComponentLibraryState): ProductionPlan {
   const upgradeArtReport = buildUpgradeArtReport(data.upgrades, assetState.assets);
   const artComplete = assetState.assets.filter(assetComplete).length;
@@ -816,6 +860,10 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
   const componentTotal = componentState?.components.length ?? 0;
   const componentPreviewGenerated = componentState?.stats.componentPreviewsGenerated ?? 0;
   const componentPreviewTotal = componentPreviewGenerated + (componentState?.stats.componentPreviewsPending ?? 0);
+  const mobileReadyScreens = screenState?.stats.mobileReadyScreens ?? 0;
+  const mobileScreenTotal = screenState?.stats.total ?? 0;
+  const mobileReadyComponents = componentState?.stats.mobileReadyComponents ?? 0;
+  const mobileComponentTotal = componentState?.stats.total ?? 0;
   const previewReady = assetState.visualPreviewReport.previewReady;
   const previewTotal = Math.max(1, assetState.visualPreviewReport.totalVisualRecords);
   const upgradeArtReady = upgradeArtReport.stats.previewReady;
@@ -835,7 +883,9 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
     { label: "Event Completion", complete: survivalEventComplete, total: Math.max(1, survivalEventTotal), value: percent(survivalEventComplete, survivalEventTotal), detail: "Authored event content from active content packs." },
     { label: "Screen Design Completion", complete: screenCompleteCount, total: Math.max(1, screenTotal), value: percent(screenCompleteCount, screenTotal), detail: "Major game screens with approved or implemented Studio design specifications." },
     { label: "Component Library Completion", complete: componentCompleteCount, total: Math.max(1, componentTotal), value: percent(componentCompleteCount, componentTotal), detail: "Reusable game UI components with approved or implemented design-system specifications." },
-    { label: "Component Preview Generation", complete: componentPreviewGenerated, total: Math.max(1, componentPreviewTotal), value: percent(componentPreviewGenerated, componentPreviewTotal), detail: `${componentState?.stats.componentPreviewsNeedsReview ?? 0} generated previews need review, ${componentState?.stats.componentPreviewsBlockedByMissingBrowserCapture ?? 0} blocked from implementation screenshot capture.` }
+    { label: "Component Preview Generation", complete: componentPreviewGenerated, total: Math.max(1, componentPreviewTotal), value: percent(componentPreviewGenerated, componentPreviewTotal), detail: `${componentState?.stats.componentPreviewsNeedsReview ?? 0} generated previews need review, ${componentState?.stats.componentPreviewsBlockedByMissingBrowserCapture ?? 0} blocked from implementation screenshot capture.` },
+    { label: "Mobile Screen Readiness", complete: mobileReadyScreens, total: Math.max(1, mobileScreenTotal), value: percent(mobileReadyScreens, mobileScreenTotal), detail: `${screenState?.stats.safeAreaBlockers ?? 0} safe-area blockers, ${screenState?.stats.touchBlockers ?? 0} touch blockers, ${screenState?.stats.iosBlockers ?? 0} iOS blockers, ${screenState?.stats.androidBlockers ?? 0} Android blockers.` },
+    { label: "Mobile Component Readiness", complete: mobileReadyComponents, total: Math.max(1, mobileComponentTotal), value: percent(mobileReadyComponents, mobileComponentTotal), detail: `${componentState?.stats.touchBlockers ?? 0} touch blockers, ${componentState?.stats.safeAreaBlockers ?? 0} safe-area blockers, ${componentState?.stats.iosBlockers ?? 0} iOS blockers, ${componentState?.stats.androidBlockers ?? 0} Android blockers.` }
   ];
   if (survivalPack) {
     metrics.splice(2, 0, { label: "Survival Content Pack", complete: survivalScore.complete, total: survivalScore.total, value: survivalScore.value, detail: `${survivalPack.title} is ${survivalScore.value}% production-ready.` });
@@ -855,7 +905,7 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
   const overall = clamp(metrics.filter((metric) => metric.label !== "Overall Game Completion").reduce((sum, metric) => sum + metric.value, 0) / Math.max(1, metrics.length - 1));
   metrics[0] = { ...metrics[0], complete: metrics.reduce((sum, metric) => sum + metric.complete, 0), total: metrics.reduce((sum, metric) => sum + metric.total, 0), value: overall };
 
-  const queue = [...componentWorkItems(componentState), ...screenDesignWorkItems(screenState), ...scaffoldWorkItems(authoringState), ...upgradeArtWorkItems(upgradeArtReport), ...assetWorkItems(assetState), ...contentWorkItems(data)].filter((item) => !isCoveredByCompleteContentPack(item)).slice(0, 220);
+  const queue = [...mobileReadinessWorkItems(screenState, componentState), ...componentWorkItems(componentState), ...screenDesignWorkItems(screenState), ...scaffoldWorkItems(authoringState), ...upgradeArtWorkItems(upgradeArtReport), ...assetWorkItems(assetState), ...contentWorkItems(data)].filter((item) => !isCoveredByCompleteContentPack(item)).slice(0, 220);
   return {
     overallCompletion: overall,
     metrics,
