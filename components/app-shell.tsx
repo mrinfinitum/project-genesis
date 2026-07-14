@@ -19,6 +19,7 @@ import {
   FileCode2,
   FileCheck2,
   FileImage,
+  FileText,
   FlaskConical,
   Gauge,
   Gem,
@@ -80,6 +81,16 @@ const navigationGroups: NavigationGroup[] = [
     items: [
       { href: "/", label: "Dashboard", icon: LayoutDashboard, activePaths: ["/"] },
       { href: "/tasks", label: "Current Sprint", icon: ListChecks }
+    ]
+  },
+  {
+    id: "studio",
+    label: "Studio",
+    icon: FileText,
+    fallbackProgress: 92,
+    systemIds: ["architecture", "dashboard-metrics"],
+    items: [
+      { href: "/architecture", label: "Architecture", icon: FileText }
     ]
   },
   {

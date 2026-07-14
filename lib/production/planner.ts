@@ -1,6 +1,7 @@
 import { civilizationAges } from "@/data/civilization-identity";
 import { contentPacks, type ContentPack, type ContentPackCategory, type ContentPackStatus } from "@/data/content-packs/survival";
 import type { AiAgentLibraryState } from "@/lib/ai-agents";
+import type { ArchitectureState } from "@/lib/architecture";
 import type { AssetProductionState, MissingAssetRequirement, ProductionAsset, ProductionTaskRecord } from "@/lib/assets/asset-production";
 import type { EraArtSummaryByEra } from "@/lib/assets/era-art-inventory";
 import type { ComponentDesignSummary, ComponentLibraryState } from "@/lib/component-library";
@@ -14,7 +15,7 @@ export type ProductionQueueItem = {
   id: string;
   title: string;
   priority: ProductionPriority;
-  type: "Asset" | "Research" | "Building" | "Resource" | "Mission" | "Event" | "Production Chain" | "Screen Design" | "Component" | "AI Agent";
+  type: "Asset" | "Research" | "Building" | "Resource" | "Mission" | "Event" | "Production Chain" | "Screen Design" | "Component" | "AI Agent" | "Architecture";
   status: string;
   era: string;
   href: string;
@@ -612,7 +613,7 @@ function buildBlockers(data: GameData, assetState: AssetProductionState): Produc
   ].filter(Boolean) as ProductionBlocker[];
 }
 
-function buildReports(data: GameData, assetState: AssetProductionState, authoringState?: ContentAuthoringState, screenState?: ScreenDesignerState, componentState?: ComponentLibraryState, upgradeArtReport?: UpgradeArtReport, aiAgentState?: AiAgentLibraryState): ProductionReport[] {
+function buildReports(data: GameData, assetState: AssetProductionState, authoringState?: ContentAuthoringState, screenState?: ScreenDesignerState, componentState?: ComponentLibraryState, upgradeArtReport?: UpgradeArtReport, aiAgentState?: AiAgentLibraryState, architectureState?: ArchitectureState): ProductionReport[] {
   const missingResearch = data.research.filter((row) => !researchComplete(row)).length;
   const missingBuildings = data.buildings.filter((row) => !buildingComplete(row)).length;
   const missingChains = data.building_chains.filter((row) => !chainComplete(row)).length;
@@ -639,8 +640,10 @@ function buildReports(data: GameData, assetState: AssetProductionState, authorin
   const mobileScreenBlockers = (screenState?.stats.safeAreaBlockers ?? 0) + (screenState?.stats.touchBlockers ?? 0) + (screenState?.stats.mobileAssetBlockers ?? 0);
   const mobileComponentBlockers = (componentState?.stats.touchBlockers ?? 0) + (componentState?.stats.safeAreaBlockers ?? 0);
   const missingAgentCoreArt = (aiAgentState?.stats.missingOpenEyeArt ?? 0) + (aiAgentState?.stats.missingBlinkArt ?? 0) + (aiAgentState?.stats.missingOfflineArt ?? 0);
+  const architectureOpenItems = (architectureState?.outstandingDecisions.length ?? 0) + (architectureState?.sections.filter((section) => section.status !== "Current").length ?? 0);
 
   return [
+    { label: "Architecture Health", count: architectureOpenItems, href: "/architecture", severity: architectureOpenItems ? "High" : "Low", description: "Outstanding Architecture decisions or documentation sections needing review." },
     { label: "Missing Assets", count: assetState.missingRequirements.length, href: "/assets/missing", severity: "High", description: "Required derivatives or source artwork still missing." },
     { label: "Preview Quality Gaps", count: previewGaps, href: "/assets", severity: previewGaps ? "High" : "Low", description: "Missing, stale, or low-resolution Studio thumbnails/previews." },
     { label: "Upgrade Art Gaps", count: upgradeArtGaps, href: "/upgrades", severity: upgradeArtGaps ? "High" : "Low", description: "Upgrade records without a resolved real icon preview or needing candidate review." },
@@ -875,7 +878,39 @@ function mobileReadinessWorkItems(screenState?: ScreenDesignerState, componentSt
   return items.slice(0, 80);
 }
 
-export function buildProductionPlan(data: GameData, assetState: AssetProductionState, eraSummary: EraArtSummaryByEra, authoringState?: ContentAuthoringState, screenState?: ScreenDesignerState, componentState?: ComponentLibraryState, aiAgentState?: AiAgentLibraryState): ProductionPlan {
+function architectureWorkItems(architectureState?: ArchitectureState) {
+  if (!architectureState) return [];
+  const items: ProductionQueueItem[] = [];
+  for (const decision of architectureState.outstandingDecisions) {
+    items.push(queueItem({
+      id: `architecture-decision-${decision.id}`,
+      title: `Resolve architecture decision: ${decision.title}`,
+      type: "Architecture",
+      status: decision.status,
+      era: "Studio",
+      href: "/architecture",
+      reason: decision.reason,
+      blockers: decision.affectedSystems,
+      priority: "High"
+    }));
+  }
+  for (const section of architectureState.sections.filter((item) => item.status !== "Current").slice(0, 12)) {
+    items.push(queueItem({
+      id: `architecture-section-${section.id}`,
+      title: `Review ${section.title} architecture section`,
+      type: "Architecture",
+      status: section.status,
+      era: "Studio",
+      href: "/architecture",
+      reason: "Architecture section is not marked Current.",
+      blockers: section.systems,
+      priority: section.status === "Outdated" ? "Critical" : "Medium"
+    }));
+  }
+  return items;
+}
+
+export function buildProductionPlan(data: GameData, assetState: AssetProductionState, eraSummary: EraArtSummaryByEra, authoringState?: ContentAuthoringState, screenState?: ScreenDesignerState, componentState?: ComponentLibraryState, aiAgentState?: AiAgentLibraryState, architectureState?: ArchitectureState): ProductionPlan {
   const upgradeArtReport = buildUpgradeArtReport(data.upgrades, assetState.assets);
   const artComplete = assetState.assets.filter(assetComplete).length;
   const artTotal = Math.max(1, assetState.assets.length + assetState.missingRequirements.length);
@@ -902,6 +937,8 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
   const mobileReadyComponents = componentState?.stats.mobileReadyComponents ?? 0;
   const mobileComponentTotal = componentState?.stats.total ?? 0;
   const aiAgentScore = aiAgentComplete(aiAgentState);
+  const architectureSectionsCurrent = architectureState?.sections.filter((section) => section.status === "Current").length ?? 0;
+  const architectureSectionsTotal = architectureState?.sections.length ?? 0;
   const previewReady = assetState.visualPreviewReport.previewReady;
   const previewTotal = Math.max(1, assetState.visualPreviewReport.totalVisualRecords);
   const upgradeArtReady = upgradeArtReport.stats.previewReady;
@@ -924,7 +961,8 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
     { label: "Component Preview Generation", complete: componentPreviewGenerated, total: Math.max(1, componentPreviewTotal), value: percent(componentPreviewGenerated, componentPreviewTotal), detail: `${componentState?.stats.componentPreviewsNeedsReview ?? 0} generated previews need review, ${componentState?.stats.componentPreviewsBlockedByMissingBrowserCapture ?? 0} blocked from implementation screenshot capture.` },
     { label: "Mobile Screen Readiness", complete: mobileReadyScreens, total: Math.max(1, mobileScreenTotal), value: percent(mobileReadyScreens, mobileScreenTotal), detail: `${screenState?.stats.safeAreaBlockers ?? 0} safe-area blockers, ${screenState?.stats.touchBlockers ?? 0} touch blockers, ${screenState?.stats.iosBlockers ?? 0} iOS blockers, ${screenState?.stats.androidBlockers ?? 0} Android blockers.` },
     { label: "Mobile Component Readiness", complete: mobileReadyComponents, total: Math.max(1, mobileComponentTotal), value: percent(mobileReadyComponents, mobileComponentTotal), detail: `${componentState?.stats.touchBlockers ?? 0} touch blockers, ${componentState?.stats.safeAreaBlockers ?? 0} safe-area blockers, ${componentState?.stats.iosBlockers ?? 0} iOS blockers, ${componentState?.stats.androidBlockers ?? 0} Android blockers.` },
-    { label: "AI Agent Readiness", complete: aiAgentScore.complete, total: aiAgentScore.total, value: aiAgentScore.value, detail: `${aiAgentState?.stats.missingOpenEyeArt ?? 0} missing open-eye, ${aiAgentState?.stats.missingBlinkArt ?? 0} missing blink, ${aiAgentState?.stats.missingOfflineArt ?? 0} missing offline, ${aiAgentState?.stats.webReady ?? 0} web-ready, ${aiAgentState?.stats.robloxReady ?? 0} Roblox-ready, ${aiAgentState?.stats.mobileReady ?? 0} mobile-ready.` }
+    { label: "AI Agent Readiness", complete: aiAgentScore.complete, total: aiAgentScore.total, value: aiAgentScore.value, detail: `${aiAgentState?.stats.missingOpenEyeArt ?? 0} missing open-eye, ${aiAgentState?.stats.missingBlinkArt ?? 0} missing blink, ${aiAgentState?.stats.missingOfflineArt ?? 0} missing offline, ${aiAgentState?.stats.webReady ?? 0} web-ready, ${aiAgentState?.stats.robloxReady ?? 0} Roblox-ready, ${aiAgentState?.stats.mobileReady ?? 0} mobile-ready.` },
+    { label: "Architecture Health", complete: architectureSectionsCurrent, total: Math.max(1, architectureSectionsTotal), value: architectureState?.healthScore ?? 0, detail: `${architectureState?.outstandingDecisions.length ?? 0} outstanding decisions, architecture version ${architectureState?.architectureVersion.current ?? "not loaded"}.` }
   ];
   if (survivalPack) {
     metrics.splice(2, 0, { label: "Survival Content Pack", complete: survivalScore.complete, total: survivalScore.total, value: survivalScore.value, detail: `${survivalPack.title} is ${survivalScore.value}% production-ready.` });
@@ -944,7 +982,7 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
   const overall = clamp(metrics.filter((metric) => metric.label !== "Overall Game Completion").reduce((sum, metric) => sum + metric.value, 0) / Math.max(1, metrics.length - 1));
   metrics[0] = { ...metrics[0], complete: metrics.reduce((sum, metric) => sum + metric.complete, 0), total: metrics.reduce((sum, metric) => sum + metric.total, 0), value: overall };
 
-  const queue = [...aiAgentWorkItems(aiAgentState), ...mobileReadinessWorkItems(screenState, componentState), ...componentWorkItems(componentState), ...screenDesignWorkItems(screenState), ...scaffoldWorkItems(authoringState), ...upgradeArtWorkItems(upgradeArtReport), ...assetWorkItems(assetState), ...contentWorkItems(data)].filter((item) => !isCoveredByCompleteContentPack(item)).slice(0, 220);
+  const queue = [...architectureWorkItems(architectureState), ...aiAgentWorkItems(aiAgentState), ...mobileReadinessWorkItems(screenState, componentState), ...componentWorkItems(componentState), ...screenDesignWorkItems(screenState), ...scaffoldWorkItems(authoringState), ...upgradeArtWorkItems(upgradeArtReport), ...assetWorkItems(assetState), ...contentWorkItems(data)].filter((item) => !isCoveredByCompleteContentPack(item)).slice(0, 220);
   return {
     overallCompletion: overall,
     metrics,
@@ -953,7 +991,7 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
     blockers: buildBlockers(data, assetState),
     heatmap,
     timeline: buildTimeline(data, assetState),
-    reports: buildReports(data, assetState, authoringState, screenState, componentState, upgradeArtReport, aiAgentState),
+    reports: buildReports(data, assetState, authoringState, screenState, componentState, upgradeArtReport, aiAgentState, architectureState),
     generatedAt: new Date().toISOString()
   };
 }
