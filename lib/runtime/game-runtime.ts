@@ -9,9 +9,17 @@ import { getAppliedGameArtAssets } from "@/lib/assets/game-art-import";
 import { getGameData } from "@/lib/data";
 import {
   buildEconomyUsageRelationships,
+  buildBuildingResourceEffects,
+  buildEconomyBehaviorContracts,
+  buildEconomyCalculationRules,
+  buildEconomyRateBreakdownDefinitions,
+  buildEconomyScopeRules,
   buildEraEconomyProfiles,
   buildInventoryResourceMetadata,
+  buildOfflineProgressionPolicies,
   buildPrimaryHudSlots,
+  buildResourceProducerDefinitions,
+  buildEconomyTransactionReasons,
   canonicalEconomyDefinitions,
   isEconomyId,
   materialResourceIdsThatMustNotBeHud,
@@ -41,7 +49,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 13;
+export const gameRuntimeContentVersion = 14;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -49,9 +57,17 @@ export type RobloxRuntimeExportPayload = {
   metadata: RuntimeMetadata & { target: "roblox"; sourceSchemaVersion: string };
   eras: EraDefinition[];
   economyDefinitions: GameRuntimeData["economyDefinitions"];
+  economyBehaviorContracts: GameRuntimeData["economyBehaviorContracts"];
   eraEconomyProfiles: GameRuntimeData["eraEconomyProfiles"];
   economyUsageRelationships: GameRuntimeData["economyUsageRelationships"];
   inventoryResourceMetadata: GameRuntimeData["inventoryResourceMetadata"];
+  resourceProducerDefinitions: GameRuntimeData["resourceProducerDefinitions"];
+  buildingResourceEffects: GameRuntimeData["buildingResourceEffects"];
+  economyScopeRules: GameRuntimeData["economyScopeRules"];
+  economyTransactionReasons: GameRuntimeData["economyTransactionReasons"];
+  economyRateBreakdownDefinitions: GameRuntimeData["economyRateBreakdownDefinitions"];
+  offlineProgressionPolicies: GameRuntimeData["offlineProgressionPolicies"];
+  economyCalculationRules: GameRuntimeData["economyCalculationRules"];
   aiAgents: GameRuntimeData["aiAgents"];
   aiAgentVariants: GameRuntimeData["aiAgentVariants"];
   aiAgentPersonalities: GameRuntimeData["aiAgentPersonalities"];
@@ -492,6 +508,7 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
     ...runtimeData,
     eras: [...runtimeData.eras].sort(byOrderThenId),
     economyDefinitions: [...runtimeData.economyDefinitions].sort(byId),
+    economyBehaviorContracts: [...runtimeData.economyBehaviorContracts].sort(byId),
     eraEconomyProfiles: [...runtimeData.eraEconomyProfiles]
       .map((profile) => ({
         ...profile,
@@ -499,6 +516,12 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
       }))
       .sort((left, right) => left.eraIndex - right.eraIndex || left.eraId.localeCompare(right.eraId)),
     inventoryResourceMetadata: [...runtimeData.inventoryResourceMetadata].sort(byId),
+    resourceProducerDefinitions: [...runtimeData.resourceProducerDefinitions].sort(byId),
+    buildingResourceEffects: [...runtimeData.buildingResourceEffects].sort(byId),
+    economyScopeRules: [...runtimeData.economyScopeRules].sort(byId),
+    economyTransactionReasons: [...runtimeData.economyTransactionReasons].sort(byId),
+    economyRateBreakdownDefinitions: [...runtimeData.economyRateBreakdownDefinitions].sort(byId),
+    offlineProgressionPolicies: [...runtimeData.offlineProgressionPolicies].sort(byId),
     aiAgents: [...runtimeData.aiAgents].sort(byId),
     aiAgentVariants: [...runtimeData.aiAgentVariants].sort(byId),
     aiAgentPersonalities: [...runtimeData.aiAgentPersonalities].sort(byId),
@@ -742,6 +765,9 @@ function validateEconomyDefaults(runtimeData: Pick<GameRuntimeData, "economyDefi
   if (labor?.manualClickTarget !== true) {
     issues.push({ severity: "error", code: "labor_click_target_invalid", message: `${context} ECON-LABOR must remain the manual click target.`, records: ["ECON-LABOR"] });
   }
+  if (labor?.startingRate !== 1) {
+    issues.push({ severity: "error", code: "labor_base_passive_rate_invalid", message: `${context} ECON-LABOR must publish the approved base passive Labor rate of +1/sec.`, records: [`received:${labor?.startingRate ?? "missing"}`] });
+  }
   const laborIconKey = String(labor?.iconKey ?? "");
   const creditsIconKey = String(credits?.iconKey ?? "");
   const forbiddenLaborIconKeys = [creditsIconKey, "nature_leaf"].filter(Boolean);
@@ -768,6 +794,90 @@ function validateEconomyDefaults(runtimeData: Pick<GameRuntimeData, "economyDefi
   }
   if (survival?.primaryEconomyId !== "ECON-LABOR" || survival?.activePrimaryEconomyId !== "ECON-LABOR" || survival?.manualClickTarget !== "ECON-LABOR" || survival?.visibleHudEconomyIds.join("|") !== primaryHudEconomyIds.join("|")) {
     issues.push({ severity: "error", code: "survival_economy_profile_invalid", message: `${context} Survival must use Labor as primary/click economy and expose the fixed five-slot HUD including Credits in slot 2.`, records: [survival?.id ?? "missing_survival_profile"] });
+  }
+}
+
+function validateResourceEconomyContracts(
+  runtimeData: Pick<GameRuntimeData, "economyDefinitions" | "economyBehaviorContracts" | "eraEconomyProfiles" | "resourceProducerDefinitions" | "buildingResourceEffects" | "economyScopeRules" | "economyTransactionReasons" | "economyRateBreakdownDefinitions" | "offlineProgressionPolicies" | "economyCalculationRules">,
+  issues: ImportIssue[],
+  context: string
+) {
+  const economyIds = new Set(runtimeData.economyDefinitions.map((definition) => definition.id));
+  const fiveHudIds = ["ECON-LABOR", "ECON-CREDITS", "ECON-POPULATION", "ECON-RESEARCH", "ECON-PREMIUM-CRYSTALS"];
+  const contractByEconomy = new Map(runtimeData.economyBehaviorContracts.map((contract) => [contract.economyId, contract]));
+  const producerIds = new Set(runtimeData.resourceProducerDefinitions.map((producer) => producer.id));
+  const validScopes = new Set(["civilization", "galaxy", "sector", "system", "planet", "settlement"]);
+  const validModes = new Set(["per_click", "per_second", "per_minute", "instant_grant", "capacity", "multiplier", "conversion"]);
+
+  for (const economyId of fiveHudIds) {
+    const contract = contractByEconomy.get(economyId);
+    if (!contract) {
+      issues.push({ severity: "error", code: "economy_behavior_contract_missing", message: `${context} must publish a behavior contract for every permanent HUD economy.`, records: [economyId] });
+    }
+  }
+
+  if (runtimeData.economyBehaviorContracts.length !== fiveHudIds.length) {
+    issues.push({ severity: "error", code: "economy_behavior_contract_count_invalid", message: `${context} must publish exactly five permanent HUD economy behavior contracts.`, records: [`received:${runtimeData.economyBehaviorContracts.length}`] });
+  }
+
+  const labor = contractByEconomy.get("ECON-LABOR");
+  if (labor && (labor.behaviorType !== "produced_currency" || labor.basePassiveRate !== 1 || !labor.manualProduction.target || !labor.automatedProduction.aiAgentTarget || !labor.offlineProgressEligible || labor.canGoNegative)) {
+    issues.push({ severity: "error", code: "labor_behavior_contract_invalid", message: "Labor contract must define manual click, +1/sec base passive, AI Agent target, offline eligibility, and non-negative balances.", records: ["ECON-LABOR"] });
+  }
+
+  const credits = contractByEconomy.get("ECON-CREDITS");
+  if (credits && (credits.basePassiveRate !== 0 || credits.manualProduction.enabled || credits.automatedProduction.aiAgentTarget || credits.canGoNegative)) {
+    issues.push({ severity: "error", code: "credits_behavior_contract_invalid", message: "Credits must not have default passive, manual click, AI Agent output, or negative balances.", records: ["ECON-CREDITS"] });
+  }
+
+  const population = contractByEconomy.get("ECON-POPULATION");
+  if (population && (population.behaviorType !== "capacity_count" || population.startingAmount !== 5 || population.spendable || !population.integerOnly || !population.capacityResource || population.manualProduction.enabled)) {
+    issues.push({ severity: "error", code: "population_behavior_contract_invalid", message: "Population must be integer capacity_count, start at 5, non-clicked, and non-spendable by default.", records: ["ECON-POPULATION"] });
+  }
+
+  const research = contractByEconomy.get("ECON-RESEARCH");
+  if (research && (research.behaviorType !== "knowledge_currency" || research.basePassiveRate !== 0 || research.manualProduction.enabled || research.startingAmount !== 0)) {
+    issues.push({ severity: "error", code: "research_behavior_contract_invalid", message: "Research must be a non-clicked knowledge currency with no default passive production.", records: ["ECON-RESEARCH"] });
+  }
+
+  const premium = contractByEconomy.get("ECON-PREMIUM-CRYSTALS");
+  if (premium && (premium.behaviorType !== "premium_currency" || premium.basePassiveRate !== 0 || premium.offlineProgressEligible || premium.buildingProduction.enabled || !premium.purchaseProduction.serverAuthoritativeRequired || !premium.integerOnly)) {
+    issues.push({ severity: "error", code: "premium_behavior_contract_invalid", message: "Premium Crystals must be integer premium currency with no generic passive/building/offline production and server-authoritative purchases.", records: ["ECON-PREMIUM-CRYSTALS"] });
+  }
+
+  for (const producer of runtimeData.resourceProducerDefinitions) {
+    if (!economyIds.has(producer.economyId)) issues.push({ severity: "error", code: "producer_economy_missing", message: "Resource producer economyId must resolve.", records: [producer.id, producer.economyId] });
+    if (!validScopes.has(producer.scope)) issues.push({ severity: "error", code: "producer_scope_invalid", message: "Resource producer scope is invalid.", records: [producer.id, producer.scope] });
+    if (!validModes.has(producer.productionMode)) issues.push({ severity: "error", code: "producer_mode_invalid", message: "Resource producer productionMode is invalid.", records: [producer.id, producer.productionMode] });
+    if (producer.economyId === "ECON-CREDITS" && producer.sourceType === "base_system") issues.push({ severity: "error", code: "credits_base_producer_forbidden", message: "Credits must not have a base_system passive fallback producer.", records: [producer.id] });
+    if (producer.economyId === "ECON-PREMIUM-CRYSTALS" && (producer.sourceType === "building" || producer.offlineEligible)) issues.push({ severity: "error", code: "premium_unsafe_producer", message: "Premium Crystals must not use generic building or offline producers.", records: [producer.id] });
+  }
+
+  for (const effect of runtimeData.buildingResourceEffects) {
+    if (!economyIds.has(effect.economyId)) issues.push({ severity: "error", code: "building_effect_economy_missing", message: "Building resource effects must reference canonical economy IDs.", records: [effect.id, effect.economyId] });
+    if (!validScopes.has(effect.scope)) issues.push({ severity: "error", code: "building_effect_scope_invalid", message: "Building resource effect scope is invalid.", records: [effect.id, effect.scope] });
+    if (!producerIds.has(`producer_${effect.id}`)) issues.push({ severity: "error", code: "building_effect_producer_missing", message: "Every building resource effect must have a matching producer definition.", records: [effect.id] });
+    if (effect.economyId === "ECON-POPULATION" && !["capacity_increase", "instant_grant", "growth_rate"].includes(effect.effectKind)) issues.push({ severity: "error", code: "population_effect_kind_invalid", message: "Population building effects must distinguish capacity, grant, or growth.", records: [effect.id, effect.effectKind] });
+  }
+
+  for (const profile of runtimeData.eraEconomyProfiles) {
+    if (profile.fixedHudSlots.join("|") !== fiveHudIds.join("|")) issues.push({ severity: "error", code: "era_contract_hud_order_invalid", message: "Era profiles must preserve fixed HUD order.", records: [profile.id] });
+    if (!profile.permittedProducerSystems.length) issues.push({ severity: "error", code: "era_permitted_producers_missing", message: "Era profiles must declare permitted producer systems.", records: [profile.id] });
+    const creditsOverride = profile.displayOverrides["ECON-CREDITS"];
+    if (!creditsOverride?.displayName || !creditsOverride.iconKey) issues.push({ severity: "error", code: "credits_era_presentation_missing", message: "Every era profile must publish Credits presentation overrides without changing ECON-CREDITS.", records: [profile.id] });
+  }
+
+  for (const policy of runtimeData.offlineProgressionPolicies) {
+    if (!economyIds.has(policy.economyId)) issues.push({ severity: "error", code: "offline_policy_economy_missing", message: "Offline policy economyId must resolve.", records: [policy.id, policy.economyId] });
+  }
+  const premiumOffline = runtimeData.offlineProgressionPolicies.find((policy) => policy.economyId === "ECON-PREMIUM-CRYSTALS");
+  if (premiumOffline?.eligible) issues.push({ severity: "error", code: "premium_offline_forbidden", message: "Premium Crystals must never be eligible for generic offline progression.", records: [premiumOffline.id] });
+
+  const premiumPurchaseReason = runtimeData.economyTransactionReasons.find((reason) => reason.id === "premium_purchase");
+  if (!premiumPurchaseReason?.serverAuthoritativeRequired) issues.push({ severity: "error", code: "premium_purchase_reason_invalid", message: "Premium purchase transaction reason must require server authority.", records: ["premium_purchase"] });
+  if (!runtimeData.economyRateBreakdownDefinitions.every((definition) => economyIds.has(definition.economyId))) issues.push({ severity: "error", code: "rate_breakdown_economy_missing", message: "Rate breakdown definitions must reference economy IDs.", records: runtimeData.economyRateBreakdownDefinitions.map((definition) => definition.id) });
+  if (!runtimeData.economyCalculationRules.rounding.integerEconomyIds.includes("ECON-POPULATION") || !runtimeData.economyCalculationRules.rounding.integerEconomyIds.includes("ECON-PREMIUM-CRYSTALS")) {
+    issues.push({ severity: "error", code: "integer_rounding_rules_missing", message: "Population and Premium Crystals must be integer-valued.", records: [runtimeData.economyCalculationRules.id] });
   }
 }
 
@@ -1037,7 +1147,7 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
     issues.push({ severity: "error", code: "metadata_architecture_version_invalid", message: "metadata.architectureVersion must be a valid semantic version matching the Architecture Workspace.", records: ["metadata", runtimeData.metadata.architectureVersion ?? "missing"] });
   }
 
-  for (const [moduleName, rows] of Object.entries({ eras: runtimeData.eras, economyDefinitions: runtimeData.economyDefinitions, eraEconomyProfiles: runtimeData.eraEconomyProfiles, inventoryResourceMetadata: runtimeData.inventoryResourceMetadata, aiAgents: runtimeData.aiAgents, aiAgentVariants: runtimeData.aiAgentVariants, resources: runtimeData.resources, upgradeCategories: runtimeData.upgradeCategories, upgrades: runtimeData.upgrades, assets: runtimeData.assets })) {
+  for (const [moduleName, rows] of Object.entries({ eras: runtimeData.eras, economyDefinitions: runtimeData.economyDefinitions, economyBehaviorContracts: runtimeData.economyBehaviorContracts, eraEconomyProfiles: runtimeData.eraEconomyProfiles, resourceProducerDefinitions: runtimeData.resourceProducerDefinitions, buildingResourceEffects: runtimeData.buildingResourceEffects, economyScopeRules: runtimeData.economyScopeRules, economyTransactionReasons: runtimeData.economyTransactionReasons, economyRateBreakdownDefinitions: runtimeData.economyRateBreakdownDefinitions, offlineProgressionPolicies: runtimeData.offlineProgressionPolicies, inventoryResourceMetadata: runtimeData.inventoryResourceMetadata, aiAgents: runtimeData.aiAgents, aiAgentVariants: runtimeData.aiAgentVariants, resources: runtimeData.resources, upgradeCategories: runtimeData.upgradeCategories, upgrades: runtimeData.upgrades, assets: runtimeData.assets })) {
     const duplicates = duplicateIds(rows as Array<{ id: string }>);
     if (duplicates.length) {
       issues.push({ severity: "error", code: "duplicate_id", message: `${moduleName} contains duplicate IDs.`, records: duplicates });
@@ -1047,6 +1157,7 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   validateCanonicalEraProgression(runtimeData.eras, issues, "Canonical runtime");
   validateEraEconomyProfiles(runtimeData, issues, "Canonical runtime");
   validateEconomyDefaults(runtimeData, issues, "Canonical runtime");
+  validateResourceEconomyContracts(runtimeData, issues, "Canonical runtime");
   validateMobileClientProfiles(runtimeData, issues);
   validateAiAgents(runtimeData, issues);
 
@@ -1188,9 +1299,17 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     },
     eras: sorted.eras,
     economyDefinitions: sorted.economyDefinitions,
+    economyBehaviorContracts: sorted.economyBehaviorContracts,
     eraEconomyProfiles: sorted.eraEconomyProfiles,
     economyUsageRelationships: sorted.economyUsageRelationships,
     inventoryResourceMetadata: sorted.inventoryResourceMetadata,
+    resourceProducerDefinitions: sorted.resourceProducerDefinitions,
+    buildingResourceEffects: sorted.buildingResourceEffects,
+    economyScopeRules: sorted.economyScopeRules,
+    economyTransactionReasons: sorted.economyTransactionReasons,
+    economyRateBreakdownDefinitions: sorted.economyRateBreakdownDefinitions,
+    offlineProgressionPolicies: sorted.offlineProgressionPolicies,
+    economyCalculationRules: sorted.economyCalculationRules,
     aiAgents: sorted.aiAgents,
     aiAgentVariants: sorted.aiAgentVariants,
     aiAgentPersonalities: sorted.aiAgentPersonalities,
@@ -1249,6 +1368,7 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
     eraEconomyProfiles: payload.eraEconomyProfiles,
     balance: payload.balance
   }, issues, "Roblox runtime");
+  validateResourceEconomyContracts(payload, issues, "Roblox runtime");
   validateAiAgents(payload, issues);
 
   const duplicateTabs = duplicateIds(payload.upgradeTabs.map((tab) => ({ id: tab.tabId })));
@@ -1336,6 +1456,9 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     };
   });
   const aiAgentModules = getAiAgentRuntimeModules();
+  const economyBehaviorContracts = buildEconomyBehaviorContracts();
+  const buildingResourceEffects = buildBuildingResourceEffects(data);
+  const resourceProducerDefinitions = buildResourceProducerDefinitions(data);
 
   for (const upgrade of upgrades) {
     if (!categories.has(upgrade.categoryId)) {
@@ -1356,9 +1479,17 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     metadata: metadata(),
     eras: defaultEras(),
     economyDefinitions: canonicalEconomyDefinitions,
+    economyBehaviorContracts,
     eraEconomyProfiles: buildEraEconomyProfiles(),
     economyUsageRelationships: buildEconomyUsageRelationships(data),
     inventoryResourceMetadata: buildInventoryResourceMetadata(data),
+    resourceProducerDefinitions,
+    buildingResourceEffects,
+    economyScopeRules: buildEconomyScopeRules(),
+    economyTransactionReasons: buildEconomyTransactionReasons(),
+    economyRateBreakdownDefinitions: buildEconomyRateBreakdownDefinitions(),
+    offlineProgressionPolicies: buildOfflineProgressionPolicies(),
+    economyCalculationRules: buildEconomyCalculationRules(),
     aiAgents: aiAgentModules.aiAgents,
     aiAgentVariants: aiAgentModules.aiAgentVariants,
     aiAgentPersonalities: aiAgentModules.aiAgentPersonalities,
@@ -1389,9 +1520,17 @@ export async function getGameRuntimeData() {
       saveMigrationHints: base.metadata.saveMigrationHints
     },
     economyDefinitions: base.economyDefinitions,
+    economyBehaviorContracts: base.economyBehaviorContracts,
     eraEconomyProfiles: base.eraEconomyProfiles,
     economyUsageRelationships: base.economyUsageRelationships,
     inventoryResourceMetadata: base.inventoryResourceMetadata,
+    resourceProducerDefinitions: base.resourceProducerDefinitions,
+    buildingResourceEffects: base.buildingResourceEffects,
+    economyScopeRules: base.economyScopeRules,
+    economyTransactionReasons: base.economyTransactionReasons,
+    economyRateBreakdownDefinitions: base.economyRateBreakdownDefinitions,
+    offlineProgressionPolicies: base.offlineProgressionPolicies,
+    economyCalculationRules: base.economyCalculationRules,
     aiAgents: base.aiAgents,
     aiAgentVariants: base.aiAgentVariants,
     aiAgentPersonalities: base.aiAgentPersonalities,
@@ -1579,9 +1718,17 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     }),
     eras: normalizeImportedEras(payload, base.eras),
     economyDefinitions: base.economyDefinitions,
+    economyBehaviorContracts: base.economyBehaviorContracts,
     eraEconomyProfiles: base.eraEconomyProfiles,
     economyUsageRelationships: base.economyUsageRelationships,
     inventoryResourceMetadata: base.inventoryResourceMetadata,
+    resourceProducerDefinitions: base.resourceProducerDefinitions,
+    buildingResourceEffects: base.buildingResourceEffects,
+    economyScopeRules: base.economyScopeRules,
+    economyTransactionReasons: base.economyTransactionReasons,
+    economyRateBreakdownDefinitions: base.economyRateBreakdownDefinitions,
+    offlineProgressionPolicies: base.offlineProgressionPolicies,
+    economyCalculationRules: base.economyCalculationRules,
     resources: base.resources,
     upgradeCategories: normalizeImportedCategories(payload, base.upgradeCategories),
     upgrades: normalizeImportedUpgrades(payload, base.upgrades),

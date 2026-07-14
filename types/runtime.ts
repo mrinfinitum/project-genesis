@@ -137,6 +137,36 @@ export type EconomyValueDefinition = {
   status: "canonical" | "draft" | "deprecated";
 };
 
+export type EconomyBehaviorType = "produced_currency" | "capacity_count" | "knowledge_currency" | "premium_currency";
+export type EconomyScope = "civilization" | "galaxy" | "sector" | "system" | "planet" | "settlement";
+export type ResourceProducerSourceType = "base_system" | "manual_click" | "ai_agent" | "building" | "upgrade" | "research" | "settlement" | "planet" | "colony" | "trade_route" | "mission" | "event" | "discovery" | "entitlement";
+export type ResourceProductionMode = "per_click" | "per_second" | "per_minute" | "instant_grant" | "capacity" | "multiplier" | "conversion";
+
+export type EconomyBehaviorContract = {
+  id: string;
+  economyId: string;
+  behaviorType: EconomyBehaviorType;
+  startingAmount: number;
+  basePassiveRate: number;
+  manualProduction: { enabled: boolean; baseClick: number; target: boolean; formula: string };
+  automatedProduction: { enabled: boolean; aiAgentTarget: boolean; formula: string };
+  buildingProduction: { enabled: boolean; requiresStructuredEffects: boolean; allowedModes: ResourceProductionMode[] };
+  eventProduction: { enabled: boolean; allowedSourceTypes: ResourceProducerSourceType[] };
+  discoveryProduction: { enabled: boolean; allowedSourceTypes: ResourceProducerSourceType[] };
+  purchaseProduction: { enabled: boolean; serverAuthoritativeRequired: boolean; allowedSourceTypes: ResourceProducerSourceType[] };
+  spendable: boolean;
+  capacityResource: boolean;
+  premiumResource: boolean;
+  canGoNegative: boolean;
+  integerOnly: boolean;
+  capPolicy: { type: "none" | "capacity_bound" | "local_capacity"; notes: string };
+  offlineProgressEligible: boolean;
+  displayProfile: { stableId: string; defaultDisplayName: string; defaultIconKey: string; eraOverrideRule: string };
+  validationRules: string[];
+  saveBehavior: { storedInPlayerSave: boolean; migrationNotes: string[] };
+  notes: string;
+};
+
 export type HudResourceSlot = {
   id: string;
   economyId: string;
@@ -160,7 +190,8 @@ export type EraEconomyProfile = {
   fixedHudSlots: string[];
   visibleHudEconomyIds: string[];
   hudSlots: HudResourceSlot[];
-  displayOverrides: Record<string, { displayName: string; compactLabel?: string; description?: string }>;
+  displayOverrides: Record<string, { displayName: string; shortDisplayName?: string; compactLabel?: string; iconKey?: string; description?: string; formatting?: EconomyValueDefinition["formatting"] }>;
+  permittedProducerSystems: string[];
   visibilityRules: {
     useEraHud: boolean;
     fixedCoreHud: boolean;
@@ -169,6 +200,95 @@ export type EraEconomyProfile = {
     notes: string;
   };
   notes: string;
+};
+
+export type ResourceProducerDefinition = {
+  id: string;
+  sourceType: ResourceProducerSourceType;
+  sourceId: string;
+  economyId: string;
+  scope: EconomyScope;
+  productionMode: ResourceProductionMode;
+  baseAmount: number;
+  intervalSeconds: number | null;
+  requirements: Record<string, unknown>;
+  staffing: { populationRequired: number; assignedWorkforceRequired: number; notes: string };
+  powerCost: number;
+  inputCosts: Array<{ economyId?: string; resourceId?: string; amount: number }>;
+  multipliers: Array<{ id: string; appliesTo: string; mode: "additive" | "multiplicative"; value: number; sourceType: string }>;
+  offlineEligible: boolean;
+  activeConditions: string[];
+  notes: string;
+};
+
+export type BuildingResourceEffect = {
+  id: string;
+  buildingId: string;
+  buildingName: string;
+  economyId: string;
+  scope: EconomyScope;
+  effectKind: "production" | "capacity_increase" | "instant_grant" | "growth_rate" | "multiplier" | "requirement";
+  productionMode: ResourceProductionMode;
+  amount: number;
+  intervalSeconds: number | null;
+  displayText: string;
+  staffingRequirement: number;
+  eraId: string;
+  sourceField: string;
+  notes: string;
+};
+
+export type EconomyScopeRule = {
+  id: string;
+  scope: EconomyScope;
+  rollupBehavior: "rolls_to_civilization" | "local_only" | "conditional_transfer";
+  appliesToEconomyIds: string[];
+  doubleCountingRule: string;
+  notes: string;
+};
+
+export type EconomyTransactionReason = {
+  id: string;
+  economyId: string;
+  operation: "grant" | "produce" | "spend" | "refund" | "transfer" | "adjust" | "purchase" | "discover";
+  sourceTypes: ResourceProducerSourceType[];
+  serverAuthoritativeRequired: boolean;
+  playerHistoryOwnedBy: "game";
+  notes: string;
+};
+
+export type EconomyRateBreakdownDefinition = {
+  id: string;
+  economyId: string;
+  labels: Array<{ id: string; displayName: string; sourceTypes: ResourceProducerSourceType[]; operation: "add" | "multiply" }>;
+  formula: string;
+  displayRule: string;
+};
+
+export type OfflineProgressionPolicy = {
+  id: string;
+  economyId: string;
+  eligible: boolean;
+  maximumOfflineSeconds: number;
+  producerEligibility: string;
+  capBehavior: string;
+  suspendedConditions: string[];
+  deterministicOrder: string[];
+};
+
+export type EconomyCalculationRules = {
+  id: string;
+  multiplierOrder: string[];
+  multiplierStacking: { sourceSpecific: "multiplicative"; civilizationWide: "multiplicative"; eventBoosts: "multiplicative"; additiveBonuses: "add_before_multiply" };
+  rounding: {
+    internalPrecision: number;
+    displayPrecision: number;
+    integerEconomyIds: string[];
+    roundingMode: "floor_for_spend_checks_round_for_display";
+    maximumSafeValueStrategy: string;
+    serializationFormat: "decimal_string_or_number";
+  };
+  laborFormula: { perSecond: string; perClick: string; notes: string };
 };
 
 export type EconomyUsageRelationships = {
@@ -579,9 +699,17 @@ export type GameRuntimeData = {
   metadata: RuntimeMetadata;
   eras: EraDefinition[];
   economyDefinitions: EconomyValueDefinition[];
+  economyBehaviorContracts: EconomyBehaviorContract[];
   eraEconomyProfiles: EraEconomyProfile[];
   economyUsageRelationships: EconomyUsageRelationships;
   inventoryResourceMetadata: InventoryResourceMetadata[];
+  resourceProducerDefinitions: ResourceProducerDefinition[];
+  buildingResourceEffects: BuildingResourceEffect[];
+  economyScopeRules: EconomyScopeRule[];
+  economyTransactionReasons: EconomyTransactionReason[];
+  economyRateBreakdownDefinitions: EconomyRateBreakdownDefinition[];
+  offlineProgressionPolicies: OfflineProgressionPolicy[];
+  economyCalculationRules: EconomyCalculationRules;
   aiAgents: AiAgentDefinition[];
   aiAgentVariants: AiAgentVariantDefinition[];
   aiAgentPersonalities: AiAgentPersonalityDefinition[];

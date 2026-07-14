@@ -23,6 +23,14 @@ type RuntimePayload = {
   eras?: Array<{ id: string; index?: number; name?: string; displayName?: string; shortDisplayName?: string }>;
   economyDefinitions?: Array<{ id: string; iconKey?: string; startingAmount?: number; startingRate?: number; premium?: boolean; spendable?: boolean; manualClickTarget?: boolean; playerFacingHelpText?: string }>;
   eraEconomyProfiles?: Array<{ id: string; eraId: string; eraIndex: number; primaryEconomyId: string; activePrimaryEconomyId: string; manualClickTarget?: string | null; primaryEconomyIds: string[]; secondaryEconomyIds: string[]; fixedHudSlots: string[]; visibleHudEconomyIds: string[]; hudSlots: Array<{ economyId: string; order: number }>; displayOverrides?: Record<string, { displayName?: string }>; visibilityRules?: { useEraHud?: boolean; fixedCoreHud?: boolean; creditsVisible?: boolean } }>;
+  economyBehaviorContracts?: Array<{ economyId: string; behaviorType?: string; startingAmount?: number; basePassiveRate?: number; manualProduction?: { enabled?: boolean; target?: boolean; baseAmount?: number }; automatedProduction?: { enabled?: boolean; aiAgentTarget?: boolean }; buildingProduction?: { enabled?: boolean; producerDefinitionIds?: string[] }; purchaseProduction?: { enabled?: boolean; serverAuthoritative?: boolean; serverAuthoritativeRequired?: boolean }; spendable?: boolean; capacityResource?: boolean; premiumResource?: boolean; canGoNegative?: boolean; capPolicy?: { type?: string; notes?: string }; offlineProgressEligible?: boolean; validationRules?: string[] }>;
+  resourceProducerDefinitions?: Array<{ id: string; economyId: string; sourceType?: string; productionMode?: string; baseRate?: number; baseAmount?: number; scope?: string; buildingEffectId?: string }>;
+  buildingResourceEffects?: Array<{ id: string; buildingId: string; economyId: string; effectType?: string; amount?: number; ratePerSecond?: number; scope?: string }>;
+  economyScopeRules?: Array<{ id: string; economyId?: string; appliesToEconomyIds?: string[]; scope?: string }>;
+  economyTransactionReasons?: Array<{ id: string; economyId: string; operation?: string; sourceTypes?: string[]; allowNegativeDelta?: boolean; serverAuthoritativeRequired?: boolean }>;
+  economyRateBreakdownDefinitions?: Array<{ id: string; economyId: string; producerDefinitionIds?: string[] }>;
+  offlineProgressionPolicies?: Array<{ economyId: string; eligible?: boolean; producerDefinitionIds?: string[] }>;
+  economyCalculationRules?: { rounding?: { integerEconomyIds?: string[] }; multiplierOrder?: string[] };
   economyUsageRelationships?: { unresolved?: Array<unknown> };
   inventoryResourceMetadata?: Array<{ resourceId: string; classification?: string }>;
   resources?: Array<{ id: string }>;
@@ -265,6 +273,94 @@ function validateEraEconomyProfiles(payload: RuntimePayload | RobloxPayload, lab
   assert(laborLabels.galactic === "Galactic Output", `${label} Galactic Labor display override must be Galactic Output.`);
 }
 
+function validateResourceEconomyContracts(payload: RuntimePayload | RobloxPayload, label: string) {
+  const fixedHud = ["ECON-LABOR", "ECON-CREDITS", "ECON-POPULATION", "ECON-RESEARCH", "ECON-PREMIUM-CRYSTALS"];
+  const economyIds = new Set((payload.economyDefinitions ?? []).map((definition) => definition.id));
+  const contracts = payload.economyBehaviorContracts ?? [];
+  const producers = payload.resourceProducerDefinitions ?? [];
+  const buildingEffects = payload.buildingResourceEffects ?? [];
+  const producerIds = new Set(producers.map((producer) => producer.id));
+  const buildingEffectIds = new Set(buildingEffects.map((effect) => effect.id));
+  const contractById = new Map(contracts.map((contract) => [contract.economyId, contract]));
+
+  assert(contracts.length === fixedHud.length, `${label} must publish exactly five HUD economy behavior contracts.`);
+  for (const economyId of fixedHud) {
+    const contract = contractById.get(economyId);
+    assert(contract, `${label} is missing economy behavior contract ${economyId}.`);
+    assert(economyIds.has(economyId), `${label} economy behavior contract ${economyId} does not resolve to an economy definition.`);
+    assert(contract?.canGoNegative === false, `${label} ${economyId} must not go negative.`);
+    assert(Array.isArray(contract?.validationRules) && (contract?.validationRules?.length ?? 0) > 0, `${label} ${economyId} must publish validation rules.`);
+  }
+
+  const labor = contractById.get("ECON-LABOR");
+  assert(labor?.behaviorType === "produced_currency", `${label} Labor contract must be produced_currency.`);
+  assert(labor?.startingAmount === 0, `${label} Labor contract startingAmount must be 0.`);
+  assert(labor?.basePassiveRate === 1, `${label} Labor contract basePassiveRate must be 1.`);
+  assert(labor?.manualProduction?.enabled === true, `${label} Labor contract must enable manual production.`);
+  assert(labor?.automatedProduction?.enabled === true && labor.automatedProduction.aiAgentTarget === true, `${label} Labor contract must allow AI Agent automation separately.`);
+  assert(labor?.buildingProduction?.enabled === true, `${label} Labor contract must allow canonical building production.`);
+  assert(labor?.offlineProgressEligible === true, `${label} Labor contract must allow offline progression.`);
+  assert(labor?.spendable === true, `${label} Labor contract must be spendable.`);
+
+  const credits = contractById.get("ECON-CREDITS");
+  assert(credits?.behaviorType === "produced_currency", `${label} Credits contract must be produced_currency.`);
+  assert(credits?.startingAmount === 0, `${label} Credits contract startingAmount must be 0.`);
+  assert(credits?.basePassiveRate === 0, `${label} Credits must not have default passive production.`);
+  assert(credits?.manualProduction?.enabled === false, `${label} Credits must not enable manual click production.`);
+  assert(credits?.spendable === true, `${label} Credits contract must be spendable.`);
+
+  const population = contractById.get("ECON-POPULATION");
+  assert(population?.behaviorType === "capacity_count", `${label} Population contract must be capacity_count.`);
+  assert(population?.startingAmount === 5, `${label} Population contract startingAmount must be 5.`);
+  assert(population?.manualProduction?.enabled === false, `${label} Population must not be manually clicked.`);
+  assert(population?.spendable === false, `${label} Population must not be spendable.`);
+  assert(population?.capacityResource === true, `${label} Population must be marked as a capacity resource.`);
+  assert(population?.capPolicy?.type === "capacity_bound", `${label} Population must use capacity-bound policy.`);
+
+  const research = contractById.get("ECON-RESEARCH");
+  assert(research?.behaviorType === "knowledge_currency", `${label} Research contract must be knowledge_currency.`);
+  assert(research?.startingAmount === 0 && research?.basePassiveRate === 0, `${label} Research must start at 0 with no default passive production.`);
+  assert(research?.manualProduction?.enabled === false, `${label} Research must not be manually clicked.`);
+
+  const premium = contractById.get("ECON-PREMIUM-CRYSTALS");
+  assert(premium?.behaviorType === "premium_currency", `${label} Premium Crystals contract must be premium_currency.`);
+  assert(premium?.startingAmount === 0 && premium?.basePassiveRate === 0, `${label} Premium Crystals must start at 0 with no default passive production.`);
+  assert(premium?.premiumResource === true, `${label} Premium Crystals must be marked premium.`);
+  assert(premium?.buildingProduction?.enabled === false, `${label} Premium Crystals must not have building production.`);
+  assert(premium?.offlineProgressEligible === false, `${label} Premium Crystals must not allow offline production.`);
+  assert(premium?.purchaseProduction?.enabled === true && (premium.purchaseProduction.serverAuthoritative === true || premium.purchaseProduction.serverAuthoritativeRequired === true), `${label} purchased Premium Crystals must be server-authoritative.`);
+
+  assert(producers.some((producer) => producer.id === "producer_labor_base_passive" && producer.economyId === "ECON-LABOR" && producer.productionMode === "per_second" && producer.baseAmount === 1), `${label} must publish Labor base passive producer.`);
+  assert(producers.some((producer) => producer.id === "producer_labor_manual_click" && producer.economyId === "ECON-LABOR" && producer.productionMode === "per_click"), `${label} must publish Labor manual click producer.`);
+  assert(producers.some((producer) => producer.id === "producer_labor_ai_agent_assistance" && producer.economyId === "ECON-LABOR" && producer.sourceType === "ai_agent"), `${label} must publish Labor AI Agent producer.`);
+  assert(!producers.some((producer) => producer.economyId === "ECON-CREDITS" && producer.sourceType === "system_base" && (producer.baseRate ?? 0) > 0), `${label} must not publish a default Credits passive producer.`);
+  assert(!producers.some((producer) => producer.economyId === "ECON-PREMIUM-CRYSTALS" && ["building", "system_base", "ai_agent"].includes(String(producer.sourceType))), `${label} must not publish generic Premium Crystal producers.`);
+  assert(buildingEffects.length > 0, `${label} must publish structured building resource effects.`);
+  for (const effect of buildingEffects) {
+    assert(economyIds.has(effect.economyId), `${label} building effect ${effect.id} has unresolved economyId ${effect.economyId}.`);
+    assert(effect.economyId !== "ECON-PREMIUM-CRYSTALS", `${label} building effect ${effect.id} must not produce Premium Crystals.`);
+  }
+  for (const producer of producers) {
+    assert(economyIds.has(producer.economyId), `${label} producer ${producer.id} has unresolved economyId ${producer.economyId}.`);
+    if (producer.buildingEffectId) {
+      assert(buildingEffectIds.has(producer.buildingEffectId), `${label} producer ${producer.id} has unresolved buildingEffectId ${producer.buildingEffectId}.`);
+    }
+  }
+  for (const producerId of contracts.flatMap((contract) => contract.buildingProduction?.producerDefinitionIds ?? [])) {
+    assert(producerIds.has(producerId), `${label} contract references unresolved producer ${producerId}.`);
+  }
+  for (const economyId of fixedHud) {
+    assert(payload.economyScopeRules?.some((rule) => rule.economyId === economyId || rule.appliesToEconomyIds?.includes(economyId)), `${label} ${economyId} is missing scope rules.`);
+    assert(payload.economyTransactionReasons?.some((reason) => reason.economyId === economyId), `${label} ${economyId} is missing transaction reason codes.`);
+    assert(payload.economyRateBreakdownDefinitions?.some((definition) => definition.economyId === economyId), `${label} ${economyId} is missing rate breakdown definitions.`);
+    assert(payload.offlineProgressionPolicies?.some((policy) => policy.economyId === economyId), `${label} ${economyId} is missing offline policy.`);
+  }
+  assert(payload.economyTransactionReasons?.some((reason) => reason.economyId === "ECON-PREMIUM-CRYSTALS" && reason.operation === "purchase" && reason.sourceTypes?.includes("entitlement") && reason.serverAuthoritativeRequired === true), `${label} Premium Crystals must include safe purchase transaction reason.`);
+  assert(payload.economyCalculationRules?.rounding?.integerEconomyIds?.includes("ECON-POPULATION"), `${label} calculation rules must keep Population integer-rounded.`);
+  assert(payload.economyCalculationRules?.rounding?.integerEconomyIds?.includes("ECON-PREMIUM-CRYSTALS"), `${label} calculation rules must keep Premium Crystals integer-rounded.`);
+  assert((payload.economyCalculationRules?.multiplierOrder?.length ?? 0) > 0, `${label} must publish deterministic multiplier order.`);
+}
+
 function validateEraNavigation(payload: RuntimePayload | RobloxPayload, label: string) {
   const eras = payload.eras ?? [];
   const eraNames = eras.map((era) => era.displayName ?? era.id);
@@ -354,8 +450,8 @@ async function main() {
   assert(roblox.payload.metadata?.accessLevel === "public-published", "Roblox accessLevel must be public-published.");
   assert(roblox.payload.metadata?.validationStatus, "Roblox validation status is missing.");
   assert((canonical.payload.eras?.length ?? 0) > 0, "Canonical payload must include at least one era.");
-  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 13, "Canonical contentVersion must be at least 13 after published AI Agent variants.");
-  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 13, "Roblox contentVersion must be at least 13 after published AI Agent variants.");
+  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 14, "Canonical contentVersion must be at least 14 after resource economy contracts.");
+  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 14, "Roblox contentVersion must be at least 14 after resource economy contracts.");
 
   validateEraNavigation(canonical.payload, "Canonical");
   validateEraNavigation(roblox.payload, "Roblox");
@@ -363,6 +459,8 @@ async function main() {
   validateEconomy(roblox.payload, "Roblox");
   validateEraEconomyProfiles(canonical.payload, "Canonical");
   validateEraEconomyProfiles(roblox.payload, "Roblox");
+  validateResourceEconomyContracts(canonical.payload, "Canonical");
+  validateResourceEconomyContracts(roblox.payload, "Roblox");
   validateAiAgentRuntime(canonical.payload, "Canonical");
   validateAiAgentRuntime(roblox.payload, "Roblox");
   validateRuntimeReferences(canonical.payload);
@@ -383,6 +481,9 @@ async function main() {
       eraCount: canonical.payload.eras?.length ?? 0,
       economyDefinitionCount: canonical.payload.economyDefinitions?.length ?? 0,
       eraEconomyProfileCount: canonical.payload.eraEconomyProfiles?.length ?? 0,
+      economyBehaviorContractCount: canonical.payload.economyBehaviorContracts?.length ?? 0,
+      resourceProducerCount: canonical.payload.resourceProducerDefinitions?.length ?? 0,
+      buildingResourceEffectCount: canonical.payload.buildingResourceEffects?.length ?? 0,
       primaryHudResources: canonical.payload.clientProfiles?.default?.primaryHudResources ?? [],
       aiAgentCount: canonical.payload.aiAgents?.length ?? 0,
       aiAgentVariantCount: canonical.payload.aiAgentVariants?.length ?? 0,
@@ -401,6 +502,9 @@ async function main() {
       eraCount: roblox.payload.eras?.length ?? 0,
       economyDefinitionCount: roblox.payload.economyDefinitions?.length ?? 0,
       eraEconomyProfileCount: roblox.payload.eraEconomyProfiles?.length ?? 0,
+      economyBehaviorContractCount: roblox.payload.economyBehaviorContracts?.length ?? 0,
+      resourceProducerCount: roblox.payload.resourceProducerDefinitions?.length ?? 0,
+      buildingResourceEffectCount: roblox.payload.buildingResourceEffects?.length ?? 0,
       primaryHudResources: roblox.payload.clientHints?.primaryHudResources ?? [],
       aiAgentCount: roblox.payload.aiAgents?.length ?? 0,
       aiAgentVariantCount: roblox.payload.aiAgentVariants?.length ?? 0,

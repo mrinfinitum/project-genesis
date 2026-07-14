@@ -496,6 +496,7 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
     dataRequirements: [
       data("dashboard-runtime", "Runtime era/economy/upgrade definitions", "Canonical Studio Definition", "game-runtime-data", "Mapped"),
       data("dashboard-fixed-hud", "Fixed five-slot HUD order", "Canonical Studio Definition", "clientProfiles.default.primaryHudSlots", "Mapped"),
+      data("dashboard-economy-contracts", "Economy behavior, producer, offline, rounding, and rate-breakdown contracts", "Canonical Studio Definition", "economyBehaviorContracts + resourceProducerDefinitions + economyRateBreakdownDefinitions", "Mapped"),
       data("dashboard-ai-agent", "AI Agent definitions and automation presentation aliases", "Canonical Studio Definition", "aiAgents + automationPresentation", "Mapped"),
       data("dashboard-player-progress", "Player progression and era completion", "Player Runtime State", "game client", "Partial")
     ],
@@ -561,6 +562,8 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
     notes: [
       "Existing dashboard is implemented but needs formal Vite/Roblox parity review against the compact hero HUD direction.",
       "Top HUD uses fixed canonical order: ECON-LABOR, ECON-CREDITS, ECON-POPULATION, ECON-RESEARCH, ECON-PREMIUM-CRYSTALS. Credits remain visible from Survival with zero starting amount/rate.",
+      "EconomyCounter should open EconomyRateBreakdown using canonical producer contributions so display totals match applied totals.",
+      "Population must distinguish current population, capacity, available workforce, assigned workforce, and growth where surfaced.",
       "Labor label comes from era display overrides; economy identity and icon semantics come from economy ID, never slot position.",
       "Auto Click player-facing copy is replaced by AI Agent, Labor Assistance, Agent Online, and Agent Offline. Stable automation IDs remain."
     ]
@@ -806,7 +809,7 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
     displayName: "Buildings",
     description: "Building catalogue, construction, upgrade, and production detail screen.",
     status: "Not Started",
-    dataRequirements: [data("building-definitions", "Building definitions", "Canonical Studio Definition", "buildings", "Mapped"), data("building-player-state", "Owned buildings/workers", "Player Runtime State", "game client", "Missing")],
+    dataRequirements: [data("building-definitions", "Building definitions", "Canonical Studio Definition", "buildings", "Mapped"), data("building-resource-effects", "Structured building resource effects", "Canonical Studio Definition", "buildingResourceEffects + resourceProducerDefinitions", "Mapped"), data("building-player-state", "Owned buildings/workers", "Player Runtime State", "game client", "Missing")],
     assetRequirements: [asset("building-card-art", "Building card art", "building_cards", "background", "Needs Approval")]
   }),
   baseRecord({
@@ -815,7 +818,7 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
     description: "Resource inventory, sources, usage, and storage screen.",
     status: "In Design",
     web: "In Progress",
-    dataRequirements: [data("resource-catalog", "Resource catalog", "Canonical Studio Definition", "resource_catalog", "Mapped"), data("resource-inventory", "Current inventory", "Player Runtime State", "game client", "Missing")],
+    dataRequirements: [data("resource-catalog", "Resource catalog", "Canonical Studio Definition", "resource_catalog", "Mapped"), data("resource-economy-contracts", "HUD economy behavior and transaction contracts", "Canonical Studio Definition", "economyBehaviorContracts + economyTransactionReasons + offlineProgressionPolicies", "Mapped"), data("resource-inventory", "Current inventory", "Player Runtime State", "game client", "Missing")],
     assetRequirements: [asset("resource-icons", "Resource icons", "resource_icons", "icon", "Needs Web Mapping")]
   }),
   baseRecord({
@@ -891,7 +894,7 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
     displayName: "Settings",
     description: "Client preferences, accessibility, account, and audio/video options.",
     status: "Not Started",
-    dataRequirements: [data("settings-schema", "Client settings schema", "Service/Backend State", "game client", "Missing"), data("accessibility-options", "Accessibility options", "Presentation Hint", "design tokens", "Partial")],
+    dataRequirements: [data("settings-schema", "Client settings schema", "Service/Backend State", "game client", "Missing"), data("accessibility-options", "Accessibility options", "Presentation Hint", "design tokens", "Partial"), data("premium-transaction-contract", "Premium purchase, grant, refund, and restore-purchase reason codes", "Canonical Studio Definition", "economyTransactionReasons.ECON-PREMIUM-CRYSTALS", "Mapped")],
     assetRequirements: [asset("settings-icons", "Settings icons", "settings_icons", "icon", "Needs Approval")]
   })
 ];

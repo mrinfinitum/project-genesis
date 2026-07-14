@@ -4,7 +4,22 @@ import { ARCHITECTURE_VERSION } from "@/lib/architecture/version";
 import { getGameData } from "@/lib/data";
 import { discoveryJournalSchema, sampleDiscoveryJournal, sampleTimelineEvents, timelineEventSchema } from "@/lib/explorer/discovery-log";
 import { colonyBuildingTemplates, colonyFocusDefinitions, colonyLevelDefinitions, colonySchema, createColonyRecord, generateFallbackColonies, type ColonyBuilding, type ColonyRecord } from "@/lib/colonies/procedural";
-import { buildEconomyUsageRelationships, buildEraEconomyProfiles, buildInventoryResourceMetadata, buildPrimaryHudSlots, canonicalEconomyDefinitions, primaryHudEconomyIds } from "@/lib/economy/definitions";
+import {
+  buildBuildingResourceEffects,
+  buildEconomyBehaviorContracts,
+  buildEconomyCalculationRules,
+  buildEconomyRateBreakdownDefinitions,
+  buildEconomyScopeRules,
+  buildEconomyTransactionReasons,
+  buildEconomyUsageRelationships,
+  buildEraEconomyProfiles,
+  buildInventoryResourceMetadata,
+  buildOfflineProgressionPolicies,
+  buildPrimaryHudSlots,
+  buildResourceProducerDefinitions,
+  canonicalEconomyDefinitions,
+  primaryHudEconomyIds
+} from "@/lib/economy/definitions";
 import { buildEconomyState, economySchemas, priceClamps, type MarketRecord, type ResourceListing, type TradeOpportunity, type TradeRoute } from "@/lib/economy/trade";
 import { generateFaction, generateFallbackFactions, type FactionRecord } from "@/lib/factions/procedural";
 import { defaultEraNavigationProfile, engineEraNavigationOverrides, resolveEraNavigationProfile, supportedEraNavigationBoundaryModes, supportedEraNavigationDashboardModes } from "@/lib/runtime/client-profiles";
@@ -140,6 +155,14 @@ type CanonicalModules = {
   trade_routes: TradeRoute[];
   trade_opportunities: TradeOpportunity[];
   economy_definitions: typeof canonicalEconomyDefinitions;
+  economy_behavior_contracts: ReturnType<typeof buildEconomyBehaviorContracts>;
+  resource_producer_definitions: ReturnType<typeof buildResourceProducerDefinitions>;
+  building_resource_effects: ReturnType<typeof buildBuildingResourceEffects>;
+  economy_scope_rules: ReturnType<typeof buildEconomyScopeRules>;
+  economy_transaction_reasons: ReturnType<typeof buildEconomyTransactionReasons>;
+  economy_rate_breakdown_definitions: ReturnType<typeof buildEconomyRateBreakdownDefinitions>;
+  offline_progression_policies: ReturnType<typeof buildOfflineProgressionPolicies>;
+  economy_calculation_rules: ReturnType<typeof buildEconomyCalculationRules>;
   era_economy_profiles: ReturnType<typeof buildEraEconomyProfiles>;
   hud_profile: Array<ReturnType<typeof buildPrimaryHudSlots>[number]>;
   primary_hud_resources: string[];
@@ -430,6 +453,7 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
   const factions = buildExportFactions(galaxies, sectors, starSystems, normalizedPlanets.assigned);
   const colonies = buildExportColonies(normalizedPlanets.assigned, factions);
   const economyState = buildEconomyState(colonies, factions, [], "derived");
+  const buildingResourceEffects = buildBuildingResourceEffects(data);
   const aiAgentModules = getAiAgentRuntimeModules();
   const missionBundle = generateMissionBundle({
     missionSeed: "project-genesis-export-missions-v1",
@@ -493,6 +517,14 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
     trade_routes: economyState.tradeRoutes,
     trade_opportunities: economyState.tradeOpportunities,
     economy_definitions: canonicalEconomyDefinitions,
+    economy_behavior_contracts: buildEconomyBehaviorContracts(),
+    resource_producer_definitions: buildResourceProducerDefinitions(data),
+    building_resource_effects: buildingResourceEffects,
+    economy_scope_rules: buildEconomyScopeRules(),
+    economy_transaction_reasons: buildEconomyTransactionReasons(),
+    economy_rate_breakdown_definitions: buildEconomyRateBreakdownDefinitions(),
+    offline_progression_policies: buildOfflineProgressionPolicies(),
+    economy_calculation_rules: buildEconomyCalculationRules(),
     era_economy_profiles: buildEraEconomyProfiles(),
     hud_profile: buildPrimaryHudSlots(),
     primary_hud_resources: [...primaryHudEconomyIds],
@@ -554,6 +586,9 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
         id: "economy_canonical_summary",
         status: "canonical",
         globalEconomyDefinitions: canonicalEconomyDefinitions.length,
+        behaviorContracts: buildEconomyBehaviorContracts().length,
+        resourceProducers: buildResourceProducerDefinitions(data).length,
+        buildingResourceEffects: buildingResourceEffects.length,
         primaryHudResources: [...primaryHudEconomyIds],
         eraEconomyProfiles: buildEraEconomyProfiles().length,
         markets: economyState.markets.length,
@@ -840,8 +875,8 @@ function validateEconomy(issues: ExportValidationIssue[], modules: CanonicalModu
   const premiumCrystals = modules.economy_definitions.find((definition) => definition.id === "ECON-PREMIUM-CRYSTALS");
   const civilizationPoints = modules.economy_definitions.find((definition) => definition.id === "ECON-CIVILIZATION-POINTS");
 
-  if (labor?.startingAmount !== 0 || labor?.manualClickTarget !== true) {
-    addIssue(issues, "error", "labor_click_economy_invalid", "ECON-LABOR must start at 0 and remain the manual click economy.", ["ECON-LABOR"]);
+  if (labor?.startingAmount !== 0 || labor?.startingRate !== 1 || labor?.manualClickTarget !== true) {
+    addIssue(issues, "error", "labor_click_economy_invalid", "ECON-LABOR must start at 0, publish +1/sec base passive Labor, and remain the manual click economy.", ["ECON-LABOR"]);
   }
 
   const laborIconKey = String(labor?.iconKey ?? "");
@@ -900,6 +935,45 @@ function validateEconomy(issues: ExportValidationIssue[], modules: CanonicalModu
     addIssue(issues, "error", "material_resource_in_hud", "Material resources must not be used as global HUD currencies.", materialHudIds);
   }
 
+  const fiveHudIds = [...primaryHudEconomyIds];
+  const contractByEconomy = new Map(modules.economy_behavior_contracts.map((contract) => [contract.economyId, contract]));
+  const missingContracts = fiveHudIds.filter((economyId) => !contractByEconomy.has(economyId));
+  if (missingContracts.length || modules.economy_behavior_contracts.length !== fiveHudIds.length) {
+    addIssue(issues, "error", "economy_behavior_contracts_invalid", "Exports must include exactly one behavior contract for each permanent HUD economy.", missingContracts.length ? missingContracts : [`received:${modules.economy_behavior_contracts.length}`]);
+  }
+  const laborContract = contractByEconomy.get("ECON-LABOR");
+  if (!laborContract?.manualProduction.target || laborContract.basePassiveRate !== 1 || !laborContract.automatedProduction.aiAgentTarget) {
+    addIssue(issues, "error", "labor_contract_invalid", "Labor contract must define manual click, +1/sec base passive, and AI Agent Labor Assistance target.", ["ECON-LABOR"]);
+  }
+  const creditsContract = contractByEconomy.get("ECON-CREDITS");
+  if (creditsContract?.basePassiveRate !== 0 || creditsContract?.manualProduction.enabled || creditsContract?.automatedProduction.aiAgentTarget) {
+    addIssue(issues, "error", "credits_contract_invalid", "Credits contract must not define passive fallback, manual click, or AI Agent production.", ["ECON-CREDITS"]);
+  }
+  const populationContract = contractByEconomy.get("ECON-POPULATION");
+  if (populationContract?.startingAmount !== 5 || !populationContract.integerOnly || populationContract.spendable || !populationContract.capacityResource) {
+    addIssue(issues, "error", "population_contract_invalid", "Population contract must start at 5, be integer-only, capacity-focused, and non-spendable by default.", ["ECON-POPULATION"]);
+  }
+  const researchContract = contractByEconomy.get("ECON-RESEARCH");
+  if (researchContract?.basePassiveRate !== 0 || researchContract?.manualProduction.enabled || researchContract?.startingAmount !== 0) {
+    addIssue(issues, "error", "research_contract_invalid", "Research contract must start at 0 and avoid default/manual production.", ["ECON-RESEARCH"]);
+  }
+  const premiumContract = contractByEconomy.get("ECON-PREMIUM-CRYSTALS");
+  if (premiumContract?.basePassiveRate !== 0 || premiumContract?.offlineProgressEligible || premiumContract?.buildingProduction.enabled || !premiumContract?.purchaseProduction.serverAuthoritativeRequired) {
+    addIssue(issues, "error", "premium_contract_invalid", "Premium Crystals contract must forbid generic passive/building/offline production and require server-authoritative purchases.", ["ECON-PREMIUM-CRYSTALS"]);
+  }
+
+  const producerIds = new Set(modules.resource_producer_definitions.map((producer) => producer.id));
+  for (const effect of modules.building_resource_effects) {
+    if (!economyIds.has(effect.economyId)) addIssue(issues, "error", "building_resource_effect_economy_missing", "Building resource effects must reference valid economy IDs.", [effect.id, effect.economyId]);
+    if (!producerIds.has(`producer_${effect.id}`)) addIssue(issues, "error", "building_resource_effect_producer_missing", "Building resource effects must have matching producer definitions.", [effect.id]);
+    if (effect.economyId === "ECON-POPULATION" && !["capacity_increase", "instant_grant", "growth_rate"].includes(effect.effectKind)) addIssue(issues, "error", "population_effect_ambiguous", "Population building effects must distinguish capacity, grant, or growth.", [effect.id]);
+  }
+  for (const producer of modules.resource_producer_definitions) {
+    if (!economyIds.has(producer.economyId)) addIssue(issues, "error", "resource_producer_economy_missing", "Resource producers must reference valid economy IDs.", [producer.id, producer.economyId]);
+    if (producer.economyId === "ECON-CREDITS" && producer.sourceType === "base_system") addIssue(issues, "error", "credits_base_producer_forbidden", "Credits must not have a base passive producer.", [producer.id]);
+    if (producer.economyId === "ECON-PREMIUM-CRYSTALS" && (producer.sourceType === "building" || producer.offlineEligible)) addIssue(issues, "error", "premium_unsafe_producer", "Premium Crystals must not have building or offline producers.", [producer.id]);
+  }
+
   const expectedEraIds = ["survival", "ancient", "medieval", "renaissance", "industrial", "modern", "space-age", "interstellar", "galactic"];
   const profileEraIds = new Set(modules.era_economy_profiles.map((profile) => profile.eraId));
   const missingEraProfiles = expectedEraIds.filter((eraId) => !profileEraIds.has(eraId));
@@ -929,6 +1003,13 @@ function validateEconomy(issues: ExportValidationIssue[], modules: CanonicalModu
     }
     if (profile.visibilityRules.useEraHud !== false || profile.visibilityRules.fixedCoreHud !== true) {
       addIssue(issues, "error", "era_hud_rule_invalid", "Era profiles must not reorder the fixed core HUD.", [profile.id]);
+    }
+    if (!profile.permittedProducerSystems.length) {
+      addIssue(issues, "error", "era_producer_systems_missing", "Era profiles must declare permitted producer systems.", [profile.id]);
+    }
+    const creditsOverride = profile.displayOverrides["ECON-CREDITS"];
+    if (!creditsOverride?.displayName || !creditsOverride.iconKey) {
+      addIssue(issues, "error", "credits_presentation_override_missing", "Every era must declare Credits presentation overrides while preserving ECON-CREDITS.", [profile.id]);
     }
   }
 
@@ -1267,7 +1348,7 @@ function schemaNotes(target: EngineTarget) {
     resources: "Resource display data must be resolved through resource_catalog/ResourceService.",
     hierarchy: "Preserve Galaxy -> Sector -> Star System -> Planet. Do not add Region or Cluster layers.",
     colonies: "Colony state, growth inputs, buildings, levels, and focus definitions are canonical Studio data shared by every engine target.",
-    economy: "Global economy definitions, HUD slots, markets, resource listings, trade routes, and opportunities are engine-agnostic canonical data. HUD slots use economy IDs only; inventory materials stay in resource_catalog.",
+    economy: "Global economy definitions, behavior contracts, producer definitions, building resource effects, scope rules, ledger reason codes, offline policies, and HUD slots are engine-agnostic canonical data. HUD slots use economy IDs only; inventory materials stay in resource_catalog.",
     eraNavigation: "Studio owns navigation intent only. Dashboards should use current_journey with compact labels; clients own layout and rendering. The full Civilization Timeline remains the all-era view.",
     missions: "Missions, objectives, rewards, statuses, and generation metadata are deterministic canonical Studio data. Engine targets consume mission state and report progress back through objective IDs.",
     aiAgents: "AI Agents are cosmetic/presentation companions layered over the existing automation mechanic. ai_agent_variants describe selectable visual skins only; stable automation IDs remain unchanged and clients use automation_presentation aliases for labels.",
@@ -1318,6 +1399,14 @@ function compactModules(modules: CanonicalModules) {
     trade_routes: modules.trade_routes,
     trade_opportunities: modules.trade_opportunities,
     economy_definitions: modules.economy_definitions,
+    economy_behavior_contracts: modules.economy_behavior_contracts,
+    resource_producer_definitions: modules.resource_producer_definitions,
+    building_resource_effects: modules.building_resource_effects,
+    economy_scope_rules: modules.economy_scope_rules,
+    economy_transaction_reasons: modules.economy_transaction_reasons,
+    economy_rate_breakdown_definitions: modules.economy_rate_breakdown_definitions,
+    offline_progression_policies: modules.offline_progression_policies,
+    economy_calculation_rules: modules.economy_calculation_rules,
     era_economy_profiles: modules.era_economy_profiles,
     hud_profile: modules.hud_profile,
     primary_hud_resources: modules.primary_hud_resources,
@@ -1355,7 +1444,7 @@ function targetArtifacts(target: EngineTarget, modules: CanonicalModules) {
   if (target === "roblox") {
     return {
       "ResourceCatalogModule.lua": `local ResourceCatalog = ${luaValue(modules.resource_catalog)}\n\nreturn ResourceCatalog\n`,
-      "EconomyDefinitionsModule.lua": `local EconomyDefinitions = ${luaValue({ economyDefinitions: modules.economy_definitions, eraEconomyProfiles: modules.era_economy_profiles, hudProfile: modules.hud_profile, primaryHudResources: modules.primary_hud_resources })}\n\nreturn EconomyDefinitions\n`,
+      "EconomyDefinitionsModule.lua": `local EconomyDefinitions = ${luaValue({ economyDefinitions: modules.economy_definitions, economyBehaviorContracts: modules.economy_behavior_contracts, resourceProducerDefinitions: modules.resource_producer_definitions, buildingResourceEffects: modules.building_resource_effects, economyScopeRules: modules.economy_scope_rules, transactionReasons: modules.economy_transaction_reasons, rateBreakdowns: modules.economy_rate_breakdown_definitions, offlinePolicies: modules.offline_progression_policies, calculationRules: modules.economy_calculation_rules, eraEconomyProfiles: modules.era_economy_profiles, hudProfile: modules.hud_profile, primaryHudResources: modules.primary_hud_resources })}\n\nreturn EconomyDefinitions\n`,
       "AIAgentModule.lua": `local AIAgents = ${luaValue({ aiAgents: modules.ai_agents, aiAgentVariants: modules.ai_agent_variants, personalities: modules.ai_agent_personalities, animationProfiles: modules.ai_agent_animation_profiles, automationPresentation: modules.automation_presentation, defaultAiAgentId: modules.default_ai_agent_id, defaultAiAgentVariantId, saveSchema: modules.ai_agent_save_schema })}\n\nreturn AIAgents\n`,
       "EraNavigationProfileModule.lua": `local EraNavigationProfiles = ${luaValue(modules.era_navigation_profiles)}\n\nreturn EraNavigationProfiles\n`,
       "ResearchUnlockModule.lua": `local ResearchUnlocks = ${luaValue({ research: modules.research, unlocks: modules.unlock_matrix })}\n\nreturn ResearchUnlocks\n`,

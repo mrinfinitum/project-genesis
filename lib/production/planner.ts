@@ -8,6 +8,7 @@ import type { ComponentDesignSummary, ComponentLibraryState } from "@/lib/compon
 import { productionTasksForScaffold, type ContentAuthoringState, type EraScaffold } from "@/lib/content-authoring/templates";
 import type { ScreenDesignerState, ScreenDesignSummary } from "@/lib/screen-designer";
 import { buildUpgradeArtReport, type UpgradeArtReport } from "@/lib/upgrades/art-previews";
+import { buildBuildingResourceEffects, buildEconomyBehaviorContracts, buildOfflineProgressionPolicies, buildResourceProducerDefinitions, primaryHudEconomyIds } from "@/lib/economy/definitions";
 import type { Building, BuildingChain, GameData, ResearchNode, ResourceCatalogItem, UnlockMatrixRow } from "@/types/schema";
 
 export type ProductionPriority = "Critical" | "High" | "Medium" | "Low";
@@ -15,7 +16,7 @@ export type ProductionQueueItem = {
   id: string;
   title: string;
   priority: ProductionPriority;
-  type: "Asset" | "Research" | "Building" | "Resource" | "Mission" | "Event" | "Production Chain" | "Screen Design" | "Component" | "AI Agent" | "Architecture";
+  type: "Asset" | "Research" | "Building" | "Resource" | "Mission" | "Event" | "Production Chain" | "Screen Design" | "Component" | "AI Agent" | "Architecture" | "Resource System";
   status: string;
   era: string;
   href: string;
@@ -335,6 +336,29 @@ function aiAgentWorkItems(aiAgentState?: AiAgentLibraryState) {
   return items;
 }
 
+function resourceEconomyWorkItems(data: GameData) {
+  const items: ProductionQueueItem[] = [];
+  const effects = buildBuildingResourceEffects(data);
+  const effectBuildingIds = new Set(effects.map((effect) => effect.buildingId));
+  const impliedProductionBuildings = data.buildings.filter((building) => /lab|library|market|trade|workshop|shelter|house|habitat|farm|factory|mine|generator|plant|academy|university|observatory/i.test(`${building.name} ${building.category} ${building.description}`) && !effectBuildingIds.has(building.id));
+
+  for (const building of impliedProductionBuildings.slice(0, 40)) {
+    items.push(queueItem({
+      id: `resource-effect-${building.id}`,
+      title: `Define structured resource effect for ${building.name}`,
+      type: "Resource System",
+      status: "Needs Contract",
+      era: building.era || "Economy",
+      href: "/buildings",
+      reason: "Building name or category implies production/capacity, but no structured resource effect field currently exports.",
+      blockers: ["Choose economyId", "Choose production mode", "Choose scope", "Confirm amount/rate"],
+      priority: /lab|market|shelter|house|habitat/i.test(`${building.name} ${building.category}`) ? "High" : "Medium"
+    }));
+  }
+
+  return items;
+}
+
 function aiAgentComplete(agentState?: AiAgentLibraryState) {
   if (!agentState) return { complete: 0, total: 1, value: 0 };
   const completeAgents = agentState.records.filter((agent) =>
@@ -644,6 +668,14 @@ function buildReports(data: GameData, assetState: AssetProductionState, authorin
   const mobileComponentBlockers = (componentState?.stats.touchBlockers ?? 0) + (componentState?.stats.safeAreaBlockers ?? 0);
   const missingAgentCoreArt = (aiAgentState?.stats.missingOpenEyeArt ?? 0) + (aiAgentState?.stats.missingBlinkArt ?? 0) + (aiAgentState?.stats.missingOfflineArt ?? 0);
   const architectureOpenItems = (architectureState?.outstandingDecisions.length ?? 0) + (architectureState?.sections.filter((section) => section.status !== "Current").length ?? 0);
+  const contracts = buildEconomyBehaviorContracts();
+  const producers = buildResourceProducerDefinitions(data);
+  const buildingEffects = buildBuildingResourceEffects(data);
+  const effectBuildingIds = new Set(buildingEffects.map((effect) => effect.buildingId));
+  const impliedMissingEffects = data.buildings.filter((building) => /lab|library|market|trade|workshop|shelter|house|habitat|farm|factory|mine|generator|plant|academy|university|observatory/i.test(`${building.name} ${building.category} ${building.description}`) && !effectBuildingIds.has(building.id)).length;
+  const premiumUnsafeSources = producers.filter((producer) => producer.economyId === "ECON-PREMIUM-CRYSTALS" && (producer.sourceType === "building" || producer.offlineEligible)).length;
+  const offlinePolicies = buildOfflineProgressionPolicies();
+  const offlineCoverageGaps = [...primaryHudEconomyIds].filter((economyId) => !offlinePolicies.some((policy) => policy.economyId === economyId)).length;
 
   return [
     { label: "Architecture Health", count: architectureOpenItems, href: "/architecture", severity: architectureOpenItems ? "High" : "Low", description: "Outstanding Architecture decisions or documentation sections needing review." },
@@ -657,6 +689,10 @@ function buildReports(data: GameData, assetState: AssetProductionState, authorin
     { label: "Missing Production Chains", count: missingChains, href: "/building-chains", severity: missingChains ? "Critical" : "Low", description: "Building chains with missing level definitions." },
     { label: "Missing Collectibles", count: missingCollectibles, href: "/collectibles", severity: missingCollectibles ? "Medium" : "Low", description: "Active content-pack collectible records needing production completion." },
     { label: "Missing Resources", count: missingResources, href: "/resource-catalog", severity: missingResources ? "High" : "Low", description: "Resource catalog records with incomplete required fields." },
+    { label: "Resource Economy Contracts", count: Math.max(0, primaryHudEconomyIds.length - contracts.length), href: "/resources", severity: contracts.length === primaryHudEconomyIds.length ? "Low" : "Critical", description: "Permanent HUD economies missing complete behavior contracts." },
+    { label: "Building Resource Effects", count: impliedMissingEffects, href: "/buildings", severity: impliedMissingEffects ? "High" : "Low", description: "Buildings whose names imply production/capacity but lack structured resource effects." },
+    { label: "Premium Crystal Unsafe Sources", count: premiumUnsafeSources, href: "/resources", severity: premiumUnsafeSources ? "Critical" : "Low", description: "Premium Crystal producers that are generic building/offline sources." },
+    { label: "Offline Progression Coverage", count: offlineCoverageGaps, href: "/resources", severity: offlineCoverageGaps ? "High" : "Low", description: "Permanent HUD economies missing offline progression policy coverage." },
     { label: "Draft Era Scaffolds", count: draftScaffoldCount, href: "/content-authoring", severity: draftScaffoldCount ? "Medium" : "Low", description: "Generated era starter kits waiting for authoring and promotion." },
     { label: "Screen Asset Blockers", count: screenAssetBlockers, href: "/screen-designer", severity: screenAssetBlockers ? "High" : "Low", description: "Screen designs blocked by missing, unpublished, or unapproved visual assets." },
     { label: "Screen Data Blockers", count: screenDataBlockers, href: "/screen-designer", severity: screenDataBlockers ? "Critical" : "Low", description: "Screen designs depending on missing or player-runtime data requirements." },
@@ -942,6 +978,11 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
   const aiAgentScore = aiAgentComplete(aiAgentState);
   const architectureSectionsCurrent = architectureState?.sections.filter((section) => section.status === "Current").length ?? 0;
   const architectureSectionsTotal = architectureState?.sections.length ?? 0;
+  const resourceEconomyContracts = buildEconomyBehaviorContracts();
+  const resourceEconomyProducers = buildResourceProducerDefinitions(data);
+  const resourceEconomyEffects = buildBuildingResourceEffects(data);
+  const resourceEconomyComplete = resourceEconomyContracts.length + resourceEconomyEffects.length;
+  const resourceEconomyTotal = primaryHudEconomyIds.length + Math.max(1, resourceEconomyEffects.length);
   const previewReady = assetState.visualPreviewReport.previewReady;
   const previewTotal = Math.max(1, assetState.visualPreviewReport.totalVisualRecords);
   const upgradeArtReady = upgradeArtReport.stats.previewReady;
@@ -957,6 +998,7 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
     { label: "Building Completion", complete: buildingCompleteCount, total: data.buildings.length, value: percent(buildingCompleteCount, data.buildings.length), detail: "Buildings with unlocks and visual references." },
     { label: "Production Chain Completion", complete: chainCompleteCount, total: data.building_chains.length, value: percent(chainCompleteCount, data.building_chains.length), detail: "Building chains with all level slots filled." },
     { label: "Resource Completion", complete: resourceCompleteCount, total: data.resource_catalog.length, value: percent(resourceCompleteCount, data.resource_catalog.length), detail: "Canonical resources with required identity fields." },
+    { label: "Resource Economy Contract Readiness", complete: resourceEconomyComplete, total: resourceEconomyTotal, value: percent(resourceEconomyComplete, resourceEconomyTotal), detail: `${resourceEconomyContracts.length}/${primaryHudEconomyIds.length} HUD economy contracts, ${resourceEconomyProducers.length} producers, ${resourceEconomyEffects.length} structured building effects.` },
     { label: "Mission Completion", complete: survivalMissionComplete, total: Math.max(1, survivalMissionTotal), value: percent(survivalMissionComplete, survivalMissionTotal), detail: "Authored mission content from active content packs." },
     { label: "Event Completion", complete: survivalEventComplete, total: Math.max(1, survivalEventTotal), value: percent(survivalEventComplete, survivalEventTotal), detail: "Authored event content from active content packs." },
     { label: "Screen Design Completion", complete: screenCompleteCount, total: Math.max(1, screenTotal), value: percent(screenCompleteCount, screenTotal), detail: "Major game screens with approved or implemented Studio design specifications." },
@@ -985,7 +1027,7 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
   const overall = clamp(metrics.filter((metric) => metric.label !== "Overall Game Completion").reduce((sum, metric) => sum + metric.value, 0) / Math.max(1, metrics.length - 1));
   metrics[0] = { ...metrics[0], complete: metrics.reduce((sum, metric) => sum + metric.complete, 0), total: metrics.reduce((sum, metric) => sum + metric.total, 0), value: overall };
 
-  const queue = [...architectureWorkItems(architectureState), ...aiAgentWorkItems(aiAgentState), ...mobileReadinessWorkItems(screenState, componentState), ...componentWorkItems(componentState), ...screenDesignWorkItems(screenState), ...scaffoldWorkItems(authoringState), ...upgradeArtWorkItems(upgradeArtReport), ...assetWorkItems(assetState), ...contentWorkItems(data)].filter((item) => !isCoveredByCompleteContentPack(item)).slice(0, 220);
+  const queue = [...architectureWorkItems(architectureState), ...resourceEconomyWorkItems(data), ...aiAgentWorkItems(aiAgentState), ...mobileReadinessWorkItems(screenState, componentState), ...componentWorkItems(componentState), ...screenDesignWorkItems(screenState), ...scaffoldWorkItems(authoringState), ...upgradeArtWorkItems(upgradeArtReport), ...assetWorkItems(assetState), ...contentWorkItems(data)].filter((item) => !isCoveredByCompleteContentPack(item)).slice(0, 220);
   return {
     overallCompletion: overall,
     metrics,

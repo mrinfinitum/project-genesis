@@ -1,6 +1,21 @@
 import { ResourceService } from "@/lib/resources/service";
 import type { GameData, ResourceCatalogItem } from "@/types/schema";
-import type { EconomyUsageRelationships, EconomyValueDefinition, EraEconomyProfile, HudResourceSlot, InventoryResourceMetadata } from "@/types/runtime";
+import type {
+  BuildingResourceEffect,
+  EconomyBehaviorContract,
+  EconomyCalculationRules,
+  EconomyRateBreakdownDefinition,
+  EconomyScopeRule,
+  EconomyTransactionReason,
+  EconomyUsageRelationships,
+  EconomyValueDefinition,
+  EraEconomyProfile,
+  HudResourceSlot,
+  InventoryResourceMetadata,
+  OfflineProgressionPolicy,
+  ResourceProducerDefinition,
+  ResourceProducerSourceType
+} from "@/types/runtime";
 
 export const canonicalEconomyDefinitions: EconomyValueDefinition[] = [
   {
@@ -273,20 +288,21 @@ type EraEconomyProfileSeed = {
   eraId: string;
   primary: readonly string[];
   secondary: readonly string[];
-  displayOverrides?: Record<string, { displayName: string; compactLabel?: string; description?: string }>;
+  displayOverrides?: EraEconomyProfile["displayOverrides"];
+  permittedProducerSystems?: string[];
   notes?: string;
 };
 
 const eraEconomyProfileSeeds: readonly EraEconomyProfileSeed[] = [
-  { eraId: "survival", primary: ["ECON-LABOR"], secondary: ["ECON-POPULATION"], displayOverrides: { "ECON-LABOR": { displayName: "Labor" } }, notes: "Survival starts with Labor as the active click economy. Credits remain visible in the fixed HUD at zero but do not passively generate without an explicit canonical source." },
-  { eraId: "ancient", primary: ["ECON-LABOR"], secondary: ["ECON-POPULATION", "ECON-RESEARCH"], displayOverrides: { "ECON-LABOR": { displayName: "Labor" } } },
-  { eraId: "medieval", primary: ["ECON-LABOR"], secondary: ["ECON-POPULATION", "ECON-RESEARCH"], displayOverrides: { "ECON-LABOR": { displayName: "Workforce" } } },
-  { eraId: "renaissance", primary: ["ECON-LABOR", "ECON-TRADE", "ECON-POPULATION", "ECON-RESEARCH"], secondary: [], displayOverrides: { "ECON-LABOR": { displayName: "Workforce" } } },
-  { eraId: "industrial", primary: ["ECON-CREDITS", "ECON-POPULATION", "ECON-RESEARCH", "ECON-LABOR"], secondary: [], displayOverrides: { "ECON-LABOR": { displayName: "Industrial Workforce", compactLabel: "Workforce" } } },
-  { eraId: "modern", primary: ["ECON-CREDITS", "ECON-RESEARCH", "ECON-POPULATION"], secondary: [], displayOverrides: { "ECON-LABOR": { displayName: "Human Capital" } } },
-  { eraId: "space-age", primary: ["ECON-CIVILIZATION-ENERGY", "ECON-RESEARCH", "ECON-POPULATION"], secondary: [], displayOverrides: { "ECON-LABOR": { displayName: "Workforce" } } },
-  { eraId: "interstellar", primary: ["ECON-CIVILIZATION-POINTS", "ECON-RESEARCH"], secondary: [], displayOverrides: { "ECON-LABOR": { displayName: "Civilization Output", compactLabel: "Output" } } },
-  { eraId: "galactic", primary: ["ECON-CIVILIZATION-POINTS", "ECON-INFLUENCE", "ECON-RESEARCH"], secondary: [], displayOverrides: { "ECON-LABOR": { displayName: "Galactic Output", compactLabel: "Output" } } }
+  { eraId: "survival", primary: ["ECON-LABOR"], secondary: ["ECON-POPULATION"], displayOverrides: { "ECON-LABOR": { displayName: "Labor" }, "ECON-CREDITS": { displayName: "Credits", shortDisplayName: "Credits", iconKey: "economy_credits", description: "Stable credit balance. No passive fallback in Survival." } }, permittedProducerSystems: ["base_system", "manual_click", "ai_agent", "building", "mission", "event", "discovery"], notes: "Survival starts with Labor as the active click economy. Credits remain visible in the fixed HUD at zero but do not passively generate without an explicit canonical source." },
+  { eraId: "ancient", primary: ["ECON-LABOR"], secondary: ["ECON-POPULATION", "ECON-RESEARCH"], displayOverrides: { "ECON-LABOR": { displayName: "Labor" }, "ECON-CREDITS": { displayName: "Coin", shortDisplayName: "Coin", iconKey: "economy_credits" } }, permittedProducerSystems: ["manual_click", "ai_agent", "building", "mission", "event", "discovery"] },
+  { eraId: "medieval", primary: ["ECON-LABOR"], secondary: ["ECON-POPULATION", "ECON-RESEARCH"], displayOverrides: { "ECON-LABOR": { displayName: "Workforce" }, "ECON-CREDITS": { displayName: "Treasury", shortDisplayName: "Coin", iconKey: "economy_credits" } }, permittedProducerSystems: ["manual_click", "ai_agent", "building", "mission", "event", "trade_route", "discovery"] },
+  { eraId: "renaissance", primary: ["ECON-LABOR", "ECON-TRADE", "ECON-POPULATION", "ECON-RESEARCH"], secondary: [], displayOverrides: { "ECON-LABOR": { displayName: "Workforce" }, "ECON-CREDITS": { displayName: "Currency", shortDisplayName: "Currency", iconKey: "economy_credits" } }, permittedProducerSystems: ["manual_click", "ai_agent", "building", "mission", "event", "trade_route", "discovery"] },
+  { eraId: "industrial", primary: ["ECON-CREDITS", "ECON-POPULATION", "ECON-RESEARCH", "ECON-LABOR"], secondary: [], displayOverrides: { "ECON-LABOR": { displayName: "Industrial Workforce", compactLabel: "Workforce" }, "ECON-CREDITS": { displayName: "Credits", shortDisplayName: "Credits", iconKey: "economy_credits" } }, permittedProducerSystems: ["building", "trade_route", "mission", "event", "discovery", "ai_agent", "manual_click"] },
+  { eraId: "modern", primary: ["ECON-CREDITS", "ECON-RESEARCH", "ECON-POPULATION"], secondary: [], displayOverrides: { "ECON-LABOR": { displayName: "Human Capital" }, "ECON-CREDITS": { displayName: "Digital Credits", shortDisplayName: "Credits", iconKey: "economy_digital_credits" } }, permittedProducerSystems: ["building", "trade_route", "mission", "event", "discovery", "ai_agent", "manual_click"] },
+  { eraId: "space-age", primary: ["ECON-CIVILIZATION-ENERGY", "ECON-RESEARCH", "ECON-POPULATION"], secondary: [], displayOverrides: { "ECON-LABOR": { displayName: "Workforce" }, "ECON-CREDITS": { displayName: "Stellar Credits", shortDisplayName: "Stellar", iconKey: "economy_stellar_credits" } }, permittedProducerSystems: ["building", "trade_route", "mission", "event", "discovery", "ai_agent", "manual_click"] },
+  { eraId: "interstellar", primary: ["ECON-CIVILIZATION-POINTS", "ECON-RESEARCH"], secondary: [], displayOverrides: { "ECON-LABOR": { displayName: "Civilization Output", compactLabel: "Output" }, "ECON-CREDITS": { displayName: "Network Credits", shortDisplayName: "Network", iconKey: "economy_network_credits" } }, permittedProducerSystems: ["building", "trade_route", "mission", "event", "discovery", "ai_agent", "manual_click"] },
+  { eraId: "galactic", primary: ["ECON-CIVILIZATION-POINTS", "ECON-INFLUENCE", "ECON-RESEARCH"], secondary: [], displayOverrides: { "ECON-LABOR": { displayName: "Galactic Output", compactLabel: "Output" }, "ECON-CREDITS": { displayName: "Galactic Credits", shortDisplayName: "Galactic", iconKey: "economy_galactic_credits" } }, permittedProducerSystems: ["building", "trade_route", "mission", "event", "discovery", "ai_agent", "manual_click", "entitlement"] }
 ];
 
 export function buildEraEconomyProfiles(): EraEconomyProfile[] {
@@ -305,6 +321,7 @@ export function buildEraEconomyProfiles(): EraEconomyProfile[] {
       visibleHudEconomyIds: fixedHudSlots,
       hudSlots: buildHudSlots(fixedHudSlots),
       displayOverrides: profile.displayOverrides ?? {},
+      permittedProducerSystems: profile.permittedProducerSystems ?? ["building", "mission", "event", "discovery"],
       visibilityRules: {
         useEraHud: false,
         fixedCoreHud: true,
@@ -315,6 +332,340 @@ export function buildEraEconomyProfiles(): EraEconomyProfile[] {
       notes: profile.notes ?? "Studio-owned era economy profile. Clients use fixed HUD slots for top-bar order and this profile for primary economy, display overrides, and progression behavior."
     };
   });
+}
+
+const fiveHudEconomyIds = ["ECON-LABOR", "ECON-CREDITS", "ECON-POPULATION", "ECON-RESEARCH", "ECON-PREMIUM-CRYSTALS"] as const;
+
+function economyDefinition(economyId: string) {
+  const definition = canonicalEconomyDefinitions.find((item) => item.id === economyId);
+  if (!definition) throw new Error(`Missing economy definition ${economyId}.`);
+  return definition;
+}
+
+export function buildEconomyBehaviorContracts(): EconomyBehaviorContract[] {
+  const config: Array<Pick<EconomyBehaviorContract, "economyId" | "behaviorType" | "basePassiveRate" | "manualProduction" | "automatedProduction" | "buildingProduction" | "eventProduction" | "discoveryProduction" | "purchaseProduction" | "capacityResource" | "premiumResource" | "canGoNegative" | "integerOnly" | "capPolicy" | "offlineProgressEligible" | "validationRules" | "notes">> = [
+    {
+      economyId: "ECON-LABOR",
+      behaviorType: "produced_currency",
+      basePassiveRate: 1,
+      manualProduction: { enabled: true, baseClick: 1, target: true, formula: "laborPerClick = baseClick + clickUpgradeBonuses; apply click multipliers and critical-click rules after flat bonuses." },
+      automatedProduction: { enabled: true, aiAgentTarget: true, formula: "aiAgentLaborAssistance is separate from basePassiveLabor and is added before approved multipliers." },
+      buildingProduction: { enabled: true, requiresStructuredEffects: true, allowedModes: ["per_second", "multiplier", "instant_grant"] },
+      eventProduction: { enabled: true, allowedSourceTypes: ["event", "mission"] },
+      discoveryProduction: { enabled: true, allowedSourceTypes: ["discovery", "mission"] },
+      purchaseProduction: { enabled: false, serverAuthoritativeRequired: false, allowedSourceTypes: [] },
+      capacityResource: false,
+      premiumResource: false,
+      canGoNegative: false,
+      integerOnly: false,
+      capPolicy: { type: "none", notes: "Labor has no global cap unless a future Architecture decision adds one." },
+      offlineProgressEligible: true,
+      validationRules: ["manualClickTarget must be true", "basePassiveRate must be 1/sec while Survival rule is approved", "AI Agent contribution must not be counted as base passive Labor", "must not produce Credits through Labor paths"],
+      notes: "Primary manual-click resource and automation target."
+    },
+    {
+      economyId: "ECON-CREDITS",
+      behaviorType: "produced_currency",
+      basePassiveRate: 0,
+      manualProduction: { enabled: false, baseClick: 0, target: false, formula: "Credits are never produced by the manual click path." },
+      automatedProduction: { enabled: false, aiAgentTarget: false, formula: "AI Agent Labor Assistance does not produce Credits." },
+      buildingProduction: { enabled: true, requiresStructuredEffects: true, allowedModes: ["per_second", "per_minute", "instant_grant", "conversion"] },
+      eventProduction: { enabled: true, allowedSourceTypes: ["event", "mission", "trade_route"] },
+      discoveryProduction: { enabled: true, allowedSourceTypes: ["discovery", "mission"] },
+      purchaseProduction: { enabled: false, serverAuthoritativeRequired: false, allowedSourceTypes: [] },
+      capacityResource: false,
+      premiumResource: false,
+      canGoNegative: false,
+      integerOnly: false,
+      capPolicy: { type: "none", notes: "Debt is not enabled; balances cannot go below zero." },
+      offlineProgressEligible: true,
+      validationRules: ["startingRate must be 0", "no default +1/sec fallback", "stable ID must remain ECON-CREDITS across era presentation changes", "producer references must be canonical"],
+      notes: "Standard economic currency generated by commerce, production, trade, taxation, missions, and events."
+    },
+    {
+      economyId: "ECON-POPULATION",
+      behaviorType: "capacity_count",
+      basePassiveRate: 0,
+      manualProduction: { enabled: false, baseClick: 0, target: false, formula: "Population is not created by manual clicks." },
+      automatedProduction: { enabled: false, aiAgentTarget: false, formula: "AI Agent Labor Assistance does not create citizens." },
+      buildingProduction: { enabled: true, requiresStructuredEffects: true, allowedModes: ["capacity", "instant_grant", "per_minute"] },
+      eventProduction: { enabled: true, allowedSourceTypes: ["event", "mission"] },
+      discoveryProduction: { enabled: false, allowedSourceTypes: [] },
+      purchaseProduction: { enabled: false, serverAuthoritativeRequired: false, allowedSourceTypes: [] },
+      capacityResource: true,
+      premiumResource: false,
+      canGoNegative: false,
+      integerOnly: true,
+      capPolicy: { type: "capacity_bound", notes: "Population totals are constrained by capacity/growth systems. Track currentPopulation, populationCapacity, availableWorkforce, assignedWorkforce, and populationGrowthRate separately when needed." },
+      offlineProgressEligible: true,
+      validationRules: ["startingAmount must be 5", "startingRate must be 0", "manualClickTarget must be false", "spendable must be false by default", "population effects must distinguish capacity, grant, growth, and local colony scope"],
+      notes: "Citizens/workforce count, not ordinary spendable currency."
+    },
+    {
+      economyId: "ECON-RESEARCH",
+      behaviorType: "knowledge_currency",
+      basePassiveRate: 0,
+      manualProduction: { enabled: false, baseClick: 0, target: false, formula: "Research is not produced by the manual click path." },
+      automatedProduction: { enabled: false, aiAgentTarget: false, formula: "AI Agent automation does not produce Research unless a future canonical research system says so." },
+      buildingProduction: { enabled: true, requiresStructuredEffects: true, allowedModes: ["per_second", "per_minute", "instant_grant", "multiplier"] },
+      eventProduction: { enabled: true, allowedSourceTypes: ["event", "mission"] },
+      discoveryProduction: { enabled: true, allowedSourceTypes: ["discovery", "mission"] },
+      purchaseProduction: { enabled: false, serverAuthoritativeRequired: false, allowedSourceTypes: [] },
+      capacityResource: false,
+      premiumResource: false,
+      canGoNegative: false,
+      integerOnly: false,
+      capPolicy: { type: "none", notes: "Research has no global cap unless future labs or storage systems introduce one." },
+      offlineProgressEligible: true,
+      validationRules: ["startingAmount must be 0", "startingRate must be 0", "must not produce without canonical producer", "research-building producers must publish flat rate or multiplier"],
+      notes: "Knowledge currency generated by labs, discoveries, missions, scientists, and research systems."
+    },
+    {
+      economyId: "ECON-PREMIUM-CRYSTALS",
+      behaviorType: "premium_currency",
+      basePassiveRate: 0,
+      manualProduction: { enabled: false, baseClick: 0, target: false, formula: "Premium Crystals are never produced by manual clicks." },
+      automatedProduction: { enabled: false, aiAgentTarget: false, formula: "Automation never produces Premium Crystals." },
+      buildingProduction: { enabled: false, requiresStructuredEffects: true, allowedModes: [] },
+      eventProduction: { enabled: true, allowedSourceTypes: ["event", "mission", "entitlement"] },
+      discoveryProduction: { enabled: true, allowedSourceTypes: ["discovery"] },
+      purchaseProduction: { enabled: true, serverAuthoritativeRequired: true, allowedSourceTypes: ["entitlement"] },
+      capacityResource: false,
+      premiumResource: true,
+      canGoNegative: false,
+      integerOnly: true,
+      capPolicy: { type: "none", notes: "Premium balances cannot go negative; purchase/refund adjustments must be server-authoritative." },
+      offlineProgressEligible: false,
+      validationRules: ["startingAmount must be 0", "startingRate must be 0", "no generic passive production", "no generic building production", "purchase/grant sources must require protected verification"],
+      notes: "Rare/premium acceleration currency from discoveries, milestones, events, grants, verified purchases, and support adjustments."
+    }
+  ];
+
+  return config.map((contract) => {
+    const definition = economyDefinition(contract.economyId);
+    return {
+      id: `economy_behavior_${contract.economyId.toLowerCase().replace(/[^a-z0-9]+/g, "_")}`,
+      economyId: contract.economyId,
+      behaviorType: contract.behaviorType,
+      startingAmount: definition.startingAmount,
+      basePassiveRate: contract.basePassiveRate,
+      manualProduction: contract.manualProduction,
+      automatedProduction: contract.automatedProduction,
+      buildingProduction: contract.buildingProduction,
+      eventProduction: contract.eventProduction,
+      discoveryProduction: contract.discoveryProduction,
+      purchaseProduction: contract.purchaseProduction,
+      spendable: definition.spendable,
+      capacityResource: contract.capacityResource,
+      premiumResource: contract.premiumResource,
+      canGoNegative: contract.canGoNegative,
+      integerOnly: contract.integerOnly,
+      capPolicy: contract.capPolicy,
+      offlineProgressEligible: contract.offlineProgressEligible,
+      displayProfile: {
+        stableId: definition.id,
+        defaultDisplayName: definition.displayName,
+        defaultIconKey: definition.iconKey,
+        eraOverrideRule: "Era profiles may override displayName, shortDisplayName, iconKey, description, and formatting only. They must not replace stable economy IDs or migrate balances."
+      },
+      validationRules: contract.validationRules,
+      saveBehavior: {
+        storedInPlayerSave: true,
+        migrationNotes: contract.economyId === "ECON-POPULATION"
+          ? ["Migrate old untouched starter Population 125 to 5 only when clearly an untouched starter save.", "Preserve established saves."]
+          : ["Do not mutate player balances from Studio exports.", "Runtime clients own player balance state."]
+      },
+      notes: contract.notes
+    };
+  });
+}
+
+function buildingScope() {
+  return "civilization" as const;
+}
+
+function buildingEffect(
+  building: GameData["buildings"][number],
+  economyId: string,
+  amount: number,
+  sourceField: string,
+  effectKind: BuildingResourceEffect["effectKind"],
+  productionMode: BuildingResourceEffect["productionMode"],
+  displayText: string
+): BuildingResourceEffect {
+  return {
+    id: `building_effect_${building.id}_${economyId.toLowerCase().replace(/[^a-z0-9]+/g, "_")}_${sourceField}`,
+    buildingId: building.id,
+    buildingName: building.name,
+    economyId,
+    scope: buildingScope(),
+    effectKind,
+    productionMode,
+    amount,
+    intervalSeconds: productionMode === "per_second" ? 1 : null,
+    displayText,
+    staffingRequirement: Number(building.labor_requirement) || 0,
+    eraId: String(building.era ?? "").toLowerCase().replace(/[^a-z0-9]+/g, "-") || "survival",
+    sourceField,
+    notes: "Derived from structured building table fields, not descriptive text."
+  };
+}
+
+export function buildBuildingResourceEffects(data: GameData): BuildingResourceEffect[] {
+  const effects: BuildingResourceEffect[] = [];
+  for (const building of data.buildings) {
+    if (Number(building.income_credits_sec) > 0) effects.push(buildingEffect(building, "ECON-CREDITS", Number(building.income_credits_sec), "income_credits_sec", "production", "per_second", `+${building.income_credits_sec} Credits/sec`));
+    if (Number(building.income_labor_sec) > 0) effects.push(buildingEffect(building, "ECON-LABOR", Number(building.income_labor_sec), "income_labor_sec", "production", "per_second", `+${building.income_labor_sec} Labor/sec`));
+    if (Number(building.income_experimental_sec) > 0) effects.push(buildingEffect(building, "ECON-RESEARCH", Number(building.income_experimental_sec), "income_experimental_sec", "production", "per_second", `+${building.income_experimental_sec} Research/sec`));
+    if (Number(building.population_bonus) > 0) effects.push(buildingEffect(building, "ECON-POPULATION", Number(building.population_bonus), "population_bonus", "capacity_increase", "capacity", `+${building.population_bonus} Population Capacity`));
+  }
+  return effects;
+}
+
+export function buildResourceProducerDefinitions(data: GameData): ResourceProducerDefinition[] {
+  const buildingEffects = buildBuildingResourceEffects(data);
+  const baseProducers: ResourceProducerDefinition[] = [
+    {
+      id: "producer_labor_base_passive",
+      sourceType: "base_system",
+      sourceId: "labor_base_passive",
+      economyId: "ECON-LABOR",
+      scope: "civilization",
+      productionMode: "per_second",
+      baseAmount: 1,
+      intervalSeconds: 1,
+      requirements: { eraId: "survival", approvedRule: true },
+      staffing: { populationRequired: 0, assignedWorkforceRequired: 0, notes: "Base Survival Labor does not consume Population." },
+      powerCost: 0,
+      inputCosts: [],
+      multipliers: [],
+      offlineEligible: true,
+      activeConditions: ["game_started", "not_paused"],
+      notes: "Base passive Labor is separate from AI Agent Labor Assistance."
+    },
+    {
+      id: "producer_labor_manual_click",
+      sourceType: "manual_click",
+      sourceId: "manual_click",
+      economyId: "ECON-LABOR",
+      scope: "civilization",
+      productionMode: "per_click",
+      baseAmount: 1,
+      intervalSeconds: null,
+      requirements: { clickTarget: true },
+      staffing: { populationRequired: 0, assignedWorkforceRequired: 0, notes: "Manual click output is not Population spending." },
+      powerCost: 0,
+      inputCosts: [],
+      multipliers: [{ id: "click_upgrade_bonuses", appliesTo: "laborPerClick", mode: "additive", value: 0, sourceType: "upgrade" }],
+      offlineEligible: false,
+      activeConditions: ["player_click"],
+      notes: "Manual click remains separate from per-second production."
+    },
+    {
+      id: "producer_labor_ai_agent_assistance",
+      sourceType: "ai_agent",
+      sourceId: "automation_upgrade_levels",
+      economyId: "ECON-LABOR",
+      scope: "civilization",
+      productionMode: "per_second",
+      baseAmount: 0,
+      intervalSeconds: 1,
+      requirements: { automationUnlocked: true, agentOnline: true },
+      staffing: { populationRequired: 0, assignedWorkforceRequired: 0, notes: "AI Agent is presentation over automation; it does not consume citizens by default." },
+      powerCost: 0,
+      inputCosts: [],
+      multipliers: [],
+      offlineEligible: true,
+      activeConditions: ["automation_unlocked", "agent_online"],
+      notes: "Labor Assistance amount comes from automation upgrade levels, not AI Agent cosmetic variants."
+    }
+  ];
+
+  return [
+    ...baseProducers,
+    ...buildingEffects.map((effect): ResourceProducerDefinition => ({
+      id: `producer_${effect.id}`,
+      sourceType: "building",
+      sourceId: effect.buildingId,
+      economyId: effect.economyId,
+      scope: effect.scope,
+      productionMode: effect.productionMode,
+      baseAmount: effect.amount,
+      intervalSeconds: effect.intervalSeconds,
+      requirements: { buildingOwned: effect.buildingId, eraId: effect.eraId },
+      staffing: { populationRequired: 0, assignedWorkforceRequired: effect.staffingRequirement, notes: effect.staffingRequirement ? "Building requires assigned workforce to operate at full effect." : "No staffing requirement in current building row." },
+      powerCost: 0,
+      inputCosts: [],
+      multipliers: [],
+      offlineEligible: effect.economyId !== "ECON-PREMIUM-CRYSTALS" && effect.productionMode !== "capacity",
+      activeConditions: ["building_active", "requirements_met"],
+      notes: effect.displayText
+    }))
+  ];
+}
+
+export function buildEconomyScopeRules(): EconomyScopeRule[] {
+  return [
+    { id: "scope_civilization_totals", scope: "civilization", rollupBehavior: "rolls_to_civilization", appliesToEconomyIds: [...fiveHudEconomyIds], doubleCountingRule: "Top HUD displays civilization totals. Do not add local and civilization rows twice.", notes: "Civilization is the permanent HUD aggregate scope." },
+    { id: "scope_planet_population", scope: "planet", rollupBehavior: "conditional_transfer", appliesToEconomyIds: ["ECON-POPULATION"], doubleCountingRule: "Planet population can roll up once into civilization totals when owned/connected; local capacity remains local.", notes: "Used by colonies and habitation." },
+    { id: "scope_settlement_capacity", scope: "settlement", rollupBehavior: "local_only", appliesToEconomyIds: ["ECON-POPULATION"], doubleCountingRule: "Settlement capacity supports local population and should not be displayed as global spendable balance.", notes: "Future settlement screens show local capacity and assigned workforce." },
+    { id: "scope_trade_routes", scope: "system", rollupBehavior: "rolls_to_civilization", appliesToEconomyIds: ["ECON-CREDITS"], doubleCountingRule: "Trade route Credits roll up through the owning civilization economy ledger once.", notes: "Route-local reporting should reference the same transaction IDs." }
+  ];
+}
+
+export function buildEconomyTransactionReasons(): EconomyTransactionReason[] {
+  const sourceTypes: ResourceProducerSourceType[] = ["base_system", "manual_click", "ai_agent", "building", "upgrade", "research", "settlement", "planet", "colony", "trade_route", "mission", "event", "discovery", "entitlement"];
+  return [
+    { id: "labor_produce", economyId: "ECON-LABOR", operation: "produce", sourceTypes: ["base_system", "manual_click", "ai_agent", "building", "event"], serverAuthoritativeRequired: false, playerHistoryOwnedBy: "game", notes: "Labor production ledger entries distinguish base passive, click, AI Agent, and building sources." },
+    { id: "credits_produce", economyId: "ECON-CREDITS", operation: "produce", sourceTypes: ["building", "trade_route", "mission", "event"], serverAuthoritativeRequired: false, playerHistoryOwnedBy: "game", notes: "No generic passive Credits source." },
+    { id: "population_grant_or_growth", economyId: "ECON-POPULATION", operation: "grant", sourceTypes: ["building", "settlement", "planet", "colony", "event"], serverAuthoritativeRequired: false, playerHistoryOwnedBy: "game", notes: "Population changes must distinguish capacity, current population, workforce assignment, and growth." },
+    { id: "research_produce", economyId: "ECON-RESEARCH", operation: "produce", sourceTypes: ["building", "mission", "event", "discovery", "research"], serverAuthoritativeRequired: false, playerHistoryOwnedBy: "game", notes: "Research is produced only by canonical sources." },
+    { id: "premium_purchase", economyId: "ECON-PREMIUM-CRYSTALS", operation: "purchase", sourceTypes: ["entitlement"], serverAuthoritativeRequired: true, playerHistoryOwnedBy: "game", notes: "Purchased Premium Crystals require verified server-authoritative entitlement processing." },
+    { id: "premium_reward", economyId: "ECON-PREMIUM-CRYSTALS", operation: "grant", sourceTypes: ["event", "mission", "discovery", "entitlement"], serverAuthoritativeRequired: true, playerHistoryOwnedBy: "game", notes: "Earned/granted Premium Crystals must keep reason-code provenance." },
+    ...fiveHudEconomyIds.map((economyId) => ({ id: `${economyId.toLowerCase()}_spend`, economyId, operation: "spend" as const, sourceTypes, serverAuthoritativeRequired: economyId === "ECON-PREMIUM-CRYSTALS", playerHistoryOwnedBy: "game" as const, notes: "Spend entries are player/runtime history, not Studio-authored balances." }))
+  ];
+}
+
+export function buildEconomyRateBreakdownDefinitions(): EconomyRateBreakdownDefinition[] {
+  return [
+    { id: "rate_breakdown_labor", economyId: "ECON-LABOR", labels: [{ id: "base_passive", displayName: "Base Passive", sourceTypes: ["base_system"], operation: "add" }, { id: "ai_agent", displayName: "AI Agent", sourceTypes: ["ai_agent"], operation: "add" }, { id: "buildings", displayName: "Buildings", sourceTypes: ["building"], operation: "add" }, { id: "boosts", displayName: "Boosts", sourceTypes: ["event", "upgrade"], operation: "multiply" }], formula: "totalLaborPerSecond = basePassiveLabor + aiAgentLaborAssistance + buildingLaborProduction + otherCanonicalProduction; then apply approved multipliers in deterministic order.", displayRule: "Show Base Passive, AI Agent, Buildings, Boosts, and Total." },
+    { id: "rate_breakdown_credits", economyId: "ECON-CREDITS", labels: [{ id: "commerce", displayName: "Commerce", sourceTypes: ["building", "trade_route"], operation: "add" }, { id: "missions", displayName: "Missions", sourceTypes: ["mission"], operation: "add" }, { id: "events", displayName: "Events", sourceTypes: ["event"], operation: "add" }], formula: "totalCreditsPerSecond = sum(active canonical Credits producers); no default fallback.", displayRule: "Only show sections with active producers." },
+    { id: "rate_breakdown_population", economyId: "ECON-POPULATION", labels: [{ id: "capacity", displayName: "Capacity", sourceTypes: ["building", "settlement", "colony"], operation: "add" }, { id: "growth", displayName: "Growth", sourceTypes: ["building", "colony", "event"], operation: "add" }], formula: "currentPopulation, populationCapacity, assignedWorkforce, availableWorkforce, and populationGrowthRate remain distinct values.", displayRule: "Display whole-number current population and separate capacity/growth rows where available." },
+    { id: "rate_breakdown_research", economyId: "ECON-RESEARCH", labels: [{ id: "labs", displayName: "Research Buildings", sourceTypes: ["building"], operation: "add" }, { id: "discoveries", displayName: "Discoveries", sourceTypes: ["discovery"], operation: "add" }, { id: "missions", displayName: "Missions", sourceTypes: ["mission"], operation: "add" }, { id: "boosts", displayName: "Boosts", sourceTypes: ["event", "upgrade"], operation: "multiply" }], formula: "totalResearchPerSecond = sum(active research producers); then apply approved multipliers.", displayRule: "Do not show passive Research until a canonical producer exists." },
+    { id: "rate_breakdown_premium", economyId: "ECON-PREMIUM-CRYSTALS", labels: [{ id: "earned", displayName: "Earned", sourceTypes: ["event", "mission", "discovery"], operation: "add" }, { id: "purchased", displayName: "Purchased", sourceTypes: ["entitlement"], operation: "add" }], formula: "Premium Crystals have no generic rate. Ledger entries are grants, purchases, refunds, discoveries, or spends.", displayRule: "Do not show passive/sec generation for Premium Crystals." }
+  ];
+}
+
+export function buildOfflineProgressionPolicies(): OfflineProgressionPolicy[] {
+  const max = 8 * 60 * 60;
+  return [
+    { id: "offline_labor", economyId: "ECON-LABOR", eligible: true, maximumOfflineSeconds: max, producerEligibility: "base_system, ai_agent, and active building producers are eligible; manual_click is not.", capBehavior: "No cap unless future systems add one.", suspendedConditions: ["game_paused", "producer_inactive"], deterministicOrder: ["flat base production", "flat producer additions", "source-specific upgrade multipliers", "civilization-wide multipliers", "event/boost multipliers", "caps and constraints", "rounding/display"] },
+    { id: "offline_credits", economyId: "ECON-CREDITS", eligible: true, maximumOfflineSeconds: max, producerEligibility: "Only active canonical Credits producers; no default fallback.", capBehavior: "No debt; clamp at zero minimum.", suspendedConditions: ["no_active_credit_producer", "producer_inactive"], deterministicOrder: ["flat producer additions", "multipliers", "caps", "rounding/display"] },
+    { id: "offline_population", economyId: "ECON-POPULATION", eligible: true, maximumOfflineSeconds: max, producerEligibility: "Approved growth systems only; capacity itself is not generated offline.", capBehavior: "Current population cannot exceed populationCapacity.", suspendedConditions: ["capacity_full", "growth_paused"], deterministicOrder: ["growth producers", "growth multipliers", "capacity cap", "integer rounding"] },
+    { id: "offline_research", economyId: "ECON-RESEARCH", eligible: true, maximumOfflineSeconds: max, producerEligibility: "Only active research producers.", capBehavior: "No global cap.", suspendedConditions: ["no_active_research_producer", "producer_inactive"], deterministicOrder: ["flat producer additions", "multipliers", "caps", "rounding/display"] },
+    { id: "offline_premium", economyId: "ECON-PREMIUM-CRYSTALS", eligible: false, maximumOfflineSeconds: 0, producerEligibility: "Never generic offline production.", capBehavior: "No negative balances.", suspendedConditions: ["always_for_generic_offline"], deterministicOrder: ["verified grant or purchase events only"] }
+  ];
+}
+
+export function buildEconomyCalculationRules(): EconomyCalculationRules {
+  return {
+    id: "economy_calculation_rules_v1",
+    multiplierOrder: ["flat base production", "flat producer additions", "source-specific upgrade multipliers", "civilization-wide multipliers", "event/boost multipliers", "caps and constraints", "rounding/display"],
+    multiplierStacking: { sourceSpecific: "multiplicative", civilizationWide: "multiplicative", eventBoosts: "multiplicative", additiveBonuses: "add_before_multiply" },
+    rounding: {
+      internalPrecision: 4,
+      displayPrecision: 2,
+      integerEconomyIds: ["ECON-POPULATION", "ECON-PREMIUM-CRYSTALS"],
+      roundingMode: "floor_for_spend_checks_round_for_display",
+      maximumSafeValueStrategy: "Clients should use safe decimal/string serialization for very large balances and never infer Infinity.",
+      serializationFormat: "decimal_string_or_number"
+    },
+    laborFormula: {
+      perSecond: "totalLaborPerSecond = basePassiveLabor + aiAgentLaborAssistance + buildingLaborProduction + otherCanonicalProduction; apply multipliers in economy_calculation_rules_v1.multiplierOrder.",
+      perClick: "laborPerClick = baseClick + clickUpgradeBonuses; apply click multipliers and critical-click behavior after flat bonuses.",
+      notes: "AI Agent assistance is not base passive Labor."
+    }
+  };
 }
 
 function relationshipPush(map: Record<string, string[]>, economyId: string | null, sourceId: string) {
