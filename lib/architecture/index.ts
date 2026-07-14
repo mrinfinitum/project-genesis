@@ -1,4 +1,5 @@
 import { buildCanonicalRuntimeExportPayload } from "@/lib/runtime/game-runtime";
+import { ARCHITECTURE_VERSION } from "@/lib/architecture/version";
 
 export type ArchitectureSectionStatus = "Current" | "Needs Review" | "Draft" | "Outdated";
 export type ArchitectureDecisionStatus = "Accepted" | "Proposed" | "Superseded" | "Needs Review";
@@ -158,7 +159,7 @@ export const architectureSections: ArchitectureSection[] = [
 ];
 
 export const architectureVersion: ArchitectureVersion = {
-  current: "1.0.0",
+  current: ARCHITECTURE_VERSION,
   previous: "0.0.0",
   reviewDate: "2026-08-14",
   changeLog: [

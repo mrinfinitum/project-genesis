@@ -3,6 +3,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { civilizationAges } from "@/data/civilization-identity";
 import { defaultAiAgentId, getAiAgentRuntimeModules } from "@/lib/ai-agents";
+import { ARCHITECTURE_VERSION } from "@/lib/architecture/version";
 import { getAssetProductionRuntimeOverrides } from "@/lib/assets/asset-production";
 import { getAppliedGameArtAssets } from "@/lib/assets/game-art-import";
 import { getGameData } from "@/lib/data";
@@ -385,6 +386,7 @@ function gameConstantsBalance(constants: GameData["game_constants"]): BalanceDef
 function metadata(overrides: Partial<RuntimeMetadata> = {}): RuntimeMetadata {
   return {
     schemaVersion: gameRuntimeSchemaVersion,
+    architectureVersion: ARCHITECTURE_VERSION,
     contentVersion: gameRuntimeContentVersion,
     checksum: "",
     accessLevel: "studio-internal",
@@ -956,6 +958,9 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   if (!runtimeData.metadata.schemaVersion) {
     issues.push({ severity: "error", code: "metadata_missing", message: "metadata.schemaVersion is required.", records: ["metadata"] });
   }
+  if (!/^\d+\.\d+\.\d+$/.test(runtimeData.metadata.architectureVersion) || runtimeData.metadata.architectureVersion !== ARCHITECTURE_VERSION) {
+    issues.push({ severity: "error", code: "metadata_architecture_version_invalid", message: "metadata.architectureVersion must be a valid semantic version matching the Architecture Workspace.", records: ["metadata", runtimeData.metadata.architectureVersion ?? "missing"] });
+  }
 
   for (const [moduleName, rows] of Object.entries({ eras: runtimeData.eras, economyDefinitions: runtimeData.economyDefinitions, eraEconomyProfiles: runtimeData.eraEconomyProfiles, inventoryResourceMetadata: runtimeData.inventoryResourceMetadata, resources: runtimeData.resources, upgradeCategories: runtimeData.upgradeCategories, upgrades: runtimeData.upgrades, assets: runtimeData.assets })) {
     const duplicates = duplicateIds(rows as Array<{ id: string }>);
@@ -1147,6 +1152,9 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
 
   if (!payload.metadata.schemaVersion) {
     issues.push({ severity: "error", code: "metadata_schema_missing", message: "metadata.schemaVersion is required.", records: ["metadata"] });
+  }
+  if (!/^\d+\.\d+\.\d+$/.test(payload.metadata.architectureVersion) || payload.metadata.architectureVersion !== ARCHITECTURE_VERSION) {
+    issues.push({ severity: "error", code: "metadata_architecture_version_invalid", message: "Roblox metadata.architectureVersion must match the Architecture Workspace.", records: ["metadata", payload.metadata.architectureVersion ?? "missing"] });
   }
   if (!payload.metadata.contentVersion) {
     issues.push({ severity: "error", code: "metadata_version_missing", message: "metadata.contentVersion is required.", records: ["metadata"] });

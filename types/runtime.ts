@@ -1,5 +1,6 @@
 export type RuntimeMetadata = {
   schemaVersion: string;
+  architectureVersion: string;
   contentVersion: number;
   checksum: string;
   accessLevel: "studio-internal" | "public-published";

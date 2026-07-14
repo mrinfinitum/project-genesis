@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAiAgentRuntimeModules } from "@/lib/ai-agents";
+import { ARCHITECTURE_VERSION } from "@/lib/architecture/version";
 import { getGameData } from "@/lib/data";
 import { discoveryJournalSchema, sampleDiscoveryJournal, sampleTimelineEvents, timelineEventSchema } from "@/lib/explorer/discovery-log";
 import { colonyBuildingTemplates, colonyFocusDefinitions, colonyLevelDefinitions, colonySchema, createColonyRecord, generateFallbackColonies, type ColonyBuilding, type ColonyRecord } from "@/lib/colonies/procedural";
@@ -8,6 +9,7 @@ import { buildEconomyState, economySchemas, priceClamps, type MarketRecord, type
 import { generateFaction, generateFallbackFactions, type FactionRecord } from "@/lib/factions/procedural";
 import { defaultEraNavigationProfile, engineEraNavigationOverrides, resolveEraNavigationProfile, supportedEraNavigationBoundaryModes, supportedEraNavigationDashboardModes } from "@/lib/runtime/client-profiles";
 import { buildMobileClientProfile, mobileAssetRequirements } from "@/lib/runtime/mobile-client-profiles";
+import { gameRuntimeContentVersion, gameRuntimeSchemaVersion } from "@/lib/runtime/game-runtime";
 import {
   generateMissionBundle,
   missionDifficulties,
@@ -1147,8 +1149,15 @@ function validateTargetSchema(issues: ExportValidationIssue[], target: EngineTar
   }
 }
 
+function validateArchitectureVersion(issues: ExportValidationIssue[]) {
+  if (!/^\d+\.\d+\.\d+$/.test(ARCHITECTURE_VERSION)) {
+    addIssue(issues, "error", "architecture_version_invalid", "Architecture version must be a semantic version.");
+  }
+}
+
 function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
   const issues: ExportValidationIssue[] = [];
+  validateArchitectureVersion(issues);
   validateStableIds(issues, modules);
   validateResourceReferences(issues, modules);
   validateUnlocks(issues, modules);
@@ -1203,9 +1212,19 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
       "completed missions have completed objectives",
       "mission rewards are claimed only once",
       "star systems link to sectors",
-      "sectors link to galaxies"
+      "sectors link to galaxies",
+      "architectureVersion is sanitized semantic metadata only"
     ],
     issues
+  };
+}
+
+function exportMetadata(validationStatus: ReturnType<typeof validateEngineExport>["status"]) {
+  return {
+    architectureVersion: ARCHITECTURE_VERSION,
+    runtimeVersion: gameRuntimeSchemaVersion,
+    contentVersion: gameRuntimeContentVersion,
+    validationStatus
   };
 }
 
@@ -1366,6 +1385,7 @@ export async function buildGameEngineExport(target: EngineTarget) {
   return {
     generatedAt: new Date().toISOString(),
     studio: "Project Genesis Studio",
+    metadata: exportMetadata(validation.status),
     target: config,
     summary: {
       sourceOfTruth: "Project Genesis Studio",

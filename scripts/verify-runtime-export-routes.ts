@@ -1,3 +1,5 @@
+import { ARCHITECTURE_VERSION } from "@/lib/architecture/version";
+
 type EraNavigationHints = {
   dashboardMode?: string;
   visibleEraCount?: number;
@@ -17,7 +19,7 @@ type RuntimeClientProfile = {
 };
 
 type RuntimePayload = {
-  metadata?: { schemaVersion?: string; contentVersion?: number; checksum?: string; accessLevel?: string; validationStatus?: string; saveMigrationHints?: Array<{ id: string; targetId: string; previousDefault: number; currentDefault: number }> };
+  metadata?: { schemaVersion?: string; architectureVersion?: string; contentVersion?: number; checksum?: string; accessLevel?: string; validationStatus?: string; saveMigrationHints?: Array<{ id: string; targetId: string; previousDefault: number; currentDefault: number }> };
   eras?: Array<{ id: string; index?: number; name?: string; displayName?: string; shortDisplayName?: string }>;
   economyDefinitions?: Array<{ id: string; iconKey?: string; startingAmount?: number; startingRate?: number; premium?: boolean; spendable?: boolean; manualClickTarget?: boolean; playerFacingHelpText?: string }>;
   eraEconomyProfiles?: Array<{ id: string; eraId: string; eraIndex: number; primaryEconomyId: string; activePrimaryEconomyId: string; manualClickTarget?: string | null; primaryEconomyIds: string[]; secondaryEconomyIds: string[]; fixedHudSlots: string[]; visibleHudEconomyIds: string[]; hudSlots: Array<{ economyId: string; order: number }>; displayOverrides?: Record<string, { displayName?: string }>; visibilityRules?: { useEraHud?: boolean; fixedCoreHud?: boolean; creditsVisible?: boolean } }>;
@@ -51,6 +53,15 @@ function assert(condition: unknown, message: string) {
   if (!condition) {
     throw new Error(message);
   }
+}
+
+function assertNoArchitectureLeak(label: string, payload: unknown) {
+  const text = JSON.stringify(payload);
+  assert(!/"sections"\s*:/.test(text), `${label} leaked Architecture sections.`);
+  assert(!/"decisions"\s*:/.test(text), `${label} leaked Architecture decisions.`);
+  assert(!/"decisionLog"\s*:/.test(text), `${label} leaked Architecture decision log.`);
+  assert(!/"outstandingDecisions"\s*:/.test(text), `${label} leaked outstanding Architecture decisions.`);
+  assert(!/\/Users\/|studio-private:\/\/|SERVICE_ROLE|PRIVATE_KEY|clientSecret|apiKey|databaseUrl/i.test(text), `${label} leaked a private path or secret marker.`);
 }
 
 function isNonEmptyString(value: unknown): value is string {
@@ -276,11 +287,13 @@ async function main() {
   assert(anonymousImportMutation.status >= 400, `Anonymous import mutation was not rejected; received ${anonymousImportMutation.status}.`);
   assert(anonymousAdmin.status >= 400 || anonymousAdmin.status === 307 || anonymousAdmin.status === 308, `Anonymous admin route was not protected; received ${anonymousAdmin.status}.`);
   assert(canonical.payload.metadata?.schemaVersion, "Canonical metadata.schemaVersion is missing.");
+  assert(canonical.payload.metadata?.architectureVersion === ARCHITECTURE_VERSION, "Canonical metadata.architectureVersion must match the Architecture Workspace.");
   assert(canonical.payload.metadata?.contentVersion, "Canonical metadata.contentVersion is missing.");
   assert(canonical.payload.metadata?.checksum, "Canonical metadata.checksum is missing.");
   assert(canonical.payload.metadata?.accessLevel === "public-published", "Canonical accessLevel must be public-published.");
   assert(canonical.payload.metadata?.validationStatus, "Canonical validation status is missing.");
   assert(roblox.payload.metadata?.schemaVersion, "Roblox metadata.schemaVersion is missing.");
+  assert(roblox.payload.metadata?.architectureVersion === ARCHITECTURE_VERSION, "Roblox metadata.architectureVersion must match the Architecture Workspace.");
   assert(roblox.payload.metadata?.contentVersion, "Roblox metadata.contentVersion is missing.");
   assert(roblox.payload.metadata?.checksum, "Roblox metadata.checksum is missing.");
   assert(roblox.payload.metadata?.accessLevel === "public-published", "Roblox accessLevel must be public-published.");
@@ -297,11 +310,14 @@ async function main() {
   validateEraEconomyProfiles(roblox.payload, "Roblox");
   validateRuntimeReferences(canonical.payload);
   validateRobloxReferences(roblox.payload);
+  assertNoArchitectureLeak("Canonical runtime", canonical.payload);
+  assertNoArchitectureLeak("Roblox runtime", roblox.payload);
 
   console.log(JSON.stringify({
     canonical: {
       status: canonical.status,
       schemaVersion: canonical.payload.metadata?.schemaVersion,
+      architectureVersion: canonical.payload.metadata?.architectureVersion,
       contentVersion: canonical.payload.metadata?.contentVersion,
       checksum: canonical.payload.metadata?.checksum,
       accessLevel: canonical.payload.metadata?.accessLevel,
@@ -317,6 +333,7 @@ async function main() {
     roblox: {
       status: roblox.status,
       schemaVersion: roblox.payload.metadata?.schemaVersion,
+      architectureVersion: roblox.payload.metadata?.architectureVersion,
       contentVersion: roblox.payload.metadata?.contentVersion,
       checksum: roblox.payload.metadata?.checksum,
       accessLevel: roblox.payload.metadata?.accessLevel,
