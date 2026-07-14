@@ -7,7 +7,7 @@ import type { TableName } from "@/types/schema";
 
 export const runtime = "nodejs";
 
-const supportedSourceExtensions = new Set([".psd", ".psb", ".ai", ".svg", ".png", ".jpg", ".jpeg", ".webp", ".tiff", ".tif", ".pdf", ".blend", ".mp3", ".wav", ".ogg", ".mp4", ".mov"]);
+const supportedSourceExtensions = new Set([".psd", ".psb", ".ai", ".svg", ".png", ".jpg", ".jpeg", ".webp", ".tiff", ".tif", ".pdf", ".blend", ".zip", ".mp3", ".wav", ".ogg", ".mp4", ".mov"]);
 
 function safeFilename(filename: string) {
   return filename.toLowerCase().replace(/[^a-z0-9._-]+/g, "-").replace(/^-+|-+$/g, "") || "asset.png";

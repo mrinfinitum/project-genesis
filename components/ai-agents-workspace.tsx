@@ -8,7 +8,7 @@ import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, Wor
 import type { AiAgentArtworkSlot, AiAgentLibraryState, AiAgentRecord, AiAgentRarity, AiAgentState } from "@/lib/ai-agents";
 
 const rarityOptions: Array<"All" | AiAgentRarity> = ["All", "Common", "Uncommon", "Rare", "Epic", "Legendary"];
-const stateOptions: Array<"All" | AiAgentState> = ["All", "Idle", "Blink", "Thinking", "Working", "Research", "Offline", "Warning", "Celebration"];
+const stateOptions: Array<"All" | AiAgentState> = ["All", "Idle", "Blink", "Thinking", "Working", "Research", "Offline", "Warning", "Celebration", "Sleeping", "Surprised"];
 
 function SourceUploadForm({ slot }: { slot: AiAgentArtworkSlot }) {
   const [busy, setBusy] = useState(false);
@@ -42,7 +42,7 @@ function SourceUploadForm({ slot }: { slot: AiAgentArtworkSlot }) {
     >
       <label className="grid gap-2">
         <span className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">Upload Layered Source</span>
-        <input name="file" type="file" accept=".psd,.png,image/png" className="rounded-md border border-cyan-300/15 bg-slate-950/60 px-3 py-2 text-sm text-slate-200 file:mr-3 file:rounded-md file:border-0 file:bg-cyan-300/15 file:px-3 file:py-1.5 file:text-cyan-100" />
+        <input name="file" type="file" accept=".png,.svg,.psd,.psb,.zip,image/png,image/svg+xml" className="rounded-md border border-cyan-300/15 bg-slate-950/60 px-3 py-2 text-sm text-slate-200 file:mr-3 file:rounded-md file:border-0 file:bg-cyan-300/15 file:px-3 file:py-1.5 file:text-cyan-100" />
       </label>
       <button type="submit" disabled={busy} className="mt-3 inline-flex h-9 items-center justify-center rounded-md border border-cyan-400/25 bg-cyan-400/10 px-3 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/60 hover:bg-cyan-400/20 disabled:cursor-not-allowed disabled:opacity-50">
         {busy ? "Uploading..." : "Upload Source"}
@@ -247,7 +247,7 @@ export function AiAgentsWorkspace({ state }: { state: AiAgentLibraryState }) {
           <WorkspaceStatTile label="Canonical Input" value="aiAgentId" />
           <WorkspaceStatTile label="Fixed PNGs" value="Rejected" />
         </div>
-        <p className="mt-4 text-sm leading-6 text-slate-300">AIAgentPortrait and related UI components must resolve head, eyes, states, and expressions from this library. Fixed robot image references are treated as production debt.</p>
+        <p className="mt-4 text-sm leading-6 text-slate-300">AiAgentPortrait and related UI components must resolve head, eyes, states, and expressions from this library. Static assistant image references are treated as production debt.</p>
       </WorkspacePanel>
 
       <WorkspacePanel title="Future Voice" icon={Sparkles}>

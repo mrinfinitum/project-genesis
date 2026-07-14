@@ -496,6 +496,7 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
     dataRequirements: [
       data("dashboard-runtime", "Runtime era/economy/upgrade definitions", "Canonical Studio Definition", "game-runtime-data", "Mapped"),
       data("dashboard-fixed-hud", "Fixed five-slot HUD order", "Canonical Studio Definition", "clientProfiles.default.primaryHudSlots", "Mapped"),
+      data("dashboard-ai-agent", "AI Agent definitions and automation presentation aliases", "Canonical Studio Definition", "aiAgents + automationPresentation", "Mapped"),
       data("dashboard-player-progress", "Player progression and era completion", "Player Runtime State", "game client", "Partial")
     ],
     assetRequirements: [
@@ -525,17 +526,119 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
         responsiveBehavior: "Preserve hero dominance; collapse secondary nodes as viewport narrows.",
         implementationNotes: "Hero remains the visual anchor; progression is a compact overlay, not a carousel."
       }
+      ,
+      {
+        id: "dashboard-ai-agent-panel",
+        componentLibraryId: "AiAgentPanel",
+        variant: "dashboard",
+        state: "Idle",
+        layoutOverride: "Compact assistant panel adjacent to automation/Labor Assistance controls.",
+        assetOverride: "ai_agent_default_head",
+        dataBindings: ["selectedAiAgentId", "aiAgents", "automationPresentation", "automation power/rate"],
+        screenSpecificNotes: "Player-facing copy uses AI Agent, Labor Assistance, Agent Online, and Agent Offline. Tap/click opens AI Agent Profile.",
+        displayName: "DashboardAIAgentPanel",
+        purpose: "Shows selected AI Agent companion, automation status, Labor Assistance, and profile entry.",
+        dimensions: "Compact HUD panel with 96px portrait target on desktop and mobile profile hints.",
+        positioning: "Dashboard automation/control cluster.",
+        typography: "Use AI Agent title and concise status labels.",
+        colors: "Resolve color theme from selected AI Agent.",
+        assetKeys: ["ai_agent_default_head", "ai_agent_default_eyes_open", "ai_agent_default_eyes_blink", "ai_agent_default_eyes_closed"],
+        dataInputs: ["selectedAiAgentId", "aiAgents", "automationPresentation", "player automation state"],
+        states: ["Idle", "Blink", "Working", "Thinking", "Offline", "Warning", "Missing Art"],
+        interactions: ["Open AI Agent Profile", "Toggle Agent Online/Offline"],
+        responsiveBehavior: "Keep touch target >=48px; profile modal respects mobile safe areas.",
+        implementationNotes: "Do not rename automation IDs in client state. Use presentation aliases from runtime."
+      }
     ],
     interactionSpecs: [
       interaction("open-full-timeline", "Click View Full Timeline", "Civilization timeline opens", "Navigate to full era timeline."),
-      interaction("current-era-info", "Hover/click current era node", "Temporary info panel expands", "Read current era progress and next unlock.")
+      interaction("current-era-info", "Hover/click current era node", "Temporary info panel expands", "Read current era progress and next unlock."),
+      interaction("open-ai-agent-profile", "Tap/click AI Agent panel", "AI Agent Profile opens", "Read selectedAiAgentId and canonical AI Agent definitions."),
+      interaction("toggle-agent-online", "Tap Agent Online/Offline control", "Automation presentation state updates", "Call existing automation toggle; do not change automation balance.")
     ],
     stateSpecs: states(requiredStates),
     responsiveStatus: "Ready",
     notes: [
       "Existing dashboard is implemented but needs formal Vite/Roblox parity review against the compact hero HUD direction.",
       "Top HUD uses fixed canonical order: ECON-LABOR, ECON-CREDITS, ECON-POPULATION, ECON-RESEARCH, ECON-PREMIUM-CRYSTALS. Credits remain visible from Survival with zero starting amount/rate.",
-      "Labor label comes from era display overrides; economy identity and icon semantics come from economy ID, never slot position."
+      "Labor label comes from era display overrides; economy identity and icon semantics come from economy ID, never slot position.",
+      "Auto Click player-facing copy is replaced by AI Agent, Labor Assistance, Agent Online, and Agent Offline. Stable automation IDs remain."
+    ]
+  }),
+  baseRecord({
+    screenId: "ai-agent-profile",
+    displayName: "AI Agent Profile",
+    description: "AI Agent customization, artwork, expression, blink preview, personality, unlock, and review workspace for the player-facing companion.",
+    status: "Draft",
+    layoutMode: "full_screen_page",
+    dataRequirements: [
+      data("ai-agent-definitions", "AI Agent definitions", "Canonical Studio Definition", "aiAgents", "Mapped"),
+      data("ai-agent-personalities", "AI Agent personality definitions", "Canonical Studio Definition", "aiAgentPersonalities", "Mapped"),
+      data("ai-agent-animation", "AI Agent blink animation profiles", "Canonical Studio Definition", "aiAgentAnimationProfiles", "Mapped"),
+      data("ai-agent-save-selection", "Selected AI Agent player preference", "Player Runtime State", "selectedAiAgentId", "Partial")
+    ],
+    assetRequirements: [
+      asset("ai-agent-open-eyes", "Default AI Agent open-eye PNG", "ai_agent_default_eyes_open", "icon", "Missing", "Transparent 512 minimum, 1024 preferred."),
+      asset("ai-agent-blink", "Default AI Agent blink/closed-eye PNG", "ai_agent_default_eyes_blink", "icon", "Missing", "Transparent blink frame required for v1."),
+      asset("ai-agent-offline", "Default AI Agent offline PNG", "ai_agent_default_eyes_closed", "icon", "Missing", "Transparent offline state required for v1.")
+    ],
+    componentSpecs: [
+      {
+        id: "ai-agent-selector",
+        componentLibraryId: "AiAgentSelector",
+        variant: "grid",
+        state: "Default",
+        layoutOverride: "Visual-first selectable agent grid.",
+        assetOverride: "ai_agent_default_head",
+        dataBindings: ["aiAgents", "selectedAiAgentId"],
+        screenSpecificNotes: "Cosmetic selection only; no gameplay modifiers in v1.",
+        displayName: "AiAgentSelector",
+        purpose: "Select the active AI Agent companion.",
+        dimensions: "Responsive card grid.",
+        positioning: "Primary profile content.",
+        typography: "Agent name, rarity, personality, unlock status.",
+        colors: "Use agent colorTheme accents.",
+        assetKeys: ["ai_agent_default_head"],
+        dataInputs: ["aiAgents", "selectedAiAgentId"],
+        states: ["Default", "Selected", "Locked", "Unavailable", "Missing Art"],
+        interactions: ["Select agent", "Open detail"],
+        responsiveBehavior: "Cards wrap; touch target >=48px.",
+        implementationNotes: "Unknown selectedAiAgentId falls back visually to default while preserving unresolved diagnostic state."
+      },
+      {
+        id: "ai-agent-blink-preview",
+        componentLibraryId: "AiAgentBlinkPreview",
+        variant: "profile",
+        state: "Blink",
+        layoutOverride: "Preview specimen with play/pause, reduced motion, light/dark background, circular HUD crop, panel crop, and density previews.",
+        assetOverride: "ai_agent_default_eyes_blink",
+        dataBindings: ["aiAgentAnimationProfiles", "selectedAiAgentId"],
+        screenSpecificNotes: "Timing is Studio-configurable; no random animation logic in asset records.",
+        displayName: "AiAgentBlinkPreview",
+        purpose: "Validate blink behavior and state derivatives.",
+        dimensions: "Preview matrix.",
+        positioning: "Artwork/Animation tab.",
+        typography: "Small labels only.",
+        colors: "Light/dark preview backgrounds.",
+        assetKeys: ["ai_agent_default_eyes_open", "ai_agent_default_eyes_blink"],
+        dataInputs: ["aiAgentAnimationProfiles", "aiAgents"],
+        states: ["Idle", "Blink", "Paused", "Reduced Motion", "Missing Art"],
+        interactions: ["Play/pause", "Toggle reduced motion"],
+        responsiveBehavior: "Preserve crop preview sizes; wrap density samples.",
+        implementationNotes: "Use reducedMotionBehavior=static_open when reduced motion is active."
+      }
+    ],
+    interactionSpecs: [
+      interaction("select-ai-agent", "Select an agent card", "Selected state updates", "Update player selectedAiAgentId."),
+      interaction("preview-blink", "Play/pause blink preview", "Preview animation toggles", "Use AI-ANIM-BLINK-DEFAULT timing metadata."),
+      interaction("toggle-reduced-motion", "Toggle reduced motion", "Static open-eye preview is shown", "Use reducedMotionBehavior from animation profile.")
+    ],
+    stateSpecs: states(["Default", "Selected", "Locked", "Disabled", "Loading", "Error", "Missing Data", "Preview", "Reduced Motion"]),
+    responsiveStatus: "Needs Review",
+    mobileReadiness: { mobileDesignStatus: "Draft", safeAreaReadiness: "Needs Review", touchReadiness: "Needs Review", mobileAssetReadiness: "Missing" },
+    notes: [
+      "Detail view covers Overview, Artwork, Expressions, Animation, Personality, Unlocks, Dialogue, future Voice, Platform mappings, Review, Handoff, and History.",
+      "No player-owned progress is stored in Studio; this screen consumes definitions plus selectedAiAgentId from the game save."
     ]
   }),
   baseRecord({
@@ -799,7 +902,7 @@ function mergeRecords(stored: ScreenDesignRecord[]) {
 }
 
 function screenOrder(screenId: string) {
-  const order = ["dashboard", "welcome", "login", "signup", "loading", "account", "cloud-saves", "save-conflict", "production", "research", "buildings", "resources", "upgrades", "civilization", "events", "galaxy", "spaceport", "earth", "solar-system", "discovery", "settings"];
+  const order = ["dashboard", "ai-agent-profile", "welcome", "login", "signup", "loading", "account", "cloud-saves", "save-conflict", "production", "research", "buildings", "resources", "upgrades", "civilization", "events", "galaxy", "spaceport", "earth", "solar-system", "discovery", "settings"];
   const index = order.indexOf(screenId);
   return index === -1 ? order.length : index;
 }

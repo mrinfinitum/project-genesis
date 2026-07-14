@@ -13,8 +13,8 @@ export type RuntimeMetadata = {
     id: string;
     targetId: string;
     field: string;
-    previousDefault: number;
-    currentDefault: number;
+    previousDefault: number | string | null;
+    currentDefault: number | string;
     applyOnlyWhen: string;
     preserveRule: string;
     introducedContentVersion: number;
@@ -293,6 +293,92 @@ export type BalanceDefinition = {
   difficultyProfileOverrides: Record<string, Partial<Omit<BalanceDefinition, "environmentOverrides" | "difficultyProfileOverrides">>>;
 };
 
+export type AiAgentVisualState = "idle" | "blink" | "working" | "thinking" | "researching" | "celebrating" | "warning" | "offline" | "sleeping" | "surprised";
+
+export type AiAgentDefinition = {
+  id: string;
+  displayName: string;
+  shortDisplayName: string;
+  description: string;
+  personalityId: string;
+  rarity: "Common" | "Uncommon" | "Rare" | "Epic" | "Legendary";
+  unlockRequirements: RequirementMap;
+  defaultForNewPlayers: boolean;
+  eraAvailability: Record<string, { available: boolean; visualTheme: string; skinId?: string }>;
+  colorTheme: { primary: string; secondary: string; accent: string };
+  headAssetKey: string;
+  eyesOpenAssetKey: string;
+  eyesBlinkAssetKey: string;
+  eyesClosedAssetKey: string;
+  expressionAssets: Partial<Record<AiAgentVisualState, string>>;
+  animationProfileId: string;
+  dialogueProfileId: string;
+  voiceProfileId: string | null;
+  gameplayModifiers: Record<string, never>;
+  automationPresentationId: string;
+  mobilePresentation: {
+    portraitSizeInPanel: number;
+    touchTarget: number;
+    reducedMotionDefault: boolean;
+    blinkPerformanceTier: "low" | "standard" | "high";
+    densityAssetSelection: Array<"1x" | "2x" | "3x">;
+    safeAreaBehavior: string;
+  };
+  assetReadiness: Record<string, "missing" | "source_uploaded" | "approved" | "published">;
+  status: "available" | "locked" | "retired";
+  approvalState: "draft" | "needs_review" | "approved";
+  publishState: "draft" | "published";
+  aliases?: string[];
+};
+
+export type AiAgentPersonalityDefinition = {
+  id: string;
+  displayName: string;
+  tone: string;
+  shortDescription: string;
+  dialogueStyle: string;
+  preferredExpressions: AiAgentVisualState[];
+  notificationStyle: string;
+  futureVoiceProfile: string;
+};
+
+export type AiAgentAnimationProfileDefinition = {
+  id: string;
+  displayName: string;
+  idleFrame: "eyesOpenAssetKey";
+  blinkFrame: "eyesBlinkAssetKey";
+  minIntervalMs: number;
+  maxIntervalMs: number;
+  blinkDurationMs: number;
+  doubleBlinkChance: number;
+  reducedMotionBehavior: "static_open";
+};
+
+export type AutomationPresentationDefinition = {
+  id: string;
+  systemId: string;
+  displayName: "AI Agent";
+  previousDisplayName: "Auto Click";
+  powerLabel: "Labor Assistance";
+  previousPowerLabel: "Auto Click Power";
+  enabledLabel: "Agent Online";
+  disabledLabel: "Agent Offline";
+  preservedInternalIds: string[];
+  notes: string;
+};
+
+export type AiAgentSaveSchemaDefinition = {
+  id: string;
+  selectedAiAgentIdDefault: string;
+  fields: {
+    selectedAiAgentId: { status: "active"; default: string; notes: string };
+    selectedAiAgentSkinId: { status: "future"; default: null; notes: string };
+    selectedEyeColorId: { status: "future"; default: null; notes: string };
+    selectedPersonalityId: { status: "future"; default: null; notes: string };
+  };
+  migrationHints: Array<{ id: string; field: string; defaultValue: string; unknownIdBehavior: string; notes: string }>;
+};
+
 export type ClientProfile = {
   defaultUpgradeRowsVisible: number;
   futureUpgradeTeaserCount: number;
@@ -433,6 +519,12 @@ export type GameRuntimeData = {
   eraEconomyProfiles: EraEconomyProfile[];
   economyUsageRelationships: EconomyUsageRelationships;
   inventoryResourceMetadata: InventoryResourceMetadata[];
+  aiAgents: AiAgentDefinition[];
+  aiAgentPersonalities: AiAgentPersonalityDefinition[];
+  aiAgentAnimationProfiles: AiAgentAnimationProfileDefinition[];
+  automationPresentation: AutomationPresentationDefinition;
+  defaultAiAgentId: string;
+  aiAgentSaveSchema: AiAgentSaveSchemaDefinition;
   resources: ResourceDefinition[];
   upgradeCategories: UpgradeCategory[];
   upgrades: UpgradeDefinition[];

@@ -1,5 +1,6 @@
 import { civilizationAges } from "@/data/civilization-identity";
 import { contentPacks, type ContentPack, type ContentPackCategory, type ContentPackStatus } from "@/data/content-packs/survival";
+import type { AiAgentLibraryState } from "@/lib/ai-agents";
 import type { AssetProductionState, MissingAssetRequirement, ProductionAsset, ProductionTaskRecord } from "@/lib/assets/asset-production";
 import type { EraArtSummaryByEra } from "@/lib/assets/era-art-inventory";
 import type { ComponentDesignSummary, ComponentLibraryState } from "@/lib/component-library";
@@ -13,7 +14,7 @@ export type ProductionQueueItem = {
   id: string;
   title: string;
   priority: ProductionPriority;
-  type: "Asset" | "Research" | "Building" | "Resource" | "Mission" | "Event" | "Production Chain" | "Screen Design" | "Component";
+  type: "Asset" | "Research" | "Building" | "Resource" | "Mission" | "Event" | "Production Chain" | "Screen Design" | "Component" | "AI Agent";
   status: string;
   era: string;
   href: string;
@@ -309,6 +310,39 @@ function assetWorkItems(assetState: AssetProductionState) {
   return items;
 }
 
+function aiAgentWorkItems(aiAgentState?: AiAgentLibraryState) {
+  const items: ProductionQueueItem[] = [];
+  if (!aiAgentState) return items;
+
+  for (const agent of aiAgentState.records) {
+    const missingSlots = agent.artworkSlots.filter((slot) => slot.required && !["Approved", "Published"].includes(slot.status));
+    for (const slot of missingSlots) {
+      items.push(queueItem({
+        id: `ai-agent-art-${agent.id}-${slot.id}`,
+        title: `Create ${agent.shortDisplayName} ${slot.label}`,
+        type: "AI Agent",
+        status: slot.status,
+        era: "AI Agent",
+        href: "/ai-agents",
+        reason: "Required AI Agent state artwork is missing from the canonical companion library.",
+        blockers: [`${slot.minimumDimensions} minimum`, "Alpha required", `${slot.derivativePresetIds.length} derivatives required`],
+        priority: agent.defaultForNewPlayers ? "High" : "Medium"
+      }));
+    }
+  }
+
+  return items;
+}
+
+function aiAgentComplete(agentState?: AiAgentLibraryState) {
+  if (!agentState) return { complete: 0, total: 1, value: 0 };
+  const complete = agentState.records.filter((agent) =>
+    agent.publishState === "published"
+    && agent.artworkSlots.filter((slot) => slot.required).every((slot) => ["Approved", "Published"].includes(slot.status))
+  ).length;
+  return { complete, total: Math.max(1, agentState.records.length), value: percent(complete, agentState.records.length) };
+}
+
 function upgradeArtWorkItems(report: UpgradeArtReport) {
   const items: ProductionQueueItem[] = [];
   for (const item of report.items.filter((row) => row.matchStatus !== "matched" || !row.resolvedPreviewUrl).slice(0, 60)) {
@@ -578,7 +612,7 @@ function buildBlockers(data: GameData, assetState: AssetProductionState): Produc
   ].filter(Boolean) as ProductionBlocker[];
 }
 
-function buildReports(data: GameData, assetState: AssetProductionState, authoringState?: ContentAuthoringState, screenState?: ScreenDesignerState, componentState?: ComponentLibraryState, upgradeArtReport?: UpgradeArtReport): ProductionReport[] {
+function buildReports(data: GameData, assetState: AssetProductionState, authoringState?: ContentAuthoringState, screenState?: ScreenDesignerState, componentState?: ComponentLibraryState, upgradeArtReport?: UpgradeArtReport, aiAgentState?: AiAgentLibraryState): ProductionReport[] {
   const missingResearch = data.research.filter((row) => !researchComplete(row)).length;
   const missingBuildings = data.buildings.filter((row) => !buildingComplete(row)).length;
   const missingChains = data.building_chains.filter((row) => !chainComplete(row)).length;
@@ -604,6 +638,7 @@ function buildReports(data: GameData, assetState: AssetProductionState, authorin
   const upgradeArtGaps = (upgradeArtReport?.stats.missing ?? 0) + (upgradeArtReport?.stats.ambiguous ?? 0);
   const mobileScreenBlockers = (screenState?.stats.safeAreaBlockers ?? 0) + (screenState?.stats.touchBlockers ?? 0) + (screenState?.stats.mobileAssetBlockers ?? 0);
   const mobileComponentBlockers = (componentState?.stats.touchBlockers ?? 0) + (componentState?.stats.safeAreaBlockers ?? 0);
+  const missingAgentCoreArt = (aiAgentState?.stats.missingOpenEyeArt ?? 0) + (aiAgentState?.stats.missingBlinkArt ?? 0) + (aiAgentState?.stats.missingOfflineArt ?? 0);
 
   return [
     { label: "Missing Assets", count: assetState.missingRequirements.length, href: "/assets/missing", severity: "High", description: "Required derivatives or source artwork still missing." },
@@ -625,6 +660,8 @@ function buildReports(data: GameData, assetState: AssetProductionState, authorin
     { label: "Component Preview Review", count: componentPreviewReview, href: "/component-library", severity: componentPreviewReview ? "Medium" : "Low", description: "Generated component specimens waiting for human review before approval." },
     { label: "Mobile Screen Blockers", count: mobileScreenBlockers, href: "/screen-designer", severity: mobileScreenBlockers ? "High" : "Low", description: "Screens needing safe-area, touch, iOS, Android, or mobile asset readiness." },
     { label: "Mobile Component Blockers", count: mobileComponentBlockers, href: "/component-library", severity: mobileComponentBlockers ? "High" : "Low", description: "Shared components needing touch, compact, safe-area, or mobile implementation readiness." },
+    { label: "AI Agent Core Art", count: missingAgentCoreArt, href: "/ai-agents", severity: missingAgentCoreArt ? "High" : "Low", description: "Default/agent open-eye, blink, and offline states needing transparent source art and derivatives." },
+    { label: "AI Agent Review", count: aiAgentState?.stats.pendingReview ?? 0, href: "/ai-agents", severity: aiAgentState?.stats.pendingReview ? "Medium" : "Low", description: "AI Agent derivatives waiting for review before publication." },
     { label: "Store Art Readiness", count: assetState.missingRequirements.filter((item) => /store|app icon|splash|launch|wordmark|loading/i.test(`${item.objectName} ${item.requiredDerivative}`)).length, href: "/assets/missing", severity: "Medium", description: "Mobile store, app brand, launch, and loading artwork requirements needing source art." },
     { label: "Component Breaking Changes", count: componentBreakingChanges, href: "/component-library", severity: componentBreakingChanges ? "Critical" : "Low", description: "Major component changes requiring dependent screen review." }
   ];
@@ -838,7 +875,7 @@ function mobileReadinessWorkItems(screenState?: ScreenDesignerState, componentSt
   return items.slice(0, 80);
 }
 
-export function buildProductionPlan(data: GameData, assetState: AssetProductionState, eraSummary: EraArtSummaryByEra, authoringState?: ContentAuthoringState, screenState?: ScreenDesignerState, componentState?: ComponentLibraryState): ProductionPlan {
+export function buildProductionPlan(data: GameData, assetState: AssetProductionState, eraSummary: EraArtSummaryByEra, authoringState?: ContentAuthoringState, screenState?: ScreenDesignerState, componentState?: ComponentLibraryState, aiAgentState?: AiAgentLibraryState): ProductionPlan {
   const upgradeArtReport = buildUpgradeArtReport(data.upgrades, assetState.assets);
   const artComplete = assetState.assets.filter(assetComplete).length;
   const artTotal = Math.max(1, assetState.assets.length + assetState.missingRequirements.length);
@@ -864,6 +901,7 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
   const mobileScreenTotal = screenState?.stats.total ?? 0;
   const mobileReadyComponents = componentState?.stats.mobileReadyComponents ?? 0;
   const mobileComponentTotal = componentState?.stats.total ?? 0;
+  const aiAgentScore = aiAgentComplete(aiAgentState);
   const previewReady = assetState.visualPreviewReport.previewReady;
   const previewTotal = Math.max(1, assetState.visualPreviewReport.totalVisualRecords);
   const upgradeArtReady = upgradeArtReport.stats.previewReady;
@@ -885,7 +923,8 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
     { label: "Component Library Completion", complete: componentCompleteCount, total: Math.max(1, componentTotal), value: percent(componentCompleteCount, componentTotal), detail: "Reusable game UI components with approved or implemented design-system specifications." },
     { label: "Component Preview Generation", complete: componentPreviewGenerated, total: Math.max(1, componentPreviewTotal), value: percent(componentPreviewGenerated, componentPreviewTotal), detail: `${componentState?.stats.componentPreviewsNeedsReview ?? 0} generated previews need review, ${componentState?.stats.componentPreviewsBlockedByMissingBrowserCapture ?? 0} blocked from implementation screenshot capture.` },
     { label: "Mobile Screen Readiness", complete: mobileReadyScreens, total: Math.max(1, mobileScreenTotal), value: percent(mobileReadyScreens, mobileScreenTotal), detail: `${screenState?.stats.safeAreaBlockers ?? 0} safe-area blockers, ${screenState?.stats.touchBlockers ?? 0} touch blockers, ${screenState?.stats.iosBlockers ?? 0} iOS blockers, ${screenState?.stats.androidBlockers ?? 0} Android blockers.` },
-    { label: "Mobile Component Readiness", complete: mobileReadyComponents, total: Math.max(1, mobileComponentTotal), value: percent(mobileReadyComponents, mobileComponentTotal), detail: `${componentState?.stats.touchBlockers ?? 0} touch blockers, ${componentState?.stats.safeAreaBlockers ?? 0} safe-area blockers, ${componentState?.stats.iosBlockers ?? 0} iOS blockers, ${componentState?.stats.androidBlockers ?? 0} Android blockers.` }
+    { label: "Mobile Component Readiness", complete: mobileReadyComponents, total: Math.max(1, mobileComponentTotal), value: percent(mobileReadyComponents, mobileComponentTotal), detail: `${componentState?.stats.touchBlockers ?? 0} touch blockers, ${componentState?.stats.safeAreaBlockers ?? 0} safe-area blockers, ${componentState?.stats.iosBlockers ?? 0} iOS blockers, ${componentState?.stats.androidBlockers ?? 0} Android blockers.` },
+    { label: "AI Agent Readiness", complete: aiAgentScore.complete, total: aiAgentScore.total, value: aiAgentScore.value, detail: `${aiAgentState?.stats.missingOpenEyeArt ?? 0} missing open-eye, ${aiAgentState?.stats.missingBlinkArt ?? 0} missing blink, ${aiAgentState?.stats.missingOfflineArt ?? 0} missing offline, ${aiAgentState?.stats.webReady ?? 0} web-ready, ${aiAgentState?.stats.robloxReady ?? 0} Roblox-ready, ${aiAgentState?.stats.mobileReady ?? 0} mobile-ready.` }
   ];
   if (survivalPack) {
     metrics.splice(2, 0, { label: "Survival Content Pack", complete: survivalScore.complete, total: survivalScore.total, value: survivalScore.value, detail: `${survivalPack.title} is ${survivalScore.value}% production-ready.` });
@@ -905,7 +944,7 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
   const overall = clamp(metrics.filter((metric) => metric.label !== "Overall Game Completion").reduce((sum, metric) => sum + metric.value, 0) / Math.max(1, metrics.length - 1));
   metrics[0] = { ...metrics[0], complete: metrics.reduce((sum, metric) => sum + metric.complete, 0), total: metrics.reduce((sum, metric) => sum + metric.total, 0), value: overall };
 
-  const queue = [...mobileReadinessWorkItems(screenState, componentState), ...componentWorkItems(componentState), ...screenDesignWorkItems(screenState), ...scaffoldWorkItems(authoringState), ...upgradeArtWorkItems(upgradeArtReport), ...assetWorkItems(assetState), ...contentWorkItems(data)].filter((item) => !isCoveredByCompleteContentPack(item)).slice(0, 220);
+  const queue = [...aiAgentWorkItems(aiAgentState), ...mobileReadinessWorkItems(screenState, componentState), ...componentWorkItems(componentState), ...screenDesignWorkItems(screenState), ...scaffoldWorkItems(authoringState), ...upgradeArtWorkItems(upgradeArtReport), ...assetWorkItems(assetState), ...contentWorkItems(data)].filter((item) => !isCoveredByCompleteContentPack(item)).slice(0, 220);
   return {
     overallCompletion: overall,
     metrics,
@@ -914,7 +953,7 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
     blockers: buildBlockers(data, assetState),
     heatmap,
     timeline: buildTimeline(data, assetState),
-    reports: buildReports(data, assetState, authoringState, screenState, componentState, upgradeArtReport),
+    reports: buildReports(data, assetState, authoringState, screenState, componentState, upgradeArtReport, aiAgentState),
     generatedAt: new Date().toISOString()
   };
 }

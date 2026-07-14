@@ -39,6 +39,10 @@ async function main() {
     assert(profile.primaryHudResources?.join("|") === primaryHudEconomyIds.join("|"), `${profileName} profile HUD resources must remain canonical.`);
     assert(profile.primaryHudSlots?.map((slot) => slot.economyId).join("|") === primaryHudEconomyIds.join("|"), `${profileName} profile HUD slots must remain canonical.`);
     assert((profile.assetDensityProfile?.requiredScales ?? []).join("|") === "1x|2x|3x", `${profileName} asset density profile must include 1x/2x/3x.`);
+    const aiAgentPanel = profile.dashboardLayoutProfile?.aiAgentPanel as Record<string, unknown> | undefined;
+    assert(aiAgentPanel?.dataSource === "aiAgents", `${profileName} dashboard layout must include canonical AI Agent panel guidance.`);
+    assert(aiAgentPanel?.selectedIdField === "selectedAiAgentId", `${profileName} AI Agent panel must use selectedAiAgentId preference.`);
+    assert(aiAgentPanel?.reducedMotionBehavior === "static_open_eyes", `${profileName} AI Agent panel must define reduced-motion blink behavior.`);
     assert(profile.authenticationProfile?.accountDeletionTracked === true, `${profileName} must track account deletion readiness.`);
     assert(profile.authenticationProfile?.secretsExported === false, `${profileName} auth profile must not export secrets.`);
     assert(profile.purchaseProfile?.purchaseVerificationRequired === true, `${profileName} purchase profile must require verification.`);

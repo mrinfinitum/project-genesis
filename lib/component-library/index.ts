@@ -653,7 +653,7 @@ const initialComponentRecords: ComponentDesignRecord[] = [
   namedComponent("CriticalStatsDisplay", "Game-Specific", "Critical stats panel for high-importance production/game metrics.", [usage("dashboard", "Dashboard")]),
   namedComponent("BoostSlot", "Game-Specific", "Boost slot with availability, cooldown, rarity, and timer.", [usage("dashboard", "Dashboard")]),
   baseRecord({
-    componentId: "AIAgentPortrait",
+    componentId: "AiAgentPortrait",
     category: "Game-Specific",
     description: "AI assistant portrait renderer that resolves head artwork, eyes, expressions, idle animation, blink animation, and color theme from a canonical AI Agent record.",
     anatomy: [anatomyPart("head-layer", "Head artwork layer", "source art"), anatomyPart("eye-layer", "Eye artwork layer", "source art"), anatomyPart("expression-layer", "Expression layer", "source art"), anatomyPart("state-animation", "Idle/blink animation layer", "interaction state"), anatomyPart("theme-frame", "Color theme frame", "runtime data")],
@@ -664,13 +664,55 @@ const initialComponentRecords: ComponentDesignRecord[] = [
     notes: ["Resolve artwork through AI Agents workspace by aiAgentId. Hardcoded assistant image references are not allowed."]
   }),
   baseRecord({
-    componentId: "AIAgentStatusBadge",
+    componentId: "AiAgentStatus",
     category: "Game-Specific",
     description: "Compact status badge for AI agent state, rarity, unlock status, and future voice availability.",
     dataInputs: [dataInput("aiAgentId", "AI Agent ID", "AiAgentId", "Canonical Studio Definition"), dataInput("agentState", "Agent state", "AiAgentState", "Local Interaction State"), dataInput("rarity", "Agent rarity", "AiAgentRarity", "Canonical Studio Definition"), dataInput("voiceProfileStatus", "Voice profile status", "VoiceProfileStatus", "Canonical Studio Definition")],
     states: states(["Idle", "Thinking", "Working", "Research", "Offline", "Warning", "Celebration", "Locked"], ["Idle", "Thinking", "Offline", "Warning"]),
     variants: [variant("chip", "Chip", ["Idle", "Warning", "Offline"]), variant("hud", "HUD", ["Idle", "Thinking", "Working"]), variant("detail", "Detail", ["Idle", "Research", "Celebration"])],
     screenUsages: [usage("dashboard", "Dashboard"), usage("research", "Research")]
+  }),
+  baseRecord({
+    componentId: "AiAgentPanel",
+    category: "Game-Specific",
+    description: "Dashboard AI Agent panel showing portrait, Labor Assistance, online/offline state, blink behavior, and profile entry action.",
+    dataInputs: [dataInput("aiAgentId", "AI Agent ID", "AiAgentId", "Canonical Studio Definition"), dataInput("automationPresentation", "Automation presentation aliases", "AutomationPresentationDefinition", "Canonical Studio Definition"), dataInput("automationPower", "Labor Assistance value", "number", "Player Runtime State"), dataInput("agentOnline", "Agent online/offline state", "boolean", "Player Runtime State")],
+    states: states(["Idle", "Blink", "Working", "Thinking", "Offline", "Warning", "Locked", "Missing Art"], ["Idle", "Blink", "Offline", "Warning"]),
+    variants: [variant("dashboard", "Dashboard", ["Idle", "Working", "Offline", "Warning"]), variant("compact", "Compact", ["Idle", "Offline"]), variant("profile-entry", "Profile Entry", ["Idle", "Thinking"])],
+    screenUsages: [usage("dashboard", "Dashboard")]
+  }),
+  baseRecord({
+    componentId: "AiAgentSelector",
+    category: "Game-Specific",
+    description: "Selectable AI Agent cosmetic list for default, locked, selected, unavailable, and missing-art states.",
+    dataInputs: [dataInput("aiAgents", "AI Agent definitions", "AiAgentDefinition[]", "Canonical Studio Definition"), dataInput("selectedAiAgentId", "Selected AI Agent ID", "AiAgentId", "Player Runtime State")],
+    states: states(["Default", "Selected", "Locked", "Unavailable", "Missing Art", "Focused", "Disabled"], ["Default", "Selected", "Locked", "Focused"]),
+    variants: [variant("grid", "Grid", ["Default", "Selected", "Locked"]), variant("compact", "Compact", ["Default", "Selected"])],
+    screenUsages: [usage("ai-agent-profile", "AI Agent Profile")]
+  }),
+  baseRecord({
+    componentId: "AiAgentCard",
+    category: "Cards",
+    description: "AI Agent card for rarity, personality, unlock requirements, visual readiness, and platform readiness.",
+    dataInputs: [dataInput("aiAgentId", "AI Agent ID", "AiAgentId", "Canonical Studio Definition"), dataInput("aiAgent", "AI Agent definition", "AiAgentDefinition", "Canonical Studio Definition"), dataInput("unlockState", "Unlock state", "AgentUnlockState", "Player Runtime State")],
+    states: states(["Default", "Selected", "Locked", "Unavailable", "Missing Art", "Focused"], ["Default", "Selected", "Locked"]),
+    screenUsages: [usage("ai-agent-profile", "AI Agent Profile")]
+  }),
+  baseRecord({
+    componentId: "AiAgentExpressionPreview",
+    category: "Game-Specific",
+    description: "Expression/state preview matrix for idle, blinking, working, offline, warning, celebration, and missing-art states.",
+    dataInputs: [dataInput("aiAgentId", "AI Agent ID", "AiAgentId", "Canonical Studio Definition"), dataInput("expressionAssets", "Expression asset map", "Record<AiAgentVisualState,string>", "Canonical Studio Definition")],
+    states: states(["Idle", "Blink", "Working", "Thinking", "Research", "Offline", "Warning", "Celebration", "Missing Art"], ["Idle", "Blink", "Offline", "Warning"]),
+    screenUsages: [usage("ai-agent-profile", "AI Agent Profile")]
+  }),
+  baseRecord({
+    componentId: "AiAgentBlinkPreview",
+    category: "Game-Specific",
+    description: "Blink animation specimen with play/pause, reduced motion, light/dark background, circular HUD crop, panel crop, and density previews.",
+    dataInputs: [dataInput("animationProfile", "AI Agent animation profile", "AiAgentAnimationProfileDefinition", "Canonical Studio Definition"), dataInput("reducedMotion", "Reduced motion setting", "boolean", "Local Interaction State")],
+    states: states(["Idle", "Blink", "Paused", "Reduced Motion", "Missing Art"], ["Idle", "Blink", "Paused", "Reduced Motion"]),
+    screenUsages: [usage("ai-agent-profile", "AI Agent Profile")]
   }),
   baseRecord({ componentId: "EconomyCounter", category: "Game-Specific", description: "Economy/resource counter with icon, balance, rate, formatting, premium flag, and gain state. Economy identity comes from definitionId; slot position is presentation only.", assetKeys: [assetRef("Labor icon", "economy_labor", "Pending Art")], dataInputs: [dataInput("definitionId", "Definition ID", "GenesisId", "Canonical Studio Definition"), dataInput("displayName", "Display name or era override", "string", "Canonical Studio Definition"), dataInput("iconKey", "Icon key", "string", "Presentation Hint"), dataInput("balance", "Balance", "number", "Player Runtime State"), dataInput("rate", "Rate", "number", "Player Runtime State"), dataInput("formatting", "Formatting", "EconomyFormat", "Presentation Hint"), dataInput("premium", "Premium", "boolean", "Canonical Studio Definition"), dataInput("gainState", "Gain state", "GainState", "Local Interaction State")], notes: ["Use ECON-LABOR + economy_labor for Labor/Workforce labels, ECON-CREDITS + economy_credits for Credits. Never infer economy identity from first slot or coin artwork."], screenUsages: [usage("dashboard", "Dashboard"), usage("resources", "Resources")] }),
   namedComponent("AlignmentBar", "Game-Specific", "Alignment progress bar for civilization path and effects.", [usage("civilization", "Civilization")]),
