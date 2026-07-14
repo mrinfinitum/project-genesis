@@ -497,6 +497,7 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
       data("dashboard-runtime", "Runtime era/economy/upgrade definitions", "Canonical Studio Definition", "game-runtime-data", "Mapped"),
       data("dashboard-fixed-hud", "Fixed five-slot HUD order", "Canonical Studio Definition", "clientProfiles.default.primaryHudSlots", "Mapped"),
       data("dashboard-economy-contracts", "Economy behavior, producer, offline, rounding, and rate-breakdown contracts", "Canonical Studio Definition", "economyBehaviorContracts + resourceProducerDefinitions + economyRateBreakdownDefinitions", "Mapped"),
+      data("dashboard-economy-designer", "Economy Designer inspector and graph handoff", "Canonical Studio Definition", "/economy-designer", "Mapped"),
       data("dashboard-ai-agent", "AI Agent definitions and automation presentation aliases", "Canonical Studio Definition", "aiAgents + automationPresentation", "Mapped"),
       data("dashboard-player-progress", "Player progression and era completion", "Player Runtime State", "game client", "Partial")
     ],
@@ -809,7 +810,7 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
     displayName: "Buildings",
     description: "Building catalogue, construction, upgrade, and production detail screen.",
     status: "Not Started",
-    dataRequirements: [data("building-definitions", "Building definitions", "Canonical Studio Definition", "buildings", "Mapped"), data("building-resource-effects", "Structured building resource effects", "Canonical Studio Definition", "buildingResourceEffects + resourceProducerDefinitions", "Mapped"), data("building-player-state", "Owned buildings/workers", "Player Runtime State", "game client", "Missing")],
+    dataRequirements: [data("building-definitions", "Building definitions", "Canonical Studio Definition", "buildings", "Mapped"), data("building-resource-effects", "Structured building resource effects", "Canonical Studio Definition", "buildingResourceEffects + resourceProducerDefinitions", "Mapped"), data("building-economy-designer", "Economy Designer building effect inspector", "Canonical Studio Definition", "/economy-designer#building-effects", "Mapped"), data("building-player-state", "Owned buildings/workers", "Player Runtime State", "game client", "Missing")],
     assetRequirements: [asset("building-card-art", "Building card art", "building_cards", "background", "Needs Approval")]
   }),
   baseRecord({
@@ -818,8 +819,54 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
     description: "Resource inventory, sources, usage, and storage screen.",
     status: "In Design",
     web: "In Progress",
-    dataRequirements: [data("resource-catalog", "Resource catalog", "Canonical Studio Definition", "resource_catalog", "Mapped"), data("resource-economy-contracts", "HUD economy behavior and transaction contracts", "Canonical Studio Definition", "economyBehaviorContracts + economyTransactionReasons + offlineProgressionPolicies", "Mapped"), data("resource-inventory", "Current inventory", "Player Runtime State", "game client", "Missing")],
+    dataRequirements: [data("resource-catalog", "Resource catalog", "Canonical Studio Definition", "resource_catalog", "Mapped"), data("resource-economy-contracts", "HUD economy behavior and transaction contracts", "Canonical Studio Definition", "economyBehaviorContracts + economyTransactionReasons + offlineProgressionPolicies", "Mapped"), data("resource-economy-designer", "Economy Designer resource inspector nodes", "Canonical Studio Definition", "/economy-designer#resource-inspector", "Mapped"), data("resource-inventory", "Current inventory", "Player Runtime State", "game client", "Missing")],
     assetRequirements: [asset("resource-icons", "Resource icons", "resource_icons", "icon", "Needs Web Mapping")]
+  }),
+  baseRecord({
+    screenId: "economy-designer",
+    displayName: "Economy Designer",
+    description: "Studio-only economy authoring workspace for resource inspectors, producer graph, building effects, focused audits, sandbox projections, validation, and handoffs.",
+    status: "In Design",
+    web: "Implemented",
+    dataRequirements: [
+      data("economy-designer-runtime", "Canonical runtime economy contracts", "Canonical Studio Definition", "economyBehaviorContracts + resourceProducerDefinitions + buildingResourceEffects", "Mapped"),
+      data("economy-designer-graph", "Derived Studio-only graph nodes and edges", "Canonical Studio Definition", "lib/economy-designer", "Mapped"),
+      data("economy-designer-sandbox", "Local sandbox scenario inputs", "Presentation Hint", "component state", "Mapped")
+    ],
+    assetRequirements: [asset("economy-designer-icons", "Economy Designer icons/previews", "economy_designer_icons", "icon", "Needs Approval")],
+    notes: ["Studio-only workspace. Sandbox scenarios, graph layout positions, and review notes are not exported to public runtime."]
+  }),
+  baseRecord({
+    screenId: "economy-breakdown",
+    displayName: "Economy Breakdown",
+    description: "Player-facing economy detail screen that explains rates, source breakdowns, scopes, and offline eligibility.",
+    status: "Not Started",
+    dataRequirements: [data("economy-designer-rate-breakdown", "Canonical rate breakdowns and multiplier order", "Canonical Studio Definition", "/economy-designer#rate-breakdown", "Mapped"), data("economy-runtime-balances", "Current balances and active producer state", "Player Runtime State", "game client", "Missing")],
+    assetRequirements: [asset("economy-icons", "Economy HUD icons", "economy_icons", "icon", "Needs Approval")]
+  }),
+  baseRecord({
+    screenId: "premium-currency",
+    displayName: "Premium Currency",
+    description: "Premium Crystal purchase, reward, refund, and restore-purchase screen.",
+    status: "Not Started",
+    dataRequirements: [data("premium-safety-contract", "Premium Crystal source safety and transaction reason codes", "Canonical Studio Definition", "/economy-designer#premium-safety", "Mapped"), data("premium-store-state", "Verified purchases and entitlements", "Service/Backend State", "commerce service", "Missing")],
+    assetRequirements: [asset("premium-crystal-art", "Premium crystal icon and store art", "premium_crystal_art", "icon", "Needs Approval")]
+  }),
+  baseRecord({
+    screenId: "population-management",
+    displayName: "Population Management",
+    description: "Population capacity, available workforce, assigned workforce, growth, and local rollup screen.",
+    status: "Not Started",
+    dataRequirements: [data("population-model-contract", "Population model and capacity/growth separation", "Canonical Studio Definition", "/economy-designer#population-model", "Mapped"), data("population-player-state", "Current citizens, assignment, and settlement state", "Player Runtime State", "game client", "Missing")],
+    assetRequirements: [asset("population-icons", "Population and workforce icons", "population_icons", "icon", "Needs Approval")]
+  }),
+  baseRecord({
+    screenId: "trade",
+    displayName: "Trade",
+    description: "Trade route, market, commerce source, and Credits income screen.",
+    status: "In Design",
+    dataRequirements: [data("credits-model-contract", "Credits producer model, commerce sources, and presentation timeline", "Canonical Studio Definition", "/economy-designer#credits-model", "Mapped"), data("trade-runtime-state", "Trade route and market state", "Player Runtime State", "game client", "Missing")],
+    assetRequirements: [asset("trade-icons", "Trade and currency icons", "trade_icons", "icon", "Needs Approval")]
   }),
   baseRecord({
     screenId: "upgrades",
@@ -894,8 +941,16 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
     displayName: "Settings",
     description: "Client preferences, accessibility, account, and audio/video options.",
     status: "Not Started",
-    dataRequirements: [data("settings-schema", "Client settings schema", "Service/Backend State", "game client", "Missing"), data("accessibility-options", "Accessibility options", "Presentation Hint", "design tokens", "Partial"), data("premium-transaction-contract", "Premium purchase, grant, refund, and restore-purchase reason codes", "Canonical Studio Definition", "economyTransactionReasons.ECON-PREMIUM-CRYSTALS", "Mapped")],
+    dataRequirements: [data("settings-schema", "Client settings schema", "Service/Backend State", "game client", "Missing"), data("accessibility-options", "Accessibility options", "Presentation Hint", "design tokens", "Partial"), data("premium-transaction-contract", "Premium purchase, grant, refund, and restore-purchase reason codes", "Canonical Studio Definition", "economyTransactionReasons.ECON-PREMIUM-CRYSTALS + /economy-designer#premium-safety", "Mapped")],
     assetRequirements: [asset("settings-icons", "Settings icons", "settings_icons", "icon", "Needs Approval")]
+  }),
+  baseRecord({
+    screenId: "validation-engine",
+    displayName: "Validation Center",
+    description: "Studio validation dashboard for runtime, exports, architecture, economy, assets, screens, and component readiness.",
+    status: "In Design",
+    dataRequirements: [data("validation-runtime", "Runtime and export validation results", "Canonical Studio Definition", "validation-engine", "Mapped"), data("economy-validation", "Economy Designer validation issues", "Canonical Studio Definition", "/economy-designer#validation", "Mapped")],
+    assetRequirements: [asset("validation-icons", "Validation status icons", "validation_icons", "icon", "Needs Approval")]
   })
 ];
 

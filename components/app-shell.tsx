@@ -90,7 +90,8 @@ const navigationGroups: NavigationGroup[] = [
     fallbackProgress: 92,
     systemIds: ["architecture", "dashboard-metrics"],
     items: [
-      { href: "/architecture", label: "Architecture", icon: FileText }
+      { href: "/architecture", label: "Architecture", icon: FileText },
+      { href: "/economy-designer", label: "Economy Designer", icon: BadgeDollarSign }
     ]
   },
   {
