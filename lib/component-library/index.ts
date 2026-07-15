@@ -487,6 +487,138 @@ function namedComponent(componentId: string, category: ComponentCategory, descri
   return baseRecord({ componentId, category, description, screenUsages });
 }
 
+const researchMasterComponentRecords: ComponentDesignRecord[] = [
+  baseRecord({
+    componentId: "ImagePlaceholder",
+    category: "Utility",
+    description: "Builder-only replaceable image placeholder that displays label, component type, bounds, linked asset, and placeholder status without baking text into final art.",
+    assetKeys: [assetRef("Pending image asset", "placeholder_image", "Pending Art")],
+    dataInputs: [dataInput("assetRequirement", "Asset requirement", "ScreenAssetRequirement", "Presentation Hint")],
+    states: states(["Placeholder", "Missing Art", "Ready", "Selected", "Locked"], ["Placeholder", "Missing Art", "Selected", "Locked"]),
+    variants: [variant("full-screen", "Full Screen", ["Placeholder", "Ready"]), variant("panel", "Panel", ["Placeholder", "Ready"]), variant("icon", "Icon", ["Placeholder", "Ready"])],
+    screenUsages: [usage("research", "Research", "full-screen", "Placeholder")]
+  }),
+  baseRecord({
+    componentId: "ResearchHeader",
+    category: "HUD",
+    description: "Research screen title/header region with editable icon, title, subtitle, and optional status metadata.",
+    assetKeys: [assetRef("Research header icon", "research_header_icon", "Pending Art")],
+    dataInputs: [dataInput("title", "Screen title", "string", "Presentation Hint"), dataInput("subtitle", "Screen subtitle", "string", "Presentation Hint")],
+    states: states(["Default", "Loading", "Error"], ["Default"]),
+    screenUsages: [usage("research", "Research")]
+  }),
+  baseRecord({
+    componentId: "ResearchBranchHeader",
+    category: "Panels",
+    description: "Selected branch header with branch title, description, hero/background placeholder, progress label, percentage, and progress bar.",
+    assetKeys: [assetRef("Branch header background", "research_branch_header_background", "Pending Art")],
+    dataInputs: [dataInput("branch", "Selected branch", "ResearchBranch", "Canonical Studio Definition"), dataInput("branchProgress", "Branch progress", "BranchProgress", "Player Runtime State")],
+    states: states(["Default", "Loading", "Empty", "Error"], ["Default", "Loading"]),
+    screenUsages: [usage("research", "Research")]
+  }),
+  baseRecord({
+    componentId: "ResearchScreenShell",
+    category: "Panels",
+    description: "4K Visual Screen Builder shell for the Research management screen with reference, background, HUD, navigation, workspace, timeline, modal, and overlay layers.",
+    dimensions: "3840x2160 master canvas with desktop_1080 derived at 0.5 scale.",
+    assetKeys: [assetRef("Research background", "research_screen_background", "Pending Art")],
+    dataInputs: [dataInput("screenLayout", "4K screen layout", "ScreenLayoutSpec", "Presentation Hint"), dataInput("canonicalHudSlots", "HUD slot order", "HudResourceSlot[]", "Presentation Hint")],
+    states: states(["Default", "Loading", "Error", "Offline", "Mobile Compact", "Tablet"], ["Default", "Loading", "Error", "Mobile Compact", "Tablet"]),
+    variants: [variant("desktop-4k", "Desktop 4K", ["Default", "Loading"]), variant("desktop-1080", "Desktop 1080", ["Default", "Loading"]), variant("tablet", "Tablet", ["Tablet"]), variant("phone-landscape", "Phone Landscape", ["Mobile Compact"])],
+    interactions: [interaction("toggle-reference-overlay", "Builder reference controls", "Show/hide or adjust locked reference overlay", "Studio-only authoring state.")],
+    screenUsages: [usage("research", "Research", "master-placeholder", "Default")],
+    notes: ["Studio-only draft shell; not exported to public runtime."]
+  }),
+  baseRecord({
+    componentId: "ResearchBranchSidebar",
+    category: "Lists",
+    description: "Scrollable research discipline list with selected, hover, locked, disabled, and progress states.",
+    assetKeys: [assetRef("Branch row backgrounds", "research_branch_row_backgrounds", "Pending Art"), assetRef("Branch icons", "research_branch_icons", "Pending Art")],
+    dataInputs: [dataInput("branches", "Research branches", "ResearchBranch[]", "Canonical Studio Definition"), dataInput("branchProgress", "Branch progress", "BranchProgress[]", "Player Runtime State"), dataInput("selectedResearchBranchId", "Selected branch", "string", "Local Interaction State")],
+    states: states(["Default", "Hover", "Focused", "Selected", "Locked", "Disabled", "Loading", "Empty"], ["Default", "Hover", "Focused", "Selected", "Locked", "Disabled"]),
+    screenUsages: [usage("research", "Research")]
+  }),
+  baseRecord({
+    componentId: "ResearchBranchRow",
+    category: "Lists",
+    description: "Single research branch row with icon, branch label, completed/total counts, selected state, hover state, locked state, and disabled state.",
+    assetKeys: [assetRef("Branch icon", "research_branch_icons", "Pending Art"), assetRef("Branch row frame", "research_branch_row_backgrounds", "Pending Art")],
+    dataInputs: [dataInput("branchName", "Branch name", "string", "Canonical Studio Definition"), dataInput("completedResearchCount", "Completed count", "number", "Player Runtime State"), dataInput("totalResearchCount", "Total count", "number", "Canonical Studio Definition")],
+    states: states(["Default", "Hover", "Focused", "Selected", "Locked", "Disabled"], ["Default", "Hover", "Focused", "Selected", "Locked", "Disabled"]),
+    screenUsages: [usage("research", "Research")]
+  }),
+  baseRecord({
+    componentId: "ResearchProgressSummary",
+    category: "Progress",
+    description: "Total Research summary block with icon, label, completed count, total count, and optional progress bar.",
+    assetKeys: [assetRef("Total research icon", "research_total_progress_icon", "Pending Art")],
+    dataInputs: [dataInput("totalResearchProgress", "Total progress", "ResearchProgressSummary", "Player Runtime State")],
+    states: states(["Default", "Loading", "Empty", "Error"], ["Default", "Loading"]),
+    screenUsages: [usage("research", "Research")]
+  }),
+  baseRecord({
+    componentId: "ResearchTreeCanvas",
+    category: "Game-Specific",
+    description: "Pan/zoom node canvas for canonical research progression, branch filtering, connectors, lock/completed/available/researching states, and touch interaction.",
+    assetKeys: [assetRef("Research tree background", "research_tree_background", "Pending Art")],
+    dataInputs: [dataInput("researchGraph", "Research graph", "ResearchGraph", "Canonical Studio Definition"), dataInput("nodeStates", "Node states", "ResearchNodeState[]", "Player Runtime State")],
+    states: states(["Default", "Panning", "Zooming", "Node Selected", "Loading", "Empty", "Error"], ["Default", "Panning", "Zooming", "Node Selected"]),
+    interactions: [interaction("pan-tree", "Pointer drag/touch pan", "Pan research graph viewport", "Local viewport state."), interaction("zoom-tree", "Wheel/pinch/zoom controls", "Zoom research graph viewport", "Local viewport state."), interaction("select-node", "Node activation", "Select node and update detail panel", "Reads canonical node plus runtime state.")],
+    screenUsages: [usage("research", "Research")]
+  }),
+  baseRecord({
+    componentId: "ResearchNode",
+    category: "Game-Specific",
+    description: "Research graph node with icon, title, level, max level, requirement indicator, connection anchors, and selected/completed/available/locked/researching states.",
+    assetKeys: [assetRef("Research node circles", "research_node_circles", "Pending Art"), assetRef("Research node selected frame", "research_node_frame_selected", "Pending Art"), assetRef("Research node locked frame", "research_node_frame_locked", "Pending Art")],
+    dataInputs: [dataInput("researchNode", "Research node", "ResearchDefinition", "Canonical Studio Definition"), dataInput("nodeState", "Node state", "ResearchNodeRuntimeState", "Player Runtime State")],
+    states: states(["Default", "Hover", "Focused", "Selected", "Completed", "Available", "Locked", "Researching", "Unavailable", "Requirement Missing"], ["Default", "Hover", "Focused", "Selected", "Completed", "Available", "Locked"]),
+    screenUsages: [usage("research", "Research")]
+  }),
+  baseRecord({
+    componentId: "ResearchConnection",
+    category: "Progress",
+    description: "Editable research graph connection line for prerequisite, unlock, branch path, and optional dependency relationships.",
+    assetKeys: [assetRef("Research connection lines", "research_connection_lines", "Pending Art")],
+    dataInputs: [dataInput("connection", "Research connection", "ResearchConnectionDefinition", "Canonical Studio Definition"), dataInput("connectionState", "Connection state", "ResearchConnectionState", "Player Runtime State")],
+    states: states(["Inactive", "Available", "Completed", "Selected Path", "Locked"], ["Inactive", "Available", "Completed", "Selected Path", "Locked"]),
+    screenUsages: [usage("research", "Research")]
+  }),
+  baseRecord({
+    componentId: "ResearchDetailPanel",
+    category: "Panels",
+    description: "Right-side selected research detail panel for title, level/status, icon, description, benefits, unlocks, requirements, cost, duration, and primary action.",
+    assetKeys: [assetRef("Research detail panel frame", "research_detail_panel_frame", "Pending Art")],
+    dataInputs: [dataInput("selectedResearch", "Selected research", "ResearchDefinition", "Canonical Studio Definition"), dataInput("selectedResearchState", "Selected node state", "ResearchNodeRuntimeState", "Player Runtime State")],
+    states: states(["Default", "Node Selected", "Locked", "Completed", "Researching", "Loading", "Error"], ["Default", "Node Selected", "Locked", "Completed", "Researching"]),
+    screenUsages: [usage("research", "Research")]
+  }),
+  baseRecord({ componentId: "ResearchBenefitRow", category: "Data Display", description: "Benefit row with icon, label, value, positive/negative formatting, percentage, flat value, and multiplier support.", assetKeys: [assetRef("Benefit icons", "research_benefit_icons", "Pending Art")], dataInputs: [dataInput("benefit", "Research benefit", "ResearchBenefit", "Canonical Studio Definition")], screenUsages: [usage("research", "Research")] }),
+  baseRecord({ componentId: "ResearchUnlockRow", category: "Data Display", description: "Unlock row for canonical building, upgrade, feature, or resource unlock references.", assetKeys: [assetRef("Unlock icons", "research_unlock_icons", "Pending Art")], dataInputs: [dataInput("unlock", "Research unlock", "ResearchUnlock", "Canonical Studio Definition")], screenUsages: [usage("research", "Research")] }),
+  baseRecord({ componentId: "ResearchRequirementRow", category: "Data Display", description: "Requirement row with icon, label, level, completion state, progress, and pass/fail indicator.", assetKeys: [assetRef("Requirement icons", "research_requirement_icons", "Pending Art")], dataInputs: [dataInput("requirement", "Research requirement", "ResearchRequirement", "Canonical Studio Definition"), dataInput("playerProgress", "Requirement progress", "RequirementProgress", "Player Runtime State")], screenUsages: [usage("research", "Research")] }),
+  baseRecord({ componentId: "ResearchCostDisplay", category: "Game-Specific", description: "Cost display that supports multiple canonical costs, economy icons, sufficient/insufficient state, and non-Research currencies.", assetKeys: [assetRef("Cost icons", "research_cost_icons", "Pending Art")], dataInputs: [dataInput("costs", "Research costs", "CostRow[]", "Canonical Studio Definition"), dataInput("balances", "Player balances", "EconomyBalance[]", "Player Runtime State")], states: states(["Sufficient", "Insufficient", "Multiple Costs", "Loading", "Error"], ["Sufficient", "Insufficient", "Multiple Costs"]), screenUsages: [usage("research", "Research")] }),
+  baseRecord({ componentId: "ResearchDurationDisplay", category: "Data Display", description: "Duration display with instant state and reduced-duration modifiers.", assetKeys: [assetRef("Duration icon", "research_duration_icon", "Pending Art")], dataInputs: [dataInput("duration", "Research duration", "DurationDefinition", "Canonical Studio Definition"), dataInput("modifiers", "Duration modifiers", "ResearchDurationModifier[]", "Player Runtime State")], states: states(["Default", "Instant", "Reduced", "Loading"], ["Default", "Instant", "Reduced"]), screenUsages: [usage("research", "Research")] }),
+  baseRecord({
+    componentId: "ResearchActionButton",
+    category: "Buttons",
+    description: "Image-backed research primary action supporting Start Research, Researching, Complete, Locked, Requirements Missing, Insufficient Resources, Queue Full, and Already Completed.",
+    assetKeys: [assetRef("Start Research button", "research_start_button", "Pending Art")],
+    dataInputs: [dataInput("actionState", "Research action state", "ResearchActionState", "Player Runtime State")],
+    states: states(["Start Research", "Researching", "Complete", "Locked", "Requirements Missing", "Insufficient Resources", "Queue Full", "Already Completed"], ["Start Research", "Researching", "Complete", "Locked", "Requirements Missing", "Insufficient Resources", "Queue Full", "Already Completed"]),
+    variants: [variant("image-backed", "Image-backed", ["Start Research", "Researching", "Locked", "Insufficient Resources"])],
+    screenUsages: [usage("research", "Research")]
+  }),
+  baseRecord({
+    componentId: "EraResearchTimeline",
+    category: "Progress",
+    description: "Bottom research-era availability timeline bound to canonical era definitions with current, completed, available, locked, preview, and progress connection states.",
+    assetKeys: [assetRef("Era timeline background", "research_era_timeline_background", "Pending Art"), assetRef("Current era node", "research_current_era_node", "Pending Art"), assetRef("Locked era node", "research_locked_era_node", "Pending Art")],
+    dataInputs: [dataInput("eras", "Era definitions", "EraDefinition[]", "Canonical Studio Definition"), dataInput("eraResearchProgress", "Era research progress", "EraResearchProgress[]", "Player Runtime State")],
+    states: states(["Default", "Current", "Completed", "Available", "Locked", "Preview"], ["Default", "Current", "Completed", "Available", "Locked", "Preview"]),
+    screenUsages: [usage("research", "Research")]
+  })
+];
+
 const dashboardComponentRecords: ComponentDesignRecord[] = [
   baseRecord({
     componentId: "SideNavigationRail",
@@ -625,6 +757,7 @@ const initialComponentRecords: ComponentDesignRecord[] = [
   namedComponent("ResourceCard", "Cards", "Resource card with icon, rarity, rate, source, storage, and usage affordances.", [usage("resources", "Resources")]),
   namedComponent("BuildingCard", "Cards", "Building card with art, unlock state, cost, production, and owned count.", [usage("buildings", "Buildings")]),
   namedComponent("ResearchCard", "Cards", "Research card/node with cost, affordability, progress, icon, and unlock state.", [usage("research", "Research")]),
+  ...researchMasterComponentRecords,
   namedComponent("UpgradeRow", "Cards", "Upgrade row in tabbed upgrade lists with status and cost.", [usage("upgrades", "Upgrades")]),
   namedComponent("MissionCard", "Cards", "Mission card with objectives, rewards, state, and tracking action.", [usage("events", "Events")]),
   namedComponent("EventCard", "Cards", "Event card with art, timer, reward preview, and status.", [usage("events", "Events")]),

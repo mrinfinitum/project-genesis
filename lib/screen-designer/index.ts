@@ -13,7 +13,7 @@ export type ScreenDataClassification = "Canonical Studio Definition" | "Player R
 export type ScreenLayoutSpec = {
   designWidth: number;
   designHeight: number;
-  coordinateSystem: "absolute" | "responsive_grid" | "hud_overlay" | "modal_overlay";
+  coordinateSystem: "absolute" | "responsive_grid" | "hud_overlay" | "hud_overlay_4k" | "modal_overlay";
   layoutMode: "full_screen_page" | "hud_overlay" | "modal" | "drawer" | "hybrid";
   panelBounds: Array<{ id: string; label: string; x: number; y: number; width: number; height: number; zIndex: number }>;
   columns: string;
@@ -56,7 +56,7 @@ export type ScreenAssetRequirement = {
   iconKey?: string;
   category: "background" | "icon" | "panel" | "button_state" | "animation" | "audio" | "video";
   required: boolean;
-  status: "Ready" | "Missing" | "Placeholder" | "Needs Web Mapping" | "Needs Roblox Mapping" | "Needs Approval";
+  status: "Ready" | "Missing" | "Placeholder" | "Pending Upload" | "Needs Web Mapping" | "Needs Roblox Mapping" | "Needs Approval";
   linkedAssetId?: string;
   notes: string;
 };
@@ -347,6 +347,16 @@ function responsiveRules(status: ScreenResponsiveRule["status"] = "Needs Review"
   }));
 }
 
+function designedStates(labels: string[], required = true): ScreenStateSpec[] {
+  return labels.map((label) => ({
+    id: label.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+    label,
+    required,
+    designed: true,
+    notes: "Master layout state placeholder is represented in the Visual Screen Builder draft."
+  }));
+}
+
 function baseRecord(input: {
   screenId: string;
   displayName: string;
@@ -413,58 +423,296 @@ function baseRecord(input: {
   };
 }
 
+const researchMasterLayout: ScreenLayoutSpec = {
+  designWidth: 3840,
+  designHeight: 2160,
+  coordinateSystem: "hud_overlay_4k",
+  layoutMode: "hud_overlay",
+  panelBounds: [
+    { id: "research-screen-root", label: "Research Screen / 4K master canvas", x: 0, y: 0, width: 3840, height: 2160, zIndex: 0 },
+    { id: "reference", label: "Reference group", x: 0, y: 0, width: 3840, height: 2160, zIndex: 1 },
+    { id: "research-master-reference", label: "Research Master Reference / locked 50% overlay", x: 0, y: 0, width: 3840, height: 2160, zIndex: 2 },
+    { id: "background", label: "Background group", x: 0, y: 0, width: 3840, height: 2160, zIndex: 0 },
+    { id: "research-background", label: "Research Background image placeholder", x: 0, y: 0, width: 3840, height: 2160, zIndex: 0 },
+    { id: "top-hud", label: "Top HUD group", x: 0, y: 0, width: 3840, height: 220, zIndex: 100 },
+    { id: "research-top-hud", label: "Civilization HUD / TopHudBar placeholder", x: 0, y: 0, width: 3840, height: 220, zIndex: 110 },
+    { id: "left-navigation", label: "Left Navigation group", x: 54, y: 276, width: 360, height: 1668, zIndex: 120 },
+    { id: "research-left-nav", label: "Main Navigation / SideNavigationRail placeholder", x: 54, y: 276, width: 360, height: 1668, zIndex: 125 },
+    { id: "research-header", label: "Research Header group", x: 464, y: 260, width: 900, height: 220, zIndex: 130 },
+    { id: "research-branch-sidebar", label: "Research Branch Sidebar group", x: 464, y: 520, width: 600, height: 1308, zIndex: 130 },
+    { id: "research-progress-summary", label: "Total Research summary", x: 504, y: 1708, width: 520, height: 96, zIndex: 140 },
+    { id: "research-tree-workspace", label: "Research Tree Workspace group", x: 1116, y: 520, width: 1716, height: 1308, zIndex: 130 },
+    { id: "selected-branch-header", label: "Selected Branch Header", x: 1164, y: 560, width: 1620, height: 220, zIndex: 140 },
+    { id: "research-connection-layer", label: "Research connection layer", x: 1164, y: 820, width: 1620, height: 860, zIndex: 141 },
+    { id: "research-node-layout", label: "Research node placeholder grid", x: 1216, y: 840, width: 1516, height: 780, zIndex: 150 },
+    { id: "research-detail-panel", label: "Research Detail Panel group", x: 2884, y: 520, width: 824, height: 1308, zIndex: 130 },
+    { id: "era-timeline", label: "Era Timeline group", x: 1116, y: 1876, width: 2592, height: 188, zIndex: 130 },
+    { id: "modal-layer", label: "Modal Layer", x: 0, y: 0, width: 3840, height: 2160, zIndex: 900 },
+    { id: "overlay-layer", label: "Overlay Layer", x: 0, y: 0, width: 3840, height: 2160, zIndex: 1000 }
+  ],
+  columns: "4K HUD overlay: 54px outer gutter, 360px left nav, 50px nav/content gap, 600px branch sidebar, 52px internal gap, 1716px research tree, 52px gap, 824px detail panel.",
+  rows: "Top HUD 220px, content top 520px, primary workspace 1308px, bottom era timeline 188px, fixed modal/overlay layers above.",
+  spacing: "All authored coordinates are 4K. Generated desktop_1080 coordinates use 0.5 scale. Default panel gutter is 40-52px; internal panel padding is 32-48px.",
+  alignment: "Match the supplied reference composition: persistent top HUD, left rail, branch list left, tree canvas center, detail panel right, timeline bottom.",
+  safeAreas: ["top HUD 220px at 4K", "left navigation 54x276 360x1668", "bottom timeline y1876 h188", "modal and overlay full canvas"],
+  overflowBehavior: "Gameplay shell is fixed. Branch sidebar and detail panel scroll internally; research tree pans/zooms internally; no browser page scroll.",
+  backgroundLayers: ["research-background", "research-master-reference locked at 50% opacity, builder-only, excluded from runtime export"],
+  overlayLayers: ["Modal Layer", "Overlay Layer", "tooltips", "selection preview", "difference/overlay review controls"]
+};
+
+function researchComponent(input: {
+  id: string;
+  componentLibraryId: string;
+  displayName: string;
+  purpose: string;
+  dimensions: string;
+  positioning: string;
+  assetKeys?: string[];
+  dataInputs?: string[];
+  states?: string[];
+  interactions?: string[];
+  notes?: string;
+}): ScreenComponentSpec {
+  const commonData = ["research", "unlock_matrix", "eras", "resources", "clientProfiles.default.primaryHudSlots", "player research progress"];
+  const commonStates = ["Default", "Hover", "Focused", "Selected", "Locked", "Disabled", "Available", "Completed", "Researching", "Loading", "Error", "Mobile Compact", "Tablet"];
+  return {
+    id: input.id,
+    componentLibraryId: input.componentLibraryId,
+    variant: "master-placeholder",
+    state: "Default",
+    layoutOverride: "Authored in 4K Visual Screen Builder coordinates. Desktop 1080 manifest is generated at 0.5 scale.",
+    assetOverride: "Pending Upload",
+    dataBindings: input.dataInputs ?? commonData,
+    screenSpecificNotes: input.notes ?? "Placeholder geometry only. Final art is replaceable without changing authored bounds, bindings, states, or interactions.",
+    displayName: input.displayName,
+    purpose: input.purpose,
+    dimensions: input.dimensions,
+    positioning: input.positioning,
+    typography: "Editable text only; no baked labels. Use shared NOVERIS HUD heading, body, metadata, and value tokens.",
+    colors: "Shared dark beveled HUD palette with cyan borders, green action emphasis, muted locked states, and canonical branch/status accents.",
+    assetKeys: input.assetKeys ?? [],
+    dataInputs: input.dataInputs ?? commonData,
+    states: input.states ?? commonStates,
+    interactions: input.interactions ?? ["Pointer/touch selection", "Keyboard focus", "Controller activation later", "Tooltip on hover/focus"],
+    responsiveBehavior: "Desktop keeps the full composition. Tablet preserves tree as primary. Phone landscape collapses branch sidebar into a drawer and detail into modal/drawer.",
+    implementationNotes: "Do not store player values or final research definitions in the screen record; consume canonical research graph and player runtime state."
+  };
+}
+
 const researchComponents: ScreenComponentSpec[] = [
-  ["research-header", "ResearchHeader", "Screen title, era status, and research currency summary."],
-  ["era-selector", "ResearchEraSelector", "Era filter that preserves canonical era IDs."],
-  ["category-tabs", "ResearchCategoryTabs", "Research category navigation."],
-  ["research-tree", "ResearchTreeCanvas", "Scrollable/pannable dependency graph surface."],
-  ["search-filter", "ResearchSearchFilter", "Search and filter controls."],
-  ["research-node", "ResearchNode", "Individual research record with cost, state, and icon."],
-  ["dependency-connectors", "DependencyConnector", "Dependency lines between research nodes."],
-  ["detail-panel", "ResearchDetailPanel", "Selected research summary and unlock details."],
-  ["unlock-requirements", "UnlockRequirementList", "Required prerequisites and feature unlocks."],
-  ["cost-panel", "CostDisplay", "Research cost and affordability."],
-  ["art-preview", "ResearchArtPreview", "Icon/card art preview and missing-art state."],
-  ["empty-state", "ResearchEmptyState", "No results and no data state."],
-  ["locked-state", "ResearchLockedState", "Locked research treatment."],
-  ["loading-state", "ResearchLoadingState", "Skeleton/loading treatment."]
-].map(([id, displayName, purpose]) => ({
-  id,
-  componentLibraryId: ({
-    "research-header": "BeveledGamePanel",
-    "era-selector": "EraProgressRail",
-    "category-tabs": "NavigationItem",
-    "research-tree": "BeveledGamePanel",
-    "search-filter": "UtilityIconButton",
-    "research-node": "ResearchCard",
-    "dependency-connectors": "EraProgressRail",
-    "detail-panel": "UpgradePanel",
-    "unlock-requirements": "UnlockRequirementList",
-    "cost-panel": "CostDisplay",
-    "art-preview": "ArtRequirementCard",
-    "empty-state": "EmptyState",
-    "locked-state": "LockedState",
-    "loading-state": "LoadingSkeleton"
-  } as Record<string, string>)[id],
-  variant: id === "research-node" ? "default" : id === "detail-panel" ? "standard" : "default",
-  state: "Default",
-  layoutOverride: "Screen-specific placement is defined by the Research layout spec.",
-  assetOverride: "",
-  dataBindings: ["research", "unlock_matrix", "player research progress"],
-  screenSpecificNotes: "Use the shared Component Library record for anatomy, states, tokens, and interaction baseline.",
-  displayName,
-  purpose,
-  dimensions: id === "research-tree" ? "Fills primary workspace; min 960x640 at 1920 reference." : "Responsive to parent panel.",
-  positioning: id === "detail-panel" ? "Right context panel, drawer on compact layouts." : "Grid slot in research workspace.",
-  typography: "Use shared heading/body/metadata tokens.",
-  colors: "Use shared dark HUD palette with rarity/status accents.",
-  assetKeys: id === "research-node" || id === "art-preview" ? ["research icons", "era node frames"] : [],
-  dataInputs: ["research", "unlock_matrix", "eras", "resources", "player research progress"],
-  states: ["Default", "Hover", "Locked", "Affordable", "Unaffordable", "Completed", "Selected", "Loading", "Error"],
-  interactions: ["Click/tap select", "Keyboard focus", "Controller navigation", "Tooltip", "Filter/search"],
-  responsiveBehavior: "Collapse supporting panels into drawers below 1440px; keep node labels readable.",
-  implementationNotes: "Do not invent player research state; use fixture or service-state classification until the game client supplies progress."
-}));
+  researchComponent({
+    id: "research-screen-shell",
+    componentLibraryId: "ResearchScreenShell",
+    displayName: "ResearchScreenShell",
+    purpose: "Full management-screen shell containing the permanent HUD, navigation, research workspace, modal, and overlay layers.",
+    dimensions: "3840x2160 root; desktop_1080 derived at 1920x1080.",
+    positioning: "Root layer tree: Reference, Background, Top HUD, Left Navigation, Research Header, Research Branch Sidebar, Research Tree Workspace, Research Detail Panel, Era Timeline, Modal Layer, Overlay Layer.",
+    assetKeys: ["research_screen_background", "research_master_reference"],
+    interactions: ["Show/hide reference", "Adjust reference opacity", "Lock/unlock reference", "Toggle 50% overlay", "Toggle difference mode if supported"]
+  }),
+  researchComponent({
+    id: "research-background",
+    componentLibraryId: "ImagePlaceholder",
+    displayName: "Research Background",
+    purpose: "Full-screen Research background and HUD backing placeholder.",
+    dimensions: "x0 y0 w3840 h2160 / z0.",
+    positioning: "Background group behind all interactive HUD layers.",
+    assetKeys: ["research_screen_background"],
+    states: ["Placeholder", "Missing Art", "Ready"]
+  }),
+  researchComponent({
+    id: "research-top-hud",
+    componentLibraryId: "TopHudBar",
+    displayName: "Civilization HUD",
+    purpose: "Permanent civilization-wide resource HUD using the canonical five-slot economy order.",
+    dimensions: "x0 y0 w3840 h220.",
+    positioning: "Pinned to the top edge above the management workspace.",
+    assetKeys: ["economy_labor", "economy_credits", "economy_population", "economy_research", "economy_premium_crystals"],
+    dataInputs: ["clientProfiles.default.primaryHudSlots", "economyDefinitions", "eraEconomyProfile", "player economy balances/rates"],
+    notes: "HUD order is ECON-LABOR, ECON-CREDITS, ECON-POPULATION, ECON-RESEARCH, ECON-PREMIUM-CRYSTALS. Do not create screen-specific economy logic."
+  }),
+  researchComponent({
+    id: "research-left-nav",
+    componentLibraryId: "SideNavigationRail",
+    displayName: "Main Navigation",
+    purpose: "Primary game navigation with Research represented as active.",
+    dimensions: "x54 y276 w360 h1668.",
+    positioning: "Left navigation rail, independent of branch sidebar.",
+    assetKeys: ["side_navigation_rail", "navigation_icons"],
+    dataInputs: ["canonical navigation definitions", "currentRoute"],
+    states: ["Default", "Hover", "Focused", "Active", "Locked", "Disabled"]
+  }),
+  researchComponent({
+    id: "research-header",
+    componentLibraryId: "ResearchHeader",
+    displayName: "Research Header",
+    purpose: "Screen heading region with editable Research icon, title, and subtitle.",
+    dimensions: "x464 y260 w900 h220.",
+    positioning: "Above the branch sidebar and aligned to the main content start.",
+    assetKeys: ["research_header_icon"],
+    dataInputs: ["screen title copy", "screen subtitle copy"],
+    notes: "Default editable text: RESEARCH / Unlock the future of your civilization."
+  }),
+  researchComponent({
+    id: "research-branch-sidebar",
+    componentLibraryId: "ResearchBranchSidebar",
+    displayName: "Research Branches",
+    purpose: "Scrollable branch/category list with progress rows and selected/locked state support.",
+    dimensions: "x464 y520 w600 h1308.",
+    positioning: "Left management column beside the research tree.",
+    assetKeys: ["research_branch_row_backgrounds", "research_branch_icons"],
+    dataInputs: ["research branches", "branch progress", "selectedResearchBranchId"],
+    states: ["Default", "Hover", "Focused", "Selected", "Locked", "Disabled", "Loading", "Empty"],
+    interactions: ["Select research branch", "Scroll branch list", "Keyboard branch navigation"]
+  }),
+  researchComponent({
+    id: "research-branch-row",
+    componentLibraryId: "ResearchBranchRow",
+    displayName: "ResearchBranchRow",
+    purpose: "Repeated branch row for Agriculture, Engineering, Manufacturing, Energy, Commerce, Transportation, Computing, Medicine, Space, and Civilization placeholders.",
+    dimensions: "Repeated row placeholder inside x464 y520 w600 h1308.",
+    positioning: "Vertical list layout with progress count and icon affordance.",
+    assetKeys: ["research_branch_icons", "research_branch_row_backgrounds"],
+    dataInputs: ["branchName", "branchIcon", "completedResearchCount", "totalResearchCount", "selectedResearchBranchId"]
+  }),
+  researchComponent({
+    id: "research-progress-summary",
+    componentLibraryId: "ResearchProgressSummary",
+    displayName: "ResearchProgressSummary",
+    purpose: "Total research progress summary at the bottom of the branch sidebar.",
+    dimensions: "x504 y1708 w520 h96.",
+    positioning: "Anchored to the bottom of the branch sidebar.",
+    assetKeys: ["research_total_progress_icon"],
+    dataInputs: ["total research progress", "completedResearchCount", "totalResearchCount"]
+  }),
+  researchComponent({
+    id: "research-tree-workspace",
+    componentLibraryId: "ResearchTreeCanvas",
+    displayName: "Research Tree",
+    purpose: "Main node-based research progression map with pan, zoom, filters, connectors, and selectable nodes.",
+    dimensions: "x1116 y520 w1716 h1308.",
+    positioning: "Largest central region between branch sidebar and detail panel.",
+    assetKeys: ["research_tree_background"],
+    dataInputs: ["research graph", "branch filter", "node states", "prerequisites", "active research"],
+    interactions: ["Pan tree", "Zoom tree", "Select research node", "Show node tooltip", "Open requirement source"]
+  }),
+  researchComponent({
+    id: "selected-branch-header",
+    componentLibraryId: "ResearchBranchHeader",
+    displayName: "Selected Branch Header",
+    purpose: "Data-driven selected branch title, description, hero/background placeholder, progress label, percentage, and progress bar.",
+    dimensions: "x1164 y560 w1620 h220.",
+    positioning: "Inside the top of the Research Tree Workspace.",
+    assetKeys: ["research_branch_header_background"],
+    dataInputs: ["selected branch title", "selected branch description", "branch progress percent"]
+  }),
+  researchComponent({
+    id: "research-node",
+    componentLibraryId: "ResearchNode",
+    displayName: "ResearchNode",
+    purpose: "Reusable research node with icon, title, level, selected/completed/available/locked/researching states, requirements, and connection anchors.",
+    dimensions: "Reusable node placeholder, approx 260x220 in 4K master; sample grid spans x1216 y840 w1516 h780.",
+    positioning: "Placeholder instances follow the supplied reference rows for Food Gathering through Hydroponics.",
+    assetKeys: ["research_node_circles", "research_node_frame_selected", "research_node_frame_completed", "research_node_frame_locked", "research_node_icons"],
+    dataInputs: ["research node definition", "current level", "max level", "node unlock state", "node affordability"],
+    states: ["Default", "Hover", "Focused", "Selected", "Completed", "Available", "Locked", "Researching", "Unavailable", "Requirement Missing"]
+  }),
+  researchComponent({
+    id: "research-connection",
+    componentLibraryId: "ResearchConnection",
+    displayName: "ResearchConnection",
+    purpose: "Editable connection layer behind nodes for prerequisite, unlock, branch path, and optional dependency lines.",
+    dimensions: "x1164 y820 w1620 h860.",
+    positioning: "Behind ResearchNode placeholders and above tree background.",
+    assetKeys: ["research_connection_lines"],
+    dataInputs: ["research graph edges", "selected path", "node completion state"],
+    states: ["Inactive", "Available", "Completed", "Selected Path", "Locked"]
+  }),
+  researchComponent({
+    id: "research-detail-panel",
+    componentLibraryId: "ResearchDetailPanel",
+    displayName: "Selected Research Detail",
+    purpose: "Right-side panel for selected node title, level/status, icon, description, benefits, unlocks, requirements, cost, duration, and primary action.",
+    dimensions: "x2884 y520 w824 h1308.",
+    positioning: "Right context panel with internal vertical scroll when content exceeds bounds.",
+    assetKeys: ["research_detail_panel_frame", "research_detail_hero_icon"],
+    dataInputs: ["selected research node", "benefits", "unlocks", "requirements", "research costs", "duration", "active research"],
+    interactions: ["Start research", "Open requirement source", "Open unlocked building", "Open unlocked upgrade"]
+  }),
+  researchComponent({
+    id: "research-benefit-row",
+    componentLibraryId: "ResearchBenefitRow",
+    displayName: "ResearchBenefitRow",
+    purpose: "Reusable benefit row with icon, label, value, positive/negative formatting, percent, flat, and multiplier support.",
+    dimensions: "Repeated row inside ResearchDetailPanel.",
+    positioning: "Detail panel Benefits section.",
+    assetKeys: ["research_benefit_icons"],
+    dataInputs: ["benefit icon", "benefit label", "benefit value", "benefit formatting"]
+  }),
+  researchComponent({
+    id: "research-unlock-row",
+    componentLibraryId: "ResearchUnlockRow",
+    displayName: "ResearchUnlockRow",
+    purpose: "Reusable unlock row for buildings, upgrades, and feature unlock references.",
+    dimensions: "Repeated row inside ResearchDetailPanel.",
+    positioning: "Detail panel Unlocks section.",
+    assetKeys: ["research_unlock_icons"],
+    dataInputs: ["canonical unlock ID", "unlock type", "unlock label", "unlock status"]
+  }),
+  researchComponent({
+    id: "research-requirement-row",
+    componentLibraryId: "ResearchRequirementRow",
+    displayName: "ResearchRequirementRow",
+    purpose: "Reusable prerequisite/requirement row with icon, label, level, completion state, progress, and pass/fail indicator.",
+    dimensions: "Repeated row inside ResearchDetailPanel.",
+    positioning: "Detail panel Requirements section.",
+    assetKeys: ["research_requirement_icons"],
+    dataInputs: ["requirement icon", "requirement label", "level", "completion state", "progress"]
+  }),
+  researchComponent({
+    id: "research-cost-display",
+    componentLibraryId: "ResearchCostDisplay",
+    displayName: "ResearchCostDisplay",
+    purpose: "Multiple-cost display that consumes canonical cost definitions and affordability state.",
+    dimensions: "Inline section inside ResearchDetailPanel.",
+    positioning: "Detail panel Cost section above the primary action.",
+    assetKeys: ["research_cost_icons", "economy_research"],
+    dataInputs: ["research cost definitions", "economy definitions", "player balances", "affordability"]
+  }),
+  researchComponent({
+    id: "research-duration-display",
+    componentLibraryId: "ResearchDurationDisplay",
+    displayName: "ResearchDurationDisplay",
+    purpose: "Duration display with instant and reduced-duration modifier support.",
+    dimensions: "Inline section inside ResearchDetailPanel.",
+    positioning: "Detail panel Duration section beside or near cost.",
+    assetKeys: ["research_duration_icon"],
+    dataInputs: ["duration", "instant state", "duration modifiers"]
+  }),
+  researchComponent({
+    id: "research-action-button",
+    componentLibraryId: "ResearchActionButton",
+    displayName: "ResearchActionButton",
+    purpose: "Primary image-backed action button for Start Research and related research action states.",
+    dimensions: "Approx w620 h108 in 4K master; final bounds remain editable.",
+    positioning: "Bottom action area of ResearchDetailPanel.",
+    assetKeys: ["research_start_button"],
+    dataInputs: ["selected research node", "requirements state", "affordability", "research queue state"],
+    states: ["Start Research", "Researching", "Complete", "Locked", "Requirements Missing", "Insufficient Resources", "Queue Full", "Already Completed"],
+    interactions: ["Start research", "Complete or claim research if canonical rules require it"]
+  }),
+  researchComponent({
+    id: "era-research-timeline",
+    componentLibraryId: "EraResearchTimeline",
+    displayName: "EraResearchTimeline",
+    purpose: "Bottom era research progression availability timeline bound to canonical era definitions.",
+    dimensions: "x1116 y1876 w2592 h188.",
+    positioning: "Bottom timeline beneath the central tree and detail areas.",
+    assetKeys: ["research_era_timeline_background", "research_current_era_node", "research_locked_era_node"],
+    dataInputs: ["eras", "era research availability", "era completion", "current era"],
+    states: ["Default", "Current", "Completed", "Available", "Locked", "Preview"]
+  })
+];
 
 const initialScreenDesignRecords: ScreenDesignRecord[] = [
   baseRecord({
@@ -759,52 +1007,151 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
     dataRequirements: [data("production-chains", "Production chain definitions", "Canonical Studio Definition", "building_chains", "Mapped"), data("production-player-state", "Owned buildings and production rates", "Player Runtime State", "game client", "Missing")],
     assetRequirements: [asset("production-icons", "Production icons", "production_icons", "icon", "Missing")]
   }),
-  baseRecord({
-    screenId: "research",
-    displayName: "Research",
-    description: "Research tree and unlock matrix screen design starter specification.",
-    status: "Draft",
-    assignedTo: "UX Design",
-    web: "Not Started",
-    roblox: "Not Started",
-    componentSpecs: researchComponents,
-    dataRequirements: [
-      data("research-definitions", "Research definitions", "Canonical Studio Definition", "research", "Mapped"),
-      data("research-dependencies", "Research dependencies", "Canonical Studio Definition", "research.dependencies", "Mapped"),
-      data("unlock-rules", "Unlock rules", "Canonical Studio Definition", "unlock_matrix", "Mapped"),
-      data("research-costs", "Costs and resource references", "Canonical Studio Definition", "research.costs", "Partial", "Cost economy schema exists in runtime, but per-node display treatment needs confirmation."),
-      data("era-relationships", "Era relationships", "Canonical Studio Definition", "eras", "Mapped"),
-      data("research-art", "Research artwork", "Canonical Studio Definition", "asset registry", "Partial"),
-      data("player-research-progress", "Completed/unlocked/affordable research", "Player Runtime State", "game client", "Missing", "Must come from player save/service, not Studio definitions.")
+  {
+    ...baseRecord({
+      screenId: "research",
+      displayName: "Research",
+      description: "Research management master screen draft in the Visual Screen Builder. Uses a locked reference overlay and structured 4K placeholders for the branch list, research tree, selected-node detail panel, and era timeline.",
+      status: "Draft",
+      assignedTo: "UX Design",
+      layoutMode: "hud_overlay",
+      web: "Not Started",
+      roblox: "Not Started",
+      componentSpecs: researchComponents,
+      dataRequirements: [
+        data("research-current-era", "Current era", "Canonical Studio Definition", "eras + player currentEraId", "Partial", "Era definitions are canonical; active player era comes from runtime state."),
+        data("research-selected-branch", "Selected branch", "Player Runtime State", "selectedResearchBranchId", "Missing", "Selection is a client/runtime interaction state and is not stored in Studio definitions."),
+        data("research-branches", "Research branches", "Canonical Studio Definition", "research branches/categories", "Mapped"),
+        data("research-branch-progress", "Branch progress", "Player Runtime State", "player research progress", "Missing", "Progress is derived from completed/unlocked player research state."),
+        data("research-graph", "Research graph", "Canonical Studio Definition", "research", "Mapped"),
+        data("research-node-states", "Node states", "Player Runtime State", "game client", "Missing", "Completed, available, locked, researching, and selected states come from runtime."),
+        data("research-prerequisites", "Prerequisites", "Canonical Studio Definition", "research.dependencies", "Mapped"),
+        data("research-costs", "Research costs", "Canonical Studio Definition", "research.costs", "Partial", "Cost display must support multiple canonical economy/resource costs."),
+        data("research-duration", "Research duration", "Canonical Studio Definition", "research.duration", "Partial", "Duration and modifiers are canonical where published; missing nodes remain unresolved."),
+        data("research-benefits", "Research benefits", "Canonical Studio Definition", "research.effects", "Partial"),
+        data("research-unlocks", "Unlocks", "Canonical Studio Definition", "unlock_matrix", "Mapped"),
+        data("research-requirements", "Requirements", "Canonical Studio Definition", "research requirements + unlock_matrix", "Mapped"),
+        data("research-active", "Active research", "Player Runtime State", "activeResearch", "Missing"),
+        data("research-queue", "Research queue", "Player Runtime State", "researchQueue", "Missing"),
+        data("research-total-progress", "Total research progress", "Player Runtime State", "game client", "Missing")
+      ],
+      assetRequirements: [
+        asset("research-screen-background", "Research screen background", "research_screen_background", "background", "Pending Upload"),
+        asset("research-header-icon", "Research header icon", "research_header_icon", "icon", "Pending Upload"),
+        asset("research-branch-row-backgrounds", "Research branch row backgrounds", "research_branch_row_backgrounds", "panel", "Pending Upload"),
+        asset("research-branch-icons", "Research branch icons", "research_branch_icons", "icon", "Pending Upload"),
+        asset("research-tree-background", "Research tree background", "research_tree_background", "background", "Pending Upload"),
+        asset("research-branch-header-background", "Branch hero/header background", "research_branch_header_background", "background", "Pending Upload"),
+        asset("research-node-circles", "Research node circles", "research_node_circles", "button_state", "Pending Upload"),
+        asset("research-node-frame-selected", "Selected node frame", "research_node_frame_selected", "button_state", "Pending Upload"),
+        asset("research-node-frame-completed", "Completed node frame", "research_node_frame_completed", "button_state", "Pending Upload"),
+        asset("research-node-frame-locked", "Locked node frame", "research_node_frame_locked", "button_state", "Pending Upload"),
+        asset("research-connection-lines", "Research connection lines", "research_connection_lines", "button_state", "Pending Upload"),
+        asset("research-detail-panel-frame", "Research detail panel frame", "research_detail_panel_frame", "panel", "Pending Upload"),
+        asset("research-benefit-icons", "Benefit icons", "research_benefit_icons", "icon", "Pending Upload"),
+        asset("research-unlock-icons", "Unlock icons", "research_unlock_icons", "icon", "Pending Upload"),
+        asset("research-requirement-icons", "Requirement icons", "research_requirement_icons", "icon", "Pending Upload"),
+        asset("research-cost-icons", "Cost icons", "research_cost_icons", "icon", "Pending Upload"),
+        asset("research-start-button", "Start Research button", "research_start_button", "button_state", "Pending Upload"),
+        asset("research-era-timeline-background", "Era timeline background", "research_era_timeline_background", "background", "Pending Upload"),
+        asset("research-current-era-node", "Current-era node", "research_current_era_node", "button_state", "Pending Upload"),
+        asset("research-locked-era-node", "Locked-era node", "research_locked_era_node", "button_state", "Pending Upload")
+      ],
+      interactionSpecs: [
+        interaction("select-research-branch", "Click/tap/keyboard activate a research branch", "Branch selected state updates and tree filters", "Update local selectedResearchBranchId; read canonical research graph."),
+        interaction("select-research-node", "Click/tap/keyboard activate a research node", "Node selected state updates and detail panel populates", "Read selected canonical research definition plus player progress."),
+        interaction("pan-tree", "Drag/touch pan the research tree", "Tree viewport pans", "Local viewport state only."),
+        interaction("zoom-tree", "Mouse wheel/pinch/zoom controls", "Tree zoom level changes", "Local viewport state only."),
+        interaction("show-node-tooltip", "Hover/focus a research node", "Tooltip shows era, name, and unlock requirements", "Read canonical requirement data."),
+        interaction("start-research", "Activate Start Research", "Researching or failure state", "Player runtime start-research action; Studio only defines contract."),
+        interaction("cancel-research", "Activate Cancel where canonical rules allow it", "Pending/active research is cancelled", "Player runtime action if allowed."),
+        interaction("complete-research", "Activate Complete/Claim where canonical rules require it", "Research completed state", "Player runtime claim action if required."),
+        interaction("switch-era", "Select an era in the bottom timeline", "Era preview/filter state changes", "Read canonical era and research availability."),
+        interaction("open-requirement-source", "Activate requirement row", "Requirement source opens", "Navigate to referenced canonical research/building/upgrade source."),
+        interaction("open-unlocked-building", "Activate building unlock row", "Building source opens", "Navigate to canonical building."),
+        interaction("open-unlocked-upgrade", "Activate upgrade unlock row", "Upgrade source opens", "Navigate to canonical upgrade."),
+        interaction("return-prior-screen", "Activate Back/Close from modal or overlay", "Return to prior screen", "Client router/back-stack action.")
+      ],
+      stateSpecs: designedStates([
+        "default",
+        "no branch selected",
+        "branch selected",
+        "node selected",
+        "node available",
+        "node locked",
+        "node completed",
+        "researching",
+        "research completed",
+        "insufficient resources",
+        "requirements missing",
+        "loading",
+        "empty branch",
+        "error",
+        "offline",
+        "mobile compact",
+        "tablet"
+      ]),
+      checklist: {
+        layoutDefined: true,
+        componentsDefined: true,
+        canonicalDataMapped: true,
+        playerStateMapped: false,
+        missingSystemsIdentified: true,
+        assetRequirementsCreated: true,
+        allStatesDesigned: true,
+        interactionsDocumented: true,
+        responsiveRulesDefined: true,
+        motionDefined: true,
+        accessibilityReviewed: false,
+        referencesAttached: true
+      },
+      responsiveStatus: "Needs Review",
+      mobileReadiness: { mobileDesignStatus: "Draft", safeAreaReadiness: "Needs Review", touchReadiness: "Needs Review", mobileAssetReadiness: "Missing" },
+      notes: [
+        "Screen type: management. Status: draft. Target clients: Web, Roblox, iOS, Android, Tablet.",
+        "Use the supplied reference only as a locked Studio-only design reference. It is excluded from runtime export and production asset manifests.",
+        "Reference controls required: show/hide, opacity, lock/unlock, reference only, builder only, 50% overlay, and difference mode if supported.",
+        "The layer tree is Research Screen > Reference > Research Master Reference, Background, Top HUD, Left Navigation, Research Header, Research Branch Sidebar, Research Tree Workspace, Research Detail Panel, Era Timeline, Modal Layer, Overlay Layer.",
+        "All geometry is authored in 3840x2160 4K coordinates. Desktop 1920x1080 manifests are derived at 0.5 scale; do not author directly in browser viewport coordinates.",
+        "Placeholders are structured and replaceable: preserve geometry, z-index, data bindings, interactions, states, and derived 1080 coordinates when final art is uploaded.",
+        "Reference branch/node names such as Agriculture, Food Storage, and Hydroponics are placeholders only. Actual definitions come from canonical research data.",
+        "Do not implement Vite/Roblox gameplay or export this draft placeholder layout into public runtime in this task."
+      ]
+    }),
+    referenceViewport: "3840x2160",
+    layoutSpec: researchMasterLayout,
+    references: [{
+      id: "research-master-reference",
+      type: "reference UI",
+      viewport: "16:9 source scaled to 3840x2160",
+      source: "/mnt/data/CF773185-E780-4A10-AB7D-421CD15F7D62.jpeg",
+      date: "2026-07-14",
+      notes: "Research Master Reference. Studio-only reference layer: locked true, visible true, opacity 50%, fit contain, centered, preserve aspect ratio, noninteractive, excluded from runtime export and production asset manifests.",
+      approvalStatus: "Unreviewed"
+    }],
+    responsiveRules: [
+      { viewport: "3840x2160", behavior: "Authoritative 4K master canvas; all element coordinates are stored here.", status: "Needs Review" },
+      { viewport: "1920x1080", behavior: "Generate desktop_1080 manifest at 0.5 scale; verify no rounding drift greater than approved tolerance.", status: "Needs Review" },
+      { viewport: "1440x900", behavior: "Scale the HUD shell, preserve tree readability, and keep branch/detail panels within text-safe regions.", status: "Needs Review" },
+      { viewport: "compact/tablet", behavior: "Tablet landscape keeps the tree primary and may collapse detail into a drawer.", status: "Needs Review" },
+      { viewport: "ios-phone-landscape", behavior: "Phone landscape collapses branch sidebar into a drawer, detail panel into modal/drawer, and preserves touch targets.", status: "Needs Review" },
+      { viewport: "android-phone-landscape", behavior: "Phone landscape follows safe-area and display-cutout constraints with tree as primary.", status: "Needs Review" },
+      { viewport: "ios-tablet-landscape", behavior: "Tablet preview required before mobile composition is finalized.", status: "Needs Review" },
+      { viewport: "android-tablet-landscape", behavior: "Tablet preview required before mobile composition is finalized.", status: "Needs Review" }
     ],
-    assetRequirements: [
-      asset("research-node-frame", "Research node frame states", "research_node_frame", "button_state", "Missing"),
-      asset("research-category-icons", "Research category icons", "research_category_icons", "icon", "Needs Approval"),
-      asset("research-empty-art", "Research empty-state art", "research_empty_state", "background", "Missing")
+    animationSpecs: [
+      "Research connection states support inactive, available, completed, selected-path, and locked visual treatments.",
+      "Pan/zoom motion uses shared motion tokens and respects reduced motion.",
+      "Research action button states use image-backed placeholders until final button art is uploaded."
     ],
-    interactionSpecs: [
-      interaction("select-node", "Click/tap a research node", "Selected research detail panel opens", "Read selected canonical research definition and player progress."),
-      interaction("filter-era", "Change era selector", "Tree filters to selected era", "Filter canonical research definitions by era ID."),
-      interaction("start-research", "Start research action", "Pending/active research state", "Player runtime action; not owned by Studio."),
-      interaction("keyboard-tree", "Arrow-key navigation in research tree", "Focus moves between reachable nodes", "No data mutation.")
-    ],
-    stateSpecs: states(["Default", "Hover", "Pressed", "Selected", "Locked", "Disabled", "Affordable", "Unaffordable", "Empty", "Loading", "Error", "Missing Data", "Completed", "Preview", "Reduced Motion"]),
-    checklist: {
-      layoutDefined: true,
-      componentsDefined: true,
-      canonicalDataMapped: true,
-      playerStateMapped: false,
-      missingSystemsIdentified: true,
-      assetRequirementsCreated: true,
-      allStatesDesigned: false,
-      interactionsDocumented: true,
-      responsiveRulesDefined: true,
-      motionDefined: true,
-      accessibilityReviewed: false,
-      referencesAttached: false
-    },
-    notes: ["Starter spec only. Do not implement the Vite or Roblox Research screen in this task.", "Player research progress is intentionally classified as Player Runtime State."]
-  }),
+    accessibilityRequirements: [
+      "Keyboard navigation order covers branch rows, tree nodes, detail-panel actions, and timeline nodes.",
+      "Visible focus state is required for every node, row, and action.",
+      "Tooltips must be accessible from hover and focus.",
+      "Controller activation is reserved in the component contract.",
+      "Text is editable and must not be baked into placeholder art."
+    ]
+  },
   baseRecord({
     screenId: "buildings",
     displayName: "Buildings",

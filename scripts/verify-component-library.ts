@@ -94,6 +94,15 @@ async function main() {
     assert(record, `Missing seeded AI Agent component: ${componentId}.`);
     assert(record.dataInputs.some((input) => input.id === "aiAgentId" || input.id === "aiAgents" || input.id === "aiAgentVariantId" || input.id === "aiAgentVariant" || input.id === "animationProfile"), `${componentId} must consume AI Agent canonical data.`);
   }
+  for (const componentId of ["ImagePlaceholder", "ResearchHeader", "ResearchBranchHeader", "ResearchScreenShell", "ResearchBranchSidebar", "ResearchBranchRow", "ResearchProgressSummary", "ResearchTreeCanvas", "ResearchNode", "ResearchConnection", "ResearchDetailPanel", "ResearchBenefitRow", "ResearchUnlockRow", "ResearchRequirementRow", "ResearchCostDisplay", "ResearchDurationDisplay", "ResearchActionButton", "EraResearchTimeline"]) {
+    const record = componentState.records.find((item) => item.componentId === componentId);
+    assert(record, `Missing seeded Research master component: ${componentId}.`);
+    assert(record.screenUsages.some((usage) => usage.screenId === "research"), `${componentId} must be linked to the Research screen.`);
+  }
+  const researchActionButton = componentState.records.find((record) => record.componentId === "ResearchActionButton");
+  assert(researchActionButton?.states.some((state) => state.label === "Insufficient Resources" && state.designed), "ResearchActionButton must include the Insufficient Resources state.");
+  const researchTreeCanvas = componentState.records.find((record) => record.componentId === "ResearchTreeCanvas");
+  assert(researchTreeCanvas?.interactions.some((item) => item.id === "pan-tree"), "ResearchTreeCanvas must define pan-tree interaction.");
 
   const screenIds = new Set(screenState.screens.map((screen) => screen.screenId));
   for (const record of componentState.records) {

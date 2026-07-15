@@ -16,11 +16,23 @@ async function main() {
   const research = state.records.find((record) => record.screenId === "research");
   assert(research, "Research starter screen design is missing.");
   assert(research.componentSpecs.length >= 14, "Research starter design must include the required draft components.");
+  assert(research.layoutSpec.designWidth === 3840 && research.layoutSpec.designHeight === 2160, "Research master screen must use the 3840x2160 4K canvas.");
+  assert(research.layoutSpec.coordinateSystem === "hud_overlay_4k", "Research master screen must use hud_overlay_4k coordinates.");
+  assert(research.referenceViewport === "3840x2160", "Research master reference viewport must be 3840x2160.");
+  assert(research.references.some((reference) => reference.id === "research-master-reference" && reference.source === "/mnt/data/CF773185-E780-4A10-AB7D-421CD15F7D62.jpeg" && reference.notes.includes("opacity 50%") && reference.notes.includes("excluded from runtime export")), "Research master reference layer metadata is missing.");
+  for (const panelId of ["research-top-hud", "research-left-nav", "research-branch-sidebar", "research-tree-workspace", "research-detail-panel", "era-timeline", "modal-layer", "overlay-layer"]) {
+    assert(research.layoutSpec.panelBounds.some((panel) => panel.id === panelId), `Research master layout is missing panel bounds: ${panelId}.`);
+  }
+  for (const componentId of ["ResearchScreenShell", "ResearchBranchSidebar", "ResearchTreeCanvas", "ResearchNode", "ResearchConnection", "ResearchDetailPanel", "ResearchActionButton", "EraResearchTimeline"]) {
+    assert(research.componentSpecs.some((component) => component.componentLibraryId === componentId), `Research master screen is missing component placeholder: ${componentId}.`);
+  }
   assert(research.dataRequirements.some((item) => item.classification === "Canonical Studio Definition" && item.source === "research"), "Research definitions must be mapped as canonical data.");
   assert(research.dataRequirements.some((item) => item.classification === "Player Runtime State" && item.status === "Missing"), "Research player progress must be classified as missing player runtime state.");
-  assert(research.assetRequirements.length >= 3, "Research starter design must include asset requirements.");
-  assert(research.interactionSpecs.length >= 4, "Research starter design must include interaction specs.");
-  assert(research.stateSpecs.some((stateSpec) => stateSpec.label === "Locked" && stateSpec.designed), "Research locked state must be represented.");
+  assert(research.assetRequirements.length >= 20, "Research master design must include the required asset requirements.");
+  assert(research.assetRequirements.every((item) => item.status === "Pending Upload"), "Research master asset requirements must stay Pending Upload until final assets are supplied.");
+  assert(research.interactionSpecs.length >= 13, "Research master design must include the interaction contracts.");
+  assert(research.stateSpecs.some((stateSpec) => stateSpec.label === "node locked" && stateSpec.designed), "Research locked node state must be represented.");
+  assert(research.responsiveRules.some((rule) => rule.viewport === "1920x1080" && rule.behavior.includes("0.5 scale")), "Research desktop_1080 derivation rule is missing.");
   assert(screenHandoffText(research, "Game Codex").includes("PROJECT GENESIS SCREEN IMPLEMENTATION HANDOFF"), "Research handoff text is not generated.");
 
   const approvedRecords = state.records.filter((record) => record.approvalStatus === "Approved");
