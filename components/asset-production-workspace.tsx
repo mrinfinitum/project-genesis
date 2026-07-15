@@ -377,6 +377,10 @@ function sizeLabel(size?: { width: number; height: number } | null) {
   return size ? `${size.width}x${size.height}` : "Pending inspection";
 }
 
+function compactSizeLabel(value: string) {
+  return value === "Pending inspection" ? "Pending" : value;
+}
+
 function statusLabel(record: UpgradeCategoryAssetStatus) {
   if (record.status === "published") return "Published";
   if (record.approvalStatus === "approved") return "Approved";
@@ -386,6 +390,19 @@ function statusLabel(record: UpgradeCategoryAssetStatus) {
 
 function semanticAssetKey(record: UpgradeCategoryAssetStatus) {
   return record.semanticAssetKey;
+}
+
+function upgradeCategoryGridClass(settings: DensitySettings) {
+  if (settings.density === "list") return "grid gap-2";
+  if (settings.density === "large") return "grid gap-4 xl:grid-cols-2";
+  return "grid gap-3 lg:grid-cols-2 2xl:grid-cols-4";
+}
+
+function upgradeCategoryPreviewClass(settings: DensitySettings) {
+  if (settings.previewSize === "hide") return "hidden";
+  if (settings.previewSize === "large") return "h-44";
+  if (settings.previewSize === "medium") return "h-36";
+  return "h-32";
 }
 
 function UpgradeCategoryUploadForm({
@@ -531,53 +548,62 @@ function UpgradeCategoryAssetCard({ record, localPreview, onUploaded, settings }
   }
 
   return (
-    <article className={cardShellClass(settings)}>
-      <div className={settings.density === "compact" ? "grid gap-3" : "grid gap-4 xl:grid-cols-[minmax(16rem,1fr)_20rem]"}>
+    <article className={`${cardShellClass(settings)} overflow-hidden`}>
+      <div className="grid gap-3">
         <div className="min-w-0">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-200">Upgrade Workspace</p>
-              <h3 className="mt-1 text-2xl font-black text-white">{record.displayName}</h3>
-              <p className="mt-1 break-all text-sm text-cyan-100">{assetId}</p>
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-[0.64rem] font-black uppercase tracking-[0.2em] text-cyan-200">Upgrade Workspace</p>
+              <h3 className="mt-1 truncate text-xl font-black text-white">{record.displayName}</h3>
+              <p className="mt-1 truncate text-xs font-semibold text-cyan-100" title={assetId}>{assetId}</p>
             </div>
-            <WorkspaceBadge value={statusLabel(record)} />
+            <div className="shrink-0">
+              <WorkspaceBadge value={statusLabel(record)} />
+            </div>
           </div>
           <div className={`mt-4 overflow-hidden rounded-md border border-cyan-300/15 bg-slate-950/70 ${settings.previewSize === "hide" ? "hidden" : ""}`}>
-            <div className={`relative bg-[radial-gradient(circle_at_35%_20%,rgba(103,232,249,0.22),transparent_26%),linear-gradient(135deg,rgba(8,14,28,0.95),rgba(2,6,23,0.98))] ${settings.density === "compact" ? "h-24" : "aspect-[16/9]"}`}>
+            <div className={`relative bg-[radial-gradient(circle_at_35%_20%,rgba(103,232,249,0.22),transparent_26%),linear-gradient(135deg,rgba(8,14,28,0.95),rgba(2,6,23,0.98))] ${upgradeCategoryPreviewClass(settings)}`}>
               {previewUrl ? <img src={previewUrl} alt={`${record.displayName} upgrade category background preview`} className="absolute inset-0 h-full w-full object-cover" /> : null}
-              <div className="absolute inset-[7%] border border-cyan-200/30" />
+              <div className="absolute inset-[8%] border border-cyan-200/25" />
               <div className="absolute left-[6%] top-[7%] h-[10%] w-[38%] border border-emerald-200/35 bg-emerald-300/5" />
               <div className="absolute left-[7%] top-[23%] h-px w-[82%] bg-cyan-200/35" />
               {!previewUrl ? (
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-center">
-                  <ImageIcon className="h-10 w-10 text-slate-600" />
-                  <p className="text-lg font-black text-white">Missing Preview</p>
-                  <p className="max-w-xs text-sm leading-6 text-slate-400">Upload a source background to preview the real Upgrade Workspace panel.</p>
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 px-4 text-center">
+                  <ImageIcon className="h-6 w-6 text-slate-600" />
+                  <p className="text-base font-black text-white">Missing Preview</p>
+                  <p className="max-w-[13rem] text-xs leading-5 text-slate-400">Upload source background.</p>
                 </div>
               ) : null}
             </div>
           </div>
-          <div className={`mt-4 grid gap-2 ${settings.density === "compact" ? "grid-cols-2" : "sm:grid-cols-3"}`}>
+          <div className="mt-3 grid gap-2 sm:grid-cols-3">
             <WorkspaceMiniStat label="Required Size" value={`${record.expectedDimensions.masterWidth}x${record.expectedDimensions.masterHeight}`} />
-            <WorkspaceMiniStat label="Current Size" value={displayedSize} />
+            <WorkspaceMiniStat label="Current Size" value={compactSizeLabel(displayedSize)} />
             <WorkspaceMiniStat label="Geometry" value={record.geometryConsistent ? "Matches" : localPreview ? "Check on save" : "Pending"} />
             {settings.density !== "compact" ? <WorkspaceMiniStat label="Web" value={record.webReady ? "Ready" : "Missing"} /> : null}
             {settings.density !== "compact" ? <WorkspaceMiniStat label="Roblox" value={record.robloxReady ? "Ready" : "Missing"} /> : null}
             {settings.density !== "compact" ? <WorkspaceMiniStat label="Derivatives" value={`${record.derivativeRequirements.length - record.missingDerivativeWarnings.length}/${record.derivativeRequirements.length}`} /> : null}
           </div>
-          <div className="mt-4 flex flex-wrap gap-2">
-            <Button type="button" disabled={Boolean(busy)} onClick={generateDerivatives}><Sparkles className="h-4 w-4" /> Generate Derivatives</Button>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Button type="button" disabled={Boolean(busy)} onClick={generateDerivatives}><Sparkles className="h-4 w-4" /> Generate</Button>
             <Button type="button" disabled={Boolean(busy)} onClick={() => runAction("Approve", { action: "review.approve", assetId, reviewer: "studio", notes: `Approved ${record.displayName} category background.` })}><CheckCircle2 className="h-4 w-4" /> Approve</Button>
-            <Button type="button" disabled={Boolean(busy)} onClick={approveAndPublish}><PackageCheck className="h-4 w-4" /> Approve + Publish Key</Button>
+            <Button type="button" disabled={Boolean(busy)} onClick={approveAndPublish}><PackageCheck className="h-4 w-4" /> Publish</Button>
             <Link href={`/assets/${encodeURIComponent(record.assetId ?? assetId)}?tab=history`} className="inline-flex h-9 items-center gap-2 rounded-md border border-cyan-400/25 bg-cyan-400/10 px-3 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/60 hover:bg-cyan-400/20"><History className="h-4 w-4" /> History</Link>
-            <Link href={`/screen-designer/upgrades?category=${record.categoryId}&mode=visual-builder`} className="inline-flex h-9 items-center gap-2 rounded-md border border-cyan-400/25 bg-cyan-400/10 px-3 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/60 hover:bg-cyan-400/20">Open in Visual Builder</Link>
-            <Link href="/screen-designer/upgrades" className="inline-flex h-9 items-center gap-2 rounded-md border border-cyan-400/25 bg-cyan-400/10 px-3 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/60 hover:bg-cyan-400/20">Open in Screen Specification</Link>
+            <Link href={`/screen-designer/upgrades?category=${record.categoryId}&mode=visual-builder`} aria-label="Open in Visual Builder" title="Open in Visual Builder" className="inline-flex h-9 items-center gap-2 rounded-md border border-cyan-400/25 bg-cyan-400/10 px-3 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/60 hover:bg-cyan-400/20">Visual Builder</Link>
+            <Link href="/screen-designer/upgrades" aria-label="Open in Screen Specification" title="Open in Screen Specification" className="inline-flex h-9 items-center gap-2 rounded-md border border-cyan-400/25 bg-cyan-400/10 px-3 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/60 hover:bg-cyan-400/20">Spec</Link>
           </div>
           {busy ? <p className="mt-3 text-sm font-semibold text-cyan-100">{busy}...</p> : null}
           {error ? <p className="mt-3 text-sm font-semibold text-rose-100">{error}</p> : null}
           {record.sourceFile ? <p className="mt-3 text-sm leading-6 text-slate-400">Source: {record.sourceFile.filename} / v{record.sourceFile.version} / {record.sourceFile.format}</p> : null}
         </div>
-        {settings.density === "list" ? null : <UpgradeCategoryUploadForm record={record} onUploaded={onUploaded} />}
+        {settings.density === "list" ? null : (
+          <details className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
+            <summary className="cursor-pointer text-xs font-black uppercase tracking-[0.16em] text-cyan-200">Upload / Replace Background</summary>
+            <div className="mt-3">
+              <UpgradeCategoryUploadForm record={record} onUploaded={onUploaded} />
+            </div>
+          </details>
+        )}
       </div>
     </article>
   );
@@ -608,7 +634,7 @@ function UpgradeCategoriesWorkspace({ state }: { state: AssetProductionState }) 
         </p>
       </WorkspacePanel>
       <CompactWorkspaceToolbar query={query} onQueryChange={setQuery} settings={settings} onSettingsChange={setSettings} resultCount={visible.length} totalCount={state.upgradeCategoryAssets.length} placeholder="Search upgrade category assets" />
-      <div className={collectionGridClass(settings)}>
+      <div className={upgradeCategoryGridClass(settings)}>
         {visible.map((record) => (
           <UpgradeCategoryAssetCard
             key={record.categoryId}

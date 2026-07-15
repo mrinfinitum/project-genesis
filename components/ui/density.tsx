@@ -109,7 +109,7 @@ export function CompactWorkspaceToolbar({
 }) {
   return (
     <section className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-3 shadow-glow">
-      <div className="grid gap-3 xl:grid-cols-[minmax(16rem,1fr)_repeat(6,minmax(7.5rem,9rem))]">
+      <div className="grid gap-3 lg:grid-cols-2 xl:grid-cols-[minmax(16rem,1fr)_repeat(3,minmax(7.5rem,9rem))] 2xl:grid-cols-[minmax(16rem,1fr)_repeat(6,minmax(7.5rem,9rem))]">
         <WorkspaceSearchBar value={query} onChange={onQueryChange} placeholder={placeholder} className="p-2" />
         <ToolbarSelect label="View" value={settings.density} icon={LayoutGrid} onChange={(density) => onSettingsChange({ density: density as DensityMode })} options={[
           { value: "large", label: "Large" },
