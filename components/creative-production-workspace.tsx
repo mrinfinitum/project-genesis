@@ -29,7 +29,15 @@ import { cardShellClass, previewBoxClass, useWorkspaceDensitySettings, type Dens
 import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, WorkspaceProgressBar, WorkspaceSearchBar, WorkspaceStatTile, workspaceBadgeClass } from "@/components/ui/workspace";
 import type { AssetProductionState } from "@/lib/assets/asset-production";
 import type { AssetLibraryCategoryId } from "@/lib/assets/asset-library-routing";
+import {
+  resolveAssetClass,
+  resolveProductionClasses,
+  resolveProductionClassSummaries,
+  resolveProductionItemsForClass,
+  type ProductionClassSummary
+} from "@/lib/assets/production-classification";
 import { cn } from "@/lib/utils";
+import type { GameData } from "@/types/schema";
 
 type InventoryItem = AssetProductionState["assetLibraryInventory"]["items"][number];
 type InventoryStatus = InventoryItem["status"];
@@ -103,7 +111,8 @@ const productionAreas: ProductionArea[] = [
 
 const areaById = Object.fromEntries(productionAreas.map((area) => [area.id, area])) as Record<Exclude<ProductionAreaId, "overview">, ProductionArea>;
 const filterTabs = ["all", "missing", "uploaded", "needs_review", "approved", "published", "invalid", "unmapped"] as const;
-const defaultCreativeDisplaySettings: Partial<DensitySettings> = { density: "compact", previewSize: "small", columns: "auto", filter: "all", groupBy: "none", sort: "updated" };
+const defaultCreativeDisplaySettings: Partial<DensitySettings> = { density: "compact", previewSize: "small", columns: "auto", filter: "all", groupBy: "none", sort: "priority" };
+const classDrivenAreaIds = new Set<ProductionAreaId>(["upgrades", "research", "buildings", "top-hud", "left-navigation"]);
 
 function searchText(item: InventoryItem) {
   return [
@@ -216,13 +225,15 @@ function areaSummary(state: AssetProductionState, area: ProductionArea) {
   };
 }
 
-function uploadHref(item?: InventoryItem, area?: ProductionArea) {
+function uploadHref(item?: InventoryItem, area?: ProductionArea, productionClassId?: string, assetRole?: string) {
   const params = new URLSearchParams({ upload: "asset" });
   if (area) params.set("category", area.label);
+  if (productionClassId && productionClassId !== "all") params.set("class", productionClassId);
+  if (assetRole && assetRole !== "All") params.set("role", assetRole);
   if (item) {
     params.set("assetKey", item.semanticAssetKey);
     params.set("name", item.displayName);
-    params.set("role", item.role);
+    params.set("role", assetRole ?? item.role);
     params.set("requiredDimensions", item.requiredDimensions);
     if (item.requirementId) params.set("requirement", item.requirementId);
   }
@@ -231,6 +242,32 @@ function uploadHref(item?: InventoryItem, area?: ProductionArea) {
 
 function statusSort(items: InventoryItem[]) {
   return [...items].sort((left, right) => priorityRank(left) - priorityRank(right) || statusCredit[left.status] - statusCredit[right.status] || usageCount(right) - usageCount(left) || left.displayName.localeCompare(right.displayName));
+}
+
+function productionSort(items: InventoryItem[], settings: DensitySettings, areaId: ProductionAreaId, studioData: GameData) {
+  const statusRank: Record<InventoryStatus, number> = {
+    invalid: 0,
+    missing: 1,
+    needs_review: 2,
+    uploaded: 3,
+    processing: 4,
+    approved: 5,
+    unmapped: 6,
+    published: 7,
+    deprecated: 8
+  };
+  const classOrder = new Map(resolveProductionClasses(areaId, studioData).map((item) => [item.classId, item.displayOrder]));
+  return [...items].sort((left, right) => {
+    if (settings.sort === "name") return left.displayName.localeCompare(right.displayName);
+    if (settings.sort === "status") return (statusRank[left.status] ?? 9) - (statusRank[right.status] ?? 9) || left.displayName.localeCompare(right.displayName);
+    if (settings.sort === "usage") return usageCount(right) - usageCount(left) || left.displayName.localeCompare(right.displayName);
+    if (settings.sort === "class") {
+      const leftClass = resolveAssetClass(left, areaId, studioData).classId;
+      const rightClass = resolveAssetClass(right, areaId, studioData).classId;
+      return (classOrder.get(leftClass) ?? 999) - (classOrder.get(rightClass) ?? 999) || left.displayName.localeCompare(right.displayName);
+    }
+    return priorityRank(left) - priorityRank(right) || (statusRank[left.status] ?? 9) - (statusRank[right.status] ?? 9) || usageCount(right) - usageCount(left) || left.displayName.localeCompare(right.displayName);
+  });
 }
 
 function PlaceholderPreview({ item, area }: { item?: InventoryItem; area?: ProductionArea }) {
@@ -323,10 +360,12 @@ function ViewOptionsButton({ settings, onSettingsChange }: { settings: DensitySe
         <label className="grid gap-1 text-[0.62rem] font-bold uppercase tracking-[0.16em] text-slate-500">
           Sort
           <select value={settings.sort} onChange={(event) => onSettingsChange({ sort: event.target.value })} className={selectClass}>
-            <option value="updated">Modified</option>
+            <option value="priority">Production Priority</option>
+            <option value="missing">Missing First</option>
             <option value="name">Name</option>
             <option value="status">Status</option>
-            <option value="type">Type</option>
+            <option value="usage">Usage</option>
+            <option value="class">Class Order</option>
           </select>
         </label>
         <label className="grid gap-1 text-[0.62rem] font-bold uppercase tracking-[0.16em] text-slate-500">
@@ -468,31 +507,145 @@ function UpgradeCategoryStatus({ state }: { state: AssetProductionState }) {
   );
 }
 
-function AreaDetail({ state, area, onBack }: { state: AssetProductionState; area: ProductionArea; onBack: () => void }) {
+function ClassSelector({
+  label,
+  classes,
+  selectedClassId,
+  onSelect
+}: {
+  label: string;
+  classes: Array<{ classId: string; displayName: string }>;
+  selectedClassId: string;
+  onSelect: (classId: string) => void;
+}) {
+  const selectorLabel = `${label} class`;
+  const options = [{ classId: "all", displayName: "All" }, ...classes];
+  if (options.length <= 6) {
+    return (
+      <div>
+        <p className="mb-2 text-[0.62rem] font-black uppercase tracking-[0.16em] text-slate-500">{label}</p>
+        <div role="tablist" aria-label={selectorLabel} className="flex max-w-full gap-2 overflow-x-auto rounded-md border border-cyan-300/15 bg-slate-950/35 p-2">
+          {options.map((option) => (
+            <button
+              key={option.classId}
+              type="button"
+              role="tab"
+              aria-selected={selectedClassId === option.classId}
+              onClick={() => onSelect(option.classId)}
+              className={`shrink-0 rounded-md px-3 py-2 text-xs font-black uppercase tracking-[0.12em] transition ${selectedClassId === option.classId ? "bg-cyan-300/20 text-white" : "text-slate-400 hover:bg-cyan-300/10 hover:text-slate-100"}`}
+            >
+              {option.displayName}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+  return (
+    <label className="grid max-w-sm gap-2 text-[0.62rem] font-black uppercase tracking-[0.16em] text-slate-500">
+      {label}
+      <select
+        aria-label={selectorLabel}
+        value={selectedClassId}
+        onChange={(event) => onSelect(event.target.value)}
+        className="h-10 rounded-md border border-cyan-300/15 bg-slate-950/80 px-3 text-sm font-bold normal-case tracking-normal text-white outline-none"
+      >
+        {options.map((option) => <option key={option.classId} value={option.classId}>{option.displayName}</option>)}
+      </select>
+    </label>
+  );
+}
+
+function ClassSummaryCard({ summary, area, onOpen }: { summary: ProductionClassSummary<InventoryItem>; area: ProductionArea; onOpen: (classId: string) => void }) {
+  const workflowHref = area.id === "upgrades" && ["workforce", "industry", "science", "technology"].includes(summary.classId)
+    ? `/asset-library?section=backgrounds&class=${encodeURIComponent(summary.classId)}`
+    : null;
+  return (
+    <article className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-3 shadow-glow">
+      <button type="button" onClick={() => onOpen(summary.classId)} className="block w-full text-left">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-[0.62rem] font-black uppercase tracking-[0.16em] text-cyan-200">{area.label}</p>
+            <h3 className="mt-2 truncate text-xl font-black text-white">{summary.displayName}</h3>
+          </div>
+          <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-cyan-200 opacity-60" />
+        </div>
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          <WorkspaceMiniStat label="Assets" value={summary.itemCount} />
+          <WorkspaceMiniStat label="Missing" value={summary.missingCount} />
+          <WorkspaceMiniStat label="Published" value={summary.publishedCount} />
+          <WorkspaceMiniStat label="Review" value={summary.needsReviewCount} />
+        </div>
+        <div className="mt-3 rounded-md border border-cyan-300/10 bg-slate-950/45 p-2">
+          <p className="text-[0.62rem] font-black uppercase tracking-[0.14em] text-slate-500">Top Blocker</p>
+          <p className="mt-1 truncate text-sm font-bold text-slate-100">{summary.topBlocker?.displayName ?? "No blocker"}</p>
+        </div>
+      </button>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <button type="button" onClick={() => onOpen(summary.classId)} className="inline-flex h-9 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Open {summary.displayName}</button>
+        {workflowHref ? <Link href={workflowHref} className="inline-flex h-9 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Open Background Workflow</Link> : null}
+      </div>
+    </article>
+  );
+}
+
+function AreaDetail({ state, studioData, area, initialClassId, onBack }: { state: AssetProductionState; studioData: GameData; area: ProductionArea; initialClassId: string | null; onBack: () => void }) {
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<(typeof filterTabs)[number]>("all");
+  const [selectedClassId, setSelectedClassId] = useState(initialClassId ?? "all");
+  const [selectedRole, setSelectedRole] = useState("All");
   const [settings, setSettings] = useWorkspaceDensitySettings(`project-genesis-density-creative-production-${area.id}`, defaultCreativeDisplaySettings);
   const summary = areaSummary(state, area);
+  const classes = useMemo(() => resolveProductionClasses(area.id, studioData), [area.id, studioData]);
+  const classSummaries = useMemo(() => resolveProductionClassSummaries(summary.items, area.id, studioData), [summary.items, area.id, studioData]);
+  const currentClass = classes.find((item) => item.classId === selectedClassId);
+  const hasClassBrowsing = classDrivenAreaIds.has(area.id) && classes.length > 0;
+  const roleOptions = useMemo(() => {
+    const baseItems = resolveProductionItemsForClass(summary.items, area.id, selectedClassId, studioData);
+    return ["All", ...Array.from(new Set(baseItems.map((item) => resolveAssetClass(item, area.id, studioData).assetRole))).sort()];
+  }, [summary.items, area.id, selectedClassId, studioData]);
   const items = useMemo(() => {
     const needle = query.trim().toLowerCase();
-    return statusSort(summary.items).filter((item) => {
+    const classItems = resolveProductionItemsForClass(summary.items, area.id, selectedClassId, studioData);
+    return productionSort(classItems, settings, area.id, studioData).filter((item) => {
       const text = searchText(item).toLowerCase();
       const displayFilterMatches = settings.filter === "without-preview" ? !item.previewUrl : settings.filter === "with-preview" ? Boolean(item.previewUrl) : true;
-      return displayFilterMatches && (status === "all" || item.status === status) && (!needle || text.includes(needle));
+      const roleMatches = selectedRole === "All" || resolveAssetClass(item, area.id, studioData).assetRole === selectedRole;
+      return roleMatches && displayFilterMatches && (status === "all" || item.status === status) && (!needle || text.includes(needle));
     });
-  }, [summary.items, query, status, settings.filter]);
+  }, [summary.items, area.id, selectedClassId, selectedRole, studioData, settings, query, status]);
+
+  useEffect(() => {
+    const requestedClass = initialClassId ?? "all";
+    const validClass = requestedClass === "all" || classes.some((item) => item.classId === requestedClass) ? requestedClass : "all";
+    setSelectedClassId(validClass);
+    setSelectedRole("All");
+  }, [area.id, initialClassId, classes]);
+
+  function selectClass(classId: string) {
+    setSelectedClassId(classId);
+    setSelectedRole("All");
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      params.set("area", area.id);
+      if (classId === "all") params.delete("class");
+      else params.set("class", classId);
+      window.history.replaceState(null, "", `/creative-production?${params.toString()}`);
+    }
+  }
 
   useEffect(() => {
     if (process.env.NODE_ENV !== "development") return;
     console.debug("[creative-production-display]", {
       pageType: "primary_creative_area",
       selectedProductionArea: area.id,
+      selectedClassId,
       resolvedCardPresentation: items.slice(0, 5).map((item) => ({ id: item.id, role: item.role, ...resolveCreativeAssetPresentation(item) })),
       activeHiddenDisplayPreferences: settings,
       viewOptionsState: "closed_by_default",
-      featureGroupingStatus: area.groups?.length ? "available" : "not_configured"
+      featureGroupingStatus: hasClassBrowsing ? "canonical_class_control" : "not_configured"
     });
-  }, [area.id, area.groups?.length, items, settings]);
+  }, [area.id, selectedClassId, items, settings, hasClassBrowsing]);
 
   return (
     <div className="space-y-5">
@@ -500,7 +653,7 @@ function AreaDetail({ state, area, onBack }: { state: AssetProductionState; area
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <button type="button" onClick={onBack} className="text-xs font-black uppercase tracking-[0.18em] text-cyan-200">Creative Production</button>
-            <h2 className="mt-2 text-3xl font-black text-white">{area.label} Production</h2>
+            <h2 className="mt-2 text-3xl font-black text-white">{area.label}{selectedClassId !== "all" && currentClass ? ` / ${currentClass.displayName}` : ""} Production</h2>
             <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-300">{area.description}</p>
           </div>
           <div className="min-w-48">
@@ -522,7 +675,7 @@ function AreaDetail({ state, area, onBack }: { state: AssetProductionState; area
           {summary.blocker ? <p className="mt-1 truncate text-xs font-semibold text-amber-100/80">{summary.blocker.semanticAssetKey}</p> : null}
         </div>
         <div className="mt-4 flex flex-wrap gap-2">
-          <Link href={uploadHref(undefined, area)} className="inline-flex h-10 items-center gap-2 rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100"><UploadCloud className="h-4 w-4" />Upload Asset</Link>
+          <Link href={uploadHref(undefined, area, selectedClassId, selectedRole)} className="inline-flex h-10 items-center gap-2 rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100"><UploadCloud className="h-4 w-4" />Upload Asset</Link>
           <Link href={`/asset-library?section=${encodeURIComponent(area.categoryIds?.[0] ?? "missing")}`} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Asset Library</Link>
           {area.visualBuilderHref ? <Link href={area.visualBuilderHref} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Visual Builder</Link> : null}
           {area.screenSpecHref ? <Link href={area.screenSpecHref} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Screen Specification</Link> : null}
@@ -530,11 +683,23 @@ function AreaDetail({ state, area, onBack }: { state: AssetProductionState; area
         </div>
       </WorkspacePanel>
       {area.id === "upgrades" ? <UpgradeCategoryStatus state={state} /> : null}
-      {area.groups?.length ? (
-        <WorkspacePanel title={`${area.label} Groups`} icon={Search}>
-          <div className="flex flex-wrap gap-2">
-            {area.groups.map((group) => <WorkspaceBadge key={group} value={group} />)}
+      {hasClassBrowsing ? (
+        <WorkspacePanel>
+          <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_14rem] lg:items-end">
+            <ClassSelector label={area.id === "top-hud" || area.id === "left-navigation" ? "Group" : "Class"} classes={classes} selectedClassId={selectedClassId} onSelect={selectClass} />
+            {selectedClassId !== "all" ? (
+              <button type="button" onClick={() => selectClass("all")} className="inline-flex h-10 items-center justify-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Back to All Classes</button>
+            ) : null}
           </div>
+          {selectedClassId !== "all" ? (
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <label className="text-[0.62rem] font-black uppercase tracking-[0.16em] text-slate-500" htmlFor={`role-filter-${area.id}`}>Role</label>
+              <select id={`role-filter-${area.id}`} value={selectedRole} onChange={(event) => setSelectedRole(event.target.value)} className="h-9 rounded-md border border-cyan-300/15 bg-slate-950/80 px-3 text-xs font-bold text-white outline-none">
+                {roleOptions.map((role) => <option key={role} value={role}>{role}</option>)}
+              </select>
+              <span className="text-xs font-semibold text-slate-500">Secondary asset-role filter</span>
+            </div>
+          ) : null}
         </WorkspacePanel>
       ) : null}
       <WorkspacePanel>
@@ -554,7 +719,11 @@ function AreaDetail({ state, area, onBack }: { state: AssetProductionState; area
           {items.length} shown / {summary.items.length} total
         </div>
       </WorkspacePanel>
-      {items.length ? (
+      {hasClassBrowsing && selectedClassId === "all" ? (
+        <div className={roleAwareAssetGridClass(settings)}>
+          {classSummaries.map((classSummary) => <ClassSummaryCard key={classSummary.classId} summary={classSummary} area={area} onOpen={selectClass} />)}
+        </div>
+      ) : items.length ? (
         <div className={roleAwareAssetGridClass(settings)}>
           {items.map((item) => <ProductionItemCard key={item.id} item={item} settings={settings} area={area} />)}
         </div>
@@ -563,7 +732,7 @@ function AreaDetail({ state, area, onBack }: { state: AssetProductionState; area
           <p className="text-sm font-semibold text-slate-300">No assets or requirements have been defined for this area.</p>
           <div className="mt-4 flex flex-wrap gap-2">
             <Link href="/asset-library?section=missing" className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Generate Requirements from Screens and Components</Link>
-            <Link href={uploadHref(undefined, area)} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Upload Asset</Link>
+            <Link href={uploadHref(undefined, area, selectedClassId, selectedRole)} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Upload Asset</Link>
             {area.visualBuilderHref ? <Link href={area.visualBuilderHref} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Open Visual Builder</Link> : null}
           </div>
         </WorkspacePanel>
@@ -572,7 +741,7 @@ function AreaDetail({ state, area, onBack }: { state: AssetProductionState; area
   );
 }
 
-export function CreativeProductionWorkspace({ state, initialArea }: { state: AssetProductionState; initialArea?: string | null }) {
+export function CreativeProductionWorkspace({ state, studioData, initialArea, initialClassId }: { state: AssetProductionState; studioData: GameData; initialArea?: string | null; initialClassId?: string | null }) {
   const normalizedInitial = initialArea && initialArea in areaById ? initialArea as Exclude<ProductionAreaId, "overview"> : null;
   const [activeArea, setActiveArea] = useState<ProductionAreaId>(normalizedInitial ?? "overview");
   useEffect(() => {
@@ -595,7 +764,7 @@ export function CreativeProductionWorkspace({ state, initialArea }: { state: Ass
   }
 
   if (activeArea !== "overview") {
-    return <AreaDetail state={state} area={areaById[activeArea as Exclude<ProductionAreaId, "overview">]} onBack={() => openArea("overview")} />;
+    return <AreaDetail state={state} studioData={studioData} area={areaById[activeArea as Exclude<ProductionAreaId, "overview">]} initialClassId={initialClassId ?? null} onBack={() => openArea("overview")} />;
   }
 
   return (

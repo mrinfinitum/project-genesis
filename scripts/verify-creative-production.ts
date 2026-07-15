@@ -55,11 +55,18 @@ async function main() {
   assert(workspace.includes("WorkspaceSearchBar"), "Creative Production must keep search visible.");
   assert(workspace.includes("ViewOptionsButton"), "Creative Production display controls must live behind one collapsed View Options control.");
   assert(workspace.includes("View Options"), "Creative Production must expose the collapsed View Options label.");
+  assert(workspace.includes("ClassSelector"), "Creative Production must expose one compact Class or Group selector.");
+  assert(workspace.includes("ClassSummaryCard"), "Creative Production must show compact class summary cards before large record sets.");
+  assert(workspace.includes("Back to All Classes"), "Creative Production drill-down must expose Back to All Classes.");
+  assert(workspace.includes("role-filter-"), "Creative Production must keep asset role as a secondary filter.");
+  assert(!workspace.includes("`${area.label} Groups`"), "Creative Production must not render noisy group-chip rows.");
+  assert(!workspace.includes("area.groups.map"), "Creative Production must not show every group as permanent chips.");
   assert(workspace.includes("viewOptionsState: \"closed_by_default\""), "View Options must remain closed by default.");
   assert(workspace.includes("role=\"tablist\"") && workspace.includes("aria-selected"), "Creative Production status tabs must remain visible and accessible.");
   assert(workspace.includes("resolveCreativeAssetPresentation"), "Creative Production must use role-aware asset card presentation.");
   assert(workspace.includes("roleAwareAssetGridClass"), "Creative Production must use a role-aware card grid.");
   assert(workspace.includes("QuickAssetPreview"), "Creative Production cards must expose hover/focus quick previews.");
+  assert(workspace.includes("resolveProductionClasses") && workspace.includes("resolveAssetClass"), "Creative Production must use shared canonical class resolvers.");
   assert(workspace.includes("Upload Asset"), "Missing cards must expose upload actions.");
   assert(workspace.includes("Open Inspector"), "Published/linked cards must expose inspector actions.");
   assert(workspace.includes("Open Upgrade Category Workflow"), "Upgrades area must preserve the dedicated Upgrade Category workflow entry point.");
