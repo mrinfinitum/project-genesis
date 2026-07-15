@@ -1049,16 +1049,12 @@ function uploadHrefForInventoryItem(item: InventoryItem) {
   return `/asset-library?${params.toString()}`;
 }
 
-function platformSummary(item: InventoryItem) {
-  return Object.entries(item.platformReadiness).map(([platform, status]) => `${platform}:${status}`).join(" / ");
-}
-
-function InventoryCard({ item, selected, onSelect, settings }: { item: InventoryItem; selected: boolean; onSelect: () => void; settings: DensitySettings }) {
+function InventoryCard({ item, settings }: { item: InventoryItem; settings: DensitySettings }) {
   const usageCount = item.referencedByScreens.length + item.referencedByComponents.length + item.referencedByPlaceholders.length;
   const linkedAssetHref = item.sourceAssetId ? `/assets/${encodeURIComponent(item.sourceAssetId)}` : uploadHrefForInventoryItem(item);
   if (settings.density === "list") {
     return (
-      <button type="button" onClick={onSelect} className={`${cardShellClass(settings)} text-left ${selected ? "border-cyan-300/50 bg-cyan-300/10" : ""}`}>
+      <article className={`${cardShellClass(settings)} text-left`}>
         <div className={previewBoxClass(settings)}>
           {item.previewUrl ? <img src={item.previewUrl} alt="" className="h-full w-full object-cover" /> : <ImageIcon className="h-5 w-5 text-slate-500" />}
         </div>
@@ -1069,13 +1065,13 @@ function InventoryCard({ item, selected, onSelect, settings }: { item: Inventory
         <span className={`rounded-md border px-2 py-1 text-xs font-black uppercase tracking-[0.12em] ${inventoryStatusClass(item.status)}`}>{item.status.replaceAll("_", " ")}</span>
         <p className="truncate text-xs text-slate-400">{item.role}</p>
         <p className="truncate text-xs text-slate-300">{usageCount} usage</p>
-      </button>
+      </article>
     );
   }
 
   return (
-    <article className={`${cardShellClass(settings)} ${selected ? "border-cyan-300/50 bg-cyan-300/10" : ""}`}>
-      <button type="button" onClick={onSelect} className="block w-full text-left">
+    <article className={cardShellClass(settings)}>
+      <div className="block w-full text-left">
         <div className={previewBoxClass(settings)}>
           {item.previewUrl ? <img src={item.previewUrl} alt="" className="h-full w-full object-cover" /> : (
             <div className="grid h-full place-items-center bg-slate-950/60">
@@ -1096,10 +1092,10 @@ function InventoryCard({ item, selected, onSelect, settings }: { item: Inventory
           {settings.density !== "compact" ? <WorkspaceMiniStat label="Required" value={item.requiredDimensions} /> : null}
           {settings.density !== "compact" ? <WorkspaceMiniStat label="Current" value={item.currentDimensions} /> : null}
         </div>
-      </button>
+      </div>
       <div className="mt-3 flex flex-wrap gap-2">
         <Link href={uploadHrefForInventoryItem(item)} className="inline-flex h-9 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">{item.status === "missing" ? "Upload Asset" : "New Version"}</Link>
-        <Link href={linkedAssetHref} className="inline-flex h-9 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Open Inspector</Link>
+        <Link href={linkedAssetHref} className="inline-flex h-9 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">{item.sourceAssetId ? "Open Record" : "Upload Details"}</Link>
       </div>
     </article>
   );
@@ -1124,9 +1120,6 @@ function AssetLibraryCategoryInventory({ state, categoryId }: { state: AssetProd
     ].join(" ").toLowerCase();
     return (statusFilter === "all" || item.status === statusFilter) && (!needle || text.includes(needle));
   });
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const selected = visible.find((item) => item.id === selectedId) ?? visible[0] ?? allItems[0] ?? null;
-
   return (
     <div className="space-y-5">
       <WorkspacePanel title={summary?.label ?? implementedNodeLabels[categoryId]} icon={ImageIcon}>
@@ -1155,43 +1148,8 @@ function AssetLibraryCategoryInventory({ state, categoryId }: { state: AssetProd
         ))}
       </div>
       <CompactWorkspaceToolbar query={query} onQueryChange={setQuery} settings={settings} onSettingsChange={setSettings} resultCount={visible.length} totalCount={allItems.length} placeholder="Search display name, semantic key, role, screen, component, status" />
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_22rem]">
-        <div className={collectionGridClass(settings)}>
-          {visible.map((item) => <InventoryCard key={item.id} item={item} selected={selected?.id === item.id} onSelect={() => setSelectedId(item.id)} settings={settings} />)}
-        </div>
-        <WorkspacePanel title="Inspector" icon={Search}>
-          {selected ? (
-            <div className="space-y-3">
-              <div>
-                <p className="text-lg font-black text-white">{selected.displayName}</p>
-                <p className="mt-1 break-all text-sm text-cyan-200">{selected.semanticAssetKey}</p>
-              </div>
-              <div className="grid gap-2">
-                <WorkspaceMiniStat label="Category" value={selected.categoryPath} />
-                <WorkspaceMiniStat label="Role" value={selected.role} />
-                <WorkspaceMiniStat label="Status" value={selected.status} />
-                <WorkspaceMiniStat label="Required" value={selected.requiredDimensions} />
-                <WorkspaceMiniStat label="Current" value={selected.currentDimensions} />
-                <WorkspaceMiniStat label="Platforms" value={platformSummary(selected)} />
-              </div>
-              <div className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
-                <p className="text-xs font-black uppercase tracking-[0.16em] text-cyan-200">Usage</p>
-                {[...selected.referencedByScreens, ...selected.referencedByComponents, ...selected.referencedByPlaceholders].slice(0, 12).map((reference) => (
-                  <Link key={`${reference.type}:${reference.id}`} href={reference.href} className="mt-2 block rounded-md border border-cyan-300/10 bg-slate-950/50 p-2 text-sm font-semibold text-slate-200">
-                    {reference.type}: {reference.name}
-                  </Link>
-                ))}
-                {!selected.referencedByScreens.length && !selected.referencedByComponents.length && !selected.referencedByPlaceholders.length ? <p className="mt-2 text-sm text-slate-400">No usage reference yet.</p> : null}
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <Link href={uploadHrefForInventoryItem(selected)} className="inline-flex h-9 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Upload</Link>
-                {selected.sourceAssetId ? <Link href={`/assets/${encodeURIComponent(selected.sourceAssetId)}`} className="inline-flex h-9 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Open Source Record</Link> : null}
-              </div>
-            </div>
-          ) : (
-            <p className="text-sm font-semibold text-slate-300">No inventory items match this filter.</p>
-          )}
-        </WorkspacePanel>
+      <div className={collectionGridClass(settings)}>
+        {visible.map((item) => <InventoryCard key={item.id} item={item} settings={settings} />)}
       </div>
     </div>
   );

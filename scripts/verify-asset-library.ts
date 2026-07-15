@@ -86,6 +86,9 @@ async function main() {
   assertIncludes("Asset Library routing", assetLibraryRouting, 'viewType: "upgrade_category_workflow"');
   assertIncludes("Asset Library routing", assetLibraryRouting, "never falls back to generic inventory");
   assertNotIncludes("Asset Library workspace", assetWorkspace, 'activeNode !== "upgrade-categories" ? <AssetLibraryCategoryInventory');
+  assertNotIncludes("Asset Library workspace", assetWorkspace, 'title="Inspector"');
+  assertNotIncludes("Asset Library workspace", assetWorkspace, "Open Inspector");
+  assertIncludes("Asset Library workspace", assetWorkspace, "Open Record");
 
   assertIncludes("Component Library", componentLibrary, "/asset-library?picker=component");
   assertIncludes("Screen Designer", screenDesigner, "/asset-library?picker=screen");
