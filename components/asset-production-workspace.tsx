@@ -5,8 +5,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Archive, Boxes, CheckCircle2, ChevronDown, FileImage, GitBranch, History, ImageIcon, Layers3, PackageCheck, Search, ShieldCheck, Sparkles, Timer, TriangleAlert, Upload, UploadCloud } from "lucide-react";
 import { AssetPreview } from "@/components/asset-preview";
 import { Button } from "@/components/ui/button";
-import { CompactWorkspaceToolbar, cardShellClass, collectionGridClass, previewBoxClass, useWorkspaceDensitySettings, type DensitySettings } from "@/components/ui/density";
-import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, WorkspaceProgressBar, WorkspaceStatTile } from "@/components/ui/workspace";
+import { cardShellClass, collectionGridClass, previewBoxClass, useWorkspaceDensitySettings, type DensitySettings } from "@/components/ui/density";
+import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, WorkspaceProgressBar, WorkspaceSearchBar, WorkspaceStatTile } from "@/components/ui/workspace";
 import { resolveMissingRequirementPreview, resolveProductionAssetPreview, sanitizePreviewUrl } from "@/lib/assets/visual-previews";
 import { assetLibraryCategoryLabels, normalizeAssetLibraryCategoryId, resolveAssetLibraryCategoryView, type AssetLibraryCategoryId } from "@/lib/assets/asset-library-routing";
 import type { AssetProductionState, ProductionAsset } from "@/lib/assets/asset-production";
@@ -381,7 +381,7 @@ function compactSizeLabel(value: string) {
   return value === "Pending inspection" ? "Pending" : value;
 }
 
-function statusLabel(record: UpgradeCategoryAssetStatus) {
+function upgradeStatusLabel(record: UpgradeCategoryAssetStatus) {
   if (record.status === "published") return "Published";
   if (record.approvalStatus === "approved") return "Approved";
   if (record.sourceFile) return "Needs Review";
@@ -566,7 +566,7 @@ function UpgradeCategoryAssetCard({ record, localPreview, onUploaded, settings }
               <p className="mt-1 truncate text-xs font-semibold text-cyan-100" title={assetId}>{assetId}</p>
             </div>
             <div className="shrink-0">
-              <WorkspaceBadge value={statusLabel(record)} />
+              <WorkspaceBadge value={upgradeStatusLabel(record)} />
             </div>
           </div>
           <div className={`mt-4 overflow-hidden rounded-md border border-cyan-300/15 bg-slate-950/70 ${settings.previewSize === "hide" ? "hidden" : ""}`}>
@@ -650,7 +650,7 @@ function UpgradeCategoriesWorkspace({ state }: { state: AssetProductionState }) 
           Designers can upload source backgrounds directly here. The Studio keeps the source private, queues the six runtime-ready derivative families, and publishes stable semantic keys for clients and the Visual Builder.
         </p>
       </WorkspacePanel>
-      <CompactWorkspaceToolbar query={query} onQueryChange={setQuery} settings={settings} onSettingsChange={setSettings} resultCount={visible.length} totalCount={state.upgradeCategoryAssets.length} placeholder="Search upgrade category assets" />
+      <CreativeBrowserControls query={query} onQueryChange={setQuery} settings={settings} onSettingsChange={setSettings} resultCount={visible.length} totalCount={state.upgradeCategoryAssets.length} placeholder="Search upgrade category assets" />
       <div className={upgradeCategoryGridClass(settings)}>
         {visible.map((record) => (
           <UpgradeCategoryAssetCard
@@ -1026,7 +1026,7 @@ function AssetGrid({ assets, empty, storageKey }: { assets: ProductionAsset[]; e
 
   return assets.length ? (
     <div className="space-y-4">
-      <CompactWorkspaceToolbar query={query} onQueryChange={setQuery} settings={settings} onSettingsChange={setSettings} resultCount={visibleAssets.length} totalCount={assets.length} placeholder="Search assets, art keys, categories, status" />
+      <CreativeBrowserControls query={query} onQueryChange={setQuery} settings={settings} onSettingsChange={setSettings} resultCount={visibleAssets.length} totalCount={assets.length} placeholder="Search assets, art keys, categories, status" />
       <div className={collectionGridClass(settings)}>
         {visibleAssets.slice(0, 48).map((asset) => <AssetCard key={asset.id} asset={asset} settings={settings} />)}
       </div>
@@ -1042,7 +1042,19 @@ function AssetGrid({ assets, empty, storageKey }: { assets: ProductionAsset[]; e
 type InventoryItem = AssetProductionState["assetLibraryInventory"]["items"][number];
 type InventoryStatus = InventoryItem["status"];
 
-const inventoryStatusFilters: Array<"all" | InventoryStatus> = ["all", "missing", "uploaded", "needs_review", "approved", "published", "invalid", "unmapped"];
+type CreativeStatusFilter = "all" | "missing" | "needs_review" | "published" | "invalid";
+const creativeStatusFilters: CreativeStatusFilter[] = ["all", "missing", "needs_review", "published", "invalid"];
+
+type InventoryTaskGroup = {
+  id: string;
+  label: string;
+  items: InventoryItem[];
+  completion: number;
+  missing: number;
+  published: number;
+  needsReview: number;
+  blocker: InventoryItem | null;
+};
 
 function inventoryStatusClass(status: InventoryStatus) {
   if (status === "published") return "border-emerald-300/30 bg-emerald-400/10 text-emerald-100";
@@ -1051,6 +1063,138 @@ function inventoryStatusClass(status: InventoryStatus) {
   if (status === "invalid") return "border-rose-300/30 bg-rose-400/10 text-rose-100";
   if (status === "unmapped") return "border-slate-500/40 bg-slate-500/10 text-slate-200";
   return "border-rose-300/30 bg-rose-400/10 text-rose-100";
+}
+
+function inventoryStatusLabel(status: InventoryStatus) {
+  if (status === "needs_review") return "Needs Review";
+  return status.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function statusFilterMatches(status: InventoryStatus, filter: CreativeStatusFilter) {
+  if (filter === "all") return true;
+  if (filter === "missing") return status === "missing" || status === "unmapped";
+  if (filter === "needs_review") return status === "needs_review" || status === "uploaded" || status === "approved" || status === "processing";
+  if (filter === "invalid") return status === "invalid" || status === "deprecated";
+  return status === filter;
+}
+
+function inventoryStatusWeight(status: InventoryStatus) {
+  if (status === "published") return 1;
+  if (status === "approved") return 0.9;
+  if (status === "uploaded" || status === "needs_review") return 0.55;
+  if (status === "processing") return 0.35;
+  return 0;
+}
+
+function inventoryCompletion(items: InventoryItem[]) {
+  if (!items.length) return 0;
+  return Math.round((items.reduce((sum, item) => sum + inventoryStatusWeight(item.status), 0) / items.length) * 100);
+}
+
+function usageCountForItem(item: InventoryItem) {
+  return item.referencedByScreens.length + item.referencedByComponents.length + item.referencedByPlaceholders.length;
+}
+
+function itemSearchText(item: InventoryItem) {
+  return [
+    item.displayName,
+    item.semanticAssetKey,
+    item.role,
+    item.status,
+    item.categoryPath,
+    item.referencedByScreens.map((reference) => reference.name).join(" "),
+    item.referencedByComponents.map((reference) => reference.name).join(" "),
+    item.referencedByPlaceholders.map((reference) => reference.name).join(" ")
+  ].join(" ").toLowerCase();
+}
+
+function topBlockerForItems(items: InventoryItem[]) {
+  const blockerStatusRank: Record<InventoryStatus, number> = {
+    invalid: 0,
+    missing: 1,
+    unmapped: 2,
+    needs_review: 3,
+    uploaded: 4,
+    processing: 5,
+    approved: 6,
+    deprecated: 7,
+    published: 8
+  };
+  return [...items]
+    .filter((item) => item.status !== "published")
+    .sort((left, right) => blockerStatusRank[left.status] - blockerStatusRank[right.status] || usageCountForItem(right) - usageCountForItem(left) || left.displayName.localeCompare(right.displayName))[0] ?? null;
+}
+
+function titleCase(value: string) {
+  return value.replace(/[-_]/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function taskGroupLabel(categoryId: InventoryItem["categoryId"], item: InventoryItem) {
+  const text = `${item.semanticAssetKey} ${item.displayName} ${item.role}`.toLowerCase();
+  if (categoryId === "top-hud") {
+    if (/background|panel|strip/.test(text)) return "Top HUD Background";
+    if (/labor|civilization_energy/.test(text)) return "Labor Icon";
+    if (/credit/.test(text)) return "Credits Icon";
+    if (/population/.test(text)) return "Population Icon";
+    if (/research/.test(text)) return "Research Icon";
+    if (/premium|crystal|civilization_points/.test(text)) return "Crystal Icon";
+    if (/calendar/.test(text)) return "Calendar";
+    if (/setting/.test(text)) return "Settings";
+    if (/identity|civilization/.test(text)) return "Civilization Identity";
+    return "Utility Controls";
+  }
+  if (categoryId === "research-ui") {
+    if (/background|screen|workspace|shell/.test(text)) return "Research Screen";
+    if (/tree/.test(text)) return "Tree";
+    if (/node/.test(text)) return "Nodes";
+    if (/button|control/.test(text)) return "Buttons";
+    if (/timeline|era/.test(text)) return "Timeline";
+    if (/icon/.test(text)) return "Icons";
+    return "Research Screen";
+  }
+  if (categoryId === "buildings-ui") {
+    if (/background|workspace/.test(text)) return "Background";
+    if (/card|panel/.test(text)) return "Cards";
+    if (/icon/.test(text)) return "Icons";
+    if (/button|control/.test(text)) return "Buttons";
+    if (/construction|progress/.test(text)) return "Construction";
+    if (/locked|lock|requirement/.test(text)) return "Locked";
+    if (/category|tab/.test(text)) return "Categories";
+    return "Cards";
+  }
+  if (categoryId === "upgrade-categories") {
+    if (/workforce|industry|science|technology|upgrade_panel|background/.test(text)) return "Upgrade Categories";
+    if (/icon/.test(text)) return "Upgrade Icons";
+    if (/card|panel/.test(text)) return "Upgrade Cards";
+    if (/button|control/.test(text)) return "Upgrade Buttons";
+    return "Upgrade Inventory";
+  }
+  if (item.role === "Icon") return "Icons";
+  if (item.role === "Background") return "Backgrounds";
+  if (item.role === "Panel") return "Panels";
+  if (item.role === "Animation") return "Animations";
+  return titleCase(item.role || "Assets");
+}
+
+function groupInventoryItems(items: InventoryItem[], categoryId: InventoryItem["categoryId"]) {
+  const groups = new Map<string, InventoryItem[]>();
+  for (const item of items) {
+    const label = taskGroupLabel(categoryId, item);
+    const key = label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+    groups.set(key, [...(groups.get(key) ?? []), item]);
+  }
+  return [...groups.entries()]
+    .map(([id, rows]): InventoryTaskGroup => ({
+      id,
+      label: taskGroupLabel(categoryId, rows[0]),
+      items: rows.sort((left, right) => inventoryStatusWeight(left.status) - inventoryStatusWeight(right.status) || left.displayName.localeCompare(right.displayName)),
+      completion: inventoryCompletion(rows),
+      missing: rows.filter((item) => item.status === "missing" || item.status === "unmapped").length,
+      published: rows.filter((item) => item.status === "published").length,
+      needsReview: rows.filter((item) => ["uploaded", "needs_review", "approved", "processing"].includes(item.status)).length,
+      blocker: topBlockerForItems(rows)
+    }))
+    .sort((left, right) => left.completion - right.completion || left.label.localeCompare(right.label));
 }
 
 function uploadHrefForInventoryItem(item: InventoryItem) {
@@ -1066,107 +1210,322 @@ function uploadHrefForInventoryItem(item: InventoryItem) {
   return `/asset-library?${params.toString()}`;
 }
 
-function InventoryCard({ item, settings }: { item: InventoryItem; settings: DensitySettings }) {
-  const usageCount = item.referencedByScreens.length + item.referencedByComponents.length + item.referencedByPlaceholders.length;
+function ViewOptions({
+  settings,
+  onSettingsChange
+}: {
+  settings: DensitySettings;
+  onSettingsChange: (patch: Partial<DensitySettings>) => void;
+}) {
+  const selectClass = "h-9 rounded-md border border-cyan-300/15 bg-slate-950/80 px-2 text-xs font-bold text-white outline-none";
+  return (
+    <details className="rounded-md border border-cyan-300/15 bg-slate-950/45">
+      <summary className="cursor-pointer px-3 py-2 text-xs font-black uppercase tracking-[0.16em] text-cyan-100">View Options</summary>
+      <div className="grid gap-2 border-t border-cyan-300/10 p-3 sm:grid-cols-2 lg:grid-cols-5">
+        <label className="grid gap-1 text-[0.62rem] font-bold uppercase tracking-[0.16em] text-slate-500">
+          View
+          <select value={settings.density} onChange={(event) => onSettingsChange({ density: event.target.value as DensitySettings["density"] })} className={selectClass}>
+            <option value="compact">Compact</option>
+            <option value="medium">Medium</option>
+            <option value="large">Large</option>
+            <option value="list">List</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-[0.62rem] font-bold uppercase tracking-[0.16em] text-slate-500">
+          Preview
+          <select value={settings.previewSize} onChange={(event) => onSettingsChange({ previewSize: event.target.value as DensitySettings["previewSize"] })} className={selectClass}>
+            <option value="small">Small</option>
+            <option value="medium">Medium</option>
+            <option value="large">Large</option>
+            <option value="hide">Hide</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-[0.62rem] font-bold uppercase tracking-[0.16em] text-slate-500">
+          Columns
+          <select value={settings.columns} onChange={(event) => onSettingsChange({ columns: event.target.value as DensitySettings["columns"] })} className={selectClass}>
+            <option value="auto">Auto</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-[0.62rem] font-bold uppercase tracking-[0.16em] text-slate-500">
+          Sort
+          <select value={settings.sort} onChange={(event) => onSettingsChange({ sort: event.target.value })} className={selectClass}>
+            <option value="updated">Modified</option>
+            <option value="name">Name</option>
+            <option value="status">Status</option>
+            <option value="type">Type</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-[0.62rem] font-bold uppercase tracking-[0.16em] text-slate-500">
+          Group
+          <select value={settings.groupBy} onChange={(event) => onSettingsChange({ groupBy: event.target.value })} className={selectClass}>
+            <option value="task">Task</option>
+            <option value="category">Category</option>
+            <option value="status">Status</option>
+            <option value="none">None</option>
+          </select>
+        </label>
+      </div>
+    </details>
+  );
+}
+
+function CreativeBrowserControls({
+  query,
+  onQueryChange,
+  settings,
+  onSettingsChange,
+  resultCount,
+  totalCount,
+  placeholder
+}: {
+  query: string;
+  onQueryChange: (value: string) => void;
+  settings: DensitySettings;
+  onSettingsChange: (patch: Partial<DensitySettings>) => void;
+  resultCount: number;
+  totalCount: number;
+  placeholder: string;
+}) {
+  return (
+    <section className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-3 shadow-glow">
+      <div className="grid gap-3 xl:grid-cols-[minmax(18rem,1fr)_18rem]">
+        <WorkspaceSearchBar value={query} onChange={onQueryChange} placeholder={placeholder} className="p-2" />
+        <ViewOptions settings={settings} onSettingsChange={onSettingsChange} />
+      </div>
+      <div className="mt-3 inline-flex items-center gap-2 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2 text-xs font-semibold text-slate-400">
+        <Search className="h-4 w-4" />
+        {resultCount} shown / {totalCount} total
+      </div>
+    </section>
+  );
+}
+
+function PreviewSurface({ item, className = "h-full" }: { item: InventoryItem; className?: string }) {
+  if (item.previewUrl) {
+    return <img src={item.previewUrl} alt={`${item.displayName} preview`} className={`${className} w-full object-cover`} />;
+  }
+  return (
+    <div className={`${className} grid w-full place-items-center bg-[radial-gradient(circle_at_35%_25%,rgba(103,232,249,0.16),transparent_34%),linear-gradient(135deg,rgba(15,23,42,0.9),rgba(2,6,23,0.96))]`}>
+      <div className="text-center">
+        <ImageIcon className="mx-auto h-6 w-6 text-cyan-100/45" />
+        <p className="mt-2 text-sm font-black text-white">{item.status === "missing" ? "Artwork Needed" : inventoryStatusLabel(item.status)}</p>
+      </div>
+    </div>
+  );
+}
+
+function InventoryHoverPreview({ item }: { item: InventoryItem }) {
+  return (
+    <div className="pointer-events-none absolute left-4 top-4 z-50 hidden w-80 translate-x-6 rounded-md border border-cyan-300/30 bg-slate-950/95 p-3 shadow-2xl group-hover:block">
+      <div className="h-44 overflow-hidden rounded-md border border-cyan-300/15">
+        <PreviewSurface item={item} />
+      </div>
+      <p className="mt-3 truncate text-sm font-black text-white">{item.displayName}</p>
+      <p className="mt-1 truncate text-xs font-semibold text-cyan-200">{item.semanticAssetKey}</p>
+    </div>
+  );
+}
+
+function InventoryCard({ item, settings, selected, onSelect }: { item: InventoryItem; settings: DensitySettings; selected: boolean; onSelect: (item: InventoryItem) => void }) {
+  const usageCount = usageCountForItem(item);
   const linkedAssetHref = item.sourceAssetId ? `/assets/${encodeURIComponent(item.sourceAssetId)}` : uploadHrefForInventoryItem(item);
   if (settings.density === "list") {
     return (
-      <article className={`${cardShellClass(settings)} text-left`}>
+      <button type="button" onClick={() => onSelect(item)} className={`${cardShellClass(settings, selected)} text-left`}>
         <div className={previewBoxClass(settings)}>
-          {item.previewUrl ? <img src={item.previewUrl} alt="" className="h-full w-full object-cover" /> : <ImageIcon className="h-5 w-5 text-slate-500" />}
+          <PreviewSurface item={item} />
         </div>
         <div className="min-w-0">
           <p className="truncate text-sm font-black text-white">{item.displayName}</p>
           <p className="truncate text-xs text-cyan-200">{item.semanticAssetKey}</p>
         </div>
-        <span className={`rounded-md border px-2 py-1 text-xs font-black uppercase tracking-[0.12em] ${inventoryStatusClass(item.status)}`}>{item.status.replaceAll("_", " ")}</span>
+        <span className={`rounded-md border px-2 py-1 text-xs font-black uppercase tracking-[0.12em] ${inventoryStatusClass(item.status)}`}>{inventoryStatusLabel(item.status)}</span>
         <p className="truncate text-xs text-slate-400">{item.role}</p>
         <p className="truncate text-xs text-slate-300">{usageCount} usage</p>
-      </article>
+      </button>
     );
   }
 
   return (
-    <article className={cardShellClass(settings)}>
-      <div className="block w-full text-left">
-        <div className={previewBoxClass(settings)}>
-          {item.previewUrl ? <img src={item.previewUrl} alt="" className="h-full w-full object-cover" /> : (
-            <div className="grid h-full place-items-center bg-slate-950/60">
-              <ImageIcon className="h-7 w-7 text-slate-500" />
-            </div>
-          )}
+    <article className={`${cardShellClass(settings, selected)} relative`}>
+      <InventoryHoverPreview item={item} />
+      <button type="button" onClick={() => onSelect(item)} className="block w-full text-left">
+        <div className={`overflow-hidden rounded-md border border-cyan-300/15 ${settings.previewSize === "hide" ? "hidden" : settings.previewSize === "large" ? "h-44" : settings.previewSize === "medium" ? "h-32" : "h-24"}`}>
+          <PreviewSurface item={item} />
         </div>
         <div className="mt-3 flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <p className="truncate text-sm font-black text-white">{item.displayName}</p>
+            <p className="truncate text-base font-black text-white">{item.displayName}</p>
             <p className="mt-1 truncate text-xs text-cyan-200">{item.semanticAssetKey}</p>
           </div>
-          <span className={`shrink-0 rounded-md border px-2 py-1 text-[0.62rem] font-black uppercase tracking-[0.12em] ${inventoryStatusClass(item.status)}`}>{item.status.replaceAll("_", " ")}</span>
+          <span className={`shrink-0 rounded-md border px-2 py-1 text-[0.62rem] font-black uppercase tracking-[0.12em] ${inventoryStatusClass(item.status)}`}>{inventoryStatusLabel(item.status)}</span>
         </div>
-        <div className="mt-3 grid grid-cols-2 gap-2">
-          <WorkspaceMiniStat label="Role" value={item.role} />
-          <WorkspaceMiniStat label="Usage" value={usageCount} />
-          {settings.density !== "compact" ? <WorkspaceMiniStat label="Required" value={item.requiredDimensions} /> : null}
-          {settings.density !== "compact" ? <WorkspaceMiniStat label="Current" value={item.currentDimensions} /> : null}
+        <div className="mt-2 flex flex-wrap gap-2 text-[0.68rem] font-bold uppercase tracking-[0.13em] text-slate-500">
+          <span>{item.role}</span>
+          <span>{usageCount} use{usageCount === 1 ? "" : "s"}</span>
+          {settings.density !== "compact" ? <span>{item.requiredDimensions}</span> : null}
         </div>
-      </div>
+      </button>
       <div className="mt-3 flex flex-wrap gap-2">
-        <Link href={uploadHrefForInventoryItem(item)} className="inline-flex h-9 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">{item.status === "missing" ? "Upload Asset" : "New Version"}</Link>
-        <Link href={linkedAssetHref} className="inline-flex h-9 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">{item.sourceAssetId ? "Open Record" : "Upload Details"}</Link>
+        <Link href={uploadHrefForInventoryItem(item)} className="inline-flex h-8 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-2 text-xs font-bold text-cyan-100">{item.status === "missing" ? "Upload" : "Replace"}</Link>
+        <Link href={linkedAssetHref} className="inline-flex h-8 items-center rounded-md border border-slate-600 bg-slate-950/40 px-2 text-xs font-bold text-slate-200">{item.sourceAssetId ? "Open" : "Details"}</Link>
       </div>
     </article>
   );
 }
 
+function CreativeContentHeader({
+  summary,
+  categoryId,
+  items
+}: {
+  summary: AssetProductionState["assetLibraryInventory"]["categorySummaries"][InventoryItem["categoryId"]];
+  categoryId: InventoryItem["categoryId"];
+  items: InventoryItem[];
+}) {
+  const completion = inventoryCompletion(items);
+  const topBlocker = topBlockerForItems(items);
+  const missing = items.filter((item) => item.status === "missing" || item.status === "unmapped").length;
+  const needsReview = items.filter((item) => ["uploaded", "needs_review", "approved", "processing"].includes(item.status)).length;
+  const published = items.filter((item) => item.status === "published").length;
+  const uploadHref = `/asset-library?upload=asset&category=${encodeURIComponent(summary?.label ?? categoryId)}`;
+  const screenHref = categoryId === "top-hud" ? "/screen-designer/noveris-app-shell" : categoryId === "research-ui" ? "/screen-designer/research" : categoryId === "buildings-ui" ? "/screen-designer/buildings" : categoryId === "upgrade-categories" ? "/screen-designer/upgrades" : "/screen-designer";
+  return (
+    <WorkspacePanel title={`${summary?.label ?? implementedNodeLabels[categoryId]} Production`} icon={ImageIcon}>
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_26rem]">
+        <div>
+          <p className="text-sm leading-6 text-slate-300">A task-first content browser for finding the next asset to upload, review, approve, or publish.</p>
+          <div className="mt-4 flex items-center justify-between gap-3">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-200">Completion</p>
+            <p className="text-sm font-black text-white">{completion}% Complete</p>
+          </div>
+          <WorkspaceProgressBar value={completion} className="mt-2" />
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Link href={uploadHref} className="inline-flex h-10 items-center gap-2 rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100"><UploadCloud className="h-4 w-4" /> Upload Asset</Link>
+            <Link href={`${screenHref}?mode=visual-builder`} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Open Visual Builder</Link>
+            <Link href={screenHref} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Open Screen</Link>
+          </div>
+        </div>
+        <div className="grid gap-2 sm:grid-cols-2">
+          <WorkspaceMiniStat label="Missing" value={missing} />
+          <WorkspaceMiniStat label="Published" value={published} />
+          <WorkspaceMiniStat label="Needs Review" value={needsReview} />
+          <WorkspaceMiniStat label="Total Assets" value={items.length} />
+          <div className="sm:col-span-2 rounded-md border border-amber-300/20 bg-amber-400/10 p-3">
+            <p className="text-xs font-black uppercase tracking-[0.16em] text-amber-100">Top Blocker</p>
+            <p className="mt-2 truncate text-sm font-black text-white">{topBlocker?.displayName ?? "No blockers"}</p>
+            {topBlocker ? <p className="mt-1 truncate text-xs font-semibold text-amber-100/80">{topBlocker.semanticAssetKey}</p> : null}
+          </div>
+        </div>
+      </div>
+    </WorkspacePanel>
+  );
+}
+
+function AssetLibraryInspector({ item, onClose }: { item: InventoryItem; onClose: () => void }) {
+  const usage = [...item.referencedByScreens, ...item.referencedByComponents, ...item.referencedByPlaceholders];
+  const linkedAssetHref = item.sourceAssetId ? `/assets/${encodeURIComponent(item.sourceAssetId)}` : uploadHrefForInventoryItem(item);
+  return (
+    <aside className="sticky top-24 rounded-md border border-cyan-300/15 bg-[#07101e]/95 p-4 shadow-glow">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-200">Inspector</p>
+          <h2 className="mt-2 truncate text-xl font-black text-white">{item.displayName}</h2>
+          <p className="mt-1 truncate text-sm font-semibold text-cyan-100">{item.semanticAssetKey}</p>
+        </div>
+        <button type="button" onClick={onClose} className="rounded-md border border-cyan-300/20 px-2 py-1 text-xs font-black uppercase tracking-[0.12em] text-slate-300 hover:bg-cyan-300/10">Close</button>
+      </div>
+      <div className="mt-4 h-48 overflow-hidden rounded-md border border-cyan-300/15">
+        <PreviewSurface item={item} />
+      </div>
+      <div className="mt-4 grid gap-2">
+        <WorkspaceMiniStat label="Status" value={inventoryStatusLabel(item.status)} />
+        <WorkspaceMiniStat label="Version" value={item.currentDimensions} />
+        <WorkspaceMiniStat label="Required Size" value={item.requiredDimensions} />
+        <WorkspaceMiniStat label="Role" value={item.role} />
+        <WorkspaceMiniStat label="Platforms" value={`web:${item.platformReadiness.web} / roblox:${item.platformReadiness.roblox} / ios:${item.platformReadiness.ios} / android:${item.platformReadiness.android}`} />
+      </div>
+      <div className="mt-4 rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
+        <p className="text-xs font-black uppercase tracking-[0.16em] text-cyan-200">Used By</p>
+        <div className="mt-2 space-y-2">
+          {usage.slice(0, 8).map((reference) => (
+            <Link key={`${reference.type}:${reference.id}`} href={reference.href} className="block truncate rounded-md border border-cyan-300/10 bg-slate-950/50 px-2 py-1.5 text-sm font-semibold text-slate-200 hover:border-cyan-300/40">
+              {reference.type}: {reference.name}
+            </Link>
+          ))}
+          {!usage.length ? <p className="text-sm font-semibold text-slate-400">No direct screen or component usage yet.</p> : null}
+        </div>
+      </div>
+      <div className="mt-4 rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
+        <p className="text-xs font-black uppercase tracking-[0.16em] text-cyan-200">History</p>
+        <p className="mt-2 text-sm leading-6 text-slate-300">Semantic key created from canonical screen, component, runtime, or registry usage. Approval and publication history stay on the asset record.</p>
+      </div>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <Link href={uploadHrefForInventoryItem(item)} className="inline-flex h-9 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Upload / Replace</Link>
+        <Link href={linkedAssetHref} className="inline-flex h-9 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Open Record</Link>
+      </div>
+    </aside>
+  );
+}
+
 function AssetLibraryCategoryInventory({ state, categoryId }: { state: AssetProductionState; categoryId: InventoryItem["categoryId"] }) {
   const [query, setQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | InventoryStatus>("all");
-  const [settings, setSettings] = useWorkspaceDensitySettings(`project-genesis-density-asset-library-${categoryId}`);
+  const [statusFilter, setStatusFilter] = useState<CreativeStatusFilter>("all");
+  const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
+  const [settings, setSettings] = useWorkspaceDensitySettings(`project-genesis-density-asset-library-${categoryId}`, { groupBy: "task", previewSize: "small" });
   const allItems = state.assetLibraryInventory.items.filter((item) => item.categoryId === categoryId);
   const summary = state.assetLibraryInventory.categorySummaries[categoryId];
   const visible = allItems.filter((item) => {
     const needle = query.trim().toLowerCase();
-    const text = [
-      item.displayName,
-      item.semanticAssetKey,
-      item.role,
-      item.status,
-      item.categoryPath,
-      item.referencedByScreens.map((reference) => reference.name).join(" "),
-      item.referencedByComponents.map((reference) => reference.name).join(" ")
-    ].join(" ").toLowerCase();
-    return (statusFilter === "all" || item.status === statusFilter) && (!needle || text.includes(needle));
+    return statusFilterMatches(item.status, statusFilter) && (!needle || itemSearchText(item).includes(needle));
   });
+  const groups = settings.groupBy === "none"
+    ? [{ id: "all", label: "All Assets", items: visible, completion: inventoryCompletion(visible), missing: visible.filter((item) => item.status === "missing").length, published: visible.filter((item) => item.status === "published").length, needsReview: visible.filter((item) => statusFilterMatches(item.status, "needs_review")).length, blocker: topBlockerForItems(visible) }]
+    : groupInventoryItems(visible, categoryId);
+
   return (
     <div className="space-y-5">
-      <WorkspacePanel title={summary?.label ?? implementedNodeLabels[categoryId]} icon={ImageIcon}>
-        <div className="grid gap-3 md:grid-cols-4">
-          <WorkspaceStatTile label="Assets" value={summary?.total ?? 0} />
-          <WorkspaceStatTile label="Missing" value={summary?.missing ?? 0} />
-          <WorkspaceStatTile label="Needs Review" value={summary?.needsReview ?? 0} />
-          <WorkspaceStatTile label="Published" value={summary?.published ?? 0} />
-        </div>
-        <div className="mt-4 grid gap-3 md:grid-cols-3">
-          <WorkspaceMiniStat label="Screen refs" value={summary?.screenReferences ?? 0} />
-          <WorkspaceMiniStat label="Component refs" value={summary?.componentReferences ?? 0} />
-          <WorkspaceMiniStat label="Builder placeholders" value={summary?.placeholderReferences ?? 0} />
-        </div>
-        <div className="mt-4 flex flex-wrap gap-2">
-          <Link href={`/asset-library?upload=asset&category=${encodeURIComponent(summary?.label ?? categoryId)}`} className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Upload Asset</Link>
-          <Button type="button">Generate Missing Requirements</Button>
-          <WorkspaceBadge value="All statuses shown" />
-        </div>
-      </WorkspacePanel>
+      <CreativeContentHeader summary={summary} categoryId={categoryId} items={allItems} />
       <div className="flex flex-wrap gap-2 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-2">
-        {inventoryStatusFilters.map((status) => (
+        {creativeStatusFilters.map((status) => (
           <button key={status} type="button" onClick={() => setStatusFilter(status)} className={`rounded-md px-3 py-2 text-xs font-black uppercase tracking-[0.12em] transition ${statusFilter === status ? "bg-cyan-300/20 text-white" : "text-slate-400 hover:bg-cyan-300/10 hover:text-slate-100"}`}>
-            {status.replaceAll("_", " ")}
+            {status === "all" ? "All" : inventoryStatusLabel(status as InventoryStatus)}
           </button>
         ))}
       </div>
-      <CompactWorkspaceToolbar query={query} onQueryChange={setQuery} settings={settings} onSettingsChange={setSettings} resultCount={visible.length} totalCount={allItems.length} placeholder="Search display name, semantic key, role, screen, component, status" />
-      <div className={collectionGridClass(settings)}>
-        {visible.map((item) => <InventoryCard key={item.id} item={item} settings={settings} />)}
+      <CreativeBrowserControls query={query} onQueryChange={setQuery} settings={settings} onSettingsChange={setSettings} resultCount={visible.length} totalCount={allItems.length} placeholder="Search display name, semantic key, role, screen, component, status" />
+      <div className={selectedItem ? "grid gap-5 2xl:grid-cols-[minmax(0,1fr)_24rem]" : ""}>
+        <div className="space-y-4">
+          {groups.map((group) => (
+            <details key={group.id} open className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-3 shadow-glow">
+              <summary className="cursor-pointer list-none">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-200">{group.label}</p>
+                    <p className="mt-1 text-sm font-semibold text-slate-400">{group.items.length} assets / {group.completion}% complete</p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <WorkspaceBadge value={`${group.missing} missing`} />
+                    <WorkspaceBadge value={`${group.published} published`} />
+                    <WorkspaceBadge value={`${group.needsReview} review`} />
+                    {group.blocker ? <WorkspaceBadge value={`Blocker: ${group.blocker.displayName}`} /> : null}
+                  </div>
+                </div>
+              </summary>
+              <WorkspaceProgressBar value={group.completion} className="mt-3" />
+              <div className={`mt-3 ${collectionGridClass(settings)}`}>
+                {group.items.map((item) => <InventoryCard key={item.id} item={item} settings={settings} selected={selectedItem?.id === item.id} onSelect={setSelectedItem} />)}
+              </div>
+            </details>
+          ))}
+          {!visible.length ? <WorkspacePanel><p className="text-sm font-semibold text-slate-300">No assets match this search or status filter.</p></WorkspacePanel> : null}
+        </div>
+        {selectedItem ? <AssetLibraryInspector item={selectedItem} onClose={() => setSelectedItem(null)} /> : null}
       </div>
     </div>
   );

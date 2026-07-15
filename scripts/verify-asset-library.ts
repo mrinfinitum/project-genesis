@@ -69,6 +69,13 @@ async function main() {
     "Upgrades",
     "unmapped",
     "AssetLibraryCategoryInventory",
+    "CreativeContentHeader",
+    "CreativeBrowserControls",
+    "View Options",
+    "Top Blocker",
+    "InventoryHoverPreview",
+    "AssetLibraryInspector",
+    "taskGroupLabel",
     "resolveAssetLibraryCategoryView",
     "categoryRoute.viewType",
     "upgradeCategoryGridClass",
@@ -76,8 +83,6 @@ async function main() {
     "compactSizeLabel",
     "Source Pending",
     "generated category preview",
-    "All statuses shown",
-    "Generate Missing Requirements",
     "Open in Visual Builder",
     "Open in Screen Specification",
     "Generate Derivatives"
@@ -91,6 +96,7 @@ async function main() {
   assertNotIncludes("Asset Library workspace", assetWorkspace, 'activeNode !== "upgrade-categories" ? <AssetLibraryCategoryInventory');
   assertNotIncludes("Asset Library workspace", assetWorkspace, 'title="Inspector"');
   assertNotIncludes("Asset Library workspace", assetWorkspace, "Open Inspector");
+  assertNotIncludes("Asset Library workspace", assetWorkspace, "CompactWorkspaceToolbar");
   assertIncludes("Asset Library workspace", assetWorkspace, "Open Record");
   assertNotIncludes("Asset Library workspace", assetWorkspace, "Missing Preview");
   assertNotIncludes("Asset Library workspace", assetWorkspace, "Background Needed");
