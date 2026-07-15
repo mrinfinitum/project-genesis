@@ -87,6 +87,19 @@ function normalizeKey(value: string) {
   return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
 }
 
+const canonicalAssetAliases: Record<string, string[]> = {
+  economy_labor: ["civilization_energy_icon", "asset_civilization_energy_icon", "icon_civilization_energy_96x96", "assets_topbar_icon_civilization_energy_96x96_png"],
+  economy_credits: ["credits_icon", "asset_credits_icon", "icon_credits_coin_96x96", "assets_topbar_icon_credits_coin_96x96_png"],
+  economy_population: ["population_icon", "asset_population_icon", "icon_population_96x96", "assets_topbar_icon_population_96x96_png"],
+  economy_research: ["research_icon", "asset_research_icon", "icon_research_flask_96x96", "assets_topbar_icon_research_flask_96x96_png"],
+  economy_premium_crystals: ["civilization_points_icon", "asset_civilization_points_icon", "icon_civilization_points_crystal_96x96", "assets_topbar_icon_civilization_points_crystal_96x96_png"],
+  top_hud_background: ["top_bar_resource_panel_strip", "asset_top_bar_resource_panel_strip", "topbar_resource_panel_1920x104a", "assets_topbar_topbar_resource_panel_1920x104a_png"],
+  top_hud_add_crystals_button: ["top_bar_plus_button", "asset_top_bar_plus_button", "topbar_plus_button_56x56", "assets_topbar_topbar_plus_button_56x56_png"],
+  top_hud_calendar_button: ["calendar_icon", "asset_calendar_icon", "icon_calendar_80x80", "assets_topbar_icon_calendar_80x80_png"],
+  top_hud_trophy_button: ["trophy_icon", "asset_trophy_icon", "icon_trophy_80x80", "assets_topbar_icon_trophy_80x80_png"],
+  top_hud_settings_button: ["settings_icon", "asset_settings_icon", "icon_settings_80x80", "assets_topbar_icon_settings_80x80_png"]
+};
+
 function roleFor(category?: string, key = "", label = "") {
   const text = `${category ?? ""} ${key} ${label}`.toLowerCase();
   if (/audio|sound|music|voice/.test(text)) return "Audio";
@@ -148,6 +161,17 @@ function readinessFromAsset(asset?: ProductionAsset | null) {
   };
 }
 
+function previewUrlForAsset(asset?: ProductionAsset | null) {
+  const webPath = (asset?.platformMappings.web as { path?: unknown } | undefined)?.path;
+  if (typeof webPath === "string" && webPath) return webPath;
+  const publicDerivative = asset?.derivatives.find((item) => {
+    const url = item.publicUrl || item.storagePath;
+    return Boolean(url) && !url.startsWith("rbxassetid://");
+  });
+  if (publicDerivative) return publicDerivative.publicUrl || publicDerivative.storagePath;
+  return asset?.sourceFiles.find((source) => source.previewUrl)?.previewUrl ?? null;
+}
+
 function currentDimensions(asset?: ProductionAsset | null) {
   const source = asset?.sourceFiles.find((item) => item.isCurrent) ?? asset?.sourceFiles[0];
   if (source?.width && source.height) return `${source.width}x${source.height}`;
@@ -165,7 +189,12 @@ function requiredDimensionsFor(role: string, key: string) {
 }
 
 function findAsset(assetsByKey: Map<string, ProductionAsset>, key: string) {
-  return assetsByKey.get(normalizeKey(key)) ?? null;
+  const normalized = normalizeKey(key);
+  for (const candidate of [normalized, ...(canonicalAssetAliases[normalized] ?? [])]) {
+    const asset = assetsByKey.get(normalizeKey(candidate));
+    if (asset) return asset;
+  }
+  return null;
 }
 
 function mergeReference(target: AssetLibraryReference[], reference: AssetLibraryReference) {
@@ -191,6 +220,10 @@ export async function buildAssetLibraryInventory(input: {
       if (key) assetsByKey.set(normalizeKey(key), asset);
     }
   }
+  for (const [canonicalKey, aliases] of Object.entries(canonicalAssetAliases)) {
+    const asset = aliases.map((alias) => assetsByKey.get(normalizeKey(alias))).find(Boolean);
+    if (asset) assetsByKey.set(normalizeKey(canonicalKey), asset);
+  }
 
   const itemsByKey = new Map<string, AssetLibraryInventoryItem>();
   let sortOrder = 0;
@@ -210,13 +243,15 @@ export async function buildAssetLibraryInventory(input: {
   }) {
     const key = normalizeKey(params.semanticAssetKey);
     const asset = params.sourceAssetId ? input.assets.find((item) => item.id === params.sourceAssetId) : findAsset(assetsByKey, key);
+    const status = asset ? statusForAsset(asset) : params.status;
+    const previewUrl = params.previewUrl ?? previewUrlForAsset(asset);
     const categoryId = params.categoryId ?? categoryFor({ key, label: params.displayName, role: params.role, sourceType: params.sourceType });
     const existing = itemsByKey.get(key);
     if (existing) {
-      existing.status = existing.status === "published" ? existing.status : params.status === "published" ? "published" : existing.status === "approved" ? existing.status : params.status;
+      existing.status = existing.status === "published" ? existing.status : status === "published" ? "published" : existing.status === "approved" ? existing.status : status;
       existing.sourceAssetId ||= params.sourceAssetId ?? asset?.id ?? null;
       existing.requirementId ||= params.requirementId ?? null;
-      existing.previewUrl ||= params.previewUrl ?? null;
+      existing.previewUrl ||= previewUrl;
       if (params.reference) {
         if (params.reference.type === "screen") mergeReference(existing.referencedByScreens, params.reference);
         else if (params.reference.type === "component") mergeReference(existing.referencedByComponents, params.reference);
@@ -233,8 +268,8 @@ export async function buildAssetLibraryInventory(input: {
       categoryPath: `Asset Library / ${assetLibraryCategoryLabels[categoryId]}`,
       role: params.role,
       sourceType: params.sourceType,
-      status: params.status,
-      previewUrl: params.previewUrl ?? null,
+      status,
+      previewUrl,
       sourceAssetId: params.sourceAssetId ?? asset?.id ?? null,
       requirementId: params.requirementId ?? null,
       referencedByScreens: [],

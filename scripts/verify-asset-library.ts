@@ -128,6 +128,27 @@ async function main() {
   const buildings = state.assetLibraryInventory.categorySummaries["buildings-ui"];
   const unmapped = state.assetLibraryInventory.categorySummaries.unmapped;
   assert(topHud.total >= 11, `Top HUD category must have real inventory cards; received ${topHud.total}.`);
+  const resolvedTopHudKeys: Record<string, string> = {
+    economy_labor: "asset_civilization_energy_icon",
+    economy_credits: "asset_credits_icon",
+    economy_population: "asset_population_icon",
+    economy_research: "asset_research_icon",
+    economy_premium_crystals: "asset_civilization_points_icon",
+    top_hud_background: "asset_top_bar_resource_panel_strip",
+    top_hud_add_crystals_button: "asset_top_bar_plus_button",
+    top_hud_calendar_button: "asset_calendar_icon",
+    top_hud_trophy_button: "asset_trophy_icon",
+    top_hud_settings_button: "asset_settings_icon"
+  };
+  for (const [semanticAssetKey, sourceAssetId] of Object.entries(resolvedTopHudKeys)) {
+    const item = state.assetLibraryInventory.items.find((row) => row.semanticAssetKey === semanticAssetKey);
+    assert(item, `Top HUD inventory is missing ${semanticAssetKey}.`);
+    assert(item.sourceAssetId === sourceAssetId, `${semanticAssetKey} must resolve to imported Roblox asset ${sourceAssetId}; received ${item.sourceAssetId ?? "(none)"}.`);
+    assert(item.status === "published", `${semanticAssetKey} must be published after Roblox/Web alias reconciliation; received ${item.status}.`);
+    assert(Boolean(item.previewUrl?.startsWith("/assets/roblox-art/")), `${semanticAssetKey} must use the public Web derivative as preview; received ${item.previewUrl ?? "(none)"}.`);
+  }
+  const identityFrame = state.assetLibraryInventory.items.find((row) => row.semanticAssetKey === "civilization_identity_frame");
+  assert(identityFrame?.status === "missing", "Civilization identity frame must remain missing until the rbxassetid://0 placeholder is replaced.");
   assert(upgrades.total >= 100, `Upgrades category must show the real upgrade inventory, not the four category cards; received ${upgrades.total}.`);
   assert(state.assetLibraryInventory.items.some((item) => item.categoryId === "upgrade-categories" && item.sourceType === "missing_requirement"), "Upgrades category must include generated upgrade requirements.");
   assert(!state.assetLibraryInventory.items.some((item) => item.categoryId === "upgrade-categories" && /upgrade_panel_.*_background/.test(item.semanticAssetKey)), "Upgrade category background assets must not occupy the Upgrades inventory.");
