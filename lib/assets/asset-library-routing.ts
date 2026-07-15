@@ -9,6 +9,7 @@ export type AssetLibraryCategoryId =
   | "settings-ui"
   | "login-ui"
   | "loading-ui"
+  | "encyclopedia"
   | "ai-agents"
   | "icons"
   | "backgrounds"
@@ -38,6 +39,7 @@ export const assetLibraryCategoryIds: AssetLibraryCategoryId[] = [
   "settings-ui",
   "login-ui",
   "loading-ui",
+  "encyclopedia",
   "ai-agents",
   "icons",
   "backgrounds",
@@ -59,6 +61,7 @@ export const assetLibraryCategoryLabels: Record<AssetLibraryCategoryId, string> 
   "settings-ui": "Settings UI",
   "login-ui": "Login UI",
   "loading-ui": "Loading UI",
+  encyclopedia: "Encyclopedia",
   "ai-agents": "AI Agents",
   icons: "Icons",
   backgrounds: "Backgrounds",
@@ -93,7 +96,10 @@ const categoryAliases: Record<string, AssetLibraryCategoryId> = {
   planet: "planet-ui",
   settings: "settings-ui",
   login: "login-ui",
-  loading: "loading-ui"
+  loading: "loading-ui",
+  encyclopedia: "encyclopedia",
+  galactopedia: "encyclopedia",
+  "civilization encyclopedia": "encyclopedia"
 };
 
 export function normalizeAssetLibraryCategoryId(value: unknown): AssetLibraryCategoryId | null {

@@ -160,7 +160,7 @@ type EraArtInventoryContext = {
 };
 
 const loadEraArtInventoryContext = cache(async (): Promise<EraArtInventoryContext> => measureAsync("loadEraArtInventoryContext", async () => {
-  const [state, data, metadata] = await Promise.all([getAssetProductionState(), getGameData(), getAssetProductionRequirementMetadata()]);
+  const [state, data, metadata] = await Promise.all([getAssetProductionState({ includeEncyclopediaRequirements: false }), getGameData(), getAssetProductionRequirementMetadata()]);
   const assetByLookupKey = new Map<string, ProductionAsset>();
   const assetById = new Map<string, ProductionAsset>();
   for (const asset of state.assets) {

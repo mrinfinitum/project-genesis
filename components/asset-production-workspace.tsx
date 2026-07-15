@@ -256,6 +256,7 @@ const damTree: Array<{ id: DamNodeId; label: string; children?: Array<{ id: DamN
   { id: "needs-review", label: "Needs Review" },
   { id: "approved-assets", label: "Approved" },
   { id: "published", label: "Published" },
+  { id: "encyclopedia", label: "Encyclopedia" },
   {
     id: "top-hud",
     label: "UI",
@@ -838,7 +839,7 @@ function RobloxManifestReport({ state }: { state: AssetProductionState }) {
 }
 
 function Dashboard({ state }: { state: AssetProductionState }) {
-  const uiCategoryIds: InventoryItem["categoryId"][] = ["top-hud", "left-navigation", "upgrade-categories", "research-ui", "buildings-ui", "galaxy-ui", "planet-ui", "settings-ui", "login-ui", "loading-ui"];
+  const uiCategoryIds: InventoryItem["categoryId"][] = ["top-hud", "left-navigation", "upgrade-categories", "research-ui", "buildings-ui", "galaxy-ui", "planet-ui", "settings-ui", "login-ui", "loading-ui", "encyclopedia"];
   const uiSummaries = uiCategoryIds.map((id) => state.assetLibraryInventory.categorySummaries[id]);
   const uiTotal = uiSummaries.reduce((sum, row) => sum + row.total, 0);
   const uiMissing = uiSummaries.reduce((sum, row) => sum + row.missing, 0);

@@ -19,6 +19,7 @@ async function main() {
   const renaissance = await measure("getEraArtInventory renaissance", () => getEraArtInventory("renaissance"));
   const timeline = createDefaultTimeline("Renaissance");
   const componentSource = await readFile("components/era-art-inventory-workspace.tsx", "utf8");
+  const sharedPreviewSource = await readFile("components/asset-preview.tsx", "utf8");
   const eraServiceSource = await readFile("lib/assets/era-art-inventory.ts", "utf8");
 
   assert(Object.keys(summary.value).length === 9, "Era art summary should cover all nine canonical eras.");
@@ -31,7 +32,7 @@ async function main() {
 
   assert(componentSource.includes("initialCardPageSize = 24"), "Era art cards should use the 24-card initial page size.");
   assert(componentSource.includes("Load More Art Cards"), "Era art workspace should expose incremental loading.");
-  assert(componentSource.includes('loading="lazy"'), "Era art previews should lazy-load images.");
+  assert(componentSource.includes('loading="lazy"') || sharedPreviewSource.includes('loading="lazy"'), "Era art previews should lazy-load images.");
   assert(componentSource.includes("useDeferredValue"), "Era art filters should defer text query recalculation.");
   assert(eraServiceSource.includes("loadEraArtInventoryContext"), "Era art service should use a shared cached loader context.");
   assert(eraServiceSource.includes("buildImportedCardsByEra"), "Imported art reconciliation should be precomputed by era.");

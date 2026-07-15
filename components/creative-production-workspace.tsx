@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import {
   Bot,
+  BookOpen,
   Building2,
   ChevronRight,
   CircleDot,
@@ -50,6 +51,7 @@ type ProductionAreaId =
   | "buildings"
   | "upgrades"
   | "ai-agents"
+  | "encyclopedia"
   | "civilizations"
   | "galaxy"
   | "planets"
@@ -96,6 +98,7 @@ const productionAreas: ProductionArea[] = [
   { id: "buildings", label: "Buildings", categoryIds: ["buildings-ui"], icon: Building2, accent: "from-amber-300/25 to-cyan-300/10", screenSpecHref: "/screen-designer/buildings", advancedHref: "/buildings", description: "Workspace background, category tabs, building cards, icons, cost rows, requirements, and construction states.", groups: ["Workspace Background", "Header", "Category Tabs", "Building Cards", "Building Icons", "Building Details", "Cost Rows", "Requirements", "Build Buttons", "Locked States"] },
   { id: "upgrades", label: "Upgrades", categoryIds: ["upgrade-categories"], icon: WandSparkles, accent: "from-fuchsia-300/25 to-cyan-300/10", screenSpecHref: "/screen-designer/upgrades", advancedHref: "/upgrades", description: "Upgrade icons, card states, category panels, shared fallback background, and dedicated category background workflow.", groups: ["Workforce Background", "Industry Background", "Science Background", "Technology Background", "Shared Fallback", "Cards", "Buttons", "Upgrade Icons"] },
   { id: "ai-agents", label: "AI Agents", categoryIds: ["ai-agents"], icon: Bot, accent: "from-emerald-300/25 to-cyan-300/10", advancedHref: "/ai-agents", description: "Agent heads, open eyes, blink, offline, working, thinking, warning, celebration, accessories, and personality badges.", groups: ["Agent", "Variant", "Open Eyes", "Blink", "Offline", "Working", "Thinking", "Warning", "Celebration", "Accessories", "Personality Badges"] },
+  { id: "encyclopedia", label: "Encyclopedia", categoryIds: ["encyclopedia"], icon: BookOpen, accent: "from-cyan-300/20 to-violet-300/10", advancedHref: "/encyclopedia", description: "Entry icons, cards, hero art, diagrams, progression art, and Galactopedia-ready visual requirements.", groups: ["Buildings", "Research", "Resources", "Planets", "Civilizations", "Factions", "Wonders", "Megastructures"] },
   { id: "civilizations", label: "Civilizations", icon: Landmark, accent: "from-yellow-300/20 to-cyan-300/10", advancedHref: "/civilizations", description: "Civilization command art, era identity, crests, timeline nodes, and command-center presentation.", matcher: (item) => /civilization|era|timeline|command/i.test(searchText(item)) },
   { id: "galaxy", label: "Galaxy", categoryIds: ["galaxy-ui"], icon: MapIcon, accent: "from-blue-300/25 to-cyan-300/10", advancedHref: "/galaxy", description: "Galaxy cards, map states, spaceport art, scanning visuals, and universe navigation." },
   { id: "planets", label: "Planets", categoryIds: ["planet-ui"], icon: CircleDot, accent: "from-lime-300/20 to-cyan-300/10", advancedHref: "/planets", description: "Planet cards, planet details, Sol body art, celestial bodies, biome visuals, and scan states." },

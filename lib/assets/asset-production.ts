@@ -5,6 +5,7 @@ import { getGameData, getRows } from "@/lib/data";
 import { buildAssetLibraryInventory, type AssetLibraryInventoryIndex } from "@/lib/assets/asset-library-inventory";
 import { applyGameArtImport, getGameArtImportWorkspaceState, getMergedAssetLibraryRows, upsertAppliedGameArtAssets } from "@/lib/assets/game-art-import";
 import { buildVisualPreviewReport, previewDerivativePresets, type VisualPreviewReport } from "@/lib/assets/visual-previews";
+import { buildEncyclopediaAssetRequirements } from "@/lib/encyclopedia";
 import { resolveUpgradeCategoryAssetStatus, upgradeCategoryAssetRecords, upgradeCategoryBackgroundDerivativePresetIds, upgradeCategoryBackgroundDimensions } from "@/lib/upgrades/category-presentation";
 import type { AssetDefinition } from "@/types/runtime";
 
@@ -623,6 +624,9 @@ export const derivativePresets: AssetDerivativePreset[] = [
   { id: "building_hero", name: "Building Hero", category: "buildings", derivativeType: "hero", width: 1920, height: 1080, aspectRatio: "16:9", format: "WebP", required: false },
   { id: "research_icon", name: "Research Icon", category: "research", derivativeType: "icon", width: 256, height: 256, aspectRatio: "1:1", format: "PNG", required: true },
   { id: "research_card", name: "Research Card", category: "research", derivativeType: "card", width: 768, height: 768, aspectRatio: "1:1", format: "WebP", required: false },
+  { id: "encyclopedia_icon", name: "Encyclopedia Icon", category: "encyclopedia", derivativeType: "encyclopedia_icon", width: 512, height: 512, aspectRatio: "1:1", format: "PNG", required: true, outputRole: "ui_icon", engineTargets: ["web", "roblox", "ios", "android"], notes: "Canonical entry icon for encyclopedia and future Galactopedia surfaces." },
+  { id: "encyclopedia_card", name: "Encyclopedia Card", category: "encyclopedia", derivativeType: "encyclopedia_card", width: 1200, height: 675, aspectRatio: "16:9", format: "WebP", required: true, outputRole: "game_card", engineTargets: ["web", "roblox", "ios", "android"], notes: "Compact entry card artwork for encyclopedia browsers." },
+  { id: "encyclopedia_hero", name: "Encyclopedia Hero", category: "encyclopedia", derivativeType: "encyclopedia_hero", width: 3840, height: 2160, aspectRatio: "16:9", format: "WebP", required: false, outputRole: "hero_art", engineTargets: ["web", "roblox", "ios", "android"], notes: "Large lore/detail hero artwork for approved encyclopedia entries." },
   { id: "era_icon", name: "Era Icon", category: "eras", derivativeType: "icon", width: 256, height: 256, aspectRatio: "1:1", format: "PNG", required: true },
   { id: "era_banner", name: "Era Banner", category: "eras", derivativeType: "banner", width: 1920, height: 640, aspectRatio: "3:1", format: "WebP", required: true },
   { id: "era_background", name: "Era Background", category: "eras", derivativeType: "background", width: 1920, height: 1080, aspectRatio: "16:9", format: "WebP", required: true },
@@ -707,6 +711,7 @@ export const requirementProfiles: AssetRequirementProfile[] = [
   { id: "sector_requirement_profile", objectType: "sector", label: "Sector", requirements: requirements(["planet_card", "planet_hero"], "medium") },
   { id: "star_system_requirement_profile", objectType: "star_system", label: "Star System", requirements: requirements(["planet_card", "planet_hero"], "medium") },
   { id: "ui_requirement_profile", objectType: "ui", label: "UI", requirements: requirements(["loading_screen"], "low") },
+  { id: "encyclopedia_requirement_profile", objectType: "encyclopedia", label: "Encyclopedia", requirements: requirements(["encyclopedia_icon", "encyclopedia_card", "encyclopedia_hero"], "medium") },
   { id: "ai_agent_requirement_profile", objectType: "ai_agent", label: "AI Agent", requirements: requirements(["ai_agent_64_png", "ai_agent_96_png", "ai_agent_128_png", "ai_agent_256_png", "ai_agent_512_png", "ai_agent_1024_png"], "high") }
 ];
 
@@ -1380,7 +1385,8 @@ function auditRows(label: string, records: Array<{ missing: MissingAssetRequirem
   };
 }
 
-export async function getAssetProductionState(): Promise<AssetProductionState> {
+export async function getAssetProductionState(options: { includeEncyclopediaRequirements?: boolean } = {}): Promise<AssetProductionState> {
+  const includeEncyclopediaRequirements = options.includeEncyclopediaRequirements ?? true;
   const [{ rows, usage }, data, importState, store] = await Promise.all([getMergedAssetLibraryRows(), getGameData(), getGameArtImportWorkspaceState(), readProductionStore()]);
   const assets = rows.map((row) => productionAssetFor(row, usage, store)).sort((left, right) => left.name.localeCompare(right.name));
   const presets = activePresets(store);
@@ -1409,6 +1415,24 @@ export async function getAssetProductionState(): Promise<AssetProductionState> {
     });
     return auditRows(category, checked, profile);
   });
+  if (includeEncyclopediaRequirements) {
+    const encyclopediaRequirements = buildEncyclopediaAssetRequirements(data, assets).map((requirement) => ({
+      id: `missing_encyclopedia_${requirement.entryId}_${requirement.role}`,
+      objectType: `encyclopedia_${requirement.entityType}`,
+      objectId: requirement.entryId,
+      objectName: requirement.displayName,
+      requiredDerivative: `encyclopedia_${requirement.role}`,
+      currentStatus: "missing" as const,
+      priority: requirement.priority,
+      linkedCanonicalRecord: requirement.canonicalRecordId,
+      artKey: requirement.semanticAssetKey,
+      iconKey: requirement.role === "icon" ? requirement.semanticAssetKey : "",
+      assignedArtist: "",
+      dueDate: "",
+      completionPercent: 0
+    })).filter((item) => !(store.missingRequirements[item.id]?.notRequired));
+    missingRequirements.push(...encyclopediaRequirements.map((item) => ({ ...item, ...(store.missingRequirements[item.id] ?? {}) })) as MissingAssetRequirement[]);
+  }
   const existingMissingRequirementIds = new Set(missingRequirements.map((item) => item.id));
   missingRequirements.push(...Object.values(store.missingRequirements).filter((item) => item.id && item.objectType && item.objectName && !existingMissingRequirementIds.has(item.id)) as MissingAssetRequirement[]);
 

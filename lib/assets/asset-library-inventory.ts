@@ -17,7 +17,7 @@ export type AssetLibraryInventoryStatus =
   | "unmapped";
 
 export type AssetLibraryReference = {
-  type: "screen" | "component" | "visual_builder" | "ai_agent" | "upgrade_category" | "runtime" | "asset_registry" | "missing_requirement";
+  type: "screen" | "component" | "visual_builder" | "ai_agent" | "upgrade_category" | "encyclopedia" | "runtime" | "asset_registry" | "missing_requirement";
   id: string;
   name: string;
   href: string;
@@ -30,7 +30,7 @@ export type AssetLibraryInventoryItem = {
   categoryId: AssetLibraryCategoryId;
   categoryPath: string;
   role: string;
-  sourceType: "asset_registry" | "screen_requirement" | "component_requirement" | "visual_builder_placeholder" | "ai_agent_requirement" | "upgrade_category_asset" | "runtime_reference" | "missing_requirement";
+  sourceType: "asset_registry" | "screen_requirement" | "component_requirement" | "visual_builder_placeholder" | "ai_agent_requirement" | "upgrade_category_asset" | "encyclopedia_requirement" | "runtime_reference" | "missing_requirement";
   status: AssetLibraryInventoryStatus;
   previewUrl: string | null;
   sourceAssetId: string | null;
@@ -117,6 +117,7 @@ function categoryFor(input: { key: string; label: string; role: string; screenId
   if (/video|cinematic|movie/.test(text)) return "video";
   if (/animation|blink_animation|idle_animation/.test(text)) return "animations";
   if (/ai[_ -]?agent|auto_robot|robot/.test(text)) return "ai-agents";
+  if (/encyclopedia|galactopedia/.test(text)) return "encyclopedia";
   if (/upgrade[_ -]?panel[_ -]?(shared|workforce|industry|science|technology)[_ -]?background/.test(text) || (/(workforce|industry|science|technology) background/.test(text) && /upgrade|panel|dashboard/.test(text))) return "backgrounds";
   if (/top[_ -]?hud|hud|economy_|premium|civilization_identity|calendar|trophy/.test(text) || ["TopHudBar", "HudEconomySlot", "EconomyCounter", "PremiumCurrencyBalance", "UtilityIconButton"].some((id) => input.componentId === id)) return "top-hud";
   if (/left[_ -]?navigation|side[_ -]?navigation|nav[_ -]?rail|overview_icon|spaceport_icon/.test(text)) return "left-navigation";
@@ -364,13 +365,15 @@ export async function buildAssetLibraryInventory(input: {
     upsert({
       semanticAssetKey: key,
       displayName: missing.objectName,
-      categoryId: categoryFor({ key, label: missing.objectName, role, sourceType: "missing_requirement" }),
+      categoryId: missing.objectType.startsWith("encyclopedia") ? "encyclopedia" : categoryFor({ key, label: missing.objectName, role, sourceType: "missing_requirement" }),
       role,
-      sourceType: "missing_requirement",
+      sourceType: missing.objectType.startsWith("encyclopedia") ? "encyclopedia_requirement" : "missing_requirement",
       status: missing.currentStatus === "published" ? "published" : "missing",
       sourceAssetId: findAsset(assetsByKey, key)?.id ?? null,
       requirementId: missing.id,
-      reference: { type: "missing_requirement", id: missing.id, name: missing.objectName, href: `/asset-library?section=missing&requirement=${encodeURIComponent(missing.id)}` }
+      reference: missing.objectType.startsWith("encyclopedia")
+        ? { type: "encyclopedia", id: missing.objectId, name: missing.objectName, href: `/encyclopedia?entry=${encodeURIComponent(missing.objectId)}` }
+        : { type: "missing_requirement", id: missing.id, name: missing.objectName, href: `/asset-library?section=missing&requirement=${encodeURIComponent(missing.id)}` }
     });
   }
 
