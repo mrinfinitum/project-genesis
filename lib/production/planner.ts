@@ -2,6 +2,7 @@ import { civilizationAges } from "@/data/civilization-identity";
 import { contentPacks, type ContentPack, type ContentPackCategory, type ContentPackStatus } from "@/data/content-packs/survival";
 import type { AiAgentLibraryState } from "@/lib/ai-agents";
 import type { ArchitectureState } from "@/lib/architecture";
+import { appShellId, mainWorkspaceSlotId, normalWorkspaceScreenIds } from "@/lib/app-shell";
 import type { AssetProductionState, MissingAssetRequirement, ProductionAsset, ProductionTaskRecord } from "@/lib/assets/asset-production";
 import type { EraArtSummaryByEra } from "@/lib/assets/era-art-inventory";
 import type { ComponentDesignSummary, ComponentLibraryState } from "@/lib/component-library";
@@ -668,6 +669,11 @@ function buildReports(data: GameData, assetState: AssetProductionState, authorin
   const mobileComponentBlockers = (componentState?.stats.touchBlockers ?? 0) + (componentState?.stats.safeAreaBlockers ?? 0);
   const missingAgentCoreArt = (aiAgentState?.stats.missingOpenEyeArt ?? 0) + (aiAgentState?.stats.missingBlinkArt ?? 0) + (aiAgentState?.stats.missingOfflineArt ?? 0);
   const architectureOpenItems = (architectureState?.outstandingDecisions.length ?? 0) + (architectureState?.sections.filter((section) => section.status !== "Current").length ?? 0);
+  const appShellExists = screenState?.records.some((record) => record.screenId === appShellId && record.screenType === "shell") ?? false;
+  const appShellSlotExists = screenState?.records.some((record) => record.screenId === appShellId && record.layoutSpec.panelBounds.some((panel) => panel.id === mainWorkspaceSlotId)) ?? false;
+  const appShellMigratedScreens = screenState?.records.filter((record) => normalWorkspaceScreenIds.includes(record.screenId) && record.shellBinding?.workspaceSlotId === mainWorkspaceSlotId).length ?? 0;
+  const appShellDuplicateScreens = screenState?.records.filter((record) => record.screenType === "workspace" && record.componentSpecs.some((component) => component.componentLibraryId === "TopHudBar" || component.componentLibraryId === "SideNavigationRail")).length ?? 0;
+  const appShellGaps = [appShellExists, appShellSlotExists, appShellMigratedScreens === normalWorkspaceScreenIds.length, appShellDuplicateScreens === 0].filter((item) => !item).length;
   const contracts = buildEconomyBehaviorContracts();
   const producers = buildResourceProducerDefinitions(data);
   const buildingEffects = buildBuildingResourceEffects(data);
@@ -679,6 +685,7 @@ function buildReports(data: GameData, assetState: AssetProductionState, authorin
 
   return [
     { label: "Architecture Health", count: architectureOpenItems, href: "/architecture", severity: architectureOpenItems ? "High" : "Low", description: "Outstanding Architecture decisions or documentation sections needing review." },
+    { label: "App Shell Readiness", count: appShellGaps, href: "/screen-designer", severity: appShellGaps ? "High" : "Low", description: `${appShellMigratedScreens}/${normalWorkspaceScreenIds.length} workspaces target the Main Workspace Slot; ${appShellDuplicateScreens} screens duplicate shell components.` },
     { label: "Missing Assets", count: assetState.missingRequirements.length, href: "/assets/missing", severity: "High", description: "Required derivatives or source artwork still missing." },
     { label: "Preview Quality Gaps", count: previewGaps, href: "/assets", severity: previewGaps ? "High" : "Low", description: "Missing, stale, or low-resolution Studio thumbnails/previews." },
     { label: "Upgrade Art Gaps", count: upgradeArtGaps, href: "/upgrades", severity: upgradeArtGaps ? "High" : "Low", description: "Upgrade records without a resolved real icon preview or needing candidate review." },
@@ -987,6 +994,19 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
   const previewTotal = Math.max(1, assetState.visualPreviewReport.totalVisualRecords);
   const upgradeArtReady = upgradeArtReport.stats.previewReady;
   const upgradeArtTotal = Math.max(1, upgradeArtReport.stats.total);
+  const appShellRecord = screenState?.records.find((record) => record.screenId === appShellId);
+  const migratedShellScreens = screenState?.records.filter((record) => normalWorkspaceScreenIds.includes(record.screenId) && record.shellBinding?.shellId === appShellId && record.shellBinding?.workspaceSlotId === mainWorkspaceSlotId).length ?? 0;
+  const duplicatedShellScreens = screenState?.records.filter((record) => record.screenType === "workspace" && record.componentSpecs.some((component) => component.componentLibraryId === "TopHudBar" || component.componentLibraryId === "SideNavigationRail")).length ?? 0;
+  const shellComponentIds = new Set(componentState?.records.map((record) => record.componentId) ?? []);
+  const appShellComponentReady = ["NoverisAppShell", "TopHudBar", "SideNavigationRail", "MainWorkspaceSlot", "GlobalOverlayRoot", "RouteWorkspaceRoot", "WorkspaceBackground", "LocalOverlayRoot", "FullScreenTakeover"].filter((componentId) => shellComponentIds.has(componentId)).length;
+  const appShellReadyChecks = [
+    Boolean(appShellRecord),
+    Boolean(appShellRecord?.layoutSpec.panelBounds.some((panel) => panel.id === mainWorkspaceSlotId)),
+    migratedShellScreens === normalWorkspaceScreenIds.length,
+    duplicatedShellScreens === 0,
+    appShellComponentReady >= 9,
+    Boolean(screenState?.records.filter((record) => record.screenType === "full_screen_takeover").every((record) => record.shellBinding.presentationMode === "full_screen_takeover" && record.shellBinding.fullScreenTakeoverReason))
+  ];
 
   const metrics: ProductionMetric[] = [
     { label: "Overall Game Completion", complete: 0, total: 0, value: 0, detail: "Average of all production systems." },
@@ -1006,6 +1026,7 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
     { label: "Component Preview Generation", complete: componentPreviewGenerated, total: Math.max(1, componentPreviewTotal), value: percent(componentPreviewGenerated, componentPreviewTotal), detail: `${componentState?.stats.componentPreviewsNeedsReview ?? 0} generated previews need review, ${componentState?.stats.componentPreviewsBlockedByMissingBrowserCapture ?? 0} blocked from implementation screenshot capture.` },
     { label: "Mobile Screen Readiness", complete: mobileReadyScreens, total: Math.max(1, mobileScreenTotal), value: percent(mobileReadyScreens, mobileScreenTotal), detail: `${screenState?.stats.safeAreaBlockers ?? 0} safe-area blockers, ${screenState?.stats.touchBlockers ?? 0} touch blockers, ${screenState?.stats.iosBlockers ?? 0} iOS blockers, ${screenState?.stats.androidBlockers ?? 0} Android blockers.` },
     { label: "Mobile Component Readiness", complete: mobileReadyComponents, total: Math.max(1, mobileComponentTotal), value: percent(mobileReadyComponents, mobileComponentTotal), detail: `${componentState?.stats.touchBlockers ?? 0} touch blockers, ${componentState?.stats.safeAreaBlockers ?? 0} safe-area blockers, ${componentState?.stats.iosBlockers ?? 0} iOS blockers, ${componentState?.stats.androidBlockers ?? 0} Android blockers.` },
+    { label: "App Shell Readiness", complete: appShellReadyChecks.filter(Boolean).length, total: appShellReadyChecks.length, value: percent(appShellReadyChecks.filter(Boolean).length, appShellReadyChecks.length), detail: `${migratedShellScreens}/${normalWorkspaceScreenIds.length} routed workspaces migrated, ${duplicatedShellScreens} duplicated shell component screens, ${appShellComponentReady}/9 shell components present.` },
     { label: "AI Agent Readiness", complete: aiAgentScore.complete, total: aiAgentScore.total, value: aiAgentScore.value, detail: `${aiAgentState?.stats.selectableAgents ?? 0} selectable agents, ${aiAgentState?.stats.selectableVariants ?? 0} selectable variants, ${aiAgentState?.stats.completeThreeStateArtSets ?? 0} complete open/blink/offline art sets, ${aiAgentState?.stats.missingOpenEyeArt ?? 0} missing open-eye, ${aiAgentState?.stats.missingBlinkArt ?? 0} missing blink, ${aiAgentState?.stats.missingOfflineArt ?? 0} missing offline.` },
     { label: "Architecture Health", complete: architectureSectionsCurrent, total: Math.max(1, architectureSectionsTotal), value: architectureState?.healthScore ?? 0, detail: `${architectureState?.outstandingDecisions.length ?? 0} outstanding decisions, architecture version ${architectureState?.architectureVersion.current ?? "not loaded"}.` }
   ];

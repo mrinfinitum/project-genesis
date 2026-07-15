@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { appShellBounds, appShellDisplayName, appShellId, appShellLayerTree, appShellVersion, blankInnerWorkspaceTemplate, createShellBinding, derivedShellProfiles, mainWorkspaceSlotId, navigationMetadataForScreen, topHudChildren, visualBuilderModes, type AppShellBuilderMode, type AppShellScreenType, type ScreenNavigationMetadata, type ScreenShellBinding } from "@/lib/app-shell";
 import type { AssetProductionState, ProductionAsset } from "@/lib/assets/asset-production";
 import { findAssetForPreviewKeys, resolveScreenPreview, type VisualPreview } from "@/lib/assets/visual-previews";
 
@@ -114,6 +115,9 @@ export type ScreenReference = {
   date: string;
   notes: string;
   approvalStatus: ScreenApprovalStatus;
+  viewModes?: Array<"Full Reference" | "Workspace Only" | "Shell Context" | "Full Composition Preview">;
+  workspaceCrop?: { x: number; y: number; width: number; height: number };
+  excludedFromRuntime?: boolean;
 };
 
 export type ScreenDesignChecklist = {
@@ -147,6 +151,10 @@ export type ScreenMobileReadiness = {
 export type ScreenDesignRecord = {
   id: string;
   screenId: string;
+  screenType: AppShellScreenType;
+  shellBinding: ScreenShellBinding;
+  navigationMetadata?: ScreenNavigationMetadata;
+  previewModes: AppShellBuilderMode[];
   displayName: string;
   description: string;
   status: ScreenDesignStatus;
@@ -261,6 +269,56 @@ function layout(label: string, mode: ScreenLayoutSpec["layoutMode"] = "full_scre
   };
 }
 
+const appShellLayoutSpec: ScreenLayoutSpec = {
+  designWidth: appShellBounds.masterCanvas.width,
+  designHeight: appShellBounds.masterCanvas.height,
+  coordinateSystem: "hud_overlay_4k",
+  layoutMode: "hud_overlay",
+  panelBounds: [
+    appShellBounds.globalBackground,
+    appShellBounds.topHud,
+    appShellBounds.leftNavigation,
+    appShellBounds.mainWorkspaceSlot,
+    appShellBounds.globalOverlayRoot,
+    appShellBounds.globalModalRoot,
+    appShellBounds.notificationLayer,
+    appShellBounds.debugCalibrationLayer
+  ],
+  columns: "4K shell: fixed top HUD, fixed left navigation rail, and one Main Workspace Slot for route content.",
+  rows: "Top Civilization HUD remains mounted. Route selections replace only the Main Workspace Slot.",
+  spacing: "4K absolute shell coordinates. Workspace-local screens use Main Workspace Slot top-left as origin.",
+  alignment: "Global HUD and navigation are shell-owned; route screens cannot move them.",
+  safeAreas: ["Top HUD bounds", "Left Navigation Rail bounds", "Main Workspace Slot safe bounds", "Global modal safe bounds"],
+  overflowBehavior: "Shell roots remain mounted. Workspaces handle internal scrolling, panning, or local drawers.",
+  backgroundLayers: ["Global Background"],
+  overlayLayers: ["Global Overlay Root", "Global Modal Root", "Notification Layer", "Debug/Calibration Layer"]
+};
+
+function workspaceLayout(label: string): ScreenLayoutSpec {
+  const slot = appShellBounds.mainWorkspaceSlot;
+  return {
+    designWidth: slot.width,
+    designHeight: slot.height,
+    coordinateSystem: "hud_overlay_4k",
+    layoutMode: "hud_overlay",
+    panelBounds: [
+      { id: "workspace-root", label: `${label} workspace root`, x: 0, y: 0, width: slot.width, height: slot.height, zIndex: 0 },
+      { id: "workspace-background", label: "Workspace background placeholder", x: 0, y: 0, width: slot.width, height: slot.height, zIndex: 0 },
+      { id: "local-content-root", label: "Local content root", x: 0, y: 0, width: slot.width, height: slot.height, zIndex: 10 },
+      { id: "local-overlay-root", label: "Local overlay root", x: 0, y: 0, width: slot.width, height: slot.height, zIndex: 800 },
+      { id: "local-modal-drawer-root", label: "Optional local modal/drawer root", x: 0, y: 0, width: slot.width, height: slot.height, zIndex: 850 }
+    ],
+    columns: "Workspace-local coordinate system inside Main Workspace Slot.",
+    rows: "Local screen content only; persistent HUD and navigation are inherited from the shell.",
+    spacing: "Use workspace-local spacing and component tokens. Do not reserve duplicate global HUD geometry.",
+    alignment: "Local content aligns to the workspace slot, not the browser viewport.",
+    safeAreas: ["Main Workspace Slot", "local overlay root", "local modal/drawer root"],
+    overflowBehavior: "Workspace content scrolls, pans, or drawers locally without remounting the global shell.",
+    backgroundLayers: ["workspace-background"],
+    overlayLayers: ["local-overlay-root", "local-modal-drawer-root"]
+  };
+}
+
 function implementationTargets(web: ScreenImplementationStatus, roblox: ScreenImplementationStatus = "Not Started") {
   return [
     { target: "Vite Web" as const, status: web, notes: "Tracked against the prototype web client." },
@@ -362,6 +420,10 @@ function baseRecord(input: {
   displayName: string;
   description: string;
   status: ScreenDesignStatus;
+  screenType?: AppShellScreenType;
+  shellBinding?: Partial<ScreenShellBinding>;
+  navigationMetadata?: ScreenNavigationMetadata;
+  previewModes?: AppShellBuilderMode[];
   approvalStatus?: ScreenApprovalStatus;
   assignedTo?: string;
   layoutMode?: ScreenLayoutSpec["layoutMode"];
@@ -378,9 +440,14 @@ function baseRecord(input: {
   notes?: string[];
 }): ScreenDesignRecord {
   const now = "2026-07-13T00:00:00.000Z";
+  const screenType = input.screenType ?? "workspace";
   return {
     id: `screen-design-${input.screenId}`,
     screenId: input.screenId,
+    screenType,
+    shellBinding: createShellBinding(input.screenId, input.shellBinding),
+    navigationMetadata: input.navigationMetadata ?? navigationMetadataForScreen(input.screenId),
+    previewModes: input.previewModes ?? (screenType === "full_screen_takeover" ? ["Full Composition Preview"] : visualBuilderModes),
     displayName: input.displayName,
     description: input.description,
     status: input.status,
@@ -392,7 +459,7 @@ function baseRecord(input: {
     updatedAt: now,
     referenceViewport: "1920x1080",
     supportedViewports,
-    layoutSpec: layout(input.displayName, input.layoutMode),
+    layoutSpec: screenType === "workspace" ? workspaceLayout(input.displayName) : layout(input.displayName, input.layoutMode),
     componentSpecs: input.componentSpecs ?? [],
     assetRequirements: input.assetRequirements ?? [],
     dataRequirements: input.dataRequirements ?? [],
@@ -424,40 +491,36 @@ function baseRecord(input: {
 }
 
 const researchMasterLayout: ScreenLayoutSpec = {
-  designWidth: 3840,
-  designHeight: 2160,
+  designWidth: 3244,
+  designHeight: 1804,
   coordinateSystem: "hud_overlay_4k",
   layoutMode: "hud_overlay",
   panelBounds: [
-    { id: "research-screen-root", label: "Research Screen / 4K master canvas", x: 0, y: 0, width: 3840, height: 2160, zIndex: 0 },
+    { id: "workspace-root", label: "Research Workspace / Main Workspace Slot local canvas", x: 0, y: 0, width: 3244, height: 1804, zIndex: 0 },
     { id: "reference", label: "Reference group", x: 0, y: 0, width: 3840, height: 2160, zIndex: 1 },
     { id: "research-master-reference", label: "Research Master Reference / locked 50% overlay", x: 0, y: 0, width: 3840, height: 2160, zIndex: 2 },
-    { id: "background", label: "Background group", x: 0, y: 0, width: 3840, height: 2160, zIndex: 0 },
-    { id: "research-background", label: "Research Background image placeholder", x: 0, y: 0, width: 3840, height: 2160, zIndex: 0 },
-    { id: "top-hud", label: "Top HUD group", x: 0, y: 0, width: 3840, height: 220, zIndex: 100 },
-    { id: "research-top-hud", label: "Civilization HUD / TopHudBar placeholder", x: 0, y: 0, width: 3840, height: 220, zIndex: 110 },
-    { id: "left-navigation", label: "Left Navigation group", x: 54, y: 276, width: 360, height: 1668, zIndex: 120 },
-    { id: "research-left-nav", label: "Main Navigation / SideNavigationRail placeholder", x: 54, y: 276, width: 360, height: 1668, zIndex: 125 },
-    { id: "research-header", label: "Research Header group", x: 464, y: 260, width: 900, height: 220, zIndex: 130 },
-    { id: "research-branch-sidebar", label: "Research Branch Sidebar group", x: 464, y: 520, width: 600, height: 1308, zIndex: 130 },
-    { id: "research-progress-summary", label: "Total Research summary", x: 504, y: 1708, width: 520, height: 96, zIndex: 140 },
-    { id: "research-tree-workspace", label: "Research Tree Workspace group", x: 1116, y: 520, width: 1716, height: 1308, zIndex: 130 },
-    { id: "selected-branch-header", label: "Selected Branch Header", x: 1164, y: 560, width: 1620, height: 220, zIndex: 140 },
-    { id: "research-connection-layer", label: "Research connection layer", x: 1164, y: 820, width: 1620, height: 860, zIndex: 141 },
-    { id: "research-node-layout", label: "Research node placeholder grid", x: 1216, y: 840, width: 1516, height: 780, zIndex: 150 },
-    { id: "research-detail-panel", label: "Research Detail Panel group", x: 2884, y: 520, width: 824, height: 1308, zIndex: 130 },
-    { id: "era-timeline", label: "Era Timeline group", x: 1116, y: 1876, width: 2592, height: 188, zIndex: 130 },
-    { id: "modal-layer", label: "Modal Layer", x: 0, y: 0, width: 3840, height: 2160, zIndex: 900 },
-    { id: "overlay-layer", label: "Overlay Layer", x: 0, y: 0, width: 3840, height: 2160, zIndex: 1000 }
+    { id: "workspace-background", label: "Research Workspace Background image placeholder", x: 0, y: 0, width: 3244, height: 1804, zIndex: 0 },
+    { id: "local-content-root", label: "Research local content root", x: 0, y: 0, width: 3244, height: 1804, zIndex: 10 },
+    { id: "research-header", label: "Research Header group", x: 0, y: 0, width: 900, height: 220, zIndex: 130 },
+    { id: "research-branch-sidebar", label: "Research Branch Sidebar group", x: 0, y: 260, width: 600, height: 1308, zIndex: 130 },
+    { id: "research-progress-summary", label: "Total Research summary", x: 40, y: 1448, width: 520, height: 96, zIndex: 140 },
+    { id: "research-tree-workspace", label: "Research Tree Workspace group", x: 652, y: 260, width: 1716, height: 1308, zIndex: 130 },
+    { id: "selected-branch-header", label: "Selected Branch Header", x: 700, y: 300, width: 1620, height: 220, zIndex: 140 },
+    { id: "research-connection-layer", label: "Research connection layer", x: 700, y: 560, width: 1620, height: 860, zIndex: 141 },
+    { id: "research-node-layout", label: "Research node placeholder grid", x: 752, y: 580, width: 1516, height: 780, zIndex: 150 },
+    { id: "research-detail-panel", label: "Research Detail Panel group", x: 2420, y: 260, width: 824, height: 1308, zIndex: 130 },
+    { id: "era-timeline", label: "Era Timeline group", x: 652, y: 1616, width: 2592, height: 188, zIndex: 130 },
+    { id: "local-modal-drawer-root", label: "Local Modal/Drawer Root", x: 0, y: 0, width: 3244, height: 1804, zIndex: 900 },
+    { id: "local-overlay-root", label: "Local Overlay Root", x: 0, y: 0, width: 3244, height: 1804, zIndex: 1000 }
   ],
-  columns: "4K HUD overlay: 54px outer gutter, 360px left nav, 50px nav/content gap, 600px branch sidebar, 52px internal gap, 1716px research tree, 52px gap, 824px detail panel.",
-  rows: "Top HUD 220px, content top 520px, primary workspace 1308px, bottom era timeline 188px, fixed modal/overlay layers above.",
-  spacing: "All authored coordinates are 4K. Generated desktop_1080 coordinates use 0.5 scale. Default panel gutter is 40-52px; internal panel padding is 32-48px.",
-  alignment: "Match the supplied reference composition: persistent top HUD, left rail, branch list left, tree canvas center, detail panel right, timeline bottom.",
-  safeAreas: ["top HUD 220px at 4K", "left navigation 54x276 360x1668", "bottom timeline y1876 h188", "modal and overlay full canvas"],
-  overflowBehavior: "Gameplay shell is fixed. Branch sidebar and detail panel scroll internally; research tree pans/zooms internally; no browser page scroll.",
-  backgroundLayers: ["research-background", "research-master-reference locked at 50% opacity, builder-only, excluded from runtime export"],
-  overlayLayers: ["Modal Layer", "Overlay Layer", "tooltips", "selection preview", "difference/overlay review controls"]
+  columns: "Workspace-local coordinates inside Main Workspace Slot: 600px branch sidebar, 52px internal gap, 1716px research tree, 52px gap, 824px detail panel.",
+  rows: "Workspace content top 0px, primary workspace starts at 260px, bottom era timeline y1616 h188, local modal/overlay layers above.",
+  spacing: "Authored in Main Workspace Slot-local 4K coordinates. Desktop_1080 composition uses the shell profile plus 0.5 scale. Default panel gutter is 40-52px; internal panel padding is 32-48px.",
+  alignment: "Match the supplied reference within shell context: branch list left, tree canvas center, detail panel right, timeline bottom. Top HUD and navigation are shell-owned.",
+  safeAreas: ["Main Workspace Slot x464 y260 w3244 h1804", "bottom timeline y1616 h188", "local modal/drawer root", "local overlay root"],
+  overflowBehavior: "Global shell is fixed and persistent. Branch sidebar and detail panel scroll internally; research tree pans/zooms internally; no browser page scroll.",
+  backgroundLayers: ["workspace-background", "research-master-reference locked at 50% opacity, builder-only, excluded from runtime export"],
+  overlayLayers: ["local-modal-drawer-root", "local-overlay-root", "tooltips", "selection preview", "difference/overlay review controls"]
 };
 
 function researchComponent(input: {
@@ -501,46 +564,34 @@ function researchComponent(input: {
 
 const researchComponents: ScreenComponentSpec[] = [
   researchComponent({
-    id: "research-screen-shell",
-    componentLibraryId: "ResearchScreenShell",
-    displayName: "ResearchScreenShell",
-    purpose: "Full management-screen shell containing the permanent HUD, navigation, research workspace, modal, and overlay layers.",
-    dimensions: "3840x2160 root; desktop_1080 derived at 1920x1080.",
-    positioning: "Root layer tree: Reference, Background, Top HUD, Left Navigation, Research Header, Research Branch Sidebar, Research Tree Workspace, Research Detail Panel, Era Timeline, Modal Layer, Overlay Layer.",
-    assetKeys: ["research_screen_background", "research_master_reference"],
-    interactions: ["Show/hide reference", "Adjust reference opacity", "Lock/unlock reference", "Toggle 50% overlay", "Toggle difference mode if supported"]
+    id: "route-workspace-root",
+    componentLibraryId: "RouteWorkspaceRoot",
+    displayName: "Research Route Workspace Root",
+    purpose: "Screen-local root mounted inside the App Shell Main Workspace Slot.",
+    dimensions: "workspace x0 y0 w3244 h1804 / shell x464 y260 w3244 h1804.",
+    positioning: "Mounted by NOVERIS App Shell in main-workspace-slot.",
+    assetKeys: [],
+    interactions: ["Show Workspace Only", "Preview in Shell Context", "Preview Full Composition"]
   }),
   researchComponent({
-    id: "research-background",
-    componentLibraryId: "ImagePlaceholder",
-    displayName: "Research Background",
-    purpose: "Full-screen Research background and HUD backing placeholder.",
-    dimensions: "x0 y0 w3840 h2160 / z0.",
-    positioning: "Background group behind all interactive HUD layers.",
+    id: "workspace-background",
+    componentLibraryId: "WorkspaceBackground",
+    displayName: "Research Workspace Background",
+    purpose: "Workspace-local Research background placeholder.",
+    dimensions: "x0 y0 w3244 h1804 / z0.",
+    positioning: "Inside RouteWorkspaceRoot behind local Research content.",
     assetKeys: ["research_screen_background"],
     states: ["Placeholder", "Missing Art", "Ready"]
   }),
   researchComponent({
-    id: "research-top-hud",
-    componentLibraryId: "TopHudBar",
-    displayName: "Civilization HUD",
-    purpose: "Permanent civilization-wide resource HUD using the canonical five-slot economy order.",
-    dimensions: "x0 y0 w3840 h220.",
-    positioning: "Pinned to the top edge above the management workspace.",
-    assetKeys: ["economy_labor", "economy_credits", "economy_population", "economy_research", "economy_premium_crystals"],
-    dataInputs: ["clientProfiles.default.primaryHudSlots", "economyDefinitions", "eraEconomyProfile", "player economy balances/rates"],
-    notes: "HUD order is ECON-LABOR, ECON-CREDITS, ECON-POPULATION, ECON-RESEARCH, ECON-PREMIUM-CRYSTALS. Do not create screen-specific economy logic."
-  }),
-  researchComponent({
-    id: "research-left-nav",
-    componentLibraryId: "SideNavigationRail",
-    displayName: "Main Navigation",
-    purpose: "Primary game navigation with Research represented as active.",
-    dimensions: "x54 y276 w360 h1668.",
-    positioning: "Left navigation rail, independent of branch sidebar.",
-    assetKeys: ["side_navigation_rail", "navigation_icons"],
-    dataInputs: ["canonical navigation definitions", "currentRoute"],
-    states: ["Default", "Hover", "Focused", "Active", "Locked", "Disabled"]
+    id: "local-overlay-root",
+    componentLibraryId: "LocalOverlayRoot",
+    displayName: "Research Local Overlay Root",
+    purpose: "Screen-local overlays, tooltips, selection previews, and review controls inside the workspace.",
+    dimensions: "x0 y0 w3244 h1804 / z1000.",
+    positioning: "Above Research content but below global shell overlays.",
+    assetKeys: [],
+    states: ["Default", "Tooltip", "Selection Preview", "Difference Overlay", "Hidden"]
   }),
   researchComponent({
     id: "research-header",
@@ -715,6 +766,161 @@ const researchComponents: ScreenComponentSpec[] = [
 ];
 
 const initialScreenDesignRecords: ScreenDesignRecord[] = [
+  {
+    ...baseRecord({
+      screenId: appShellId,
+      displayName: appShellDisplayName,
+      description: "Persistent global civilization shell for NOVERIS. Top HUD, left navigation, global overlays, modals, notifications, and the Main Workspace Slot remain mounted while route workspaces swap inside the slot.",
+      status: "Draft",
+      screenType: "shell",
+      shellBinding: createShellBinding(appShellId),
+      assignedTo: "UX Architecture",
+      layoutMode: "hud_overlay",
+      componentSpecs: [
+        researchComponent({
+          id: "global-background",
+          componentLibraryId: "NoverisAppShell",
+          displayName: "Global Background",
+          purpose: "Shell-owned background layer behind all workspace routes.",
+          dimensions: "x0 y0 w3840 h2160 / z0.",
+          positioning: "Global shell root.",
+          assetKeys: ["dashboard_hero", "global_background"]
+        }),
+        researchComponent({
+          id: "top-civilization-hud",
+          componentLibraryId: "TopHudBar",
+          displayName: "Top Civilization HUD",
+          purpose: "Persistent civilization-wide HUD with fixed economy slots and global actions.",
+          dimensions: "x0 y0 w3840 h220 / z100.",
+          positioning: "Pinned top of App Shell.",
+          assetKeys: ["economy_labor", "economy_credits", "economy_population", "economy_research", "economy_premium_crystals"],
+          dataInputs: ["clientProfiles.default.primaryHudSlots", "eraEconomyProfile", "economyDefinitions", "player economy balances/rates"],
+          notes: `Shell-only. Children: ${topHudChildren.join(", ")}.`
+        }),
+        researchComponent({
+          id: "left-navigation-rail",
+          componentLibraryId: "SideNavigationRail",
+          displayName: "Left Navigation Rail",
+          purpose: "Persistent route navigation that replaces only the Main Workspace Slot.",
+          dimensions: "x54 y276 w360 h1668 / z120.",
+          positioning: "Pinned left of App Shell.",
+          assetKeys: ["side_navigation_rail", "navigation_icons"],
+          dataInputs: ["navigationContract", "currentRoute"]
+        }),
+        researchComponent({
+          id: mainWorkspaceSlotId,
+          componentLibraryId: "MainWorkspaceSlot",
+          displayName: "Main Workspace Slot",
+          purpose: "Only mount point for normal route-specific content.",
+          dimensions: "x464 y260 w3244 h1804 / z130.",
+          positioning: "Between the persistent navigation and shell overlays.",
+          dataInputs: ["routeMetadata", "activeScreenId", "workspaceSlotId"]
+        }),
+        researchComponent({
+          id: "global-overlay-root",
+          componentLibraryId: "GlobalOverlayRoot",
+          displayName: "Global Overlay Root",
+          purpose: "Global tooltips, status overlays, non-route overlays, and shell-owned notifications.",
+          dimensions: "x0 y0 w3840 h2160 / z900.",
+          positioning: "Above shell and workspace content."
+        }),
+        researchComponent({
+          id: "global-modal-root",
+          componentLibraryId: "GlobalOverlayRoot",
+          displayName: "Global Modal Root",
+          purpose: "Shell-owned settings, calendar, achievements, account, and blocking global modal host.",
+          dimensions: "x464 y260 w3244 h1804 / z910.",
+          positioning: "Global modal safe bounds above the workspace slot."
+        }),
+        researchComponent({
+          id: "notification-layer",
+          componentLibraryId: "GlobalOverlayRoot",
+          displayName: "Notification Layer",
+          purpose: "Persistent notification/status surface that does not remount on route change.",
+          dimensions: "x464 y240 w3244 h360 / z920.",
+          positioning: "Top of the workspace safe region."
+        }),
+        researchComponent({
+          id: "debug-calibration-layer",
+          componentLibraryId: "GlobalOverlayRoot",
+          displayName: "Debug/Calibration Layer",
+          purpose: "Studio-only calibration layer for shell/workspace bounds and parity inspection.",
+          dimensions: "x0 y0 w3840 h2160 / z1000.",
+          positioning: "Topmost builder-only layer."
+        })
+      ],
+      dataRequirements: [
+        data("shell-navigation-contract", "Route navigation contract", "Presentation Hint", "navigationContract", "Mapped"),
+        data("shell-hud-slots", "Fixed HUD slots", "Canonical Studio Definition", "clientProfiles.default.primaryHudSlots", "Mapped"),
+        data("shell-derived-profiles", "Shell profile geometry", "Presentation Hint", "derivedShellProfiles", "Mapped")
+      ],
+      assetRequirements: [
+        asset("shell-background", "Global shell background", "global_background", "background", "Needs Approval"),
+        asset("shell-navigation", "Left navigation rail artwork", "side_navigation_rail", "background", "Needs Web Mapping")
+      ],
+      checklist: {
+        layoutDefined: true,
+        componentsDefined: true,
+        canonicalDataMapped: true,
+        playerStateMapped: true,
+        missingSystemsIdentified: true,
+        assetRequirementsCreated: true,
+        allStatesDesigned: true,
+        interactionsDocumented: true,
+        responsiveRulesDefined: true,
+        motionDefined: true,
+        accessibilityReviewed: false,
+        referencesAttached: false
+      },
+      notes: [
+        `Layer tree: ${appShellLayerTree.join(" > ")}.`,
+        `Main Workspace Slot bounds: x${appShellBounds.mainWorkspaceSlot.x} y${appShellBounds.mainWorkspaceSlot.y} w${appShellBounds.mainWorkspaceSlot.width} h${appShellBounds.mainWorkspaceSlot.height}.`,
+        `Derived profiles: ${derivedShellProfiles.map((profile) => profile.id).join(", ")}.`,
+        "Shell editing is allowed only in this App Shell record. Inner route screens must create an Architecture/Design conflict request for shell changes.",
+        "Draft builder state, shell guides, reference overlays, and internal comments are not public runtime exports."
+      ]
+    }),
+    layoutSpec: appShellLayoutSpec,
+    referenceViewport: "3840x2160",
+    previewModes: visualBuilderModes
+  },
+  {
+    ...baseRecord({
+      screenId: "civilization-command",
+      displayName: "Civilization Command",
+      description: "Primary route workspace for civilization overview content mounted inside the persistent NOVERIS App Shell.",
+      status: "Draft",
+      assignedTo: "UX Design",
+      layoutMode: "hud_overlay",
+      dataRequirements: [
+        data("command-runtime", "Runtime era/economy/upgrade definitions", "Canonical Studio Definition", "game-runtime-data", "Mapped"),
+        data("command-player-progress", "Player progression and current era state", "Player Runtime State", "game client", "Partial")
+      ],
+      componentSpecs: [
+        researchComponent({
+          id: "route-workspace-root",
+          componentLibraryId: "RouteWorkspaceRoot",
+          displayName: "Civilization Command Workspace Root",
+          purpose: "Local workspace root mounted in main-workspace-slot.",
+          dimensions: "x0 y0 w3244 h1804.",
+          positioning: "Inside NOVERIS App Shell Main Workspace Slot."
+        }),
+        researchComponent({
+          id: "workspace-background",
+          componentLibraryId: "WorkspaceBackground",
+          displayName: "Civilization Command Background",
+          purpose: "Local background placeholder without duplicating global shell elements.",
+          dimensions: "x0 y0 w3244 h1804.",
+          positioning: "Behind Civilization Command local content."
+        })
+      ],
+      notes: [
+        `Generated from ${blankInnerWorkspaceTemplate.displayName}.`,
+        "Route metadata maps Overview navigation to civilization-command and replaces only main-workspace-slot."
+      ]
+    }),
+    layoutSpec: workspaceLayout("Civilization Command")
+  },
   baseRecord({
     screenId: "dashboard",
     displayName: "Dashboard",
@@ -924,6 +1130,8 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
     displayName: "Welcome",
     description: "Mobile-first welcome entry screen for NOVERIS.",
     status: "Draft",
+    screenType: "full_screen_takeover",
+    shellBinding: { presentationMode: "full_screen_takeover", fullScreenTakeoverReason: "Welcome/Login" },
     layoutMode: "modal",
     dataRequirements: [data("welcome-profile", "Client presentation profile", "Presentation Hint", "clientProfiles.ios/android", "Mapped")],
     assetRequirements: [asset("noveris-wordmark", "NOVERIS wordmark", "mobile_noveris_wordmark", "background", "Missing")],
@@ -936,6 +1144,8 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
     displayName: "Login",
     description: "Account login screen with email, magic link, Google, and Sign in with Apple presentation requirements.",
     status: "Draft",
+    screenType: "full_screen_takeover",
+    shellBinding: { presentationMode: "full_screen_takeover", fullScreenTakeoverReason: "Welcome/Login" },
     layoutMode: "modal",
     dataRequirements: [data("auth-profile", "Auth capability metadata", "Presentation Hint", "clientProfiles.ios/android.authenticationProfile", "Mapped")],
     assetRequirements: [asset("login-background", "Login background", "mobile_login_background", "background", "Missing")],
@@ -948,6 +1158,8 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
     displayName: "Signup",
     description: "Account creation and guest conversion screen.",
     status: "Draft",
+    screenType: "full_screen_takeover",
+    shellBinding: { presentationMode: "full_screen_takeover", fullScreenTakeoverReason: "Welcome/Login" },
     layoutMode: "modal",
     dataRequirements: [data("account-conversion", "Account conversion capabilities", "Presentation Hint", "clientProfiles.ios/android.authenticationProfile", "Mapped")],
     interactionSpecs: [interaction("create-account", "Tap Create Account", "Signup flow starts", "Client auth action.")],
@@ -959,6 +1171,8 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
     displayName: "Loading",
     description: "Mobile loading and launch transition screen.",
     status: "Draft",
+    screenType: "full_screen_takeover",
+    shellBinding: { presentationMode: "full_screen_takeover", fullScreenTakeoverReason: "Loading" },
     layoutMode: "full_screen_page",
     dataRequirements: [data("lifecycle-profile", "Mobile lifecycle presentation hints", "Presentation Hint", "clientProfiles.ios/android.lifecycleProfile", "Mapped")],
     assetRequirements: [asset("mobile-loading", "Mobile loading screen", "mobile_loading_screen", "background", "Missing"), asset("mobile-launch-background", "Launch background", "mobile_launch_background", "background", "Missing")],
@@ -993,6 +1207,8 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
     displayName: "Save Conflict",
     description: "Cloud save conflict resolution screen.",
     status: "Draft",
+    screenType: "full_screen_takeover",
+    shellBinding: { presentationMode: "full_screen_takeover", fullScreenTakeoverReason: "Save Conflict Blocking" },
     layoutMode: "modal",
     dataRequirements: [data("save-conflict", "Save conflict notification/deep-link hints", "Presentation Hint", "clientProfiles.ios/android.notificationProfile", "Mapped")],
     interactionSpecs: [interaction("resolve-conflict", "Tap Keep Local or Cloud", "Conflict resolution confirmation opens", "Client save-service action.")],
@@ -1109,12 +1325,14 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
       mobileReadiness: { mobileDesignStatus: "Draft", safeAreaReadiness: "Needs Review", touchReadiness: "Needs Review", mobileAssetReadiness: "Missing" },
       notes: [
         "Screen type: management. Status: draft. Target clients: Web, Roblox, iOS, Android, Tablet.",
-        "Use the supplied reference only as a locked Studio-only design reference. It is excluded from runtime export and production asset manifests.",
+        "Research is an inner workspace mounted inside the persistent NOVERIS App Shell Main Workspace Slot.",
+        "Use the supplied full reference only as shell context. It is excluded from runtime export and production asset manifests.",
         "Reference controls required: show/hide, opacity, lock/unlock, reference only, builder only, 50% overlay, and difference mode if supported.",
-        "The layer tree is Research Screen > Reference > Research Master Reference, Background, Top HUD, Left Navigation, Research Header, Research Branch Sidebar, Research Tree Workspace, Research Detail Panel, Era Timeline, Modal Layer, Overlay Layer.",
-        "All geometry is authored in 3840x2160 4K coordinates. Desktop 1920x1080 manifests are derived at 0.5 scale; do not author directly in browser viewport coordinates.",
+        "The layer tree is Route Workspace Root > Reference > Research Master Reference, Workspace Background, Research Header, Research Branch Sidebar, Research Tree Workspace, Research Detail Panel, Era Timeline, Local Modal/Drawer Root, Local Overlay Root.",
+        "All route geometry is authored in Main Workspace Slot-local 4K coordinates. Full composition previews resolve shell x464 y260 w3244 h1804 around the local workspace.",
         "Placeholders are structured and replaceable: preserve geometry, z-index, data bindings, interactions, states, and derived 1080 coordinates when final art is uploaded.",
         "Reference branch/node names such as Agriculture, Food Storage, and Hydroponics are placeholders only. Actual definitions come from canonical research data.",
+        "TopHudBar and SideNavigationRail belong to the App Shell and must not be duplicated in this Research screen record.",
         "Do not implement Vite/Roblox gameplay or export this draft placeholder layout into public runtime in this task."
       ]
     }),
@@ -1127,7 +1345,10 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
       source: "/mnt/data/CF773185-E780-4A10-AB7D-421CD15F7D62.jpeg",
       date: "2026-07-14",
       notes: "Research Master Reference. Studio-only reference layer: locked true, visible true, opacity 50%, fit contain, centered, preserve aspect ratio, noninteractive, excluded from runtime export and production asset manifests.",
-      approvalStatus: "Unreviewed"
+      approvalStatus: "Unreviewed",
+      viewModes: ["Full Reference", "Workspace Only", "Shell Context", "Full Composition Preview"],
+      workspaceCrop: { x: 464, y: 260, width: 3244, height: 1804 },
+      excludedFromRuntime: true
     }],
     responsiveRules: [
       { viewport: "3840x2160", behavior: "Authoritative 4K master canvas; all element coordinates are stored here.", status: "Needs Review" },
@@ -1333,14 +1554,19 @@ function mergeRecords(stored: ScreenDesignRecord[]) {
 }
 
 function screenOrder(screenId: string) {
-  const order = ["dashboard", "ai-agent-profile", "welcome", "login", "signup", "loading", "account", "cloud-saves", "save-conflict", "production", "research", "buildings", "resources", "upgrades", "civilization", "events", "galaxy", "spaceport", "earth", "solar-system", "discovery", "settings"];
+  const order = [appShellId, "civilization-command", "dashboard", "ai-agent-profile", "welcome", "login", "signup", "loading", "account", "cloud-saves", "save-conflict", "production", "research", "buildings", "resources", "upgrades", "civilization", "events", "galaxy", "spaceport", "earth", "solar-system", "discovery", "settings"];
   const index = order.indexOf(screenId);
   return index === -1 ? order.length : index;
 }
 
 function normalizeRecord(record: ScreenDesignRecord): ScreenDesignRecord {
+  const screenType = record.screenType ?? (record.screenId === appShellId ? "shell" : record.shellBinding?.presentationMode === "full_screen_takeover" ? "full_screen_takeover" : "workspace");
   return {
     ...record,
+    screenType,
+    shellBinding: record.shellBinding ?? createShellBinding(record.screenId),
+    navigationMetadata: record.navigationMetadata ?? navigationMetadataForScreen(record.screenId),
+    previewModes: record.previewModes?.length ? record.previewModes : (screenType === "full_screen_takeover" ? ["Full Composition Preview"] : visualBuilderModes),
     supportedViewports: record.supportedViewports?.length ? record.supportedViewports : supportedViewports,
     componentSpecs: record.componentSpecs ?? [],
     assetRequirements: record.assetRequirements ?? [],

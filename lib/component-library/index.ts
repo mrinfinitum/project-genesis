@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { appShellId, mainWorkspaceSlotId } from "@/lib/app-shell";
 import type { AssetProductionState, ProductionAsset } from "@/lib/assets/asset-production";
 import { findAssetForPreviewKeys, resolveComponentPreview, type VisualPreview } from "@/lib/assets/visual-previews";
 import { generatedComponentPreviewReferences, generatedComponentPreviewStats } from "@/lib/component-preview-generation";
@@ -487,6 +488,85 @@ function namedComponent(componentId: string, category: ComponentCategory, descri
   return baseRecord({ componentId, category, description, screenUsages });
 }
 
+const appShellComponentRecords: ComponentDesignRecord[] = [
+  baseRecord({
+    componentId: "NoverisAppShell",
+    category: "Panels",
+    description: "Persistent global civilization app shell that owns TopHudBar, SideNavigationRail, MainWorkspaceSlot, global overlays, modals, notifications, and calibration layers.",
+    dimensions: "3840x2160 master shell with derived desktop/mobile profiles.",
+    dataInputs: [dataInput("shellId", "Shell ID", "string", "Presentation Hint"), dataInput("shellVersion", "Shell version", "number", "Presentation Hint"), dataInput("activeScreenId", "Active workspace screen ID", "string", "Local Interaction State")],
+    states: states(["Default", "Loading", "Error", "Reduced Motion"], ["Default", "Loading", "Error"]),
+    variants: [variant("desktop-4k", "Desktop 4K", ["Default", "Loading"]), variant("desktop-1080", "Desktop 1080", ["Default", "Loading"]), variant("mobile-landscape", "Mobile Landscape", ["Default", "Loading"])],
+    screenUsages: [usage(appShellId, "NOVERIS App Shell")],
+    notes: ["Global-only. Route screens must not duplicate this component; they target MainWorkspaceSlot."]
+  }),
+  baseRecord({
+    componentId: "MainWorkspaceSlot",
+    category: "Utility",
+    description: "Stable shell-owned mount point for normal route workspaces. Navigation changes replace this slot only.",
+    dimensions: "Shell x464 y260 w3244 h1804 at 4K.",
+    dataInputs: [dataInput("workspaceSlotId", "Workspace slot ID", "string", "Presentation Hint"), dataInput("routeMetadata", "Route metadata", "ScreenNavigationMetadata", "Presentation Hint")],
+    states: states(["Empty", "Populated", "Loading", "Error"], ["Empty", "Populated", "Loading"]),
+    variants: [variant("desktop", "Desktop", ["Empty", "Populated"]), variant("mobile-drawer-nav", "Mobile Drawer Nav", ["Empty", "Populated"])],
+    screenUsages: [usage(appShellId, "NOVERIS App Shell")],
+    notes: ["Global-only mount point. It may contain RouteWorkspaceRoot children, but not TopHudBar or SideNavigationRail children."]
+  }),
+  baseRecord({
+    componentId: "GlobalOverlayRoot",
+    category: "Overlays",
+    description: "Shell-owned global overlay host for notifications, global status surfaces, settings/global modals, and blocking overlays that must survive route changes.",
+    dimensions: "Full shell 3840x2160, with modal-safe child bounds.",
+    dataInputs: [dataInput("globalOverlayState", "Global overlay state", "GlobalOverlayState", "Local Interaction State")],
+    states: states(["Default", "Notification", "Modal Open", "Blocking", "Hidden"], ["Default", "Notification", "Modal Open", "Blocking"]),
+    variants: [variant("overlay", "Overlay", ["Default", "Notification"]), variant("modal-root", "Modal Root", ["Modal Open", "Blocking"]), variant("notification", "Notification", ["Notification"])],
+    screenUsages: [usage(appShellId, "NOVERIS App Shell")],
+    notes: ["Global-only. Local route overlays use LocalOverlayRoot."]
+  }),
+  baseRecord({
+    componentId: "RouteWorkspaceRoot",
+    category: "Utility",
+    description: "Workspace-only root component for a route screen mounted inside MainWorkspaceSlot.",
+    dimensions: "Workspace-local x0 y0 w3244 h1804.",
+    dataInputs: [dataInput("screenId", "Route screen ID", "string", "Presentation Hint"), dataInput("shellId", "Parent shell ID", "string", "Presentation Hint")],
+    states: states(["Default", "Loading", "Error", "Empty"], ["Default", "Loading", "Error"]),
+    variants: [variant("workspace-only", "Workspace Only", ["Default", "Loading"]), variant("shell-context", "Shell Context", ["Default", "Loading"]), variant("full-composition", "Full Composition Preview", ["Default", "Loading"])],
+    screenUsages: [usage("civilization-command", "Civilization Command"), usage("research", "Research"), usage("buildings", "Buildings"), usage("upgrades", "Upgrades"), usage("civilization", "Civilization"), usage("events", "Events"), usage("galaxy", "Galaxy"), usage("spaceport", "Spaceport")],
+    notes: ["Workspace-only. It must not include persistent HUD or navigation children."]
+  }),
+  baseRecord({
+    componentId: "WorkspaceBackground",
+    category: "Utility",
+    description: "Workspace-local background placeholder or art layer for route-specific screens.",
+    dimensions: "Fills the MainWorkspaceSlot local canvas.",
+    assetKeys: [assetRef("Workspace background", "workspace_background", "Pending Art")],
+    dataInputs: [dataInput("workspaceBackgroundAsset", "Workspace background asset", "AssetReference", "Presentation Hint")],
+    states: states(["Placeholder", "Ready", "Missing Art", "Loading"], ["Placeholder", "Ready", "Missing Art"]),
+    screenUsages: [usage("civilization-command", "Civilization Command"), usage("research", "Research")],
+    notes: ["Workspace-only. Global shell background remains in NoverisAppShell."]
+  }),
+  baseRecord({
+    componentId: "LocalOverlayRoot",
+    category: "Overlays",
+    description: "Workspace-owned overlay host for local tooltips, selection previews, local drawers, and local non-global modals.",
+    dimensions: "Workspace-local x0 y0 w3244 h1804.",
+    dataInputs: [dataInput("localOverlayState", "Local overlay state", "LocalOverlayState", "Local Interaction State")],
+    states: states(["Default", "Tooltip", "Drawer Open", "Modal Open", "Hidden"], ["Default", "Tooltip", "Drawer Open", "Modal Open"]),
+    screenUsages: [usage("research", "Research"), usage("buildings", "Buildings"), usage("galaxy", "Galaxy")],
+    notes: ["Workspace-only. Use GlobalOverlayRoot for settings, notifications, and global blockers."]
+  }),
+  baseRecord({
+    componentId: "FullScreenTakeover",
+    category: "Overlays",
+    description: "Explicit full-screen shell bypass for loading, welcome/login, password reset, blocking save conflict, cinematics, major era transitions, mandatory tutorial takeovers, and critical maintenance/error states.",
+    dimensions: "Full viewport/shell canvas with safe-area variants.",
+    dataInputs: [dataInput("takeoverType", "Takeover type", "FullScreenTakeoverType", "Presentation Hint")],
+    states: states(["Default", "Loading", "Blocking", "Error", "Reduced Motion"], ["Default", "Loading", "Blocking", "Error"]),
+    variants: [variant("loading", "Loading", ["Loading"]), variant("welcome-login", "Welcome/Login", ["Default"]), variant("save-conflict", "Save Conflict", ["Blocking"]), variant("cinematic", "Cinematic", ["Default", "Reduced Motion"])],
+    screenUsages: [usage("welcome", "Welcome"), usage("login", "Login"), usage("loading", "Loading"), usage("save-conflict", "Save Conflict")],
+    notes: ["Only explicitly marked full-screen takeover screens may use this component."]
+  })
+];
+
 const researchMasterComponentRecords: ComponentDesignRecord[] = [
   baseRecord({
     componentId: "ImagePlaceholder",
@@ -738,6 +818,7 @@ const dashboardComponentRecords: ComponentDesignRecord[] = [
 
 const initialComponentRecords: ComponentDesignRecord[] = [
   ...dashboardComponentRecords,
+  ...appShellComponentRecords,
   namedComponent("NavigationItem", "Navigation", "Reusable navigation item with icon, label, active state, locked state, and notification treatment.", [usage("dashboard", "Dashboard"), usage("settings", "Settings")]),
   namedComponent("BeveledGamePanel", "Panels", "Shared beveled game surface for dense HUD and management panels.", [usage("dashboard", "Dashboard"), usage("research", "Research")]),
   namedComponent("HeroPanel", "Panels", "Large visual panel anchored by hero artwork and minimal overlay controls.", [usage("dashboard", "Dashboard"), usage("civilization", "Civilization")]),

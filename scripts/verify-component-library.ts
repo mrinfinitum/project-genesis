@@ -89,12 +89,17 @@ async function main() {
   for (const componentId of ["SideNavigationRail", "TopHudBar", "HudEconomySlot", "ClickPowerControl", "AutoClickControl", "BottomDrawer", "EraNode", "ImageBackedActionButton", "EconomyCounter", "UnlockRequirementList"]) {
     assert(componentState.records.some((record) => record.componentId === componentId), `Missing seeded Dashboard/shared component: ${componentId}.`);
   }
+  for (const componentId of ["NoverisAppShell", "MainWorkspaceSlot", "GlobalOverlayRoot", "RouteWorkspaceRoot", "WorkspaceBackground", "LocalOverlayRoot", "FullScreenTakeover"]) {
+    const record = componentState.records.find((item) => item.componentId === componentId);
+    assert(record, `Missing seeded App Shell component: ${componentId}.`);
+    assert(record.notes.some((note) => /Global-only|Workspace-only|full-screen/i.test(note)) || record.description.includes("full-screen"), `${componentId} must document global/workspace/takeover role.`);
+  }
   for (const componentId of ["AiAgentPortrait", "AiAgentPanel", "AiAgentStatus", "AiAgentSelector", "AiAgentCard", "AiAgentVariantCard", "AiAgentExpressionPreview", "AiAgentBlinkPreview"]) {
     const record = componentState.records.find((item) => item.componentId === componentId);
     assert(record, `Missing seeded AI Agent component: ${componentId}.`);
     assert(record.dataInputs.some((input) => input.id === "aiAgentId" || input.id === "aiAgents" || input.id === "aiAgentVariantId" || input.id === "aiAgentVariant" || input.id === "animationProfile"), `${componentId} must consume AI Agent canonical data.`);
   }
-  for (const componentId of ["ImagePlaceholder", "ResearchHeader", "ResearchBranchHeader", "ResearchScreenShell", "ResearchBranchSidebar", "ResearchBranchRow", "ResearchProgressSummary", "ResearchTreeCanvas", "ResearchNode", "ResearchConnection", "ResearchDetailPanel", "ResearchBenefitRow", "ResearchUnlockRow", "ResearchRequirementRow", "ResearchCostDisplay", "ResearchDurationDisplay", "ResearchActionButton", "EraResearchTimeline"]) {
+  for (const componentId of ["ImagePlaceholder", "ResearchHeader", "ResearchBranchHeader", "RouteWorkspaceRoot", "WorkspaceBackground", "LocalOverlayRoot", "ResearchBranchSidebar", "ResearchBranchRow", "ResearchProgressSummary", "ResearchTreeCanvas", "ResearchNode", "ResearchConnection", "ResearchDetailPanel", "ResearchBenefitRow", "ResearchUnlockRow", "ResearchRequirementRow", "ResearchCostDisplay", "ResearchDurationDisplay", "ResearchActionButton", "EraResearchTimeline"]) {
     const record = componentState.records.find((item) => item.componentId === componentId);
     assert(record, `Missing seeded Research master component: ${componentId}.`);
     assert(record.screenUsages.some((usage) => usage.screenId === "research"), `${componentId} must be linked to the Research screen.`);
