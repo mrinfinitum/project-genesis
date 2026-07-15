@@ -570,8 +570,8 @@ function UpgradeCategoryAssetCard({ record, localPreview, onUploaded, settings }
               {!previewUrl ? (
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 px-4 text-center">
                   <ImageIcon className="h-6 w-6 text-slate-600" />
-                  <p className="text-base font-black text-white">Missing Preview</p>
-                  <p className="max-w-[13rem] text-xs leading-5 text-slate-400">Upload source background.</p>
+                  <p className="text-base font-black text-white">Background Needed</p>
+                  <p className="max-w-[13rem] text-xs leading-5 text-slate-400">Upload or replace artwork to preview this panel.</p>
                 </div>
               ) : null}
             </div>
