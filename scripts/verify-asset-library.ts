@@ -66,6 +66,7 @@ async function main() {
     "needs-review",
     "approved-assets",
     "upgrade-categories",
+    "Upgrades",
     "unmapped",
     "AssetLibraryCategoryInventory",
     "resolveAssetLibraryCategoryView",
@@ -85,8 +86,8 @@ async function main() {
   }
   assertNotIncludes("Asset Library workspace", assetWorkspace, "Recent Imports");
   assertNotIncludes("Asset Library workspace", assetWorkspace, "Import / Reconcile Art");
-  assertIncludes("Asset Library routing", assetLibraryRouting, 'viewType: "upgrade_category_workflow"');
-  assertIncludes("Asset Library routing", assetLibraryRouting, "never falls back to generic inventory");
+  assertIncludes("Asset Library routing", assetLibraryRouting, "Upgrades resolves to the merged upgrade inventory");
+  assertIncludes("Asset Library routing", assetLibraryRouting, "category background assets stay in the Backgrounds bucket");
   assertNotIncludes("Asset Library workspace", assetWorkspace, 'activeNode !== "upgrade-categories" ? <AssetLibraryCategoryInventory');
   assertNotIncludes("Asset Library workspace", assetWorkspace, 'title="Inspector"');
   assertNotIncludes("Asset Library workspace", assetWorkspace, "Open Inspector");
@@ -121,10 +122,16 @@ async function main() {
   assert(state.assetLibraryInventory.duplicateSemanticKeys.length === 0, `Duplicate semantic keys found: ${state.assetLibraryInventory.duplicateSemanticKeys.map((item) => item.semanticAssetKey).join(", ")}`);
 
   const topHud = state.assetLibraryInventory.categorySummaries["top-hud"];
+  const upgrades = state.assetLibraryInventory.categorySummaries["upgrade-categories"];
+  const backgrounds = state.assetLibraryInventory.categorySummaries.backgrounds;
   const research = state.assetLibraryInventory.categorySummaries["research-ui"];
   const buildings = state.assetLibraryInventory.categorySummaries["buildings-ui"];
   const unmapped = state.assetLibraryInventory.categorySummaries.unmapped;
   assert(topHud.total >= 11, `Top HUD category must have real inventory cards; received ${topHud.total}.`);
+  assert(upgrades.total >= 100, `Upgrades category must show the real upgrade inventory, not the four category cards; received ${upgrades.total}.`);
+  assert(state.assetLibraryInventory.items.some((item) => item.categoryId === "upgrade-categories" && item.sourceType === "missing_requirement"), "Upgrades category must include generated upgrade requirements.");
+  assert(!state.assetLibraryInventory.items.some((item) => item.categoryId === "upgrade-categories" && /upgrade_panel_.*_background/.test(item.semanticAssetKey)), "Upgrade category background assets must not occupy the Upgrades inventory.");
+  assert(state.assetLibraryInventory.items.filter((item) => item.categoryId === "backgrounds" && /upgrade_panel_.*_background/.test(item.semanticAssetKey)).length >= 5, "Upgrade category and shared fallback background records must live under Backgrounds.");
   assert(research.total >= 18, `Research category must have requirement cards; received ${research.total}.`);
   assert(buildings.total >= 10, `Buildings category must have meaningful inventory cards; received ${buildings.total}.`);
   assert(state.assetLibraryInventory.items.some((item) => item.status === "published"), "Published assets must appear in the Asset Library inventory.");
@@ -153,6 +160,8 @@ async function main() {
     inventoryItems: state.assetLibraryInventory.items.length,
     categoryCounts: {
       topHud: topHud.total,
+      upgrades: upgrades.total,
+      backgrounds: backgrounds.total,
       research: research.total,
       buildings: buildings.total,
       published: state.assetLibraryInventory.items.filter((item) => item.status === "published").length,
@@ -161,7 +170,8 @@ async function main() {
     },
     uploadWorkflow: true,
     pickerLinks: ["component-library", "screen-designer"],
-    upgradeCategoryPath: "/asset-library?section=upgrade-categories",
+    upgradesPath: "/asset-library?section=upgrade-categories",
+    upgradeCategoryBackgroundsPath: "/asset-library?section=backgrounds",
     runtime: {
       contentVersion: runtime.metadata.contentVersion,
       validationStatus: runtime.metadata.validationStatus,

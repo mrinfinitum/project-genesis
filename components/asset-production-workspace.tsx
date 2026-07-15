@@ -262,7 +262,7 @@ const damTree: Array<{ id: DamNodeId; label: string; children?: Array<{ id: DamN
     children: [
       { id: "top-hud", label: "Top HUD" },
       { id: "left-navigation", label: "Left Navigation" },
-      { id: "upgrade-categories", label: "Upgrade Categories" },
+      { id: "upgrade-categories", label: "Upgrades" },
       { id: "research-ui", label: "Research" },
       { id: "buildings-ui", label: "Buildings" },
       { id: "galaxy-ui", label: "Galaxy" },
@@ -1401,7 +1401,7 @@ export function AssetProductionWorkspace({ state, view, preferredRoute = "/asset
     eyebrow: "Asset Library",
     title: implementedNodeLabels[activeNode],
     description: activeNode === "upgrade-categories"
-      ? "Designer-facing DAM workflow for the Workforce, Industry, Science, and Technology upgrade panel backgrounds."
+      ? "Browse upgrade icons, models, requirements, and visual-builder placeholders as a dense production inventory."
       : "Upload, organize, approve, and publish game assets through a compact content browser."
   };
   const stats = [
@@ -1457,7 +1457,7 @@ export function AssetProductionWorkspace({ state, view, preferredRoute = "/asset
           <UploadCloud className="h-4 w-4" />
           Upload Asset
         </Button>
-        <Link href={`${preferredRoute}?section=upgrade-categories`} onClick={(event) => { event.preventDefault(); selectNode("upgrade-categories"); }} className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Upgrade Categories</Link>
+        <Link href={`${preferredRoute}?section=upgrade-categories`} onClick={(event) => { event.preventDefault(); selectNode("upgrade-categories"); }} className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Upgrades</Link>
         <Link href={`${preferredRoute}?section=missing`} onClick={(event) => { event.preventDefault(); selectNode("missing"); }} className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Missing Assets</Link>
         {pickerMode ? <WorkspaceBadge value={`Picker: ${pickerMode}`} /> : null}
         {deprecated ? <WorkspaceBadge value="Moved to Asset Library" /> : null}

@@ -51,7 +51,7 @@ export const assetLibraryCategoryIds: AssetLibraryCategoryId[] = [
 export const assetLibraryCategoryLabels: Record<AssetLibraryCategoryId, string> = {
   "top-hud": "Top HUD",
   "left-navigation": "Left Navigation",
-  "upgrade-categories": "Upgrade Categories",
+  "upgrade-categories": "Upgrades",
   "research-ui": "Research UI",
   "buildings-ui": "Buildings UI",
   "galaxy-ui": "Galaxy UI",
@@ -73,6 +73,7 @@ const categoryAliases: Record<string, AssetLibraryCategoryId> = {
   "ui/top-hud": "top-hud",
   "ui/left-navigation": "left-navigation",
   "ui/upgrade-categories": "upgrade-categories",
+  "ui/upgrades": "upgrade-categories",
   "ui/research": "research-ui",
   "ui/research-ui": "research-ui",
   "ui/buildings": "buildings-ui",
@@ -84,6 +85,7 @@ const categoryAliases: Record<string, AssetLibraryCategoryId> = {
   "ui/loading": "loading-ui",
   "upgrade categories": "upgrade-categories",
   "upgrade_categories": "upgrade-categories",
+  upgrade: "upgrade-categories",
   upgrades: "upgrade-categories",
   research: "research-ui",
   buildings: "buildings-ui",
@@ -118,8 +120,8 @@ export function resolveAssetLibraryCategoryView(categoryId: unknown): {
   if (normalized === "upgrade-categories") {
     return {
       categoryId: normalized,
-      viewType: "upgrade_category_workflow",
-      reason: "Upgrade Categories has a dedicated DAM workflow and never falls back to generic inventory."
+      viewType: "generic_inventory",
+      reason: "Upgrades resolves to the merged upgrade inventory; category background assets stay in the Backgrounds bucket."
     };
   }
   if (normalized === "ai-agents") {

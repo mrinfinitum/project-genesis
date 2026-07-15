@@ -104,6 +104,7 @@ function categoryFor(input: { key: string; label: string; role: string; screenId
   if (/video|cinematic|movie/.test(text)) return "video";
   if (/animation|blink_animation|idle_animation/.test(text)) return "animations";
   if (/ai[_ -]?agent|auto_robot|robot/.test(text)) return "ai-agents";
+  if (/upgrade[_ -]?panel[_ -]?(shared|workforce|industry|science|technology)[_ -]?background/.test(text) || (/(workforce|industry|science|technology) background/.test(text) && /upgrade|panel|dashboard/.test(text))) return "backgrounds";
   if (/top[_ -]?hud|hud|economy_|premium|civilization_identity|calendar|trophy/.test(text) || ["TopHudBar", "HudEconomySlot", "EconomyCounter", "PremiumCurrencyBalance", "UtilityIconButton"].some((id) => input.componentId === id)) return "top-hud";
   if (/left[_ -]?navigation|side[_ -]?navigation|nav[_ -]?rail|overview_icon|spaceport_icon/.test(text)) return "left-navigation";
   if (/research/.test(text)) return "research-ui";
@@ -342,7 +343,7 @@ export async function buildAssetLibraryInventory(input: {
     upsert({
       semanticAssetKey: record.semanticAssetKey,
       displayName: record.displayName,
-      categoryId: "upgrade-categories",
+      categoryId: "backgrounds",
       role: "Background",
       sourceType: "upgrade_category_asset",
       status: record.status === "published" ? "published" : record.approvalStatus === "approved" ? "approved" : record.sourceFile ? "uploaded" : "missing",
@@ -351,7 +352,7 @@ export async function buildAssetLibraryInventory(input: {
       previewUrl: record.currentBackgroundPreview ?? null,
       requiredDimensions: `${record.expectedDimensions.masterWidth}x${record.expectedDimensions.masterHeight}`,
       currentDimensions: record.dimensions ? `${record.dimensions.width}x${record.dimensions.height}` : "Pending inspection",
-      reference: { type: "upgrade_category", id: record.categoryId, name: record.displayName, href: `/asset-library?section=upgrade-categories` }
+      reference: { type: "upgrade_category", id: record.categoryId, name: record.displayName, href: `/asset-library?section=backgrounds` }
     });
   }
 
