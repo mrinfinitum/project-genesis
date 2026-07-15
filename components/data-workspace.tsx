@@ -29,12 +29,12 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { AdminTable } from "@/components/admin-table";
 import { Button } from "@/components/ui/button";
+import { CompactWorkspaceToolbar, DensityInspector, cardShellClass, collectionGridClass, previewBoxClass, useWorkspaceDensitySettings, type DensitySettings } from "@/components/ui/density";
 import {
   WorkspaceBadge,
   WorkspaceHeader,
   WorkspaceMiniStat,
   WorkspacePanel,
-  WorkspaceSearchBar,
   WorkspaceStatTile,
   workspaceBadgeClass
 } from "@/components/ui/workspace";
@@ -187,16 +187,27 @@ function rowMatches(row: Row, config: TableConfig, query: string, typeFilter: st
   return matchesQuery && matchesType && matchesStatus;
 }
 
+function sortRows(rows: Row[], config: TableConfig, sort: string) {
+  return [...rows].sort((left, right) => {
+    if (sort === "status") return statusForRow(left, config).localeCompare(statusForRow(right, config));
+    if (sort === "type") return subtitleForRow(left, config).localeCompare(subtitleForRow(right, config));
+    if (sort === "updated") return pickFirst(right, ["updatedAt", "updated_at", "modified", "lastUpdated"]).localeCompare(pickFirst(left, ["updatedAt", "updated_at", "modified", "lastUpdated"]));
+    return titleForRow(left, config).localeCompare(titleForRow(right, config));
+  });
+}
+
 function DataCard({
   row,
   config,
   selected,
-  onSelect
+  onSelect,
+  settings
 }: {
   row: Row;
   config: TableConfig;
   selected: boolean;
   onSelect: () => void;
+  settings: DensitySettings;
 }) {
   const Icon = tableIcons[config.table] ?? Database;
   const title = titleForRow(row, config);
@@ -206,19 +217,37 @@ function DataCard({
   const statKeys = statKeysFor(config);
   const accent = accentClasses[config.table] ?? "from-cyan-300/20 via-blue-300/10 to-transparent text-cyan-100 border-cyan-300/30";
   const previewUrl = config.table === "assets" ? pickFirst(row, ["preview_url", "file_url"]) : "";
+  const modified = pickFirst(row, ["updatedAt", "updated_at", "modified", "lastUpdated"]) || "Unknown";
+  const version = pickFirst(row, ["version", "schemaVersion", "contentVersion"]) || "v1";
+  const published = pickFirst(row, ["published", "publishedAt", "export_status"]) || status;
+
+  if (settings.density === "list") {
+    return (
+      <button type="button" onClick={onSelect} className={cardShellClass(settings, selected)}>
+        <div className={cn("grid place-items-center overflow-hidden rounded-md border bg-gradient-to-br", previewBoxClass(settings), accent)}>
+          {previewUrl ? <img src={previewUrl} alt="" className="h-full w-full object-cover" /> : <Icon className="h-5 w-5" />}
+        </div>
+        <div className="min-w-0">
+          <h3 className="truncate text-sm font-black text-white">{title}</h3>
+          <p className="mt-1 truncate text-xs text-slate-400">{description || config.description}</p>
+        </div>
+        <p className="truncate text-xs font-bold text-cyan-100">{subtitle || config.title}</p>
+        <span className={cn("justify-self-start rounded-md border px-2 py-1 text-[0.62rem] font-black uppercase tracking-[0.14em]", workspaceBadgeClass(status))}>{status.replaceAll("_", " ")}</span>
+        <p className="truncate text-xs text-slate-400">{modified}</p>
+        <p className="truncate text-xs text-slate-300">{version} / {published}</p>
+      </button>
+    );
+  }
 
   return (
     <button
       type="button"
       onClick={onSelect}
-      className={cn(
-        "group flex min-h-[17rem] flex-col rounded-md border bg-[#07101e]/85 p-4 text-left shadow-glow transition hover:-translate-y-0.5 hover:border-cyan-300/35 hover:bg-[#0a1728]",
-        selected ? "border-cyan-300/55 ring-1 ring-cyan-300/30" : "border-cyan-300/15"
-      )}
+      className={cardShellClass(settings, selected)}
     >
-      <div className={cn("flex h-16 items-center justify-between overflow-hidden rounded-md border bg-gradient-to-br p-3", accent)}>
+      <div className={cn("flex items-center justify-between overflow-hidden rounded-md border bg-gradient-to-br p-3", previewBoxClass(settings), accent)}>
         {previewUrl ? (
-          <img src={previewUrl} alt="" className="h-12 w-16 rounded-md border border-current/25 bg-slate-950/45 object-cover" />
+          <img src={previewUrl} alt="" className="h-full w-20 rounded-md border border-current/25 bg-slate-950/45 object-cover" />
         ) : (
           <span className="grid h-10 w-10 place-items-center rounded-md border border-current/25 bg-slate-950/45">
             <Icon className="h-5 w-5" />
@@ -231,15 +260,15 @@ function DataCard({
 
       <div className="mt-4 min-w-0">
         {subtitle ? <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-300">{subtitle}</p> : null}
-        <h3 className="mt-2 line-clamp-2 text-xl font-black text-white">{title}</h3>
+        <h3 className={cn("mt-2 line-clamp-2 font-black text-white", settings.density === "compact" ? "text-base" : "text-xl")}>{title}</h3>
       </div>
 
-      <p className="mt-3 line-clamp-2 min-h-11 text-sm leading-6 text-slate-400">
+      <p className={cn("mt-2 line-clamp-2 text-sm leading-6 text-slate-400", settings.density === "compact" ? "hidden" : "min-h-11")}>
         {description || config.description}
       </p>
 
-      <div className="mt-auto grid grid-cols-3 gap-2 pt-4">
-        {statKeys.map((key) => (
+      <div className={cn("mt-auto grid grid-cols-3 gap-2 pt-3", settings.density === "compact" && "grid-cols-2")}>
+        {statKeys.slice(0, settings.density === "compact" ? 2 : 3).map((key) => (
           <WorkspaceMiniStat key={key} label={titleCase(key)} value={stringifyValue(row[key]) || "None"} />
         ))}
       </div>
@@ -309,12 +338,13 @@ export function DataWorkspace({
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedId, setSelectedId] = useState(() => stringifyValue(initialRows[0]?.id));
   const [rawEditorOpen, setRawEditorOpen] = useState(false);
+  const [densitySettings, setDensitySettings] = useWorkspaceDensitySettings(`project-genesis-density-${config.table}`);
   const filterKey = config.typeKey ?? config.eraKey;
   const typeOptions = useMemo(() => uniqueValues(initialRows, filterKey), [initialRows, filterKey]);
   const statusOptions = useMemo(() => uniqueValues(initialRows, config.statusKey ?? "status"), [initialRows, config.statusKey]);
   const filteredRows = useMemo(
-    () => initialRows.filter((row) => rowMatches(row, config, query, typeFilter, statusFilter)),
-    [config, initialRows, query, statusFilter, typeFilter]
+    () => sortRows(initialRows.filter((row) => rowMatches(row, config, query, typeFilter, statusFilter)), config, densitySettings.sort),
+    [config, densitySettings.sort, initialRows, query, statusFilter, typeFilter]
   );
   const selected = filteredRows.find((row) => stringifyValue(row.id) === selectedId) ?? filteredRows[0] ?? initialRows[0];
   const readyCount = initialRows.filter((row) => /ready|complete|completed|active|true/i.test(statusForRow(row, config))).length;
@@ -350,15 +380,35 @@ export function DataWorkspace({
         </div>
       </WorkspacePanel>
 
-      <div className="grid gap-4 xl:grid-cols-[1fr_22rem]">
-        <WorkspaceSearchBar value={query} onChange={setQuery} placeholder={`Search ${title.toLowerCase()}`} className="xl:col-span-1" />
-        <div className="flex items-center gap-3 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-3 text-sm text-slate-400">
-          <Search className="h-4 w-4 text-slate-500" />
-          <span>{filteredRows.length} visible</span>
-          <span className="text-slate-600">/</span>
-          <span>{initialRows.length} total</span>
-        </div>
-      </div>
+      <CompactWorkspaceToolbar
+        query={query}
+        onQueryChange={setQuery}
+        settings={densitySettings}
+        onSettingsChange={(patch) => {
+          if (patch.filter) setStatusFilter(patch.filter === "all" ? "all" : patch.filter);
+          setDensitySettings(patch);
+        }}
+        resultCount={filteredRows.length}
+        totalCount={initialRows.length}
+        placeholder={`Search ${title.toLowerCase()}`}
+        sortOptions={[
+          { value: "updated", label: "Modified" },
+          { value: "name", label: "Name" },
+          { value: "status", label: "Status" },
+          { value: "type", label: "Type" }
+        ]}
+        filterOptions={[
+          { value: "all", label: "All" },
+          ...statusOptions.map((option) => ({ value: option, label: option }))
+        ]}
+        groupOptions={[
+          { value: "none", label: "None" },
+          { value: "category", label: "Category" },
+          { value: "status", label: "Status" },
+          { value: "type", label: "Type" },
+          { value: "era", label: "Era" }
+        ]}
+      />
 
       {(typeOptions.length || statusOptions.length) ? (
         <div className="flex flex-wrap gap-2 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-3">
@@ -390,7 +440,7 @@ export function DataWorkspace({
       ) : null}
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_28rem]">
-        <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
+        <div className={collectionGridClass(densitySettings)}>
           {filteredRows.map((row) => {
             const id = stringifyValue(row.id);
             return (
@@ -400,13 +450,16 @@ export function DataWorkspace({
                 config={config}
                 selected={Boolean(id) && stringifyValue(selected?.id) === id}
                 onSelect={() => setSelectedId(id)}
+                settings={densitySettings}
               />
             );
           })}
         </div>
 
         {selected ? (
-          <DetailPanel row={selected} config={config} />
+          <DensityInspector title={titleForRow(selected, config)}>
+            <DetailPanel row={selected} config={config} />
+          </DensityInspector>
         ) : (
           <WorkspacePanel className="grid min-h-80 place-items-center text-center">
             <div>

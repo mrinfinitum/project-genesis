@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Archive, Boxes, CheckCircle2, ChevronDown, FileImage, GitBranch, History, ImageIcon, Layers3, PackageCheck, ShieldCheck, Sparkles, Timer, TriangleAlert, Upload, UploadCloud } from "lucide-react";
 import { AssetPreview } from "@/components/asset-preview";
 import { Button } from "@/components/ui/button";
+import { CompactWorkspaceToolbar, cardShellClass, collectionGridClass, previewBoxClass, useWorkspaceDensitySettings, type DensitySettings } from "@/components/ui/density";
 import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, WorkspaceProgressBar, WorkspaceStatTile } from "@/components/ui/workspace";
 import { resolveMissingRequirementPreview, resolveProductionAssetPreview, sanitizePreviewUrl } from "@/lib/assets/visual-previews";
 import type { AssetProductionState, ProductionAsset } from "@/lib/assets/asset-production";
@@ -363,7 +364,7 @@ function UpgradeCategoryUploadForm({
   );
 }
 
-function UpgradeCategoryAssetCard({ record, localPreview, onUploaded }: { record: UpgradeCategoryAssetStatus; localPreview?: LocalUploadPreview; onUploaded: (categoryId: string, preview: LocalUploadPreview) => void }) {
+function UpgradeCategoryAssetCard({ record, localPreview, onUploaded, settings }: { record: UpgradeCategoryAssetStatus; localPreview?: LocalUploadPreview; onUploaded: (categoryId: string, preview: LocalUploadPreview) => void; settings: DensitySettings }) {
   const [busy, setBusy] = useState<string>("");
   const [error, setError] = useState<string>("");
   const previewUrl = localPreview?.url ?? sanitizePreviewUrl(record.currentBackgroundPreview);
@@ -415,8 +416,8 @@ function UpgradeCategoryAssetCard({ record, localPreview, onUploaded }: { record
   }
 
   return (
-    <article className="rounded-md border border-cyan-300/15 bg-[#07101e]/90 p-4 shadow-glow">
-      <div className="grid gap-4 xl:grid-cols-[minmax(16rem,1fr)_20rem]">
+    <article className={cardShellClass(settings)}>
+      <div className={settings.density === "compact" ? "grid gap-3" : "grid gap-4 xl:grid-cols-[minmax(16rem,1fr)_20rem]"}>
         <div className="min-w-0">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
@@ -426,8 +427,8 @@ function UpgradeCategoryAssetCard({ record, localPreview, onUploaded }: { record
             </div>
             <WorkspaceBadge value={statusLabel(record)} />
           </div>
-          <div className="mt-4 overflow-hidden rounded-md border border-cyan-300/15 bg-slate-950/70">
-            <div className="relative aspect-[16/9] bg-[radial-gradient(circle_at_35%_20%,rgba(103,232,249,0.22),transparent_26%),linear-gradient(135deg,rgba(8,14,28,0.95),rgba(2,6,23,0.98))]">
+          <div className={`mt-4 overflow-hidden rounded-md border border-cyan-300/15 bg-slate-950/70 ${settings.previewSize === "hide" ? "hidden" : ""}`}>
+            <div className={`relative bg-[radial-gradient(circle_at_35%_20%,rgba(103,232,249,0.22),transparent_26%),linear-gradient(135deg,rgba(8,14,28,0.95),rgba(2,6,23,0.98))] ${settings.density === "compact" ? "h-24" : "aspect-[16/9]"}`}>
               {previewUrl ? <img src={previewUrl} alt={`${record.displayName} upgrade category background preview`} className="absolute inset-0 h-full w-full object-cover" /> : null}
               <div className="absolute inset-[7%] border border-cyan-200/30" />
               <div className="absolute left-[6%] top-[7%] h-[10%] w-[38%] border border-emerald-200/35 bg-emerald-300/5" />
@@ -441,13 +442,13 @@ function UpgradeCategoryAssetCard({ record, localPreview, onUploaded }: { record
               ) : null}
             </div>
           </div>
-          <div className="mt-4 grid gap-2 sm:grid-cols-3">
+          <div className={`mt-4 grid gap-2 ${settings.density === "compact" ? "grid-cols-2" : "sm:grid-cols-3"}`}>
             <WorkspaceMiniStat label="Required Size" value={`${record.expectedDimensions.masterWidth}x${record.expectedDimensions.masterHeight}`} />
             <WorkspaceMiniStat label="Current Size" value={displayedSize} />
             <WorkspaceMiniStat label="Geometry" value={record.geometryConsistent ? "Matches" : localPreview ? "Check on save" : "Pending"} />
-            <WorkspaceMiniStat label="Web" value={record.webReady ? "Ready" : "Missing"} />
-            <WorkspaceMiniStat label="Roblox" value={record.robloxReady ? "Ready" : "Missing"} />
-            <WorkspaceMiniStat label="Derivatives" value={`${record.derivativeRequirements.length - record.missingDerivativeWarnings.length}/${record.derivativeRequirements.length}`} />
+            {settings.density !== "compact" ? <WorkspaceMiniStat label="Web" value={record.webReady ? "Ready" : "Missing"} /> : null}
+            {settings.density !== "compact" ? <WorkspaceMiniStat label="Roblox" value={record.robloxReady ? "Ready" : "Missing"} /> : null}
+            {settings.density !== "compact" ? <WorkspaceMiniStat label="Derivatives" value={`${record.derivativeRequirements.length - record.missingDerivativeWarnings.length}/${record.derivativeRequirements.length}`} /> : null}
           </div>
           <div className="mt-4 flex flex-wrap gap-2">
             <Button type="button" disabled={Boolean(busy)} onClick={generateDerivatives}><Sparkles className="h-4 w-4" /> Generate Derivatives</Button>
@@ -461,7 +462,7 @@ function UpgradeCategoryAssetCard({ record, localPreview, onUploaded }: { record
           {error ? <p className="mt-3 text-sm font-semibold text-rose-100">{error}</p> : null}
           {record.sourceFile ? <p className="mt-3 text-sm leading-6 text-slate-400">Source: {record.sourceFile.filename} / v{record.sourceFile.version} / {record.sourceFile.format}</p> : null}
         </div>
-        <UpgradeCategoryUploadForm record={record} onUploaded={onUploaded} />
+        {settings.density === "list" ? null : <UpgradeCategoryUploadForm record={record} onUploaded={onUploaded} />}
       </div>
     </article>
   );
@@ -469,8 +470,14 @@ function UpgradeCategoryAssetCard({ record, localPreview, onUploaded }: { record
 
 function UpgradeCategoriesWorkspace({ state }: { state: AssetProductionState }) {
   const [localPreviews, setLocalPreviews] = useState<Record<string, LocalUploadPreview>>({});
+  const [query, setQuery] = useState("");
+  const [settings, setSettings] = useWorkspaceDensitySettings("project-genesis-density-upgrade-categories");
   const missing = state.upgradeCategoryAssets.filter((record) => !record.sourceFile).length;
   const approved = state.upgradeCategoryAssets.filter((record) => record.approvalStatus === "approved" || record.status === "published").length;
+  const visible = state.upgradeCategoryAssets.filter((record) => {
+    const needle = query.trim().toLowerCase();
+    return !needle || [record.displayName, record.categoryId, record.semanticAssetKey, record.status].join(" ").toLowerCase().includes(needle);
+  });
 
   return (
     <div className="space-y-5">
@@ -485,13 +492,15 @@ function UpgradeCategoriesWorkspace({ state }: { state: AssetProductionState }) 
           Designers can upload source backgrounds directly here. The Studio keeps the source private, queues the six runtime-ready derivative families, and publishes stable semantic keys for clients and the Visual Builder.
         </p>
       </WorkspacePanel>
-      <div className="grid gap-5">
-        {state.upgradeCategoryAssets.map((record) => (
+      <CompactWorkspaceToolbar query={query} onQueryChange={setQuery} settings={settings} onSettingsChange={setSettings} resultCount={visible.length} totalCount={state.upgradeCategoryAssets.length} placeholder="Search upgrade category assets" />
+      <div className={collectionGridClass(settings)}>
+        {visible.map((record) => (
           <UpgradeCategoryAssetCard
             key={record.categoryId}
             record={record}
             localPreview={localPreviews[record.categoryId]}
             onUploaded={(categoryId, preview) => setLocalPreviews((current) => ({ ...current, [categoryId]: preview }))}
+            settings={settings}
           />
         ))}
       </div>
@@ -593,31 +602,50 @@ function PresetEditor() {
   );
 }
 
-function AssetCard({ asset }: { asset: ProductionAsset }) {
+function AssetCard({ asset, settings }: { asset: ProductionAsset; settings: DensitySettings }) {
   const preview = resolveProductionAssetPreview(asset, { size: "card", mode: asset.category.includes("hero") ? "hero" : "card" });
+  if (settings.density === "list") {
+    return (
+      <Link href={`/assets/${encodeURIComponent(asset.id)}`} className={cardShellClass(settings)}>
+        <div className={previewBoxClass(settings)}>
+          <AssetPreview preview={{ ...preview, size: "small" }} allowFullscreen={false} compact />
+        </div>
+        <div className="min-w-0">
+          <p className="truncate text-sm font-black text-white">{asset.name}</p>
+          <p className="mt-1 truncate text-xs text-cyan-200">{asset.artKey || asset.iconKey || asset.id}</p>
+        </div>
+        <WorkspaceBadge value={asset.category || asset.type} />
+        <WorkspaceBadge value={asset.productionStatus} />
+        <p className="truncate text-xs text-slate-400">{asset.updatedAt ? new Date(asset.updatedAt).toLocaleDateString() : "Unknown"}</p>
+        <p className="truncate text-xs text-slate-300">{asset.sourceFiles[0]?.versionLabel ?? "v1"} / {asset.publishedAt ? "Published" : asset.approvalStatus}</p>
+      </Link>
+    );
+  }
   return (
-    <Link href={`/assets/${encodeURIComponent(asset.id)}`} className="block rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-4 shadow-glow transition hover:border-cyan-300/40 hover:bg-[#0a1728]">
-      <AssetPreview preview={preview} allowFullscreen={false} />
+    <Link href={`/assets/${encodeURIComponent(asset.id)}`} className={cardShellClass(settings)}>
+      <div className={previewBoxClass(settings)}>
+        <AssetPreview preview={{ ...preview, size: settings.previewSize === "large" ? "large" : "small" }} allowFullscreen={false} compact={settings.density === "compact"} />
+      </div>
       <div className="mt-4 flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="truncate text-lg font-black text-white">{asset.name}</p>
+          <p className={`truncate font-black text-white ${settings.density === "compact" ? "text-base" : "text-lg"}`}>{asset.name}</p>
           <p className="mt-1 truncate text-sm text-cyan-200">{asset.artKey || asset.iconKey || asset.id}</p>
         </div>
         <WorkspaceBadge value={asset.productionStatus} />
       </div>
-      <div className="mt-4">
+      <div className={settings.density === "compact" ? "mt-3 hidden" : "mt-4"}>
         <div className="flex items-center justify-between gap-3 text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
           <span>Completion</span>
           <span>{asset.completionPercent}%</span>
         </div>
         <WorkspaceProgressBar value={asset.completionPercent} className="mt-2" />
       </div>
-      <div className="mt-4 grid grid-cols-3 gap-2">
+      <div className={`mt-3 grid gap-2 ${settings.density === "compact" ? "grid-cols-2" : "grid-cols-3"}`}>
         <WorkspaceMiniStat label="Source" value={asset.sourceFiles.length} />
         <WorkspaceMiniStat label="Deriv." value={asset.derivatives.length} />
-        <WorkspaceMiniStat label="Engines" value={platformCount(asset)} />
+        {settings.density !== "compact" ? <WorkspaceMiniStat label="Engines" value={platformCount(asset)} /> : null}
       </div>
-      <div className="mt-3 flex flex-wrap gap-2">
+      <div className={settings.density === "compact" ? "mt-3 hidden" : "mt-3 flex flex-wrap gap-2"}>
         <WorkspaceBadge value={`master ${asset.masterSourceStatus}`} />
         <WorkspaceBadge value={`${asset.derivativeCompleteness.current}/${asset.derivativeCompleteness.required} current`} />
         <WorkspaceBadge value={`preview ${preview.status}`} />
@@ -832,28 +860,22 @@ function Dashboard({ state }: { state: AssetProductionState }) {
   );
 }
 
-function AssetGrid({ assets, empty }: { assets: ProductionAsset[]; empty: string }) {
-  const [view, setView] = useState<"grid" | "compact" | "list" | "large">(() => {
-    if (typeof window === "undefined") return "grid";
-    return (window.localStorage.getItem("project-genesis-asset-preview-view") as "grid" | "compact" | "list" | "large" | null) ?? "grid";
+function AssetGrid({ assets, empty, storageKey }: { assets: ProductionAsset[]; empty: string; storageKey: string }) {
+  const [query, setQuery] = useState("");
+  const [settings, setSettings] = useWorkspaceDensitySettings(storageKey);
+  const visibleAssets = assets.filter((asset) => {
+    const needle = query.trim().toLowerCase();
+    if (!needle) return true;
+    return [asset.name, asset.id, asset.artKey, asset.iconKey, asset.category, asset.productionStatus, asset.tags.join(" ")].join(" ").toLowerCase().includes(needle);
   });
-
-  function updateView(next: "grid" | "compact" | "list" | "large") {
-    setView(next);
-    window.localStorage.setItem("project-genesis-asset-preview-view", next);
-  }
 
   return assets.length ? (
     <div className="space-y-4">
-      <div className="flex flex-wrap gap-2 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-2">
-        {(["grid", "compact", "list", "large"] as const).map((item) => (
-          <button key={item} type="button" onClick={() => updateView(item)} className={`rounded-md px-3 py-2 text-sm font-bold capitalize ${view === item ? "bg-cyan-300/20 text-white" : "text-slate-400 hover:bg-cyan-300/10 hover:text-slate-100"}`}>{item}</button>
-        ))}
+      <CompactWorkspaceToolbar query={query} onQueryChange={setQuery} settings={settings} onSettingsChange={setSettings} resultCount={visibleAssets.length} totalCount={assets.length} placeholder="Search assets, art keys, categories, status" />
+      <div className={collectionGridClass(settings)}>
+        {visibleAssets.slice(0, 48).map((asset) => <AssetCard key={asset.id} asset={asset} settings={settings} />)}
       </div>
-      <div className={view === "list" ? "grid gap-3" : view === "large" ? "grid gap-5 xl:grid-cols-2" : view === "compact" ? "grid gap-3 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4" : "grid gap-4 lg:grid-cols-2 2xl:grid-cols-3"}>
-        {assets.slice(0, 24).map((asset) => <AssetCard key={asset.id} asset={asset} />)}
-      </div>
-      {assets.length > 24 ? <p className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3 text-sm font-semibold text-slate-300">Showing first 24 assets for grid performance. Use filters or detail pages for deeper inspection.</p> : null}
+      {visibleAssets.length > 48 ? <p className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3 text-sm font-semibold text-slate-300">Showing first 48 assets for grid performance. Use filters or detail pages for deeper inspection.</p> : null}
     </div>
   ) : (
     <WorkspacePanel>
@@ -1113,8 +1135,8 @@ export function AssetProductionWorkspace({ state, view }: { state: AssetProducti
           {isAssetProductionView(activeNode) ? <AssetNav active={activeNode} /> : null}
           {activeNode === "dashboard" ? <Dashboard state={state} /> : null}
           {activeNode === "source" ? <SourceFiles state={state} /> : null}
-          {activeNode === "generated" ? <AssetGrid assets={state.generatedAssets} empty="No generated derivatives are available yet." /> : null}
-          {activeNode === "published" ? <AssetGrid assets={state.publishedAssets} empty="No assets have reached published status yet." /> : null}
+          {activeNode === "generated" ? <AssetGrid assets={state.generatedAssets} empty="No generated derivatives are available yet." storageKey="project-genesis-density-assets-generated" /> : null}
+          {activeNode === "published" ? <AssetGrid assets={state.publishedAssets} empty="No assets have reached published status yet." storageKey="project-genesis-density-assets-published" /> : null}
           {activeNode === "missing" ? <MissingAssets state={state} /> : null}
           {activeNode === "processing" ? <ProcessingQueue state={state} /> : null}
           {activeNode === "import-history" ? <ImportHistory state={state} /> : null}

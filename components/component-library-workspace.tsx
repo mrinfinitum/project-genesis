@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Boxes, Search, ShieldCheck, TriangleAlert } from "lucide-react";
 import { AssetPreview } from "@/components/asset-preview";
+import { CompactWorkspaceToolbar, DensityInspector, cardShellClass, collectionGridClass, previewBoxClass, useWorkspaceDensitySettings, type DensitySettings } from "@/components/ui/density";
 import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, WorkspaceProgressBar, WorkspaceSearchBar, WorkspaceStatTile } from "@/components/ui/workspace";
 import type { ComponentApprovalStatus, ComponentCategory, ComponentDesignStatus, ComponentLibraryState, ComponentParityStatus } from "@/lib/component-library";
+import { cn } from "@/lib/utils";
 
 const categoryOptions: ComponentCategory[] = ["Navigation", "HUD", "Panels", "Buttons", "Cards", "Lists", "Progress", "Forms", "Overlays", "Feedback", "Data Display", "Game-Specific", "Accessibility", "Utility"];
 const statuses: Array<"All" | ComponentDesignStatus> = ["All", "Not Started", "Draft", "In Design", "Ready for Review", "Approved", "Implemented", "Needs Revision", "Deprecated"];
@@ -24,13 +26,32 @@ function SelectFilter<T extends string>({ label, value, options, onChange }: { l
   );
 }
 
-function ComponentCard({ component }: { component: ComponentLibraryState["components"][number] }) {
+function ComponentCard({ component, settings, selected, onSelect }: { component: ComponentLibraryState["components"][number]; settings: DensitySettings; selected: boolean; onSelect: () => void }) {
   const readiness = Math.round((component.checklistComplete / Math.max(1, component.checklistTotal)) * 100);
   const vite = component.implementationTargets.find((target) => target.target === "Vite Web")?.status ?? "Not Started";
   const roblox = component.implementationTargets.find((target) => target.target === "Roblox")?.status ?? "Not Started";
+  if (settings.density === "list") {
+    return (
+      <button type="button" onClick={onSelect} className={cardShellClass(settings, selected)}>
+        <div className={cn("overflow-hidden rounded-md", previewBoxClass(settings))}>
+          <AssetPreview preview={{ ...component.visualPreview, size: "small" }} allowFullscreen={false} compact />
+        </div>
+        <div className="min-w-0">
+          <h2 className="truncate text-sm font-black text-white">{component.displayName}</h2>
+          <p className="mt-1 truncate font-mono text-xs text-cyan-200">{component.componentId}</p>
+        </div>
+        <WorkspaceBadge value={component.category} />
+        <WorkspaceBadge value={component.status} />
+        <p className="truncate text-xs text-slate-400">v{component.version}</p>
+        <p className="truncate text-xs text-slate-300">{component.approvalStatus}</p>
+      </button>
+    );
+  }
   return (
-    <Link href={`/component-library/${component.componentId}`} className="block rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-4 shadow-glow transition hover:border-cyan-300/50 hover:bg-[#0a1728]">
-      <AssetPreview preview={component.visualPreview} allowFullscreen={false} />
+    <button type="button" onClick={onSelect} className={cardShellClass(settings, selected)}>
+      <div className={previewBoxClass(settings)}>
+        <AssetPreview preview={{ ...component.visualPreview, size: settings.previewSize === "large" ? "large" : "small" }} allowFullscreen={false} compact={settings.density === "compact"} />
+      </div>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap gap-2">
@@ -38,25 +59,19 @@ function ComponentCard({ component }: { component: ComponentLibraryState["compon
             <WorkspaceBadge value={component.status} />
             <WorkspaceBadge value={component.approvalStatus} />
           </div>
-          <h2 className="mt-3 text-xl font-black text-white">{component.displayName}</h2>
+          <h2 className={cn("mt-3 font-black text-white", settings.density === "compact" ? "text-base" : "text-xl")}>{component.displayName}</h2>
           <p className="mt-1 truncate font-mono text-xs text-cyan-200">{component.componentId}</p>
         </div>
         {component.approvalStatus === "Approved" ? <ShieldCheck className="h-6 w-6 text-emerald-200" /> : <Boxes className="h-6 w-6 text-cyan-200" />}
       </div>
-      <p className="mt-3 line-clamp-2 text-sm leading-6 text-slate-300">{component.description}</p>
-      <div className="mt-4 grid gap-2 sm:grid-cols-2">
+      <p className={cn("mt-3 line-clamp-2 text-sm leading-6 text-slate-300", settings.density === "compact" && "hidden")}>{component.description}</p>
+      <div className={cn("mt-3 grid gap-2", settings.density === "compact" ? "grid-cols-2" : "sm:grid-cols-2")}>
         <WorkspaceMiniStat label="Designer" value={component.assignedTo} />
         <WorkspaceMiniStat label="Version" value={`v${component.version}`} />
-        <WorkspaceMiniStat label="Vite" value={vite} />
-        <WorkspaceMiniStat label="Roblox" value={roblox} />
-        <WorkspaceMiniStat label="Screens" value={component.screenUsages.length} />
-        <WorkspaceMiniStat label="Variants" value={component.variants.length} />
-        <WorkspaceMiniStat label="States" value={component.stateCount} />
-        <WorkspaceMiniStat label="Missing Assets" value={component.missingAssets} />
-        <WorkspaceMiniStat label="Missing States" value={component.missingStates} />
-        <WorkspaceMiniStat label="Preview" value={component.visualPreview.status} />
+        {settings.density !== "compact" ? <WorkspaceMiniStat label="Vite" value={vite} /> : null}
+        {settings.density !== "compact" ? <WorkspaceMiniStat label="Roblox" value={roblox} /> : null}
       </div>
-      <div className="mt-4">
+      <div className={cn("mt-4", settings.density === "compact" && "hidden")}>
         <div className="flex items-center justify-between text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
           <span>Guardrails</span>
           <span>{readiness}%</span>
@@ -67,7 +82,34 @@ function ComponentCard({ component }: { component: ComponentLibraryState["compon
         <WorkspaceBadge value={`parity ${component.parityStatus}`} />
         {component.breakingChanges.some((change) => !change.resolved) ? <WorkspaceBadge value="Breaking Change" /> : null}
       </div>
-    </Link>
+    </button>
+  );
+}
+
+function ComponentInspector({ component }: { component: ComponentLibraryState["components"][number] }) {
+  const readiness = Math.round((component.checklistComplete / Math.max(1, component.checklistTotal)) * 100);
+  return (
+    <DensityInspector title={component.displayName}>
+      <AssetPreview preview={{ ...component.visualPreview, size: "large" }} allowFullscreen={false} />
+      <div className="flex flex-wrap gap-2">
+        <WorkspaceBadge value={component.category} />
+        <WorkspaceBadge value={component.status} />
+        <WorkspaceBadge value={component.approvalStatus} />
+      </div>
+      <p className="text-sm leading-6 text-slate-300">{component.description}</p>
+      <div className="grid gap-2 sm:grid-cols-2">
+        <WorkspaceMiniStat label="Version" value={`v${component.version}`} />
+        <WorkspaceMiniStat label="Designer" value={component.assignedTo} />
+        <WorkspaceMiniStat label="Screens" value={component.screenUsages.length} />
+        <WorkspaceMiniStat label="Variants" value={component.variants.length} />
+        <WorkspaceMiniStat label="States" value={component.stateCount} />
+        <WorkspaceMiniStat label="Missing Assets" value={component.missingAssets} />
+      </div>
+      <WorkspaceProgressBar value={readiness} />
+      <Link href={`/component-library/${component.componentId}`} className="inline-flex h-9 items-center justify-center rounded-md border border-cyan-400/25 bg-cyan-400/10 px-3 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/60 hover:bg-cyan-400/20">
+        Open Component Detail
+      </Link>
+    </DensityInspector>
   );
 }
 
@@ -80,6 +122,7 @@ export function ComponentLibraryWorkspace({ state }: { state: ComponentLibrarySt
   const [parity, setParity] = useState<(typeof parityStatuses)[number]>("All");
   const [missingAssets, setMissingAssets] = useState(false);
   const [missingStates, setMissingStates] = useState(false);
+  const [densitySettings, setDensitySettings] = useWorkspaceDensitySettings("project-genesis-density-component-library");
 
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -95,6 +138,9 @@ export function ComponentLibraryWorkspace({ state }: { state: ComponentLibrarySt
         && (!missingStates || component.missingStates > 0);
     });
   }, [approval, category, missingAssets, missingStates, parity, query, state.components, status, target]);
+  const first = filtered[0] ?? state.components[0];
+  const [selectedId, setSelectedId] = useState(first?.componentId ?? "");
+  const selected = filtered.find((component) => component.componentId === selectedId) ?? first;
 
   return (
     <main className="space-y-6">
@@ -154,8 +200,28 @@ export function ComponentLibraryWorkspace({ state }: { state: ComponentLibrarySt
         </div>
       </section>
 
-      <section className="grid gap-4 xl:grid-cols-2">
-        {filtered.map((component) => <ComponentCard key={component.componentId} component={component} />)}
+      <CompactWorkspaceToolbar
+        query={query}
+        onQueryChange={setQuery}
+        settings={densitySettings}
+        onSettingsChange={(patch) => {
+          if (patch.filter) setStatus(patch.filter === "all" ? "All" : patch.filter as typeof status);
+          setDensitySettings(patch);
+        }}
+        resultCount={filtered.length}
+        totalCount={state.components.length}
+        placeholder="Search components, IDs, screens, designers, variants"
+        filterOptions={[{ value: "all", label: "All" }, ...statuses.filter((item) => item !== "All").map((item) => ({ value: item, label: item }))]}
+        groupOptions={[{ value: "none", label: "None" }, { value: "category", label: "Category" }, { value: "status", label: "Status" }, { value: "component", label: "Component" }, { value: "published", label: "Published" }, { value: "missing", label: "Missing" }]}
+      />
+
+      <section className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_26rem]">
+        <div className={collectionGridClass(densitySettings)}>
+          {filtered.map((component) => (
+            <ComponentCard key={component.componentId} component={component} settings={densitySettings} selected={selected?.componentId === component.componentId} onSelect={() => setSelectedId(component.componentId)} />
+          ))}
+        </div>
+        {selected ? <ComponentInspector component={selected} /> : null}
       </section>
     </main>
   );

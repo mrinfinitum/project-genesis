@@ -4,7 +4,8 @@ import { useMemo, useState } from "react";
 import { AlertTriangle, ArrowRight, BadgeDollarSign, Boxes, Brain, CircuitBoard, Clock, Coins, Diamond, Download, Gauge, GitBranch, Hammer, Layers3, MousePointerClick, Network, Search, ShieldCheck, Sigma, Users } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { EconomyDesignerView, EconomyFocusedModel, EconomyGraphNode, EconomyInspector } from "@/lib/economy-designer";
-import { WorkspaceBadge as Badge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel as Panel, WorkspaceProgressBar, WorkspaceSearchBar, WorkspaceStatTile, WorkspaceTabs } from "@/components/ui/workspace";
+import { CompactWorkspaceToolbar, collectionGridClass, useWorkspaceDensitySettings } from "@/components/ui/density";
+import { WorkspaceBadge as Badge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel as Panel, WorkspaceProgressBar, WorkspaceStatTile, WorkspaceTabs } from "@/components/ui/workspace";
 import { cn } from "@/lib/utils";
 
 type EconomyDesignerTab = "inspector" | "graph" | "producers" | "building_effects" | "models" | "scope" | "timeline" | "sandbox" | "validation" | "handoff";
@@ -352,6 +353,7 @@ export function EconomyDesignerWorkspace({ view }: { view: EconomyDesignerView }
   const [tab, setTab] = useState<EconomyDesignerTab>("inspector");
   const [selectedEconomyId, setSelectedEconomyId] = useState(view.economies[0]?.economyId ?? "ECON-LABOR");
   const [query, setQuery] = useState("");
+  const [densitySettings, setDensitySettings] = useWorkspaceDensitySettings("project-genesis-density-economy-designer");
   const selectedEconomy = view.economies.find((economy) => economy.economyId === selectedEconomyId) ?? view.economies[0];
 
   return (
@@ -380,7 +382,17 @@ export function EconomyDesignerWorkspace({ view }: { view: EconomyDesignerView }
       </div>
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,0.8fr)_minmax(22rem,0.35fr)]">
-        <WorkspaceSearchBar value={query} onChange={setQuery} placeholder="Search economy IDs, producers, buildings, scopes, reason codes" />
+        <CompactWorkspaceToolbar
+          query={query}
+          onQueryChange={setQuery}
+          settings={densitySettings}
+          onSettingsChange={setDensitySettings}
+          resultCount={view.economies.length}
+          totalCount={view.economies.length}
+          placeholder="Search economy IDs, producers, buildings, scopes, reason codes"
+          filterOptions={[{ value: "all", label: "All" }, { value: "ready", label: "Ready" }, { value: "warning", label: "Warnings" }]}
+          groupOptions={[{ value: "none", label: "None" }, { value: "status", label: "Status" }, { value: "type", label: "Type" }, { value: "era", label: "Era" }]}
+        />
         <Panel>
           <div className="grid gap-2">
             <div className="flex items-center justify-between gap-3">
@@ -393,7 +405,7 @@ export function EconomyDesignerWorkspace({ view }: { view: EconomyDesignerView }
         </Panel>
       </div>
 
-      <div className="grid gap-2 md:grid-cols-5">
+      <div className={collectionGridClass(densitySettings)}>
         {view.economies.map((economy) => <EconomyPill key={economy.economyId} economy={economy} selected={selectedEconomyId === economy.economyId} onClick={() => setSelectedEconomyId(economy.economyId)} />)}
       </div>
 

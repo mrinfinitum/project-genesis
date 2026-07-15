@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { CheckCircle2, MonitorCog, Search, ShieldAlert } from "lucide-react";
 import { AssetPreview } from "@/components/asset-preview";
+import { CompactWorkspaceToolbar, DensityInspector, cardShellClass, collectionGridClass, previewBoxClass, useWorkspaceDensitySettings, type DensitySettings } from "@/components/ui/density";
 import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, WorkspaceProgressBar, WorkspaceSearchBar, WorkspaceStatTile } from "@/components/ui/workspace";
 import type { ScreenDesignerState, ScreenDesignStatus, ScreenApprovalStatus } from "@/lib/screen-designer";
+import { cn } from "@/lib/utils";
 
 const statusOptions: Array<"All" | ScreenDesignStatus> = ["All", "Not Started", "Draft", "In Design", "Ready for Review", "Approved", "Implemented", "Needs Revision"];
 const approvalOptions: Array<"All" | ScreenApprovalStatus> = ["All", "Unreviewed", "Changes Requested", "Approved"];
@@ -24,39 +26,53 @@ function SelectFilter<T extends string>({ label, value, options, onChange }: { l
   );
 }
 
-function ScreenCard({ screen }: { screen: ScreenDesignerState["screens"][number] }) {
+function ScreenCard({ screen, settings, selected, onSelect }: { screen: ScreenDesignerState["screens"][number]; settings: DensitySettings; selected: boolean; onSelect: () => void }) {
   const completion = Math.round((screen.checklistComplete / Math.max(1, screen.checklistTotal)) * 100);
   const vite = screen.implementationTargets.find((target) => target.target === "Vite Web")?.status ?? "Not Started";
   const roblox = screen.implementationTargets.find((target) => target.target === "Roblox")?.status ?? "Not Started";
 
+  if (settings.density === "list") {
+    return (
+      <button type="button" onClick={onSelect} className={cardShellClass(settings, selected)}>
+        <div className={cn("overflow-hidden rounded-md", previewBoxClass(settings))}>
+          <AssetPreview preview={{ ...screen.visualPreview, size: "small" }} allowFullscreen={false} compact />
+        </div>
+        <div className="min-w-0">
+          <h2 className="truncate text-sm font-black text-white">{screen.displayName}</h2>
+          <p className="mt-1 truncate font-mono text-xs text-cyan-200">{screen.screenId}</p>
+        </div>
+        <WorkspaceBadge value={screen.status} />
+        <WorkspaceBadge value={screen.approvalStatus} />
+        <p className="truncate text-xs text-slate-400">{new Date(screen.updatedAt).toLocaleDateString()}</p>
+        <p className="truncate text-xs text-slate-300">v{screen.version} / {screen.responsivePreviewReady ? "Preview" : "Needs Review"}</p>
+      </button>
+    );
+  }
+
   return (
-    <Link href={`/screen-designer/${screen.screenId}`} className="block rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-4 shadow-glow transition hover:border-cyan-300/50 hover:bg-[#0a1728]">
-      <AssetPreview preview={screen.visualPreview} allowFullscreen={false} />
+    <button type="button" onClick={onSelect} className={cardShellClass(settings, selected)}>
+      <div className={previewBoxClass(settings)}>
+        <AssetPreview preview={{ ...screen.visualPreview, size: settings.previewSize === "large" ? "large" : "small" }} allowFullscreen={false} compact={settings.density === "compact"} />
+      </div>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap gap-2">
             <WorkspaceBadge value={screen.status} />
             <WorkspaceBadge value={screen.approvalStatus} />
           </div>
-          <h2 className="mt-3 text-2xl font-black text-white">{screen.displayName}</h2>
+          <h2 className={cn("mt-3 font-black text-white", settings.density === "compact" ? "text-base" : "text-2xl")}>{screen.displayName}</h2>
           <p className="mt-1 truncate font-mono text-xs text-cyan-200">{screen.screenId}</p>
         </div>
         {screen.approvalStatus === "Approved" ? <CheckCircle2 className="h-6 w-6 text-emerald-200" /> : <MonitorCog className="h-6 w-6 text-cyan-200" />}
       </div>
-      <p className="mt-3 line-clamp-2 text-sm leading-6 text-slate-300">{screen.description}</p>
-      <div className="mt-4 grid gap-2 sm:grid-cols-2">
+      <p className={cn("mt-3 line-clamp-2 text-sm leading-6 text-slate-300", settings.density === "compact" && "hidden")}>{screen.description}</p>
+      <div className={cn("mt-3 grid gap-2", settings.density === "compact" ? "grid-cols-2" : "sm:grid-cols-2")}>
         <WorkspaceMiniStat label="Designer" value={screen.assignedTo} />
         <WorkspaceMiniStat label="Updated" value={new Date(screen.updatedAt).toLocaleDateString()} />
-        <WorkspaceMiniStat label="Vite Parity" value={screen.parityStatus.vite} />
-        <WorkspaceMiniStat label="Roblox Parity" value={screen.parityStatus.roblox} />
-        <WorkspaceMiniStat label="Missing Assets" value={screen.missingAssets} />
-        <WorkspaceMiniStat label="Data Gaps" value={screen.unresolvedDataRequirements} />
-        <WorkspaceMiniStat label="Vite Impl." value={vite} />
-        <WorkspaceMiniStat label="Roblox Impl." value={roblox} />
-        <WorkspaceMiniStat label="Preview" value={screen.visualPreview.status} />
-        <WorkspaceMiniStat label="Parity Score" value={`${screen.parityScore}%`} />
+        {settings.density !== "compact" ? <WorkspaceMiniStat label="Vite Impl." value={vite} /> : null}
+        {settings.density !== "compact" ? <WorkspaceMiniStat label="Roblox Impl." value={roblox} /> : null}
       </div>
-      <div className="mt-4">
+      <div className={cn("mt-4", settings.density === "compact" && "hidden")}>
         <div className="flex items-center justify-between text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
           <span>Readiness Checklist</span>
           <span>{completion}%</span>
@@ -67,7 +83,34 @@ function ScreenCard({ screen }: { screen: ScreenDesignerState["screens"][number]
         <WorkspaceBadge value={screen.responsivePreviewReady ? "Responsive Preview Ready" : "Responsive Needs Review"} />
         <WorkspaceBadge value={`v${screen.version}`} />
       </div>
-    </Link>
+    </button>
+  );
+}
+
+function ScreenInspector({ screen }: { screen: ScreenDesignerState["screens"][number] }) {
+  const completion = Math.round((screen.checklistComplete / Math.max(1, screen.checklistTotal)) * 100);
+  return (
+    <DensityInspector title={screen.displayName}>
+      <AssetPreview preview={{ ...screen.visualPreview, size: "large" }} allowFullscreen={false} />
+      <div className="flex flex-wrap gap-2">
+        <WorkspaceBadge value={screen.status} />
+        <WorkspaceBadge value={screen.approvalStatus} />
+        <WorkspaceBadge value={`v${screen.version}`} />
+      </div>
+      <p className="text-sm leading-6 text-slate-300">{screen.description}</p>
+      <div className="grid gap-2 sm:grid-cols-2">
+        <WorkspaceMiniStat label="Modified" value={new Date(screen.updatedAt).toLocaleDateString()} />
+        <WorkspaceMiniStat label="Designer" value={screen.assignedTo} />
+        <WorkspaceMiniStat label="Missing Assets" value={screen.missingAssets} />
+        <WorkspaceMiniStat label="Data Gaps" value={screen.unresolvedDataRequirements} />
+        <WorkspaceMiniStat label="Vite Parity" value={screen.parityStatus.vite} />
+        <WorkspaceMiniStat label="Roblox Parity" value={screen.parityStatus.roblox} />
+      </div>
+      <WorkspaceProgressBar value={completion} />
+      <Link href={`/screen-designer/${screen.screenId}`} className="inline-flex h-9 items-center justify-center rounded-md border border-cyan-400/25 bg-cyan-400/10 px-3 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/60 hover:bg-cyan-400/20">
+        Open Screen Specification
+      </Link>
+    </DensityInspector>
   );
 }
 
@@ -78,6 +121,7 @@ export function ScreenDesignerWorkspace({ state }: { state: ScreenDesignerState 
   const [target, setTarget] = useState<(typeof targets)[number]>("All");
   const [onlyMissingAssets, setOnlyMissingAssets] = useState(false);
   const [onlyMissingData, setOnlyMissingData] = useState(false);
+  const [densitySettings, setDensitySettings] = useWorkspaceDensitySettings("project-genesis-density-screen-designer");
 
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -91,6 +135,9 @@ export function ScreenDesignerWorkspace({ state }: { state: ScreenDesignerState 
         && (!onlyMissingData || screen.unresolvedDataRequirements > 0);
     });
   }, [approval, onlyMissingAssets, onlyMissingData, query, state.screens, status, target]);
+  const selected = filtered[0] ?? state.screens[0];
+  const [selectedId, setSelectedId] = useState(selected?.screenId ?? "");
+  const selectedScreen = filtered.find((screen) => screen.screenId === selectedId) ?? selected;
 
   return (
     <main className="space-y-6">
@@ -146,10 +193,28 @@ export function ScreenDesignerWorkspace({ state }: { state: ScreenDesignerState 
         </div>
       </section>
 
-      <section className="grid gap-4 xl:grid-cols-2">
-        {filtered.map((screen) => (
-          <ScreenCard key={screen.screenId} screen={screen} />
-        ))}
+      <CompactWorkspaceToolbar
+        query={query}
+        onQueryChange={setQuery}
+        settings={densitySettings}
+        onSettingsChange={(patch) => {
+          if (patch.filter) setStatus(patch.filter === "all" ? "All" : patch.filter as typeof status);
+          setDensitySettings(patch);
+        }}
+        resultCount={filtered.length}
+        totalCount={state.screens.length}
+        placeholder="Search screens, canonical IDs, designers, notes"
+        filterOptions={[{ value: "all", label: "All" }, ...statusOptions.filter((item) => item !== "All").map((item) => ({ value: item, label: item }))]}
+        groupOptions={[{ value: "none", label: "None" }, { value: "status", label: "Status" }, { value: "screen", label: "Screen" }, { value: "published", label: "Published" }, { value: "missing", label: "Missing" }]}
+      />
+
+      <section className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_26rem]">
+        <div className={collectionGridClass(densitySettings)}>
+          {filtered.map((screen) => (
+            <ScreenCard key={screen.screenId} screen={screen} settings={densitySettings} selected={selectedScreen?.screenId === screen.screenId} onSelect={() => setSelectedId(screen.screenId)} />
+          ))}
+        </div>
+        {selectedScreen ? <ScreenInspector screen={selectedScreen} /> : null}
       </section>
     </main>
   );

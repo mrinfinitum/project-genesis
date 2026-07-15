@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Bot, Eye, Layers3, MessageSquareText, Palette, Search, Sparkles, UploadCloud } from "lucide-react";
 import { AssetPreview } from "@/components/asset-preview";
+import { CompactWorkspaceToolbar, cardShellClass, collectionGridClass, previewBoxClass, useWorkspaceDensitySettings, type DensitySettings } from "@/components/ui/density";
 import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, WorkspaceProgressBar, WorkspaceSearchBar, WorkspaceStatTile } from "@/components/ui/workspace";
 import type { AiAgentArtworkSlot, AiAgentLibraryState, AiAgentRecord, AiAgentRarity, AiAgentState } from "@/lib/ai-agents";
+import { cn } from "@/lib/utils";
 
 const rarityOptions: Array<"All" | AiAgentRarity> = ["All", "Common", "Uncommon", "Rare", "Epic", "Legendary"];
 const stateOptions: Array<"All" | AiAgentState> = ["All", "Idle", "Blink", "Thinking", "Working", "Research", "Offline", "Warning", "Celebration", "Sleeping", "Surprised"];
@@ -52,33 +54,52 @@ function SourceUploadForm({ slot }: { slot: AiAgentArtworkSlot }) {
   );
 }
 
-function AgentCard({ agent }: { agent: AiAgentLibraryState["agents"][number] }) {
+function AgentCard({ agent, settings }: { agent: AiAgentLibraryState["agents"][number]; settings: DensitySettings }) {
   const artworkPercent = Math.round((agent.artworkReady / Math.max(1, agent.artworkTotal)) * 100);
   const expressionPercent = Math.round((agent.expressionReady / Math.max(1, agent.expressionTotal)) * 100);
+  if (settings.density === "list") {
+    return (
+      <article className={cardShellClass(settings)}>
+        <div className={cn("overflow-hidden rounded-md", previewBoxClass(settings))}>
+          <AssetPreview preview={{ ...agent.primaryPreview, size: "small" }} allowFullscreen={false} compact />
+        </div>
+        <div className="min-w-0">
+          <h2 className="truncate text-sm font-black text-white">{agent.displayName}</h2>
+          <p className="mt-1 truncate font-mono text-xs text-cyan-200">{agent.id}</p>
+        </div>
+        <WorkspaceBadge value={agent.rarity} />
+        <WorkspaceBadge value={`${agent.supportedStates.length} states`} />
+        <p className="truncate text-xs text-slate-400">{agent.artworkReady}/{agent.artworkTotal} art</p>
+        <p className="truncate text-xs text-slate-300">{agent.expressionReady}/{agent.expressionTotal} expressions</p>
+      </article>
+    );
+  }
   return (
-    <article className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-4 shadow-glow">
-      <AssetPreview preview={agent.primaryPreview} allowFullscreen={false} />
+    <article className={cardShellClass(settings)}>
+      <div className={previewBoxClass(settings)}>
+        <AssetPreview preview={{ ...agent.primaryPreview, size: settings.previewSize === "large" ? "large" : "small" }} allowFullscreen={false} compact={settings.density === "compact"} />
+      </div>
       <div className="mt-4 flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap gap-2">
             <WorkspaceBadge value={agent.rarity} />
             <WorkspaceBadge value={`${agent.supportedStates.length} states`} />
           </div>
-          <h2 className="mt-3 text-2xl font-black text-white">{agent.displayName}</h2>
+          <h2 className={cn("mt-3 font-black text-white", settings.density === "compact" ? "text-base" : "text-2xl")}>{agent.displayName}</h2>
           <p className="mt-1 truncate font-mono text-xs text-cyan-200">{agent.id}</p>
         </div>
         <div className="grid h-11 w-11 place-items-center rounded-md border border-cyan-300/20 bg-cyan-300/10">
           <Bot className="h-5 w-5 text-cyan-100" />
         </div>
       </div>
-      <p className="mt-3 line-clamp-2 text-sm leading-6 text-slate-300">{agent.description}</p>
-      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+      <p className={cn("mt-3 line-clamp-2 text-sm leading-6 text-slate-300", settings.density === "compact" && "hidden")}>{agent.description}</p>
+      <div className={cn("mt-3 grid gap-3", settings.density === "compact" ? "grid-cols-2" : "sm:grid-cols-2")}>
         <WorkspaceMiniStat label="Artwork" value={`${agent.artworkReady}/${agent.artworkTotal}`} />
         <WorkspaceMiniStat label="Expressions" value={`${agent.expressionReady}/${agent.expressionTotal}`} />
-        <WorkspaceMiniStat label="Components" value={agent.componentLibraryReferences.join(", ")} />
-        <WorkspaceMiniStat label="Unlocks" value={agent.unlockRequirements.join(", ")} />
+        {settings.density !== "compact" ? <WorkspaceMiniStat label="Components" value={agent.componentLibraryReferences.join(", ")} /> : null}
+        {settings.density !== "compact" ? <WorkspaceMiniStat label="Unlocks" value={agent.unlockRequirements.join(", ")} /> : null}
       </div>
-      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+      <div className={cn("mt-4 grid gap-3 sm:grid-cols-2", settings.density === "compact" && "hidden")}>
         <div>
           <div className="flex items-center justify-between text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
             <span>Artwork</span>
@@ -94,7 +115,7 @@ function AgentCard({ agent }: { agent: AiAgentLibraryState["agents"][number] }) 
           <WorkspaceProgressBar value={expressionPercent} className="mt-2" />
         </div>
       </div>
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className={cn("mt-4 flex flex-wrap gap-2", settings.density === "compact" && "hidden")}>
         {agent.supportedStates.map((state) => <WorkspaceBadge key={state} value={state} />)}
       </div>
       {agent.blockers.length ? <p className="mt-4 text-sm leading-6 text-amber-100">Needs: {agent.blockers.slice(0, 4).join("; ")}{agent.blockers.length > 4 ? "..." : ""}</p> : null}
@@ -192,6 +213,7 @@ export function AiAgentsWorkspace({ state }: { state: AiAgentLibraryState }) {
   const [query, setQuery] = useState("");
   const [rarity, setRarity] = useState<(typeof rarityOptions)[number]>("All");
   const [agentState, setAgentState] = useState<(typeof stateOptions)[number]>("All");
+  const [densitySettings, setDensitySettings] = useWorkspaceDensitySettings("project-genesis-density-ai-agents");
 
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -262,8 +284,23 @@ export function AiAgentsWorkspace({ state }: { state: AiAgentLibraryState }) {
         </div>
       </section>
 
-      <section className="grid gap-4 xl:grid-cols-2">
-        {filtered.map((agent) => <AgentCard key={agent.id} agent={agent} />)}
+      <CompactWorkspaceToolbar
+        query={query}
+        onQueryChange={setQuery}
+        settings={densitySettings}
+        onSettingsChange={(patch) => {
+          if (patch.filter) setRarity(patch.filter === "all" ? "All" : patch.filter as typeof rarity);
+          setDensitySettings(patch);
+        }}
+        resultCount={filtered.length}
+        totalCount={state.agents.length}
+        placeholder="Search AI agents, unlocks, states, dialogue roles"
+        filterOptions={[{ value: "all", label: "All" }, ...rarityOptions.filter((item) => item !== "All").map((item) => ({ value: item, label: item }))]}
+        groupOptions={[{ value: "none", label: "None" }, { value: "rarity", label: "Rarity" }, { value: "status", label: "Status" }, { value: "type", label: "Type" }, { value: "missing", label: "Missing" }]}
+      />
+
+      <section className={collectionGridClass(densitySettings)}>
+        {filtered.map((agent) => <AgentCard key={agent.id} agent={agent} settings={densitySettings} />)}
       </section>
 
       <WorkspacePanel title="Published Variant Contract" icon={Sparkles}>
