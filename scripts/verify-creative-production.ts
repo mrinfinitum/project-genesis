@@ -40,6 +40,7 @@ async function main() {
   const workspacePath = "components/creative-production-workspace.tsx";
   const robloxArtRoutePath = "app/assets/roblox-art/[...path]/route.ts";
   const appShell = read("components/app-shell.tsx");
+  const page = read(pagePath);
   const workspace = read(workspacePath);
   const robloxArtRoute = read(robloxArtRoutePath);
   const architecture = read("lib/architecture/index.ts");
@@ -87,11 +88,18 @@ async function main() {
   assert(workspace.includes("Advanced / Systems Authoring"), "Creative Production must link to Advanced / Systems Authoring.");
   assert(workspace.includes("useEffect(() =>"), "Creative Production workspace must sync active area from route changes.");
   assert(workspace.includes("setActiveArea(normalizedInitial ?? \"overview\")"), "Creative Production workspace must update when the selected area query changes.");
+  assert(page.includes("buildGameEngineExport(\"generic\")"), "Creative Production must load the canonical generated universe catalog.");
+  assert(workspace.includes("UniverseAreaDetail"), "Creative Production must render dedicated universe catalog detail pages.");
+  assert(workspace.includes("UniverseCatalogCard"), "Creative Production must render generated celestial records as catalog cards.");
+  assert(workspace.includes("universeCatalogItems"), "Creative Production must resolve celestial catalog items from canonical runtime data.");
+  assert(workspace.includes('if (value === "galaxy") return "galaxies";'), "Old galaxy route query must normalize to the new Galaxies catalog.");
+  assert(workspace.includes('textValue(row.celestial_body_type) !== "Star"'), "Planets catalog must exclude star records.");
+  assert(!workspace.includes('id: "planets", label: "Planets", categoryIds: ["planet-ui"]'), "Planets catalog must not use planet-ui asset inventory.");
 
   const creativeNav = section(appShell, 'id: "civilization"', 'id: "resources"');
   const advancedNav = section(appShell, 'id: "studio"', 'id: "universe"');
   assert(creativeNav.includes('label: "Creative Production"'), "Primary nav must include Creative Production.");
-  for (const label of ["Overview", "Top HUD", "Left Navigation", "Research", "Buildings", "Upgrades", "AI Agents", "Civilizations", "Galaxy", "Planets", "Settings", "Login & Account", "Loading", "Icons", "Backgrounds", "Animations", "Audio", "Video"]) {
+  for (const label of ["Overview", "Top HUD", "Left Navigation", "Research", "Buildings", "Upgrades", "AI Agents", "Civilizations", "Galaxies", "Sectors", "Star Systems", "Stars", "Planets", "Settings", "Login & Account", "Loading", "Icons", "Backgrounds", "Animations", "Audio", "Video"]) {
     assert(creativeNav.includes(`label: "${label}"`), `Creative Production nav is missing ${label}.`);
   }
   assert(!creativeNav.includes("Research Designer"), "Research Designer must not remain in primary Creative Production nav.");
@@ -142,6 +150,20 @@ async function main() {
   for (const [index, engineExport] of exports.entries()) {
     assert(engineExport.validation.status === "Ready", `${targets[index]} export must remain Ready; received ${engineExport.validation.status}.`);
   }
+  const canonical = exports[0].canonical as {
+    galaxies: Array<Record<string, unknown>>;
+    sectors: Array<Record<string, unknown>>;
+    star_systems: Array<Record<string, unknown>>;
+    celestial_bodies: Array<Record<string, unknown>>;
+    planets: Array<Record<string, unknown>>;
+  };
+  const starCount = canonical.celestial_bodies.filter((row) => row.celestial_body_type === "Star").length;
+  const planetBodyCount = canonical.celestial_bodies.filter((row) => row.celestial_body_type !== "Star").length;
+  assert(canonical.galaxies.length >= 1, "Generated catalog must expose at least one galaxy.");
+  assert(canonical.sectors.length >= 1, "Generated catalog must expose at least one sector.");
+  assert(canonical.star_systems.length >= 1, "Generated catalog must expose generated star systems.");
+  assert(starCount >= 1, "Generated catalog must expose star records.");
+  assert(planetBodyCount >= 1, "Generated catalog must expose non-star celestial bodies for Planets.");
 
   console.log(JSON.stringify({
     ok: true,
@@ -158,7 +180,12 @@ async function main() {
       research: research.length,
       buildings: buildings.length,
       upgrades: upgrades.length,
-      aiAgents: category("ai-agents").length
+      aiAgents: category("ai-agents").length,
+      galaxies: canonical.galaxies.length,
+      sectors: canonical.sectors.length,
+      starSystems: canonical.star_systems.length,
+      stars: starCount,
+      planetsAndMoons: planetBodyCount + canonical.planets.length
     },
     readiness: {
       topHud: readiness(topHud),

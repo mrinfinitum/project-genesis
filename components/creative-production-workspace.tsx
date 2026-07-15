@@ -42,6 +42,27 @@ import type { GameData } from "@/types/schema";
 
 type InventoryItem = AssetProductionState["assetLibraryInventory"]["items"][number];
 type InventoryStatus = InventoryItem["status"];
+type UniverseCatalogKind = "galaxies" | "sectors" | "star-systems" | "stars" | "planets";
+type UniverseCatalogRecord = Record<string, unknown>;
+type UniverseCatalogData = {
+  galaxies?: UniverseCatalogRecord[];
+  sectors?: UniverseCatalogRecord[];
+  star_systems?: UniverseCatalogRecord[];
+  celestial_bodies?: UniverseCatalogRecord[];
+  planets?: UniverseCatalogRecord[];
+};
+type UniverseCatalogItem = {
+  id: string;
+  name: string;
+  className: string;
+  subclassName: string;
+  seed: string;
+  discoveryStatus: string;
+  publishedStatus: string;
+  assetStatus: string;
+  previewUrl?: string;
+  detailHref: string;
+};
 type CreativeCardType = "icon" | "landscape" | "portrait" | "banner" | "panel" | "button" | "audio" | "video" | "requirement" | "group_summary";
 type ProductionAreaId =
   | "overview"
@@ -54,7 +75,10 @@ type ProductionAreaId =
   | "discovery"
   | "encyclopedia"
   | "civilizations"
-  | "galaxy"
+  | "galaxies"
+  | "sectors"
+  | "star-systems"
+  | "stars"
   | "planets"
   | "settings"
   | "login-account"
@@ -74,6 +98,7 @@ type ProductionArea = {
   accent: string;
   screenSpecHref?: string;
   advancedHref?: string;
+  universeCatalog?: UniverseCatalogKind;
   description: string;
   groups?: string[];
   matcher?: (item: InventoryItem) => boolean;
@@ -101,8 +126,11 @@ const productionAreas: ProductionArea[] = [
   { id: "discovery", label: "Discovery", categoryIds: ["discovery"], icon: Search, accent: "from-indigo-300/25 to-cyan-300/10", advancedHref: "/discovery", description: "Artifacts, lifeforms, alien technology, Universal Catalog attribution, signals, anomalies, rare matter, ruins, scan art, and collectible discovery production.", groups: ["Artifacts", "Lifeforms", "Alien Technology", "Universal Catalog", "First Discovery Badges", "Naming Moderation States", "Signals", "Anomalies", "Rare Matter", "Ruins"] },
   { id: "encyclopedia", label: "Encyclopedia", categoryIds: ["encyclopedia"], icon: BookOpen, accent: "from-cyan-300/20 to-violet-300/10", advancedHref: "/encyclopedia", description: "Entry icons, cards, hero art, diagrams, progression art, and Galactopedia-ready visual requirements.", groups: ["Buildings", "Research", "Resources", "Planets", "Civilizations", "Factions", "Wonders", "Megastructures"] },
   { id: "civilizations", label: "Civilizations", icon: Landmark, accent: "from-yellow-300/20 to-cyan-300/10", advancedHref: "/civilizations", description: "Civilization command art, era identity, crests, timeline nodes, and command-center presentation.", matcher: (item) => /civilization|era|timeline|command/i.test(searchText(item)) },
-  { id: "galaxy", label: "Galaxy", categoryIds: ["galaxy-ui"], icon: MapIcon, accent: "from-blue-300/25 to-cyan-300/10", advancedHref: "/galaxy", description: "Galaxy cards, map states, spaceport art, scanning visuals, and universe navigation." },
-  { id: "planets", label: "Planets", categoryIds: ["planet-ui"], icon: CircleDot, accent: "from-lime-300/20 to-cyan-300/10", advancedHref: "/planets", description: "Planet cards, planet details, Sol body art, celestial bodies, biome visuals, and scan states." },
+  { id: "galaxies", label: "Galaxies", icon: MapIcon, accent: "from-blue-300/25 to-cyan-300/10", advancedHref: "/galaxy", universeCatalog: "galaxies", description: "Generated galaxy records only. Drill into sectors, systems, stars, and celestial bodies from the canonical universe hierarchy." },
+  { id: "sectors", label: "Sectors", icon: MapIcon, accent: "from-sky-300/25 to-cyan-300/10", advancedHref: "/sector-map", universeCatalog: "sectors", description: "Generated sector records only. No region, cluster, UI, runtime, or placeholder records are shown here." },
+  { id: "star-systems", label: "Star Systems", icon: Sparkles, accent: "from-indigo-300/25 to-cyan-300/10", advancedHref: "/star-system-map", universeCatalog: "star-systems", description: "Generated star system records only, preserving Galaxy to Sector to Star System parent links." },
+  { id: "stars", label: "Stars", icon: Sparkles, accent: "from-yellow-300/20 to-cyan-300/10", advancedHref: "/celestial-bodies", universeCatalog: "stars", description: "Generated star records only. Stars are browsed as celestial objects, not as artwork production placeholders." },
+  { id: "planets", label: "Planets", icon: CircleDot, accent: "from-lime-300/20 to-cyan-300/10", advancedHref: "/celestial-bodies", universeCatalog: "planets", description: "Generated planets, moons, dwarf planets, asteroid belts, and other non-star celestial body records only." },
   { id: "settings", label: "Settings", categoryIds: ["settings-ui"], icon: Settings, accent: "from-slate-300/20 to-cyan-300/10", advancedHref: "/settings", description: "Settings panels, account controls, sliders, toggles, cloud save status, and modal states." },
   { id: "login-account", label: "Login & Account", categoryIds: ["login-ui"], icon: LogIn, accent: "from-rose-300/20 to-cyan-300/10", advancedHref: "/login", description: "Login, account, password reset, MFA, onboarding, and authentication presentation." },
   { id: "loading", label: "Loading", categoryIds: ["loading-ui"], icon: Loader, accent: "from-indigo-300/25 to-cyan-300/10", description: "Launch, loading, splash, wordmark, and transition artwork." },
@@ -133,6 +161,7 @@ function searchText(item: InventoryItem) {
 }
 
 function areaItems(state: AssetProductionState, area: ProductionArea) {
+  if (area.universeCatalog) return [];
   const categoryIds = new Set(area.categoryIds ?? []);
   return state.assetLibraryInventory.items.filter((item) => {
     const inCategory = categoryIds.has(item.categoryId);
@@ -142,6 +171,141 @@ function areaItems(state: AssetProductionState, area: ProductionArea) {
     }
     return inCategory || custom;
   });
+}
+
+function textValue(value: unknown, fallback = "") {
+  if (typeof value === "string" && value.trim()) return value.trim();
+  if (typeof value === "number" && Number.isFinite(value)) return String(value);
+  if (typeof value === "boolean") return value ? "yes" : "no";
+  return fallback;
+}
+
+function previewUrlForUniverseRecord(row: UniverseCatalogRecord) {
+  return (
+    textValue(row.previewUrl) ||
+    textValue(row.preview_url) ||
+    textValue(row.orbit_view_image_url) ||
+    textValue(row.hero_discovery_image_url) ||
+    textValue(row.surface_landscape_image_url) ||
+    textValue(row.image_url) ||
+    textValue(row.thumbnailUrl) ||
+    undefined
+  );
+}
+
+function assetStatusForUniverseRecord(row: UniverseCatalogRecord) {
+  return previewUrlForUniverseRecord(row) ? "art attached" : "art missing";
+}
+
+function universeRecordName(row: UniverseCatalogRecord) {
+  return textValue(row.displayName) || textValue(row.display_name) || textValue(row.generatedName) || textValue(row.generated_name) || textValue(row.name) || textValue(row.system_name) || textValue(row.sector_name) || textValue(row.id, "Unnamed");
+}
+
+function universeCatalogItems(catalog: UniverseCatalogData, area: ProductionArea): UniverseCatalogItem[] {
+  const catalogKind = area.universeCatalog;
+  if (!catalogKind) return [];
+  const bodies = catalog.celestial_bodies ?? [];
+  const planetIds = new Set<string>();
+  const mapBody = (row: UniverseCatalogRecord): UniverseCatalogItem => {
+    const bodyType = textValue(row.celestial_body_type) || textValue(row.type, "Celestial Body");
+    const name = universeRecordName(row);
+    return {
+      id: textValue(row.id, name),
+      name,
+      className: textValue(row.planet_class) || bodyType,
+      subclassName: textValue(row.planet_subclass) || textValue(row.subclass) || textValue(row.biome) || "Canonical body",
+      seed: textValue(row.seed) || textValue(row.planet_seed) || textValue(row.system_id) || "seed pending",
+      discoveryStatus: textValue(row.discoveryState) || textValue(row.discovery_state) || (textValue(row.is_starting_body) === "yes" ? "charted" : "generated"),
+      publishedStatus: textValue(row.is_fixed) === "yes" ? "canonical fixed" : "canonical generated",
+      assetStatus: assetStatusForUniverseRecord(row),
+      previewUrl: previewUrlForUniverseRecord(row),
+      detailHref: `/celestial-bodies?body=${encodeURIComponent(textValue(row.id, name))}`
+    };
+  };
+
+  if (catalogKind === "galaxies") {
+    return (catalog.galaxies ?? []).map((row) => {
+      const id = textValue(row.id, universeRecordName(row));
+      return {
+        id,
+        name: universeRecordName(row),
+        className: textValue(row.galaxy_type) || textValue(row.type, "Galaxy"),
+        subclassName: textValue(row.galaxy_size) || textValue(row.generation_mode) || "Generated galaxy",
+        seed: textValue(row.galaxy_seed) || textValue(row.seed) || "seed pending",
+        discoveryStatus: textValue(row.discoveryState) || textValue(row.discovery_state) || "charted",
+        publishedStatus: textValue(row.is_fixed) === "yes" ? "canonical fixed" : "canonical generated",
+        assetStatus: assetStatusForUniverseRecord(row),
+        previewUrl: previewUrlForUniverseRecord(row),
+        detailHref: `/galaxy?galaxy=${encodeURIComponent(id)}`
+      };
+    });
+  }
+
+  if (catalogKind === "sectors") {
+    return (catalog.sectors ?? []).map((row) => {
+      const id = textValue(row.id, universeRecordName(row));
+      return {
+        id,
+        name: universeRecordName(row),
+        className: textValue(row.sector_type) || textValue(row.type, "Sector"),
+        subclassName: textValue(row.sector_rarity) || textValue(row.density) || "Generated sector",
+        seed: textValue(row.sector_seed) || textValue(row.seed) || textValue(row.galaxy_id) || "seed pending",
+        discoveryStatus: textValue(row.discoveryState) || textValue(row.discovery_state) || "generated",
+        publishedStatus: "canonical generated",
+        assetStatus: assetStatusForUniverseRecord(row),
+        previewUrl: previewUrlForUniverseRecord(row),
+        detailHref: `/sector-map?sector=${encodeURIComponent(id)}`
+      };
+    });
+  }
+
+  if (catalogKind === "star-systems") {
+    return (catalog.star_systems ?? []).map((row) => {
+      const id = textValue(row.id, universeRecordName(row));
+      return {
+        id,
+        name: universeRecordName(row),
+        className: textValue(row.system_type) || textValue(row.star_type) || "Star System",
+        subclassName: textValue(row.system_rarity) || textValue(row.star_class) || "Generated system",
+        seed: textValue(row.system_seed) || textValue(row.seed) || textValue(row.sector_id) || "seed pending",
+        discoveryStatus: textValue(row.discoveryState) || textValue(row.discovery_state) || "generated",
+        publishedStatus: "canonical generated",
+        assetStatus: assetStatusForUniverseRecord(row),
+        previewUrl: previewUrlForUniverseRecord(row),
+        detailHref: `/star-system-map?system=${encodeURIComponent(id)}`
+      };
+    });
+  }
+
+  if (catalogKind === "stars") {
+    return bodies.filter((row) => textValue(row.celestial_body_type) === "Star").map(mapBody);
+  }
+
+  const planetBodyItems = bodies
+    .filter((row) => textValue(row.celestial_body_type) !== "Star")
+    .map((row) => {
+      const item = mapBody(row);
+      planetIds.add(item.id);
+      return item;
+    });
+  const generatedPlanetItems = (catalog.planets ?? [])
+    .filter((row) => !planetIds.has(textValue(row.id)))
+    .map((row) => {
+      const id = textValue(row.id, universeRecordName(row));
+      return {
+        id,
+        name: universeRecordName(row),
+        className: textValue(row.planetClass) || textValue(row.planet_class) || textValue(row.type, "Planet"),
+        subclassName: textValue(row.planetSubclass) || textValue(row.planet_subclass) || textValue(row.biome) || "Generated planet",
+        seed: textValue(row.seed) || textValue(row.planetSeed) || textValue(row.planet_seed) || "seed pending",
+        discoveryStatus: textValue(row.discoveryState) || textValue(row.discovery_state) || "generated",
+        publishedStatus: textValue(row.export_status) || "canonical generated",
+        assetStatus: assetStatusForUniverseRecord(row),
+        previewUrl: previewUrlForUniverseRecord(row),
+        detailHref: `/planets?planet=${encodeURIComponent(id)}`
+      };
+    });
+  return [...planetBodyItems, ...generatedPlanetItems];
 }
 
 function priorityFor(item: InventoryItem): "P0" | "P1" | "P2" | "P3" {
@@ -204,7 +368,25 @@ function readinessFor(items: InventoryItem[]) {
   return Math.round((score / items.length) * 100);
 }
 
-function areaSummary(state: AssetProductionState, area: ProductionArea) {
+function areaSummary(state: AssetProductionState, area: ProductionArea, universeCatalog?: UniverseCatalogData) {
+  if (area.universeCatalog) {
+    const catalogItems = universeCatalogItems(universeCatalog ?? {}, area);
+    const missing = catalogItems.filter((item) => item.assetStatus === "art missing").length;
+    const published = catalogItems.length;
+    const readiness = catalogItems.length ? Math.round(((catalogItems.length - missing) / catalogItems.length) * 100) : 0;
+    return {
+      items: [] as InventoryItem[],
+      readiness,
+      missing,
+      needsReview: 0,
+      invalid: 0,
+      published,
+      uploaded: 0,
+      approved: catalogItems.length - missing,
+      unmapped: 0,
+      blocker: undefined as InventoryItem | undefined
+    };
+  }
   const items = areaItems(state, area);
   const missing = items.filter((item) => item.status === "missing").length;
   const needsReview = items.filter((item) => item.status === "needs_review").length;
@@ -486,6 +668,150 @@ function ProductionItemCard({ item, settings, area }: { item: InventoryItem; set
   );
 }
 
+function UniversePlaceholderPreview({ item, area }: { item?: UniverseCatalogItem; area: ProductionArea }) {
+  return (
+    <div className={`grid h-full place-items-center bg-gradient-to-br ${area.accent} px-3 text-center`}>
+      <div>
+        <CircleDot className="mx-auto h-5 w-5 text-cyan-100/70" />
+        <p className="mt-2 line-clamp-2 text-xs font-black text-white">{item?.name ?? area.label}</p>
+        <p className="mt-1 text-[0.62rem] font-bold uppercase tracking-[0.14em] text-cyan-100/60">Canonical object</p>
+      </div>
+    </div>
+  );
+}
+
+function SafeUniversePreviewImage({ src, item, area }: { src?: string | null; item?: UniverseCatalogItem; area: ProductionArea }) {
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    setFailed(false);
+  }, [src]);
+
+  if (!src || failed) return <UniversePlaceholderPreview item={item} area={area} />;
+  return <img src={src} alt="" onError={() => setFailed(true)} className="h-full w-full rounded-md object-cover" />;
+}
+
+function UniverseCatalogCard({ item, settings, area }: { item: UniverseCatalogItem; settings: DensitySettings; area: ProductionArea }) {
+  if (settings.density === "list") {
+    return (
+      <Link href={item.detailHref} className={`${cardShellClass(settings)} group relative outline-none transition hover:border-cyan-300/45 hover:bg-[#0a1728] focus-visible:border-cyan-200 focus-visible:ring-2 focus-visible:ring-cyan-300/35`}>
+        <div className={previewBoxClass(settings)}><SafeUniversePreviewImage src={item.previewUrl} item={item} area={area} /></div>
+        <div className="min-w-0">
+          <p className="truncate text-sm font-black text-white">{item.name}</p>
+          <p className="truncate text-xs text-cyan-200">{item.className}</p>
+        </div>
+        <WorkspaceBadge value={item.discoveryStatus} className="shrink-0 text-[0.58rem]" />
+        <p className="truncate text-xs text-slate-300">{item.seed}</p>
+        <WorkspaceBadge value={item.assetStatus} className="shrink-0 text-[0.58rem]" />
+        <ChevronRight className="h-4 w-4 text-cyan-200 opacity-60 transition group-hover:translate-x-0.5 group-hover:opacity-100" />
+      </Link>
+    );
+  }
+
+  return (
+    <Link href={item.detailHref} className={`${cardShellClass(settings)} group relative block outline-none transition hover:border-cyan-300/45 hover:bg-[#0a1728] focus-visible:border-cyan-200 focus-visible:ring-2 focus-visible:ring-cyan-300/35`}>
+      <div className={`${settings.previewSize === "hide" ? "hidden" : settings.previewSize === "large" ? "h-44" : settings.previewSize === "medium" ? "h-32" : "h-24"} overflow-hidden rounded-md border border-cyan-300/10 bg-slate-950/60`}>
+        <SafeUniversePreviewImage src={item.previewUrl} item={item} area={area} />
+      </div>
+      <div className="mt-3 flex items-start justify-between gap-2">
+        <div className="min-w-0">
+          <p className="truncate text-sm font-black text-white">{item.name}</p>
+          <p className="mt-1 truncate text-xs text-cyan-200">{item.className}</p>
+        </div>
+        <WorkspaceBadge value={item.assetStatus} className="shrink-0 text-[0.58rem]" />
+      </div>
+      <div className="mt-3 grid grid-cols-2 gap-2">
+        <WorkspaceMiniStat label="Subclass" value={item.subclassName} />
+        <WorkspaceMiniStat label="Seed" value={item.seed} />
+        <WorkspaceMiniStat label="Discovery" value={item.discoveryStatus} />
+        <WorkspaceMiniStat label="Published" value={item.publishedStatus} />
+      </div>
+    </Link>
+  );
+}
+
+function universeSort(items: UniverseCatalogItem[], settings: DensitySettings) {
+  return [...items].sort((left, right) => {
+    if (settings.sort === "name") return left.name.localeCompare(right.name);
+    if (settings.sort === "status") return left.discoveryStatus.localeCompare(right.discoveryStatus) || left.name.localeCompare(right.name);
+    if (settings.sort === "usage") return left.className.localeCompare(right.className) || left.name.localeCompare(right.name);
+    return left.name.localeCompare(right.name);
+  });
+}
+
+function UniverseAreaDetail({ universeCatalog, area, onBack }: { universeCatalog: UniverseCatalogData; area: ProductionArea; onBack: () => void }) {
+  const [query, setQuery] = useState("");
+  const [status, setStatus] = useState<"all" | "with-art" | "missing-art">("all");
+  const [settings, setSettings] = useWorkspaceDensitySettings(`project-genesis-density-creative-production-${area.id}`, defaultCreativeDisplaySettings);
+  const allItems = useMemo(() => universeCatalogItems(universeCatalog, area), [universeCatalog, area]);
+  const items = useMemo(() => {
+    const needle = query.trim().toLowerCase();
+    return universeSort(allItems, settings).filter((item) => {
+      const hasArt = item.assetStatus !== "art missing";
+      const statusMatches = status === "all" || (status === "with-art" ? hasArt : !hasArt);
+      const text = `${item.name} ${item.className} ${item.subclassName} ${item.seed} ${item.discoveryStatus} ${item.publishedStatus} ${item.assetStatus}`.toLowerCase();
+      return statusMatches && (!needle || text.includes(needle));
+    });
+  }, [allItems, settings, query, status]);
+  const missingArt = allItems.filter((item) => item.assetStatus === "art missing").length;
+  const readiness = allItems.length ? Math.round(((allItems.length - missingArt) / allItems.length) * 100) : 0;
+
+  return (
+    <div className="space-y-5">
+      <WorkspacePanel>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <button type="button" onClick={onBack} className="text-xs font-black uppercase tracking-[0.18em] text-cyan-200">Creative Production</button>
+            <h2 className="mt-2 text-3xl font-black text-white">{area.label} Catalog</h2>
+            <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-300">{area.description}</p>
+          </div>
+          <div className="min-w-48">
+            <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">Artwork Readiness</p>
+            <p className="mt-1 text-3xl font-black text-white">{readiness}%</p>
+            <WorkspaceProgressBar value={readiness} className="mt-2" />
+          </div>
+        </div>
+        <div className="mt-4 grid gap-3 md:grid-cols-4">
+          <WorkspaceStatTile label="Canonical Records" value={allItems.length} />
+          <WorkspaceStatTile label="Art Attached" value={allItems.length - missingArt} />
+          <WorkspaceStatTile label="Art Missing" value={missingArt} />
+          <WorkspaceStatTile label="Catalog Source" value="Runtime" />
+        </div>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {area.advancedHref ? <Link href={area.advancedHref} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Open Canonical Browser</Link> : null}
+          <Link href={handoffHref(area, "game")} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Generate Game Handoff</Link>
+        </div>
+      </WorkspacePanel>
+      <WorkspacePanel>
+        <div className="grid gap-3 xl:grid-cols-[minmax(18rem,1fr)_auto] xl:items-start">
+          <WorkspaceSearchBar value={query} onChange={setQuery} placeholder={`Search ${area.label.toLowerCase()} catalog`} className="p-2" />
+          <ViewOptionsButton settings={settings} onSettingsChange={setSettings} />
+        </div>
+        <div role="tablist" aria-label={`${area.label} catalog status`} className="mt-3 flex gap-2 overflow-x-auto rounded-md border border-cyan-300/15 bg-slate-950/35 p-2">
+          {(["all", "with-art", "missing-art"] as const).map((tab) => (
+            <button key={tab} type="button" role="tab" aria-selected={status === tab} onClick={() => setStatus(tab)} className={`shrink-0 rounded-md px-3 py-2 text-xs font-black uppercase tracking-[0.12em] transition ${status === tab ? "bg-cyan-300/20 text-white" : "text-slate-400 hover:bg-cyan-300/10 hover:text-slate-100"}`}>
+              {tab.replace("-", " ")}
+            </button>
+          ))}
+        </div>
+        <div className="mt-3 inline-flex items-center gap-2 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2 text-xs font-semibold text-slate-400">
+          <Search className="h-4 w-4" />
+          {items.length} shown / {allItems.length} total
+        </div>
+      </WorkspacePanel>
+      {items.length ? (
+        <div className={roleAwareAssetGridClass(settings)}>
+          {items.map((item) => <UniverseCatalogCard key={item.id} item={item} settings={settings} area={area} />)}
+        </div>
+      ) : (
+        <WorkspacePanel>
+          <p className="text-sm font-semibold text-slate-300">No generated {area.label.toLowerCase()} records exist yet.</p>
+        </WorkspacePanel>
+      )}
+    </div>
+  );
+}
+
 function UpgradeCategoryStatus({ state }: { state: AssetProductionState }) {
   const records = state.upgradeCategoryAssets;
   return (
@@ -696,13 +1022,19 @@ function AreaDetail({ state, studioData, area, initialClassId, onBack }: { state
   );
 }
 
-export function CreativeProductionWorkspace({ state, studioData, initialArea, initialClassId }: { state: AssetProductionState; studioData: GameData; initialArea?: string | null; initialClassId?: string | null }) {
-  const normalizedInitial = initialArea && initialArea in areaById ? initialArea as Exclude<ProductionAreaId, "overview"> : null;
+function normalizeProductionArea(value?: string | null): Exclude<ProductionAreaId, "overview"> | null {
+  if (!value) return null;
+  if (value === "galaxy") return "galaxies";
+  return value in areaById ? value as Exclude<ProductionAreaId, "overview"> : null;
+}
+
+export function CreativeProductionWorkspace({ state, studioData, universeCatalog, initialArea, initialClassId }: { state: AssetProductionState; studioData: GameData; universeCatalog: UniverseCatalogData; initialArea?: string | null; initialClassId?: string | null }) {
+  const normalizedInitial = normalizeProductionArea(initialArea);
   const [activeArea, setActiveArea] = useState<ProductionAreaId>(normalizedInitial ?? "overview");
   useEffect(() => {
     setActiveArea(normalizedInitial ?? "overview");
   }, [normalizedInitial]);
-  const summaries = useMemo(() => productionAreas.map((area) => ({ area, summary: areaSummary(state, area) })), [state]);
+  const summaries = useMemo(() => productionAreas.map((area) => ({ area, summary: areaSummary(state, area, universeCatalog) })), [state, universeCatalog]);
   const allItems = summaries.flatMap((entry) => entry.summary.items);
   const uniqueItems = new Map(allItems.map((item) => [item.id, item]));
   const totalItems = [...uniqueItems.values()];
@@ -719,7 +1051,11 @@ export function CreativeProductionWorkspace({ state, studioData, initialArea, in
   }
 
   if (activeArea !== "overview") {
-    return <AreaDetail state={state} studioData={studioData} area={areaById[activeArea as Exclude<ProductionAreaId, "overview">]} initialClassId={initialClassId ?? null} onBack={() => openArea("overview")} />;
+    const area = areaById[activeArea as Exclude<ProductionAreaId, "overview">];
+    if (area.universeCatalog) {
+      return <UniverseAreaDetail universeCatalog={universeCatalog} area={area} onBack={() => openArea("overview")} />;
+    }
+    return <AreaDetail state={state} studioData={studioData} area={area} initialClassId={initialClassId ?? null} onBack={() => openArea("overview")} />;
   }
 
   return (
