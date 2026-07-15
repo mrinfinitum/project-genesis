@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { defaultAiAgentVariantId, getAiAgentRuntimeModules } from "@/lib/ai-agents";
 import { ARCHITECTURE_VERSION } from "@/lib/architecture/version";
-import { buildBuildingClassifications, canonicalBuildingTaxonomy } from "@/lib/buildings/taxonomy";
+import { buildBuildingClassifications, canonicalBuildingLibrary, canonicalBuildingTaxonomy } from "@/lib/buildings/taxonomy";
 import { getGameData } from "@/lib/data";
 import { discoveryJournalSchema, sampleDiscoveryJournal, sampleTimelineEvents, timelineEventSchema } from "@/lib/explorer/discovery-log";
 import { colonyBuildingTemplates, colonyFocusDefinitions, colonyLevelDefinitions, colonySchema, createColonyRecord, generateFallbackColonies, type ColonyBuilding, type ColonyRecord } from "@/lib/colonies/procedural";
@@ -136,6 +136,7 @@ type CanonicalModules = {
   planet_resource_profiles: ReturnType<typeof normalizePlanetResourceProfiles>;
   research: GameData["research"];
   building_taxonomy: typeof canonicalBuildingTaxonomy;
+  building_library: typeof canonicalBuildingLibrary;
   building_classifications: ReturnType<typeof buildBuildingClassifications>;
   unlock_matrix: GameData["unlock_matrix"];
   galaxies: Array<Record<string, unknown>>;
@@ -478,6 +479,7 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
     planet_resource_profiles: validatePlanetResourceProfiles(data.planet_resource_profiles as PlanetResourceProfile[]),
     research: data.research,
     building_taxonomy: canonicalBuildingTaxonomy,
+    building_library: canonicalBuildingLibrary,
     building_classifications: buildBuildingClassifications(data.buildings),
     unlock_matrix: data.unlock_matrix,
     galaxies: galaxies.map((galaxy) => ({ ...galaxy, generatedName: galaxyName(galaxy), displayName: galaxyName(galaxy) })),
@@ -641,6 +643,8 @@ function buildRelationshipMap(modules: CanonicalModules) {
   const missionsByMarket: Record<string, string[]> = {};
   const missionsByTradeRoute: Record<string, string[]> = {};
   const missionsBySystem: Record<string, string[]> = {};
+  const buildingLibraryByFamily: Record<string, string[]> = {};
+  const buildingLibraryBySubcategory: Record<string, string[]> = {};
   const buildingClassificationsByFamily: Record<string, string[]> = {};
   const buildingClassificationsBySubcategory: Record<string, string[]> = {};
   const economyUsage: Record<string, Record<string, string[]>> = {};
@@ -710,6 +714,12 @@ function buildRelationshipMap(modules: CanonicalModules) {
     }
   }
 
+  for (const definition of modules.building_library) {
+    buildingLibraryByFamily[definition.familyId] = [...(buildingLibraryByFamily[definition.familyId] ?? []), definition.id];
+    const key = `${definition.familyId}/${definition.subcategoryId}`;
+    buildingLibraryBySubcategory[key] = [...(buildingLibraryBySubcategory[key] ?? []), definition.id];
+  }
+
   for (const classification of modules.building_classifications) {
     buildingClassificationsByFamily[classification.primaryFamilyId] = [...(buildingClassificationsByFamily[classification.primaryFamilyId] ?? []), classification.buildingId];
     const key = `${classification.primaryFamilyId}/${classification.subcategoryId}`;
@@ -737,6 +747,8 @@ function buildRelationshipMap(modules: CanonicalModules) {
     missionsByMarket,
     missionsByTradeRoute,
     missionsBySystem,
+    buildingLibraryByFamily,
+    buildingLibraryBySubcategory,
     buildingClassificationsByFamily,
     buildingClassificationsBySubcategory,
     economyUsage
@@ -811,13 +823,35 @@ function validateUnlocks(issues: ExportValidationIssue[], modules: CanonicalModu
 }
 
 function validateBuildingTaxonomy(issues: ExportValidationIssue[], modules: CanonicalModules) {
-  if (modules.building_taxonomy.length !== 20) {
-    addIssue(issues, "error", "building_taxonomy_family_count", "Building taxonomy must export exactly 20 primary families.", modules.building_taxonomy.map((family) => family.id));
+  if (modules.building_taxonomy.length !== 40) {
+    addIssue(issues, "error", "building_taxonomy_family_count", "Building taxonomy must export exactly 40 primary families.", modules.building_taxonomy.map((family) => family.id));
+  }
+  if (modules.building_library.length < 500) {
+    addIssue(issues, "error", "building_library_count", "Building library must export at least 500 scaffoldable building definitions.", [`${modules.building_library.length}`]);
   }
   const familyIds = new Set(modules.building_taxonomy.map((family) => family.id));
+  const subcategoryIdsByFamily = new Map(modules.building_taxonomy.map((family) => [family.id, new Set(family.subcategories.map((subcategory) => subcategory.id))]));
   const orders = modules.building_taxonomy.map((family) => family.displayOrder);
   if (new Set(orders).size !== orders.length) {
     addIssue(issues, "error", "building_taxonomy_order_duplicate", "Building taxonomy display orders must be unique.", modules.building_taxonomy.map((family) => family.id));
+  }
+  for (const family of modules.building_taxonomy) {
+    if (family.subcategories.length < 2) {
+      addIssue(issues, "error", "building_taxonomy_subcategory_missing", "Every building taxonomy family must include multiple subcategories.", [family.id]);
+    }
+  }
+  for (const definition of modules.building_library) {
+    const family = modules.building_taxonomy.find((row) => row.id === definition.familyId);
+    if (!familyIds.has(definition.familyId) || !family) {
+      addIssue(issues, "error", "building_library_family_missing", "Building library familyId must resolve to building_taxonomy.", [definition.id, definition.familyId]);
+      continue;
+    }
+    if (!subcategoryIdsByFamily.get(definition.familyId)?.has(definition.subcategoryId)) {
+      addIssue(issues, "error", "building_library_subcategory_missing", "Building library subcategoryId must resolve inside its family.", [definition.id, definition.subcategoryId]);
+    }
+    if (!definition.visualAssetRequirements.length || !definition.animationRequirements.length || !definition.soundRequirements.length) {
+      addIssue(issues, "error", "building_library_requirements_missing", "Building library definitions must include visual, animation, and sound requirements.", [definition.id]);
+    }
   }
   const classifiedBuildingIds = new Set<string>();
   const duplicateBuildingIds = new Set<string>();
@@ -1425,6 +1459,7 @@ function compactModules(modules: CanonicalModules) {
     planet_resource_profiles: modules.planet_resource_profiles,
     research: modules.research,
     building_taxonomy: modules.building_taxonomy,
+    building_library: modules.building_library,
     building_classifications: modules.building_classifications,
     unlock_matrix: modules.unlock_matrix,
     galaxies: modules.galaxies,

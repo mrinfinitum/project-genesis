@@ -122,7 +122,41 @@ export type BuildingTaxonomyFamily = {
     displayName: string;
     displayOrder: number;
     aliases?: string[];
+    buildingExamples?: string[];
   }>;
+};
+
+export type CanonicalBuildingDefinition = {
+  id: string;
+  displayName: string;
+  familyId: string;
+  familyName: string;
+  subcategoryId: string;
+  subcategoryName: string;
+  era: string;
+  tier: number;
+  planetAvailability: string[];
+  districtAvailability: string[];
+  alignment: string[];
+  populationEffects: string[];
+  laborEffects: string[];
+  creditEffects: string[];
+  researchEffects: string[];
+  power: {
+    produces: string[];
+    consumes: string[];
+  };
+  inputs: string[];
+  outputs: string[];
+  maintenance: string[];
+  upgradePath: string[];
+  dependencies: string[];
+  unlockRequirements: string[];
+  visualAssetRequirements: string[];
+  animationRequirements: string[];
+  soundRequirements: string[];
+  status: "draft";
+  tags: string[];
 };
 
 export type BuildingClassification = {
@@ -774,6 +808,7 @@ export type GameRuntimeData = {
   aiAgentSaveSchema: AiAgentSaveSchemaDefinition;
   resources: ResourceDefinition[];
   buildingTaxonomy: BuildingTaxonomyFamily[];
+  buildingLibrary: CanonicalBuildingDefinition[];
   buildingClassifications: BuildingClassification[];
   upgradeCategories: UpgradeCategory[];
   upgrades: UpgradeDefinition[];

@@ -79,7 +79,7 @@ async function main() {
 
   const buildingClasses = resolveProductionClasses("buildings", data);
   const canonicalBuildingFamilyIds = new Set(canonicalBuildingTaxonomy.map((family) => family.id));
-  assert(canonicalBuildingFamilyIds.size === 20, "Canonical building taxonomy must expose 20 primary families.");
+  assert(canonicalBuildingFamilyIds.size === 40, "Canonical building taxonomy must expose 40 primary families.");
   for (const classRow of buildingClasses.filter((row) => !["shared", "unclassified"].includes(row.classId))) {
     assert(canonicalBuildingFamilyIds.has(classRow.classId), `Buildings feature cards used non-taxonomy class ${classRow.classId}.`);
   }
@@ -94,7 +94,7 @@ async function main() {
   for (const id of ["shell", "navigation-icons", "selected-state", "inactive-state", "badges-indicators"]) assert(navClasses.includes(id), `Left Navigation feature cards are missing ${id}.`);
 
   const runtime = await buildCanonicalRuntimeExportPayload();
-  assert(runtime.metadata.contentVersion >= 16, `Production classification requires building taxonomy runtime contentVersion 16 or newer; received ${runtime.metadata.contentVersion}.`);
+  assert(runtime.metadata.contentVersion >= 17, `Production classification requires building taxonomy runtime contentVersion 17 or newer; received ${runtime.metadata.contentVersion}.`);
   assert(runtime.metadata.validationStatus === "Ready", `Runtime must remain Ready; received ${runtime.metadata.validationStatus}.`);
   const targets: EngineTarget[] = ["generic", "roblox", "web", "unity", "unreal", "godot"];
   const exports = await Promise.all(targets.map((target) => buildGameEngineExport(target)));

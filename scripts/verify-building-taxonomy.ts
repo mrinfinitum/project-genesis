@@ -4,7 +4,10 @@ import { getAssetProductionState } from "@/lib/assets/asset-production";
 import { resolveProductionClasses } from "@/lib/assets/production-classification";
 import {
   buildBuildingClassifications,
+  canonicalBuildingLibrary,
+  canonicalBuildingLibraryVersion,
   canonicalBuildingTaxonomy,
+  canonicalBuildingTaxonomyVersion,
   classifyBuilding,
   legacyBuildingCategoryMapping,
   validateBuildingTaxonomy
@@ -28,15 +31,27 @@ async function main() {
   const gameEngine = read("lib/export/game-engine.ts");
   const runtimeBuilder = read("lib/runtime/game-runtime.ts");
 
-  assert(canonicalBuildingTaxonomy.length === 20, `Expected 20 canonical building families; received ${canonicalBuildingTaxonomy.length}.`);
+  assert(canonicalBuildingTaxonomyVersion === "building-taxonomy-v2", `Expected building-taxonomy-v2; received ${canonicalBuildingTaxonomyVersion}.`);
+  assert(canonicalBuildingLibraryVersion === "building-library-v1", `Expected building-library-v1; received ${canonicalBuildingLibraryVersion}.`);
+  assert(canonicalBuildingTaxonomy.length === 40, `Expected 40 canonical building families; received ${canonicalBuildingTaxonomy.length}.`);
+  assert(canonicalBuildingLibrary.length >= 500, `Expected at least 500 canonical building definitions; received ${canonicalBuildingLibrary.length}.`);
   const familyIds = new Set(canonicalBuildingTaxonomy.map((family) => family.id));
+  const libraryIds = new Set(canonicalBuildingLibrary.map((definition) => definition.id));
+  assert(libraryIds.size === canonicalBuildingLibrary.length, "Canonical building library IDs must be unique.");
   const displayOrders = canonicalBuildingTaxonomy.map((family) => family.displayOrder);
   assert(new Set(displayOrders).size === displayOrders.length, "Building family displayOrder values must be unique.");
   for (const family of canonicalBuildingTaxonomy) {
-    assert(family.subcategories.length > 0, `${family.displayName} must include subcategories.`);
+    assert(family.subcategories.length > 1, `${family.displayName} must include multiple subcategories.`);
     assert(new Set(family.subcategories.map((subcategory) => subcategory.displayOrder)).size === family.subcategories.length, `${family.displayName} subcategory displayOrder values must be unique.`);
+    assert(canonicalBuildingLibrary.some((definition) => definition.familyId === family.id), `${family.displayName} must have building library definitions.`);
   }
-  for (const required of ["population-housing", "agriculture-food", "resources-extraction", "production", "industry", "utilities-infrastructure", "research-education", "commerce-trade", "government-administration", "health-welfare", "culture-society", "security-defense", "space-exploration", "planetary-development", "civilization-systems", "wonders-megastructures", "ancient-historical", "alien-exotic", "environment-ecology", "special"]) {
+  for (const definition of canonicalBuildingLibrary) {
+    const family = canonicalBuildingTaxonomy.find((row) => row.id === definition.familyId);
+    assert(family, `${definition.id} resolved to a missing family.`);
+    assert(family.subcategories.some((subcategory) => subcategory.id === definition.subcategoryId), `${definition.id} resolved to a missing subcategory.`);
+    assert(definition.visualAssetRequirements.length > 0 && definition.animationRequirements.length > 0 && definition.soundRequirements.length > 0, `${definition.id} is missing production requirements.`);
+  }
+  for (const required of ["population-housing", "agriculture-food", "resource-extraction", "manufacturing", "heavy-industry", "utilities", "energy", "transportation", "logistics", "commerce", "finance", "research-education", "government", "health-medicine", "culture", "recreation", "security", "military-defense", "environment", "ecology", "space-infrastructure", "planetary-infrastructure", "orbital-infrastructure", "megastructures", "wonders", "religious-spiritual", "tourism", "communications", "data-computing", "robotics-automation", "ai-infrastructure", "quantum-technology", "nano-technology", "terraforming", "colonial-development", "planetary-support", "interstellar-logistics", "trade-networks", "science-specializations", "civilization-special-projects"]) {
     assert(familyIds.has(required), `Canonical building taxonomy is missing ${required}.`);
   }
 
@@ -61,38 +76,44 @@ async function main() {
     assert(familyIds.has(classRow.classId), `Creative Production Buildings class ${classRow.classId} is not a taxonomy family.`);
   }
   assert(state.assetLibraryInventory.items.some((item) => item.categoryId === "buildings-ui"), "Asset Library must expose Buildings UI inventory records.");
-  assert(page.includes("Canonical Building Taxonomy v1.0"), "Building Designer must surface the canonical taxonomy standard.");
+  assert(page.includes("Canonical Building Taxonomy v2.0"), "Building Designer must surface the canonical taxonomy standard.");
+  assert(page.includes("Family -> Subcategory -> Building"), "Building Designer must describe the family/subcategory/building hierarchy.");
   assert(page.includes("Legacy Migration Map"), "Building Designer must show the legacy category migration map.");
   assert(classificationResolver.includes("canonicalBuildingTaxonomy"), "Creative Production class resolver must use canonical building taxonomy.");
   assert(creativeWorkspace.includes("FeatureSummaryCard"), "Creative Production must render feature navigation cards for large building collections.");
   assert(creativeWorkspace.includes("card_navigation"), "Creative Production must report feature-card navigation instead of duplicate selectors.");
 
   const runtime = await buildCanonicalRuntimeExportPayload();
-  assert(runtime.metadata.contentVersion >= 16, `Runtime must publish contentVersion 16 or newer for building taxonomy; received ${runtime.metadata.contentVersion}.`);
+  assert(runtime.metadata.contentVersion >= 17, `Runtime must publish contentVersion 17 or newer for building taxonomy v2; received ${runtime.metadata.contentVersion}.`);
   assert(runtime.metadata.validationStatus === "Ready", `Runtime must remain Ready; received ${runtime.metadata.validationStatus}.`);
-  assert(runtime.buildingTaxonomy.length === 20, "Canonical runtime must export the full building taxonomy.");
+  assert(runtime.buildingTaxonomy.length === 40, "Canonical runtime must export the full building taxonomy.");
+  assert(runtime.buildingLibrary.length === canonicalBuildingLibrary.length, "Canonical runtime must export the building library.");
   assert(runtime.buildingClassifications.length === data.buildings.length, "Canonical runtime must export one building classification per building.");
   const roblox = buildRobloxRuntimePayload(await getGameRuntimeData());
-  assert(roblox.buildingTaxonomy.length === 20, "Roblox runtime must export building taxonomy.");
+  assert(roblox.buildingTaxonomy.length === 40, "Roblox runtime must export building taxonomy.");
+  assert(roblox.buildingLibrary.length === canonicalBuildingLibrary.length, "Roblox runtime must export building library.");
   assert(roblox.buildingClassifications.length === data.buildings.length, "Roblox runtime must export building classifications.");
-  assert(runtimeBuilder.includes("buildingTaxonomy") && runtimeBuilder.includes("buildingClassifications"), "Runtime builder must publish taxonomy metadata.");
-  assert(gameEngine.includes("building_taxonomy") && gameEngine.includes("building_classifications"), "Engine exports must include taxonomy modules.");
+  assert(runtimeBuilder.includes("buildingTaxonomy") && runtimeBuilder.includes("buildingLibrary") && runtimeBuilder.includes("buildingClassifications"), "Runtime builder must publish taxonomy metadata.");
+  assert(gameEngine.includes("building_taxonomy") && gameEngine.includes("building_library") && gameEngine.includes("building_classifications"), "Engine exports must include taxonomy modules.");
 
   const targets: EngineTarget[] = ["generic", "roblox", "web", "unity", "unreal", "godot"];
   const exports = await Promise.all(targets.map((target) => buildGameEngineExport(target)));
   for (const [index, engineExport] of exports.entries()) {
     assert(engineExport.validation.status === "Ready", `${targets[index]} export must remain Ready; received ${engineExport.validation.status}.`);
     assert(Array.isArray(engineExport.canonical.building_taxonomy), `${targets[index]} export is missing building_taxonomy.`);
+    assert(Array.isArray(engineExport.canonical.building_library), `${targets[index]} export is missing building_library.`);
     assert(Array.isArray(engineExport.canonical.building_classifications), `${targets[index]} export is missing building_classifications.`);
   }
 
   const familyCounts = Object.fromEntries(canonicalBuildingTaxonomy.map((family) => [family.id, classifications.filter((classification) => classification.primaryFamilyId === family.id).length]));
   console.log(JSON.stringify({
     ok: true,
-    taxonomyVersion: "building-taxonomy-v1",
+    taxonomyVersion: canonicalBuildingTaxonomyVersion,
+    libraryVersion: canonicalBuildingLibraryVersion,
     families: canonicalBuildingTaxonomy.length,
     subcategories: canonicalBuildingTaxonomy.reduce((sum, family) => sum + family.subcategories.length, 0),
-    buildings: data.buildings.length,
+    buildingLibrary: canonicalBuildingLibrary.length,
+    migratedBuildings: data.buildings.length,
     classifications: classifications.length,
     familyCounts,
     migrationWarnings: validation.issues.filter((issue) => issue.severity === "warning").length,
