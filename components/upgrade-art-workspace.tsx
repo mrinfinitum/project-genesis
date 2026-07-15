@@ -29,7 +29,7 @@ const layoutStorageKey = "project-genesis-upgrade-art-layout";
 const filters: Array<{ id: FilterId; label: string }> = [
   { id: "all", label: "All" },
   { id: "has_preview", label: "Has Preview" },
-  { id: "missing_preview", label: "Missing Preview" },
+  { id: "missing_preview", label: "Needs Artwork" },
   { id: "linked_asset", label: "Linked Asset" },
   { id: "unlinked", label: "Unlinked" },
   { id: "needs_review", label: "Needs Review" },

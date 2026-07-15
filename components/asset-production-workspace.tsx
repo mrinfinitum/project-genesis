@@ -405,6 +405,13 @@ function upgradeCategoryPreviewClass(settings: DensitySettings) {
   return "h-32";
 }
 
+function upgradeCategoryAccent(categoryId: string) {
+  if (categoryId === "industry") return { glow: "rgba(245,158,11,0.34)", line: "rgba(251,191,36,0.5)", fill: "rgba(245,158,11,0.1)" };
+  if (categoryId === "science") return { glow: "rgba(34,211,238,0.34)", line: "rgba(125,211,252,0.55)", fill: "rgba(14,165,233,0.1)" };
+  if (categoryId === "technology") return { glow: "rgba(168,85,247,0.34)", line: "rgba(216,180,254,0.55)", fill: "rgba(168,85,247,0.1)" };
+  return { glow: "rgba(52,211,153,0.34)", line: "rgba(110,231,183,0.55)", fill: "rgba(16,185,129,0.1)" };
+}
+
 function UpgradeCategoryUploadForm({
   record,
   onUploaded
@@ -502,6 +509,7 @@ function UpgradeCategoryAssetCard({ record, localPreview, onUploaded, settings }
   const previewUrl = localPreview?.url ?? sanitizePreviewUrl(record.currentBackgroundPreview);
   const displayedSize = localPreview?.sizeLabel ?? sizeLabel(record.dimensions);
   const assetId = semanticAssetKey(record);
+  const accent = upgradeCategoryAccent(record.categoryId);
 
   async function runAction(label: string, body: Record<string, unknown>) {
     setBusy(label);
@@ -568,10 +576,19 @@ function UpgradeCategoryAssetCard({ record, localPreview, onUploaded, settings }
               <div className="absolute left-[6%] top-[7%] h-[10%] w-[38%] border border-emerald-200/35 bg-emerald-300/5" />
               <div className="absolute left-[7%] top-[23%] h-px w-[82%] bg-cyan-200/35" />
               {!previewUrl ? (
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 px-4 text-center">
-                  <ImageIcon className="h-6 w-6 text-slate-600" />
-                  <p className="text-base font-black text-white">Background Needed</p>
-                  <p className="max-w-[13rem] text-xs leading-5 text-slate-400">Upload or replace artwork to preview this panel.</p>
+                <div className="absolute inset-0 overflow-hidden" aria-label={`${record.displayName} generated category preview`}>
+                  <div className="absolute inset-0" style={{ background: `radial-gradient(circle at 30% 28%, ${accent.glow}, transparent 34%), linear-gradient(135deg, rgba(2,6,23,0.08), rgba(2,6,23,0.62))` }} />
+                  <div className="absolute left-[9%] top-[17%] h-[14%] w-[42%] rounded-sm border" style={{ borderColor: accent.line, backgroundColor: accent.fill }} />
+                  <div className="absolute left-[9%] top-[39%] h-px w-[78%]" style={{ backgroundColor: accent.line }} />
+                  <div className="absolute left-[9%] top-[51%] grid w-[52%] gap-1">
+                    <span className="h-1.5 rounded-full" style={{ backgroundColor: accent.line }} />
+                    <span className="h-1.5 w-3/4 rounded-full bg-cyan-100/20" />
+                    <span className="h-1.5 w-1/2 rounded-full bg-cyan-100/15" />
+                  </div>
+                  <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between gap-3">
+                    <p className="truncate text-sm font-black text-white">{record.displayName}</p>
+                    <p className="shrink-0 text-[0.62rem] font-black uppercase tracking-[0.14em] text-cyan-100/70">Source Pending</p>
+                  </div>
                 </div>
               ) : null}
             </div>

@@ -73,7 +73,8 @@ async function main() {
     "upgradeCategoryGridClass",
     "Upload / Replace Background",
     "compactSizeLabel",
-    "Background Needed",
+    "Source Pending",
+    "generated category preview",
     "All statuses shown",
     "Generate Missing Requirements",
     "Open in Visual Builder",
@@ -91,6 +92,7 @@ async function main() {
   assertNotIncludes("Asset Library workspace", assetWorkspace, "Open Inspector");
   assertIncludes("Asset Library workspace", assetWorkspace, "Open Record");
   assertNotIncludes("Asset Library workspace", assetWorkspace, "Missing Preview");
+  assertNotIncludes("Asset Library workspace", assetWorkspace, "Background Needed");
 
   assertIncludes("Component Library", componentLibrary, "/asset-library?picker=component");
   assertIncludes("Screen Designer", screenDesigner, "/asset-library?picker=screen");

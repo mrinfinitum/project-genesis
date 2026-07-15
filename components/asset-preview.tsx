@@ -29,7 +29,7 @@ const modeLabel: Record<PreviewMode, string> = {
 };
 
 function MissingPreview({ preview }: { preview: VisualPreview }) {
-  const label = preview.status === "Error" ? "Preview Error" : preview.status === "Pending Generation" ? "Preview Pending" : preview.source === "placeholder" ? "Preview Placeholder" : "Missing Preview";
+  const label = preview.status === "Error" ? "Preview Error" : preview.status === "Pending Generation" ? "Preview Pending" : preview.source === "placeholder" ? "Preview Placeholder" : "Artwork Needed";
   return (
     <div className="grid h-full w-full place-items-center bg-[linear-gradient(135deg,rgba(34,211,238,0.12),rgba(15,23,42,0.96))] p-4 text-center">
       <div>
