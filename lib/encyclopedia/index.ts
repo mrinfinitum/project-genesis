@@ -2,6 +2,7 @@ import { defaultAiAgentId, getAiAgentRuntimeModules } from "@/lib/ai-agents";
 import { canonicalBuildingLibrary, canonicalBuildingTaxonomy, type CanonicalBuildingDefinition } from "@/lib/buildings/taxonomy";
 import { colonyLevelDefinitions } from "@/lib/colonies/procedural";
 import { canonicalEconomyDefinitions } from "@/lib/economy/definitions";
+import { canonicalDiscoveries, discoveryCategories, type DiscoveryRecord } from "@/lib/discovery";
 import { generateFallbackFactions } from "@/lib/factions/procedural";
 import { ResourceService } from "@/lib/resources/service";
 import type { ProductionAsset } from "@/lib/assets/asset-production";
@@ -24,6 +25,7 @@ export type EncyclopediaEntityType =
   | "civilization"
   | "faction"
   | "technology"
+  | "discovery"
   | "upgrade"
   | "wonder"
   | "megastructure"
@@ -292,6 +294,16 @@ export const encyclopediaAssetProfiles = {
     { role: "icon" as const, required: true, dimensions: "512x512", derivativeProfile: "icon" },
     { role: "hero" as const, required: true, dimensions: "3840x2160", derivativeProfile: "hero" },
     { role: "card" as const, required: false, dimensions: "1200x675", derivativeProfile: "card" }
+  ],
+  discovery: [
+    { role: "icon" as const, required: true, dimensions: "512x512", derivativeProfile: "icon" },
+    { role: "thumbnail" as const, required: true, dimensions: "512x512", derivativeProfile: "icon" },
+    { role: "card" as const, required: true, dimensions: "1200x675", derivativeProfile: "card" },
+    { role: "hero" as const, required: true, dimensions: "3840x2160", derivativeProfile: "hero" },
+    { role: "gallery" as const, required: false, dimensions: "world/detail renders", derivativeProfile: "hero" },
+    { role: "animation" as const, required: false, dimensions: "scan/discovery animation", derivativeProfile: "media" },
+    { role: "audio" as const, required: false, dimensions: "sound/narration", derivativeProfile: "media" },
+    { role: "video" as const, required: false, dimensions: "optional discovery clip", derivativeProfile: "media" }
   ]
 };
 
@@ -307,7 +319,8 @@ export const encyclopediaSemanticNamingConvention = [
   { entityType: "research", example: "research_agriculture_crop_cultivation_hero", notes: "research_<branch or node id>_<role>" },
   { entityType: "resource", example: "resource_helium_3_icon", notes: "resource IDs keep canonical Resource Catalog identity." },
   { entityType: "planet", example: "planet_earthlike_alpha_card", notes: "planet_<canonical planet id>_<role>" },
-  { entityType: "civilization", example: "civilization_noveris_founders_emblem", notes: "civilization or faction identity art stays tied to canonical records." }
+  { entityType: "civilization", example: "civilization_noveris_founders_emblem", notes: "civilization or faction identity art stays tied to canonical records." },
+  { entityType: "discovery", example: "discovery_precursor_quantum_core_hero", notes: "discovery_<canonical discovery id>_<role>" }
 ];
 
 function requirementsForEntry(input: {
@@ -474,6 +487,42 @@ function generatedPlanetName(row: GeneratedPlanet) {
   return text(row.name, row.id);
 }
 
+function discoveryEntry(row: DiscoveryRecord, assets: ProductionAsset[]): EncyclopediaEntry {
+  const category = discoveryCategories.find((item) => item.id === row.categoryId);
+  const subcategory = category?.subcategories.find((item) => item.id === row.subcategoryId);
+  const entry = entryBase({
+    entityType: "discovery",
+    canonicalRecordId: row.id,
+    displayName: row.displayName,
+    description: row.description,
+    summary: `${category?.displayName ?? row.categoryId} / ${subcategory?.displayName ?? row.subcategoryId}`,
+    category: category?.displayName ?? row.categoryId,
+    subcategory: subcategory?.displayName ?? row.subcategoryId,
+    era: "discovery",
+    tier: row.requiredScanLevel,
+    rarity: row.rarity,
+    tags: row.tags,
+    effects: compactStrings(`Discovery XP ${row.discoveryXp}`, `Research ${row.researchValue}`, `Credits ${row.creditsValue}`, row.unlocks),
+    inputs: [...row.requiredEquipmentIds, ...row.relatedResourceIds],
+    outputs: row.unlocks,
+    unlockRequirements: [...row.relatedResearchIds, ...row.requiredEquipmentIds],
+    dependencies: row.relatedResearchIds,
+    locations: compactStrings(row.spawnRules.galaxy, row.spawnRules.sector, row.spawnRules.starSystem, row.spawnRules.planetClass, row.spawnRules.biome, row.spawnRules.starType),
+    publicationState: row.publicationStatus === "published" ? "published" : row.publicationStatus === "approved" ? "approved_design" : "canonical_draft",
+    priority: row.rarity === "unique" || row.rarity === "mythic" || row.rarity === "legendary" ? "P1" : "P2",
+    references: [{ type: "discovery", id: row.id, label: "Discovery", href: `/discovery?entry=${encodeURIComponent(row.id)}` }]
+  }, assets);
+  entry.lore.shortSummary = row.lore;
+  entry.lore.longDescription = row.lore;
+  entry.lore.playerFacingExplanation = row.description;
+  entry.lore.discoveryText = row.lore;
+  entry.relatedEntries = row.unlocks.filter((id) => id.startsWith("discovery_")).map((id) => ({ entryId: `discovery_${slug(id)}`, relationshipType: "unlocks" }));
+  entry.civilizations = row.relatedCivilizationIds;
+  entry.planets = row.relatedPlanetIds;
+  entry.progression = [`Scan level ${row.requiredScanLevel}`, `Spawn weight ${row.spawnWeight}`, ...row.unlocks];
+  return entry;
+}
+
 function buildEntries(data: GameData, assets: ProductionAsset[]) {
   const aiModules = getAiAgentRuntimeModules();
   const fallbackFactions = generateFallbackFactions();
@@ -494,6 +543,7 @@ function buildEntries(data: GameData, assets: ProductionAsset[]) {
       priority: row.era === "Survival" || row.era === "Ancient" ? "P1" : "P2",
       references: [{ type: "research", id: row.id, label: "Research Designer", href: "/research" }]
     }, assets)),
+    ...canonicalDiscoveries.map((row) => discoveryEntry(row, assets)),
     ...canonicalEconomyDefinitions.map((row) => entryBase({
       entityType: "resource",
       canonicalRecordId: row.id,
@@ -760,6 +810,7 @@ function buildSections(entries: EncyclopediaEntry[]): EncyclopediaSection[] {
     section("civilization", "Civilizations", "Civilization identity, alignment, and progression records.", ["Civilization"], byType("civilization")),
     section("faction", "Factions", "Faction/civilization presence and generated faction records.", ["Type", "Faction"], byType("faction")),
     section("technology", "Technologies", "Technology entries are represented by research/upgrades until a dedicated table exists.", ["Era", "Technology"], byType("technology"), "Technology records are currently modeled through Research and Upgrades."),
+    section("discovery", "Discovery", "Canonical discoverable objects, scan targets, collection records, and discovery-facing lore.", ["Category", "Subcategory", "Discovery"], byType("discovery")),
     section("upgrade", "Upgrades", "Upgrade chains and category effects.", ["Category", "Upgrade"], byType("upgrade")),
     section("wonder", "Wonders", "Wonders and high-impact civilization projects.", ["Era", "Wonder"], byType("wonder")),
     section("megastructure", "Megastructures", "Megastructure definitions and late-game construction.", ["Era", "Megastructure"], byType("megastructure")),

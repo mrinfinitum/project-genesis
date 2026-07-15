@@ -61,6 +61,64 @@ export type ResourceDefinition = {
   tags: string[];
 };
 
+export type DiscoveryRarityDefinition = {
+  id: string;
+  displayName: string;
+  displayOrder: number;
+  defaultSpawnWeight: number;
+};
+
+export type DiscoveryCategoryDefinition = {
+  id: string;
+  displayName: string;
+  shortDisplayName: string;
+  displayOrder: number;
+  description: string;
+  subcategories: Array<{ id: string; displayName: string; displayOrder: number }>;
+};
+
+export type DiscoveryDefinition = {
+  id: string;
+  displayName: string;
+  categoryId: string;
+  subcategoryId: string;
+  scientificName: string;
+  description: string;
+  lore: string;
+  rarity: string;
+  spawnWeight: number;
+  discoveryXp: number;
+  creditsValue: number;
+  researchValue: number;
+  tradeValue: number;
+  unlocks: string[];
+  relatedResearchIds: string[];
+  relatedBuildingIds: string[];
+  relatedResourceIds: string[];
+  relatedPlanetIds: string[];
+  relatedCivilizationIds: string[];
+  relatedLifeformIds: string[];
+  requiredEquipmentIds: string[];
+  requiredScanLevel: number;
+  spawnRules: Record<string, unknown>;
+  assetProfile: Record<string, unknown>;
+  publicationStatus: string;
+  tags: string[];
+};
+
+export type DiscoveryCollectionDefinition = {
+  id: string;
+  displayName: string;
+  discoveryIds: string[];
+  milestoneType: string;
+};
+
+export type DiscoveryChainDefinition = {
+  id: string;
+  displayName: string;
+  nodes: Array<{ order: number; discoveryId: string; unlocks: string[] }>;
+};
+
 export type UpgradeCategory = {
   id: string;
   displayName: string;
@@ -806,6 +864,13 @@ export type GameRuntimeData = {
   automationPresentation: AutomationPresentationDefinition;
   defaultAiAgentId: string;
   aiAgentSaveSchema: AiAgentSaveSchemaDefinition;
+  discoveryCategories: DiscoveryCategoryDefinition[];
+  discoveryRarities: DiscoveryRarityDefinition[];
+  discoveries: DiscoveryDefinition[];
+  discoveryCollections: DiscoveryCollectionDefinition[];
+  discoveryChains: DiscoveryChainDefinition[];
+  discoveryMilestones: Array<Record<string, unknown>>;
+  discoveryPlayerCollectionSchema: Record<string, unknown>;
   resources: ResourceDefinition[];
   buildingTaxonomy: BuildingTaxonomyFamily[];
   buildingLibrary: CanonicalBuildingDefinition[];

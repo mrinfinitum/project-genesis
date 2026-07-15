@@ -3,6 +3,7 @@ import { defaultAiAgentVariantId, getAiAgentRuntimeModules } from "@/lib/ai-agen
 import { ARCHITECTURE_VERSION } from "@/lib/architecture/version";
 import { buildBuildingClassifications, canonicalBuildingLibrary, canonicalBuildingTaxonomy } from "@/lib/buildings/taxonomy";
 import { getGameData } from "@/lib/data";
+import { canonicalDiscoveries, discoveryCategories, discoveryChains, discoveryCollections, discoveryMilestones, discoveryPlayerCollectionSchema, discoveryRarities, validateDiscoverySystem } from "@/lib/discovery";
 import { discoveryJournalSchema, sampleDiscoveryJournal, sampleTimelineEvents, timelineEventSchema } from "@/lib/explorer/discovery-log";
 import { colonyBuildingTemplates, colonyFocusDefinitions, colonyLevelDefinitions, colonySchema, createColonyRecord, generateFallbackColonies, type ColonyBuilding, type ColonyRecord } from "@/lib/colonies/procedural";
 import {
@@ -73,8 +74,8 @@ const targetConfigs: Record<EngineTarget, EngineTargetConfig> = {
     format: "Lua ModuleScripts plus JSON-compatible Studio data",
     endpoint: "/api/export/roblox",
     folderStructure: ["ReplicatedStorage/ProjectGenesis/Data", "ReplicatedStorage/ProjectGenesis/Services", "ServerScriptService/ProjectGenesis"],
-    generatedModules: ["ResourceCatalogModule", "ResearchUnlockModule", "UniverseDataModule", "ApiService"],
-    schemaMapping: ["resource_catalog -> ResourceCatalogModule", "research + unlock_matrix -> ResearchUnlockModule", "galaxies/sectors/star_systems/planets/factions -> UniverseDataModule"],
+    generatedModules: ["ResourceCatalogModule", "ResearchUnlockModule", "DiscoveryCatalogModule", "UniverseDataModule", "ApiService"],
+    schemaMapping: ["resource_catalog -> ResourceCatalogModule", "research + unlock_matrix -> ResearchUnlockModule", "discoveries + discovery_categories -> DiscoveryCatalogModule", "galaxies/sectors/star_systems/planets/factions -> UniverseDataModule"],
     apiNotes: ["Roblox consumes Studio/API data; it is not the primary data generator.", "Use HttpService against the Generic JSON API for live sync workflows."]
   },
   unity: {
@@ -84,7 +85,7 @@ const targetConfigs: Record<EngineTarget, EngineTargetConfig> = {
     endpoint: "/api/export/unity",
     folderStructure: ["Assets/ProjectGenesis/Data", "Assets/ProjectGenesis/Scripts/Generated", "Assets/ProjectGenesis/ScriptableObjects"],
     generatedModules: ["ResourceCatalog.cs", "ResearchUnlocks.cs", "UniverseLoader.cs"],
-    schemaMapping: ["resource_catalog -> ResourceDefinition", "research + unlock_matrix -> ResearchUnlockDefinition", "universe + factions -> UniverseData"],
+    schemaMapping: ["resource_catalog -> ResourceDefinition", "research + unlock_matrix -> ResearchUnlockDefinition", "discoveries -> DiscoveryDefinition", "universe + factions -> UniverseData"],
     apiNotes: ["Import JSON at build time or pull from the Generic JSON API at runtime.", "ScriptableObjects should cache imported data, not replace Studio ownership."]
   },
   unreal: {
@@ -94,7 +95,7 @@ const targetConfigs: Record<EngineTarget, EngineTargetConfig> = {
     endpoint: "/api/export/unreal",
     folderStructure: ["Content/ProjectGenesis/Data", "Source/ProjectGenesis/Public/Generated", "Source/ProjectGenesis/Private/Loaders"],
     generatedModules: ["ResourceCatalog", "ResearchUnlockTable", "UniverseData"],
-    schemaMapping: ["resource_catalog -> FGenesisResourceRow", "unlock_matrix -> FGenesisResearchUnlockRow", "universe + factions -> FGenesisUniverseData"],
+    schemaMapping: ["resource_catalog -> FGenesisResourceRow", "unlock_matrix -> FGenesisResearchUnlockRow", "discoveries -> FGenesisDiscoveryRow", "universe + factions -> FGenesisUniverseData"],
     apiNotes: ["Use DataTables for static builds or HTTP JSON for live tools.", "Structs mirror Studio IDs and relationships."]
   },
   godot: {
@@ -104,7 +105,7 @@ const targetConfigs: Record<EngineTarget, EngineTargetConfig> = {
     endpoint: "/api/export/godot",
     folderStructure: ["res://project_genesis/data", "res://project_genesis/loaders", "res://project_genesis/autoload"],
     generatedModules: ["ResourceCatalog.gd", "ResearchUnlocks.gd", "UniverseLoader.gd"],
-    schemaMapping: ["resource_catalog -> ResourceCatalog.gd", "research + unlock_matrix -> ResearchUnlocks.gd", "universe + factions -> UniverseLoader.gd"],
+    schemaMapping: ["resource_catalog -> ResourceCatalog.gd", "research + unlock_matrix -> ResearchUnlocks.gd", "discoveries -> DiscoveryCatalog.gd", "universe + factions -> UniverseLoader.gd"],
     apiNotes: ["Load local JSON with FileAccess or fetch Studio exports with HTTPRequest.", "Keep gameplay rules in exported JSON, not duplicated GDScript tables."]
   },
   web: {
@@ -114,7 +115,7 @@ const targetConfigs: Record<EngineTarget, EngineTargetConfig> = {
     endpoint: "/api/export/web",
     folderStructure: ["src/project-genesis/data", "src/project-genesis/api", "src/project-genesis/store"],
     generatedModules: ["project-genesis.types.ts", "projectGenesisClient.ts", "projectGenesisStore.ts"],
-    schemaMapping: ["canonical payload -> TypeScript interfaces", "factions -> normalized faction store", "endpoint references -> API client", "relationship map -> normalized store"],
+    schemaMapping: ["canonical payload -> TypeScript interfaces", "discoveries -> normalized discovery codex store", "factions -> normalized faction store", "endpoint references -> API client", "relationship map -> normalized store"],
     apiNotes: ["Use this target for browser games, tools, previews, and local editor clients.", "Zustand/Redux examples consume normalized canonical data."]
   },
   generic: {
@@ -180,6 +181,13 @@ type CanonicalModules = {
   automation_presentation: ReturnType<typeof getAiAgentRuntimeModules>["automationPresentation"];
   default_ai_agent_id: string;
   ai_agent_save_schema: ReturnType<typeof getAiAgentRuntimeModules>["aiAgentSaveSchema"];
+  discovery_categories: typeof discoveryCategories;
+  discovery_rarities: typeof discoveryRarities;
+  discoveries: typeof canonicalDiscoveries;
+  discovery_collections: Array<Omit<(typeof discoveryCollections)[number], "discoveryIds"> & { discoveryIds: string[] }>;
+  discovery_chains: Array<Omit<(typeof discoveryChains)[number], "nodes"> & { nodes: Array<{ order: number; discoveryId: string; unlocks: string[] }> }>;
+  discovery_milestones: Array<Omit<(typeof discoveryMilestones)[number], "categoryIds"> & { categoryIds: string[] }>;
+  discovery_player_collection_schema: typeof discoveryPlayerCollectionSchema;
   economy_usage_relationships: ReturnType<typeof buildEconomyUsageRelationships>;
   inventory_resource_metadata: ReturnType<typeof buildInventoryResourceMetadata>;
   economy_schemas: typeof economySchemas;
@@ -583,6 +591,19 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
     automation_presentation: aiAgentModules.automationPresentation,
     default_ai_agent_id: aiAgentModules.defaultAiAgentId,
     ai_agent_save_schema: aiAgentModules.aiAgentSaveSchema,
+    discovery_categories: discoveryCategories,
+    discovery_rarities: discoveryRarities,
+    discoveries: canonicalDiscoveries,
+    discovery_collections: discoveryCollections.map((collection) => ({ ...collection, discoveryIds: [...collection.discoveryIds] })),
+    discovery_chains: discoveryChains.map((chain) => ({
+      ...chain,
+      nodes: chain.nodes.map((node) => ({
+        ...node,
+        unlocks: [...node.unlocks]
+      }))
+    })),
+    discovery_milestones: discoveryMilestones.map((milestone) => ({ ...milestone, categoryIds: [...milestone.categoryIds] })),
+    discovery_player_collection_schema: discoveryPlayerCollectionSchema,
     economy_usage_relationships: buildEconomyUsageRelationships(data),
     inventory_resource_metadata: buildInventoryResourceMetadata(data),
     economy_schemas: economySchemas,
@@ -647,6 +668,11 @@ function buildRelationshipMap(modules: CanonicalModules) {
   const buildingLibraryBySubcategory: Record<string, string[]> = {};
   const buildingClassificationsByFamily: Record<string, string[]> = {};
   const buildingClassificationsBySubcategory: Record<string, string[]> = {};
+  const discoveriesByCategory: Record<string, string[]> = {};
+  const discoveriesBySubcategory: Record<string, string[]> = {};
+  const discoveriesByRarity: Record<string, string[]> = {};
+  const discoveriesByCollection: Record<string, string[]> = {};
+  const discoveryChainNodes: Record<string, string[]> = {};
   const economyUsage: Record<string, Record<string, string[]>> = {};
 
   for (const sector of modules.sectors) {
@@ -726,6 +752,20 @@ function buildRelationshipMap(modules: CanonicalModules) {
     buildingClassificationsBySubcategory[key] = [...(buildingClassificationsBySubcategory[key] ?? []), classification.buildingId];
   }
 
+  for (const discovery of modules.discoveries) {
+    discoveriesByCategory[discovery.categoryId] = [...(discoveriesByCategory[discovery.categoryId] ?? []), discovery.id];
+    discoveriesBySubcategory[`${discovery.categoryId}/${discovery.subcategoryId}`] = [...(discoveriesBySubcategory[`${discovery.categoryId}/${discovery.subcategoryId}`] ?? []), discovery.id];
+    discoveriesByRarity[discovery.rarity] = [...(discoveriesByRarity[discovery.rarity] ?? []), discovery.id];
+  }
+
+  for (const collection of modules.discovery_collections) {
+    discoveriesByCollection[collection.id] = [...collection.discoveryIds];
+  }
+
+  for (const chain of modules.discovery_chains) {
+    discoveryChainNodes[chain.id] = chain.nodes.map((node) => node.discoveryId);
+  }
+
   return {
     sectorsByGalaxy,
     systemsBySector,
@@ -751,6 +791,11 @@ function buildRelationshipMap(modules: CanonicalModules) {
     buildingLibraryBySubcategory,
     buildingClassificationsByFamily,
     buildingClassificationsBySubcategory,
+    discoveriesByCategory,
+    discoveriesBySubcategory,
+    discoveriesByRarity,
+    discoveriesByCollection,
+    discoveryChainNodes,
     economyUsage
   };
 }
@@ -1334,6 +1379,23 @@ function validateTargetSchema(issues: ExportValidationIssue[], target: EngineTar
   }
 }
 
+function validateDiscovery(issues: ExportValidationIssue[], modules: CanonicalModules) {
+  const validation = validateDiscoverySystem();
+  for (const issue of validation.issues) {
+    addIssue(issues, issue.severity, `discovery_${issue.code}`, issue.message, issue.records);
+  }
+  const discoveryIds = new Set(modules.discoveries.map((discovery) => discovery.id));
+  const categoryIds = new Set(modules.discovery_categories.map((category) => category.id));
+  const badCategoryLinks = modules.discoveries.filter((discovery) => !categoryIds.has(discovery.categoryId));
+  if (badCategoryLinks.length) {
+    addIssue(issues, "error", "discovery_category_missing", "Discoveries must reference canonical discovery categories.", badCategoryLinks.map((discovery) => discovery.id));
+  }
+  const badCollectionLinks = modules.discovery_collections.flatMap((collection) => collection.discoveryIds.filter((id) => !discoveryIds.has(id)).map((id) => `${collection.id}:${id}`));
+  if (badCollectionLinks.length) {
+    addIssue(issues, "error", "discovery_collection_link_missing", "Discovery collections must reference canonical discovery IDs.", badCollectionLinks);
+  }
+}
+
 function validateArchitectureVersion(issues: ExportValidationIssue[]) {
   if (!/^\d+\.\d+\.\d+$/.test(ARCHITECTURE_VERSION)) {
     addIssue(issues, "error", "architecture_version_invalid", "Architecture version must be a semantic version.");
@@ -1352,6 +1414,7 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
   validateEraNavigationProfiles(issues, modules);
   validateMissions(issues, modules);
   validateAiAgentModules(issues, modules);
+  validateDiscovery(issues, modules);
   validateTargetSchema(issues, target);
 
   const errorCount = issues.filter((issue) => issue.severity === "error").length;
@@ -1400,6 +1463,10 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
       "mission rewards are claimed only once",
       "AI Agent variants resolve to published agents",
       "AI Agent cosmetic variants do not alter automation strength",
+      "discovery categories have display order",
+      "discovery rarities are valid",
+      "discovery spawn rules are canonical",
+      "discovery collections and chains resolve",
       "star systems link to sectors",
       "sectors link to galaxies",
       "architectureVersion is sanitized semantic metadata only"
@@ -1430,6 +1497,7 @@ function schemaNotes(target: EngineTarget) {
     economy: "Global economy definitions, behavior contracts, producer definitions, building resource effects, scope rules, ledger reason codes, offline policies, and HUD slots are engine-agnostic canonical data. HUD slots use economy IDs only; inventory materials stay in resource_catalog.",
     eraNavigation: "Studio owns navigation intent only. Dashboards should use current_journey with compact labels; clients own layout and rendering. The full Civilization Timeline remains the all-era view.",
     missions: "Missions, objectives, rewards, statuses, and generation metadata are deterministic canonical Studio data. Engine targets consume mission state and report progress back through objective IDs.",
+    discovery: "Discovery categories, rarities, canonical discoverable records, spawn rules, collections, chains, and asset profiles are Studio-owned. Player collection completion stays game/save scoped.",
     aiAgents: "AI Agents are cosmetic/presentation companions layered over the existing automation mechanic. ai_agent_variants describe selectable visual skins only; stable automation IDs remain unchanged and clients use automation_presentation aliases for labels.",
     mapping: config.schemaMapping
   };
@@ -1502,6 +1570,13 @@ function compactModules(modules: CanonicalModules) {
     automation_presentation: modules.automation_presentation,
     default_ai_agent_id: modules.default_ai_agent_id,
     ai_agent_save_schema: modules.ai_agent_save_schema,
+    discovery_categories: modules.discovery_categories,
+    discovery_rarities: modules.discovery_rarities,
+    discoveries: modules.discoveries,
+    discovery_collections: modules.discovery_collections,
+    discovery_chains: modules.discovery_chains,
+    discovery_milestones: modules.discovery_milestones,
+    discovery_player_collection_schema: modules.discovery_player_collection_schema,
     economy_usage_relationships: modules.economy_usage_relationships,
     inventory_resource_metadata: modules.inventory_resource_metadata,
     economy_schemas: modules.economy_schemas,
@@ -1528,6 +1603,7 @@ function targetArtifacts(target: EngineTarget, modules: CanonicalModules) {
       "ResourceCatalogModule.lua": `local ResourceCatalog = ${luaValue(modules.resource_catalog)}\n\nreturn ResourceCatalog\n`,
       "EconomyDefinitionsModule.lua": `local EconomyDefinitions = ${luaValue({ economyDefinitions: modules.economy_definitions, economyBehaviorContracts: modules.economy_behavior_contracts, resourceProducerDefinitions: modules.resource_producer_definitions, buildingResourceEffects: modules.building_resource_effects, economyScopeRules: modules.economy_scope_rules, transactionReasons: modules.economy_transaction_reasons, rateBreakdowns: modules.economy_rate_breakdown_definitions, offlinePolicies: modules.offline_progression_policies, calculationRules: modules.economy_calculation_rules, eraEconomyProfiles: modules.era_economy_profiles, hudProfile: modules.hud_profile, primaryHudResources: modules.primary_hud_resources })}\n\nreturn EconomyDefinitions\n`,
       "AIAgentModule.lua": `local AIAgents = ${luaValue({ aiAgents: modules.ai_agents, aiAgentVariants: modules.ai_agent_variants, personalities: modules.ai_agent_personalities, animationProfiles: modules.ai_agent_animation_profiles, automationPresentation: modules.automation_presentation, defaultAiAgentId: modules.default_ai_agent_id, defaultAiAgentVariantId, saveSchema: modules.ai_agent_save_schema })}\n\nreturn AIAgents\n`,
+      "DiscoveryCatalogModule.lua": `local DiscoveryCatalog = ${luaValue({ categories: modules.discovery_categories, rarities: modules.discovery_rarities, discoveries: modules.discoveries, collections: modules.discovery_collections, chains: modules.discovery_chains })}\n\nreturn DiscoveryCatalog\n`,
       "EraNavigationProfileModule.lua": `local EraNavigationProfiles = ${luaValue(modules.era_navigation_profiles)}\n\nreturn EraNavigationProfiles\n`,
       "ResearchUnlockModule.lua": `local ResearchUnlocks = ${luaValue({ research: modules.research, unlocks: modules.unlock_matrix })}\n\nreturn ResearchUnlocks\n`,
       "UniverseDataModule.lua": `local UniverseData = ${luaValue({ galaxies: modules.galaxies, sectors: modules.sectors, starSystems: modules.star_systems, planets: modules.planets, celestialBodies: modules.celestial_bodies, factions: modules.factions, colonies: modules.colonies, colonyBuildings: modules.colony_buildings, colonyLevels: modules.colony_level_definitions, colonyFocus: modules.colony_focus_definitions, markets: modules.markets, tradeRoutes: modules.trade_routes, tradeOpportunities: modules.trade_opportunities, missions: modules.missions, missionObjectives: modules.mission_objectives, missionRewards: modules.mission_rewards })}\n\nreturn UniverseData\n`,
@@ -1537,7 +1613,7 @@ function targetArtifacts(target: EngineTarget, modules: CanonicalModules) {
 
   if (target === "web") {
     return {
-      "project-genesis.types.ts": "export type GenesisId = string;\n\nexport interface GenesisResource { id: GenesisId; resource_name: string; category: string; rarity: string; }\nexport interface GenesisEraNavigationProfile { dashboardMode: 'current_journey' | 'compact_timeline' | 'full_timeline'; visibleEraCount: number; fullTimelineEnabled: boolean; allowPrimaryHorizontalScroll: boolean; boundaryBehavior: { firstEraMode: string; middleEraMode: string; lastEraMode: string }; }\nexport interface GenesisAiAgent { id: GenesisId; displayName: string; shortDisplayName: string; personalityId: GenesisId; defaultForNewPlayers: boolean; baseVariantId: GenesisId; availableVariantIds: GenesisId[]; headAssetKey: string; eyesOpenAssetKey: string; eyesBlinkAssetKey: string; eyesClosedAssetKey: string; }\nexport interface GenesisAiAgentVariant { id: GenesisId; agentId: GenesisId; displayName: string; tier: number; variantType: string; assetKeys: Record<string, string>; unlockText: string; }\nexport interface GenesisResearchNode { id: GenesisId; name: string; era: string; status: string; }\nexport interface GenesisFaction { id: GenesisId; name: string; type: string; disposition: string; homeStarSystemId: GenesisId; controlledPlanetIds: GenesisId[]; }\nexport interface GenesisColonyBuilding { id: GenesisId; name: string; category: string; colonyId: GenesisId; constructionStatus: string; modifiers: Record<string, number>; }\nexport interface GenesisColony { id: GenesisId; name: string; planetId: GenesisId; starSystemId: GenesisId; population: number; populationCapacity: number; populationGrowthRate: number; colonyLevel: number; focus: string; status: string; resourceOutputIds: GenesisId[]; resourceOutputRates: Record<string, number>; buildingIds: GenesisId[]; }\nexport interface GenesisMarketListing { resourceId: GenesisId; basePrice: number; currentPrice: number; supply: number; demand: number; priceTrend: string; availability: string; }\nexport interface GenesisMarket { id: GenesisId; name: string; marketType: string; colonyId?: GenesisId; childMarketIds: GenesisId[]; resourceListings: GenesisMarketListing[]; tradeVolume: number; prosperity: number; security: number; }\nexport interface GenesisTradeRoute { id: GenesisId; originMarketId: GenesisId; destinationMarketId: GenesisId; resourceIds: GenesisId[]; profitability: number; risk: number; status: string; }\nexport interface GenesisMissionObjective { id: GenesisId; missionId: GenesisId; objectiveType: string; targetId: GenesisId; targetCount: number; currentCount: number; completed: boolean; }\nexport interface GenesisMission { id: GenesisId; title: string; missionType: string; status: string; difficulty: string; objectiveIds: GenesisId[]; rewardIds: GenesisId[]; rewardsClaimed: boolean; tracked: boolean; }\nexport interface GenesisExportPayload { target: string; canonical: Record<string, unknown>; relationshipMap: Record<string, unknown>; }\n",
+      "project-genesis.types.ts": "export type GenesisId = string;\n\nexport interface GenesisResource { id: GenesisId; resource_name: string; category: string; rarity: string; }\nexport interface GenesisEraNavigationProfile { dashboardMode: 'current_journey' | 'compact_timeline' | 'full_timeline'; visibleEraCount: number; fullTimelineEnabled: boolean; allowPrimaryHorizontalScroll: boolean; boundaryBehavior: { firstEraMode: string; middleEraMode: string; lastEraMode: string }; }\nexport interface GenesisDiscovery { id: GenesisId; displayName: string; categoryId: GenesisId; subcategoryId: GenesisId; rarity: string; spawnWeight: number; discoveryXp: number; requiredScanLevel: number; assetProfile: Record<string, string>; }\nexport interface GenesisAiAgent { id: GenesisId; displayName: string; shortDisplayName: string; personalityId: GenesisId; defaultForNewPlayers: boolean; baseVariantId: GenesisId; availableVariantIds: GenesisId[]; headAssetKey: string; eyesOpenAssetKey: string; eyesBlinkAssetKey: string; eyesClosedAssetKey: string; }\nexport interface GenesisAiAgentVariant { id: GenesisId; agentId: GenesisId; displayName: string; tier: number; variantType: string; assetKeys: Record<string, string>; unlockText: string; }\nexport interface GenesisResearchNode { id: GenesisId; name: string; era: string; status: string; }\nexport interface GenesisFaction { id: GenesisId; name: string; type: string; disposition: string; homeStarSystemId: GenesisId; controlledPlanetIds: GenesisId[]; }\nexport interface GenesisColonyBuilding { id: GenesisId; name: string; category: string; colonyId: GenesisId; constructionStatus: string; modifiers: Record<string, number>; }\nexport interface GenesisColony { id: GenesisId; name: string; planetId: GenesisId; starSystemId: GenesisId; population: number; populationCapacity: number; populationGrowthRate: number; colonyLevel: number; focus: string; status: string; resourceOutputIds: GenesisId[]; resourceOutputRates: Record<string, number>; buildingIds: GenesisId[]; }\nexport interface GenesisMarketListing { resourceId: GenesisId; basePrice: number; currentPrice: number; supply: number; demand: number; priceTrend: string; availability: string; }\nexport interface GenesisMarket { id: GenesisId; name: string; marketType: string; colonyId?: GenesisId; childMarketIds: GenesisId[]; resourceListings: GenesisMarketListing[]; tradeVolume: number; prosperity: number; security: number; }\nexport interface GenesisTradeRoute { id: GenesisId; originMarketId: GenesisId; destinationMarketId: GenesisId; resourceIds: GenesisId[]; profitability: number; risk: number; status: string; }\nexport interface GenesisMissionObjective { id: GenesisId; missionId: GenesisId; objectiveType: string; targetId: GenesisId; targetCount: number; currentCount: number; completed: boolean; }\nexport interface GenesisMission { id: GenesisId; title: string; missionType: string; status: string; difficulty: string; objectiveIds: GenesisId[]; rewardIds: GenesisId[]; rewardsClaimed: boolean; tracked: boolean; }\nexport interface GenesisExportPayload { target: string; canonical: Record<string, unknown>; relationshipMap: Record<string, unknown>; }\n",
       "projectGenesisClient.ts": "export async function fetchProjectGenesisExport(target = 'generic') {\n  const response = await fetch(`/api/export/${target}`);\n  if (!response.ok) throw new Error(`Project Genesis export failed: ${response.status}`);\n  return response.json();\n}\n",
       "projectGenesisStore.ts": "import { create } from 'zustand';\n\ntype GenesisStore = { data: unknown | null; setData: (data: unknown) => void };\nexport const useGenesisStore = create<GenesisStore>((set) => ({ data: null, setData: (data) => set({ data }) }));\n"
     };

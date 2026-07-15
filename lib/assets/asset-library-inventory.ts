@@ -117,6 +117,7 @@ function categoryFor(input: { key: string; label: string; role: string; screenId
   if (/video|cinematic|movie/.test(text)) return "video";
   if (/animation|blink_animation|idle_animation/.test(text)) return "animations";
   if (/ai[_ -]?agent|auto_robot|robot/.test(text)) return "ai-agents";
+  if (/discovery|artifact|lifeform|alien[_ -]?technology|rare[_ -]?matter|signal|anomal|ruin|precursor|first[_ -]?contact/.test(text)) return "discovery";
   if (/encyclopedia|galactopedia/.test(text)) return "encyclopedia";
   if (/upgrade[_ -]?panel[_ -]?(shared|workforce|industry|science|technology)[_ -]?background/.test(text) || (/(workforce|industry|science|technology) background/.test(text) && /upgrade|panel|dashboard/.test(text))) return "backgrounds";
   if (/top[_ -]?hud|hud|economy_|premium|civilization_identity|calendar|trophy/.test(text) || ["TopHudBar", "HudEconomySlot", "EconomyCounter", "PremiumCurrencyBalance", "UtilityIconButton"].some((id) => input.componentId === id)) return "top-hud";
@@ -365,7 +366,7 @@ export async function buildAssetLibraryInventory(input: {
     upsert({
       semanticAssetKey: key,
       displayName: missing.objectName,
-      categoryId: missing.objectType.startsWith("encyclopedia") ? "encyclopedia" : categoryFor({ key, label: missing.objectName, role, sourceType: "missing_requirement" }),
+      categoryId: missing.objectType === "encyclopedia_discovery" ? "discovery" : missing.objectType.startsWith("encyclopedia") ? "encyclopedia" : categoryFor({ key, label: missing.objectName, role, sourceType: "missing_requirement" }),
       role,
       sourceType: missing.objectType.startsWith("encyclopedia") ? "encyclopedia_requirement" : "missing_requirement",
       status: missing.currentStatus === "published" ? "published" : "missing",

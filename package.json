@@ -32,6 +32,7 @@
     "verify:screen-designer": "tsx scripts/verify-screen-designer.ts",
     "verify:screen-requirements": "tsx scripts/verify-screen-requirements.ts",
     "verify:content-production": "tsx scripts/verify-content-production.ts",
+    "verify:discovery-system": "tsx scripts/verify-discovery-system.ts",
     "verify:app-shell": "tsx scripts/verify-app-shell.ts",
     "verify:research-screen-builder": "tsx scripts/verify-research-screen-builder.ts",
     "verify:mobile-profiles": "tsx scripts/verify-mobile-profiles.ts",

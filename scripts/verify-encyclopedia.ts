@@ -3,6 +3,7 @@ import path from "node:path";
 import { getAssetProductionState } from "@/lib/assets/asset-production";
 import { canonicalBuildingLibrary, canonicalBuildingTaxonomy } from "@/lib/buildings/taxonomy";
 import { getGameData } from "@/lib/data";
+import { canonicalDiscoveries } from "@/lib/discovery";
 import { buildCivilizationEncyclopediaState } from "@/lib/encyclopedia";
 import { buildGameEngineExport, type EngineTarget } from "@/lib/export/game-engine";
 import { buildCanonicalRuntimeExportPayload } from "@/lib/runtime/game-runtime";
@@ -32,14 +33,15 @@ async function main() {
   assert(state.route === "/encyclopedia", "Encyclopedia route metadata must be /encyclopedia.");
   assert(state.validation.status === "Ready", `Encyclopedia validation must be Ready; received ${state.validation.status}: ${state.validation.issues.map((issue) => issue.message).join("; ")}`);
   assert(state.sections.length >= 20, "Encyclopedia must expose the requested section surface.");
-  for (const section of ["building", "research", "resource", "planet", "district", "colony", "ai_agent", "civilization", "faction", "upgrade", "wonder"]) {
+  for (const section of ["building", "research", "resource", "planet", "district", "colony", "ai_agent", "civilization", "faction", "upgrade", "wonder", "discovery"]) {
     assert(state.sections.some((item) => item.id === section && item.status === "active"), `${section} section must be backed by canonical records.`);
   }
-  for (const section of ["star", "star_system", "sector", "galaxy", "ship", "species", "artifact", "event", "trade"]) {
+  for (const section of ["star", "star_system", "sector", "galaxy", "ship", "species", "event", "trade"]) {
     assert(state.sections.some((item) => item.id === section && item.status === "planned"), `${section} must be marked planned rather than fabricated.`);
   }
   assert(state.entries.length > canonicalBuildingLibrary.length, "Encyclopedia must include more than building scaffold entries.");
   assert(state.sections.find((item) => item.id === "building")?.entries.length === canonicalBuildingLibrary.length, "Building encyclopedia must use the canonical building library.");
+  assert(state.sections.find((item) => item.id === "discovery")?.entries.length === canonicalDiscoveries.length, "Discovery encyclopedia must use canonical discovery records.");
   assert(canonicalBuildingTaxonomy.length === 40, "Building taxonomy must remain expanded to 40 families.");
   assert(state.buildingCollections.length >= 10, "Building collections must be supported.");
   assert(state.buildingProgressionChains.length >= 5, "Building progression chains must be supported.");
@@ -49,7 +51,7 @@ async function main() {
   assert(state.metrics.publishedEntries === 0, "Draft/scaffold encyclopedia entries must not be counted as published.");
 
   const runtime = await buildCanonicalRuntimeExportPayload();
-  assert(runtime.metadata.contentVersion === 17, `Studio-only encyclopedia infrastructure must preserve contentVersion 17; received ${runtime.metadata.contentVersion}.`);
+  assert(runtime.metadata.contentVersion >= 18, `Discovery-backed encyclopedia requires contentVersion 18 or newer; received ${runtime.metadata.contentVersion}.`);
   const targets: EngineTarget[] = ["generic", "roblox", "web", "unity", "unreal", "godot"];
   const exports = await Promise.all(targets.map((target) => buildGameEngineExport(target)));
   for (const [index, engineExport] of exports.entries()) {

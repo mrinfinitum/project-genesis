@@ -34,6 +34,12 @@ type RuntimePayload = {
   economyUsageRelationships?: { unresolved?: Array<unknown> };
   inventoryResourceMetadata?: Array<{ resourceId: string; classification?: string }>;
   resources?: Array<{ id: string }>;
+  discoveryCategories?: Array<{ id: string; subcategories?: Array<{ id: string }> }>;
+  discoveryRarities?: Array<{ id: string }>;
+  discoveries?: Array<{ id: string; categoryId: string; subcategoryId: string; rarity: string; spawnWeight: number }>;
+  discoveryCollections?: Array<{ id: string; discoveryIds: string[] }>;
+  discoveryChains?: Array<{ id: string; nodes: Array<{ discoveryId: string }> }>;
+  discoveryPlayerCollectionSchema?: { studioOwnership?: string };
   upgradeCategories?: Array<{ id: string }>;
   upgrades?: Array<{ id: string; categoryId?: string; tabId?: string; eraId?: string; costResourceId?: string | null; costEconomyId?: string | null }>;
   aiAgents?: Array<{ id: string; defaultForNewPlayers?: boolean; baseVariantId?: string; availableVariantIds?: string[]; assetKeys?: Record<string, string>; gameplayModifiers?: Record<string, unknown> }>;
@@ -163,6 +169,39 @@ function validateAiAgentRuntime(payload: RuntimePayload | RobloxPayload, label: 
   }
   for (const variant of variants) {
     assert(variant.agentId && agentIds.has(variant.agentId), `${label} ${variant.id} has unresolved agentId ${variant.agentId ?? "(missing)"}.`);
+  }
+}
+
+function validateDiscoveryRuntime(payload: RuntimePayload | RobloxPayload, label: string) {
+  const categories = payload.discoveryCategories ?? [];
+  const rarities = payload.discoveryRarities ?? [];
+  const discoveries = payload.discoveries ?? [];
+  const categoryIds = new Set(categories.map((category) => category.id));
+  const rarityIds = new Set(rarities.map((rarity) => rarity.id));
+  const discoveryIds = new Set(discoveries.map((discovery) => discovery.id));
+
+  assert(categories.length >= 8, `${label} must publish discoveryCategories.`);
+  assert(rarities.length === 7, `${label} must publish the seven canonical discovery rarity tiers.`);
+  assert(discoveries.length >= 10, `${label} must publish canonical discoveries.`);
+  assert((payload.discoveryCollections?.length ?? 0) >= 6, `${label} must publish discoveryCollections.`);
+  assert((payload.discoveryChains?.length ?? 0) >= 2, `${label} must publish discoveryChains.`);
+  assert(payload.discoveryPlayerCollectionSchema?.studioOwnership === "canonical_definitions_only", `${label} must mark player discovery collection state as game-owned.`);
+  for (const discovery of discoveries) {
+    const category = categories.find((item) => item.id === discovery.categoryId);
+    assert(categoryIds.has(discovery.categoryId), `${label} discovery ${discovery.id} has unresolved categoryId ${discovery.categoryId}.`);
+    assert(category?.subcategories?.some((subcategory) => subcategory.id === discovery.subcategoryId), `${label} discovery ${discovery.id} has unresolved subcategoryId ${discovery.subcategoryId}.`);
+    assert(rarityIds.has(discovery.rarity), `${label} discovery ${discovery.id} has unresolved rarity ${discovery.rarity}.`);
+    assert(discovery.spawnWeight > 0, `${label} discovery ${discovery.id} must have positive spawnWeight.`);
+  }
+  for (const collection of payload.discoveryCollections ?? []) {
+    for (const discoveryId of collection.discoveryIds) {
+      assert(discoveryIds.has(discoveryId), `${label} discovery collection ${collection.id} references missing discovery ${discoveryId}.`);
+    }
+  }
+  for (const chain of payload.discoveryChains ?? []) {
+    for (const node of chain.nodes) {
+      assert(discoveryIds.has(node.discoveryId), `${label} discovery chain ${chain.id} references missing discovery ${node.discoveryId}.`);
+    }
   }
 }
 
@@ -463,6 +502,8 @@ async function main() {
   validateResourceEconomyContracts(roblox.payload, "Roblox");
   validateAiAgentRuntime(canonical.payload, "Canonical");
   validateAiAgentRuntime(roblox.payload, "Roblox");
+  validateDiscoveryRuntime(canonical.payload, "Canonical");
+  validateDiscoveryRuntime(roblox.payload, "Roblox");
   validateRuntimeReferences(canonical.payload);
   validateRobloxReferences(roblox.payload);
   assertNoArchitectureLeak("Canonical runtime", canonical.payload);
@@ -487,6 +528,8 @@ async function main() {
       primaryHudResources: canonical.payload.clientProfiles?.default?.primaryHudResources ?? [],
       aiAgentCount: canonical.payload.aiAgents?.length ?? 0,
       aiAgentVariantCount: canonical.payload.aiAgentVariants?.length ?? 0,
+      discoveryCategoryCount: canonical.payload.discoveryCategories?.length ?? 0,
+      discoveryCount: canonical.payload.discoveries?.length ?? 0,
       resourceCount: canonical.payload.resources?.length ?? 0,
       upgradeCount: canonical.payload.upgrades?.length ?? 0
     },
@@ -508,6 +551,8 @@ async function main() {
       primaryHudResources: roblox.payload.clientHints?.primaryHudResources ?? [],
       aiAgentCount: roblox.payload.aiAgents?.length ?? 0,
       aiAgentVariantCount: roblox.payload.aiAgentVariants?.length ?? 0,
+      discoveryCategoryCount: roblox.payload.discoveryCategories?.length ?? 0,
+      discoveryCount: roblox.payload.discoveries?.length ?? 0,
       resourceCount: roblox.payload.resources?.length ?? 0,
       upgradeTabCount: roblox.payload.upgradeTabs?.length ?? 0,
       upgradeCount: roblox.payload.upgrades?.length ?? 0

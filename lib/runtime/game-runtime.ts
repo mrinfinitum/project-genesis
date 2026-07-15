@@ -8,6 +8,7 @@ import { getAssetProductionRuntimeOverrides } from "@/lib/assets/asset-productio
 import { getAppliedGameArtAssets } from "@/lib/assets/game-art-import";
 import { buildBuildingClassifications, canonicalBuildingLibrary, canonicalBuildingTaxonomy } from "@/lib/buildings/taxonomy";
 import { getGameData } from "@/lib/data";
+import { canonicalDiscoveries, discoveryCategories, discoveryChains, discoveryCollections, discoveryMilestones, discoveryPlayerCollectionSchema, discoveryRarities, validateDiscoverySystem } from "@/lib/discovery";
 import {
   buildEconomyUsageRelationships,
   buildBuildingResourceEffects,
@@ -51,7 +52,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 17;
+export const gameRuntimeContentVersion = 18;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -77,6 +78,13 @@ export type RobloxRuntimeExportPayload = {
   automationPresentation: GameRuntimeData["automationPresentation"];
   defaultAiAgentId: GameRuntimeData["defaultAiAgentId"];
   aiAgentSaveSchema: GameRuntimeData["aiAgentSaveSchema"];
+  discoveryCategories: GameRuntimeData["discoveryCategories"];
+  discoveryRarities: GameRuntimeData["discoveryRarities"];
+  discoveries: GameRuntimeData["discoveries"];
+  discoveryCollections: GameRuntimeData["discoveryCollections"];
+  discoveryChains: GameRuntimeData["discoveryChains"];
+  discoveryMilestones: GameRuntimeData["discoveryMilestones"];
+  discoveryPlayerCollectionSchema: GameRuntimeData["discoveryPlayerCollectionSchema"];
   resources: ResourceDefinition[];
   buildingTaxonomy: GameRuntimeData["buildingTaxonomy"];
   buildingLibrary: GameRuntimeData["buildingLibrary"];
@@ -536,6 +544,15 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
     aiAgentVariants: [...runtimeData.aiAgentVariants].sort(byId),
     aiAgentPersonalities: [...runtimeData.aiAgentPersonalities].sort(byId),
     aiAgentAnimationProfiles: [...runtimeData.aiAgentAnimationProfiles].sort(byId),
+    discoveryCategories: [...runtimeData.discoveryCategories].sort(byDisplayOrderThenId).map((category) => ({
+      ...category,
+      subcategories: [...category.subcategories].sort(byDisplayOrderThenId)
+    })),
+    discoveryRarities: [...runtimeData.discoveryRarities].sort(byDisplayOrderThenId),
+    discoveries: [...runtimeData.discoveries].sort(byId),
+    discoveryCollections: [...runtimeData.discoveryCollections].sort(byId),
+    discoveryChains: [...runtimeData.discoveryChains].sort(byId).map((chain) => ({ ...chain, nodes: [...chain.nodes].sort((left, right) => left.order - right.order || left.discoveryId.localeCompare(right.discoveryId)) })),
+    discoveryMilestones: [...runtimeData.discoveryMilestones].sort((left, right) => String(left.id).localeCompare(String(right.id))),
     resources: [...runtimeData.resources].sort(byId),
     buildingTaxonomy: [...runtimeData.buildingTaxonomy].sort(byDisplayOrderThenId).map((family) => ({
       ...family,
@@ -1218,7 +1235,7 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
     issues.push({ severity: "error", code: "metadata_architecture_version_invalid", message: "metadata.architectureVersion must be a valid semantic version matching the Architecture Workspace.", records: ["metadata", runtimeData.metadata.architectureVersion ?? "missing"] });
   }
 
-  for (const [moduleName, rows] of Object.entries({ eras: runtimeData.eras, economyDefinitions: runtimeData.economyDefinitions, economyBehaviorContracts: runtimeData.economyBehaviorContracts, eraEconomyProfiles: runtimeData.eraEconomyProfiles, resourceProducerDefinitions: runtimeData.resourceProducerDefinitions, buildingResourceEffects: runtimeData.buildingResourceEffects, economyScopeRules: runtimeData.economyScopeRules, economyTransactionReasons: runtimeData.economyTransactionReasons, economyRateBreakdownDefinitions: runtimeData.economyRateBreakdownDefinitions, offlineProgressionPolicies: runtimeData.offlineProgressionPolicies, inventoryResourceMetadata: runtimeData.inventoryResourceMetadata, aiAgents: runtimeData.aiAgents, aiAgentVariants: runtimeData.aiAgentVariants, resources: runtimeData.resources, buildingTaxonomy: runtimeData.buildingTaxonomy, buildingLibrary: runtimeData.buildingLibrary, buildingClassifications: runtimeData.buildingClassifications, upgradeCategories: runtimeData.upgradeCategories, upgrades: runtimeData.upgrades, assets: runtimeData.assets })) {
+  for (const [moduleName, rows] of Object.entries({ eras: runtimeData.eras, economyDefinitions: runtimeData.economyDefinitions, economyBehaviorContracts: runtimeData.economyBehaviorContracts, eraEconomyProfiles: runtimeData.eraEconomyProfiles, resourceProducerDefinitions: runtimeData.resourceProducerDefinitions, buildingResourceEffects: runtimeData.buildingResourceEffects, economyScopeRules: runtimeData.economyScopeRules, economyTransactionReasons: runtimeData.economyTransactionReasons, economyRateBreakdownDefinitions: runtimeData.economyRateBreakdownDefinitions, offlineProgressionPolicies: runtimeData.offlineProgressionPolicies, inventoryResourceMetadata: runtimeData.inventoryResourceMetadata, aiAgents: runtimeData.aiAgents, aiAgentVariants: runtimeData.aiAgentVariants, discoveryCategories: runtimeData.discoveryCategories, discoveryRarities: runtimeData.discoveryRarities, discoveries: runtimeData.discoveries, discoveryCollections: runtimeData.discoveryCollections, discoveryChains: runtimeData.discoveryChains, resources: runtimeData.resources, buildingTaxonomy: runtimeData.buildingTaxonomy, buildingLibrary: runtimeData.buildingLibrary, buildingClassifications: runtimeData.buildingClassifications, upgradeCategories: runtimeData.upgradeCategories, upgrades: runtimeData.upgrades, assets: runtimeData.assets })) {
     const duplicates = duplicateIds(rows as Array<{ id: string }>);
     if (duplicates.length) {
       issues.push({ severity: "error", code: "duplicate_id", message: `${moduleName} contains duplicate IDs.`, records: duplicates });
@@ -1231,6 +1248,10 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   validateResourceEconomyContracts(runtimeData, issues, "Canonical runtime");
   validateMobileClientProfiles(runtimeData, issues);
   validateAiAgents(runtimeData, issues);
+  const discoveryValidation = validateDiscoverySystem();
+  for (const issue of discoveryValidation.issues) {
+    issues.push({ severity: issue.severity, code: `discovery_${issue.code}`, message: issue.message, records: issue.records });
+  }
   validateBuildingTaxonomyRuntime(runtimeData, issues);
   const categoryPresentationValidation = validateUpgradeCategoryPresentation({ categories: runtimeData.upgradeCategories });
   for (const message of categoryPresentationValidation.issues) {
@@ -1393,6 +1414,13 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     automationPresentation: sorted.automationPresentation,
     defaultAiAgentId: sorted.defaultAiAgentId,
     aiAgentSaveSchema: sorted.aiAgentSaveSchema,
+    discoveryCategories: sorted.discoveryCategories,
+    discoveryRarities: sorted.discoveryRarities,
+    discoveries: sorted.discoveries,
+    discoveryCollections: sorted.discoveryCollections,
+    discoveryChains: sorted.discoveryChains,
+    discoveryMilestones: sorted.discoveryMilestones,
+    discoveryPlayerCollectionSchema: sorted.discoveryPlayerCollectionSchema,
     resources: sorted.resources,
     buildingTaxonomy: sorted.buildingTaxonomy,
     buildingLibrary: sorted.buildingLibrary,
@@ -1582,6 +1610,13 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     automationPresentation: aiAgentModules.automationPresentation,
     defaultAiAgentId: aiAgentModules.defaultAiAgentId,
     aiAgentSaveSchema: aiAgentModules.aiAgentSaveSchema,
+    discoveryCategories: discoveryCategories.map((category) => ({ ...category, subcategories: category.subcategories.map((subcategory) => ({ ...subcategory })) })),
+    discoveryRarities: discoveryRarities.map((rarity) => ({ ...rarity })),
+    discoveries: canonicalDiscoveries.map((discovery) => ({ ...discovery, assetProfile: { ...discovery.assetProfile, variants: [...discovery.assetProfile.variants] }, spawnRules: { ...discovery.spawnRules } })),
+    discoveryCollections: discoveryCollections.map((collection) => ({ ...collection, discoveryIds: [...collection.discoveryIds] })),
+    discoveryChains: discoveryChains.map((chain) => ({ ...chain, nodes: chain.nodes.map((node) => ({ ...node, unlocks: [...node.unlocks] })) })),
+    discoveryMilestones: discoveryMilestones.map((milestone) => ({ ...milestone, categoryIds: [...milestone.categoryIds] })),
+    discoveryPlayerCollectionSchema,
     resources: ResourceService.catalog.map(resourceToRuntime),
     buildingTaxonomy: canonicalBuildingTaxonomy,
     buildingLibrary: canonicalBuildingLibrary,
@@ -1626,6 +1661,13 @@ export async function getGameRuntimeData() {
     automationPresentation: base.automationPresentation,
     defaultAiAgentId: base.defaultAiAgentId,
     aiAgentSaveSchema: base.aiAgentSaveSchema,
+    discoveryCategories: base.discoveryCategories,
+    discoveryRarities: base.discoveryRarities,
+    discoveries: base.discoveries,
+    discoveryCollections: base.discoveryCollections,
+    discoveryChains: base.discoveryChains,
+    discoveryMilestones: base.discoveryMilestones,
+    discoveryPlayerCollectionSchema: base.discoveryPlayerCollectionSchema,
     resources: base.resources,
     balance: {
       ...store.appliedRuntimeData.balance,
@@ -1825,6 +1867,13 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     economyRateBreakdownDefinitions: base.economyRateBreakdownDefinitions,
     offlineProgressionPolicies: base.offlineProgressionPolicies,
     economyCalculationRules: base.economyCalculationRules,
+    discoveryCategories: base.discoveryCategories,
+    discoveryRarities: base.discoveryRarities,
+    discoveries: base.discoveries,
+    discoveryCollections: base.discoveryCollections,
+    discoveryChains: base.discoveryChains,
+    discoveryMilestones: base.discoveryMilestones,
+    discoveryPlayerCollectionSchema: base.discoveryPlayerCollectionSchema,
     resources: base.resources,
     buildingTaxonomy: base.buildingTaxonomy,
     buildingLibrary: base.buildingLibrary,

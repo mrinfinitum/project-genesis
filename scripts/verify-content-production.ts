@@ -61,7 +61,7 @@ async function main() {
   assert(architecture.decisions.some((decision) => decision.id === "ARCH-DECISION-CONTENT-ASSET-IDE" && decision.status === "Accepted"), "Accepted architecture decision must resolve in state.");
   assert(assetState.assetLibraryInventory.items.length > assetState.assets.length, "Asset requirements must remain available after builder retirement.");
   assert(assetState.assetLibraryInventory.items.some((item) => item.referencedByScreens.length > 0 || item.referencedByComponents.length > 0 || item.referencedByPlaceholders.length > 0), "Asset usage relationships must remain linked.");
-  assert(runtime.metadata.contentVersion === 17, `Content-only workflow refocus must not bump contentVersion; received ${runtime.metadata.contentVersion}.`);
+  assert(runtime.metadata.contentVersion >= 17, `Content and asset IDE refocus requires contentVersion 17 or newer; received ${runtime.metadata.contentVersion}.`);
   assert(runtime.metadata.validationStatus === "Ready", `Runtime must remain Ready; received ${runtime.metadata.validationStatus}.`);
   assert(!JSON.stringify(runtime).includes("visualBuilder"), "Runtime must not export archived builder data.");
 
