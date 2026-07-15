@@ -83,13 +83,21 @@ const navigationGroups: NavigationGroup[] = [
   },
   {
     id: "studio",
-    label: "Studio",
+    label: "Advanced / Systems Authoring",
     icon: FileText,
     fallbackProgress: 92,
-    systemIds: ["architecture", "dashboard-metrics"],
+    systemIds: ["architecture", "research", "unlock-matrix", "buildings", "upgrades", "dashboard-metrics"],
     items: [
-      { href: "/architecture", label: "Architecture", icon: FileText },
-      { href: "/economy-designer", label: "Economy Designer", icon: BadgeDollarSign }
+      { href: "/civilizations", label: "Civilization Design Studio", icon: Landmark },
+      { href: "/content-authoring", label: "Content Authoring", icon: CopyPlus },
+      { href: "/research", label: "Research Designer", icon: FlaskConical },
+      { href: "/unlock-matrix", label: "Unlock Matrix", icon: GitBranch },
+      { href: "/upgrades", label: "Upgrade Designer", icon: Gauge },
+      { href: "/buildings", label: "Building Designer", icon: Building2 },
+      { href: "/wonders", label: "Wonder Designer", icon: Sparkles },
+      { href: "/districts", label: "District Designer", icon: Network },
+      { href: "/economy-designer", label: "Economy Designer", icon: BadgeDollarSign },
+      { href: "/architecture", label: "Architecture", icon: FileText }
     ]
   },
   {
@@ -124,19 +132,29 @@ const navigationGroups: NavigationGroup[] = [
   },
   {
     id: "civilization",
-    label: "Progression Design",
-    icon: Landmark,
-    fallbackProgress: 84,
-    systemIds: ["research", "unlock-matrix", "buildings", "upgrades", "districts", "wonders"],
+    label: "Creative Production",
+    icon: Palette,
+    fallbackProgress: 38,
+    systemIds: ["assets", "research", "buildings", "upgrades"],
     items: [
-      { href: "/civilizations", label: "Civilization Design Studio", icon: Landmark },
-      { href: "/content-authoring", label: "Content Authoring", icon: CopyPlus },
-      { href: "/research", label: "Research Designer", icon: FlaskConical },
-      { href: "/unlock-matrix", label: "Unlock Matrix", icon: GitBranch },
-      { href: "/upgrades", label: "Upgrade Designer", icon: Gauge },
-      { href: "/buildings", label: "Building Designer", icon: Building2 },
-      { href: "/wonders", label: "Wonder Designer", icon: Sparkles },
-      { href: "/districts", label: "District Designer", icon: Network }
+      { href: "/creative-production", label: "Overview", icon: LayoutDashboard },
+      { href: "/creative-production?area=top-hud", label: "Top HUD", icon: MonitorCog },
+      { href: "/creative-production?area=left-navigation", label: "Left Navigation", icon: Map },
+      { href: "/creative-production?area=research", label: "Research", icon: FlaskConical },
+      { href: "/creative-production?area=buildings", label: "Buildings", icon: Building2 },
+      { href: "/creative-production?area=upgrades", label: "Upgrades", icon: Gauge },
+      { href: "/creative-production?area=ai-agents", label: "AI Agents", icon: Bot },
+      { href: "/creative-production?area=civilizations", label: "Civilizations", icon: Landmark },
+      { href: "/creative-production?area=galaxy", label: "Galaxy", icon: Star },
+      { href: "/creative-production?area=planets", label: "Planets", icon: Orbit },
+      { href: "/creative-production?area=settings", label: "Settings", icon: Settings },
+      { href: "/creative-production?area=login-account", label: "Login & Account", icon: FileText },
+      { href: "/creative-production?area=loading", label: "Loading", icon: UploadCloud },
+      { href: "/creative-production?area=icons", label: "Icons", icon: PackageCheck },
+      { href: "/creative-production?area=backgrounds", label: "Backgrounds", icon: Palette },
+      { href: "/creative-production?area=animations", label: "Animations", icon: Sparkles },
+      { href: "/creative-production?area=audio", label: "Audio", icon: BadgeDollarSign },
+      { href: "/creative-production?area=video", label: "Video", icon: FileCode2 }
     ]
   },
   {
@@ -218,6 +236,10 @@ function progressForGroup(group: NavigationGroup, systems: ProjectSystemProgress
   return Math.round(matches.reduce((sum, system) => sum + clampPercent(system.completion_percent), 0) / matches.length);
 }
 
+function hrefPath(href: string) {
+  return href.split("#")[0].split("?")[0];
+}
+
 function activeGroupForPath(pathname: string) {
   return navigationGroups.find((group) =>
     group.items.some((item) => {
@@ -229,7 +251,7 @@ function activeGroupForPath(pathname: string) {
         return item.activePaths.includes(pathname);
       }
 
-      return item.href.split("#")[0] === pathname;
+      return hrefPath(item.href) === pathname;
     })
   );
 }
@@ -243,7 +265,7 @@ function isItemActive(item: NavigationItem, pathname: string) {
     return item.activePaths.includes(pathname);
   }
 
-  return item.href.split("#")[0] === pathname;
+  return hrefPath(item.href) === pathname;
 }
 
 function uniqueSections(ids: Array<string | undefined>) {
