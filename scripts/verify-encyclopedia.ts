@@ -48,7 +48,7 @@ async function main() {
   assert(state.relationshipGraph.edges.length > 0, "Relationship graph must include canonical progression edges.");
   assert(state.galactopediaContract.status === "draft_not_published", "Galactopedia contract must remain draft and unpublished.");
   assert(state.metrics.scaffoldEntries === canonicalBuildingLibrary.length, "Scaffold building entries must be distinguished from published entries.");
-  assert(state.metrics.publishedEntries === 0, "Draft/scaffold encyclopedia entries must not be counted as published.");
+  assert(state.metrics.publishedEntries === canonicalDiscoveries.length, "Only polished canonical discovery records should currently count as published encyclopedia entries.");
 
   const runtime = await buildCanonicalRuntimeExportPayload();
   assert(runtime.metadata.contentVersion >= 18, `Discovery-backed encyclopedia requires contentVersion 18 or newer; received ${runtime.metadata.contentVersion}.`);

@@ -490,6 +490,20 @@ function generatedPlanetName(row: GeneratedPlanet) {
 function discoveryEntry(row: DiscoveryRecord, assets: ProductionAsset[]): EncyclopediaEntry {
   const category = discoveryCategories.find((item) => item.id === row.categoryId);
   const subcategory = category?.subcategories.find((item) => item.id === row.subcategoryId);
+  const spawnRuleSummary = compactStrings(
+    row.spawnRules.galaxy,
+    row.spawnRules.sector,
+    row.spawnRules.starSystem,
+    row.spawnRules.planetClass,
+    row.spawnRules.biome,
+    row.spawnRules.atmosphere,
+    row.spawnRules.gravity,
+    row.spawnRules.temperature,
+    row.spawnRules.weather,
+    row.spawnRules.pointsOfInterest,
+    row.spawnRules.starType,
+    row.spawnRules.specialEvents
+  ).join(", ");
   const entry = entryBase({
     entityType: "discovery",
     canonicalRecordId: row.id,
@@ -512,14 +526,20 @@ function discoveryEntry(row: DiscoveryRecord, assets: ProductionAsset[]): Encycl
     priority: row.rarity === "unique" || row.rarity === "mythic" || row.rarity === "legendary" ? "P1" : "P2",
     references: [{ type: "discovery", id: row.id, label: "Discovery", href: `/discovery?entry=${encodeURIComponent(row.id)}` }]
   }, assets);
+  entry.lore.editorialStatus = row.publicationStatus === "published" ? "published" : row.publicationStatus === "approved" ? "reviewed" : "draft";
   entry.lore.shortSummary = row.lore;
-  entry.lore.longDescription = row.lore;
+  entry.lore.longDescription = compactStrings(row.description, row.lore, spawnRuleSummary ? `Spawn rules: ${spawnRuleSummary}.` : "").join("\n\n");
   entry.lore.playerFacingExplanation = row.description;
-  entry.lore.discoveryText = row.lore;
-  entry.relatedEntries = row.unlocks.filter((id) => id.startsWith("discovery_")).map((id) => ({ entryId: `discovery_${slug(id)}`, relationshipType: "unlocks" }));
+  entry.lore.discoveryText = compactStrings(row.lore, row.unlocks.length ? `Discovery notes: unlocks ${row.unlocks.join(", ")}.` : "").join("\n\n");
+  entry.relatedEntries = [
+    ...row.unlocks.filter((id) => id.startsWith("DISC-")).map((id) => ({ entryId: `discovery_${slug(id)}`, relationshipType: "unlocks" as const })),
+    ...row.relatedLifeformIds.map((id) => ({ entryId: `discovery_${slug(id)}`, relationshipType: "related_to" as const }))
+  ];
   entry.civilizations = row.relatedCivilizationIds;
   entry.planets = row.relatedPlanetIds;
   entry.progression = [`Scan level ${row.requiredScanLevel}`, `Spawn weight ${row.spawnWeight}`, ...row.unlocks];
+  entry.galleryArtKeys = [row.assetProfile.card, row.assetProfile.hero, row.assetProfile.worldRender, row.assetProfile.discoveryAnimation, row.assetProfile.sound, row.assetProfile.video].filter(Boolean);
+  entry.completeness.editorialReadiness = entry.lore.editorialStatus === "published" ? 100 : entry.lore.editorialStatus === "reviewed" ? 80 : 35;
   return entry;
 }
 

@@ -31,6 +31,30 @@ function assertNoPrivatePaths(label: string, value: unknown) {
   assert(!serialized.includes("studio-private://"), `${label} must not expose studio-private paths.`);
 }
 
+const expectedCanonicalDiscoveryIds = [
+  "DISC-FLORA-LUMEN-MOSS",
+  "DISC-FAUNA-AEROVALE-SKIMMER",
+  "DISC-LIVING-MYCELIAL-WORLDNET",
+  "DISC-ELEMENT-HELIUM3-ICEVEIN",
+  "DISC-MINERAL-VESPER-CRYSTAL",
+  "DISC-EXOTIC-UMBRAL-CONDENSATE",
+  "DISC-ARTIFACT-SILENT-SUN-ORRERY",
+  "DISC-ALIENTECH-PRECURSOR-MEMORY-LATTICE",
+  "DISC-RUINS-ECHO-VAULT",
+  "DISC-ANOMALY-PALE-CHORUS"
+] as const;
+
+const expectedCollectionNames = [
+  "Primitive Biology",
+  "Planetary Flora",
+  "Planetary Fauna",
+  "Rare Matter",
+  "Artifacts",
+  "Alien Technology",
+  "Living Systems",
+  "Signals"
+] as const;
+
 async function main() {
   const discoveryPagePath = "app/discovery/page.tsx";
   const discoverySource = read("lib/discovery/index.ts");
@@ -62,7 +86,7 @@ async function main() {
   assert(discoveryCategories.length >= 8, `Discovery needs broad category coverage; received ${discoveryCategories.length}.`);
   assert(discoveryCategories.reduce((sum, category) => sum + category.subcategories.length, 0) >= 30, "Discovery must expose the requested subcategory breadth.");
   assert(discoveryRarities.length === 7, `Discovery rarity model must contain seven tiers; received ${discoveryRarities.length}.`);
-  assert(canonicalDiscoveries.length >= 10, `Discovery must seed canonical records; received ${canonicalDiscoveries.length}.`);
+  assert(canonicalDiscoveries.length === expectedCanonicalDiscoveryIds.length, `Discovery must publish the first ten canonical records exactly; received ${canonicalDiscoveries.length}.`);
   assert(discoveryCollections.length >= 6, "Discovery collections must be defined.");
   assert(discoveryChains.length >= 2, "Discovery chains must be defined.");
   assert(discoveryMilestones.length >= 5, "Discovery milestones must be defined.");
@@ -71,15 +95,28 @@ async function main() {
   const categoryIds = new Set(discoveryCategories.map((category) => category.id));
   const rarityIds = new Set(discoveryRarities.map((rarity) => rarity.id));
   const discoveryIds = new Set(canonicalDiscoveries.map((discovery) => discovery.id));
+  for (const expectedId of expectedCanonicalDiscoveryIds) {
+    assert(discoveryIds.has(expectedId), `Missing canonical discovery record ${expectedId}.`);
+  }
+  for (const collectionName of expectedCollectionNames) {
+    assert(discoveryCollections.some((collection) => collection.displayName === collectionName), `Missing canonical discovery collection ${collectionName}.`);
+  }
+  for (const rarity of discoveryRarities) {
+    assert(canonicalDiscoveries.some((discovery) => discovery.rarity === rarity.id), `Canonical discovery records must represent rarity tier ${rarity.displayName}.`);
+  }
   for (const discovery of canonicalDiscoveries) {
     const category = discoveryCategories.find((item) => item.id === discovery.categoryId);
     assert(categoryIds.has(discovery.categoryId), `${discovery.id} references missing category ${discovery.categoryId}.`);
     assert(category?.subcategories.some((subcategory) => subcategory.id === discovery.subcategoryId), `${discovery.id} references missing subcategory ${discovery.subcategoryId}.`);
     assert(rarityIds.has(discovery.rarity), `${discovery.id} references missing rarity ${discovery.rarity}.`);
+    assert(discovery.publicationStatus === "published", `${discovery.id} must be published canonical content, not a placeholder or draft.`);
     assert(discovery.spawnWeight > 0, `${discovery.id} must define a positive spawnWeight separate from rarity.`);
     assert(discovery.requiredScanLevel >= 1, `${discovery.id} must define requiredScanLevel.`);
     for (const key of ["icon", "inventoryThumbnail", "card", "hero", "detailIllustration"] as const) {
       assert(Boolean(discovery.assetProfile[key]), `${discovery.id} is missing assetProfile.${key}.`);
+    }
+    for (const relatedLifeformId of discovery.relatedLifeformIds) {
+      assert(discoveryIds.has(relatedLifeformId), `${discovery.id} references missing related lifeform discovery ${relatedLifeformId}.`);
     }
   }
   for (const collection of discoveryCollections) {
@@ -113,8 +150,11 @@ async function main() {
   assert(architecture.decisions.some((decision) => decision.id === "ARCH-DECISION-CANONICAL-DISCOVERY-SYSTEM" && decision.status === "Accepted"), "Architecture decision must resolve in state.");
 
   assert(runtime.metadata.validationStatus === "Ready", `Runtime must remain Ready; received ${runtime.metadata.validationStatus}.`);
-  assert(runtime.metadata.contentVersion >= 18, `Discovery runtime publication requires contentVersion 18 or newer; received ${runtime.metadata.contentVersion}.`);
+  assert(runtime.metadata.contentVersion >= 20, `First ten canonical discovery records require contentVersion 20 or newer; received ${runtime.metadata.contentVersion}.`);
   assert(runtime.discoveries.length === canonicalDiscoveries.length, "Runtime discoveries must mirror canonical discovery records.");
+  for (const expectedId of expectedCanonicalDiscoveryIds) {
+    assert(runtime.discoveries.some((discovery) => discovery.id === expectedId), `Runtime is missing canonical discovery ${expectedId}.`);
+  }
   assert(runtime.discoveryCategories.length === discoveryCategories.length, "Runtime discoveryCategories must mirror canonical categories.");
   assert(runtime.discoveryRarities.length === discoveryRarities.length, "Runtime discoveryRarities must mirror canonical rarities.");
   assert(runtime.discoveryCollections.length === discoveryCollections.length, "Runtime discoveryCollections must mirror canonical collections.");
