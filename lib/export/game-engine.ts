@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { defaultAiAgentVariantId, getAiAgentRuntimeModules } from "@/lib/ai-agents";
 import { ARCHITECTURE_VERSION } from "@/lib/architecture/version";
+import { buildBuildingClassifications, canonicalBuildingTaxonomy } from "@/lib/buildings/taxonomy";
 import { getGameData } from "@/lib/data";
 import { discoveryJournalSchema, sampleDiscoveryJournal, sampleTimelineEvents, timelineEventSchema } from "@/lib/explorer/discovery-log";
 import { colonyBuildingTemplates, colonyFocusDefinitions, colonyLevelDefinitions, colonySchema, createColonyRecord, generateFallbackColonies, type ColonyBuilding, type ColonyRecord } from "@/lib/colonies/procedural";
@@ -134,6 +135,8 @@ type CanonicalModules = {
   resource_catalog: typeof ResourceService.catalog;
   planet_resource_profiles: ReturnType<typeof normalizePlanetResourceProfiles>;
   research: GameData["research"];
+  building_taxonomy: typeof canonicalBuildingTaxonomy;
+  building_classifications: ReturnType<typeof buildBuildingClassifications>;
   unlock_matrix: GameData["unlock_matrix"];
   galaxies: Array<Record<string, unknown>>;
   sectors: Array<Record<string, unknown>>;
@@ -474,6 +477,8 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
     resource_catalog: ResourceService.catalog,
     planet_resource_profiles: validatePlanetResourceProfiles(data.planet_resource_profiles as PlanetResourceProfile[]),
     research: data.research,
+    building_taxonomy: canonicalBuildingTaxonomy,
+    building_classifications: buildBuildingClassifications(data.buildings),
     unlock_matrix: data.unlock_matrix,
     galaxies: galaxies.map((galaxy) => ({ ...galaxy, generatedName: galaxyName(galaxy), displayName: galaxyName(galaxy) })),
     sectors: sectors.map((sector) => ({ ...sector, generatedName: asString(sector.sector_name) || String(sector.id), displayName: asString(sector.sector_name) || String(sector.id) })),
@@ -636,6 +641,8 @@ function buildRelationshipMap(modules: CanonicalModules) {
   const missionsByMarket: Record<string, string[]> = {};
   const missionsByTradeRoute: Record<string, string[]> = {};
   const missionsBySystem: Record<string, string[]> = {};
+  const buildingClassificationsByFamily: Record<string, string[]> = {};
+  const buildingClassificationsBySubcategory: Record<string, string[]> = {};
   const economyUsage: Record<string, Record<string, string[]>> = {};
 
   for (const sector of modules.sectors) {
@@ -703,6 +710,12 @@ function buildRelationshipMap(modules: CanonicalModules) {
     }
   }
 
+  for (const classification of modules.building_classifications) {
+    buildingClassificationsByFamily[classification.primaryFamilyId] = [...(buildingClassificationsByFamily[classification.primaryFamilyId] ?? []), classification.buildingId];
+    const key = `${classification.primaryFamilyId}/${classification.subcategoryId}`;
+    buildingClassificationsBySubcategory[key] = [...(buildingClassificationsBySubcategory[key] ?? []), classification.buildingId];
+  }
+
   return {
     sectorsByGalaxy,
     systemsBySector,
@@ -724,6 +737,8 @@ function buildRelationshipMap(modules: CanonicalModules) {
     missionsByMarket,
     missionsByTradeRoute,
     missionsBySystem,
+    buildingClassificationsByFamily,
+    buildingClassificationsBySubcategory,
     economyUsage
   };
 }
@@ -792,6 +807,34 @@ function validateUnlocks(issues: ExportValidationIssue[], modules: CanonicalModu
 
   if (orphanSources.length) {
     addIssue(issues, "error", "orphan_unlock_source", "unlock_matrix contains research source IDs that do not exist in research.", orphanSources.map((row) => row.id));
+  }
+}
+
+function validateBuildingTaxonomy(issues: ExportValidationIssue[], modules: CanonicalModules) {
+  if (modules.building_taxonomy.length !== 20) {
+    addIssue(issues, "error", "building_taxonomy_family_count", "Building taxonomy must export exactly 20 primary families.", modules.building_taxonomy.map((family) => family.id));
+  }
+  const familyIds = new Set(modules.building_taxonomy.map((family) => family.id));
+  const orders = modules.building_taxonomy.map((family) => family.displayOrder);
+  if (new Set(orders).size !== orders.length) {
+    addIssue(issues, "error", "building_taxonomy_order_duplicate", "Building taxonomy display orders must be unique.", modules.building_taxonomy.map((family) => family.id));
+  }
+  const classifiedBuildingIds = new Set<string>();
+  const duplicateBuildingIds = new Set<string>();
+  for (const classification of modules.building_classifications) {
+    if (classifiedBuildingIds.has(classification.buildingId)) duplicateBuildingIds.add(classification.buildingId);
+    classifiedBuildingIds.add(classification.buildingId);
+    const family = modules.building_taxonomy.find((row) => row.id === classification.primaryFamilyId);
+    if (!familyIds.has(classification.primaryFamilyId) || !family) {
+      addIssue(issues, "error", "building_classification_family_missing", "Building classification primaryFamilyId must resolve to building_taxonomy.", [classification.id, classification.primaryFamilyId]);
+      continue;
+    }
+    if (!family.subcategories.some((subcategory) => subcategory.id === classification.subcategoryId)) {
+      addIssue(issues, "error", "building_classification_subcategory_missing", "Building classification subcategoryId must resolve inside its primary family.", [classification.id, classification.subcategoryId]);
+    }
+  }
+  if (duplicateBuildingIds.size) {
+    addIssue(issues, "error", "building_classification_duplicate", "Every building must export exactly one primary taxonomy classification.", [...duplicateBuildingIds]);
   }
 }
 
@@ -1269,6 +1312,7 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
   validateStableIds(issues, modules);
   validateResourceReferences(issues, modules);
   validateUnlocks(issues, modules);
+  validateBuildingTaxonomy(issues, modules);
   validateHierarchy(issues, modules);
   validateEconomy(issues, modules);
   validateEraNavigationProfiles(issues, modules);
@@ -1289,6 +1333,7 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
       "stable IDs",
       "no duplicate IDs",
       "no orphan unlocks",
+      "building taxonomy classifications resolve",
       "no invalid resource IDs",
       "parent/child links exist",
       "schema matches selected engine target",
@@ -1379,6 +1424,8 @@ function compactModules(modules: CanonicalModules) {
     resource_catalog: modules.resource_catalog,
     planet_resource_profiles: modules.planet_resource_profiles,
     research: modules.research,
+    building_taxonomy: modules.building_taxonomy,
+    building_classifications: modules.building_classifications,
     unlock_matrix: modules.unlock_matrix,
     galaxies: modules.galaxies,
     sectors: modules.sectors,

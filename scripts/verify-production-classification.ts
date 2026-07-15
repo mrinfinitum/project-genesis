@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { getAssetProductionState } from "@/lib/assets/asset-production";
+import { canonicalBuildingTaxonomy } from "@/lib/buildings/taxonomy";
 import {
   resolveAssetClass,
   resolveProductionClasses,
@@ -75,9 +76,10 @@ async function main() {
   assert(resolveProductionClasses("research", data).some((row) => row.classId === "unclassified"), "Research must expose Unclassified.");
 
   const buildingClasses = resolveProductionClasses("buildings", data);
-  const canonicalBuildingClassIds = new Set(data.buildings.map((building) => building.category).filter(Boolean).map((category) => category.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")));
-  for (const id of canonicalBuildingClassIds) {
-    assert(buildingClasses.some((row) => row.classId === id), `Buildings class selector is missing canonical class ${id}.`);
+  const canonicalBuildingFamilyIds = new Set(canonicalBuildingTaxonomy.map((family) => family.id));
+  assert(canonicalBuildingFamilyIds.size === 20, "Canonical building taxonomy must expose 20 primary families.");
+  for (const classRow of buildingClasses.filter((row) => !["shared", "unclassified"].includes(row.classId))) {
+    assert(canonicalBuildingFamilyIds.has(classRow.classId), `Buildings class selector used non-taxonomy class ${classRow.classId}.`);
   }
   const populatedBuildingClass = resolveProductionClassSummaries(areaItems.buildings, "buildings", data).find((row) => row.classId !== "shared" && row.classId !== "unclassified");
   assert(populatedBuildingClass, "Buildings must have at least one populated canonical class summary.");
@@ -90,7 +92,7 @@ async function main() {
   for (const id of ["shell", "navigation-icons", "selected-state", "inactive-state", "badges-indicators"]) assert(navClasses.includes(id), `Left Navigation group selector is missing ${id}.`);
 
   const runtime = await buildCanonicalRuntimeExportPayload();
-  assert(runtime.metadata.contentVersion === 15, `Production classification must not change runtime contentVersion; received ${runtime.metadata.contentVersion}.`);
+  assert(runtime.metadata.contentVersion >= 16, `Production classification requires building taxonomy runtime contentVersion 16 or newer; received ${runtime.metadata.contentVersion}.`);
   assert(runtime.metadata.validationStatus === "Ready", `Runtime must remain Ready; received ${runtime.metadata.validationStatus}.`);
   const targets: EngineTarget[] = ["generic", "roblox", "web", "unity", "unreal", "godot"];
   const exports = await Promise.all(targets.map((target) => buildGameEngineExport(target)));
@@ -123,4 +125,3 @@ main().catch((error) => {
   console.error(error instanceof Error ? error.message : error);
   process.exit(1);
 });
-

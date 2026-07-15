@@ -22,6 +22,7 @@
     "audit:asset-census": "tsx scripts/audit-asset-census.ts",
     "verify:creative-production": "tsx scripts/verify-creative-production.ts",
     "verify:production-classification": "tsx scripts/verify-production-classification.ts",
+    "verify:building-taxonomy": "tsx scripts/verify-building-taxonomy.ts",
     "verify:asset-library-category-routing": "tsx scripts/verify-asset-library-category-routing.ts",
     "verify:asset-production": "tsx scripts/verify-asset-production.ts",
     "verify:component-library": "tsx scripts/verify-component-library.ts",

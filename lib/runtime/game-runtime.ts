@@ -6,6 +6,7 @@ import { aiAgentSafePublishedDefaultArtKeys, defaultAiAgentId, defaultAiAgentVar
 import { ARCHITECTURE_VERSION } from "@/lib/architecture/version";
 import { getAssetProductionRuntimeOverrides } from "@/lib/assets/asset-production";
 import { getAppliedGameArtAssets } from "@/lib/assets/game-art-import";
+import { buildBuildingClassifications, canonicalBuildingTaxonomy } from "@/lib/buildings/taxonomy";
 import { getGameData } from "@/lib/data";
 import {
   buildEconomyUsageRelationships,
@@ -50,7 +51,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 15;
+export const gameRuntimeContentVersion = 16;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -77,6 +78,8 @@ export type RobloxRuntimeExportPayload = {
   defaultAiAgentId: GameRuntimeData["defaultAiAgentId"];
   aiAgentSaveSchema: GameRuntimeData["aiAgentSaveSchema"];
   resources: ResourceDefinition[];
+  buildingTaxonomy: GameRuntimeData["buildingTaxonomy"];
+  buildingClassifications: GameRuntimeData["buildingClassifications"];
   upgradeTabs: Array<UpgradeCategory & { tabId: string; label: string }>;
   upgrades: Array<UpgradeDefinition & { tabId: string }>;
   assets: Array<AssetDefinition & { robloxAssetId: string | null }>;
@@ -505,6 +508,10 @@ function byOrderThenId<T extends { id: string; order?: number; index?: number }>
   return (left.order ?? left.index ?? 0) - (right.order ?? right.index ?? 0) || left.id.localeCompare(right.id);
 }
 
+function byDisplayOrderThenId<T extends { id: string; displayOrder: number }>(left: T, right: T) {
+  return left.displayOrder - right.displayOrder || left.id.localeCompare(right.id);
+}
+
 function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
   return {
     ...runtimeData,
@@ -529,6 +536,11 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
     aiAgentPersonalities: [...runtimeData.aiAgentPersonalities].sort(byId),
     aiAgentAnimationProfiles: [...runtimeData.aiAgentAnimationProfiles].sort(byId),
     resources: [...runtimeData.resources].sort(byId),
+    buildingTaxonomy: [...runtimeData.buildingTaxonomy].sort(byDisplayOrderThenId).map((family) => ({
+      ...family,
+      subcategories: [...family.subcategories].sort(byDisplayOrderThenId)
+    })),
+    buildingClassifications: [...runtimeData.buildingClassifications].sort(byId),
     upgradeCategories: [...runtimeData.upgradeCategories].sort(byOrderThenId),
     upgrades: [...runtimeData.upgrades].sort(byOrderThenId),
     assets: [...runtimeData.assets].sort(byId),
@@ -1051,6 +1063,44 @@ function validateAiAgents(runtimeData: Pick<GameRuntimeData, "aiAgents" | "aiAge
   }
 }
 
+function validateBuildingTaxonomyRuntime(runtimeData: Pick<GameRuntimeData, "buildingTaxonomy" | "buildingClassifications">, issues: ImportIssue[]) {
+  const familyIds = new Set(runtimeData.buildingTaxonomy.map((family) => family.id));
+  const familyOrders = runtimeData.buildingTaxonomy.map((family) => family.displayOrder);
+  const assignedBuildingIds = new Set<string>();
+  const duplicateBuildingIds = new Set<string>();
+
+  if (runtimeData.buildingTaxonomy.length !== 20) {
+    issues.push({ severity: "error", code: "building_taxonomy_family_count", message: "Canonical runtime must publish exactly 20 building taxonomy families.", records: runtimeData.buildingTaxonomy.map((family) => family.id) });
+  }
+  if (new Set(familyOrders).size !== familyOrders.length) {
+    issues.push({ severity: "error", code: "building_taxonomy_order_duplicate", message: "Building taxonomy families must have unique displayOrder values.", records: runtimeData.buildingTaxonomy.map((family) => family.id) });
+  }
+  for (const family of runtimeData.buildingTaxonomy) {
+    if (!family.subcategories.length) {
+      issues.push({ severity: "error", code: "building_taxonomy_subcategory_missing", message: "Every building taxonomy family must include subcategories.", records: [family.id] });
+    }
+    const subcategoryOrders = family.subcategories.map((subcategory) => subcategory.displayOrder);
+    if (new Set(subcategoryOrders).size !== subcategoryOrders.length) {
+      issues.push({ severity: "error", code: "building_taxonomy_subcategory_order_duplicate", message: "Building taxonomy subcategory displayOrder values must be unique inside a family.", records: [family.id] });
+    }
+  }
+  for (const classification of runtimeData.buildingClassifications) {
+    if (assignedBuildingIds.has(classification.buildingId)) duplicateBuildingIds.add(classification.buildingId);
+    assignedBuildingIds.add(classification.buildingId);
+    const family = runtimeData.buildingTaxonomy.find((row) => row.id === classification.primaryFamilyId);
+    if (!familyIds.has(classification.primaryFamilyId) || !family) {
+      issues.push({ severity: "error", code: "building_classification_family_missing", message: "Building primaryFamilyId must resolve to the canonical taxonomy.", records: [classification.id, classification.primaryFamilyId] });
+      continue;
+    }
+    if (!family.subcategories.some((subcategory) => subcategory.id === classification.subcategoryId)) {
+      issues.push({ severity: "error", code: "building_classification_subcategory_missing", message: "Building subcategoryId must resolve inside its primary family.", records: [classification.id, classification.subcategoryId] });
+    }
+  }
+  if (duplicateBuildingIds.size) {
+    issues.push({ severity: "error", code: "building_classification_duplicate", message: "Every building must have exactly one primary taxonomy classification.", records: [...duplicateBuildingIds] });
+  }
+}
+
 function stableStringify(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(stableStringify).join(",")}]`;
   if (value && typeof value === "object") {
@@ -1149,7 +1199,7 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
     issues.push({ severity: "error", code: "metadata_architecture_version_invalid", message: "metadata.architectureVersion must be a valid semantic version matching the Architecture Workspace.", records: ["metadata", runtimeData.metadata.architectureVersion ?? "missing"] });
   }
 
-  for (const [moduleName, rows] of Object.entries({ eras: runtimeData.eras, economyDefinitions: runtimeData.economyDefinitions, economyBehaviorContracts: runtimeData.economyBehaviorContracts, eraEconomyProfiles: runtimeData.eraEconomyProfiles, resourceProducerDefinitions: runtimeData.resourceProducerDefinitions, buildingResourceEffects: runtimeData.buildingResourceEffects, economyScopeRules: runtimeData.economyScopeRules, economyTransactionReasons: runtimeData.economyTransactionReasons, economyRateBreakdownDefinitions: runtimeData.economyRateBreakdownDefinitions, offlineProgressionPolicies: runtimeData.offlineProgressionPolicies, inventoryResourceMetadata: runtimeData.inventoryResourceMetadata, aiAgents: runtimeData.aiAgents, aiAgentVariants: runtimeData.aiAgentVariants, resources: runtimeData.resources, upgradeCategories: runtimeData.upgradeCategories, upgrades: runtimeData.upgrades, assets: runtimeData.assets })) {
+  for (const [moduleName, rows] of Object.entries({ eras: runtimeData.eras, economyDefinitions: runtimeData.economyDefinitions, economyBehaviorContracts: runtimeData.economyBehaviorContracts, eraEconomyProfiles: runtimeData.eraEconomyProfiles, resourceProducerDefinitions: runtimeData.resourceProducerDefinitions, buildingResourceEffects: runtimeData.buildingResourceEffects, economyScopeRules: runtimeData.economyScopeRules, economyTransactionReasons: runtimeData.economyTransactionReasons, economyRateBreakdownDefinitions: runtimeData.economyRateBreakdownDefinitions, offlineProgressionPolicies: runtimeData.offlineProgressionPolicies, inventoryResourceMetadata: runtimeData.inventoryResourceMetadata, aiAgents: runtimeData.aiAgents, aiAgentVariants: runtimeData.aiAgentVariants, resources: runtimeData.resources, buildingTaxonomy: runtimeData.buildingTaxonomy, buildingClassifications: runtimeData.buildingClassifications, upgradeCategories: runtimeData.upgradeCategories, upgrades: runtimeData.upgrades, assets: runtimeData.assets })) {
     const duplicates = duplicateIds(rows as Array<{ id: string }>);
     if (duplicates.length) {
       issues.push({ severity: "error", code: "duplicate_id", message: `${moduleName} contains duplicate IDs.`, records: duplicates });
@@ -1162,6 +1212,7 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   validateResourceEconomyContracts(runtimeData, issues, "Canonical runtime");
   validateMobileClientProfiles(runtimeData, issues);
   validateAiAgents(runtimeData, issues);
+  validateBuildingTaxonomyRuntime(runtimeData, issues);
   const categoryPresentationValidation = validateUpgradeCategoryPresentation({ categories: runtimeData.upgradeCategories });
   for (const message of categoryPresentationValidation.issues) {
     issues.push({ severity: "error", code: "upgrade_category_presentation_invalid", message, records: runtimeData.upgradeCategories.map((category) => category.id) });
@@ -1324,6 +1375,8 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     defaultAiAgentId: sorted.defaultAiAgentId,
     aiAgentSaveSchema: sorted.aiAgentSaveSchema,
     resources: sorted.resources,
+    buildingTaxonomy: sorted.buildingTaxonomy,
+    buildingClassifications: sorted.buildingClassifications,
     upgradeTabs: sorted.upgradeCategories.map((category) => ({
       ...category,
       tabId: category.id,
@@ -1380,6 +1433,7 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
   }, issues, "Roblox runtime");
   validateResourceEconomyContracts(payload, issues, "Roblox runtime");
   validateAiAgents(payload, issues);
+  validateBuildingTaxonomyRuntime(payload, issues);
 
   const duplicateTabs = duplicateIds(payload.upgradeTabs.map((tab) => ({ id: tab.tabId })));
   if (duplicateTabs.length) {
@@ -1509,6 +1563,8 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     defaultAiAgentId: aiAgentModules.defaultAiAgentId,
     aiAgentSaveSchema: aiAgentModules.aiAgentSaveSchema,
     resources: ResourceService.catalog.map(resourceToRuntime),
+    buildingTaxonomy: canonicalBuildingTaxonomy,
+    buildingClassifications: buildBuildingClassifications(data.buildings),
     upgradeCategories: [...categories.values()].sort((left, right) => left.order - right.order),
     upgrades,
     assets,
@@ -1749,6 +1805,8 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     offlineProgressionPolicies: base.offlineProgressionPolicies,
     economyCalculationRules: base.economyCalculationRules,
     resources: base.resources,
+    buildingTaxonomy: base.buildingTaxonomy,
+    buildingClassifications: base.buildingClassifications,
     upgradeCategories: normalizeImportedCategories(payload, base.upgradeCategories),
     upgrades: normalizeImportedUpgrades(payload, base.upgrades),
     assets: normalizeImportedAssets(payload, base.assets),

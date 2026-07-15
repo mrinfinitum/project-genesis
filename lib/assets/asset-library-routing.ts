@@ -120,8 +120,15 @@ export function resolveAssetLibraryCategoryView(categoryId: unknown): {
   if (normalized === "upgrade-categories") {
     return {
       categoryId: normalized,
+      viewType: "generic_inventory",
+      reason: "Upgrades resolves to the merged upgrade inventory. Dedicated category background production lives in the Backgrounds bucket."
+    };
+  }
+  if (normalized === "backgrounds") {
+    return {
+      categoryId: normalized,
       viewType: "upgrade_category_workflow",
-      reason: "Upgrades uses the dedicated Upgrade Categories workflow; generic upgrade requirements remain available through production reports."
+      reason: "Backgrounds owns the dedicated Upgrade Category background workflow and shared background production."
     };
   }
   if (normalized === "ai-agents") {

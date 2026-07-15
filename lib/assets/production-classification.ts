@@ -1,5 +1,6 @@
 import { upgradeCategoryAssetRecords, upgradeCategoryIds } from "@/lib/upgrades/category-presentation";
 import type { AssetProductionState } from "@/lib/assets/asset-production";
+import { buildBuildingClassifications, canonicalBuildingTaxonomy, classifyBuilding } from "@/lib/buildings/taxonomy";
 import type { GameData } from "@/types/schema";
 
 export type ProductionClassMode = "canonical_class" | "group" | "none";
@@ -143,22 +144,15 @@ export function resolveProductionClasses(areaId: string, data: Pick<GameData, "r
   }
 
   if (areaId === "buildings") {
-    const seen = new Set<string>();
-    const classes = data.buildings
-      .map((building) => building.category)
-      .filter(Boolean)
-      .map((category) => ({ id: normalizeId(category), label: category }))
-      .filter((category) => {
-        if (seen.has(category.id)) return false;
-        seen.add(category.id);
-        return true;
-      })
-      .map((category, index) => ({
-        classId: category.id,
-        displayName: category.label,
-        displayOrder: index + 1,
+    const populatedFamilyIds = new Set(buildBuildingClassifications(data.buildings).map((classification) => classification.primaryFamilyId));
+    const classes = canonicalBuildingTaxonomy
+      .filter((family) => populatedFamilyIds.has(family.id))
+      .map((family) => ({
+        classId: family.id,
+        displayName: family.displayName,
+        displayOrder: family.displayOrder,
         mode: "canonical_class" as const,
-        description: "Canonical building category from Studio building definitions."
+        description: family.description
       }));
     return [...classes, sharedClass, unclassifiedClass].sort(sortByClassOrder);
   }
@@ -234,12 +228,13 @@ export function resolveAssetClass(item: InventoryItem, areaId: string, data: Pic
   if (areaId === "buildings") {
     const building = data.buildings.find((row) => hasCanonicalMatch(item, [row.id, row.name, row.icon_name, row.model_name, row.asset_id]));
     if (building) {
-      return { classId: normalizeId(building.category), displayName: building.category || "Buildings", assetRole: assetRoleFor(item), confidence: "linked_canonical_record" };
+      const classification = classifyBuilding(building);
+      return { classId: classification.primaryFamilyId, displayName: classification.primaryFamilyName, assetRole: assetRoleFor(item), confidence: "linked_canonical_record" };
     }
     if (sharedByArea(areaId, item)) return { classId: "shared", displayName: sharedClass.displayName, assetRole: assetRoleFor(item), confidence: "semantic_role_mapping" };
-    const categories = [...new Set(data.buildings.map((row) => row.category).filter(Boolean))];
-    for (const category of categories) {
-      if (hasCanonicalMatch(item, [category])) return { classId: normalizeId(category), displayName: category, assetRole: assetRoleFor(item), confidence: "semantic_role_mapping" };
+    for (const family of canonicalBuildingTaxonomy) {
+      const values = [family.id, family.displayName, ...family.subcategories.flatMap((subcategory) => [subcategory.id, subcategory.displayName, ...(subcategory.aliases ?? [])])];
+      if (hasCanonicalMatch(item, values)) return { classId: family.id, displayName: family.displayName, assetRole: assetRoleFor(item), confidence: "semantic_role_mapping" };
     }
   }
 

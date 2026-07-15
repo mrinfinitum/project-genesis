@@ -122,7 +122,7 @@ async function main() {
   assert(state.upgradeCategoryAssets.length === 4, "Upgrade Category workflow must continue exposing four category background records.");
 
   const runtime = await buildCanonicalRuntimeExportPayload();
-  assert(runtime.metadata.contentVersion === 15, `Creative Production must not change runtime contentVersion; received ${runtime.metadata.contentVersion}.`);
+  assert(runtime.metadata.contentVersion >= 16, `Creative Production requires building taxonomy runtime contentVersion 16 or newer; received ${runtime.metadata.contentVersion}.`);
   assert(runtime.metadata.validationStatus === "Ready", `Runtime must remain Ready; received ${runtime.metadata.validationStatus}.`);
 
   const targets: EngineTarget[] = ["generic", "roblox", "web", "unity", "unreal", "godot"];

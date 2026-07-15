@@ -92,8 +92,8 @@ async function main() {
   assertNotIncludes("Asset Library workspace", assetWorkspace, "Recent Imports");
   assertNotIncludes("Asset Library workspace", assetWorkspace, "Import / Reconcile Art");
   assertIncludes("Asset Library routing", assetLibraryRouting, 'viewType: "upgrade_category_workflow"');
-  assertIncludes("Asset Library routing", assetLibraryRouting, "dedicated Upgrade Categories workflow");
-  assertNotIncludes("Asset Library routing", assetLibraryRouting, "Upgrades resolves to the merged upgrade inventory");
+  assertIncludes("Asset Library routing", assetLibraryRouting, "Upgrades resolves to the merged upgrade inventory");
+  assertIncludes("Asset Library routing", assetLibraryRouting, "Backgrounds owns the dedicated Upgrade Category background workflow");
   assertNotIncludes("Asset Library workspace", assetWorkspace, 'activeNode !== "upgrade-categories" ? <AssetLibraryCategoryInventory');
   assertNotIncludes("Asset Library workspace", assetWorkspace, 'title="Inspector"');
   assertNotIncludes("Asset Library workspace", assetWorkspace, "Open Inspector");

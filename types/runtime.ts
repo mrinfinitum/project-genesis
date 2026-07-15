@@ -112,6 +112,55 @@ export type UpgradeDefinition = {
   tags: string[];
 };
 
+export type BuildingTaxonomyFamily = {
+  id: string;
+  displayName: string;
+  displayOrder: number;
+  description: string;
+  subcategories: Array<{
+    id: string;
+    displayName: string;
+    displayOrder: number;
+    aliases?: string[];
+  }>;
+};
+
+export type BuildingClassification = {
+  id: string;
+  buildingId: string;
+  buildingName: string;
+  primaryFamilyId: string;
+  primaryFamilyName: string;
+  subcategoryId: string;
+  subcategoryName: string;
+  legacyCategory: string;
+  era: string;
+  civilizationAvailability: string[];
+  planetAvailability: string[];
+  districtAvailability: string[];
+  resourceProducerIds: string[];
+  resourceConsumerIds: string[];
+  populationEffects: {
+    populationBonus: number;
+    populationCapacity: number;
+    populationGrowth: number;
+  };
+  researchEffects: {
+    researchPerSecond: number;
+    researchBonus: number;
+  };
+  workforceEffects: {
+    laborRequirement: number;
+    laborPerSecond: number;
+  };
+  unlockRequirements: {
+    researchId: string | null;
+    buildingId: string | null;
+  };
+  upgradePath: string;
+  migrationConfidence: "legacy_category_map" | "subcategory_keyword" | "manual_review_required";
+};
+
 export type EconomyValueDefinition = {
   id: string;
   name: string;
@@ -724,6 +773,8 @@ export type GameRuntimeData = {
   defaultAiAgentId: string;
   aiAgentSaveSchema: AiAgentSaveSchemaDefinition;
   resources: ResourceDefinition[];
+  buildingTaxonomy: BuildingTaxonomyFamily[];
+  buildingClassifications: BuildingClassification[];
   upgradeCategories: UpgradeCategory[];
   upgrades: UpgradeDefinition[];
   assets: AssetDefinition[];
