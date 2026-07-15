@@ -25,14 +25,16 @@ async function main() {
   const resolver = read("lib/assets/production-classification.ts");
   const page = read("app/creative-production/page.tsx");
 
-  assert(workspace.includes("ClassSelector"), "Creative Production must render one compact class/group selector.");
-  assert(workspace.includes("ClassSummaryCard"), "Creative Production must show class summary cards when Class is All.");
-  assert(workspace.includes("Back to All Classes"), "Drill-down view must expose Back to All Classes.");
-  assert(workspace.includes("role-filter-"), "Class drill-down must expose secondary role filtering.");
+  assert(!workspace.includes("ClassSelector"), "Creative Production must not render a duplicate class/group selector.");
+  assert(workspace.includes("FeatureSummaryCard"), "Creative Production must show feature cards as navigation before asset cards.");
+  assert(workspace.includes("Back to Feature Cards"), "Drill-down view must return to feature cards.");
+  assert(workspace.includes("role-filter-"), "Asset-card drill-down must expose secondary role filtering.");
   assert(workspace.includes("Production Priority"), "View Options must include production priority sorting.");
   assert(workspace.includes("sort: \"priority\""), "Creative Production default sort must be production priority.");
   assert(workspace.includes("params.set(\"class\""), "Upload and deep-link flows must carry selected canonical class IDs.");
-  assert(workspace.includes("window.history.replaceState"), "Class selection must persist into the URL.");
+  assert(workspace.includes("window.history.replaceState"), "Feature-card selection must persist into the URL.");
+  assert(workspace.includes("card_navigation"), "Creative Production development diagnostics must report card navigation.");
+  assert(!workspace.includes("Open Inspector"), "Asset cards must navigate directly instead of showing Open Inspector buttons.");
   assert(!workspace.includes("`${area.label} Groups`"), "Primary Creative Production must not render busy group-chip rows.");
   assert(!workspace.includes("area.groups.map"), "Primary Creative Production must not show every role/group as permanent chips.");
   assert(page.includes("getGameData"), "Creative Production page must pass canonical Studio data into class resolution.");
@@ -55,7 +57,7 @@ async function main() {
   const upgradeClasses = resolveProductionClasses("upgrades", data);
   const upgradeSummaries = resolveProductionClassSummaries(areaItems.upgrades, "upgrades", data);
   for (const id of ["workforce", "industry", "science", "technology"]) {
-    assert(upgradeClasses.some((row) => row.classId === id), `Upgrades class selector is missing ${id}.`);
+    assert(upgradeClasses.some((row) => row.classId === id), `Upgrades feature cards are missing ${id}.`);
     assert((upgradeSummaries.find((row) => row.classId === id)?.itemCount ?? 0) > 0, `Upgrades class ${id} must have matching production items.`);
     assert(resolveProductionItemsForClass(areaItems.upgrades, "upgrades", id, data).every((item) => resolveAssetClass(item, "upgrades", data).classId === id), `Upgrades ${id} drill-down leaked another class.`);
   }
@@ -65,9 +67,9 @@ async function main() {
   assert(workforceRoles.has("Background") || workforceRoles.has("Icon") || workforceRoles.has("Card"), "Upgrade class records must preserve asset roles as secondary metadata.");
 
   const researchClasses = resolveProductionClasses("research", data);
-  assert(researchClasses.length >= 10, `Research class picker must derive canonical branch taxonomy; received ${researchClasses.length}.`);
+  assert(researchClasses.length >= 10, `Research feature cards must derive canonical branch taxonomy; received ${researchClasses.length}.`);
   const agriculture = researchClasses.find((row) => /agric/i.test(row.displayName));
-  assert(agriculture, "Research class picker must include the canonical Agriculture branch.");
+  assert(agriculture, "Research feature cards must include the canonical Agriculture branch.");
   if (!agriculture) throw new Error("Missing Agriculture branch.");
   const agricultureItems = resolveProductionItemsForClass(areaItems.research, "research", agriculture.classId, data);
   assert(agricultureItems.length > 0, "Agriculture drill-down must resolve branch production items.");
@@ -79,7 +81,7 @@ async function main() {
   const canonicalBuildingFamilyIds = new Set(canonicalBuildingTaxonomy.map((family) => family.id));
   assert(canonicalBuildingFamilyIds.size === 20, "Canonical building taxonomy must expose 20 primary families.");
   for (const classRow of buildingClasses.filter((row) => !["shared", "unclassified"].includes(row.classId))) {
-    assert(canonicalBuildingFamilyIds.has(classRow.classId), `Buildings class selector used non-taxonomy class ${classRow.classId}.`);
+    assert(canonicalBuildingFamilyIds.has(classRow.classId), `Buildings feature cards used non-taxonomy class ${classRow.classId}.`);
   }
   const populatedBuildingClass = resolveProductionClassSummaries(areaItems.buildings, "buildings", data).find((row) => row.classId !== "shared" && row.classId !== "unclassified");
   assert(populatedBuildingClass, "Buildings must have at least one populated canonical class summary.");
@@ -88,8 +90,8 @@ async function main() {
 
   const topHudClasses = resolveProductionClasses("top-hud", data).map((row) => row.classId);
   const navClasses = resolveProductionClasses("left-navigation", data).map((row) => row.classId);
-  for (const id of ["shell", "economy-icons", "identity", "utility-buttons", "interaction-states"]) assert(topHudClasses.includes(id), `Top HUD group selector is missing ${id}.`);
-  for (const id of ["shell", "navigation-icons", "selected-state", "inactive-state", "badges-indicators"]) assert(navClasses.includes(id), `Left Navigation group selector is missing ${id}.`);
+  for (const id of ["shell", "economy-icons", "identity", "utility-buttons", "interaction-states"]) assert(topHudClasses.includes(id), `Top HUD feature cards are missing ${id}.`);
+  for (const id of ["shell", "navigation-icons", "selected-state", "inactive-state", "badges-indicators"]) assert(navClasses.includes(id), `Left Navigation feature cards are missing ${id}.`);
 
   const runtime = await buildCanonicalRuntimeExportPayload();
   assert(runtime.metadata.contentVersion >= 16, `Production classification requires building taxonomy runtime contentVersion 16 or newer; received ${runtime.metadata.contentVersion}.`);

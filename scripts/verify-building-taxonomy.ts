@@ -64,7 +64,8 @@ async function main() {
   assert(page.includes("Canonical Building Taxonomy v1.0"), "Building Designer must surface the canonical taxonomy standard.");
   assert(page.includes("Legacy Migration Map"), "Building Designer must show the legacy category migration map.");
   assert(classificationResolver.includes("canonicalBuildingTaxonomy"), "Creative Production class resolver must use canonical building taxonomy.");
-  assert(creativeWorkspace.includes("ClassSummaryCard"), "Creative Production must render class summary cards for large building collections.");
+  assert(creativeWorkspace.includes("FeatureSummaryCard"), "Creative Production must render feature navigation cards for large building collections.");
+  assert(creativeWorkspace.includes("card_navigation"), "Creative Production must report feature-card navigation instead of duplicate selectors.");
 
   const runtime = await buildCanonicalRuntimeExportPayload();
   assert(runtime.metadata.contentVersion >= 16, `Runtime must publish contentVersion 16 or newer for building taxonomy; received ${runtime.metadata.contentVersion}.`);
@@ -108,4 +109,3 @@ main().catch((error) => {
   console.error(error instanceof Error ? error.message : error);
   process.exit(1);
 });
-

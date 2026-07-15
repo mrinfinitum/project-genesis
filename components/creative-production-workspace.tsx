@@ -112,7 +112,7 @@ const productionAreas: ProductionArea[] = [
 const areaById = Object.fromEntries(productionAreas.map((area) => [area.id, area])) as Record<Exclude<ProductionAreaId, "overview">, ProductionArea>;
 const filterTabs = ["all", "missing", "uploaded", "needs_review", "approved", "published", "invalid", "unmapped"] as const;
 const defaultCreativeDisplaySettings: Partial<DensitySettings> = { density: "compact", previewSize: "small", columns: "auto", filter: "all", groupBy: "none", sort: "priority" };
-const classDrivenAreaIds = new Set<ProductionAreaId>(["upgrades", "research", "buildings", "top-hud", "left-navigation"]);
+const featureCardAreaIds = new Set<ProductionAreaId>(["upgrades", "research", "buildings", "top-hud", "left-navigation"]);
 
 function searchText(item: InventoryItem) {
   return [
@@ -394,23 +394,25 @@ function ViewOptionsButton({ settings, onSettingsChange }: { settings: DensitySe
 function AreaCard({ area, summary, onOpen }: { area: ProductionArea; summary: ReturnType<typeof areaSummary>; onOpen: (areaId: ProductionAreaId) => void }) {
   const Icon = area.icon;
   return (
-    <article className="group rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-3 shadow-glow transition hover:border-cyan-300/45 hover:bg-[#0a1728]">
-      <button type="button" onClick={() => onOpen(area.id)} className="block w-full text-left">
-        <div className={`relative h-20 overflow-hidden rounded-md border border-cyan-300/10 bg-gradient-to-br ${area.accent}`}>
-          {summary.blocker?.previewUrl ? <SafePreviewImage src={summary.blocker.previewUrl} item={summary.blocker} area={area} /> : <PlaceholderPreview area={area} />}
-          <div className="absolute left-3 top-3 grid h-9 w-9 place-items-center rounded-md border border-cyan-200/20 bg-slate-950/60">
-            <Icon className="h-5 w-5 text-cyan-100" />
-          </div>
-          <span className="absolute right-3 top-3 rounded-md border border-cyan-200/20 bg-slate-950/75 px-2 py-1 text-xs font-black text-cyan-100">{summary.readiness}%</span>
+    <button
+      type="button"
+      onClick={() => onOpen(area.id)}
+      className="group block rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-3 text-left shadow-glow outline-none transition hover:border-cyan-300/45 hover:bg-[#0a1728] focus-visible:border-cyan-200 focus-visible:ring-2 focus-visible:ring-cyan-300/35"
+    >
+      <div className={`relative h-20 overflow-hidden rounded-md border border-cyan-300/10 bg-gradient-to-br ${area.accent}`}>
+        {summary.blocker?.previewUrl ? <SafePreviewImage src={summary.blocker.previewUrl} item={summary.blocker} area={area} /> : <PlaceholderPreview area={area} />}
+        <div className="absolute left-3 top-3 grid h-9 w-9 place-items-center rounded-md border border-cyan-200/20 bg-slate-950/60">
+          <Icon className="h-5 w-5 text-cyan-100" />
         </div>
-        <div className="mt-3 flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <h3 className="truncate text-lg font-black text-white">{area.label}</h3>
-            <p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-400">{area.description}</p>
-          </div>
-          <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-cyan-200 opacity-60 transition group-hover:translate-x-0.5 group-hover:opacity-100" />
+        <span className="absolute right-3 top-3 rounded-md border border-cyan-200/20 bg-slate-950/75 px-2 py-1 text-xs font-black text-cyan-100">{summary.readiness}%</span>
+      </div>
+      <div className="mt-3 flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h3 className="truncate text-lg font-black text-white">{area.label}</h3>
+          <p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-400">{area.description}</p>
         </div>
-      </button>
+        <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-cyan-200 opacity-60 transition group-hover:translate-x-0.5 group-hover:opacity-100" />
+      </div>
       <div className="mt-3">
         <WorkspaceProgressBar value={summary.readiness} />
       </div>
@@ -423,11 +425,7 @@ function AreaCard({ area, summary, onOpen }: { area: ProductionArea; summary: Re
         <p className="text-[0.62rem] font-black uppercase tracking-[0.14em] text-slate-500">Top Blocker</p>
         <p className="mt-1 truncate text-sm font-bold text-slate-100">{summary.blocker?.displayName ?? "No blocker"}</p>
       </div>
-      <div className="mt-3 flex flex-wrap gap-2">
-        <button type="button" onClick={() => onOpen(area.id)} className="inline-flex h-9 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Open Production</button>
-        <Link href={uploadHref(undefined, area)} className="inline-flex h-9 items-center gap-2 rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200"><UploadCloud className="h-4 w-4" />Upload</Link>
-      </div>
-    </article>
+    </button>
   );
 }
 
@@ -437,10 +435,9 @@ function ProductionItemCard({ item, settings, area }: { item: InventoryItem; set
   const linkedHref = item.sourceAssetId ? `/assets/${encodeURIComponent(item.sourceAssetId)}` : uploadHref(item, area);
   const presentation = resolveCreativeAssetPresentation(item);
   const usefulFact = item.status === "missing" ? item.requiredDimensions : item.status === "needs_review" || item.status === "uploaded" ? item.currentDimensions : `${count} use${count === 1 ? "" : "s"}`;
-  const primaryAction = item.status === "missing" ? "Upload Asset" : item.status === "needs_review" || item.status === "uploaded" ? "Review" : "Replace";
   if (settings.density === "list") {
     return (
-      <article className={`${cardShellClass(settings)} relative`}>
+      <Link href={linkedHref} className={`${cardShellClass(settings)} group relative outline-none transition hover:border-cyan-300/45 hover:bg-[#0a1728] focus-visible:border-cyan-200 focus-visible:ring-2 focus-visible:ring-cyan-300/35`}>
         <QuickAssetPreview item={item} area={area} />
         <div className={previewBoxClass(settings)}><SafePreviewImage src={preview} item={item} area={area} /></div>
         <div className="min-w-0">
@@ -450,12 +447,12 @@ function ProductionItemCard({ item, settings, area }: { item: InventoryItem; set
         <span className={cn("rounded-md border px-2 py-1 text-xs font-black uppercase tracking-[0.12em]", workspaceBadgeClass(item.status))}>{item.status.replaceAll("_", " ")}</span>
         <p className="truncate text-xs text-slate-400">{priorityFor(item)}</p>
         <p className="truncate text-xs text-slate-300">{count} usage</p>
-        <Link href={linkedHref} className="text-xs font-bold text-cyan-100 hover:text-white">{item.sourceAssetId ? "Open" : "Upload"}</Link>
-      </article>
+        <ChevronRight className="h-4 w-4 text-cyan-200 opacity-60 transition group-hover:translate-x-0.5 group-hover:opacity-100" />
+      </Link>
     );
   }
   return (
-    <article className={`${cardShellClass(settings)} ${presentation.defaultSpan} relative`}>
+    <Link href={linkedHref} className={`${cardShellClass(settings)} ${presentation.defaultSpan} group relative block outline-none transition hover:border-cyan-300/45 hover:bg-[#0a1728] focus-visible:border-cyan-200 focus-visible:ring-2 focus-visible:ring-cyan-300/35`}>
       <QuickAssetPreview item={item} area={area} />
       <div className={`${cardPreviewHeight(item, settings)} overflow-hidden rounded-md border border-cyan-300/10 bg-slate-950/60`}>
         <SafePreviewImage src={preview} item={item} area={area} />
@@ -467,12 +464,11 @@ function ProductionItemCard({ item, settings, area }: { item: InventoryItem; set
         </div>
         <WorkspaceBadge value={item.status} className="shrink-0 text-[0.58rem]" />
       </div>
-      <div className="mt-3 flex flex-wrap gap-2">
-        <Link href={uploadHref(item, area)} className="inline-flex h-8 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-2 text-xs font-bold text-cyan-100">{primaryAction}</Link>
-        <button type="button" aria-label={`Preview ${item.displayName}`} className="inline-flex h-8 items-center rounded-md border border-slate-600 bg-slate-950/40 px-2 text-xs font-bold text-slate-200">Preview</button>
-        <Link href={linkedHref} className="inline-flex h-8 items-center rounded-md border border-slate-600 bg-slate-950/40 px-2 text-xs font-bold text-slate-200">{item.sourceAssetId ? "Open Inspector" : "Open Requirement"}</Link>
+      <div className="mt-3 flex items-center justify-between gap-2 text-xs font-bold text-cyan-100">
+        <span>{item.sourceAssetId ? "Inspect asset" : "Upload asset"}</span>
+        <ChevronRight className="h-4 w-4 opacity-60 transition group-hover:translate-x-0.5 group-hover:opacity-100" />
       </div>
-    </article>
+    </Link>
   );
 }
 
@@ -499,93 +495,35 @@ function UpgradeCategoryStatus({ state }: { state: AssetProductionState }) {
           </div>
         </div>
       </div>
-      <div className="mt-4 flex flex-wrap gap-2">
-        <Link href="/asset-library?section=backgrounds" className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Open Upgrade Category Workflow</Link>
-        <Link href="/asset-library?section=upgrade-categories" className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Open Upgrade Inventory</Link>
-      </div>
     </WorkspacePanel>
   );
 }
 
-function ClassSelector({
-  label,
-  classes,
-  selectedClassId,
-  onSelect
-}: {
-  label: string;
-  classes: Array<{ classId: string; displayName: string }>;
-  selectedClassId: string;
-  onSelect: (classId: string) => void;
-}) {
-  const selectorLabel = `${label} class`;
-  const options = [{ classId: "all", displayName: "All" }, ...classes];
-  if (options.length <= 6) {
-    return (
-      <div>
-        <p className="mb-2 text-[0.62rem] font-black uppercase tracking-[0.16em] text-slate-500">{label}</p>
-        <div role="tablist" aria-label={selectorLabel} className="flex max-w-full gap-2 overflow-x-auto rounded-md border border-cyan-300/15 bg-slate-950/35 p-2">
-          {options.map((option) => (
-            <button
-              key={option.classId}
-              type="button"
-              role="tab"
-              aria-selected={selectedClassId === option.classId}
-              onClick={() => onSelect(option.classId)}
-              className={`shrink-0 rounded-md px-3 py-2 text-xs font-black uppercase tracking-[0.12em] transition ${selectedClassId === option.classId ? "bg-cyan-300/20 text-white" : "text-slate-400 hover:bg-cyan-300/10 hover:text-slate-100"}`}
-            >
-              {option.displayName}
-            </button>
-          ))}
-        </div>
-      </div>
-    );
-  }
+function FeatureSummaryCard({ summary, area, onOpen }: { summary: ProductionClassSummary<InventoryItem>; area: ProductionArea; onOpen: (classId: string) => void }) {
   return (
-    <label className="grid max-w-sm gap-2 text-[0.62rem] font-black uppercase tracking-[0.16em] text-slate-500">
-      {label}
-      <select
-        aria-label={selectorLabel}
-        value={selectedClassId}
-        onChange={(event) => onSelect(event.target.value)}
-        className="h-10 rounded-md border border-cyan-300/15 bg-slate-950/80 px-3 text-sm font-bold normal-case tracking-normal text-white outline-none"
-      >
-        {options.map((option) => <option key={option.classId} value={option.classId}>{option.displayName}</option>)}
-      </select>
-    </label>
-  );
-}
-
-function ClassSummaryCard({ summary, area, onOpen }: { summary: ProductionClassSummary<InventoryItem>; area: ProductionArea; onOpen: (classId: string) => void }) {
-  const workflowHref = area.id === "upgrades" && ["workforce", "industry", "science", "technology"].includes(summary.classId)
-    ? `/asset-library?section=backgrounds&class=${encodeURIComponent(summary.classId)}`
-    : null;
-  return (
-    <article className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-3 shadow-glow">
-      <button type="button" onClick={() => onOpen(summary.classId)} className="block w-full text-left">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <p className="text-[0.62rem] font-black uppercase tracking-[0.16em] text-cyan-200">{area.label}</p>
-            <h3 className="mt-2 truncate text-xl font-black text-white">{summary.displayName}</h3>
-          </div>
-          <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-cyan-200 opacity-60" />
+    <button
+      type="button"
+      onClick={() => onOpen(summary.classId)}
+      className="group block rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-3 text-left shadow-glow outline-none transition hover:border-cyan-300/45 hover:bg-[#0a1728] focus-visible:border-cyan-200 focus-visible:ring-2 focus-visible:ring-cyan-300/35"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-[0.62rem] font-black uppercase tracking-[0.16em] text-cyan-200">{area.label}</p>
+          <h3 className="mt-2 truncate text-xl font-black text-white">{summary.displayName}</h3>
         </div>
-        <div className="mt-4 grid grid-cols-2 gap-2">
-          <WorkspaceMiniStat label="Assets" value={summary.itemCount} />
-          <WorkspaceMiniStat label="Missing" value={summary.missingCount} />
-          <WorkspaceMiniStat label="Published" value={summary.publishedCount} />
-          <WorkspaceMiniStat label="Review" value={summary.needsReviewCount} />
-        </div>
-        <div className="mt-3 rounded-md border border-cyan-300/10 bg-slate-950/45 p-2">
-          <p className="text-[0.62rem] font-black uppercase tracking-[0.14em] text-slate-500">Top Blocker</p>
-          <p className="mt-1 truncate text-sm font-bold text-slate-100">{summary.topBlocker?.displayName ?? "No blocker"}</p>
-        </div>
-      </button>
-      <div className="mt-3 flex flex-wrap gap-2">
-        <button type="button" onClick={() => onOpen(summary.classId)} className="inline-flex h-9 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Open {summary.displayName}</button>
-        {workflowHref ? <Link href={workflowHref} className="inline-flex h-9 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Open Background Workflow</Link> : null}
+        <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-cyan-200 opacity-60 transition group-hover:translate-x-0.5 group-hover:opacity-100" />
       </div>
-    </article>
+      <div className="mt-4 grid grid-cols-2 gap-2">
+        <WorkspaceMiniStat label="Assets" value={summary.itemCount} />
+        <WorkspaceMiniStat label="Missing" value={summary.missingCount} />
+        <WorkspaceMiniStat label="Published" value={summary.publishedCount} />
+        <WorkspaceMiniStat label="Review" value={summary.needsReviewCount} />
+      </div>
+      <div className="mt-3 rounded-md border border-cyan-300/10 bg-slate-950/45 p-2">
+        <p className="text-[0.62rem] font-black uppercase tracking-[0.14em] text-slate-500">Top Blocker</p>
+        <p className="mt-1 truncate text-sm font-bold text-slate-100">{summary.topBlocker?.displayName ?? "No blocker"}</p>
+      </div>
+    </button>
   );
 }
 
@@ -599,7 +537,7 @@ function AreaDetail({ state, studioData, area, initialClassId, onBack }: { state
   const classes = useMemo(() => resolveProductionClasses(area.id, studioData), [area.id, studioData]);
   const classSummaries = useMemo(() => resolveProductionClassSummaries(summary.items, area.id, studioData), [summary.items, area.id, studioData]);
   const currentClass = classes.find((item) => item.classId === selectedClassId);
-  const hasClassBrowsing = classDrivenAreaIds.has(area.id) && classes.length > 0;
+  const hasFeatureCards = featureCardAreaIds.has(area.id) && classes.length > 0;
   const roleOptions = useMemo(() => {
     const baseItems = resolveProductionItemsForClass(summary.items, area.id, selectedClassId, studioData);
     return ["All", ...Array.from(new Set(baseItems.map((item) => resolveAssetClass(item, area.id, studioData).assetRole))).sort()];
@@ -643,9 +581,9 @@ function AreaDetail({ state, studioData, area, initialClassId, onBack }: { state
       resolvedCardPresentation: items.slice(0, 5).map((item) => ({ id: item.id, role: item.role, ...resolveCreativeAssetPresentation(item) })),
       activeHiddenDisplayPreferences: settings,
       viewOptionsState: "closed_by_default",
-      featureGroupingStatus: hasClassBrowsing ? "canonical_class_control" : "not_configured"
+      featureGroupingStatus: hasFeatureCards ? "card_navigation" : "not_configured"
     });
-  }, [area.id, selectedClassId, items, settings, hasClassBrowsing]);
+  }, [area.id, selectedClassId, items, settings, hasFeatureCards]);
 
   return (
     <div className="space-y-5">
@@ -683,57 +621,58 @@ function AreaDetail({ state, studioData, area, initialClassId, onBack }: { state
         </div>
       </WorkspacePanel>
       {area.id === "upgrades" ? <UpgradeCategoryStatus state={state} /> : null}
-      {hasClassBrowsing ? (
-        <WorkspacePanel>
-          <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_14rem] lg:items-end">
-            <ClassSelector label={area.id === "top-hud" || area.id === "left-navigation" ? "Group" : "Class"} classes={classes} selectedClassId={selectedClassId} onSelect={selectClass} />
-            {selectedClassId !== "all" ? (
-              <button type="button" onClick={() => selectClass("all")} className="inline-flex h-10 items-center justify-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Back to All Classes</button>
-            ) : null}
-          </div>
-          {selectedClassId !== "all" ? (
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <label className="text-[0.62rem] font-black uppercase tracking-[0.16em] text-slate-500" htmlFor={`role-filter-${area.id}`}>Role</label>
-              <select id={`role-filter-${area.id}`} value={selectedRole} onChange={(event) => setSelectedRole(event.target.value)} className="h-9 rounded-md border border-cyan-300/15 bg-slate-950/80 px-3 text-xs font-bold text-white outline-none">
-                {roleOptions.map((role) => <option key={role} value={role}>{role}</option>)}
-              </select>
-              <span className="text-xs font-semibold text-slate-500">Secondary asset-role filter</span>
-            </div>
-          ) : null}
-        </WorkspacePanel>
-      ) : null}
-      <WorkspacePanel>
-        <div className="grid gap-3 xl:grid-cols-[minmax(18rem,1fr)_auto] xl:items-start">
-          <WorkspaceSearchBar value={query} onChange={setQuery} placeholder={`Search ${area.label} production`} className="p-2" />
-          <ViewOptionsButton settings={settings} onSettingsChange={setSettings} />
-        </div>
-        <div role="tablist" aria-label={`${area.label} production status`} className="mt-3 flex gap-2 overflow-x-auto rounded-md border border-cyan-300/15 bg-slate-950/35 p-2">
-          {filterTabs.map((tab) => (
-            <button key={tab} type="button" role="tab" aria-selected={status === tab} onClick={() => setStatus(tab)} className={`shrink-0 rounded-md px-3 py-2 text-xs font-black uppercase tracking-[0.12em] transition ${status === tab ? "bg-cyan-300/20 text-white" : "text-slate-400 hover:bg-cyan-300/10 hover:text-slate-100"}`}>
-              {tab.replaceAll("_", " ")}
-            </button>
-          ))}
-        </div>
-        <div className="mt-3 inline-flex items-center gap-2 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2 text-xs font-semibold text-slate-400">
-          <Search className="h-4 w-4" />
-          {items.length} shown / {summary.items.length} total
-        </div>
-      </WorkspacePanel>
-      {hasClassBrowsing && selectedClassId === "all" ? (
+      {hasFeatureCards && selectedClassId === "all" ? (
         <div className={roleAwareAssetGridClass(settings)}>
-          {classSummaries.map((classSummary) => <ClassSummaryCard key={classSummary.classId} summary={classSummary} area={area} onOpen={selectClass} />)}
+          {classSummaries.map((classSummary) => <FeatureSummaryCard key={classSummary.classId} summary={classSummary} area={area} onOpen={selectClass} />)}
         </div>
       ) : items.length ? (
-        <div className={roleAwareAssetGridClass(settings)}>
-          {items.map((item) => <ProductionItemCard key={item.id} item={item} settings={settings} area={area} />)}
-        </div>
+        <>
+          <WorkspacePanel>
+            {selectedClassId !== "all" ? (
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/40 p-3">
+                <div>
+                  <p className="text-[0.62rem] font-black uppercase tracking-[0.16em] text-slate-500">Feature</p>
+                  <p className="mt-1 text-sm font-black text-white">{currentClass?.displayName ?? area.label}</p>
+                </div>
+                <button type="button" onClick={() => selectClass("all")} className="inline-flex h-9 items-center justify-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-xs font-black uppercase tracking-[0.12em] text-slate-200 hover:border-cyan-300/40 hover:text-white">Back to Feature Cards</button>
+              </div>
+            ) : null}
+            <div className="grid gap-3 xl:grid-cols-[minmax(18rem,1fr)_auto] xl:items-start">
+              <WorkspaceSearchBar value={query} onChange={setQuery} placeholder={`Search ${currentClass?.displayName ?? area.label} assets`} className="p-2" />
+              <ViewOptionsButton settings={settings} onSettingsChange={setSettings} />
+            </div>
+            {selectedClassId !== "all" ? (
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <label className="text-[0.62rem] font-black uppercase tracking-[0.16em] text-slate-500" htmlFor={`role-filter-${area.id}`}>Role</label>
+                <select id={`role-filter-${area.id}`} value={selectedRole} onChange={(event) => setSelectedRole(event.target.value)} className="h-9 rounded-md border border-cyan-300/15 bg-slate-950/80 px-3 text-xs font-bold text-white outline-none">
+                  {roleOptions.map((role) => <option key={role} value={role}>{role}</option>)}
+                </select>
+                <span className="text-xs font-semibold text-slate-500">Secondary asset-role filter</span>
+              </div>
+            ) : null}
+            <div role="tablist" aria-label={`${area.label} production status`} className="mt-3 flex gap-2 overflow-x-auto rounded-md border border-cyan-300/15 bg-slate-950/35 p-2">
+              {filterTabs.map((tab) => (
+                <button key={tab} type="button" role="tab" aria-selected={status === tab} onClick={() => setStatus(tab)} className={`shrink-0 rounded-md px-3 py-2 text-xs font-black uppercase tracking-[0.12em] transition ${status === tab ? "bg-cyan-300/20 text-white" : "text-slate-400 hover:bg-cyan-300/10 hover:text-slate-100"}`}>
+                  {tab.replaceAll("_", " ")}
+                </button>
+              ))}
+            </div>
+            <div className="mt-3 inline-flex items-center gap-2 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2 text-xs font-semibold text-slate-400">
+              <Search className="h-4 w-4" />
+              {items.length} shown / {summary.items.length} total
+            </div>
+          </WorkspacePanel>
+          <div className={roleAwareAssetGridClass(settings)}>
+            {items.map((item) => <ProductionItemCard key={item.id} item={item} settings={settings} area={area} />)}
+          </div>
+        </>
       ) : (
         <WorkspacePanel>
           <p className="text-sm font-semibold text-slate-300">No assets or requirements have been defined for this area.</p>
           <div className="mt-4 flex flex-wrap gap-2">
             <Link href="/asset-library?section=missing" className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Generate Requirements from Screens and Components</Link>
             <Link href={uploadHref(undefined, area, selectedClassId, selectedRole)} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Upload Asset</Link>
-            {area.visualBuilderHref ? <Link href={area.visualBuilderHref} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Open Visual Builder</Link> : null}
+            {area.visualBuilderHref ? <Link href={area.visualBuilderHref} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Visual Builder</Link> : null}
           </div>
         </WorkspacePanel>
       )}
