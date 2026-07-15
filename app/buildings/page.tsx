@@ -1,4 +1,5 @@
 import { DataWorkspace } from "@/components/data-workspace";
+import { ReferenceScreenWorkflow } from "@/components/reference-screen-workflow";
 import { WorkspaceBadge, WorkspacePanel, WorkspaceStatTile } from "@/components/ui/workspace";
 import { buildBuildingClassifications, canonicalBuildingLibrary, canonicalBuildingTaxonomy, legacyBuildingCategoryMapping } from "@/lib/buildings/taxonomy";
 import { getRows } from "@/lib/data";
@@ -16,6 +17,13 @@ export default async function BuildingsPage() {
   const categoryRows = canonicalBuildingTaxonomy;
   return (
     <div className="space-y-6">
+      <ReferenceScreenWorkflow
+        featureId="buildings"
+        assetsHref="/asset-library?screen=buildings"
+        componentsHref="/component-library?screen=buildings"
+        handoffHref="/screen-designer/buildings#handoff"
+        screenSpecHref="/screen-designer/buildings"
+      />
       <WorkspacePanel title="Canonical Building Taxonomy">
         <div className="grid gap-3 md:grid-cols-4">
           <WorkspaceStatTile label="Primary Families" value={canonicalBuildingTaxonomy.length} />

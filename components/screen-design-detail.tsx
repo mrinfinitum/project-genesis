@@ -4,16 +4,17 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { ArrowLeft, CheckCircle2, Clipboard, MonitorCog, Send, ShieldCheck, TriangleAlert } from "lucide-react";
 import { AssetPreview } from "@/components/asset-preview";
+import { ReferenceScreenWorkflow } from "@/components/reference-screen-workflow";
 import { WorkspaceBadge, WorkspaceMiniStat, WorkspacePanel, WorkspaceProgressBar, WorkspaceStatTile, WorkspaceTabs } from "@/components/ui/workspace";
 import type { VisualPreview } from "@/lib/assets/visual-previews";
 import type { ScreenDesignRecord } from "@/lib/screen-designer";
 
-type Tab = "overview" | "layout" | "components" | "data" | "assets" | "states" | "interactions" | "responsive" | "motion" | "accessibility" | "review" | "handoff" | "history";
+type Tab = "overview" | "reference" | "components" | "data" | "assets" | "states" | "interactions" | "responsive" | "motion" | "accessibility" | "review" | "handoff" | "history";
 
-const tabs: Tab[] = ["overview", "layout", "components", "data", "assets", "states", "interactions", "responsive", "motion", "accessibility", "review", "handoff", "history"];
+const tabs: Tab[] = ["overview", "reference", "components", "data", "assets", "states", "interactions", "responsive", "motion", "accessibility", "review", "handoff", "history"];
 const labels: Partial<Record<Tab, string>> = {
   overview: "Overview",
-  layout: "Layout",
+  reference: "Reference",
   components: "Components",
   data: "Data",
   assets: "Assets",
@@ -232,29 +233,17 @@ export function ScreenDesignDetail({
         </section>
       ) : null}
 
-      {tab === "layout" ? (
-        <WorkspacePanel title="Layout Specification" icon={MonitorCog}>
-          <FieldGrid>
-            <WorkspaceMiniStat label="Design Width" value={record.layoutSpec.designWidth} />
-            <WorkspaceMiniStat label="Design Height" value={record.layoutSpec.designHeight} />
-            <WorkspaceMiniStat label="Coordinate System" value={record.layoutSpec.coordinateSystem} />
-            <WorkspaceMiniStat label="Layout Mode" value={record.layoutSpec.layoutMode} />
-            <WorkspaceMiniStat label="Columns" value={record.layoutSpec.columns} />
-            <WorkspaceMiniStat label="Rows" value={record.layoutSpec.rows} />
-          </FieldGrid>
-          <div className="mt-4 grid gap-3">
-            {record.layoutSpec.panelBounds.map((panel) => (
-              <div key={panel.id} className="grid gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 p-3 md:grid-cols-[1fr_repeat(5,5rem)]">
-                <p className="font-bold text-white">{panel.label}</p>
-                <p className="text-sm text-slate-300">x {panel.x}</p>
-                <p className="text-sm text-slate-300">y {panel.y}</p>
-                <p className="text-sm text-slate-300">w {panel.width}</p>
-                <p className="text-sm text-slate-300">h {panel.height}</p>
-                <p className="text-sm text-slate-300">z {panel.zIndex}</p>
-              </div>
-            ))}
-          </div>
-        </WorkspacePanel>
+      {tab === "reference" ? (
+        <ReferenceScreenWorkflow
+          featureId={record.screenId}
+          title="Reference Screenshot"
+          description="The Game repository owns final screen layout and rendering. Studio stores the current screenshot reference plus assets, components, runtime requirements, states, interactions, and handoff notes."
+          assetsHref={`/asset-library?screen=${record.screenId}`}
+          componentsHref={`/component-library?screen=${record.screenId}`}
+          runtimeHref="/api/export/game-runtime-data.json"
+          handoffHref={`/screen-designer/${record.screenId}#handoff`}
+          screenSpecHref={`/screen-designer/${record.screenId}`}
+        />
       ) : null}
 
       {tab === "components" ? (

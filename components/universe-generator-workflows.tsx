@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
-import { ChevronRight, CirclePlus, Orbit, Pencil, Plus, Search, Sparkles, Star, Trash2, Waypoints, X } from "lucide-react";
+import { ChevronRight, CirclePlus, Orbit, Pencil, Plus, Search, Sparkles, Star, Trash2, Waypoints, X, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { handoffData } from "@/data/handoff";
 import { createColonyRecord, upsertDiscoveredColony, type ColonyRecord } from "@/lib/colonies/procedural";
@@ -1439,7 +1439,7 @@ function DeleteButton({ label, onDelete }: { label: string; onDelete: () => void
   );
 }
 
-function CardImage({ variant, icon: Icon, label, compact = false }: { variant: string; icon: React.ElementType; label: string; compact?: boolean }) {
+function CardImage({ variant, icon: Icon, label, compact = false }: { variant: string; icon: LucideIcon; label: string; compact?: boolean }) {
   return (
     <div className={cn("relative overflow-hidden rounded-t-md bg-gradient-to-br", compact ? "h-40" : "h-56", variant)}>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_48%,rgba(103,232,249,0.35),transparent_12%),radial-gradient(circle_at_42%_56%,rgba(255,255,255,0.12),transparent_18%),radial-gradient(circle_at_60%_45%,rgba(147,51,234,0.25),transparent_28%)]" />

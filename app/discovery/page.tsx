@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Search, Sparkles } from "lucide-react";
+import { ReferenceScreenWorkflow } from "@/components/reference-screen-workflow";
 import { WorkspaceBadge, WorkspaceHeader, WorkspacePanel, WorkspaceProgressBar, WorkspaceStatTile } from "@/components/ui/workspace";
 import { canonicalDiscoveries, discoveryCategories, discoveryChains, discoveryCollections, discoveryMilestones, discoveryRarities, validateDiscoverySystem } from "@/lib/discovery";
 
@@ -42,6 +43,14 @@ export default async function DiscoveryWorkspacePage({ searchParams }: { searchP
           { label: "Collections", value: discoveryCollections.length },
           { label: "Validation", value: validation.status }
         ]}
+      />
+
+      <ReferenceScreenWorkflow
+        featureId="discovery"
+        assetsHref="/asset-library?screen=discovery"
+        componentsHref="/component-library?screen=discovery"
+        handoffHref="/screen-designer/discovery#handoff"
+        screenSpecHref="/screen-designer/discovery"
       />
 
       <WorkspacePanel>

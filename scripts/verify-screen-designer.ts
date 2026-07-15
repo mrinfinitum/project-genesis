@@ -32,14 +32,11 @@ async function main() {
   assert(research.layoutSpec.coordinateSystem === "hud_overlay_4k", "Research master screen must use hud_overlay_4k coordinates.");
   assert(research.referenceViewport === "3840x2160", "Research master reference viewport must be 3840x2160.");
   assert(research.references.some((reference) => reference.id === "research-master-reference" && reference.source === "/mnt/data/CF773185-E780-4A10-AB7D-421CD15F7D62.jpeg" && reference.notes.includes("opacity 50%") && reference.excludedFromRuntime === true && reference.workspaceCrop?.x === 464 && reference.viewModes?.includes("Workspace Only")), "Research master reference layer metadata is missing.");
-  for (const panelId of ["workspace-root", "workspace-background", "local-content-root", "research-branch-sidebar", "research-tree-workspace", "research-detail-panel", "era-timeline", "local-modal-drawer-root", "local-overlay-root"]) {
-    assert(research.layoutSpec.panelBounds.some((panel) => panel.id === panelId), `Research master layout is missing panel bounds: ${panelId}.`);
-  }
-  for (const forbiddenPanelId of ["research-top-hud", "research-left-nav", "top-hud", "left-navigation"]) {
-    assert(!research.layoutSpec.panelBounds.some((panel) => panel.id === forbiddenPanelId), `Research must not duplicate shell panel bounds: ${forbiddenPanelId}.`);
-  }
+  assert(research.layoutSpec.panelBounds.length === 0, "Research must not generate Studio-authored placeholder panel bounds.");
+  assert(research.layoutSpec.columns.includes("Game repository"), "Research layout notes must assign visual composition ownership to the Game repository.");
+  assert(research.layoutSpec.overlayLayers.includes("Future screenshot annotations"), "Research layout notes must preserve future annotation support.");
   for (const componentId of ["RouteWorkspaceRoot", "WorkspaceBackground", "LocalOverlayRoot", "ResearchBranchSidebar", "ResearchTreeCanvas", "ResearchNode", "ResearchConnection", "ResearchDetailPanel", "ResearchActionButton", "EraResearchTimeline"]) {
-    assert(research.componentSpecs.some((component) => component.componentLibraryId === componentId), `Research master screen is missing component placeholder: ${componentId}.`);
+    assert(research.componentSpecs.some((component) => component.componentLibraryId === componentId), `Research master screen is missing component contract: ${componentId}.`);
   }
   for (const forbiddenComponentId of ["ResearchScreenShell", "TopHudBar", "SideNavigationRail"]) {
     assert(!research.componentSpecs.some((component) => component.componentLibraryId === forbiddenComponentId), `Research must not duplicate shell component: ${forbiddenComponentId}.`);
@@ -51,7 +48,9 @@ async function main() {
   assert(research.interactionSpecs.length >= 13, "Research master design must include the interaction contracts.");
   assert(research.stateSpecs.some((stateSpec) => stateSpec.label === "node locked" && stateSpec.designed), "Research locked node state must be represented.");
   assert(research.responsiveRules.some((rule) => rule.viewport === "1920x1080" && rule.behavior.includes("0.5 scale")), "Research desktop_1080 derivation rule is missing.");
-  assert(screenHandoffText(research, "Game Codex").includes("PROJECT GENESIS SCREEN IMPLEMENTATION HANDOFF"), "Research handoff text is not generated.");
+  const researchHandoff = screenHandoffText(research, "Game Codex");
+  assert(researchHandoff.includes("PROJECT GENESIS SCREEN IMPLEMENTATION HANDOFF"), "Research handoff text is not generated.");
+  assert(researchHandoff.includes("Studio does not generate placeholder game layouts"), "Research handoff must make Game layout ownership explicit.");
 
   const approvedRecords = state.records.filter((record) => record.approvalStatus === "Approved");
   for (const record of approvedRecords) {
@@ -75,6 +74,7 @@ async function main() {
     blockedByMissingAssets: state.stats.blockedByMissingAssets,
     blockedByMissingData: state.stats.blockedByMissingData,
     researchComponents: research.componentSpecs.length,
+    researchPanelBounds: research.layoutSpec.panelBounds.length,
     runtimeValidation: runtime.metadata.validationStatus
   }, null, 2));
 }

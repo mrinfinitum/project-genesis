@@ -15,13 +15,9 @@ async function main() {
   assert(research.shellBinding.defaultBuilderMode === "Workspace Only", "Research default builder mode must be Workspace Only.");
   assert(research.navigationMetadata?.navigationId === "research", "Research navigation metadata is missing.");
 
-  const panelIds = new Set(research.layoutSpec.panelBounds.map((panel) => panel.id));
-  for (const requiredPanel of ["workspace-root", "workspace-background", "local-content-root", "research-header", "research-branch-sidebar", "research-tree-workspace", "research-detail-panel", "era-timeline", "local-modal-drawer-root", "local-overlay-root"]) {
-    assert(panelIds.has(requiredPanel), `Research workspace is missing panel ${requiredPanel}.`);
-  }
-  for (const forbiddenPanel of ["top-hud", "research-top-hud", "left-navigation", "research-left-nav", "modal-layer", "overlay-layer"]) {
-    assert(!panelIds.has(forbiddenPanel), `Research still contains duplicated shell/global panel ${forbiddenPanel}.`);
-  }
+  assert(research.layoutSpec.panelBounds.length === 0, "Research must not generate placeholder panel bounds; the uploaded reference screenshot is the visual source of truth.");
+  assert(research.layoutSpec.columns.includes("Game repository"), "Research layout notes must assign visual composition to the Game repository.");
+  assert(research.layoutSpec.backgroundLayers.includes("Research reference screenshot when uploaded"), "Research layout notes must use reference screenshots instead of fabricated backgrounds.");
 
   const componentIds = new Set(research.componentSpecs.map((component) => component.componentLibraryId));
   for (const requiredComponent of ["RouteWorkspaceRoot", "WorkspaceBackground", "LocalOverlayRoot", "ResearchHeader", "ResearchBranchSidebar", "ResearchTreeCanvas", "ResearchDetailPanel", "EraResearchTimeline"]) {
@@ -37,6 +33,7 @@ async function main() {
   assert(reference.workspaceCrop?.x === 464 && reference.workspaceCrop.y === 260 && reference.workspaceCrop.width === 3244 && reference.workspaceCrop.height === 1804, "Research workspace crop must align to Main Workspace Slot.");
   assert(reference.viewModes?.includes("Full Reference") && reference.viewModes.includes("Workspace Only"), "Research reference must support Full Reference and Workspace Only views.");
   assert(research.notes.some((note) => note.includes("TopHudBar") && note.includes("SideNavigationRail")), "Research notes must explicitly state that shell components are not duplicated.");
+  assert(research.notes.some((note) => note.includes("Game repository owns the final Research screen layout")), "Research notes must make Game screen ownership explicit.");
 
   console.log(JSON.stringify({
     ok: true,

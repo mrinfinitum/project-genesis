@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { cache } from "react";
 import { FullCivilizationTimeline, canonicalTimelineEraId, type TimelineEra } from "@/components/civilization-timeline";
+import { ReferenceScreenWorkflow } from "@/components/reference-screen-workflow";
 import { civilizationAges } from "@/data/civilization-identity";
 import { getEraArtSummaryByEra } from "@/lib/assets/era-art-inventory";
 import { getRows } from "@/lib/data";
@@ -358,6 +359,13 @@ export default async function CivilizationsPage() {
 
   return (
     <div className="space-y-6">
+      <ReferenceScreenWorkflow
+        featureId="civilization"
+        assetsHref="/asset-library?screen=civilization"
+        componentsHref="/component-library?screen=civilization"
+        handoffHref="/screen-designer/civilization#handoff"
+        screenSpecHref="/screen-designer/civilization"
+      />
       <section className="overflow-hidden rounded-md border border-cyan-300/15 bg-[#07101e]/85 shadow-glow">
         <div className="grid gap-6 border-b border-cyan-300/15 p-6 xl:grid-cols-[1.1fr_0.9fr]">
           <div>
