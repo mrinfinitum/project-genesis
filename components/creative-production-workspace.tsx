@@ -25,14 +25,15 @@ import {
   WandSparkles
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { CompactWorkspaceToolbar, cardShellClass, collectionGridClass, previewBoxClass, useWorkspaceDensitySettings, type DensitySettings } from "@/components/ui/density";
-import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, WorkspaceProgressBar, WorkspaceStatTile, workspaceBadgeClass } from "@/components/ui/workspace";
+import { cardShellClass, previewBoxClass, useWorkspaceDensitySettings, type DensitySettings } from "@/components/ui/density";
+import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, WorkspaceProgressBar, WorkspaceSearchBar, WorkspaceStatTile, workspaceBadgeClass } from "@/components/ui/workspace";
 import type { AssetProductionState } from "@/lib/assets/asset-production";
 import type { AssetLibraryCategoryId } from "@/lib/assets/asset-library-routing";
 import { cn } from "@/lib/utils";
 
 type InventoryItem = AssetProductionState["assetLibraryInventory"]["items"][number];
 type InventoryStatus = InventoryItem["status"];
+type CreativeCardType = "icon" | "landscape" | "portrait" | "banner" | "panel" | "button" | "audio" | "video" | "requirement" | "group_summary";
 type ProductionAreaId =
   | "overview"
   | "top-hud"
@@ -102,6 +103,7 @@ const productionAreas: ProductionArea[] = [
 
 const areaById = Object.fromEntries(productionAreas.map((area) => [area.id, area])) as Record<Exclude<ProductionAreaId, "overview">, ProductionArea>;
 const filterTabs = ["all", "missing", "uploaded", "needs_review", "approved", "published", "invalid", "unmapped"] as const;
+const defaultCreativeDisplaySettings: Partial<DensitySettings> = { density: "compact", previewSize: "small", columns: "auto", filter: "all", groupBy: "none", sort: "updated" };
 
 function searchText(item: InventoryItem) {
   return [
@@ -143,6 +145,44 @@ function priorityRank(item: InventoryItem) {
 
 function usageCount(item: InventoryItem) {
   return item.referencedByScreens.length + item.referencedByComponents.length + item.referencedByPlaceholders.length;
+}
+
+function resolveCreativeAssetPresentation(item: InventoryItem): {
+  preferredCardType: CreativeCardType;
+  preferredAspectRatio: string;
+  previewFit: "cover" | "contain";
+  minimumWidth: number;
+  maximumWidth: number;
+  defaultSpan: string;
+} {
+  const text = `${item.semanticAssetKey} ${item.displayName} ${item.role} ${item.requiredDimensions}`.toLowerCase();
+  if (/audio|sound|music|voice/.test(text)) return { preferredCardType: "audio", preferredAspectRatio: "16 / 5", previewFit: "contain", minimumWidth: 260, maximumWidth: 520, defaultSpan: "md:col-span-2" };
+  if (/video|cinematic|movie/.test(text)) return { preferredCardType: "video", preferredAspectRatio: "16 / 9", previewFit: "cover", minimumWidth: 280, maximumWidth: 640, defaultSpan: "md:col-span-2" };
+  if (/portrait|agent|avatar|character/.test(text)) return { preferredCardType: "portrait", preferredAspectRatio: "3 / 4", previewFit: "contain", minimumWidth: 180, maximumWidth: 300, defaultSpan: "" };
+  if (/banner|top[_ -]?bar|rail|strip/.test(text)) return { preferredCardType: "banner", preferredAspectRatio: "21 / 6", previewFit: "cover", minimumWidth: 280, maximumWidth: 720, defaultSpan: "md:col-span-2" };
+  if (/background|hero|workspace|screen/.test(text)) return { preferredCardType: "landscape", preferredAspectRatio: "16 / 9", previewFit: "cover", minimumWidth: 260, maximumWidth: 640, defaultSpan: "md:col-span-2" };
+  if (/button|tab|toggle|control/.test(text)) return { preferredCardType: "button", preferredAspectRatio: "5 / 2", previewFit: "contain", minimumWidth: 220, maximumWidth: 420, defaultSpan: "" };
+  if (/panel|card|frame|drawer|modal/.test(text)) return { preferredCardType: "panel", preferredAspectRatio: "4 / 3", previewFit: "cover", minimumWidth: 220, maximumWidth: 460, defaultSpan: "" };
+  if (/icon|crystal|credits|population|research|labor|calendar|settings|trophy/.test(text)) return { preferredCardType: "icon", preferredAspectRatio: "1 / 1", previewFit: "contain", minimumWidth: 160, maximumWidth: 260, defaultSpan: "" };
+  return { preferredCardType: "requirement", preferredAspectRatio: "4 / 3", previewFit: "cover", minimumWidth: 220, maximumWidth: 420, defaultSpan: "" };
+}
+
+function roleAwareAssetGridClass(settings: DensitySettings) {
+  if (settings.density === "list") return "grid gap-2";
+  if (settings.density === "large") return "grid auto-rows-fr gap-4 md:grid-cols-2 2xl:grid-cols-3";
+  if (settings.density === "medium") return "grid auto-rows-fr gap-3 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4";
+  return "grid auto-rows-fr gap-3 sm:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-5";
+}
+
+function cardPreviewHeight(item: InventoryItem, settings: DensitySettings) {
+  const presentation = resolveCreativeAssetPresentation(item);
+  if (settings.previewSize === "hide") return "hidden";
+  if (settings.density === "list") return previewBoxClass(settings);
+  if (settings.previewSize === "large") return presentation.preferredCardType === "icon" ? "h-36" : "h-48";
+  if (settings.previewSize === "medium") return presentation.preferredCardType === "icon" ? "h-28" : "h-36";
+  if (presentation.preferredCardType === "banner" || presentation.preferredCardType === "button") return "h-20";
+  if (presentation.preferredCardType === "icon") return "h-24";
+  return "h-28";
 }
 
 function readinessFor(items: InventoryItem[]) {
@@ -213,7 +253,103 @@ function SafePreviewImage({ src, item, area }: { src?: string | null; item?: Inv
   }, [src]);
 
   if (!src || failed) return <PlaceholderPreview item={item} area={area} />;
-  return <img src={src} alt="" onError={() => setFailed(true)} className="h-full w-full rounded-md object-cover" />;
+  const fit = item ? resolveCreativeAssetPresentation(item).previewFit : "cover";
+  return <img src={src} alt="" onError={() => setFailed(true)} className={`h-full w-full rounded-md ${fit === "contain" ? "object-contain p-3" : "object-cover"}`} />;
+}
+
+function QuickAssetPreview({ item, area }: { item: InventoryItem; area: ProductionArea }) {
+  return (
+    <div className="pointer-events-none absolute left-4 top-4 z-40 hidden w-80 translate-x-5 rounded-md border border-cyan-300/30 bg-slate-950/95 p-3 shadow-2xl group-hover:block group-focus-within:block">
+      <div className="h-48 overflow-hidden rounded-md border border-cyan-300/15 bg-slate-950/70">
+        <SafePreviewImage src={item.previewUrl} item={item} area={area} />
+      </div>
+      <div className="mt-3 flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="truncate text-sm font-black text-white">{item.displayName}</p>
+          <p className="mt-1 truncate text-xs font-semibold text-cyan-200">{item.semanticAssetKey}</p>
+        </div>
+        <WorkspaceBadge value={item.status} className="shrink-0 text-[0.56rem]" />
+      </div>
+      <div className="mt-3 grid grid-cols-2 gap-2">
+        <WorkspaceMiniStat label="Dimensions" value={item.currentDimensions || item.requiredDimensions} />
+        <WorkspaceMiniStat label="Usage" value={usageCount(item)} />
+      </div>
+    </div>
+  );
+}
+
+function ViewOptionsButton({ settings, onSettingsChange }: { settings: DensitySettings; onSettingsChange: (patch: Partial<DensitySettings>) => void }) {
+  const [open, setOpen] = useState(false);
+  const selectClass = "h-9 rounded-md border border-cyan-300/15 bg-slate-950/80 px-2 text-xs font-bold text-white outline-none";
+  const reset = () => onSettingsChange(defaultCreativeDisplaySettings);
+
+  return (
+    <details
+      open={open}
+      onToggle={(event) => setOpen(event.currentTarget.open)}
+      className="relative rounded-md border border-cyan-300/15 bg-slate-950/45"
+    >
+      <summary aria-expanded={open} className="cursor-pointer px-3 py-2 text-xs font-black uppercase tracking-[0.16em] text-cyan-100">View Options</summary>
+      <div className="absolute right-0 top-11 z-30 grid w-[min(34rem,calc(100vw-2rem))] gap-3 rounded-md border border-cyan-300/20 bg-slate-950/95 p-3 shadow-2xl sm:grid-cols-2 lg:grid-cols-3">
+        <label className="grid gap-1 text-[0.62rem] font-bold uppercase tracking-[0.16em] text-slate-500">
+          View mode
+          <select value={settings.density} onChange={(event) => onSettingsChange({ density: event.target.value as DensitySettings["density"] })} className={selectClass}>
+            <option value="compact">Compact</option>
+            <option value="medium">Medium</option>
+            <option value="large">Large</option>
+            <option value="list">List</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-[0.62rem] font-bold uppercase tracking-[0.16em] text-slate-500">
+          Preview size
+          <select value={settings.previewSize} onChange={(event) => onSettingsChange({ previewSize: event.target.value as DensitySettings["previewSize"] })} className={selectClass}>
+            <option value="small">Small</option>
+            <option value="medium">Medium</option>
+            <option value="large">Large</option>
+            <option value="hide">Hide</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-[0.62rem] font-bold uppercase tracking-[0.16em] text-slate-500">
+          Columns
+          <select value={settings.columns} onChange={(event) => onSettingsChange({ columns: event.target.value as DensitySettings["columns"] })} className={selectClass}>
+            <option value="auto">Auto</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-[0.62rem] font-bold uppercase tracking-[0.16em] text-slate-500">
+          Sort
+          <select value={settings.sort} onChange={(event) => onSettingsChange({ sort: event.target.value })} className={selectClass}>
+            <option value="updated">Modified</option>
+            <option value="name">Name</option>
+            <option value="status">Status</option>
+            <option value="type">Type</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-[0.62rem] font-bold uppercase tracking-[0.16em] text-slate-500">
+          Filter
+          <select value={settings.filter} onChange={(event) => onSettingsChange({ filter: event.target.value })} className={selectClass}>
+            <option value="all">All</option>
+            <option value="with-preview">With preview</option>
+            <option value="without-preview">Without preview</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-[0.62rem] font-bold uppercase tracking-[0.16em] text-slate-500">
+          Group
+          <select value={settings.groupBy} onChange={(event) => onSettingsChange({ groupBy: event.target.value })} className={selectClass}>
+            <option value="none">None</option>
+            <option value="feature">Feature</option>
+            <option value="status">Status</option>
+            <option value="role">Role</option>
+          </select>
+        </label>
+        <button type="button" onClick={reset} className="sm:col-span-2 lg:col-span-3 h-9 rounded-md border border-slate-600 bg-slate-950/70 px-3 text-xs font-black uppercase tracking-[0.14em] text-slate-200 hover:border-cyan-300/40">Reset display settings</button>
+      </div>
+    </details>
+  );
 }
 
 function AreaCard({ area, summary, onOpen }: { area: ProductionArea; summary: ReturnType<typeof areaSummary>; onOpen: (areaId: ProductionAreaId) => void }) {
@@ -260,9 +396,13 @@ function ProductionItemCard({ item, settings, area }: { item: InventoryItem; set
   const count = usageCount(item);
   const preview = item.previewUrl;
   const linkedHref = item.sourceAssetId ? `/assets/${encodeURIComponent(item.sourceAssetId)}` : uploadHref(item, area);
+  const presentation = resolveCreativeAssetPresentation(item);
+  const usefulFact = item.status === "missing" ? item.requiredDimensions : item.status === "needs_review" || item.status === "uploaded" ? item.currentDimensions : `${count} use${count === 1 ? "" : "s"}`;
+  const primaryAction = item.status === "missing" ? "Upload Asset" : item.status === "needs_review" || item.status === "uploaded" ? "Review" : "Replace";
   if (settings.density === "list") {
     return (
-      <article className={cardShellClass(settings)}>
+      <article className={`${cardShellClass(settings)} relative`}>
+        <QuickAssetPreview item={item} area={area} />
         <div className={previewBoxClass(settings)}><SafePreviewImage src={preview} item={item} area={area} /></div>
         <div className="min-w-0">
           <p className="truncate text-sm font-black text-white">{item.displayName}</p>
@@ -276,25 +416,21 @@ function ProductionItemCard({ item, settings, area }: { item: InventoryItem; set
     );
   }
   return (
-    <article className={cardShellClass(settings)}>
-      <div className={previewBoxClass(settings)}>
+    <article className={`${cardShellClass(settings)} ${presentation.defaultSpan} relative`}>
+      <QuickAssetPreview item={item} area={area} />
+      <div className={`${cardPreviewHeight(item, settings)} overflow-hidden rounded-md border border-cyan-300/10 bg-slate-950/60`}>
         <SafePreviewImage src={preview} item={item} area={area} />
       </div>
       <div className="mt-3 flex items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="truncate text-sm font-black text-white">{item.displayName}</p>
-          <p className="mt-1 truncate text-xs text-cyan-200">{item.semanticAssetKey}</p>
+          <p className="mt-1 truncate text-xs text-slate-400">{usefulFact}</p>
         </div>
         <WorkspaceBadge value={item.status} className="shrink-0 text-[0.58rem]" />
       </div>
-      <div className="mt-3 grid grid-cols-2 gap-2">
-        <WorkspaceMiniStat label="Priority" value={priorityFor(item)} />
-        <WorkspaceMiniStat label="Usage" value={count} />
-        {settings.density !== "compact" ? <WorkspaceMiniStat label="Role" value={item.role} /> : null}
-        {settings.density !== "compact" ? <WorkspaceMiniStat label="Required" value={item.requiredDimensions} /> : null}
-      </div>
       <div className="mt-3 flex flex-wrap gap-2">
-        <Link href={uploadHref(item, area)} className="inline-flex h-8 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-2 text-xs font-bold text-cyan-100">{item.status === "missing" ? "Upload Asset" : "New Version"}</Link>
+        <Link href={uploadHref(item, area)} className="inline-flex h-8 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-2 text-xs font-bold text-cyan-100">{primaryAction}</Link>
+        <button type="button" aria-label={`Preview ${item.displayName}`} className="inline-flex h-8 items-center rounded-md border border-slate-600 bg-slate-950/40 px-2 text-xs font-bold text-slate-200">Preview</button>
         <Link href={linkedHref} className="inline-flex h-8 items-center rounded-md border border-slate-600 bg-slate-950/40 px-2 text-xs font-bold text-slate-200">{item.sourceAssetId ? "Open Inspector" : "Open Requirement"}</Link>
       </div>
     </article>
@@ -335,15 +471,29 @@ function UpgradeCategoryStatus({ state }: { state: AssetProductionState }) {
 function AreaDetail({ state, area, onBack }: { state: AssetProductionState; area: ProductionArea; onBack: () => void }) {
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<(typeof filterTabs)[number]>("all");
-  const [settings, setSettings] = useWorkspaceDensitySettings(`project-genesis-density-creative-production-${area.id}`, { density: "compact", previewSize: "small", columns: "auto", filter: "all", groupBy: "none" });
+  const [settings, setSettings] = useWorkspaceDensitySettings(`project-genesis-density-creative-production-${area.id}`, defaultCreativeDisplaySettings);
   const summary = areaSummary(state, area);
   const items = useMemo(() => {
     const needle = query.trim().toLowerCase();
     return statusSort(summary.items).filter((item) => {
       const text = searchText(item).toLowerCase();
-      return (status === "all" || item.status === status) && (!needle || text.includes(needle));
+      const displayFilterMatches = settings.filter === "without-preview" ? !item.previewUrl : settings.filter === "with-preview" ? Boolean(item.previewUrl) : true;
+      return displayFilterMatches && (status === "all" || item.status === status) && (!needle || text.includes(needle));
     });
-  }, [summary.items, query, status]);
+  }, [summary.items, query, status, settings.filter]);
+
+  useEffect(() => {
+    if (process.env.NODE_ENV !== "development") return;
+    console.debug("[creative-production-display]", {
+      pageType: "primary_creative_area",
+      selectedProductionArea: area.id,
+      resolvedCardPresentation: items.slice(0, 5).map((item) => ({ id: item.id, role: item.role, ...resolveCreativeAssetPresentation(item) })),
+      activeHiddenDisplayPreferences: settings,
+      viewOptionsState: "closed_by_default",
+      featureGroupingStatus: area.groups?.length ? "available" : "not_configured"
+    });
+  }, [area.id, area.groups?.length, items, settings]);
+
   return (
     <div className="space-y-5">
       <WorkspacePanel>
@@ -366,6 +516,11 @@ function AreaDetail({ state, area, onBack }: { state: AssetProductionState; area
           <WorkspaceStatTile label="Invalid" value={summary.invalid} />
           <WorkspaceStatTile label="Unmapped" value={summary.unmapped} />
         </div>
+        <div className="mt-4 rounded-md border border-amber-300/20 bg-amber-400/10 p-3">
+          <p className="text-xs font-black uppercase tracking-[0.16em] text-amber-100">Top Blocker</p>
+          <p className="mt-2 truncate text-sm font-black text-white">{summary.blocker?.displayName ?? "No blockers"}</p>
+          {summary.blocker ? <p className="mt-1 truncate text-xs font-semibold text-amber-100/80">{summary.blocker.semanticAssetKey}</p> : null}
+        </div>
         <div className="mt-4 flex flex-wrap gap-2">
           <Link href={uploadHref(undefined, area)} className="inline-flex h-10 items-center gap-2 rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100"><UploadCloud className="h-4 w-4" />Upload Asset</Link>
           <Link href={`/asset-library?section=${encodeURIComponent(area.categoryIds?.[0] ?? "missing")}`} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Asset Library</Link>
@@ -382,16 +537,25 @@ function AreaDetail({ state, area, onBack }: { state: AssetProductionState; area
           </div>
         </WorkspacePanel>
       ) : null}
-      <div className="flex flex-wrap gap-2 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-2">
-        {filterTabs.map((tab) => (
-          <button key={tab} type="button" onClick={() => setStatus(tab)} className={`rounded-md px-3 py-2 text-xs font-black uppercase tracking-[0.12em] transition ${status === tab ? "bg-cyan-300/20 text-white" : "text-slate-400 hover:bg-cyan-300/10 hover:text-slate-100"}`}>
-            {tab.replaceAll("_", " ")}
-          </button>
-        ))}
-      </div>
-      <CompactWorkspaceToolbar query={query} onQueryChange={setQuery} settings={settings} onSettingsChange={setSettings} resultCount={items.length} totalCount={summary.items.length} placeholder={`Search ${area.label} production`} />
+      <WorkspacePanel>
+        <div className="grid gap-3 xl:grid-cols-[minmax(18rem,1fr)_auto] xl:items-start">
+          <WorkspaceSearchBar value={query} onChange={setQuery} placeholder={`Search ${area.label} production`} className="p-2" />
+          <ViewOptionsButton settings={settings} onSettingsChange={setSettings} />
+        </div>
+        <div role="tablist" aria-label={`${area.label} production status`} className="mt-3 flex gap-2 overflow-x-auto rounded-md border border-cyan-300/15 bg-slate-950/35 p-2">
+          {filterTabs.map((tab) => (
+            <button key={tab} type="button" role="tab" aria-selected={status === tab} onClick={() => setStatus(tab)} className={`shrink-0 rounded-md px-3 py-2 text-xs font-black uppercase tracking-[0.12em] transition ${status === tab ? "bg-cyan-300/20 text-white" : "text-slate-400 hover:bg-cyan-300/10 hover:text-slate-100"}`}>
+              {tab.replaceAll("_", " ")}
+            </button>
+          ))}
+        </div>
+        <div className="mt-3 inline-flex items-center gap-2 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2 text-xs font-semibold text-slate-400">
+          <Search className="h-4 w-4" />
+          {items.length} shown / {summary.items.length} total
+        </div>
+      </WorkspacePanel>
       {items.length ? (
-        <div className={collectionGridClass(settings)}>
+        <div className={roleAwareAssetGridClass(settings)}>
           {items.map((item) => <ProductionItemCard key={item.id} item={item} settings={settings} area={area} />)}
         </div>
       ) : (

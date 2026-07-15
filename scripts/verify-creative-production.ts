@@ -51,6 +51,15 @@ async function main() {
   assert(workspace.includes("statusCredit"), "Readiness must derive from item status credit, not manual percentages.");
   assert(workspace.includes("density: \"compact\""), "Creative Production default density must be compact.");
   assert(workspace.includes("previewSize: \"small\""), "Creative Production default preview size must be small.");
+  assert(!workspace.includes("CompactWorkspaceToolbar"), "Primary Creative Production must not render the repeated expanded asset display toolbar.");
+  assert(workspace.includes("WorkspaceSearchBar"), "Creative Production must keep search visible.");
+  assert(workspace.includes("ViewOptionsButton"), "Creative Production display controls must live behind one collapsed View Options control.");
+  assert(workspace.includes("View Options"), "Creative Production must expose the collapsed View Options label.");
+  assert(workspace.includes("viewOptionsState: \"closed_by_default\""), "View Options must remain closed by default.");
+  assert(workspace.includes("role=\"tablist\"") && workspace.includes("aria-selected"), "Creative Production status tabs must remain visible and accessible.");
+  assert(workspace.includes("resolveCreativeAssetPresentation"), "Creative Production must use role-aware asset card presentation.");
+  assert(workspace.includes("roleAwareAssetGridClass"), "Creative Production must use a role-aware card grid.");
+  assert(workspace.includes("QuickAssetPreview"), "Creative Production cards must expose hover/focus quick previews.");
   assert(workspace.includes("Upload Asset"), "Missing cards must expose upload actions.");
   assert(workspace.includes("Open Inspector"), "Published/linked cards must expose inspector actions.");
   assert(workspace.includes("Open Upgrade Category Workflow"), "Upgrades area must preserve the dedicated Upgrade Category workflow entry point.");
