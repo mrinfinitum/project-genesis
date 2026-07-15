@@ -4,6 +4,7 @@ import { ARCHITECTURE_VERSION } from "@/lib/architecture/version";
 import { buildBuildingClassifications, canonicalBuildingLibrary, canonicalBuildingTaxonomy } from "@/lib/buildings/taxonomy";
 import { getGameData } from "@/lib/data";
 import { canonicalDiscoveries, discoveryCategories, discoveryChains, discoveryCollections, discoveryMilestones, discoveryPlayerCollectionSchema, discoveryRarities, validateDiscoverySystem } from "@/lib/discovery";
+import { universalDiscoveryRegistryContract, validateUniversalDiscoveryRegistryContract } from "@/lib/discovery/universal-registry";
 import { discoveryJournalSchema, sampleDiscoveryJournal, sampleTimelineEvents, timelineEventSchema } from "@/lib/explorer/discovery-log";
 import { colonyBuildingTemplates, colonyFocusDefinitions, colonyLevelDefinitions, colonySchema, createColonyRecord, generateFallbackColonies, type ColonyBuilding, type ColonyRecord } from "@/lib/colonies/procedural";
 import {
@@ -74,8 +75,8 @@ const targetConfigs: Record<EngineTarget, EngineTargetConfig> = {
     format: "Lua ModuleScripts plus JSON-compatible Studio data",
     endpoint: "/api/export/roblox",
     folderStructure: ["ReplicatedStorage/ProjectGenesis/Data", "ReplicatedStorage/ProjectGenesis/Services", "ServerScriptService/ProjectGenesis"],
-    generatedModules: ["ResourceCatalogModule", "ResearchUnlockModule", "DiscoveryCatalogModule", "UniverseDataModule", "ApiService"],
-    schemaMapping: ["resource_catalog -> ResourceCatalogModule", "research + unlock_matrix -> ResearchUnlockModule", "discoveries + discovery_categories -> DiscoveryCatalogModule", "galaxies/sectors/star_systems/planets/factions -> UniverseDataModule"],
+    generatedModules: ["ResourceCatalogModule", "ResearchUnlockModule", "DiscoveryCatalogModule", "UniversalDiscoveryRegistryContract", "UniverseDataModule", "ApiService"],
+    schemaMapping: ["resource_catalog -> ResourceCatalogModule", "research + unlock_matrix -> ResearchUnlockModule", "discoveries + discovery_categories -> DiscoveryCatalogModule", "universal_discovery_registry -> UniversalDiscoveryRegistryContract", "galaxies/sectors/star_systems/planets/factions -> UniverseDataModule"],
     apiNotes: ["Roblox consumes Studio/API data; it is not the primary data generator.", "Use HttpService against the Generic JSON API for live sync workflows."]
   },
   unity: {
@@ -188,6 +189,7 @@ type CanonicalModules = {
   discovery_chains: Array<Omit<(typeof discoveryChains)[number], "nodes"> & { nodes: Array<{ order: number; discoveryId: string; unlocks: string[] }> }>;
   discovery_milestones: Array<Omit<(typeof discoveryMilestones)[number], "categoryIds"> & { categoryIds: string[] }>;
   discovery_player_collection_schema: typeof discoveryPlayerCollectionSchema;
+  universal_discovery_registry: typeof universalDiscoveryRegistryContract;
   economy_usage_relationships: ReturnType<typeof buildEconomyUsageRelationships>;
   inventory_resource_metadata: ReturnType<typeof buildInventoryResourceMetadata>;
   economy_schemas: typeof economySchemas;
@@ -604,6 +606,7 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
     })),
     discovery_milestones: discoveryMilestones.map((milestone) => ({ ...milestone, categoryIds: [...milestone.categoryIds] })),
     discovery_player_collection_schema: discoveryPlayerCollectionSchema,
+    universal_discovery_registry: universalDiscoveryRegistryContract,
     economy_usage_relationships: buildEconomyUsageRelationships(data),
     inventory_resource_metadata: buildInventoryResourceMetadata(data),
     economy_schemas: economySchemas,
@@ -1384,6 +1387,10 @@ function validateDiscovery(issues: ExportValidationIssue[], modules: CanonicalMo
   for (const issue of validation.issues) {
     addIssue(issues, issue.severity, `discovery_${issue.code}`, issue.message, issue.records);
   }
+  const registryValidation = validateUniversalDiscoveryRegistryContract();
+  for (const issue of registryValidation.issues) {
+    addIssue(issues, issue.severity, `universal_discovery_registry_${issue.code}`, issue.message, issue.records);
+  }
   const discoveryIds = new Set(modules.discoveries.map((discovery) => discovery.id));
   const categoryIds = new Set(modules.discovery_categories.map((category) => category.id));
   const badCategoryLinks = modules.discoveries.filter((discovery) => !categoryIds.has(discovery.categoryId));
@@ -1467,6 +1474,8 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
       "discovery rarities are valid",
       "discovery spawn rules are canonical",
       "discovery collections and chains resolve",
+      "universal discovery registry contract is sanitized",
+      "universal discovery registry exports no live claim records",
       "star systems link to sectors",
       "sectors link to galaxies",
       "architectureVersion is sanitized semantic metadata only"
@@ -1478,6 +1487,7 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
 function exportMetadata(validationStatus: ReturnType<typeof validateEngineExport>["status"]) {
   return {
     architectureVersion: ARCHITECTURE_VERSION,
+    universalDiscoveryRegistryVersion: universalDiscoveryRegistryContract.version,
     runtimeVersion: gameRuntimeSchemaVersion,
     contentVersion: gameRuntimeContentVersion,
     validationStatus
@@ -1498,6 +1508,7 @@ function schemaNotes(target: EngineTarget) {
     eraNavigation: "Studio owns navigation intent only. Dashboards should use current_journey with compact labels; clients own layout and rendering. The full Civilization Timeline remains the all-era view.",
     missions: "Missions, objectives, rewards, statuses, and generation metadata are deterministic canonical Studio data. Engine targets consume mission state and report progress back through objective IDs.",
     discovery: "Discovery categories, rarities, canonical discoverable records, spawn rules, collections, chains, and asset profiles are Studio-owned. Player collection completion stays game/save scoped.",
+    universalDiscoveryRegistry: "Universal Discovery Registry metadata is a static contract for stable object IDs, first-discovery milestones, naming/moderation, attribution/privacy, backend/API handoff, and presentation states. Studio exports no live discovery claims.",
     aiAgents: "AI Agents are cosmetic/presentation companions layered over the existing automation mechanic. ai_agent_variants describe selectable visual skins only; stable automation IDs remain unchanged and clients use automation_presentation aliases for labels.",
     mapping: config.schemaMapping
   };
@@ -1577,6 +1588,7 @@ function compactModules(modules: CanonicalModules) {
     discovery_chains: modules.discovery_chains,
     discovery_milestones: modules.discovery_milestones,
     discovery_player_collection_schema: modules.discovery_player_collection_schema,
+    universal_discovery_registry: modules.universal_discovery_registry,
     economy_usage_relationships: modules.economy_usage_relationships,
     inventory_resource_metadata: modules.inventory_resource_metadata,
     economy_schemas: modules.economy_schemas,
@@ -1604,6 +1616,7 @@ function targetArtifacts(target: EngineTarget, modules: CanonicalModules) {
       "EconomyDefinitionsModule.lua": `local EconomyDefinitions = ${luaValue({ economyDefinitions: modules.economy_definitions, economyBehaviorContracts: modules.economy_behavior_contracts, resourceProducerDefinitions: modules.resource_producer_definitions, buildingResourceEffects: modules.building_resource_effects, economyScopeRules: modules.economy_scope_rules, transactionReasons: modules.economy_transaction_reasons, rateBreakdowns: modules.economy_rate_breakdown_definitions, offlinePolicies: modules.offline_progression_policies, calculationRules: modules.economy_calculation_rules, eraEconomyProfiles: modules.era_economy_profiles, hudProfile: modules.hud_profile, primaryHudResources: modules.primary_hud_resources })}\n\nreturn EconomyDefinitions\n`,
       "AIAgentModule.lua": `local AIAgents = ${luaValue({ aiAgents: modules.ai_agents, aiAgentVariants: modules.ai_agent_variants, personalities: modules.ai_agent_personalities, animationProfiles: modules.ai_agent_animation_profiles, automationPresentation: modules.automation_presentation, defaultAiAgentId: modules.default_ai_agent_id, defaultAiAgentVariantId, saveSchema: modules.ai_agent_save_schema })}\n\nreturn AIAgents\n`,
       "DiscoveryCatalogModule.lua": `local DiscoveryCatalog = ${luaValue({ categories: modules.discovery_categories, rarities: modules.discovery_rarities, discoveries: modules.discoveries, collections: modules.discovery_collections, chains: modules.discovery_chains })}\n\nreturn DiscoveryCatalog\n`,
+      "UniversalDiscoveryRegistryContract.lua": `local UniversalDiscoveryRegistryContract = ${luaValue(modules.universal_discovery_registry)}\n\nreturn UniversalDiscoveryRegistryContract\n`,
       "EraNavigationProfileModule.lua": `local EraNavigationProfiles = ${luaValue(modules.era_navigation_profiles)}\n\nreturn EraNavigationProfiles\n`,
       "ResearchUnlockModule.lua": `local ResearchUnlocks = ${luaValue({ research: modules.research, unlocks: modules.unlock_matrix })}\n\nreturn ResearchUnlocks\n`,
       "UniverseDataModule.lua": `local UniverseData = ${luaValue({ galaxies: modules.galaxies, sectors: modules.sectors, starSystems: modules.star_systems, planets: modules.planets, celestialBodies: modules.celestial_bodies, factions: modules.factions, colonies: modules.colonies, colonyBuildings: modules.colony_buildings, colonyLevels: modules.colony_level_definitions, colonyFocus: modules.colony_focus_definitions, markets: modules.markets, tradeRoutes: modules.trade_routes, tradeOpportunities: modules.trade_opportunities, missions: modules.missions, missionObjectives: modules.mission_objectives, missionRewards: modules.mission_rewards })}\n\nreturn UniverseData\n`,

@@ -9,6 +9,7 @@ import { getAppliedGameArtAssets } from "@/lib/assets/game-art-import";
 import { buildBuildingClassifications, canonicalBuildingLibrary, canonicalBuildingTaxonomy } from "@/lib/buildings/taxonomy";
 import { getGameData } from "@/lib/data";
 import { canonicalDiscoveries, discoveryCategories, discoveryChains, discoveryCollections, discoveryMilestones, discoveryPlayerCollectionSchema, discoveryRarities, validateDiscoverySystem } from "@/lib/discovery";
+import { universalDiscoveryRegistryContract, universalDiscoveryRegistryVersion, validateUniversalDiscoveryRegistryContract } from "@/lib/discovery/universal-registry";
 import {
   buildEconomyUsageRelationships,
   buildBuildingResourceEffects,
@@ -52,7 +53,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 18;
+export const gameRuntimeContentVersion = 19;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -85,6 +86,7 @@ export type RobloxRuntimeExportPayload = {
   discoveryChains: GameRuntimeData["discoveryChains"];
   discoveryMilestones: GameRuntimeData["discoveryMilestones"];
   discoveryPlayerCollectionSchema: GameRuntimeData["discoveryPlayerCollectionSchema"];
+  universalDiscoveryRegistry: GameRuntimeData["universalDiscoveryRegistry"];
   resources: ResourceDefinition[];
   buildingTaxonomy: GameRuntimeData["buildingTaxonomy"];
   buildingLibrary: GameRuntimeData["buildingLibrary"];
@@ -418,6 +420,7 @@ function metadata(overrides: Partial<RuntimeMetadata> = {}): RuntimeMetadata {
   return {
     schemaVersion: gameRuntimeSchemaVersion,
     architectureVersion: ARCHITECTURE_VERSION,
+    universalDiscoveryRegistryVersion,
     contentVersion: gameRuntimeContentVersion,
     checksum: "",
     accessLevel: "studio-internal",
@@ -553,6 +556,7 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
     discoveryCollections: [...runtimeData.discoveryCollections].sort(byId),
     discoveryChains: [...runtimeData.discoveryChains].sort(byId).map((chain) => ({ ...chain, nodes: [...chain.nodes].sort((left, right) => left.order - right.order || left.discoveryId.localeCompare(right.discoveryId)) })),
     discoveryMilestones: [...runtimeData.discoveryMilestones].sort((left, right) => String(left.id).localeCompare(String(right.id))),
+    universalDiscoveryRegistry: runtimeData.universalDiscoveryRegistry,
     resources: [...runtimeData.resources].sort(byId),
     buildingTaxonomy: [...runtimeData.buildingTaxonomy].sort(byDisplayOrderThenId).map((family) => ({
       ...family,
@@ -1252,6 +1256,10 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   for (const issue of discoveryValidation.issues) {
     issues.push({ severity: issue.severity, code: `discovery_${issue.code}`, message: issue.message, records: issue.records });
   }
+  const universalRegistryValidation = validateUniversalDiscoveryRegistryContract();
+  for (const issue of universalRegistryValidation.issues) {
+    issues.push({ severity: issue.severity, code: `universal_discovery_registry_${issue.code}`, message: issue.message, records: issue.records });
+  }
   validateBuildingTaxonomyRuntime(runtimeData, issues);
   const categoryPresentationValidation = validateUpgradeCategoryPresentation({ categories: runtimeData.upgradeCategories });
   for (const message of categoryPresentationValidation.issues) {
@@ -1421,6 +1429,7 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     discoveryChains: sorted.discoveryChains,
     discoveryMilestones: sorted.discoveryMilestones,
     discoveryPlayerCollectionSchema: sorted.discoveryPlayerCollectionSchema,
+    universalDiscoveryRegistry: sorted.universalDiscoveryRegistry,
     resources: sorted.resources,
     buildingTaxonomy: sorted.buildingTaxonomy,
     buildingLibrary: sorted.buildingLibrary,
@@ -1617,6 +1626,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     discoveryChains: discoveryChains.map((chain) => ({ ...chain, nodes: chain.nodes.map((node) => ({ ...node, unlocks: [...node.unlocks] })) })),
     discoveryMilestones: discoveryMilestones.map((milestone) => ({ ...milestone, categoryIds: [...milestone.categoryIds] })),
     discoveryPlayerCollectionSchema,
+    universalDiscoveryRegistry: universalDiscoveryRegistryContract,
     resources: ResourceService.catalog.map(resourceToRuntime),
     buildingTaxonomy: canonicalBuildingTaxonomy,
     buildingLibrary: canonicalBuildingLibrary,
@@ -1668,6 +1678,7 @@ export async function getGameRuntimeData() {
     discoveryChains: base.discoveryChains,
     discoveryMilestones: base.discoveryMilestones,
     discoveryPlayerCollectionSchema: base.discoveryPlayerCollectionSchema,
+    universalDiscoveryRegistry: base.universalDiscoveryRegistry,
     resources: base.resources,
     balance: {
       ...store.appliedRuntimeData.balance,
@@ -1874,6 +1885,7 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     discoveryChains: base.discoveryChains,
     discoveryMilestones: base.discoveryMilestones,
     discoveryPlayerCollectionSchema: base.discoveryPlayerCollectionSchema,
+    universalDiscoveryRegistry: base.universalDiscoveryRegistry,
     resources: base.resources,
     buildingTaxonomy: base.buildingTaxonomy,
     buildingLibrary: base.buildingLibrary,

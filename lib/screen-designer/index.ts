@@ -766,7 +766,118 @@ const researchComponents: ScreenComponentSpec[] = [
   })
 ];
 
+const universalDiscoveryRegistryScreens: ScreenDesignRecord[] = [
+  baseRecord({
+    screenId: "universal-catalog",
+    displayName: "Universal Catalog",
+    description: "Public catalog browser for verified Universal Discovery Registry records combined with Studio-authored canonical object content.",
+    status: "Draft",
+    dataRequirements: [
+      data("universal-discovery-registry-contract", "Universal Discovery Registry contract", "Canonical Studio Definition", "runtime.universalDiscoveryRegistry", "Mapped"),
+      data("public-catalog-query", "Public catalog query", "Service/Backend State", "Game catalog API", "Missing"),
+      data("canonical-object-content", "Canonical object content", "Canonical Studio Definition", "Studio runtime + Galactopedia", "Mapped")
+    ],
+    componentSpecs: [
+      researchComponent({ id: "catalog-search", componentLibraryId: "UniversalCatalogSearch", displayName: "Universal Catalog Search", purpose: "Search and filter public discovery records.", dimensions: "Responsive toolbar.", positioning: "Top of catalog workspace." }),
+      researchComponent({ id: "discovered-object-card", componentLibraryId: "DiscoveredObjectCard", displayName: "Discovered Object Card", purpose: "Grid/list record display.", dimensions: "Responsive card/list row.", positioning: "Catalog result list." })
+    ],
+    stateSpecs: designedStates(["Default", "Searching", "No Results", "Filtered", "Error"])
+  }),
+  baseRecord({
+    screenId: "object-discovery-detail",
+    displayName: "Object Discovery Detail",
+    description: "Detailed object record combining canonical fallback identity, approved public name, attribution, milestones, and history summary.",
+    status: "Draft",
+    dataRequirements: [
+      data("registry-record", "Registry record", "Service/Backend State", "Game catalog API", "Missing"),
+      data("canonical-object-content", "Canonical fallback content", "Canonical Studio Definition", "Studio runtime", "Mapped")
+    ],
+    componentSpecs: [
+      researchComponent({ id: "discovery-attribution", componentLibraryId: "DiscoveryAttribution", displayName: "Discovery Attribution", purpose: "Privacy-safe Discovered By presentation.", dimensions: "Detail header row.", positioning: "Object header." }),
+      researchComponent({ id: "milestone-badge", componentLibraryId: "DiscoveryMilestoneBadge", displayName: "Discovery Milestone Badge", purpose: "Show first detected/scanned/landed/colonized milestones.", dimensions: "Badge row.", positioning: "Detail body." }),
+      researchComponent({ id: "history-timeline", componentLibraryId: "DiscoveryHistoryTimeline", displayName: "Discovery History Timeline", purpose: "Append-only public history.", dimensions: "Timeline panel.", positioning: "Detail lower panel." })
+    ],
+    stateSpecs: designedStates(["Default", "Hidden Attribution", "Named", "Pending Verification", "Error"])
+  }),
+  baseRecord({
+    screenId: "first-discovery-confirmation",
+    displayName: "First Discovery Confirmation",
+    description: "Server-returned first-discovery result screen showing accepted, lost-race, retry, and already-discovered outcomes.",
+    status: "Draft",
+    dataRequirements: [data("claim-result", "Claim result", "Service/Backend State", "submit_discovery_claim", "Missing")],
+    componentSpecs: [
+      researchComponent({ id: "first-discovery-badge", componentLibraryId: "FirstDiscoveryBadge", displayName: "First Discovery Badge", purpose: "Verified first-discovery result.", dimensions: "Hero badge.", positioning: "Confirmation header." }),
+      researchComponent({ id: "pending-claim", componentLibraryId: "PendingDiscoveryClaim", displayName: "Pending Discovery Claim", purpose: "Retry/offline/lost-race state.", dimensions: "Status panel.", positioning: "Confirmation body." })
+    ],
+    stateSpecs: designedStates(["Accepted", "Already Claimed", "Lost Race", "Pending Verification", "Rejected", "Retryable Error"])
+  }),
+  baseRecord({
+    screenId: "naming-proposal",
+    displayName: "Naming Proposal",
+    description: "Eligible-object naming proposal surface with canonical fallback preview and moderation disclosure.",
+    status: "Draft",
+    dataRequirements: [data("naming-policy", "Naming policy", "Canonical Studio Definition", "runtime.universalDiscoveryRegistry.namingPolicy", "Mapped"), data("proposal-endpoint", "Naming proposal endpoint", "Service/Backend State", "Game catalog API", "Missing")],
+    componentSpecs: [researchComponent({ id: "naming-proposal-form", componentLibraryId: "NamingProposalForm", displayName: "Naming Proposal Form", purpose: "Submit proposed public name.", dimensions: "Modal or inline form.", positioning: "Primary content." })],
+    stateSpecs: designedStates(["Eligible", "Ineligible", "Editing", "Submitting", "Pending Review", "Rejected", "Approved", "Error"])
+  }),
+  baseRecord({
+    screenId: "naming-pending-review",
+    displayName: "Naming Pending Review",
+    description: "Name review status screen that never exposes internal moderation notes.",
+    status: "Draft",
+    dataRequirements: [data("naming-status", "Naming status", "Service/Backend State", "Game catalog API", "Missing")],
+    componentSpecs: [researchComponent({ id: "moderation-status", componentLibraryId: "NamingModerationStatus", displayName: "Naming Moderation Status", purpose: "Public moderation status.", dimensions: "Status panel.", positioning: "Primary content." })],
+    stateSpecs: designedStates(["Pending Review", "Approved", "Rejected", "Auto Blocked", "Reverted", "Error"])
+  }),
+  baseRecord({
+    screenId: "discovery-history",
+    displayName: "Discovery History",
+    description: "Public immutable event history for an object, explorer, or civilization, excluding private moderation/security events.",
+    status: "Draft",
+    dataRequirements: [data("history", "Public history entries", "Service/Backend State", "Game catalog API", "Missing")],
+    componentSpecs: [researchComponent({ id: "history-timeline", componentLibraryId: "DiscoveryHistoryTimeline", displayName: "Discovery History Timeline", purpose: "Display append-only public history.", dimensions: "Timeline list.", positioning: "Primary content." })],
+    stateSpecs: designedStates(["Empty", "Populated", "Filtered", "Loading", "Error"])
+  }),
+  baseRecord({
+    screenId: "explorer-discoveries",
+    displayName: "Explorer Discoveries",
+    description: "Public explorer discovery listing using public profile IDs and attribution privacy controls.",
+    status: "Draft",
+    dataRequirements: [data("public-profile", "Public explorer profile", "Service/Backend State", "Game catalog API", "Missing"), data("discoveries-by-player", "Discoveries by player", "Service/Backend State", "Game catalog API", "Missing")],
+    componentSpecs: [researchComponent({ id: "explorer-profile-link", componentLibraryId: "ExplorerProfileLink", displayName: "Explorer Profile Link", purpose: "Privacy-safe public explorer reference.", dimensions: "Header/link.", positioning: "Page header." }), researchComponent({ id: "discovered-object-card", componentLibraryId: "DiscoveredObjectCard", displayName: "Discovered Object Card", purpose: "Explorer discovery rows.", dimensions: "Grid/list.", positioning: "Primary list." })],
+    stateSpecs: designedStates(["Default", "Anonymous", "Hidden", "No Results", "Error"])
+  }),
+  baseRecord({
+    screenId: "civilization-discoveries",
+    displayName: "Civilization Discoveries",
+    description: "Civilization-scoped discovery credit, score, first charted/colonized records, and historical snapshots.",
+    status: "Draft",
+    dataRequirements: [data("civilization-credit", "Civilization discovery credit", "Service/Backend State", "Game catalog API", "Missing")],
+    componentSpecs: [researchComponent({ id: "civilization-credit", componentLibraryId: "CivilizationDiscoveryCredit", displayName: "Civilization Discovery Credit", purpose: "Historical civilization attribution.", dimensions: "Credit row/card.", positioning: "Header and list rows." })],
+    stateSpecs: designedStates(["Default", "Changed Since Discovery", "Hidden", "No Results", "Error"])
+  }),
+  baseRecord({
+    screenId: "offline-claim-pending",
+    displayName: "Offline Claim Pending",
+    description: "Private pending-claim surface for offline discoveries awaiting server verification.",
+    status: "Draft",
+    dataRequirements: [data("pending-claims", "Pending discovery claims", "Player Runtime State", "save.pendingDiscoveryClaims", "Mapped")],
+    componentSpecs: [researchComponent({ id: "pending-claim", componentLibraryId: "PendingDiscoveryClaim", displayName: "Pending Discovery Claim", purpose: "Offline queue and reconnect result.", dimensions: "Status list.", positioning: "Primary content." })],
+    stateSpecs: designedStates(["Queued Offline", "Submitting", "Accepted", "Lost Race", "Rejected", "Retryable Error"])
+  }),
+  baseRecord({
+    screenId: "name-report",
+    displayName: "Name Report",
+    description: "Public report-name workflow for approved player-assigned names, routed to protected moderation services.",
+    status: "Draft",
+    dataRequirements: [data("report-name", "Name report endpoint", "Service/Backend State", "Game catalog API", "Missing")],
+    componentSpecs: [researchComponent({ id: "moderation-status", componentLibraryId: "NamingModerationStatus", displayName: "Naming Moderation Status", purpose: "Current report/moderation status.", dimensions: "Status panel.", positioning: "Primary content." })],
+    stateSpecs: designedStates(["Default", "Submitting", "Submitted", "Error"])
+  })
+];
+
 const initialScreenDesignRecords: ScreenDesignRecord[] = [
+  ...universalDiscoveryRegistryScreens,
   {
     ...baseRecord({
       screenId: appShellId,

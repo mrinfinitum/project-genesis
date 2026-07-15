@@ -830,8 +830,122 @@ const dashboardComponentRecords: ComponentDesignRecord[] = [
   })
 ];
 
+const universalDiscoveryRegistryComponentRecords: ComponentDesignRecord[] = [
+  baseRecord({
+    componentId: "DiscoveryAttribution",
+    displayName: "Discovery Attribution",
+    category: "Data Display",
+    description: "Public attribution row for server-verified Universal Discovery Registry records with privacy-safe fallback text.",
+    dataInputs: [dataInput("registryRecord", "Registry record", "UniversalDiscoveryRegistryRecord", "Service State"), dataInput("publicAttribution", "Public attribution", "PublicDiscoveryAttribution", "Service State"), dataInput("fallbackAttributionText", "Fallback attribution text", "string", "Canonical Studio Definition")],
+    states: states(["Default", "Hidden Attribution", "Anonymous", "Current Player", "Other Player", "Civilization Visible", "Loading", "Error"], ["Default", "Hidden Attribution", "Anonymous", "Current Player"]),
+    variants: [variant("compact", "Compact", ["Default", "Anonymous", "Hidden Attribution"]), variant("detail", "Detail", ["Default", "Civilization Visible"]), variant("history", "History", ["Default", "Other Player"])],
+    screenUsages: [usage("object-discovery-detail", "Object Discovery Detail"), usage("universal-catalog", "Universal Catalog")]
+  }),
+  baseRecord({
+    componentId: "FirstDiscoveryBadge",
+    displayName: "First Discovery Badge",
+    category: "Feedback",
+    description: "Badge indicating a verified first-discovery milestone without letting the client award that status locally.",
+    dataInputs: [dataInput("milestoneType", "Milestone type", "UniversalDiscoveryMilestoneType", "Canonical Studio Definition"), dataInput("claimStatus", "Claim status", "VerifiedClaimStatus", "Service State")],
+    states: states(["Verified", "Pending Verification", "Already Claimed", "Hidden", "Loading", "Error"], ["Verified", "Pending Verification", "Already Claimed"]),
+    variants: [variant("identified", "Identified", ["Verified", "Pending Verification"]), variant("landed", "Landed", ["Verified", "Already Claimed"]), variant("colonized", "Colonized", ["Verified", "Already Claimed"])],
+    screenUsages: [usage("first-discovery-confirmation", "First Discovery Confirmation"), usage("universal-catalog", "Universal Catalog")]
+  }),
+  baseRecord({
+    componentId: "DiscoveredObjectCard",
+    displayName: "Discovered Object Card",
+    category: "Cards",
+    description: "Universal Catalog card combining Studio canonical object content with Game registry attribution and approved naming state.",
+    dataInputs: [dataInput("canonicalObject", "Canonical object", "Discovery/Planet/System Canonical Record", "Canonical Studio Definition"), dataInput("registryRecord", "Registry record", "UniversalDiscoveryRegistryRecord", "Service State")],
+    states: states(["Undiscovered", "Globally Discovered", "Discovered By Current Player", "Pending Verification", "Named", "Name Pending Review", "Hidden Attribution", "Loading", "Error"], ["Undiscovered", "Globally Discovered", "Pending Verification", "Named"]),
+    variants: [variant("grid", "Grid", ["Globally Discovered", "Named"]), variant("list", "List", ["Globally Discovered", "Pending Verification"]), variant("compact", "Compact", ["Undiscovered", "Hidden Attribution"])],
+    screenUsages: [usage("universal-catalog", "Universal Catalog"), usage("explorer-discoveries", "Explorer Discoveries")]
+  }),
+  baseRecord({
+    componentId: "DiscoveryHistoryTimeline",
+    displayName: "Discovery History Timeline",
+    category: "Lists",
+    description: "Append-only public history timeline for registry events; moderation/security events are not exposed through this component.",
+    dataInputs: [dataInput("historyEntries", "Public history entries", "UniversalDiscoveryHistoryEntry[]", "Service State")],
+    states: states(["Empty", "Populated", "Filtered", "Loading", "Error"], ["Empty", "Populated", "Filtered"]),
+    variants: [variant("detail", "Detail", ["Populated", "Filtered"]), variant("compact", "Compact", ["Populated", "Empty"])],
+    screenUsages: [usage("discovery-history", "Discovery History"), usage("object-discovery-detail", "Object Discovery Detail")]
+  }),
+  baseRecord({
+    componentId: "ExplorerProfileLink",
+    displayName: "Explorer Profile Link",
+    category: "Navigation",
+    description: "Privacy-aware public explorer profile link using public profile IDs only, never auth user IDs.",
+    dataInputs: [dataInput("publicProfileId", "Public profile ID", "string", "Service State"), dataInput("attributionPrivacy", "Attribution privacy", "DiscoveryPrivacySettings", "Service State")],
+    states: states(["Visible", "Anonymous", "Hidden", "Focused", "Disabled", "Loading"], ["Visible", "Anonymous", "Hidden", "Focused"]),
+    variants: [variant("inline", "Inline", ["Visible", "Anonymous"]), variant("badge", "Badge", ["Visible", "Focused"])],
+    screenUsages: [usage("explorer-discoveries", "Explorer Discoveries"), usage("object-discovery-detail", "Object Discovery Detail")]
+  }),
+  baseRecord({
+    componentId: "CivilizationDiscoveryCredit",
+    displayName: "Civilization Discovery Credit",
+    category: "Data Display",
+    description: "Historical civilization-at-time-of-discovery credit, separate from current player civilization.",
+    dataInputs: [dataInput("civilizationId", "Civilization ID", "string", "Service State"), dataInput("civilizationSnapshot", "Civilization snapshot", "string", "Service State")],
+    states: states(["Visible", "Hidden", "Changed Since Discovery", "Loading", "Error"], ["Visible", "Hidden", "Changed Since Discovery"]),
+    variants: [variant("compact", "Compact", ["Visible", "Hidden"]), variant("score", "Score", ["Visible", "Changed Since Discovery"])],
+    screenUsages: [usage("civilization-discoveries", "Civilization Discoveries"), usage("object-discovery-detail", "Object Discovery Detail")]
+  }),
+  baseRecord({
+    componentId: "NamingProposalForm",
+    displayName: "Naming Proposal Form",
+    category: "Forms",
+    description: "Eligible-object naming proposal form with moderation disclosure and canonical fallback preview.",
+    dataInputs: [dataInput("eligibleEntityType", "Eligible entity type", "UniversalDiscoveryEntityType", "Canonical Studio Definition"), dataInput("canonicalFallbackName", "Canonical fallback name", "string", "Canonical Studio Definition"), dataInput("namingPolicy", "Naming policy", "UniversalDiscoveryNamingPolicy", "Canonical Studio Definition")],
+    states: states(["Eligible", "Ineligible", "Editing", "Submitting", "Pending Review", "Rejected", "Approved", "Error"], ["Eligible", "Ineligible", "Editing", "Pending Review", "Rejected"]),
+    variants: [variant("modal", "Modal", ["Editing", "Submitting"]), variant("inline", "Inline", ["Eligible", "Pending Review"])],
+    screenUsages: [usage("naming-proposal", "Naming Proposal"), usage("naming-pending-review", "Naming Pending Review")]
+  }),
+  baseRecord({
+    componentId: "NamingModerationStatus",
+    displayName: "Naming Moderation Status",
+    category: "Feedback",
+    description: "Status presentation for proposed/approved/rejected/blocked names without exposing internal moderation notes.",
+    dataInputs: [dataInput("namingStatus", "Naming status", "UniversalNamingStatus", "Service State"), dataInput("rejectionReasonCode", "Rejection reason code", "string", "Service State")],
+    states: states(["Not Named", "Proposed", "Pending Review", "Approved", "Rejected", "Auto Blocked", "Reverted", "Loading"], ["Not Named", "Pending Review", "Approved", "Rejected", "Auto Blocked"]),
+    variants: [variant("pill", "Pill", ["Pending Review", "Approved", "Rejected"]), variant("detail", "Detail", ["Auto Blocked", "Reverted"])],
+    screenUsages: [usage("naming-pending-review", "Naming Pending Review"), usage("name-report", "Name Report")]
+  }),
+  baseRecord({
+    componentId: "PendingDiscoveryClaim",
+    displayName: "Pending Discovery Claim",
+    category: "Feedback",
+    description: "Offline/unverified claim state that clearly separates personal discovery progress from global first-discovery attribution.",
+    dataInputs: [dataInput("pendingClaim", "Pending claim", "PendingDiscoveryClaim", "Player Runtime State"), dataInput("claimSyncStatus", "Claim sync status", "ClaimSyncStatus", "Service State")],
+    states: states(["Queued Offline", "Submitting", "Accepted", "Lost Race", "Rejected", "Retryable Error"], ["Queued Offline", "Submitting", "Accepted", "Lost Race"]),
+    variants: [variant("banner", "Banner", ["Queued Offline", "Submitting"]), variant("detail", "Detail", ["Accepted", "Lost Race", "Rejected"])],
+    screenUsages: [usage("offline-claim-pending", "Offline Claim Pending"), usage("first-discovery-confirmation", "First Discovery Confirmation")]
+  }),
+  baseRecord({
+    componentId: "UniversalCatalogSearch",
+    displayName: "Universal Catalog Search",
+    category: "Forms",
+    description: "Search/filter controls for public catalog records by object, player, civilization, recency, naming status, and nearby systems.",
+    dataInputs: [dataInput("catalogQuery", "Catalog query", "UniversalCatalogQuery", "Local Interaction State"), dataInput("catalogApi", "Catalog API", "UniversalDiscoveryCatalogApi", "Service State")],
+    states: states(["Default", "Searching", "No Results", "Filtered", "Error", "Reduced Motion"], ["Default", "Searching", "No Results", "Filtered"]),
+    variants: [variant("full", "Full", ["Default", "Searching", "Filtered"]), variant("compact", "Compact", ["Default", "No Results"])],
+    screenUsages: [usage("universal-catalog", "Universal Catalog")]
+  }),
+  baseRecord({
+    componentId: "DiscoveryMilestoneBadge",
+    displayName: "Discovery Milestone Badge",
+    category: "Feedback",
+    description: "Milestone badge for detected/scanned/identified/visited/landed/sampled/recovered/completed/colonized/catalogued firsts.",
+    dataInputs: [dataInput("milestoneType", "Milestone type", "UniversalDiscoveryMilestoneType", "Canonical Studio Definition"), dataInput("milestoneRecord", "Milestone record", "UniversalDiscoveryMilestoneRecord", "Service State")],
+    states: states(["Unclaimed", "Claimed", "Current Player", "Other Player", "Pending Verification", "Hidden"], ["Unclaimed", "Claimed", "Pending Verification"]),
+    variants: [variant("small", "Small", ["Claimed", "Unclaimed"]), variant("timeline", "Timeline", ["Claimed", "Current Player", "Other Player"])],
+    screenUsages: [usage("discovery-history", "Discovery History"), usage("object-discovery-detail", "Object Discovery Detail")]
+  })
+];
+
 const initialComponentRecords: ComponentDesignRecord[] = [
   ...dashboardComponentRecords,
+  ...universalDiscoveryRegistryComponentRecords,
   ...appShellComponentRecords,
   namedComponent("NavigationItem", "Navigation", "Reusable navigation item with icon, label, active state, locked state, and notification treatment.", [usage("dashboard", "Dashboard"), usage("settings", "Settings")]),
   namedComponent("BeveledGamePanel", "Panels", "Shared beveled game surface for dense HUD and management panels.", [usage("dashboard", "Dashboard"), usage("research", "Research")]),

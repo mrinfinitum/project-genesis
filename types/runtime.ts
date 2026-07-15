@@ -1,6 +1,7 @@
 export type RuntimeMetadata = {
   schemaVersion: string;
   architectureVersion: string;
+  universalDiscoveryRegistryVersion?: string;
   contentVersion: number;
   checksum: string;
   accessLevel: "studio-internal" | "public-published";
@@ -871,6 +872,7 @@ export type GameRuntimeData = {
   discoveryChains: DiscoveryChainDefinition[];
   discoveryMilestones: Array<Record<string, unknown>>;
   discoveryPlayerCollectionSchema: Record<string, unknown>;
+  universalDiscoveryRegistry: Record<string, unknown>;
   resources: ResourceDefinition[];
   buildingTaxonomy: BuildingTaxonomyFamily[];
   buildingLibrary: CanonicalBuildingDefinition[];

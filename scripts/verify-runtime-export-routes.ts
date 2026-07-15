@@ -19,7 +19,7 @@ type RuntimeClientProfile = {
 };
 
 type RuntimePayload = {
-  metadata?: { schemaVersion?: string; architectureVersion?: string; contentVersion?: number; checksum?: string; accessLevel?: string; validationStatus?: string; saveMigrationHints?: Array<{ id: string; targetId: string; previousDefault: unknown; currentDefault: unknown }> };
+  metadata?: { schemaVersion?: string; architectureVersion?: string; universalDiscoveryRegistryVersion?: string; contentVersion?: number; checksum?: string; accessLevel?: string; validationStatus?: string; saveMigrationHints?: Array<{ id: string; targetId: string; previousDefault: unknown; currentDefault: unknown }> };
   eras?: Array<{ id: string; index?: number; name?: string; displayName?: string; shortDisplayName?: string }>;
   economyDefinitions?: Array<{ id: string; iconKey?: string; startingAmount?: number; startingRate?: number; premium?: boolean; spendable?: boolean; manualClickTarget?: boolean; playerFacingHelpText?: string }>;
   eraEconomyProfiles?: Array<{ id: string; eraId: string; eraIndex: number; primaryEconomyId: string; activePrimaryEconomyId: string; manualClickTarget?: string | null; primaryEconomyIds: string[]; secondaryEconomyIds: string[]; fixedHudSlots: string[]; visibleHudEconomyIds: string[]; hudSlots: Array<{ economyId: string; order: number }>; displayOverrides?: Record<string, { displayName?: string }>; visibilityRules?: { useEraHud?: boolean; fixedCoreHud?: boolean; creditsVisible?: boolean } }>;
@@ -40,6 +40,7 @@ type RuntimePayload = {
   discoveryCollections?: Array<{ id: string; discoveryIds: string[] }>;
   discoveryChains?: Array<{ id: string; nodes: Array<{ discoveryId: string }> }>;
   discoveryPlayerCollectionSchema?: { studioOwnership?: string };
+  universalDiscoveryRegistry?: { version?: string; entityTypes?: Array<{ id: string }>; milestones?: Array<{ id: string }>; liveDataPolicy?: string };
   upgradeCategories?: Array<{ id: string }>;
   upgrades?: Array<{ id: string; categoryId?: string; tabId?: string; eraId?: string; costResourceId?: string | null; costEconomyId?: string | null }>;
   aiAgents?: Array<{ id: string; defaultForNewPlayers?: boolean; baseVariantId?: string; availableVariantIds?: string[]; assetKeys?: Record<string, string>; gameplayModifiers?: Record<string, unknown> }>;
@@ -183,6 +184,10 @@ function validateDiscoveryRuntime(payload: RuntimePayload | RobloxPayload, label
   assert(categories.length >= 8, `${label} must publish discoveryCategories.`);
   assert(rarities.length === 7, `${label} must publish the seven canonical discovery rarity tiers.`);
   assert(discoveries.length >= 10, `${label} must publish canonical discoveries.`);
+  assert(payload.universalDiscoveryRegistry?.version === "1.0.0", `${label} must publish universalDiscoveryRegistry version 1.0.0.`);
+  assert((payload.universalDiscoveryRegistry?.entityTypes?.length ?? 0) >= 14, `${label} must publish universal registry eligible entity types.`);
+  assert((payload.universalDiscoveryRegistry?.milestones?.length ?? 0) === 10, `${label} must publish universal registry milestone definitions.`);
+  assert(payload.universalDiscoveryRegistry?.liveDataPolicy?.includes("Live registry records"), `${label} must state live registry records come from Game APIs.`);
   assert((payload.discoveryCollections?.length ?? 0) >= 6, `${label} must publish discoveryCollections.`);
   assert((payload.discoveryChains?.length ?? 0) >= 2, `${label} must publish discoveryChains.`);
   assert(payload.discoveryPlayerCollectionSchema?.studioOwnership === "canonical_definitions_only", `${label} must mark player discovery collection state as game-owned.`);
@@ -478,12 +483,14 @@ async function main() {
   assert(anonymousAdmin.status >= 400 || anonymousAdmin.status === 307 || anonymousAdmin.status === 308, `Anonymous admin route was not protected; received ${anonymousAdmin.status}.`);
   assert(canonical.payload.metadata?.schemaVersion, "Canonical metadata.schemaVersion is missing.");
   assert(canonical.payload.metadata?.architectureVersion === ARCHITECTURE_VERSION, "Canonical metadata.architectureVersion must match the Architecture Workspace.");
+  assert(canonical.payload.metadata?.universalDiscoveryRegistryVersion === "1.0.0", "Canonical metadata.universalDiscoveryRegistryVersion must be 1.0.0.");
   assert(canonical.payload.metadata?.contentVersion, "Canonical metadata.contentVersion is missing.");
   assert(canonical.payload.metadata?.checksum, "Canonical metadata.checksum is missing.");
   assert(canonical.payload.metadata?.accessLevel === "public-published", "Canonical accessLevel must be public-published.");
   assert(canonical.payload.metadata?.validationStatus, "Canonical validation status is missing.");
   assert(roblox.payload.metadata?.schemaVersion, "Roblox metadata.schemaVersion is missing.");
   assert(roblox.payload.metadata?.architectureVersion === ARCHITECTURE_VERSION, "Roblox metadata.architectureVersion must match the Architecture Workspace.");
+  assert(roblox.payload.metadata?.universalDiscoveryRegistryVersion === "1.0.0", "Roblox metadata.universalDiscoveryRegistryVersion must be 1.0.0.");
   assert(roblox.payload.metadata?.contentVersion, "Roblox metadata.contentVersion is missing.");
   assert(roblox.payload.metadata?.checksum, "Roblox metadata.checksum is missing.");
   assert(roblox.payload.metadata?.accessLevel === "public-published", "Roblox accessLevel must be public-published.");
@@ -514,6 +521,7 @@ async function main() {
       status: canonical.status,
       schemaVersion: canonical.payload.metadata?.schemaVersion,
       architectureVersion: canonical.payload.metadata?.architectureVersion,
+      universalDiscoveryRegistryVersion: canonical.payload.metadata?.universalDiscoveryRegistryVersion,
       contentVersion: canonical.payload.metadata?.contentVersion,
       checksum: canonical.payload.metadata?.checksum,
       accessLevel: canonical.payload.metadata?.accessLevel,
@@ -530,6 +538,7 @@ async function main() {
       aiAgentVariantCount: canonical.payload.aiAgentVariants?.length ?? 0,
       discoveryCategoryCount: canonical.payload.discoveryCategories?.length ?? 0,
       discoveryCount: canonical.payload.discoveries?.length ?? 0,
+      universalRegistryEntityTypeCount: canonical.payload.universalDiscoveryRegistry?.entityTypes?.length ?? 0,
       resourceCount: canonical.payload.resources?.length ?? 0,
       upgradeCount: canonical.payload.upgrades?.length ?? 0
     },
@@ -537,6 +546,7 @@ async function main() {
       status: roblox.status,
       schemaVersion: roblox.payload.metadata?.schemaVersion,
       architectureVersion: roblox.payload.metadata?.architectureVersion,
+      universalDiscoveryRegistryVersion: roblox.payload.metadata?.universalDiscoveryRegistryVersion,
       contentVersion: roblox.payload.metadata?.contentVersion,
       checksum: roblox.payload.metadata?.checksum,
       accessLevel: roblox.payload.metadata?.accessLevel,
@@ -553,6 +563,7 @@ async function main() {
       aiAgentVariantCount: roblox.payload.aiAgentVariants?.length ?? 0,
       discoveryCategoryCount: roblox.payload.discoveryCategories?.length ?? 0,
       discoveryCount: roblox.payload.discoveries?.length ?? 0,
+      universalRegistryEntityTypeCount: roblox.payload.universalDiscoveryRegistry?.entityTypes?.length ?? 0,
       resourceCount: roblox.payload.resources?.length ?? 0,
       upgradeTabCount: roblox.payload.upgradeTabs?.length ?? 0,
       upgradeCount: roblox.payload.upgrades?.length ?? 0
