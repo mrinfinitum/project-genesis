@@ -240,6 +240,10 @@ function hrefPath(href: string) {
   return href.split("#")[0].split("?")[0];
 }
 
+function hrefSearch(href: string) {
+  return href.split("#")[0].split("?")[1] ?? "";
+}
+
 function activeGroupForPath(pathname: string) {
   return navigationGroups.find((group) =>
     group.items.some((item) => {
@@ -256,7 +260,7 @@ function activeGroupForPath(pathname: string) {
   );
 }
 
-function isItemActive(item: NavigationItem, pathname: string) {
+function isItemActive(item: NavigationItem, pathname: string, searchParams: { get: (key: string) => string | null; has: (key: string) => boolean }) {
   if (!item.href) {
     return false;
   }
@@ -265,7 +269,20 @@ function isItemActive(item: NavigationItem, pathname: string) {
     return item.activePaths.includes(pathname);
   }
 
-  return hrefPath(item.href) === pathname;
+  if (hrefPath(item.href) !== pathname) {
+    return false;
+  }
+
+  const itemSearch = hrefSearch(item.href);
+  if (!itemSearch) {
+    return pathname !== "/creative-production" || !searchParams.has("area");
+  }
+
+  const itemParams = new URLSearchParams(itemSearch);
+  for (const [key, value] of itemParams.entries()) {
+    if (searchParams.get(key) !== value) return false;
+  }
+  return true;
 }
 
 function uniqueSections(ids: Array<string | undefined>) {
@@ -274,6 +291,8 @@ function uniqueSections(ids: Array<string | undefined>) {
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const [currentSearch, setCurrentSearch] = useState("");
+  const currentSearchParams = useMemo(() => new URLSearchParams(currentSearch), [currentSearch]);
   const isAuthRoute = pathname === "/login" || pathname.startsWith("/auth/");
   const activeGroup = useMemo(() => activeGroupForPath(pathname), [pathname]);
   const [expandedGroups, setExpandedGroups] = useState<string[]>(() => uniqueSections(["command-center", activeGroup?.id]));
@@ -301,6 +320,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     setExpandedGroups(next);
     window.localStorage.setItem(STORAGE_SECTIONS_KEY, JSON.stringify(next));
   }, [activeGroup?.id]);
+
+  useEffect(() => {
+    function syncSearch() {
+      setCurrentSearch(window.location.search);
+    }
+    syncSearch();
+    window.addEventListener("popstate", syncSearch);
+    return () => window.removeEventListener("popstate", syncSearch);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -392,7 +420,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   <div className="space-y-1 border-t border-cyan-400/10 p-2">
                     {group.items.map((item) => {
                       const ItemIcon = item.icon;
-                      const active = isItemActive(item, pathname);
+                      const active = isItemActive(item, pathname, currentSearchParams);
 
                       if (!item.href || item.future) {
                         return (
@@ -414,12 +442,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                         <Link
                           key={`${group.id}-${item.label}`}
                           href={item.href}
+                          onClick={() => setCurrentSearch(hrefSearch(item.href ?? "") ? `?${hrefSearch(item.href ?? "")}` : "")}
                           className={cn(
-                            "flex h-9 items-center gap-3 rounded-md px-2 text-sm text-slate-300 transition hover:bg-cyan-300/10 hover:text-white",
-                            active && "border border-cyan-300/45 bg-cyan-300/20 text-cyan-50 shadow-[0_0_18px_rgba(34,211,238,0.12)]"
+                            "flex h-8 items-center gap-3 rounded-md border border-transparent px-2 text-sm font-semibold text-slate-400 transition hover:border-cyan-300/20 hover:bg-cyan-300/10 hover:text-cyan-50",
+                            active && "border-cyan-300/35 bg-cyan-300/15 text-cyan-50 shadow-[inset_2px_0_0_rgba(103,232,249,0.9)]"
                           )}
                         >
-                          <ItemIcon className="h-4 w-4" />
+                          <ItemIcon className={cn("h-4 w-4 shrink-0", active ? "text-cyan-100" : "text-slate-500")} />
                           <span className="truncate">{item.label}</span>
                         </Link>
                       );

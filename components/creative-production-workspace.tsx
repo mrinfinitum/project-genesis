@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Bot,
   Building2,
@@ -400,6 +400,9 @@ function AreaDetail({ state, area, onBack }: { state: AssetProductionState; area
 export function CreativeProductionWorkspace({ state, initialArea }: { state: AssetProductionState; initialArea?: string | null }) {
   const normalizedInitial = initialArea && initialArea in areaById ? initialArea as Exclude<ProductionAreaId, "overview"> : null;
   const [activeArea, setActiveArea] = useState<ProductionAreaId>(normalizedInitial ?? "overview");
+  useEffect(() => {
+    setActiveArea(normalizedInitial ?? "overview");
+  }, [normalizedInitial]);
   const summaries = useMemo(() => productionAreas.map((area) => ({ area, summary: areaSummary(state, area) })), [state]);
   const allItems = summaries.flatMap((entry) => entry.summary.items);
   const uniqueItems = new Map(allItems.map((item) => [item.id, item]));

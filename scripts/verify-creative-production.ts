@@ -54,6 +54,8 @@ async function main() {
   assert(workspace.includes("Screen Shell") && workspace.includes("Branch Sidebar") && workspace.includes("Era Timeline"), "Research production groups must be present.");
   assert(workspace.includes("Labor") && workspace.includes("Premium Crystal") && workspace.includes("Civilization Identity"), "Top HUD production groups must be present.");
   assert(workspace.includes("Advanced / Systems Authoring"), "Creative Production must link to Advanced / Systems Authoring.");
+  assert(workspace.includes("useEffect(() =>"), "Creative Production workspace must sync active area from route changes.");
+  assert(workspace.includes("setActiveArea(normalizedInitial ?? \"overview\")"), "Creative Production workspace must update when the selected area query changes.");
 
   const creativeNav = section(appShell, 'id: "civilization"', 'id: "resources"');
   const advancedNav = section(appShell, 'id: "studio"', 'id: "universe"');
@@ -68,6 +70,10 @@ async function main() {
     assert(advancedNav.includes(`label: "${label}"`), `${label} must appear under Advanced / Systems Authoring.`);
   }
   assert(appShell.includes("function hrefPath"), "App shell must normalize query-string navigation paths.");
+  assert(appShell.includes("currentSearchParams"), "Creative Production nav must track query parameters so area links become active.");
+  assert(appShell.includes("window.location.search"), "Creative Production nav must sync query state from the current URL without forcing global CSR bailout.");
+  assert(appShell.includes("function hrefSearch"), "Creative Production nav must compare query-string route targets.");
+  assert(appShell.includes("isItemActive(item, pathname, currentSearchParams)"), "Creative Production nav items must use query-aware active state.");
 
   for (const route of ["app/research/page.tsx", "app/upgrades/page.tsx", "app/buildings/page.tsx", "app/unlock-matrix/page.tsx", "app/wonders/page.tsx", "app/districts/page.tsx"]) {
     assert(existsSync(path.join(process.cwd(), route)), `Old designer route must still exist: ${route}.`);
