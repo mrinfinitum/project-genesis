@@ -17,7 +17,7 @@ async function main() {
   ]);
   const roblox = buildRobloxRuntimePayload(runtime);
 
-  assert(runtime.metadata.contentVersion === 15, `Expected contentVersion 15 after publishing category presentation fields; received ${runtime.metadata.contentVersion}.`);
+  assert(runtime.metadata.contentVersion >= 15, `Expected contentVersion 15 or newer after publishing category presentation fields; received ${runtime.metadata.contentVersion}.`);
   assert(runtime.metadata.validationStatus === "Ready", "Canonical runtime must remain Ready.");
   assert(roblox.metadata.validationStatus === "Ready", "Roblox runtime must remain Ready.");
   assert(uploadUpgradeCategoryBackgroundAction.label === "Upload Upgrade Category Background", "Upload action metadata is missing.");

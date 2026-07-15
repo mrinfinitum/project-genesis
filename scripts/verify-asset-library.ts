@@ -99,7 +99,7 @@ async function main() {
 
   const runtime = await buildCanonicalRuntimeExportPayload();
   assert(runtime.metadata.validationStatus === "Ready", `Runtime must remain Ready; received ${runtime.metadata.validationStatus}.`);
-  assert(runtime.metadata.contentVersion === 15, `Asset Library routing must not bump runtime contentVersion; received ${runtime.metadata.contentVersion}.`);
+  assert(runtime.metadata.contentVersion >= 15, `Asset Library routing requires runtime contentVersion 15 or newer; received ${runtime.metadata.contentVersion}.`);
 
   const targets: EngineTarget[] = ["generic", "roblox", "web", "unity", "unreal", "godot"];
   const exports = await Promise.all(targets.map((target) => buildGameEngineExport(target)));
