@@ -70,6 +70,13 @@ async function main() {
   assert(workspace.includes("QuickAssetPreview"), "Creative Production cards must expose hover/focus quick previews.");
   assert(workspace.includes("resolveProductionClasses") && workspace.includes("resolveAssetClass"), "Creative Production must use shared canonical class resolvers.");
   assert(workspace.includes("Upload Asset"), "Missing cards must expose upload actions.");
+  assert(workspace.includes("Open Asset Library"), "Creative Production must link to Asset Library instead of an internal layout editor.");
+  assert(workspace.includes("Generate Game Handoff"), "Creative Production must generate client handoffs.");
+  assert(workspace.includes("Generate Roblox Handoff"), "Creative Production must generate Roblox handoffs.");
+  assert(workspace.includes("Generate Mobile Handoff"), "Creative Production must generate mobile handoffs.");
+  assert(!workspace.includes("Visual Builder"), "Creative Production must not expose Visual Builder as an active workflow.");
+  assert(!workspace.includes("visualBuilderHref"), "Creative Production must not retain active visual builder route wiring.");
+  assert(!workspace.includes("mode=visual-builder"), "Creative Production must not link to visual-builder mode.");
   assert(workspace.includes("Inspect asset"), "Published/linked cards must navigate directly to inspection through the card.");
   assert(!workspace.includes("Open Inspector"), "Creative Production must not show Open Inspector buttons.");
   assert(!workspace.includes("Open Requirement"), "Creative Production must not show Open Requirement buttons.");
@@ -90,7 +97,7 @@ async function main() {
   assert(!creativeNav.includes("Research Designer"), "Research Designer must not remain in primary Creative Production nav.");
   assert(!creativeNav.includes("Upgrade Designer"), "Upgrade Designer must not remain in primary Creative Production nav.");
   assert(!creativeNav.includes("Building Designer"), "Building Designer must not remain in primary Creative Production nav.");
-  for (const label of ["Civilization Design Studio", "Content Authoring", "Research Designer", "Unlock Matrix", "Upgrade Designer", "Building Designer", "Wonder Designer", "District Designer", "Economy Designer", "Architecture"]) {
+  for (const label of ["Civilization Design Studio", "Content Authoring", "Research Designer", "Unlock Matrix", "Upgrade Designer", "Building Designer", "Wonder Designer", "District Designer", "Economy Designer", "Architecture", "Deprecated Visual Builder Archive"]) {
     assert(advancedNav.includes(`label: "${label}"`), `${label} must appear under Advanced / Systems Authoring.`);
   }
   assert(appShell.includes("function hrefPath"), "App shell must normalize query-string navigation paths.");
@@ -104,6 +111,7 @@ async function main() {
   }
 
   assert(architecture.includes("ARCH-DECISION-CREATIVE-PRODUCTION-PRIMARY"), "Architecture decision for Creative Production must be recorded.");
+  assert(architecture.includes("ARCH-DECISION-CONTENT-ASSET-IDE"), "Architecture decision for Studio as canonical Content and Asset IDE must be recorded.");
   assert(architecture.includes("Creative Production Is the Primary Creative Workflow"), "Architecture decision title is missing.");
   assert(robloxArtRoute.includes("public\", \"assets\", \"roblox-art"), "Roblox art route must serve only the public Roblox art folder.");
   assert(robloxArtRoute.includes("path.relative"), "Roblox art route must guard against path traversal.");

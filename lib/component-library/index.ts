@@ -599,7 +599,7 @@ const researchMasterComponentRecords: ComponentDesignRecord[] = [
   baseRecord({
     componentId: "ResearchScreenShell",
     category: "Panels",
-    description: "4K Visual Screen Builder shell for the Research management screen with reference, background, HUD, navigation, workspace, timeline, modal, and overlay layers.",
+    description: "Research management screen contract with reference, background, HUD, navigation, workspace, timeline, modal, and overlay layer requirements.",
     dimensions: "3840x2160 master canvas with desktop_1080 derived at 0.5 scale.",
     assetKeys: [assetRef("Research background", "research_screen_background", "Pending Art")],
     dataInputs: [dataInput("screenLayout", "4K screen layout", "ScreenLayoutSpec", "Presentation Hint"), dataInput("canonicalHudSlots", "HUD slot order", "HudResourceSlot[]", "Presentation Hint")],

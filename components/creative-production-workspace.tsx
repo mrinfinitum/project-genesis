@@ -71,7 +71,6 @@ type ProductionArea = {
   categoryIds?: AssetLibraryCategoryId[];
   icon: LucideIcon;
   accent: string;
-  visualBuilderHref?: string;
   screenSpecHref?: string;
   advancedHref?: string;
   description: string;
@@ -92,9 +91,9 @@ const statusCredit: Record<InventoryStatus, number> = {
 };
 
 const productionAreas: ProductionArea[] = [
-  { id: "top-hud", label: "Top HUD", categoryIds: ["top-hud"], icon: MonitorCog, accent: "from-cyan-300/25 to-emerald-300/10", visualBuilderHref: "/screen-designer/noveris-app-shell", screenSpecHref: "/component-library/TopHudBar", description: "Panel background, fixed economy slots, identity frame, utility controls, and shell usage.", groups: ["Panel Background", "Civilization Identity", "Labor", "Credits", "Population", "Research", "Premium Crystal", "Calendar", "Trophy", "Settings"] },
-  { id: "left-navigation", label: "Left Navigation", categoryIds: ["left-navigation"], icon: MapIcon, accent: "from-sky-300/25 to-cyan-300/10", visualBuilderHref: "/screen-designer/noveris-app-shell", screenSpecHref: "/component-library/SideNavigationRail", description: "Navigation rail background, icons, active states, locked states, and route usage.", groups: ["Rail Background", "Navigation Icons", "Active State", "Locked State", "Collapse Control"] },
-  { id: "research", label: "Research", categoryIds: ["research-ui"], icon: Sparkles, accent: "from-violet-300/25 to-cyan-300/10", visualBuilderHref: "/screen-designer/research", screenSpecHref: "/screen-designer/research", advancedHref: "/research", description: "Research screen shell, branch sidebar, icons, tree background, nodes, states, buttons, and timeline.", groups: ["Screen Shell", "Branch Sidebar", "Branch Icons", "Tree Background", "Research Nodes", "Connection States", "Detail Panel", "Benefits", "Unlocks", "Requirements", "Buttons", "Era Timeline"] },
+  { id: "top-hud", label: "Top HUD", categoryIds: ["top-hud"], icon: MonitorCog, accent: "from-cyan-300/25 to-emerald-300/10", screenSpecHref: "/component-library/TopHudBar", description: "Panel background, fixed economy slots, identity frame, utility controls, and shell usage.", groups: ["Panel Background", "Civilization Identity", "Labor", "Credits", "Population", "Research", "Premium Crystal", "Calendar", "Trophy", "Settings"] },
+  { id: "left-navigation", label: "Left Navigation", categoryIds: ["left-navigation"], icon: MapIcon, accent: "from-sky-300/25 to-cyan-300/10", screenSpecHref: "/component-library/SideNavigationRail", description: "Navigation rail background, icons, active states, locked states, and route usage.", groups: ["Rail Background", "Navigation Icons", "Active State", "Locked State", "Collapse Control"] },
+  { id: "research", label: "Research", categoryIds: ["research-ui"], icon: Sparkles, accent: "from-violet-300/25 to-cyan-300/10", screenSpecHref: "/screen-designer/research", advancedHref: "/research", description: "Research screen shell, branch sidebar, icons, tree background, nodes, states, buttons, and timeline.", groups: ["Screen Shell", "Branch Sidebar", "Branch Icons", "Tree Background", "Research Nodes", "Connection States", "Detail Panel", "Benefits", "Unlocks", "Requirements", "Buttons", "Era Timeline"] },
   { id: "buildings", label: "Buildings", categoryIds: ["buildings-ui"], icon: Building2, accent: "from-amber-300/25 to-cyan-300/10", screenSpecHref: "/screen-designer/buildings", advancedHref: "/buildings", description: "Workspace background, category tabs, building cards, icons, cost rows, requirements, and construction states.", groups: ["Workspace Background", "Header", "Category Tabs", "Building Cards", "Building Icons", "Building Details", "Cost Rows", "Requirements", "Build Buttons", "Locked States"] },
   { id: "upgrades", label: "Upgrades", categoryIds: ["upgrade-categories"], icon: WandSparkles, accent: "from-fuchsia-300/25 to-cyan-300/10", screenSpecHref: "/screen-designer/upgrades", advancedHref: "/upgrades", description: "Upgrade icons, card states, category panels, shared fallback background, and dedicated category background workflow.", groups: ["Workforce Background", "Industry Background", "Science Background", "Technology Background", "Shared Fallback", "Cards", "Buttons", "Upgrade Icons"] },
   { id: "ai-agents", label: "AI Agents", categoryIds: ["ai-agents"], icon: Bot, accent: "from-emerald-300/25 to-cyan-300/10", advancedHref: "/ai-agents", description: "Agent heads, open eyes, blink, offline, working, thinking, warning, celebration, accessories, and personality badges.", groups: ["Agent", "Variant", "Open Eyes", "Blink", "Offline", "Working", "Thinking", "Warning", "Celebration", "Accessories", "Personality Badges"] },
@@ -226,6 +225,16 @@ function areaSummary(state: AssetProductionState, area: ProductionArea) {
     unmapped: items.filter((item) => item.status === "unmapped").length,
     blocker
   };
+}
+
+function screenSpecLabel(area: ProductionArea) {
+  if (area.screenSpecHref?.startsWith("/component-library")) return "Component Contract";
+  return "Screen Specification";
+}
+
+function handoffHref(area: ProductionArea, target: "game" | "roblox" | "mobile") {
+  const params = new URLSearchParams({ target, area: area.id });
+  return `/codex-handoffs?${params.toString()}`;
 }
 
 function uploadHref(item?: InventoryItem, area?: ProductionArea, productionClassId?: string, assetRole?: string) {
@@ -617,10 +626,12 @@ function AreaDetail({ state, studioData, area, initialClassId, onBack }: { state
         </div>
         <div className="mt-4 flex flex-wrap gap-2">
           <Link href={uploadHref(undefined, area, selectedClassId, selectedRole)} className="inline-flex h-10 items-center gap-2 rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100"><UploadCloud className="h-4 w-4" />Upload Asset</Link>
-          <Link href={`/asset-library?section=${encodeURIComponent(area.categoryIds?.[0] ?? "missing")}`} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Asset Library</Link>
-          {area.visualBuilderHref ? <Link href={area.visualBuilderHref} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Visual Builder</Link> : null}
-          {area.screenSpecHref ? <Link href={area.screenSpecHref} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Screen Specification</Link> : null}
+          <Link href={`/asset-library?section=${encodeURIComponent(area.categoryIds?.[0] ?? "missing")}`} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Open Asset Library</Link>
+          {area.screenSpecHref ? <Link href={area.screenSpecHref} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Open {screenSpecLabel(area)}</Link> : null}
           {area.advancedHref ? <Link href={area.advancedHref} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Advanced Designer</Link> : null}
+          <Link href={handoffHref(area, "game")} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Generate Game Handoff</Link>
+          <Link href={handoffHref(area, "roblox")} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Generate Roblox Handoff</Link>
+          <Link href={handoffHref(area, "mobile")} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Generate Mobile Handoff</Link>
         </div>
       </WorkspacePanel>
       {area.id === "upgrades" ? <UpgradeCategoryStatus state={state} /> : null}
@@ -675,7 +686,7 @@ function AreaDetail({ state, studioData, area, initialClassId, onBack }: { state
           <div className="mt-4 flex flex-wrap gap-2">
             <Link href="/asset-library?section=missing" className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Generate Requirements from Screens and Components</Link>
             <Link href={uploadHref(undefined, area, selectedClassId, selectedRole)} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Upload Asset</Link>
-            {area.visualBuilderHref ? <Link href={area.visualBuilderHref} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Visual Builder</Link> : null}
+            {area.screenSpecHref ? <Link href={area.screenSpecHref} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Open {screenSpecLabel(area)}</Link> : null}
           </div>
         </WorkspacePanel>
       )}

@@ -43,6 +43,10 @@ async function main() {
   assert(state.currentSaveVersion.length > 0, "Architecture must document current save version.");
   assert(state.sections.length >= architectureSectionIds.length, "Architecture is missing required sections.");
   assert(state.decisions.length >= 8, "Architecture decision log is too thin.");
+  assert(state.decisions.some((decision) => decision.id === "ARCH-DECISION-CONTENT-ASSET-IDE" && decision.status === "Accepted"), "Architecture must include the accepted Content and Asset IDE decision.");
+  assert(state.sections.some((section) => section.id === "studio" && section.content.join(" ").includes("Exact screen layout") && section.content.join(" ").includes("client repositories")), "Studio section must define Studio/client ownership boundaries.");
+  assert(state.sections.some((section) => section.id === "screen-standards" && section.summary.includes("not an internal pixel-layout editor")), "Screen standards must reject active pixel-layout editor ownership.");
+  assert(!state.sections.find((section) => section.id === "ui-standards")?.content.join(" ").includes("absolute coordinate manifests"), "UI standards must not require Studio-authored coordinate manifests.");
   assert(state.recentDecisions.length > 0, "Architecture must expose recent decisions.");
   assert(state.outstandingDecisions.some((decision) => decision.id === "ARCH-DECISION-CLIENT-RESPONSIBILITIES"), "Architecture must track outstanding client responsibility documentation.");
   for (const id of architectureSectionIds) {

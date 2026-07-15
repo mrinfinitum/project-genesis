@@ -24,7 +24,7 @@ export default async function BuildingsPage() {
           <WorkspaceStatTile label="Mapped Records" value={classifications.length} />
         </div>
         <p className="mt-4 max-w-5xl text-sm leading-6 text-slate-300">
-          {"Building Designer now resolves content through the canonical Family -> Subcategory -> Building hierarchy before the direct-edit layer. Legacy categories are preserved for ID/save compatibility, while production, Visual Builder, Asset Library, Screen Designer, and runtime exports consume the expanded taxonomy and draft building library."}
+          {"Building Designer now resolves content through the canonical Family -> Subcategory -> Building hierarchy before the direct-edit layer. Legacy categories are preserved for ID/save compatibility, while production, Asset Library, Screen Specifications, and runtime exports consume the expanded taxonomy and draft building library."}
         </p>
         <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           {categoryRows.map((family) => (

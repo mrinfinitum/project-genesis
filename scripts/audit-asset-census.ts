@@ -10,7 +10,7 @@ import { getScreenDesignerState } from "@/lib/screen-designer";
 
 type SourceKind =
   | "Asset Registry"
-  | "Visual Builder"
+  | "Screen Specifications"
   | "Screen Designer"
   | "Component Library"
   | "App Shell"
@@ -351,7 +351,7 @@ async function main() {
       });
     }
     for (const component of screen.componentSpecs) {
-      const source: SourceKind = component.componentLibraryId?.toLowerCase().includes("nav") ? "Left Navigation" : component.componentLibraryId?.toLowerCase().includes("hud") ? "Top HUD" : "Visual Builder";
+      const source: SourceKind = component.componentLibraryId?.toLowerCase().includes("nav") ? "Left Navigation" : component.componentLibraryId?.toLowerCase().includes("hud") ? "Top HUD" : "Screen Specifications";
       for (const key of component.assetKeys ?? []) {
         addRecord(census, {
           semanticKey: key,

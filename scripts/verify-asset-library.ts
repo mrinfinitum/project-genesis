@@ -83,8 +83,9 @@ async function main() {
     "compactSizeLabel",
     "Source Pending",
     "generated category preview",
-    "Open in Visual Builder",
-    "Open in Screen Specification",
+    "Open Screen Specification",
+    "Generate Game Handoff",
+    "Generate Roblox Handoff",
     "Generate Derivatives"
   ]) {
     assertIncludes("Asset Library workspace", assetWorkspace, expected);
@@ -165,7 +166,7 @@ async function main() {
   assert(state.assetLibraryInventory.items.some((item) => item.status === "published"), "Published assets must appear in the Asset Library inventory.");
   assert(state.assetLibraryInventory.items.some((item) => item.status === "missing"), "Missing requirements must appear in the Asset Library inventory.");
   assert(unmapped.total === state.assetLibraryInventory.unmappedAssets.length, "Unmapped queue must be visible and internally consistent.");
-  assert(state.assetLibraryInventory.items.some((item) => item.sourceType === "visual_builder_placeholder" && item.referencedByPlaceholders.length > 0), "Visual Builder placeholder links must resolve into Asset Library.");
+  assert(state.assetLibraryInventory.items.some((item) => item.sourceType === "visual_builder_placeholder" && item.referencedByPlaceholders.length > 0), "Historical builder-derived placeholder links must be migrated into Asset Library requirements.");
   assert(state.assetLibraryInventory.items.some((item) => item.referencedByComponents.length > 0), "Component Library usage links must resolve into Asset Library.");
   assert(state.assetLibraryInventory.items.some((item) => item.requirementId && item.actions.includes("Upload Asset")), "Requirement cards must expose upload actions.");
 

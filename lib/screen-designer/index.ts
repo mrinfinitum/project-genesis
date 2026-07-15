@@ -412,7 +412,7 @@ function designedStates(labels: string[], required = true): ScreenStateSpec[] {
     label,
     required,
     designed: true,
-    notes: "Master layout state placeholder is represented in the Visual Screen Builder draft."
+    notes: "Historical layout reference is preserved in the Screen Specification archive."
   }));
 }
 
@@ -544,7 +544,7 @@ function researchComponent(input: {
     componentLibraryId: input.componentLibraryId,
     variant: "master-placeholder",
     state: "Default",
-    layoutOverride: "Authored in 4K Visual Screen Builder coordinates. Desktop 1080 manifest is generated at 0.5 scale.",
+    layoutOverride: "Historical 4K reference metadata is preserved. Client implementations own exact layout geometry.",
     assetOverride: "Pending Upload",
     dataBindings: input.dataInputs ?? commonData,
     screenSpecificNotes: input.notes ?? "Placeholder geometry only. Final art is replaceable without changing authored bounds, bindings, states, or interactions.",
@@ -1228,7 +1228,7 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
     ...baseRecord({
       screenId: "research",
       displayName: "Research",
-      description: "Research management master screen draft in the Visual Screen Builder. Uses a locked reference overlay and structured 4K placeholders for the branch list, research tree, selected-node detail panel, and era timeline.",
+      description: "Research management screen specification. Preserves reference context and structured implementation requirements for the branch list, research tree, selected-node detail panel, and era timeline.",
       status: "Draft",
       assignedTo: "UX Design",
       layoutMode: "hud_overlay",
@@ -1802,6 +1802,8 @@ export function screenHandoffText(record: ScreenDesignRecord, target: "Game Code
     `Approval: ${record.approvalStatus}`,
     `Reference viewport: ${record.referenceViewport}`,
     `Supported viewports: ${record.supportedViewports.join(", ")}`,
+    "Studio ownership: canonical data requirements, asset keys, component contracts, states, interactions, accessibility, and acceptance criteria.",
+    "Client ownership: exact coordinates, CSS/layout, responsive composition, rendering, and animation placement.",
     "",
     "Layout:",
     `- ${record.layoutSpec.designWidth}x${record.layoutSpec.designHeight}`,

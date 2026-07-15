@@ -98,7 +98,8 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/wonders", label: "Wonder Designer", icon: Sparkles },
       { href: "/districts", label: "District Designer", icon: Network },
       { href: "/economy-designer", label: "Economy Designer", icon: BadgeDollarSign },
-      { href: "/architecture", label: "Architecture", icon: FileText }
+      { href: "/architecture", label: "Architecture", icon: FileText },
+      { href: "/advanced/deprecated/visual-builder", label: "Deprecated Visual Builder Archive", icon: Archive }
     ]
   },
   {
@@ -185,7 +186,7 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/prompt-library", label: "Prompt Library", icon: ScrollText },
       { href: "/ai-agents", label: "AI Agents", icon: Bot },
       { href: "/encyclopedia", label: "Civilization Encyclopedia", icon: BookOpen },
-      { href: "/screen-designer", label: "Screen Designer", icon: MonitorCog },
+      { href: "/screen-designer", label: "Screen Specifications", icon: MonitorCog },
       { href: "/component-library", label: "Component Library", icon: PackageCheck },
       { href: "/asset-library", label: "Asset Library", icon: PackageCheck },
       { href: "/conceptual-art", label: "Concept Art", icon: Palette }

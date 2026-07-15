@@ -607,8 +607,9 @@ function UpgradeCategoryAssetCard({ record, localPreview, onUploaded, settings }
             <Button type="button" disabled={Boolean(busy)} onClick={() => runAction("Approve", { action: "review.approve", assetId, reviewer: "studio", notes: `Approved ${record.displayName} category background.` })}><CheckCircle2 className="h-4 w-4" /> Approve</Button>
             <Button type="button" disabled={Boolean(busy)} onClick={approveAndPublish}><PackageCheck className="h-4 w-4" /> Publish</Button>
             <Link href={`/assets/${encodeURIComponent(record.assetId ?? assetId)}?tab=history`} className="inline-flex h-9 items-center gap-2 rounded-md border border-cyan-400/25 bg-cyan-400/10 px-3 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/60 hover:bg-cyan-400/20"><History className="h-4 w-4" /> History</Link>
-            <Link href={`/screen-designer/upgrades?category=${record.categoryId}&mode=visual-builder`} aria-label="Open in Visual Builder" title="Open in Visual Builder" className="inline-flex h-9 items-center gap-2 rounded-md border border-cyan-400/25 bg-cyan-400/10 px-3 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/60 hover:bg-cyan-400/20">Visual Builder</Link>
-            <Link href="/screen-designer/upgrades" aria-label="Open in Screen Specification" title="Open in Screen Specification" className="inline-flex h-9 items-center gap-2 rounded-md border border-cyan-400/25 bg-cyan-400/10 px-3 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/60 hover:bg-cyan-400/20">Spec</Link>
+            <Link href={`/screen-designer/upgrades?category=${record.categoryId}`} aria-label="Open Screen Specification" title="Open Screen Specification" className="inline-flex h-9 items-center gap-2 rounded-md border border-cyan-400/25 bg-cyan-400/10 px-3 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/60 hover:bg-cyan-400/20">Screen Spec</Link>
+            <Link href={`/codex-handoffs?target=game&area=upgrades&category=${record.categoryId}`} aria-label="Generate Game Handoff" title="Generate Game Handoff" className="inline-flex h-9 items-center gap-2 rounded-md border border-cyan-400/25 bg-cyan-400/10 px-3 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/60 hover:bg-cyan-400/20">Game Handoff</Link>
+            <Link href={`/codex-handoffs?target=roblox&area=upgrades&category=${record.categoryId}`} aria-label="Generate Roblox Handoff" title="Generate Roblox Handoff" className="inline-flex h-9 items-center gap-2 rounded-md border border-cyan-400/25 bg-cyan-400/10 px-3 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/60 hover:bg-cyan-400/20">Roblox Handoff</Link>
           </div>
           {busy ? <p className="mt-3 text-sm font-semibold text-cyan-100">{busy}...</p> : null}
           {error ? <p className="mt-3 text-sm font-semibold text-rose-100">{error}</p> : null}
@@ -648,7 +649,7 @@ function UpgradeCategoriesWorkspace({ state }: { state: AssetProductionState }) 
           <WorkspaceStatTile label="Required Master" value={`${upgradeCategoryBackgroundDimensions.masterWidth}x${upgradeCategoryBackgroundDimensions.masterHeight}`} />
         </div>
         <p className="mt-4 text-sm leading-6 text-slate-300">
-          Designers can upload source backgrounds directly here. The Studio keeps the source private, queues the six runtime-ready derivative families, and publishes stable semantic keys for clients and the Visual Builder.
+          Designers can upload source backgrounds directly here. The Studio keeps the source private, queues the six runtime-ready derivative families, and publishes stable semantic keys for clients and screen specifications.
         </p>
       </WorkspacePanel>
       <CreativeBrowserControls query={query} onQueryChange={setQuery} settings={settings} onSettingsChange={setSettings} resultCount={visible.length} totalCount={state.upgradeCategoryAssets.length} placeholder="Search upgrade category assets" />
@@ -1408,8 +1409,8 @@ function CreativeContentHeader({
           <WorkspaceProgressBar value={completion} className="mt-2" />
           <div className="mt-4 flex flex-wrap gap-2">
             <Link href={uploadHref} className="inline-flex h-10 items-center gap-2 rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100"><UploadCloud className="h-4 w-4" /> Upload Asset</Link>
-            <Link href={`${screenHref}?mode=visual-builder`} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Open Visual Builder</Link>
-            <Link href={screenHref} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Open Screen</Link>
+            <Link href={screenHref} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Open Screen Specification</Link>
+            <Link href={`/codex-handoffs?target=game&category=${encodeURIComponent(categoryId)}`} className="inline-flex h-10 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Generate Game Handoff</Link>
           </div>
         </div>
         <div className="grid gap-2 sm:grid-cols-2">
