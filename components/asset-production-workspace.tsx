@@ -2,14 +2,36 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Archive, CheckCircle2, FileImage, GitBranch, History, ImageIcon, Layers3, PackageCheck, ShieldCheck, Timer, TriangleAlert, UploadCloud } from "lucide-react";
+import { Archive, Boxes, CheckCircle2, ChevronDown, FileImage, GitBranch, History, ImageIcon, Layers3, PackageCheck, ShieldCheck, Sparkles, Timer, TriangleAlert, Upload, UploadCloud } from "lucide-react";
 import { AssetPreview } from "@/components/asset-preview";
 import { Button } from "@/components/ui/button";
 import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, WorkspaceProgressBar, WorkspaceStatTile } from "@/components/ui/workspace";
 import { resolveMissingRequirementPreview, resolveProductionAssetPreview, sanitizePreviewUrl } from "@/lib/assets/visual-previews";
 import type { AssetProductionState, ProductionAsset } from "@/lib/assets/asset-production";
+import { upgradeCategoryBackgroundDerivativePresetIds, upgradeCategoryBackgroundDimensions } from "@/lib/upgrades/category-presentation";
 
 export type AssetProductionView = "dashboard" | "source" | "generated" | "published" | "missing" | "processing" | "import-history";
+type DamNodeId = AssetProductionView
+  | "top-hud"
+  | "left-navigation"
+  | "upgrade-categories"
+  | "research-ui"
+  | "buildings-ui"
+  | "galaxy-ui"
+  | "planet-ui"
+  | "settings-ui"
+  | "login-ui"
+  | "loading-ui"
+  | "ai-agents"
+  | "icons"
+  | "backgrounds"
+  | "illustrations"
+  | "animations"
+  | "audio"
+  | "video";
+
+type UpgradeCategoryAssetStatus = AssetProductionState["upgradeCategoryAssets"][number];
+type LocalUploadPreview = { url: string; sizeLabel: string; fileName: string };
 
 const viewMeta: Record<AssetProductionView, { eyebrow: string; title: string; description: string }> = {
   dashboard: {
@@ -79,7 +101,7 @@ function platformCount(asset: ProductionAsset) {
   return Object.keys(asset.platformMappings ?? {}).length;
 }
 
-async function postProductionAction(body: Record<string, unknown>) {
+async function postProductionAction(body: Record<string, unknown>, options: { reload?: boolean } = {}) {
   const response = await fetch("/api/assets/production/action", {
     method: "POST",
     headers: { "content-type": "application/json" },
@@ -87,7 +109,8 @@ async function postProductionAction(body: Record<string, unknown>) {
   });
   const result = await response.json();
   if (!response.ok) throw new Error(result.error ?? "Production action failed.");
-  window.location.reload();
+  if (options.reload ?? true) window.location.reload();
+  return result;
 }
 
 function ActionButton({ children, body }: { children: React.ReactNode; body: Record<string, unknown> }) {
@@ -107,6 +130,402 @@ function ActionButton({ children, body }: { children: React.ReactNode; body: Rec
     >
       {children}
     </Button>
+  );
+}
+
+const damTree: Array<{ id: DamNodeId; label: string; children?: Array<{ id: DamNodeId; label: string }> }> = [
+  { id: "dashboard", label: "Dashboard" },
+  {
+    id: "top-hud",
+    label: "UI",
+    children: [
+      { id: "top-hud", label: "Top HUD" },
+      { id: "left-navigation", label: "Left Navigation" },
+      { id: "upgrade-categories", label: "Upgrade Categories" },
+      { id: "research-ui", label: "Research" },
+      { id: "buildings-ui", label: "Buildings" },
+      { id: "galaxy-ui", label: "Galaxy" },
+      { id: "planet-ui", label: "Planet" },
+      { id: "settings-ui", label: "Settings" },
+      { id: "login-ui", label: "Login" },
+      { id: "loading-ui", label: "Loading" }
+    ]
+  },
+  { id: "ai-agents", label: "AI Agents" },
+  { id: "icons", label: "Icons" },
+  { id: "backgrounds", label: "Backgrounds" },
+  { id: "illustrations", label: "Illustrations" },
+  { id: "animations", label: "Animations" },
+  { id: "audio", label: "Audio" },
+  { id: "video", label: "Video" },
+  {
+    id: "source",
+    label: "Pipeline Views",
+    children: [
+      { id: "source", label: "Source Art" },
+      { id: "generated", label: "Generated" },
+      { id: "published", label: "Published" },
+      { id: "missing", label: "Missing Assets" },
+      { id: "processing", label: "Processing Queue" },
+      { id: "import-history", label: "Import History" }
+    ]
+  }
+];
+
+const implementedNodeLabels: Record<DamNodeId, string> = {
+  dashboard: "Dashboard",
+  source: "Source Art",
+  generated: "Generated Assets",
+  published: "Published Assets",
+  missing: "Missing Assets",
+  processing: "Processing Queue",
+  "import-history": "Import History",
+  "top-hud": "Top HUD",
+  "left-navigation": "Left Navigation",
+  "upgrade-categories": "Upgrade Categories",
+  "research-ui": "Research UI",
+  "buildings-ui": "Buildings UI",
+  "galaxy-ui": "Galaxy UI",
+  "planet-ui": "Planet UI",
+  "settings-ui": "Settings UI",
+  "login-ui": "Login UI",
+  "loading-ui": "Loading UI",
+  "ai-agents": "AI Agents",
+  icons: "Icons",
+  backgrounds: "Backgrounds",
+  illustrations: "Illustrations",
+  animations: "Animations",
+  audio: "Audio",
+  video: "Video"
+};
+
+function isAssetProductionView(node: DamNodeId): node is AssetProductionView {
+  return ["dashboard", "source", "generated", "published", "missing", "processing", "import-history"].includes(node);
+}
+
+function treeItemClass(active: boolean) {
+  return `flex w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-left text-sm font-bold transition ${active ? "border border-cyan-300/30 bg-cyan-300/15 text-white" : "text-slate-400 hover:bg-cyan-300/10 hover:text-slate-100"}`;
+}
+
+function AssetProductionTree({ active, onSelect }: { active: DamNodeId; onSelect: (node: DamNodeId) => void }) {
+  return (
+    <aside className="rounded-md border border-cyan-300/15 bg-[#07101e]/90 p-3 shadow-glow">
+      <div className="flex items-center gap-2 px-2 py-2">
+        <Boxes className="h-4 w-4 text-cyan-200" />
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.22em] text-cyan-200">Asset Production</p>
+          <p className="text-xs text-slate-500">Visual DAM workspace</p>
+        </div>
+      </div>
+      <div className="mt-3 space-y-1">
+        {damTree.map((item) => (
+          <div key={item.id}>
+            <button type="button" onClick={() => onSelect(item.id)} className={treeItemClass(active === item.id || Boolean(item.children?.some((child) => child.id === active)))}>
+              <span>{item.label}</span>
+              {item.children?.length ? <ChevronDown className="h-4 w-4" /> : null}
+            </button>
+            {item.children?.length ? (
+              <div className="ml-3 mt-1 border-l border-cyan-300/10 pl-2">
+                {item.children.map((child) => (
+                  <button key={child.id} type="button" onClick={() => onSelect(child.id)} className={treeItemClass(active === child.id)}>
+                    <span>{child.label}</span>
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
+        ))}
+      </div>
+    </aside>
+  );
+}
+
+function readBrowserImageSize(file: File) {
+  if (!file.type.startsWith("image/") || file.type.includes("tiff")) return Promise.resolve(null);
+  return new Promise<{ width: number; height: number } | null>((resolve) => {
+    const url = URL.createObjectURL(file);
+    const image = new Image();
+    image.onload = () => {
+      resolve({ width: image.naturalWidth, height: image.naturalHeight });
+      URL.revokeObjectURL(url);
+    };
+    image.onerror = () => {
+      resolve(null);
+      URL.revokeObjectURL(url);
+    };
+    image.src = url;
+  });
+}
+
+function sizeLabel(size?: { width: number; height: number } | null) {
+  return size ? `${size.width}x${size.height}` : "Pending inspection";
+}
+
+function statusLabel(record: UpgradeCategoryAssetStatus) {
+  if (record.status === "published") return "Published";
+  if (record.approvalStatus === "approved") return "Approved";
+  if (record.sourceFile) return "Needs Review";
+  return "Missing";
+}
+
+function semanticAssetKey(record: UpgradeCategoryAssetStatus) {
+  return record.semanticAssetKey;
+}
+
+function UpgradeCategoryUploadForm({
+  record,
+  onUploaded
+}: {
+  record: UpgradeCategoryAssetStatus;
+  onUploaded: (categoryId: string, preview: LocalUploadPreview) => void;
+}) {
+  const [file, setFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [currentSize, setCurrentSize] = useState<string>("No file selected");
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<string>("");
+
+  return (
+    <form
+      onSubmit={async (event) => {
+        event.preventDefault();
+        if (!file) {
+          setMessage("Choose a PNG, PSD, PSB, TIFF, or SVG source first.");
+          return;
+        }
+        setBusy(true);
+        setMessage("");
+        const formData = new FormData();
+        formData.set("categoryId", record.categoryId);
+        formData.set("file", file);
+        formData.set("sourceVersion", String(record.sourceFile ? Number(record.sourceFile.version) + 1 : 1));
+        formData.set("approvalState", "Needs Review");
+        formData.set("notes", `Designer upload from Asset Production DAM for ${record.displayName}.`);
+        try {
+          const response = await fetch("/api/assets/upgrade-category-background", { method: "POST", body: formData });
+          const result = await response.json();
+          if (!response.ok) throw new Error(result.error ?? "Upload failed.");
+          if (previewUrl) onUploaded(record.categoryId, { url: previewUrl, sizeLabel: currentSize, fileName: file.name });
+          setMessage(`Uploaded ${file.name}. Preview is available now; reload will show the persisted Studio record.`);
+        } catch (error) {
+          setMessage(error instanceof Error ? error.message : "Upload failed.");
+        } finally {
+          setBusy(false);
+        }
+      }}
+      className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3"
+    >
+      <label className="flex cursor-pointer flex-col rounded-md border border-dashed border-cyan-300/30 bg-cyan-300/5 p-3 transition hover:border-cyan-300/60 hover:bg-cyan-300/10">
+        <span className="flex items-center gap-2 text-sm font-black text-cyan-100"><Upload className="h-4 w-4" /> Upload Background</span>
+        <span className="mt-1 text-xs leading-5 text-slate-400">PNG, PSD, PSB, TIFF, or SVG. Master target {upgradeCategoryBackgroundDimensions.masterWidth}x{upgradeCategoryBackgroundDimensions.masterHeight}.</span>
+        <input
+          type="file"
+          accept=".png,.psd,.psb,.tiff,.tif,.svg,image/png,image/svg+xml,image/tiff"
+          className="sr-only"
+          onChange={async (event) => {
+            const nextFile = event.currentTarget.files?.[0] ?? null;
+            setFile(nextFile);
+            setMessage("");
+            if (!nextFile) {
+              setPreviewUrl(null);
+              setCurrentSize("No file selected");
+              return;
+            }
+            const ext = nextFile.name.split(".").pop()?.toUpperCase() ?? "SOURCE";
+            const canPreview = nextFile.type.startsWith("image/") && !nextFile.type.includes("tiff") && !["PSD", "PSB"].includes(ext);
+            if (canPreview) {
+              const url = URL.createObjectURL(nextFile);
+              setPreviewUrl(url);
+            } else {
+              setPreviewUrl(null);
+            }
+            const imageSize = await readBrowserImageSize(nextFile);
+            setCurrentSize(sizeLabel(imageSize));
+          }}
+        />
+      </label>
+      <div className="mt-3 grid gap-2 sm:grid-cols-2">
+        <WorkspaceMiniStat label="Required Size" value={`${record.expectedDimensions.masterWidth}x${record.expectedDimensions.masterHeight}`} />
+        <WorkspaceMiniStat label="Current Size" value={currentSize} />
+        <WorkspaceMiniStat label="Status" value={file ? "Ready to upload" : "Waiting"} />
+        <WorkspaceMiniStat label="Transparency" value={record.transparencyRequired ? "Required" : "Optional"} />
+      </div>
+      {previewUrl ? (
+        <div className="mt-3 overflow-hidden rounded-md border border-cyan-300/15 bg-black/30">
+          <img src={previewUrl} alt={`${record.displayName} uploaded preview`} className="h-36 w-full object-cover" />
+        </div>
+      ) : null}
+      <div className="mt-3 flex flex-wrap gap-2">
+        <Button type="submit" disabled={busy || !file}>{busy ? "Uploading..." : record.sourceFile ? "Replace Asset" : "Upload Asset"}</Button>
+      </div>
+      {message ? <p className="mt-3 text-sm leading-6 text-cyan-100">{message}</p> : null}
+    </form>
+  );
+}
+
+function UpgradeCategoryAssetCard({ record, localPreview, onUploaded }: { record: UpgradeCategoryAssetStatus; localPreview?: LocalUploadPreview; onUploaded: (categoryId: string, preview: LocalUploadPreview) => void }) {
+  const [busy, setBusy] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const previewUrl = localPreview?.url ?? sanitizePreviewUrl(record.currentBackgroundPreview);
+  const displayedSize = localPreview?.sizeLabel ?? sizeLabel(record.dimensions);
+  const assetId = semanticAssetKey(record);
+
+  async function runAction(label: string, body: Record<string, unknown>) {
+    setBusy(label);
+    setError("");
+    try {
+      await postProductionAction(body);
+    } catch (actionError) {
+      setError(actionError instanceof Error ? actionError.message : "Action failed.");
+      setBusy("");
+    }
+  }
+
+  async function generateDerivatives() {
+    setBusy("Generate Derivatives");
+    setError("");
+    try {
+      for (const presetId of upgradeCategoryBackgroundDerivativePresetIds) {
+        await postProductionAction({ action: "derivative.generate", assetId, presetId, notes: `Queued ${record.displayName} upgrade background derivative.` }, { reload: false });
+      }
+      window.location.reload();
+    } catch (actionError) {
+      setError(actionError instanceof Error ? actionError.message : "Derivative queue failed.");
+      setBusy("");
+    }
+  }
+
+  async function approveAndPublish() {
+    setBusy("Approve + Publish");
+    setError("");
+    try {
+      await postProductionAction({ action: "review.approve", assetId, reviewer: "studio", notes: `Approved semantic key ${assetId}.` }, { reload: false });
+      await postProductionAction({
+        action: "review.publish",
+        assetId,
+        reviewer: "studio",
+        adminOverride: true,
+        payload: { publicationTargets: ["web", "roblox", "ios", "android"] },
+        notes: `Published semantic upgrade category background key ${assetId}.`
+      });
+    } catch (actionError) {
+      setError(actionError instanceof Error ? actionError.message : "Publish failed.");
+      setBusy("");
+    }
+  }
+
+  return (
+    <article className="rounded-md border border-cyan-300/15 bg-[#07101e]/90 p-4 shadow-glow">
+      <div className="grid gap-4 xl:grid-cols-[minmax(16rem,1fr)_20rem]">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-200">Upgrade Workspace</p>
+              <h3 className="mt-1 text-2xl font-black text-white">{record.displayName}</h3>
+              <p className="mt-1 break-all text-sm text-cyan-100">{assetId}</p>
+            </div>
+            <WorkspaceBadge value={statusLabel(record)} />
+          </div>
+          <div className="mt-4 overflow-hidden rounded-md border border-cyan-300/15 bg-slate-950/70">
+            <div className="relative aspect-[16/9] bg-[radial-gradient(circle_at_35%_20%,rgba(103,232,249,0.22),transparent_26%),linear-gradient(135deg,rgba(8,14,28,0.95),rgba(2,6,23,0.98))]">
+              {previewUrl ? <img src={previewUrl} alt={`${record.displayName} upgrade category background preview`} className="absolute inset-0 h-full w-full object-cover" /> : null}
+              <div className="absolute inset-[7%] border border-cyan-200/30" />
+              <div className="absolute left-[6%] top-[7%] h-[10%] w-[38%] border border-emerald-200/35 bg-emerald-300/5" />
+              <div className="absolute left-[7%] top-[23%] h-px w-[82%] bg-cyan-200/35" />
+              {!previewUrl ? (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-center">
+                  <ImageIcon className="h-10 w-10 text-slate-600" />
+                  <p className="text-lg font-black text-white">Missing Preview</p>
+                  <p className="max-w-xs text-sm leading-6 text-slate-400">Upload a source background to preview the real Upgrade Workspace panel.</p>
+                </div>
+              ) : null}
+            </div>
+          </div>
+          <div className="mt-4 grid gap-2 sm:grid-cols-3">
+            <WorkspaceMiniStat label="Required Size" value={`${record.expectedDimensions.masterWidth}x${record.expectedDimensions.masterHeight}`} />
+            <WorkspaceMiniStat label="Current Size" value={displayedSize} />
+            <WorkspaceMiniStat label="Geometry" value={record.geometryConsistent ? "Matches" : localPreview ? "Check on save" : "Pending"} />
+            <WorkspaceMiniStat label="Web" value={record.webReady ? "Ready" : "Missing"} />
+            <WorkspaceMiniStat label="Roblox" value={record.robloxReady ? "Ready" : "Missing"} />
+            <WorkspaceMiniStat label="Derivatives" value={`${record.derivativeRequirements.length - record.missingDerivativeWarnings.length}/${record.derivativeRequirements.length}`} />
+          </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Button type="button" disabled={Boolean(busy)} onClick={generateDerivatives}><Sparkles className="h-4 w-4" /> Generate Derivatives</Button>
+            <Button type="button" disabled={Boolean(busy)} onClick={() => runAction("Approve", { action: "review.approve", assetId, reviewer: "studio", notes: `Approved ${record.displayName} category background.` })}><CheckCircle2 className="h-4 w-4" /> Approve</Button>
+            <Button type="button" disabled={Boolean(busy)} onClick={approveAndPublish}><PackageCheck className="h-4 w-4" /> Approve + Publish Key</Button>
+            <Link href={`/assets/${encodeURIComponent(record.assetId ?? assetId)}?tab=history`} className="inline-flex h-9 items-center gap-2 rounded-md border border-cyan-400/25 bg-cyan-400/10 px-3 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/60 hover:bg-cyan-400/20"><History className="h-4 w-4" /> History</Link>
+            <Link href={`/screen-designer/upgrades?category=${record.categoryId}&mode=visual-builder`} className="inline-flex h-9 items-center gap-2 rounded-md border border-cyan-400/25 bg-cyan-400/10 px-3 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/60 hover:bg-cyan-400/20">Open in Visual Builder</Link>
+            <Link href="/screen-designer/upgrades" className="inline-flex h-9 items-center gap-2 rounded-md border border-cyan-400/25 bg-cyan-400/10 px-3 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/60 hover:bg-cyan-400/20">Open in Screen Specification</Link>
+          </div>
+          {busy ? <p className="mt-3 text-sm font-semibold text-cyan-100">{busy}...</p> : null}
+          {error ? <p className="mt-3 text-sm font-semibold text-rose-100">{error}</p> : null}
+          {record.sourceFile ? <p className="mt-3 text-sm leading-6 text-slate-400">Source: {record.sourceFile.filename} / v{record.sourceFile.version} / {record.sourceFile.format}</p> : null}
+        </div>
+        <UpgradeCategoryUploadForm record={record} onUploaded={onUploaded} />
+      </div>
+    </article>
+  );
+}
+
+function UpgradeCategoriesWorkspace({ state }: { state: AssetProductionState }) {
+  const [localPreviews, setLocalPreviews] = useState<Record<string, LocalUploadPreview>>({});
+  const missing = state.upgradeCategoryAssets.filter((record) => !record.sourceFile).length;
+  const approved = state.upgradeCategoryAssets.filter((record) => record.approvalStatus === "approved" || record.status === "published").length;
+
+  return (
+    <div className="space-y-5">
+      <WorkspacePanel title="Upgrade Category Backgrounds" icon={Layers3}>
+        <div className="grid gap-3 md:grid-cols-4">
+          <WorkspaceStatTile label="Categories" value={state.upgradeCategoryAssets.length} />
+          <WorkspaceStatTile label="Missing" value={missing} />
+          <WorkspaceStatTile label="Approved" value={approved} />
+          <WorkspaceStatTile label="Required Master" value={`${upgradeCategoryBackgroundDimensions.masterWidth}x${upgradeCategoryBackgroundDimensions.masterHeight}`} />
+        </div>
+        <p className="mt-4 text-sm leading-6 text-slate-300">
+          Designers can upload source backgrounds directly here. The Studio keeps the source private, queues the six runtime-ready derivative families, and publishes stable semantic keys for clients and the Visual Builder.
+        </p>
+      </WorkspacePanel>
+      <div className="grid gap-5">
+        {state.upgradeCategoryAssets.map((record) => (
+          <UpgradeCategoryAssetCard
+            key={record.categoryId}
+            record={record}
+            localPreview={localPreviews[record.categoryId]}
+            onUploaded={(categoryId, preview) => setLocalPreviews((current) => ({ ...current, [categoryId]: preview }))}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function DamPlaceholder({ active }: { active: DamNodeId }) {
+  return (
+    <WorkspacePanel title={implementedNodeLabels[active]} icon={ImageIcon}>
+      <div className="grid gap-4 lg:grid-cols-[1fr_20rem]">
+        <div>
+          <p className="text-lg font-black text-white">Visual workspace shell is ready</p>
+          <p className="mt-2 text-sm leading-6 text-slate-300">
+            This DAM section is discoverable in the Asset Production tree and will use the same upload, preview, derivative, approval, publish, and history workflow as Upgrade Categories.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <WorkspaceBadge value="visual workflow" />
+            <WorkspaceBadge value="private source" />
+            <WorkspaceBadge value="semantic keys" />
+          </div>
+        </div>
+        <div className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-4">
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-200">Workflow</p>
+          <div className="mt-3 space-y-2 text-sm font-semibold text-slate-300">
+            <p>Upload source</p>
+            <p>Preview immediately</p>
+            <p>Generate derivatives</p>
+            <p>Approve</p>
+            <p>Publish semantic asset key</p>
+          </div>
+        </div>
+      </div>
+    </WorkspacePanel>
   );
 }
 
@@ -658,7 +1077,18 @@ function ImportHistory({ state }: { state: AssetProductionState }) {
 }
 
 export function AssetProductionWorkspace({ state, view }: { state: AssetProductionState; view: AssetProductionView }) {
-  const meta = viewMeta[view];
+  const [activeNode, setActiveNode] = useState<DamNodeId>(() => {
+    if (typeof window === "undefined") return view;
+    const section = new URLSearchParams(window.location.search).get("section") as DamNodeId | null;
+    return section && implementedNodeLabels[section] ? section : view;
+  });
+  const meta = isAssetProductionView(activeNode) ? viewMeta[activeNode] : {
+    eyebrow: "Asset Production",
+    title: implementedNodeLabels[activeNode],
+    description: activeNode === "upgrade-categories"
+      ? "Designer-facing DAM workflow for the Workforce, Industry, Science, and Technology upgrade panel backgrounds."
+      : "Discoverable visual production workspace for game UI, artwork, media, and runtime presentation assets."
+  };
   const stats = [
     { label: "Assets", value: state.dashboard.totalAssets },
     { label: "Source Files", value: state.dashboard.sourceFilesUploaded },
@@ -666,17 +1096,32 @@ export function AssetProductionWorkspace({ state, view }: { state: AssetProducti
     { label: "Published", value: state.dashboard.published }
   ];
 
+  function selectNode(node: DamNodeId) {
+    setActiveNode(node);
+    if (typeof window !== "undefined") {
+      const path = node === "dashboard" ? "/assets" : `/assets?section=${encodeURIComponent(node)}`;
+      window.history.replaceState(null, "", path);
+    }
+  }
+
   return (
     <main className="space-y-6">
       <WorkspaceHeader eyebrow={meta.eyebrow} title={meta.title} description={meta.description} stats={stats} />
-      <AssetNav active={view} />
-      {view === "dashboard" ? <Dashboard state={state} /> : null}
-      {view === "source" ? <SourceFiles state={state} /> : null}
-      {view === "generated" ? <AssetGrid assets={state.generatedAssets} empty="No generated derivatives are available yet." /> : null}
-      {view === "published" ? <AssetGrid assets={state.publishedAssets} empty="No assets have reached published status yet." /> : null}
-      {view === "missing" ? <MissingAssets state={state} /> : null}
-      {view === "processing" ? <ProcessingQueue state={state} /> : null}
-      {view === "import-history" ? <ImportHistory state={state} /> : null}
+      <div className="grid gap-5 xl:grid-cols-[18rem_minmax(0,1fr)]">
+        <AssetProductionTree active={activeNode} onSelect={selectNode} />
+        <section className="min-w-0 space-y-5">
+          {isAssetProductionView(activeNode) ? <AssetNav active={activeNode} /> : null}
+          {activeNode === "dashboard" ? <Dashboard state={state} /> : null}
+          {activeNode === "source" ? <SourceFiles state={state} /> : null}
+          {activeNode === "generated" ? <AssetGrid assets={state.generatedAssets} empty="No generated derivatives are available yet." /> : null}
+          {activeNode === "published" ? <AssetGrid assets={state.publishedAssets} empty="No assets have reached published status yet." /> : null}
+          {activeNode === "missing" ? <MissingAssets state={state} /> : null}
+          {activeNode === "processing" ? <ProcessingQueue state={state} /> : null}
+          {activeNode === "import-history" ? <ImportHistory state={state} /> : null}
+          {activeNode === "upgrade-categories" ? <UpgradeCategoriesWorkspace state={state} /> : null}
+          {!isAssetProductionView(activeNode) && activeNode !== "upgrade-categories" ? <DamPlaceholder active={activeNode} /> : null}
+        </section>
+      </div>
       <WorkspacePanel title="Workflow Guardrails" icon={Archive}>
         <p className="text-sm leading-6 text-slate-300">
           Source masters stay private, public runtime exports only receive sanitized derivative metadata and engine mappings, and canonical gameplay records continue to reference artKey, iconKey, audioKey, or modelKey.
