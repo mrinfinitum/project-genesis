@@ -616,7 +616,7 @@ function buildEntries(data: GameData, assets: ProductionAsset[]) {
       tags: compactStrings(row.celestial_body_type, row.planet_class, row.planet_subclass, row.planet_rarity),
       locations: [row.system_id],
       priority: "P3",
-      references: [{ type: "celestial_body", id: row.id, label: "Celestial Bodies", href: "/celestial-bodies" }]
+      references: [{ type: "celestial_body", id: row.id, label: "Star Library", href: "/celestial-bodies" }]
     }, assets)),
     ...data.star_systems.map((row) => entryBase({
       entityType: "star_system",
@@ -629,7 +629,7 @@ function buildEntries(data: GameData, assets: ProductionAsset[]) {
       tags: compactStrings(row.star_type, row.system_type, row.system_role, row.system_rarity, row.resource_bias, row.sector_id),
       locations: [row.sector_id],
       priority: "P3",
-      references: [{ type: "star_system", id: row.id, label: "Star System Map", href: "/star-system-map" }]
+      references: [{ type: "star_system", id: row.id, label: "Star System Library", href: "/star-system-map" }]
     }, assets)),
     ...data.districts.map((row) => entryBase({
       entityType: "district",
@@ -695,7 +695,7 @@ function buildEntries(data: GameData, assets: ProductionAsset[]) {
       era: row.current_age,
       tags: compactStrings(row.civilization_title, row.primary_alignment, row.secondary_alignment, row.current_age),
       priority: "P1",
-      references: [{ type: "civilization", id: row.id, label: "Civilization Design Studio", href: "/civilizations" }]
+      references: [{ type: "civilization", id: row.id, label: "Civilization Library", href: "/civilizations" }]
     }, assets)),
     ...fallbackFactions.map((row) => entryBase({
       entityType: "faction",

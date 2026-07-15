@@ -91,7 +91,7 @@ export function DiscoveryJournalWorkspace({ mode = "journal" }: { mode?: Explore
     <main className="space-y-6">
       <WorkspaceHeader
         eyebrow="Explorer Update v0.5"
-        title={mode === "journal" ? "Discovery Journal" : "Universe Timeline"}
+        title={mode === "journal" ? "Discovery Library" : "Universe Timeline"}
         description={
           mode === "journal"
             ? "Track named discoveries, discovery states, score, parent links, rarity, tags, and notes as the exploration loop resolves the universe."

@@ -1,1 +1,1 @@
-export { GalaxyGeneratorWorkflow as GalaxyCommandCenter } from "@/components/universe-generator-workflows";
+export { GalaxyGeneratorWorkflow as GalaxyCommandCenter, GalaxyGeneratorWorkflow as GalaxyLibrary } from "@/components/universe-generator-workflows";

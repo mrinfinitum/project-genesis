@@ -321,10 +321,10 @@ export function CelestialBodyDesigner({ rows }: { rows: Body[] }) {
     <div className="space-y-6">
       <section className="grid gap-5 xl:grid-cols-[1fr_26rem]">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Universe Workflow</p>
-          <h1 className="mt-3 text-5xl font-bold text-white">Celestial Bodies</h1>
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Universe Library</p>
+          <h1 className="mt-3 text-5xl font-bold text-white">Star Library</h1>
           <p className="mt-3 max-w-4xl text-lg leading-8 text-slate-300">
-            Design stars, planets, moons, dwarf planets, orbital worlds, belts, and fixed Sol bodies as a nested system hierarchy.
+            Browse canonical star and celestial body records, including planets, moons, dwarf planets, orbital worlds, belts, and fixed Sol bodies as a nested system hierarchy.
           </p>
         </div>
         <div className="rounded-md border border-cyan-400/15 bg-[#07101e]/85 p-4 shadow-glow">

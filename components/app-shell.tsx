@@ -90,7 +90,7 @@ const navigationGroups: NavigationGroup[] = [
     fallbackProgress: 92,
     systemIds: ["architecture", "research", "unlock-matrix", "buildings", "upgrades", "dashboard-metrics"],
     items: [
-      { href: "/civilizations", label: "Civilization Design Studio", icon: Landmark },
+      { href: "/civilizations", label: "Civilization Library", icon: Landmark },
       { href: "/content-authoring", label: "Content Authoring", icon: CopyPlus },
       { href: "/research", label: "Research Designer", icon: FlaskConical },
       { href: "/unlock-matrix", label: "Unlock Matrix", icon: GitBranch },
@@ -105,16 +105,17 @@ const navigationGroups: NavigationGroup[] = [
   },
   {
     id: "universe",
-    label: "Universe Explorer",
+    label: "Universe Libraries",
     icon: Star,
     fallbackProgress: 58,
     systemIds: ["planet-generation", "ancient-civilizations", "planet-traits", "anomalies", "hazards", "expeditions"],
     items: [
-      { href: "/galaxy", label: "Explore Galaxies", icon: Star },
-      { href: "/sector-map", label: "Sector Map", icon: Map },
-      { href: "/star-system-map", label: "Star System Map", icon: Radar },
+      { href: "/galaxy", label: "Galaxy Library", icon: Star },
+      { href: "/sector-map", label: "Sector Library", icon: Map },
+      { href: "/star-system-map", label: "Star System Library", icon: Radar },
+      { href: "/celestial-bodies", label: "Star Library", icon: CircleDot },
       { href: "/planets", label: "Planet Library", icon: Orbit },
-      { href: "/discovery-journal", label: "Discovery Journal", icon: ScrollText },
+      { href: "/discovery-journal", label: "Discovery Library", icon: ScrollText },
       { href: "/universe-timeline", label: "Universe Timeline", icon: History },
       { href: "/missions", label: "Missions", icon: ClipboardList },
       { href: "/planetary-rules", label: "Rules", icon: GitBranch }
@@ -130,7 +131,7 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/factions", label: "Factions", icon: Landmark },
       { href: "/colonies", label: "Colonies", icon: Building2 },
       { href: "/economy", label: "Economy & Trade", icon: BadgeDollarSign },
-      { href: "/celestial-bodies", label: "Celestial Bodies", icon: CircleDot }
+      { href: "/celestial-bodies", label: "Star Library", icon: CircleDot }
     ]
   },
   {

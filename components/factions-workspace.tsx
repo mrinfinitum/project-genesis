@@ -141,7 +141,7 @@ export function FactionsWorkspace() {
           </div>
           <div className="rounded-md border border-emerald-300/15 bg-emerald-400/10 p-4 text-sm font-semibold leading-6 text-emerald-100">
             <Sparkles className="mb-2 h-5 w-5" />
-            Factions are generated from deterministic system and planet seeds, then logged to the Discovery Journal and Universe Timeline when found.
+            Factions are generated from deterministic system and planet seeds, then logged to the Discovery Library and Universe Timeline when found.
           </div>
         </aside>
       </section>

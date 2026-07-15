@@ -1,5 +1,5 @@
-import { SectorMap } from "@/components/sector-map";
+import { SectorLibrary } from "@/components/sector-map";
 
-export default function SectorMapPage() {
-  return <SectorMap />;
+export default function SectorLibraryPage() {
+  return <SectorLibrary />;
 }

@@ -2744,7 +2744,7 @@ function StarSystemDetailPanel({
       <section className="space-y-4 border-t border-cyan-300/15 p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h3 className="text-2xl font-black text-white">Celestial Bodies</h3>
+            <h3 className="text-2xl font-black text-white">Star Library Bodies</h3>
             <p className="mt-1 text-sm font-semibold text-slate-400">Real assigned planets plus generated moons, asteroid belts, stations, and anomalies inside this star system.</p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -4208,9 +4208,9 @@ export function GalaxyGeneratorWorkflow() {
 
   return (
     <GeneratorShell
-      eyebrow="Universe Workflow"
-      title="Galaxies"
-      description="Generate visual galaxy cards, drill into sectors, and shape the content hierarchy before it moves into the game app."
+      eyebrow="Universe Library"
+      title="Galaxy Library"
+      description="Browse and generate canonical galaxy records, then drill into sectors while preserving the generated universe hierarchy."
       actions={
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(12rem,1fr)_6rem_11rem_10rem_auto] xl:items-center">
           <HeaderTextInput label="Universe Seed" value={universeSeed} onChange={setUniverseSeed} placeholder="Universe seed" />
@@ -4473,9 +4473,9 @@ export function SectorGeneratorWorkflow() {
 
   return (
     <GeneratorShell
-      eyebrow="Universe Workflow"
-      title="Sectors"
-      description="Generate sector cards, drill into their star systems, and curate what belongs in the selected galaxy."
+      eyebrow="Universe Library"
+      title="Sector Library"
+      description="Browse and generate canonical sector records for the selected galaxy, then drill into their star system collections."
       actions={
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(12rem,1fr)_5rem_6rem_11rem_10rem_auto] xl:items-center">
           <HeaderTextInput label="Universe Seed" value={universeSeed} onChange={setUniverseSeed} placeholder="Universe seed" />
@@ -4684,9 +4684,9 @@ export function StarSystemGeneratorWorkflow() {
 
   return (
     <GeneratorShell
-      eyebrow="Universe Workflow"
-      title="Star Systems"
-      description="Generate collectible star-system cards, then open them to populate planets, moons, belts, and orbital worlds."
+      eyebrow="Universe Library"
+      title="Star System Library"
+      description="Browse and generate canonical star system records, then open them to populate planets, moons, belts, and orbital worlds."
       actions={
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(12rem,1fr)_5rem_5rem_6rem_10rem_10rem_auto] xl:items-center">
           <HeaderTextInput label="Universe Seed" value={universeSeed} onChange={setUniverseSeed} placeholder="Universe seed" />

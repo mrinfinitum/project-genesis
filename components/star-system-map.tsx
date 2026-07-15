@@ -1,1 +1,1 @@
-export { StarSystemGeneratorWorkflow as StarSystemMap } from "@/components/universe-generator-workflows";
+export { StarSystemGeneratorWorkflow as StarSystemLibrary, StarSystemGeneratorWorkflow as StarSystemMap } from "@/components/universe-generator-workflows";

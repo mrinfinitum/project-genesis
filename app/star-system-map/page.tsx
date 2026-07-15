@@ -1,5 +1,5 @@
-import { StarSystemMap } from "@/components/star-system-map";
+import { StarSystemLibrary } from "@/components/star-system-map";
 
-export default function StarSystemMapPage() {
-  return <StarSystemMap />;
+export default function StarSystemLibraryPage() {
+  return <StarSystemLibrary />;
 }

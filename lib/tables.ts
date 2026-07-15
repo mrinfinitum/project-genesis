@@ -341,7 +341,7 @@ export const tableConfigs: Record<TableName, TableConfig> = {
   },
   celestial_bodies: {
     table: "celestial_bodies",
-    title: "Celestial Bodies",
+    title: "Star Library",
     description: "Stars, planets, moons, dwarf planets, asteroid belts, orbital platforms, stations, megastructures, and system features.",
     statusKey: "colonizable_status",
     typeKey: "celestial_body_type",

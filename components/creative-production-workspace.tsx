@@ -1087,7 +1087,7 @@ export function CreativeProductionWorkspace({ state, studioData, universeCatalog
       <WorkspacePanel title="Advanced / Systems Authoring" icon={Landmark}>
         <div className="grid gap-2 md:grid-cols-3 xl:grid-cols-4">
           {[
-            ["/civilizations", "Civilization Design Studio"],
+            ["/civilizations", "Civilization Library"],
             ["/content-authoring", "Content Authoring"],
             ["/research", "Research Designer"],
             ["/unlock-matrix", "Unlock Matrix"],

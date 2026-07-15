@@ -153,7 +153,7 @@ Discovery is one of the core pillars. Everything discovered should matter:
 - Anomalies
 - Artifacts
 
-Every discovery is permanent. The Discovery Journal becomes the player's encyclopedia.
+Every discovery is permanent. The Discovery Library becomes the player's encyclopedia.
 
 ## Colonization
 

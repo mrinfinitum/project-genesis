@@ -97,6 +97,7 @@ async function main() {
   assert(!workspace.includes('id: "planets", label: "Planets", categoryIds: ["planet-ui"]'), "Planets catalog must not use planet-ui asset inventory.");
 
   const creativeNav = section(appShell, 'id: "civilization"', 'id: "resources"');
+  const universeNav = section(appShell, 'id: "universe"', 'id: "operations"');
   const advancedNav = section(appShell, 'id: "studio"', 'id: "universe"');
   assert(creativeNav.includes('label: "Creative Production"'), "Primary nav must include Creative Production.");
   for (const label of ["Overview", "Top HUD", "Left Navigation", "Research", "Buildings", "Upgrades", "AI Agents", "Civilizations", "Galaxies", "Sectors", "Star Systems", "Stars", "Planets", "Settings", "Login & Account", "Loading", "Icons", "Backgrounds", "Animations", "Audio", "Video"]) {
@@ -105,7 +106,13 @@ async function main() {
   assert(!creativeNav.includes("Research Designer"), "Research Designer must not remain in primary Creative Production nav.");
   assert(!creativeNav.includes("Upgrade Designer"), "Upgrade Designer must not remain in primary Creative Production nav.");
   assert(!creativeNav.includes("Building Designer"), "Building Designer must not remain in primary Creative Production nav.");
-  for (const label of ["Civilization Design Studio", "Content Authoring", "Research Designer", "Unlock Matrix", "Upgrade Designer", "Building Designer", "Wonder Designer", "District Designer", "Economy Designer", "Architecture", "Deprecated Visual Builder Archive"]) {
+  for (const label of ["Galaxy Library", "Sector Library", "Star System Library", "Star Library", "Planet Library", "Discovery Library"]) {
+    assert(universeNav.includes(`label: "${label}"`), `Universe navigation is missing ${label}.`);
+  }
+  for (const oldLabel of ["Explore Galaxies", "Sector Map", "Star System Map", "Discovery Journal"]) {
+    assert(!universeNav.includes(oldLabel), `Universe navigation still contains old label ${oldLabel}.`);
+  }
+  for (const label of ["Civilization Library", "Content Authoring", "Research Designer", "Unlock Matrix", "Upgrade Designer", "Building Designer", "Wonder Designer", "District Designer", "Economy Designer", "Architecture", "Deprecated Visual Builder Archive"]) {
     assert(advancedNav.includes(`label: "${label}"`), `${label} must appear under Advanced / Systems Authoring.`);
   }
   assert(appShell.includes("function hrefPath"), "App shell must normalize query-string navigation paths.");

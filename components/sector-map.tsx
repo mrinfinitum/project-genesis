@@ -1,1 +1,1 @@
-export { SectorGeneratorWorkflow as SectorMap } from "@/components/universe-generator-workflows";
+export { SectorGeneratorWorkflow as SectorLibrary, SectorGeneratorWorkflow as SectorMap } from "@/components/universe-generator-workflows";

@@ -100,7 +100,7 @@ const dependencyGraph = [
   },
   {
     title: "Galactic Age",
-    dependsOn: ["Galaxy Mapping", "Megastructures", "Genesis Gate", "Universal Navigation"],
+    dependsOn: ["Galaxy Library", "Megastructures", "Genesis Gate", "Universal Navigation"],
     note: "Galactic is the endgame validation layer, not a separate rush-only destination."
   }
 ];
@@ -362,7 +362,7 @@ export default async function CivilizationsPage() {
         <div className="grid gap-6 border-b border-cyan-300/15 p-6 xl:grid-cols-[1.1fr_0.9fr]">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">Civilization Authoring</p>
-            <h2 className="mt-2 text-4xl font-bold text-white">Civilization Design Studio</h2>
+            <h2 className="mt-2 text-4xl font-bold text-white">Civilization Library</h2>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
               IDE workspace for designing civilization ages, dependencies, alignment rules, bonuses, unlocks, and export readiness.
             </p>

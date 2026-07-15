@@ -317,7 +317,7 @@ export function UniverseExplorer() {
         </div>
 
         <div className="rounded-md border border-cyan-400/15 bg-genesis-panel/90 p-4">
-          <h3 className="text-base font-semibold text-white">Celestial Bodies</h3>
+          <h3 className="text-base font-semibold text-white">Star Library Bodies</h3>
           <div className="mt-4 grid max-h-[28rem] gap-2 overflow-auto pr-1">
             {selectableBodies.map((body) => (
               <BodyCard
