@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Archive, Boxes, CheckCircle2, ChevronDown, FileImage, GitBranch, History, ImageIcon, Layers3, PackageCheck, Search, ShieldCheck, Sparkles, Timer, TriangleAlert, Upload, UploadCloud } from "lucide-react";
 import { AssetPreview } from "@/components/asset-preview";
 import { Button } from "@/components/ui/button";
 import { CompactWorkspaceToolbar, cardShellClass, collectionGridClass, previewBoxClass, useWorkspaceDensitySettings, type DensitySettings } from "@/components/ui/density";
 import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, WorkspaceProgressBar, WorkspaceStatTile } from "@/components/ui/workspace";
 import { resolveMissingRequirementPreview, resolveProductionAssetPreview, sanitizePreviewUrl } from "@/lib/assets/visual-previews";
+import { assetLibraryCategoryLabels, normalizeAssetLibraryCategoryId, resolveAssetLibraryCategoryView, type AssetLibraryCategoryId } from "@/lib/assets/asset-library-routing";
 import type { AssetProductionState, ProductionAsset } from "@/lib/assets/asset-production";
 import { upgradeCategoryBackgroundDerivativePresetIds, upgradeCategoryBackgroundDimensions } from "@/lib/upgrades/category-presentation";
 
@@ -17,24 +18,7 @@ type DamNodeId = AssetProductionView
   | "recently-uploaded"
   | "needs-review"
   | "approved-assets"
-  | "top-hud"
-  | "left-navigation"
-  | "upgrade-categories"
-  | "research-ui"
-  | "buildings-ui"
-  | "galaxy-ui"
-  | "planet-ui"
-  | "settings-ui"
-  | "login-ui"
-  | "loading-ui"
-  | "ai-agents"
-  | "icons"
-  | "backgrounds"
-  | "illustrations"
-  | "animations"
-  | "audio"
-  | "video"
-  | "unmapped";
+  | AssetLibraryCategoryId;
 
 type UpgradeCategoryAssetStatus = AssetProductionState["upgradeCategoryAssets"][number];
 type LocalUploadPreview = { url: string; sizeLabel: string; fileName: string };
@@ -321,32 +305,18 @@ const implementedNodeLabels: Record<DamNodeId, string> = {
   missing: "Missing Assets",
   processing: "Processing Queue",
   "import-history": "Legacy Import",
-  "top-hud": "Top HUD",
-  "left-navigation": "Left Navigation",
-  "upgrade-categories": "Upgrade Categories",
-  "research-ui": "Research UI",
-  "buildings-ui": "Buildings UI",
-  "galaxy-ui": "Galaxy UI",
-  "planet-ui": "Planet UI",
-  "settings-ui": "Settings UI",
-  "login-ui": "Login UI",
-  "loading-ui": "Loading UI",
-  "ai-agents": "AI Agents",
-  icons: "Icons",
-  backgrounds: "Backgrounds",
-  illustrations: "Illustrations",
-  animations: "Animations",
-  audio: "Audio",
-  video: "Video",
-  unmapped: "Unmapped"
+  ...assetLibraryCategoryLabels
 };
 
 function isAssetProductionView(node: DamNodeId): node is AssetProductionView {
   return ["dashboard", "source", "generated", "published", "missing", "processing", "import-history"].includes(node);
 }
 
-function isInventoryCategoryNode(node: DamNodeId): node is InventoryItem["categoryId"] {
-  return ["top-hud", "left-navigation", "upgrade-categories", "research-ui", "buildings-ui", "galaxy-ui", "planet-ui", "settings-ui", "login-ui", "loading-ui", "ai-agents", "icons", "backgrounds", "illustrations", "animations", "audio", "video", "unmapped"].includes(node);
+function normalizeDamNode(value: unknown, fallback: DamNodeId): DamNodeId {
+  const categoryId = normalizeAssetLibraryCategoryId(value);
+  if (categoryId) return categoryId;
+  if (typeof value === "string" && value in implementedNodeLabels) return value as DamNodeId;
+  return fallback;
 }
 
 function treeItemClass(active: boolean) {
@@ -1418,15 +1388,14 @@ function ImportHistory({ state }: { state: AssetProductionState }) {
   );
 }
 
-export function AssetProductionWorkspace({ state, view, preferredRoute = "/asset-library" }: { state: AssetProductionState; view: AssetProductionView; preferredRoute?: string }) {
-  const [activeNode, setActiveNode] = useState<DamNodeId>(() => {
-    if (typeof window === "undefined") return preferredRoute === "/asset-library" && view === "dashboard" ? "all-assets" : view;
-    const section = new URLSearchParams(window.location.search).get("section") as DamNodeId | null;
-    return section && implementedNodeLabels[section] ? section : preferredRoute === "/asset-library" && view === "dashboard" ? "all-assets" : view;
-  });
+export function AssetProductionWorkspace({ state, view, preferredRoute = "/asset-library", initialSection }: { state: AssetProductionState; view: AssetProductionView; preferredRoute?: string; initialSection?: string | null }) {
+  const defaultNode: DamNodeId = preferredRoute === "/asset-library" && view === "dashboard" ? "all-assets" : view;
+  const routeNode = normalizeDamNode(initialSection, defaultNode);
+  const [activeNode, setActiveNode] = useState<DamNodeId>(routeNode);
   const [uploadOpen, setUploadOpen] = useState(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).get("upload") === "asset");
   const pickerMode = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("picker") : null;
   const deprecated = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("deprecated") : null;
+  const categoryRoute = useMemo(() => resolveAssetLibraryCategoryView(activeNode), [activeNode]);
   const meta = isAssetProductionView(activeNode) ? viewMeta[activeNode] : {
     eyebrow: "Asset Library",
     title: implementedNodeLabels[activeNode],
@@ -1442,12 +1411,42 @@ export function AssetProductionWorkspace({ state, view, preferredRoute = "/asset
   ];
 
   function selectNode(node: DamNodeId) {
-    setActiveNode(node);
+    const nextNode = normalizeDamNode(node, defaultNode);
+    setActiveNode(nextNode);
     if (typeof window !== "undefined") {
-      const path = node === "all-assets" ? preferredRoute : `${preferredRoute}?section=${encodeURIComponent(node)}`;
+      const path = nextNode === "all-assets" ? preferredRoute : `${preferredRoute}?section=${encodeURIComponent(nextNode)}`;
       window.history.replaceState(null, "", path);
     }
   }
+
+  useEffect(() => {
+    setActiveNode(routeNode);
+  }, [routeNode]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    function syncFromLocation() {
+      const section = new URLSearchParams(window.location.search).get("section");
+      setActiveNode(normalizeDamNode(section, defaultNode));
+    }
+    window.addEventListener("popstate", syncFromLocation);
+    return () => window.removeEventListener("popstate", syncFromLocation);
+  }, [defaultNode]);
+
+  useEffect(() => {
+    if (process.env.NODE_ENV !== "development") return;
+    const diagnostic = {
+      routeCategoryId: initialSection ?? null,
+      normalizedCategoryId: categoryRoute.categoryId,
+      resolvedCategoryViewType: categoryRoute.viewType,
+      selectedRenderer: categoryRoute.viewType,
+      hydrationState: "mounted",
+      persistedSettingsLoaded: "presentation-settings-only",
+      inventoryReadiness: state.assetLibraryInventory.items.length > 0 ? "ready" : "empty",
+      reason: categoryRoute.reason
+    };
+    console.debug("[asset-library-category-routing]", diagnostic);
+  }, [categoryRoute, initialSection, state.assetLibraryInventory.items.length]);
 
   return (
     <main className="space-y-6">
@@ -1457,8 +1456,8 @@ export function AssetProductionWorkspace({ state, view, preferredRoute = "/asset
           <UploadCloud className="h-4 w-4" />
           Upload Asset
         </Button>
-        <Link href={`${preferredRoute}?section=upgrade-categories`} className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Upgrade Categories</Link>
-        <Link href={`${preferredRoute}?section=missing`} className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Missing Assets</Link>
+        <Link href={`${preferredRoute}?section=upgrade-categories`} onClick={(event) => { event.preventDefault(); selectNode("upgrade-categories"); }} className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Upgrade Categories</Link>
+        <Link href={`${preferredRoute}?section=missing`} onClick={(event) => { event.preventDefault(); selectNode("missing"); }} className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Missing Assets</Link>
         {pickerMode ? <WorkspaceBadge value={`Picker: ${pickerMode}`} /> : null}
         {deprecated ? <WorkspaceBadge value="Moved to Asset Library" /> : null}
       </div>
@@ -1483,8 +1482,9 @@ export function AssetProductionWorkspace({ state, view, preferredRoute = "/asset
           {activeNode === "missing" ? <MissingAssets state={state} /> : null}
           {activeNode === "processing" ? <ProcessingQueue state={state} /> : null}
           {activeNode === "import-history" ? <ImportHistory state={state} /> : null}
-          {activeNode === "upgrade-categories" ? <UpgradeCategoriesWorkspace state={state} /> : null}
-          {isInventoryCategoryNode(activeNode) && activeNode !== "upgrade-categories" ? <AssetLibraryCategoryInventory state={state} categoryId={activeNode} /> : null}
+          {categoryRoute.viewType === "upgrade_category_workflow" ? <UpgradeCategoriesWorkspace state={state} /> : null}
+          {categoryRoute.viewType === "generic_inventory" && categoryRoute.categoryId ? <AssetLibraryCategoryInventory state={state} categoryId={categoryRoute.categoryId} /> : null}
+          {["ai_agent_workflow", "audio_workflow", "video_workflow"].includes(categoryRoute.viewType) && categoryRoute.categoryId ? <AssetLibraryCategoryInventory state={state} categoryId={categoryRoute.categoryId} /> : null}
         </section>
       </div>
       <WorkspacePanel title="Workflow Guardrails" icon={Archive}>

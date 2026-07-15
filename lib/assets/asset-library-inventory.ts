@@ -2,27 +2,8 @@ import { getAiAgentLibraryState } from "@/lib/ai-agents";
 import { getComponentLibraryState } from "@/lib/component-library";
 import { getScreenDesignerState } from "@/lib/screen-designer";
 import type { AssetProductionState, MissingAssetRequirement, ProductionAsset } from "@/lib/assets/asset-production";
+import { assetLibraryCategoryIds, assetLibraryCategoryLabels, type AssetLibraryCategoryId } from "@/lib/assets/asset-library-routing";
 import type { VisualPreviewReport } from "@/lib/assets/visual-previews";
-
-export type AssetLibraryCategoryId =
-  | "top-hud"
-  | "left-navigation"
-  | "upgrade-categories"
-  | "research-ui"
-  | "buildings-ui"
-  | "galaxy-ui"
-  | "planet-ui"
-  | "settings-ui"
-  | "login-ui"
-  | "loading-ui"
-  | "ai-agents"
-  | "icons"
-  | "backgrounds"
-  | "illustrations"
-  | "animations"
-  | "audio"
-  | "video"
-  | "unmapped";
 
 export type AssetLibraryInventoryStatus =
   | "published"
@@ -92,27 +73,6 @@ export type AssetLibraryInventoryIndex = {
   duplicateSemanticKeys: Array<{ semanticAssetKey: string; itemIds: string[] }>;
   defaultFilter: "all";
   generatedAt: string;
-};
-
-const categoryLabels: Record<AssetLibraryCategoryId, string> = {
-  "top-hud": "Top HUD",
-  "left-navigation": "Left Navigation",
-  "upgrade-categories": "Upgrade Categories",
-  "research-ui": "Research UI",
-  "buildings-ui": "Buildings UI",
-  "galaxy-ui": "Galaxy UI",
-  "planet-ui": "Planet UI",
-  "settings-ui": "Settings UI",
-  "login-ui": "Login UI",
-  "loading-ui": "Loading UI",
-  "ai-agents": "AI Agents",
-  icons: "Icons",
-  backgrounds: "Backgrounds",
-  illustrations: "Illustrations",
-  animations: "Animations",
-  audio: "Audio",
-  video: "Video",
-  unmapped: "Unmapped"
 };
 
 function titleFromKey(value: string) {
@@ -269,7 +229,7 @@ export async function buildAssetLibraryInventory(input: {
       semanticAssetKey: key,
       displayName: params.displayName || titleFromKey(key),
       categoryId,
-      categoryPath: `Asset Library / ${categoryLabels[categoryId]}`,
+      categoryPath: `Asset Library / ${assetLibraryCategoryLabels[categoryId]}`,
       role: params.role,
       sourceType: params.sourceType,
       status: params.status,
@@ -429,14 +389,14 @@ export async function buildAssetLibraryInventory(input: {
   }
 
   const items = [...itemsByKey.values()].sort((left, right) => left.categoryId.localeCompare(right.categoryId) || left.status.localeCompare(right.status) || left.sortOrder - right.sortOrder);
-  const categorySummaries = Object.fromEntries((Object.keys(categoryLabels) as AssetLibraryCategoryId[]).map((id) => {
+  const categorySummaries = Object.fromEntries(assetLibraryCategoryIds.map((id) => {
     const rows = items.filter((item) => item.categoryId === id);
     const uniqueScreenReferences = new Set(rows.flatMap((item) => item.referencedByScreens.map((reference) => reference.id))).size;
     const uniqueComponentReferences = new Set(rows.flatMap((item) => item.referencedByComponents.map((reference) => reference.id))).size;
     const uniquePlaceholderReferences = new Set(rows.flatMap((item) => item.referencedByPlaceholders.map((reference) => reference.id))).size;
     return [id, {
       id,
-      label: categoryLabels[id],
+      label: assetLibraryCategoryLabels[id],
       total: rows.length,
       published: rows.filter((item) => item.status === "published").length,
       approved: rows.filter((item) => item.status === "approved").length,

@@ -29,6 +29,7 @@ async function main() {
   const eraArtInventory = read("components/era-art-inventory-workspace.tsx");
   const visualPreviews = read("lib/assets/visual-previews.ts");
   const assetProduction = read("lib/assets/asset-production.ts");
+  const assetLibraryRouting = read("lib/assets/asset-library-routing.ts");
   const architecture = read("lib/architecture/index.ts");
 
   assert(existsSync(path.join(process.cwd(), "app/asset-library/page.tsx")), "Asset Library route must exist.");
@@ -67,6 +68,8 @@ async function main() {
     "upgrade-categories",
     "unmapped",
     "AssetLibraryCategoryInventory",
+    "resolveAssetLibraryCategoryView",
+    "categoryRoute.viewType",
     "All statuses shown",
     "Generate Missing Requirements",
     "Open in Visual Builder",
@@ -77,6 +80,9 @@ async function main() {
   }
   assertNotIncludes("Asset Library workspace", assetWorkspace, "Recent Imports");
   assertNotIncludes("Asset Library workspace", assetWorkspace, "Import / Reconcile Art");
+  assertIncludes("Asset Library routing", assetLibraryRouting, 'viewType: "upgrade_category_workflow"');
+  assertIncludes("Asset Library routing", assetLibraryRouting, "never falls back to generic inventory");
+  assertNotIncludes("Asset Library workspace", assetWorkspace, 'activeNode !== "upgrade-categories" ? <AssetLibraryCategoryInventory');
 
   assertIncludes("Component Library", componentLibrary, "/asset-library?picker=component");
   assertIncludes("Screen Designer", screenDesigner, "/asset-library?picker=screen");
