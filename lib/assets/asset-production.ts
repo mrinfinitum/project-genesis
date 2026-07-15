@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { copyFile, mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { getGameData, getRows } from "@/lib/data";
+import { buildAssetLibraryInventory, type AssetLibraryInventoryIndex } from "@/lib/assets/asset-library-inventory";
 import { applyGameArtImport, getGameArtImportWorkspaceState, getMergedAssetLibraryRows, upsertAppliedGameArtAssets } from "@/lib/assets/game-art-import";
 import { buildVisualPreviewReport, previewDerivativePresets, type VisualPreviewReport } from "@/lib/assets/visual-previews";
 import { resolveUpgradeCategoryAssetStatus, upgradeCategoryAssetRecords, upgradeCategoryBackgroundDerivativePresetIds, upgradeCategoryBackgroundDimensions } from "@/lib/upgrades/category-presentation";
@@ -286,6 +287,7 @@ export type AssetProductionState = {
     issues: AssetQualityIssue[];
   };
   visualPreviewReport: VisualPreviewReport;
+  assetLibraryInventory: AssetLibraryInventoryIndex;
   robloxManifestReports: RobloxArtManifestImportReport[];
   webPublishReports: RobloxArtWebPublishReport[];
   audit: Array<{
@@ -1420,13 +1422,15 @@ export async function getAssetProductionState(): Promise<AssetProductionState> {
   const staleDerivativeCount = assets.reduce((sum, asset) => sum + asset.derivativeCompleteness.stale, 0);
   const visualPreviewReport = buildVisualPreviewReport({ assets, missingRequirements });
   const upgradeCategoryAssets = resolveUpgradeCategoryAssetStatus(assets);
+  const sortedMissingRequirements = missingRequirements.sort((left, right) => left.objectType.localeCompare(right.objectType) || left.objectName.localeCompare(right.objectName));
+  const assetLibraryInventory = await buildAssetLibraryInventory({ assets, missingRequirements: sortedMissingRequirements, upgradeCategoryAssets, visualPreviewReport });
 
   return {
     assets,
     sourceFiles,
     generatedAssets,
     publishedAssets,
-    missingRequirements: missingRequirements.sort((left, right) => left.objectType.localeCompare(right.objectType) || left.objectName.localeCompare(right.objectName)),
+    missingRequirements: sortedMissingRequirements,
     processingJobs,
     productionTasks: store.productionTasks,
     importHistory: importState.history,
@@ -1451,6 +1455,7 @@ export async function getAssetProductionState(): Promise<AssetProductionState> {
       })
     },
     visualPreviewReport,
+    assetLibraryInventory,
     robloxManifestReports: store.robloxManifestReports ?? [],
     webPublishReports: store.webPublishReports ?? [],
     audit,

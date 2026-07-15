@@ -33,7 +33,8 @@ type DamNodeId = AssetProductionView
   | "illustrations"
   | "animations"
   | "audio"
-  | "video";
+  | "video"
+  | "unmapped";
 
 type UpgradeCategoryAssetStatus = AssetProductionState["upgradeCategoryAssets"][number];
 type LocalUploadPreview = { url: string; sizeLabel: string; fileName: string };
@@ -148,16 +149,17 @@ function slugForAssetKey(value: string) {
 }
 
 function UploadAssetWorkflow({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [currentSize, setCurrentSize] = useState("No file selected");
-  const [belongsTo, setBelongsTo] = useState("UI");
-  const [role, setRole] = useState("Screen Background");
-  const [target, setTarget] = useState("Workforce Upgrade Background");
-  const [notes, setNotes] = useState("");
+  const [belongsTo, setBelongsTo] = useState(params?.get("category") ?? "UI");
+  const [role, setRole] = useState(params?.get("role") ?? "Screen Background");
+  const [target, setTarget] = useState(params?.get("name") ?? params?.get("assetKey") ?? "Workforce Upgrade Background");
+  const [notes, setNotes] = useState(params?.get("requirement") ? `Linked requirement: ${params.get("requirement")}` : "");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
-  const semanticKey = `${slugForAssetKey(role)}_${slugForAssetKey(target)}`;
+  const semanticKey = params?.get("assetKey") ?? `${slugForAssetKey(role)}_${slugForAssetKey(target)}`;
 
   if (!open) return null;
 
@@ -248,9 +250,10 @@ function UploadAssetWorkflow({ open, onClose }: { open: boolean; onClose: () => 
           {previewUrl ? <img src={previewUrl} alt="Selected asset preview" className="mt-3 h-40 w-full rounded-md border border-cyan-300/15 object-cover" /> : <div className="mt-3 grid h-40 place-items-center rounded-md border border-cyan-300/15 bg-slate-950/60 text-sm font-bold text-slate-400">Preview unavailable until derivative</div>}
           <div className="mt-3 grid gap-2">
             <WorkspaceMiniStat label="Source Dimensions" value={currentSize} />
-            <WorkspaceMiniStat label="Required Dimensions" value={belongsTo === "UI" ? "Use selected requirement" : "Not assigned"} />
+            <WorkspaceMiniStat label="Required Dimensions" value={params?.get("requiredDimensions") ?? (belongsTo === "UI" ? "Use selected requirement" : "Not assigned")} />
             <WorkspaceMiniStat label="Semantic Asset Key" value={semanticKey} />
             <WorkspaceMiniStat label="Target Platforms" value="Web / Roblox / Mobile" />
+            {params?.get("requirement") ? <WorkspaceMiniStat label="Requirement" value={params.get("requirement") ?? ""} /> : null}
           </div>
           <details className="mt-3 rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
             <summary className="cursor-pointer text-xs font-black uppercase tracking-[0.16em] text-slate-400">Advanced</summary>
@@ -292,6 +295,7 @@ const damTree: Array<{ id: DamNodeId; label: string; children?: Array<{ id: DamN
   { id: "animations", label: "Animations" },
   { id: "audio", label: "Audio" },
   { id: "video", label: "Video" },
+  { id: "unmapped", label: "Unmapped" },
   {
     id: "dashboard",
     label: "Advanced",
@@ -333,11 +337,16 @@ const implementedNodeLabels: Record<DamNodeId, string> = {
   illustrations: "Illustrations",
   animations: "Animations",
   audio: "Audio",
-  video: "Video"
+  video: "Video",
+  unmapped: "Unmapped"
 };
 
 function isAssetProductionView(node: DamNodeId): node is AssetProductionView {
   return ["dashboard", "source", "generated", "published", "missing", "processing", "import-history"].includes(node);
+}
+
+function isInventoryCategoryNode(node: DamNodeId): node is InventoryItem["categoryId"] {
+  return ["top-hud", "left-navigation", "upgrade-categories", "research-ui", "buildings-ui", "galaxy-ui", "planet-ui", "settings-ui", "login-ui", "loading-ui", "ai-agents", "icons", "backgrounds", "illustrations", "animations", "audio", "video", "unmapped"].includes(node);
 }
 
 function treeItemClass(active: boolean) {
@@ -644,36 +653,6 @@ function UpgradeCategoriesWorkspace({ state }: { state: AssetProductionState }) 
   );
 }
 
-function DamPlaceholder({ active }: { active: DamNodeId }) {
-  return (
-    <WorkspacePanel title={implementedNodeLabels[active]} icon={ImageIcon}>
-      <div className="grid gap-4 lg:grid-cols-[1fr_20rem]">
-        <div>
-          <p className="text-lg font-black text-white">Visual workspace shell is ready</p>
-          <p className="mt-2 text-sm leading-6 text-slate-300">
-            This Asset Library section is discoverable in the category tree and will use the same upload, preview, platform readiness, approval, publish, and history workflow as Upgrade Categories.
-          </p>
-          <div className="mt-4 flex flex-wrap gap-2">
-            <WorkspaceBadge value="visual workflow" />
-            <WorkspaceBadge value="private source" />
-            <WorkspaceBadge value="semantic keys" />
-          </div>
-        </div>
-        <div className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-4">
-          <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-200">Workflow</p>
-          <div className="mt-3 space-y-2 text-sm font-semibold text-slate-300">
-            <p>Upload asset</p>
-            <p>Preview immediately</p>
-            <p>Generate platform readiness</p>
-            <p>Approve</p>
-            <p>Publish semantic asset key</p>
-          </div>
-        </div>
-      </div>
-    </WorkspacePanel>
-  );
-}
-
 function PresetEditor() {
   const [busy, setBusy] = useState(false);
   return (
@@ -846,6 +825,13 @@ function RobloxManifestReport({ state }: { state: AssetProductionState }) {
 }
 
 function Dashboard({ state }: { state: AssetProductionState }) {
+  const uiCategoryIds: InventoryItem["categoryId"][] = ["top-hud", "left-navigation", "upgrade-categories", "research-ui", "buildings-ui", "galaxy-ui", "planet-ui", "settings-ui", "login-ui", "loading-ui"];
+  const uiSummaries = uiCategoryIds.map((id) => state.assetLibraryInventory.categorySummaries[id]);
+  const uiTotal = uiSummaries.reduce((sum, row) => sum + row.total, 0);
+  const uiMissing = uiSummaries.reduce((sum, row) => sum + row.missing, 0);
+  const uiPublished = uiSummaries.reduce((sum, row) => sum + row.published, 0);
+  const screensWithMissingAssets = new Set(state.assetLibraryInventory.items.filter((item) => item.status === "missing").flatMap((item) => item.referencedByScreens.map((reference) => reference.id))).size;
+  const componentsWithMissingAssets = new Set(state.assetLibraryInventory.items.filter((item) => item.status === "missing").flatMap((item) => item.referencedByComponents.map((reference) => reference.id))).size;
   return (
     <div className="grid gap-5 xl:grid-cols-[1fr_26rem]">
       <section className="space-y-5">
@@ -866,6 +852,23 @@ function Dashboard({ state }: { state: AssetProductionState }) {
             <WorkspaceStatTile label="Visual Records" value={state.dashboard.visualRecords} />
             <WorkspaceStatTile label="Preview Ready" value={state.dashboard.previewReady} />
             <WorkspaceStatTile label="Preview Missing" value={state.dashboard.previewMissing} />
+          </div>
+        </WorkspacePanel>
+
+        <WorkspacePanel title="Asset Library Inventory" icon={Boxes}>
+          <div className="grid gap-3 md:grid-cols-3">
+            <WorkspaceStatTile label="UI Assets Total" value={uiTotal} />
+            <WorkspaceStatTile label="Missing UI Assets" value={uiMissing} />
+            <WorkspaceStatTile label="Published UI Assets" value={uiPublished} />
+            <WorkspaceStatTile label="Uncategorized" value={state.assetLibraryInventory.unmappedAssets.length} />
+            <WorkspaceStatTile label="Screens Missing Assets" value={screensWithMissingAssets} />
+            <WorkspaceStatTile label="Components Missing Assets" value={componentsWithMissingAssets} />
+          </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Link href="/asset-library?section=top-hud" className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Top HUD</Link>
+            <Link href="/asset-library?section=research-ui" className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Research UI</Link>
+            <Link href="/asset-library?section=buildings-ui" className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Buildings UI</Link>
+            <Link href="/asset-library?section=unmapped" className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Unmapped</Link>
           </div>
         </WorkspacePanel>
 
@@ -1020,6 +1023,181 @@ function AssetGrid({ assets, empty, storageKey }: { assets: ProductionAsset[]; e
     <WorkspacePanel>
       <p className="text-sm font-semibold text-slate-300">{empty}</p>
     </WorkspacePanel>
+  );
+}
+
+type InventoryItem = AssetProductionState["assetLibraryInventory"]["items"][number];
+type InventoryStatus = InventoryItem["status"];
+
+const inventoryStatusFilters: Array<"all" | InventoryStatus> = ["all", "missing", "uploaded", "needs_review", "approved", "published", "invalid", "unmapped"];
+
+function inventoryStatusClass(status: InventoryStatus) {
+  if (status === "published") return "border-emerald-300/30 bg-emerald-400/10 text-emerald-100";
+  if (status === "approved") return "border-cyan-300/30 bg-cyan-400/10 text-cyan-100";
+  if (status === "uploaded" || status === "needs_review") return "border-amber-300/30 bg-amber-400/10 text-amber-100";
+  if (status === "invalid") return "border-rose-300/30 bg-rose-400/10 text-rose-100";
+  if (status === "unmapped") return "border-slate-500/40 bg-slate-500/10 text-slate-200";
+  return "border-rose-300/30 bg-rose-400/10 text-rose-100";
+}
+
+function uploadHrefForInventoryItem(item: InventoryItem) {
+  const params = new URLSearchParams({
+    upload: "asset",
+    category: item.categoryPath.split("/").pop()?.trim() ?? item.categoryId,
+    role: item.role,
+    assetKey: item.semanticAssetKey,
+    name: item.displayName,
+    requiredDimensions: item.requiredDimensions
+  });
+  if (item.requirementId) params.set("requirement", item.requirementId);
+  return `/asset-library?${params.toString()}`;
+}
+
+function platformSummary(item: InventoryItem) {
+  return Object.entries(item.platformReadiness).map(([platform, status]) => `${platform}:${status}`).join(" / ");
+}
+
+function InventoryCard({ item, selected, onSelect, settings }: { item: InventoryItem; selected: boolean; onSelect: () => void; settings: DensitySettings }) {
+  const usageCount = item.referencedByScreens.length + item.referencedByComponents.length + item.referencedByPlaceholders.length;
+  const linkedAssetHref = item.sourceAssetId ? `/assets/${encodeURIComponent(item.sourceAssetId)}` : uploadHrefForInventoryItem(item);
+  if (settings.density === "list") {
+    return (
+      <button type="button" onClick={onSelect} className={`${cardShellClass(settings)} text-left ${selected ? "border-cyan-300/50 bg-cyan-300/10" : ""}`}>
+        <div className={previewBoxClass(settings)}>
+          {item.previewUrl ? <img src={item.previewUrl} alt="" className="h-full w-full object-cover" /> : <ImageIcon className="h-5 w-5 text-slate-500" />}
+        </div>
+        <div className="min-w-0">
+          <p className="truncate text-sm font-black text-white">{item.displayName}</p>
+          <p className="truncate text-xs text-cyan-200">{item.semanticAssetKey}</p>
+        </div>
+        <span className={`rounded-md border px-2 py-1 text-xs font-black uppercase tracking-[0.12em] ${inventoryStatusClass(item.status)}`}>{item.status.replaceAll("_", " ")}</span>
+        <p className="truncate text-xs text-slate-400">{item.role}</p>
+        <p className="truncate text-xs text-slate-300">{usageCount} usage</p>
+      </button>
+    );
+  }
+
+  return (
+    <article className={`${cardShellClass(settings)} ${selected ? "border-cyan-300/50 bg-cyan-300/10" : ""}`}>
+      <button type="button" onClick={onSelect} className="block w-full text-left">
+        <div className={previewBoxClass(settings)}>
+          {item.previewUrl ? <img src={item.previewUrl} alt="" className="h-full w-full object-cover" /> : (
+            <div className="grid h-full place-items-center bg-slate-950/60">
+              <ImageIcon className="h-7 w-7 text-slate-500" />
+            </div>
+          )}
+        </div>
+        <div className="mt-3 flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <p className="truncate text-sm font-black text-white">{item.displayName}</p>
+            <p className="mt-1 truncate text-xs text-cyan-200">{item.semanticAssetKey}</p>
+          </div>
+          <span className={`shrink-0 rounded-md border px-2 py-1 text-[0.62rem] font-black uppercase tracking-[0.12em] ${inventoryStatusClass(item.status)}`}>{item.status.replaceAll("_", " ")}</span>
+        </div>
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          <WorkspaceMiniStat label="Role" value={item.role} />
+          <WorkspaceMiniStat label="Usage" value={usageCount} />
+          {settings.density !== "compact" ? <WorkspaceMiniStat label="Required" value={item.requiredDimensions} /> : null}
+          {settings.density !== "compact" ? <WorkspaceMiniStat label="Current" value={item.currentDimensions} /> : null}
+        </div>
+      </button>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <Link href={uploadHrefForInventoryItem(item)} className="inline-flex h-9 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">{item.status === "missing" ? "Upload Asset" : "New Version"}</Link>
+        <Link href={linkedAssetHref} className="inline-flex h-9 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Open Inspector</Link>
+      </div>
+    </article>
+  );
+}
+
+function AssetLibraryCategoryInventory({ state, categoryId }: { state: AssetProductionState; categoryId: InventoryItem["categoryId"] }) {
+  const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | InventoryStatus>("all");
+  const [settings, setSettings] = useWorkspaceDensitySettings(`project-genesis-density-asset-library-${categoryId}`);
+  const allItems = state.assetLibraryInventory.items.filter((item) => item.categoryId === categoryId);
+  const summary = state.assetLibraryInventory.categorySummaries[categoryId];
+  const visible = allItems.filter((item) => {
+    const needle = query.trim().toLowerCase();
+    const text = [
+      item.displayName,
+      item.semanticAssetKey,
+      item.role,
+      item.status,
+      item.categoryPath,
+      item.referencedByScreens.map((reference) => reference.name).join(" "),
+      item.referencedByComponents.map((reference) => reference.name).join(" ")
+    ].join(" ").toLowerCase();
+    return (statusFilter === "all" || item.status === statusFilter) && (!needle || text.includes(needle));
+  });
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const selected = visible.find((item) => item.id === selectedId) ?? visible[0] ?? allItems[0] ?? null;
+
+  return (
+    <div className="space-y-5">
+      <WorkspacePanel title={summary?.label ?? implementedNodeLabels[categoryId]} icon={ImageIcon}>
+        <div className="grid gap-3 md:grid-cols-4">
+          <WorkspaceStatTile label="Assets" value={summary?.total ?? 0} />
+          <WorkspaceStatTile label="Missing" value={summary?.missing ?? 0} />
+          <WorkspaceStatTile label="Needs Review" value={summary?.needsReview ?? 0} />
+          <WorkspaceStatTile label="Published" value={summary?.published ?? 0} />
+        </div>
+        <div className="mt-4 grid gap-3 md:grid-cols-3">
+          <WorkspaceMiniStat label="Screen refs" value={summary?.screenReferences ?? 0} />
+          <WorkspaceMiniStat label="Component refs" value={summary?.componentReferences ?? 0} />
+          <WorkspaceMiniStat label="Builder placeholders" value={summary?.placeholderReferences ?? 0} />
+        </div>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Link href={`/asset-library?upload=asset&category=${encodeURIComponent(summary?.label ?? categoryId)}`} className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Upload Asset</Link>
+          <Button type="button">Generate Missing Requirements</Button>
+          <WorkspaceBadge value="All statuses shown" />
+        </div>
+      </WorkspacePanel>
+      <div className="flex flex-wrap gap-2 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-2">
+        {inventoryStatusFilters.map((status) => (
+          <button key={status} type="button" onClick={() => setStatusFilter(status)} className={`rounded-md px-3 py-2 text-xs font-black uppercase tracking-[0.12em] transition ${statusFilter === status ? "bg-cyan-300/20 text-white" : "text-slate-400 hover:bg-cyan-300/10 hover:text-slate-100"}`}>
+            {status.replaceAll("_", " ")}
+          </button>
+        ))}
+      </div>
+      <CompactWorkspaceToolbar query={query} onQueryChange={setQuery} settings={settings} onSettingsChange={setSettings} resultCount={visible.length} totalCount={allItems.length} placeholder="Search display name, semantic key, role, screen, component, status" />
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_22rem]">
+        <div className={collectionGridClass(settings)}>
+          {visible.map((item) => <InventoryCard key={item.id} item={item} selected={selected?.id === item.id} onSelect={() => setSelectedId(item.id)} settings={settings} />)}
+        </div>
+        <WorkspacePanel title="Inspector" icon={Search}>
+          {selected ? (
+            <div className="space-y-3">
+              <div>
+                <p className="text-lg font-black text-white">{selected.displayName}</p>
+                <p className="mt-1 break-all text-sm text-cyan-200">{selected.semanticAssetKey}</p>
+              </div>
+              <div className="grid gap-2">
+                <WorkspaceMiniStat label="Category" value={selected.categoryPath} />
+                <WorkspaceMiniStat label="Role" value={selected.role} />
+                <WorkspaceMiniStat label="Status" value={selected.status} />
+                <WorkspaceMiniStat label="Required" value={selected.requiredDimensions} />
+                <WorkspaceMiniStat label="Current" value={selected.currentDimensions} />
+                <WorkspaceMiniStat label="Platforms" value={platformSummary(selected)} />
+              </div>
+              <div className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-cyan-200">Usage</p>
+                {[...selected.referencedByScreens, ...selected.referencedByComponents, ...selected.referencedByPlaceholders].slice(0, 12).map((reference) => (
+                  <Link key={`${reference.type}:${reference.id}`} href={reference.href} className="mt-2 block rounded-md border border-cyan-300/10 bg-slate-950/50 p-2 text-sm font-semibold text-slate-200">
+                    {reference.type}: {reference.name}
+                  </Link>
+                ))}
+                {!selected.referencedByScreens.length && !selected.referencedByComponents.length && !selected.referencedByPlaceholders.length ? <p className="mt-2 text-sm text-slate-400">No usage reference yet.</p> : null}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Link href={uploadHrefForInventoryItem(selected)} className="inline-flex h-9 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Upload</Link>
+                {selected.sourceAssetId ? <Link href={`/assets/${encodeURIComponent(selected.sourceAssetId)}`} className="inline-flex h-9 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Open Source Record</Link> : null}
+              </div>
+            </div>
+          ) : (
+            <p className="text-sm font-semibold text-slate-300">No inventory items match this filter.</p>
+          )}
+        </WorkspacePanel>
+      </div>
+    </div>
   );
 }
 
@@ -1306,7 +1484,7 @@ export function AssetProductionWorkspace({ state, view, preferredRoute = "/asset
           {activeNode === "processing" ? <ProcessingQueue state={state} /> : null}
           {activeNode === "import-history" ? <ImportHistory state={state} /> : null}
           {activeNode === "upgrade-categories" ? <UpgradeCategoriesWorkspace state={state} /> : null}
-          {!isAssetProductionView(activeNode) && activeNode !== "upgrade-categories" ? <DamPlaceholder active={activeNode} /> : null}
+          {isInventoryCategoryNode(activeNode) && activeNode !== "upgrade-categories" ? <AssetLibraryCategoryInventory state={state} categoryId={activeNode} /> : null}
         </section>
       </div>
       <WorkspacePanel title="Workflow Guardrails" icon={Archive}>

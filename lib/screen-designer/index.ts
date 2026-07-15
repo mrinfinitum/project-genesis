@@ -1380,7 +1380,20 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
     description: "Building catalogue, construction, upgrade, and production detail screen.",
     status: "Not Started",
     dataRequirements: [data("building-definitions", "Building definitions", "Canonical Studio Definition", "buildings", "Mapped"), data("building-resource-effects", "Structured building resource effects", "Canonical Studio Definition", "buildingResourceEffects + resourceProducerDefinitions", "Mapped"), data("building-economy-designer", "Economy Designer building effect inspector", "Canonical Studio Definition", "/economy-designer#building-effects", "Mapped"), data("building-player-state", "Owned buildings/workers", "Player Runtime State", "game client", "Missing")],
-    assetRequirements: [asset("building-card-art", "Building card art", "building_cards", "background", "Needs Approval")]
+    assetRequirements: [
+      asset("buildings-workspace-background", "Buildings workspace background", "buildings_workspace_background", "background", "Pending Upload"),
+      asset("buildings-header", "Buildings header", "buildings_header", "background", "Pending Upload"),
+      asset("building-category-tabs", "Building category tabs", "building_category_tabs", "button_state", "Pending Upload"),
+      asset("building-card-art", "Building card frames", "building_cards", "background", "Needs Approval"),
+      asset("building-icon-placeholders", "Building icon placeholders", "building_icon_placeholders", "icon", "Pending Upload"),
+      asset("building-detail-panel", "Building detail panel", "building_detail_panel", "panel", "Pending Upload"),
+      asset("building-cost-rows", "Building cost rows", "building_cost_rows", "panel", "Pending Upload"),
+      asset("building-requirement-rows", "Building requirement rows", "building_requirement_rows", "panel", "Pending Upload"),
+      asset("building-build-upgrade-buttons", "Build/upgrade buttons", "building_build_upgrade_buttons", "button_state", "Pending Upload"),
+      asset("building-empty-state", "Building empty state", "building_empty_state", "background", "Pending Upload"),
+      asset("building-locked-state", "Building locked state", "building_locked_state", "background", "Pending Upload"),
+      asset("building-construction-state", "Building construction state", "building_construction_state", "background", "Pending Upload")
+    ]
   }),
   baseRecord({
     screenId: "resources",

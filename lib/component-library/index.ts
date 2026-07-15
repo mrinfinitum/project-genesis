@@ -723,7 +723,15 @@ const dashboardComponentRecords: ComponentDesignRecord[] = [
     viteStatus: "In Progress",
     robloxStatus: "In Progress",
     anatomy: [anatomyPart("hud-surface", "HUD surface", "CSS/layout"), anatomyPart("economy-slots", "Economy slots", "runtime data"), anatomyPart("utility-controls", "Utility controls", "interaction state")],
-    assetKeys: [assetRef("Labor icon", "economy_labor", "Pending Art")],
+    assetKeys: [
+      assetRef("Top HUD background", "top_hud_background", "Pending Art"),
+      assetRef("Civilization identity frame", "civilization_identity_frame", "Pending Art"),
+      assetRef("Labor icon", "economy_labor", "Pending Art"),
+      assetRef("Credits icon", "economy_credits", "Pending Art"),
+      assetRef("Population icon", "economy_population", "Pending Art"),
+      assetRef("Research icon", "economy_research", "Pending Art"),
+      assetRef("Premium Crystal icon", "economy_premium_crystals", "Pending Art")
+    ],
     dataInputs: [dataInput("primaryHudResources", "Fixed HUD resource IDs", "string[]", "Presentation Hint"), dataInput("primaryHudSlots", "Fixed HUD slot metadata", "HudResourceSlot[]", "Presentation Hint"), dataInput("eraEconomyProfile", "Era economy behavior and display overrides", "EraEconomyProfile", "Canonical Studio Definition"), dataInput("economyBalances", "Economy balances and rates", "EconomyState[]", "Player Runtime State")],
     notes: [
       "Fixed order: ECON-LABOR, ECON-CREDITS, ECON-POPULATION, ECON-RESEARCH, ECON-PREMIUM-CRYSTALS.",
@@ -755,6 +763,12 @@ const dashboardComponentRecords: ComponentDesignRecord[] = [
     status: "Implemented",
     viteStatus: "Implemented",
     robloxStatus: "Needs Parity Review",
+    assetKeys: [
+      assetRef("Add Crystals button", "top_hud_add_crystals_button", "Pending Art"),
+      assetRef("Calendar button", "top_hud_calendar_button", "Pending Art"),
+      assetRef("Trophy button", "top_hud_trophy_button", "Pending Art"),
+      assetRef("Settings button", "top_hud_settings_button", "Pending Art")
+    ],
     states: states(buttonStates, ["Default", "Hover", "Pressed", "Focused", "Disabled"]),
     variants: [variant("default", "Default", buttonStates), variant("danger", "Danger", buttonStates), variant("subtle", "Subtle", buttonStates)],
     interactions: [interaction("activate", "Pointer/touch/Enter/Space", "Invoke utility action"), interaction("show-tooltip", "Hover/focus", "Show tooltip without stealing focus", "Local interaction state only.")],

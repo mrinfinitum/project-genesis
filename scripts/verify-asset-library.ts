@@ -65,6 +65,10 @@ async function main() {
     "needs-review",
     "approved-assets",
     "upgrade-categories",
+    "unmapped",
+    "AssetLibraryCategoryInventory",
+    "All statuses shown",
+    "Generate Missing Requirements",
     "Open in Visual Builder",
     "Open in Screen Specification",
     "Generate Derivatives"
@@ -96,6 +100,23 @@ async function main() {
   assert(state.assets.length > 0, "Asset Library must resolve existing canonical asset records.");
   assert(state.missingRequirements.length >= 0, "Asset Library missing-assets collection must resolve.");
   assert(state.dashboard.totalAssets === state.assets.length, "Asset Library dashboard must count canonical assets.");
+  assert(state.assetLibraryInventory.defaultFilter === "all", "Asset Library must default to all statuses.");
+  assert(state.assetLibraryInventory.items.length > state.assets.length, "Asset Library inventory must include derived requirements, not only published assets.");
+  assert(state.assetLibraryInventory.duplicateSemanticKeys.length === 0, `Duplicate semantic keys found: ${state.assetLibraryInventory.duplicateSemanticKeys.map((item) => item.semanticAssetKey).join(", ")}`);
+
+  const topHud = state.assetLibraryInventory.categorySummaries["top-hud"];
+  const research = state.assetLibraryInventory.categorySummaries["research-ui"];
+  const buildings = state.assetLibraryInventory.categorySummaries["buildings-ui"];
+  const unmapped = state.assetLibraryInventory.categorySummaries.unmapped;
+  assert(topHud.total >= 11, `Top HUD category must have real inventory cards; received ${topHud.total}.`);
+  assert(research.total >= 18, `Research category must have requirement cards; received ${research.total}.`);
+  assert(buildings.total >= 10, `Buildings category must have meaningful inventory cards; received ${buildings.total}.`);
+  assert(state.assetLibraryInventory.items.some((item) => item.status === "published"), "Published assets must appear in the Asset Library inventory.");
+  assert(state.assetLibraryInventory.items.some((item) => item.status === "missing"), "Missing requirements must appear in the Asset Library inventory.");
+  assert(unmapped.total === state.assetLibraryInventory.unmappedAssets.length, "Unmapped queue must be visible and internally consistent.");
+  assert(state.assetLibraryInventory.items.some((item) => item.sourceType === "visual_builder_placeholder" && item.referencedByPlaceholders.length > 0), "Visual Builder placeholder links must resolve into Asset Library.");
+  assert(state.assetLibraryInventory.items.some((item) => item.referencedByComponents.length > 0), "Component Library usage links must resolve into Asset Library.");
+  assert(state.assetLibraryInventory.items.some((item) => item.requirementId && item.actions.includes("Upload Asset")), "Requirement cards must expose upload actions.");
 
   const runtime = await buildCanonicalRuntimeExportPayload();
   assert(runtime.metadata.validationStatus === "Ready", `Runtime must remain Ready; received ${runtime.metadata.validationStatus}.`);
@@ -113,6 +134,15 @@ async function main() {
     deprecatedRoute: "/game-art-import",
     assets: state.assets.length,
     missingAssets: state.missingRequirements.length,
+    inventoryItems: state.assetLibraryInventory.items.length,
+    categoryCounts: {
+      topHud: topHud.total,
+      research: research.total,
+      buildings: buildings.total,
+      published: state.assetLibraryInventory.items.filter((item) => item.status === "published").length,
+      missing: state.assetLibraryInventory.items.filter((item) => item.status === "missing").length,
+      unmapped: unmapped.total
+    },
     uploadWorkflow: true,
     pickerLinks: ["component-library", "screen-designer"],
     upgradeCategoryPath: "/asset-library?section=upgrade-categories",
