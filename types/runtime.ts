@@ -70,6 +70,12 @@ export type UpgradeCategory = {
   unlockRequirements: RequirementMap;
   iconKey: string;
   themeKey: string;
+  presentation: {
+    backgroundArtKey: string;
+    fallbackBackgroundArtKey: string;
+    selectedTabArtKey: string | null;
+    iconArtKey: string | null;
+  };
 };
 
 export type VisibilityRules = {

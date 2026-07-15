@@ -9,6 +9,7 @@ import type { ComponentDesignSummary, ComponentLibraryState } from "@/lib/compon
 import { productionTasksForScaffold, type ContentAuthoringState, type EraScaffold } from "@/lib/content-authoring/templates";
 import type { ScreenDesignerState, ScreenDesignSummary } from "@/lib/screen-designer";
 import { buildUpgradeArtReport, type UpgradeArtReport } from "@/lib/upgrades/art-previews";
+import { resolveUpgradeCategoryAssetStatus } from "@/lib/upgrades/category-presentation";
 import { buildBuildingResourceEffects, buildEconomyBehaviorContracts, buildOfflineProgressionPolicies, buildResourceProducerDefinitions, primaryHudEconomyIds } from "@/lib/economy/definitions";
 import type { Building, BuildingChain, GameData, ResearchNode, ResourceCatalogItem, UnlockMatrixRow } from "@/types/schema";
 
@@ -388,6 +389,28 @@ function upgradeArtWorkItems(report: UpgradeArtReport) {
     }));
   }
   return items;
+}
+
+function upgradeCategoryBackgroundWorkItems(assetState: AssetProductionState) {
+  return resolveUpgradeCategoryAssetStatus(assetState.assets)
+    .filter((item) => item.status !== "published" && item.approvalStatus !== "approved")
+    .map((item) => queueItem({
+      id: `upgrade-category-background-${item.categoryId}`,
+      title: `Upload ${item.displayName} upgrade category background`,
+      type: "Asset",
+      status: item.status,
+      era: "Upgrade Categories",
+      href: "/assets?group=upgrade-categories",
+      reason: `Asset Production needs ${item.semanticAssetKey} for selectedUpgradeCategory.presentation.backgroundArtKey.`,
+      blockers: [
+        item.sourceFile ? "" : "Source file missing",
+        item.geometryConsistent ? "" : `Required ${item.expectedDimensions.masterWidth}x${item.expectedDimensions.masterHeight} geometry`,
+        item.webReady ? "" : "Web mapping missing",
+        item.robloxReady ? "" : "Roblox mapping missing",
+        item.iosReady && item.androidReady ? "" : "Mobile mappings missing"
+      ].filter(Boolean),
+      priority: "High"
+    }));
 }
 
 function contentWorkItems(data: GameData) {
@@ -994,6 +1017,12 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
   const previewTotal = Math.max(1, assetState.visualPreviewReport.totalVisualRecords);
   const upgradeArtReady = upgradeArtReport.stats.previewReady;
   const upgradeArtTotal = Math.max(1, upgradeArtReport.stats.total);
+  const upgradeCategoryAssets = resolveUpgradeCategoryAssetStatus(assetState.assets);
+  const upgradeCategoryComplete = upgradeCategoryAssets.filter((asset) => asset.status === "published" || asset.approvalStatus === "approved").length;
+  const upgradeCategoryWebReady = upgradeCategoryAssets.filter((asset) => asset.webReady).length;
+  const upgradeCategoryRobloxReady = upgradeCategoryAssets.filter((asset) => asset.robloxReady).length;
+  const upgradeCategoryMobileReady = upgradeCategoryAssets.filter((asset) => asset.iosReady && asset.androidReady).length;
+  const upgradeCategoryGeometryReady = upgradeCategoryAssets.filter((asset) => !asset.sourceFile || asset.geometryConsistent).length;
   const appShellRecord = screenState?.records.find((record) => record.screenId === appShellId);
   const migratedShellScreens = screenState?.records.filter((record) => normalWorkspaceScreenIds.includes(record.screenId) && record.shellBinding?.shellId === appShellId && record.shellBinding?.workspaceSlotId === mainWorkspaceSlotId).length ?? 0;
   const duplicatedShellScreens = screenState?.records.filter((record) => record.screenType === "workspace" && record.componentSpecs.some((component) => component.componentLibraryId === "TopHudBar" || component.componentLibraryId === "SideNavigationRail")).length ?? 0;
@@ -1014,6 +1043,7 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
     { label: "Art Completion", complete: artComplete, total: artTotal, value: percent(artComplete, artTotal), detail: `${artComplete} complete assets, ${assetState.missingRequirements.length} missing requirements.` },
     { label: "Preview Readiness", complete: previewReady, total: previewTotal, value: percent(previewReady, previewTotal), detail: `${assetState.visualPreviewReport.previewMissing} missing, ${assetState.visualPreviewReport.previewStale} stale, ${assetState.visualPreviewReport.lowResolution} low-resolution previews.` },
     { label: "Upgrade Art Readiness", complete: upgradeArtReady, total: upgradeArtTotal, value: percent(upgradeArtReady, upgradeArtTotal), detail: `${upgradeArtReport.stats.missing} missing, ${upgradeArtReport.stats.ambiguous} need review, ${upgradeArtReport.stats.webReady} web-ready upgrade icons.` },
+    { label: "Upgrade Category Backgrounds", complete: upgradeCategoryComplete, total: 4, value: percent(upgradeCategoryComplete, 4), detail: `Workforce, Industry, Science, and Technology backgrounds. Web ${upgradeCategoryWebReady}/4, Roblox ${upgradeCategoryRobloxReady}/4, mobile ${upgradeCategoryMobileReady}/4, geometry ${upgradeCategoryGeometryReady}/4.` },
     { label: "Research Completion", complete: researchCompleteCount, total: data.research.length, value: percent(researchCompleteCount, data.research.length), detail: "Complete research nodes with usable icon/asset links." },
     { label: "Building Completion", complete: buildingCompleteCount, total: data.buildings.length, value: percent(buildingCompleteCount, data.buildings.length), detail: "Buildings with unlocks and visual references." },
     { label: "Production Chain Completion", complete: chainCompleteCount, total: data.building_chains.length, value: percent(chainCompleteCount, data.building_chains.length), detail: "Building chains with all level slots filled." },
@@ -1048,7 +1078,7 @@ export function buildProductionPlan(data: GameData, assetState: AssetProductionS
   const overall = clamp(metrics.filter((metric) => metric.label !== "Overall Game Completion").reduce((sum, metric) => sum + metric.value, 0) / Math.max(1, metrics.length - 1));
   metrics[0] = { ...metrics[0], complete: metrics.reduce((sum, metric) => sum + metric.complete, 0), total: metrics.reduce((sum, metric) => sum + metric.total, 0), value: overall };
 
-  const queue = [...architectureWorkItems(architectureState), ...resourceEconomyWorkItems(data), ...aiAgentWorkItems(aiAgentState), ...mobileReadinessWorkItems(screenState, componentState), ...componentWorkItems(componentState), ...screenDesignWorkItems(screenState), ...scaffoldWorkItems(authoringState), ...upgradeArtWorkItems(upgradeArtReport), ...assetWorkItems(assetState), ...contentWorkItems(data)].filter((item) => !isCoveredByCompleteContentPack(item)).slice(0, 220);
+  const queue = [...architectureWorkItems(architectureState), ...resourceEconomyWorkItems(data), ...aiAgentWorkItems(aiAgentState), ...mobileReadinessWorkItems(screenState, componentState), ...componentWorkItems(componentState), ...screenDesignWorkItems(screenState), ...scaffoldWorkItems(authoringState), ...upgradeCategoryBackgroundWorkItems(assetState), ...upgradeArtWorkItems(upgradeArtReport), ...assetWorkItems(assetState), ...contentWorkItems(data)].filter((item) => !isCoveredByCompleteContentPack(item)).slice(0, 220);
   return {
     overallCompletion: overall,
     metrics,

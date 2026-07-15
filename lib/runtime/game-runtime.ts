@@ -29,6 +29,7 @@ import {
 import { ResourceService } from "@/lib/resources/service";
 import { engineEraNavigationOverrides, resolveEraNavigationProfile, supportedEraNavigationBoundaryModes, supportedEraNavigationDashboardModes } from "@/lib/runtime/client-profiles";
 import { buildMobileClientProfile } from "@/lib/runtime/mobile-client-profiles";
+import { categoryPresentationFor, validateUpgradeCategoryPresentation } from "@/lib/upgrades/category-presentation";
 import type { GameData, ResourceCatalogItem, Upgrade } from "@/types/schema";
 import type {
   AssetDefinition,
@@ -49,7 +50,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 14;
+export const gameRuntimeContentVersion = 15;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -264,7 +265,8 @@ function defaultCategories(): UpgradeCategory[] {
     unlockedAtGameStart: index === 0,
     unlockRequirements: index === 0 ? { start: true } : {},
     iconKey: `upgrade-category-${id}`,
-    themeKey: `theme-${id}`
+    themeKey: `theme-${id}`,
+    presentation: categoryPresentationFor(id)
   }));
 }
 
@@ -1160,6 +1162,10 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   validateResourceEconomyContracts(runtimeData, issues, "Canonical runtime");
   validateMobileClientProfiles(runtimeData, issues);
   validateAiAgents(runtimeData, issues);
+  const categoryPresentationValidation = validateUpgradeCategoryPresentation({ categories: runtimeData.upgradeCategories });
+  for (const message of categoryPresentationValidation.issues) {
+    issues.push({ severity: "error", code: "upgrade_category_presentation_invalid", message, records: runtimeData.upgradeCategories.map((category) => category.id) });
+  }
 
   const missingCategories = requiredCategoryIds.filter((id) => !categoryIds.has(id));
   if (missingCategories.length) {
@@ -1357,6 +1363,10 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
   if (payload.upgradeTabs.length !== 4) {
     issues.push({ severity: "error", code: "invalid_upgrade_tab_count", message: "Roblox runtime payload must expose exactly four upgrade tabs.", records: payload.upgradeTabs.map((tab) => tab.tabId) });
   }
+  const tabPresentationValidation = validateUpgradeCategoryPresentation({ categories: payload.upgradeTabs.map((tab) => ({ id: tab.id, presentation: tab.presentation })) });
+  for (const message of tabPresentationValidation.issues) {
+    issues.push({ severity: "error", code: "upgrade_tab_presentation_invalid", message, records: payload.upgradeTabs.map((tab) => tab.tabId) });
+  }
   validateCanonicalEraProgression(payload.eras, issues, "Roblox runtime");
   validateEraEconomyProfiles({
     eras: payload.eras,
@@ -1470,7 +1480,8 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
         unlockedAtGameStart: false,
         unlockRequirements: {},
         iconKey: `upgrade-category-${upgrade.categoryId}`,
-        themeKey: `theme-${upgrade.categoryId}`
+        themeKey: `theme-${upgrade.categoryId}`,
+        presentation: categoryPresentationFor(upgrade.categoryId)
       });
     }
   }
@@ -1589,6 +1600,8 @@ function normalizeImportedCategories(payload: Record<string, unknown>, fallback:
   return rows.map((item, index): UpgradeCategory => {
     const row = asRecord(item);
     const id = slug(display(row.id ?? row.tabId ?? row.name ?? row.displayName, `category-${index + 1}`));
+    const presentation = asRecord(row.presentation);
+    const defaults = categoryPresentationFor(id);
     return {
       id,
       displayName: display(row.displayName ?? row.name, id),
@@ -1597,7 +1610,13 @@ function normalizeImportedCategories(payload: Record<string, unknown>, fallback:
       unlockedAtGameStart: asBoolean(row.unlockedAtGameStart, index === 0),
       unlockRequirements: asRecord(row.unlockRequirements),
       iconKey: display(row.iconKey, `upgrade-category-${id}`),
-      themeKey: display(row.themeKey, `theme-${id}`)
+      themeKey: display(row.themeKey, `theme-${id}`),
+      presentation: {
+        backgroundArtKey: display(presentation.backgroundArtKey, defaults.backgroundArtKey),
+        fallbackBackgroundArtKey: display(presentation.fallbackBackgroundArtKey, defaults.fallbackBackgroundArtKey),
+        selectedTabArtKey: presentation.selectedTabArtKey ? display(presentation.selectedTabArtKey) : defaults.selectedTabArtKey,
+        iconArtKey: presentation.iconArtKey ? display(presentation.iconArtKey) : defaults.iconArtKey
+      }
     };
   });
 }

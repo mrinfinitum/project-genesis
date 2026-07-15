@@ -3,6 +3,7 @@ import path from "node:path";
 import { appShellBounds, appShellDisplayName, appShellId, appShellLayerTree, appShellVersion, blankInnerWorkspaceTemplate, createShellBinding, derivedShellProfiles, mainWorkspaceSlotId, navigationMetadataForScreen, topHudChildren, visualBuilderModes, type AppShellBuilderMode, type AppShellScreenType, type ScreenNavigationMetadata, type ScreenShellBinding } from "@/lib/app-shell";
 import type { AssetProductionState, ProductionAsset } from "@/lib/assets/asset-production";
 import { findAssetForPreviewKeys, resolveScreenPreview, type VisualPreview } from "@/lib/assets/visual-previews";
+import { categoryPresentationFor, upgradePanelSharedFallbackArtKey } from "@/lib/upgrades/category-presentation";
 
 export type ScreenDesignStatus = "Not Started" | "Draft" | "In Design" | "Ready for Review" | "Approved" | "Implemented" | "Needs Revision";
 export type ScreenApprovalStatus = "Unreviewed" | "Changes Requested" | "Approved";
@@ -1441,8 +1442,73 @@ const initialScreenDesignRecords: ScreenDesignRecord[] = [
     displayName: "Upgrades",
     description: "Upgrade tab and upgrade chain screen.",
     status: "Not Started",
-    dataRequirements: [data("upgrade-definitions", "Upgrade definitions", "Canonical Studio Definition", "upgrades", "Mapped"), data("upgrade-player-state", "Purchased upgrade state", "Player Runtime State", "game client", "Missing")],
-    assetRequirements: [asset("upgrade-icons", "Upgrade icons", "upgrade_icons", "icon", "Needs Approval")]
+    dataRequirements: [
+      data("upgrade-definitions", "Upgrade definitions", "Canonical Studio Definition", "upgrades", "Mapped"),
+      data("upgrade-category-presentation", "Upgrade category presentation backgrounds", "Canonical Studio Definition", "upgradeCategories[].presentation.backgroundArtKey", "Mapped", "selectedUpgradeCategoryId resolves to canonical category definition, then to presentation.backgroundArtKey."),
+      data("upgrade-player-state", "Purchased upgrade state", "Player Runtime State", "game client", "Missing")
+    ],
+    assetRequirements: [
+      asset("upgrade-workforce-background", "Workforce background", categoryPresentationFor("workforce").backgroundArtKey, "background", "Pending Upload", "UI > Dashboard > Upgrade Categories > Workforce."),
+      asset("upgrade-industry-background", "Industry background", categoryPresentationFor("industry").backgroundArtKey, "background", "Pending Upload", "UI > Dashboard > Upgrade Categories > Industry."),
+      asset("upgrade-science-background", "Science background", categoryPresentationFor("science").backgroundArtKey, "background", "Pending Upload", "UI > Dashboard > Upgrade Categories > Science."),
+      asset("upgrade-technology-background", "Technology background", categoryPresentationFor("technology").backgroundArtKey, "background", "Pending Upload", "UI > Dashboard > Upgrade Categories > Technology."),
+      asset("upgrade-shared-fallback-background", "Shared fallback upgrade background", upgradePanelSharedFallbackArtKey, "background", "Needs Approval", "Used when category-specific background is missing or unpublished."),
+      asset("upgrade-icons", "Upgrade icons", "upgrade_icons", "icon", "Needs Approval")
+    ],
+    componentSpecs: [
+      researchComponent({
+        id: "upgrade-workspace-background",
+        componentLibraryId: "UpgradeWorkspaceBackground",
+        displayName: "Upgrade Workspace Background",
+        purpose: "Category-specific local workspace background selected from canonical upgrade category presentation metadata.",
+        dimensions: "x0 y0 w3244 h1804.",
+        positioning: "WorkspaceBackground layer inside RouteWorkspaceRoot.",
+        assetKeys: [
+          categoryPresentationFor("workforce").backgroundArtKey,
+          categoryPresentationFor("industry").backgroundArtKey,
+          categoryPresentationFor("science").backgroundArtKey,
+          categoryPresentationFor("technology").backgroundArtKey,
+          upgradePanelSharedFallbackArtKey
+        ],
+        dataInputs: ["selectedUpgradeCategoryId", "upgradeCategories", "selectedUpgradeCategory.presentation.backgroundArtKey"],
+        states: ["workforce", "industry", "science", "technology", "fallback", "missing art", "loading", "selected"]
+      }),
+      researchComponent({
+        id: "upgrade-category-tabs",
+        componentLibraryId: "UpgradeCategoryTabs",
+        displayName: "Upgrade Category Tabs",
+        purpose: "Switches selectedUpgradeCategoryId without duplicating screen layouts.",
+        dimensions: "Local tab strip inside Upgrades workspace.",
+        positioning: "Top tab region within the Main Workspace Slot.",
+        dataInputs: ["upgradeCategories", "selectedUpgradeCategoryId", "player category unlock state"],
+        states: ["workforce", "industry", "science", "technology", "fallback", "loading", "selected"]
+      }),
+      researchComponent({
+        id: "upgrade-category-view",
+        componentLibraryId: "UpgradeCategoryView",
+        displayName: "Upgrade Category View",
+        purpose: "Single category-state view that swaps heading, background, selected tab, and sample rows from selectedUpgradeCategoryId.",
+        dimensions: "Primary Upgrades workspace content.",
+        positioning: "Inside local content root.",
+        dataInputs: ["selectedUpgradeCategory", "upgradesByCategory", "category presentation metadata"],
+        states: ["workforce", "industry", "science", "technology", "fallback", "missing art", "loading", "selected"]
+      }),
+      researchComponent({
+        id: "upgrade-list",
+        componentLibraryId: "UpgradeList",
+        displayName: "Upgrade List",
+        purpose: "Category-specific upgrade row list using one layout and selected category state overrides.",
+        dimensions: "Scrollable row region inside the Upgrades workspace.",
+        positioning: "Below tab and heading region.",
+        dataInputs: ["selectedUpgradeCategoryId", "upgrades", "player purchased upgrades"],
+        states: ["workforce", "industry", "science", "technology", "loading", "selected"]
+      })
+    ],
+    notes: [
+      "Background binding: selectedUpgradeCategoryId -> canonical upgrade category definition -> presentation.backgroundArtKey.",
+      "Preview modes: Workforce, Industry, Science, Technology. Use category-state overrides, not four duplicated screen layouts.",
+      "Category-specific artwork comes from Asset Production UI > Dashboard > Upgrade Categories and must be approved/published before runtime asset rows expose mappings."
+    ]
   }),
   baseRecord({
     screenId: "civilization",

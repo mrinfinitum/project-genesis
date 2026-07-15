@@ -4,6 +4,7 @@ import path from "node:path";
 import { getGameData, getRows } from "@/lib/data";
 import { applyGameArtImport, getGameArtImportWorkspaceState, getMergedAssetLibraryRows, upsertAppliedGameArtAssets } from "@/lib/assets/game-art-import";
 import { buildVisualPreviewReport, previewDerivativePresets, type VisualPreviewReport } from "@/lib/assets/visual-previews";
+import { resolveUpgradeCategoryAssetStatus, upgradeCategoryAssetRecords, upgradeCategoryBackgroundDerivativePresetIds, upgradeCategoryBackgroundDimensions } from "@/lib/upgrades/category-presentation";
 import type { AssetDefinition } from "@/types/runtime";
 
 type Row = Record<string, unknown>;
@@ -270,6 +271,7 @@ export type AssetProductionState = {
   derivativePresets: AssetDerivativePreset[];
   derivativeProfiles: AssetDerivativeProfile[];
   requirementProfiles: AssetRequirementProfile[];
+  upgradeCategoryAssets: ReturnType<typeof resolveUpgradeCategoryAssetStatus>;
   assetQualityReport: {
     totalIssues: number;
     using1xAsset: number;
@@ -598,6 +600,18 @@ const productionStorePath = process.env.PROJECT_GENESIS_ASSET_PRODUCTION_STORE
 
 export const derivativePresets: AssetDerivativePreset[] = [
   ...previewDerivativePresets.map((item) => preset(item.id, item.name, "visual_previews", "preview", item.width, item.height, item.height ? `${item.width}:${item.height}` : "source", item.format, { outputRole: "thumbnail", required: item.id === "preview_card_256_webp", notes: item.notes, webOptimized: item.format === "WebP" })),
+  preset("upgrade_category_master_preview", "Upgrade Category Master Preview", "upgrade_category_backgrounds", "master_preview", upgradeCategoryBackgroundDimensions.masterWidth, upgradeCategoryBackgroundDimensions.masterHeight, `${upgradeCategoryBackgroundDimensions.masterWidth}:${upgradeCategoryBackgroundDimensions.masterHeight}`, "PNG", { required: true, category: "ui", engineTargets: ["web"], notes: "Studio-only master preview for category geometry review." }),
+  preset("upgrade_category_background_4k_png", "Upgrade Category Background 4K", "upgrade_category_backgrounds", "background_4k", upgradeCategoryBackgroundDimensions.masterWidth, upgradeCategoryBackgroundDimensions.masterHeight, `${upgradeCategoryBackgroundDimensions.masterWidth}:${upgradeCategoryBackgroundDimensions.masterHeight}`, "PNG", { required: true, category: "ui", engineTargets: ["web", "roblox"], cropMode: "cover", safeArea: "workspace content safe region", alignment: "top-left" }),
+  preset("upgrade_category_background_1440_webp", "Upgrade Category Background 1440", "upgrade_category_backgrounds", "background_1440", 2163, 1203, "2163:1203", "WebP", { required: true, category: "ui", engineTargets: ["web"], cropMode: "cover", safeArea: "workspace content safe region", alignment: "top-left", webOptimized: true }),
+  preset("upgrade_category_background_1080_webp", "Upgrade Category Background 1080", "upgrade_category_backgrounds", "background_1080", upgradeCategoryBackgroundDimensions.derived1080Bounds.width, upgradeCategoryBackgroundDimensions.derived1080Bounds.height, `${upgradeCategoryBackgroundDimensions.derived1080Bounds.width}:${upgradeCategoryBackgroundDimensions.derived1080Bounds.height}`, "WebP", { required: true, category: "ui", engineTargets: ["web"], cropMode: "cover", safeArea: "workspace content safe region", alignment: "top-left", webOptimized: true }),
+  preset("upgrade_category_background_720_webp", "Upgrade Category Background 720", "upgrade_category_backgrounds", "background_720", 1081, 601, "1081:601", "WebP", { required: false, category: "ui", engineTargets: ["web"], cropMode: "cover", safeArea: "workspace content safe region", alignment: "top-left", webOptimized: true }),
+  preset("upgrade_category_background_web_runtime", "Upgrade Category Web Runtime", "upgrade_category_backgrounds", "web_runtime", 1622, 902, "1622:902", "WebP", { required: true, category: "ui", engineTargets: ["web"], cropMode: "cover", safeArea: "workspace content safe region", alignment: "top-left", webOptimized: true }),
+  preset("upgrade_category_background_roblox_png", "Upgrade Category Roblox PNG", "upgrade_category_backgrounds", "roblox", 1622, 902, "1622:902", "PNG", { required: true, category: "ui", engineTargets: ["roblox"], cropMode: "cover", safeArea: "workspace content safe region", alignment: "top-left", robloxReady: true }),
+  preset("upgrade_category_background_ios_phone_png", "Upgrade Category iOS Phone", "upgrade_category_backgrounds", "ios_phone", 778, 433, "778:433", "PNG", { required: true, category: "ui", engineTargets: ["ios"], cropMode: "cover", safeArea: "workspace content safe region", alignment: "top-left" }),
+  preset("upgrade_category_background_ios_tablet_png", "Upgrade Category iOS Tablet", "upgrade_category_backgrounds", "ios_tablet", 1152, 641, "1152:641", "PNG", { required: true, category: "ui", engineTargets: ["ios"], cropMode: "cover", safeArea: "workspace content safe region", alignment: "top-left" }),
+  preset("upgrade_category_background_android_phone_png", "Upgrade Category Android Phone", "upgrade_category_backgrounds", "android_phone", 762, 424, "762:424", "PNG", { required: true, category: "ui", engineTargets: ["android"], cropMode: "cover", safeArea: "workspace content safe region", alignment: "top-left" }),
+  preset("upgrade_category_background_android_tablet_png", "Upgrade Category Android Tablet", "upgrade_category_backgrounds", "android_tablet", 1152, 641, "1152:641", "PNG", { required: true, category: "ui", engineTargets: ["android"], cropMode: "cover", safeArea: "workspace content safe region", alignment: "top-left" }),
+  preset("upgrade_category_background_thumbnail", "Upgrade Category Thumbnail", "upgrade_category_backgrounds", "thumbnail", 512, 285, "512:285", "WebP", { required: true, category: "ui", engineTargets: ["web"], outputRole: "thumbnail", cropMode: "cover", safeArea: "workspace content safe region", alignment: "top-left", webOptimized: true }),
   { id: "planet_icon", name: "Planet Icon", category: "planets", derivativeType: "icon", width: 256, height: 256, aspectRatio: "1:1", format: "PNG", required: true },
   { id: "planet_card", name: "Planet Card", category: "planets", derivativeType: "card", width: 1024, height: 1024, aspectRatio: "1:1", format: "WebP", required: true },
   { id: "planet_hero", name: "Planet Hero", category: "planets", derivativeType: "hero", width: 1920, height: 1080, aspectRatio: "16:9", format: "WebP", required: true },
@@ -663,6 +677,14 @@ export const derivativeProfiles: AssetDerivativeProfile[] = [
     masterFormats: ["PSD", "PSB", "AI", "SVG", "TIFF"]
   },
   {
+    id: "upgrade_category_backgrounds",
+    label: "Upgrade Category Backgrounds",
+    description: "Four canonical upgrade panel backgrounds for Workforce, Industry, Science, and Technology. All outputs share one registration point, safe region, alpha behavior, and crop mode.",
+    presetIds: [...upgradeCategoryBackgroundDerivativePresetIds],
+    engineTargets: ["roblox", "web", "ios", "android"],
+    masterFormats: ["PSD", "PSB", "PNG", "TIFF", "SVG"]
+  },
+  {
     id: "marketing_storybook",
     label: "Marketing and Storybook",
     description: "Steam, Epic, website, social, YouTube, Discord, and Storybook preview derivatives from the same master.",
@@ -678,6 +700,7 @@ export const requirementProfiles: AssetRequirementProfile[] = [
   { id: "building_requirement_profile", objectType: "building", label: "Building", requirements: requirements(["building_card", "building_hero"], "high") },
   { id: "research_requirement_profile", objectType: "research", label: "Research", requirements: requirements(["research_icon", "research_card"], "medium") },
   { id: "era_requirement_profile", objectType: "era", label: "Era", requirements: requirements(["era_icon", "era_banner", "era_background", "era_hero", "era_timeline_card", "era_loading_screen", "era_transition_art", "era_music", "era_ambient_audio", "era_cinematic"], "high") },
+  { id: "upgrade_category_background_requirement_profile", objectType: "upgrade_category", label: "Upgrade Category Background", requirements: requirements([...upgradeCategoryBackgroundDerivativePresetIds], "critical") },
   { id: "galaxy_requirement_profile", objectType: "galaxy", label: "Galaxy", requirements: requirements(["planet_card", "planet_hero"], "medium") },
   { id: "sector_requirement_profile", objectType: "sector", label: "Sector", requirements: requirements(["planet_card", "planet_hero"], "medium") },
   { id: "star_system_requirement_profile", objectType: "star_system", label: "Star System", requirements: requirements(["planet_card", "planet_hero"], "medium") },
@@ -1268,6 +1291,7 @@ function canonicalRequirementsByObject() {
     buildings: requirementProfiles.find((profile) => profile.objectType === "building")!,
     research: requirementProfiles.find((profile) => profile.objectType === "research")!,
     upgrades: requirementProfiles.find((profile) => profile.objectType === "research")!,
+    upgrade_category: requirementProfiles.find((profile) => profile.objectType === "upgrade_category")!,
     eras: requirementProfiles.find((profile) => profile.objectType === "era")!,
     celestial_bodies: requirementProfiles.find((profile) => profile.objectType === "planet")!
   };
@@ -1368,6 +1392,7 @@ export async function getAssetProductionState(): Promise<AssetProductionState> {
     planets: data.generated_planets.map((row) => ({ id: row.id, name: row.name, key: row.id })),
     celestial_bodies: data.celestial_bodies.map((row) => ({ id: row.id, name: row.name, key: row.id })),
     upgrades: data.upgrades.map((row) => ({ id: row.id, name: row.name, key: row.icon_name || row.id })),
+    upgrade_category: upgradeCategoryAssetRecords.map((record) => ({ id: record.categoryId, name: record.displayName, key: record.semanticAssetKey })),
     eras: Array.from(new Set(data.research.map((row) => row.era))).map((era) => ({ id: slug(era), name: era, key: `${slug(era)}_banner` }))
   };
 
@@ -1394,6 +1419,7 @@ export async function getAssetProductionState(): Promise<AssetProductionState> {
   const qualityIssues = assets.flatMap((asset) => asset.qualityIssues);
   const staleDerivativeCount = assets.reduce((sum, asset) => sum + asset.derivativeCompleteness.stale, 0);
   const visualPreviewReport = buildVisualPreviewReport({ assets, missingRequirements });
+  const upgradeCategoryAssets = resolveUpgradeCategoryAssetStatus(assets);
 
   return {
     assets,
@@ -1407,6 +1433,7 @@ export async function getAssetProductionState(): Promise<AssetProductionState> {
     derivativePresets: presets,
     derivativeProfiles,
     requirementProfiles,
+    upgradeCategoryAssets,
     assetQualityReport: {
       totalIssues: qualityIssues.length,
       using1xAsset: qualityIssues.filter((issue) => issue.code === "using_1x_asset").length,

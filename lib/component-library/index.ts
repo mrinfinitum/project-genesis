@@ -827,6 +827,43 @@ const initialComponentRecords: ComponentDesignRecord[] = [
   namedComponent("EventPanel", "Panels", "Event content panel with image, time, rewards, and status treatment.", [usage("events", "Events")]),
   namedComponent("AlignmentPanel", "Panels", "Civilization alignment panel for current path and effects.", [usage("civilization", "Civilization")]),
   namedComponent("LeaderboardPanel", "Panels", "Leaderboard surface for ranked rows and empty/error states."),
+  baseRecord({
+    componentId: "UpgradeCategoryTabs",
+    category: "Navigation",
+    description: "Canonical upgrade category tab strip that sets selectedUpgradeCategoryId and resolves selected-tab presentation through upgradeCategories[].presentation.",
+    dataInputs: [dataInput("upgradeCategories", "Upgrade categories", "UpgradeCategory[]", "Canonical Studio Definition"), dataInput("selectedUpgradeCategoryId", "Selected category", "string", "Local Interaction State")],
+    states: states(["workforce", "industry", "science", "technology", "fallback", "missing art", "loading", "selected"], ["workforce", "industry", "science", "technology", "selected"]),
+    variants: [variant("default", "Default", ["workforce", "industry", "science", "technology"]), variant("compact", "Compact", ["workforce", "industry", "science", "technology"])],
+    screenUsages: [usage("upgrades", "Upgrades")]
+  }),
+  baseRecord({
+    componentId: "UpgradeWorkspaceBackground",
+    category: "Panels",
+    description: "Category-aware Upgrades workspace background that binds to selectedUpgradeCategory.presentation.backgroundArtKey and falls back to the shared upgrade panel background.",
+    assetKeys: [assetRef("Workforce category background", "upgrade_panel_workforce_background", "Pending Art"), assetRef("Industry category background", "upgrade_panel_industry_background", "Pending Art"), assetRef("Science category background", "upgrade_panel_science_background", "Pending Art"), assetRef("Technology category background", "upgrade_panel_technology_background", "Pending Art"), assetRef("Shared fallback background", "upgrade_panel_shared_background", "Needs Approval")],
+    dataInputs: [dataInput("selectedUpgradeCategory", "Selected upgrade category", "UpgradeCategory", "Canonical Studio Definition"), dataInput("backgroundArtKey", "Resolved background art key", "string", "Presentation Hint")],
+    states: states(["workforce", "industry", "science", "technology", "fallback", "missing art", "loading", "selected"], ["workforce", "industry", "science", "technology", "fallback"]),
+    variants: [variant("workspace", "Workspace", ["workforce", "industry", "science", "technology", "fallback"]), variant("shell-context", "Shell Context", ["workforce", "industry", "science", "technology"])],
+    screenUsages: [usage("upgrades", "Upgrades")]
+  }),
+  baseRecord({
+    componentId: "UpgradeCategoryView",
+    category: "Game-Specific",
+    description: "Single Upgrades category workspace view that swaps heading, background, selected tab, and sample upgrade rows from selectedUpgradeCategoryId.",
+    dataInputs: [dataInput("selectedUpgradeCategory", "Selected upgrade category", "UpgradeCategory", "Canonical Studio Definition"), dataInput("upgradesByCategory", "Upgrades by category", "Record<string, UpgradeDefinition[]>", "Canonical Studio Definition"), dataInput("categoryBackgroundArtKey", "Category background art key", "string", "Presentation Hint")],
+    states: states(["workforce", "industry", "science", "technology", "fallback", "missing art", "loading", "selected"], ["workforce", "industry", "science", "technology", "selected"]),
+    variants: [variant("default", "Default", ["workforce", "industry", "science", "technology"]), variant("empty", "Empty", ["fallback", "missing art"])],
+    screenUsages: [usage("upgrades", "Upgrades")]
+  }),
+  baseRecord({
+    componentId: "UpgradeList",
+    category: "Lists",
+    description: "Scrollable upgrade row list filtered by selectedUpgradeCategoryId with category-state visuals and no duplicated category layouts.",
+    dataInputs: [dataInput("selectedUpgradeCategoryId", "Selected category ID", "string", "Local Interaction State"), dataInput("upgrades", "Upgrades", "UpgradeDefinition[]", "Canonical Studio Definition"), dataInput("purchasedUpgrades", "Purchased upgrade state", "Record<string, number>", "Player Runtime State")],
+    states: states(["workforce", "industry", "science", "technology", "fallback", "missing art", "loading", "selected"], ["workforce", "industry", "science", "technology"]),
+    variants: [variant("dense", "Dense", ["workforce", "industry", "science", "technology"]), variant("touch", "Touch", ["workforce", "industry", "science", "technology"])],
+    screenUsages: [usage("upgrades", "Upgrades")]
+  }),
   namedComponent("UpgradePanel", "Panels", "Upgrade detail panel with cost, requirements, and action state.", [usage("upgrades", "Upgrades")]),
   baseRecord({ componentId: "PrimaryActionButton", category: "Buttons", description: "Primary game action button with required focus, disabled, hover, and pressed states.", states: states(buttonStates, ["Default", "Hover", "Pressed", "Focused", "Disabled"]), variants: [variant("default", "Default", buttonStates), variant("compact", "Compact", buttonStates), variant("large", "Large", buttonStates), variant("destructive", "Destructive", buttonStates), variant("premium", "Premium", buttonStates), variant("image-backed", "Image-backed", buttonStates)], screenUsages: [usage("dashboard", "Dashboard"), usage("research", "Research"), usage("buildings", "Buildings"), usage("resources", "Resources"), usage("events", "Events"), usage("settings", "Settings")] }),
   baseRecord({ componentId: "SecondaryActionButton", category: "Buttons", description: "Secondary action button for supporting commands.", states: states(buttonStates, ["Default", "Hover", "Pressed", "Focused", "Disabled"]), screenUsages: [usage("research", "Research"), usage("settings", "Settings")] }),

@@ -17,6 +17,7 @@
     "verify:runtime-routes": "tsx scripts/verify-runtime-export-routes.ts",
     "verify:resource-economy": "tsx scripts/verify-resource-economy.ts",
     "verify:economy-designer": "tsx scripts/verify-economy-designer.ts",
+    "verify:upgrade-category-assets": "tsx scripts/verify-upgrade-category-assets.ts",
     "verify:asset-production": "tsx scripts/verify-asset-production.ts",
     "verify:component-library": "tsx scripts/verify-component-library.ts",
     "verify:screen-designer": "tsx scripts/verify-screen-designer.ts",
