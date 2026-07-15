@@ -1501,28 +1501,35 @@ function AssetLibraryCategoryInventory({ state, categoryId }: { state: AssetProd
       <CreativeBrowserControls query={query} onQueryChange={setQuery} settings={settings} onSettingsChange={setSettings} resultCount={visible.length} totalCount={allItems.length} placeholder="Search display name, semantic key, role, screen, component, status" />
       <div className={selectedItem ? "grid gap-5 2xl:grid-cols-[minmax(0,1fr)_24rem]" : ""}>
         <div className="space-y-4">
-          {groups.map((group) => (
-            <details key={group.id} open className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-3 shadow-glow">
-              <summary className="cursor-pointer list-none">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-200">{group.label}</p>
-                    <p className="mt-1 text-sm font-semibold text-slate-400">{group.items.length} assets / {group.completion}% complete</p>
+          {groups.map((group) => {
+            const previewItem = group.blocker ?? group.items[0];
+            return (
+              <details key={group.id} className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-3 shadow-glow">
+                <summary className="cursor-pointer list-none">
+                  <div className="grid gap-3 md:grid-cols-[10rem_minmax(0,1fr)_auto] md:items-center">
+                    <div className="h-20 overflow-hidden rounded-md border border-cyan-300/15 bg-slate-950/60">
+                      {previewItem ? <PreviewSurface item={previewItem} /> : null}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="truncate text-lg font-black text-white">{group.label}</p>
+                      <p className="mt-1 text-sm font-semibold text-slate-400">{group.items.length} assets / {group.completion}% complete</p>
+                      {group.blocker ? <p className="mt-1 truncate text-sm font-semibold text-amber-100">Next: {group.blocker.displayName}</p> : null}
+                      <WorkspaceProgressBar value={group.completion} className="mt-3" />
+                    </div>
+                    <div className="flex flex-wrap justify-start gap-2 md:justify-end">
+                      <WorkspaceBadge value={`${group.missing} missing`} />
+                      <WorkspaceBadge value={`${group.published} published`} />
+                      <WorkspaceBadge value={`${group.needsReview} review`} />
+                      <WorkspaceBadge value="Open" />
+                    </div>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    <WorkspaceBadge value={`${group.missing} missing`} />
-                    <WorkspaceBadge value={`${group.published} published`} />
-                    <WorkspaceBadge value={`${group.needsReview} review`} />
-                    {group.blocker ? <WorkspaceBadge value={`Blocker: ${group.blocker.displayName}`} /> : null}
-                  </div>
+                </summary>
+                <div className={`mt-3 ${collectionGridClass(settings)}`}>
+                  {group.items.map((item) => <InventoryCard key={item.id} item={item} settings={settings} selected={selectedItem?.id === item.id} onSelect={setSelectedItem} />)}
                 </div>
-              </summary>
-              <WorkspaceProgressBar value={group.completion} className="mt-3" />
-              <div className={`mt-3 ${collectionGridClass(settings)}`}>
-                {group.items.map((item) => <InventoryCard key={item.id} item={item} settings={settings} selected={selectedItem?.id === item.id} onSelect={setSelectedItem} />)}
-              </div>
-            </details>
-          ))}
+              </details>
+            );
+          })}
           {!visible.length ? <WorkspacePanel><p className="text-sm font-semibold text-slate-300">No assets match this search or status filter.</p></WorkspacePanel> : null}
         </div>
         {selectedItem ? <AssetLibraryInspector item={selectedItem} onClose={() => setSelectedItem(null)} /> : null}
