@@ -5,5 +5,5 @@ export const dynamic = "force-dynamic";
 
 export default async function GeneratedAssetsPage() {
   const state = await getAssetProductionState();
-  return <AssetProductionWorkspace state={state} view="generated" />;
+  return <AssetProductionWorkspace state={state} view="generated" preferredRoute="/assets" />;
 }

@@ -5,5 +5,5 @@ export const dynamic = "force-dynamic";
 
 export default async function AssetImportHistoryPage() {
   const state = await getAssetProductionState();
-  return <AssetProductionWorkspace state={state} view="import-history" />;
+  return <AssetProductionWorkspace state={state} view="import-history" preferredRoute="/assets" />;
 }

@@ -112,8 +112,8 @@ function DetailPanel({ item }: { item: UpgradeArtCard }) {
           <p className="text-xs font-black uppercase tracking-[0.18em] text-rose-100">Missing Action</p>
           <p className="mt-2 text-sm leading-6 text-slate-300">{item.missingReason || "Create or link a real upgrade icon asset, then publish a preview derivative."}</p>
           <div className="mt-3 flex flex-wrap gap-2">
-            <a href="/assets/missing" className="rounded-md border border-rose-200/30 bg-rose-300/10 px-3 py-2 text-sm font-bold text-rose-50">Open Missing Assets</a>
-            <a href="/game-art-import" className="rounded-md border border-cyan-200/30 bg-cyan-300/10 px-3 py-2 text-sm font-bold text-cyan-50">Import / Reconcile Art</a>
+            <a href="/asset-library?section=missing" className="rounded-md border border-rose-200/30 bg-rose-300/10 px-3 py-2 text-sm font-bold text-rose-50">Open Missing Assets</a>
+            <a href="/asset-library?upload=asset" className="rounded-md border border-cyan-200/30 bg-cyan-300/10 px-3 py-2 text-sm font-bold text-cyan-50">Upload Asset</a>
           </div>
         </div>
       ) : null}

@@ -480,7 +480,7 @@ export function resolveMissingRequirementPreview(requirement: MissingAssetRequir
       dimensions: "Use linked requirement preset",
       format: "WebP / PNG",
       required: true,
-      actionHref: "/game-art-import",
+      actionHref: "/asset-library?upload=asset",
       actionLabel: "Create Asset"
     },
     metadata: [

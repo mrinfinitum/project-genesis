@@ -148,7 +148,7 @@ function previewForEraCard(card: EraArtRequirementCard): VisualPreview {
       dimensions: card.requiredDimensions,
       format: card.format,
       required: card.required,
-      actionHref: card.assetId ? `/assets/${encodeURIComponent(card.assetId)}?tab=previews` : "/game-art-import",
+      actionHref: card.assetId ? `/assets/${encodeURIComponent(card.assetId)}?tab=previews` : "/asset-library?upload=asset",
       actionLabel: card.assetId ? "Upload Preview" : "Create Asset"
     },
     safeForPublicRuntime: false,
@@ -192,7 +192,7 @@ function RequirementCard({
   onMapRoblox: (card: EraArtRequirementCard) => void;
   onMarkNotRequired: (card: EraArtRequirementCard) => void;
 }) {
-  const detailHref = card.assetId ? `/assets/${encodeURIComponent(card.assetId)}?returnTo=${encodeURIComponent(`/assets/eras/${card.eraId}`)}` : "/game-art-import";
+  const detailHref = card.assetId ? `/assets/${encodeURIComponent(card.assetId)}?returnTo=${encodeURIComponent(`/assets/eras/${card.eraId}`)}` : "/asset-library?upload=asset";
   return (
     <article className={`rounded-md border bg-[#07101e]/85 p-4 shadow-glow ${cardStatusTone(card.status)}`}>
       <div className="mb-3 flex items-center justify-between gap-3">

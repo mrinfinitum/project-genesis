@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Archive, Boxes, CheckCircle2, ChevronDown, FileImage, GitBranch, History, ImageIcon, Layers3, PackageCheck, ShieldCheck, Sparkles, Timer, TriangleAlert, Upload, UploadCloud } from "lucide-react";
+import { Archive, Boxes, CheckCircle2, ChevronDown, FileImage, GitBranch, History, ImageIcon, Layers3, PackageCheck, Search, ShieldCheck, Sparkles, Timer, TriangleAlert, Upload, UploadCloud } from "lucide-react";
 import { AssetPreview } from "@/components/asset-preview";
 import { Button } from "@/components/ui/button";
 import { CompactWorkspaceToolbar, cardShellClass, collectionGridClass, previewBoxClass, useWorkspaceDensitySettings, type DensitySettings } from "@/components/ui/density";
@@ -13,6 +13,10 @@ import { upgradeCategoryBackgroundDerivativePresetIds, upgradeCategoryBackground
 
 export type AssetProductionView = "dashboard" | "source" | "generated" | "published" | "missing" | "processing" | "import-history";
 type DamNodeId = AssetProductionView
+  | "all-assets"
+  | "recently-uploaded"
+  | "needs-review"
+  | "approved-assets"
   | "top-hud"
   | "left-navigation"
   | "upgrade-categories"
@@ -36,9 +40,9 @@ type LocalUploadPreview = { url: string; sizeLabel: string; fileName: string };
 
 const viewMeta: Record<AssetProductionView, { eyebrow: string; title: string; description: string }> = {
   dashboard: {
-    eyebrow: "Game Assets",
-    title: "Asset Dashboard",
-    description: "Production control center for source artwork, derivatives, review state, engine mappings, and publishing readiness."
+    eyebrow: "Creative Assets",
+    title: "Asset Library",
+    description: "Upload, organize, approve, and publish game assets without exposing import mechanics or runtime mapping details."
   },
   source: {
     eyebrow: "Master Files",
@@ -66,26 +70,28 @@ const viewMeta: Record<AssetProductionView, { eyebrow: string; title: string; de
     description: "Queued derivative work for source art that has missing outputs."
   },
   "import-history": {
-    eyebrow: "Intake Log",
-    title: "Import History",
-    description: "Prior game art imports, created assets, matched assets, warnings, and source projects."
+    eyebrow: "Advanced / Internal",
+    title: "Legacy Import",
+    description: "Internal migration records for bulk Roblox imports, legacy asset recovery, and historical mapping audits."
   }
 };
 
-const links: Array<{ href: string; label: string; view: AssetProductionView }> = [
-  { href: "/assets", label: "Dashboard", view: "dashboard" },
-  { href: "/assets/source", label: "Source Art", view: "source" },
-  { href: "/assets/generated", label: "Generated", view: "generated" },
-  { href: "/assets/published", label: "Published", view: "published" },
-  { href: "/assets/missing", label: "Missing", view: "missing" },
-  { href: "/assets/processing", label: "Queue", view: "processing" },
-  { href: "/assets/import-history", label: "Import History", view: "import-history" }
-];
+function viewLinks(preferredRoute: string): Array<{ href: string; label: string; view: AssetProductionView }> {
+  return [
+    { href: preferredRoute, label: "Asset Library", view: "dashboard" },
+    { href: `${preferredRoute}?section=source`, label: "Source Files", view: "source" },
+    { href: `${preferredRoute}?section=generated`, label: "Generated", view: "generated" },
+    { href: `${preferredRoute}?section=published`, label: "Published", view: "published" },
+    { href: `${preferredRoute}?section=missing`, label: "Missing", view: "missing" },
+    { href: `${preferredRoute}?section=processing`, label: "Processing", view: "processing" },
+    { href: `${preferredRoute}?section=import-history`, label: "Advanced", view: "import-history" }
+  ];
+}
 
-function AssetNav({ active }: { active: AssetProductionView }) {
+function AssetNav({ active, preferredRoute }: { active: AssetProductionView; preferredRoute: string }) {
   return (
     <div className="flex flex-wrap gap-2 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-2">
-      {links.map((item) => (
+      {viewLinks(preferredRoute).map((item) => (
         <Link
           key={item.href}
           href={item.href}
@@ -134,8 +140,135 @@ function ActionButton({ children, body }: { children: React.ReactNode; body: Rec
   );
 }
 
+const assetBelongsOptions = ["UI", "Research", "Buildings", "AI Agents", "Icons", "Backgrounds", "Galaxy", "Planet", "Audio", "Video", "Other"];
+const assetRoleOptions = ["Screen Background", "Panel Background", "Button", "Tab", "Icon", "Overlay", "Placeholder Replacement", "Agent State", "Audio Cue", "Video"];
+
+function slugForAssetKey(value: string) {
+  return value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "") || "new_asset";
+}
+
+function UploadAssetWorkflow({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [file, setFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [currentSize, setCurrentSize] = useState("No file selected");
+  const [belongsTo, setBelongsTo] = useState("UI");
+  const [role, setRole] = useState("Screen Background");
+  const [target, setTarget] = useState("Workforce Upgrade Background");
+  const [notes, setNotes] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState("");
+  const semanticKey = `${slugForAssetKey(role)}_${slugForAssetKey(target)}`;
+
+  if (!open) return null;
+
+  return (
+    <WorkspacePanel title="Upload Asset" icon={UploadCloud}>
+      <form
+        className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_22rem]"
+        onSubmit={async (event) => {
+          event.preventDefault();
+          if (!file) {
+            setMessage("Choose a source file first.");
+            return;
+          }
+          setBusy(true);
+          setMessage("");
+          const formData = new FormData();
+          formData.set("upload_kind", "source");
+          formData.set("source_table", "assets");
+          formData.set("source_id", semanticKey);
+          formData.set("asset_id", semanticKey);
+          formData.set("asset_name", target);
+          formData.set("file", file);
+          try {
+            const response = await fetch("/api/assets/upload", { method: "POST", body: formData });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error ?? "Upload failed.");
+            setMessage(`Uploaded ${file.name}. Studio will track review, platform readiness, and derivatives from ${semanticKey}.`);
+          } catch (error) {
+            setMessage(error instanceof Error ? error.message : "Upload failed.");
+          } finally {
+            setBusy(false);
+          }
+        }}
+      >
+        <div className="space-y-4">
+          <div className="grid gap-3 md:grid-cols-2">
+            <label className="grid gap-2">
+              <span className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">1. Choose File</span>
+              <input
+                type="file"
+                accept=".png,.jpg,.jpeg,.webp,.svg,.psd,.psb,.tiff,.tif,.mp3,.wav,.ogg,.mp4,.mov,image/*,audio/*,video/*"
+                className="rounded-md border border-cyan-300/15 bg-slate-950/60 px-3 py-2 text-sm text-slate-200 file:mr-3 file:rounded-md file:border-0 file:bg-cyan-300/15 file:px-3 file:py-1.5 file:text-cyan-100"
+                onChange={async (event) => {
+                  const nextFile = event.currentTarget.files?.[0] ?? null;
+                  setFile(nextFile);
+                  setMessage("");
+                  if (!nextFile) {
+                    setPreviewUrl(null);
+                    setCurrentSize("No file selected");
+                    return;
+                  }
+                  const canPreview = nextFile.type.startsWith("image/") && !nextFile.type.includes("tiff") && !/\.(psd|psb)$/i.test(nextFile.name);
+                  setPreviewUrl(canPreview ? URL.createObjectURL(nextFile) : null);
+                  const imageSize = await readBrowserImageSize(nextFile);
+                  setCurrentSize(sizeLabel(imageSize));
+                }}
+              />
+            </label>
+            <label className="grid gap-2">
+              <span className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">2. Belongs To</span>
+              <select value={belongsTo} onChange={(event) => setBelongsTo(event.target.value)} className="h-11 rounded-md border border-cyan-300/15 bg-slate-950/80 px-3 text-sm font-bold text-white outline-none">
+                {assetBelongsOptions.map((option) => <option key={option} value={option}>{option}</option>)}
+              </select>
+            </label>
+            <label className="grid gap-2">
+              <span className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">3. Asset Role</span>
+              <select value={role} onChange={(event) => setRole(event.target.value)} className="h-11 rounded-md border border-cyan-300/15 bg-slate-950/80 px-3 text-sm font-bold text-white outline-none">
+                {assetRoleOptions.map((option) => <option key={option} value={option}>{option}</option>)}
+              </select>
+            </label>
+            <label className="grid gap-2">
+              <span className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">4. Canonical Target</span>
+              <input value={target} onChange={(event) => setTarget(event.target.value)} className="h-11 rounded-md border border-cyan-300/15 bg-slate-950/80 px-3 text-sm font-bold text-white outline-none" />
+            </label>
+          </div>
+          <label className="grid gap-2">
+            <span className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">5. Notes</span>
+            <textarea value={notes} onChange={(event) => setNotes(event.target.value)} placeholder="Production notes, usage intent, geometry notes" className="min-h-20 rounded-md border border-cyan-300/15 bg-slate-950/60 p-3 text-sm text-white outline-none" />
+          </label>
+          <div className="flex flex-wrap gap-2">
+            <Button type="submit" disabled={busy || !file}>{busy ? "Uploading..." : "6. Upload"}</Button>
+            <Button type="button" onClick={onClose}>Close</Button>
+          </div>
+          {message ? <p className="rounded-md border border-cyan-300/15 bg-cyan-300/10 p-3 text-sm font-semibold text-cyan-100">{message}</p> : null}
+        </div>
+        <div className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-200">Review</p>
+          {previewUrl ? <img src={previewUrl} alt="Selected asset preview" className="mt-3 h-40 w-full rounded-md border border-cyan-300/15 object-cover" /> : <div className="mt-3 grid h-40 place-items-center rounded-md border border-cyan-300/15 bg-slate-950/60 text-sm font-bold text-slate-400">Preview unavailable until derivative</div>}
+          <div className="mt-3 grid gap-2">
+            <WorkspaceMiniStat label="Source Dimensions" value={currentSize} />
+            <WorkspaceMiniStat label="Required Dimensions" value={belongsTo === "UI" ? "Use selected requirement" : "Not assigned"} />
+            <WorkspaceMiniStat label="Semantic Asset Key" value={semanticKey} />
+            <WorkspaceMiniStat label="Target Platforms" value="Web / Roblox / Mobile" />
+          </div>
+          <details className="mt-3 rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
+            <summary className="cursor-pointer text-xs font-black uppercase tracking-[0.16em] text-slate-400">Advanced</summary>
+            <p className="mt-3 text-sm leading-6 text-slate-300">Studio stores the source privately, queues platform readiness, and keeps runtime URLs, checksums, and platform mappings in developer details.</p>
+          </details>
+        </div>
+      </form>
+    </WorkspacePanel>
+  );
+}
+
 const damTree: Array<{ id: DamNodeId; label: string; children?: Array<{ id: DamNodeId; label: string }> }> = [
-  { id: "dashboard", label: "Dashboard" },
+  { id: "all-assets", label: "All Assets" },
+  { id: "recently-uploaded", label: "Recently Uploaded" },
+  { id: "missing", label: "Missing Assets" },
+  { id: "needs-review", label: "Needs Review" },
+  { id: "approved-assets", label: "Approved" },
+  { id: "published", label: "Published" },
   {
     id: "top-hud",
     label: "UI",
@@ -160,27 +293,30 @@ const damTree: Array<{ id: DamNodeId; label: string; children?: Array<{ id: DamN
   { id: "audio", label: "Audio" },
   { id: "video", label: "Video" },
   {
-    id: "source",
-    label: "Pipeline Views",
+    id: "dashboard",
+    label: "Advanced",
     children: [
-      { id: "source", label: "Source Art" },
-      { id: "generated", label: "Generated" },
-      { id: "published", label: "Published" },
-      { id: "missing", label: "Missing Assets" },
-      { id: "processing", label: "Processing Queue" },
-      { id: "import-history", label: "Import History" }
+      { id: "dashboard", label: "Readiness Dashboard" },
+      { id: "source", label: "Source Files" },
+      { id: "generated", label: "Generated Derivatives" },
+      { id: "processing", label: "Processing" },
+      { id: "import-history", label: "Legacy Import" }
     ]
   }
 ];
 
 const implementedNodeLabels: Record<DamNodeId, string> = {
+  "all-assets": "All Assets",
+  "recently-uploaded": "Recently Uploaded",
+  "needs-review": "Needs Review",
+  "approved-assets": "Approved",
   dashboard: "Dashboard",
   source: "Source Art",
   generated: "Generated Assets",
   published: "Published Assets",
   missing: "Missing Assets",
   processing: "Processing Queue",
-  "import-history": "Import History",
+  "import-history": "Legacy Import",
   "top-hud": "Top HUD",
   "left-navigation": "Left Navigation",
   "upgrade-categories": "Upgrade Categories",
@@ -214,8 +350,8 @@ function AssetProductionTree({ active, onSelect }: { active: DamNodeId; onSelect
       <div className="flex items-center gap-2 px-2 py-2">
         <Boxes className="h-4 w-4 text-cyan-200" />
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.22em] text-cyan-200">Asset Production</p>
-          <p className="text-xs text-slate-500">Visual DAM workspace</p>
+          <p className="text-xs font-black uppercase tracking-[0.22em] text-cyan-200">Asset Library</p>
+          <p className="text-xs text-slate-500">Content browser</p>
         </div>
       </div>
       <div className="mt-3 space-y-1">
@@ -515,7 +651,7 @@ function DamPlaceholder({ active }: { active: DamNodeId }) {
         <div>
           <p className="text-lg font-black text-white">Visual workspace shell is ready</p>
           <p className="mt-2 text-sm leading-6 text-slate-300">
-            This DAM section is discoverable in the Asset Production tree and will use the same upload, preview, derivative, approval, publish, and history workflow as Upgrade Categories.
+            This Asset Library section is discoverable in the category tree and will use the same upload, preview, platform readiness, approval, publish, and history workflow as Upgrade Categories.
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             <WorkspaceBadge value="visual workflow" />
@@ -526,9 +662,9 @@ function DamPlaceholder({ active }: { active: DamNodeId }) {
         <div className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-4">
           <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-200">Workflow</p>
           <div className="mt-3 space-y-2 text-sm font-semibold text-slate-300">
-            <p>Upload source</p>
+            <p>Upload asset</p>
             <p>Preview immediately</p>
-            <p>Generate derivatives</p>
+            <p>Generate platform readiness</p>
             <p>Approve</p>
             <p>Publish semantic asset key</p>
           </div>
@@ -663,23 +799,26 @@ function RobloxManifestReport({ state }: { state: AssetProductionState }) {
   const webReport = state.webPublishReports[0];
   if (!report) {
     return (
-      <WorkspacePanel title="Roblox Art Manifest" icon={GitBranch}>
-        <p className="text-sm leading-6 text-slate-400">No Roblox art manifest has been imported yet.</p>
+      <WorkspacePanel title="Legacy Migration Reports" icon={GitBranch}>
+        <p className="text-sm leading-6 text-slate-400">No internal legacy migration reports have been recorded yet.</p>
       </WorkspacePanel>
     );
   }
 
   return (
-    <WorkspacePanel title="Roblox Art Manifest" icon={GitBranch}>
+    <WorkspacePanel title="Legacy Migration Reports" icon={GitBranch}>
       <div className="grid gap-3 sm:grid-cols-3">
-        <WorkspaceMiniStat label="Imported" value={report.importedAssets} />
+        <WorkspaceMiniStat label="Uploaded" value={report.importedAssets} />
         <WorkspaceMiniStat label="Matched" value={report.matchedAssets} />
         <WorkspaceMiniStat label="New" value={report.newAssets} />
         <WorkspaceMiniStat label="Sources" value={report.sourceFilesCreated} />
         <WorkspaceMiniStat label="Placeholders" value={report.placeholderAssets.length} />
         <WorkspaceMiniStat label="Conflicts" value={report.conflicts.length} />
       </div>
-      <p className="mt-3 break-all text-xs leading-5 text-slate-500">{report.manifestPath || report.sourceRoot}</p>
+      <details className="mt-3 rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
+        <summary className="cursor-pointer text-xs font-black uppercase tracking-[0.16em] text-slate-400">Developer Details</summary>
+        <p className="mt-3 break-all text-xs leading-5 text-slate-500">{report.manifestPath || report.sourceRoot}</p>
+      </details>
       {report.placeholderAssets.length ? (
         <div className="mt-4 rounded-md border border-amber-300/20 bg-amber-400/10 p-3">
           <p className="text-sm font-black text-amber-100">Placeholder cleanup required</p>
@@ -842,7 +981,7 @@ function Dashboard({ state }: { state: AssetProductionState }) {
           </div>
         </WorkspacePanel>
 
-        <WorkspacePanel title="Recent Imports" icon={History}>
+        <WorkspacePanel title="Recent Uploads" icon={History}>
           <div className="space-y-2">
             {state.importHistory.slice(0, 5).map((entry) => (
               <div key={entry.importId} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
@@ -850,7 +989,7 @@ function Dashboard({ state }: { state: AssetProductionState }) {
                 <p className="mt-1 text-sm text-slate-400">Created {entry.createdAssets} / Updated {entry.updatedAssets}</p>
               </div>
             ))}
-            {!state.importHistory.length ? <p className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3 text-sm font-semibold text-slate-300">No imports recorded yet.</p> : null}
+            {!state.importHistory.length ? <p className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3 text-sm font-semibold text-slate-300">No upload history recorded yet.</p> : null}
           </div>
         </WorkspacePanel>
 
@@ -921,7 +1060,10 @@ function SourceFiles({ state }: { state: AssetProductionState }) {
             <WorkspaceBadge value={source.sourceRole ?? "source"} />
             <WorkspaceBadge value={source.previewStatus ?? "preview pending"} />
           </div>
-          <p className="mt-3 break-all text-sm leading-6 text-slate-400">{source.storagePath || "Private Studio storage pending."}</p>
+          <details className="mt-3 rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
+            <summary className="cursor-pointer text-xs font-black uppercase tracking-[0.16em] text-slate-400">Developer Details</summary>
+            <p className="mt-3 break-all text-sm leading-6 text-slate-400">{source.storagePath || "Private Studio storage pending."}</p>
+          </details>
         </WorkspacePanel>
       ))}
       {!state.sourceFiles.length ? <WorkspacePanel><p className="text-sm font-semibold text-slate-300">No source masters uploaded yet.</p></WorkspacePanel> : null}
@@ -953,7 +1095,7 @@ function MissingAssets({ state }: { state: AssetProductionState }) {
             </div>
             <div className="mt-4 flex flex-wrap gap-2">
               {linkedAsset ? <Link href={`/assets/${encodeURIComponent(linkedAsset.id)}`} className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Open Asset</Link> : null}
-              <Link href={linkedAsset ? `/assets/${encodeURIComponent(linkedAsset.id)}?tab=source_files` : "/game-art-import"} className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Upload Source</Link>
+              <Link href={linkedAsset ? `/assets/${encodeURIComponent(linkedAsset.id)}?tab=source_files` : "/asset-library?upload=asset"} className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Upload Asset</Link>
               <ActionButton body={{ action: "missing.mark_not_required", missingRequirementId: item.id }}>Mark Not Required</ActionButton>
             </div>
             <form
@@ -1053,7 +1195,7 @@ function ImportHistory({ state }: { state: AssetProductionState }) {
                 <WorkspaceBadge value={report.conflicts.length ? "review" : "imported"} />
               </div>
               <div className="mt-4 grid grid-cols-3 gap-2">
-                <WorkspaceMiniStat label="Imported" value={report.importedAssets} />
+              <WorkspaceMiniStat label="Uploaded" value={report.importedAssets} />
                 <WorkspaceMiniStat label="Matched" value={report.matchedAssets} />
                 <WorkspaceMiniStat label="New" value={report.newAssets} />
                 <WorkspaceMiniStat label="Placeholders" value={report.placeholderAssets.length} />
@@ -1062,7 +1204,7 @@ function ImportHistory({ state }: { state: AssetProductionState }) {
               </div>
             </div>
           ))}
-          {!state.robloxManifestReports.length ? <p className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3 text-sm font-semibold text-slate-300">No Roblox manifest reports yet.</p> : null}
+          {!state.robloxManifestReports.length ? <p className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3 text-sm font-semibold text-slate-300">No legacy migration reports yet.</p> : null}
         </div>
       </WorkspacePanel>
 
@@ -1098,18 +1240,21 @@ function ImportHistory({ state }: { state: AssetProductionState }) {
   );
 }
 
-export function AssetProductionWorkspace({ state, view }: { state: AssetProductionState; view: AssetProductionView }) {
+export function AssetProductionWorkspace({ state, view, preferredRoute = "/asset-library" }: { state: AssetProductionState; view: AssetProductionView; preferredRoute?: string }) {
   const [activeNode, setActiveNode] = useState<DamNodeId>(() => {
-    if (typeof window === "undefined") return view;
+    if (typeof window === "undefined") return preferredRoute === "/asset-library" && view === "dashboard" ? "all-assets" : view;
     const section = new URLSearchParams(window.location.search).get("section") as DamNodeId | null;
-    return section && implementedNodeLabels[section] ? section : view;
+    return section && implementedNodeLabels[section] ? section : preferredRoute === "/asset-library" && view === "dashboard" ? "all-assets" : view;
   });
+  const [uploadOpen, setUploadOpen] = useState(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).get("upload") === "asset");
+  const pickerMode = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("picker") : null;
+  const deprecated = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("deprecated") : null;
   const meta = isAssetProductionView(activeNode) ? viewMeta[activeNode] : {
-    eyebrow: "Asset Production",
+    eyebrow: "Asset Library",
     title: implementedNodeLabels[activeNode],
     description: activeNode === "upgrade-categories"
       ? "Designer-facing DAM workflow for the Workforce, Industry, Science, and Technology upgrade panel backgrounds."
-      : "Discoverable visual production workspace for game UI, artwork, media, and runtime presentation assets."
+      : "Upload, organize, approve, and publish game assets through a compact content browser."
   };
   const stats = [
     { label: "Assets", value: state.dashboard.totalAssets },
@@ -1121,7 +1266,7 @@ export function AssetProductionWorkspace({ state, view }: { state: AssetProducti
   function selectNode(node: DamNodeId) {
     setActiveNode(node);
     if (typeof window !== "undefined") {
-      const path = node === "dashboard" ? "/assets" : `/assets?section=${encodeURIComponent(node)}`;
+      const path = node === "all-assets" ? preferredRoute : `${preferredRoute}?section=${encodeURIComponent(node)}`;
       window.history.replaceState(null, "", path);
     }
   }
@@ -1129,10 +1274,30 @@ export function AssetProductionWorkspace({ state, view }: { state: AssetProducti
   return (
     <main className="space-y-6">
       <WorkspaceHeader eyebrow={meta.eyebrow} title={meta.title} description={meta.description} stats={stats} />
+      <div className="flex flex-wrap items-center gap-2 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-3 shadow-glow">
+        <Button type="button" onClick={() => setUploadOpen((value) => !value)} className="h-10">
+          <UploadCloud className="h-4 w-4" />
+          Upload Asset
+        </Button>
+        <Link href={`${preferredRoute}?section=upgrade-categories`} className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Upgrade Categories</Link>
+        <Link href={`${preferredRoute}?section=missing`} className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Missing Assets</Link>
+        {pickerMode ? <WorkspaceBadge value={`Picker: ${pickerMode}`} /> : null}
+        {deprecated ? <WorkspaceBadge value="Moved to Asset Library" /> : null}
+      </div>
+      <UploadAssetWorkflow open={uploadOpen} onClose={() => setUploadOpen(false)} />
+      {pickerMode ? (
+        <WorkspacePanel title="Asset Library Picker" icon={Search}>
+          <p className="text-sm leading-6 text-slate-300">Search, filter, preview, and select a published asset. Placeholder replacement preserves geometry, layer order, bindings, and interactions in the calling screen or component.</p>
+        </WorkspacePanel>
+      ) : null}
       <div className="grid gap-5 xl:grid-cols-[18rem_minmax(0,1fr)]">
         <AssetProductionTree active={activeNode} onSelect={selectNode} />
         <section className="min-w-0 space-y-5">
-          {isAssetProductionView(activeNode) ? <AssetNav active={activeNode} /> : null}
+          {isAssetProductionView(activeNode) ? <AssetNav active={activeNode} preferredRoute={preferredRoute} /> : null}
+          {activeNode === "all-assets" ? <AssetGrid assets={state.assets} empty="No assets here yet. Upload artwork or create an asset requirement to get started." storageKey="project-genesis-density-asset-library-all" /> : null}
+          {activeNode === "recently-uploaded" ? <AssetGrid assets={[...state.assets].sort((left, right) => right.updatedAt.localeCompare(left.updatedAt)).slice(0, 48)} empty="No recent uploads yet. Upload artwork or create an asset requirement to get started." storageKey="project-genesis-density-asset-library-recent" /> : null}
+          {activeNode === "needs-review" ? <AssetGrid assets={state.assets.filter((asset) => asset.approvalStatus !== "approved" && asset.productionStatus !== "published")} empty="No assets need review." storageKey="project-genesis-density-asset-library-review" /> : null}
+          {activeNode === "approved-assets" ? <AssetGrid assets={state.assets.filter((asset) => asset.approvalStatus === "approved")} empty="No approved assets yet." storageKey="project-genesis-density-asset-library-approved" /> : null}
           {activeNode === "dashboard" ? <Dashboard state={state} /> : null}
           {activeNode === "source" ? <SourceFiles state={state} /> : null}
           {activeNode === "generated" ? <AssetGrid assets={state.generatedAssets} empty="No generated derivatives are available yet." storageKey="project-genesis-density-assets-generated" /> : null}

@@ -3,7 +3,7 @@ import { getAssetProductionState } from "@/lib/assets/asset-production";
 
 export const dynamic = "force-dynamic";
 
-export default async function SourceArtPage() {
+export default async function AssetLibraryPage() {
   const state = await getAssetProductionState();
-  return <AssetProductionWorkspace state={state} view="source" preferredRoute="/assets" />;
+  return <AssetProductionWorkspace state={state} view="dashboard" preferredRoute="/asset-library" />;
 }

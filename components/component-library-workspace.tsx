@@ -109,6 +109,9 @@ function ComponentInspector({ component }: { component: ComponentLibraryState["c
       <Link href={`/component-library/${component.componentId}`} className="inline-flex h-9 items-center justify-center rounded-md border border-cyan-400/25 bg-cyan-400/10 px-3 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/60 hover:bg-cyan-400/20">
         Open Component Detail
       </Link>
+      <Link href={`/asset-library?picker=component&component=${encodeURIComponent(component.componentId)}`} className="inline-flex h-9 items-center justify-center rounded-md border border-cyan-400/25 bg-cyan-400/10 px-3 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/60 hover:bg-cyan-400/20">
+        Choose from Asset Library
+      </Link>
     </DensityInspector>
   );
 }

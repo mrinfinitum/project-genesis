@@ -5,5 +5,5 @@ export const dynamic = "force-dynamic";
 
 export default async function ProcessingQueuePage() {
   const state = await getAssetProductionState();
-  return <AssetProductionWorkspace state={state} view="processing" />;
+  return <AssetProductionWorkspace state={state} view="processing" preferredRoute="/assets" />;
 }

@@ -145,7 +145,7 @@ export function AssetDetailWorkspace({
   const currentSource = asset.sourceFiles.find((source) => source.isCurrent) ?? asset.sourceFiles[0] ?? null;
   const primaryPreview = sourcePreview(asset);
   const backHref = returnTo || (returnEraId ? `/assets/eras/${returnEraId}` : "/assets");
-  const backLabel = returnEraId ? `Back to ${returnEraId.replaceAll("-", " ")} Art Inventory` : returnTo ? "Back to Art Inventory" : "Back to Asset Dashboard";
+  const backLabel = returnEraId ? `Back to ${returnEraId.replaceAll("-", " ")} Art Inventory` : returnTo ? "Back to Art Inventory" : "Back to Asset Library";
   const engineMappings = asset.platformMappings as Record<string, unknown>;
   const sourceById = useMemo(() => Object.fromEntries(asset.sourceFiles.map((source) => [source.id, source])), [asset.sourceFiles]);
   const leftSource = sourceById[compareLeft];

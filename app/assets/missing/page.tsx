@@ -5,5 +5,5 @@ export const dynamic = "force-dynamic";
 
 export default async function MissingAssetsPage() {
   const state = await getAssetProductionState();
-  return <AssetProductionWorkspace state={state} view="missing" />;
+  return <AssetProductionWorkspace state={state} view="missing" preferredRoute="/assets" />;
 }

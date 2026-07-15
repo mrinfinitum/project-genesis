@@ -184,13 +184,13 @@ export function GameArtImportWorkspace({ initialState }: { initialState: Workspa
   return (
     <main className="space-y-6">
       <WorkspaceHeader
-        eyebrow="Creative Asset Intake"
-        title="Game Art Import"
-        description="Import and map game art manifests from Roblox, Web, Unity, Unreal, Godot, or generic asset folders without putting platform paths inside gameplay records."
+        eyebrow="Advanced Asset Migration"
+        title="Legacy Import"
+        description="Internal migration utilities for reconciling existing engine manifests. Day-to-day creative uploads, approvals, and publishing should start in the Asset Library."
         stats={[
-          { label: "Imported Assets", value: initialState.assetCount },
+          { label: "Migrated Assets", value: initialState.assetCount },
           { label: "Missing Artwork", value: initialState.missingCount },
-          { label: "Imports", value: history.length },
+          { label: "Migration Runs", value: history.length },
           { label: "Preview Status", value: validation?.status ?? "Idle" }
         ]}
       />
@@ -321,7 +321,7 @@ export function GameArtImportWorkspace({ initialState }: { initialState: Workspa
                 ))}
               </div>
             ) : (
-              <div className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3 text-sm font-semibold text-slate-300">No game art imports yet.</div>
+              <div className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3 text-sm font-semibold text-slate-300">No legacy migration runs yet.</div>
             )}
           </WorkspacePanel>
         </aside>

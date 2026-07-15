@@ -110,6 +110,9 @@ function ScreenInspector({ screen }: { screen: ScreenDesignerState["screens"][nu
       <Link href={`/screen-designer/${screen.screenId}`} className="inline-flex h-9 items-center justify-center rounded-md border border-cyan-400/25 bg-cyan-400/10 px-3 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/60 hover:bg-cyan-400/20">
         Open Screen Specification
       </Link>
+      <Link href={`/asset-library?picker=screen&screen=${encodeURIComponent(screen.screenId)}`} className="inline-flex h-9 items-center justify-center rounded-md border border-cyan-400/25 bg-cyan-400/10 px-3 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/60 hover:bg-cyan-400/20">
+        Replace Asset from Library
+      </Link>
     </DensityInspector>
   );
 }
