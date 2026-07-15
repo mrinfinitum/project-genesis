@@ -38,11 +38,14 @@ function readiness(items: Array<{ status: string }>) {
 async function main() {
   const pagePath = "app/creative-production/page.tsx";
   const workspacePath = "components/creative-production-workspace.tsx";
+  const robloxArtRoutePath = "app/assets/roblox-art/[...path]/route.ts";
   const appShell = read("components/app-shell.tsx");
   const workspace = read(workspacePath);
+  const robloxArtRoute = read(robloxArtRoutePath);
   const architecture = read("lib/architecture/index.ts");
 
   assert(existsSync(path.join(process.cwd(), pagePath)), "Creative Production route must exist.");
+  assert(existsSync(path.join(process.cwd(), robloxArtRoutePath)), "Published Roblox art route must exist.");
   assert(workspace.includes("See what is missing, upload assets, and finish each part of NOVERIS."), "Creative Production subtitle is missing.");
   assert(workspace.includes("Creative Production Readiness"), "Creative Production readiness summary is missing.");
   assert(workspace.includes("statusCredit"), "Readiness must derive from item status credit, not manual percentages.");
@@ -51,6 +54,7 @@ async function main() {
   assert(workspace.includes("Upload Asset"), "Missing cards must expose upload actions.");
   assert(workspace.includes("Open Inspector"), "Published/linked cards must expose inspector actions.");
   assert(workspace.includes("Open Upgrade Category Workflow"), "Upgrades area must preserve the dedicated Upgrade Category workflow entry point.");
+  assert(workspace.includes("SafePreviewImage"), "Creative Production cards must gracefully fall back when a preview URL fails.");
   assert(workspace.includes("Screen Shell") && workspace.includes("Branch Sidebar") && workspace.includes("Era Timeline"), "Research production groups must be present.");
   assert(workspace.includes("Labor") && workspace.includes("Premium Crystal") && workspace.includes("Civilization Identity"), "Top HUD production groups must be present.");
   assert(workspace.includes("Advanced / Systems Authoring"), "Creative Production must link to Advanced / Systems Authoring.");
@@ -81,6 +85,9 @@ async function main() {
 
   assert(architecture.includes("ARCH-DECISION-CREATIVE-PRODUCTION-PRIMARY"), "Architecture decision for Creative Production must be recorded.");
   assert(architecture.includes("Creative Production Is the Primary Creative Workflow"), "Architecture decision title is missing.");
+  assert(robloxArtRoute.includes("public\", \"assets\", \"roblox-art"), "Roblox art route must serve only the public Roblox art folder.");
+  assert(robloxArtRoute.includes("path.relative"), "Roblox art route must guard against path traversal.");
+  assert(robloxArtRoute.includes("content-type"), "Roblox art route must return image content types.");
 
   const state = await getAssetProductionState();
   const items = state.assetLibraryInventory.items;

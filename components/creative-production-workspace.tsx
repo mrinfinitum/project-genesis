@@ -205,13 +205,24 @@ function PlaceholderPreview({ item, area }: { item?: InventoryItem; area?: Produ
   );
 }
 
+function SafePreviewImage({ src, item, area }: { src?: string | null; item?: InventoryItem; area?: ProductionArea }) {
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    setFailed(false);
+  }, [src]);
+
+  if (!src || failed) return <PlaceholderPreview item={item} area={area} />;
+  return <img src={src} alt="" onError={() => setFailed(true)} className="h-full w-full rounded-md object-cover" />;
+}
+
 function AreaCard({ area, summary, onOpen }: { area: ProductionArea; summary: ReturnType<typeof areaSummary>; onOpen: (areaId: ProductionAreaId) => void }) {
   const Icon = area.icon;
   return (
     <article className="group rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-3 shadow-glow transition hover:border-cyan-300/45 hover:bg-[#0a1728]">
       <button type="button" onClick={() => onOpen(area.id)} className="block w-full text-left">
         <div className={`relative h-20 overflow-hidden rounded-md border border-cyan-300/10 bg-gradient-to-br ${area.accent}`}>
-          {summary.blocker?.previewUrl ? <img src={summary.blocker.previewUrl} alt="" className="h-full w-full object-cover opacity-75" /> : <PlaceholderPreview area={area} />}
+          {summary.blocker?.previewUrl ? <SafePreviewImage src={summary.blocker.previewUrl} item={summary.blocker} area={area} /> : <PlaceholderPreview area={area} />}
           <div className="absolute left-3 top-3 grid h-9 w-9 place-items-center rounded-md border border-cyan-200/20 bg-slate-950/60">
             <Icon className="h-5 w-5 text-cyan-100" />
           </div>
@@ -252,7 +263,7 @@ function ProductionItemCard({ item, settings, area }: { item: InventoryItem; set
   if (settings.density === "list") {
     return (
       <article className={cardShellClass(settings)}>
-        <div className={previewBoxClass(settings)}>{preview ? <img src={preview} alt="" className="h-full w-full rounded-md object-cover" /> : <PlaceholderPreview item={item} area={area} />}</div>
+        <div className={previewBoxClass(settings)}><SafePreviewImage src={preview} item={item} area={area} /></div>
         <div className="min-w-0">
           <p className="truncate text-sm font-black text-white">{item.displayName}</p>
           <p className="truncate text-xs text-cyan-200">{item.semanticAssetKey}</p>
@@ -267,7 +278,7 @@ function ProductionItemCard({ item, settings, area }: { item: InventoryItem; set
   return (
     <article className={cardShellClass(settings)}>
       <div className={previewBoxClass(settings)}>
-        {preview ? <img src={preview} alt="" className="h-full w-full rounded-md object-cover" /> : <PlaceholderPreview item={item} area={area} />}
+        <SafePreviewImage src={preview} item={item} area={area} />
       </div>
       <div className="mt-3 flex items-start justify-between gap-2">
         <div className="min-w-0">
