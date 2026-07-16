@@ -32,6 +32,7 @@ import {
 } from "@/lib/economy/definitions";
 import { ResourceService } from "@/lib/resources/service";
 import { planetExplorationProgression, timeActionContract, validatePlanetExplorationProgression, validateTimeActionContract } from "@/lib/planets/exploration-progression";
+import { planetDevelopmentFramework, validatePlanetDevelopmentFramework } from "@/lib/planets/development-framework";
 import { canonicalPlanetOpportunityProfiles, validatePlanetOpportunityProfiles } from "@/lib/planets/opportunity-profiles";
 import { engineEraNavigationOverrides, resolveEraNavigationProfile, supportedEraNavigationBoundaryModes, supportedEraNavigationDashboardModes } from "@/lib/runtime/client-profiles";
 import { galaxyEngineContractVersion, galaxyEnginePresentationContract, validateGalaxyEnginePresentationContract } from "@/lib/runtime/galaxy-engine-contract";
@@ -57,7 +58,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 25;
+export const gameRuntimeContentVersion = 26;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -96,6 +97,7 @@ export type RobloxRuntimeExportPayload = {
   actionSystem: GameRuntimeData["actionSystem"];
   planetOpportunityProfiles: GameRuntimeData["planetOpportunityProfiles"];
   planetExplorationProgression: GameRuntimeData["planetExplorationProgression"];
+  planetDevelopmentFramework: GameRuntimeData["planetDevelopmentFramework"];
   resources: ResourceDefinition[];
   buildingTaxonomy: GameRuntimeData["buildingTaxonomy"];
   buildingLibrary: GameRuntimeData["buildingLibrary"];
@@ -622,6 +624,21 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
       timedActions: [...runtimeData.planetExplorationProgression.timedActions].sort(byId),
       nicknameRules: [...runtimeData.planetExplorationProgression.nicknameRules].sort((left, right) => right.priority - left.priority || left.id.localeCompare(right.id)),
       validationRules: [...runtimeData.planetExplorationProgression.validationRules].sort()
+    },
+    planetDevelopmentFramework: {
+      ...runtimeData.planetDevelopmentFramework,
+      knowledgeLifecycle: [...runtimeData.planetDevelopmentFramework.knowledgeLifecycle].sort(byOrderThenId),
+      visibilityMatrix: [...runtimeData.planetDevelopmentFramework.visibilityMatrix].sort((left, right) => (runtimeData.planetDevelopmentFramework.knowledgeLifecycle.find((state) => state.id === left.stateId)?.order ?? 0) - (runtimeData.planetDevelopmentFramework.knowledgeLifecycle.find((state) => state.id === right.stateId)?.order ?? 0) || left.stateId.localeCompare(right.stateId)),
+      csiBands: [...runtimeData.planetDevelopmentFramework.csiBands].sort((left, right) => right.min - left.min || left.id.localeCompare(right.id)),
+      sviBands: [...runtimeData.planetDevelopmentFramework.sviBands].sort((left, right) => right.min - left.min || left.id.localeCompare(right.id)),
+      opportunityArchetypes: [...runtimeData.planetDevelopmentFramework.opportunityArchetypes].sort((left, right) => right.priority - left.priority || left.id.localeCompare(right.id)),
+      bodyClassBaselines: [...runtimeData.planetDevelopmentFramework.bodyClassBaselines].sort(byId),
+      actionReferences: [...runtimeData.planetDevelopmentFramework.actionReferences].sort((left, right) => left.actionId.localeCompare(right.actionId)),
+      developmentProjectPhases: [...runtimeData.planetDevelopmentFramework.developmentProjectPhases].sort(byOrderThenId),
+      presentationContracts: [...runtimeData.planetDevelopmentFramework.presentationContracts].sort(byId),
+      assetRequirements: [...runtimeData.planetDevelopmentFramework.assetRequirements].sort(byId),
+      developmentProfiles: [...runtimeData.planetDevelopmentFramework.developmentProfiles].sort(byId),
+      validationRules: [...runtimeData.planetDevelopmentFramework.validationRules].sort()
     },
     resources: [...runtimeData.resources].sort(byId),
     buildingTaxonomy: [...runtimeData.buildingTaxonomy].sort(byDisplayOrderThenId).map((family) => ({
@@ -1341,6 +1358,9 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   for (const issue of validatePlanetExplorationProgression(runtimeData.planetExplorationProgression, runtimeData.timeActionContract)) {
     issues.push(issue);
   }
+  for (const issue of validatePlanetDevelopmentFramework(runtimeData.planetDevelopmentFramework, new Set(runtimeData.actionSystem.actionDefinitions.map((action) => action.id)), new Set(runtimeData.planetOpportunityProfiles.map((profile) => profile.id)))) {
+    issues.push(issue);
+  }
   validateBuildingTaxonomyRuntime(runtimeData, issues);
   const categoryPresentationValidation = validateUpgradeCategoryPresentation({ categories: runtimeData.upgradeCategories });
   for (const message of categoryPresentationValidation.issues) {
@@ -1516,6 +1536,7 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     actionSystem: sorted.actionSystem,
     planetOpportunityProfiles: sorted.planetOpportunityProfiles,
     planetExplorationProgression: sorted.planetExplorationProgression,
+    planetDevelopmentFramework: sorted.planetDevelopmentFramework,
     resources: sorted.resources,
     buildingTaxonomy: sorted.buildingTaxonomy,
     buildingLibrary: sorted.buildingLibrary,
@@ -1589,6 +1610,9 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
     issues.push(issue);
   }
   for (const issue of validatePlanetExplorationProgression(payload.planetExplorationProgression, payload.timeActionContract)) {
+    issues.push(issue);
+  }
+  for (const issue of validatePlanetDevelopmentFramework(payload.planetDevelopmentFramework, new Set(payload.actionSystem.actionDefinitions.map((action) => action.id)), new Set(payload.planetOpportunityProfiles.map((profile) => profile.id)))) {
     issues.push(issue);
   }
   validateBuildingTaxonomyRuntime(payload, issues);
@@ -1733,6 +1757,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     actionSystem: canonicalActionSystem,
     planetOpportunityProfiles: canonicalPlanetOpportunityProfiles,
     planetExplorationProgression,
+    planetDevelopmentFramework,
     resources: ResourceService.catalog.map(resourceToRuntime),
     buildingTaxonomy: canonicalBuildingTaxonomy,
     buildingLibrary: canonicalBuildingLibrary,
@@ -1790,6 +1815,7 @@ export async function getGameRuntimeData() {
     actionSystem: base.actionSystem,
     planetOpportunityProfiles: base.planetOpportunityProfiles,
     planetExplorationProgression: base.planetExplorationProgression,
+    planetDevelopmentFramework: base.planetDevelopmentFramework,
     resources: base.resources,
     balance: {
       ...store.appliedRuntimeData.balance,
@@ -2002,6 +2028,7 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     actionSystem: base.actionSystem,
     planetOpportunityProfiles: base.planetOpportunityProfiles,
     planetExplorationProgression: base.planetExplorationProgression,
+    planetDevelopmentFramework: base.planetDevelopmentFramework,
     resources: base.resources,
     buildingTaxonomy: base.buildingTaxonomy,
     buildingLibrary: base.buildingLibrary,

@@ -27,6 +27,7 @@ import {
 import { buildEconomyState, economySchemas, priceClamps, type MarketRecord, type ResourceListing, type TradeOpportunity, type TradeRoute } from "@/lib/economy/trade";
 import { generateFaction, generateFallbackFactions, type FactionRecord } from "@/lib/factions/procedural";
 import { planetExplorationProgression, timeActionContract, validatePlanetExplorationProgression, validateTimeActionContract } from "@/lib/planets/exploration-progression";
+import { planetDevelopmentFramework, validatePlanetDevelopmentFramework } from "@/lib/planets/development-framework";
 import { canonicalPlanetOpportunityProfiles, resolvePlanetOpportunityProfileId, validatePlanetOpportunityProfiles } from "@/lib/planets/opportunity-profiles";
 import { defaultEraNavigationProfile, engineEraNavigationOverrides, resolveEraNavigationProfile, supportedEraNavigationBoundaryModes, supportedEraNavigationDashboardModes } from "@/lib/runtime/client-profiles";
 import { galaxyEngineContractVersion, galaxyEnginePresentationContract, validateGalaxyEnginePresentationContract } from "@/lib/runtime/galaxy-engine-contract";
@@ -199,6 +200,7 @@ type CanonicalModules = {
   time_action_contract: typeof timeActionContract;
   action_system: typeof canonicalActionSystem;
   planet_exploration_progression: typeof planetExplorationProgression;
+  planet_development_framework: typeof planetDevelopmentFramework;
   economy_usage_relationships: ReturnType<typeof buildEconomyUsageRelationships>;
   inventory_resource_metadata: ReturnType<typeof buildInventoryResourceMetadata>;
   economy_schemas: typeof economySchemas;
@@ -638,6 +640,7 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
     time_action_contract: timeActionContract,
     action_system: canonicalActionSystem,
     planet_exploration_progression: planetExplorationProgression,
+    planet_development_framework: planetDevelopmentFramework,
     economy_usage_relationships: buildEconomyUsageRelationships(data),
     inventory_resource_metadata: buildInventoryResourceMetadata(data),
     economy_schemas: economySchemas,
@@ -1039,6 +1042,9 @@ function validatePlanetExploration(issues: ExportValidationIssue[], modules: Can
     addIssue(issues, issue.severity, issue.code, issue.message, issue.records);
   }
   for (const issue of validatePlanetExplorationProgression(modules.planet_exploration_progression, modules.time_action_contract)) {
+    addIssue(issues, issue.severity, issue.code, issue.message, issue.records);
+  }
+  for (const issue of validatePlanetDevelopmentFramework(modules.planet_development_framework, new Set(modules.action_system.actionDefinitions.map((action) => action.id)), new Set(modules.planet_opportunity_profiles.map((profile) => profile.id)))) {
     addIssue(issues, issue.severity, issue.code, issue.message, issue.records);
   }
 }
@@ -1596,6 +1602,7 @@ function schemaNotes(target: EngineTarget) {
     hierarchy: "Preserve Galaxy -> Sector -> Star System -> Planet. Do not add Region or Cluster layers.",
     planetOpportunities: "Planet Opportunity Profiles define strategic uses, suitability scores, capabilities, hazards, and valid player actions. Planets and celestial bodies reference opportunityProfileId; clients do not invent these values.",
     planetExploration: "Planet Exploration Progression defines the Unknown -> Detected -> Probed -> Surveyed -> Evaluated -> Selected -> Active Project -> Complete pipeline. CSI, SVI, nickname, recommended uses, and actions are hidden until Surveyed. Timed actions reference the shared Time Action Contract.",
+    planetDevelopment: "Planet Development Framework defines the post-survey report contract: knowledge lifecycle, visibility matrix, CSI/SVI bands, opportunity archetypes, valid actions, blocked reasons, hazards, project phases, and presentation intent. Active player projects remain Game-owned.",
     timeActions: "Time Action Contract defines the shared action state machine, progress model, acceleration policy, and modifier families. Premium Crystals accelerate progress only and never bypass technology requirements.",
     actions: "Canonical Action System defines gameplay actions, categories, states, queues, requirements, inputs, outputs, modifiers, automation, history, and presentation intent. Future systems must use this framework instead of separate timer systems.",
     colonies: "Colony state, growth inputs, buildings, levels, and focus definitions are canonical Studio data shared by every engine target.",
@@ -1646,6 +1653,7 @@ function compactModules(modules: CanonicalModules) {
     time_action_contract: modules.time_action_contract,
     action_system: modules.action_system,
     planet_exploration_progression: modules.planet_exploration_progression,
+    planet_development_framework: modules.planet_development_framework,
     discovery_journal: modules.discovery_journal,
     timeline_events: modules.timeline_events,
     explorer_schemas: modules.explorer_schemas,
@@ -1719,7 +1727,7 @@ function targetArtifacts(target: EngineTarget, modules: CanonicalModules) {
       "UniversalDiscoveryRegistryContract.lua": `local UniversalDiscoveryRegistryContract = ${luaValue(modules.universal_discovery_registry)}\n\nreturn UniversalDiscoveryRegistryContract\n`,
       "EraNavigationProfileModule.lua": `local EraNavigationProfiles = ${luaValue(modules.era_navigation_profiles)}\n\nreturn EraNavigationProfiles\n`,
       "ResearchUnlockModule.lua": `local ResearchUnlocks = ${luaValue({ research: modules.research, unlocks: modules.unlock_matrix })}\n\nreturn ResearchUnlocks\n`,
-      "UniverseDataModule.lua": `local UniverseData = ${luaValue({ galaxies: modules.galaxies, sectors: modules.sectors, starSystems: modules.star_systems, planets: modules.planets, celestialBodies: modules.celestial_bodies, planetOpportunityProfiles: modules.planet_opportunity_profiles, timeActionContract: modules.time_action_contract, actionSystem: modules.action_system, planetExplorationProgression: modules.planet_exploration_progression, factions: modules.factions, colonies: modules.colonies, colonyBuildings: modules.colony_buildings, colonyLevels: modules.colony_level_definitions, colonyFocus: modules.colony_focus_definitions, markets: modules.markets, tradeRoutes: modules.trade_routes, tradeOpportunities: modules.trade_opportunities, missions: modules.missions, missionObjectives: modules.mission_objectives, missionRewards: modules.mission_rewards })}\n\nreturn UniverseData\n`,
+      "UniverseDataModule.lua": `local UniverseData = ${luaValue({ galaxies: modules.galaxies, sectors: modules.sectors, starSystems: modules.star_systems, planets: modules.planets, celestialBodies: modules.celestial_bodies, planetOpportunityProfiles: modules.planet_opportunity_profiles, timeActionContract: modules.time_action_contract, actionSystem: modules.action_system, planetExplorationProgression: modules.planet_exploration_progression, planetDevelopmentFramework: modules.planet_development_framework, factions: modules.factions, colonies: modules.colonies, colonyBuildings: modules.colony_buildings, colonyLevels: modules.colony_level_definitions, colonyFocus: modules.colony_focus_definitions, markets: modules.markets, tradeRoutes: modules.trade_routes, tradeOpportunities: modules.trade_opportunities, missions: modules.missions, missionObjectives: modules.mission_objectives, missionRewards: modules.mission_rewards })}\n\nreturn UniverseData\n`,
       "ApiService.lua": "local HttpService = game:GetService(\"HttpService\")\n\nlocal ApiService = {}\nApiService.BaseUrl = \"https://your-studio-host.example.com/api/export\"\n\nfunction ApiService.FetchGeneric()\n  local response = HttpService:GetAsync(ApiService.BaseUrl .. \"/generic\")\n  return HttpService:JSONDecode(response)\nend\n\nreturn ApiService\n"
     };
   }

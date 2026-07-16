@@ -1060,6 +1060,220 @@ export type PlanetExplorationProgressionContract = {
   validationRules: string[];
 };
 
+export type PlanetDevelopmentKnowledgeStateId = "unknown" | "detected" | "probe_queued" | "probing" | "probed" | "survey_queued" | "surveying" | "surveyed" | "analyzed" | "catalogued" | "development_selected" | "development_active" | "operational" | "preserved" | "abandoned";
+
+export type PlanetDevelopmentKnowledgeState = {
+  id: PlanetDevelopmentKnowledgeStateId;
+  displayName: string;
+  order: number;
+  allowedTransitions: PlanetDevelopmentKnowledgeStateId[];
+  canShowCsi: boolean;
+  canShowSvi: boolean;
+  canShowNickname: boolean;
+  canShowRecommendations: boolean;
+  canShowDevelopmentActions: boolean;
+  terminal: boolean;
+  notes: string;
+};
+
+export type PlanetDevelopmentVisibilityRule = {
+  stateId: PlanetDevelopmentKnowledgeStateId;
+  hiddenDisplayName: "???";
+  canShowObjectExists: boolean;
+  canShowApproximateLocation: boolean;
+  canShowDistance: boolean;
+  canShowUnresolvedSignal: boolean;
+  canShowBroadBodyClass: boolean;
+  canShowApproximateAtmosphere: boolean;
+  canShowApproximateGravity: boolean;
+  canShowTemperatureBand: boolean;
+  canShowBasicHazards: boolean;
+  canShowPreliminaryResourceSignals: boolean;
+  canShowCsi: boolean;
+  canShowSvi: boolean;
+  canShowNickname: boolean;
+  canShowOpportunityScores: boolean;
+  canShowCapabilities: boolean;
+  canShowRestrictions: boolean;
+  canShowRecommendations: boolean;
+  canShowFullResources: boolean;
+  canShowLifeforms: boolean;
+  canShowRuinsDiscoveries: boolean;
+  canShowValidDevelopmentActions: boolean;
+};
+
+export type PlanetDevelopmentScoreBand = {
+  id: string;
+  min: number;
+  max: number;
+  label: string;
+  starRating: number;
+  summary: string;
+};
+
+export type PlanetDevelopmentOpportunityScores = {
+  colonization: number;
+  mining: number;
+  resourceHarvesting: number;
+  scientificResearch: number;
+  archaeology: number;
+  orbitalInfrastructure: number;
+  energyProduction: number;
+  tradeHub: number;
+  tourism: number;
+  terraforming: number;
+  preservation: number;
+  strategicSecurity: number;
+  logistics: number;
+  habitationSupport: number;
+};
+
+export type PlanetDevelopmentCapabilityState = "unavailable" | "currently_locked" | "technically_possible" | "supported" | "recommended" | "restricted" | "prohibited";
+
+export type PlanetDevelopmentCapabilities = {
+  surfaceColonization: PlanetDevelopmentCapabilityState;
+  orbitalColonization: PlanetDevelopmentCapabilityState;
+  subsurfaceColonization: PlanetDevelopmentCapabilityState;
+  floatingColonization: PlanetDevelopmentCapabilityState;
+  mining: PlanetDevelopmentCapabilityState;
+  harvesting: PlanetDevelopmentCapabilityState;
+  research: PlanetDevelopmentCapabilityState;
+  archaeology: PlanetDevelopmentCapabilityState;
+  orbitalPlatforms: PlanetDevelopmentCapabilityState;
+  trade: PlanetDevelopmentCapabilityState;
+  tourism: PlanetDevelopmentCapabilityState;
+  terraforming: PlanetDevelopmentCapabilityState;
+  preservation: PlanetDevelopmentCapabilityState;
+  refueling: PlanetDevelopmentCapabilityState;
+  automatedExtraction: PlanetDevelopmentCapabilityState;
+  humanPresence: PlanetDevelopmentCapabilityState;
+  roboticPresence: PlanetDevelopmentCapabilityState;
+};
+
+export type PlanetDevelopmentHazards = {
+  temperature: number;
+  radiation: number;
+  toxicity: number;
+  pressure: number;
+  gravity: number;
+  weather: number;
+  geology: number;
+  biology: number;
+  electromagneticActivity: number;
+  anomalies: number;
+  accessibility: number;
+  overallDanger: number;
+};
+
+export type PlanetDevelopmentArchetype = {
+  id: string;
+  displayName: string;
+  summary: string;
+  qualifyingRules: string[];
+  priority: number;
+  presentationToken: string;
+  recommendedActionIds: string[];
+};
+
+export type PlanetDevelopmentActionReference = {
+  actionId: string;
+  intent: string;
+  requiredSurveyComplete: boolean;
+};
+
+export type PlanetDevelopmentBlockedActionReason = {
+  actionId: string;
+  reasonCode: string;
+  description: string;
+};
+
+export type PlanetDevelopmentProfile = {
+  id: string;
+  ownerBodyId: string;
+  sourceOpportunityProfileId: string;
+  calculationVersion: string;
+  csi: {
+    value: number;
+    bandId: string;
+    label: string;
+    starRating: number;
+    summary: string;
+    advantages: string[];
+    limitingFactors: string[];
+    version: string;
+  };
+  svi: {
+    value: number;
+    bandId: string;
+    label: string;
+    starRating: number;
+    summary: string;
+    advantages: string[];
+    limitingFactors: string[];
+    version: string;
+  };
+  opportunityScores: PlanetDevelopmentOpportunityScores;
+  opportunityArchetypeId: string;
+  capabilities: PlanetDevelopmentCapabilities;
+  restrictions: string[];
+  hazards: PlanetDevelopmentHazards;
+  recommendedUses: PlanetOpportunityRecommendedUses;
+  validActionIds: string[];
+  blockedActionReasons: PlanetDevelopmentBlockedActionReason[];
+  visibilityProfile: "survey_required";
+  validationStatus: "Ready" | "Ready With Warnings" | "Blocked";
+};
+
+export type PlanetDevelopmentProjectPhase = {
+  id: string;
+  displayName: string;
+  order: number;
+  actionPhaseTemplateId: string;
+  requirementTypes: ActionRequirement["type"][];
+  notes: string;
+};
+
+export type PlanetDevelopmentPresentationContract = {
+  id: "PlanetDevelopmentReport" | "CivilizationSuitabilityGauge" | "StrategicValueGauge" | "OpportunityScoreBar" | "RecommendedUseCard" | "HazardIndicator" | "CapabilityBadge" | "RestrictionBadge" | "PlanetKnowledgeProgress" | "ProbeProgress" | "SurveyProgress" | "DevelopmentProjectSummary";
+  displayName: string;
+  visibleBeforeSurvey: boolean;
+  rendererIndependent: true;
+  notes: string;
+};
+
+export type PlanetDevelopmentAssetRequirement = {
+  id: string;
+  displayName: string;
+  category: "badge" | "icon" | "state" | "reveal" | "project" | "phase";
+  status: "required" | "planned";
+  notes: string;
+};
+
+export type PlanetDevelopmentFrameworkContract = {
+  id: "planet_development_framework_v1";
+  version: "1.0.0";
+  architectureDecisionId: "ARCH-DECISION-PLANET-DEVELOPMENT-FRAMEWORK";
+  actionSystemId: ActionSystemContract["id"];
+  planetOpportunityProfileVersion: "1.0.0";
+  calculationVersion: string;
+  ownership: {
+    studioOwns: string[];
+    gameOwns: string[];
+  };
+  knowledgeLifecycle: PlanetDevelopmentKnowledgeState[];
+  visibilityMatrix: PlanetDevelopmentVisibilityRule[];
+  csiBands: PlanetDevelopmentScoreBand[];
+  sviBands: PlanetDevelopmentScoreBand[];
+  opportunityArchetypes: PlanetDevelopmentArchetype[];
+  bodyClassBaselines: Array<{ id: string; bodyClass: string; opportunityProfileId: string; notes: string }>;
+  actionReferences: PlanetDevelopmentActionReference[];
+  developmentProjectPhases: PlanetDevelopmentProjectPhase[];
+  presentationContracts: PlanetDevelopmentPresentationContract[];
+  assetRequirements: PlanetDevelopmentAssetRequirement[];
+  developmentProfiles: PlanetDevelopmentProfile[];
+  validationRules: string[];
+};
+
 export type ActionSystemCategory = {
   id: string;
   displayName: string;
@@ -1456,6 +1670,7 @@ export type GameRuntimeData = {
   galaxyEngineContract: GalaxyEnginePresentationContract;
   planetOpportunityProfiles: PlanetOpportunityProfile[];
   planetExplorationProgression: PlanetExplorationProgressionContract;
+  planetDevelopmentFramework: PlanetDevelopmentFrameworkContract;
   clientProfiles: ClientProfiles;
 };
 

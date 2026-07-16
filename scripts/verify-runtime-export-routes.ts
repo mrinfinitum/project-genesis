@@ -149,6 +149,27 @@ type RuntimePayload = {
     }>;
     nicknameRules?: Array<{ id: string; revealStageId?: string }>;
   };
+  planetDevelopmentFramework?: {
+    id?: string;
+    actionSystemId?: string;
+    calculationVersion?: string;
+    knowledgeLifecycle?: Array<{ id: string; allowedTransitions?: string[]; terminal?: boolean }>;
+    visibilityMatrix?: Array<{ stateId: string; canShowCsi?: boolean; canShowSvi?: boolean; canShowNickname?: boolean; canShowRecommendations?: boolean; canShowValidDevelopmentActions?: boolean }>;
+    csiBands?: Array<{ id: string; min: number; max: number }>;
+    sviBands?: Array<{ id: string; min: number; max: number }>;
+    opportunityArchetypes?: Array<{ id: string; recommendedActionIds?: string[] }>;
+    actionReferences?: Array<{ actionId: string; requiredSurveyComplete?: boolean }>;
+    developmentProfiles?: Array<{
+      id: string;
+      sourceOpportunityProfileId?: string;
+      csi?: { value?: number; bandId?: string };
+      svi?: { value?: number; bandId?: string };
+      capabilities?: { surfaceColonization?: string };
+      validActionIds?: string[];
+      blockedActionReasons?: Array<{ actionId?: string; reasonCode?: string }>;
+    }>;
+    assetRequirements?: unknown[];
+  };
   upgradeCategories?: Array<{ id: string }>;
   upgrades?: Array<{ id: string; categoryId?: string; tabId?: string; eraId?: string; costResourceId?: string | null; costEconomyId?: string | null }>;
   aiAgents?: Array<{ id: string; defaultForNewPlayers?: boolean; baseVariantId?: string; availableVariantIds?: string[]; assetKeys?: Record<string, string>; gameplayModifiers?: Record<string, unknown> }>;
@@ -498,6 +519,60 @@ function validatePlanetExplorationProgression(payload: RuntimePayload | RobloxPa
   for (const rule of progression?.nicknameRules ?? []) {
     assert(rule.revealStageId === "surveyed", `${label} nickname rule ${rule.id} must reveal only at Surveyed.`);
   }
+}
+
+function validatePlanetDevelopmentFramework(payload: RuntimePayload | RobloxPayload, label: string) {
+  const framework = payload.planetDevelopmentFramework;
+  const actionIds = new Set(payload.actionSystem?.actionDefinitions?.map((action) => action.id) ?? []);
+  const opportunityProfileIds = new Set(payload.planetOpportunityProfiles?.map((profile) => profile.id) ?? []);
+  const preSurveyStates = ["unknown", "detected", "probe_queued", "probing", "probed", "survey_queued", "surveying"];
+
+  assert(framework?.id === "planet_development_framework_v1", `${label} must publish planet_development_framework_v1.`);
+  assert(framework?.actionSystemId === payload.actionSystem?.id, `${label} Planet Development Framework must reference Action System.`);
+  assert((framework?.knowledgeLifecycle?.length ?? 0) >= 15, `${label} Planet Development Framework must publish knowledge lifecycle.`);
+  assert((framework?.visibilityMatrix?.length ?? 0) >= 15, `${label} Planet Development Framework must publish visibility matrix.`);
+  assert((framework?.csiBands?.length ?? 0) === 6, `${label} Planet Development Framework must publish six CSI bands.`);
+  assert((framework?.sviBands?.length ?? 0) === 6, `${label} Planet Development Framework must publish six SVI bands.`);
+  assert((framework?.opportunityArchetypes?.length ?? 0) >= 20, `${label} Planet Development Framework must publish opportunity archetypes.`);
+  assert((framework?.developmentProfiles?.length ?? 0) === (payload.planetOpportunityProfiles?.length ?? -1), `${label} Development Profile count must match opportunity profiles.`);
+  assert((framework?.assetRequirements?.length ?? 0) >= 8, `${label} Planet Development Framework must publish asset requirements.`);
+
+  const detected = framework?.knowledgeLifecycle?.find((state) => state.id === "detected");
+  assert(!(detected?.allowedTransitions ?? []).includes("operational"), `${label} must not allow detected -> operational.`);
+  assert(!(detected?.allowedTransitions ?? []).includes("preserved"), `${label} must not allow detected -> preserved.`);
+
+  for (const rule of framework?.visibilityMatrix ?? []) {
+    if (preSurveyStates.includes(rule.stateId)) {
+      assert(!rule.canShowCsi && !rule.canShowSvi && !rule.canShowNickname && !rule.canShowRecommendations && !rule.canShowValidDevelopmentActions, `${label} ${rule.stateId} leaks survey-only Planet Development fields.`);
+    }
+  }
+
+  for (const reference of framework?.actionReferences ?? []) {
+    assert(actionIds.has(reference.actionId), `${label} Planet Development action ${reference.actionId} must resolve to Action System.`);
+  }
+  for (const archetype of framework?.opportunityArchetypes ?? []) {
+    for (const actionId of archetype.recommendedActionIds ?? []) {
+      assert(actionIds.has(actionId), `${label} archetype ${archetype.id} references unresolved action ${actionId}.`);
+    }
+  }
+
+  const csiBands = new Set(framework?.csiBands?.map((band) => band.id) ?? []);
+  const sviBands = new Set(framework?.sviBands?.map((band) => band.id) ?? []);
+  for (const profile of framework?.developmentProfiles ?? []) {
+    assert(profile.sourceOpportunityProfileId && opportunityProfileIds.has(profile.sourceOpportunityProfileId), `${label} ${profile.id} source Opportunity Profile does not resolve.`);
+    assert((profile.csi?.value ?? -1) >= 0 && (profile.csi?.value ?? 101) <= 100, `${label} ${profile.id} CSI out of range.`);
+    assert((profile.svi?.value ?? -1) >= 0 && (profile.svi?.value ?? 101) <= 100, `${label} ${profile.id} SVI out of range.`);
+    assert(Boolean(profile.csi?.bandId && csiBands.has(profile.csi.bandId)), `${label} ${profile.id} CSI band does not resolve.`);
+    assert(Boolean(profile.svi?.bandId && sviBands.has(profile.svi.bandId)), `${label} ${profile.id} SVI band does not resolve.`);
+    for (const actionId of profile.validActionIds ?? []) {
+      assert(actionIds.has(actionId), `${label} ${profile.id} valid action ${actionId} does not resolve.`);
+    }
+    assert((profile.blockedActionReasons ?? []).every((reason) => Boolean(reason.reasonCode)), `${label} ${profile.id} has blocked action without reason.`);
+  }
+  const gasGiant = framework?.developmentProfiles?.find((profile) => profile.sourceOpportunityProfileId === "planet_opportunity_gas_giant");
+  assert(gasGiant?.capabilities?.surfaceColonization === "prohibited", `${label} Gas Giant must prohibit surface colonization.`);
+  assert(gasGiant?.blockedActionReasons?.some((reason) => reason.actionId === "establish_colony" && reason.reasonCode === "blocked_no_solid_surface"), `${label} Gas Giant colony block reason missing.`);
+  assert(!/activePlayerProject|startedAt|completedAt|queueContents|playerBalances|\/Users\//i.test(JSON.stringify(framework)), `${label} Planet Development Framework leaked player state or private paths.`);
 }
 
 function validateActionSystem(payload: RuntimePayload | RobloxPayload, label: string) {
@@ -866,8 +941,8 @@ async function main() {
   assert(roblox.payload.metadata?.accessLevel === "public-published", "Roblox accessLevel must be public-published.");
   assert(roblox.payload.metadata?.validationStatus, "Roblox validation status is missing.");
   assert((canonical.payload.eras?.length ?? 0) > 0, "Canonical payload must include at least one era.");
-  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 25, "Canonical contentVersion must be at least 25 after canonical action system foundation.");
-  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 25, "Roblox contentVersion must be at least 25 after canonical action system foundation.");
+  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 26, "Canonical contentVersion must be at least 26 after Planet Development Framework.");
+  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 26, "Roblox contentVersion must be at least 26 after Planet Development Framework.");
 
   validateEraNavigation(canonical.payload, "Canonical");
   validateEraNavigation(roblox.payload, "Roblox");
@@ -889,6 +964,8 @@ async function main() {
   validateActionSystem(roblox.payload, "Roblox");
   validatePlanetExplorationProgression(canonical.payload, "Canonical");
   validatePlanetExplorationProgression(roblox.payload, "Roblox");
+  validatePlanetDevelopmentFramework(canonical.payload, "Canonical");
+  validatePlanetDevelopmentFramework(roblox.payload, "Roblox");
   validateRuntimeReferences(canonical.payload);
   validateRobloxReferences(roblox.payload);
   assertNoArchitectureLeak("Canonical runtime", canonical.payload);
@@ -929,6 +1006,7 @@ async function main() {
       actionDefinitionCount: canonical.payload.actionSystem?.actionDefinitions?.length ?? 0,
       planetExplorationStageCount: canonical.payload.planetExplorationProgression?.pipeline?.length ?? 0,
       planetExplorationActionCount: canonical.payload.planetExplorationProgression?.timedActions?.length ?? 0,
+      planetDevelopmentProfileCount: canonical.payload.planetDevelopmentFramework?.developmentProfiles?.length ?? 0,
       resourceCount: canonical.payload.resources?.length ?? 0,
       upgradeCount: canonical.payload.upgrades?.length ?? 0
     },
@@ -966,6 +1044,7 @@ async function main() {
       actionDefinitionCount: roblox.payload.actionSystem?.actionDefinitions?.length ?? 0,
       planetExplorationStageCount: roblox.payload.planetExplorationProgression?.pipeline?.length ?? 0,
       planetExplorationActionCount: roblox.payload.planetExplorationProgression?.timedActions?.length ?? 0,
+      planetDevelopmentProfileCount: roblox.payload.planetDevelopmentFramework?.developmentProfiles?.length ?? 0,
       resourceCount: roblox.payload.resources?.length ?? 0,
       upgradeTabCount: roblox.payload.upgradeTabs?.length ?? 0,
       upgradeCount: roblox.payload.upgrades?.length ?? 0
