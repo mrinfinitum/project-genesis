@@ -358,6 +358,8 @@ export type CelestialBodyRecord = {
   planet_subclass: string | null;
   planet_rarity: string | null;
   biome: string | null;
+  opportunityProfileId?: string;
+  opportunity_profile_id?: string;
   atmosphere: string | null;
   gravity: string | null;
   orbit_position: number | null;
@@ -418,6 +420,8 @@ export type GeneratedPlanet = {
   orbit_speed: string;
   planet_class: string;
   planet_subclass: string;
+  opportunityProfileId?: string;
+  opportunity_profile_id?: string;
   primary_biome: string;
   climate: string;
   atmosphere: string;

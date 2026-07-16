@@ -51,6 +51,15 @@ type RuntimePayload = {
     assetRoles?: Array<{ id: string; fallbackRuleId?: string }>;
     proceduralFallbackRules?: Array<{ id: string; appliesToClassIds?: string[] }>;
   };
+  planetOpportunityProfiles?: Array<{
+    id: string;
+    planetClass?: string;
+    suitability?: Record<string, number>;
+    eligibility?: Record<string, boolean>;
+    hazardProfile?: Record<string, number>;
+    recommendedUses?: { primaryUse?: string; secondaryUse?: string; optionalUse?: string };
+    recommendedActions?: string[];
+  }>;
   upgradeCategories?: Array<{ id: string }>;
   upgrades?: Array<{ id: string; categoryId?: string; tabId?: string; eraId?: string; costResourceId?: string | null; costEconomyId?: string | null }>;
   aiAgents?: Array<{ id: string; defaultForNewPlayers?: boolean; baseVariantId?: string; availableVariantIds?: string[]; assetKeys?: Record<string, string>; gameplayModifiers?: Record<string, unknown> }>;
@@ -275,6 +284,58 @@ function validateGalaxyEngineContract(payload: RuntimePayload | RobloxPayload, l
   }
   const forbiddenConfigKeys = /"(?:threeJsConfig|reactThreeFiberConfig|cameraConfig|shaderConfig|lightingRig|controlScheme|rendererSettings)"\s*:/i;
   assert(!forbiddenConfigKeys.test(JSON.stringify(contract)), `${label} galaxyEngineContract leaked renderer implementation config.`);
+}
+
+function validatePlanetOpportunityProfiles(payload: RuntimePayload | RobloxPayload, label: string) {
+  const profiles = payload.planetOpportunityProfiles ?? [];
+  const ids = new Set(profiles.map((profile) => profile.id));
+  const expectedIds = [
+    "planet_opportunity_earth_like",
+    "planet_opportunity_ocean",
+    "planet_opportunity_forest",
+    "planet_opportunity_desert",
+    "planet_opportunity_frozen",
+    "planet_opportunity_volcanic",
+    "planet_opportunity_rocky",
+    "planet_opportunity_gas_giant",
+    "planet_opportunity_ice_giant",
+    "planet_opportunity_artificial",
+    "planet_opportunity_exotic",
+    "planet_opportunity_barren",
+    "planet_opportunity_dead",
+    "planet_opportunity_crystal",
+    "planet_opportunity_toxic",
+    "planet_opportunity_radioactive",
+    "planet_opportunity_inferno",
+    "planet_opportunity_ocean_moon",
+    "planet_opportunity_frozen_moon",
+    "planet_opportunity_asteroid_belt"
+  ];
+
+  assert(profiles.length === expectedIds.length, `${label} must publish exactly ${expectedIds.length} Planet Opportunity Profiles; received ${profiles.length}.`);
+  for (const id of expectedIds) {
+    assert(ids.has(id), `${label} is missing Planet Opportunity Profile ${id}.`);
+  }
+  for (const profile of profiles) {
+    for (const [key, value] of Object.entries(profile.suitability ?? {})) {
+      assert(Number.isFinite(value) && value >= 0 && value <= 100, `${label} ${profile.id} suitability ${key} must be normalized 0-100.`);
+    }
+    for (const [key, value] of Object.entries(profile.hazardProfile ?? {})) {
+      assert(Number.isFinite(value) && value >= 0 && value <= 100, `${label} ${profile.id} hazard ${key} must be normalized 0-100.`);
+    }
+    assert(Boolean(profile.recommendedUses?.primaryUse), `${label} ${profile.id} must publish primaryUse.`);
+    assert(Boolean(profile.recommendedUses?.secondaryUse), `${label} ${profile.id} must publish secondaryUse.`);
+    assert(Boolean(profile.recommendedUses?.optionalUse), `${label} ${profile.id} must publish optionalUse.`);
+    assert((profile.recommendedActions?.length ?? 0) > 0, `${label} ${profile.id} must publish recommended player actions.`);
+  }
+
+  const gasGiant = profiles.find((profile) => profile.id === "planet_opportunity_gas_giant");
+  assert(gasGiant?.eligibility?.supportsColonization === false, `${label} Gas Giant must not support colonization.`);
+  assert(gasGiant?.suitability?.mining === 98, `${label} Gas Giant mining suitability must remain 98.`);
+  assert(gasGiant?.suitability?.harvesting === 100, `${label} Gas Giant harvesting suitability must remain 100.`);
+  const earthLike = profiles.find((profile) => profile.id === "planet_opportunity_earth_like");
+  assert(earthLike?.eligibility?.supportsColonization === true, `${label} Earth-like must support colonization.`);
+  assert(earthLike?.suitability?.colonization === 95, `${label} Earth-like colonization suitability must remain 95.`);
 }
 
 function validateEconomy(payload: RuntimePayload | RobloxPayload, label: string) {
@@ -565,8 +626,8 @@ async function main() {
   assert(roblox.payload.metadata?.accessLevel === "public-published", "Roblox accessLevel must be public-published.");
   assert(roblox.payload.metadata?.validationStatus, "Roblox validation status is missing.");
   assert((canonical.payload.eras?.length ?? 0) > 0, "Canonical payload must include at least one era.");
-  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 21, "Canonical contentVersion must be at least 21 after galaxy engine contracts.");
-  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 21, "Roblox contentVersion must be at least 21 after galaxy engine contracts.");
+  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 22, "Canonical contentVersion must be at least 22 after planet opportunity profiles.");
+  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 22, "Roblox contentVersion must be at least 22 after planet opportunity profiles.");
 
   validateEraNavigation(canonical.payload, "Canonical");
   validateEraNavigation(roblox.payload, "Roblox");
@@ -582,6 +643,8 @@ async function main() {
   validateDiscoveryRuntime(roblox.payload, "Roblox");
   validateGalaxyEngineContract(canonical.payload, "Canonical");
   validateGalaxyEngineContract(roblox.payload, "Roblox");
+  validatePlanetOpportunityProfiles(canonical.payload, "Canonical");
+  validatePlanetOpportunityProfiles(roblox.payload, "Roblox");
   validateRuntimeReferences(canonical.payload);
   validateRobloxReferences(roblox.payload);
   assertNoArchitectureLeak("Canonical runtime", canonical.payload);
@@ -616,6 +679,7 @@ async function main() {
       technologyGateCount: canonical.payload.galaxyEngineContract?.technologyGates?.length ?? 0,
       knowledgeStateCount: canonical.payload.galaxyEngineContract?.knowledgeVisibility?.length ?? 0,
       platformRenderingProfileCount: canonical.payload.galaxyEngineContract?.platformRenderingProfiles?.length ?? 0,
+      planetOpportunityProfileCount: canonical.payload.planetOpportunityProfiles?.length ?? 0,
       resourceCount: canonical.payload.resources?.length ?? 0,
       upgradeCount: canonical.payload.upgrades?.length ?? 0
     },
@@ -647,6 +711,7 @@ async function main() {
       technologyGateCount: roblox.payload.galaxyEngineContract?.technologyGates?.length ?? 0,
       knowledgeStateCount: roblox.payload.galaxyEngineContract?.knowledgeVisibility?.length ?? 0,
       platformRenderingProfileCount: roblox.payload.galaxyEngineContract?.platformRenderingProfiles?.length ?? 0,
+      planetOpportunityProfileCount: roblox.payload.planetOpportunityProfiles?.length ?? 0,
       resourceCount: roblox.payload.resources?.length ?? 0,
       upgradeTabCount: roblox.payload.upgradeTabs?.length ?? 0,
       upgradeCount: roblox.payload.upgrades?.length ?? 0

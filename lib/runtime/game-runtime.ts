@@ -30,6 +30,7 @@ import {
   resolveEconomyId
 } from "@/lib/economy/definitions";
 import { ResourceService } from "@/lib/resources/service";
+import { canonicalPlanetOpportunityProfiles, validatePlanetOpportunityProfiles } from "@/lib/planets/opportunity-profiles";
 import { engineEraNavigationOverrides, resolveEraNavigationProfile, supportedEraNavigationBoundaryModes, supportedEraNavigationDashboardModes } from "@/lib/runtime/client-profiles";
 import { galaxyEngineContractVersion, galaxyEnginePresentationContract, validateGalaxyEnginePresentationContract } from "@/lib/runtime/galaxy-engine-contract";
 import { buildMobileClientProfile } from "@/lib/runtime/mobile-client-profiles";
@@ -54,7 +55,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 21;
+export const gameRuntimeContentVersion = 22;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -89,6 +90,7 @@ export type RobloxRuntimeExportPayload = {
   discoveryPlayerCollectionSchema: GameRuntimeData["discoveryPlayerCollectionSchema"];
   universalDiscoveryRegistry: GameRuntimeData["universalDiscoveryRegistry"];
   galaxyEngineContract: GameRuntimeData["galaxyEngineContract"];
+  planetOpportunityProfiles: GameRuntimeData["planetOpportunityProfiles"];
   resources: ResourceDefinition[];
   buildingTaxonomy: GameRuntimeData["buildingTaxonomy"];
   buildingLibrary: GameRuntimeData["buildingLibrary"];
@@ -570,6 +572,7 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
       assetRoles: [...runtimeData.galaxyEngineContract.assetRoles].sort(byId),
       proceduralFallbackRules: [...runtimeData.galaxyEngineContract.proceduralFallbackRules].sort(byId)
     },
+    planetOpportunityProfiles: [...runtimeData.planetOpportunityProfiles].sort(byId),
     resources: [...runtimeData.resources].sort(byId),
     buildingTaxonomy: [...runtimeData.buildingTaxonomy].sort(byDisplayOrderThenId).map((family) => ({
       ...family,
@@ -1276,6 +1279,9 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   for (const issue of validateGalaxyEnginePresentationContract(runtimeData.galaxyEngineContract)) {
     issues.push(issue);
   }
+  for (const issue of validatePlanetOpportunityProfiles(runtimeData.planetOpportunityProfiles)) {
+    issues.push(issue);
+  }
   validateBuildingTaxonomyRuntime(runtimeData, issues);
   const categoryPresentationValidation = validateUpgradeCategoryPresentation({ categories: runtimeData.upgradeCategories });
   for (const message of categoryPresentationValidation.issues) {
@@ -1447,6 +1453,7 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     discoveryPlayerCollectionSchema: sorted.discoveryPlayerCollectionSchema,
     universalDiscoveryRegistry: sorted.universalDiscoveryRegistry,
     galaxyEngineContract: sorted.galaxyEngineContract,
+    planetOpportunityProfiles: sorted.planetOpportunityProfiles,
     resources: sorted.resources,
     buildingTaxonomy: sorted.buildingTaxonomy,
     buildingLibrary: sorted.buildingLibrary,
@@ -1508,6 +1515,9 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
   validateResourceEconomyContracts(payload, issues, "Roblox runtime");
   validateAiAgents(payload, issues);
   for (const issue of validateGalaxyEnginePresentationContract(payload.galaxyEngineContract)) {
+    issues.push(issue);
+  }
+  for (const issue of validatePlanetOpportunityProfiles(payload.planetOpportunityProfiles)) {
     issues.push(issue);
   }
   validateBuildingTaxonomyRuntime(payload, issues);
@@ -1648,6 +1658,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     discoveryPlayerCollectionSchema,
     universalDiscoveryRegistry: universalDiscoveryRegistryContract,
     galaxyEngineContract: galaxyEnginePresentationContract,
+    planetOpportunityProfiles: canonicalPlanetOpportunityProfiles,
     resources: ResourceService.catalog.map(resourceToRuntime),
     buildingTaxonomy: canonicalBuildingTaxonomy,
     buildingLibrary: canonicalBuildingLibrary,
@@ -1701,6 +1712,7 @@ export async function getGameRuntimeData() {
     discoveryPlayerCollectionSchema: base.discoveryPlayerCollectionSchema,
     universalDiscoveryRegistry: base.universalDiscoveryRegistry,
     galaxyEngineContract: base.galaxyEngineContract,
+    planetOpportunityProfiles: base.planetOpportunityProfiles,
     resources: base.resources,
     balance: {
       ...store.appliedRuntimeData.balance,
@@ -1909,6 +1921,7 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     discoveryPlayerCollectionSchema: base.discoveryPlayerCollectionSchema,
     universalDiscoveryRegistry: base.universalDiscoveryRegistry,
     galaxyEngineContract: base.galaxyEngineContract,
+    planetOpportunityProfiles: base.planetOpportunityProfiles,
     resources: base.resources,
     buildingTaxonomy: base.buildingTaxonomy,
     buildingLibrary: base.buildingLibrary,

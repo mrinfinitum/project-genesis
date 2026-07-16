@@ -866,6 +866,67 @@ export type GalaxyEnginePresentationContract = {
   validationRules: string[];
 };
 
+export type PlanetOpportunitySuitability = {
+  colonization: number;
+  mining: number;
+  harvesting: number;
+  scientificResearch: number;
+  archaeology: number;
+  orbitalInfrastructure: number;
+  tradeHub: number;
+  tourism: number;
+  terraforming: number;
+  military: number;
+  danger: number;
+  environmentalHazard: number;
+};
+
+export type PlanetOpportunityEligibility = {
+  supportsColonization: boolean;
+  supportsMining: boolean;
+  supportsHarvesting: boolean;
+  supportsOrbitalPlatforms: boolean;
+  supportsTerraforming: boolean;
+  supportsPreservation: boolean;
+  supportsTourism: boolean;
+  supportsMilitary: boolean;
+  supportsResearchStations: boolean;
+  supportsRefueling: boolean;
+};
+
+export type PlanetOpportunityHazardProfile = {
+  temperature: number;
+  radiation: number;
+  storms: number;
+  gravity: number;
+  atmosphere: number;
+  hostility: number;
+  environmentalRisk: number;
+};
+
+export type PlanetOpportunityRecommendedUses = {
+  primaryUse: string;
+  secondaryUse: string;
+  optionalUse: string;
+};
+
+export type PlanetOpportunityAction = "Colonize" | "Mine" | "Harvest" | "Research" | "Survey" | "Catalog" | "Probe" | "Bookmark" | "Ignore";
+
+export type PlanetOpportunityProfile = {
+  id: string;
+  planetClass: string;
+  displayName: string;
+  aliases: string[];
+  description: string;
+  suitability: PlanetOpportunitySuitability;
+  eligibility: PlanetOpportunityEligibility;
+  hazardProfile: PlanetOpportunityHazardProfile;
+  preservationStatus: "encouraged" | "optional" | "restricted" | "not_applicable";
+  recommendedUses: PlanetOpportunityRecommendedUses;
+  recommendedActions: PlanetOpportunityAction[];
+  notes: string;
+};
+
 export type MobileDeviceClass = {
   id: "phone_compact" | "phone_standard" | "phone_large" | "tablet_standard" | "tablet_large";
   minimumLogicalWidth: number;
@@ -990,6 +1051,7 @@ export type GameRuntimeData = {
   assets: AssetDefinition[];
   balance: BalanceDefinition;
   galaxyEngineContract: GalaxyEnginePresentationContract;
+  planetOpportunityProfiles: PlanetOpportunityProfile[];
   clientProfiles: ClientProfiles;
 };
 

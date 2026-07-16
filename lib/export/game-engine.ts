@@ -25,6 +25,7 @@ import {
 } from "@/lib/economy/definitions";
 import { buildEconomyState, economySchemas, priceClamps, type MarketRecord, type ResourceListing, type TradeOpportunity, type TradeRoute } from "@/lib/economy/trade";
 import { generateFaction, generateFallbackFactions, type FactionRecord } from "@/lib/factions/procedural";
+import { canonicalPlanetOpportunityProfiles, resolvePlanetOpportunityProfileId, validatePlanetOpportunityProfiles } from "@/lib/planets/opportunity-profiles";
 import { defaultEraNavigationProfile, engineEraNavigationOverrides, resolveEraNavigationProfile, supportedEraNavigationBoundaryModes, supportedEraNavigationDashboardModes } from "@/lib/runtime/client-profiles";
 import { galaxyEngineContractVersion, galaxyEnginePresentationContract, validateGalaxyEnginePresentationContract } from "@/lib/runtime/galaxy-engine-contract";
 import { buildMobileClientProfile, mobileAssetRequirements } from "@/lib/runtime/mobile-client-profiles";
@@ -148,7 +149,8 @@ type CanonicalModules = {
   planets: ExportGeneratedPlanet[];
   unassigned_planets: ExportUnassignedPlanet[];
   planet_rules: GameData["planets"];
-  celestial_bodies: GameData["celestial_bodies"];
+  celestial_bodies: ExportCelestialBody[];
+  planet_opportunity_profiles: typeof canonicalPlanetOpportunityProfiles;
   discovery_journal: typeof sampleDiscoveryJournal;
   timeline_events: typeof sampleTimelineEvents;
   explorer_schemas: Array<Record<string, unknown>>;
@@ -226,11 +228,20 @@ type ExportGeneratedPlanet = GeneratedPlanet & {
   parentStarSeed: string;
   generatedName: string;
   displayName: string;
+  opportunityProfileId: string;
+  opportunity_profile_id: string;
 };
 
 type ExportUnassignedPlanet = GeneratedPlanet & {
   export_status: "unassigned";
   unassigned_reason: string;
+};
+
+type ExportCelestialBody = GameData["celestial_bodies"][number] & {
+  generatedName: string;
+  displayName: string;
+  opportunityProfileId: string;
+  opportunity_profile_id: string;
 };
 
 export function getEngineTargets() {
@@ -378,7 +389,9 @@ function normalizeExportPlanets(
       parentStarClass: starType,
       parentStarSeed: system.system_seed,
       generatedName: namedPlanet.generatedName ?? planet.name,
-      displayName: namedPlanet.displayName ?? planet.name
+      displayName: namedPlanet.displayName ?? planet.name,
+      opportunityProfileId: resolvePlanetOpportunityProfileId(planet),
+      opportunity_profile_id: resolvePlanetOpportunityProfileId(planet)
     });
   }
 
@@ -500,7 +513,14 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
     planets: normalizedPlanets.assigned,
     unassigned_planets: normalizedPlanets.unassigned,
     planet_rules: data.planets,
-    celestial_bodies: celestialBodies.map((body) => ({ ...body, generatedName: body.name, displayName: body.name })),
+    celestial_bodies: celestialBodies.map((body) => ({
+      ...body,
+      generatedName: body.name,
+      displayName: body.name,
+      opportunityProfileId: resolvePlanetOpportunityProfileId(body),
+      opportunity_profile_id: resolvePlanetOpportunityProfileId(body)
+    })),
+    planet_opportunity_profiles: canonicalPlanetOpportunityProfiles,
     discovery_journal: sampleDiscoveryJournal,
     timeline_events: sampleTimelineEvents,
     explorer_schemas: [
@@ -979,6 +999,30 @@ function validateHierarchy(issues: ExportValidationIssue[], modules: CanonicalMo
   }
 }
 
+function validatePlanetOpportunities(issues: ExportValidationIssue[], modules: CanonicalModules) {
+  const profileIds = new Set(modules.planet_opportunity_profiles.map((profile) => profile.id));
+  const validationIssues = validatePlanetOpportunityProfiles(modules.planet_opportunity_profiles, [...modules.planets, ...modules.celestial_bodies]);
+
+  for (const issue of validationIssues) {
+    issues.push({
+      severity: issue.severity,
+      code: issue.code,
+      message: issue.message,
+      records: issue.records
+    });
+  }
+
+  const planetsMissingProfiles = modules.planets.filter((planet) => !profileIds.has(planet.opportunityProfileId));
+  if (planetsMissingProfiles.length) {
+    addIssue(issues, "error", "planet_opportunity_profile_missing", "Every generated planet must reference a valid Planet Opportunity Profile.", planetsMissingProfiles.map((planet) => planet.id));
+  }
+
+  const bodiesMissingProfiles = modules.celestial_bodies.filter((body) => !profileIds.has(body.opportunityProfileId));
+  if (bodiesMissingProfiles.length) {
+    addIssue(issues, "error", "celestial_body_opportunity_profile_missing", "Every generated celestial body must reference a valid Planet Opportunity Profile.", bodiesMissingProfiles.map((body) => body.id));
+  }
+}
+
 function validateEconomy(issues: ExportValidationIssue[], modules: CanonicalModules) {
   const marketIds = new Set(modules.markets.map((market) => market.id));
   const colonyIds = new Set(modules.colonies.map((colony) => colony.id));
@@ -1420,6 +1464,7 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
   validateUnlocks(issues, modules);
   validateBuildingTaxonomy(issues, modules);
   validateHierarchy(issues, modules);
+  validatePlanetOpportunities(issues, modules);
   validateEconomy(issues, modules);
   validateEraNavigationProfiles(issues, modules);
   validateMissions(issues, modules);
@@ -1455,6 +1500,9 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
       "planets link to star systems",
       "planets link to sectors",
       "planets link to galaxies",
+      "planet opportunity profiles resolve",
+      "celestial body opportunity profiles resolve",
+      "planet opportunity scores are normalized",
       "colonies link to planets",
       "colonies link to star systems",
       "colonies link to sectors",
@@ -1519,6 +1567,7 @@ function schemaNotes(target: EngineTarget) {
     ids: "IDs are stable and should be treated as save-compatible identifiers.",
     resources: "Resource display data must be resolved through resource_catalog/ResourceService.",
     hierarchy: "Preserve Galaxy -> Sector -> Star System -> Planet. Do not add Region or Cluster layers.",
+    planetOpportunities: "Planet Opportunity Profiles define strategic uses, suitability scores, capabilities, hazards, and valid player actions. Planets and celestial bodies reference opportunityProfileId; clients do not invent these values.",
     colonies: "Colony state, growth inputs, buildings, levels, and focus definitions are canonical Studio data shared by every engine target.",
     economy: "Global economy definitions, behavior contracts, producer definitions, building resource effects, scope rules, ledger reason codes, offline policies, and HUD slots are engine-agnostic canonical data. HUD slots use economy IDs only; inventory materials stay in resource_catalog.",
     eraNavigation: "Studio owns navigation intent only. Dashboards should use current_journey with compact labels; clients own layout and rendering. The full Civilization Timeline remains the all-era view.",
@@ -1563,6 +1612,7 @@ function compactModules(modules: CanonicalModules) {
     planets: modules.planets,
     unassigned_planets: modules.unassigned_planets,
     celestial_bodies: modules.celestial_bodies,
+    planet_opportunity_profiles: modules.planet_opportunity_profiles,
     discovery_journal: modules.discovery_journal,
     timeline_events: modules.timeline_events,
     explorer_schemas: modules.explorer_schemas,
@@ -1636,7 +1686,7 @@ function targetArtifacts(target: EngineTarget, modules: CanonicalModules) {
       "UniversalDiscoveryRegistryContract.lua": `local UniversalDiscoveryRegistryContract = ${luaValue(modules.universal_discovery_registry)}\n\nreturn UniversalDiscoveryRegistryContract\n`,
       "EraNavigationProfileModule.lua": `local EraNavigationProfiles = ${luaValue(modules.era_navigation_profiles)}\n\nreturn EraNavigationProfiles\n`,
       "ResearchUnlockModule.lua": `local ResearchUnlocks = ${luaValue({ research: modules.research, unlocks: modules.unlock_matrix })}\n\nreturn ResearchUnlocks\n`,
-      "UniverseDataModule.lua": `local UniverseData = ${luaValue({ galaxies: modules.galaxies, sectors: modules.sectors, starSystems: modules.star_systems, planets: modules.planets, celestialBodies: modules.celestial_bodies, factions: modules.factions, colonies: modules.colonies, colonyBuildings: modules.colony_buildings, colonyLevels: modules.colony_level_definitions, colonyFocus: modules.colony_focus_definitions, markets: modules.markets, tradeRoutes: modules.trade_routes, tradeOpportunities: modules.trade_opportunities, missions: modules.missions, missionObjectives: modules.mission_objectives, missionRewards: modules.mission_rewards })}\n\nreturn UniverseData\n`,
+      "UniverseDataModule.lua": `local UniverseData = ${luaValue({ galaxies: modules.galaxies, sectors: modules.sectors, starSystems: modules.star_systems, planets: modules.planets, celestialBodies: modules.celestial_bodies, planetOpportunityProfiles: modules.planet_opportunity_profiles, factions: modules.factions, colonies: modules.colonies, colonyBuildings: modules.colony_buildings, colonyLevels: modules.colony_level_definitions, colonyFocus: modules.colony_focus_definitions, markets: modules.markets, tradeRoutes: modules.trade_routes, tradeOpportunities: modules.trade_opportunities, missions: modules.missions, missionObjectives: modules.mission_objectives, missionRewards: modules.mission_rewards })}\n\nreturn UniverseData\n`,
       "ApiService.lua": "local HttpService = game:GetService(\"HttpService\")\n\nlocal ApiService = {}\nApiService.BaseUrl = \"https://your-studio-host.example.com/api/export\"\n\nfunction ApiService.FetchGeneric()\n  local response = HttpService:GetAsync(ApiService.BaseUrl .. \"/generic\")\n  return HttpService:JSONDecode(response)\nend\n\nreturn ApiService\n"
     };
   }
