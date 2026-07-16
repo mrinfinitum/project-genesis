@@ -57,7 +57,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 24;
+export const gameRuntimeContentVersion = 25;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -602,6 +602,13 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
       actionStates: [...runtimeData.actionSystem.actionStates],
       actionDefinitions: [...runtimeData.actionSystem.actionDefinitions].sort(byId),
       actionQueueRules: [...runtimeData.actionSystem.actionQueueRules].sort(byId),
+      actionDurationDefinitions: [...runtimeData.actionSystem.actionDurationDefinitions].sort(byId),
+      actionPhaseTemplates: [...runtimeData.actionSystem.actionPhaseTemplates].sort((left, right) => left.order - right.order || left.id.localeCompare(right.id)),
+      actionAccelerationPolicies: [...runtimeData.actionSystem.actionAccelerationPolicies].sort(byId),
+      actionAutomationPolicies: [...runtimeData.actionSystem.actionAutomationPolicies].sort(byId),
+      actionFailureCauses: [...runtimeData.actionSystem.actionFailureCauses].sort(byId),
+      actionEventDefinitions: [...runtimeData.actionSystem.actionEventDefinitions].sort(byId),
+      actionPresentationContracts: [...runtimeData.actionSystem.actionPresentationContracts].sort(byId),
       accelerationRules: [...runtimeData.actionSystem.accelerationRules].sort(),
       automationRules: [...runtimeData.actionSystem.automationRules].sort(),
       actionPresentation: [...runtimeData.actionSystem.actionPresentation].sort((left, right) => left.mode.localeCompare(right.mode)),

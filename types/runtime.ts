@@ -1069,40 +1069,59 @@ export type ActionSystemCategory = {
 };
 
 export type ActionSystemState = {
-  id: "idle" | "queued" | "waiting" | "preparing" | "running" | "paused" | "blocked" | "failed" | "cancelled" | "completed" | "archived";
+  id: "unavailable" | "ready" | "queued" | "waiting" | "preparing" | "in_progress" | "paused" | "blocked" | "completed" | "failed" | "cancelled" | "archived";
   displayName: string;
   terminal: boolean;
   historyEvent: boolean;
+  allowedTransitions: string[];
+  resumable: boolean;
+  queueBehavior: "not_queueable" | "queueable" | "active" | "suspended" | "terminal";
+  progressBehavior: "none" | "pending" | "time_based" | "held" | "terminal";
+  presentationToken: string;
   description: string;
 };
 
 export type ActionRequirement = {
-  type: "research" | "technology" | "building" | "resource" | "population" | "labor" | "credits" | "discovery" | "civilization_level" | "planet_class" | "ownership" | "knowledge_state" | "environment" | "equipment" | "ai_agent";
+  type: "research" | "technology" | "building" | "resource" | "credits" | "labor" | "population" | "workforce" | "equipment" | "ai_agent" | "discovery_state" | "planet_knowledge" | "ownership" | "range" | "location" | "target_class" | "target_environment" | "civilization_milestone" | "civilization_identity" | "action_dependency" | "queue_capacity" | "server_verification" | "preservation_restriction" | "story_gate";
   id: string;
   quantity: number | null;
   condition: string;
   blocking: boolean;
+  reasonCode: string;
   notes: string;
 };
 
 export type ActionTransfer = {
-  type: "resource" | "economy" | "building" | "research" | "discovery" | "artifact" | "population" | "colony" | "trade_route" | "infrastructure" | "knowledge" | "time";
+  type: "resource" | "credits" | "labor" | "population" | "fuel" | "artifact" | "material" | "energy" | "logistics" | "transport_capacity" | "time" | "project_slot" | "research" | "discovery_points" | "knowledge" | "discovery_state" | "building" | "colony" | "infrastructure" | "route" | "unlock" | "notification" | "follow_up_action" | "civilization_identity";
   id: string;
   quantity: number | null;
   timing: "start" | "progress" | "completion";
+  reservationBehavior: "none" | "reserve_on_queue" | "reserve_on_start";
+  consumptionBehavior: "none" | "consume_on_start" | "consume_over_time" | "consume_on_completion";
+  cancellationRefund: "none" | "full" | "partial" | "unspent_only";
+  phaseBehavior: "all_phases" | "start_phase" | "progress_phases" | "completion_phase";
   notes: string;
 };
 
 export type ActionDuration = {
   timeActionContractId: TimeActionContract["id"];
+  durationDefinitionId: string;
   baseDurationSeconds: number;
   minimumDurationSeconds: number;
   maximumDurationSeconds: number;
+  offlinePolicy: string;
+  modifierPolicy: string;
+  accelerationPolicy: string;
+  startPolicy: string;
+  completionPolicy: string;
+  authoritativeTimePolicy: string;
+  phaseTemplateIds: string[];
   estimatedCompletionRule: string;
   progressRule: string;
 };
 
 export type ActionModifiers = {
+  modifierOrder: string[];
   researchModifierIds: string[];
   aiAgentModifierIds: string[];
   automationModifierIds: string[];
@@ -1121,12 +1140,18 @@ export type ActionAutomation = {
   canAutomate: boolean;
   automationTier: "none" | "basic" | "advanced" | "specialized" | "future";
   aiAgentSupport: boolean;
+  automationPolicyId: string;
+  autoQueue: boolean;
+  autoStart: boolean;
+  autoRepeat: boolean;
+  playerConfirmationRequired: boolean;
+  premiumSpendPermission: "never" | "explicit_player_authorization";
   automationRules: string[];
 };
 
 export type ActionQueueBehavior = {
   queueRuleId: string;
-  queueScope: "single" | "multiple" | "per_colony" | "per_planet" | "global" | "priority" | "future";
+  queueScope: "global" | "civilization" | "colony" | "planet" | "research" | "construction" | "probe" | "survey" | "manufacturing" | "logistics" | "future";
   interruptible: boolean;
   prioritySupported: boolean;
   pauseSupported: boolean;
@@ -1146,16 +1171,28 @@ export type ActionDefinition = {
   displayName: string;
   category: string;
   description: string;
-  entityType: "planet" | "colony" | "building" | "research" | "resource" | "trade_route" | "fleet" | "artifact" | "ai_agent" | "civilization";
+  targetTypes: string[];
+  entityType: "planet" | "celestial_body" | "colony" | "building" | "research" | "resource" | "trade_route" | "fleet" | "artifact" | "ai_agent" | "civilization" | "route" | "destination";
   actionType: string;
   requirements: ActionRequirement[];
   inputs: ActionTransfer[];
   outputs: ActionTransfer[];
   duration: ActionDuration;
+  phases: string[];
   modifiers: ActionModifiers;
   automation: ActionAutomation;
   queueBehavior: ActionQueueBehavior;
+  concurrency: {
+    concurrencyPolicyId: string;
+    conflictGroupIds: string[];
+    maxConcurrentTargets: number;
+  };
   failureRules: string[];
+  cancellationRules: {
+    allowed: boolean;
+    refundPolicy: string;
+    retainedProgressPolicy: string;
+  };
   completionRules: string[];
   events: string[];
   rewardProfile: {
@@ -1172,14 +1209,96 @@ export type ActionDefinition = {
     automated: boolean;
   };
   presentation: ActionPresentation;
+  relatedCanonicalContent: {
+    researchIds: string[];
+    buildingIds: string[];
+    resourceIds: string[];
+    economyIds: string[];
+    discoveryIds: string[];
+    planetOpportunityProfileIds: string[];
+  };
+  publicationStatus: "approved" | "provisional" | "draft";
 };
 
 export type ActionQueueRule = {
   id: string;
   displayName: string;
   queueScope: ActionQueueBehavior["queueScope"];
+  maxConcurrency: number;
+  capacitySource: string;
+  supportsReorder: boolean;
   supportsPriority: boolean;
-  supportsParallelActions: boolean;
+  supportsPause: boolean;
+  supportsCancel: boolean;
+  autoStart: boolean;
+  conflictGroups: string[];
+  notes: string;
+};
+
+export type ActionDurationDefinition = {
+  id: string;
+  displayName: string;
+  baseDurationSeconds: number;
+  minimumDurationSeconds: number;
+  maximumDurationSeconds: number;
+  offlinePolicy: string;
+  modifierPolicy: string;
+  accelerationPolicy: string;
+  startPolicy: string;
+  completionPolicy: string;
+  authoritativeTimePolicy: string;
+};
+
+export type ActionPhaseTemplate = {
+  id: string;
+  displayName: string;
+  order: number;
+  progressWeight: number;
+  canPause: boolean;
+  canFail: boolean;
+};
+
+export type ActionAccelerationPolicy = {
+  id: string;
+  displayName: string;
+  accelerationType: "fixed_reduction" | "percentage_reduction" | "temporary_speed_multiplier" | "eligible_instant_completion";
+  serverAuthoritativeBalance: boolean;
+  serverCalculatedCost: boolean;
+  approvedTransactionReasonCodes: string[];
+  idempotencyRequired: boolean;
+  minimumDurationClamp: boolean;
+  canBypassRequirements: false;
+};
+
+export type ActionAutomationPolicy = {
+  id: string;
+  displayName: string;
+  aiAgentRequirement: string;
+  autoQueue: boolean;
+  autoStart: boolean;
+  autoRepeat: boolean;
+  playerConfirmation: string;
+  premiumSpendPermission: "never" | "explicit_player_authorization";
+};
+
+export type ActionFailureCause = {
+  id: string;
+  displayName: string;
+  refundPolicy: string;
+  retainedProgressPolicy: string;
+};
+
+export type ActionEventDefinition = {
+  id: string;
+  displayName: string;
+  gameOwnsPlayerHistory: boolean;
+};
+
+export type ActionPresentationContract = {
+  id: "ActionCard" | "ActionQueue" | "ActionProgress" | "ActionPhaseStepper" | "ActionRequirementList" | "ActionInputSummary" | "ActionOutputSummary" | "ActionModifierBreakdown" | "ActionAccelerationPrompt" | "ActionCompletionNotification" | "ActionHistoryEntry";
+  displayName: string;
+  rendererIndependent: boolean;
+  semanticFields: string[];
   notes: string;
 };
 
@@ -1196,6 +1315,13 @@ export type ActionSystemContract = {
   actionStates: ActionSystemState[];
   actionDefinitions: ActionDefinition[];
   actionQueueRules: ActionQueueRule[];
+  actionDurationDefinitions: ActionDurationDefinition[];
+  actionPhaseTemplates: ActionPhaseTemplate[];
+  actionAccelerationPolicies: ActionAccelerationPolicy[];
+  actionAutomationPolicies: ActionAutomationPolicy[];
+  actionFailureCauses: ActionFailureCause[];
+  actionEventDefinitions: ActionEventDefinition[];
+  actionPresentationContracts: ActionPresentationContract[];
   accelerationRules: string[];
   automationRules: string[];
   actionPresentation: ActionPresentation[];

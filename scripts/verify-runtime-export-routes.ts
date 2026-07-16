@@ -83,21 +83,30 @@ type RuntimePayload = {
     version?: string;
     timeActionContractId?: string;
     actionCategories?: Array<{ id: string }>;
-    actionStates?: Array<{ id: string; terminal?: boolean; historyEvent?: boolean }>;
+    actionStates?: Array<{ id: string; terminal?: boolean; historyEvent?: boolean; allowedTransitions?: string[]; resumable?: boolean; presentationToken?: string }>;
     actionDefinitions?: Array<{
       id: string;
       displayName?: string;
       category?: string;
-      requirements?: unknown[];
+      requirements?: Array<{ reasonCode?: string }>;
       outputs?: unknown[];
-      duration?: { timeActionContractId?: string; baseDurationSeconds?: number; minimumDurationSeconds?: number; maximumDurationSeconds?: number };
+      duration?: { timeActionContractId?: string; durationDefinitionId?: string; baseDurationSeconds?: number; minimumDurationSeconds?: number; maximumDurationSeconds?: number; phaseTemplateIds?: string[] };
       modifiers?: { premiumCrystalAcceleration?: { policy?: string; canUnlockUnavailableActions?: boolean } };
-      automation?: { automationRules?: string[] };
+      automation?: { automationRules?: string[]; premiumSpendPermission?: string; automationPolicyId?: string };
       queueBehavior?: { queueRuleId?: string };
+      concurrency?: { concurrencyPolicyId?: string };
+      phases?: string[];
       history?: { started?: boolean; completed?: boolean; cancelled?: boolean; failed?: boolean; accelerated?: boolean; automated?: boolean };
       events?: string[];
+      publicationStatus?: string;
     }>;
     actionQueueRules?: Array<{ id: string }>;
+    actionDurationDefinitions?: Array<{ id: string }>;
+    actionPhaseTemplates?: Array<{ id: string }>;
+    actionAccelerationPolicies?: Array<{ id: string; serverAuthoritativeBalance?: boolean; serverCalculatedCost?: boolean; idempotencyRequired?: boolean; minimumDurationClamp?: boolean; canBypassRequirements?: boolean }>;
+    actionAutomationPolicies?: Array<{ id: string; premiumSpendPermission?: string }>;
+    actionEventDefinitions?: Array<{ id: string }>;
+    actionPresentationContracts?: Array<{ id: string; rendererIndependent?: boolean }>;
     accelerationRules?: string[];
     automationRules?: string[];
     actionPresentation?: unknown[];
@@ -494,18 +503,26 @@ function validatePlanetExplorationProgression(payload: RuntimePayload | RobloxPa
 function validateActionSystem(payload: RuntimePayload | RobloxPayload, label: string) {
   const timeContract = payload.timeActionContract;
   const actionSystem = payload.actionSystem;
-  const expectedStates = ["idle", "queued", "waiting", "preparing", "running", "paused", "blocked", "failed", "cancelled", "completed", "archived"];
-  const requiredActions = ["action_send_probe", "action_survey_planet", "action_colonize_planet", "action_build_colony", "action_build_mining_outpost", "action_build_research_station", "action_build_orbital_refinery", "action_build_gas_harvest_platform", "action_terraform_planet", "action_research_technology", "action_construct_building", "action_upgrade_building", "action_manufacture_goods", "action_create_trade_route", "action_fleet_travel", "action_analyze_artifact", "action_excavate_ruins", "action_planet_catalog"];
+  const expectedStates = ["unavailable", "ready", "queued", "waiting", "preparing", "in_progress", "paused", "blocked", "completed", "failed", "cancelled", "archived"];
+  const requiredActions = ["send_probe", "probe_travel", "probe_scan", "survey_planet", "catalog_planet", "analyze_anomaly", "analyze_artifact", "excavate_ruin", "prepare_colony", "establish_colony", "build_mining_outpost", "deploy_automated_extraction", "build_gas_harvest_platform", "build_ocean_harvest_platform", "build_research_station", "build_archaeological_camp", "build_orbital_refinery", "designate_preserve", "begin_terraforming_study", "terraform_planet_stage", "conduct_research", "construct_building", "upgrade_building", "manufacture_item", "transfer_resources", "establish_trade_route", "travel_to_destination"];
   const queueIds = new Set(actionSystem?.actionQueueRules?.map((rule) => rule.id) ?? []);
   const categoryIds = new Set(actionSystem?.actionCategories?.map((category) => category.id) ?? []);
+  const durationIds = new Set(actionSystem?.actionDurationDefinitions?.map((duration) => duration.id) ?? []);
+  const phaseIds = new Set(actionSystem?.actionPhaseTemplates?.map((phase) => phase.id) ?? []);
+  const automationPolicyIds = new Set(actionSystem?.actionAutomationPolicies?.map((policy) => policy.id) ?? []);
+  const eventIds = new Set(actionSystem?.actionEventDefinitions?.map((event) => event.id) ?? []);
 
   assert(actionSystem?.id === "canonical_action_system_v1", `${label} must publish canonical_action_system_v1.`);
   assert(actionSystem?.version === "1.0.0", `${label} Action System version must be 1.0.0.`);
   assert(actionSystem?.timeActionContractId === timeContract?.id, `${label} Action System must reference Time Action Contract.`);
   assert(actionSystem?.actionStates?.map((state) => state.id).join("|") === expectedStates.join("|"), `${label} Action System state machine is invalid.`);
-  assert((actionSystem?.actionCategories?.length ?? 0) >= 24, `${label} Action System must publish all action categories.`);
+  assert((actionSystem?.actionCategories?.length ?? 0) >= 28, `${label} Action System must publish all action categories.`);
   assert((actionSystem?.actionDefinitions?.length ?? 0) >= requiredActions.length, `${label} Action System must publish starter gameplay actions.`);
-  assert((actionSystem?.actionQueueRules?.length ?? 0) >= 6, `${label} Action System must publish queue rules.`);
+  assert((actionSystem?.actionQueueRules?.length ?? 0) >= 10, `${label} Action System must publish queue rules.`);
+  assert((actionSystem?.actionDurationDefinitions?.length ?? 0) >= 5, `${label} Action System must publish duration definitions.`);
+  assert((actionSystem?.actionPhaseTemplates?.length ?? 0) >= 12, `${label} Action System must publish phase templates.`);
+  assert((actionSystem?.actionAccelerationPolicies?.length ?? 0) === 4, `${label} Action System must publish protected acceleration policies.`);
+  assert((actionSystem?.actionPresentationContracts?.length ?? 0) >= 11, `${label} Action System must publish presentation contracts.`);
   assert((actionSystem?.accelerationRules?.length ?? 0) > 0, `${label} Action System must publish acceleration rules.`);
   assert((actionSystem?.automationRules?.length ?? 0) > 0, `${label} Action System must publish automation rules.`);
   assert((actionSystem?.actionPresentation?.length ?? 0) >= 5, `${label} Action System must publish presentation intent.`);
@@ -514,22 +531,50 @@ function validateActionSystem(payload: RuntimePayload | RobloxPayload, label: st
   for (const actionId of requiredActions) {
     assert(actionIds.has(actionId), `${label} Action System is missing ${actionId}.`);
   }
+  for (const state of actionSystem?.actionStates ?? []) {
+    assert((state.allowedTransitions?.length ?? 0) > 0 || state.id === "archived", `${label} ${state.id} must publish transition metadata.`);
+    assert(Boolean(state.presentationToken), `${label} ${state.id} must publish a presentation token.`);
+  }
+  for (const policy of actionSystem?.actionAccelerationPolicies ?? []) {
+    assert(policy.serverAuthoritativeBalance === true, `${label} ${policy.id} must require server-authoritative balance.`);
+    assert(policy.serverCalculatedCost === true, `${label} ${policy.id} must require server-calculated cost.`);
+    assert(policy.idempotencyRequired === true, `${label} ${policy.id} must require idempotency.`);
+    assert(policy.minimumDurationClamp === true, `${label} ${policy.id} must enforce minimum duration clamp.`);
+    assert(policy.canBypassRequirements === false, `${label} ${policy.id} must not bypass requirements.`);
+  }
+  for (const contract of actionSystem?.actionPresentationContracts ?? []) {
+    assert(contract.rendererIndependent === true, `${label} ${contract.id} must be renderer-independent.`);
+  }
 
   for (const action of actionSystem?.actionDefinitions ?? []) {
     assert(Boolean(action.id && action.displayName), `${label} Action missing identity.`);
+    assert(!action.id.startsWith("action_"), `${label} ${action.id} must use canonical unprefixed IDs.`);
     assert(Boolean(action.category && categoryIds.has(action.category)), `${label} ${action.id} category does not resolve.`);
     assert((action.requirements?.length ?? 0) > 0, `${label} ${action.id} is missing requirements.`);
+    assert(action.requirements?.every((requirement) => Boolean(requirement.reasonCode)), `${label} ${action.id} requirements must publish reason codes.`);
     assert((action.outputs?.length ?? 0) > 0, `${label} ${action.id} is missing outputs.`);
     assert(action.duration?.timeActionContractId === timeContract?.id, `${label} ${action.id} duration must reference Time Action Contract.`);
+    assert(Boolean(action.duration?.durationDefinitionId && durationIds.has(action.duration.durationDefinitionId)), `${label} ${action.id} duration definition does not resolve.`);
     assert((action.duration?.baseDurationSeconds ?? 0) > 0, `${label} ${action.id} must be time based.`);
     assert((action.duration?.baseDurationSeconds ?? -1) >= (action.duration?.minimumDurationSeconds ?? 0), `${label} ${action.id} duration is below minimum.`);
     assert((action.duration?.baseDurationSeconds ?? 0) <= (action.duration?.maximumDurationSeconds ?? Number.POSITIVE_INFINITY), `${label} ${action.id} duration is above maximum.`);
+    assert((action.phases?.length ?? 0) > 0, `${label} ${action.id} must publish phases.`);
+    for (const phaseId of action.phases ?? []) {
+      assert(phaseIds.has(phaseId), `${label} ${action.id} has unresolved phase ${phaseId}.`);
+    }
     assert(Boolean(action.queueBehavior?.queueRuleId && queueIds.has(action.queueBehavior.queueRuleId)), `${label} ${action.id} queue rule does not resolve.`);
+    assert(Boolean(action.concurrency?.concurrencyPolicyId && queueIds.has(action.concurrency.concurrencyPolicyId)), `${label} ${action.id} concurrency policy does not resolve.`);
+    assert(Boolean(action.automation?.automationPolicyId && automationPolicyIds.has(action.automation.automationPolicyId)), `${label} ${action.id} automation policy does not resolve.`);
     assert((action.automation?.automationRules?.length ?? 0) > 0, `${label} ${action.id} is missing automation rules.`);
+    assert(action.automation?.premiumSpendPermission === "never" || action.automation?.premiumSpendPermission === "explicit_player_authorization", `${label} ${action.id} has unsafe Premium Crystal automation permission.`);
     assert(action.modifiers?.premiumCrystalAcceleration?.policy === "accelerate_only", `${label} ${action.id} Premium Crystal policy must be accelerate_only.`);
     assert(action.modifiers?.premiumCrystalAcceleration?.canUnlockUnavailableActions === false, `${label} ${action.id} Premium Crystals must not unlock unavailable actions.`);
     assert(action.history?.started === true && action.history.completed === true && action.history.cancelled === true && action.history.failed === true && action.history.accelerated === true && action.history.automated === true, `${label} ${action.id} must publish complete history coverage.`);
     assert(action.events?.includes("action_started") && action.events.includes("action_completed"), `${label} ${action.id} must publish started/completed events.`);
+    for (const eventId of action.events ?? []) {
+      assert(eventIds.has(eventId), `${label} ${action.id} has unresolved event ${eventId}.`);
+    }
+    assert(action.publicationStatus === "approved" || action.publicationStatus === "provisional", `${label} ${action.id} must be approved or provisional.`);
   }
 }
 
@@ -821,8 +866,8 @@ async function main() {
   assert(roblox.payload.metadata?.accessLevel === "public-published", "Roblox accessLevel must be public-published.");
   assert(roblox.payload.metadata?.validationStatus, "Roblox validation status is missing.");
   assert((canonical.payload.eras?.length ?? 0) > 0, "Canonical payload must include at least one era.");
-  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 24, "Canonical contentVersion must be at least 24 after canonical action system.");
-  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 24, "Roblox contentVersion must be at least 24 after canonical action system.");
+  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 25, "Canonical contentVersion must be at least 25 after canonical action system foundation.");
+  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 25, "Roblox contentVersion must be at least 25 after canonical action system foundation.");
 
   validateEraNavigation(canonical.payload, "Canonical");
   validateEraNavigation(roblox.payload, "Roblox");
