@@ -25,6 +25,7 @@ import {
 } from "@/lib/economy/definitions";
 import { buildEconomyState, economySchemas, priceClamps, type MarketRecord, type ResourceListing, type TradeOpportunity, type TradeRoute } from "@/lib/economy/trade";
 import { generateFaction, generateFallbackFactions, type FactionRecord } from "@/lib/factions/procedural";
+import { planetExplorationProgression, timeActionContract, validatePlanetExplorationProgression, validateTimeActionContract } from "@/lib/planets/exploration-progression";
 import { canonicalPlanetOpportunityProfiles, resolvePlanetOpportunityProfileId, validatePlanetOpportunityProfiles } from "@/lib/planets/opportunity-profiles";
 import { defaultEraNavigationProfile, engineEraNavigationOverrides, resolveEraNavigationProfile, supportedEraNavigationBoundaryModes, supportedEraNavigationDashboardModes } from "@/lib/runtime/client-profiles";
 import { galaxyEngineContractVersion, galaxyEnginePresentationContract, validateGalaxyEnginePresentationContract } from "@/lib/runtime/galaxy-engine-contract";
@@ -194,6 +195,8 @@ type CanonicalModules = {
   discovery_player_collection_schema: typeof discoveryPlayerCollectionSchema;
   universal_discovery_registry: typeof universalDiscoveryRegistryContract;
   galaxy_engine_contract: typeof galaxyEnginePresentationContract;
+  time_action_contract: typeof timeActionContract;
+  planet_exploration_progression: typeof planetExplorationProgression;
   economy_usage_relationships: ReturnType<typeof buildEconomyUsageRelationships>;
   inventory_resource_metadata: ReturnType<typeof buildInventoryResourceMetadata>;
   economy_schemas: typeof economySchemas;
@@ -630,6 +633,8 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
     discovery_player_collection_schema: discoveryPlayerCollectionSchema,
     universal_discovery_registry: universalDiscoveryRegistryContract,
     galaxy_engine_contract: galaxyEnginePresentationContract,
+    time_action_contract: timeActionContract,
+    planet_exploration_progression: planetExplorationProgression,
     economy_usage_relationships: buildEconomyUsageRelationships(data),
     inventory_resource_metadata: buildInventoryResourceMetadata(data),
     economy_schemas: economySchemas,
@@ -1020,6 +1025,15 @@ function validatePlanetOpportunities(issues: ExportValidationIssue[], modules: C
   const bodiesMissingProfiles = modules.celestial_bodies.filter((body) => !profileIds.has(body.opportunityProfileId));
   if (bodiesMissingProfiles.length) {
     addIssue(issues, "error", "celestial_body_opportunity_profile_missing", "Every generated celestial body must reference a valid Planet Opportunity Profile.", bodiesMissingProfiles.map((body) => body.id));
+  }
+}
+
+function validatePlanetExploration(issues: ExportValidationIssue[], modules: CanonicalModules) {
+  for (const issue of validateTimeActionContract(modules.time_action_contract)) {
+    addIssue(issues, issue.severity, issue.code, issue.message, issue.records);
+  }
+  for (const issue of validatePlanetExplorationProgression(modules.planet_exploration_progression, modules.time_action_contract)) {
+    addIssue(issues, issue.severity, issue.code, issue.message, issue.records);
   }
 }
 
@@ -1465,6 +1479,7 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
   validateBuildingTaxonomy(issues, modules);
   validateHierarchy(issues, modules);
   validatePlanetOpportunities(issues, modules);
+  validatePlanetExploration(issues, modules);
   validateEconomy(issues, modules);
   validateEraNavigationProfiles(issues, modules);
   validateMissions(issues, modules);
@@ -1503,6 +1518,10 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
       "planet opportunity profiles resolve",
       "celestial body opportunity profiles resolve",
       "planet opportunity scores are normalized",
+      "time action contract resolves",
+      "planet exploration actions reference time action contract",
+      "CSI, SVI, nickname, recommendations, and actions stay hidden until Surveyed",
+      "Premium Crystals accelerate only and do not unlock unavailable actions",
       "colonies link to planets",
       "colonies link to star systems",
       "colonies link to sectors",
@@ -1568,6 +1587,8 @@ function schemaNotes(target: EngineTarget) {
     resources: "Resource display data must be resolved through resource_catalog/ResourceService.",
     hierarchy: "Preserve Galaxy -> Sector -> Star System -> Planet. Do not add Region or Cluster layers.",
     planetOpportunities: "Planet Opportunity Profiles define strategic uses, suitability scores, capabilities, hazards, and valid player actions. Planets and celestial bodies reference opportunityProfileId; clients do not invent these values.",
+    planetExploration: "Planet Exploration Progression defines the Unknown -> Detected -> Probed -> Surveyed -> Evaluated -> Selected -> Active Project -> Complete pipeline. CSI, SVI, nickname, recommended uses, and actions are hidden until Surveyed. Timed actions reference the shared Time Action Contract.",
+    timeActions: "Time Action Contract defines the shared action state machine, progress model, acceleration policy, and modifier families. Premium Crystals accelerate progress only and never bypass technology requirements.",
     colonies: "Colony state, growth inputs, buildings, levels, and focus definitions are canonical Studio data shared by every engine target.",
     economy: "Global economy definitions, behavior contracts, producer definitions, building resource effects, scope rules, ledger reason codes, offline policies, and HUD slots are engine-agnostic canonical data. HUD slots use economy IDs only; inventory materials stay in resource_catalog.",
     eraNavigation: "Studio owns navigation intent only. Dashboards should use current_journey with compact labels; clients own layout and rendering. The full Civilization Timeline remains the all-era view.",
@@ -1613,6 +1634,8 @@ function compactModules(modules: CanonicalModules) {
     unassigned_planets: modules.unassigned_planets,
     celestial_bodies: modules.celestial_bodies,
     planet_opportunity_profiles: modules.planet_opportunity_profiles,
+    time_action_contract: modules.time_action_contract,
+    planet_exploration_progression: modules.planet_exploration_progression,
     discovery_journal: modules.discovery_journal,
     timeline_events: modules.timeline_events,
     explorer_schemas: modules.explorer_schemas,
@@ -1686,14 +1709,14 @@ function targetArtifacts(target: EngineTarget, modules: CanonicalModules) {
       "UniversalDiscoveryRegistryContract.lua": `local UniversalDiscoveryRegistryContract = ${luaValue(modules.universal_discovery_registry)}\n\nreturn UniversalDiscoveryRegistryContract\n`,
       "EraNavigationProfileModule.lua": `local EraNavigationProfiles = ${luaValue(modules.era_navigation_profiles)}\n\nreturn EraNavigationProfiles\n`,
       "ResearchUnlockModule.lua": `local ResearchUnlocks = ${luaValue({ research: modules.research, unlocks: modules.unlock_matrix })}\n\nreturn ResearchUnlocks\n`,
-      "UniverseDataModule.lua": `local UniverseData = ${luaValue({ galaxies: modules.galaxies, sectors: modules.sectors, starSystems: modules.star_systems, planets: modules.planets, celestialBodies: modules.celestial_bodies, planetOpportunityProfiles: modules.planet_opportunity_profiles, factions: modules.factions, colonies: modules.colonies, colonyBuildings: modules.colony_buildings, colonyLevels: modules.colony_level_definitions, colonyFocus: modules.colony_focus_definitions, markets: modules.markets, tradeRoutes: modules.trade_routes, tradeOpportunities: modules.trade_opportunities, missions: modules.missions, missionObjectives: modules.mission_objectives, missionRewards: modules.mission_rewards })}\n\nreturn UniverseData\n`,
+      "UniverseDataModule.lua": `local UniverseData = ${luaValue({ galaxies: modules.galaxies, sectors: modules.sectors, starSystems: modules.star_systems, planets: modules.planets, celestialBodies: modules.celestial_bodies, planetOpportunityProfiles: modules.planet_opportunity_profiles, timeActionContract: modules.time_action_contract, planetExplorationProgression: modules.planet_exploration_progression, factions: modules.factions, colonies: modules.colonies, colonyBuildings: modules.colony_buildings, colonyLevels: modules.colony_level_definitions, colonyFocus: modules.colony_focus_definitions, markets: modules.markets, tradeRoutes: modules.trade_routes, tradeOpportunities: modules.trade_opportunities, missions: modules.missions, missionObjectives: modules.mission_objectives, missionRewards: modules.mission_rewards })}\n\nreturn UniverseData\n`,
       "ApiService.lua": "local HttpService = game:GetService(\"HttpService\")\n\nlocal ApiService = {}\nApiService.BaseUrl = \"https://your-studio-host.example.com/api/export\"\n\nfunction ApiService.FetchGeneric()\n  local response = HttpService:GetAsync(ApiService.BaseUrl .. \"/generic\")\n  return HttpService:JSONDecode(response)\nend\n\nreturn ApiService\n"
     };
   }
 
   if (target === "web") {
     return {
-      "project-genesis.types.ts": "export type GenesisId = string;\n\nexport interface GenesisResource { id: GenesisId; resource_name: string; category: string; rarity: string; }\nexport interface GenesisEraNavigationProfile { dashboardMode: 'current_journey' | 'compact_timeline' | 'full_timeline'; visibleEraCount: number; fullTimelineEnabled: boolean; allowPrimaryHorizontalScroll: boolean; boundaryBehavior: { firstEraMode: string; middleEraMode: string; lastEraMode: string }; }\nexport interface GenesisDiscovery { id: GenesisId; displayName: string; categoryId: GenesisId; subcategoryId: GenesisId; rarity: string; spawnWeight: number; discoveryXp: number; requiredScanLevel: number; assetProfile: Record<string, string>; }\nexport interface GenesisAiAgent { id: GenesisId; displayName: string; shortDisplayName: string; personalityId: GenesisId; defaultForNewPlayers: boolean; baseVariantId: GenesisId; availableVariantIds: GenesisId[]; headAssetKey: string; eyesOpenAssetKey: string; eyesBlinkAssetKey: string; eyesClosedAssetKey: string; }\nexport interface GenesisAiAgentVariant { id: GenesisId; agentId: GenesisId; displayName: string; tier: number; variantType: string; assetKeys: Record<string, string>; unlockText: string; }\nexport interface GenesisResearchNode { id: GenesisId; name: string; era: string; status: string; }\nexport interface GenesisFaction { id: GenesisId; name: string; type: string; disposition: string; homeStarSystemId: GenesisId; controlledPlanetIds: GenesisId[]; }\nexport interface GenesisColonyBuilding { id: GenesisId; name: string; category: string; colonyId: GenesisId; constructionStatus: string; modifiers: Record<string, number>; }\nexport interface GenesisColony { id: GenesisId; name: string; planetId: GenesisId; starSystemId: GenesisId; population: number; populationCapacity: number; populationGrowthRate: number; colonyLevel: number; focus: string; status: string; resourceOutputIds: GenesisId[]; resourceOutputRates: Record<string, number>; buildingIds: GenesisId[]; }\nexport interface GenesisMarketListing { resourceId: GenesisId; basePrice: number; currentPrice: number; supply: number; demand: number; priceTrend: string; availability: string; }\nexport interface GenesisMarket { id: GenesisId; name: string; marketType: string; colonyId?: GenesisId; childMarketIds: GenesisId[]; resourceListings: GenesisMarketListing[]; tradeVolume: number; prosperity: number; security: number; }\nexport interface GenesisTradeRoute { id: GenesisId; originMarketId: GenesisId; destinationMarketId: GenesisId; resourceIds: GenesisId[]; profitability: number; risk: number; status: string; }\nexport interface GenesisMissionObjective { id: GenesisId; missionId: GenesisId; objectiveType: string; targetId: GenesisId; targetCount: number; currentCount: number; completed: boolean; }\nexport interface GenesisMission { id: GenesisId; title: string; missionType: string; status: string; difficulty: string; objectiveIds: GenesisId[]; rewardIds: GenesisId[]; rewardsClaimed: boolean; tracked: boolean; }\nexport interface GenesisExportPayload { target: string; canonical: Record<string, unknown>; relationshipMap: Record<string, unknown>; }\n",
+      "project-genesis.types.ts": "export type GenesisId = string;\n\nexport interface GenesisResource { id: GenesisId; resource_name: string; category: string; rarity: string; }\nexport interface GenesisEraNavigationProfile { dashboardMode: 'current_journey' | 'compact_timeline' | 'full_timeline'; visibleEraCount: number; fullTimelineEnabled: boolean; allowPrimaryHorizontalScroll: boolean; boundaryBehavior: { firstEraMode: string; middleEraMode: string; lastEraMode: string }; }\nexport interface GenesisTimeActionContract { id: GenesisId; stateMachine: string[]; accelerationPolicy: Record<string, unknown>; progressModel: Record<string, unknown>; }\nexport interface GenesisPlanetExplorationProgression { id: GenesisId; timeActionContractId: GenesisId; pipeline: Array<{ id: string; order: number; displayName: string }>; visibilityRules: Array<Record<string, unknown>>; timedActions: Array<Record<string, unknown>>; }\nexport interface GenesisDiscovery { id: GenesisId; displayName: string; categoryId: GenesisId; subcategoryId: GenesisId; rarity: string; spawnWeight: number; discoveryXp: number; requiredScanLevel: number; assetProfile: Record<string, string>; }\nexport interface GenesisAiAgent { id: GenesisId; displayName: string; shortDisplayName: string; personalityId: GenesisId; defaultForNewPlayers: boolean; baseVariantId: GenesisId; availableVariantIds: GenesisId[]; headAssetKey: string; eyesOpenAssetKey: string; eyesBlinkAssetKey: string; eyesClosedAssetKey: string; }\nexport interface GenesisAiAgentVariant { id: GenesisId; agentId: GenesisId; displayName: string; tier: number; variantType: string; assetKeys: Record<string, string>; unlockText: string; }\nexport interface GenesisResearchNode { id: GenesisId; name: string; era: string; status: string; }\nexport interface GenesisFaction { id: GenesisId; name: string; type: string; disposition: string; homeStarSystemId: GenesisId; controlledPlanetIds: GenesisId[]; }\nexport interface GenesisColonyBuilding { id: GenesisId; name: string; category: string; colonyId: GenesisId; constructionStatus: string; modifiers: Record<string, number>; }\nexport interface GenesisColony { id: GenesisId; name: string; planetId: GenesisId; starSystemId: GenesisId; population: number; populationCapacity: number; populationGrowthRate: number; colonyLevel: number; focus: string; status: string; resourceOutputIds: GenesisId[]; resourceOutputRates: Record<string, number>; buildingIds: GenesisId[]; }\nexport interface GenesisMarketListing { resourceId: GenesisId; basePrice: number; currentPrice: number; supply: number; demand: number; priceTrend: string; availability: string; }\nexport interface GenesisMarket { id: GenesisId; name: string; marketType: string; colonyId?: GenesisId; childMarketIds: GenesisId[]; resourceListings: GenesisMarketListing[]; tradeVolume: number; prosperity: number; security: number; }\nexport interface GenesisTradeRoute { id: GenesisId; originMarketId: GenesisId; destinationMarketId: GenesisId; resourceIds: GenesisId[]; profitability: number; risk: number; status: string; }\nexport interface GenesisMissionObjective { id: GenesisId; missionId: GenesisId; objectiveType: string; targetId: GenesisId; targetCount: number; currentCount: number; completed: boolean; }\nexport interface GenesisMission { id: GenesisId; title: string; missionType: string; status: string; difficulty: string; objectiveIds: GenesisId[]; rewardIds: GenesisId[]; rewardsClaimed: boolean; tracked: boolean; }\nexport interface GenesisExportPayload { target: string; canonical: Record<string, unknown>; relationshipMap: Record<string, unknown>; }\n",
       "projectGenesisClient.ts": "export async function fetchProjectGenesisExport(target = 'generic') {\n  const response = await fetch(`/api/export/${target}`);\n  if (!response.ok) throw new Error(`Project Genesis export failed: ${response.status}`);\n  return response.json();\n}\n",
       "projectGenesisStore.ts": "import { create } from 'zustand';\n\ntype GenesisStore = { data: unknown | null; setData: (data: unknown) => void };\nexport const useGenesisStore = create<GenesisStore>((set) => ({ data: null, setData: (data) => set({ data }) }));\n"
     };

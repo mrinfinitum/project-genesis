@@ -51,6 +51,33 @@ type RuntimePayload = {
     assetRoles?: Array<{ id: string; fallbackRuleId?: string }>;
     proceduralFallbackRules?: Array<{ id: string; appliesToClassIds?: string[] }>;
   };
+  timeActionContract?: {
+    id?: string;
+    version?: string;
+    stateMachine?: string[];
+    progressModel?: {
+      supportsProgressPercent?: boolean;
+      supportsRemainingTime?: boolean;
+      supportsEstimatedCompletion?: boolean;
+      supportsAccelerationSources?: boolean;
+      supportsCrystalAcceleration?: boolean;
+      completionEventRequired?: boolean;
+    };
+    accelerationPolicy?: {
+      premiumCrystals?: {
+        allowed?: boolean;
+        policy?: string;
+        canUnlockUnavailableActions?: boolean;
+        allowedUses?: string[];
+      };
+      researchModifierIds?: string[];
+      aiAgentModifierIds?: string[];
+      buildingModifierIds?: string[];
+      automationModifierIds?: string[];
+      civilizationModifierIds?: string[];
+    };
+    futureSystemScopes?: string[];
+  };
   planetOpportunityProfiles?: Array<{
     id: string;
     planetClass?: string;
@@ -60,6 +87,35 @@ type RuntimePayload = {
     recommendedUses?: { primaryUse?: string; secondaryUse?: string; optionalUse?: string };
     recommendedActions?: string[];
   }>;
+  planetExplorationProgression?: {
+    id?: string;
+    version?: string;
+    timeActionContractId?: string;
+    pipeline?: Array<{ id: string; order?: number; requiredActionIds?: string[] }>;
+    visibilityRules?: Array<{
+      stageId: string;
+      canShowCivilizationSuitabilityIndex?: boolean;
+      canShowStrategicValueIndex?: boolean;
+      canShowNickname?: boolean;
+      canShowRecommendedUses?: boolean;
+      canShowAvailableActions?: boolean;
+      hiddenDisplayName?: string;
+    }>;
+    timedActions?: Array<{
+      id: string;
+      timeActionContractId?: string;
+      fromStageId?: string;
+      toStageId?: string;
+      baseDurationSeconds?: number;
+      minimumDurationSeconds?: number;
+      maximumDurationSeconds?: number;
+      requiresSurveyComplete?: boolean;
+      researchModifierIds?: string[];
+      aiAgentModifierIds?: string[];
+      premiumCrystalAcceleration?: { enabled?: boolean; unlocksUnavailableActions?: boolean; policy?: string };
+    }>;
+    nicknameRules?: Array<{ id: string; revealStageId?: string }>;
+  };
   upgradeCategories?: Array<{ id: string }>;
   upgrades?: Array<{ id: string; categoryId?: string; tabId?: string; eraId?: string; costResourceId?: string | null; costEconomyId?: string | null }>;
   aiAgents?: Array<{ id: string; defaultForNewPlayers?: boolean; baseVariantId?: string; availableVariantIds?: string[]; assetKeys?: Record<string, string>; gameplayModifiers?: Record<string, unknown> }>;
@@ -336,6 +392,79 @@ function validatePlanetOpportunityProfiles(payload: RuntimePayload | RobloxPaylo
   const earthLike = profiles.find((profile) => profile.id === "planet_opportunity_earth_like");
   assert(earthLike?.eligibility?.supportsColonization === true, `${label} Earth-like must support colonization.`);
   assert(earthLike?.suitability?.colonization === 95, `${label} Earth-like colonization suitability must remain 95.`);
+}
+
+function validatePlanetExplorationProgression(payload: RuntimePayload | RobloxPayload, label: string) {
+  const timeContract = payload.timeActionContract;
+  const progression = payload.planetExplorationProgression;
+  const expectedPipeline = ["unknown", "detected", "probed", "surveyed", "evaluated", "selected_for_development", "active_project", "complete"];
+
+  assert(timeContract?.id === "time_action_contract_v1", `${label} must publish time_action_contract_v1.`);
+  assert(timeContract?.version === "1.0.0", `${label} Time Action Contract version must be 1.0.0.`);
+  for (const state of ["idle", "queued", "preparing", "in_progress", "paused", "complete", "failed", "cancelled"]) {
+    assert(timeContract?.stateMachine?.includes(state), `${label} Time Action Contract is missing state ${state}.`);
+  }
+  assert(timeContract?.progressModel?.supportsProgressPercent === true, `${label} Time Action Contract must support progress percent.`);
+  assert(timeContract?.progressModel?.supportsRemainingTime === true, `${label} Time Action Contract must support remaining time.`);
+  assert(timeContract?.progressModel?.supportsEstimatedCompletion === true, `${label} Time Action Contract must support estimated completion.`);
+  assert(timeContract?.progressModel?.supportsAccelerationSources === true, `${label} Time Action Contract must support acceleration sources.`);
+  assert(timeContract?.progressModel?.supportsCrystalAcceleration === true, `${label} Time Action Contract must support crystal acceleration.`);
+  assert(timeContract?.progressModel?.completionEventRequired === true, `${label} Time Action Contract must require completion events.`);
+  assert(timeContract?.accelerationPolicy?.premiumCrystals?.allowed === true, `${label} Premium Crystal acceleration must be explicitly allowed.`);
+  assert(timeContract?.accelerationPolicy?.premiumCrystals?.policy === "accelerate_only", `${label} Premium Crystals must accelerate only.`);
+  assert(timeContract?.accelerationPolicy?.premiumCrystals?.canUnlockUnavailableActions === false, `${label} Premium Crystals must not unlock unavailable actions.`);
+  for (const key of ["researchModifierIds", "aiAgentModifierIds", "buildingModifierIds", "automationModifierIds", "civilizationModifierIds"] as const) {
+    assert((timeContract?.accelerationPolicy?.[key]?.length ?? 0) > 0, `${label} Time Action Contract is missing ${key}.`);
+  }
+  for (const scope of ["research", "buildings", "exploration", "colonization", "mining", "terraforming", "manufacturing", "ship_construction", "expeditions", "discovery"]) {
+    assert(timeContract?.futureSystemScopes?.includes(scope), `${label} Time Action Contract is missing future system scope ${scope}.`);
+  }
+
+  assert(progression?.id === "planet_exploration_progression_v1", `${label} must publish planet_exploration_progression_v1.`);
+  assert(progression?.timeActionContractId === "time_action_contract_v1", `${label} planet exploration progression must reference time_action_contract_v1.`);
+  assert(progression?.pipeline?.map((stage) => stage.id).join("|") === expectedPipeline.join("|"), `${label} planet exploration pipeline is invalid: ${progression?.pipeline?.map((stage) => stage.id).join(", ")}.`);
+  const stageIds = new Set(progression?.pipeline?.map((stage) => stage.id) ?? []);
+  for (const rule of progression?.visibilityRules ?? []) {
+    assert(stageIds.has(rule.stageId), `${label} visibility rule references missing stage ${rule.stageId}.`);
+    if (["unknown", "detected", "probed"].includes(rule.stageId)) {
+      assert(rule.canShowCivilizationSuitabilityIndex === false, `${label} CSI must be hidden at ${rule.stageId}.`);
+      assert(rule.canShowStrategicValueIndex === false, `${label} SVI must be hidden at ${rule.stageId}.`);
+      assert(rule.canShowNickname === false, `${label} nickname must be hidden at ${rule.stageId}.`);
+      assert(rule.canShowRecommendedUses === false, `${label} recommended uses must be hidden at ${rule.stageId}.`);
+      assert(rule.canShowAvailableActions === false, `${label} actions must be hidden at ${rule.stageId}.`);
+    }
+  }
+  const surveyed = progression?.visibilityRules?.find((rule) => rule.stageId === "surveyed");
+  assert(surveyed?.canShowCivilizationSuitabilityIndex === true, `${label} Surveyed must reveal CSI.`);
+  assert(surveyed?.canShowStrategicValueIndex === true, `${label} Surveyed must reveal SVI.`);
+  assert(surveyed?.canShowNickname === true, `${label} Surveyed must reveal nickname.`);
+  assert(surveyed?.canShowRecommendedUses === true, `${label} Surveyed must reveal recommended uses.`);
+  assert(surveyed?.canShowAvailableActions === true, `${label} Surveyed must reveal available actions.`);
+
+  for (const action of progression?.timedActions ?? []) {
+    assert(action.timeActionContractId === "time_action_contract_v1", `${label} action ${action.id} must reference Time Action Contract.`);
+    assert(action.fromStageId && stageIds.has(action.fromStageId), `${label} action ${action.id} has unresolved fromStageId ${action.fromStageId ?? "(missing)"}.`);
+    assert(action.toStageId && stageIds.has(action.toStageId), `${label} action ${action.id} has unresolved toStageId ${action.toStageId ?? "(missing)"}.`);
+    assert((action.baseDurationSeconds ?? -1) >= (action.minimumDurationSeconds ?? 0), `${label} action ${action.id} base duration is below minimum.`);
+    assert((action.baseDurationSeconds ?? 0) <= (action.maximumDurationSeconds ?? Number.POSITIVE_INFINITY), `${label} action ${action.id} base duration is above maximum.`);
+    assert(action.premiumCrystalAcceleration?.unlocksUnavailableActions === false, `${label} action ${action.id} Premium Crystals must not unlock unavailable actions.`);
+    if (!["planet_evaluate", "planet_select_development"].includes(action.id)) {
+      assert((action.baseDurationSeconds ?? 0) > 0, `${label} action ${action.id} must be time-gated.`);
+    }
+    if (["planet_start_project", "planet_evaluate", "planet_select_development"].includes(action.id)) {
+      assert(action.requiresSurveyComplete === true, `${label} action ${action.id} must require Survey completion.`);
+    }
+    if (["planet_probe", "planet_survey", "planet_start_project"].includes(action.id)) {
+      assert((action.researchModifierIds?.length ?? 0) > 0, `${label} action ${action.id} must publish research duration modifiers.`);
+      assert((action.aiAgentModifierIds?.length ?? 0) > 0, `${label} action ${action.id} must publish AI Agent duration modifiers.`);
+    }
+  }
+  for (const actionId of ["planet_probe", "planet_survey", "planet_start_project"]) {
+    assert(progression?.timedActions?.some((action) => action.id === actionId), `${label} is missing required exploration action ${actionId}.`);
+  }
+  for (const rule of progression?.nicknameRules ?? []) {
+    assert(rule.revealStageId === "surveyed", `${label} nickname rule ${rule.id} must reveal only at Surveyed.`);
+  }
 }
 
 function validateEconomy(payload: RuntimePayload | RobloxPayload, label: string) {
@@ -626,8 +755,8 @@ async function main() {
   assert(roblox.payload.metadata?.accessLevel === "public-published", "Roblox accessLevel must be public-published.");
   assert(roblox.payload.metadata?.validationStatus, "Roblox validation status is missing.");
   assert((canonical.payload.eras?.length ?? 0) > 0, "Canonical payload must include at least one era.");
-  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 22, "Canonical contentVersion must be at least 22 after planet opportunity profiles.");
-  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 22, "Roblox contentVersion must be at least 22 after planet opportunity profiles.");
+  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 23, "Canonical contentVersion must be at least 23 after planet exploration progression.");
+  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 23, "Roblox contentVersion must be at least 23 after planet exploration progression.");
 
   validateEraNavigation(canonical.payload, "Canonical");
   validateEraNavigation(roblox.payload, "Roblox");
@@ -645,6 +774,8 @@ async function main() {
   validateGalaxyEngineContract(roblox.payload, "Roblox");
   validatePlanetOpportunityProfiles(canonical.payload, "Canonical");
   validatePlanetOpportunityProfiles(roblox.payload, "Roblox");
+  validatePlanetExplorationProgression(canonical.payload, "Canonical");
+  validatePlanetExplorationProgression(roblox.payload, "Roblox");
   validateRuntimeReferences(canonical.payload);
   validateRobloxReferences(roblox.payload);
   assertNoArchitectureLeak("Canonical runtime", canonical.payload);
@@ -680,6 +811,9 @@ async function main() {
       knowledgeStateCount: canonical.payload.galaxyEngineContract?.knowledgeVisibility?.length ?? 0,
       platformRenderingProfileCount: canonical.payload.galaxyEngineContract?.platformRenderingProfiles?.length ?? 0,
       planetOpportunityProfileCount: canonical.payload.planetOpportunityProfiles?.length ?? 0,
+      timeActionContractId: canonical.payload.timeActionContract?.id,
+      planetExplorationStageCount: canonical.payload.planetExplorationProgression?.pipeline?.length ?? 0,
+      planetExplorationActionCount: canonical.payload.planetExplorationProgression?.timedActions?.length ?? 0,
       resourceCount: canonical.payload.resources?.length ?? 0,
       upgradeCount: canonical.payload.upgrades?.length ?? 0
     },
@@ -712,6 +846,9 @@ async function main() {
       knowledgeStateCount: roblox.payload.galaxyEngineContract?.knowledgeVisibility?.length ?? 0,
       platformRenderingProfileCount: roblox.payload.galaxyEngineContract?.platformRenderingProfiles?.length ?? 0,
       planetOpportunityProfileCount: roblox.payload.planetOpportunityProfiles?.length ?? 0,
+      timeActionContractId: roblox.payload.timeActionContract?.id,
+      planetExplorationStageCount: roblox.payload.planetExplorationProgression?.pipeline?.length ?? 0,
+      planetExplorationActionCount: roblox.payload.planetExplorationProgression?.timedActions?.length ?? 0,
       resourceCount: roblox.payload.resources?.length ?? 0,
       upgradeTabCount: roblox.payload.upgradeTabs?.length ?? 0,
       upgradeCount: roblox.payload.upgrades?.length ?? 0

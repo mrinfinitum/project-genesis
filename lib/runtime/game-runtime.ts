@@ -30,6 +30,7 @@ import {
   resolveEconomyId
 } from "@/lib/economy/definitions";
 import { ResourceService } from "@/lib/resources/service";
+import { planetExplorationProgression, timeActionContract, validatePlanetExplorationProgression, validateTimeActionContract } from "@/lib/planets/exploration-progression";
 import { canonicalPlanetOpportunityProfiles, validatePlanetOpportunityProfiles } from "@/lib/planets/opportunity-profiles";
 import { engineEraNavigationOverrides, resolveEraNavigationProfile, supportedEraNavigationBoundaryModes, supportedEraNavigationDashboardModes } from "@/lib/runtime/client-profiles";
 import { galaxyEngineContractVersion, galaxyEnginePresentationContract, validateGalaxyEnginePresentationContract } from "@/lib/runtime/galaxy-engine-contract";
@@ -55,7 +56,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 22;
+export const gameRuntimeContentVersion = 23;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -90,7 +91,9 @@ export type RobloxRuntimeExportPayload = {
   discoveryPlayerCollectionSchema: GameRuntimeData["discoveryPlayerCollectionSchema"];
   universalDiscoveryRegistry: GameRuntimeData["universalDiscoveryRegistry"];
   galaxyEngineContract: GameRuntimeData["galaxyEngineContract"];
+  timeActionContract: GameRuntimeData["timeActionContract"];
   planetOpportunityProfiles: GameRuntimeData["planetOpportunityProfiles"];
+  planetExplorationProgression: GameRuntimeData["planetExplorationProgression"];
   resources: ResourceDefinition[];
   buildingTaxonomy: GameRuntimeData["buildingTaxonomy"];
   buildingLibrary: GameRuntimeData["buildingLibrary"];
@@ -572,7 +575,34 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
       assetRoles: [...runtimeData.galaxyEngineContract.assetRoles].sort(byId),
       proceduralFallbackRules: [...runtimeData.galaxyEngineContract.proceduralFallbackRules].sort(byId)
     },
+    timeActionContract: {
+      ...runtimeData.timeActionContract,
+      stateMachine: [...runtimeData.timeActionContract.stateMachine],
+      futureSystemScopes: [...runtimeData.timeActionContract.futureSystemScopes].sort(),
+      validationRules: [...runtimeData.timeActionContract.validationRules].sort(),
+      accelerationPolicy: {
+        ...runtimeData.timeActionContract.accelerationPolicy,
+        premiumCrystals: {
+          ...runtimeData.timeActionContract.accelerationPolicy.premiumCrystals,
+          allowedUses: [...runtimeData.timeActionContract.accelerationPolicy.premiumCrystals.allowedUses].sort()
+        },
+        researchModifierIds: [...runtimeData.timeActionContract.accelerationPolicy.researchModifierIds].sort(),
+        upgradeModifierIds: [...runtimeData.timeActionContract.accelerationPolicy.upgradeModifierIds].sort(),
+        aiAgentModifierIds: [...runtimeData.timeActionContract.accelerationPolicy.aiAgentModifierIds].sort(),
+        buildingModifierIds: [...runtimeData.timeActionContract.accelerationPolicy.buildingModifierIds].sort(),
+        civilizationModifierIds: [...runtimeData.timeActionContract.accelerationPolicy.civilizationModifierIds].sort(),
+        automationModifierIds: [...runtimeData.timeActionContract.accelerationPolicy.automationModifierIds].sort()
+      }
+    },
     planetOpportunityProfiles: [...runtimeData.planetOpportunityProfiles].sort(byId),
+    planetExplorationProgression: {
+      ...runtimeData.planetExplorationProgression,
+      pipeline: [...runtimeData.planetExplorationProgression.pipeline].sort(byOrderThenId),
+      visibilityRules: [...runtimeData.planetExplorationProgression.visibilityRules].sort((left, right) => (runtimeData.planetExplorationProgression.pipeline.find((stage) => stage.id === left.stageId)?.order ?? 0) - (runtimeData.planetExplorationProgression.pipeline.find((stage) => stage.id === right.stageId)?.order ?? 0) || left.stageId.localeCompare(right.stageId)),
+      timedActions: [...runtimeData.planetExplorationProgression.timedActions].sort(byId),
+      nicknameRules: [...runtimeData.planetExplorationProgression.nicknameRules].sort((left, right) => right.priority - left.priority || left.id.localeCompare(right.id)),
+      validationRules: [...runtimeData.planetExplorationProgression.validationRules].sort()
+    },
     resources: [...runtimeData.resources].sort(byId),
     buildingTaxonomy: [...runtimeData.buildingTaxonomy].sort(byDisplayOrderThenId).map((family) => ({
       ...family,
@@ -1279,7 +1309,13 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   for (const issue of validateGalaxyEnginePresentationContract(runtimeData.galaxyEngineContract)) {
     issues.push(issue);
   }
+  for (const issue of validateTimeActionContract(runtimeData.timeActionContract)) {
+    issues.push(issue);
+  }
   for (const issue of validatePlanetOpportunityProfiles(runtimeData.planetOpportunityProfiles)) {
+    issues.push(issue);
+  }
+  for (const issue of validatePlanetExplorationProgression(runtimeData.planetExplorationProgression, runtimeData.timeActionContract)) {
     issues.push(issue);
   }
   validateBuildingTaxonomyRuntime(runtimeData, issues);
@@ -1453,7 +1489,9 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     discoveryPlayerCollectionSchema: sorted.discoveryPlayerCollectionSchema,
     universalDiscoveryRegistry: sorted.universalDiscoveryRegistry,
     galaxyEngineContract: sorted.galaxyEngineContract,
+    timeActionContract: sorted.timeActionContract,
     planetOpportunityProfiles: sorted.planetOpportunityProfiles,
+    planetExplorationProgression: sorted.planetExplorationProgression,
     resources: sorted.resources,
     buildingTaxonomy: sorted.buildingTaxonomy,
     buildingLibrary: sorted.buildingLibrary,
@@ -1517,7 +1555,13 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
   for (const issue of validateGalaxyEnginePresentationContract(payload.galaxyEngineContract)) {
     issues.push(issue);
   }
+  for (const issue of validateTimeActionContract(payload.timeActionContract)) {
+    issues.push(issue);
+  }
   for (const issue of validatePlanetOpportunityProfiles(payload.planetOpportunityProfiles)) {
+    issues.push(issue);
+  }
+  for (const issue of validatePlanetExplorationProgression(payload.planetExplorationProgression, payload.timeActionContract)) {
     issues.push(issue);
   }
   validateBuildingTaxonomyRuntime(payload, issues);
@@ -1658,7 +1702,9 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     discoveryPlayerCollectionSchema,
     universalDiscoveryRegistry: universalDiscoveryRegistryContract,
     galaxyEngineContract: galaxyEnginePresentationContract,
+    timeActionContract,
     planetOpportunityProfiles: canonicalPlanetOpportunityProfiles,
+    planetExplorationProgression,
     resources: ResourceService.catalog.map(resourceToRuntime),
     buildingTaxonomy: canonicalBuildingTaxonomy,
     buildingLibrary: canonicalBuildingLibrary,
@@ -1712,7 +1758,9 @@ export async function getGameRuntimeData() {
     discoveryPlayerCollectionSchema: base.discoveryPlayerCollectionSchema,
     universalDiscoveryRegistry: base.universalDiscoveryRegistry,
     galaxyEngineContract: base.galaxyEngineContract,
+    timeActionContract: base.timeActionContract,
     planetOpportunityProfiles: base.planetOpportunityProfiles,
+    planetExplorationProgression: base.planetExplorationProgression,
     resources: base.resources,
     balance: {
       ...store.appliedRuntimeData.balance,
@@ -1921,7 +1969,9 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     discoveryPlayerCollectionSchema: base.discoveryPlayerCollectionSchema,
     universalDiscoveryRegistry: base.universalDiscoveryRegistry,
     galaxyEngineContract: base.galaxyEngineContract,
+    timeActionContract: base.timeActionContract,
     planetOpportunityProfiles: base.planetOpportunityProfiles,
+    planetExplorationProgression: base.planetExplorationProgression,
     resources: base.resources,
     buildingTaxonomy: base.buildingTaxonomy,
     buildingLibrary: base.buildingLibrary,

@@ -927,6 +927,139 @@ export type PlanetOpportunityProfile = {
   notes: string;
 };
 
+export type TimeActionState = "idle" | "queued" | "preparing" | "in_progress" | "paused" | "complete" | "failed" | "cancelled";
+
+export type TimeActionProgressModel = {
+  supportsProgressPercent: boolean;
+  supportsRemainingTime: boolean;
+  supportsEstimatedCompletion: boolean;
+  supportsAccelerationSources: boolean;
+  supportsCrystalAcceleration: boolean;
+  completionEventRequired: boolean;
+  deterministicClock: "game_server_or_trusted_client";
+  offlineProgressPolicy: "allowed_when_action_allows" | "not_allowed";
+};
+
+export type TimeActionAccelerationPolicy = {
+  premiumCrystals: {
+    allowed: boolean;
+    policy: "accelerate_only";
+    canUnlockUnavailableActions: false;
+    allowedUses: string[];
+  };
+  researchModifierIds: string[];
+  upgradeModifierIds: string[];
+  aiAgentModifierIds: string[];
+  buildingModifierIds: string[];
+  civilizationModifierIds: string[];
+  automationModifierIds: string[];
+};
+
+export type TimeActionContract = {
+  id: "time_action_contract_v1";
+  version: "1.0.0";
+  architectureDecisionId: "ARCH-DECISION-TIME-PRIMARY";
+  decisionTitle: "Time Is the Primary Progression Resource";
+  ownership: {
+    studioOwns: string[];
+    gameOwns: string[];
+  };
+  stateMachine: TimeActionState[];
+  progressModel: TimeActionProgressModel;
+  accelerationPolicy: TimeActionAccelerationPolicy;
+  futureSystemScopes: string[];
+  validationRules: string[];
+};
+
+export type PlanetExplorationStageId = "unknown" | "detected" | "probed" | "surveyed" | "evaluated" | "selected_for_development" | "active_project" | "complete";
+
+export type PlanetExplorationVisibilityRule = {
+  stageId: PlanetExplorationStageId;
+  canShowName: boolean;
+  canShowApproximatePosition: boolean;
+  canShowDistance: boolean;
+  canShowUnknownIcon: boolean;
+  canShowPlanetClass: boolean;
+  canShowBasicAtmosphere: boolean;
+  canShowGravity: boolean;
+  canShowTemperature: boolean;
+  canShowBasicHazards: boolean;
+  canShowEstimatedResources: boolean;
+  canShowCivilizationSuitabilityIndex: boolean;
+  canShowStrategicValueIndex: boolean;
+  canShowNickname: boolean;
+  canShowRecommendedUses: boolean;
+  canShowResourceRichness: boolean;
+  canShowBiomeDetails: boolean;
+  canShowLifeforms: boolean;
+  canShowAncientRuins: boolean;
+  canShowDiscoveryOpportunities: boolean;
+  canShowAvailableActions: boolean;
+  hiddenDisplayName: "???";
+};
+
+export type PlanetExplorationStage = {
+  id: PlanetExplorationStageId;
+  order: number;
+  displayName: string;
+  description: string;
+  requiredActionIds: string[];
+  revealedFields: string[];
+  hiddenFields: string[];
+  nextStageIds: PlanetExplorationStageId[];
+};
+
+export type PlanetExplorationTimedAction = {
+  id: string;
+  displayName: string;
+  category: "probe" | "survey" | "decision" | "development";
+  description: string;
+  timeActionContractId: TimeActionContract["id"];
+  fromStageId: PlanetExplorationStageId;
+  toStageId: PlanetExplorationStageId;
+  baseDurationSeconds: number;
+  minimumDurationSeconds: number;
+  maximumDurationSeconds: number;
+  researchModifierIds: string[];
+  buildingModifierIds: string[];
+  aiAgentModifierIds: string[];
+  automationModifierIds: string[];
+  civilizationModifierIds: string[];
+  premiumCrystalAcceleration: {
+    enabled: boolean;
+    unlocksUnavailableActions: false;
+    policy: "reduce_remaining_time" | "complete_instantly_when_allowed" | "speed_automation";
+  };
+  progressStages: string[];
+  completionRewards: string[];
+  requiresSurveyComplete: boolean;
+  validOpportunityActions: PlanetOpportunityAction[];
+  notes: string;
+};
+
+export type PlanetNicknameRule = {
+  id: string;
+  nickname: string;
+  priority: number;
+  profileSignals: string[];
+  revealStageId: "surveyed";
+};
+
+export type PlanetExplorationProgressionContract = {
+  id: "planet_exploration_progression_v1";
+  version: "1.0.0";
+  timeActionContractId: TimeActionContract["id"];
+  ownership: {
+    studioOwns: string[];
+    gameOwns: string[];
+  };
+  pipeline: PlanetExplorationStage[];
+  visibilityRules: PlanetExplorationVisibilityRule[];
+  timedActions: PlanetExplorationTimedAction[];
+  nicknameRules: PlanetNicknameRule[];
+  validationRules: string[];
+};
+
 export type MobileDeviceClass = {
   id: "phone_compact" | "phone_standard" | "phone_large" | "tablet_standard" | "tablet_large";
   minimumLogicalWidth: number;
@@ -1043,6 +1176,7 @@ export type GameRuntimeData = {
   discoveryPlayerCollectionSchema: Record<string, unknown>;
   universalDiscoveryRegistry: Record<string, unknown>;
   resources: ResourceDefinition[];
+  timeActionContract: TimeActionContract;
   buildingTaxonomy: BuildingTaxonomyFamily[];
   buildingLibrary: CanonicalBuildingDefinition[];
   buildingClassifications: BuildingClassification[];
@@ -1052,6 +1186,7 @@ export type GameRuntimeData = {
   balance: BalanceDefinition;
   galaxyEngineContract: GalaxyEnginePresentationContract;
   planetOpportunityProfiles: PlanetOpportunityProfile[];
+  planetExplorationProgression: PlanetExplorationProgressionContract;
   clientProfiles: ClientProfiles;
 };
 
