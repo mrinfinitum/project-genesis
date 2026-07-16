@@ -2446,6 +2446,239 @@ export type MissionExpeditionFrameworkContract = {
   validationRules: string[];
 };
 
+export type DynamicEventPublicationStatus = "approved" | "provisional" | "draft";
+export type DynamicEventCategoryId =
+  | "stellar"
+  | "planetary"
+  | "atmospheric"
+  | "geological"
+  | "biological"
+  | "ecological"
+  | "anomalous"
+  | "discovery"
+  | "artifact"
+  | "archaeology"
+  | "colony"
+  | "infrastructure"
+  | "population"
+  | "economy"
+  | "logistics"
+  | "trade"
+  | "research"
+  | "production"
+  | "resource"
+  | "terraforming"
+  | "automation"
+  | "ai_agent"
+  | "civilization"
+  | "identity"
+  | "progression"
+  | "mission"
+  | "expedition"
+  | "registry"
+  | "story"
+  | "opportunity"
+  | "crisis"
+  | "celebration";
+export type DynamicEventTypeId =
+  | "ambient"
+  | "informational"
+  | "opportunity"
+  | "beneficial"
+  | "neutral"
+  | "disruptive"
+  | "hazardous"
+  | "crisis"
+  | "milestone"
+  | "discovery_triggered"
+  | "mission_triggered"
+  | "action_triggered"
+  | "colony_triggered"
+  | "economy_triggered"
+  | "logistics_triggered"
+  | "identity_triggered"
+  | "progression_triggered"
+  | "story"
+  | "chain"
+  | "branching"
+  | "recurring"
+  | "seasonal_future"
+  | "global_future";
+export type DynamicEventLifecycleStateId = "hidden" | "eligible" | "pending" | "triggered" | "revealed" | "active" | "awaiting_choice" | "resolving" | "resolved" | "expired" | "failed" | "cancelled" | "archived";
+export type DynamicEventTriggerPolicyId =
+  | "time_elapsed"
+  | "action_started"
+  | "action_completed"
+  | "action_failed"
+  | "mission_started"
+  | "mission_completed"
+  | "expedition_phase"
+  | "discovery_state_changed"
+  | "knowledge_state_changed"
+  | "registry_claim"
+  | "colony_stage_changed"
+  | "colony_focus_changed"
+  | "colony_shortage"
+  | "colony_surplus"
+  | "population_threshold"
+  | "wellbeing_threshold"
+  | "resource_threshold"
+  | "storage_capacity_threshold"
+  | "route_disruption"
+  | "shipment_state_changed"
+  | "production_bottleneck"
+  | "research_completed"
+  | "building_constructed"
+  | "building_failed"
+  | "identity_threshold"
+  | "identity_trend"
+  | "progression_stage"
+  | "milestone_completed"
+  | "hazard_threshold"
+  | "celestial_condition"
+  | "anomaly_detected"
+  | "random_window_with_conditions"
+  | "story_hook"
+  | "manual_authorized";
+export type DynamicEventProbabilityPolicyId = "guaranteed" | "weighted" | "threshold_based" | "windowed" | "escalating_chance" | "diminishing_chance" | "cooldown_based" | "chain_dependent" | "once_per_target" | "once_per_civilization" | "recurring" | "event_pool_selection";
+export type DynamicEventSeverityId = "trivial" | "minor" | "moderate" | "major" | "severe" | "critical" | "civilization_defining";
+export type DynamicEventDurationClassId = "instant_resolution" | "short_window" | "timed" | "persistent_until_resolved" | "multi_phase" | "recurring_window" | "permanent_historical";
+export type DynamicEventPhaseId = "warning" | "onset" | "escalation" | "peak" | "response" | "stabilization" | "aftermath" | "resolved";
+export type DynamicEventEffectTypeId =
+  | "duration_modifier"
+  | "action_speed_modifier"
+  | "action_cost_modifier"
+  | "resource_output_modifier"
+  | "resource_consumption_modifier"
+  | "storage_modifier"
+  | "route_modifier"
+  | "shipment_risk_modifier"
+  | "production_modifier"
+  | "research_modifier"
+  | "colony_capacity_modifier"
+  | "colony_stability_modifier"
+  | "hazard_modifier"
+  | "knowledge_reveal"
+  | "discovery_opportunity"
+  | "mission_generation"
+  | "expedition_generation"
+  | "building_damage_hook"
+  | "building_bonus_hook"
+  | "population_growth_hook"
+  | "migration_hook"
+  | "wellbeing_hook"
+  | "identity_influence"
+  | "progression_progress"
+  | "market_modifier"
+  | "temporary_unlock"
+  | "permanent_unlock"
+  | "timeline_entry"
+  | "encyclopedia_reveal"
+  | "registry_hook";
+export type DynamicEventChoiceId = "investigate" | "ignore" | "evacuate" | "repair" | "reinforce" | "exploit" | "preserve" | "research" | "quarantine" | "trade" | "automate" | "manually_intervene" | "reroute" | "abandon" | "rescue" | "share_discovery" | "secure_artifact" | "donate_artifact" | "begin_mission" | "deploy_expedition";
+export type DynamicEventResolutionPolicyId = "automatic" | "choice_based" | "action_based" | "mission_based" | "timed" | "threshold_based" | "multi_stage" | "server_authoritative" | "deterministic_roll" | "weighted_outcome";
+export type DynamicEventTimelineSignificanceId = "not_recorded" | "local_record" | "colony_record" | "civilization_record" | "galactic_record";
+
+export type DynamicEventCategoryDefinition = { id: DynamicEventCategoryId; displayName: string; description: string; sourceSystemIds: string[]; presentationToken: string };
+export type DynamicEventTypeDefinition = { id: DynamicEventTypeId; displayName: string; description: string; defaultSeverityId: DynamicEventSeverityId; positiveBias: "positive" | "neutral" | "negative" | "mixed"; presentationToken: string };
+export type DynamicEventLifecycleStateDefinition = { id: DynamicEventLifecycleStateId; displayName: string; terminal: boolean; playerVisible: boolean; allowedTransitions: DynamicEventLifecycleStateId[]; presentationToken: string };
+export type DynamicEventTriggerPolicyDefinition = { id: DynamicEventTriggerPolicyId; displayName: string; sourceSystemIds: string[]; canonicalReasonCode: string; protectedResolutionRequired: boolean; notes: string };
+export type DynamicEventEligibilityDefinition = { id: string; displayName: string; dependsOn: string[]; blockerReasonCodes: string[]; cooldownPolicy: string; knowledgeSafe: boolean; notes: string };
+export type DynamicEventProbabilityPolicyDefinition = { id: DynamicEventProbabilityPolicyId; displayName: string; deterministic: true; balanceStatus: "approved" | "provisional"; notes: string };
+export type DynamicEventDeterministicSeedPolicy = { id: string; displayName: string; seedInputs: Array<"universeSeed" | "targetCanonicalId" | "civilizationId" | "eventDefinitionId" | "timeBucket" | "contentVersion" | "priorEventCount">; forbidsUncontrolledRandom: true; notes: string };
+export type DynamicEventSeverityDefinition = { id: DynamicEventSeverityId; displayName: string; urgency: number; notificationPriority: number; allowedEffectMagnitude: string; acknowledgementPolicy: string; missionGenerationEligible: boolean; historicalSignificance: DynamicEventTimelineSignificanceId; presentationToken: string };
+export type DynamicEventPhaseDefinition = { id: DynamicEventPhaseId; displayName: string; order: number; defaultDurationClassId: DynamicEventDurationClassId; notes: string };
+export type DynamicEventEffectDefinition = { id: DynamicEventEffectTypeId; displayName: string; targetSystemIds: string[]; studioMutatesPlayerState: false; protectedResolutionRequired: boolean; notes: string };
+export type DynamicEventChoiceDefinition = { id: DynamicEventChoiceId; displayName: string; actionIds: string[]; requirementReasonCodes: string[]; outcomeEffectTypeIds: DynamicEventEffectTypeId[]; irreversible: boolean; requiresPlayerConfirmation: boolean; timelinePolicyId: DynamicEventTimelineSignificanceId; notes: string };
+export type DynamicEventResolutionPolicyDefinition = { id: DynamicEventResolutionPolicyId; displayName: string; protectedOutcome: boolean; gameOwnsResolvedOutcome: true; deterministicInputs: string[]; notes: string };
+export type DynamicEventFailurePolicyDefinition = { id: string; displayName: string; reasonCodes: string[]; recoveryChoiceIds: DynamicEventChoiceId[]; missionHookIds: string[]; notes: string };
+export type DynamicEventKnowledgeVisibilityRule = { id: string; knowledgeStateId: string; canShowName: boolean; canShowTargetRegistry: boolean; canShowResources: boolean; canShowArtifacts: boolean; canShowLifeforms: boolean; fallbackText: "???" | "Unknown" | "Signal Detected"; notes: string };
+export type DynamicEventTimelineSignificancePolicy = { id: DynamicEventTimelineSignificanceId; displayName: string; createsTimelineDefinition: boolean; scope: string; notes: string };
+export type DynamicEventDefinition = {
+  id: string;
+  displayName: string;
+  publicDescription: string;
+  hiddenDescriptionPolicy: string;
+  categoryId: DynamicEventCategoryId;
+  eventTypeId: DynamicEventTypeId;
+  sourceSystemId: string;
+  targetEntityTypes: string[];
+  triggerPolicyIds: DynamicEventTriggerPolicyId[];
+  eligibilityIds: string[];
+  probabilityPolicyId: DynamicEventProbabilityPolicyId;
+  deterministicSeedPolicyId: string;
+  severityId: DynamicEventSeverityId;
+  durationClassId: DynamicEventDurationClassId;
+  phaseIds: DynamicEventPhaseId[];
+  effectTypeIds: DynamicEventEffectTypeId[];
+  choiceIds: DynamicEventChoiceId[];
+  resolutionPolicyIds: DynamicEventResolutionPolicyId[];
+  failurePolicyIds: string[];
+  followUpEventIds: string[];
+  missionHookTemplateIds: string[];
+  actionReferenceIds: string[];
+  identityInfluenceIds: string[];
+  progressionMilestoneIds: string[];
+  presentationProfileId: string;
+  timelineSignificanceId: DynamicEventTimelineSignificanceId;
+  publicationStatus: DynamicEventPublicationStatus;
+  provisionalBalance: true;
+};
+export type DynamicEventChainDefinition = { id: string; displayName: string; eventIds: string[]; branchEventIds: string[]; terminalEventIds: string[]; deterministicChainRule: string; notes: string };
+export type DynamicEventPresentationContract = { id: "EventCard" | "EventNotification" | "EventDetail" | "EventChoicePanel" | "EventSeverityBadge" | "EventPhaseStepper" | "EventTimer" | "EventEffectSummary" | "EventRequirementSummary" | "EventResolutionReport" | "EventChainProgress" | "EventHistoryEntry" | "EventMissionLink" | "EventTimelineSignificance" | "KnowledgeSafeEventPreview"; displayName: string; rendererIndependent: true; semanticFields: string[]; notes: string };
+export type DynamicEventMissingCanonicalDefinition = { id: string; type: "action" | "population_framework" | "asset" | "encyclopedia_entry" | "progression_milestone"; displayName: string; referencedBy: string[]; severity: "warning" | "info"; recommendedOwner: "Action System" | "Population Simulation" | "Asset Library" | "Encyclopedia" | "Civilization Progression"; notes: string };
+export type DynamicEventFrameworkContract = {
+  id: "dynamic_event_framework_v1";
+  version: "1.0.0";
+  architectureDecisionId: "ARCH-DECISION-DYNAMIC-EVENT-FRAMEWORK";
+  actionSystemId: ActionSystemContract["id"];
+  planetDevelopmentFrameworkId: PlanetDevelopmentFrameworkContract["id"];
+  civilizationProgressionFrameworkId: CivilizationProgressionFrameworkContract["id"];
+  colonizationFrameworkId: ColonizationFrameworkContract["id"];
+  resourceEconomyLogisticsFrameworkId: ResourceEconomyLogisticsFrameworkContract["id"];
+  missionExpeditionFrameworkId: MissionExpeditionFrameworkContract["id"];
+  universalDiscoveryRegistryVersion: string;
+  populationSimulationIntegration: { implemented: false; hookOnly: true; dependencyGap: "Population Simulation Framework"; hooks: string[] };
+  ownership: { studioOwns: string[]; gameOwns: string[] };
+  activePlayerStatePolicy: {
+    exportsActiveEventInstances: false;
+    exportsTimestamps: false;
+    exportsCurrentModifiers: false;
+    exportsSelectedChoices: false;
+    exportsGeneratedPlayerParameters: false;
+    exportsResolvedOutcomes: false;
+    exportsPlayerEventHistory: false;
+  };
+  eventCategoryDefinitions: DynamicEventCategoryDefinition[];
+  eventTypeDefinitions: DynamicEventTypeDefinition[];
+  eventLifecycleStateDefinitions: DynamicEventLifecycleStateDefinition[];
+  eventDefinitions: DynamicEventDefinition[];
+  eventTriggerPolicies: DynamicEventTriggerPolicyDefinition[];
+  eventEligibilityDefinitions: DynamicEventEligibilityDefinition[];
+  eventProbabilityPolicies: DynamicEventProbabilityPolicyDefinition[];
+  eventDeterministicSeedPolicies: DynamicEventDeterministicSeedPolicy[];
+  eventSeverityDefinitions: DynamicEventSeverityDefinition[];
+  eventDurationClasses: Array<{ id: DynamicEventDurationClassId; displayName: string; actionDurationReference: string | null; notes: string }>;
+  eventPhaseDefinitions: DynamicEventPhaseDefinition[];
+  eventEffectDefinitions: DynamicEventEffectDefinition[];
+  eventChoiceDefinitions: DynamicEventChoiceDefinition[];
+  eventResolutionPolicies: DynamicEventResolutionPolicyDefinition[];
+  eventFailurePolicies: DynamicEventFailurePolicyDefinition[];
+  eventChainDefinitions: DynamicEventChainDefinition[];
+  eventReasonCodes: Array<{ id: string; displayName: string; sourceSystemId: string; blocker: boolean; notes: string }>;
+  eventKnowledgeVisibility: DynamicEventKnowledgeVisibilityRule[];
+  eventTimelineSignificancePolicies: DynamicEventTimelineSignificancePolicy[];
+  eventPresentationContract: DynamicEventPresentationContract[];
+  offlinePolicies: Array<{ id: string; displayName: string; behavior: "progress" | "pause" | "resolve_server_authoritative" | "defer_choice" | "expire" | "require_reconnect"; notes: string }>;
+  aiAgentRules: string[];
+  creativeProductionRequirements: Array<{ id: string; displayName: string; category: "Dynamic Events"; status: "required" | "planned"; notes: string }>;
+  assetLibraryCategories: Array<{ id: string; displayName: string; groups: string[]; notes: string }>;
+  encyclopediaSections: Array<{ id: string; displayName: string; status: "active" | "planned"; notes: string }>;
+  provisionalBalanceValues: Array<{ id: string; displayName: string; value: string; notes: string }>;
+  missingCanonicalDefinitions: DynamicEventMissingCanonicalDefinition[];
+  validationRules: string[];
+};
+
 export type ActionSystemCategory = {
   id: string;
   displayName: string;
@@ -2847,6 +3080,7 @@ export type GameRuntimeData = {
   colonizationFramework: ColonizationFrameworkContract;
   resourceEconomyLogisticsFramework: ResourceEconomyLogisticsFrameworkContract;
   missionExpeditionFramework: MissionExpeditionFrameworkContract;
+  dynamicEventFramework: DynamicEventFrameworkContract;
   clientProfiles: ClientProfiles;
 };
 

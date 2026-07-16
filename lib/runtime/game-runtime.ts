@@ -14,6 +14,7 @@ import { getGameData } from "@/lib/data";
 import { canonicalDiscoveries, discoveryCategories, discoveryChains, discoveryCollections, discoveryMilestones, discoveryPlayerCollectionSchema, discoveryRarities, validateDiscoverySystem } from "@/lib/discovery";
 import { universalDiscoveryRegistryContract, universalDiscoveryRegistryVersion, validateUniversalDiscoveryRegistryContract } from "@/lib/discovery/universal-registry";
 import { resourceEconomyLogisticsFramework, validateResourceEconomyLogisticsFramework } from "@/lib/economy/logistics-framework";
+import { dynamicEventFramework, validateDynamicEventFramework } from "@/lib/events/framework";
 import { missionExpeditionFramework, validateMissionExpeditionFramework } from "@/lib/missions/framework";
 import {
   buildEconomyUsageRelationships,
@@ -62,7 +63,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 30;
+export const gameRuntimeContentVersion = 31;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -106,6 +107,7 @@ export type RobloxRuntimeExportPayload = {
   colonizationFramework: GameRuntimeData["colonizationFramework"];
   resourceEconomyLogisticsFramework: GameRuntimeData["resourceEconomyLogisticsFramework"];
   missionExpeditionFramework: GameRuntimeData["missionExpeditionFramework"];
+  dynamicEventFramework: GameRuntimeData["dynamicEventFramework"];
   resources: ResourceDefinition[];
   buildingTaxonomy: GameRuntimeData["buildingTaxonomy"];
   buildingLibrary: GameRuntimeData["buildingLibrary"];
@@ -1014,6 +1016,106 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
       })),
       validationRules: [...runtimeData.missionExpeditionFramework.validationRules].sort()
     },
+    dynamicEventFramework: {
+      ...runtimeData.dynamicEventFramework,
+      ownership: {
+        studioOwns: [...runtimeData.dynamicEventFramework.ownership.studioOwns].sort(),
+        gameOwns: [...runtimeData.dynamicEventFramework.ownership.gameOwns].sort()
+      },
+      populationSimulationIntegration: {
+        ...runtimeData.dynamicEventFramework.populationSimulationIntegration,
+        hooks: [...runtimeData.dynamicEventFramework.populationSimulationIntegration.hooks].sort()
+      },
+      eventCategoryDefinitions: [...runtimeData.dynamicEventFramework.eventCategoryDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        sourceSystemIds: [...definition.sourceSystemIds].sort()
+      })),
+      eventTypeDefinitions: [...runtimeData.dynamicEventFramework.eventTypeDefinitions].sort(byId),
+      eventLifecycleStateDefinitions: [...runtimeData.dynamicEventFramework.eventLifecycleStateDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        allowedTransitions: [...definition.allowedTransitions].sort()
+      })),
+      eventDefinitions: [...runtimeData.dynamicEventFramework.eventDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        targetEntityTypes: [...definition.targetEntityTypes].sort(),
+        triggerPolicyIds: [...definition.triggerPolicyIds].sort(),
+        eligibilityIds: [...definition.eligibilityIds].sort(),
+        phaseIds: [...definition.phaseIds].sort(),
+        effectTypeIds: [...definition.effectTypeIds].sort(),
+        choiceIds: [...definition.choiceIds].sort(),
+        resolutionPolicyIds: [...definition.resolutionPolicyIds].sort(),
+        failurePolicyIds: [...definition.failurePolicyIds].sort(),
+        followUpEventIds: [...definition.followUpEventIds].sort(),
+        missionHookTemplateIds: [...definition.missionHookTemplateIds].sort(),
+        actionReferenceIds: [...definition.actionReferenceIds].sort(),
+        identityInfluenceIds: [...definition.identityInfluenceIds].sort(),
+        progressionMilestoneIds: [...definition.progressionMilestoneIds].sort()
+      })),
+      eventTriggerPolicies: [...runtimeData.dynamicEventFramework.eventTriggerPolicies].sort(byId).map((definition) => ({
+        ...definition,
+        sourceSystemIds: [...definition.sourceSystemIds].sort()
+      })),
+      eventEligibilityDefinitions: [...runtimeData.dynamicEventFramework.eventEligibilityDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        dependsOn: [...definition.dependsOn].sort(),
+        blockerReasonCodes: [...definition.blockerReasonCodes].sort()
+      })),
+      eventProbabilityPolicies: [...runtimeData.dynamicEventFramework.eventProbabilityPolicies].sort(byId),
+      eventDeterministicSeedPolicies: [...runtimeData.dynamicEventFramework.eventDeterministicSeedPolicies].sort(byId).map((definition) => ({
+        ...definition,
+        seedInputs: [...definition.seedInputs].sort()
+      })),
+      eventSeverityDefinitions: [...runtimeData.dynamicEventFramework.eventSeverityDefinitions].sort(byId),
+      eventDurationClasses: [...runtimeData.dynamicEventFramework.eventDurationClasses].sort(byId),
+      eventPhaseDefinitions: [...runtimeData.dynamicEventFramework.eventPhaseDefinitions].sort(byOrderThenId),
+      eventEffectDefinitions: [...runtimeData.dynamicEventFramework.eventEffectDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        targetSystemIds: [...definition.targetSystemIds].sort()
+      })),
+      eventChoiceDefinitions: [...runtimeData.dynamicEventFramework.eventChoiceDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        actionIds: [...definition.actionIds].sort(),
+        requirementReasonCodes: [...definition.requirementReasonCodes].sort(),
+        outcomeEffectTypeIds: [...definition.outcomeEffectTypeIds].sort()
+      })),
+      eventResolutionPolicies: [...runtimeData.dynamicEventFramework.eventResolutionPolicies].sort(byId).map((definition) => ({
+        ...definition,
+        deterministicInputs: [...definition.deterministicInputs].sort()
+      })),
+      eventFailurePolicies: [...runtimeData.dynamicEventFramework.eventFailurePolicies].sort(byId).map((definition) => ({
+        ...definition,
+        reasonCodes: [...definition.reasonCodes].sort(),
+        recoveryChoiceIds: [...definition.recoveryChoiceIds].sort(),
+        missionHookIds: [...definition.missionHookIds].sort()
+      })),
+      eventChainDefinitions: [...runtimeData.dynamicEventFramework.eventChainDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        eventIds: [...definition.eventIds].sort(),
+        branchEventIds: [...definition.branchEventIds].sort(),
+        terminalEventIds: [...definition.terminalEventIds].sort()
+      })),
+      eventReasonCodes: [...runtimeData.dynamicEventFramework.eventReasonCodes].sort(byId),
+      eventKnowledgeVisibility: [...runtimeData.dynamicEventFramework.eventKnowledgeVisibility].sort(byId),
+      eventTimelineSignificancePolicies: [...runtimeData.dynamicEventFramework.eventTimelineSignificancePolicies].sort(byId),
+      eventPresentationContract: [...runtimeData.dynamicEventFramework.eventPresentationContract].sort(byId).map((contract) => ({
+        ...contract,
+        semanticFields: [...contract.semanticFields].sort()
+      })),
+      offlinePolicies: [...runtimeData.dynamicEventFramework.offlinePolicies].sort(byId),
+      aiAgentRules: [...runtimeData.dynamicEventFramework.aiAgentRules].sort(),
+      creativeProductionRequirements: [...runtimeData.dynamicEventFramework.creativeProductionRequirements].sort(byId),
+      assetLibraryCategories: [...runtimeData.dynamicEventFramework.assetLibraryCategories].sort(byId).map((category) => ({
+        ...category,
+        groups: [...category.groups].sort()
+      })),
+      encyclopediaSections: [...runtimeData.dynamicEventFramework.encyclopediaSections].sort(byId),
+      provisionalBalanceValues: [...runtimeData.dynamicEventFramework.provisionalBalanceValues].sort(byId),
+      missingCanonicalDefinitions: [...runtimeData.dynamicEventFramework.missingCanonicalDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        referencedBy: [...definition.referencedBy].sort()
+      })),
+      validationRules: [...runtimeData.dynamicEventFramework.validationRules].sort()
+    },
     resources: [...runtimeData.resources].sort(byId),
     buildingTaxonomy: [...runtimeData.buildingTaxonomy].sort(byDisplayOrderThenId).map((family) => ({
       ...family,
@@ -1772,6 +1874,13 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   })) {
     issues.push(issue);
   }
+  for (const issue of validateDynamicEventFramework(runtimeData.dynamicEventFramework, {
+    actionIds: new Set(runtimeData.actionSystem.actionDefinitions.map((action) => action.id)),
+    missionTemplateIds: new Set(runtimeData.missionExpeditionFramework.missionTemplateDefinitions.map((template) => template.id)),
+    progressionMilestoneIds: new Set(runtimeData.civilizationProgressionFramework.civilizationMilestones.map((milestone) => milestone.id))
+  })) {
+    issues.push(issue);
+  }
   validateBuildingTaxonomyRuntime(runtimeData, issues);
   const categoryPresentationValidation = validateUpgradeCategoryPresentation({ categories: runtimeData.upgradeCategories });
   for (const message of categoryPresentationValidation.issues) {
@@ -1952,6 +2061,7 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     colonizationFramework: sorted.colonizationFramework,
     resourceEconomyLogisticsFramework: sorted.resourceEconomyLogisticsFramework,
     missionExpeditionFramework: sorted.missionExpeditionFramework,
+    dynamicEventFramework: sorted.dynamicEventFramework,
     resources: sorted.resources,
     buildingTaxonomy: sorted.buildingTaxonomy,
     buildingLibrary: sorted.buildingLibrary,
@@ -2064,6 +2174,13 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
     actionIds: new Set(payload.actionSystem.actionDefinitions.map((action) => action.id)),
     routeIds: new Set(payload.resourceEconomyLogisticsFramework.logisticsRouteDefinitions.map((route) => route.id)),
     transportModeIds: new Set(payload.resourceEconomyLogisticsFramework.transportModeDefinitions.map((transport) => transport.id))
+  })) {
+    issues.push(issue);
+  }
+  for (const issue of validateDynamicEventFramework(payload.dynamicEventFramework, {
+    actionIds: new Set(payload.actionSystem.actionDefinitions.map((action) => action.id)),
+    missionTemplateIds: new Set(payload.missionExpeditionFramework.missionTemplateDefinitions.map((template) => template.id)),
+    progressionMilestoneIds: new Set(payload.civilizationProgressionFramework.civilizationMilestones.map((milestone) => milestone.id))
   })) {
     issues.push(issue);
   }
@@ -2214,6 +2331,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     colonizationFramework,
     resourceEconomyLogisticsFramework,
     missionExpeditionFramework,
+    dynamicEventFramework,
     resources: ResourceService.catalog.map(resourceToRuntime),
     buildingTaxonomy: canonicalBuildingTaxonomy,
     buildingLibrary: canonicalBuildingLibrary,
@@ -2276,6 +2394,7 @@ export async function getGameRuntimeData() {
     colonizationFramework: base.colonizationFramework,
     resourceEconomyLogisticsFramework: base.resourceEconomyLogisticsFramework,
     missionExpeditionFramework: base.missionExpeditionFramework,
+    dynamicEventFramework: base.dynamicEventFramework,
     resources: base.resources,
     balance: {
       ...store.appliedRuntimeData.balance,
@@ -2493,6 +2612,7 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     colonizationFramework: base.colonizationFramework,
     resourceEconomyLogisticsFramework: base.resourceEconomyLogisticsFramework,
     missionExpeditionFramework: base.missionExpeditionFramework,
+    dynamicEventFramework: base.dynamicEventFramework,
     resources: base.resources,
     buildingTaxonomy: base.buildingTaxonomy,
     buildingLibrary: base.buildingLibrary,

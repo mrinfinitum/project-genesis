@@ -264,6 +264,39 @@ type RuntimePayload = {
     assetLibraryCategories?: Array<{ id: string; groups?: string[] }>;
     missingCanonicalDefinitions?: Array<{ id: string; type?: string }>;
   };
+  dynamicEventFramework?: {
+    id?: string;
+    architectureDecisionId?: string;
+    populationSimulationIntegration?: { implemented?: boolean; hookOnly?: boolean; dependencyGap?: string; hooks?: string[] };
+    activePlayerStatePolicy?: Record<string, boolean | undefined>;
+    eventCategoryDefinitions?: Array<{ id: string; sourceSystemIds?: string[] }>;
+    eventTypeDefinitions?: Array<{ id: string }>;
+    eventLifecycleStateDefinitions?: Array<{ id: string; allowedTransitions?: string[]; terminal?: boolean }>;
+    eventDefinitions?: Array<{ id: string; categoryId?: string; eventTypeId?: string; triggerPolicyIds?: string[]; eligibilityIds?: string[]; probabilityPolicyId?: string; deterministicSeedPolicyId?: string; severityId?: string; durationClassId?: string; phaseIds?: string[]; effectTypeIds?: string[]; choiceIds?: string[]; resolutionPolicyIds?: string[]; failurePolicyIds?: string[]; followUpEventIds?: string[]; missionHookTemplateIds?: string[]; actionReferenceIds?: string[]; timelineSignificanceId?: string; publicDescription?: string }>;
+    eventTriggerPolicies?: Array<{ id: string; canonicalReasonCode?: string; protectedResolutionRequired?: boolean }>;
+    eventEligibilityDefinitions?: Array<{ id: string; blockerReasonCodes?: string[]; knowledgeSafe?: boolean }>;
+    eventProbabilityPolicies?: Array<{ id: string; deterministic?: boolean }>;
+    eventDeterministicSeedPolicies?: Array<{ id: string; forbidsUncontrolledRandom?: boolean; seedInputs?: string[] }>;
+    eventSeverityDefinitions?: Array<{ id: string }>;
+    eventDurationClasses?: Array<{ id: string }>;
+    eventPhaseDefinitions?: Array<{ id: string; defaultDurationClassId?: string }>;
+    eventEffectDefinitions?: Array<{ id: string; studioMutatesPlayerState?: boolean }>;
+    eventChoiceDefinitions?: Array<{ id: string; actionIds?: string[]; outcomeEffectTypeIds?: string[]; timelinePolicyId?: string; irreversible?: boolean; requiresPlayerConfirmation?: boolean }>;
+    eventResolutionPolicies?: Array<{ id: string; gameOwnsResolvedOutcome?: boolean; protectedOutcome?: boolean }>;
+    eventFailurePolicies?: Array<{ id: string; recoveryChoiceIds?: string[]; missionHookIds?: string[] }>;
+    eventChainDefinitions?: Array<{ id: string; eventIds?: string[]; branchEventIds?: string[]; terminalEventIds?: string[] }>;
+    eventReasonCodes?: Array<{ id: string; blocker?: boolean }>;
+    eventKnowledgeVisibility?: Array<{ id: string; knowledgeStateId?: string; canShowName?: boolean; canShowResources?: boolean; canShowArtifacts?: boolean; canShowLifeforms?: boolean; fallbackText?: string }>;
+    eventTimelineSignificancePolicies?: Array<{ id: string; createsTimelineDefinition?: boolean }>;
+    eventPresentationContract?: Array<{ id: string; rendererIndependent?: boolean }>;
+    offlinePolicies?: Array<{ id: string; behavior?: string }>;
+    aiAgentRules?: string[];
+    creativeProductionRequirements?: Array<{ id: string; category?: string }>;
+    assetLibraryCategories?: Array<{ id: string; groups?: string[] }>;
+    encyclopediaSections?: Array<{ id: string }>;
+    provisionalBalanceValues?: Array<{ id: string }>;
+    missingCanonicalDefinitions?: Array<{ id: string; type?: string }>;
+  };
   upgradeCategories?: Array<{ id: string }>;
   upgrades?: Array<{ id: string; categoryId?: string; tabId?: string; eraId?: string; costResourceId?: string | null; costEconomyId?: string | null }>;
   buildingLibrary?: Array<{ id: string }>;
@@ -1029,6 +1062,95 @@ function validateMissionExpeditionFramework(payload: RuntimePayload | RobloxPayl
   assert(!/"(?:acceptedMissionRecords|activeExpeditionRecords|objectiveProgressRecords|rewardClaimRecords|crewAssignmentRecords|playerMissionHistoryRecords)"\s*:|\/Users\/|studio-private:\/\//i.test(JSON.stringify(framework)), `${label} Mission & Expedition Framework leaked player state or private paths.`);
 }
 
+function validateDynamicEventFramework(payload: RuntimePayload | RobloxPayload, label: string) {
+  const framework = payload.dynamicEventFramework;
+  const actionIds = new Set(payload.actionSystem?.actionDefinitions?.map((action) => action.id) ?? []);
+  const missionTemplateIds = new Set(payload.missionExpeditionFramework?.missionTemplateDefinitions?.map((template) => template.id) ?? []);
+  const categoryIds = new Set(framework?.eventCategoryDefinitions?.map((definition) => definition.id) ?? []);
+  const typeIds = new Set(framework?.eventTypeDefinitions?.map((definition) => definition.id) ?? []);
+  const lifecycleIds = new Set(framework?.eventLifecycleStateDefinitions?.map((definition) => definition.id) ?? []);
+  const triggerIds = new Set(framework?.eventTriggerPolicies?.map((definition) => definition.id) ?? []);
+  const eligibilityIds = new Set(framework?.eventEligibilityDefinitions?.map((definition) => definition.id) ?? []);
+  const probabilityIds = new Set(framework?.eventProbabilityPolicies?.map((definition) => definition.id) ?? []);
+  const seedPolicyIds = new Set(framework?.eventDeterministicSeedPolicies?.map((definition) => definition.id) ?? []);
+  const severityIds = new Set(framework?.eventSeverityDefinitions?.map((definition) => definition.id) ?? []);
+  const durationIds = new Set(framework?.eventDurationClasses?.map((definition) => definition.id) ?? []);
+  const phaseIds = new Set(framework?.eventPhaseDefinitions?.map((definition) => definition.id) ?? []);
+  const effectIds = new Set(framework?.eventEffectDefinitions?.map((definition) => definition.id) ?? []);
+  const choiceIds = new Set(framework?.eventChoiceDefinitions?.map((definition) => definition.id) ?? []);
+  const resolutionIds = new Set(framework?.eventResolutionPolicies?.map((definition) => definition.id) ?? []);
+  const failureIds = new Set(framework?.eventFailurePolicies?.map((definition) => definition.id) ?? []);
+  const eventIds = new Set(framework?.eventDefinitions?.map((definition) => definition.id) ?? []);
+  const timelineIds = new Set(framework?.eventTimelineSignificancePolicies?.map((definition) => definition.id) ?? []);
+
+  assert(framework?.id === "dynamic_event_framework_v1", `${label} must publish dynamic_event_framework_v1.`);
+  assert(framework?.architectureDecisionId === "ARCH-DECISION-DYNAMIC-EVENT-FRAMEWORK", `${label} Dynamic Event architecture decision mismatch.`);
+  assert(framework?.populationSimulationIntegration?.implemented === false, `${label} must report Population Simulation as absent.`);
+  assert(framework?.populationSimulationIntegration?.hookOnly === true, `${label} must publish population hooks only.`);
+  assert(framework?.activePlayerStatePolicy && Object.values(framework.activePlayerStatePolicy).every((value) => value === false), `${label} must not export active Event player state.`);
+  assert((framework?.eventCategoryDefinitions?.length ?? 0) === 32, `${label} must publish 32 event categories.`);
+  assert((framework?.eventTypeDefinitions?.length ?? 0) === 23, `${label} must publish 23 event types.`);
+  assert((framework?.eventLifecycleStateDefinitions?.length ?? 0) === 13, `${label} must publish 13 lifecycle states.`);
+  assert((framework?.eventDefinitions?.length ?? 0) >= 40, `${label} must publish starter Dynamic Event library.`);
+  assert((framework?.eventTriggerPolicies?.length ?? 0) === 34, `${label} must publish 34 trigger policies.`);
+  assert((framework?.eventProbabilityPolicies?.length ?? 0) === 12, `${label} must publish 12 probability policies.`);
+  assert((framework?.eventSeverityDefinitions?.length ?? 0) === 7, `${label} must publish 7 severity bands.`);
+  assert((framework?.eventEffectDefinitions?.length ?? 0) === 30, `${label} must publish 30 effect definitions.`);
+  assert((framework?.eventChoiceDefinitions?.length ?? 0) === 20, `${label} must publish 20 event choices.`);
+  assert((framework?.eventChainDefinitions?.length ?? 0) === 4, `${label} must publish 4 event chains.`);
+
+  for (const state of framework?.eventLifecycleStateDefinitions ?? []) for (const id of state.allowedTransitions ?? []) assert(lifecycleIds.has(id), `${label} event state ${state.id} transition ${id} does not resolve.`);
+  for (const trigger of framework?.eventTriggerPolicies ?? []) assert(trigger.canonicalReasonCode?.startsWith("event_trigger_"), `${label} trigger ${trigger.id} must use canonical reason code.`);
+  for (const policy of framework?.eventProbabilityPolicies ?? []) assert(policy.deterministic === true, `${label} probability policy ${policy.id} must be deterministic.`);
+  for (const policy of framework?.eventDeterministicSeedPolicies ?? []) assert(policy.forbidsUncontrolledRandom === true, `${label} seed policy ${policy.id} must forbid uncontrolled random.`);
+  for (const phase of framework?.eventPhaseDefinitions ?? []) assert(phase.defaultDurationClassId && durationIds.has(phase.defaultDurationClassId), `${label} phase ${phase.id} duration class does not resolve.`);
+  for (const effect of framework?.eventEffectDefinitions ?? []) assert(effect.studioMutatesPlayerState === false, `${label} effect ${effect.id} must not mutate player state in Studio.`);
+  for (const choice of framework?.eventChoiceDefinitions ?? []) {
+    for (const id of choice.actionIds ?? []) assert(actionIds.has(id), `${label} choice ${choice.id} action ${id} does not resolve.`);
+    for (const id of choice.outcomeEffectTypeIds ?? []) assert(effectIds.has(id), `${label} choice ${choice.id} effect ${id} does not resolve.`);
+    assert(choice.timelinePolicyId && timelineIds.has(choice.timelinePolicyId), `${label} choice ${choice.id} timeline policy does not resolve.`);
+    if (choice.irreversible) assert(choice.requiresPlayerConfirmation === true, `${label} irreversible choice ${choice.id} must require confirmation.`);
+  }
+  for (const resolution of framework?.eventResolutionPolicies ?? []) assert(resolution.gameOwnsResolvedOutcome === true, `${label} resolution ${resolution.id} must keep outcomes Game-owned.`);
+  for (const failure of framework?.eventFailurePolicies ?? []) {
+    for (const id of failure.recoveryChoiceIds ?? []) assert(choiceIds.has(id), `${label} failure ${failure.id} choice ${id} does not resolve.`);
+    for (const id of failure.missionHookIds ?? []) assert(missionTemplateIds.has(id), `${label} failure ${failure.id} mission hook ${id} does not resolve.`);
+  }
+  for (const event of framework?.eventDefinitions ?? []) {
+    assert(event.categoryId && categoryIds.has(event.categoryId), `${label} event ${event.id} category does not resolve.`);
+    assert(event.eventTypeId && typeIds.has(event.eventTypeId), `${label} event ${event.id} type does not resolve.`);
+    for (const id of event.triggerPolicyIds ?? []) assert(triggerIds.has(id), `${label} event ${event.id} trigger ${id} does not resolve.`);
+    for (const id of event.eligibilityIds ?? []) assert(eligibilityIds.has(id), `${label} event ${event.id} eligibility ${id} does not resolve.`);
+    assert(event.probabilityPolicyId && probabilityIds.has(event.probabilityPolicyId), `${label} event ${event.id} probability policy does not resolve.`);
+    assert(event.deterministicSeedPolicyId && seedPolicyIds.has(event.deterministicSeedPolicyId), `${label} event ${event.id} seed policy does not resolve.`);
+    assert(event.severityId && severityIds.has(event.severityId), `${label} event ${event.id} severity does not resolve.`);
+    assert(event.durationClassId && durationIds.has(event.durationClassId), `${label} event ${event.id} duration does not resolve.`);
+    for (const id of event.phaseIds ?? []) assert(phaseIds.has(id), `${label} event ${event.id} phase ${id} does not resolve.`);
+    for (const id of event.effectTypeIds ?? []) assert(effectIds.has(id), `${label} event ${event.id} effect ${id} does not resolve.`);
+    for (const id of event.choiceIds ?? []) assert(choiceIds.has(id), `${label} event ${event.id} choice ${id} does not resolve.`);
+    for (const id of event.resolutionPolicyIds ?? []) assert(resolutionIds.has(id), `${label} event ${event.id} resolution ${id} does not resolve.`);
+    for (const id of event.failurePolicyIds ?? []) assert(failureIds.has(id), `${label} event ${event.id} failure policy ${id} does not resolve.`);
+    for (const id of event.followUpEventIds ?? []) assert(eventIds.has(id), `${label} event ${event.id} follow-up ${id} does not resolve.`);
+    for (const id of event.missionHookTemplateIds ?? []) assert(missionTemplateIds.has(id), `${label} event ${event.id} mission hook ${id} does not resolve.`);
+    for (const id of event.actionReferenceIds ?? []) assert(actionIds.has(id), `${label} event ${event.id} action ${id} does not resolve.`);
+  }
+  for (const chain of framework?.eventChainDefinitions ?? []) {
+    const mainPath = new Set<string>();
+    for (const id of chain.eventIds ?? []) {
+      assert(eventIds.has(id), `${label} chain ${chain.id} event ${id} does not resolve.`);
+      assert(!mainPath.has(id), `${label} chain ${chain.id} repeats ${id}.`);
+      mainPath.add(id);
+    }
+    for (const id of [...chain.branchEventIds ?? [], ...chain.terminalEventIds ?? []]) assert(eventIds.has(id), `${label} chain ${chain.id} branch/terminal event ${id} does not resolve.`);
+  }
+  const unknown = framework?.eventKnowledgeVisibility?.find((rule) => rule.knowledgeStateId === "unknown");
+  assert(unknown?.canShowName === false && unknown.canShowResources === false && unknown.canShowArtifacts === false && unknown.canShowLifeforms === false && unknown.fallbackText === "???", `${label} unknown knowledge rule must hide details behind ???.`);
+  for (const contract of framework?.eventPresentationContract ?? []) assert(contract.rendererIndependent === true, `${label} presentation contract ${contract.id} must be renderer-independent.`);
+  assert(framework?.creativeProductionRequirements?.some((item) => item.category === "Dynamic Events"), `${label} must publish Creative Production Dynamic Events requirements.`);
+  assert(framework?.assetLibraryCategories?.some((category) => category.id === "dynamic_events"), `${label} must publish Asset Library Dynamic Events category.`);
+  assert(!/"(?:activeEventInstances|currentModifiers|selectedChoices|generatedPlayerParameters|resolvedOutcomes|playerEventHistory)"\s*:|\/Users\/|studio-private:\/\//i.test(JSON.stringify(framework)), `${label} Dynamic Event Framework leaked player state or private paths.`);
+}
+
 function validateActionSystem(payload: RuntimePayload | RobloxPayload, label: string) {
   const timeContract = payload.timeActionContract;
   const actionSystem = payload.actionSystem;
@@ -1395,8 +1517,8 @@ async function main() {
   assert(roblox.payload.metadata?.accessLevel === "public-published", "Roblox accessLevel must be public-published.");
   assert(roblox.payload.metadata?.validationStatus, "Roblox validation status is missing.");
   assert((canonical.payload.eras?.length ?? 0) > 0, "Canonical payload must include at least one era.");
-  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 30, "Canonical contentVersion must be at least 30 after Mission & Expedition Framework.");
-  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 30, "Roblox contentVersion must be at least 30 after Mission & Expedition Framework.");
+  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 31, "Canonical contentVersion must be at least 31 after Dynamic Event Framework.");
+  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 31, "Roblox contentVersion must be at least 31 after Dynamic Event Framework.");
 
   validateEraNavigation(canonical.payload, "Canonical");
   validateEraNavigation(roblox.payload, "Roblox");
@@ -1428,6 +1550,8 @@ async function main() {
   validateResourceEconomyLogisticsFramework(roblox.payload, "Roblox");
   validateMissionExpeditionFramework(canonical.payload, "Canonical");
   validateMissionExpeditionFramework(roblox.payload, "Roblox");
+  validateDynamicEventFramework(canonical.payload, "Canonical");
+  validateDynamicEventFramework(roblox.payload, "Roblox");
   validateRuntimeReferences(canonical.payload);
   validateRobloxReferences(roblox.payload);
   assertNoArchitectureLeak("Canonical runtime", canonical.payload);
@@ -1478,6 +1602,9 @@ async function main() {
       missionTypeCount: canonical.payload.missionExpeditionFramework?.missionTypeDefinitions?.length ?? 0,
       expeditionScopeCount: canonical.payload.missionExpeditionFramework?.expeditionScopeDefinitions?.length ?? 0,
       missionTemplateCount: canonical.payload.missionExpeditionFramework?.missionTemplateDefinitions?.length ?? 0,
+      dynamicEventCount: canonical.payload.dynamicEventFramework?.eventDefinitions?.length ?? 0,
+      dynamicEventCategoryCount: canonical.payload.dynamicEventFramework?.eventCategoryDefinitions?.length ?? 0,
+      dynamicEventChainCount: canonical.payload.dynamicEventFramework?.eventChainDefinitions?.length ?? 0,
       resourceCount: canonical.payload.resources?.length ?? 0,
       upgradeCount: canonical.payload.upgrades?.length ?? 0
     },
@@ -1525,6 +1652,9 @@ async function main() {
       missionTypeCount: roblox.payload.missionExpeditionFramework?.missionTypeDefinitions?.length ?? 0,
       expeditionScopeCount: roblox.payload.missionExpeditionFramework?.expeditionScopeDefinitions?.length ?? 0,
       missionTemplateCount: roblox.payload.missionExpeditionFramework?.missionTemplateDefinitions?.length ?? 0,
+      dynamicEventCount: roblox.payload.dynamicEventFramework?.eventDefinitions?.length ?? 0,
+      dynamicEventCategoryCount: roblox.payload.dynamicEventFramework?.eventCategoryDefinitions?.length ?? 0,
+      dynamicEventChainCount: roblox.payload.dynamicEventFramework?.eventChainDefinitions?.length ?? 0,
       resourceCount: roblox.payload.resources?.length ?? 0,
       upgradeTabCount: roblox.payload.upgradeTabs?.length ?? 0,
       upgradeCount: roblox.payload.upgrades?.length ?? 0
