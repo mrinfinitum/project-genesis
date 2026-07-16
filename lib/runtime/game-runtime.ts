@@ -3,6 +3,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { civilizationAges } from "@/data/civilization-identity";
 import { aiAgentSafePublishedDefaultArtKeys, defaultAiAgentId, defaultAiAgentVariantId, getAiAgentRuntimeModules } from "@/lib/ai-agents";
+import { canonicalActionSystem, validateActionSystem } from "@/lib/actions/action-system";
 import { ARCHITECTURE_VERSION } from "@/lib/architecture/version";
 import { getAssetProductionRuntimeOverrides } from "@/lib/assets/asset-production";
 import { getAppliedGameArtAssets } from "@/lib/assets/game-art-import";
@@ -56,7 +57,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 23;
+export const gameRuntimeContentVersion = 24;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -92,6 +93,7 @@ export type RobloxRuntimeExportPayload = {
   universalDiscoveryRegistry: GameRuntimeData["universalDiscoveryRegistry"];
   galaxyEngineContract: GameRuntimeData["galaxyEngineContract"];
   timeActionContract: GameRuntimeData["timeActionContract"];
+  actionSystem: GameRuntimeData["actionSystem"];
   planetOpportunityProfiles: GameRuntimeData["planetOpportunityProfiles"];
   planetExplorationProgression: GameRuntimeData["planetExplorationProgression"];
   resources: ResourceDefinition[];
@@ -593,6 +595,17 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
         civilizationModifierIds: [...runtimeData.timeActionContract.accelerationPolicy.civilizationModifierIds].sort(),
         automationModifierIds: [...runtimeData.timeActionContract.accelerationPolicy.automationModifierIds].sort()
       }
+    },
+    actionSystem: {
+      ...runtimeData.actionSystem,
+      actionCategories: [...runtimeData.actionSystem.actionCategories].sort(byDisplayOrderThenId),
+      actionStates: [...runtimeData.actionSystem.actionStates],
+      actionDefinitions: [...runtimeData.actionSystem.actionDefinitions].sort(byId),
+      actionQueueRules: [...runtimeData.actionSystem.actionQueueRules].sort(byId),
+      accelerationRules: [...runtimeData.actionSystem.accelerationRules].sort(),
+      automationRules: [...runtimeData.actionSystem.automationRules].sort(),
+      actionPresentation: [...runtimeData.actionSystem.actionPresentation].sort((left, right) => left.mode.localeCompare(right.mode)),
+      validationRules: [...runtimeData.actionSystem.validationRules].sort()
     },
     planetOpportunityProfiles: [...runtimeData.planetOpportunityProfiles].sort(byId),
     planetExplorationProgression: {
@@ -1312,6 +1325,9 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   for (const issue of validateTimeActionContract(runtimeData.timeActionContract)) {
     issues.push(issue);
   }
+  for (const issue of validateActionSystem(runtimeData.actionSystem, runtimeData.timeActionContract)) {
+    issues.push(issue);
+  }
   for (const issue of validatePlanetOpportunityProfiles(runtimeData.planetOpportunityProfiles)) {
     issues.push(issue);
   }
@@ -1490,6 +1506,7 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     universalDiscoveryRegistry: sorted.universalDiscoveryRegistry,
     galaxyEngineContract: sorted.galaxyEngineContract,
     timeActionContract: sorted.timeActionContract,
+    actionSystem: sorted.actionSystem,
     planetOpportunityProfiles: sorted.planetOpportunityProfiles,
     planetExplorationProgression: sorted.planetExplorationProgression,
     resources: sorted.resources,
@@ -1556,6 +1573,9 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
     issues.push(issue);
   }
   for (const issue of validateTimeActionContract(payload.timeActionContract)) {
+    issues.push(issue);
+  }
+  for (const issue of validateActionSystem(payload.actionSystem, payload.timeActionContract)) {
     issues.push(issue);
   }
   for (const issue of validatePlanetOpportunityProfiles(payload.planetOpportunityProfiles)) {
@@ -1703,6 +1723,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     universalDiscoveryRegistry: universalDiscoveryRegistryContract,
     galaxyEngineContract: galaxyEnginePresentationContract,
     timeActionContract,
+    actionSystem: canonicalActionSystem,
     planetOpportunityProfiles: canonicalPlanetOpportunityProfiles,
     planetExplorationProgression,
     resources: ResourceService.catalog.map(resourceToRuntime),
@@ -1759,6 +1780,7 @@ export async function getGameRuntimeData() {
     universalDiscoveryRegistry: base.universalDiscoveryRegistry,
     galaxyEngineContract: base.galaxyEngineContract,
     timeActionContract: base.timeActionContract,
+    actionSystem: base.actionSystem,
     planetOpportunityProfiles: base.planetOpportunityProfiles,
     planetExplorationProgression: base.planetExplorationProgression,
     resources: base.resources,
@@ -1970,6 +1992,7 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     universalDiscoveryRegistry: base.universalDiscoveryRegistry,
     galaxyEngineContract: base.galaxyEngineContract,
     timeActionContract: base.timeActionContract,
+    actionSystem: base.actionSystem,
     planetOpportunityProfiles: base.planetOpportunityProfiles,
     planetExplorationProgression: base.planetExplorationProgression,
     resources: base.resources,

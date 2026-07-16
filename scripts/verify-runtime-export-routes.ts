@@ -78,6 +78,30 @@ type RuntimePayload = {
     };
     futureSystemScopes?: string[];
   };
+  actionSystem?: {
+    id?: string;
+    version?: string;
+    timeActionContractId?: string;
+    actionCategories?: Array<{ id: string }>;
+    actionStates?: Array<{ id: string; terminal?: boolean; historyEvent?: boolean }>;
+    actionDefinitions?: Array<{
+      id: string;
+      displayName?: string;
+      category?: string;
+      requirements?: unknown[];
+      outputs?: unknown[];
+      duration?: { timeActionContractId?: string; baseDurationSeconds?: number; minimumDurationSeconds?: number; maximumDurationSeconds?: number };
+      modifiers?: { premiumCrystalAcceleration?: { policy?: string; canUnlockUnavailableActions?: boolean } };
+      automation?: { automationRules?: string[] };
+      queueBehavior?: { queueRuleId?: string };
+      history?: { started?: boolean; completed?: boolean; cancelled?: boolean; failed?: boolean; accelerated?: boolean; automated?: boolean };
+      events?: string[];
+    }>;
+    actionQueueRules?: Array<{ id: string }>;
+    accelerationRules?: string[];
+    automationRules?: string[];
+    actionPresentation?: unknown[];
+  };
   planetOpportunityProfiles?: Array<{
     id: string;
     planetClass?: string;
@@ -467,6 +491,48 @@ function validatePlanetExplorationProgression(payload: RuntimePayload | RobloxPa
   }
 }
 
+function validateActionSystem(payload: RuntimePayload | RobloxPayload, label: string) {
+  const timeContract = payload.timeActionContract;
+  const actionSystem = payload.actionSystem;
+  const expectedStates = ["idle", "queued", "waiting", "preparing", "running", "paused", "blocked", "failed", "cancelled", "completed", "archived"];
+  const requiredActions = ["action_send_probe", "action_survey_planet", "action_colonize_planet", "action_build_colony", "action_build_mining_outpost", "action_build_research_station", "action_build_orbital_refinery", "action_build_gas_harvest_platform", "action_terraform_planet", "action_research_technology", "action_construct_building", "action_upgrade_building", "action_manufacture_goods", "action_create_trade_route", "action_fleet_travel", "action_analyze_artifact", "action_excavate_ruins", "action_planet_catalog"];
+  const queueIds = new Set(actionSystem?.actionQueueRules?.map((rule) => rule.id) ?? []);
+  const categoryIds = new Set(actionSystem?.actionCategories?.map((category) => category.id) ?? []);
+
+  assert(actionSystem?.id === "canonical_action_system_v1", `${label} must publish canonical_action_system_v1.`);
+  assert(actionSystem?.version === "1.0.0", `${label} Action System version must be 1.0.0.`);
+  assert(actionSystem?.timeActionContractId === timeContract?.id, `${label} Action System must reference Time Action Contract.`);
+  assert(actionSystem?.actionStates?.map((state) => state.id).join("|") === expectedStates.join("|"), `${label} Action System state machine is invalid.`);
+  assert((actionSystem?.actionCategories?.length ?? 0) >= 24, `${label} Action System must publish all action categories.`);
+  assert((actionSystem?.actionDefinitions?.length ?? 0) >= requiredActions.length, `${label} Action System must publish starter gameplay actions.`);
+  assert((actionSystem?.actionQueueRules?.length ?? 0) >= 6, `${label} Action System must publish queue rules.`);
+  assert((actionSystem?.accelerationRules?.length ?? 0) > 0, `${label} Action System must publish acceleration rules.`);
+  assert((actionSystem?.automationRules?.length ?? 0) > 0, `${label} Action System must publish automation rules.`);
+  assert((actionSystem?.actionPresentation?.length ?? 0) >= 5, `${label} Action System must publish presentation intent.`);
+
+  const actionIds = new Set(actionSystem?.actionDefinitions?.map((action) => action.id) ?? []);
+  for (const actionId of requiredActions) {
+    assert(actionIds.has(actionId), `${label} Action System is missing ${actionId}.`);
+  }
+
+  for (const action of actionSystem?.actionDefinitions ?? []) {
+    assert(Boolean(action.id && action.displayName), `${label} Action missing identity.`);
+    assert(Boolean(action.category && categoryIds.has(action.category)), `${label} ${action.id} category does not resolve.`);
+    assert((action.requirements?.length ?? 0) > 0, `${label} ${action.id} is missing requirements.`);
+    assert((action.outputs?.length ?? 0) > 0, `${label} ${action.id} is missing outputs.`);
+    assert(action.duration?.timeActionContractId === timeContract?.id, `${label} ${action.id} duration must reference Time Action Contract.`);
+    assert((action.duration?.baseDurationSeconds ?? 0) > 0, `${label} ${action.id} must be time based.`);
+    assert((action.duration?.baseDurationSeconds ?? -1) >= (action.duration?.minimumDurationSeconds ?? 0), `${label} ${action.id} duration is below minimum.`);
+    assert((action.duration?.baseDurationSeconds ?? 0) <= (action.duration?.maximumDurationSeconds ?? Number.POSITIVE_INFINITY), `${label} ${action.id} duration is above maximum.`);
+    assert(Boolean(action.queueBehavior?.queueRuleId && queueIds.has(action.queueBehavior.queueRuleId)), `${label} ${action.id} queue rule does not resolve.`);
+    assert((action.automation?.automationRules?.length ?? 0) > 0, `${label} ${action.id} is missing automation rules.`);
+    assert(action.modifiers?.premiumCrystalAcceleration?.policy === "accelerate_only", `${label} ${action.id} Premium Crystal policy must be accelerate_only.`);
+    assert(action.modifiers?.premiumCrystalAcceleration?.canUnlockUnavailableActions === false, `${label} ${action.id} Premium Crystals must not unlock unavailable actions.`);
+    assert(action.history?.started === true && action.history.completed === true && action.history.cancelled === true && action.history.failed === true && action.history.accelerated === true && action.history.automated === true, `${label} ${action.id} must publish complete history coverage.`);
+    assert(action.events?.includes("action_started") && action.events.includes("action_completed"), `${label} ${action.id} must publish started/completed events.`);
+  }
+}
+
 function validateEconomy(payload: RuntimePayload | RobloxPayload, label: string) {
   const economyDefinitions = payload.economyDefinitions ?? [];
   const economyIds = new Set(economyDefinitions.map((definition) => definition.id));
@@ -755,8 +821,8 @@ async function main() {
   assert(roblox.payload.metadata?.accessLevel === "public-published", "Roblox accessLevel must be public-published.");
   assert(roblox.payload.metadata?.validationStatus, "Roblox validation status is missing.");
   assert((canonical.payload.eras?.length ?? 0) > 0, "Canonical payload must include at least one era.");
-  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 23, "Canonical contentVersion must be at least 23 after planet exploration progression.");
-  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 23, "Roblox contentVersion must be at least 23 after planet exploration progression.");
+  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 24, "Canonical contentVersion must be at least 24 after canonical action system.");
+  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 24, "Roblox contentVersion must be at least 24 after canonical action system.");
 
   validateEraNavigation(canonical.payload, "Canonical");
   validateEraNavigation(roblox.payload, "Roblox");
@@ -774,6 +840,8 @@ async function main() {
   validateGalaxyEngineContract(roblox.payload, "Roblox");
   validatePlanetOpportunityProfiles(canonical.payload, "Canonical");
   validatePlanetOpportunityProfiles(roblox.payload, "Roblox");
+  validateActionSystem(canonical.payload, "Canonical");
+  validateActionSystem(roblox.payload, "Roblox");
   validatePlanetExplorationProgression(canonical.payload, "Canonical");
   validatePlanetExplorationProgression(roblox.payload, "Roblox");
   validateRuntimeReferences(canonical.payload);
@@ -812,6 +880,8 @@ async function main() {
       platformRenderingProfileCount: canonical.payload.galaxyEngineContract?.platformRenderingProfiles?.length ?? 0,
       planetOpportunityProfileCount: canonical.payload.planetOpportunityProfiles?.length ?? 0,
       timeActionContractId: canonical.payload.timeActionContract?.id,
+      actionSystemId: canonical.payload.actionSystem?.id,
+      actionDefinitionCount: canonical.payload.actionSystem?.actionDefinitions?.length ?? 0,
       planetExplorationStageCount: canonical.payload.planetExplorationProgression?.pipeline?.length ?? 0,
       planetExplorationActionCount: canonical.payload.planetExplorationProgression?.timedActions?.length ?? 0,
       resourceCount: canonical.payload.resources?.length ?? 0,
@@ -847,6 +917,8 @@ async function main() {
       platformRenderingProfileCount: roblox.payload.galaxyEngineContract?.platformRenderingProfiles?.length ?? 0,
       planetOpportunityProfileCount: roblox.payload.planetOpportunityProfiles?.length ?? 0,
       timeActionContractId: roblox.payload.timeActionContract?.id,
+      actionSystemId: roblox.payload.actionSystem?.id,
+      actionDefinitionCount: roblox.payload.actionSystem?.actionDefinitions?.length ?? 0,
       planetExplorationStageCount: roblox.payload.planetExplorationProgression?.pipeline?.length ?? 0,
       planetExplorationActionCount: roblox.payload.planetExplorationProgression?.timedActions?.length ?? 0,
       resourceCount: roblox.payload.resources?.length ?? 0,

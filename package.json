@@ -18,6 +18,7 @@
     "verify:galaxy-engine-contract": "tsx scripts/verify-galaxy-engine-contract.ts",
     "verify:planet-opportunities": "tsx scripts/verify-planet-opportunities.ts",
     "verify:planet-exploration": "tsx scripts/verify-planet-exploration.ts",
+    "verify:action-system": "tsx scripts/verify-action-system.ts",
     "verify:resource-economy": "tsx scripts/verify-resource-economy.ts",
     "verify:economy-designer": "tsx scripts/verify-economy-designer.ts",
     "verify:upgrade-category-assets": "tsx scripts/verify-upgrade-category-assets.ts",

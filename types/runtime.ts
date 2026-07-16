@@ -1060,6 +1060,148 @@ export type PlanetExplorationProgressionContract = {
   validationRules: string[];
 };
 
+export type ActionSystemCategory = {
+  id: string;
+  displayName: string;
+  description: string;
+  displayOrder: number;
+  future: boolean;
+};
+
+export type ActionSystemState = {
+  id: "idle" | "queued" | "waiting" | "preparing" | "running" | "paused" | "blocked" | "failed" | "cancelled" | "completed" | "archived";
+  displayName: string;
+  terminal: boolean;
+  historyEvent: boolean;
+  description: string;
+};
+
+export type ActionRequirement = {
+  type: "research" | "technology" | "building" | "resource" | "population" | "labor" | "credits" | "discovery" | "civilization_level" | "planet_class" | "ownership" | "knowledge_state" | "environment" | "equipment" | "ai_agent";
+  id: string;
+  quantity: number | null;
+  condition: string;
+  blocking: boolean;
+  notes: string;
+};
+
+export type ActionTransfer = {
+  type: "resource" | "economy" | "building" | "research" | "discovery" | "artifact" | "population" | "colony" | "trade_route" | "infrastructure" | "knowledge" | "time";
+  id: string;
+  quantity: number | null;
+  timing: "start" | "progress" | "completion";
+  notes: string;
+};
+
+export type ActionDuration = {
+  timeActionContractId: TimeActionContract["id"];
+  baseDurationSeconds: number;
+  minimumDurationSeconds: number;
+  maximumDurationSeconds: number;
+  estimatedCompletionRule: string;
+  progressRule: string;
+};
+
+export type ActionModifiers = {
+  researchModifierIds: string[];
+  aiAgentModifierIds: string[];
+  automationModifierIds: string[];
+  buildingModifierIds: string[];
+  civilizationModifierIds: string[];
+  planetModifierIds: string[];
+  temporaryEventModifierIds: string[];
+  premiumCrystalAcceleration: {
+    allowed: boolean;
+    policy: "accelerate_only";
+    canUnlockUnavailableActions: false;
+  };
+};
+
+export type ActionAutomation = {
+  canAutomate: boolean;
+  automationTier: "none" | "basic" | "advanced" | "specialized" | "future";
+  aiAgentSupport: boolean;
+  automationRules: string[];
+};
+
+export type ActionQueueBehavior = {
+  queueRuleId: string;
+  queueScope: "single" | "multiple" | "per_colony" | "per_planet" | "global" | "priority" | "future";
+  interruptible: boolean;
+  prioritySupported: boolean;
+  pauseSupported: boolean;
+  cancelSupported: boolean;
+};
+
+export type ActionPresentation = {
+  mode: "circular_progress" | "linear_progress" | "countdown" | "queue_card" | "status_badge";
+  iconKey: string;
+  statusBadge: string;
+  completionAnimationKey: string | null;
+  notes: string;
+};
+
+export type ActionDefinition = {
+  id: string;
+  displayName: string;
+  category: string;
+  description: string;
+  entityType: "planet" | "colony" | "building" | "research" | "resource" | "trade_route" | "fleet" | "artifact" | "ai_agent" | "civilization";
+  actionType: string;
+  requirements: ActionRequirement[];
+  inputs: ActionTransfer[];
+  outputs: ActionTransfer[];
+  duration: ActionDuration;
+  modifiers: ActionModifiers;
+  automation: ActionAutomation;
+  queueBehavior: ActionQueueBehavior;
+  failureRules: string[];
+  completionRules: string[];
+  events: string[];
+  rewardProfile: {
+    discoveryPoints: number;
+    rewardIds: string[];
+    historyRecordRequired: boolean;
+  };
+  history: {
+    started: boolean;
+    completed: boolean;
+    cancelled: boolean;
+    failed: boolean;
+    accelerated: boolean;
+    automated: boolean;
+  };
+  presentation: ActionPresentation;
+};
+
+export type ActionQueueRule = {
+  id: string;
+  displayName: string;
+  queueScope: ActionQueueBehavior["queueScope"];
+  supportsPriority: boolean;
+  supportsParallelActions: boolean;
+  notes: string;
+};
+
+export type ActionSystemContract = {
+  id: "canonical_action_system_v1";
+  version: "1.0.0";
+  architectureDecisionId: "ARCH-DECISION-CANONICAL-ACTION-FRAMEWORK";
+  timeActionContractId: TimeActionContract["id"];
+  ownership: {
+    studioOwns: string[];
+    gameOwns: string[];
+  };
+  actionCategories: ActionSystemCategory[];
+  actionStates: ActionSystemState[];
+  actionDefinitions: ActionDefinition[];
+  actionQueueRules: ActionQueueRule[];
+  accelerationRules: string[];
+  automationRules: string[];
+  actionPresentation: ActionPresentation[];
+  validationRules: string[];
+};
+
 export type MobileDeviceClass = {
   id: "phone_compact" | "phone_standard" | "phone_large" | "tablet_standard" | "tablet_large";
   minimumLogicalWidth: number;
@@ -1177,6 +1319,7 @@ export type GameRuntimeData = {
   universalDiscoveryRegistry: Record<string, unknown>;
   resources: ResourceDefinition[];
   timeActionContract: TimeActionContract;
+  actionSystem: ActionSystemContract;
   buildingTaxonomy: BuildingTaxonomyFamily[];
   buildingLibrary: CanonicalBuildingDefinition[];
   buildingClassifications: BuildingClassification[];
