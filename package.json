@@ -15,6 +15,7 @@
     "sync:space-research": "tsx scripts/sync-space-research.ts",
     "regenerate:assets": "tsx scripts/regenerate-asset-variants.ts",
     "verify:runtime-routes": "tsx scripts/verify-runtime-export-routes.ts",
+    "verify:galaxy-engine-contract": "tsx scripts/verify-galaxy-engine-contract.ts",
     "verify:resource-economy": "tsx scripts/verify-resource-economy.ts",
     "verify:economy-designer": "tsx scripts/verify-economy-designer.ts",
     "verify:upgrade-category-assets": "tsx scripts/verify-upgrade-category-assets.ts",

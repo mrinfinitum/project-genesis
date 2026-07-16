@@ -31,6 +31,7 @@ import {
 } from "@/lib/economy/definitions";
 import { ResourceService } from "@/lib/resources/service";
 import { engineEraNavigationOverrides, resolveEraNavigationProfile, supportedEraNavigationBoundaryModes, supportedEraNavigationDashboardModes } from "@/lib/runtime/client-profiles";
+import { galaxyEngineContractVersion, galaxyEnginePresentationContract, validateGalaxyEnginePresentationContract } from "@/lib/runtime/galaxy-engine-contract";
 import { buildMobileClientProfile } from "@/lib/runtime/mobile-client-profiles";
 import { categoryPresentationFor, validateUpgradeCategoryPresentation } from "@/lib/upgrades/category-presentation";
 import type { GameData, ResourceCatalogItem, Upgrade } from "@/types/schema";
@@ -53,7 +54,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 20;
+export const gameRuntimeContentVersion = 21;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -87,6 +88,7 @@ export type RobloxRuntimeExportPayload = {
   discoveryMilestones: GameRuntimeData["discoveryMilestones"];
   discoveryPlayerCollectionSchema: GameRuntimeData["discoveryPlayerCollectionSchema"];
   universalDiscoveryRegistry: GameRuntimeData["universalDiscoveryRegistry"];
+  galaxyEngineContract: GameRuntimeData["galaxyEngineContract"];
   resources: ResourceDefinition[];
   buildingTaxonomy: GameRuntimeData["buildingTaxonomy"];
   buildingLibrary: GameRuntimeData["buildingLibrary"];
@@ -421,6 +423,7 @@ function metadata(overrides: Partial<RuntimeMetadata> = {}): RuntimeMetadata {
     schemaVersion: gameRuntimeSchemaVersion,
     architectureVersion: ARCHITECTURE_VERSION,
     universalDiscoveryRegistryVersion,
+    galaxyEngineContractVersion,
     contentVersion: gameRuntimeContentVersion,
     checksum: "",
     accessLevel: "studio-internal",
@@ -557,6 +560,16 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
     discoveryChains: [...runtimeData.discoveryChains].sort(byId).map((chain) => ({ ...chain, nodes: [...chain.nodes].sort((left, right) => left.order - right.order || left.discoveryId.localeCompare(right.discoveryId)) })),
     discoveryMilestones: [...runtimeData.discoveryMilestones].sort((left, right) => String(left.id).localeCompare(String(right.id))),
     universalDiscoveryRegistry: runtimeData.universalDiscoveryRegistry,
+    galaxyEngineContract: {
+      ...runtimeData.galaxyEngineContract,
+      semanticZoom: [...runtimeData.galaxyEngineContract.semanticZoom].sort(byId),
+      technologyGates: [...runtimeData.galaxyEngineContract.technologyGates].sort(byId),
+      knowledgeVisibility: [...runtimeData.galaxyEngineContract.knowledgeVisibility].sort((left, right) => left.order - right.order || left.id.localeCompare(right.id)),
+      presentationClasses: [...runtimeData.galaxyEngineContract.presentationClasses].sort(byId),
+      platformRenderingProfiles: [...runtimeData.galaxyEngineContract.platformRenderingProfiles].sort(byId),
+      assetRoles: [...runtimeData.galaxyEngineContract.assetRoles].sort(byId),
+      proceduralFallbackRules: [...runtimeData.galaxyEngineContract.proceduralFallbackRules].sort(byId)
+    },
     resources: [...runtimeData.resources].sort(byId),
     buildingTaxonomy: [...runtimeData.buildingTaxonomy].sort(byDisplayOrderThenId).map((family) => ({
       ...family,
@@ -1260,6 +1273,9 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   for (const issue of universalRegistryValidation.issues) {
     issues.push({ severity: issue.severity, code: `universal_discovery_registry_${issue.code}`, message: issue.message, records: issue.records });
   }
+  for (const issue of validateGalaxyEnginePresentationContract(runtimeData.galaxyEngineContract)) {
+    issues.push(issue);
+  }
   validateBuildingTaxonomyRuntime(runtimeData, issues);
   const categoryPresentationValidation = validateUpgradeCategoryPresentation({ categories: runtimeData.upgradeCategories });
   for (const message of categoryPresentationValidation.issues) {
@@ -1430,6 +1446,7 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     discoveryMilestones: sorted.discoveryMilestones,
     discoveryPlayerCollectionSchema: sorted.discoveryPlayerCollectionSchema,
     universalDiscoveryRegistry: sorted.universalDiscoveryRegistry,
+    galaxyEngineContract: sorted.galaxyEngineContract,
     resources: sorted.resources,
     buildingTaxonomy: sorted.buildingTaxonomy,
     buildingLibrary: sorted.buildingLibrary,
@@ -1490,6 +1507,9 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
   }, issues, "Roblox runtime");
   validateResourceEconomyContracts(payload, issues, "Roblox runtime");
   validateAiAgents(payload, issues);
+  for (const issue of validateGalaxyEnginePresentationContract(payload.galaxyEngineContract)) {
+    issues.push(issue);
+  }
   validateBuildingTaxonomyRuntime(payload, issues);
 
   const duplicateTabs = duplicateIds(payload.upgradeTabs.map((tab) => ({ id: tab.tabId })));
@@ -1627,6 +1647,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     discoveryMilestones: discoveryMilestones.map((milestone) => ({ ...milestone, categoryIds: [...milestone.categoryIds] })),
     discoveryPlayerCollectionSchema,
     universalDiscoveryRegistry: universalDiscoveryRegistryContract,
+    galaxyEngineContract: galaxyEnginePresentationContract,
     resources: ResourceService.catalog.map(resourceToRuntime),
     buildingTaxonomy: canonicalBuildingTaxonomy,
     buildingLibrary: canonicalBuildingLibrary,
@@ -1679,6 +1700,7 @@ export async function getGameRuntimeData() {
     discoveryMilestones: base.discoveryMilestones,
     discoveryPlayerCollectionSchema: base.discoveryPlayerCollectionSchema,
     universalDiscoveryRegistry: base.universalDiscoveryRegistry,
+    galaxyEngineContract: base.galaxyEngineContract,
     resources: base.resources,
     balance: {
       ...store.appliedRuntimeData.balance,
@@ -1886,6 +1908,7 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     discoveryMilestones: base.discoveryMilestones,
     discoveryPlayerCollectionSchema: base.discoveryPlayerCollectionSchema,
     universalDiscoveryRegistry: base.universalDiscoveryRegistry,
+    galaxyEngineContract: base.galaxyEngineContract,
     resources: base.resources,
     buildingTaxonomy: base.buildingTaxonomy,
     buildingLibrary: base.buildingLibrary,

@@ -2,6 +2,7 @@ export type RuntimeMetadata = {
   schemaVersion: string;
   architectureVersion: string;
   universalDiscoveryRegistryVersion?: string;
+  galaxyEngineContractVersion?: string;
   contentVersion: number;
   checksum: string;
   accessLevel: "studio-internal" | "public-published";
@@ -758,6 +759,113 @@ export type EraNavigationProfile = {
   };
 };
 
+export type GalaxySemanticZoomLevel = {
+  id: "galaxy" | "sector" | "star_system";
+  displayName: string;
+  hierarchyLevel: number;
+  canonicalEntityType: "galaxy" | "sector" | "star_system";
+  parentEntityType: "universe" | "galaxy" | "sector";
+  childEntityTypes: string[];
+  defaultKnowledgeState: GalaxyKnowledgeStateId;
+  navigationIntent: string;
+  labelBehavior: string;
+};
+
+export type GalaxyTechnologyGate = {
+  id: "survival" | "planetary" | "interplanetary" | "interstellar" | "galactic" | "intergalactic";
+  displayName: string;
+  requiredResearchIds: string[];
+  unlockedZoom: Array<GalaxySemanticZoomLevel["id"]>;
+  unlockedInteractions: string[];
+  maximumViewDistance: number;
+  maximumProbeDistance: number;
+  maximumTravelDistance: number;
+  distanceUnit: "au" | "light_years" | "galactic_index";
+  notes: string;
+};
+
+export type GalaxyKnowledgeStateId = "unknown" | "detected" | "probed" | "scanned" | "charted" | "explored" | "colonized" | "mastered";
+
+export type GalaxyKnowledgeVisibilityRule = {
+  id: GalaxyKnowledgeStateId;
+  displayName: string;
+  order: number;
+  unknownDisplayName: "???";
+  canShowName: boolean;
+  canShowRegistry: boolean;
+  canShowResources: boolean;
+  canShowBodyCount: boolean;
+  canShowDiscoveries: boolean;
+  canShowTravelRoutes: boolean;
+  notes: string;
+};
+
+export type GalaxyPresentationClass = {
+  id: "galaxy" | "sector" | "star" | "planet" | "moon" | "asteroid_belt";
+  displayName: string;
+  presentationClass: string;
+  proceduralAllowed: boolean;
+  heroArtRequired: boolean;
+  supportsAtmosphere: boolean;
+  supportsClouds: boolean;
+  supportsRings: boolean;
+  lodIntent: "macro" | "regional" | "stellar" | "orbital" | "belt";
+  assetRoleIds: string[];
+  notes: string;
+};
+
+export type GalaxyPlatformRenderingProfile = {
+  id: "desktop_ultra" | "desktop_high" | "desktop_medium" | "steam" | "iphone" | "ipad" | "android_phone" | "android_tablet" | "reduced";
+  displayName: string;
+  platform: "desktop" | "steam" | "ios" | "android" | "accessibility";
+  renderScale: number;
+  lod: "ultra" | "high" | "medium" | "mobile" | "reduced";
+  textureTier: "ultra" | "high" | "medium" | "mobile" | "low";
+  particleDensity: number;
+  bloom: boolean;
+  nebula: boolean;
+  clouds: boolean;
+  atmosphere: boolean;
+  labelBudget: number;
+  recommendationOnly: true;
+  notes: string;
+};
+
+export type GalaxyEngineAssetRole = {
+  id: "galaxy" | "sector" | "star" | "planet" | "moon" | "navigation" | "probe" | "travel" | "unknown" | "selection";
+  displayName: string;
+  category: "celestial" | "navigation" | "interaction" | "state";
+  semanticAssetKey: string;
+  requiredFor: string[];
+  fallbackRuleId: string;
+};
+
+export type GalaxyProceduralFallbackRule = {
+  id: string;
+  appliesToClassIds: GalaxyPresentationClass["id"][];
+  fallbackMode: "procedural_shader" | "procedural_icon" | "neutral_silhouette" | "label_only";
+  allowedWhenArtMissing: boolean;
+  clientOwnsImplementation: true;
+  notes: string;
+};
+
+export type GalaxyEnginePresentationContract = {
+  id: "galaxy_engine_presentation_contract";
+  version: "1.0.0";
+  ownership: {
+    studioOwns: string[];
+    gameOwns: string[];
+  };
+  semanticZoom: GalaxySemanticZoomLevel[];
+  technologyGates: GalaxyTechnologyGate[];
+  knowledgeVisibility: GalaxyKnowledgeVisibilityRule[];
+  presentationClasses: GalaxyPresentationClass[];
+  platformRenderingProfiles: GalaxyPlatformRenderingProfile[];
+  assetRoles: GalaxyEngineAssetRole[];
+  proceduralFallbackRules: GalaxyProceduralFallbackRule[];
+  validationRules: string[];
+};
+
 export type MobileDeviceClass = {
   id: "phone_compact" | "phone_standard" | "phone_large" | "tablet_standard" | "tablet_large";
   minimumLogicalWidth: number;
@@ -881,6 +989,7 @@ export type GameRuntimeData = {
   upgrades: UpgradeDefinition[];
   assets: AssetDefinition[];
   balance: BalanceDefinition;
+  galaxyEngineContract: GalaxyEnginePresentationContract;
   clientProfiles: ClientProfiles;
 };
 

@@ -19,7 +19,7 @@ type RuntimeClientProfile = {
 };
 
 type RuntimePayload = {
-  metadata?: { schemaVersion?: string; architectureVersion?: string; universalDiscoveryRegistryVersion?: string; contentVersion?: number; checksum?: string; accessLevel?: string; validationStatus?: string; saveMigrationHints?: Array<{ id: string; targetId: string; previousDefault: unknown; currentDefault: unknown }> };
+  metadata?: { schemaVersion?: string; architectureVersion?: string; universalDiscoveryRegistryVersion?: string; galaxyEngineContractVersion?: string; contentVersion?: number; checksum?: string; accessLevel?: string; validationStatus?: string; saveMigrationHints?: Array<{ id: string; targetId: string; previousDefault: unknown; currentDefault: unknown }> };
   eras?: Array<{ id: string; index?: number; name?: string; displayName?: string; shortDisplayName?: string }>;
   economyDefinitions?: Array<{ id: string; iconKey?: string; startingAmount?: number; startingRate?: number; premium?: boolean; spendable?: boolean; manualClickTarget?: boolean; playerFacingHelpText?: string }>;
   eraEconomyProfiles?: Array<{ id: string; eraId: string; eraIndex: number; primaryEconomyId: string; activePrimaryEconomyId: string; manualClickTarget?: string | null; primaryEconomyIds: string[]; secondaryEconomyIds: string[]; fixedHudSlots: string[]; visibleHudEconomyIds: string[]; hudSlots: Array<{ economyId: string; order: number }>; displayOverrides?: Record<string, { displayName?: string }>; visibilityRules?: { useEraHud?: boolean; fixedCoreHud?: boolean; creditsVisible?: boolean } }>;
@@ -41,6 +41,16 @@ type RuntimePayload = {
   discoveryChains?: Array<{ id: string; nodes: Array<{ discoveryId: string }> }>;
   discoveryPlayerCollectionSchema?: { studioOwnership?: string };
   universalDiscoveryRegistry?: { version?: string; entityTypes?: Array<{ id: string }>; milestones?: Array<{ id: string }>; liveDataPolicy?: string };
+  galaxyEngineContract?: {
+    version?: string;
+    semanticZoom?: Array<{ id: string }>;
+    technologyGates?: Array<{ id: string; unlockedZoom?: string[]; maximumViewDistance?: number; maximumProbeDistance?: number; maximumTravelDistance?: number }>;
+    knowledgeVisibility?: Array<{ id: string; unknownDisplayName?: string; canShowName?: boolean; canShowRegistry?: boolean; canShowResources?: boolean; canShowBodyCount?: boolean; canShowDiscoveries?: boolean }>;
+    presentationClasses?: Array<{ id: string; assetRoleIds?: string[] }>;
+    platformRenderingProfiles?: Array<{ id: string; recommendationOnly?: boolean }>;
+    assetRoles?: Array<{ id: string; fallbackRuleId?: string }>;
+    proceduralFallbackRules?: Array<{ id: string; appliesToClassIds?: string[] }>;
+  };
   upgradeCategories?: Array<{ id: string }>;
   upgrades?: Array<{ id: string; categoryId?: string; tabId?: string; eraId?: string; costResourceId?: string | null; costEconomyId?: string | null }>;
   aiAgents?: Array<{ id: string; defaultForNewPlayers?: boolean; baseVariantId?: string; availableVariantIds?: string[]; assetKeys?: Record<string, string>; gameplayModifiers?: Record<string, unknown> }>;
@@ -208,6 +218,63 @@ function validateDiscoveryRuntime(payload: RuntimePayload | RobloxPayload, label
       assert(discoveryIds.has(node.discoveryId), `${label} discovery chain ${chain.id} references missing discovery ${node.discoveryId}.`);
     }
   }
+}
+
+function validateGalaxyEngineContract(payload: RuntimePayload | RobloxPayload, label: string) {
+  const contract = payload.galaxyEngineContract;
+  assert(contract, `${label} must publish galaxyEngineContract.`);
+  assert(contract?.version === "1.0.0", `${label} galaxyEngineContract version must be 1.0.0.`);
+
+  const zoomIds = new Set(contract?.semanticZoom?.map((item) => item.id) ?? []);
+  const gateIds = new Set(contract?.technologyGates?.map((item) => item.id) ?? []);
+  const knowledgeIds = new Set(contract?.knowledgeVisibility?.map((item) => item.id) ?? []);
+  const classIds = new Set(contract?.presentationClasses?.map((item) => item.id) ?? []);
+  const roleIds = new Set(contract?.assetRoles?.map((item) => item.id) ?? []);
+  const fallbackIds = new Set(contract?.proceduralFallbackRules?.map((item) => item.id) ?? []);
+
+  for (const id of ["galaxy", "sector", "star_system"]) {
+    assert(zoomIds.has(id), `${label} galaxyEngineContract is missing semantic zoom ${id}.`);
+  }
+  assert(!zoomIds.has("region") && !zoomIds.has("cluster"), `${label} galaxyEngineContract must not add Region or Cluster zoom layers.`);
+  for (const id of ["survival", "planetary", "interplanetary", "interstellar", "galactic", "intergalactic"]) {
+    assert(gateIds.has(id), `${label} galaxyEngineContract is missing technology gate ${id}.`);
+  }
+  for (const id of ["unknown", "detected", "probed", "scanned", "charted", "explored", "colonized", "mastered"]) {
+    assert(knowledgeIds.has(id), `${label} galaxyEngineContract is missing knowledge state ${id}.`);
+  }
+  const unknown = contract?.knowledgeVisibility?.find((item) => item.id === "unknown");
+  assert(unknown?.unknownDisplayName === "???", `${label} unknown objects must display ???.`);
+  assert(unknown?.canShowName === false && unknown?.canShowRegistry === false && unknown?.canShowResources === false && unknown?.canShowBodyCount === false && unknown?.canShowDiscoveries === false, `${label} unknown objects must hide all knowledge fields.`);
+  for (const id of ["galaxy", "sector", "star", "planet", "moon", "asteroid_belt"]) {
+    assert(classIds.has(id), `${label} galaxyEngineContract is missing presentation class ${id}.`);
+  }
+  for (const id of ["desktop_ultra", "desktop_high", "desktop_medium", "steam", "iphone", "ipad", "android_phone", "android_tablet", "reduced"]) {
+    assert(contract?.platformRenderingProfiles?.some((profile) => profile.id === id && profile.recommendationOnly === true), `${label} platform rendering profile ${id} must exist and remain recommendation-only.`);
+  }
+  for (const id of ["galaxy", "sector", "star", "planet", "moon", "navigation", "probe", "travel", "unknown", "selection"]) {
+    assert(roleIds.has(id), `${label} galaxyEngineContract is missing asset role ${id}.`);
+  }
+  for (const gate of contract?.technologyGates ?? []) {
+    for (const zoom of gate.unlockedZoom ?? []) {
+      assert(zoomIds.has(zoom), `${label} technology gate ${gate.id} references missing zoom ${zoom}.`);
+    }
+    assert((gate.maximumViewDistance ?? 0) >= (gate.maximumProbeDistance ?? 0) && (gate.maximumProbeDistance ?? 0) >= (gate.maximumTravelDistance ?? 0), `${label} technology gate ${gate.id} distances must be view >= probe >= travel.`);
+  }
+  for (const presentationClass of contract?.presentationClasses ?? []) {
+    for (const roleId of presentationClass.assetRoleIds ?? []) {
+      assert(roleIds.has(roleId), `${label} presentation class ${presentationClass.id} references missing asset role ${roleId}.`);
+    }
+  }
+  for (const role of contract?.assetRoles ?? []) {
+    assert(role.fallbackRuleId && fallbackIds.has(role.fallbackRuleId), `${label} asset role ${role.id} references missing fallback rule ${role.fallbackRuleId ?? "(missing)"}.`);
+  }
+  for (const fallback of contract?.proceduralFallbackRules ?? []) {
+    for (const classId of fallback.appliesToClassIds ?? []) {
+      assert(classIds.has(classId), `${label} fallback rule ${fallback.id} references missing presentation class ${classId}.`);
+    }
+  }
+  const forbiddenConfigKeys = /"(?:threeJsConfig|reactThreeFiberConfig|cameraConfig|shaderConfig|lightingRig|controlScheme|rendererSettings)"\s*:/i;
+  assert(!forbiddenConfigKeys.test(JSON.stringify(contract)), `${label} galaxyEngineContract leaked renderer implementation config.`);
 }
 
 function validateEconomy(payload: RuntimePayload | RobloxPayload, label: string) {
@@ -484,6 +551,7 @@ async function main() {
   assert(canonical.payload.metadata?.schemaVersion, "Canonical metadata.schemaVersion is missing.");
   assert(canonical.payload.metadata?.architectureVersion === ARCHITECTURE_VERSION, "Canonical metadata.architectureVersion must match the Architecture Workspace.");
   assert(canonical.payload.metadata?.universalDiscoveryRegistryVersion === "1.0.0", "Canonical metadata.universalDiscoveryRegistryVersion must be 1.0.0.");
+  assert(canonical.payload.metadata?.galaxyEngineContractVersion === "1.0.0", "Canonical metadata.galaxyEngineContractVersion must be 1.0.0.");
   assert(canonical.payload.metadata?.contentVersion, "Canonical metadata.contentVersion is missing.");
   assert(canonical.payload.metadata?.checksum, "Canonical metadata.checksum is missing.");
   assert(canonical.payload.metadata?.accessLevel === "public-published", "Canonical accessLevel must be public-published.");
@@ -491,13 +559,14 @@ async function main() {
   assert(roblox.payload.metadata?.schemaVersion, "Roblox metadata.schemaVersion is missing.");
   assert(roblox.payload.metadata?.architectureVersion === ARCHITECTURE_VERSION, "Roblox metadata.architectureVersion must match the Architecture Workspace.");
   assert(roblox.payload.metadata?.universalDiscoveryRegistryVersion === "1.0.0", "Roblox metadata.universalDiscoveryRegistryVersion must be 1.0.0.");
+  assert(roblox.payload.metadata?.galaxyEngineContractVersion === "1.0.0", "Roblox metadata.galaxyEngineContractVersion must be 1.0.0.");
   assert(roblox.payload.metadata?.contentVersion, "Roblox metadata.contentVersion is missing.");
   assert(roblox.payload.metadata?.checksum, "Roblox metadata.checksum is missing.");
   assert(roblox.payload.metadata?.accessLevel === "public-published", "Roblox accessLevel must be public-published.");
   assert(roblox.payload.metadata?.validationStatus, "Roblox validation status is missing.");
   assert((canonical.payload.eras?.length ?? 0) > 0, "Canonical payload must include at least one era.");
-  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 14, "Canonical contentVersion must be at least 14 after resource economy contracts.");
-  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 14, "Roblox contentVersion must be at least 14 after resource economy contracts.");
+  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 21, "Canonical contentVersion must be at least 21 after galaxy engine contracts.");
+  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 21, "Roblox contentVersion must be at least 21 after galaxy engine contracts.");
 
   validateEraNavigation(canonical.payload, "Canonical");
   validateEraNavigation(roblox.payload, "Roblox");
@@ -511,6 +580,8 @@ async function main() {
   validateAiAgentRuntime(roblox.payload, "Roblox");
   validateDiscoveryRuntime(canonical.payload, "Canonical");
   validateDiscoveryRuntime(roblox.payload, "Roblox");
+  validateGalaxyEngineContract(canonical.payload, "Canonical");
+  validateGalaxyEngineContract(roblox.payload, "Roblox");
   validateRuntimeReferences(canonical.payload);
   validateRobloxReferences(roblox.payload);
   assertNoArchitectureLeak("Canonical runtime", canonical.payload);
@@ -522,6 +593,7 @@ async function main() {
       schemaVersion: canonical.payload.metadata?.schemaVersion,
       architectureVersion: canonical.payload.metadata?.architectureVersion,
       universalDiscoveryRegistryVersion: canonical.payload.metadata?.universalDiscoveryRegistryVersion,
+      metadataGalaxyEngineContractVersion: canonical.payload.metadata?.galaxyEngineContractVersion,
       contentVersion: canonical.payload.metadata?.contentVersion,
       checksum: canonical.payload.metadata?.checksum,
       accessLevel: canonical.payload.metadata?.accessLevel,
@@ -539,6 +611,11 @@ async function main() {
       discoveryCategoryCount: canonical.payload.discoveryCategories?.length ?? 0,
       discoveryCount: canonical.payload.discoveries?.length ?? 0,
       universalRegistryEntityTypeCount: canonical.payload.universalDiscoveryRegistry?.entityTypes?.length ?? 0,
+      galaxyEngineContractVersion: canonical.payload.galaxyEngineContract?.version,
+      semanticZoomCount: canonical.payload.galaxyEngineContract?.semanticZoom?.length ?? 0,
+      technologyGateCount: canonical.payload.galaxyEngineContract?.technologyGates?.length ?? 0,
+      knowledgeStateCount: canonical.payload.galaxyEngineContract?.knowledgeVisibility?.length ?? 0,
+      platformRenderingProfileCount: canonical.payload.galaxyEngineContract?.platformRenderingProfiles?.length ?? 0,
       resourceCount: canonical.payload.resources?.length ?? 0,
       upgradeCount: canonical.payload.upgrades?.length ?? 0
     },
@@ -547,6 +624,7 @@ async function main() {
       schemaVersion: roblox.payload.metadata?.schemaVersion,
       architectureVersion: roblox.payload.metadata?.architectureVersion,
       universalDiscoveryRegistryVersion: roblox.payload.metadata?.universalDiscoveryRegistryVersion,
+      metadataGalaxyEngineContractVersion: roblox.payload.metadata?.galaxyEngineContractVersion,
       contentVersion: roblox.payload.metadata?.contentVersion,
       checksum: roblox.payload.metadata?.checksum,
       accessLevel: roblox.payload.metadata?.accessLevel,
@@ -564,6 +642,11 @@ async function main() {
       discoveryCategoryCount: roblox.payload.discoveryCategories?.length ?? 0,
       discoveryCount: roblox.payload.discoveries?.length ?? 0,
       universalRegistryEntityTypeCount: roblox.payload.universalDiscoveryRegistry?.entityTypes?.length ?? 0,
+      galaxyEngineContractVersion: roblox.payload.galaxyEngineContract?.version,
+      semanticZoomCount: roblox.payload.galaxyEngineContract?.semanticZoom?.length ?? 0,
+      technologyGateCount: roblox.payload.galaxyEngineContract?.technologyGates?.length ?? 0,
+      knowledgeStateCount: roblox.payload.galaxyEngineContract?.knowledgeVisibility?.length ?? 0,
+      platformRenderingProfileCount: roblox.payload.galaxyEngineContract?.platformRenderingProfiles?.length ?? 0,
       resourceCount: roblox.payload.resources?.length ?? 0,
       upgradeTabCount: roblox.payload.upgradeTabs?.length ?? 0,
       upgradeCount: roblox.payload.upgrades?.length ?? 0

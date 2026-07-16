@@ -26,6 +26,7 @@ import {
 import { buildEconomyState, economySchemas, priceClamps, type MarketRecord, type ResourceListing, type TradeOpportunity, type TradeRoute } from "@/lib/economy/trade";
 import { generateFaction, generateFallbackFactions, type FactionRecord } from "@/lib/factions/procedural";
 import { defaultEraNavigationProfile, engineEraNavigationOverrides, resolveEraNavigationProfile, supportedEraNavigationBoundaryModes, supportedEraNavigationDashboardModes } from "@/lib/runtime/client-profiles";
+import { galaxyEngineContractVersion, galaxyEnginePresentationContract, validateGalaxyEnginePresentationContract } from "@/lib/runtime/galaxy-engine-contract";
 import { buildMobileClientProfile, mobileAssetRequirements } from "@/lib/runtime/mobile-client-profiles";
 import { gameRuntimeContentVersion, gameRuntimeSchemaVersion } from "@/lib/runtime/game-runtime";
 import {
@@ -190,6 +191,7 @@ type CanonicalModules = {
   discovery_milestones: Array<Omit<(typeof discoveryMilestones)[number], "categoryIds"> & { categoryIds: string[] }>;
   discovery_player_collection_schema: typeof discoveryPlayerCollectionSchema;
   universal_discovery_registry: typeof universalDiscoveryRegistryContract;
+  galaxy_engine_contract: typeof galaxyEnginePresentationContract;
   economy_usage_relationships: ReturnType<typeof buildEconomyUsageRelationships>;
   inventory_resource_metadata: ReturnType<typeof buildInventoryResourceMetadata>;
   economy_schemas: typeof economySchemas;
@@ -607,6 +609,7 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
     discovery_milestones: discoveryMilestones.map((milestone) => ({ ...milestone, categoryIds: [...milestone.categoryIds] })),
     discovery_player_collection_schema: discoveryPlayerCollectionSchema,
     universal_discovery_registry: universalDiscoveryRegistryContract,
+    galaxy_engine_contract: galaxyEnginePresentationContract,
     economy_usage_relationships: buildEconomyUsageRelationships(data),
     inventory_resource_metadata: buildInventoryResourceMetadata(data),
     economy_schemas: economySchemas,
@@ -1422,6 +1425,14 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
   validateMissions(issues, modules);
   validateAiAgentModules(issues, modules);
   validateDiscovery(issues, modules);
+  for (const issue of validateGalaxyEnginePresentationContract(modules.galaxy_engine_contract)) {
+    issues.push({
+      severity: issue.severity,
+      code: issue.code,
+      message: issue.message,
+      records: issue.records
+    });
+  }
   validateTargetSchema(issues, target);
 
   const errorCount = issues.filter((issue) => issue.severity === "error").length;
@@ -1476,6 +1487,10 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
       "discovery collections and chains resolve",
       "universal discovery registry contract is sanitized",
       "universal discovery registry exports no live claim records",
+      "galaxy engine presentation contract is sanitized",
+      "technology gates resolve semantic zoom levels",
+      "knowledge visibility states resolve",
+      "platform rendering profiles are recommendations only",
       "star systems link to sectors",
       "sectors link to galaxies",
       "architectureVersion is sanitized semantic metadata only"
@@ -1488,6 +1503,7 @@ function exportMetadata(validationStatus: ReturnType<typeof validateEngineExport
   return {
     architectureVersion: ARCHITECTURE_VERSION,
     universalDiscoveryRegistryVersion: universalDiscoveryRegistryContract.version,
+    galaxyEngineContractVersion,
     runtimeVersion: gameRuntimeSchemaVersion,
     contentVersion: gameRuntimeContentVersion,
     validationStatus
@@ -1589,6 +1605,7 @@ function compactModules(modules: CanonicalModules) {
     discovery_milestones: modules.discovery_milestones,
     discovery_player_collection_schema: modules.discovery_player_collection_schema,
     universal_discovery_registry: modules.universal_discovery_registry,
+    galaxy_engine_contract: modules.galaxy_engine_contract,
     economy_usage_relationships: modules.economy_usage_relationships,
     inventory_resource_metadata: modules.inventory_resource_metadata,
     economy_schemas: modules.economy_schemas,
