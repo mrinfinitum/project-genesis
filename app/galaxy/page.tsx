@@ -1,4 +1,4 @@
-import { GalaxyLibrary } from "@/components/galaxy-command-center";
+import { InteractiveGalaxyMap } from "@/components/interactive-galaxy-map";
 import { ReferenceScreenWorkflow } from "@/components/reference-screen-workflow";
 
 export default function GalaxyPage() {
@@ -11,7 +11,7 @@ export default function GalaxyPage() {
         handoffHref="/screen-designer/galaxy#handoff"
         screenSpecHref="/screen-designer/galaxy"
       />
-      <GalaxyLibrary />
+      <InteractiveGalaxyMap />
     </div>
   );
 }
