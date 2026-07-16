@@ -245,6 +245,25 @@ type RuntimePayload = {
     provisionalBalanceValues?: Array<{ id: string }>;
     missingCanonicalDefinitions?: Array<{ id: string; type?: string }>;
   };
+  missionExpeditionFramework?: {
+    id?: string;
+    architectureDecisionId?: string;
+    activePlayerStatePolicy?: Record<string, boolean | undefined>;
+    missionTypeDefinitions?: Array<{ id: string; expeditionScopeIds?: string[]; defaultObjectiveTypeIds?: string[]; defaultRewardTypeIds?: string[]; requiredActionIds?: string[] }>;
+    expeditionScopeDefinitions?: Array<{ id: string; requiredRouteDefinitionIds?: string[]; requiredTransportModeIds?: string[] }>;
+    missionLifecycleStateDefinitions?: Array<{ id: string; allowedTransitions?: string[]; terminal?: boolean }>;
+    expeditionLifecycleStateDefinitions?: Array<{ id: string; allowedTransitions?: string[]; missionStateHint?: string; terminal?: boolean }>;
+    missionObjectiveContractDefinitions?: Array<{ id: string; requiredActionIds?: string[] }>;
+    missionRewardContractDefinitions?: Array<{ id: string; allowedForMissionTypeIds?: string[]; gameOwnsClaimState?: boolean }>;
+    missionTemplateDefinitions?: Array<{ id: string; missionTypeId?: string; expeditionScopeId?: string; objectiveTypeIds?: string[]; rewardTypeIds?: string[] }>;
+    expeditionRequirementDefinitions?: Array<{ id: string; resourceIds?: string[]; actionIds?: string[]; routeDefinitionIds?: string[]; transportModeIds?: string[]; gameOwnsAssignmentState?: boolean }>;
+    expeditionRiskDefinitions?: Array<{ id: string; appliesToScopeIds?: string[]; mitigationRequirementIds?: string[] }>;
+    integrationHooks?: Array<{ id: string; referencedIds?: string[]; required?: boolean }>;
+    missionExpeditionPresentationContract?: Array<{ id: string; rendererIndependent?: boolean }>;
+    creativeProductionRequirements?: Array<{ id: string; category?: string }>;
+    assetLibraryCategories?: Array<{ id: string; groups?: string[] }>;
+    missingCanonicalDefinitions?: Array<{ id: string; type?: string }>;
+  };
   upgradeCategories?: Array<{ id: string }>;
   upgrades?: Array<{ id: string; categoryId?: string; tabId?: string; eraId?: string; costResourceId?: string | null; costEconomyId?: string | null }>;
   buildingLibrary?: Array<{ id: string }>;
@@ -938,6 +957,78 @@ function validateResourceEconomyLogisticsFramework(payload: RuntimePayload | Rob
   assert(!/"(?:playerInventories|activeShipments|marketOrders|liveStockpiles|routeInstances|transportAssignments)"\s*:|\/Users\/|studio-private:\/\//i.test(JSON.stringify(framework)), `${label} Resource Economy & Logistics Framework leaked player state or private paths.`);
 }
 
+function validateMissionExpeditionFramework(payload: RuntimePayload | RobloxPayload, label: string) {
+  const framework = payload.missionExpeditionFramework;
+  const resourceIds = new Set(payload.resources?.map((resource) => resource.id) ?? []);
+  const actionIds = new Set(payload.actionSystem?.actionDefinitions?.map((action) => action.id) ?? []);
+  const routeIds = new Set(payload.resourceEconomyLogisticsFramework?.logisticsRouteDefinitions?.map((route) => route.id) ?? []);
+  const transportIds = new Set(payload.resourceEconomyLogisticsFramework?.transportModeDefinitions?.map((transport) => transport.id) ?? []);
+  const missionTypeIds = new Set(framework?.missionTypeDefinitions?.map((definition) => definition.id) ?? []);
+  const scopeIds = new Set(framework?.expeditionScopeDefinitions?.map((definition) => definition.id) ?? []);
+  const objectiveIds = new Set(framework?.missionObjectiveContractDefinitions?.map((definition) => definition.id) ?? []);
+  const rewardIds = new Set(framework?.missionRewardContractDefinitions?.map((definition) => definition.id) ?? []);
+  const missionStateIds = new Set(framework?.missionLifecycleStateDefinitions?.map((definition) => definition.id) ?? []);
+  const expeditionStateIds = new Set(framework?.expeditionLifecycleStateDefinitions?.map((definition) => definition.id) ?? []);
+  const requirementIds = new Set(framework?.expeditionRequirementDefinitions?.map((definition) => definition.id) ?? []);
+
+  assert(framework?.id === "mission_expedition_framework_v1", `${label} must publish mission_expedition_framework_v1.`);
+  assert(framework?.architectureDecisionId === "ARCH-DECISION-MISSION-EXPEDITION-FRAMEWORK", `${label} Mission & Expedition architecture decision mismatch.`);
+  assert(framework?.activePlayerStatePolicy && Object.values(framework.activePlayerStatePolicy).every((value) => value === false), `${label} must not export player mission/expedition state.`);
+  assert((framework?.missionTypeDefinitions?.length ?? 0) === 10, `${label} must publish 10 mission type definitions.`);
+  assert((framework?.expeditionScopeDefinitions?.length ?? 0) === 6, `${label} must publish 6 expedition scopes.`);
+  assert((framework?.missionLifecycleStateDefinitions?.length ?? 0) === 10, `${label} must publish 10 mission lifecycle states.`);
+  assert((framework?.expeditionLifecycleStateDefinitions?.length ?? 0) === 11, `${label} must publish 11 expedition lifecycle states.`);
+  assert((framework?.missionObjectiveContractDefinitions?.length ?? 0) === 20, `${label} must publish 20 mission objective contracts.`);
+  assert((framework?.missionRewardContractDefinitions?.length ?? 0) === 12, `${label} must publish 12 mission reward contracts.`);
+  assert((framework?.missionTemplateDefinitions?.length ?? 0) === 6, `${label} must publish 6 mission templates.`);
+  assert((framework?.expeditionRequirementDefinitions?.length ?? 0) === 5, `${label} must publish 5 expedition requirements.`);
+  assert((framework?.expeditionRiskDefinitions?.length ?? 0) === 3, `${label} must publish 3 expedition risks.`);
+  assert((framework?.integrationHooks?.length ?? 0) === 9, `${label} must publish integration hooks for dependent systems.`);
+
+  for (const type of framework?.missionTypeDefinitions ?? []) {
+    for (const id of type.expeditionScopeIds ?? []) assert(scopeIds.has(id), `${label} mission type ${type.id} scope ${id} does not resolve.`);
+    for (const id of type.defaultObjectiveTypeIds ?? []) assert(objectiveIds.has(id), `${label} mission type ${type.id} objective ${id} does not resolve.`);
+    for (const id of type.defaultRewardTypeIds ?? []) assert(rewardIds.has(id), `${label} mission type ${type.id} reward ${id} does not resolve.`);
+    for (const id of type.requiredActionIds ?? []) assert(actionIds.has(id), `${label} mission type ${type.id} action ${id} does not resolve.`);
+  }
+  for (const scope of framework?.expeditionScopeDefinitions ?? []) {
+    for (const id of scope.requiredRouteDefinitionIds ?? []) assert(routeIds.has(id), `${label} expedition scope ${scope.id} route ${id} does not resolve.`);
+    for (const id of scope.requiredTransportModeIds ?? []) assert(transportIds.has(id), `${label} expedition scope ${scope.id} transport ${id} does not resolve.`);
+  }
+  for (const state of framework?.missionLifecycleStateDefinitions ?? []) for (const id of state.allowedTransitions ?? []) assert(missionStateIds.has(id), `${label} mission state ${state.id} transition ${id} does not resolve.`);
+  for (const state of framework?.expeditionLifecycleStateDefinitions ?? []) {
+    assert(state.missionStateHint && missionStateIds.has(state.missionStateHint), `${label} expedition state ${state.id} mission hint does not resolve.`);
+    for (const id of state.allowedTransitions ?? []) assert(expeditionStateIds.has(id), `${label} expedition state ${state.id} transition ${id} does not resolve.`);
+  }
+  for (const objective of framework?.missionObjectiveContractDefinitions ?? []) for (const id of objective.requiredActionIds ?? []) assert(actionIds.has(id), `${label} objective ${objective.id} action ${id} does not resolve.`);
+  for (const reward of framework?.missionRewardContractDefinitions ?? []) {
+    assert(reward.gameOwnsClaimState === true, `${label} reward ${reward.id} claim state must be Game-owned.`);
+    for (const id of reward.allowedForMissionTypeIds ?? []) assert(missionTypeIds.has(id), `${label} reward ${reward.id} mission type ${id} does not resolve.`);
+  }
+  for (const template of framework?.missionTemplateDefinitions ?? []) {
+    assert(template.missionTypeId && missionTypeIds.has(template.missionTypeId), `${label} template ${template.id} mission type does not resolve.`);
+    assert(template.expeditionScopeId && scopeIds.has(template.expeditionScopeId), `${label} template ${template.id} scope does not resolve.`);
+    for (const id of template.objectiveTypeIds ?? []) assert(objectiveIds.has(id), `${label} template ${template.id} objective ${id} does not resolve.`);
+    for (const id of template.rewardTypeIds ?? []) assert(rewardIds.has(id), `${label} template ${template.id} reward ${id} does not resolve.`);
+  }
+  for (const requirement of framework?.expeditionRequirementDefinitions ?? []) {
+    assert(requirement.gameOwnsAssignmentState === true, `${label} requirement ${requirement.id} assignment state must be Game-owned.`);
+    for (const id of requirement.resourceIds ?? []) assert(resourceIds.has(id) || id.startsWith("ECON-"), `${label} requirement ${requirement.id} resource ${id} does not resolve.`);
+    for (const id of requirement.actionIds ?? []) assert(actionIds.has(id), `${label} requirement ${requirement.id} action ${id} does not resolve.`);
+    for (const id of requirement.routeDefinitionIds ?? []) assert(routeIds.has(id), `${label} requirement ${requirement.id} route ${id} does not resolve.`);
+    for (const id of requirement.transportModeIds ?? []) assert(transportIds.has(id), `${label} requirement ${requirement.id} transport ${id} does not resolve.`);
+  }
+  for (const risk of framework?.expeditionRiskDefinitions ?? []) {
+    for (const id of risk.appliesToScopeIds ?? []) assert(scopeIds.has(id), `${label} risk ${risk.id} scope ${id} does not resolve.`);
+    for (const id of risk.mitigationRequirementIds ?? []) assert(requirementIds.has(id), `${label} risk ${risk.id} mitigation requirement ${id} does not resolve.`);
+  }
+  for (const hook of framework?.integrationHooks ?? []) if (hook.required) assert((hook.referencedIds?.length ?? 0) > 0, `${label} integration hook ${hook.id} must have references.`);
+  for (const contract of framework?.missionExpeditionPresentationContract ?? []) assert(contract.rendererIndependent === true, `${label} presentation contract ${contract.id} must be renderer-independent.`);
+  assert(framework?.creativeProductionRequirements?.some((item) => item.category === "Missions & Expeditions"), `${label} must publish Creative Production mission requirements.`);
+  assert(framework?.assetLibraryCategories?.some((category) => category.id === "missions_expeditions" && (category.groups?.length ?? 0) >= 7), `${label} must publish Asset Library mission category.`);
+  assert(!/"(?:acceptedMissionRecords|activeExpeditionRecords|objectiveProgressRecords|rewardClaimRecords|crewAssignmentRecords|playerMissionHistoryRecords)"\s*:|\/Users\/|studio-private:\/\//i.test(JSON.stringify(framework)), `${label} Mission & Expedition Framework leaked player state or private paths.`);
+}
+
 function validateActionSystem(payload: RuntimePayload | RobloxPayload, label: string) {
   const timeContract = payload.timeActionContract;
   const actionSystem = payload.actionSystem;
@@ -1304,8 +1395,8 @@ async function main() {
   assert(roblox.payload.metadata?.accessLevel === "public-published", "Roblox accessLevel must be public-published.");
   assert(roblox.payload.metadata?.validationStatus, "Roblox validation status is missing.");
   assert((canonical.payload.eras?.length ?? 0) > 0, "Canonical payload must include at least one era.");
-  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 29, "Canonical contentVersion must be at least 29 after Resource Economy & Logistics Framework.");
-  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 29, "Roblox contentVersion must be at least 29 after Resource Economy & Logistics Framework.");
+  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 30, "Canonical contentVersion must be at least 30 after Mission & Expedition Framework.");
+  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 30, "Roblox contentVersion must be at least 30 after Mission & Expedition Framework.");
 
   validateEraNavigation(canonical.payload, "Canonical");
   validateEraNavigation(roblox.payload, "Roblox");
@@ -1335,6 +1426,8 @@ async function main() {
   validateColonizationFramework(roblox.payload, "Roblox");
   validateResourceEconomyLogisticsFramework(canonical.payload, "Canonical");
   validateResourceEconomyLogisticsFramework(roblox.payload, "Roblox");
+  validateMissionExpeditionFramework(canonical.payload, "Canonical");
+  validateMissionExpeditionFramework(roblox.payload, "Roblox");
   validateRuntimeReferences(canonical.payload);
   validateRobloxReferences(roblox.payload);
   assertNoArchitectureLeak("Canonical runtime", canonical.payload);
@@ -1382,6 +1475,9 @@ async function main() {
       logisticsRouteCount: canonical.payload.resourceEconomyLogisticsFramework?.logisticsRouteDefinitions?.length ?? 0,
       transportModeCount: canonical.payload.resourceEconomyLogisticsFramework?.transportModeDefinitions?.length ?? 0,
       shipmentStateCount: canonical.payload.resourceEconomyLogisticsFramework?.shipmentStateDefinitions?.length ?? 0,
+      missionTypeCount: canonical.payload.missionExpeditionFramework?.missionTypeDefinitions?.length ?? 0,
+      expeditionScopeCount: canonical.payload.missionExpeditionFramework?.expeditionScopeDefinitions?.length ?? 0,
+      missionTemplateCount: canonical.payload.missionExpeditionFramework?.missionTemplateDefinitions?.length ?? 0,
       resourceCount: canonical.payload.resources?.length ?? 0,
       upgradeCount: canonical.payload.upgrades?.length ?? 0
     },
@@ -1426,6 +1522,9 @@ async function main() {
       logisticsRouteCount: roblox.payload.resourceEconomyLogisticsFramework?.logisticsRouteDefinitions?.length ?? 0,
       transportModeCount: roblox.payload.resourceEconomyLogisticsFramework?.transportModeDefinitions?.length ?? 0,
       shipmentStateCount: roblox.payload.resourceEconomyLogisticsFramework?.shipmentStateDefinitions?.length ?? 0,
+      missionTypeCount: roblox.payload.missionExpeditionFramework?.missionTypeDefinitions?.length ?? 0,
+      expeditionScopeCount: roblox.payload.missionExpeditionFramework?.expeditionScopeDefinitions?.length ?? 0,
+      missionTemplateCount: roblox.payload.missionExpeditionFramework?.missionTemplateDefinitions?.length ?? 0,
       resourceCount: roblox.payload.resources?.length ?? 0,
       upgradeTabCount: roblox.payload.upgradeTabs?.length ?? 0,
       upgradeCount: roblox.payload.upgrades?.length ?? 0

@@ -14,6 +14,7 @@ import { getGameData } from "@/lib/data";
 import { canonicalDiscoveries, discoveryCategories, discoveryChains, discoveryCollections, discoveryMilestones, discoveryPlayerCollectionSchema, discoveryRarities, validateDiscoverySystem } from "@/lib/discovery";
 import { universalDiscoveryRegistryContract, universalDiscoveryRegistryVersion, validateUniversalDiscoveryRegistryContract } from "@/lib/discovery/universal-registry";
 import { resourceEconomyLogisticsFramework, validateResourceEconomyLogisticsFramework } from "@/lib/economy/logistics-framework";
+import { missionExpeditionFramework, validateMissionExpeditionFramework } from "@/lib/missions/framework";
 import {
   buildEconomyUsageRelationships,
   buildBuildingResourceEffects,
@@ -61,7 +62,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 29;
+export const gameRuntimeContentVersion = 30;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -104,6 +105,7 @@ export type RobloxRuntimeExportPayload = {
   civilizationProgressionFramework: GameRuntimeData["civilizationProgressionFramework"];
   colonizationFramework: GameRuntimeData["colonizationFramework"];
   resourceEconomyLogisticsFramework: GameRuntimeData["resourceEconomyLogisticsFramework"];
+  missionExpeditionFramework: GameRuntimeData["missionExpeditionFramework"];
   resources: ResourceDefinition[];
   buildingTaxonomy: GameRuntimeData["buildingTaxonomy"];
   buildingLibrary: GameRuntimeData["buildingLibrary"];
@@ -931,6 +933,87 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
       provisionalBalanceValues: [...runtimeData.resourceEconomyLogisticsFramework.provisionalBalanceValues].sort(byId),
       validationRules: [...runtimeData.resourceEconomyLogisticsFramework.validationRules].sort()
     },
+    missionExpeditionFramework: {
+      ...runtimeData.missionExpeditionFramework,
+      missionTypeDefinitions: [...runtimeData.missionExpeditionFramework.missionTypeDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        expeditionScopeIds: [...definition.expeditionScopeIds].sort(),
+        defaultObjectiveTypeIds: [...definition.defaultObjectiveTypeIds].sort(),
+        defaultRewardTypeIds: [...definition.defaultRewardTypeIds].sort(),
+        requiredActionIds: [...definition.requiredActionIds].sort(),
+        relatedSystemIds: [...definition.relatedSystemIds].sort()
+      })),
+      expeditionScopeDefinitions: [...runtimeData.missionExpeditionFramework.expeditionScopeDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        validTargetTypes: [...definition.validTargetTypes].sort(),
+        requiredRouteDefinitionIds: [...definition.requiredRouteDefinitionIds].sort(),
+        requiredTransportModeIds: [...definition.requiredTransportModeIds].sort(),
+        hazardPolicyIds: [...definition.hazardPolicyIds].sort()
+      })),
+      missionLifecycleStateDefinitions: [...runtimeData.missionExpeditionFramework.missionLifecycleStateDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        allowedTransitions: [...definition.allowedTransitions].sort()
+      })),
+      expeditionLifecycleStateDefinitions: [...runtimeData.missionExpeditionFramework.expeditionLifecycleStateDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        allowedTransitions: [...definition.allowedTransitions].sort()
+      })),
+      missionObjectiveContractDefinitions: [...runtimeData.missionExpeditionFramework.missionObjectiveContractDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        targetTypes: [...definition.targetTypes].sort(),
+        requiredActionIds: [...definition.requiredActionIds].sort(),
+        requiredKnowledgeStates: [...definition.requiredKnowledgeStates].sort()
+      })),
+      missionRewardContractDefinitions: [...runtimeData.missionExpeditionFramework.missionRewardContractDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        allowedForMissionTypeIds: [...definition.allowedForMissionTypeIds].sort()
+      })),
+      missionTemplateDefinitions: [...runtimeData.missionExpeditionFramework.missionTemplateDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        objectiveTypeIds: [...definition.objectiveTypeIds].sort(),
+        rewardTypeIds: [...definition.rewardTypeIds].sort(),
+        prerequisiteResearchIds: [...definition.prerequisiteResearchIds].sort(),
+        prerequisiteDiscoveryStateIds: [...definition.prerequisiteDiscoveryStateIds].sort()
+      })),
+      expeditionRequirementDefinitions: [...runtimeData.missionExpeditionFramework.expeditionRequirementDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        resourceIds: [...definition.resourceIds].sort(),
+        actionIds: [...definition.actionIds].sort(),
+        routeDefinitionIds: [...definition.routeDefinitionIds].sort(),
+        transportModeIds: [...definition.transportModeIds].sort()
+      })),
+      expeditionRiskDefinitions: [...runtimeData.missionExpeditionFramework.expeditionRiskDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        appliesToScopeIds: [...definition.appliesToScopeIds].sort(),
+        hazardProfileIds: [...definition.hazardProfileIds].sort(),
+        failureCauseIds: [...definition.failureCauseIds].sort(),
+        mitigationRequirementIds: [...definition.mitigationRequirementIds].sort()
+      })),
+      missionGenerationRules: [...runtimeData.missionExpeditionFramework.missionGenerationRules].sort(byId).map((rule) => ({
+        ...rule,
+        inputs: [...rule.inputs].sort(),
+        rejectsWhen: [...rule.rejectsWhen].sort()
+      })),
+      integrationHooks: [...runtimeData.missionExpeditionFramework.integrationHooks].sort(byId).map((hook) => ({
+        ...hook,
+        referencedIds: [...hook.referencedIds].sort()
+      })),
+      aiAutomationRules: [...runtimeData.missionExpeditionFramework.aiAutomationRules].sort(),
+      missionExpeditionPresentationContract: [...runtimeData.missionExpeditionFramework.missionExpeditionPresentationContract].sort(byId).map((contract) => ({
+        ...contract,
+        semanticFields: [...contract.semanticFields].sort()
+      })),
+      creativeProductionRequirements: [...runtimeData.missionExpeditionFramework.creativeProductionRequirements].sort(byId),
+      assetLibraryCategories: [...runtimeData.missionExpeditionFramework.assetLibraryCategories].sort(byId).map((category) => ({
+        ...category,
+        groups: [...category.groups].sort()
+      })),
+      missingCanonicalDefinitions: [...runtimeData.missionExpeditionFramework.missingCanonicalDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        referencedBy: [...definition.referencedBy].sort()
+      })),
+      validationRules: [...runtimeData.missionExpeditionFramework.validationRules].sort()
+    },
     resources: [...runtimeData.resources].sort(byId),
     buildingTaxonomy: [...runtimeData.buildingTaxonomy].sort(byDisplayOrderThenId).map((family) => ({
       ...family,
@@ -1681,6 +1764,14 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   })) {
     issues.push(issue);
   }
+  for (const issue of validateMissionExpeditionFramework(runtimeData.missionExpeditionFramework, {
+    resourceIds: new Set(runtimeData.resources.map((resource) => resource.id)),
+    actionIds: new Set(runtimeData.actionSystem.actionDefinitions.map((action) => action.id)),
+    routeIds: new Set(runtimeData.resourceEconomyLogisticsFramework.logisticsRouteDefinitions.map((route) => route.id)),
+    transportModeIds: new Set(runtimeData.resourceEconomyLogisticsFramework.transportModeDefinitions.map((transport) => transport.id))
+  })) {
+    issues.push(issue);
+  }
   validateBuildingTaxonomyRuntime(runtimeData, issues);
   const categoryPresentationValidation = validateUpgradeCategoryPresentation({ categories: runtimeData.upgradeCategories });
   for (const message of categoryPresentationValidation.issues) {
@@ -1860,6 +1951,7 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     civilizationProgressionFramework: sorted.civilizationProgressionFramework,
     colonizationFramework: sorted.colonizationFramework,
     resourceEconomyLogisticsFramework: sorted.resourceEconomyLogisticsFramework,
+    missionExpeditionFramework: sorted.missionExpeditionFramework,
     resources: sorted.resources,
     buildingTaxonomy: sorted.buildingTaxonomy,
     buildingLibrary: sorted.buildingLibrary,
@@ -1964,6 +2056,14 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
     planetDevelopmentFrameworkId: payload.planetDevelopmentFramework.id,
     civilizationProgressionFrameworkId: payload.civilizationProgressionFramework.id,
     colonizationFrameworkId: payload.colonizationFramework.id
+  })) {
+    issues.push(issue);
+  }
+  for (const issue of validateMissionExpeditionFramework(payload.missionExpeditionFramework, {
+    resourceIds: new Set(payload.resources.map((resource) => resource.id)),
+    actionIds: new Set(payload.actionSystem.actionDefinitions.map((action) => action.id)),
+    routeIds: new Set(payload.resourceEconomyLogisticsFramework.logisticsRouteDefinitions.map((route) => route.id)),
+    transportModeIds: new Set(payload.resourceEconomyLogisticsFramework.transportModeDefinitions.map((transport) => transport.id))
   })) {
     issues.push(issue);
   }
@@ -2113,6 +2213,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     civilizationProgressionFramework,
     colonizationFramework,
     resourceEconomyLogisticsFramework,
+    missionExpeditionFramework,
     resources: ResourceService.catalog.map(resourceToRuntime),
     buildingTaxonomy: canonicalBuildingTaxonomy,
     buildingLibrary: canonicalBuildingLibrary,
@@ -2174,6 +2275,7 @@ export async function getGameRuntimeData() {
     civilizationProgressionFramework: base.civilizationProgressionFramework,
     colonizationFramework: base.colonizationFramework,
     resourceEconomyLogisticsFramework: base.resourceEconomyLogisticsFramework,
+    missionExpeditionFramework: base.missionExpeditionFramework,
     resources: base.resources,
     balance: {
       ...store.appliedRuntimeData.balance,
@@ -2390,6 +2492,7 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     civilizationProgressionFramework: base.civilizationProgressionFramework,
     colonizationFramework: base.colonizationFramework,
     resourceEconomyLogisticsFramework: base.resourceEconomyLogisticsFramework,
+    missionExpeditionFramework: base.missionExpeditionFramework,
     resources: base.resources,
     buildingTaxonomy: base.buildingTaxonomy,
     buildingLibrary: base.buildingLibrary,

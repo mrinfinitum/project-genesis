@@ -2220,6 +2220,232 @@ export type ResourceEconomyLogisticsFrameworkContract = {
   validationRules: string[];
 };
 
+export type MissionExpeditionTypeId =
+  | "exploration"
+  | "survey"
+  | "research"
+  | "colonization"
+  | "logistics"
+  | "trade"
+  | "rescue"
+  | "archaeology"
+  | "diplomacy"
+  | "security";
+
+export type ExpeditionScopeId = "local" | "planetary" | "orbital" | "interplanetary" | "interstellar" | "galactic";
+export type MissionLifecycleStateId = "locked" | "available" | "accepted" | "preparing" | "in_progress" | "ready_to_complete" | "completed" | "failed" | "expired" | "abandoned";
+export type ExpeditionLifecycleStateId = "draft" | "planned" | "assembling" | "launch_ready" | "en_route" | "operating" | "returning" | "completed" | "failed" | "recalled" | "lost";
+export type MissionObjectiveContractId =
+  | "scan_sector"
+  | "scan_star_system"
+  | "scan_planet"
+  | "survey_body"
+  | "discover_resource"
+  | "discover_faction"
+  | "chart_location"
+  | "claim_planet"
+  | "colonize_planet"
+  | "establish_colony"
+  | "construct_building"
+  | "produce_resource"
+  | "deliver_resource"
+  | "establish_trade_route"
+  | "stabilize_market"
+  | "resolve_shortage"
+  | "escort_route"
+  | "survey_anomaly"
+  | "analyze_artifact"
+  | "complete_research";
+export type MissionRewardContractId = "discovery_points" | "credits" | "resource" | "research_points" | "research_unlock" | "faction_reputation" | "colony_bonus" | "trade_access" | "unique_item" | "title" | "collectible" | "civilization_influence";
+export type MissionDifficultyContractId = "trivial" | "easy" | "moderate" | "hard" | "extreme" | "legendary";
+
+export type MissionExpeditionTypeDefinition = {
+  id: MissionExpeditionTypeId;
+  displayName: string;
+  description: string;
+  expeditionScopeIds: ExpeditionScopeId[];
+  defaultObjectiveTypeIds: MissionObjectiveContractId[];
+  defaultRewardTypeIds: MissionRewardContractId[];
+  requiredActionIds: string[];
+  relatedSystemIds: string[];
+  presentationToken: string;
+  status: "approved" | "provisional";
+};
+
+export type ExpeditionScopeDefinition = {
+  id: ExpeditionScopeId;
+  displayName: string;
+  minimumTechnologyGateId: string;
+  validTargetTypes: string[];
+  requiredRouteDefinitionIds: LogisticsRouteDefinitionId[];
+  requiredTransportModeIds: TransportModeDefinitionId[];
+  maximumDistancePolicy: string;
+  durationPolicyId: string;
+  hazardPolicyIds: string[];
+  status: "approved" | "provisional";
+};
+
+export type MissionLifecycleStateDefinition = {
+  id: MissionLifecycleStateId;
+  displayName: string;
+  terminal: boolean;
+  playerVisible: boolean;
+  allowedTransitions: MissionLifecycleStateId[];
+  presentationToken: string;
+};
+
+export type ExpeditionLifecycleStateDefinition = {
+  id: ExpeditionLifecycleStateId;
+  displayName: string;
+  terminal: boolean;
+  allowedTransitions: ExpeditionLifecycleStateId[];
+  missionStateHint: MissionLifecycleStateId;
+  presentationToken: string;
+};
+
+export type MissionObjectiveContractDefinition = {
+  id: MissionObjectiveContractId;
+  displayName: string;
+  targetTypes: string[];
+  requiredActionIds: string[];
+  requiredKnowledgeStates: string[];
+  progressSource: "action_completion" | "discovery_event" | "resource_delivery" | "construction_completion" | "research_completion" | "market_event" | "manual_game_event";
+  deterministicProgressKey: string;
+  validationRule: string;
+};
+
+export type MissionRewardContractDefinition = {
+  id: MissionRewardContractId;
+  displayName: string;
+  rewardSource: "economy" | "resource_catalog" | "research" | "faction" | "colony" | "trade" | "discovery" | "encyclopedia" | "identity";
+  gameOwnsClaimState: true;
+  allowedForMissionTypeIds: MissionExpeditionTypeId[];
+  validationRule: string;
+};
+
+export type MissionTemplateDefinition = {
+  id: string;
+  displayName: string;
+  missionTypeId: MissionExpeditionTypeId;
+  expeditionScopeId: ExpeditionScopeId;
+  difficultyId: MissionDifficultyContractId;
+  objectiveTypeIds: MissionObjectiveContractId[];
+  rewardTypeIds: MissionRewardContractId[];
+  prerequisiteResearchIds: string[];
+  prerequisiteDiscoveryStateIds: string[];
+  targetSelectionRule: string;
+  deterministicSeedRule: string;
+  repeatPolicy: "once" | "repeatable" | "daily" | "event_limited";
+  expirationPolicy: "none" | "time_limited_game_owned" | "event_window_game_owned";
+  status: "approved" | "provisional";
+};
+
+export type ExpeditionRequirementDefinition = {
+  id: string;
+  displayName: string;
+  requirementType: "crew" | "vehicle" | "resource" | "fuel" | "supply" | "equipment" | "technology" | "route" | "knowledge" | "logistics_capacity";
+  resourceIds: string[];
+  actionIds: string[];
+  routeDefinitionIds: LogisticsRouteDefinitionId[];
+  transportModeIds: TransportModeDefinitionId[];
+  minimumQuantity: number;
+  gameOwnsAssignmentState: true;
+  notes: string;
+};
+
+export type ExpeditionRiskDefinition = {
+  id: string;
+  displayName: string;
+  appliesToScopeIds: ExpeditionScopeId[];
+  hazardProfileIds: string[];
+  failureCauseIds: string[];
+  mitigationRequirementIds: string[];
+  deterministicFormula: string;
+  status: "approved" | "provisional";
+};
+
+export type MissionExpeditionIntegrationHook = {
+  id: string;
+  systemId: "action_system" | "planet_development" | "civilization_identity" | "civilization_progression" | "colonization" | "resource_economy_logistics" | "discovery" | "universal_discovery_registry" | "encyclopedia";
+  referencedIds: string[];
+  contractRule: string;
+  required: boolean;
+};
+
+export type MissionExpeditionPresentationContract = {
+  id:
+    | "MissionBoard"
+    | "MissionCard"
+    | "MissionDetail"
+    | "ObjectiveChecklist"
+    | "RewardSummary"
+    | "ExpeditionPlanner"
+    | "ExpeditionLoadout"
+    | "ExpeditionTimeline"
+    | "RiskSummary"
+    | "MissionCompletion"
+    | "MissionHistory";
+  displayName: string;
+  rendererIndependent: true;
+  semanticFields: string[];
+  notes: string;
+};
+
+export type MissionExpeditionMissingCanonicalDefinition = {
+  id: string;
+  type: "resource" | "building" | "action" | "research" | "progression_milestone" | "asset" | "encyclopedia_entry";
+  displayName: string;
+  referencedBy: string[];
+  severity: "warning" | "info";
+  recommendedOwner: "Resource Catalog" | "Building Library" | "Action System" | "Research" | "Civilization Progression" | "Asset Library" | "Encyclopedia";
+  notes: string;
+};
+
+export type MissionExpeditionFrameworkContract = {
+  id: "mission_expedition_framework_v1";
+  version: "1.0.0";
+  architectureDecisionId: "ARCH-DECISION-MISSION-EXPEDITION-FRAMEWORK";
+  actionSystemId: ActionSystemContract["id"];
+  planetDevelopmentFrameworkId: PlanetDevelopmentFrameworkContract["id"];
+  civilizationProgressionFrameworkId: CivilizationProgressionFrameworkContract["id"];
+  colonizationFrameworkId: ColonizationFrameworkContract["id"];
+  resourceEconomyLogisticsFrameworkId: ResourceEconomyLogisticsFrameworkContract["id"];
+  universalDiscoveryRegistryVersion: string;
+  calculationVersion: string;
+  ownership: {
+    studioOwns: string[];
+    gameOwns: string[];
+  };
+  activePlayerStatePolicy: {
+    exportsAcceptedMissions: false;
+    exportsActiveExpeditions: false;
+    exportsObjectiveProgress: false;
+    exportsRewardClaims: false;
+    exportsCrewAssignments: false;
+    exportsTimestamps: false;
+    exportsPlayerMissionHistory: false;
+  };
+  missionTypeDefinitions: MissionExpeditionTypeDefinition[];
+  expeditionScopeDefinitions: ExpeditionScopeDefinition[];
+  missionLifecycleStateDefinitions: MissionLifecycleStateDefinition[];
+  expeditionLifecycleStateDefinitions: ExpeditionLifecycleStateDefinition[];
+  missionObjectiveContractDefinitions: MissionObjectiveContractDefinition[];
+  missionRewardContractDefinitions: MissionRewardContractDefinition[];
+  missionTemplateDefinitions: MissionTemplateDefinition[];
+  expeditionRequirementDefinitions: ExpeditionRequirementDefinition[];
+  expeditionRiskDefinitions: ExpeditionRiskDefinition[];
+  missionGenerationRules: Array<{ id: string; displayName: string; deterministic: true; inputs: string[]; rejectsWhen: string[]; notes: string }>;
+  missionInstanceSchema: Record<string, string>;
+  expeditionInstanceSchema: Record<string, string>;
+  integrationHooks: MissionExpeditionIntegrationHook[];
+  aiAutomationRules: string[];
+  missionExpeditionPresentationContract: MissionExpeditionPresentationContract[];
+  creativeProductionRequirements: Array<{ id: string; displayName: string; category: "Missions & Expeditions"; status: "required" | "planned"; notes: string }>;
+  assetLibraryCategories: Array<{ id: string; displayName: string; groups: string[]; notes: string }>;
+  missingCanonicalDefinitions: MissionExpeditionMissingCanonicalDefinition[];
+  validationRules: string[];
+};
+
 export type ActionSystemCategory = {
   id: string;
   displayName: string;
@@ -2620,6 +2846,7 @@ export type GameRuntimeData = {
   civilizationProgressionFramework: CivilizationProgressionFrameworkContract;
   colonizationFramework: ColonizationFrameworkContract;
   resourceEconomyLogisticsFramework: ResourceEconomyLogisticsFrameworkContract;
+  missionExpeditionFramework: MissionExpeditionFrameworkContract;
   clientProfiles: ClientProfiles;
 };
 

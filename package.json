@@ -23,6 +23,7 @@
     "verify:colony-types": "tsx scripts/verify-colony-types.ts",
     "verify:colony-projects": "tsx scripts/verify-colony-projects.ts",
     "verify:resource-economy-logistics": "tsx scripts/verify-resource-economy-logistics.ts",
+    "verify:mission-expedition-framework": "tsx scripts/verify-mission-expedition-framework.ts",
     "verify:logistics-routes": "tsx scripts/verify-logistics-routes.ts",
     "verify:production-chains": "tsx scripts/verify-production-chains.ts",
     "verify:resource-flows": "tsx scripts/verify-resource-flows.ts",
