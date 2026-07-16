@@ -1,17 +1,15 @@
-import { InteractiveGalaxyMap } from "@/components/interactive-galaxy-map";
-import { ReferenceScreenWorkflow } from "@/components/reference-screen-workflow";
+import { GeneratedUniverseLibrary } from "@/components/generated-universe-library";
+import { getUniverseLibraryRecords } from "@/lib/universe/library";
 
-export default function GalaxyPage() {
+export default function GalaxyLibraryPage() {
   return (
-    <div className="space-y-6">
-      <ReferenceScreenWorkflow
-        featureId="galaxy"
-        assetsHref="/asset-library?screen=galaxy"
-        componentsHref="/component-library?screen=galaxy"
-        handoffHref="/screen-designer/galaxy#handoff"
-        screenSpecHref="/screen-designer/galaxy"
-      />
-      <InteractiveGalaxyMap />
-    </div>
+    <GeneratedUniverseLibrary
+      kind="galaxies"
+      title="Galaxy Library"
+      description="Manage canonical generated galaxy records that can be exported and consumed by the Game."
+      generateLabel="Generate Galaxy"
+      records={getUniverseLibraryRecords("galaxies")}
+      emptyMessage="No generated galaxies yet."
+    />
   );
 }

@@ -94,6 +94,7 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/content-authoring", label: "Content Authoring", icon: CopyPlus },
       { href: "/research", label: "Research Designer", icon: FlaskConical },
       { href: "/unlock-matrix", label: "Unlock Matrix", icon: GitBranch },
+      { href: "/exploration-progression", label: "Exploration Progression", icon: Compass },
       { href: "/upgrades", label: "Upgrade Designer", icon: Gauge },
       { href: "/buildings", label: "Building Designer", icon: Building2 },
       { href: "/wonders", label: "Wonder Designer", icon: Sparkles },

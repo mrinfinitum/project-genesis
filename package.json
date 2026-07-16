@@ -46,29 +46,20 @@
     "cleanup:remote-psd": "tsx scripts/cleanup-remote-psd-sources.ts",
     "generate:component-previews": "tsx scripts/generate-component-preview-specimens.ts",
     "verify:visual-previews": "tsx scripts/verify-visual-previews.ts",
-    "verify:galaxy-map": "tsx scripts/verify-galaxy-map.ts",
-    "verify:galaxy-interaction": "tsx scripts/verify-galaxy-interaction.ts",
-    "verify:galaxy-rendering": "tsx scripts/verify-galaxy-rendering.ts",
-    "verify:galaxy-coordinates": "tsx scripts/verify-galaxy-coordinates.ts",
-    "verify:galaxy-navigation-ranges": "tsx scripts/verify-galaxy-navigation-ranges.ts",
+    "verify:universe-libraries": "tsx scripts/verify-universe-libraries.ts",
     "verify:mobile-readiness": "npm run verify:mobile-profiles",
     "sync:studio-runtime": "tsx scripts/sync-studio-runtime.ts"
   },
   "dependencies": {
-    "@react-three/drei": "^10.7.7",
-    "@react-three/fiber": "^9.6.1",
-    "@react-three/postprocessing": "^3.0.4",
     "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.45.4",
     "ag-psd": "^31.0.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.468.0",
     "next": "^15.1.0",
-    "postprocessing": "^6.39.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "tailwind-merge": "^2.5.5",
-    "three": "^0.185.1"
+    "tailwind-merge": "^2.5.5"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
