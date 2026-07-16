@@ -1274,6 +1274,135 @@ export type PlanetDevelopmentFrameworkContract = {
   validationRules: string[];
 };
 
+export type CivilizationProgressionStageId = "survival" | "settlement" | "planetary" | "interplanetary" | "interstellar" | "galactic" | "intergalactic" | "ascendant";
+
+export type CivilizationProgressionDimensionId =
+  | "civilization_age"
+  | "civilization_stage"
+  | "development_score"
+  | "scientific_advancement"
+  | "economic_development"
+  | "industrial_capacity"
+  | "ecological_stewardship"
+  | "exploration_capacity"
+  | "population_maturity"
+  | "infrastructure_maturity";
+
+export type CivilizationProgressionRequirementType =
+  | "completed_action"
+  | "completed_actions"
+  | "colony_count"
+  | "discovery_count"
+  | "research_count"
+  | "economy_threshold"
+  | "logistics_threshold"
+  | "population_threshold"
+  | "infrastructure_threshold"
+  | "civilization_identity"
+  | "planet_development"
+  | "milestone";
+
+export type CivilizationProgressionDimension = {
+  id: CivilizationProgressionDimensionId;
+  displayName: string;
+  description: string;
+  calculationVersion: string;
+  deterministic: true;
+  sourceMetrics: CivilizationProgressionRequirementType[];
+  weight: number;
+  scoreRange: { min: 0; max: 100 };
+  notes: string;
+};
+
+export type CivilizationDevelopmentScoreBand = {
+  id: string;
+  min: number;
+  max: number;
+  displayName: string;
+  summary: string;
+};
+
+export type CivilizationStageRequirement = {
+  id: string;
+  stageId: CivilizationProgressionStageId;
+  requirementType: CivilizationProgressionRequirementType;
+  metricId: string;
+  operator: ">=" | "==" | "includes";
+  threshold: number | string;
+  requiredIds: string[];
+  dimensionIds: CivilizationProgressionDimensionId[];
+  description: string;
+};
+
+export type CivilizationMilestone = {
+  id: string;
+  displayName: string;
+  category: "colony" | "orbit" | "trade" | "planet_development" | "research" | "ai_agent" | "megastructure" | "population" | "exploration" | "identity";
+  description: string;
+  requirementIds: string[];
+  contributesToDimensionIds: CivilizationProgressionDimensionId[];
+  unlockedSystemIds: string[];
+  importance: "low" | "medium" | "high" | "legendary";
+  deterministic: true;
+  presentation: {
+    iconKey: string;
+    badgeKey: string;
+    timelineEventType: string;
+  };
+};
+
+export type CivilizationStage = {
+  id: CivilizationProgressionStageId;
+  displayName: string;
+  order: number;
+  description: string;
+  requirementIds: string[];
+  unlockedSystemIds: string[];
+  recommendedGameplay: string[];
+  availableActionIds: string[];
+  milestoneIds: string[];
+  presentation: {
+    iconKey: string;
+    artKey: string;
+    themeKey: string;
+    badgeKey: string;
+  };
+};
+
+export type CivilizationProgressionPresentationContract = {
+  id: "CivilizationStageBadge" | "CivilizationProgressionSummary" | "DevelopmentScoreRadar" | "MilestoneTimeline" | "StageRequirementList" | "CivilizationAgeLabel" | "ProgressionDimensionBreakdown";
+  displayName: string;
+  rendererIndependent: true;
+  semanticFields: string[];
+  notes: string;
+};
+
+export type CivilizationProgressionFrameworkContract = {
+  id: "civilization_progression_framework_v1";
+  version: "1.0.0";
+  architectureDecisionId: "ARCH-DECISION-CIVILIZATION-PROGRESSION-FRAMEWORK";
+  actionSystemId: ActionSystemContract["id"];
+  planetDevelopmentFrameworkId: PlanetDevelopmentFrameworkContract["id"];
+  civilizationIdentitySource: "civilization_identity";
+  calculationVersion: string;
+  progressionPolicy: {
+    xpAllowed: false;
+    deterministic: true;
+    playerInstancesExported: false;
+  };
+  ownership: {
+    studioOwns: string[];
+    gameOwns: string[];
+  };
+  developmentScores: CivilizationProgressionDimension[];
+  scoreBands: CivilizationDevelopmentScoreBand[];
+  civilizationStages: CivilizationStage[];
+  civilizationStageRequirements: CivilizationStageRequirement[];
+  civilizationMilestones: CivilizationMilestone[];
+  civilizationProgressionPresentation: CivilizationProgressionPresentationContract[];
+  validationRules: string[];
+};
+
 export type ActionSystemCategory = {
   id: string;
   displayName: string;
@@ -1671,6 +1800,7 @@ export type GameRuntimeData = {
   planetOpportunityProfiles: PlanetOpportunityProfile[];
   planetExplorationProgression: PlanetExplorationProgressionContract;
   planetDevelopmentFramework: PlanetDevelopmentFrameworkContract;
+  civilizationProgressionFramework: CivilizationProgressionFrameworkContract;
   clientProfiles: ClientProfiles;
 };
 

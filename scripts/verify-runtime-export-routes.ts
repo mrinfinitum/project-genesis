@@ -170,6 +170,20 @@ type RuntimePayload = {
     }>;
     assetRequirements?: unknown[];
   };
+  civilizationProgressionFramework?: {
+    id?: string;
+    actionSystemId?: string;
+    planetDevelopmentFrameworkId?: string;
+    civilizationIdentitySource?: string;
+    calculationVersion?: string;
+    progressionPolicy?: { xpAllowed?: boolean; deterministic?: boolean; playerInstancesExported?: boolean };
+    developmentScores?: Array<{ id: string; calculationVersion?: string; deterministic?: boolean; scoreRange?: { min?: number; max?: number } }>;
+    scoreBands?: Array<{ id: string; min: number; max: number }>;
+    civilizationStages?: Array<{ id: string; order?: number; requirementIds?: string[]; unlockedSystemIds?: string[]; availableActionIds?: string[]; milestoneIds?: string[] }>;
+    civilizationStageRequirements?: Array<{ id: string; stageId?: string; requirementType?: string; requiredIds?: string[]; dimensionIds?: string[] }>;
+    civilizationMilestones?: Array<{ id: string; deterministic?: boolean; requirementIds?: string[]; contributesToDimensionIds?: string[]; unlockedSystemIds?: string[] }>;
+    civilizationProgressionPresentation?: Array<{ id: string; rendererIndependent?: boolean; semanticFields?: string[] }>;
+  };
   upgradeCategories?: Array<{ id: string }>;
   upgrades?: Array<{ id: string; categoryId?: string; tabId?: string; eraId?: string; costResourceId?: string | null; costEconomyId?: string | null }>;
   aiAgents?: Array<{ id: string; defaultForNewPlayers?: boolean; baseVariantId?: string; availableVariantIds?: string[]; assetKeys?: Record<string, string>; gameplayModifiers?: Record<string, unknown> }>;
@@ -575,6 +589,81 @@ function validatePlanetDevelopmentFramework(payload: RuntimePayload | RobloxPayl
   assert(!/activePlayerProject|startedAt|completedAt|queueContents|playerBalances|\/Users\//i.test(JSON.stringify(framework)), `${label} Planet Development Framework leaked player state or private paths.`);
 }
 
+function validateCivilizationProgressionFramework(payload: RuntimePayload | RobloxPayload, label: string) {
+  const framework = payload.civilizationProgressionFramework;
+  const actionIds = new Set(payload.actionSystem?.actionDefinitions?.map((action) => action.id) ?? []);
+  const expectedStages = ["survival", "settlement", "planetary", "interplanetary", "interstellar", "galactic", "intergalactic", "ascendant"];
+  const stageIds = new Set(framework?.civilizationStages?.map((stage) => stage.id) ?? []);
+  const dimensionIds = new Set(framework?.developmentScores?.map((dimension) => dimension.id) ?? []);
+  const requirementIds = new Set(framework?.civilizationStageRequirements?.map((requirement) => requirement.id) ?? []);
+  const milestoneIds = (framework?.civilizationMilestones ?? []).map((milestone) => milestone.id);
+  const canonicalSystems = new Set(["actions", "ai_agents", "colonies", "discovery", "economy", "exploration", "infrastructure", "logistics", "megastructures", "planet_development", "research", "trade", "travel", "universal_discovery_registry"]);
+
+  assert(framework?.id === "civilization_progression_framework_v1", `${label} must publish civilization_progression_framework_v1.`);
+  assert(framework?.actionSystemId === payload.actionSystem?.id, `${label} Civilization Progression Framework must reference Action System.`);
+  assert(framework?.planetDevelopmentFrameworkId === payload.planetDevelopmentFramework?.id, `${label} Civilization Progression Framework must reference Planet Development Framework.`);
+  assert(framework?.civilizationIdentitySource === "civilization_identity", `${label} Civilization Progression Framework must reference Civilization Identity.`);
+  assert(framework?.progressionPolicy?.xpAllowed === false, `${label} Civilization Progression must explicitly forbid XP.`);
+  assert(framework?.progressionPolicy?.deterministic === true, `${label} Civilization Progression must be deterministic.`);
+  assert(framework?.progressionPolicy?.playerInstancesExported === false, `${label} Civilization Progression must not export player instances.`);
+  assert((framework?.developmentScores?.length ?? 0) === 10, `${label} must publish ten civilization development dimensions.`);
+  assert((framework?.scoreBands?.length ?? 0) >= 6, `${label} must publish development score bands.`);
+  assert(framework?.civilizationStages?.map((stage) => stage.id).join("|") === expectedStages.join("|"), `${label} civilization stage order is invalid.`);
+  assert((framework?.civilizationMilestones?.length ?? 0) >= 10, `${label} must publish milestone definitions.`);
+  assert((framework?.civilizationProgressionPresentation?.length ?? 0) >= 7, `${label} must publish progression presentation contracts.`);
+
+  const duplicateMilestones = milestoneIds.filter((id, index) => milestoneIds.indexOf(id) !== index);
+  assert(!duplicateMilestones.length, `${label} milestone IDs must be unique: ${duplicateMilestones.join(", ")}.`);
+  for (const required of ["first_colony", "first_orbital_colony", "first_trade_route", "first_garden_world", "first_terraforming_project", "first_ai_governor", "first_megastructure", "first_million_population", "first_galaxy_survey", "first_civilization_identity_milestone"]) {
+    assert(milestoneIds.includes(required), `${label} is missing progression milestone ${required}.`);
+  }
+
+  for (const dimension of framework?.developmentScores ?? []) {
+    assert(dimension.calculationVersion === framework?.calculationVersion, `${label} dimension ${dimension.id} calculation version mismatch.`);
+    assert(dimension.deterministic === true, `${label} dimension ${dimension.id} must be deterministic.`);
+    assert(dimension.scoreRange?.min === 0 && dimension.scoreRange.max === 100, `${label} dimension ${dimension.id} must be normalized 0-100.`);
+  }
+  for (const requirement of framework?.civilizationStageRequirements ?? []) {
+    assert(Boolean(requirement.stageId && stageIds.has(requirement.stageId)), `${label} requirement ${requirement.id} stage does not resolve.`);
+    for (const dimensionId of requirement.dimensionIds ?? []) {
+      assert(dimensionIds.has(dimensionId), `${label} requirement ${requirement.id} dimension ${dimensionId} does not resolve.`);
+    }
+    if (requirement.requirementType === "completed_action") {
+      for (const actionId of requirement.requiredIds ?? []) {
+        assert(actionIds.has(actionId), `${label} requirement ${requirement.id} action ${actionId} does not resolve.`);
+      }
+    }
+  }
+  for (const stage of framework?.civilizationStages ?? []) {
+    for (const requirementId of stage.requirementIds ?? []) {
+      assert(requirementIds.has(requirementId), `${label} stage ${stage.id} requirement ${requirementId} does not resolve.`);
+    }
+    for (const actionId of stage.availableActionIds ?? []) {
+      assert(actionIds.has(actionId), `${label} stage ${stage.id} action ${actionId} does not resolve.`);
+    }
+    for (const systemId of stage.unlockedSystemIds ?? []) {
+      assert(canonicalSystems.has(systemId), `${label} stage ${stage.id} system ${systemId} is not canonical.`);
+    }
+  }
+  for (const milestone of framework?.civilizationMilestones ?? []) {
+    assert(milestone.deterministic === true, `${label} milestone ${milestone.id} must be deterministic.`);
+    for (const requirementId of milestone.requirementIds ?? []) {
+      assert(requirementIds.has(requirementId), `${label} milestone ${milestone.id} requirement ${requirementId} does not resolve.`);
+    }
+    for (const dimensionId of milestone.contributesToDimensionIds ?? []) {
+      assert(dimensionIds.has(dimensionId), `${label} milestone ${milestone.id} dimension ${dimensionId} does not resolve.`);
+    }
+    for (const systemId of milestone.unlockedSystemIds ?? []) {
+      assert(canonicalSystems.has(systemId), `${label} milestone ${milestone.id} system ${systemId} is not canonical.`);
+    }
+  }
+  for (const presentation of framework?.civilizationProgressionPresentation ?? []) {
+    assert(presentation.rendererIndependent === true, `${label} presentation ${presentation.id} must be renderer-independent.`);
+    assert((presentation.semanticFields?.length ?? 0) > 0, `${label} presentation ${presentation.id} must publish semantic fields.`);
+  }
+  assert(!/experiencePoints|rpgLevel|currentStage|completedMilestoneIds|playerProgression|playerBalances|\/Users\//i.test(JSON.stringify(framework)), `${label} Civilization Progression Framework leaked XP, player state, or private paths.`);
+}
+
 function validateActionSystem(payload: RuntimePayload | RobloxPayload, label: string) {
   const timeContract = payload.timeActionContract;
   const actionSystem = payload.actionSystem;
@@ -941,8 +1030,8 @@ async function main() {
   assert(roblox.payload.metadata?.accessLevel === "public-published", "Roblox accessLevel must be public-published.");
   assert(roblox.payload.metadata?.validationStatus, "Roblox validation status is missing.");
   assert((canonical.payload.eras?.length ?? 0) > 0, "Canonical payload must include at least one era.");
-  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 26, "Canonical contentVersion must be at least 26 after Planet Development Framework.");
-  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 26, "Roblox contentVersion must be at least 26 after Planet Development Framework.");
+  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 27, "Canonical contentVersion must be at least 27 after Civilization Progression Framework.");
+  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 27, "Roblox contentVersion must be at least 27 after Civilization Progression Framework.");
 
   validateEraNavigation(canonical.payload, "Canonical");
   validateEraNavigation(roblox.payload, "Roblox");
@@ -966,6 +1055,8 @@ async function main() {
   validatePlanetExplorationProgression(roblox.payload, "Roblox");
   validatePlanetDevelopmentFramework(canonical.payload, "Canonical");
   validatePlanetDevelopmentFramework(roblox.payload, "Roblox");
+  validateCivilizationProgressionFramework(canonical.payload, "Canonical");
+  validateCivilizationProgressionFramework(roblox.payload, "Roblox");
   validateRuntimeReferences(canonical.payload);
   validateRobloxReferences(roblox.payload);
   assertNoArchitectureLeak("Canonical runtime", canonical.payload);
@@ -1007,6 +1098,8 @@ async function main() {
       planetExplorationStageCount: canonical.payload.planetExplorationProgression?.pipeline?.length ?? 0,
       planetExplorationActionCount: canonical.payload.planetExplorationProgression?.timedActions?.length ?? 0,
       planetDevelopmentProfileCount: canonical.payload.planetDevelopmentFramework?.developmentProfiles?.length ?? 0,
+      civilizationStageCount: canonical.payload.civilizationProgressionFramework?.civilizationStages?.length ?? 0,
+      civilizationMilestoneCount: canonical.payload.civilizationProgressionFramework?.civilizationMilestones?.length ?? 0,
       resourceCount: canonical.payload.resources?.length ?? 0,
       upgradeCount: canonical.payload.upgrades?.length ?? 0
     },
@@ -1045,6 +1138,8 @@ async function main() {
       planetExplorationStageCount: roblox.payload.planetExplorationProgression?.pipeline?.length ?? 0,
       planetExplorationActionCount: roblox.payload.planetExplorationProgression?.timedActions?.length ?? 0,
       planetDevelopmentProfileCount: roblox.payload.planetDevelopmentFramework?.developmentProfiles?.length ?? 0,
+      civilizationStageCount: roblox.payload.civilizationProgressionFramework?.civilizationStages?.length ?? 0,
+      civilizationMilestoneCount: roblox.payload.civilizationProgressionFramework?.civilizationMilestones?.length ?? 0,
       resourceCount: roblox.payload.resources?.length ?? 0,
       upgradeTabCount: roblox.payload.upgradeTabs?.length ?? 0,
       upgradeCount: roblox.payload.upgrades?.length ?? 0
