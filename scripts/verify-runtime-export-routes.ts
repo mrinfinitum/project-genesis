@@ -184,8 +184,41 @@ type RuntimePayload = {
     civilizationMilestones?: Array<{ id: string; deterministic?: boolean; requirementIds?: string[]; contributesToDimensionIds?: string[]; unlockedSystemIds?: string[] }>;
     civilizationProgressionPresentation?: Array<{ id: string; rendererIndependent?: boolean; semanticFields?: string[] }>;
   };
+  colonizationFramework?: {
+    id?: string;
+    actionSystemId?: string;
+    planetDevelopmentFrameworkId?: string;
+    civilizationProgressionFrameworkId?: string;
+    activePlayerStatePolicy?: {
+      exportsActiveColonies?: boolean;
+      exportsProjectQueues?: boolean;
+      exportsTimestamps?: boolean;
+      exportsPlayerPopulationAssignments?: boolean;
+      exportsTransferredResources?: boolean;
+    };
+    resolverContract?: { id?: string; deterministic?: boolean; inputFields?: string[]; returnFields?: string[] };
+    colonyTypeDefinitions?: Array<{ id: string; supportedBodyClasses?: string[]; prohibitedBodyClasses?: string[]; requiredResources?: string[]; requiredBuildings?: string[]; allowedActionIds?: string[]; defaultDevelopmentFocus?: string; civilizationIdentityInfluence?: { alignmentIds?: string[] } }>;
+    colonizationEligibilityDefinitions?: Array<{ id: string; canStartProject?: boolean; blocksActionStart?: boolean }>;
+    colonizationReasonCodes?: Array<{ id: string }>;
+    colonyProjectPhaseDefinitions?: Array<{ id: string; canonicalActionPhaseId?: string; durationDefinitionId?: string }>;
+    colonyTransportRequirementDefinitions?: Array<{ id: string; status?: string; requiredForColonyTypeIds?: string[]; canonicalBuildingId?: string | null; canonicalResourceId?: string | null }>;
+    colonyResourcePackageDefinitions?: Array<{ id: string; resourceInputs?: Array<{ role: string; resourceId: string; quantity: number }>; transportRequirementIds?: string[]; recommendedForColonyTypeIds?: string[] }>;
+    colonyPopulationRequirementDefinitions?: Array<{ id: string; colonyTypeId?: string; minimumFoundingPopulation?: number; minimumAssignedWorkforce?: number }>;
+    colonyInitialStateTemplates?: Array<{ id: string; colonyTypeId?: string; operationalStatus?: string; firstBuildingSetId?: string; hazardModifierIds?: string[]; maintenanceCategoryIds?: string[] }>;
+    colonyDevelopmentStages?: Array<{ id: string; requirements?: unknown[] }>;
+    colonyFocusDefinitions?: Array<{ id: string; recommendedActionIds?: string[] }>;
+    colonyStarterSetDefinitions?: Array<{ id: string; colonyTypeId?: string; buildingRoles?: Array<{ role: string; buildingId?: string | null }> }>;
+    colonyCapabilityDefinitions?: Array<{ id: string }>;
+    colonyMaintenanceDefinitions?: Array<{ id: string; category?: string }>;
+    colonyFailurePolicies?: Array<{ id: string; historicalRecord?: boolean }>;
+    colonyPresentationContract?: Array<{ id: string; rendererIndependent?: boolean }>;
+    creativeProductionRequirements?: Array<{ id: string; category?: string }>;
+    assetLibraryCategories?: Array<{ id: string; groups?: string[] }>;
+    missingCanonicalDefinitions?: Array<{ id: string; type?: string }>;
+  };
   upgradeCategories?: Array<{ id: string }>;
   upgrades?: Array<{ id: string; categoryId?: string; tabId?: string; eraId?: string; costResourceId?: string | null; costEconomyId?: string | null }>;
+  buildingLibrary?: Array<{ id: string }>;
   aiAgents?: Array<{ id: string; defaultForNewPlayers?: boolean; baseVariantId?: string; availableVariantIds?: string[]; assetKeys?: Record<string, string>; gameplayModifiers?: Record<string, unknown> }>;
   aiAgentVariants?: Array<{ id: string; agentId?: string; assetKeys?: Record<string, string>; progressionMapping?: { cosmeticIdentity?: boolean; automationPowerSource?: string } }>;
   aiAgentPersonalities?: Array<{ id: string }>;
@@ -664,6 +697,120 @@ function validateCivilizationProgressionFramework(payload: RuntimePayload | Robl
   assert(!/experiencePoints|rpgLevel|currentStage|completedMilestoneIds|playerProgression|playerBalances|\/Users\//i.test(JSON.stringify(framework)), `${label} Civilization Progression Framework leaked XP, player state, or private paths.`);
 }
 
+function validateColonizationFramework(payload: RuntimePayload | RobloxPayload, label: string) {
+  const framework = payload.colonizationFramework;
+  const actionIds = new Set(payload.actionSystem?.actionDefinitions?.map((action) => action.id) ?? []);
+  const phaseIds = new Set(payload.actionSystem?.actionPhaseTemplates?.map((phase) => phase.id) ?? []);
+  const durationIds = new Set(payload.actionSystem?.actionDurationDefinitions?.map((duration) => duration.id) ?? []);
+  const resourceIds = new Set(payload.resources?.map((resource) => resource.id) ?? []);
+  const buildingIds = new Set(payload.buildingLibrary?.map((building) => building.id) ?? []);
+  const colonyTypeIds = new Set(framework?.colonyTypeDefinitions?.map((type) => type.id) ?? []);
+  const focusIds = new Set(framework?.colonyFocusDefinitions?.map((focus) => focus.id) ?? []);
+  const capabilityIds = new Set(framework?.colonyCapabilityDefinitions?.map((capability) => capability.id) ?? []);
+  const noSolidSurface = new Set(["Gas Giant", "Ice Giant", "Asteroid Belt"]);
+
+  assert(framework?.id === "colonization_settlement_framework_v1", `${label} must publish colonization_settlement_framework_v1.`);
+  assert(framework?.actionSystemId === payload.actionSystem?.id, `${label} Colonization Framework must reference Action System.`);
+  assert(framework?.planetDevelopmentFrameworkId === payload.planetDevelopmentFramework?.id, `${label} Colonization Framework must reference Planet Development Framework.`);
+  assert(framework?.civilizationProgressionFrameworkId === payload.civilizationProgressionFramework?.id, `${label} Colonization Framework must reference Civilization Progression Framework.`);
+  assert(framework?.activePlayerStatePolicy?.exportsActiveColonies === false, `${label} must not export active player colonies.`);
+  assert(framework?.activePlayerStatePolicy?.exportsProjectQueues === false, `${label} must not export project queues.`);
+  assert(framework?.activePlayerStatePolicy?.exportsTimestamps === false, `${label} must not export timestamps.`);
+  assert(framework?.activePlayerStatePolicy?.exportsPlayerPopulationAssignments === false, `${label} must not export player population assignments.`);
+  assert(framework?.activePlayerStatePolicy?.exportsTransferredResources === false, `${label} must not export transferred resources.`);
+  assert(framework?.resolverContract?.id === "resolveColonizationEligibility", `${label} resolver contract missing.`);
+  assert(framework?.resolverContract?.deterministic === true, `${label} resolver must be deterministic.`);
+  assert((framework?.resolverContract?.inputFields?.length ?? 0) >= 10, `${label} resolver input fields are incomplete.`);
+  assert((framework?.resolverContract?.returnFields?.length ?? 0) >= 7, `${label} resolver return fields are incomplete.`);
+
+  assert((framework?.colonyTypeDefinitions?.length ?? 0) === 17, `${label} must publish 17 colony types.`);
+  assert((framework?.colonizationEligibilityDefinitions?.length ?? 0) === 7, `${label} must publish seven eligibility states.`);
+  assert((framework?.colonizationReasonCodes?.length ?? 0) >= 11, `${label} must publish canonical colonization reason codes.`);
+  assert((framework?.colonyProjectPhaseDefinitions?.length ?? 0) === 12, `${label} must publish 12 colonization phases.`);
+  assert((framework?.colonyResourcePackageDefinitions?.length ?? 0) === 5, `${label} must publish five resource packages.`);
+  assert((framework?.colonyPopulationRequirementDefinitions?.length ?? 0) === 17, `${label} must publish population requirements for each type.`);
+  assert((framework?.colonyInitialStateTemplates?.length ?? 0) === 17, `${label} must publish initial state templates for each type.`);
+  assert((framework?.colonyDevelopmentStages?.length ?? 0) === 12, `${label} must publish 12 colony development stages.`);
+  assert((framework?.colonyFocusDefinitions?.length ?? 0) === 14, `${label} must publish 14 colony focuses.`);
+  assert((framework?.colonyPresentationContract?.length ?? 0) === 13, `${label} must publish 13 presentation contracts.`);
+
+  for (const required of ["primary_colony", "secondary_colony", "frontier_colony", "mining_colony", "research_colony", "agricultural_colony", "industrial_colony", "trade_colony", "logistics_hub", "orbital_colony", "floating_colony", "subsurface_colony", "fuel_depot", "archaeological_outpost", "preservation_station", "terraforming_base", "automated_outpost"]) {
+    assert(colonyTypeIds.has(required), `${label} is missing colony type ${required}.`);
+  }
+  for (const required of ["no_solid_surface", "insufficient_technology", "insufficient_population", "insufficient_logistics", "protected_ecology", "precursor_quarantine", "extreme_hazard", "no_habitation_support", "missing_colony_ship", "missing_resource_allocation", "progression_stage_locked"]) {
+    assert(framework?.colonizationReasonCodes?.some((reason) => reason.id === required), `${label} is missing colonization reason code ${required}.`);
+  }
+  for (const required of ["planning", "site_selection", "resource_allocation", "population_assignment", "transport_preparation", "transit", "landing_or_orbital_insertion", "site_preparation", "initial_habitat_construction", "life_support_activation", "infrastructure_commissioning", "operational"]) {
+    assert(framework?.colonyProjectPhaseDefinitions?.some((phase) => phase.id === required), `${label} is missing colonization phase ${required}.`);
+  }
+  for (const phase of framework?.colonyProjectPhaseDefinitions ?? []) {
+    assert(phase.canonicalActionPhaseId && phaseIds.has(phase.canonicalActionPhaseId), `${label} phase ${phase.id} action phase does not resolve.`);
+    assert(phase.durationDefinitionId && durationIds.has(phase.durationDefinitionId), `${label} phase ${phase.id} duration does not resolve.`);
+  }
+
+  const nonSurfaceOptions = ["orbital_colony", "floating_colony", "fuel_depot", "preservation_station", "automated_outpost"];
+  for (const type of framework?.colonyTypeDefinitions ?? []) {
+    for (const actionId of type.allowedActionIds ?? []) {
+      assert(actionIds.has(actionId), `${label} colony type ${type.id} action ${actionId} does not resolve.`);
+    }
+    assert(type.defaultDevelopmentFocus && focusIds.has(type.defaultDevelopmentFocus), `${label} colony type ${type.id} focus does not resolve.`);
+    for (const resourceId of type.requiredResources ?? []) {
+      assert(resourceIds.has(resourceId), `${label} colony type ${type.id} resource ${resourceId} does not resolve.`);
+    }
+    for (const buildingId of type.requiredBuildings ?? []) {
+      assert(buildingIds.has(buildingId), `${label} colony type ${type.id} building ${buildingId} does not resolve.`);
+    }
+    if (!nonSurfaceOptions.includes(type.id)) {
+      assert((type.supportedBodyClasses ?? []).every((bodyClass) => !noSolidSurface.has(bodyClass)), `${label} surface colony type ${type.id} supports no-solid-surface body.`);
+    }
+    for (const alignmentId of type.civilizationIdentityInfluence?.alignmentIds ?? []) {
+      assert(["Industry", "Technology", "Cyber", "Nature", "Corporate"].includes(alignmentId), `${label} colony type ${type.id} identity alignment ${alignmentId} does not resolve.`);
+    }
+  }
+  for (const typeId of nonSurfaceOptions) {
+    const type = framework?.colonyTypeDefinitions?.find((candidate) => candidate.id === typeId);
+    assert(type?.supportedBodyClasses?.some((bodyClass) => noSolidSurface.has(bodyClass)), `${label} ${typeId} must support no-solid-surface bodies.`);
+  }
+
+  for (const packageDefinition of framework?.colonyResourcePackageDefinitions ?? []) {
+    assert((packageDefinition.resourceInputs?.length ?? 0) >= 9, `${label} package ${packageDefinition.id} has incomplete inputs.`);
+    for (const input of packageDefinition.resourceInputs ?? []) {
+      assert(resourceIds.has(input.resourceId), `${label} package ${packageDefinition.id} resource ${input.resourceId} does not resolve.`);
+      assert(Number.isFinite(input.quantity) && input.quantity > 0, `${label} package ${packageDefinition.id} input ${input.role} quantity is invalid.`);
+    }
+  }
+  for (const starterSet of framework?.colonyStarterSetDefinitions ?? []) {
+    assert(starterSet.colonyTypeId && colonyTypeIds.has(starterSet.colonyTypeId), `${label} starter set ${starterSet.id} colony type does not resolve.`);
+    for (const role of starterSet.buildingRoles ?? []) {
+      if (role.buildingId) assert(buildingIds.has(role.buildingId), `${label} starter set ${starterSet.id} building ${role.buildingId} does not resolve.`);
+    }
+  }
+  for (const template of framework?.colonyInitialStateTemplates ?? []) {
+    assert(template.colonyTypeId && colonyTypeIds.has(template.colonyTypeId), `${label} initial template ${template.id} colony type does not resolve.`);
+    assert(template.operationalStatus === "operational", `${label} initial template ${template.id} must be operational after completion.`);
+    assert((template.hazardModifierIds?.length ?? 0) >= 5, `${label} initial template ${template.id} must include hazard hooks.`);
+    assert((template.maintenanceCategoryIds?.length ?? 0) >= 5, `${label} initial template ${template.id} must include maintenance hooks.`);
+  }
+  for (const focus of framework?.colonyFocusDefinitions ?? []) {
+    for (const actionId of focus.recommendedActionIds ?? []) {
+      assert(actionIds.has(actionId), `${label} focus ${focus.id} action ${actionId} does not resolve.`);
+    }
+  }
+  for (const stage of framework?.colonyDevelopmentStages ?? []) {
+    assert((stage.requirements?.length ?? 0) >= 3, `${label} development stage ${stage.id} must publish deterministic requirements.`);
+  }
+  for (const policy of framework?.colonyFailurePolicies ?? []) {
+    assert(policy.historicalRecord === true, `${label} failure policy ${policy.id} must preserve history.`);
+  }
+  for (const contract of framework?.colonyPresentationContract ?? []) {
+    assert(contract.rendererIndependent === true, `${label} presentation contract ${contract.id} must be renderer-independent.`);
+  }
+  assert(framework?.creativeProductionRequirements?.some((item) => item.category === "Colonization & Settlements"), `${label} must publish Creative Production colonization requirements.`);
+  assert(framework?.assetLibraryCategories?.some((category) => category.id === "colonization_settlements" && (category.groups?.length ?? 0) >= 8), `${label} must publish Asset Library colonization category.`);
+  assert(framework?.missingCanonicalDefinitions?.some((item) => item.type === "transport"), `${label} must report missing transport canonical definitions.`);
+  assert(!/activePlayerColony|activeColonyInstance|projectStartedAt|projectCompletedAt|queueContents|livePlayerPopulation|assignedPlayerPopulation|liveTransferredResources|saveId|\/Users\/|studio-private:\/\//i.test(JSON.stringify(framework)), `${label} Colonization Framework leaked player state or private paths.`);
+}
+
 function validateActionSystem(payload: RuntimePayload | RobloxPayload, label: string) {
   const timeContract = payload.timeActionContract;
   const actionSystem = payload.actionSystem;
@@ -1030,8 +1177,8 @@ async function main() {
   assert(roblox.payload.metadata?.accessLevel === "public-published", "Roblox accessLevel must be public-published.");
   assert(roblox.payload.metadata?.validationStatus, "Roblox validation status is missing.");
   assert((canonical.payload.eras?.length ?? 0) > 0, "Canonical payload must include at least one era.");
-  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 27, "Canonical contentVersion must be at least 27 after Civilization Progression Framework.");
-  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 27, "Roblox contentVersion must be at least 27 after Civilization Progression Framework.");
+  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 28, "Canonical contentVersion must be at least 28 after Colonization & Settlement Framework.");
+  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 28, "Roblox contentVersion must be at least 28 after Colonization & Settlement Framework.");
 
   validateEraNavigation(canonical.payload, "Canonical");
   validateEraNavigation(roblox.payload, "Roblox");
@@ -1057,6 +1204,8 @@ async function main() {
   validatePlanetDevelopmentFramework(roblox.payload, "Roblox");
   validateCivilizationProgressionFramework(canonical.payload, "Canonical");
   validateCivilizationProgressionFramework(roblox.payload, "Roblox");
+  validateColonizationFramework(canonical.payload, "Canonical");
+  validateColonizationFramework(roblox.payload, "Roblox");
   validateRuntimeReferences(canonical.payload);
   validateRobloxReferences(roblox.payload);
   assertNoArchitectureLeak("Canonical runtime", canonical.payload);

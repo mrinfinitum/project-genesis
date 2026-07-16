@@ -9,6 +9,7 @@ import { getAssetProductionRuntimeOverrides } from "@/lib/assets/asset-productio
 import { getAppliedGameArtAssets } from "@/lib/assets/game-art-import";
 import { buildBuildingClassifications, canonicalBuildingLibrary, canonicalBuildingTaxonomy } from "@/lib/buildings/taxonomy";
 import { civilizationProgressionFramework, validateCivilizationProgressionFramework } from "@/lib/civilization/progression-framework";
+import { colonizationFramework, validateColonizationFramework } from "@/lib/colonization/framework";
 import { getGameData } from "@/lib/data";
 import { canonicalDiscoveries, discoveryCategories, discoveryChains, discoveryCollections, discoveryMilestones, discoveryPlayerCollectionSchema, discoveryRarities, validateDiscoverySystem } from "@/lib/discovery";
 import { universalDiscoveryRegistryContract, universalDiscoveryRegistryVersion, validateUniversalDiscoveryRegistryContract } from "@/lib/discovery/universal-registry";
@@ -59,7 +60,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 27;
+export const gameRuntimeContentVersion = 28;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -100,6 +101,7 @@ export type RobloxRuntimeExportPayload = {
   planetExplorationProgression: GameRuntimeData["planetExplorationProgression"];
   planetDevelopmentFramework: GameRuntimeData["planetDevelopmentFramework"];
   civilizationProgressionFramework: GameRuntimeData["civilizationProgressionFramework"];
+  colonizationFramework: GameRuntimeData["colonizationFramework"];
   resources: ResourceDefinition[];
   buildingTaxonomy: GameRuntimeData["buildingTaxonomy"];
   buildingLibrary: GameRuntimeData["buildingLibrary"];
@@ -670,6 +672,90 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
         semanticFields: [...presentation.semanticFields].sort()
       })),
       validationRules: [...runtimeData.civilizationProgressionFramework.validationRules].sort()
+    },
+    colonizationFramework: {
+      ...runtimeData.colonizationFramework,
+      colonyTypeDefinitions: [...runtimeData.colonizationFramework.colonyTypeDefinitions].sort(byId).map((type) => ({
+        ...type,
+        supportedBodyClasses: [...type.supportedBodyClasses].sort(),
+        prohibitedBodyClasses: [...type.prohibitedBodyClasses].sort(),
+        requiredCapabilityStates: [...type.requiredCapabilityStates].sort(),
+        requiredTechnologies: [...type.requiredTechnologies].sort(),
+        requiredBuildings: [...type.requiredBuildings].sort(),
+        requiredResources: [...type.requiredResources].sort(),
+        progressionRequirements: [...type.progressionRequirements].sort((left, right) => left.id.localeCompare(right.id)),
+        allowedActionIds: [...type.allowedActionIds].sort()
+      })),
+      colonizationEligibilityDefinitions: [...runtimeData.colonizationFramework.colonizationEligibilityDefinitions].sort(byOrderThenId),
+      colonizationReasonCodes: [...runtimeData.colonizationFramework.colonizationReasonCodes].sort(byId),
+      colonyProjectPhaseDefinitions: [...runtimeData.colonizationFramework.colonyProjectPhaseDefinitions].sort(byOrderThenId).map((phase) => ({
+        ...phase,
+        requirementIds: [...phase.requirementIds].sort(),
+        resourceInputRoles: [...phase.resourceInputRoles].sort(),
+        populationInputRoles: [...phase.populationInputRoles].sort(),
+        workforceInputRoles: [...phase.workforceInputRoles].sort(),
+        failureConditionIds: [...phase.failureConditionIds].sort(),
+        completionEffects: [...phase.completionEffects].sort()
+      })),
+      colonyTransportRequirementDefinitions: [...runtimeData.colonizationFramework.colonyTransportRequirementDefinitions].sort(byId).map((requirement) => ({
+        ...requirement,
+        requiredForColonyTypeIds: [...requirement.requiredForColonyTypeIds].sort()
+      })),
+      colonyResourcePackageDefinitions: [...runtimeData.colonizationFramework.colonyResourcePackageDefinitions].sort(byId).map((packageDefinition) => ({
+        ...packageDefinition,
+        resourceInputs: [...packageDefinition.resourceInputs].sort((left, right) => left.role.localeCompare(right.role)),
+        transportRequirementIds: [...packageDefinition.transportRequirementIds].sort(),
+        recommendedForColonyTypeIds: [...packageDefinition.recommendedForColonyTypeIds].sort()
+      })),
+      colonyPopulationRequirementDefinitions: [...runtimeData.colonizationFramework.colonyPopulationRequirementDefinitions].sort(byId).map((requirement) => ({
+        ...requirement,
+        specialistsRequired: [...requirement.specialistsRequired].sort()
+      })),
+      colonyInitialStateTemplates: [...runtimeData.colonizationFramework.colonyInitialStateTemplates].sort(byId).map((template) => ({
+        ...template,
+        hazardModifierIds: [...template.hazardModifierIds].sort(),
+        maintenanceCategoryIds: [...template.maintenanceCategoryIds].sort(),
+        progressionContributionIds: [...template.progressionContributionIds].sort()
+      })),
+      colonyDevelopmentStages: [...runtimeData.colonizationFramework.colonyDevelopmentStages].sort(byOrderThenId).map((stage) => ({
+        ...stage,
+        requirements: [...stage.requirements].sort((left, right) => left.id.localeCompare(right.id)),
+        unlockedCapabilityIds: [...stage.unlockedCapabilityIds].sort()
+      })),
+      colonyFocusDefinitions: [...runtimeData.colonizationFramework.colonyFocusDefinitions].sort(byId).map((focus) => ({
+        ...focus,
+        recommendedBuildingRoles: [...focus.recommendedBuildingRoles].sort(),
+        resourcePriorityRoles: [...focus.resourcePriorityRoles].sort(),
+        recommendedActionIds: [...focus.recommendedActionIds].sort()
+      })),
+      colonyStarterSetDefinitions: [...runtimeData.colonizationFramework.colonyStarterSetDefinitions].sort(byId).map((starterSet) => ({
+        ...starterSet,
+        buildingRoles: [...starterSet.buildingRoles].sort((left, right) => left.role.localeCompare(right.role)),
+        missingBuildingRoles: [...starterSet.missingBuildingRoles].sort()
+      })),
+      colonyCapabilityDefinitions: [...runtimeData.colonizationFramework.colonyCapabilityDefinitions].sort(byId),
+      colonyMaintenanceDefinitions: [...runtimeData.colonizationFramework.colonyMaintenanceDefinitions].sort(byId).map((maintenance) => ({
+        ...maintenance,
+        affectedCapabilityIds: [...maintenance.affectedCapabilityIds].sort()
+      })),
+      colonyFailurePolicies: [...runtimeData.colonizationFramework.colonyFailurePolicies].sort(byId).map((policy) => ({
+        ...policy,
+        restartRequirements: [...policy.restartRequirements].sort()
+      })),
+      colonyPresentationContract: [...runtimeData.colonizationFramework.colonyPresentationContract].sort(byId).map((contract) => ({
+        ...contract,
+        semanticFields: [...contract.semanticFields].sort()
+      })),
+      creativeProductionRequirements: [...runtimeData.colonizationFramework.creativeProductionRequirements].sort(byId),
+      assetLibraryCategories: [...runtimeData.colonizationFramework.assetLibraryCategories].sort(byId).map((category) => ({
+        ...category,
+        groups: [...category.groups].sort()
+      })),
+      missingCanonicalDefinitions: [...runtimeData.colonizationFramework.missingCanonicalDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        referencedBy: [...definition.referencedBy].sort()
+      })),
+      validationRules: [...runtimeData.colonizationFramework.validationRules].sort()
     },
     resources: [...runtimeData.resources].sort(byId),
     buildingTaxonomy: [...runtimeData.buildingTaxonomy].sort(byDisplayOrderThenId).map((family) => ({
@@ -1395,6 +1481,18 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   for (const issue of validateCivilizationProgressionFramework(runtimeData.civilizationProgressionFramework, new Set(runtimeData.actionSystem.actionDefinitions.map((action) => action.id)), runtimeData.planetDevelopmentFramework.id)) {
     issues.push(issue);
   }
+  for (const issue of validateColonizationFramework(runtimeData.colonizationFramework, {
+    actionIds: new Set(runtimeData.actionSystem.actionDefinitions.map((action) => action.id)),
+    actionPhaseIds: new Set(runtimeData.actionSystem.actionPhaseTemplates.map((phase) => phase.id)),
+    actionDurationIds: new Set(runtimeData.actionSystem.actionDurationDefinitions.map((duration) => duration.id)),
+    resourceIds: new Set(runtimeData.resources.map((resource) => resource.id)),
+    buildingIds: new Set(runtimeData.buildingLibrary.map((building) => building.id)),
+    planetDevelopmentFrameworkId: runtimeData.planetDevelopmentFramework.id,
+    civilizationProgressionFrameworkId: runtimeData.civilizationProgressionFramework.id,
+    progressionMilestoneIds: new Set(runtimeData.civilizationProgressionFramework.civilizationMilestones.map((milestone) => milestone.id))
+  })) {
+    issues.push(issue);
+  }
   validateBuildingTaxonomyRuntime(runtimeData, issues);
   const categoryPresentationValidation = validateUpgradeCategoryPresentation({ categories: runtimeData.upgradeCategories });
   for (const message of categoryPresentationValidation.issues) {
@@ -1572,6 +1670,7 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     planetExplorationProgression: sorted.planetExplorationProgression,
     planetDevelopmentFramework: sorted.planetDevelopmentFramework,
     civilizationProgressionFramework: sorted.civilizationProgressionFramework,
+    colonizationFramework: sorted.colonizationFramework,
     resources: sorted.resources,
     buildingTaxonomy: sorted.buildingTaxonomy,
     buildingLibrary: sorted.buildingLibrary,
@@ -1651,6 +1750,18 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
     issues.push(issue);
   }
   for (const issue of validateCivilizationProgressionFramework(payload.civilizationProgressionFramework, new Set(payload.actionSystem.actionDefinitions.map((action) => action.id)), payload.planetDevelopmentFramework.id)) {
+    issues.push(issue);
+  }
+  for (const issue of validateColonizationFramework(payload.colonizationFramework, {
+    actionIds: new Set(payload.actionSystem.actionDefinitions.map((action) => action.id)),
+    actionPhaseIds: new Set(payload.actionSystem.actionPhaseTemplates.map((phase) => phase.id)),
+    actionDurationIds: new Set(payload.actionSystem.actionDurationDefinitions.map((duration) => duration.id)),
+    resourceIds: new Set(payload.resources.map((resource) => resource.id)),
+    buildingIds: new Set(payload.buildingLibrary.map((building) => building.id)),
+    planetDevelopmentFrameworkId: payload.planetDevelopmentFramework.id,
+    civilizationProgressionFrameworkId: payload.civilizationProgressionFramework.id,
+    progressionMilestoneIds: new Set(payload.civilizationProgressionFramework.civilizationMilestones.map((milestone) => milestone.id))
+  })) {
     issues.push(issue);
   }
   validateBuildingTaxonomyRuntime(payload, issues);
@@ -1797,6 +1908,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     planetExplorationProgression,
     planetDevelopmentFramework,
     civilizationProgressionFramework,
+    colonizationFramework,
     resources: ResourceService.catalog.map(resourceToRuntime),
     buildingTaxonomy: canonicalBuildingTaxonomy,
     buildingLibrary: canonicalBuildingLibrary,
@@ -1856,6 +1968,7 @@ export async function getGameRuntimeData() {
     planetExplorationProgression: base.planetExplorationProgression,
     planetDevelopmentFramework: base.planetDevelopmentFramework,
     civilizationProgressionFramework: base.civilizationProgressionFramework,
+    colonizationFramework: base.colonizationFramework,
     resources: base.resources,
     balance: {
       ...store.appliedRuntimeData.balance,
@@ -2070,6 +2183,7 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     planetExplorationProgression: base.planetExplorationProgression,
     planetDevelopmentFramework: base.planetDevelopmentFramework,
     civilizationProgressionFramework: base.civilizationProgressionFramework,
+    colonizationFramework: base.colonizationFramework,
     resources: base.resources,
     buildingTaxonomy: base.buildingTaxonomy,
     buildingLibrary: base.buildingLibrary,

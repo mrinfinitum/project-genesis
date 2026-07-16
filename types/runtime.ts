@@ -1403,6 +1403,376 @@ export type CivilizationProgressionFrameworkContract = {
   validationRules: string[];
 };
 
+export type ColonyTypeId =
+  | "primary_colony"
+  | "secondary_colony"
+  | "frontier_colony"
+  | "mining_colony"
+  | "research_colony"
+  | "agricultural_colony"
+  | "industrial_colony"
+  | "trade_colony"
+  | "logistics_hub"
+  | "orbital_colony"
+  | "floating_colony"
+  | "subsurface_colony"
+  | "fuel_depot"
+  | "archaeological_outpost"
+  | "preservation_station"
+  | "terraforming_base"
+  | "automated_outpost";
+
+export type ColonizationEligibilityState = "unavailable" | "currently_locked" | "technically_possible" | "supported" | "recommended" | "restricted" | "prohibited";
+
+export type ColonizationReasonCodeId =
+  | "no_solid_surface"
+  | "insufficient_technology"
+  | "insufficient_population"
+  | "insufficient_logistics"
+  | "protected_ecology"
+  | "precursor_quarantine"
+  | "extreme_hazard"
+  | "no_habitation_support"
+  | "missing_colony_ship"
+  | "missing_resource_allocation"
+  | "progression_stage_locked";
+
+export type ColonyProjectPhaseId =
+  | "planning"
+  | "site_selection"
+  | "resource_allocation"
+  | "population_assignment"
+  | "transport_preparation"
+  | "transit"
+  | "landing_or_orbital_insertion"
+  | "site_preparation"
+  | "initial_habitat_construction"
+  | "life_support_activation"
+  | "infrastructure_commissioning"
+  | "operational";
+
+export type ColonyResourcePackageId = "minimum_viable" | "standard" | "accelerated" | "specialized" | "automated";
+
+export type ColonyDevelopmentStageId =
+  | "founding_outpost"
+  | "established_outpost"
+  | "settlement"
+  | "developed_settlement"
+  | "town"
+  | "city"
+  | "major_city"
+  | "planetary_capital"
+  | "orbital_metropolis"
+  | "megacity"
+  | "specialized_world"
+  | "mature_colony";
+
+export type ColonyFocusId =
+  | "balanced"
+  | "population_growth"
+  | "mining"
+  | "industry"
+  | "research"
+  | "agriculture"
+  | "trade"
+  | "logistics"
+  | "preservation"
+  | "archaeology"
+  | "energy"
+  | "orbital_infrastructure"
+  | "terraforming"
+  | "automation";
+
+export type ColonyCapabilityId =
+  | "habitation"
+  | "extraction"
+  | "processing"
+  | "manufacturing"
+  | "research"
+  | "trade"
+  | "storage"
+  | "ship_support"
+  | "population_growth"
+  | "terraforming"
+  | "preservation"
+  | "defense_security"
+  | "tourism"
+  | "automation"
+  | "diplomacy"
+  | "education"
+  | "healthcare";
+
+export type ColonyOutcomeId = "completed" | "paused" | "blocked" | "failed" | "cancelled" | "abandoned" | "decommissioned" | "evacuated";
+
+export type ColonizationRequirementReference = {
+  type: "technology" | "building" | "resource" | "population" | "workforce" | "logistics" | "progression_stage" | "progression_milestone" | "action" | "identity" | "policy" | "transport";
+  id: string;
+  quantity: number | null;
+  required: boolean;
+  reasonCode: string;
+  notes: string;
+};
+
+export type CivilizationIdentityInfluenceProfile = {
+  alignmentIds: Array<"Industry" | "Technology" | "Cyber" | "Nature" | "Corporate">;
+  influenceTrigger: "phase_completion" | "operational_completion";
+  influenceAmount: number;
+  notes: string;
+};
+
+export type ColonyTypeDefinition = {
+  id: ColonyTypeId;
+  displayName: string;
+  description: string;
+  supportedBodyClasses: string[];
+  prohibitedBodyClasses: string[];
+  requiredCapabilityStates: ColonyCapabilityId[];
+  requiredTechnologies: string[];
+  requiredBuildings: string[];
+  requiredResources: string[];
+  requiredPopulation: number;
+  requiredWorkforce: number;
+  requiredLogistics: number;
+  phaseTemplateId: "colonization_project_standard";
+  defaultDevelopmentFocus: ColonyFocusId;
+  civilizationIdentityInfluence: CivilizationIdentityInfluenceProfile;
+  progressionRequirements: ColonizationRequirementReference[];
+  allowedActionIds: string[];
+  publicationStatus: "approved" | "planned" | "draft";
+};
+
+export type ColonizationEligibilityDefinition = {
+  id: ColonizationEligibilityState;
+  displayName: string;
+  order: number;
+  canStartProject: boolean;
+  blocksActionStart: boolean;
+  description: string;
+};
+
+export type ColonizationReasonCodeDefinition = {
+  id: ColonizationReasonCodeId;
+  displayName: string;
+  severity: "blocker" | "warning" | "info";
+  description: string;
+  recommendedResolution: string;
+};
+
+export type ColonizationResolverContract = {
+  id: "resolveColonizationEligibility";
+  deterministic: true;
+  inputFields: string[];
+  returnFields: string[];
+  evaluationOrder: string[];
+  notes: string;
+};
+
+export type ColonyProjectPhaseDefinition = {
+  id: ColonyProjectPhaseId;
+  displayName: string;
+  order: number;
+  canonicalActionPhaseId: string;
+  durationDefinitionId: string;
+  requirementIds: string[];
+  resourceInputRoles: string[];
+  populationInputRoles: string[];
+  workforceInputRoles: string[];
+  logisticsCapacityRequired: number;
+  failureConditionIds: string[];
+  cancellationPolicy: string;
+  completionEffects: string[];
+  presentationLabel: string;
+};
+
+export type ColonyTransportRequirementDefinition = {
+  id: string;
+  displayName: string;
+  requiredForColonyTypeIds: ColonyTypeId[];
+  canonicalAssetKey: string | null;
+  canonicalBuildingId: string | null;
+  canonicalResourceId: string | null;
+  status: "resolved" | "missing_canonical_definition";
+  notes: string;
+};
+
+export type ColonyResourcePackageDefinition = {
+  id: ColonyResourcePackageId;
+  displayName: string;
+  description: string;
+  resourceInputs: Array<{ role: string; resourceId: string; quantity: number; required: boolean }>;
+  transportRequirementIds: string[];
+  recommendedForColonyTypeIds: ColonyTypeId[];
+  projectedDurationModifier: number;
+  notes: string;
+};
+
+export type ColonyPopulationRequirementDefinition = {
+  id: string;
+  colonyTypeId: ColonyTypeId;
+  minimumFoundingPopulation: number;
+  minimumAssignedWorkforce: number;
+  specialistsRequired: string[];
+  engineersRequired: number;
+  scientistsRequired: number;
+  logisticsStaffRequired: number;
+  automationSubstitutionPolicy: string;
+  aiAgentSupport: boolean;
+  roboticWorkforceSupport: boolean;
+};
+
+export type ColonyInitialStateTemplate = {
+  id: string;
+  colonyTypeId: ColonyTypeId;
+  operationalStatus: "planned" | "operational";
+  foundingPopulation: number;
+  populationCapacity: number;
+  assignedWorkforce: number;
+  lifeSupportCapacity: number;
+  storageCapacity: number;
+  energyCapacity: number;
+  foodWaterBalance: "surplus" | "balanced" | "shortage";
+  logisticsAccess: "local" | "orbital" | "interplanetary" | "interstellar";
+  firstBuildingSetId: string;
+  settlementFocus: ColonyFocusId;
+  growthPolicy: string;
+  hazardModifierIds: string[];
+  maintenanceCategoryIds: string[];
+  civilizationIdentityEffects: CivilizationIdentityInfluenceProfile;
+  progressionContributionIds: string[];
+};
+
+export type ColonyDevelopmentStage = {
+  id: ColonyDevelopmentStageId;
+  displayName: string;
+  order: number;
+  requirements: Array<{ type: string; id: string; threshold: number | string; notes: string }>;
+  unlockedCapabilityIds: ColonyCapabilityId[];
+  presentationKey: string;
+  notes: string;
+};
+
+export type ColonyFocusDefinition = {
+  id: ColonyFocusId;
+  displayName: string;
+  description: string;
+  recommendedBuildingRoles: string[];
+  resourcePriorityRoles: string[];
+  workforcePriority: string;
+  growthModifiers: Record<string, number>;
+  identityInfluence: CivilizationIdentityInfluenceProfile;
+  recommendedActionIds: string[];
+};
+
+export type ColonyStarterSetDefinition = {
+  id: string;
+  colonyTypeId: ColonyTypeId;
+  displayName: string;
+  buildingRoles: Array<{ role: string; buildingId: string | null; required: boolean; notes: string }>;
+  missingBuildingRoles: string[];
+};
+
+export type ColonyCapabilityDefinition = {
+  id: ColonyCapabilityId;
+  displayName: string;
+  description: string;
+  inputsToFutureSystems: string[];
+};
+
+export type ColonyMaintenanceDefinition = {
+  id: string;
+  displayName: string;
+  category: "hazard_modifier" | "maintenance_category";
+  formulaHook: string;
+  affectedCapabilityIds: ColonyCapabilityId[];
+  notes: string;
+};
+
+export type ColonyFailurePolicy = {
+  id: ColonyOutcomeId;
+  displayName: string;
+  refundPolicy: string;
+  resourceRecovery: string;
+  populationRecovery: string;
+  remainingInfrastructure: string;
+  historicalRecord: boolean;
+  identityInfluence: CivilizationIdentityInfluenceProfile | null;
+  timelineEventType: string;
+  restartRequirements: string[];
+};
+
+export type ColonyPresentationContract = {
+  id:
+    | "ColonizationEligibilityPanel"
+    | "ColonyTypeCard"
+    | "ColonyResourcePackage"
+    | "ColonyPopulationRequirement"
+    | "ColonyProjectTimeline"
+    | "ColonyPhaseStepper"
+    | "ColonyStarterSet"
+    | "ColonyCapabilitySummary"
+    | "ColonyOperationalReport"
+    | "ColonyGrowthStage"
+    | "ColonyFocusSelector"
+    | "ColonyFailureSummary"
+    | "ColonyAbandonmentSummary";
+  displayName: string;
+  rendererIndependent: true;
+  semanticFields: string[];
+  notes: string;
+};
+
+export type ColonizationMissingCanonicalDefinition = {
+  id: string;
+  type: "building" | "resource" | "transport" | "progression_milestone" | "asset";
+  displayName: string;
+  referencedBy: string[];
+  severity: "warning" | "info";
+  recommendedOwner: "Building Library" | "Resource Catalog" | "Asset Library" | "Civilization Progression" | "Transport System";
+  notes: string;
+};
+
+export type ColonizationFrameworkContract = {
+  id: "colonization_settlement_framework_v1";
+  version: "1.0.0";
+  architectureDecisionId: "ARCH-DECISION-COLONIZATION-MULTI-STAGE-PROJECT";
+  actionSystemId: ActionSystemContract["id"];
+  planetDevelopmentFrameworkId: PlanetDevelopmentFrameworkContract["id"];
+  civilizationProgressionFrameworkId: CivilizationProgressionFrameworkContract["id"];
+  civilizationIdentitySource: "civilization_identity";
+  calculationVersion: string;
+  ownership: {
+    studioOwns: string[];
+    gameOwns: string[];
+  };
+  activePlayerStatePolicy: {
+    exportsActiveColonies: false;
+    exportsProjectQueues: false;
+    exportsTimestamps: false;
+    exportsPlayerPopulationAssignments: false;
+    exportsTransferredResources: false;
+  };
+  resolverContract: ColonizationResolverContract;
+  colonyTypeDefinitions: ColonyTypeDefinition[];
+  colonizationEligibilityDefinitions: ColonizationEligibilityDefinition[];
+  colonizationReasonCodes: ColonizationReasonCodeDefinition[];
+  colonyProjectPhaseDefinitions: ColonyProjectPhaseDefinition[];
+  colonyTransportRequirementDefinitions: ColonyTransportRequirementDefinition[];
+  colonyResourcePackageDefinitions: ColonyResourcePackageDefinition[];
+  colonyPopulationRequirementDefinitions: ColonyPopulationRequirementDefinition[];
+  colonyInitialStateTemplates: ColonyInitialStateTemplate[];
+  colonyDevelopmentStages: ColonyDevelopmentStage[];
+  colonyFocusDefinitions: ColonyFocusDefinition[];
+  colonyStarterSetDefinitions: ColonyStarterSetDefinition[];
+  colonyCapabilityDefinitions: ColonyCapabilityDefinition[];
+  colonyMaintenanceDefinitions: ColonyMaintenanceDefinition[];
+  colonyFailurePolicies: ColonyFailurePolicy[];
+  colonyPresentationContract: ColonyPresentationContract[];
+  creativeProductionRequirements: Array<{ id: string; displayName: string; category: string; status: "required" | "planned"; notes: string }>;
+  assetLibraryCategories: Array<{ id: string; displayName: string; groups: string[]; notes: string }>;
+  missingCanonicalDefinitions: ColonizationMissingCanonicalDefinition[];
+  validationRules: string[];
+};
+
 export type ActionSystemCategory = {
   id: string;
   displayName: string;
@@ -1801,6 +2171,7 @@ export type GameRuntimeData = {
   planetExplorationProgression: PlanetExplorationProgressionContract;
   planetDevelopmentFramework: PlanetDevelopmentFrameworkContract;
   civilizationProgressionFramework: CivilizationProgressionFrameworkContract;
+  colonizationFramework: ColonizationFrameworkContract;
   clientProfiles: ClientProfiles;
 };
 
