@@ -1,6 +1,7 @@
 import { buildGameEngineExport, type EngineTarget } from "@/lib/export/game-engine";
 import { buildCanonicalRuntimeExportPayload, buildRobloxRuntimePayload, gameRuntimeContentVersion, getGameRuntimeData } from "@/lib/runtime/game-runtime";
 import { validateDynamicEventFramework } from "@/lib/events/framework";
+import { populationSimulationFramework } from "@/lib/population/framework";
 
 const supportedTargets: EngineTarget[] = ["roblox", "unity", "unreal", "godot", "web", "generic"];
 
@@ -22,15 +23,16 @@ function assertFramework(framework: Awaited<ReturnType<typeof getGameRuntimeData
   assert(framework.eventChoiceDefinitions.length === 20, `${label} must publish 20 choices.`);
   assert(framework.eventChainDefinitions.length === 4, `${label} must publish 4 event chains.`);
   assert(framework.eventDefinitions.length >= 40, `${label} must publish the curated starter event library.`);
-  assert(framework.populationSimulationIntegration.implemented === false, `${label} must report Population Simulation as absent.`);
-  assert(framework.populationSimulationIntegration.hookOnly === true, `${label} must publish population hooks only while Population Simulation is absent.`);
+  assert(framework.populationSimulationIntegration.implemented === true, `${label} must integrate with the published Population Simulation Framework.`);
+  assert(framework.populationSimulationIntegration.hookOnly === false, `${label} must no longer treat population hooks as future-only.`);
+  assert(framework.populationSimulationIntegration.populationSimulationFrameworkId === populationSimulationFramework.id, `${label} must reference the published Population Simulation Framework.`);
   assert(framework.activePlayerStatePolicy.exportsActiveEventInstances === false, `${label} must not export active Event instances.`);
   assert(framework.activePlayerStatePolicy.exportsResolvedOutcomes === false, `${label} must not export resolved outcomes.`);
   assert(!/"(?:activeEventInstances|currentModifiers|selectedChoices|generatedPlayerParameters|resolvedOutcomes|playerEventHistory)"\s*:|\/Users\/|studio-private:\/\//i.test(JSON.stringify(framework)), `${label} leaked player event state or private paths.`);
 }
 
 async function main() {
-  assert(gameRuntimeContentVersion >= 31, `Runtime contentVersion must be at least 31; received ${gameRuntimeContentVersion}.`);
+  assert(gameRuntimeContentVersion >= 32, `Runtime contentVersion must be at least 32; received ${gameRuntimeContentVersion}.`);
   const runtime = await getGameRuntimeData();
   const canonical = await buildCanonicalRuntimeExportPayload();
   const roblox = buildRobloxRuntimePayload(runtime);

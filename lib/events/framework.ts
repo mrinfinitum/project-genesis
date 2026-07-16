@@ -5,6 +5,7 @@ import { universalDiscoveryRegistryVersion } from "@/lib/discovery/universal-reg
 import { resourceEconomyLogisticsFramework } from "@/lib/economy/logistics-framework";
 import { missionExpeditionFramework } from "@/lib/missions/framework";
 import { planetDevelopmentFramework } from "@/lib/planets/development-framework";
+import { populationSimulationFramework } from "@/lib/population/framework";
 import type {
   DynamicEventCategoryDefinition,
   DynamicEventChainDefinition,
@@ -50,7 +51,7 @@ const eventCategoryDefinitions: DynamicEventCategoryDefinition[] = [
   ["archaeology", "Archaeology", "Ruin activation, excavation, and ancient record events.", ["planet_development", "mission_expedition"]],
   ["colony", "Colony", "Settlement, colony stage, focus, and habitability events.", ["colonization"]],
   ["infrastructure", "Infrastructure", "Building, route, capacity, and maintenance events.", ["colonization", "resource_economy_logistics"]],
-  ["population", "Population", "Population-facing hooks for workforce, migration, wellbeing, and evacuation.", ["population_simulation_future"]],
+  ["population", "Population", "Population-facing hooks for workforce, migration, wellbeing, and evacuation.", [populationSimulationFramework.id]],
   ["economy", "Economy", "Market, cost, demand, and civilization value events.", ["resource_economy_logistics"]],
   ["logistics", "Logistics", "Route, shipment, transport, storage, and throughput events.", ["resource_economy_logistics"]],
   ["trade", "Trade", "Trade route, market access, and exchange opportunity events.", ["resource_economy_logistics", "mission_expedition"]],
@@ -134,7 +135,7 @@ const eventEligibilityDefinitions = [
   { id: "discovery_signal", displayName: "Discovery Signal", dependsOn: ["discovery_state", "scan_level", "registry_state"], blockerReasonCodes: ["signal_hidden", "scan_required"], cooldownPolicy: "once_per_target", knowledgeSafe: true, notes: "Supports anomaly, artifact, and rare matter events." },
   { id: "identity_trend_present", displayName: "Identity Trend Present", dependsOn: ["civilization_identity", "identity_trend"], blockerReasonCodes: ["identity_threshold_missing"], cooldownPolicy: "per_civilization", knowledgeSafe: true, notes: "Choices may influence identity only through approved hooks." },
   { id: "progression_transition", displayName: "Progression Transition", dependsOn: ["civilization_stage", "milestone"], blockerReasonCodes: ["stage_requirement_missing"], cooldownPolicy: "once_per_civilization", knowledgeSafe: true, notes: "Recognition only; does not duplicate progression logic." },
-  { id: "population_hook_available", displayName: "Population Hook Available", dependsOn: ["population_framework_future"], blockerReasonCodes: ["population_framework_missing"], cooldownPolicy: "future", knowledgeSafe: true, notes: "Population Simulation Framework is not implemented; hooks are schema-only." }
+  { id: "population_hook_available", displayName: "Population Hook Available", dependsOn: [populationSimulationFramework.id], blockerReasonCodes: [], cooldownPolicy: "population_simulation_framework", knowledgeSafe: true, notes: "Population Simulation Framework is published; Dynamic Events use its hooks without owning live population state." }
 ];
 
 const eventProbabilityPolicies: DynamicEventProbabilityPolicyDefinition[] = [
@@ -185,7 +186,7 @@ const effectIds = [
 const eventEffectDefinitions: DynamicEventEffectDefinition[] = effectIds.map((id) => ({
   id,
   displayName: id.split("_").map((word) => word[0].toUpperCase() + word.slice(1)).join(" "),
-  targetSystemIds: id.includes("population") || id.includes("migration") || id.includes("wellbeing") ? ["population_simulation_future"] : id.includes("mission") || id.includes("expedition") ? ["mission_expedition"] : id.includes("resource") || id.includes("route") || id.includes("shipment") || id.includes("storage") || id.includes("production") || id.includes("market") ? ["resource_economy_logistics"] : id.includes("identity") ? ["civilization_identity"] : id.includes("progression") ? ["civilization_progression"] : id.includes("knowledge") || id.includes("discovery") || id.includes("registry") ? ["discovery", "universal_discovery_registry"] : ["action_system"],
+  targetSystemIds: id.includes("population") || id.includes("migration") || id.includes("wellbeing") ? [populationSimulationFramework.id] : id.includes("mission") || id.includes("expedition") ? ["mission_expedition"] : id.includes("resource") || id.includes("route") || id.includes("shipment") || id.includes("storage") || id.includes("production") || id.includes("market") ? ["resource_economy_logistics"] : id.includes("identity") ? ["civilization_identity"] : id.includes("progression") ? ["civilization_progression"] : id.includes("knowledge") || id.includes("discovery") || id.includes("registry") ? ["discovery", "universal_discovery_registry"] : ["action_system"],
   studioMutatesPlayerState: false,
   protectedResolutionRequired: ["building_damage_hook", "permanent_unlock", "registry_hook", "mission_generation", "expedition_generation"].includes(id),
   notes: "Effect contract only. The Game resolves active modifiers and player state."
@@ -333,9 +334,8 @@ const eventPresentationContract: DynamicEventPresentationContract[] = [
 ].map((id) => ({ id, displayName: id.replace(/([A-Z])/g, " $1").trim(), rendererIndependent: true, semanticFields: ["id", "displayName", "status", "severity", "knowledgeVisibility", "choices"], notes: "Renderer-independent semantic contract only. Clients own final UI." } as DynamicEventPresentationContract));
 
 const missingCanonicalDefinitions: DynamicEventMissingCanonicalDefinition[] = [
-  { id: "population_simulation_framework", type: "population_framework", displayName: "Population Simulation Framework", referencedBy: ["population hooks", "wellbeing hooks", "migration hooks", "evacuation choices"], severity: "warning", recommendedOwner: "Population Simulation", notes: "Not implemented in Studio. Dynamic Events publish population-facing hooks only." },
   { id: "dedicated_repair_action", type: "action", displayName: "Dedicated Repair Action", referencedBy: ["repair choice", "building damage hooks"], severity: "info", recommendedOwner: "Action System", notes: "Current framework uses construct_building as a canonical repair-adjacent hook." },
-  { id: "dedicated_evacuation_action", type: "action", displayName: "Dedicated Evacuation Action", referencedBy: ["evacuate choice"], severity: "info", recommendedOwner: "Action System", notes: "Population evacuation remains hook-only until Population Simulation exists." },
+  { id: "dedicated_evacuation_action", type: "action", displayName: "Dedicated Evacuation Action", referencedBy: ["evacuate choice"], severity: "info", recommendedOwner: "Action System", notes: "Population evacuation currently uses transfer_population and travel_to_destination; a dedicated Action can follow if design requires it." },
   { id: "dynamic_event_art", type: "asset", displayName: "Dynamic Event Art", referencedBy: ["Creative Production", "Asset Library"], severity: "info", recommendedOwner: "Asset Library", notes: "Do not create fake game screens or final art." },
   { id: "event_encyclopedia_entries", type: "encyclopedia_entry", displayName: "Event Encyclopedia Entries", referencedBy: ["Encyclopedia"], severity: "info", recommendedOwner: "Encyclopedia", notes: "Sections are declared; authored entries can follow." }
 ];
@@ -352,9 +352,9 @@ export const dynamicEventFramework: DynamicEventFrameworkContract = {
   missionExpeditionFrameworkId: missionExpeditionFramework.id,
   universalDiscoveryRegistryVersion,
   populationSimulationIntegration: {
-    implemented: false,
-    hookOnly: true,
-    dependencyGap: "Population Simulation Framework",
+    implemented: true,
+    hookOnly: false,
+    populationSimulationFrameworkId: populationSimulationFramework.id,
     hooks: ["population_growth_hook", "migration_hook", "wellbeing_hook", "evacuation_choice", "specialist_shortage", "capacity_warning"]
   },
   ownership: {
@@ -391,7 +391,7 @@ export const dynamicEventFramework: DynamicEventFrameworkContract = {
     { id: "knowledge_locked", displayName: "Knowledge Locked", sourceSystemId: "knowledge", blocker: true, notes: "Do not leak hidden data." },
     { id: "route_missing", displayName: "Route Missing", sourceSystemId: "resource_economy_logistics", blocker: true, notes: "Route must resolve before logistics event responses." },
     { id: "shipment_unavailable", displayName: "Shipment Unavailable", sourceSystemId: "resource_economy_logistics", blocker: true, notes: "No live shipment instance is exported." },
-    { id: "population_framework_missing", displayName: "Population Framework Missing", sourceSystemId: "population_simulation_future", blocker: true, notes: "Population hooks only." },
+    { id: "population_framework_required", displayName: "Population Framework Required", sourceSystemId: populationSimulationFramework.id, blocker: true, notes: "Population-facing events require the published Population Simulation Framework." },
     { id: "server_verification_required", displayName: "Server Verification Required", sourceSystemId: "game_backend", blocker: true, notes: "Protected outcome cannot be resolved by untrusted clients." }
   ],
   eventKnowledgeVisibility,
@@ -481,7 +481,7 @@ export function validateDynamicEventFramework(
   if (framework.colonizationFrameworkId !== colonizationFramework.id) issues.push(issue("error", "invalid_colonization_reference", "Dynamic Event Framework colonization reference does not resolve.", [framework.colonizationFrameworkId]));
   if (framework.resourceEconomyLogisticsFrameworkId !== resourceEconomyLogisticsFramework.id) issues.push(issue("error", "invalid_logistics_reference", "Dynamic Event Framework logistics reference does not resolve.", [framework.resourceEconomyLogisticsFrameworkId]));
   if (framework.missionExpeditionFrameworkId !== missionExpeditionFramework.id) issues.push(issue("error", "invalid_mission_reference", "Dynamic Event Framework mission reference does not resolve.", [framework.missionExpeditionFrameworkId]));
-  if (framework.populationSimulationIntegration.implemented !== false || framework.populationSimulationIntegration.hookOnly !== true) issues.push(issue("error", "invalid_population_gap_policy", "Population Simulation is absent, so Dynamic Events must publish hooks only."));
+  if (framework.populationSimulationIntegration.implemented !== true || framework.populationSimulationIntegration.hookOnly !== false || framework.populationSimulationIntegration.populationSimulationFrameworkId !== populationSimulationFramework.id) issues.push(issue("error", "invalid_population_integration_policy", "Dynamic Events must integrate with the published Population Simulation Framework without owning live player population state."));
 
   for (const state of framework.eventLifecycleStateDefinitions) {
     for (const transition of state.allowedTransitions) if (!lifecycleStateIds.has(transition)) issues.push(issue("error", "invalid_lifecycle_transition", `${state.id} transition ${transition} does not resolve.`, [state.id, transition]));

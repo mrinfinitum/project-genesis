@@ -2579,6 +2579,71 @@ export type DynamicEventChoiceId = "investigate" | "ignore" | "evacuate" | "repa
 export type DynamicEventResolutionPolicyId = "automatic" | "choice_based" | "action_based" | "mission_based" | "timed" | "threshold_based" | "multi_stage" | "server_authoritative" | "deterministic_roll" | "weighted_outcome";
 export type DynamicEventTimelineSignificanceId = "not_recorded" | "local_record" | "colony_record" | "civilization_record" | "galactic_record";
 
+export type PopulationCategoryKind = "demographic_cohort" | "workforce_role" | "specialist_role" | "synthetic_role" | "visitor_role";
+export type PopulationLifeStageId = "child" | "adolescent" | "adult" | "senior" | "synthetic" | "non_biological" | "temporary_resident";
+export type PopulationWorkforceRoleId = "general_labor" | "engineering" | "science" | "agriculture" | "mining" | "manufacturing" | "logistics" | "trade" | "administration" | "healthcare" | "education" | "exploration" | "archaeology" | "terraforming" | "automation_management" | "security" | "hospitality" | "maintenance" | "construction" | "energy";
+export type PopulationAutomationPolicyId = "no_substitution" | "partial_substitution" | "full_substitution" | "specialist_only" | "supervision_required" | "biological_required" | "synthetic_preferred";
+export type PopulationWellbeingBandId = "critical" | "unstable" | "strained" | "stable" | "thriving" | "exceptional";
+export type PopulationMigrationTypeId = "internal_reassignment" | "colony_to_colony" | "planetary_migration" | "orbital_migration" | "interplanetary_migration" | "interstellar_migration" | "refugee_migration" | "specialist_relocation" | "colonist_transport" | "temporary_worker_transfer" | "visitor_travel";
+export type WorkforceAssignmentModeId = "auto_assignment" | "manual_assignment" | "priority_assignment" | "minimum_staffing" | "target_staffing" | "specialist_required" | "automation_substitution" | "shortage" | "surplus" | "reserve_pool";
+export type PopulationShortageReasonCodeId = "labor_shortage" | "specialist_shortage" | "housing_shortage" | "food_shortage" | "water_shortage" | "healthcare_shortage" | "education_shortage" | "life_support_shortage" | "overcapacity" | "unemployment" | "population_decline" | "migration_pressure" | "evacuation_required";
+
+export type PopulationCategoryDefinition = { id: string; displayName: string; kind: PopulationCategoryKind; description: string; lifeStageIds: PopulationLifeStageId[]; workforceRoleIds: PopulationWorkforceRoleId[]; specialistRoleIds: string[]; gameOwnsLiveCount: true; notes: string };
+export type PopulationLifeStageDefinition = { id: PopulationLifeStageId; displayName: string; workforceEligible: boolean; educationEligible: boolean; migrationEligible: boolean; participatesInGrowth: boolean; consumptionModifier: number; healthcareNeed: "low" | "medium" | "high" | "synthetic" | "temporary"; housingNeed: "standard" | "supported" | "synthetic_bay" | "temporary"; notes: string };
+export type PopulationWorkforceRoleDefinition = { id: PopulationWorkforceRoleId; displayName: string; skillClass: "general" | "technical" | "scientific" | "logistics" | "civic" | "hazard" | "service"; educationTierIds: string[]; supportedBuildingFamilyIds: string[]; productivityProfileId: string; substitutionPolicyIds: PopulationAutomationPolicyId[]; shortageReasonCodeIds: PopulationShortageReasonCodeId[]; identityRelationshipIds: string[]; notes: string };
+export type PopulationSpecialistRoleDefinition = { id: string; displayName: string; baseWorkforceRoleId: PopulationWorkforceRoleId; educationTierIds: string[]; requiredResearchIds: string[]; requiredBuildingFamilyIds: string[]; supportedActionIds: string[]; identityRelationshipIds: string[]; missingSourceDefinitionIds: string[]; notes: string };
+export type PopulationDemographicStateSchema = { id: "population_demographic_state_schema"; gameOwned: true; fields: Array<{ id: string; displayName: string; valueType: "integer" | "number" | "map"; description: string }> };
+export type PopulationGrowthDefinition = { id: string; displayName: string; deterministic: true; calculationVersion: string; inputs: string[]; formula: string; clamps: { minGrowthRate: number; maxGrowthRate: number }; outputs: string[]; notes: string };
+export type PopulationCapacityDefinition = { id: string; displayName: string; capacityType: "surface_habitation" | "orbital_habitation" | "subsurface_habitation" | "floating_habitation" | "temporary_habitation" | "robotic_capacity" | "visitor_capacity"; sourceTypes: string[]; constraintIds: string[]; notes: string };
+export type PopulationNeedDefinition = { id: string; displayName: string; criticality: "critical" | "high" | "medium" | "low"; affects: string[]; shortageReasonCodeId: PopulationShortageReasonCodeId | null; notes: string };
+export type PopulationWellbeingBandDefinition = { id: PopulationWellbeingBandId; displayName: string; min: number; max: number; migrationEffect: string; growthEffect: string; productivityEffect: string; unrestHook: string; notes: string };
+export type PopulationEducationDefinition = { id: string; displayName: string; tier: "basic" | "technical" | "advanced" | "specialist" | "elite" | "synthetic_training"; capacitySourceTypes: string[]; trainingDurationActionId: string; eligibleRoleIds: PopulationWorkforceRoleId[]; specialistConversionRoleIds: string[]; buildingDependencyIds: string[]; researchDependencyIds: string[]; identityModifierIds: string[]; notes: string };
+export type PopulationMigrationDefinition = { id: PopulationMigrationTypeId; displayName: string; actionIds: string[]; logisticsRequired: true; transportCapacityRequired: true; distanceRule: string; travelTimeRule: string; destinationCapacityCheck: true; policyCheck: true; hazardCheck: true; notes: string };
+export type WorkforceAssignmentDefinition = { id: WorkforceAssignmentModeId; displayName: string; targetScopes: Array<"colony" | "building" | "project" | "extraction" | "research" | "logistics" | "trade" | "terraforming" | "exploration">; actionIds: string[]; gameOwnsAssignments: true; notes: string };
+export type AutomationSubstitutionPolicyDefinition = { id: PopulationAutomationPolicyId; displayName: string; allowedWorkerCategoryIds: string[]; maxCoveragePercent: number; requiresSupervisor: boolean; canBypassTechnology: false; canBypassSpecialists: false; canBypassCosts: false; canBypassPremiumPermissions: false; dangerousWorkEligible: boolean; notes: string };
+export type PopulationColonyIntegrationDefinition = { id: string; colonyTypeId: string; minimumViablePopulation: number; targetFoundingPopulation: number; workforceRoleRequirements: Array<{ roleId: PopulationWorkforceRoleId; minimum: number; target: number }>; specialistRoleRequirements: string[]; initialCapacity: number; growthProfileId: string; automationSupportPolicyIds: PopulationAutomationPolicyId[]; notes: string };
+export type PopulationBuildingIntegrationHook = { id: string; buildingFamilyId: string; populationCapacity: number | null; workforceDemandRoleIds: PopulationWorkforceRoleId[]; specialistDemandRoleIds: string[]; educationCapacity: number | null; healthcareCapacity: number | null; visitorCapacity: number | null; housingType: string | null; automationPolicyIds: PopulationAutomationPolicyId[]; productivityEffect: string; missingDefinition: boolean; notes: string };
+export type PopulationIntegrationHook = { id: string; targetSystemId: string; referencedIds: string[]; notes: string };
+export type PopulationPresentationContract = { id: "PopulationSummary" | "PopulationComposition" | "DemographicBreakdown" | "WorkforceBreakdown" | "WorkforceAssignmentPanel" | "PopulationCapacityGauge" | "NeedsAndWellbeingPanel" | "PopulationGrowthForecast" | "MigrationSummary" | "SpecialistRequirement" | "AutomationSubstitutionSummary" | "PopulationShortageAlert" | "ColonyPopulationReadiness"; displayName: string; rendererIndependent: true; semanticFields: string[]; notes: string };
+export type PopulationMissingSourceDefinition = { id: string; type: "action" | "building" | "research" | "specialist_source" | "asset" | "encyclopedia_entry"; displayName: string; referencedBy: string[]; severity: "warning" | "info"; recommendedOwner: "Action System" | "Building Library" | "Research" | "Population Simulation" | "Asset Library" | "Encyclopedia"; notes: string };
+export type PopulationSimulationFrameworkContract = {
+  id: "population_simulation_framework_v1";
+  version: "1.0.0";
+  architectureDecisionId: "ARCH-DECISION-POPULATION-STRUCTURED-SIMULATION";
+  actionSystemId: ActionSystemContract["id"];
+  planetDevelopmentFrameworkId: PlanetDevelopmentFrameworkContract["id"];
+  civilizationProgressionFrameworkId: CivilizationProgressionFrameworkContract["id"];
+  colonizationFrameworkId: ColonizationFrameworkContract["id"];
+  calculationVersion: string;
+  ownership: { studioOwns: string[]; gameOwns: string[] };
+  activePlayerStatePolicy: { exportsPlayerPopulationValues: false; exportsLiveColonyDemographics: false; exportsAssignments: false; exportsMigrationInstances: false; exportsTimestamps: false; exportsQueues: false; exportsSaveState: false };
+  populationCategoryDefinitions: PopulationCategoryDefinition[];
+  populationLifeStageDefinitions: PopulationLifeStageDefinition[];
+  populationWorkforceRoleDefinitions: PopulationWorkforceRoleDefinition[];
+  populationSpecialistRoleDefinitions: PopulationSpecialistRoleDefinition[];
+  demographicStateSchema: PopulationDemographicStateSchema;
+  populationGrowthDefinitions: PopulationGrowthDefinition[];
+  populationCapacityDefinitions: PopulationCapacityDefinition[];
+  populationNeedDefinitions: PopulationNeedDefinition[];
+  populationWellbeingBands: PopulationWellbeingBandDefinition[];
+  populationEducationDefinitions: PopulationEducationDefinition[];
+  populationMigrationDefinitions: PopulationMigrationDefinition[];
+  workforceAssignmentDefinitions: WorkforceAssignmentDefinition[];
+  automationSubstitutionPolicies: AutomationSubstitutionPolicyDefinition[];
+  populationShortageReasonCodes: Array<{ id: PopulationShortageReasonCodeId; displayName: string; blocker: boolean; severity: "warning" | "critical"; notes: string }>;
+  colonyIntegration: PopulationColonyIntegrationDefinition[];
+  buildingIntegrationHooks: PopulationBuildingIntegrationHook[];
+  economyResourceHooks: PopulationIntegrationHook[];
+  civilizationIdentityIntegration: PopulationIntegrationHook[];
+  civilizationProgressionIntegration: PopulationIntegrationHook[];
+  actionSystemIntegration: PopulationIntegrationHook[];
+  populationPresentationContract: PopulationPresentationContract[];
+  creativeProductionRequirements: Array<{ id: string; displayName: string; category: "Population"; status: "required" | "planned"; notes: string }>;
+  assetLibraryCategories: Array<{ id: string; displayName: string; groups: string[]; notes: string }>;
+  missingSourceDefinitions: PopulationMissingSourceDefinition[];
+  validationRules: string[];
+};
+
 export type DynamicEventCategoryDefinition = { id: DynamicEventCategoryId; displayName: string; description: string; sourceSystemIds: string[]; presentationToken: string };
 export type DynamicEventTypeDefinition = { id: DynamicEventTypeId; displayName: string; description: string; defaultSeverityId: DynamicEventSeverityId; positiveBias: "positive" | "neutral" | "negative" | "mixed"; presentationToken: string };
 export type DynamicEventLifecycleStateDefinition = { id: DynamicEventLifecycleStateId; displayName: string; terminal: boolean; playerVisible: boolean; allowedTransitions: DynamicEventLifecycleStateId[]; presentationToken: string };
@@ -2638,7 +2703,7 @@ export type DynamicEventFrameworkContract = {
   resourceEconomyLogisticsFrameworkId: ResourceEconomyLogisticsFrameworkContract["id"];
   missionExpeditionFrameworkId: MissionExpeditionFrameworkContract["id"];
   universalDiscoveryRegistryVersion: string;
-  populationSimulationIntegration: { implemented: false; hookOnly: true; dependencyGap: "Population Simulation Framework"; hooks: string[] };
+  populationSimulationIntegration: { implemented: boolean; hookOnly: boolean; populationSimulationFrameworkId?: PopulationSimulationFrameworkContract["id"]; dependencyGap?: "Population Simulation Framework"; hooks: string[] };
   ownership: { studioOwns: string[]; gameOwns: string[] };
   activePlayerStatePolicy: {
     exportsActiveEventInstances: false;
@@ -3078,6 +3143,7 @@ export type GameRuntimeData = {
   planetDevelopmentFramework: PlanetDevelopmentFrameworkContract;
   civilizationProgressionFramework: CivilizationProgressionFrameworkContract;
   colonizationFramework: ColonizationFrameworkContract;
+  populationSimulationFramework: PopulationSimulationFrameworkContract;
   resourceEconomyLogisticsFramework: ResourceEconomyLogisticsFrameworkContract;
   missionExpeditionFramework: MissionExpeditionFrameworkContract;
   dynamicEventFramework: DynamicEventFrameworkContract;

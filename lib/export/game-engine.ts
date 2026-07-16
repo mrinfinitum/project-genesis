@@ -34,6 +34,7 @@ import { missionExpeditionFramework, validateMissionExpeditionFramework } from "
 import { planetExplorationProgression, timeActionContract, validatePlanetExplorationProgression, validateTimeActionContract } from "@/lib/planets/exploration-progression";
 import { planetDevelopmentFramework, validatePlanetDevelopmentFramework } from "@/lib/planets/development-framework";
 import { canonicalPlanetOpportunityProfiles, resolvePlanetOpportunityProfileId, validatePlanetOpportunityProfiles } from "@/lib/planets/opportunity-profiles";
+import { populationSimulationFramework, validatePopulationSimulationFramework } from "@/lib/population/framework";
 import { defaultEraNavigationProfile, engineEraNavigationOverrides, resolveEraNavigationProfile, supportedEraNavigationBoundaryModes, supportedEraNavigationDashboardModes } from "@/lib/runtime/client-profiles";
 import { galaxyEngineContractVersion, galaxyEnginePresentationContract, validateGalaxyEnginePresentationContract } from "@/lib/runtime/galaxy-engine-contract";
 import { buildMobileClientProfile, mobileAssetRequirements } from "@/lib/runtime/mobile-client-profiles";
@@ -86,7 +87,7 @@ const targetConfigs: Record<EngineTarget, EngineTargetConfig> = {
     endpoint: "/api/export/roblox",
     folderStructure: ["ReplicatedStorage/ProjectGenesis/Data", "ReplicatedStorage/ProjectGenesis/Services", "ServerScriptService/ProjectGenesis"],
     generatedModules: ["ResourceCatalogModule", "ResearchUnlockModule", "DiscoveryCatalogModule", "UniversalDiscoveryRegistryContract", "UniverseDataModule", "ApiService"],
-    schemaMapping: ["resource_catalog -> ResourceCatalogModule", "research + unlock_matrix -> ResearchUnlockModule", "discoveries + discovery_categories -> DiscoveryCatalogModule", "universal_discovery_registry -> UniversalDiscoveryRegistryContract", "colonization_framework + resource_economy_logistics_framework + mission_expedition_framework + dynamic_event_framework -> UniverseDataModule", "galaxies/sectors/star_systems/planets/factions -> UniverseDataModule"],
+    schemaMapping: ["resource_catalog -> ResourceCatalogModule", "research + unlock_matrix -> ResearchUnlockModule", "discoveries + discovery_categories -> DiscoveryCatalogModule", "universal_discovery_registry -> UniversalDiscoveryRegistryContract", "colonization_framework + population_simulation_framework + resource_economy_logistics_framework + mission_expedition_framework + dynamic_event_framework -> UniverseDataModule", "galaxies/sectors/star_systems/planets/factions -> UniverseDataModule"],
     apiNotes: ["Roblox consumes Studio/API data; it is not the primary data generator.", "Use HttpService against the Generic JSON API for live sync workflows."]
   },
   unity: {
@@ -208,6 +209,7 @@ type CanonicalModules = {
   planet_development_framework: typeof planetDevelopmentFramework;
   civilization_progression_framework: typeof civilizationProgressionFramework;
   colonization_framework: typeof colonizationFramework;
+  population_simulation_framework: typeof populationSimulationFramework;
   resource_economy_logistics_framework: typeof resourceEconomyLogisticsFramework;
   mission_expedition_framework: typeof missionExpeditionFramework;
   dynamic_event_framework: typeof dynamicEventFramework;
@@ -653,6 +655,7 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
     planet_development_framework: planetDevelopmentFramework,
     civilization_progression_framework: civilizationProgressionFramework,
     colonization_framework: colonizationFramework,
+    population_simulation_framework: populationSimulationFramework,
     resource_economy_logistics_framework: resourceEconomyLogisticsFramework,
     mission_expedition_framework: missionExpeditionFramework,
     dynamic_event_framework: dynamicEventFramework,
@@ -1522,6 +1525,17 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
   })) {
     addIssue(issues, issue.severity, issue.code, issue.message, issue.records);
   }
+  for (const issue of validatePopulationSimulationFramework(modules.population_simulation_framework, {
+    actionIds: new Set(modules.action_system.actionDefinitions.map((action) => action.id)),
+    buildingFamilyIds: new Set(modules.building_taxonomy.map((family) => family.id)),
+    colonizationFrameworkId: modules.colonization_framework.id,
+    planetDevelopmentFrameworkId: modules.planet_development_framework.id,
+    civilizationProgressionFrameworkId: modules.civilization_progression_framework.id,
+    colonyTypeIds: new Set(modules.colonization_framework.colonyTypeDefinitions.map((type) => type.id)),
+    progressionMilestoneIds: new Set(modules.civilization_progression_framework.civilizationMilestones.map((milestone) => milestone.id))
+  })) {
+    addIssue(issues, issue.severity, issue.code, issue.message, issue.records);
+  }
   for (const issue of validateResourceEconomyLogisticsFramework(modules.resource_economy_logistics_framework, {
     resourceIds: new Set(modules.resource_catalog.map((resource) => resource.id)),
     actionIds: new Set(modules.action_system.actionDefinitions.map((action) => action.id)),
@@ -1721,6 +1735,7 @@ function compactModules(modules: CanonicalModules) {
     planet_development_framework: modules.planet_development_framework,
     civilization_progression_framework: modules.civilization_progression_framework,
     colonization_framework: modules.colonization_framework,
+    population_simulation_framework: modules.population_simulation_framework,
     resource_economy_logistics_framework: modules.resource_economy_logistics_framework,
     mission_expedition_framework: modules.mission_expedition_framework,
     dynamic_event_framework: modules.dynamic_event_framework,
@@ -1797,7 +1812,7 @@ function targetArtifacts(target: EngineTarget, modules: CanonicalModules) {
       "UniversalDiscoveryRegistryContract.lua": `local UniversalDiscoveryRegistryContract = ${luaValue(modules.universal_discovery_registry)}\n\nreturn UniversalDiscoveryRegistryContract\n`,
       "EraNavigationProfileModule.lua": `local EraNavigationProfiles = ${luaValue(modules.era_navigation_profiles)}\n\nreturn EraNavigationProfiles\n`,
       "ResearchUnlockModule.lua": `local ResearchUnlocks = ${luaValue({ research: modules.research, unlocks: modules.unlock_matrix })}\n\nreturn ResearchUnlocks\n`,
-      "UniverseDataModule.lua": `local UniverseData = ${luaValue({ galaxies: modules.galaxies, sectors: modules.sectors, starSystems: modules.star_systems, planets: modules.planets, celestialBodies: modules.celestial_bodies, planetOpportunityProfiles: modules.planet_opportunity_profiles, timeActionContract: modules.time_action_contract, actionSystem: modules.action_system, planetExplorationProgression: modules.planet_exploration_progression, planetDevelopmentFramework: modules.planet_development_framework, civilizationProgressionFramework: modules.civilization_progression_framework, colonizationFramework: modules.colonization_framework, resourceEconomyLogisticsFramework: modules.resource_economy_logistics_framework, missionExpeditionFramework: modules.mission_expedition_framework, dynamicEventFramework: modules.dynamic_event_framework, factions: modules.factions, colonies: modules.colonies, colonyBuildings: modules.colony_buildings, colonyLevels: modules.colony_level_definitions, colonyFocus: modules.colony_focus_definitions, markets: modules.markets, tradeRoutes: modules.trade_routes, tradeOpportunities: modules.trade_opportunities, missions: modules.missions, missionObjectives: modules.mission_objectives, missionRewards: modules.mission_rewards })}\n\nreturn UniverseData\n`,
+      "UniverseDataModule.lua": `local UniverseData = ${luaValue({ galaxies: modules.galaxies, sectors: modules.sectors, starSystems: modules.star_systems, planets: modules.planets, celestialBodies: modules.celestial_bodies, planetOpportunityProfiles: modules.planet_opportunity_profiles, timeActionContract: modules.time_action_contract, actionSystem: modules.action_system, planetExplorationProgression: modules.planet_exploration_progression, planetDevelopmentFramework: modules.planet_development_framework, civilizationProgressionFramework: modules.civilization_progression_framework, colonizationFramework: modules.colonization_framework, populationSimulationFramework: modules.population_simulation_framework, resourceEconomyLogisticsFramework: modules.resource_economy_logistics_framework, missionExpeditionFramework: modules.mission_expedition_framework, dynamicEventFramework: modules.dynamic_event_framework, factions: modules.factions, colonies: modules.colonies, colonyBuildings: modules.colony_buildings, colonyLevels: modules.colony_level_definitions, colonyFocus: modules.colony_focus_definitions, markets: modules.markets, tradeRoutes: modules.trade_routes, tradeOpportunities: modules.trade_opportunities, missions: modules.missions, missionObjectives: modules.mission_objectives, missionRewards: modules.mission_rewards })}\n\nreturn UniverseData\n`,
       "ApiService.lua": "local HttpService = game:GetService(\"HttpService\")\n\nlocal ApiService = {}\nApiService.BaseUrl = \"https://your-studio-host.example.com/api/export\"\n\nfunction ApiService.FetchGeneric()\n  local response = HttpService:GetAsync(ApiService.BaseUrl .. \"/generic\")\n  return HttpService:JSONDecode(response)\nend\n\nreturn ApiService\n"
     };
   }

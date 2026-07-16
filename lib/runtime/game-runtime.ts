@@ -39,6 +39,7 @@ import { ResourceService } from "@/lib/resources/service";
 import { planetExplorationProgression, timeActionContract, validatePlanetExplorationProgression, validateTimeActionContract } from "@/lib/planets/exploration-progression";
 import { planetDevelopmentFramework, validatePlanetDevelopmentFramework } from "@/lib/planets/development-framework";
 import { canonicalPlanetOpportunityProfiles, validatePlanetOpportunityProfiles } from "@/lib/planets/opportunity-profiles";
+import { populationSimulationFramework, validatePopulationSimulationFramework } from "@/lib/population/framework";
 import { engineEraNavigationOverrides, resolveEraNavigationProfile, supportedEraNavigationBoundaryModes, supportedEraNavigationDashboardModes } from "@/lib/runtime/client-profiles";
 import { galaxyEngineContractVersion, galaxyEnginePresentationContract, validateGalaxyEnginePresentationContract } from "@/lib/runtime/galaxy-engine-contract";
 import { buildMobileClientProfile } from "@/lib/runtime/mobile-client-profiles";
@@ -63,7 +64,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 31;
+export const gameRuntimeContentVersion = 32;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -105,6 +106,7 @@ export type RobloxRuntimeExportPayload = {
   planetDevelopmentFramework: GameRuntimeData["planetDevelopmentFramework"];
   civilizationProgressionFramework: GameRuntimeData["civilizationProgressionFramework"];
   colonizationFramework: GameRuntimeData["colonizationFramework"];
+  populationSimulationFramework: GameRuntimeData["populationSimulationFramework"];
   resourceEconomyLogisticsFramework: GameRuntimeData["resourceEconomyLogisticsFramework"];
   missionExpeditionFramework: GameRuntimeData["missionExpeditionFramework"];
   dynamicEventFramework: GameRuntimeData["dynamicEventFramework"];
@@ -762,6 +764,121 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
         referencedBy: [...definition.referencedBy].sort()
       })),
       validationRules: [...runtimeData.colonizationFramework.validationRules].sort()
+    },
+    populationSimulationFramework: {
+      ...runtimeData.populationSimulationFramework,
+      ownership: {
+        studioOwns: [...runtimeData.populationSimulationFramework.ownership.studioOwns].sort(),
+        gameOwns: [...runtimeData.populationSimulationFramework.ownership.gameOwns].sort()
+      },
+      populationCategoryDefinitions: [...runtimeData.populationSimulationFramework.populationCategoryDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        lifeStageIds: [...definition.lifeStageIds].sort(),
+        workforceRoleIds: [...definition.workforceRoleIds].sort(),
+        specialistRoleIds: [...definition.specialistRoleIds].sort()
+      })),
+      populationLifeStageDefinitions: [...runtimeData.populationSimulationFramework.populationLifeStageDefinitions].sort(byId),
+      populationWorkforceRoleDefinitions: [...runtimeData.populationSimulationFramework.populationWorkforceRoleDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        educationTierIds: [...definition.educationTierIds].sort(),
+        supportedBuildingFamilyIds: [...definition.supportedBuildingFamilyIds].sort(),
+        substitutionPolicyIds: [...definition.substitutionPolicyIds].sort(),
+        shortageReasonCodeIds: [...definition.shortageReasonCodeIds].sort(),
+        identityRelationshipIds: [...definition.identityRelationshipIds].sort()
+      })),
+      populationSpecialistRoleDefinitions: [...runtimeData.populationSimulationFramework.populationSpecialistRoleDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        educationTierIds: [...definition.educationTierIds].sort(),
+        requiredResearchIds: [...definition.requiredResearchIds].sort(),
+        requiredBuildingFamilyIds: [...definition.requiredBuildingFamilyIds].sort(),
+        supportedActionIds: [...definition.supportedActionIds].sort(),
+        identityRelationshipIds: [...definition.identityRelationshipIds].sort(),
+        missingSourceDefinitionIds: [...definition.missingSourceDefinitionIds].sort()
+      })),
+      demographicStateSchema: {
+        ...runtimeData.populationSimulationFramework.demographicStateSchema,
+        fields: [...runtimeData.populationSimulationFramework.demographicStateSchema.fields].sort(byId)
+      },
+      populationGrowthDefinitions: [...runtimeData.populationSimulationFramework.populationGrowthDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        inputs: [...definition.inputs].sort(),
+        outputs: [...definition.outputs].sort()
+      })),
+      populationCapacityDefinitions: [...runtimeData.populationSimulationFramework.populationCapacityDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        sourceTypes: [...definition.sourceTypes].sort(),
+        constraintIds: [...definition.constraintIds].sort()
+      })),
+      populationNeedDefinitions: [...runtimeData.populationSimulationFramework.populationNeedDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        affects: [...definition.affects].sort()
+      })),
+      populationWellbeingBands: [...runtimeData.populationSimulationFramework.populationWellbeingBands].sort((left, right) => left.min - right.min || left.id.localeCompare(right.id)),
+      populationEducationDefinitions: [...runtimeData.populationSimulationFramework.populationEducationDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        capacitySourceTypes: [...definition.capacitySourceTypes].sort(),
+        eligibleRoleIds: [...definition.eligibleRoleIds].sort(),
+        specialistConversionRoleIds: [...definition.specialistConversionRoleIds].sort(),
+        buildingDependencyIds: [...definition.buildingDependencyIds].sort(),
+        researchDependencyIds: [...definition.researchDependencyIds].sort(),
+        identityModifierIds: [...definition.identityModifierIds].sort()
+      })),
+      populationMigrationDefinitions: [...runtimeData.populationSimulationFramework.populationMigrationDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        actionIds: [...definition.actionIds].sort()
+      })),
+      workforceAssignmentDefinitions: [...runtimeData.populationSimulationFramework.workforceAssignmentDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        targetScopes: [...definition.targetScopes].sort(),
+        actionIds: [...definition.actionIds].sort()
+      })),
+      automationSubstitutionPolicies: [...runtimeData.populationSimulationFramework.automationSubstitutionPolicies].sort(byId).map((definition) => ({
+        ...definition,
+        allowedWorkerCategoryIds: [...definition.allowedWorkerCategoryIds].sort()
+      })),
+      populationShortageReasonCodes: [...runtimeData.populationSimulationFramework.populationShortageReasonCodes].sort(byId),
+      colonyIntegration: [...runtimeData.populationSimulationFramework.colonyIntegration].sort(byId).map((definition) => ({
+        ...definition,
+        workforceRoleRequirements: [...definition.workforceRoleRequirements].sort((left, right) => left.roleId.localeCompare(right.roleId)),
+        specialistRoleRequirements: [...definition.specialistRoleRequirements].sort(),
+        automationSupportPolicyIds: [...definition.automationSupportPolicyIds].sort()
+      })),
+      buildingIntegrationHooks: [...runtimeData.populationSimulationFramework.buildingIntegrationHooks].sort(byId).map((definition) => ({
+        ...definition,
+        workforceDemandRoleIds: [...definition.workforceDemandRoleIds].sort(),
+        specialistDemandRoleIds: [...definition.specialistDemandRoleIds].sort(),
+        automationPolicyIds: [...definition.automationPolicyIds].sort()
+      })),
+      economyResourceHooks: [...runtimeData.populationSimulationFramework.economyResourceHooks].sort(byId).map((hook) => ({
+        ...hook,
+        referencedIds: [...hook.referencedIds].sort()
+      })),
+      civilizationIdentityIntegration: [...runtimeData.populationSimulationFramework.civilizationIdentityIntegration].sort(byId).map((hook) => ({
+        ...hook,
+        referencedIds: [...hook.referencedIds].sort()
+      })),
+      civilizationProgressionIntegration: [...runtimeData.populationSimulationFramework.civilizationProgressionIntegration].sort(byId).map((hook) => ({
+        ...hook,
+        referencedIds: [...hook.referencedIds].sort()
+      })),
+      actionSystemIntegration: [...runtimeData.populationSimulationFramework.actionSystemIntegration].sort(byId).map((hook) => ({
+        ...hook,
+        referencedIds: [...hook.referencedIds].sort()
+      })),
+      populationPresentationContract: [...runtimeData.populationSimulationFramework.populationPresentationContract].sort(byId).map((contract) => ({
+        ...contract,
+        semanticFields: [...contract.semanticFields].sort()
+      })),
+      creativeProductionRequirements: [...runtimeData.populationSimulationFramework.creativeProductionRequirements].sort(byId),
+      assetLibraryCategories: [...runtimeData.populationSimulationFramework.assetLibraryCategories].sort(byId).map((category) => ({
+        ...category,
+        groups: [...category.groups].sort()
+      })),
+      missingSourceDefinitions: [...runtimeData.populationSimulationFramework.missingSourceDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        referencedBy: [...definition.referencedBy].sort()
+      })),
+      validationRules: [...runtimeData.populationSimulationFramework.validationRules].sort()
     },
     resourceEconomyLogisticsFramework: {
       ...runtimeData.resourceEconomyLogisticsFramework,
@@ -1852,6 +1969,17 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   })) {
     issues.push(issue);
   }
+  for (const issue of validatePopulationSimulationFramework(runtimeData.populationSimulationFramework, {
+    actionIds: new Set(runtimeData.actionSystem.actionDefinitions.map((action) => action.id)),
+    buildingFamilyIds: new Set(runtimeData.buildingTaxonomy.map((family) => family.id)),
+    colonizationFrameworkId: runtimeData.colonizationFramework.id,
+    planetDevelopmentFrameworkId: runtimeData.planetDevelopmentFramework.id,
+    civilizationProgressionFrameworkId: runtimeData.civilizationProgressionFramework.id,
+    colonyTypeIds: new Set(runtimeData.colonizationFramework.colonyTypeDefinitions.map((type) => type.id)),
+    progressionMilestoneIds: new Set(runtimeData.civilizationProgressionFramework.civilizationMilestones.map((milestone) => milestone.id))
+  })) {
+    issues.push(issue);
+  }
   for (const issue of validateResourceEconomyLogisticsFramework(runtimeData.resourceEconomyLogisticsFramework, {
     resourceIds: new Set(runtimeData.resources.map((resource) => resource.id)),
     actionIds: new Set(runtimeData.actionSystem.actionDefinitions.map((action) => action.id)),
@@ -2059,6 +2187,7 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     planetDevelopmentFramework: sorted.planetDevelopmentFramework,
     civilizationProgressionFramework: sorted.civilizationProgressionFramework,
     colonizationFramework: sorted.colonizationFramework,
+    populationSimulationFramework: sorted.populationSimulationFramework,
     resourceEconomyLogisticsFramework: sorted.resourceEconomyLogisticsFramework,
     missionExpeditionFramework: sorted.missionExpeditionFramework,
     dynamicEventFramework: sorted.dynamicEventFramework,
@@ -2151,6 +2280,17 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
     buildingIds: new Set(payload.buildingLibrary.map((building) => building.id)),
     planetDevelopmentFrameworkId: payload.planetDevelopmentFramework.id,
     civilizationProgressionFrameworkId: payload.civilizationProgressionFramework.id,
+    progressionMilestoneIds: new Set(payload.civilizationProgressionFramework.civilizationMilestones.map((milestone) => milestone.id))
+  })) {
+    issues.push(issue);
+  }
+  for (const issue of validatePopulationSimulationFramework(payload.populationSimulationFramework, {
+    actionIds: new Set(payload.actionSystem.actionDefinitions.map((action) => action.id)),
+    buildingFamilyIds: new Set(payload.buildingTaxonomy.map((family) => family.id)),
+    colonizationFrameworkId: payload.colonizationFramework.id,
+    planetDevelopmentFrameworkId: payload.planetDevelopmentFramework.id,
+    civilizationProgressionFrameworkId: payload.civilizationProgressionFramework.id,
+    colonyTypeIds: new Set(payload.colonizationFramework.colonyTypeDefinitions.map((type) => type.id)),
     progressionMilestoneIds: new Set(payload.civilizationProgressionFramework.civilizationMilestones.map((milestone) => milestone.id))
   })) {
     issues.push(issue);
@@ -2329,6 +2469,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     planetDevelopmentFramework,
     civilizationProgressionFramework,
     colonizationFramework,
+    populationSimulationFramework,
     resourceEconomyLogisticsFramework,
     missionExpeditionFramework,
     dynamicEventFramework,
@@ -2392,6 +2533,7 @@ export async function getGameRuntimeData() {
     planetDevelopmentFramework: base.planetDevelopmentFramework,
     civilizationProgressionFramework: base.civilizationProgressionFramework,
     colonizationFramework: base.colonizationFramework,
+    populationSimulationFramework: base.populationSimulationFramework,
     resourceEconomyLogisticsFramework: base.resourceEconomyLogisticsFramework,
     missionExpeditionFramework: base.missionExpeditionFramework,
     dynamicEventFramework: base.dynamicEventFramework,
@@ -2610,6 +2752,7 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     planetDevelopmentFramework: base.planetDevelopmentFramework,
     civilizationProgressionFramework: base.civilizationProgressionFramework,
     colonizationFramework: base.colonizationFramework,
+    populationSimulationFramework: base.populationSimulationFramework,
     resourceEconomyLogisticsFramework: base.resourceEconomyLogisticsFramework,
     missionExpeditionFramework: base.missionExpeditionFramework,
     dynamicEventFramework: base.dynamicEventFramework,

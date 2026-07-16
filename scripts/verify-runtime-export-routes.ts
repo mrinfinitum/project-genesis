@@ -267,7 +267,7 @@ type RuntimePayload = {
   dynamicEventFramework?: {
     id?: string;
     architectureDecisionId?: string;
-    populationSimulationIntegration?: { implemented?: boolean; hookOnly?: boolean; dependencyGap?: string; hooks?: string[] };
+    populationSimulationIntegration?: { implemented?: boolean; hookOnly?: boolean; populationSimulationFrameworkId?: string; dependencyGap?: string; hooks?: string[] };
     activePlayerStatePolicy?: Record<string, boolean | undefined>;
     eventCategoryDefinitions?: Array<{ id: string; sourceSystemIds?: string[] }>;
     eventTypeDefinitions?: Array<{ id: string }>;
@@ -296,6 +296,24 @@ type RuntimePayload = {
     encyclopediaSections?: Array<{ id: string }>;
     provisionalBalanceValues?: Array<{ id: string }>;
     missingCanonicalDefinitions?: Array<{ id: string; type?: string }>;
+  };
+  populationSimulationFramework?: {
+    id?: string;
+    architectureDecisionId?: string;
+    activePlayerStatePolicy?: Record<string, boolean | undefined>;
+    populationCategoryDefinitions?: Array<{ id: string; kind?: string }>;
+    populationLifeStageDefinitions?: Array<{ id: string }>;
+    populationWorkforceRoleDefinitions?: Array<{ id: string }>;
+    populationSpecialistRoleDefinitions?: Array<{ id: string }>;
+    populationGrowthDefinitions?: Array<{ id: string }>;
+    populationCapacityDefinitions?: Array<{ id: string }>;
+    populationNeedDefinitions?: Array<{ id: string }>;
+    populationWellbeingBands?: Array<{ id: string }>;
+    populationMigrationDefinitions?: Array<{ id: string }>;
+    workforceAssignmentDefinitions?: Array<{ id: string }>;
+    automationSubstitutionPolicies?: Array<{ id: string }>;
+    populationShortageReasonCodes?: Array<{ id: string }>;
+    populationPresentationContract?: Array<{ id: string; rendererIndependent?: boolean }>;
   };
   upgradeCategories?: Array<{ id: string }>;
   upgrades?: Array<{ id: string; categoryId?: string; tabId?: string; eraId?: string; costResourceId?: string | null; costEconomyId?: string | null }>;
@@ -1064,6 +1082,7 @@ function validateMissionExpeditionFramework(payload: RuntimePayload | RobloxPayl
 
 function validateDynamicEventFramework(payload: RuntimePayload | RobloxPayload, label: string) {
   const framework = payload.dynamicEventFramework;
+  const populationFramework = payload.populationSimulationFramework;
   const actionIds = new Set(payload.actionSystem?.actionDefinitions?.map((action) => action.id) ?? []);
   const missionTemplateIds = new Set(payload.missionExpeditionFramework?.missionTemplateDefinitions?.map((template) => template.id) ?? []);
   const categoryIds = new Set(framework?.eventCategoryDefinitions?.map((definition) => definition.id) ?? []);
@@ -1085,8 +1104,9 @@ function validateDynamicEventFramework(payload: RuntimePayload | RobloxPayload, 
 
   assert(framework?.id === "dynamic_event_framework_v1", `${label} must publish dynamic_event_framework_v1.`);
   assert(framework?.architectureDecisionId === "ARCH-DECISION-DYNAMIC-EVENT-FRAMEWORK", `${label} Dynamic Event architecture decision mismatch.`);
-  assert(framework?.populationSimulationIntegration?.implemented === false, `${label} must report Population Simulation as absent.`);
-  assert(framework?.populationSimulationIntegration?.hookOnly === true, `${label} must publish population hooks only.`);
+  assert(framework?.populationSimulationIntegration?.implemented === true, `${label} must integrate with Population Simulation.`);
+  assert(framework?.populationSimulationIntegration?.hookOnly === false, `${label} must not publish population hooks as future-only.`);
+  assert(framework?.populationSimulationIntegration?.populationSimulationFrameworkId === populationFramework?.id, `${label} must reference the published Population Simulation Framework.`);
   assert(framework?.activePlayerStatePolicy && Object.values(framework.activePlayerStatePolicy).every((value) => value === false), `${label} must not export active Event player state.`);
   assert((framework?.eventCategoryDefinitions?.length ?? 0) === 32, `${label} must publish 32 event categories.`);
   assert((framework?.eventTypeDefinitions?.length ?? 0) === 23, `${label} must publish 23 event types.`);
@@ -1149,6 +1169,27 @@ function validateDynamicEventFramework(payload: RuntimePayload | RobloxPayload, 
   assert(framework?.creativeProductionRequirements?.some((item) => item.category === "Dynamic Events"), `${label} must publish Creative Production Dynamic Events requirements.`);
   assert(framework?.assetLibraryCategories?.some((category) => category.id === "dynamic_events"), `${label} must publish Asset Library Dynamic Events category.`);
   assert(!/"(?:activeEventInstances|currentModifiers|selectedChoices|generatedPlayerParameters|resolvedOutcomes|playerEventHistory)"\s*:|\/Users\/|studio-private:\/\//i.test(JSON.stringify(framework)), `${label} Dynamic Event Framework leaked player state or private paths.`);
+}
+
+function validatePopulationSimulationFramework(payload: RuntimePayload | RobloxPayload, label: string) {
+  const framework = payload.populationSimulationFramework;
+  assert(framework?.id === "population_simulation_framework_v1", `${label} must publish population_simulation_framework_v1.`);
+  assert(framework?.architectureDecisionId === "ARCH-DECISION-POPULATION-STRUCTURED-SIMULATION", `${label} Population Simulation architecture decision mismatch.`);
+  assert(framework?.activePlayerStatePolicy && Object.values(framework.activePlayerStatePolicy).every((value) => value === false), `${label} must not export live player population state.`);
+  assert((framework?.populationCategoryDefinitions?.length ?? 0) >= 24, `${label} must publish canonical population categories.`);
+  assert((framework?.populationLifeStageDefinitions?.length ?? 0) === 7, `${label} must publish 7 life stages.`);
+  assert((framework?.populationWorkforceRoleDefinitions?.length ?? 0) === 20, `${label} must publish 20 workforce roles.`);
+  assert((framework?.populationSpecialistRoleDefinitions?.length ?? 0) === 12, `${label} must publish 12 specialist roles.`);
+  assert((framework?.populationGrowthDefinitions?.length ?? 0) >= 4, `${label} must publish deterministic growth definitions.`);
+  assert((framework?.populationCapacityDefinitions?.length ?? 0) === 7, `${label} must publish 7 capacity definitions.`);
+  assert((framework?.populationNeedDefinitions?.length ?? 0) === 15, `${label} must publish 15 needs.`);
+  assert((framework?.populationWellbeingBands?.length ?? 0) === 6, `${label} must publish 6 wellbeing bands.`);
+  assert((framework?.populationMigrationDefinitions?.length ?? 0) === 11, `${label} must publish 11 migration types.`);
+  assert((framework?.workforceAssignmentDefinitions?.length ?? 0) === 10, `${label} must publish 10 workforce assignment modes.`);
+  assert((framework?.automationSubstitutionPolicies?.length ?? 0) === 7, `${label} must publish 7 automation substitution policies.`);
+  assert((framework?.populationShortageReasonCodes?.length ?? 0) === 13, `${label} must publish 13 shortage reason codes.`);
+  assert((framework?.populationPresentationContract?.length ?? 0) >= 13, `${label} must publish population presentation contracts.`);
+  assert(!/"(?:currentPopulationValue|livePopulationCount|activePopulationAssignment|migrationStartedAt|migrationCompletedAt|queueInstance|saveId|cloudSaveId)"\s*:|\/Users\/|studio-private:\/\//i.test(JSON.stringify(framework)), `${label} Population Simulation Framework leaked player state or private paths.`);
 }
 
 function validateActionSystem(payload: RuntimePayload | RobloxPayload, label: string) {
@@ -1517,8 +1558,8 @@ async function main() {
   assert(roblox.payload.metadata?.accessLevel === "public-published", "Roblox accessLevel must be public-published.");
   assert(roblox.payload.metadata?.validationStatus, "Roblox validation status is missing.");
   assert((canonical.payload.eras?.length ?? 0) > 0, "Canonical payload must include at least one era.");
-  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 31, "Canonical contentVersion must be at least 31 after Dynamic Event Framework.");
-  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 31, "Roblox contentVersion must be at least 31 after Dynamic Event Framework.");
+  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 32, "Canonical contentVersion must be at least 32 after Population Simulation Framework.");
+  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 32, "Roblox contentVersion must be at least 32 after Population Simulation Framework.");
 
   validateEraNavigation(canonical.payload, "Canonical");
   validateEraNavigation(roblox.payload, "Roblox");
@@ -1550,6 +1591,8 @@ async function main() {
   validateResourceEconomyLogisticsFramework(roblox.payload, "Roblox");
   validateMissionExpeditionFramework(canonical.payload, "Canonical");
   validateMissionExpeditionFramework(roblox.payload, "Roblox");
+  validatePopulationSimulationFramework(canonical.payload, "Canonical");
+  validatePopulationSimulationFramework(roblox.payload, "Roblox");
   validateDynamicEventFramework(canonical.payload, "Canonical");
   validateDynamicEventFramework(roblox.payload, "Roblox");
   validateRuntimeReferences(canonical.payload);
