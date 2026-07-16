@@ -1773,6 +1773,453 @@ export type ColonizationFrameworkContract = {
   validationRules: string[];
 };
 
+export type EconomyLogisticsResourceClass =
+  | "metal"
+  | "mineral"
+  | "volatile"
+  | "gas"
+  | "liquid"
+  | "energy"
+  | "organic"
+  | "biological"
+  | "chemical"
+  | "manufactured"
+  | "data"
+  | "artifact"
+  | "fuel"
+  | "food"
+  | "water"
+  | "waste"
+  | "exotic"
+  | "general";
+
+export type EconomyNodeTypeId =
+  | "extraction_site"
+  | "mining_outpost"
+  | "gas_harvest_platform"
+  | "ocean_harvest_platform"
+  | "agricultural_site"
+  | "research_site"
+  | "archaeological_site"
+  | "storage_depot"
+  | "warehouse"
+  | "orbital_storage"
+  | "refinery"
+  | "processing_plant"
+  | "factory"
+  | "manufacturing_complex"
+  | "colony"
+  | "city"
+  | "trade_hub"
+  | "logistics_hub"
+  | "refueling_station"
+  | "spaceport"
+  | "orbital_port"
+  | "fleet"
+  | "expedition"
+  | "terraforming_project"
+  | "recycling_center"
+  | "waste_site"
+  | "market"
+  | "distribution_center";
+
+export type ResourceLocationScopeId = "celestial_body" | "colony" | "settlement" | "building" | "storage_node" | "fleet" | "route" | "sector" | "star_system" | "civilization" | "market" | "project";
+export type ResourceExtractionDefinitionId = "surface_mining" | "deep_core_mining" | "automated_mining" | "asteroid_mining" | "atmospheric_harvesting" | "ocean_harvesting" | "ice_extraction" | "geothermal_extraction" | "biological_harvesting" | "rare_matter_extraction" | "artifact_recovery" | "archaeological_recovery" | "stellar_energy_collection" | "salvage";
+export type ResourceStorageDefinitionId = "raw_material_storage" | "bulk_storage" | "liquid_storage" | "gas_storage" | "cryogenic_storage" | "hazardous_storage" | "biological_storage" | "artifact_storage" | "scientific_sample_storage" | "energy_storage" | "food_storage" | "water_storage" | "orbital_storage" | "mobile_storage" | "fleet_cargo" | "secure_vault";
+export type TransportModeDefinitionId = "surface_transport" | "pipeline" | "conveyor" | "orbital_lift" | "cargo_shuttle" | "cargo_ship" | "colony_ship" | "tanker" | "freighter" | "automated_drone" | "interplanetary_freighter" | "interstellar_freighter" | "gateway_transfer" | "trade_convoy" | "expedition_transport" | "emergency_transport";
+export type LogisticsRouteDefinitionId = "local_supply_route" | "colony_internal_route" | "surface_to_orbit" | "orbital_to_surface" | "interplanetary_route" | "interstellar_route" | "trade_route" | "fuel_route" | "research_sample_route" | "artifact_secure_route" | "colonization_supply_route" | "terraforming_supply_route" | "emergency_route";
+export type ShipmentStateId = "planned" | "reserving" | "loading" | "queued" | "departing" | "in_transit" | "delayed" | "rerouted" | "arrived" | "unloading" | "completed" | "lost" | "damaged" | "cancelled";
+export type ThroughputDefinitionId = "extraction" | "storage" | "loading" | "unloading" | "transport" | "processing" | "manufacturing" | "distribution" | "consumption" | "recycling";
+export type CapacityConstraintId = "node_capacity" | "route_capacity" | "transport_capacity" | "port_capacity" | "workforce_capacity" | "energy_capacity" | "storage_capacity" | "queue_capacity";
+export type EconomyLogisticsPriorityId = "critical" | "essential" | "operational" | "growth" | "strategic" | "optional" | "luxury";
+export type EconomyConditionStateId = "severe_shortage" | "shortage" | "constrained" | "balanced" | "surplus" | "oversupply" | "blocked_storage" | "transport_bottleneck" | "processing_bottleneck" | "workforce_bottleneck" | "energy_bottleneck" | "route_disruption";
+export type EconomyLossPolicyId = "transport_loss" | "hazard_damage" | "spoilage" | "evaporation" | "contamination" | "theft_security_loss" | "accident_loss" | "storage_degradation" | "manufacturing_waste" | "recycling_recovery" | "disposal";
+export type EconomyRecipeCategoryId = "refining" | "smelting" | "chemical_processing" | "biological_processing" | "food_processing" | "construction_materials" | "electronics" | "robotics" | "ship_components" | "scientific_equipment" | "terraforming_materials" | "energy_products" | "consumer_goods" | "artifact_processing" | "recycling";
+export type MarketTradeScopeId = "locally_exchanged" | "civilization_traded" | "interplanetary_traded" | "interstellar_traded" | "restricted" | "protected" | "non_tradable" | "unique" | "contraband_future";
+
+export type EconomyLogisticsIdentityInfluenceProfile = {
+  alignmentIds: Array<"Industry" | "Technology" | "Cyber" | "Nature" | "Corporate" | "Trade" | "Automation" | "Scientific" | "Eco">;
+  influenceTrigger: "action_completion" | "route_completion" | "production_chain_completion" | "shortage_resolved" | "waste_recycled";
+  influenceAmount: number;
+  notes: string;
+};
+
+export type EconomyNodeTypeDefinition = {
+  id: EconomyNodeTypeId;
+  displayName: string;
+  supportedResourceClasses: EconomyLogisticsResourceClass[];
+  inputCapacity: number;
+  outputCapacity: number;
+  storageCapacity: number;
+  throughput: number;
+  workforceRequirement: number;
+  energyRequirement: number;
+  buildingReferences: string[];
+  automationSupport: "none" | "assisted" | "full";
+  hazardConstraints: string[];
+  routeCompatibility: LogisticsRouteDefinitionId[];
+  presentationToken: string;
+  status: "approved" | "provisional";
+};
+
+export type ResourceLocationScopeDefinition = {
+  id: ResourceLocationScopeId;
+  displayName: string;
+  resourceStateSchema: {
+    locationId: string;
+    resourceId: string;
+    availableQuantity: number;
+    reservedQuantity: number;
+    inTransitQuantity: number;
+    damagedQuantity: number;
+    wasteQuantity: number;
+    capacity: number;
+    lastUpdatedAt: string;
+  };
+  gameOwnsValues: true;
+  studioPublishesSchemaOnly: true;
+  notes: string;
+};
+
+export type ResourceExtractionDefinition = {
+  id: ResourceExtractionDefinitionId;
+  displayName: string;
+  actionId: string;
+  eligibleBodyClasses: string[];
+  eligibleResourceClasses: EconomyLogisticsResourceClass[];
+  buildingRequirementIds: string[];
+  technologyRequirementIds: string[];
+  workforceRequirement: number;
+  equipmentRequirementIds: string[];
+  energyRequirement: number;
+  baseOutput: number;
+  durationDefinitionId: string;
+  depletionPolicyId: string;
+  hazardModifierIds: string[];
+  byproductResourceIds: string[];
+  wastePolicyId: EconomyLossPolicyId;
+  identityInfluence: EconomyLogisticsIdentityInfluenceProfile;
+  status: "approved" | "provisional";
+};
+
+export type ResourceStorageDefinition = {
+  id: ResourceStorageDefinitionId;
+  displayName: string;
+  supportedResourceClasses: EconomyLogisticsResourceClass[];
+  capacityUnits: number;
+  hazardRequirements: string[];
+  environmentalRequirements: string[];
+  lossPolicyId: EconomyLossPolicyId;
+  buildingReferenceIds: string[];
+  upgradeReferenceIds: string[];
+  automationSupport: "none" | "assisted" | "full";
+  status: "approved" | "provisional";
+};
+
+export type TransportModeDefinition = {
+  id: TransportModeDefinitionId;
+  displayName: string;
+  supportedRouteScopes: LogisticsRouteDefinitionId[];
+  cargoClasses: EconomyLogisticsResourceClass[];
+  capacity: number;
+  speedClass: "slow" | "standard" | "fast" | "instant_gate";
+  fuelRequirementIds: string[];
+  technologyRequirementIds: string[];
+  buildingPortRequirementIds: string[];
+  workforceOrAutomationRequirement: string;
+  hazardTolerance: string[];
+  lossPolicyId: EconomyLossPolicyId;
+  maintenanceHooks: string[];
+  actionIds: string[];
+  presentationToken: string;
+  status: "approved" | "provisional";
+};
+
+export type LogisticsRouteDefinition = {
+  id: LogisticsRouteDefinitionId;
+  displayName: string;
+  sourceNodeRequirements: EconomyNodeTypeId[];
+  destinationNodeRequirements: EconomyNodeTypeId[];
+  validTransportModeIds: TransportModeDefinitionId[];
+  maximumDistancePolicy: string;
+  travelTimePolicy: string;
+  throughput: number;
+  capacity: number;
+  priority: EconomyLogisticsPriorityId;
+  hazardModifierIds: string[];
+  escortSecurityHooks: string[];
+  fuelCostPolicy: string;
+  routeActionIds: string[];
+  failureRetryPolicy: string;
+  queuePolicyId: string;
+  deterministic: true;
+};
+
+export type ShipmentInstanceSchema = {
+  shipmentId: string;
+  routeDefinitionId: LogisticsRouteDefinitionId;
+  sourceNodeId: string;
+  destinationNodeId: string;
+  transportModeId: TransportModeDefinitionId;
+  cargo: Array<{ resourceId: string; quantity: number; reservedQuantity: number }>;
+  reservedAt: string;
+  departedAt: string | null;
+  estimatedArrivalAt: string | null;
+  arrivedAt: string | null;
+  state: ShipmentStateId;
+  capacityUsed: number;
+  fuelCost: Array<{ resourceId: string; quantity: number }>;
+  hazardSnapshot: Record<string, unknown>;
+  idempotencyKey: string;
+  createdFromContentVersion: number;
+};
+
+export type ShipmentStateDefinition = {
+  id: ShipmentStateId;
+  displayName: string;
+  terminal: boolean;
+  cargoLocation: "source" | "transport" | "destination" | "lost" | "cancelled";
+  allowedTransitions: ShipmentStateId[];
+  presentationToken: string;
+};
+
+export type ThroughputDefinition = {
+  id: ThroughputDefinitionId;
+  displayName: string;
+  supportedModes: Array<"per-minute" | "per-hour" | "per-cycle" | "per-Action" | "batch" | "continuous">;
+  defaultMode: "per-minute" | "per-hour" | "per-cycle" | "per-Action" | "batch" | "continuous";
+  capacityConstraintIds: CapacityConstraintId[];
+  formula: string;
+  bounded: true;
+};
+
+export type CapacityConstraintDefinition = {
+  id: CapacityConstraintId;
+  displayName: string;
+  appliesTo: string[];
+  hardLimit: boolean;
+  notes: string;
+};
+
+export type EconomyRecipeDefinition = {
+  id: string;
+  displayName: string;
+  categoryId: EconomyRecipeCategoryId;
+  inputItems: Array<{ resourceId: string; quantity: number }>;
+  outputItems: Array<{ resourceId: string; quantity: number }>;
+  byproducts: Array<{ resourceId: string; quantity: number }>;
+  wasteOutputs: Array<{ resourceId: string; quantity: number; policyId: EconomyLossPolicyId }>;
+  requiredBuildingIds: string[];
+  requiredResearchIds: string[];
+  requiredWorkforceRoles: string[];
+  energyRequirement: number;
+  durationDefinitionId: string;
+  actionId: string;
+  batchSize: number;
+  automationPolicyId: string;
+  qualityPolicyId: string;
+  status: "approved" | "provisional" | "draft";
+  provisionalBalance: boolean;
+};
+
+export type ProductionChainDefinition = {
+  id: string;
+  displayName: string;
+  stages: Array<{ order: number; inputResourceIds: string[]; outputResourceIds: string[]; recipeId: string; nodeTypeIds: EconomyNodeTypeId[] }>;
+  storageRequirementIds: ResourceStorageDefinitionId[];
+  transportRequirementIds: TransportModeDefinitionId[];
+  bottleneckDefinitionIds: EconomyConditionStateId[];
+  completionOutputResourceIds: string[];
+  presentationSummary: string;
+  status: "approved" | "provisional";
+};
+
+export type SupplyDemandDefinition = {
+  id: string;
+  displayName: string;
+  type: "supply" | "demand";
+  sourceType: "population" | "buildings" | "colonies" | "construction_projects" | "research" | "manufacturing" | "fleets" | "terraforming" | "trade" | "expeditions" | "maintenance" | "extraction" | "production" | "recycling" | "salvage" | "rewards" | "imports";
+  resourceClassIds: EconomyLogisticsResourceClass[];
+  priorityId: EconomyLogisticsPriorityId;
+  affectedActionIds: string[];
+  notes: string;
+};
+
+export type EconomyPriorityDefinition = {
+  id: EconomyLogisticsPriorityId;
+  displayName: string;
+  order: number;
+  canBlockActions: boolean;
+  notes: string;
+};
+
+export type EconomyConditionStateDefinition = {
+  id: EconomyConditionStateId;
+  displayName: string;
+  severity: "critical" | "warning" | "neutral" | "positive";
+  reasonCode: string;
+  blocksActionStart: boolean;
+  presentationToken: string;
+};
+
+export type EconomyLossWastePolicy = {
+  id: EconomyLossPolicyId;
+  displayName: string;
+  appliesToResourceClasses: EconomyLogisticsResourceClass[];
+  deterministicFormula: string;
+  producesWaste: boolean;
+  recoveryPolicyId: string | null;
+  version: string;
+};
+
+export type RecyclingPolicyDefinition = {
+  id: string;
+  displayName: string;
+  inputResourceClasses: EconomyLogisticsResourceClass[];
+  recoveredResourceClass: EconomyLogisticsResourceClass;
+  recoveryRate: number;
+  actionId: string;
+  wastePolicyId: EconomyLossPolicyId;
+};
+
+export type ResourceFlowDefinition = {
+  id: string;
+  resourceId: string;
+  resourceClass: EconomyLogisticsResourceClass;
+  sourceNodeTypes: EconomyNodeTypeId[];
+  destinationNodeTypes: EconomyNodeTypeId[];
+  extractionDefinitionId: ResourceExtractionDefinitionId | null;
+  storageDefinitionIds: ResourceStorageDefinitionId[];
+  transportModeIds: TransportModeDefinitionId[];
+  processingRecipeIds: string[];
+  manufacturingRecipeIds: string[];
+  consumptionProfileIds: string[];
+  lossPolicyId: EconomyLossPolicyId;
+  wastePolicyId: EconomyLossPolicyId;
+  recyclingPolicyId: string | null;
+  marketEligibility: MarketTradeScopeId[];
+  tradeEligibility: MarketTradeScopeId[];
+  hazardProfileId: string;
+  presentationProfileId: string;
+  status: "approved" | "provisional";
+};
+
+export type MarketTradeIntegrationDefinition = {
+  id: string;
+  nodeTypeId: EconomyNodeTypeId;
+  locationScopeIds: ResourceLocationScopeId[];
+  acceptedResourceClasses: EconomyLogisticsResourceClass[];
+  storageDefinitionIds: ResourceStorageDefinitionId[];
+  routeAccessIds: LogisticsRouteDefinitionId[];
+  pricePolicyId: string;
+  transactionReasonCodeIds: string[];
+  tradeActionIds: string[];
+  listingSchema: Record<string, string>;
+  gameOwnsOrders: true;
+};
+
+export type EconomyLogisticsPresentationContract = {
+  id:
+    | "EconomyOverview"
+    | "ResourceFlowGraph"
+    | "SupplyDemandSummary"
+    | "StorageCapacityPanel"
+    | "ShipmentCard"
+    | "ShipmentTimeline"
+    | "RouteSummary"
+    | "LogisticsNetworkView"
+    | "ProductionChainView"
+    | "RecipeCard"
+    | "BottleneckAlert"
+    | "ShortageAlert"
+    | "SurplusIndicator"
+    | "MarketSummary"
+    | "RecyclingSummary"
+    | "ColonySupplyReadiness"
+    | "ProjectSupplyChecklist";
+  displayName: string;
+  rendererIndependent: true;
+  semanticFields: string[];
+  notes: string;
+};
+
+export type ResourceEconomyLogisticsMissingCanonicalDefinition = {
+  id: string;
+  type: "resource" | "building" | "action" | "progression_milestone" | "asset" | "recipe";
+  displayName: string;
+  referencedBy: string[];
+  severity: "warning" | "info";
+  recommendedOwner: "Resource Catalog" | "Building Library" | "Action System" | "Civilization Progression" | "Asset Library" | "Economy Designer";
+  notes: string;
+};
+
+export type ResourceEconomyLogisticsFrameworkContract = {
+  id: "resource_economy_logistics_framework_v1";
+  version: "1.0.0";
+  architectureDecisionId: "ARCH-DECISION-RESOURCE-ECONOMY-LOGISTICS-NETWORK";
+  actionSystemId: ActionSystemContract["id"];
+  planetDevelopmentFrameworkId: PlanetDevelopmentFrameworkContract["id"];
+  civilizationProgressionFrameworkId: CivilizationProgressionFrameworkContract["id"];
+  colonizationFrameworkId: ColonizationFrameworkContract["id"];
+  civilizationIdentitySource: "civilization_identity";
+  calculationVersion: string;
+  ownership: {
+    studioOwns: string[];
+    gameOwns: string[];
+  };
+  activePlayerStatePolicy: {
+    exportsPlayerInventories: false;
+    exportsLiveStockpiles: false;
+    exportsActiveShipments: false;
+    exportsRouteInstances: false;
+    exportsMarketOrders: false;
+    exportsTimestamps: false;
+    exportsQueueInstances: false;
+    exportsTransportAssignments: false;
+  };
+  auditSummary: Array<{ id: string; source: string; status: "integrated" | "referenced" | "reported"; notes: string }>;
+  resourceFlowDefinitions: ResourceFlowDefinition[];
+  economyNodeTypeDefinitions: EconomyNodeTypeDefinition[];
+  resourceLocationScopes: ResourceLocationScopeDefinition[];
+  resourceExtractionDefinitions: ResourceExtractionDefinition[];
+  resourceStorageDefinitions: ResourceStorageDefinition[];
+  transportModeDefinitions: TransportModeDefinition[];
+  logisticsRouteDefinitions: LogisticsRouteDefinition[];
+  shipmentInstanceSchema: ShipmentInstanceSchema;
+  shipmentStateDefinitions: ShipmentStateDefinition[];
+  throughputDefinitions: ThroughputDefinition[];
+  capacityConstraintDefinitions: CapacityConstraintDefinition[];
+  processingRecipeDefinitions: EconomyRecipeDefinition[];
+  manufacturingRecipeDefinitions: EconomyRecipeDefinition[];
+  productionChainDefinitions: ProductionChainDefinition[];
+  supplyDemandDefinitions: SupplyDemandDefinition[];
+  economyPriorityDefinitions: EconomyPriorityDefinition[];
+  economyConditionStateDefinitions: EconomyConditionStateDefinition[];
+  economyShortageReasonCodes: Array<{ id: string; stateId: EconomyConditionStateId; displayName: string; blocksActionStart: boolean; recommendedResolution: string }>;
+  lossAndWastePolicies: EconomyLossWastePolicy[];
+  recyclingPolicies: RecyclingPolicyDefinition[];
+  marketTradeIntegration: MarketTradeIntegrationDefinition[];
+  colonizationIntegration: {
+    colonyResourcePackageIds: ColonyResourcePackageId[];
+    requiredRouteDefinitionIds: LogisticsRouteDefinitionId[];
+    requiredTransportModeIds: TransportModeDefinitionId[];
+    requiredPhaseIds: ColonyProjectPhaseId[];
+    rule: string;
+  };
+  populationIntegrationHooks: Array<{ id: string; consumesResourceClasses: EconomyLogisticsResourceClass[]; provides: string[]; notes: string }>;
+  buildingIntegrationHooks: Array<{ id: string; buildingFamilyId: string; nodeTypeIds: EconomyNodeTypeId[]; providedCapabilities: string[]; missingCoverage: boolean }>;
+  actionIntegrationHooks: Array<{ id: string; actionId: string; purpose: string; required: boolean }>;
+  identityIntegrationHooks: EconomyLogisticsIdentityInfluenceProfile[];
+  progressionIntegrationHooks: Array<{ id: string; milestoneId: string; status: "resolved" | "missing_canonical_definition"; notes: string }>;
+  aiAutomationRules: string[];
+  economyLogisticsPresentationContract: EconomyLogisticsPresentationContract[];
+  creativeProductionRequirements: Array<{ id: string; displayName: string; category: "Economy & Logistics"; status: "required" | "planned"; notes: string }>;
+  assetLibraryCategories: Array<{ id: string; displayName: string; groups: string[]; notes: string }>;
+  missingCanonicalDefinitions: ResourceEconomyLogisticsMissingCanonicalDefinition[];
+  provisionalBalanceValues: Array<{ id: string; field: string; value: number | string; reason: string }>;
+  validationRules: string[];
+};
+
 export type ActionSystemCategory = {
   id: string;
   displayName: string;
@@ -2172,6 +2619,7 @@ export type GameRuntimeData = {
   planetDevelopmentFramework: PlanetDevelopmentFrameworkContract;
   civilizationProgressionFramework: CivilizationProgressionFrameworkContract;
   colonizationFramework: ColonizationFrameworkContract;
+  resourceEconomyLogisticsFramework: ResourceEconomyLogisticsFrameworkContract;
   clientProfiles: ClientProfiles;
 };
 

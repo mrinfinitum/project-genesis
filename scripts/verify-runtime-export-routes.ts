@@ -216,6 +216,35 @@ type RuntimePayload = {
     assetLibraryCategories?: Array<{ id: string; groups?: string[] }>;
     missingCanonicalDefinitions?: Array<{ id: string; type?: string }>;
   };
+  resourceEconomyLogisticsFramework?: {
+    id?: string;
+    architectureDecisionId?: string;
+    activePlayerStatePolicy?: Record<string, boolean | undefined>;
+    resourceFlowDefinitions?: Array<{ id: string; resourceId?: string; sourceNodeTypes?: string[]; destinationNodeTypes?: string[]; storageDefinitionIds?: string[]; transportModeIds?: string[]; lossPolicyId?: string; wastePolicyId?: string }>;
+    economyNodeTypeDefinitions?: Array<{ id: string; routeCompatibility?: string[]; buildingReferences?: string[] }>;
+    resourceExtractionDefinitions?: Array<{ id: string; actionId?: string; durationDefinitionId?: string; buildingRequirementIds?: string[]; byproductResourceIds?: string[]; wastePolicyId?: string }>;
+    resourceStorageDefinitions?: Array<{ id: string; lossPolicyId?: string; buildingReferenceIds?: string[] }>;
+    transportModeDefinitions?: Array<{ id: string; supportedRouteScopes?: string[]; fuelRequirementIds?: string[]; actionIds?: string[]; lossPolicyId?: string }>;
+    logisticsRouteDefinitions?: Array<{ id: string; sourceNodeRequirements?: string[]; destinationNodeRequirements?: string[]; validTransportModeIds?: string[]; routeActionIds?: string[]; throughput?: number; capacity?: number; deterministic?: boolean; queuePolicyId?: string }>;
+    shipmentStateDefinitions?: Array<{ id: string; allowedTransitions?: string[]; terminal?: boolean }>;
+    throughputDefinitions?: Array<{ id: string; bounded?: boolean; capacityConstraintIds?: string[] }>;
+    capacityConstraintDefinitions?: Array<{ id: string }>;
+    processingRecipeDefinitions?: Array<{ id: string; inputItems?: Array<{ resourceId: string }>; outputItems?: Array<{ resourceId: string }>; byproducts?: Array<{ resourceId: string }>; wasteOutputs?: Array<{ resourceId: string; policyId?: string }>; requiredBuildingIds?: string[]; durationDefinitionId?: string; actionId?: string }>;
+    manufacturingRecipeDefinitions?: Array<{ id: string; inputItems?: Array<{ resourceId: string }>; outputItems?: Array<{ resourceId: string }>; byproducts?: Array<{ resourceId: string }>; wasteOutputs?: Array<{ resourceId: string; policyId?: string }>; requiredBuildingIds?: string[]; durationDefinitionId?: string; actionId?: string }>;
+    productionChainDefinitions?: Array<{ id: string; stages?: Array<{ recipeId?: string; inputResourceIds?: string[]; outputResourceIds?: string[]; nodeTypeIds?: string[] }>; storageRequirementIds?: string[]; transportRequirementIds?: string[]; bottleneckDefinitionIds?: string[] }>;
+    supplyDemandDefinitions?: Array<{ id: string; priorityId?: string; affectedActionIds?: string[] }>;
+    economyPriorityDefinitions?: Array<{ id: string }>;
+    economyConditionStateDefinitions?: Array<{ id: string; reasonCode?: string; blocksActionStart?: boolean }>;
+    economyShortageReasonCodes?: Array<{ id: string; stateId?: string }>;
+    lossAndWastePolicies?: Array<{ id: string }>;
+    recyclingPolicies?: Array<{ id: string; actionId?: string; wastePolicyId?: string }>;
+    marketTradeIntegration?: Array<{ id: string; gameOwnsOrders?: boolean; tradeActionIds?: string[] }>;
+    colonizationIntegration?: { colonyResourcePackageIds?: string[]; requiredRouteDefinitionIds?: string[]; requiredTransportModeIds?: string[]; requiredPhaseIds?: string[] };
+    actionIntegrationHooks?: Array<{ id: string; actionId?: string; required?: boolean }>;
+    economyLogisticsPresentationContract?: Array<{ id: string; rendererIndependent?: boolean }>;
+    provisionalBalanceValues?: Array<{ id: string }>;
+    missingCanonicalDefinitions?: Array<{ id: string; type?: string }>;
+  };
   upgradeCategories?: Array<{ id: string }>;
   upgrades?: Array<{ id: string; categoryId?: string; tabId?: string; eraId?: string; costResourceId?: string | null; costEconomyId?: string | null }>;
   buildingLibrary?: Array<{ id: string }>;
@@ -811,6 +840,104 @@ function validateColonizationFramework(payload: RuntimePayload | RobloxPayload, 
   assert(!/activePlayerColony|activeColonyInstance|projectStartedAt|projectCompletedAt|queueContents|livePlayerPopulation|assignedPlayerPopulation|liveTransferredResources|saveId|\/Users\/|studio-private:\/\//i.test(JSON.stringify(framework)), `${label} Colonization Framework leaked player state or private paths.`);
 }
 
+function validateResourceEconomyLogisticsFramework(payload: RuntimePayload | RobloxPayload, label: string) {
+  const framework = payload.resourceEconomyLogisticsFramework;
+  const resourceIds = new Set(payload.resources?.map((resource) => resource.id) ?? []);
+  const actionIds = new Set(payload.actionSystem?.actionDefinitions?.map((action) => action.id) ?? []);
+  const durationIds = new Set(payload.actionSystem?.actionDurationDefinitions?.map((duration) => duration.id) ?? []);
+  const buildingIds = new Set(payload.buildingLibrary?.map((building) => building.id) ?? []);
+  const nodeIds = new Set(framework?.economyNodeTypeDefinitions?.map((node) => node.id) ?? []);
+  const storageIds = new Set(framework?.resourceStorageDefinitions?.map((storage) => storage.id) ?? []);
+  const transportIds = new Set(framework?.transportModeDefinitions?.map((transport) => transport.id) ?? []);
+  const routeIds = new Set(framework?.logisticsRouteDefinitions?.map((route) => route.id) ?? []);
+  const policyIds = new Set(framework?.lossAndWastePolicies?.map((policy) => policy.id) ?? []);
+  const recipeIds = new Set([...(framework?.processingRecipeDefinitions ?? []), ...(framework?.manufacturingRecipeDefinitions ?? [])].map((recipe) => recipe.id));
+  const conditionIds = new Set(framework?.economyConditionStateDefinitions?.map((condition) => condition.id) ?? []);
+  const priorityIds = new Set(framework?.economyPriorityDefinitions?.map((priority) => priority.id) ?? []);
+  const shipmentStateIds = new Set(framework?.shipmentStateDefinitions?.map((state) => state.id) ?? []);
+  const packageIds = new Set(payload.colonizationFramework?.colonyResourcePackageDefinitions?.map((item) => item.id) ?? []);
+  const colonyPhaseIds = new Set(payload.colonizationFramework?.colonyProjectPhaseDefinitions?.map((item) => item.id) ?? []);
+
+  assert(framework?.id === "resource_economy_logistics_framework_v1", `${label} must publish resource_economy_logistics_framework_v1.`);
+  assert(framework?.architectureDecisionId === "ARCH-DECISION-RESOURCE-ECONOMY-LOGISTICS-NETWORK", `${label} Resource Economy & Logistics architecture decision mismatch.`);
+  assert(framework?.activePlayerStatePolicy && Object.values(framework.activePlayerStatePolicy).every((value) => value === false), `${label} must not export player economy/logistics state.`);
+  assert((framework?.resourceFlowDefinitions?.length ?? 0) === resourceIds.size, `${label} must publish exactly one resource flow per Resource Catalog item.`);
+  assert((framework?.economyNodeTypeDefinitions?.length ?? 0) === 28, `${label} must publish 28 economy node types.`);
+  assert((framework?.resourceExtractionDefinitions?.length ?? 0) === 14, `${label} must publish 14 extraction definitions.`);
+  assert((framework?.resourceStorageDefinitions?.length ?? 0) === 16, `${label} must publish 16 storage definitions.`);
+  assert((framework?.transportModeDefinitions?.length ?? 0) === 16, `${label} must publish 16 transport modes.`);
+  assert((framework?.logisticsRouteDefinitions?.length ?? 0) === 13, `${label} must publish 13 route definitions.`);
+  assert((framework?.shipmentStateDefinitions?.length ?? 0) === 14, `${label} must publish 14 shipment states.`);
+  assert((framework?.throughputDefinitions ?? []).every((throughput) => throughput.bounded === true), `${label} throughput definitions must be bounded.`);
+  assert((framework?.marketTradeIntegration ?? []).every((market) => market.gameOwnsOrders === true), `${label} market orders must remain Game-owned.`);
+
+  for (const flow of framework?.resourceFlowDefinitions ?? []) {
+    assert(flow.resourceId && resourceIds.has(flow.resourceId), `${label} flow ${flow.id} resource does not resolve.`);
+    for (const id of [...flow.sourceNodeTypes ?? [], ...flow.destinationNodeTypes ?? []]) assert(nodeIds.has(id), `${label} flow ${flow.id} node ${id} does not resolve.`);
+    for (const id of flow.storageDefinitionIds ?? []) assert(storageIds.has(id), `${label} flow ${flow.id} storage ${id} does not resolve.`);
+    for (const id of flow.transportModeIds ?? []) assert(transportIds.has(id), `${label} flow ${flow.id} transport ${id} does not resolve.`);
+    assert(flow.lossPolicyId && policyIds.has(flow.lossPolicyId), `${label} flow ${flow.id} loss policy does not resolve.`);
+    assert(flow.wastePolicyId && policyIds.has(flow.wastePolicyId), `${label} flow ${flow.id} waste policy does not resolve.`);
+  }
+  for (const extraction of framework?.resourceExtractionDefinitions ?? []) {
+    assert(extraction.actionId && actionIds.has(extraction.actionId), `${label} extraction ${extraction.id} action does not resolve.`);
+    assert(extraction.durationDefinitionId && durationIds.has(extraction.durationDefinitionId), `${label} extraction ${extraction.id} duration does not resolve.`);
+    for (const id of extraction.buildingRequirementIds ?? []) assert(buildingIds.has(id), `${label} extraction ${extraction.id} building ${id} does not resolve.`);
+    for (const id of extraction.byproductResourceIds ?? []) assert(resourceIds.has(id), `${label} extraction ${extraction.id} byproduct ${id} does not resolve.`);
+    assert(extraction.wastePolicyId && policyIds.has(extraction.wastePolicyId), `${label} extraction ${extraction.id} waste policy does not resolve.`);
+  }
+  for (const transport of framework?.transportModeDefinitions ?? []) {
+    for (const id of transport.supportedRouteScopes ?? []) assert(routeIds.has(id), `${label} transport ${transport.id} route ${id} does not resolve.`);
+    for (const id of transport.fuelRequirementIds ?? []) assert(resourceIds.has(id), `${label} transport ${transport.id} fuel ${id} does not resolve.`);
+    for (const id of transport.actionIds ?? []) assert(actionIds.has(id), `${label} transport ${transport.id} action ${id} does not resolve.`);
+    assert(transport.lossPolicyId && policyIds.has(transport.lossPolicyId), `${label} transport ${transport.id} loss policy does not resolve.`);
+  }
+  for (const route of framework?.logisticsRouteDefinitions ?? []) {
+    assert(route.deterministic === true, `${label} route ${route.id} must be deterministic.`);
+    assert((route.throughput ?? 0) > 0 && (route.capacity ?? 0) > 0, `${label} route ${route.id} must have bounded positive throughput and capacity.`);
+    assert(route.queuePolicyId === "queue_logistics", `${label} route ${route.id} must use queue_logistics.`);
+    for (const id of [...route.sourceNodeRequirements ?? [], ...route.destinationNodeRequirements ?? []]) assert(nodeIds.has(id), `${label} route ${route.id} node ${id} does not resolve.`);
+    for (const id of route.validTransportModeIds ?? []) assert(transportIds.has(id), `${label} route ${route.id} transport ${id} does not resolve.`);
+    for (const id of route.routeActionIds ?? []) assert(actionIds.has(id), `${label} route ${route.id} action ${id} does not resolve.`);
+  }
+  for (const state of framework?.shipmentStateDefinitions ?? []) {
+    for (const id of state.allowedTransitions ?? []) assert(shipmentStateIds.has(id), `${label} shipment state ${state.id} transition ${id} does not resolve.`);
+  }
+  for (const recipe of [...framework?.processingRecipeDefinitions ?? [], ...framework?.manufacturingRecipeDefinitions ?? []]) {
+    for (const item of [...recipe.inputItems ?? [], ...recipe.outputItems ?? [], ...recipe.byproducts ?? [], ...recipe.wasteOutputs ?? []]) assert(resourceIds.has(item.resourceId), `${label} recipe ${recipe.id} resource ${item.resourceId} does not resolve.`);
+    for (const id of recipe.requiredBuildingIds ?? []) assert(buildingIds.has(id), `${label} recipe ${recipe.id} building ${id} does not resolve.`);
+    assert(recipe.actionId && actionIds.has(recipe.actionId), `${label} recipe ${recipe.id} action does not resolve.`);
+    assert(recipe.durationDefinitionId && durationIds.has(recipe.durationDefinitionId), `${label} recipe ${recipe.id} duration does not resolve.`);
+  }
+  for (const chain of framework?.productionChainDefinitions ?? []) {
+    for (const stage of chain.stages ?? []) {
+      assert(stage.recipeId && recipeIds.has(stage.recipeId), `${label} chain ${chain.id} recipe ${stage.recipeId} does not resolve.`);
+      for (const id of [...stage.inputResourceIds ?? [], ...stage.outputResourceIds ?? []]) assert(resourceIds.has(id), `${label} chain ${chain.id} resource ${id} does not resolve.`);
+      for (const id of stage.nodeTypeIds ?? []) assert(nodeIds.has(id), `${label} chain ${chain.id} node ${id} does not resolve.`);
+    }
+    for (const id of chain.storageRequirementIds ?? []) assert(storageIds.has(id), `${label} chain ${chain.id} storage ${id} does not resolve.`);
+    for (const id of chain.transportRequirementIds ?? []) assert(transportIds.has(id), `${label} chain ${chain.id} transport ${id} does not resolve.`);
+    for (const id of chain.bottleneckDefinitionIds ?? []) assert(conditionIds.has(id), `${label} chain ${chain.id} bottleneck ${id} does not resolve.`);
+  }
+  for (const definition of framework?.supplyDemandDefinitions ?? []) {
+    assert(definition.priorityId && priorityIds.has(definition.priorityId), `${label} supply/demand ${definition.id} priority does not resolve.`);
+    for (const id of definition.affectedActionIds ?? []) assert(actionIds.has(id), `${label} supply/demand ${definition.id} action ${id} does not resolve.`);
+  }
+  for (const shortage of framework?.economyShortageReasonCodes ?? []) assert(shortage.stateId && conditionIds.has(shortage.stateId), `${label} shortage reason ${shortage.id} state does not resolve.`);
+  for (const policy of framework?.recyclingPolicies ?? []) {
+    assert(policy.actionId && actionIds.has(policy.actionId), `${label} recycling policy ${policy.id} action does not resolve.`);
+    assert(policy.wastePolicyId && policyIds.has(policy.wastePolicyId), `${label} recycling policy ${policy.id} waste policy does not resolve.`);
+  }
+  for (const market of framework?.marketTradeIntegration ?? []) for (const id of market.tradeActionIds ?? []) assert(actionIds.has(id), `${label} market ${market.id} action ${id} does not resolve.`);
+  for (const id of framework?.colonizationIntegration?.colonyResourcePackageIds ?? []) assert(packageIds.has(id), `${label} colonization package ${id} does not resolve.`);
+  for (const id of framework?.colonizationIntegration?.requiredPhaseIds ?? []) assert(colonyPhaseIds.has(id), `${label} colonization phase ${id} does not resolve.`);
+  for (const id of framework?.colonizationIntegration?.requiredRouteDefinitionIds ?? []) assert(routeIds.has(id), `${label} colonization route ${id} does not resolve.`);
+  for (const id of framework?.colonizationIntegration?.requiredTransportModeIds ?? []) assert(transportIds.has(id), `${label} colonization transport ${id} does not resolve.`);
+  for (const hook of framework?.actionIntegrationHooks ?? []) if (hook.required) assert(hook.actionId && actionIds.has(hook.actionId), `${label} action hook ${hook.id} does not resolve.`);
+  assert(framework?.colonizationIntegration?.requiredRouteDefinitionIds?.includes("colonization_supply_route"), `${label} colonization supply route missing.`);
+  assert(!/"(?:playerInventories|activeShipments|marketOrders|liveStockpiles|routeInstances|transportAssignments)"\s*:|\/Users\/|studio-private:\/\//i.test(JSON.stringify(framework)), `${label} Resource Economy & Logistics Framework leaked player state or private paths.`);
+}
+
 function validateActionSystem(payload: RuntimePayload | RobloxPayload, label: string) {
   const timeContract = payload.timeActionContract;
   const actionSystem = payload.actionSystem;
@@ -1177,8 +1304,8 @@ async function main() {
   assert(roblox.payload.metadata?.accessLevel === "public-published", "Roblox accessLevel must be public-published.");
   assert(roblox.payload.metadata?.validationStatus, "Roblox validation status is missing.");
   assert((canonical.payload.eras?.length ?? 0) > 0, "Canonical payload must include at least one era.");
-  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 28, "Canonical contentVersion must be at least 28 after Colonization & Settlement Framework.");
-  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 28, "Roblox contentVersion must be at least 28 after Colonization & Settlement Framework.");
+  assert((canonical.payload.metadata?.contentVersion ?? 0) >= 29, "Canonical contentVersion must be at least 29 after Resource Economy & Logistics Framework.");
+  assert((roblox.payload.metadata?.contentVersion ?? 0) >= 29, "Roblox contentVersion must be at least 29 after Resource Economy & Logistics Framework.");
 
   validateEraNavigation(canonical.payload, "Canonical");
   validateEraNavigation(roblox.payload, "Roblox");
@@ -1206,6 +1333,8 @@ async function main() {
   validateCivilizationProgressionFramework(roblox.payload, "Roblox");
   validateColonizationFramework(canonical.payload, "Canonical");
   validateColonizationFramework(roblox.payload, "Roblox");
+  validateResourceEconomyLogisticsFramework(canonical.payload, "Canonical");
+  validateResourceEconomyLogisticsFramework(roblox.payload, "Roblox");
   validateRuntimeReferences(canonical.payload);
   validateRobloxReferences(roblox.payload);
   assertNoArchitectureLeak("Canonical runtime", canonical.payload);
@@ -1249,6 +1378,10 @@ async function main() {
       planetDevelopmentProfileCount: canonical.payload.planetDevelopmentFramework?.developmentProfiles?.length ?? 0,
       civilizationStageCount: canonical.payload.civilizationProgressionFramework?.civilizationStages?.length ?? 0,
       civilizationMilestoneCount: canonical.payload.civilizationProgressionFramework?.civilizationMilestones?.length ?? 0,
+      resourceFlowCount: canonical.payload.resourceEconomyLogisticsFramework?.resourceFlowDefinitions?.length ?? 0,
+      logisticsRouteCount: canonical.payload.resourceEconomyLogisticsFramework?.logisticsRouteDefinitions?.length ?? 0,
+      transportModeCount: canonical.payload.resourceEconomyLogisticsFramework?.transportModeDefinitions?.length ?? 0,
+      shipmentStateCount: canonical.payload.resourceEconomyLogisticsFramework?.shipmentStateDefinitions?.length ?? 0,
       resourceCount: canonical.payload.resources?.length ?? 0,
       upgradeCount: canonical.payload.upgrades?.length ?? 0
     },
@@ -1289,6 +1422,10 @@ async function main() {
       planetDevelopmentProfileCount: roblox.payload.planetDevelopmentFramework?.developmentProfiles?.length ?? 0,
       civilizationStageCount: roblox.payload.civilizationProgressionFramework?.civilizationStages?.length ?? 0,
       civilizationMilestoneCount: roblox.payload.civilizationProgressionFramework?.civilizationMilestones?.length ?? 0,
+      resourceFlowCount: roblox.payload.resourceEconomyLogisticsFramework?.resourceFlowDefinitions?.length ?? 0,
+      logisticsRouteCount: roblox.payload.resourceEconomyLogisticsFramework?.logisticsRouteDefinitions?.length ?? 0,
+      transportModeCount: roblox.payload.resourceEconomyLogisticsFramework?.transportModeDefinitions?.length ?? 0,
+      shipmentStateCount: roblox.payload.resourceEconomyLogisticsFramework?.shipmentStateDefinitions?.length ?? 0,
       resourceCount: roblox.payload.resources?.length ?? 0,
       upgradeTabCount: roblox.payload.upgradeTabs?.length ?? 0,
       upgradeCount: roblox.payload.upgrades?.length ?? 0

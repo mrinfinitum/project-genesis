@@ -13,6 +13,7 @@ import { colonizationFramework, validateColonizationFramework } from "@/lib/colo
 import { getGameData } from "@/lib/data";
 import { canonicalDiscoveries, discoveryCategories, discoveryChains, discoveryCollections, discoveryMilestones, discoveryPlayerCollectionSchema, discoveryRarities, validateDiscoverySystem } from "@/lib/discovery";
 import { universalDiscoveryRegistryContract, universalDiscoveryRegistryVersion, validateUniversalDiscoveryRegistryContract } from "@/lib/discovery/universal-registry";
+import { resourceEconomyLogisticsFramework, validateResourceEconomyLogisticsFramework } from "@/lib/economy/logistics-framework";
 import {
   buildEconomyUsageRelationships,
   buildBuildingResourceEffects,
@@ -60,7 +61,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 28;
+export const gameRuntimeContentVersion = 29;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -102,6 +103,7 @@ export type RobloxRuntimeExportPayload = {
   planetDevelopmentFramework: GameRuntimeData["planetDevelopmentFramework"];
   civilizationProgressionFramework: GameRuntimeData["civilizationProgressionFramework"];
   colonizationFramework: GameRuntimeData["colonizationFramework"];
+  resourceEconomyLogisticsFramework: GameRuntimeData["resourceEconomyLogisticsFramework"];
   resources: ResourceDefinition[];
   buildingTaxonomy: GameRuntimeData["buildingTaxonomy"];
   buildingLibrary: GameRuntimeData["buildingLibrary"];
@@ -756,6 +758,178 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
         referencedBy: [...definition.referencedBy].sort()
       })),
       validationRules: [...runtimeData.colonizationFramework.validationRules].sort()
+    },
+    resourceEconomyLogisticsFramework: {
+      ...runtimeData.resourceEconomyLogisticsFramework,
+      auditSummary: [...runtimeData.resourceEconomyLogisticsFramework.auditSummary].sort(byId),
+      resourceFlowDefinitions: [...runtimeData.resourceEconomyLogisticsFramework.resourceFlowDefinitions].sort(byId).map((flow) => ({
+        ...flow,
+        sourceNodeTypes: [...flow.sourceNodeTypes].sort(),
+        destinationNodeTypes: [...flow.destinationNodeTypes].sort(),
+        storageDefinitionIds: [...flow.storageDefinitionIds].sort(),
+        transportModeIds: [...flow.transportModeIds].sort(),
+        processingRecipeIds: [...flow.processingRecipeIds].sort(),
+        manufacturingRecipeIds: [...flow.manufacturingRecipeIds].sort(),
+        consumptionProfileIds: [...flow.consumptionProfileIds].sort(),
+        marketEligibility: [...flow.marketEligibility].sort(),
+        tradeEligibility: [...flow.tradeEligibility].sort()
+      })),
+      economyNodeTypeDefinitions: [...runtimeData.resourceEconomyLogisticsFramework.economyNodeTypeDefinitions].sort(byId).map((node) => ({
+        ...node,
+        supportedResourceClasses: [...node.supportedResourceClasses].sort(),
+        buildingReferences: [...node.buildingReferences].sort(),
+        hazardConstraints: [...node.hazardConstraints].sort(),
+        routeCompatibility: [...node.routeCompatibility].sort()
+      })),
+      resourceLocationScopes: [...runtimeData.resourceEconomyLogisticsFramework.resourceLocationScopes].sort(byId),
+      resourceExtractionDefinitions: [...runtimeData.resourceEconomyLogisticsFramework.resourceExtractionDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        eligibleBodyClasses: [...definition.eligibleBodyClasses].sort(),
+        eligibleResourceClasses: [...definition.eligibleResourceClasses].sort(),
+        buildingRequirementIds: [...definition.buildingRequirementIds].sort(),
+        technologyRequirementIds: [...definition.technologyRequirementIds].sort(),
+        equipmentRequirementIds: [...definition.equipmentRequirementIds].sort(),
+        hazardModifierIds: [...definition.hazardModifierIds].sort(),
+        byproductResourceIds: [...definition.byproductResourceIds].sort()
+      })),
+      resourceStorageDefinitions: [...runtimeData.resourceEconomyLogisticsFramework.resourceStorageDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        supportedResourceClasses: [...definition.supportedResourceClasses].sort(),
+        hazardRequirements: [...definition.hazardRequirements].sort(),
+        environmentalRequirements: [...definition.environmentalRequirements].sort(),
+        buildingReferenceIds: [...definition.buildingReferenceIds].sort(),
+        upgradeReferenceIds: [...definition.upgradeReferenceIds].sort()
+      })),
+      transportModeDefinitions: [...runtimeData.resourceEconomyLogisticsFramework.transportModeDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        supportedRouteScopes: [...definition.supportedRouteScopes].sort(),
+        cargoClasses: [...definition.cargoClasses].sort(),
+        fuelRequirementIds: [...definition.fuelRequirementIds].sort(),
+        technologyRequirementIds: [...definition.technologyRequirementIds].sort(),
+        buildingPortRequirementIds: [...definition.buildingPortRequirementIds].sort(),
+        hazardTolerance: [...definition.hazardTolerance].sort(),
+        maintenanceHooks: [...definition.maintenanceHooks].sort(),
+        actionIds: [...definition.actionIds].sort()
+      })),
+      logisticsRouteDefinitions: [...runtimeData.resourceEconomyLogisticsFramework.logisticsRouteDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        sourceNodeRequirements: [...definition.sourceNodeRequirements].sort(),
+        destinationNodeRequirements: [...definition.destinationNodeRequirements].sort(),
+        validTransportModeIds: [...definition.validTransportModeIds].sort(),
+        hazardModifierIds: [...definition.hazardModifierIds].sort(),
+        escortSecurityHooks: [...definition.escortSecurityHooks].sort(),
+        routeActionIds: [...definition.routeActionIds].sort()
+      })),
+      shipmentStateDefinitions: [...runtimeData.resourceEconomyLogisticsFramework.shipmentStateDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        allowedTransitions: [...definition.allowedTransitions].sort()
+      })),
+      throughputDefinitions: [...runtimeData.resourceEconomyLogisticsFramework.throughputDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        supportedModes: [...definition.supportedModes].sort(),
+        capacityConstraintIds: [...definition.capacityConstraintIds].sort()
+      })),
+      capacityConstraintDefinitions: [...runtimeData.resourceEconomyLogisticsFramework.capacityConstraintDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        appliesTo: [...definition.appliesTo].sort()
+      })),
+      processingRecipeDefinitions: [...runtimeData.resourceEconomyLogisticsFramework.processingRecipeDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        inputItems: [...definition.inputItems].sort((left, right) => left.resourceId.localeCompare(right.resourceId)),
+        outputItems: [...definition.outputItems].sort((left, right) => left.resourceId.localeCompare(right.resourceId)),
+        byproducts: [...definition.byproducts].sort((left, right) => left.resourceId.localeCompare(right.resourceId)),
+        wasteOutputs: [...definition.wasteOutputs].sort((left, right) => left.resourceId.localeCompare(right.resourceId)),
+        requiredBuildingIds: [...definition.requiredBuildingIds].sort(),
+        requiredResearchIds: [...definition.requiredResearchIds].sort(),
+        requiredWorkforceRoles: [...definition.requiredWorkforceRoles].sort()
+      })),
+      manufacturingRecipeDefinitions: [...runtimeData.resourceEconomyLogisticsFramework.manufacturingRecipeDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        inputItems: [...definition.inputItems].sort((left, right) => left.resourceId.localeCompare(right.resourceId)),
+        outputItems: [...definition.outputItems].sort((left, right) => left.resourceId.localeCompare(right.resourceId)),
+        byproducts: [...definition.byproducts].sort((left, right) => left.resourceId.localeCompare(right.resourceId)),
+        wasteOutputs: [...definition.wasteOutputs].sort((left, right) => left.resourceId.localeCompare(right.resourceId)),
+        requiredBuildingIds: [...definition.requiredBuildingIds].sort(),
+        requiredResearchIds: [...definition.requiredResearchIds].sort(),
+        requiredWorkforceRoles: [...definition.requiredWorkforceRoles].sort()
+      })),
+      productionChainDefinitions: [...runtimeData.resourceEconomyLogisticsFramework.productionChainDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        stages: [...definition.stages].sort((left, right) => left.order - right.order).map((stage) => ({
+          ...stage,
+          inputResourceIds: [...stage.inputResourceIds].sort(),
+          outputResourceIds: [...stage.outputResourceIds].sort(),
+          nodeTypeIds: [...stage.nodeTypeIds].sort()
+        })),
+        storageRequirementIds: [...definition.storageRequirementIds].sort(),
+        transportRequirementIds: [...definition.transportRequirementIds].sort(),
+        bottleneckDefinitionIds: [...definition.bottleneckDefinitionIds].sort(),
+        completionOutputResourceIds: [...definition.completionOutputResourceIds].sort()
+      })),
+      supplyDemandDefinitions: [...runtimeData.resourceEconomyLogisticsFramework.supplyDemandDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        resourceClassIds: [...definition.resourceClassIds].sort(),
+        affectedActionIds: [...definition.affectedActionIds].sort()
+      })),
+      economyPriorityDefinitions: [...runtimeData.resourceEconomyLogisticsFramework.economyPriorityDefinitions].sort(byOrderThenId),
+      economyConditionStateDefinitions: [...runtimeData.resourceEconomyLogisticsFramework.economyConditionStateDefinitions].sort(byId),
+      economyShortageReasonCodes: [...runtimeData.resourceEconomyLogisticsFramework.economyShortageReasonCodes].sort(byId),
+      lossAndWastePolicies: [...runtimeData.resourceEconomyLogisticsFramework.lossAndWastePolicies].sort(byId).map((policy) => ({
+        ...policy,
+        appliesToResourceClasses: [...policy.appliesToResourceClasses].sort()
+      })),
+      recyclingPolicies: [...runtimeData.resourceEconomyLogisticsFramework.recyclingPolicies].sort(byId).map((policy) => ({
+        ...policy,
+        inputResourceClasses: [...policy.inputResourceClasses].sort()
+      })),
+      marketTradeIntegration: [...runtimeData.resourceEconomyLogisticsFramework.marketTradeIntegration].sort(byId).map((integration) => ({
+        ...integration,
+        locationScopeIds: [...integration.locationScopeIds].sort(),
+        acceptedResourceClasses: [...integration.acceptedResourceClasses].sort(),
+        storageDefinitionIds: [...integration.storageDefinitionIds].sort(),
+        routeAccessIds: [...integration.routeAccessIds].sort(),
+        transactionReasonCodeIds: [...integration.transactionReasonCodeIds].sort(),
+        tradeActionIds: [...integration.tradeActionIds].sort()
+      })),
+      colonizationIntegration: {
+        ...runtimeData.resourceEconomyLogisticsFramework.colonizationIntegration,
+        colonyResourcePackageIds: [...runtimeData.resourceEconomyLogisticsFramework.colonizationIntegration.colonyResourcePackageIds].sort(),
+        requiredRouteDefinitionIds: [...runtimeData.resourceEconomyLogisticsFramework.colonizationIntegration.requiredRouteDefinitionIds].sort(),
+        requiredTransportModeIds: [...runtimeData.resourceEconomyLogisticsFramework.colonizationIntegration.requiredTransportModeIds].sort(),
+        requiredPhaseIds: [...runtimeData.resourceEconomyLogisticsFramework.colonizationIntegration.requiredPhaseIds].sort()
+      },
+      populationIntegrationHooks: [...runtimeData.resourceEconomyLogisticsFramework.populationIntegrationHooks].sort(byId).map((hook) => ({
+        ...hook,
+        consumesResourceClasses: [...hook.consumesResourceClasses].sort(),
+        provides: [...hook.provides].sort()
+      })),
+      buildingIntegrationHooks: [...runtimeData.resourceEconomyLogisticsFramework.buildingIntegrationHooks].sort(byId).map((hook) => ({
+        ...hook,
+        nodeTypeIds: [...hook.nodeTypeIds].sort(),
+        providedCapabilities: [...hook.providedCapabilities].sort()
+      })),
+      actionIntegrationHooks: [...runtimeData.resourceEconomyLogisticsFramework.actionIntegrationHooks].sort(byId),
+      identityIntegrationHooks: [...runtimeData.resourceEconomyLogisticsFramework.identityIntegrationHooks].sort((left, right) => left.notes.localeCompare(right.notes)).map((hook) => ({
+        ...hook,
+        alignmentIds: [...hook.alignmentIds].sort()
+      })),
+      progressionIntegrationHooks: [...runtimeData.resourceEconomyLogisticsFramework.progressionIntegrationHooks].sort(byId),
+      aiAutomationRules: [...runtimeData.resourceEconomyLogisticsFramework.aiAutomationRules].sort(),
+      economyLogisticsPresentationContract: [...runtimeData.resourceEconomyLogisticsFramework.economyLogisticsPresentationContract].sort(byId).map((contract) => ({
+        ...contract,
+        semanticFields: [...contract.semanticFields].sort()
+      })),
+      creativeProductionRequirements: [...runtimeData.resourceEconomyLogisticsFramework.creativeProductionRequirements].sort(byId),
+      assetLibraryCategories: [...runtimeData.resourceEconomyLogisticsFramework.assetLibraryCategories].sort(byId).map((category) => ({
+        ...category,
+        groups: [...category.groups].sort()
+      })),
+      missingCanonicalDefinitions: [...runtimeData.resourceEconomyLogisticsFramework.missingCanonicalDefinitions].sort(byId).map((definition) => ({
+        ...definition,
+        referencedBy: [...definition.referencedBy].sort()
+      })),
+      provisionalBalanceValues: [...runtimeData.resourceEconomyLogisticsFramework.provisionalBalanceValues].sort(byId),
+      validationRules: [...runtimeData.resourceEconomyLogisticsFramework.validationRules].sort()
     },
     resources: [...runtimeData.resources].sort(byId),
     buildingTaxonomy: [...runtimeData.buildingTaxonomy].sort(byDisplayOrderThenId).map((family) => ({
@@ -1493,6 +1667,20 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   })) {
     issues.push(issue);
   }
+  for (const issue of validateResourceEconomyLogisticsFramework(runtimeData.resourceEconomyLogisticsFramework, {
+    resourceIds: new Set(runtimeData.resources.map((resource) => resource.id)),
+    actionIds: new Set(runtimeData.actionSystem.actionDefinitions.map((action) => action.id)),
+    actionPhaseIds: new Set(runtimeData.actionSystem.actionPhaseTemplates.map((phase) => phase.id)),
+    actionDurationIds: new Set(runtimeData.actionSystem.actionDurationDefinitions.map((duration) => duration.id)),
+    buildingIds: new Set(runtimeData.buildingLibrary.map((building) => building.id)),
+    colonizationPackageIds: new Set(runtimeData.colonizationFramework.colonyResourcePackageDefinitions.map((item) => item.id)),
+    colonizationPhaseIds: new Set(runtimeData.colonizationFramework.colonyProjectPhaseDefinitions.map((item) => item.id)),
+    planetDevelopmentFrameworkId: runtimeData.planetDevelopmentFramework.id,
+    civilizationProgressionFrameworkId: runtimeData.civilizationProgressionFramework.id,
+    colonizationFrameworkId: runtimeData.colonizationFramework.id
+  })) {
+    issues.push(issue);
+  }
   validateBuildingTaxonomyRuntime(runtimeData, issues);
   const categoryPresentationValidation = validateUpgradeCategoryPresentation({ categories: runtimeData.upgradeCategories });
   for (const message of categoryPresentationValidation.issues) {
@@ -1671,6 +1859,7 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     planetDevelopmentFramework: sorted.planetDevelopmentFramework,
     civilizationProgressionFramework: sorted.civilizationProgressionFramework,
     colonizationFramework: sorted.colonizationFramework,
+    resourceEconomyLogisticsFramework: sorted.resourceEconomyLogisticsFramework,
     resources: sorted.resources,
     buildingTaxonomy: sorted.buildingTaxonomy,
     buildingLibrary: sorted.buildingLibrary,
@@ -1761,6 +1950,20 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
     planetDevelopmentFrameworkId: payload.planetDevelopmentFramework.id,
     civilizationProgressionFrameworkId: payload.civilizationProgressionFramework.id,
     progressionMilestoneIds: new Set(payload.civilizationProgressionFramework.civilizationMilestones.map((milestone) => milestone.id))
+  })) {
+    issues.push(issue);
+  }
+  for (const issue of validateResourceEconomyLogisticsFramework(payload.resourceEconomyLogisticsFramework, {
+    resourceIds: new Set(payload.resources.map((resource) => resource.id)),
+    actionIds: new Set(payload.actionSystem.actionDefinitions.map((action) => action.id)),
+    actionPhaseIds: new Set(payload.actionSystem.actionPhaseTemplates.map((phase) => phase.id)),
+    actionDurationIds: new Set(payload.actionSystem.actionDurationDefinitions.map((duration) => duration.id)),
+    buildingIds: new Set(payload.buildingLibrary.map((building) => building.id)),
+    colonizationPackageIds: new Set(payload.colonizationFramework.colonyResourcePackageDefinitions.map((item) => item.id)),
+    colonizationPhaseIds: new Set(payload.colonizationFramework.colonyProjectPhaseDefinitions.map((item) => item.id)),
+    planetDevelopmentFrameworkId: payload.planetDevelopmentFramework.id,
+    civilizationProgressionFrameworkId: payload.civilizationProgressionFramework.id,
+    colonizationFrameworkId: payload.colonizationFramework.id
   })) {
     issues.push(issue);
   }
@@ -1909,6 +2112,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     planetDevelopmentFramework,
     civilizationProgressionFramework,
     colonizationFramework,
+    resourceEconomyLogisticsFramework,
     resources: ResourceService.catalog.map(resourceToRuntime),
     buildingTaxonomy: canonicalBuildingTaxonomy,
     buildingLibrary: canonicalBuildingLibrary,
@@ -1969,6 +2173,7 @@ export async function getGameRuntimeData() {
     planetDevelopmentFramework: base.planetDevelopmentFramework,
     civilizationProgressionFramework: base.civilizationProgressionFramework,
     colonizationFramework: base.colonizationFramework,
+    resourceEconomyLogisticsFramework: base.resourceEconomyLogisticsFramework,
     resources: base.resources,
     balance: {
       ...store.appliedRuntimeData.balance,
@@ -2184,6 +2389,7 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     planetDevelopmentFramework: base.planetDevelopmentFramework,
     civilizationProgressionFramework: base.civilizationProgressionFramework,
     colonizationFramework: base.colonizationFramework,
+    resourceEconomyLogisticsFramework: base.resourceEconomyLogisticsFramework,
     resources: base.resources,
     buildingTaxonomy: base.buildingTaxonomy,
     buildingLibrary: base.buildingLibrary,
