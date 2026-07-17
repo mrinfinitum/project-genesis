@@ -84,7 +84,7 @@ export type ExperienceBibleChapter = {
 };
 
 export type ExperienceBibleRelease = {
-  id: "DV-02" | "DV-02B" | "DV-02C" | "DV-03";
+  id: "DV-02" | "DV-02B" | "DV-02C" | "DV-03" | "DV-04";
   version: "0.1";
   status: "Draft";
   title: string;
@@ -697,11 +697,11 @@ export const experienceBibleSignature: ExperienceBibleSignature = {
     signatureSection(9, "principle", "Civilization Gold", "Civilization Gold is a visual philosophy, not an economy value.", "Civilization Gold represents legacy, achievement, warmth, human accomplishment, guidance, and hope. It should recur as a recognizable visual identity for civilization-level progress and meaningful human achievement. It is not a token value, currency rule, or gameplay mechanic."),
     signatureSection(10, "callout", "The NOVERIS Test", "If the logo disappeared, the work should still read as NOVERIS.", "Every future screen, illustration, cinematic, trailer, website page, and interface should pass one test: if the logo disappeared, would someone still know this is NOVERIS? If not, the design has failed and should return to the signature principles."),
     signatureSection(11, "checklist", "Visual Checklist", "A reusable screen and art-direction review checklist.", "Every future screen should answer yes to these questions: Is the universe visible? Is civilization celebrated? Is the atmosphere optimistic? Does the interface support the world? Is scale immediately obvious? Does lighting tell a story? Does this feel calm? Does this feel intelligent? Does this feel monumental? Would this still feel timeless in ten years?"),
-    signatureSection(12, "reference", "Future Relationships", "DV-02C names future relationship points without defining them.", "DV-02C creates relationship placeholders for future work only: DV-03 Visual DNA, DV-04 Mood Boards, DS-02 Design Tokens, DS-03 Materials, DS-04 Motion, DS-05 Components, DS-06 Screen Library, and ED-02 Studio Experience. These future documents are not defined here.")
+    signatureSection(12, "reference", "Future Relationships", "DV-02C names future relationship points without defining them.", "DV-02C creates relationship placeholders for future work only: DV-03 Visual DNA, DV-04 Inspiration Board Library, DS-02 Design Tokens, DS-03 Materials, DS-04 Motion, DS-05 Components, DS-06 Screen Library, and ED-02 Studio Experience. These future documents are not defined here.")
   ],
   futureRelationships: [
     { id: "DV-03", label: "Visual DNA", notes: "Future relationship only; not defined in DV-02C." },
-    { id: "DV-04", label: "Mood Boards", notes: "Future relationship only; not defined in DV-02C." },
+    { id: "DV-04", label: "Inspiration Board Library", notes: "Future relationship only; not defined in DV-02C." },
     { id: "DS-02", label: "Design Tokens", notes: "Future relationship only; not defined in DV-02C." },
     { id: "DS-03", label: "Materials", notes: "Future relationship only; not defined in DV-02C." },
     { id: "DS-04", label: "Motion", notes: "Future relationship only; not defined in DV-02C." },
@@ -730,7 +730,7 @@ export const experienceBibleVisualDna: ExperienceBibleVisualDna = {
   purpose: "Author the canonical artistic physics of NOVERIS: why it looks the way it does and what emotional rules every future visual decision inherits.",
   visualDnaStatement: "NOVERIS Visual DNA is the shared artistic physics of the project: deep space calm, warm civilization achievement, soft projection intelligence, rare violet transcendence, meaningful atmosphere, generous negative space, universe-first composition, emotional scale, ordered celestial geometry, durable materials, monumental architecture, quiet density, deliberate motion, and contrast built through light, depth, spacing, scale, and focus rather than saturation.",
   expands: ["DS-01", "DV-02A", "DV-02B", "DV-02C"],
-  inheritedBy: ["Mood Boards", "Design Tokens", "Materials", "Motion", "Components", "Screen Templates", "Studio Experience", "Game Experience"],
+  inheritedBy: ["Inspiration Boards", "Design Tokens", "Materials", "Motion", "Components", "Screen Templates", "Studio Experience", "Game Experience"],
   boundaries: [
     "DV-03 is emotional and artistic guidance, not UI implementation.",
     "DV-03 does not define CSS, rendering, shaders, design tokens, component code, or engine-specific output.",
@@ -754,7 +754,7 @@ export const experienceBibleVisualDna: ExperienceBibleVisualDna = {
     "NOVERIS Image Test"
   ],
   sections: [
-    visualDnaSection(1, "principle", "Visual DNA", "The recurring artistic principles, emotional language, visual physics, compositional rules, and atmospheric identity shared by every part of NOVERIS.", "Visual DNA explains why NOVERIS looks the way it does. It is inherited by the Game, Studio, Website, Steam, Marketing, and Cinematics. It creates continuity across Mood Boards, Design Tokens, Materials, Motion, Components, Screen Templates, Studio Experience, and Game Experience without becoming implementation."),
+    visualDnaSection(1, "principle", "Visual DNA", "The recurring artistic principles, emotional language, visual physics, compositional rules, and atmospheric identity shared by every part of NOVERIS.", "Visual DNA explains why NOVERIS looks the way it does. It is inherited by the Game, Studio, Website, Steam, Marketing, and Cinematics. It creates continuity across Inspiration Boards, Design Tokens, Materials, Motion, Components, Screen Templates, Studio Experience, and Game Experience without becoming implementation."),
     visualDnaSection(2, "principle", "Color Philosophy", "Colors are emotional civilization meanings, not UI-only values or hexadecimal tokens.", "Deep Space Navy represents infinity, calm, knowledge, and possibility. Warm Civilization Gold represents achievement, humanity, legacy, engineering, and hope. Soft Projection Cyan represents analysis, guidance, AI, and interfaces. Rare Violet represents ancient technology, rare discoveries, transcendence, and advanced civilization. White represents clarity, knowledge, and precision. Black represents distance, scale, and the unknown. These belong to the civilization, not only to UI components."),
     visualDnaSection(3, "principle", "Light Philosophy", "Light tells the story of civilization, technology, and distance.", "Warm light means civilization, success, engineering, and human presence. Cool light means technology, projection, and systems. Darkness means mystery, distance, and possibility, not horror. As civilizations evolve, their environments should become warmer, cleaner, more elegant, and more ordered."),
     visualDnaSection(4, "principle", "Atmosphere", "Atmosphere is a storytelling layer that communicates wonder, immensity, time, and space.", "NOVERIS atmosphere may use stellar dust, nebula, fog, planet haze, volumetric depth, light scattering, distance, and scale. Atmosphere should create wonder and depth. Never become visual clutter."),
@@ -803,6 +803,20 @@ export const experienceBibleVisualDnaRelease: ExperienceBibleRelease = {
     "Defines the artistic physics, emotional language, composition, atmosphere, material, motion, and contrast principles of NOVERIS.",
     "Expands DS-01, DV-02A, DV-02B, and DV-02C without modifying existing chapters.",
     "DV-03 is not UI implementation, CSS, rendering, shaders, design tokens, runtime data, or an engine export contract."
+  ]
+};
+
+export const experienceBibleInspirationBoardRelease: ExperienceBibleRelease = {
+  id: "DV-04",
+  version: "0.1",
+  status: "Draft",
+  title: "Inspiration Board Library",
+  createdAt: "2026-07-17T00:00:00.000Z",
+  chapterIds: [],
+  notes: [
+    "Creates the canonical Inspiration Board Library as the visual memory of NOVERIS.",
+    "Uses the existing Experience Design mood_board content model without creating duplicate content models.",
+    "DV-04 is not an image gallery, Pinterest board, generic asset store, runtime data, or an engine export contract."
   ]
 };
 
@@ -867,7 +881,7 @@ export function getExperienceBibleState(): ExperienceBibleState {
     parts: experienceBibleParts,
     chapters: experienceBibleChapters,
     release: experienceBibleRelease,
-    contentReleases: [experienceBibleRelease, experienceBiblePartIRelease, experienceBibleSignatureRelease, experienceBibleVisualDnaRelease],
+    contentReleases: [experienceBibleRelease, experienceBiblePartIRelease, experienceBibleSignatureRelease, experienceBibleVisualDnaRelease, experienceBibleInspirationBoardRelease],
     signature: experienceBibleSignature,
     visualDna: experienceBibleVisualDna,
     governanceRules: experienceBibleGovernanceRules,

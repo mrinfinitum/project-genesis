@@ -11,7 +11,7 @@ It is not gameplay, rendering, React implementation, CSS, or Three.js. Studio au
 Experience Design supports:
 
 - Experience Bible
-- Mood Boards
+- Inspiration Boards
 - Concept Library
 - Screen Library
 - Design Token Collections

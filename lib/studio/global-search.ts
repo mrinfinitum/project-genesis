@@ -51,7 +51,7 @@ const workspaceResults: StudioSearchResult[] = [
   workspace("architecture", "Architecture", "/architecture", "Architecture Workspace"),
   workspace("experience-design", "Experience Design", "/experience-design", "Creative direction authoring"),
   workspace("experience-bible", "Experience Bible", "/experience-design/bible", "Creative canon framework"),
-  workspace("mood-boards", "Mood Boards", "/experience-design/mood-boards", "Visual reference boards"),
+  workspace("inspiration-boards", "Inspiration Boards", "/experience-design/inspiration-boards", "Canonical visual memory and reference boards"),
   workspace("screen-library", "Screen Library", "/experience-design/screens", "Canonical screen intent"),
   workspace("upload-asset", "Upload Asset", "/assets?upload=asset", "Asset pipeline"),
   workspace("regenerate-derivatives", "Regenerate Derivatives", "/asset-library?status=needs_review", "Asset pipeline"),
@@ -155,6 +155,26 @@ export async function buildStudioSearchIndex(): Promise<StudioSearchIndex> {
         aliases: [record.description, record.author, record.tags.join(" "), record.notes.join(" "), JSON.stringify(record.fields)]
       });
     }),
+    ...experienceDesign.inspirationBoards.boards.map((board) => result({
+      id: board.id,
+      type: "Experience Design" as const,
+      title: board.title,
+      subtitle: `Inspiration Board / ${board.status} / ${board.subtitle}`,
+      href: `${experienceDesign.inspirationBoards.workspaceRoute}#${board.id}`,
+      status: board.status,
+      aliases: [
+        board.purpose,
+        board.creativeGoal,
+        board.tags.join(" "),
+        board.keywords.join(" "),
+        board.notes.join(" "),
+        board.experienceBibleReferences.join(" "),
+        board.visualDnaReferences.join(" "),
+        board.annotationCategories.join(" "),
+        board.signatureReinforcement.join(" "),
+        Object.entries(board.inspirationScores).map(([key, value]) => `${key} ${value}`).join(" ")
+      ]
+    })),
     ...experienceDesign.experienceBible.parts.map((part) => result({
       id: `experience-bible-part:${part.id}`,
       type: "Experience Design" as const,

@@ -38,6 +38,8 @@ function assertNoRuntimeLeak(label: string, value: unknown) {
   assert(!text.includes("DV-03"), `${label} leaked DV-03 Visual DNA data.`);
   assert(!text.includes("Visual DNA"), `${label} leaked Visual DNA guidance.`);
   assert(!text.includes("Deep Space Navy"), `${label} leaked color philosophy guidance.`);
+  assert(!text.includes("DV-04"), `${label} leaked DV-04 Inspiration Board data.`);
+  assert(!text.includes("Inspiration Board Library"), `${label} leaked Inspiration Board Library data.`);
   assert(!/"bodySections"\s*:/.test(text), `${label} leaked Bible body sections.`);
 }
 
@@ -67,6 +69,11 @@ async function main() {
   assert(visualDnaRelease.version === "0.1", "DV-03 must be version 0.1.");
   assert(visualDnaRelease.status === "Draft", "DV-03 must remain Draft.");
   assert(visualDnaRelease.chapterIds.length === 0, "DV-03 must be a Visual DNA section, not a numbered chapter release.");
+  const inspirationBoardRelease = bible.contentReleases.find((release) => release.id === "DV-04");
+  assert(inspirationBoardRelease, "Missing DV-04 Inspiration Board Library content release.");
+  assert(inspirationBoardRelease.version === "0.1", "DV-04 must be version 0.1.");
+  assert(inspirationBoardRelease.status === "Draft", "DV-04 must remain Draft.");
+  assert(inspirationBoardRelease.chapterIds.length === 0, "DV-04 must be an Inspiration Board Library release, not a numbered chapter release.");
   assert(experience.experienceBible.chapters.length === 65, "Experience Design state must expose Bible chapters.");
 
   assert(bible.signature.id === "DV-02C", "Signature section ID must be DV-02C.");
@@ -167,7 +174,7 @@ async function main() {
   assert(bible.visualDna.version === "0.1", "Visual DNA section must be version 0.1.");
   assert(bible.visualDna.status === "Draft", "Visual DNA section must remain Draft.");
   assert(bible.visualDna.expands.join("|") === "DS-01|DV-02A|DV-02B|DV-02C", "DV-03 must expand DS-01, DV-02A, DV-02B, and DV-02C.");
-  for (const inherited of ["Mood Boards", "Design Tokens", "Materials", "Motion", "Components", "Screen Templates", "Studio Experience", "Game Experience"]) {
+  for (const inherited of ["Inspiration Boards", "Design Tokens", "Materials", "Motion", "Components", "Screen Templates", "Studio Experience", "Game Experience"]) {
     assert(bible.visualDna.inheritedBy.includes(inherited), `DV-03 must be inherited by ${inherited}.`);
   }
   for (const boundary of ["not UI implementation", "CSS", "rendering", "shaders", "design tokens", "engine-specific"]) {
@@ -509,6 +516,8 @@ async function main() {
   assert(read("docs/experience-bible.md").includes("The NOVERIS Signature"), "Experience Bible documentation must document The NOVERIS Signature.");
   assert(read("docs/experience-bible.md").includes("DV-03"), "Experience Bible documentation must document DV-03.");
   assert(read("docs/experience-bible.md").includes("Visual DNA"), "Experience Bible documentation must document Visual DNA.");
+  assert(read("docs/experience-bible.md").includes("DV-04"), "Experience Bible documentation must document DV-04.");
+  assert(read("docs/experience-bible.md").includes("Inspiration Board Library"), "Experience Bible documentation must document Inspiration Board Library.");
   assert(read("components/experience-bible-workspace.tsx").includes("aria-label=\"Experience Bible table of contents\""), "TOC must expose accessible label.");
   assert(read("components/experience-bible-workspace.tsx").includes("window.localStorage.setItem(storageKey"), "TOC expansion state must be remembered.");
   assert(read("components/experience-bible-workspace.tsx").includes("state.contentReleases"), "Bible versions view must expose all content releases.");
@@ -554,6 +563,12 @@ async function main() {
       status: visualDnaRelease.status,
       sections: bible.visualDna.sections.length,
       futureRelationships: bible.visualDna.futureRelationships.length
+    },
+    inspirationBoardRelease: {
+      id: inspirationBoardRelease.id,
+      version: inspirationBoardRelease.version,
+      status: inspirationBoardRelease.status,
+      chapters: inspirationBoardRelease.chapterIds.length
     },
     searchResults: {
       futureWeBuild: search.returned,

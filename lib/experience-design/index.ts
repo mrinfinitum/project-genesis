@@ -62,6 +62,91 @@ export type ExperienceDesignRecord = {
   fields: Record<string, string | string[] | number | boolean>;
 };
 
+export type ExperienceInspirationAnnotationCategory =
+  | "Lighting"
+  | "Color"
+  | "Composition"
+  | "Geometry"
+  | "Atmosphere"
+  | "Scale"
+  | "Materials"
+  | "Motion ideas"
+  | "Typography"
+  | "Negative space"
+  | "Visual rhythm"
+  | "Interaction inspiration";
+
+export type ExperienceInspirationBoardCategory = {
+  id: string;
+  title: string;
+  purpose: string;
+  tags: string[];
+};
+
+export type ExperienceInspirationBoard = {
+  id: string;
+  title: string;
+  subtitle: string;
+  purpose: string;
+  creativeGoal: string;
+  categoryId: string;
+  collectionId: string;
+  subboardIds: string[];
+  experienceBibleReferences: string[];
+  visualDnaReferences: string[];
+  status: ExperienceDesignStatus;
+  owner: string;
+  reviewers: string[];
+  version: string;
+  created: string;
+  modified: string;
+  tags: string[];
+  keywords: string[];
+  notes: string[];
+  attachments: ExperienceAttachment[];
+  relationships: ExperienceRelationship[];
+  approvalStatus: ExperienceDesignStatus;
+  history: ExperienceHistoryEntry[];
+  referenceCount: number;
+  annotationCategories: ExperienceInspirationAnnotationCategory[];
+  signatureReinforcement: string[];
+  inspirationScores: Record<string, number>;
+  favorite: boolean;
+};
+
+export type ExperienceInspirationBoardLibrary = {
+  id: "DV-04";
+  title: "Inspiration Board Library";
+  version: "0.1";
+  status: "Draft";
+  purpose: string;
+  workspaceRoute: string;
+  categories: ExperienceInspirationBoardCategory[];
+  boards: ExperienceInspirationBoard[];
+  referenceModelFields: string[];
+  annotationCategories: ExperienceInspirationAnnotationCategory[];
+  relationshipTargets: string[];
+  searchFields: string[];
+  filters: string[];
+  viewModes: string[];
+  presentationMode: {
+    enabled: true;
+    purpose: string[];
+  };
+  reviewWorkflow: ExperienceDesignStatus[];
+  scoreDimensions: string[];
+  favorites: {
+    pinnedBoardIds: string[];
+    recentlyViewedBoardIds: string[];
+    recentlyUpdatedBoardIds: string[];
+    favoriteReferenceIds: string[];
+  };
+  signatureTags: string[];
+  importSources: string[];
+  performanceRequirements: string[];
+  accessibilityRequirements: string[];
+};
+
 export type ExperienceContentModel = {
   kind: ExperienceDesignKind;
   displayName: string;
@@ -98,6 +183,7 @@ export type ExperienceDesignState = {
     countsByKind: Record<ExperienceDesignKind, number>;
   };
   experienceBible: ReturnType<typeof getExperienceBibleState>;
+  inspirationBoards: ExperienceInspirationBoardLibrary;
 };
 
 export const EXPERIENCE_DESIGN_ROUTE = "/experience-design";
@@ -107,7 +193,7 @@ export const experienceReviewWorkflow: ExperienceDesignStatus[] = ["Draft", "In 
 export const experienceDesignSections: ExperienceDesignSection[] = [
   { id: "dashboard", label: "Dashboard", description: "Creative direction command center for ED-01.", route: EXPERIENCE_DESIGN_ROUTE, kinds: [] },
   { id: "bible", label: "Experience Bible", description: "Canonical chapters, references, annotations, and creative principles.", route: `${EXPERIENCE_DESIGN_ROUTE}/bible`, kinds: ["experience_bible"] },
-  { id: "mood-boards", label: "Mood Boards", description: "Visual reference boards by gameplay and presentation domain.", route: `${EXPERIENCE_DESIGN_ROUTE}/mood-boards`, kinds: ["mood_board"] },
+  { id: "inspiration-boards", label: "Inspiration Boards", description: "Canonical visual memory, reference boards, annotations, relationships, presentation mode, and creative review.", route: `${EXPERIENCE_DESIGN_ROUTE}/inspiration-boards`, kinds: ["mood_board"] },
   { id: "concepts", label: "Concept Library", description: "Versioned concept art, illustration, interface, material, and motion references.", route: `${EXPERIENCE_DESIGN_ROUTE}/concepts`, kinds: ["concept"] },
   { id: "screens", label: "Screen Library", description: "Canonical experience intent for screens without client implementation ownership.", route: `${EXPERIENCE_DESIGN_ROUTE}/screens`, kinds: ["screen_definition"] },
   { id: "tokens", label: "Design Tokens", description: "Framework for future color, type, spacing, radius, motion, and breakpoint collections.", route: `${EXPERIENCE_DESIGN_ROUTE}/tokens`, kinds: ["design_token_collection"] },
@@ -123,7 +209,7 @@ export const experienceDesignSections: ExperienceDesignSection[] = [
 
 export const experienceContentModels: ExperienceContentModel[] = [
   model("experience_bible", "Experience Bible", "Long-form creative canon with chapters, subchapters, annotations, cross references, linked concepts, search, and history.", ["chapters", "subchapters", "annotations", "crossReferences", "linkedConcepts"], ["embedded images", "version history", "search", "future expansion"], "bible"),
-  model("mood_board", "Mood Board", "Visual reference board with images, references, lighting notes, color notes, composition notes, approval, and history.", ["title", "description", "images", "references", "lightingNotes", "colorNotes", "compositionNotes"], ["categories", "approval", "version history"], "mood-boards"),
+  model("mood_board", "Inspiration Board", "Canonical inspiration board with references, annotations, creative goals, Bible links, Visual DNA links, approval, history, favorites, and presentation mode.", ["title", "subtitle", "purpose", "creativeGoal", "experienceBibleReferences", "visualDnaReferences", "references", "annotations", "lightingNotes", "colorNotes", "compositionNotes"], ["categories", "collections", "boards", "subboards", "references", "annotations", "relationships", "versions", "approval", "history", "search", "favorites", "presentation mode"], "inspiration-boards"),
   model("concept", "Concept", "Versioned concept record for art, interface, environment, lighting, typography, material, or animation reference.", ["preview", "sourceAsset", "notes", "tags", "relationships"], ["approval workflow", "source asset links"], "concepts"),
   model("screen_definition", "Screen Definition", "Canonical screen intent, player goals, emotional goals, layout notes, interaction zones, accessibility, references, and approved concepts.", ["purpose", "playerGoals", "emotionalGoals", "narrativePurpose", "layoutNotes", "interactionZones"], ["attachments", "related components", "version history"], "screens"),
   model("design_token_collection", "Design Token Collection", "Framework for future token collections without defining token values yet.", ["tokenFamilies", "status", "approval"], ["color", "typography", "spacing", "radius", "blur", "elevation", "shadow", "opacity", "motion", "breakpoints"], "tokens"),
@@ -147,13 +233,13 @@ export const experienceDesignRecords: ExperienceDesignRecord[] = [
     linkedConcepts: ["Supported"],
     tableOfContents: "Part -> Chapter hierarchy"
   }),
-  record("mood-board-galaxy", "mood_board", "Galaxy Mood Board", "Reference board for galaxy-scale wonder, navigation distance, light, scale, and discovery tone.", "Draft", "Art Direction", ["galaxy", "lighting", "composition"], ["Framework board; images can be attached later."], {
+  record("mood-board-galaxy", "mood_board", "Galaxy Inspiration Board", "Reference board for galaxy-scale wonder, navigation distance, light, scale, and discovery tone.", "Draft", "Art Direction", ["galaxy", "lighting", "composition"], ["Framework board; images can be attached later."], {
     category: "Galaxy",
     lightingNotes: "Cosmic scale, legible focus, restrained glow.",
     colorNotes: "Use approved design tokens when token values are authored.",
     compositionNotes: "Hero imagery supports game direction without becoming implementation."
   }),
-  record("mood-board-hud", "mood_board", "HUD Mood Board", "Reference board for quiet, readable, canonical HUD experience intent.", "Draft", "UX Direction", ["hud", "interface", "accessibility"], ["Screen implementation remains game-owned."], {
+  record("mood-board-hud", "mood_board", "HUD Inspiration Board", "Reference board for quiet, readable, canonical HUD experience intent.", "Draft", "UX Direction", ["hud", "interface", "accessibility"], ["Screen implementation remains game-owned."], {
     category: "HUD",
     lightingNotes: "Readable over bright and dark game scenes.",
     colorNotes: "State color must remain accessible.",
@@ -179,7 +265,7 @@ export const experienceDesignRecords: ExperienceDesignRecord[] = [
   record("material-space-glass", "material_definition", "Space Glass", "Material definition framework for projected, transparent, readable surfaces.", "Draft", "Art Direction", ["material", "glass", "interface"], ["Framework only; no shader or CSS implementation."], {
     purpose: "Canonical material intent.",
     visualIntent: "Subtle depth, transparency, and legibility.",
-    references: ["Pending mood board attachments"]
+    references: ["Pending Inspiration Board attachments"]
   }),
   record("motion-discovery", "motion_definition", "Discovery Motion", "Motion intent for discovery reveal moments and reduced-motion alternatives.", "Draft", "Motion Design", ["motion", "discovery", "accessibility"], ["No implementation curves are final."], {
     purpose: "Signal a meaningful reveal without blocking interaction.",
@@ -215,6 +301,197 @@ export const experienceDesignRecords: ExperienceDesignRecord[] = [
     decision: "Pending"
   })
 ];
+
+const inspirationBoardCategoryNames = [
+  "Universe",
+  "Galaxy",
+  "Sector",
+  "Star System",
+  "Planet",
+  "Moon",
+  "Colony",
+  "Civilization",
+  "Architecture",
+  "Megastructures",
+  "Discovery",
+  "Research",
+  "Population",
+  "Economy",
+  "Logistics",
+  "AI",
+  "Interface",
+  "HUD",
+  "Navigation",
+  "Loading",
+  "Main Menu",
+  "Settings",
+  "Studio",
+  "Typography",
+  "Lighting",
+  "Color",
+  "Materials",
+  "Motion",
+  "Brand",
+  "Marketing",
+  "Website",
+  "Steam",
+  "Trailers",
+  "Photography",
+  "NASA",
+  "Engineering",
+  "Natural Phenomena"
+];
+
+export const inspirationBoardAnnotationCategories: ExperienceInspirationAnnotationCategory[] = [
+  "Lighting",
+  "Color",
+  "Composition",
+  "Geometry",
+  "Atmosphere",
+  "Scale",
+  "Materials",
+  "Motion ideas",
+  "Typography",
+  "Negative space",
+  "Visual rhythm",
+  "Interaction inspiration"
+];
+
+export const inspirationBoardCategories: ExperienceInspirationBoardCategory[] = inspirationBoardCategoryNames.map((title) => ({
+  id: `inspiration-${slugify(title)}`,
+  title,
+  purpose: `${title} inspiration board category for approved NOVERIS visual memory, references, annotations, and creative relationships.`,
+  tags: ["inspiration-board", slugify(title)]
+}));
+
+const signatureTags = [
+  "Monumental Civilization",
+  "Universe First",
+  "Celestial Geometry",
+  "Light Represents Progress",
+  "Calm Intelligence",
+  "Civilization Gold",
+  "Hopeful Futurism"
+];
+
+export const inspirationBoards: ExperienceInspirationBoard[] = inspirationBoardCategories.map((category, index) => {
+  const primaryReferences = category.title === "Website"
+    ? ["noveris-life-translation", "dv-02c-section-12-future-relationships"]
+    : ["core-creative-philosophy", "what-noveris-is", "dv-02c-section-01-the-noveris-signature"];
+  const visualReferences = category.title === "Lighting"
+    ? ["dv-03-section-03-light-philosophy", "dv-03-section-13-visual-contrast"]
+    : ["dv-03-section-01-visual-dna", "dv-03-section-06-composition", "dv-03-section-08-geometry"];
+
+  return {
+    id: `inspiration-board-${slugify(category.title)}`,
+    title: `${category.title} Inspiration Board`,
+    subtitle: `${category.title} visual memory and review surface`,
+    purpose: "Answer what we are trying to create, why it matters, which Experience Bible principles support it, which Visual DNA language it reinforces, and which future screens inherit from it.",
+    creativeGoal: `Collect approved ${category.title.toLowerCase()} references that strengthen NOVERIS visual direction without duplicating Asset Library binaries.`,
+    categoryId: category.id,
+    collectionId: "noveris-inspiration-library",
+    subboardIds: [],
+    experienceBibleReferences: primaryReferences,
+    visualDnaReferences: visualReferences,
+    status: category.title === "Website" ? "In Review" : "Draft",
+    owner: category.title === "Website" ? "Brand Direction" : "Art Direction",
+    reviewers: ["Creative Direction", "Experience Design"],
+    version: "0.1",
+    created: "2026-07-17T00:00:00.000Z",
+    modified: "2026-07-17T00:00:00.000Z",
+    tags: ["dv-04", "inspiration-board", category.title.toLowerCase(), ...category.tags],
+    keywords: [category.title, "emotion", "lighting", "color", "composition", "geometry", "glass", "projection", "orbit", "discovery", "legacy", "civilization", "calm"],
+    notes: ["Reference approved assets only.", "Do not duplicate existing Asset Library binaries.", "Route approved boards through Experience Design review."],
+    attachments: [],
+    relationships: [
+      { id: `${category.id}-relationship-bible`, targetType: "experience_bible", targetId: "DV-02", label: "Experience Bible" },
+      { id: `${category.id}-relationship-visual-dna`, targetType: "visual_dna", targetId: "DV-03", label: "Visual DNA" }
+    ],
+    approvalStatus: category.title === "Website" ? "In Review" : "Draft",
+    history: [
+      {
+        id: `inspiration-board-${slugify(category.title)}-created`,
+        action: "created",
+        author: "Experience Design",
+        timestamp: "2026-07-17T00:00:00.000Z",
+        notes: `Created ${category.title} Inspiration Board for DV-04.`
+      }
+    ],
+    referenceCount: 0,
+    annotationCategories: inspirationBoardAnnotationCategories,
+    signatureReinforcement: signatureTags.filter((_, tagIndex) => (tagIndex + index) % 2 === 0).slice(0, 4),
+    inspirationScores: {
+      Hope: 70 + (index % 4) * 5,
+      Wonder: 72 + (index % 5) * 4,
+      Scale: 68 + (index % 6) * 3,
+      Civilization: 70 + (index % 3) * 6,
+      Discovery: 66 + (index % 5) * 5,
+      Architecture: 62 + (index % 4) * 6,
+      Atmosphere: 70 + (index % 5) * 4,
+      Light: 74 + (index % 4) * 4,
+      Calm: 72 + (index % 3) * 5,
+      Engineering: 65 + (index % 5) * 4
+    },
+    favorite: ["Universe", "Galaxy", "Civilization", "Website"].includes(category.title)
+  };
+});
+
+export const inspirationBoardLibrary: ExperienceInspirationBoardLibrary = {
+  id: "DV-04",
+  title: "Inspiration Board Library",
+  version: "0.1",
+  status: "Draft",
+  purpose: "The canonical visual memory of NOVERIS. Every approved image, concept, photograph, render, illustration, architectural study, lighting reference, typography example, cinematic frame, interface reference, and composition study should ultimately live here.",
+  workspaceRoute: `${EXPERIENCE_DESIGN_ROUTE}/inspiration-boards`,
+  categories: inspirationBoardCategories,
+  boards: inspirationBoards,
+  referenceModelFields: [
+    "title",
+    "description",
+    "source",
+    "creator",
+    "licenseNotes",
+    "category",
+    "tags",
+    "keywords",
+    "lightingNotes",
+    "colorNotes",
+    "compositionNotes",
+    "architectureNotes",
+    "materialNotes",
+    "emotion",
+    "visualPrinciples",
+    "experienceBibleLinks",
+    "visualDnaLinks",
+    "screenRelationships",
+    "componentRelationships",
+    "status",
+    "version",
+    "approval",
+    "history"
+  ],
+  annotationCategories: inspirationBoardAnnotationCategories,
+  relationshipTargets: ["Experience Bible Chapters", "Visual DNA Sections", "Screen Definitions", "Design Tokens", "Materials", "Motion Definitions", "Components", "Themes", "Brand Guidance", "Concept Art", "Future Tasks"],
+  searchFields: ["emotion", "lighting", "color", "composition", "planet", "architecture", "NASA", "hope", "civilization", "monumentality", "calm", "geometry", "glass", "projection", "environment", "planetary", "orbit", "discovery", "legacy", "annotations"],
+  filters: ["Status", "Approved", "Draft", "Category", "Lighting", "Emotion", "Material", "Theme", "Architecture", "Platform", "Relationship", "Tags", "Color Family"],
+  viewModes: ["Grid", "Masonry", "Canvas", "Presentation Mode"],
+  presentationMode: {
+    enabled: true,
+    purpose: ["creative reviews", "art direction", "team discussions", "design workshops"]
+  },
+  reviewWorkflow: experienceReviewWorkflow,
+  scoreDimensions: ["Hope", "Wonder", "Scale", "Civilization", "Discovery", "Architecture", "Atmosphere", "Light", "Calm", "Engineering"],
+  favorites: {
+    pinnedBoardIds: ["inspiration-board-universe", "inspiration-board-galaxy", "inspiration-board-website"],
+    recentlyViewedBoardIds: ["inspiration-board-universe", "inspiration-board-hud", "inspiration-board-website"],
+    recentlyUpdatedBoardIds: ["inspiration-board-website", "inspiration-board-lighting", "inspiration-board-civilization"],
+    favoriteReferenceIds: []
+  },
+  signatureTags,
+  importSources: ["Asset Library", "Dropbox", "Local Upload", "Generated Concepts", "Approved Marketing Assets"],
+  performanceRequirements: ["lazy images", "virtualized grids", "responsive previews", "deferred loading", "fast search"],
+  accessibilityRequirements: ["keyboard navigation", "screen readers", "zoom", "reduced motion", "high contrast"]
+};
 
 function model(
   kind: ExperienceDesignKind,
@@ -306,13 +583,18 @@ export function getExperienceDesignState(): ExperienceDesignState {
     contentModels: experienceContentModels,
     records: experienceDesignRecords,
     reviewWorkflow: experienceReviewWorkflow,
-    searchScopes: ["Bible", "Mood Boards", "Concepts", "Screens", "Tokens", "Materials", "Motion", "Components", "Themes", "Journey"],
+    searchScopes: ["Bible", "Inspiration Boards", "Concepts", "Screens", "Tokens", "Materials", "Motion", "Components", "Themes", "Journey"],
     dashboard: {
       recentActivity: history,
       draftReviews: experienceDesignRecords.filter((item) => item.status === "Draft" || item.status === "In Review"),
       approvedChanges: experienceDesignRecords.filter((item) => item.status === "Approved"),
       countsByKind
     },
-    experienceBible
+    experienceBible,
+    inspirationBoards: inspirationBoardLibrary
   };
+}
+
+function slugify(value: string) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }

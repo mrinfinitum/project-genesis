@@ -12,11 +12,14 @@ Status: Draft
 Visual DNA Draft: DV-03 v0.1  
 Status: Draft
 
+Inspiration Board Draft: DV-04 v0.1  
+Status: Draft
+
 The NOVERIS Experience Bible is the living creative reference for Project Genesis Studio. It is a structured Studio workspace, not a single markdown document and not a game implementation surface.
 
 ## What It Owns
 
-Studio owns the Bible structure, parts, chapters, creative principles, references, attachments, linked concepts, linked mood boards, linked screen definitions, review states, governance, and version history.
+Studio owns the Bible structure, parts, chapters, creative principles, references, attachments, linked concepts, linked Inspiration Boards, linked screen definitions, review states, governance, and version history.
 
 The Game owns React, CSS, Three.js, shaders, animation code, platform rendering, live player state, and screen behavior.
 
@@ -120,7 +123,7 @@ The reusable DV-02C checklist asks:
 DV-02C names future relationships only and does not define them yet:
 
 - DV-03 Visual DNA
-- DV-04 Mood Boards
+- DV-04 Inspiration Board Library
 - DS-02 Design Tokens
 - DS-03 Materials
 - DS-04 Motion
@@ -140,7 +143,7 @@ DV-03 expands DS-01, DV-02A, DV-02B, and DV-02C without modifying approved chapt
 
 DV-03 is inherited by:
 
-- Mood Boards
+- Inspiration Boards
 - Design Tokens
 - Materials
 - Motion
@@ -199,6 +202,74 @@ DV-03 names future relationships only and does not define implementation:
 - DS-06 Screen Library
 - ED-02 Studio Experience
 - Game Rendering
+
+## DV-04 Inspiration Board Library
+
+DV-04 creates the canonical Inspiration Board Library. This is not an image gallery, not a Pinterest board, and not generic asset storage. It is the visual memory of NOVERIS.
+
+Every approved image, concept, photograph, render, illustration, architectural study, lighting reference, typography example, cinematic frame, interface reference, and composition study should ultimately live in Inspiration Boards. Every future design decision should be traceable back to an approved Inspiration Board.
+
+Each Inspiration Board answers:
+
+- What are we trying to create?
+- Why?
+- Which Experience Bible principles support it?
+- Which visual language does it reinforce?
+- Which future screens inherit from it?
+
+The DV-04 workspace supports categories, collections, boards, subboards, references, annotations, relationships, versions, approval, history, search, favorites, and presentation mode.
+
+Initial canonical board categories:
+
+- Universe
+- Galaxy
+- Sector
+- Star System
+- Planet
+- Moon
+- Colony
+- Civilization
+- Architecture
+- Megastructures
+- Discovery
+- Research
+- Population
+- Economy
+- Logistics
+- AI
+- Interface
+- HUD
+- Navigation
+- Loading
+- Main Menu
+- Settings
+- Studio
+- Typography
+- Lighting
+- Color
+- Materials
+- Motion
+- Brand
+- Marketing
+- Website
+- Steam
+- Trailers
+- Photography
+- NASA
+- Engineering
+- Natural Phenomena
+
+Reference annotations may mark Lighting, Color, Composition, Geometry, Atmosphere, Scale, Materials, Motion ideas, Typography, Negative space, Visual rhythm, and Interaction inspiration.
+
+Every Inspiration Board may link to Experience Bible Chapters, Visual DNA Sections, Screen Definitions, Design Tokens, Materials, Motion Definitions, Components, Themes, Brand Guidance, Concept Art, and Future Tasks.
+
+The workspace supports Grid, Masonry, Canvas, and Presentation Mode. Presentation Mode is for creative reviews, art direction, team discussions, and design workshops.
+
+Boards may reinforce NOVERIS signature traits: Monumental Civilization, Universe First, Celestial Geometry, Light Represents Progress, Calm Intelligence, Civilization Gold, and Hopeful Futurism.
+
+The dedicated Brand Reference Board supports approved noveris.life screenshots, spacing, typography, lighting, layout, visual hierarchy, and motion observations. Studio must not scrape noveris.life; it should reference approved assets only.
+
+DV-04 uses the existing Experience Design `mood_board` content model. It does not create a duplicate model, duplicate Asset Library binaries, publish runtime data, or alter engine exports.
 
 ## Approval
 

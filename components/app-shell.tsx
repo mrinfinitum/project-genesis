@@ -126,7 +126,7 @@ const navigationGroups: NavigationGroup[] = [
     items: [
       { href: "/experience-design", label: "Dashboard", icon: Palette },
       { href: "/experience-design/bible", label: "Experience Bible", icon: BookOpen },
-      { href: "/experience-design/mood-boards", label: "Mood Boards", icon: Palette },
+      { href: "/experience-design/inspiration-boards", label: "Inspiration Boards", icon: Palette },
       { href: "/experience-design/concepts", label: "Concept Library", icon: Sparkles },
       { href: "/experience-design/screens", label: "Screen Library", icon: MonitorCog },
       { href: "/experience-design/tokens", label: "Design Tokens", icon: CopyPlus },

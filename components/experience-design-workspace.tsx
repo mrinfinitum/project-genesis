@@ -22,7 +22,7 @@ import {
   Sparkles
 } from "lucide-react";
 import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, WorkspaceSearchBar, WorkspaceStatTile, WorkspaceTabs } from "@/components/ui/workspace";
-import type { ExperienceDesignKind, ExperienceDesignRecord, ExperienceDesignSection, ExperienceDesignState } from "@/lib/experience-design";
+import type { ExperienceDesignKind, ExperienceDesignRecord, ExperienceDesignSection, ExperienceDesignState, ExperienceInspirationBoard } from "@/lib/experience-design";
 import { cn } from "@/lib/utils";
 
 type ExperienceTab = "dashboard" | "library" | "models" | "reviews" | "history";
@@ -30,7 +30,7 @@ type ExperienceTab = "dashboard" | "library" | "models" | "reviews" | "history";
 const sectionIcons: Record<string, ComponentType<{ className?: string }>> = {
   dashboard: Palette,
   bible: BookOpen,
-  "mood-boards": GalleryHorizontalEnd,
+  "inspiration-boards": GalleryHorizontalEnd,
   concepts: Sparkles,
   screens: Layers3,
   tokens: Palette,
@@ -112,7 +112,7 @@ function ExperienceShowcasePanel({ state }: { state: ExperienceDesignState }) {
         <div>
           <p className="text-xs font-black uppercase tracking-[0.24em] text-amber-200">Civilization Observatory</p>
           <h2 className="mt-3 text-3xl font-black text-white">Experience Design is the creative command center for NOVERIS.</h2>
-          <p className="mt-4 max-w-3xl text-base leading-8 text-slate-300">The Bible, mood boards, concept library, screen intent, design tokens, materials, motion, and themes now share one premium reading and review environment. Studio remains the canonical authoring surface while the Game owns implementation.</p>
+          <p className="mt-4 max-w-3xl text-base leading-8 text-slate-300">The Bible, inspiration boards, concept library, screen intent, design tokens, materials, motion, and themes now share one premium reading and review environment. Studio remains the canonical authoring surface while the Game owns implementation.</p>
           <div className="mt-5 flex flex-wrap gap-2">
             {pillars.map((pillar) => <WorkspaceBadge key={pillar} value={pillar} />)}
           </div>
@@ -127,17 +127,18 @@ function ExperienceShowcasePanel({ state }: { state: ExperienceDesignState }) {
   );
 }
 
-function MoodBoardCanvasPreview() {
-  const notes = ["Lighting Notes", "Composition", "References", "Asset Links", "Annotations"];
+function InspirationBoardCanvasPreview({ state }: { state: ExperienceDesignState }) {
+  const notes = ["Lighting", "Composition", "References", "Visual DNA", "Annotations"];
   return (
     <section className="studio-material-command rounded-lg p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-300">Immersive Canvas</p>
-          <h3 className="mt-1 text-xl font-black text-white">Mood Board Experience</h3>
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-300">{state.inspirationBoards.id} / Creative Studio</p>
+          <h3 className="mt-1 text-xl font-black text-white">Inspiration Board Library</h3>
         </div>
-        <WorkspaceBadge value="PureRef Inspired" />
+        <WorkspaceBadge value="Presentation Mode Ready" />
       </div>
+      <p className="mt-3 text-sm leading-6 text-slate-300">{state.inspirationBoards.purpose}</p>
       <div className="studio-mood-board-canvas relative mt-4 rounded-md border border-cyan-300/15 p-5">
         <div className="relative grid h-full min-h-72 gap-4 md:grid-cols-3">
           {notes.map((note, index) => (
@@ -149,12 +150,75 @@ function MoodBoardCanvasPreview() {
               index === 4 && "md:translate-y-2"
             )}>
               <p className="text-xs font-black uppercase tracking-[0.18em] text-amber-200">{note}</p>
-              <p className="mt-3 text-sm leading-6 text-slate-300">Zoomable reference cluster prepared for annotations, lighting notes, source links, and future asset relationships.</p>
+              <p className="mt-3 text-sm leading-6 text-slate-300">Zoomable reference cluster prepared for provenance, annotations, relationships, source links, and creative review.</p>
             </div>
           ))}
         </div>
       </div>
+      <div className="mt-4 grid gap-3 md:grid-cols-4">
+        <WorkspaceMiniStat label="Categories" value={state.inspirationBoards.categories.length} />
+        <WorkspaceMiniStat label="Boards" value={state.inspirationBoards.boards.length} />
+        <WorkspaceMiniStat label="View Modes" value={state.inspirationBoards.viewModes.length} />
+        <WorkspaceMiniStat label="Review States" value={state.inspirationBoards.reviewWorkflow.length} />
+      </div>
     </section>
+  );
+}
+
+function InspirationBoardCard({ board }: { board: ExperienceInspirationBoard }) {
+  return (
+    <article id={board.id} className="rounded-md border border-cyan-300/15 bg-slate-950/45 p-4 scroll-mt-24">
+      <div className="h-36 rounded-md border border-cyan-300/10 bg-[radial-gradient(circle_at_25%_20%,rgba(253,214,114,0.22),transparent_34%),radial-gradient(circle_at_78%_30%,rgba(92,229,255,0.18),transparent_34%),linear-gradient(135deg,rgba(6,15,30,0.95),rgba(11,22,45,0.78))]" aria-hidden="true" />
+      <div className="mt-4 flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="truncate text-xs font-black uppercase tracking-[0.18em] text-cyan-300">{board.categoryId.replace("inspiration-", "").replaceAll("-", " ")}</p>
+          <h3 className="mt-2 truncate text-xl font-black text-white" title={board.title}>{board.title}</h3>
+          <p className="mt-1 line-clamp-2 text-sm leading-5 text-slate-400">{board.subtitle}</p>
+        </div>
+        <WorkspaceBadge value={board.status} />
+      </div>
+      <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-300">{board.creativeGoal}</p>
+      <div className="mt-4 flex flex-wrap gap-2">
+        {board.signatureReinforcement.map((tag) => <WorkspaceBadge key={tag} value={tag} className="text-[0.62rem]" />)}
+      </div>
+      <div className="mt-4 grid gap-2 sm:grid-cols-3">
+        <WorkspaceMiniStat label="References" value={board.referenceCount} />
+        <WorkspaceMiniStat label="Annotations" value={board.annotationCategories.length} />
+        <WorkspaceMiniStat label="Favorite" value={board.favorite ? "Pinned" : "Available"} />
+      </div>
+    </article>
+  );
+}
+
+function InspirationBoardsWorkspace({ state, boards }: { state: ExperienceDesignState; boards: ExperienceInspirationBoard[] }) {
+  return (
+    <div className="space-y-4 lg:col-span-2 2xl:col-span-3">
+      <InspirationBoardCanvasPreview state={state} />
+      <WorkspacePanel title="Board Categories" icon={GalleryHorizontalEnd}>
+        <div className="flex flex-wrap gap-2">
+          {state.inspirationBoards.categories.map((category) => <WorkspaceBadge key={category.id} value={category.title} />)}
+        </div>
+      </WorkspacePanel>
+      <WorkspacePanel title="Annotations, Relationships, and Review" icon={MessageSquareText}>
+        <div className="grid gap-4 lg:grid-cols-3">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Annotations</p>
+            <p className="mt-2 text-sm leading-6 text-slate-300">{state.inspirationBoards.annotationCategories.join(", ")}</p>
+          </div>
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Relationships</p>
+            <p className="mt-2 text-sm leading-6 text-slate-300">{state.inspirationBoards.relationshipTargets.join(", ")}</p>
+          </div>
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Modes</p>
+            <p className="mt-2 text-sm leading-6 text-slate-300">{state.inspirationBoards.viewModes.join(", ")}</p>
+          </div>
+        </div>
+      </WorkspacePanel>
+      <section className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
+        {boards.map((board) => <InspirationBoardCard key={board.id} board={board} />)}
+      </section>
+    </div>
   );
 }
 
@@ -176,6 +240,30 @@ export function ExperienceDesignWorkspace({ state, initialSection = "dashboard" 
     });
   }, [currentSection.kinds, query, sectionId, state.records]);
 
+  const filteredBoards = useMemo(() => {
+    const normalized = query.trim().toLowerCase();
+    return state.inspirationBoards.boards.filter((board) => {
+      if (!normalized) return true;
+      const text = [
+        board.id,
+        board.title,
+        board.subtitle,
+        board.purpose,
+        board.creativeGoal,
+        board.status,
+        board.owner,
+        board.tags.join(" "),
+        board.keywords.join(" "),
+        board.notes.join(" "),
+        board.annotationCategories.join(" "),
+        board.signatureReinforcement.join(" "),
+        board.experienceBibleReferences.join(" "),
+        board.visualDnaReferences.join(" ")
+      ].join(" ").toLowerCase();
+      return text.includes(normalized);
+    });
+  }, [query, state.inspirationBoards.boards]);
+
   const reviewCounts = state.reviewWorkflow.map((status) => ({
     status,
     count: state.records.filter((record) => record.status === status).length
@@ -186,7 +274,7 @@ export function ExperienceDesignWorkspace({ state, initialSection = "dashboard" 
       <WorkspaceHeader
         eyebrow="Canonical Creative Authoring"
         title="Experience Design"
-        description="ED-01 establishes Studio as the source of truth for NOVERIS creative direction: Bible, mood boards, concepts, screen intent, design systems, motion, themes, journeys, reviews, and history. Runtime and game implementation remain untouched."
+        description="ED-01 establishes Studio as the source of truth for NOVERIS creative direction: Bible, inspiration boards, concepts, screen intent, design systems, motion, themes, journeys, reviews, and history. Runtime and game implementation remain untouched."
         stats={[
           { label: "Framework", value: state.frameworkId },
           { label: "Version", value: state.version },
@@ -268,7 +356,7 @@ export function ExperienceDesignWorkspace({ state, initialSection = "dashboard" 
         </div>
       </div>
 
-      <WorkspaceSearchBar value={query} onChange={setQuery} placeholder="Search Bible, mood boards, concepts, screens, tokens, materials, motion, components, themes, journeys, reviews" />
+      <WorkspaceSearchBar value={query} onChange={setQuery} placeholder="Search Bible, inspiration boards, concepts, screens, tokens, materials, motion, components, themes, journeys, reviews" />
 
       {tab === "dashboard" ? (
         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -285,9 +373,9 @@ export function ExperienceDesignWorkspace({ state, initialSection = "dashboard" 
 
       {tab === "library" ? (
         <section className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
-          {currentSection.id === "mood-boards" ? <div className="lg:col-span-2 2xl:col-span-3"><MoodBoardCanvasPreview /></div> : null}
-          {filteredRecords.map((record) => <ExperienceRecordCard key={record.id} state={state} record={record} />)}
-          {!filteredRecords.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Experience Design records match this view.</p> : null}
+          {currentSection.id === "inspiration-boards" ? <InspirationBoardsWorkspace state={state} boards={filteredBoards} /> : filteredRecords.map((record) => <ExperienceRecordCard key={record.id} state={state} record={record} />)}
+          {currentSection.id !== "inspiration-boards" && !filteredRecords.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Experience Design records match this view.</p> : null}
+          {currentSection.id === "inspiration-boards" && !filteredBoards.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Inspiration Boards match this view.</p> : null}
         </section>
       ) : null}
 

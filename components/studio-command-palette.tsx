@@ -22,7 +22,7 @@ const commandSeeds: PaletteResult[] = [
   { id: "command:exports", type: "Exports", title: "Open Game Engine Exports", subtitle: "Generic, Roblox, Web, Unity, Unreal, Godot", href: "/game-engine-exports" },
   { id: "command:experience-design", type: "Experience Design", title: "Open Experience Design", subtitle: "Creative direction authoring", href: "/experience-design" },
   { id: "command:experience-bible", type: "Experience Design", title: "Open Experience Bible", subtitle: "NOVERIS creative canon framework", href: "/experience-design/bible" },
-  { id: "command:mood-boards", type: "Experience Design", title: "Open Mood Boards", subtitle: "Visual reference boards", href: "/experience-design/mood-boards" },
+  { id: "command:inspiration-boards", type: "Experience Design", title: "Open Inspiration Boards", subtitle: "Canonical visual memory and reference boards", href: "/experience-design/inspiration-boards" },
   { id: "command:verification", type: "Verification", title: "Run Verification", subtitle: "Open validation engine", href: "/validation-engine" },
   { id: "command:publish-runtime", type: "Runtime", title: "Publish Runtime", subtitle: "Content release workflow", href: "/content-releases" },
   { id: "command:recent-assets", type: "Asset Library", title: "Open Recent Assets", subtitle: "Recently opened Studio assets", href: "/asset-library?folder=recently-opened" },
