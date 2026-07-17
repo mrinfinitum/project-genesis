@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 function assert(condition: unknown, message: string): asserts condition {
@@ -12,8 +12,28 @@ function read(relativePath: string) {
 function appRouteExists(href: string) {
   const pathname = href.split("?")[0].split("#")[0];
   if (pathname === "/") return existsSync(path.join(process.cwd(), "app/page.tsx"));
-  const routePath = pathname.replace(/^\//, "");
-  return existsSync(path.join(process.cwd(), "app", routePath, "page.tsx"));
+  const segments = pathname.replace(/^\//, "").split("/");
+
+  function walk(directory: string, index: number): boolean {
+    if (index >= segments.length) {
+      return existsSync(path.join(directory, "page.tsx"));
+    }
+
+    const literal = path.join(directory, segments[index]);
+    if (existsSync(literal) && walk(literal, index + 1)) {
+      return true;
+    }
+
+    if (!existsSync(directory)) {
+      return false;
+    }
+
+    return readdirSync(directory, { withFileTypes: true })
+      .filter((entry) => entry.isDirectory() && entry.name.startsWith("[") && entry.name.endsWith("]"))
+      .some((entry) => walk(path.join(directory, entry.name), index + 1));
+  }
+
+  return walk(path.join(process.cwd(), "app"), 0);
 }
 
 function section(text: string, start: string, end: string) {
@@ -38,6 +58,7 @@ async function main() {
   const expectedGroups = [
     { id: "command-center", label: "Command Center", items: ["Dashboard", "Current Sprint"] },
     { id: "content-libraries", label: "Content Libraries", items: ["Asset Library", "Galaxy Library", "Sector Library", "Star System Library", "Star Library", "Planet Library", "Discovery Library", "Civilization Library", "Encyclopedia"] },
+    { id: "experience-design", label: "Experience Design", items: ["Dashboard", "Experience Bible", "Mood Boards", "Concept Library", "Screen Library", "Design Tokens", "Material Library", "Motion Library", "Component Library", "Theme Library", "Brand System", "Accessibility", "Experience Journey", "Reviews"] },
     { id: "world-systems", label: "World Systems", items: ["Actions", "Colonies", "Population", "Economy & Trade", "Missions", "Dynamic Events"] },
     { id: "authoring", label: "Authoring", items: ["Research", "Buildings", "Resources", "AI Agents", "Runtime", "Exports", "Architecture"] }
   ];
@@ -78,6 +99,8 @@ async function main() {
   for (const route of ["app/actions/page.tsx", "app/population/page.tsx", "app/dynamic-events/page.tsx", "app/runtime/page.tsx", "app/exports/page.tsx"]) {
     assert(existsSync(path.join(process.cwd(), route)), `New navigation route missing: ${route}`);
   }
+  assert(existsSync(path.join(process.cwd(), "app/experience-design/page.tsx")), "Experience Design dashboard route missing.");
+  assert(existsSync(path.join(process.cwd(), "app/experience-design/[section]/page.tsx")), "Experience Design section route missing.");
   assert(read("app/exports/page.tsx").includes('redirect("/game-engine-exports")'), "/exports must redirect to the existing exports workspace.");
   assert(read("app/creative-production/page.tsx").includes("redirect("), "Creative Production route must remain a safe redirect.");
   assert(read("app/creative-production/[...path]/page.tsx").includes("redirect("), "Creative Production deep links must remain safe redirects.");

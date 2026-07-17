@@ -1,5 +1,6 @@
 import { handoffBuildings, handoffResearch } from "@/data/handoff";
 import { getAssetProductionState } from "@/lib/assets/asset-production";
+import { getExperienceDesignState } from "@/lib/experience-design";
 import { ResourceService } from "@/lib/resources/service";
 import { getUniverseLibraryData } from "@/lib/universe/library";
 
@@ -15,6 +16,7 @@ export type StudioSearchResultType =
   | "Building"
   | "Research"
   | "Resource"
+  | "Experience Design"
   | "Workspace";
 
 export type StudioSearchResult = {
@@ -47,6 +49,10 @@ const workspaceResults: StudioSearchResult[] = [
   workspace("runtime", "Runtime", "/runtime", "Canonical runtime"),
   workspace("exports", "Game Engine Exports", "/game-engine-exports", "Engine export targets"),
   workspace("architecture", "Architecture", "/architecture", "Architecture Workspace"),
+  workspace("experience-design", "Experience Design", "/experience-design", "Creative direction authoring"),
+  workspace("experience-bible", "Experience Bible", "/experience-design/bible", "Creative canon framework"),
+  workspace("mood-boards", "Mood Boards", "/experience-design/mood-boards", "Visual reference boards"),
+  workspace("screen-library", "Screen Library", "/experience-design/screens", "Canonical screen intent"),
   workspace("upload-asset", "Upload Asset", "/assets?upload=asset", "Asset pipeline"),
   workspace("regenerate-derivatives", "Regenerate Derivatives", "/asset-library?status=needs_review", "Asset pipeline"),
   workspace("run-verification", "Run Verification", "/validation-engine", "Studio verification")
@@ -78,6 +84,7 @@ function result(input: Omit<StudioSearchResult, "searchText">): StudioSearchResu
 export async function buildStudioSearchIndex(): Promise<StudioSearchIndex> {
   const [assetState] = await Promise.all([getAssetProductionState()]);
   const universe = getUniverseLibraryData();
+  const experienceDesign = getExperienceDesignState();
 
   const assetResults = assetState.assetLibraryInventory.items.map((item) => result({
     id: item.id,
@@ -127,7 +134,30 @@ export async function buildStudioSearchIndex(): Promise<StudioSearchIndex> {
     aliases: [resource.discovery_tier, resource.description, resource.science_lore_notes, ...resource.primary_uses, ...resource.typical_planet_classes]
   }));
 
-  const results = [...workspaceResults, ...assetResults, ...universeResults, ...buildingResults, ...researchResults, ...resourceResults];
+  const experienceResults = [
+    ...experienceDesign.sections.filter((section) => section.id !== "dashboard").map((section) => result({
+      id: `experience-section:${section.id}`,
+      type: "Experience Design" as const,
+      title: section.label,
+      subtitle: section.description,
+      href: section.route,
+      aliases: [section.id, section.kinds.join(" ")]
+    })),
+    ...experienceDesign.records.map((record) => {
+      const section = experienceDesign.sections.find((item) => item.kinds.includes(record.kind));
+      return result({
+        id: record.id,
+        type: "Experience Design" as const,
+        title: record.name,
+        subtitle: `${record.kind.replaceAll("_", " ")} / ${section?.label ?? "Experience Design"}`,
+        href: section?.route ?? "/experience-design",
+        status: record.status,
+        aliases: [record.description, record.author, record.tags.join(" "), record.notes.join(" "), JSON.stringify(record.fields)]
+      });
+    })
+  ];
+
+  const results = [...workspaceResults, ...assetResults, ...universeResults, ...buildingResults, ...researchResults, ...resourceResults, ...experienceResults];
 
   return {
     generatedAt: new Date().toISOString(),
@@ -137,7 +167,7 @@ export async function buildStudioSearchIndex(): Promise<StudioSearchIndex> {
     diagnostics: {
       bounded: true,
       indexedFields: ["name", "tags", "semantic roles", "categories", "canonical IDs", "aliases", "descriptions", "parent relationships", "statuses"],
-      sourceCollections: ["assets", "universe libraries", "buildings", "research", "resources", "workspaces"]
+      sourceCollections: ["assets", "universe libraries", "buildings", "research", "resources", "experience design", "workspaces"]
     }
   };
 }

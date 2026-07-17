@@ -17,6 +17,7 @@ import {
   CopyPlus,
   Cpu,
   Database,
+  Eye,
   FileCode2,
   FileCheck2,
   FileText,
@@ -26,6 +27,7 @@ import {
   GitBranch,
   History,
   Landmark,
+  Layers3,
   LayoutDashboard,
   ListChecks,
   Map,
@@ -39,6 +41,7 @@ import {
   ScrollText,
   Search,
   Settings,
+  ShieldCheck,
   Sparkles,
   Star,
   UploadCloud
@@ -114,6 +117,27 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/discovery-journal", label: "Discovery Library", icon: ScrollText },
       { href: "/civilizations", label: "Civilization Library", icon: Landmark },
       { href: "/encyclopedia", label: "Encyclopedia", icon: BookOpen }
+    ]
+  },
+  {
+    id: "experience-design",
+    label: "Experience Design",
+    icon: Palette,
+    items: [
+      { href: "/experience-design", label: "Dashboard", icon: Palette },
+      { href: "/experience-design/bible", label: "Experience Bible", icon: BookOpen },
+      { href: "/experience-design/mood-boards", label: "Mood Boards", icon: Palette },
+      { href: "/experience-design/concepts", label: "Concept Library", icon: Sparkles },
+      { href: "/experience-design/screens", label: "Screen Library", icon: MonitorCog },
+      { href: "/experience-design/tokens", label: "Design Tokens", icon: CopyPlus },
+      { href: "/experience-design/materials", label: "Material Library", icon: Layers3 },
+      { href: "/experience-design/motion", label: "Motion Library", icon: Orbit },
+      { href: "/experience-design/components", label: "Component Library", icon: Network },
+      { href: "/experience-design/themes", label: "Theme Library", icon: Palette },
+      { href: "/experience-design/brand", label: "Brand System", icon: ShieldCheck },
+      { href: "/experience-design/accessibility", label: "Accessibility", icon: Eye },
+      { href: "/experience-design/journey", label: "Experience Journey", icon: Compass },
+      { href: "/experience-design/reviews", label: "Reviews", icon: FileCheck2 }
     ]
   },
   {
