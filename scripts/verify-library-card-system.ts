@@ -65,9 +65,14 @@ const expectedPlanetSamples = ["Earth", "Moon", "Mercury", "Venus", "Mars", "Pho
 const targets: EngineTarget[] = ["generic", "roblox", "web", "unity", "unreal", "godot"];
 
 type ArtworkDecision = {
-  source: "direct_saved_record_image" | "neutral_fallback";
-  url: string | null;
+  source: "direct_saved_record_image" | "local_derivative" | "class_fallback";
+  url: string;
 };
+
+function publicUrlExists(url: string) {
+  if (!url.startsWith("/")) return false;
+  return existsSync(path.join(process.cwd(), "public", url.split("?")[0]!.replace(/^\//, "")));
+}
 
 function directRecordImage(record: Record<string, unknown>): string | null {
   const fields = [
@@ -99,8 +104,21 @@ function artworkDecisionFor(record: UniverseLibraryRecord, sourceRecord: Record<
     assert(record.thumbnailUrl === direct, `${record.name} must use its direct saved image field.`);
     return { source: "direct_saved_record_image", url: direct };
   }
-  assert(!record.thumbnailUrl, `${record.name} has no direct saved image and must use the neutral fallback, not ${record.thumbnailUrl}.`);
-  return { source: "neutral_fallback", url: null };
+
+  const thumbnailUrl = record.thumbnailUrl;
+  if (!thumbnailUrl?.startsWith("/")) {
+    throw new Error(`${record.name} must use a browser-safe local thumbnail, not ${thumbnailUrl ?? "(none)"}.`);
+  }
+  assert(publicUrlExists(thumbnailUrl), `${record.name} thumbnail does not exist: ${thumbnailUrl}.`);
+
+  const name = String(sourceRecord.name ?? record.name).toLowerCase();
+  const exactSolPreview = new Set(["earth", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "europa", "ganymede", "titan", "enceladus"]);
+  if (exactSolPreview.has(name)) {
+    assert(thumbnailUrl === `/assets/game-art/planet-renders/sol/sol_${name}.png`, `${record.name} must use its exact Sol preview derivative.`);
+    return { source: "local_derivative", url: thumbnailUrl };
+  }
+
+  return { source: thumbnailUrl.startsWith("/assets/game-art/") ? "local_derivative" : "class_fallback", url: thumbnailUrl };
 }
 
 function verifyGeneratedLibraryCode() {
@@ -179,7 +197,12 @@ function verifyUniverseRecords() {
     assert(!ids.has(record.id), `Duplicate generated-library record ID: ${record.id}.`);
     ids.add(record.id);
     assert(record.href.includes(encodeURIComponent(record.id)), `${record.name} route does not point at its own ID.`);
-    assert(!record.thumbnailUrl?.startsWith("/images/"), `${record.name} must not use fuzzy /images substitution.`);
+    const thumbnailUrl = record.thumbnailUrl;
+    if (!thumbnailUrl?.startsWith("/")) {
+      throw new Error(`${record.name} must expose a browser-safe library thumbnail.`);
+    }
+    assert(publicUrlExists(thumbnailUrl), `${record.name} thumbnail does not exist: ${thumbnailUrl}.`);
+    assert(!thumbnailUrl.includes("/Users/") && !thumbnailUrl.startsWith("rbxassetid://"), `${record.name} thumbnail must not expose a private or Roblox-only path.`);
   }
 
   for (const galaxy of source.galaxies) assert(isGeneratedGameRecord(galaxy as unknown as Record<string, unknown>, "galaxies", source), `Galaxy failed generated-record validation: ${galaxy.id}`);
