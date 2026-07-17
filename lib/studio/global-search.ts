@@ -45,6 +45,18 @@ export type StudioSearchIndex = {
 const workspaceResults: StudioSearchResult[] = [
   workspace("dashboard", "Dashboard", "/", "Command Center"),
   workspace("asset-library", "Asset Library", "/asset-library", "Content Libraries"),
+  workspace("galaxy-library", "Galaxy Library", "/galaxy", "Generated galaxy records"),
+  workspace("generate-galaxy", "Generate Galaxy", "/galaxy?action=generate", "Galaxy Library action"),
+  workspace("planet-library", "Planet Library", "/planets", "Generated celestial records"),
+  workspace("generate-planet", "Generate Planet", "/planets?action=generate", "Planet Library action"),
+  workspace("building-library", "Building Library", "/buildings", "Building records and taxonomy"),
+  workspace("create-building", "Create Building", "/buildings?action=create", "Building Library action"),
+  workspace("research-library", "Research Library", "/research", "Research records and unlocks"),
+  workspace("create-research", "Create Research", "/research?action=create", "Research Library action"),
+  workspace("resource-catalog", "Resource Catalog", "/resource-catalog", "Canonical resource records"),
+  workspace("create-resource", "Create Resource", "/resource-catalog?action=create", "Resource Catalog action"),
+  workspace("ai-agents", "AI Agents", "/ai-agents", "AI agent definitions and variants"),
+  workspace("era-starter-kits", "Era Starter Kits", "/era-starter-kits", "Draft future-era scaffolds"),
   workspace("production-health", "Production Health", "/asset-library?section=all-assets", "Studio health and asset readiness"),
   workspace("runtime", "Runtime", "/runtime", "Canonical runtime"),
   workspace("exports", "Game Engine Exports", "/game-engine-exports", "Engine export targets"),
@@ -116,7 +128,7 @@ export async function buildStudioSearchIndex(): Promise<StudioSearchIndex> {
     type: "Building",
     title: building.name,
     subtitle: `${building.era} / ${building.category}`,
-    href: "/buildings",
+    href: `/buildings?record=${encodeURIComponent(building.id)}`,
     aliases: [building.civilization, building.description, building.visual_evolution, building.notes]
   }));
 
@@ -125,7 +137,7 @@ export async function buildStudioSearchIndex(): Promise<StudioSearchIndex> {
     type: "Research",
     title: research.name,
     subtitle: `${research.era} / ${research.primary_unlock_type}`,
-    href: "/research",
+    href: `/research?record=${encodeURIComponent(research.id)}`,
     status: research.status,
     aliases: [research.branch_id, research.design_purpose, research.gameplay_effect, research.unlock_summary, ...research.unlocks]
   }));
@@ -135,7 +147,7 @@ export async function buildStudioSearchIndex(): Promise<StudioSearchIndex> {
     type: "Resource",
     title: resource.resource_name,
     subtitle: `${resource.category} / ${resource.rarity}`,
-    href: "/resource-catalog",
+    href: `/resource-catalog?record=${encodeURIComponent(resource.id)}`,
     aliases: [resource.discovery_tier, resource.description, resource.science_lore_notes, ...resource.primary_uses, ...resource.typical_planet_classes]
   }));
 

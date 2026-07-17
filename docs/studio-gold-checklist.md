@@ -4,6 +4,7 @@
 - [x] Asset Pipeline exposes source, version, preview, thumbnail, derivatives, review, approve, and publish states through existing asset records and production health.
 - [x] Global Search indexes canonical records, assets, semantic roles, categories, IDs, aliases, descriptions, parent relationships, and statuses.
 - [x] Command Palette opens workspaces, searches records, opens upload/runtime/export/health flows, and supports Command/Ctrl+K.
+- [x] Navigation follows one content type = one obvious home; generated records live in Libraries, assets live in Asset Library, creative guidance lives in Experience Design, and publication health lives in Runtime & Verification.
 - [x] Downloads use shared eligibility logic and safe fallback messaging.
 - [x] Thumbnails, previews, derivatives, broken links, route health, and private-path boundary are covered by production-health verification.
 - [x] Floating inspector is optional and dismissible; no permanent browser inspector is reserved.

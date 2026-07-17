@@ -58,9 +58,10 @@ async function main() {
   const expectedGroups = [
     { id: "command-center", label: "Command Center", items: ["Dashboard", "Current Sprint"] },
     { id: "content-libraries", label: "Content Libraries", items: ["Asset Library", "Galaxy Library", "Sector Library", "Star System Library", "Star Library", "Planet Library", "Discovery Library", "Civilization Library", "Encyclopedia"] },
-    { id: "experience-design", label: "Experience Design", items: ["Dashboard", "Experience Bible", "Inspiration Wall", "Concept Library", "Screen Library", "Design Tokens", "Material Library", "Motion Library", "Component Library", "Theme Library", "Brand System", "Accessibility", "Experience Journey", "Reviews"] },
-    { id: "world-systems", label: "World Systems", items: ["Actions", "Colonies", "Population", "Economy & Trade", "Missions", "Dynamic Events"] },
-    { id: "authoring", label: "Authoring", items: ["Research", "Buildings", "Resources", "AI Agents", "Runtime", "Exports", "Architecture"] }
+    { id: "civilization", label: "Civilization", items: ["Building Library", "Research Library", "Resource Catalog", "Population", "Colonies", "Districts", "AI Agents", "Era Starter Kits"] },
+    { id: "experience-design", label: "Experience Design", items: ["Dashboard", "Experience Bible", "Inspiration Wall", "Concept Library", "Screen Library", "Design Tokens", "Material Library", "Motion Library", "Component Library", "Interaction Patterns", "Theme Library", "Brand System", "Accessibility", "Experience Journey", "Reviews"] },
+    { id: "world-systems", label: "World Systems", items: ["Actions", "Economy & Trade", "Missions", "Dynamic Events"] },
+    { id: "runtime-verification", label: "Runtime & Verification", items: ["Runtime", "Content Releases", "Exports", "Verification", "Architecture"] }
   ];
 
   let cursor = -1;
@@ -78,6 +79,8 @@ async function main() {
   }
 
   assert(!navigationSource.includes('label: "Creative Production"'), "Creative Production must not be a primary navigation item.");
+  assert(!navigationSource.includes('id: "authoring"'), "Top-level Authoring group must be removed.");
+  assert(!navigationSource.includes('label: "Authoring"'), "Top-level Authoring label must be removed.");
   assert(!navigationSource.includes('id: "creative"'), "Old Creative group must be removed.");
   assert(!navigationSource.includes('id: "engine"'), "Old Engine & Validation group must be removed.");
   assert(!navigationSource.includes('id: "resources"'), "Old Resources group must be removed.");
@@ -96,12 +99,13 @@ async function main() {
   assert(appShell.includes('uniqueSections(["command-center", activeGroup?.id])'), "Navigation must expand active section by default.");
   assert(appShell.includes("hrefSearch"), "Navigation must preserve query-aware active behavior.");
 
-  for (const route of ["app/actions/page.tsx", "app/population/page.tsx", "app/dynamic-events/page.tsx", "app/runtime/page.tsx", "app/exports/page.tsx"]) {
+  for (const route of ["app/actions/page.tsx", "app/population/page.tsx", "app/dynamic-events/page.tsx", "app/runtime/page.tsx", "app/exports/page.tsx", "app/era-starter-kits/page.tsx", "app/content-releases/page.tsx", "app/validation-engine/page.tsx"]) {
     assert(existsSync(path.join(process.cwd(), route)), `New navigation route missing: ${route}`);
   }
   assert(existsSync(path.join(process.cwd(), "app/experience-design/page.tsx")), "Experience Design dashboard route missing.");
   assert(existsSync(path.join(process.cwd(), "app/experience-design/[section]/page.tsx")), "Experience Design section route missing.");
   assert(read("app/exports/page.tsx").includes('redirect("/game-engine-exports")'), "/exports must redirect to the existing exports workspace.");
+  assert(read("app/content-authoring/page.tsx").includes('redirect("/era-starter-kits")'), "/content-authoring must redirect to Era Starter Kits.");
   assert(read("app/creative-production/page.tsx").includes("redirect("), "Creative Production route must remain a safe redirect.");
   assert(read("app/creative-production/[...path]/page.tsx").includes("redirect("), "Creative Production deep links must remain safe redirects.");
 
@@ -111,6 +115,7 @@ async function main() {
     routeCount: allHrefs.length,
     redirects: {
       creativeProduction: "/assets?deprecated=creative-production",
+      contentAuthoring: "/era-starter-kits",
       exports: "/game-engine-exports"
     },
     collapseState: "remembered",

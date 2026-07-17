@@ -239,8 +239,8 @@ export function ContentAuthoringWorkspace({ initialState }: { initialState: Cont
   return (
     <main className="space-y-6">
       <WorkspaceHeader
-        eyebrow="Authoring IDE"
-        title="Content Templates"
+        eyebrow="Era Scaffold Workspace"
+        title="Era Starter Kits"
         description="Reusable templates, guided wizards, era cloning, procedural starter kits, validation defaults, and production estimates for generating future eras without touching runtime exports."
         stats={[
           { label: "Templates", value: state.stats.templateCount },
@@ -285,7 +285,7 @@ export function ContentAuthoringWorkspace({ initialState }: { initialState: Cont
           </div>
           <div className="mt-4">
             <div className="mb-2 flex justify-between text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
-              <span>Authoring Throughput</span>
+              <span>Scaffold Throughput</span>
               <span>{Math.min(100, state.stats.scaffoldCount * 20)}%</span>
             </div>
             <WorkspaceProgressBar value={Math.min(100, state.stats.scaffoldCount * 20)} />

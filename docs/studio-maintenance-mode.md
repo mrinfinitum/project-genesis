@@ -25,6 +25,10 @@ Every runtime or architecture change must update the matching verifier before me
 
 The Game consumes approved published runtime/API content. It should not infer canonical gameplay rules that Studio owns, and it should keep local fallbacks only during staged migration.
 
+## Navigation Ownership
+
+One content type has one obvious home. Generated records are created, reviewed, and managed from their canonical Library surfaces. Asset Library manages real uploaded or imported assets. Experience Design manages creative guidance, visual language, design systems, and semantic screen/component contracts. Runtime & Verification manages publication, exports, architecture, release health, and verifier results. Do not recreate a vague top-level Authoring workspace for records that already have a canonical Library home.
+
 ## Deprecation Policy
 
 Obsolete Studio routes must redirect safely. Deprecated exports must remain available until all known clients have migrated or a compatibility note is published.

@@ -13,7 +13,7 @@ export default async function RuntimePage() {
   return (
     <main className="space-y-6">
       <WorkspaceHeader
-        eyebrow="Authoring"
+        eyebrow="Runtime & Verification"
         title="Runtime"
         description="Inspect the published canonical runtime contract consumed by game clients and engine exports."
         stats={[

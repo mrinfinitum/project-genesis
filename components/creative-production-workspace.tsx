@@ -1084,15 +1084,15 @@ export function CreativeProductionWorkspace({ state, studioData, universeCatalog
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-5">
         {summaries.map(({ area, summary }) => <AreaCard key={area.id} area={area} summary={summary} onOpen={openArea} />)}
       </div>
-      <WorkspacePanel title="Advanced / Systems Authoring" icon={Landmark}>
+      <WorkspacePanel title="Related Studio Workspaces" icon={Landmark}>
         <div className="grid gap-2 md:grid-cols-3 xl:grid-cols-4">
           {[
             ["/civilizations", "Civilization Library"],
-            ["/content-authoring", "Content Authoring"],
-            ["/research", "Research Designer"],
+            ["/era-starter-kits", "Era Starter Kits"],
+            ["/research", "Research Library"],
             ["/unlock-matrix", "Unlock Matrix"],
             ["/upgrades", "Upgrade Designer"],
-            ["/buildings", "Building Designer"],
+            ["/buildings", "Building Library"],
             ["/wonders", "Wonder Designer"],
             ["/districts", "District Designer"],
             ["/economy-designer", "Economy Designer"],

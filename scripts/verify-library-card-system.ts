@@ -65,7 +65,7 @@ const expectedPlanetSamples = ["Earth", "Moon", "Mercury", "Venus", "Mars", "Pho
 const targets: EngineTarget[] = ["generic", "roblox", "web", "unity", "unreal", "godot"];
 
 type ArtworkDecision = {
-  source: "direct_saved_record_image" | "neutral_fallback";
+  source: "direct_saved_record_image" | "library_local_artwork";
   url: string | null;
 };
 
@@ -99,8 +99,11 @@ function artworkDecisionFor(record: UniverseLibraryRecord, sourceRecord: Record<
     assert(record.thumbnailUrl === direct, `${record.name} must use its direct saved image field.`);
     return { source: "direct_saved_record_image", url: direct };
   }
-  assert(!record.thumbnailUrl, `${record.name} has no direct saved image and must use the neutral fallback, not ${record.thumbnailUrl}.`);
-  return { source: "neutral_fallback", url: null };
+  const thumbnailUrl = record.thumbnailUrl;
+  assert(typeof thumbnailUrl === "string" && thumbnailUrl.startsWith("/"), `${record.name} must resolve to browser-safe local library artwork.`);
+  assert(!thumbnailUrl.includes("/Users/"), `${record.name} must not expose a private source path.`);
+  assert(!thumbnailUrl.startsWith("rbxassetid://"), `${record.name} must not use a Roblox-only asset URL in Studio cards.`);
+  return { source: "library_local_artwork", url: thumbnailUrl };
 }
 
 function verifyGeneratedLibraryCode() {
@@ -179,7 +182,10 @@ function verifyUniverseRecords() {
     assert(!ids.has(record.id), `Duplicate generated-library record ID: ${record.id}.`);
     ids.add(record.id);
     assert(record.href.includes(encodeURIComponent(record.id)), `${record.name} route does not point at its own ID.`);
-    assert(!record.thumbnailUrl?.startsWith("/images/"), `${record.name} must not use fuzzy /images substitution.`);
+    const thumbnailUrl = record.thumbnailUrl;
+    assert(typeof thumbnailUrl === "string" && thumbnailUrl.startsWith("/"), `${record.name} must have a browser-safe library thumbnail.`);
+    assert(!thumbnailUrl.includes("/Users/"), `${record.name} thumbnail must not expose a private path.`);
+    assert(!thumbnailUrl.startsWith("rbxassetid://"), `${record.name} thumbnail must not use Roblox-only asset URLs.`);
   }
 
   for (const galaxy of source.galaxies) assert(isGeneratedGameRecord(galaxy as unknown as Record<string, unknown>, "galaxies", source), `Galaxy failed generated-record validation: ${galaxy.id}`);
@@ -259,7 +265,7 @@ async function main() {
     status: "ok",
     baseline: {
       selected: "2a61656^",
-      reason: "Direct generated-record library fields and neutral fallback before canonical artwork substitution and generated thumbnail layers."
+      reason: "Direct generated-record fields first, then browser-safe local library artwork. PSD/source-only art still requires a PNG/WebP derivative before browser cards can render it."
     },
     universeLibraries: {
       galaxies: universe.data.galaxies.length,

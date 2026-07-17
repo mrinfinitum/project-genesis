@@ -24,7 +24,6 @@ import {
   FlaskConical,
   Gauge,
   Gem,
-  GitBranch,
   History,
   Landmark,
   Layers3,
@@ -45,7 +44,8 @@ import {
   ShieldCheck,
   Sparkles,
   Star,
-  UploadCloud
+  UploadCloud,
+  WandSparkles
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { StudioCommandPalette } from "@/components/studio-command-palette";
@@ -121,6 +121,21 @@ const navigationGroups: NavigationGroup[] = [
     ]
   },
   {
+    id: "civilization",
+    label: "Civilization",
+    icon: Landmark,
+    items: [
+      { href: "/buildings", label: "Building Library", icon: Building2 },
+      { href: "/research", label: "Research Library", icon: FlaskConical },
+      { href: "/resource-catalog", label: "Resource Catalog", icon: Gem },
+      { href: "/population", label: "Population", icon: Landmark },
+      { href: "/colonies", label: "Colonies", icon: Building2 },
+      { href: "/districts", label: "Districts", icon: Layers3 },
+      { href: "/ai-agents", label: "AI Agents", icon: Bot },
+      { href: "/era-starter-kits", label: "Era Starter Kits", icon: WandSparkles }
+    ]
+  },
+  {
     id: "experience-design",
     label: "Experience Design",
     icon: Palette,
@@ -148,24 +163,20 @@ const navigationGroups: NavigationGroup[] = [
     icon: BadgeDollarSign,
     items: [
       { href: "/actions", label: "Actions", icon: ListChecks },
-      { href: "/colonies", label: "Colonies", icon: Building2 },
-      { href: "/population", label: "Population", icon: Landmark },
       { href: "/economy", label: "Economy & Trade", icon: BadgeDollarSign },
       { href: "/missions", label: "Missions", icon: ClipboardList },
       { href: "/dynamic-events", label: "Dynamic Events", icon: Sparkles }
     ]
   },
   {
-    id: "authoring",
-    label: "Authoring",
-    icon: GitBranch,
+    id: "runtime-verification",
+    label: "Runtime & Verification",
+    icon: FileCheck2,
     items: [
-      { href: "/research", label: "Research", icon: FlaskConical },
-      { href: "/buildings", label: "Buildings", icon: Building2 },
-      { href: "/resource-catalog", label: "Resources", icon: Gem },
-      { href: "/ai-agents", label: "AI Agents", icon: Bot },
       { href: "/runtime", label: "Runtime", icon: Database },
+      { href: "/content-releases", label: "Content Releases", icon: Archive },
       { href: "/game-engine-exports", label: "Exports", icon: FileCode2 },
+      { href: "/validation-engine", label: "Verification", icon: FileCheck2 },
       { href: "/architecture", label: "Architecture", icon: FileText }
     ]
   }
@@ -494,7 +505,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <header className="sticky top-0 z-10 border-b border-cyan-400/10 bg-[#06111f]/68 backdrop-blur-xl">
           <div className="flex min-h-16 items-center justify-between gap-4 px-5 lg:px-8">
             <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">Universe Authoring IDE</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">Canonical Content IDE</p>
               <h1 className="text-lg font-semibold text-white">Project Genesis Studio</h1>
             </div>
             <div className="flex items-center gap-3 text-xs text-slate-300">

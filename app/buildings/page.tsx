@@ -9,7 +9,27 @@ import type { Building } from "@/types/schema";
 
 export const dynamic = "force-dynamic";
 
+const buildingFamilyArtwork: Record<string, string> = {
+  residential: "/assets/game-art/asset_housing_expansion/asset_housing_expansion.png",
+  production: "/assets/game-art/asset_industrial_management/asset_industrial_management.png",
+  utility: "/assets/game-art/asset_power_grid/asset_power_grid.png",
+  research: "/assets/game-art/asset_research_icon/asset_research_icon.png",
+  commercial: "/assets/game-art/asset_commercial_infrastructure/asset_commercial_infrastructure.png",
+  civic: "/assets/game-art/asset_government_administration/asset_government_administration.png",
+  logistics: "/assets/game-art/asset_advanced_logistics/asset_advanced_logistics.png",
+  culture: "/assets/game-art/asset_entertainment/asset_entertainment.png",
+  defense: "/assets/game-art/asset_critical_star_icon/asset_critical_star_icon.png",
+  space: "/assets/game-art/asset_spaceport_icon/asset_spaceport_icon.png"
+};
+
+function buildingArtworkFor(definition: (typeof canonicalBuildingLibrary)[number]) {
+  const text = `${definition.familyId} ${definition.familyName} ${definition.subcategoryName} ${definition.displayName}`.toLowerCase();
+  const match = Object.entries(buildingFamilyArtwork).find(([cue]) => text.includes(cue));
+  return match?.[1] ?? "/assets/game-art/asset_buildings_icon/asset_buildings_icon.png";
+}
+
 function buildingLibraryCard(definition: (typeof canonicalBuildingLibrary)[number]): GeneratedLibraryCardRecord {
+  const thumbnailUrl = buildingArtworkFor(definition);
   return {
     id: definition.id,
     name: definition.displayName,
@@ -20,6 +40,8 @@ function buildingLibraryCard(definition: (typeof canonicalBuildingLibrary)[numbe
     status: "Draft",
     href: `/buildings?record=${encodeURIComponent(definition.id)}`,
     tone: "building",
+    thumbnailUrl,
+    mediumPreviewUrl: thumbnailUrl,
     focalPoint: "center"
   };
 }
