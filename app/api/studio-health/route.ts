@@ -10,12 +10,21 @@ import { buildCanonicalRuntimeExportPayload } from "@/lib/runtime/game-runtime";
 export const dynamic = "force-dynamic";
 
 type HealthMetric = {
-  id: "content" | "art" | "exports" | "verification";
+  id: "content" | "art";
   label: string;
   percent: number;
   href: string;
   numerator: number;
   denominator: number;
+  tooltip: string;
+  details: string[];
+};
+
+type HealthCheck = {
+  id: "exports" | "verification" | "build" | "runtime";
+  label: string;
+  ok: boolean;
+  href: string;
   tooltip: string;
   details: string[];
 };
@@ -131,30 +140,27 @@ async function artProduction(): Promise<HealthMetric> {
   };
 }
 
-async function engineExports(): Promise<HealthMetric> {
+async function engineExportCheck(): Promise<HealthCheck> {
   const targets: EngineTarget[] = ["generic", "web", "roblox", "unity", "unreal", "godot"];
   const [runtime, ...exports] = await Promise.all([
     buildCanonicalRuntimeExportPayload(),
     ...targets.map((target) => buildGameEngineExport(target))
   ]);
   const readyExports = exports.filter((engineExport) => engineExport.validation.status === "Ready").length;
-  const runtimeReady = runtime.metadata.validationStatus === "Ready" ? 1 : 0;
-  const numerator = readyExports + runtimeReady;
-  const denominator = targets.length + 1;
+  const runtimeReady = runtime.metadata.validationStatus === "Ready";
+  const ok = readyExports === targets.length && runtimeReady;
 
   return {
     id: "exports",
-    label: "Engine Exports",
-    percent: percent(numerator, denominator),
+    label: ok ? "All Engine Exports Ready" : "Export Warning",
+    ok,
     href: "/runtime",
-    numerator,
-    denominator,
-    tooltip: "Ready engine exports plus canonical runtime validation divided by expected export targets.",
+    tooltip: "All six engine exports and the canonical runtime must validate as Ready.",
     details: [`${readyExports}/${targets.length} engine exports Ready`, `Runtime ${runtime.metadata.validationStatus}`, `Content v${runtime.metadata.contentVersion}`]
   };
 }
 
-async function verification(): Promise<HealthMetric> {
+async function verificationCheck(): Promise<HealthCheck> {
   const [runtime, architecture, assets, generic, web, roblox, unity, unreal, godot] = await Promise.all([
     buildCanonicalRuntimeExportPayload(),
     getArchitectureState(),
@@ -167,7 +173,6 @@ async function verification(): Promise<HealthMetric> {
     buildGameEngineExport("godot")
   ]);
   const checks = [
-    { label: "Build artifact", ok: existsSync(path.join(process.cwd(), ".next", "BUILD_ID")) },
     { label: "Runtime Ready", ok: runtime.metadata.validationStatus === "Ready" },
     { label: "Architecture Contract", ok: /^\d+\.\d+\.\d+$/.test(architecture.architectureVersion.current) },
     { label: "Asset Library", ok: assets.assetLibraryInventory.duplicateSemanticKeys.length === 0 },
@@ -175,18 +180,40 @@ async function verification(): Promise<HealthMetric> {
     { label: "Dependencies", ok: assets.assetLibraryInventory.items.length > 0 && runtime.resources.length > 0 },
     { label: "Exports", ok: [generic, web, roblox, unity, unreal, godot].every((engineExport) => engineExport.validation.status === "Ready") }
   ];
-  const numerator = checks.filter((check) => check.ok).length;
-  const denominator = checks.length;
+  const ok = checks.every((check) => check.ok);
 
   return {
     id: "verification",
-    label: "Verification",
-    percent: percent(numerator, denominator),
+    label: ok ? "Verification Passing" : "Verification Failing",
+    ok,
     href: "/validation-engine",
-    numerator,
-    denominator,
-    tooltip: "Current validation signals divided by registered Studio health checks.",
+    tooltip: "Registered Studio validation signals must all pass.",
     details: checks.map((check) => `${check.ok ? "Ready" : "Needs work"}: ${check.label}`)
+  };
+}
+
+async function runtimeCheck(): Promise<HealthCheck> {
+  const runtime = await buildCanonicalRuntimeExportPayload();
+  const ok = runtime.metadata.validationStatus === "Ready";
+  return {
+    id: "runtime",
+    label: ok ? "Runtime Ready" : "Runtime Failing",
+    ok,
+    href: "/runtime",
+    tooltip: "Canonical runtime metadata validation status.",
+    details: [`Runtime ${runtime.metadata.validationStatus}`, `Content v${runtime.metadata.contentVersion}`, `Schema ${runtime.metadata.schemaVersion}`]
+  };
+}
+
+function buildCheck(): HealthCheck {
+  const ok = existsSync(path.join(process.cwd(), ".next", "BUILD_ID"));
+  return {
+    id: "build",
+    label: ok ? "Build Passing" : "Build Not Verified",
+    ok,
+    href: "/validation-engine",
+    tooltip: "A recent Next.js production build artifact must exist.",
+    details: [ok ? "Build artifact found" : "Run npm run build to refresh verification"]
   };
 }
 
@@ -206,16 +233,19 @@ async function studioStatus(): Promise<StudioStatus> {
 }
 
 export async function GET() {
-  const [contentExport, art, exportsMetric, verificationMetric, status] = await Promise.all([
+  const [contentExport, art, exportsStatus, verificationStatus, runtimeStatus, status] = await Promise.all([
     buildGameEngineExport("generic"),
     artProduction(),
-    engineExports(),
-    verification(),
+    engineExportCheck(),
+    verificationCheck(),
+    runtimeCheck(),
     studioStatus()
   ]);
   const content = contentReadiness(contentExport.canonical as Record<string, unknown>);
+  const buildStatus = buildCheck();
   const generatedAt = new Date().toISOString();
-  const metrics = [content, art, exportsMetric, verificationMetric];
+  const metrics = [content, art];
+  const checks = [exportsStatus, verificationStatus, buildStatus, runtimeStatus];
 
-  return NextResponse.json({ generatedAt, status, metrics });
+  return NextResponse.json({ generatedAt, status, metrics, checks });
 }

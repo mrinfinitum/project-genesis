@@ -3,12 +3,21 @@ import path from "node:path";
 import { GET } from "@/app/api/studio-health/route";
 
 type HealthMetric = {
-  id: "content" | "art" | "exports" | "verification";
+  id: "content" | "art";
   label: string;
   percent: number;
   href: string;
   numerator: number;
   denominator: number;
+  tooltip: string;
+  details: string[];
+};
+
+type HealthCheck = {
+  id: "exports" | "verification" | "build" | "runtime";
+  label: string;
+  ok: boolean;
+  href: string;
   tooltip: string;
   details: string[];
 };
@@ -37,16 +46,21 @@ async function main() {
   const packageJson = JSON.parse(read("package.json")) as { scripts?: Record<string, string> };
 
   assert(packageJson.scripts?.["verify:studio-health-dashboard"], "verify:studio-health-dashboard script must be registered.");
+  assert(packageJson.scripts?.["verify:sidebar-health"], "verify:sidebar-health script must be registered.");
+  assert(packageJson.scripts?.["verify:production-health"], "verify:production-health script must be registered.");
   assert(appShell.includes('fetch("/api/studio-health")'), "Sidebar must load health metrics from /api/studio-health.");
-  assert(appShell.includes("<StudioHealthPanel metrics={healthMetrics} status={studioStatus} />"), "Sidebar must render the Studio health panel with status.");
+  assert(appShell.includes("<StudioHealthPanel metrics={healthMetrics} checks={healthChecks} status={studioStatus} />"), "Sidebar must render the Studio health panel with status checks.");
   assert(appShell.includes('href={metric.href}'), "Health metrics must be clickable links.");
+  assert(appShell.includes('href={check.href}'), "Health status checks must be clickable links.");
   assert(appShell.includes("title={`${metric.tooltip}"), "Health metrics must expose calculation tooltips.");
+  assert(appShell.includes("aria-label={`${check.label}:"), "Status checks must have accessible labels.");
   assert(appShell.includes("percent >= 100") && appShell.includes("percent >= 75") && appShell.includes("percent >= 50") && appShell.includes("percent >= 25"), "Health color thresholds must match the health-state contract.");
   assert(appShell.includes("Studio Online"), "Top status must include Studio Online.");
   assert(appShell.includes("Runtime Ready"), "Top status must include Runtime Ready.");
   assert(appShell.includes("Git Clean"), "Top status must include Git Clean.");
-  assert(appShell.includes("h-px"), "Health indicators must use thin progress lines.");
+  assert(appShell.includes("h-0.5"), "Health indicators must use 2px-style thin progress lines.");
   assert(!appShell.includes("h-2 overflow-hidden rounded-full"), "Large health progress bars must be removed.");
+  assert(!appShell.includes("metricValue"), "Exports and Verification must not be converted into percentage-style metric values.");
   assert(!appShell.includes("shadow-glow\">\n      <p className=\"text-xs font-black uppercase tracking-[0.22em]"), "Health panel must not render as a heavy dashboard card.");
   assert(appShell.includes("STORAGE_SECTIONS_KEY"), "Navigation collapse behavior must remain persisted.");
   assert(appShell.includes("window.localStorage.setItem(STORAGE_SECTIONS_KEY"), "Navigation collapse state must be remembered.");
@@ -65,7 +79,8 @@ async function main() {
 
   const response = await GET();
   assert(response.status === 200, `Studio health route returned HTTP ${response.status}.`);
-  const payload = (await response.json()) as { status?: StudioStatus; metrics?: HealthMetric[] };
+  const rawPayload = (await response.json()) as { status?: StudioStatus; metrics?: Array<HealthMetric | { id?: string }>; checks?: HealthCheck[] };
+  const payload = rawPayload as { status?: StudioStatus; metrics?: HealthMetric[]; checks?: HealthCheck[] };
   assert(payload.status?.studioOnline === true, "Studio Online status must be true when the health endpoint responds.");
   assert(payload.status?.contentVersion !== undefined, "contentVersion status chip source is missing.");
   assert(/^\d+\.\d+\.\d+$/.test(String(payload.status?.architectureVersion)), "architectureVersion status chip must be a semantic version.");
@@ -74,9 +89,7 @@ async function main() {
   const metrics = payload.metrics ?? [];
   const expected = [
     { id: "content", label: "Content Readiness", href: "/encyclopedia" },
-    { id: "art", label: "Art Production", href: "/asset-library" },
-    { id: "exports", label: "Engine Exports", href: "/runtime" },
-    { id: "verification", label: "Verification", href: "/validation-engine" }
+    { id: "art", label: "Art Production", href: "/asset-library" }
   ] as const;
 
   assert(metrics.length === expected.length, `Expected ${expected.length} health metrics; received ${metrics.length}.`);
@@ -90,6 +103,25 @@ async function main() {
     assert(metric.numerator >= 0 && metric.numerator <= metric.denominator, `${requirement.id} numerator must be within denominator.`);
     assert(metric.tooltip.length > 20, `${requirement.id} tooltip must explain the calculation.`);
     assert(metric.details.length > 0, `${requirement.id} must include metric details.`);
+  }
+  assert(!rawPayload.metrics?.some((metric) => metric.id === "exports" || metric.id === "verification"), "Exports and Verification must not be percentage metrics.");
+
+  const checks = payload.checks ?? [];
+  const expectedChecks = [
+    { id: "exports", href: "/runtime" },
+    { id: "verification", href: "/validation-engine" },
+    { id: "build", href: "/validation-engine" },
+    { id: "runtime", href: "/runtime" }
+  ] as const;
+  assert(checks.length === expectedChecks.length, `Expected ${expectedChecks.length} status checks; received ${checks.length}.`);
+  for (const requirement of expectedChecks) {
+    const check = checks.find((item) => item.id === requirement.id);
+    assert(check, `Missing health check ${requirement.id}.`);
+    assert(check.href === requirement.href, `${requirement.id} href mismatch.`);
+    assert(typeof check.ok === "boolean", `${requirement.id} ok must be boolean.`);
+    assert(!Object.prototype.hasOwnProperty.call(check, "percent"), `${requirement.id} must not expose a percentage.`);
+    assert(check.tooltip.length > 20, `${requirement.id} tooltip must explain the status source.`);
+    assert(check.details.length > 0, `${requirement.id} must include status details.`);
   }
 
   console.log(JSON.stringify({

@@ -47,9 +47,18 @@ import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type StudioHealthMetric = {
-  id: "content" | "art" | "exports" | "verification";
+  id: "content" | "art";
   label: string;
   percent: number;
+  href: string;
+  tooltip: string;
+  details: string[];
+};
+
+type StudioHealthCheck = {
+  id: "exports" | "verification" | "build" | "runtime";
+  label: string;
+  ok: boolean;
   href: string;
   tooltip: string;
   details: string[];
@@ -197,53 +206,50 @@ function healthLineClass(percent: number) {
 }
 
 function metricLabel(metric: StudioHealthMetric) {
-  if (metric.id === "content") return "Content";
-  if (metric.id === "art") return "Art";
-  if (metric.id === "exports") return "Exports";
-  return "Verification";
+  return metric.id === "content" ? "Content Readiness" : "Art Production";
 }
 
-function metricValue(metric: StudioHealthMetric) {
-  if (metric.id === "exports" && metric.percent === 100) return "Ready";
-  return `${metric.percent}%`;
-}
-
-function StatusChip({ label, ok, muted }: { label: string; ok?: boolean; muted?: boolean }) {
+function StatusText({ ok, children }: { ok?: boolean; children: React.ReactNode }) {
   return (
     <span
       className={cn(
-        "rounded border px-1.5 py-0.5 text-[0.62rem] font-semibold leading-none",
-        muted && "border-slate-700/70 bg-transparent text-slate-500",
-        ok === true && "border-slate-700/70 bg-transparent text-slate-400",
-        ok === false && "border-amber-400/35 bg-amber-400/5 text-amber-200"
+        "font-semibold",
+        ok === false ? "text-amber-200" : "text-slate-500"
       )}
     >
-      {label}
+      {children}
     </span>
   );
 }
 
-function StudioHealthPanel({ metrics, status }: { metrics: StudioHealthMetric[]; status?: StudioStatus }) {
+function StudioHealthPanel({ metrics, checks, status }: { metrics: StudioHealthMetric[]; checks: StudioHealthCheck[]; status?: StudioStatus }) {
   return (
-    <section className="mb-4 border-y border-cyan-400/10 py-3">
-      <div className="flex flex-wrap gap-1.5">
-        <StatusChip label={status?.studioOnline ? "Studio Online" : "Studio Offline"} ok={status?.studioOnline ?? true} />
-        <StatusChip label={`v${status?.contentVersion ?? "..."}`} muted />
-        <StatusChip label={`Arch ${status?.architectureVersion ?? "..."}`} muted />
-        <StatusChip label={status?.runtimeReady ? "Runtime Ready" : "Runtime Issue"} ok={status?.runtimeReady ?? true} />
-        <StatusChip label={status?.gitClean ? "Git Clean" : "Git Dirty"} ok={status?.gitClean ?? true} />
+    <section className="mb-3 border-y border-cyan-400/10 py-2.5" aria-label="Studio health and status">
+      <div className="space-y-0.5 text-[0.64rem] leading-4 text-slate-600">
+        <p className="truncate">
+          <StatusText ok={status?.studioOnline ?? true}>{status?.studioOnline ? "Studio Online" : "Studio Offline"}</StatusText>
+          <span className="px-1.5 text-slate-700">/</span>
+          <span>v{status?.contentVersion ?? "..."}</span>
+          <span className="px-1.5 text-slate-700">/</span>
+          <span>Arch {status?.architectureVersion ?? "..."}</span>
+        </p>
+        <p className="truncate">
+          <StatusText ok={status?.runtimeReady ?? true}>{status?.runtimeReady ? "Runtime Ready" : "Runtime Issue"}</StatusText>
+          <span className="px-1.5 text-slate-700">/</span>
+          <StatusText ok={status?.gitClean ?? true}>{status?.gitClean ? "Git Clean" : "Git Dirty"}</StatusText>
+        </p>
       </div>
 
       <div className="mt-3 space-y-2">
         {metrics.length ? metrics.map((metric) => {
-          const alert = metric.percent < 50 || (metric.id === "exports" && metric.percent < 100) || (metric.id === "verification" && metric.percent < 100);
+          const alert = metric.percent < 50;
           return (
             <Link key={metric.id} href={metric.href} title={`${metric.tooltip} ${metric.details.join(" ")}`} className="group block rounded-sm text-slate-500 transition hover:text-slate-200">
               <span className="flex items-center justify-between gap-3 text-[0.68rem]">
                 <span className="truncate font-semibold uppercase tracking-[0.16em]">{metricLabel(metric)}</span>
-                <span className={cn("font-semibold tabular-nums", alert ? "text-amber-200" : "text-slate-400")}>{metricValue(metric)}</span>
+                <span className={cn("font-semibold tabular-nums", alert ? "text-amber-200" : "text-slate-400")}>{metric.percent}%</span>
               </span>
-              <span className="mt-1 block h-px overflow-hidden rounded-full bg-slate-800/80">
+              <span className="mt-1 block h-0.5 overflow-hidden rounded-full bg-slate-800/80">
                 <span className={cn("block h-full rounded-full transition-all", healthLineClass(metric.percent))} style={{ width: `${Math.max(0, Math.min(100, metric.percent))}%` }} />
               </span>
             </Link>
@@ -252,6 +258,26 @@ function StudioHealthPanel({ metrics, status }: { metrics: StudioHealthMetric[];
           <p className="text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-slate-600">Calculating health...</p>
         )}
       </div>
+
+      {checks.length ? (
+        <div className="mt-2 space-y-1 border-t border-cyan-400/10 pt-2">
+          {checks.map((check) => (
+            <Link
+              key={check.id}
+              href={check.href}
+              title={`${check.tooltip} ${check.details.join(" ")}`}
+              aria-label={`${check.label}: ${check.ok ? "healthy" : "needs attention"}`}
+              className={cn(
+                "flex items-center justify-between gap-2 rounded-sm text-[0.66rem] font-semibold leading-4 transition focus-visible:outline focus-visible:outline-1 focus-visible:outline-cyan-300/50",
+                check.ok ? "text-slate-500 hover:text-slate-300" : "text-amber-200 hover:text-amber-100"
+              )}
+            >
+              <span className="truncate">{check.label}</span>
+              <span aria-hidden="true">{check.ok ? "OK" : "!"}</span>
+            </Link>
+          ))}
+        </div>
+      ) : null}
     </section>
   );
 }
@@ -264,6 +290,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const activeGroup = useMemo(() => activeGroupForPath(pathname), [pathname]);
   const [expandedGroups, setExpandedGroups] = useState<string[]>(() => uniqueSections(["command-center", activeGroup?.id]));
   const [healthMetrics, setHealthMetrics] = useState<StudioHealthMetric[]>([]);
+  const [healthChecks, setHealthChecks] = useState<StudioHealthCheck[]>([]);
   const [studioStatus, setStudioStatus] = useState<StudioStatus>();
 
   useEffect(() => {
@@ -303,15 +330,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
     fetch("/api/studio-health")
       .then((response) => (response.ok ? response.json() : null))
-      .then((payload: { status?: StudioStatus; metrics?: StudioHealthMetric[] } | null) => {
+      .then((payload: { status?: StudioStatus; metrics?: StudioHealthMetric[]; checks?: StudioHealthCheck[] } | null) => {
         if (!cancelled && payload?.metrics) {
           setHealthMetrics(payload.metrics);
+          setHealthChecks(payload.checks ?? []);
           setStudioStatus(payload.status);
         }
       })
       .catch(() => {
         if (!cancelled) {
           setHealthMetrics([]);
+          setHealthChecks([]);
           setStudioStatus(undefined);
         }
       });
@@ -345,9 +374,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <span className="block text-xl font-bold text-white">Genesis Studio</span>
           </span>
         </Link>
-        <StudioHealthPanel metrics={healthMetrics} status={studioStatus} />
+        <StudioHealthPanel metrics={healthMetrics} checks={healthChecks} status={studioStatus} />
 
-        <nav className="h-[calc(100vh-16rem)] space-y-2 overflow-y-auto pr-1">
+        <nav className="h-[calc(100vh-14.5rem)] space-y-2 overflow-y-auto pr-1">
           {navigationGroups.map((group) => {
             const Icon = group.icon;
             const expanded = expandedGroups.includes(group.id);
