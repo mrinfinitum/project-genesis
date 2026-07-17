@@ -4,11 +4,12 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Archive, Boxes, CheckCircle2, ChevronDown, FileImage, GitBranch, History, ImageIcon, Layers3, PackageCheck, Search, ShieldCheck, Sparkles, Timer, TriangleAlert, Upload, UploadCloud } from "lucide-react";
 import { AssetPreview } from "@/components/asset-preview";
+import { GeneratedLibraryCard, type GeneratedLibraryCardRecord, type GeneratedLibraryCardTone } from "@/components/generated-library-card";
 import { Button } from "@/components/ui/button";
 import { cardShellClass, collectionGridClass, previewBoxClass, useWorkspaceDensitySettings, type DensitySettings } from "@/components/ui/density";
 import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, WorkspaceProgressBar, WorkspaceSearchBar, WorkspaceStatTile } from "@/components/ui/workspace";
 import { resolveMissingRequirementPreview, resolveProductionAssetPreview, sanitizePreviewUrl } from "@/lib/assets/visual-previews";
-import { assetLibraryCategoryLabels, normalizeAssetLibraryCategoryId, resolveAssetLibraryCategoryView, type AssetLibraryCategoryId } from "@/lib/assets/asset-library-routing";
+import { assetLibraryCategoryIds, assetLibraryCategoryLabels, normalizeAssetLibraryCategoryId, resolveAssetLibraryCategoryView, type AssetLibraryCategoryId } from "@/lib/assets/asset-library-routing";
 import type { AssetProductionState, ProductionAsset } from "@/lib/assets/asset-production";
 import { upgradeCategoryBackgroundDerivativePresetIds, upgradeCategoryBackgroundDimensions } from "@/lib/upgrades/category-presentation";
 
@@ -1093,6 +1094,83 @@ function inventoryCompletion(items: InventoryItem[]) {
   return Math.round((items.reduce((sum, item) => sum + inventoryStatusWeight(item.status), 0) / items.length) * 100);
 }
 
+const categoryThumbnailMap: Partial<Record<AssetLibraryCategoryId, string>> = {
+  "top-hud": "/assets/roblox-art/asset_top_bar_resource_panel_strip/asset_top_bar_resource_panel_strip.png",
+  "left-navigation": "/assets/roblox-art/asset_overview_icon/asset_overview_icon.png",
+  "upgrade-categories": "/assets/roblox-art/asset_cpuchip_icon/asset_cpuchip_icon.png",
+  "research-ui": "/assets/roblox-art/asset_research_icon/asset_research_icon.png",
+  "buildings-ui": "/assets/roblox-art/asset_buildings_icon/asset_buildings_icon.png",
+  "galaxy-ui": "/assets/roblox-art/asset_galaxy_icon/asset_galaxy_icon.png",
+  "planet-ui": "/assets/roblox-art/asset_spaceport_icon/asset_spaceport_icon.png",
+  "settings-ui": "/assets/roblox-art/asset_settings_icon/asset_settings_icon.png",
+  "loading-ui": "/assets/roblox-art/asset_dashboard_background/asset_dashboard_background.png",
+  discovery: "/assets/roblox-art/asset_galaxy_icon/asset_galaxy_icon.png",
+  encyclopedia: "/assets/roblox-art/asset_overview_icon/asset_overview_icon.png",
+  "ai-agents": "/assets/roblox-art/asset_aiassistant_icon/asset_aiassistant_icon.png",
+  icons: "/assets/roblox-art/asset_overview_icon/asset_overview_icon.png",
+  backgrounds: "/assets/roblox-art/asset_dashboard_background/asset_dashboard_background.png",
+  animations: "/assets/roblox-art/asset_auto_robot_icon/asset_auto_robot_icon.png"
+};
+
+const categoryToneMap: Partial<Record<AssetLibraryCategoryId, GeneratedLibraryCardTone>> = {
+  "research-ui": "research",
+  "buildings-ui": "building",
+  "galaxy-ui": "galaxy",
+  "planet-ui": "planet",
+  discovery: "discovery",
+  encyclopedia: "civilization",
+  "ai-agents": "civilization"
+};
+
+function statusForCategorySummary(summary: AssetProductionState["assetLibraryInventory"]["categorySummaries"][AssetLibraryCategoryId]) {
+  if (summary.invalid > 0) return "Invalid";
+  if (summary.missing > 0 || summary.unmapped > 0) return "Needs Assets";
+  if (summary.needsReview > 0 || summary.uploaded > 0) return "Needs Review";
+  if (summary.published > 0 && summary.published === summary.total) return "Published";
+  if (summary.approved > 0 || summary.published > 0) return "Ready";
+  return summary.total > 0 ? "Mapped" : "Empty";
+}
+
+function AssetCategoryLanding({ state, preferredRoute }: { state: AssetProductionState; preferredRoute: string }) {
+  const records: GeneratedLibraryCardRecord[] = assetLibraryCategoryIds
+    .filter((categoryId) => categoryId !== "unmapped")
+    .map((categoryId) => {
+      const summary = state.assetLibraryInventory.categorySummaries[categoryId];
+      const total = summary.total;
+      const missing = summary.missing + summary.unmapped;
+      const review = summary.needsReview + summary.uploaded;
+      const contains = total ? `${total} asset${total === 1 ? "" : "s"}` : "No assets";
+      const classification = missing ? `${missing} missing` : review ? `${review} in review` : summary.published ? `${summary.published} published` : "Ready for assets";
+      return {
+        id: categoryId,
+        name: assetLibraryCategoryLabels[categoryId],
+        type: "Asset Category",
+        classification,
+        parent: "Asset Library",
+        contains,
+        status: statusForCategorySummary(summary),
+        href: `${preferredRoute}?category=${encodeURIComponent(categoryId)}`,
+        tone: categoryToneMap[categoryId] ?? "neutral",
+        thumbnailUrl: categoryThumbnailMap[categoryId]
+      };
+    });
+
+  return (
+    <section className="space-y-5">
+      <WorkspacePanel title="Asset Categories" icon={Boxes}>
+        <p className="text-sm leading-6 text-slate-300">
+          Choose the production area first. Category cards open directly into the assets, requirements, usage links, previews, derivatives, and review workflow for that area.
+        </p>
+      </WorkspacePanel>
+      <div className="grid items-stretch gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+        {records.map((record) => (
+          <GeneratedLibraryCard key={record.id} record={record} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function usageCountForItem(item: InventoryItem) {
   return item.referencedByScreens.length + item.referencedByComponents.length + item.referencedByPlaceholders.length;
 }
@@ -1758,7 +1836,7 @@ function ImportHistory({ state }: { state: AssetProductionState }) {
 }
 
 export function AssetProductionWorkspace({ state, view, preferredRoute = "/asset-library", initialSection }: { state: AssetProductionState; view: AssetProductionView; preferredRoute?: string; initialSection?: string | null }) {
-  const defaultNode: DamNodeId = preferredRoute === "/asset-library" && view === "dashboard" ? "all-assets" : view;
+  const defaultNode: DamNodeId = view;
   const routeNode = normalizeDamNode(initialSection, defaultNode);
   const [activeNode, setActiveNode] = useState<DamNodeId>(routeNode);
   const [uploadOpen, setUploadOpen] = useState(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).get("upload") === "asset");
@@ -1783,7 +1861,8 @@ export function AssetProductionWorkspace({ state, view, preferredRoute = "/asset
     const nextNode = normalizeDamNode(node, defaultNode);
     setActiveNode(nextNode);
     if (typeof window !== "undefined") {
-      const path = nextNode === "all-assets" ? preferredRoute : `${preferredRoute}?section=${encodeURIComponent(nextNode)}`;
+      const queryKey = normalizeAssetLibraryCategoryId(nextNode) ? "category" : "section";
+      const path = nextNode === "dashboard" ? preferredRoute : `${preferredRoute}?${queryKey}=${encodeURIComponent(nextNode)}`;
       window.history.replaceState(null, "", path);
     }
   }
@@ -1795,7 +1874,8 @@ export function AssetProductionWorkspace({ state, view, preferredRoute = "/asset
   useEffect(() => {
     if (typeof window === "undefined") return;
     function syncFromLocation() {
-      const section = new URLSearchParams(window.location.search).get("section");
+      const params = new URLSearchParams(window.location.search);
+      const section = params.get("category") ?? params.get("section");
       setActiveNode(normalizeDamNode(section, defaultNode));
     }
     window.addEventListener("popstate", syncFromLocation);
@@ -1819,13 +1899,13 @@ export function AssetProductionWorkspace({ state, view, preferredRoute = "/asset
 
   return (
     <main className="space-y-6">
-      <WorkspaceHeader eyebrow={meta.eyebrow} title={meta.title} description={meta.description} stats={stats} />
+      <WorkspaceHeader eyebrow={meta.eyebrow} title={meta.title} description={meta.description} stats={activeNode === "dashboard" ? [] : stats} />
       <div className="flex flex-wrap items-center gap-2 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-3 shadow-glow">
         <Button type="button" onClick={() => setUploadOpen((value) => !value)} className="h-10">
           <UploadCloud className="h-4 w-4" />
           Upload Asset
         </Button>
-        <Link href={`${preferredRoute}?section=upgrade-categories`} onClick={(event) => { event.preventDefault(); selectNode("upgrade-categories"); }} className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Upgrades</Link>
+        <Link href={`${preferredRoute}?category=upgrade-categories`} onClick={(event) => { event.preventDefault(); selectNode("upgrade-categories"); }} className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Upgrades</Link>
         <Link href={`${preferredRoute}?section=missing`} onClick={(event) => { event.preventDefault(); selectNode("missing"); }} className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Missing Assets</Link>
         {pickerMode ? <WorkspaceBadge value={`Picker: ${pickerMode}`} /> : null}
         {deprecated ? <WorkspaceBadge value="Moved to Asset Library" /> : null}
@@ -1836,15 +1916,15 @@ export function AssetProductionWorkspace({ state, view, preferredRoute = "/asset
           <p className="text-sm leading-6 text-slate-300">Search, filter, preview, and select a published asset. Placeholder replacement preserves geometry, layer order, bindings, and interactions in the calling screen or component.</p>
         </WorkspacePanel>
       ) : null}
-      <div className="grid gap-5 xl:grid-cols-[18rem_minmax(0,1fr)]">
-        <AssetProductionTree active={activeNode} onSelect={selectNode} />
+      <div className={activeNode === "dashboard" ? "" : "grid gap-5 xl:grid-cols-[18rem_minmax(0,1fr)]"}>
+        {activeNode === "dashboard" ? null : <AssetProductionTree active={activeNode} onSelect={selectNode} />}
         <section className="min-w-0 space-y-5">
-          {isAssetProductionView(activeNode) ? <AssetNav active={activeNode} preferredRoute={preferredRoute} /> : null}
+          {isAssetProductionView(activeNode) && activeNode !== "dashboard" ? <AssetNav active={activeNode} preferredRoute={preferredRoute} /> : null}
           {activeNode === "all-assets" ? <AssetGrid assets={state.assets} empty="No assets here yet. Upload artwork or create an asset requirement to get started." storageKey="project-genesis-density-asset-library-all" /> : null}
           {activeNode === "recently-uploaded" ? <AssetGrid assets={[...state.assets].sort((left, right) => right.updatedAt.localeCompare(left.updatedAt)).slice(0, 48)} empty="No recent uploads yet. Upload artwork or create an asset requirement to get started." storageKey="project-genesis-density-asset-library-recent" /> : null}
           {activeNode === "needs-review" ? <AssetGrid assets={state.assets.filter((asset) => asset.approvalStatus !== "approved" && asset.productionStatus !== "published")} empty="No assets need review." storageKey="project-genesis-density-asset-library-review" /> : null}
           {activeNode === "approved-assets" ? <AssetGrid assets={state.assets.filter((asset) => asset.approvalStatus === "approved")} empty="No approved assets yet." storageKey="project-genesis-density-asset-library-approved" /> : null}
-          {activeNode === "dashboard" ? <Dashboard state={state} /> : null}
+          {activeNode === "dashboard" ? <AssetCategoryLanding state={state} preferredRoute={preferredRoute} /> : null}
           {activeNode === "source" ? <SourceFiles state={state} /> : null}
           {activeNode === "generated" ? <AssetGrid assets={state.generatedAssets} empty="No generated derivatives are available yet." storageKey="project-genesis-density-assets-generated" /> : null}
           {activeNode === "published" ? <AssetGrid assets={state.publishedAssets} empty="No assets have reached published status yet." storageKey="project-genesis-density-assets-published" /> : null}

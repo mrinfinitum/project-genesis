@@ -20,9 +20,9 @@ export default async function DeprecatedVisualScreenBuilderRedirect({ searchPara
   }
 
   if (area) {
-    next.set("area", area);
-    redirect(`/creative-production?${next.toString()}`);
+    next.set("category", area);
+    redirect(`/assets?${next.toString()}`);
   }
 
-  redirect("/creative-production?deprecated=visual-builder");
+  redirect("/assets?deprecated=visual-builder");
 }

@@ -136,35 +136,28 @@ const navigationGroups: NavigationGroup[] = [
     ]
   },
   {
-    id: "civilization",
-    label: "Creative Production",
-    icon: Palette,
-    fallbackProgress: 38,
+    id: "asset-library",
+    label: "Asset Library",
+    icon: PackageCheck,
+    fallbackProgress: 65,
     systemIds: ["assets", "research", "buildings", "upgrades"],
     items: [
-      { href: "/creative-production", label: "Overview", icon: LayoutDashboard },
-      { href: "/creative-production?area=top-hud", label: "Top HUD", icon: MonitorCog },
-      { href: "/creative-production?area=left-navigation", label: "Left Navigation", icon: Map },
-      { href: "/creative-production?area=research", label: "Research", icon: FlaskConical },
-      { href: "/creative-production?area=buildings", label: "Buildings", icon: Building2 },
-      { href: "/creative-production?area=upgrades", label: "Upgrades", icon: Gauge },
-      { href: "/creative-production?area=ai-agents", label: "AI Agents", icon: Bot },
-      { href: "/creative-production?area=discovery", label: "Discovery", icon: Search },
-      { href: "/creative-production?area=encyclopedia", label: "Encyclopedia", icon: BookOpen },
-      { href: "/creative-production?area=civilizations", label: "Civilizations", icon: Landmark },
-      { href: "/creative-production?area=galaxies", label: "Galaxies", icon: Star },
-      { href: "/creative-production?area=sectors", label: "Sectors", icon: Map },
-      { href: "/creative-production?area=star-systems", label: "Star Systems", icon: Orbit },
-      { href: "/creative-production?area=stars", label: "Stars", icon: Star },
-      { href: "/creative-production?area=planets", label: "Planets", icon: Orbit },
-      { href: "/creative-production?area=settings", label: "Settings", icon: Settings },
-      { href: "/creative-production?area=login-account", label: "Login & Account", icon: FileText },
-      { href: "/creative-production?area=loading", label: "Loading", icon: UploadCloud },
-      { href: "/creative-production?area=icons", label: "Icons", icon: PackageCheck },
-      { href: "/creative-production?area=backgrounds", label: "Backgrounds", icon: Palette },
-      { href: "/creative-production?area=animations", label: "Animations", icon: Sparkles },
-      { href: "/creative-production?area=audio", label: "Audio", icon: BadgeDollarSign },
-      { href: "/creative-production?area=video", label: "Video", icon: FileCode2 }
+      { href: "/asset-library", label: "All Categories", icon: PackageCheck },
+      { href: "/asset-library?category=top-hud", label: "Top HUD", icon: MonitorCog },
+      { href: "/asset-library?category=left-navigation", label: "Left Navigation", icon: Map },
+      { href: "/asset-library?category=upgrade-categories", label: "Upgrades", icon: Gauge },
+      { href: "/asset-library?category=research-ui", label: "Research", icon: FlaskConical },
+      { href: "/asset-library?category=buildings-ui", label: "Buildings", icon: Building2 },
+      { href: "/asset-library?category=galaxy-ui", label: "Galaxy", icon: Star },
+      { href: "/asset-library?category=planet-ui", label: "Planets", icon: Orbit },
+      { href: "/asset-library?category=discovery", label: "Discovery", icon: Search },
+      { href: "/asset-library?category=encyclopedia", label: "Encyclopedia", icon: BookOpen },
+      { href: "/asset-library?category=ai-agents", label: "AI Agents", icon: Bot },
+      { href: "/asset-library?category=icons", label: "Icons", icon: PackageCheck },
+      { href: "/asset-library?category=backgrounds", label: "Backgrounds", icon: Sparkles },
+      { href: "/asset-library?category=animations", label: "Animations", icon: Sparkles },
+      { href: "/asset-library?category=audio", label: "Audio", icon: BadgeDollarSign },
+      { href: "/asset-library?category=video", label: "Video", icon: FileCode2 }
     ]
   },
   {
@@ -196,7 +189,6 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/encyclopedia", label: "Civilization Encyclopedia", icon: BookOpen },
       { href: "/screen-designer", label: "Screen Specifications", icon: MonitorCog },
       { href: "/component-library", label: "Component Library", icon: PackageCheck },
-      { href: "/asset-library", label: "Asset Library", icon: PackageCheck },
       { href: "/conceptual-art", label: "Concept Art", icon: Palette }
     ]
   },
@@ -287,7 +279,7 @@ function isItemActive(item: NavigationItem, pathname: string, searchParams: { ge
 
   const itemSearch = hrefSearch(item.href);
   if (!itemSearch) {
-    return pathname !== "/creative-production" || !searchParams.has("area");
+    return pathname !== "/asset-library" || (!searchParams.has("category") && !searchParams.has("section"));
   }
 
   const itemParams = new URLSearchParams(itemSearch);

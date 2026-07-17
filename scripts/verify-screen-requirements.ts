@@ -26,7 +26,7 @@ async function main() {
 
   assert(existsSync(path.join(process.cwd(), "app/screen-designer/page.tsx")), "Screen Specifications index route must exist.");
   assert(existsSync(path.join(process.cwd(), "app/screen-designer/[screenId]/page.tsx")), "Screen Specification detail route must exist.");
-  assert(redirectRoute.includes("/creative-production?deprecated=visual-builder"), "Deprecated builder bookmarks must redirect to Creative Production.");
+  assert(redirectRoute.includes("/assets?deprecated=visual-builder"), "Deprecated builder bookmarks must redirect to Asset Library.");
   assert(archiveRoute.includes("Read-only"), "Deprecated archive must be read-only.");
   assert(archiveRoute.includes("Open Screen Spec"), "Archive must point users to Screen Specifications.");
 

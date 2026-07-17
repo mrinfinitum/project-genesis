@@ -28,7 +28,7 @@ async function main() {
 
   assert(existsSync(path.join(process.cwd(), "app/visual-screen-builder/page.tsx")), "Deprecated visual-screen-builder redirect route must exist.");
   assert(existsSync(path.join(process.cwd(), "app/advanced/deprecated/visual-builder/page.tsx")), "Visual Builder archive route must exist.");
-  assert(read("app/visual-screen-builder/page.tsx").includes("redirect(\"/creative-production?deprecated=visual-builder\")"), "General builder route must redirect to Creative Production.");
+  assert(read("app/visual-screen-builder/page.tsx").includes("redirect(\"/assets?deprecated=visual-builder\")"), "General builder route must redirect to Asset Library.");
   assert(read("app/advanced/deprecated/visual-builder/page.tsx").includes("Deprecated — historical reference only"), "Archive page must be clearly labeled deprecated.");
 
   assert(appShell.includes("Deprecated Visual Builder Archive"), "Advanced nav must include the read-only deprecated archive.");

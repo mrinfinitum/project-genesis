@@ -72,7 +72,7 @@ async function main() {
   assert(discoveryPage.includes("Canonical Discovery System"), "Discovery page must present the canonical system name.");
   assert(discoveryPage.includes("Studio publishes definitions only"), "Discovery page must clarify that player state is game-owned.");
   assert(appShell.includes('href: "/discovery"'), "App shell must expose the Discovery workspace.");
-  assert(appShell.includes('href: "/creative-production?area=discovery"'), "Creative Production nav must expose Discovery.");
+  assert(appShell.includes('href: "/asset-library?category=discovery"'), "Asset Library nav must expose Discovery.");
   assert(creativeProduction.includes('id: "discovery"'), "Creative Production must include a Discovery production area.");
   assert(assetRouting.includes('"discovery"'), "Asset Library routing must include Discovery.");
   assert(assetInventory.includes('return "discovery"'), "Asset Library inventory must route discovery requirements into Discovery.");

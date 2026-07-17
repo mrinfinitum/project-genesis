@@ -39,8 +39,7 @@ export default async function VisualBuilderArchivePage() {
 
       <WorkspacePanel title="Migration Targets">
         <div className="flex flex-wrap gap-2">
-          <Link href="/creative-production" className="inline-flex h-10 items-center gap-2 rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Creative Production <ExternalLink className="h-4 w-4" /></Link>
-          <Link href="/asset-library" className="inline-flex h-10 items-center gap-2 rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Asset Library <ExternalLink className="h-4 w-4" /></Link>
+          <Link href="/asset-library" className="inline-flex h-10 items-center gap-2 rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Asset Library <ExternalLink className="h-4 w-4" /></Link>
           <Link href="/screen-designer" className="inline-flex h-10 items-center gap-2 rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Screen Specifications <ExternalLink className="h-4 w-4" /></Link>
           <Link href="/component-library" className="inline-flex h-10 items-center gap-2 rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">Component Library <ExternalLink className="h-4 w-4" /></Link>
         </div>
@@ -65,7 +64,7 @@ export default async function VisualBuilderArchivePage() {
             </div>
             <div className="mt-4 flex flex-wrap gap-2">
               <Link href={`/screen-designer/${record.screenId}`} className="inline-flex h-9 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-xs font-black uppercase tracking-[0.12em] text-cyan-100">Open Screen Spec</Link>
-              <Link href={`/creative-production?area=${record.screenId === "research" ? "research" : "top-hud"}`} className="inline-flex h-9 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-xs font-black uppercase tracking-[0.12em] text-slate-200">Open Production</Link>
+              <Link href={`/asset-library?category=${record.screenId === "research" ? "research-ui" : "top-hud"}`} className="inline-flex h-9 items-center rounded-md border border-slate-600 bg-slate-950/40 px-3 text-xs font-black uppercase tracking-[0.12em] text-slate-200">Open Assets</Link>
             </div>
           </article>
         ))}

@@ -93,8 +93,7 @@ export default async function EncyclopediaPage({ searchParams }: { searchParams?
           <h1 className="mt-3 text-5xl font-black tracking-tight text-white">Civilization Encyclopedia</h1>
           <p className="mt-4 max-w-4xl text-lg leading-8 text-slate-300">The canonical knowledge system of NOVERIS.</p>
           <div className="mt-5 flex flex-wrap gap-2">
-            <Link href="/asset-library?section=encyclopedia" className="rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 py-2 text-sm font-bold text-cyan-100">Asset Library / Encyclopedia</Link>
-            <Link href="/creative-production?area=encyclopedia" className="rounded-md border border-slate-600 bg-slate-950/40 px-3 py-2 text-sm font-bold text-slate-200">Creative Production Readiness</Link>
+            <Link href="/asset-library?category=encyclopedia" className="rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 py-2 text-sm font-bold text-cyan-100">Asset Library / Encyclopedia</Link>
             <Link href="/screen-designer?filter=encyclopedia" className="rounded-md border border-slate-600 bg-slate-950/40 px-3 py-2 text-sm font-bold text-slate-200">Screen Specs</Link>
           </div>
         </div>
