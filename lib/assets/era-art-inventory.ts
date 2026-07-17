@@ -9,6 +9,7 @@ import {
   type AssetProductionState,
   type ProductionAsset
 } from "@/lib/assets/asset-production";
+import { resolveAssetDownloadEligibility } from "@/lib/assets/download-eligibility";
 import { measureAsync, measureSync } from "@/lib/performance/diagnostics";
 
 type RequirementPriority = "low" | "medium" | "high" | "critical";
@@ -83,6 +84,13 @@ export type EraArtRequirementCard = {
   sourceType: string;
   sourceVersionCount: number;
   previewStatus: string;
+  sourceAvailability: string;
+  canDownloadSource: boolean;
+  sourceDownloadReason: string;
+  sourceDownloadMessage: string;
+  preferredDownloadType: string;
+  derivativeDownloadUrl: string;
+  previewDownloadUrl: string;
   derivativeCount: number;
   productionNotes: string;
   latestUpdateAt: string;
@@ -346,6 +354,11 @@ function cardFromRequirement(input: {
   const baseStatus = statusFor(resolvedAsset, input.requirement.derivativeType, input.requirement.required);
   const status = override?.status ? statusLabel(override.status) : baseStatus;
   const source = resolvedAsset?.sourceFiles.find((item) => item.isCurrent) ?? resolvedAsset?.sourceFiles[0];
+  const downloadableDerivative = resolvedAsset?.derivatives.find((item) => item.sourceFileId === source?.id && item.publishStatus === "published" && item.publicUrl)
+    ?? resolvedAsset?.derivatives.find((item) => item.sourceFileId === source?.id && item.publicUrl)
+    ?? derivative
+    ?? null;
+  const downloadEligibility = resolveAssetDownloadEligibility({ asset: resolvedAsset, sourceVersion: source, derivative: downloadableDerivative, environment: "studio", userAccess: "studio" });
   const sourceType = source?.extension ? source.extension.replace(".", "").toUpperCase() : "None";
   const sourceVersionCount = resolvedAsset?.sourceFiles.length ?? 0;
   const previewStatus = source?.previewStatus ?? (source?.previewUrl ? "ready" : "missing");
@@ -395,6 +408,13 @@ function cardFromRequirement(input: {
     sourceType,
     sourceVersionCount,
     previewStatus,
+    sourceAvailability: downloadEligibility.sourceAvailability,
+    canDownloadSource: downloadEligibility.canDownloadSource,
+    sourceDownloadReason: downloadEligibility.reasonCode,
+    sourceDownloadMessage: downloadEligibility.userMessage,
+    preferredDownloadType: downloadEligibility.preferredDownloadType,
+    derivativeDownloadUrl: downloadableDerivative?.publicUrl ?? "",
+    previewDownloadUrl: source?.previewUrl ?? "",
     derivativeCount: resolvedAsset?.derivatives.length ?? 0,
     productionNotes: override?.productionNotes ?? input.notes ?? "",
     latestUpdateAt: resolvedAsset?.updatedAt || source?.uploadedAt || derivative?.generatedAt || "",
@@ -602,6 +622,11 @@ function cardFromImportedAsset(input: {
   const override = input.metadata.missingRequirements[cardId];
   const status = override?.status ? statusLabel(override.status) : statusFor(input.asset, input.target.requirementType, input.target.required);
   const source = input.asset.sourceFiles.find((item) => item.isCurrent) ?? input.asset.sourceFiles[0];
+  const downloadableDerivative = input.asset.derivatives.find((item) => item.sourceFileId === source?.id && item.publishStatus === "published" && item.publicUrl)
+    ?? input.asset.derivatives.find((item) => item.sourceFileId === source?.id && item.publicUrl)
+    ?? derivative
+    ?? null;
+  const downloadEligibility = resolveAssetDownloadEligibility({ asset: input.asset, sourceVersion: source, derivative: downloadableDerivative, environment: "studio", userAccess: "studio" });
   const sourceType = source?.extension ? source.extension.replace(".", "").toUpperCase() : "None";
   const previewStatus = source?.previewStatus ?? (source?.previewUrl ? "ready" : "missing");
   const platformMappings = input.asset.platformMappings ?? {};
@@ -650,6 +675,13 @@ function cardFromImportedAsset(input: {
     sourceType,
     sourceVersionCount: input.asset.sourceFiles.length,
     previewStatus,
+    sourceAvailability: downloadEligibility.sourceAvailability,
+    canDownloadSource: downloadEligibility.canDownloadSource,
+    sourceDownloadReason: downloadEligibility.reasonCode,
+    sourceDownloadMessage: downloadEligibility.userMessage,
+    preferredDownloadType: downloadEligibility.preferredDownloadType,
+    derivativeDownloadUrl: downloadableDerivative?.publicUrl ?? "",
+    previewDownloadUrl: source?.previewUrl ?? "",
     derivativeCount: input.asset.derivatives.length,
     productionNotes: override?.productionNotes ?? "Reconciled from imported Roblox art manifest usage.",
     latestUpdateAt: input.asset.updatedAt || source?.uploadedAt || derivative?.generatedAt || "",
@@ -740,6 +772,13 @@ function cardFromPlaceholder(input: {
     sourceType: "None",
     sourceVersionCount: 0,
     previewStatus: "missing",
+    sourceAvailability: "missing_source",
+    canDownloadSource: false,
+    sourceDownloadReason: "source_missing",
+    sourceDownloadMessage: "No source file has been uploaded for this asset.",
+    preferredDownloadType: "none",
+    derivativeDownloadUrl: "",
+    previewDownloadUrl: "",
     derivativeCount: 0,
     productionNotes: input.placeholder.replacementRequired,
     latestUpdateAt: "",

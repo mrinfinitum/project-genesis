@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { ArrowLeft, CheckCircle2, Download, Eye, FileImage, GitBranch, History, Layers3, PackageCheck, RefreshCcw, UploadCloud } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, WorkspaceProgressBar, WorkspaceStatTile, WorkspaceTabs } from "@/components/ui/workspace";
+import { resolveAssetDownloadEligibility } from "@/lib/assets/download-eligibility";
 import type { ProcessingJobRecord, ProductionAsset, SourceFileRecord, AssetDerivativeRecord } from "@/lib/assets/asset-production";
 
 type DetailTab = "overview" | "source_files" | "versions" | "previews" | "derivatives" | "requirements" | "engine_mappings" | "review" | "usage" | "history";
@@ -68,6 +69,71 @@ function privateState(source: SourceFileRecord) {
 
 function derivativesForSource(asset: ProductionAsset, sourceId: string) {
   return asset.derivatives.filter((derivative) => derivative.sourceFileId === sourceId);
+}
+
+function preferredDerivativeForSource(asset: ProductionAsset, sourceId: string) {
+  const derivatives = derivativesForSource(asset, sourceId).filter((derivative) => !derivative.archived);
+  return derivatives.find((derivative) => derivative.publishStatus === "published" && derivative.publicUrl)
+    ?? derivatives.find((derivative) => derivative.approvalStatus === "approved" && derivative.publicUrl)
+    ?? derivatives.find((derivative) => derivative.publicUrl)
+    ?? null;
+}
+
+function SourceDownloadActions({ asset, source, derivative, compact = false, onUploadSource }: { asset: ProductionAsset; source: SourceFileRecord; derivative: AssetDerivativeRecord | null; compact?: boolean; onUploadSource: () => void }) {
+  const eligibility = resolveAssetDownloadEligibility({ asset, sourceVersion: source, derivative, environment: "studio", userAccess: "studio" });
+  if (eligibility.canDownloadSource) {
+    return (
+      <Link href={`/api/assets/production/source/${source.id}`} className="inline-flex h-10 items-center gap-2 rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">
+        <Download className="h-4 w-4" />
+        Download Source
+      </Link>
+    );
+  }
+
+  if (eligibility.canDownloadDerivative && derivative?.publicUrl) {
+    return (
+      <div className={compact ? "space-y-2" : "flex flex-wrap items-center gap-2"}>
+        <Link href={derivative.publicUrl} download className="inline-flex h-10 items-center gap-2 rounded-md border border-emerald-300/25 bg-emerald-300/10 px-3 text-sm font-bold text-emerald-100">
+          <Download className="h-4 w-4" />
+          Download {derivative.derivativeType} Derivative
+        </Link>
+        <button type="button" onClick={onUploadSource} className="inline-flex h-10 items-center gap-2 rounded-md border border-slate-600/70 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">
+          <UploadCloud className="h-4 w-4" />
+          Upload Source
+        </button>
+        <p className="basis-full text-xs font-semibold text-slate-400">{eligibility.userMessage}</p>
+      </div>
+    );
+  }
+
+  if (eligibility.canDownloadPreview && source.previewUrl) {
+    return (
+      <div className={compact ? "space-y-2" : "flex flex-wrap items-center gap-2"}>
+        <Link href={source.previewUrl} className="inline-flex h-10 items-center gap-2 rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">
+          <Eye className="h-4 w-4" />
+          Open Preview
+        </Link>
+        <button type="button" onClick={onUploadSource} className="inline-flex h-10 items-center gap-2 rounded-md border border-slate-600/70 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">
+          <UploadCloud className="h-4 w-4" />
+          Upload Source
+        </button>
+        <p className="basis-full text-xs font-semibold text-slate-400">{eligibility.userMessage}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className={compact ? "space-y-2" : "flex flex-wrap items-center gap-2"}>
+      <button type="button" disabled title={eligibility.userMessage} className="inline-flex h-10 cursor-not-allowed items-center gap-2 rounded-md border border-amber-300/25 bg-amber-300/5 px-3 text-sm font-bold text-amber-100">
+        Source Reference
+      </button>
+      <button type="button" onClick={onUploadSource} className="inline-flex h-10 items-center gap-2 rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">
+        <UploadCloud className="h-4 w-4" />
+        Upload Source
+      </button>
+      <p className="basis-full text-xs font-semibold text-slate-400">{eligibility.userMessage}</p>
+    </div>
+  );
 }
 
 function ActionForm({
@@ -314,7 +380,9 @@ export function AssetDetailWorkspace({
       {activeTab === "source_files" ? (
         <div className="grid gap-5 xl:grid-cols-[1fr_24rem]">
           <div className="space-y-3">
-            {asset.sourceFiles.map((source) => (
+            {asset.sourceFiles.map((source) => {
+              const derivative = preferredDerivativeForSource(asset, source.id);
+              return (
               <WorkspacePanel key={source.id} title={source.filename} icon={FileImage}>
                 <div className="grid gap-3 md:grid-cols-4 xl:grid-cols-6">
                   <WorkspaceMiniStat label="Version" value={source.versionLabel} />
@@ -337,13 +405,10 @@ export function AssetDetailWorkspace({
                     const notes = window.prompt("Source notes", source.notes);
                     if (notes !== null) runAction("source.notes", undefined, { sourceFileId: source.id, notes });
                   }}>Add Notes</Button>
-                  <Link href={`/api/assets/production/source/${source.id}`} className="inline-flex h-10 items-center gap-2 rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">
-                    <Download className="h-4 w-4" />
-                    Download
-                  </Link>
+                  <SourceDownloadActions asset={asset} source={source} derivative={derivative} onUploadSource={() => setActiveTab("source_files")} />
                 </div>
               </WorkspacePanel>
-            ))}
+            );})}
             {!asset.sourceFiles.length ? <WorkspacePanel><p className="text-sm font-semibold text-slate-300">No source versions yet.</p></WorkspacePanel> : null}
           </div>
           <ActionForm title="Upload Replacement as New Version" onSubmit={uploadSourceFile} submitLabel="Upload Source">
@@ -384,7 +449,9 @@ export function AssetDetailWorkspace({
             </div>
           </WorkspacePanel>
 
-          {asset.sourceFiles.map((source) => (
+          {asset.sourceFiles.map((source) => {
+            const derivative = preferredDerivativeForSource(asset, source.id);
+            return (
             <div key={source.id} className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-4">
               <div className="grid gap-4 lg:grid-cols-[12rem_1fr_12rem] lg:items-start">
                 <PreviewPane url={source.previewUrl ?? ""} label={source.previewStatus ?? "preview missing"} />
@@ -403,11 +470,11 @@ export function AssetDetailWorkspace({
                   <Button type="button" onClick={() => runAction("source.set_current", undefined, { sourceFileId: source.id })}>Set Current</Button>
                   <Button type="button" onClick={() => runAction("source.restore", undefined, { sourceFileId: source.id })}>Restore</Button>
                   <Button type="button" onClick={() => runAction("source.archive", undefined, { sourceFileId: source.id })}>Archive</Button>
-                  <Link href={`/api/assets/production/source/${source.id}`} className="inline-flex h-10 items-center justify-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Download</Link>
+                  <SourceDownloadActions asset={asset} source={source} derivative={derivative} compact onUploadSource={() => setActiveTab("source_files")} />
                 </div>
               </div>
             </div>
-          ))}
+          );})}
         </div>
       ) : null}
 
@@ -479,6 +546,7 @@ export function AssetDetailWorkspace({
                       <Button type="button" onClick={() => runAction("derivative.approve", undefined, { derivativeId: derivative.id })}>Mark Approved</Button>
                       <Button type="button" onClick={() => runAction("derivative.needs_changes", undefined, { derivativeId: derivative.id })}>Request Changes</Button>
                       <Button type="button" onClick={() => runAction("mapping.web_publish", undefined, { derivativeId: derivative.id, path: derivative.publicUrl, adminOverride: true })}>Publish Web</Button>
+                      {derivative.publicUrl ? <Link href={derivative.publicUrl} download className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Download Derivative</Link> : null}
                       <Button type="button" onClick={() => setActiveTab("engine_mappings")}>Map Roblox ID</Button>
                       <Button type="button" onClick={() => runAction("derivative.archive", undefined, { derivativeId: derivative.id })}>Archive</Button>
                     </div>

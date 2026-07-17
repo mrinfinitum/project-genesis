@@ -1,0 +1,92 @@
+{
+  "generatedAt": "2026-07-17T00:30:21.918Z",
+  "architectureVersion": "1.0.0",
+  "runtimeVersion": "game-runtime-v1",
+  "contentVersion": 32,
+  "checksum": "62140cbd4f9070f61175b2608e5d71dfb2d456a4db057c27b6c9d959b68fda48",
+  "rootCause": "Top Bar Resource Panel Strip is an imported Roblox manifest source reference. The source path is provenance, not a Studio-hosted downloadable object. A published Web derivative is available and should be used until a Studio-managed source is uploaded.",
+  "sourceAvailabilityModel": {
+    "imported_manifest_reference": 95
+  },
+  "downloadEligibility": {
+    "totalSourceRecords": 95,
+    "downloadableSources": 0,
+    "derivativeFallbacks": 94,
+    "previewFallbacks": 0,
+    "unavailableSources": 1,
+    "topBar": {
+      "sourceFileId": "source_asset_top_bar_resource_panel_strip_0eee33b08799",
+      "sourceAvailability": "imported_manifest_reference",
+      "canDownloadSource": false,
+      "preferredDownloadType": "derivative",
+      "reasonCode": "derivative_available",
+      "userMessage": "This record references an external project source from an import manifest. Upload or publish a Studio-managed source copy to enable source downloads. A published derivative is available instead.",
+      "derivativeUrl": "/assets/roblox-art/asset_top_bar_resource_panel_strip/asset_top_bar_resource_panel_strip.png"
+    }
+  },
+  "assetRecordAudit": {
+    "totalAssets": 95,
+    "sourceRecords": 95,
+    "derivativeRecords": 285,
+    "readyPreviews": 0,
+    "missingPreviews": 95,
+    "readyDerivatives": 285,
+    "failedDerivatives": 0,
+    "staleDerivatives": 0,
+    "brokenDerivativeUrls": 0,
+    "usageReferenceMissing": 0,
+    "engineMappingsMissing": 0
+  },
+  "storageProviders": {
+    "imported-manifest-reference": {
+      "records": 95,
+      "brokenReferences": 0
+    }
+  },
+  "routeHealth": {
+    "totalRoutesChecked": 16,
+    "missingRoutes": [],
+    "sourceRouteStatusModel": {
+      "externalOnly": 409,
+      "protected": 403,
+      "archived": 410,
+      "missing": 404,
+      "storageUnavailable": 503
+    }
+  },
+  "libraryThumbnails": {
+    "totalChecked": 152,
+    "brokenThumbnailCount": 0,
+    "missingThumbnailCount": 0
+  },
+  "privatePathBoundary": {
+    "publicRuntimeViolations": []
+  },
+  "engineExports": {
+    "generic": "Ready",
+    "roblox": "Ready",
+    "web": "Ready",
+    "unity": "Ready",
+    "unreal": "Ready",
+    "godot": "Ready"
+  },
+  "severitySummary": {
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 95,
+    "informational": 95
+  },
+  "automaticRemediation": [
+    "Created shared download eligibility resolver.",
+    "Asset Detail source actions now hide dead Download Source links.",
+    "Era Art Inventory source actions now fall back to derivative/preview actions.",
+    "Source download API now returns explicit safe error envelopes and status codes.",
+    "Production Health verifier/report added."
+  ],
+  "remainingManualRemediation": [
+    "Upload Studio-managed source files for imported manifest references that need source downloads.",
+    "Generate or publish missing previews where the audit reports preview_missing.",
+    "Review non-public or stale derivatives before publishing."
+  ]
+}

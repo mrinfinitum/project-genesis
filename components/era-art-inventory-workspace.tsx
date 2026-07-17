@@ -269,10 +269,22 @@ function RequirementCard({
         <button type="button" onClick={() => onAssign(card)} className="inline-flex h-10 items-center rounded-md border border-slate-600/70 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">
           Assign Artist
         </button>
-        {card.currentSourceFileId ? (
+        {card.canDownloadSource && card.currentSourceFileId ? (
           <Link href={`/api/assets/production/source/${card.currentSourceFileId}`} className="inline-flex h-10 items-center rounded-md border border-slate-600/70 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">
             Download Source
           </Link>
+        ) : card.derivativeDownloadUrl ? (
+          <Link href={card.derivativeDownloadUrl} download className="inline-flex h-10 items-center rounded-md border border-emerald-300/25 bg-emerald-300/10 px-3 text-sm font-bold text-emerald-100" title={card.sourceDownloadMessage}>
+            Download Derivative
+          </Link>
+        ) : card.previewDownloadUrl ? (
+          <Link href={card.previewDownloadUrl} className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100" title={card.sourceDownloadMessage}>
+            Open Preview
+          </Link>
+        ) : card.currentSourceFileId ? (
+          <button type="button" disabled title={card.sourceDownloadMessage} className="inline-flex h-10 cursor-not-allowed items-center rounded-md border border-amber-300/25 bg-amber-300/5 px-3 text-sm font-bold text-amber-100">
+            Source Reference
+          </button>
         ) : null}
         <button type="button" onClick={() => onUploadPreview(card)} className="inline-flex h-10 items-center rounded-md border border-slate-600/70 bg-slate-950/40 px-3 text-sm font-bold text-slate-200">
           Upload Preview

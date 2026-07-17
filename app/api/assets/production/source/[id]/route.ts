@@ -1,7 +1,8 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { NextResponse } from "next/server";
-import { getProductionSourceFile } from "@/lib/assets/asset-production";
+import { getProductionAssetForSourceFile } from "@/lib/assets/asset-production";
+import { resolveAssetDownloadEligibility, sourceDownloadHttpStatus } from "@/lib/assets/download-eligibility";
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
 
 type Params = {
@@ -32,19 +33,34 @@ async function readPrivateSource(storagePath: string) {
 export async function GET(_request: Request, { params }: Params) {
   try {
     const { id } = await params;
-    const source = await getProductionSourceFile(id);
-    if (!source) return NextResponse.json({ error: "Source version not found." }, { status: 404 });
+    const record = await getProductionAssetForSourceFile(id);
+    if (!record) return NextResponse.json({ error: "Source version not found.", code: "source_missing" }, { status: 404 });
 
-    const buffer = await readPrivateSource(source.storagePath);
+    const derivative = record.asset.derivatives.find((item) => item.sourceFileId === record.sourceFile.id && item.publishStatus === "published" && item.publicUrl)
+      ?? record.asset.derivatives.find((item) => item.sourceFileId === record.sourceFile.id && item.publicUrl)
+      ?? null;
+    const eligibility = resolveAssetDownloadEligibility({ asset: record.asset, sourceVersion: record.sourceFile, derivative, environment: process.env.VERCEL ? "vercel" : process.env.NODE_ENV ?? "development", userAccess: "studio" });
+    if (!eligibility.canDownloadSource) {
+      return NextResponse.json({
+        error: eligibility.userMessage,
+        code: eligibility.reasonCode,
+        sourceAvailability: eligibility.sourceAvailability,
+        preferredDownloadType: eligibility.preferredDownloadType,
+        remediationAction: eligibility.remediationAction,
+        diagnosticContext: eligibility.diagnosticContext
+      }, { status: sourceDownloadHttpStatus(eligibility.reasonCode) });
+    }
+
+    const buffer = await readPrivateSource(record.sourceFile.storagePath);
     return new NextResponse(buffer, {
       headers: {
-        "content-type": source.mimeType || "application/octet-stream",
-        "content-disposition": `attachment; filename="${source.filename.replaceAll('"', "")}"`,
+        "content-type": record.sourceFile.mimeType || "application/octet-stream",
+        "content-disposition": `attachment; filename="${record.sourceFile.filename.replaceAll('"', "")}"`,
         "cache-control": "private, no-store"
       }
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Could not download source file.";
-    return NextResponse.json({ error: message }, { status: 400 });
+    return NextResponse.json({ error: message, code: "source_not_available_in_environment" }, { status: 409 });
   }
 }

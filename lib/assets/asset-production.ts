@@ -1531,6 +1531,15 @@ export async function getProductionSourceFile(sourceFileId: string) {
   return null;
 }
 
+export async function getProductionAssetForSourceFile(sourceFileId: string) {
+  const state = await getAssetProductionState();
+  for (const asset of state.assets) {
+    const sourceFile = asset.sourceFiles.find((source) => source.id === sourceFileId);
+    if (sourceFile) return { asset, sourceFile };
+  }
+  return null;
+}
+
 export async function getAssetProductionRuntimeOverrides() {
   const store = await readProductionStore();
   return Object.fromEntries(
