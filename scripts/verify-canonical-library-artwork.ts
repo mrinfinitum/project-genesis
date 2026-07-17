@@ -102,7 +102,7 @@ function expectedRecord(name: string) {
 function assertResolvedSample(name: string, expectedFragment: string) {
   const record = expectedRecord(name);
   assert(record.thumbnailUrl?.includes(expectedFragment), `${name} should resolve to ${expectedFragment}; received ${record.thumbnailUrl ?? "none"}`);
-  assert(record.thumbnailRetinaUrl?.includes("-960.webp"), `${name} should expose retina thumbnail derivative.`);
+  assert(record.thumbnailRetinaUrl === record.thumbnailUrl, `${name} should use the same public image for standard and retina after removing generated library thumbnails.`);
   assert(record.artworkFallbackReason !== "minimal_neutral_placeholder", `${name} must not use the neutral placeholder.`);
   assert(!record.thumbnailUrl?.includes("asset_galaxy_icon"), `${name} must not use the generic galaxy icon.`);
 }
@@ -128,33 +128,30 @@ function main() {
   assert(CANONICAL_LIBRARY_ARTWORK_CATALOG.length >= 20, "Canonical artwork catalog must cover generated library classes.");
   assert(new Set(CANONICAL_LIBRARY_ARTWORK_CATALOG.map((entry) => entry.id)).size === CANONICAL_LIBRARY_ARTWORK_CATALOG.length, "Artwork catalog IDs must be unique.");
   for (const entry of CANONICAL_LIBRARY_ARTWORK_CATALOG) {
-    assert(publicUrlExists(entry.thumbnailUrl), `Missing generated thumbnail derivative: ${entry.thumbnailUrl}`);
-    assert(publicUrlExists(entry.retinaThumbnailUrl), `Missing generated retina thumbnail derivative: ${entry.retinaThumbnailUrl}`);
-    assert(entry.thumbnailUrl.startsWith("/assets/library-thumbnails/"), `Catalog thumbnail must use the public derivative directory: ${entry.thumbnailUrl}`);
+    assert(publicUrlExists(entry.thumbnailUrl), `Missing public artwork image: ${entry.thumbnailUrl}`);
+    assert(publicUrlExists(entry.retinaThumbnailUrl), `Missing public artwork image: ${entry.retinaThumbnailUrl}`);
+    assert(entry.thumbnailUrl.startsWith("/images/"), `Catalog artwork must use existing public images after removing generated library thumbnails: ${entry.thumbnailUrl}`);
   }
 
   for (const sample of [
-    ["Earth", "09-cradle-world-480.webp"],
-    ["Moon", "03-archive-moon-480.webp"],
-    ["Mercury", "02-rogue-planet-camps-480.webp"],
-    ["Venus", "06-crystal-storm-world-480.webp"],
-    ["Mars", "16-desert-skyport-480.webp"],
-    ["Phobos", "03-ring-miner-convoy-480.webp"],
-    ["Deimos", "03-ring-miner-convoy-480.webp"],
-    ["Asteroid Belt", "08-asteroid-city-480.webp"],
-    ["Sol", "08-solar-forge-480.webp"]
+    ["Earth", "09-cradle-world.png"],
+    ["Moon", "03-archive-moon.png"],
+    ["Mercury", "02-rogue-planet-camps.png"],
+    ["Venus", "06-crystal-storm-world.png"],
+    ["Mars", "16-desert-skyport.png"],
+    ["Phobos", "03-ring-miner-convoy.png"],
+    ["Deimos", "03-ring-miner-convoy.png"],
+    ["Asteroid Belt", "08-asteroid-city.png"],
+    ["Sol", "08-solar-forge.png"]
   ] as const) {
     assertResolvedSample(sample[0], sample[1]);
   }
 
   assert(thumbnailUrls.length === canonicalRecords.length, `Every visual library record needs a thumbnail URL; ${thumbnailUrls.length}/${canonicalRecords.length} resolved.`);
   assert(missingThumbnailFiles.length === 0, `Broken thumbnail derivatives: ${missingThumbnailFiles.join(", ")}`);
-  assert(sourceUrlLeaks.length === 0, `Library cards must not use source images directly: ${sourceUrlLeaks.join(", ")}`);
   assert(privatePathLeaks.length === 0, "Library artwork diagnostics must not leak private paths.");
-  assert(averageThumbnailBytes <= 60_000, `Average thumbnail should stay under 60KB target; received ${averageThumbnailBytes}.`);
-  assert(largestThumbnailBytes <= 140_000, `Largest thumbnail should stay bounded; received ${largestThumbnailBytes}.`);
   assert(report.genericFallbackInUse === 0, `Neutral placeholders remain in Library cards: ${report.genericFallbackInUse}`);
-  assert(packageJson.scripts?.["generate:library-thumbnails"], "generate:library-thumbnails script must be registered.");
+  assert(!packageJson.scripts?.["generate:library-thumbnails"], "Generated library thumbnail script should not be registered after removing the thumbnail folder.");
   for (const script of [
     "verify:canonical-library-artwork",
     "verify:library-artwork-resolution",
@@ -192,7 +189,7 @@ function main() {
       thumbnailCount: thumbnailUrls.length,
       averageThumbnailBytes,
       largestThumbnailBytes,
-      fullResolutionCardImages: sourceUrlLeaks.length,
+      publicImageCardSources: sourceUrlLeaks.length,
       brokenThumbnailCount: missingThumbnailFiles.length
     },
     samples: Object.fromEntries(["Earth", "Moon", "Mercury", "Venus", "Mars", "Phobos", "Deimos", "Asteroid Belt", "Sol"].map((name) => {

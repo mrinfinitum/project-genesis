@@ -1095,21 +1095,21 @@ function inventoryCompletion(items: InventoryItem[]) {
 }
 
 const categoryThumbnailMap: Partial<Record<AssetLibraryCategoryId, string>> = {
-  "top-hud": "/assets/roblox-art/asset_top_bar_resource_panel_strip/asset_top_bar_resource_panel_strip.png",
-  "left-navigation": "/assets/roblox-art/asset_overview_icon/asset_overview_icon.png",
-  "upgrade-categories": "/assets/roblox-art/asset_cpuchip_icon/asset_cpuchip_icon.png",
-  "research-ui": "/assets/roblox-art/asset_research_icon/asset_research_icon.png",
-  "buildings-ui": "/assets/roblox-art/asset_buildings_icon/asset_buildings_icon.png",
-  "galaxy-ui": "/assets/roblox-art/asset_galaxy_icon/asset_galaxy_icon.png",
-  "planet-ui": "/assets/roblox-art/asset_spaceport_icon/asset_spaceport_icon.png",
-  "settings-ui": "/assets/roblox-art/asset_settings_icon/asset_settings_icon.png",
-  "loading-ui": "/assets/roblox-art/asset_dashboard_background/asset_dashboard_background.png",
-  discovery: "/assets/roblox-art/asset_galaxy_icon/asset_galaxy_icon.png",
-  encyclopedia: "/assets/roblox-art/asset_overview_icon/asset_overview_icon.png",
-  "ai-agents": "/assets/roblox-art/asset_aiassistant_icon/asset_aiassistant_icon.png",
-  icons: "/assets/roblox-art/asset_overview_icon/asset_overview_icon.png",
-  backgrounds: "/assets/roblox-art/asset_dashboard_background/asset_dashboard_background.png",
-  animations: "/assets/roblox-art/asset_auto_robot_icon/asset_auto_robot_icon.png"
+  "top-hud": "/assets/game-art/asset_top_bar_resource_panel_strip/asset_top_bar_resource_panel_strip.png",
+  "left-navigation": "/assets/game-art/asset_overview_icon/asset_overview_icon.png",
+  "upgrade-categories": "/assets/game-art/asset_cpuchip_icon/asset_cpuchip_icon.png",
+  "research-ui": "/assets/game-art/asset_research_icon/asset_research_icon.png",
+  "buildings-ui": "/assets/game-art/asset_buildings_icon/asset_buildings_icon.png",
+  "galaxy-ui": "/assets/game-art/asset_galaxy_icon/asset_galaxy_icon.png",
+  "planet-ui": "/assets/game-art/asset_spaceport_icon/asset_spaceport_icon.png",
+  "settings-ui": "/assets/game-art/asset_settings_icon/asset_settings_icon.png",
+  "loading-ui": "/assets/game-art/asset_dashboard_background/asset_dashboard_background.png",
+  discovery: "/assets/game-art/asset_galaxy_icon/asset_galaxy_icon.png",
+  encyclopedia: "/assets/game-art/asset_overview_icon/asset_overview_icon.png",
+  "ai-agents": "/assets/game-art/asset_aiassistant_icon/asset_aiassistant_icon.png",
+  icons: "/assets/game-art/asset_overview_icon/asset_overview_icon.png",
+  backgrounds: "/assets/game-art/asset_dashboard_background/asset_dashboard_background.png",
+  animations: "/assets/game-art/asset_auto_robot_icon/asset_auto_robot_icon.png"
 };
 
 const categoryToneMap: Partial<Record<AssetLibraryCategoryId, GeneratedLibraryCardTone>> = {

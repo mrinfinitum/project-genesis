@@ -86,12 +86,8 @@ export type CanonicalArtworkCatalogEntry = {
   semanticStrength: "record" | "class" | "type";
 };
 
-const PUBLIC_IMAGE_DERIVATIVE_ROOT = "/assets/library-thumbnails";
-
-function derivativeUrl(sourceUrl: string, size: 480 | 960) {
-  const filename = sourceUrl.split("/").pop() ?? "artwork.png";
-  const basename = filename.replace(/\.[^.]+$/, "");
-  return `${PUBLIC_IMAGE_DERIVATIVE_ROOT}/${basename}-${size}.webp`;
+function derivativeUrl(sourceUrl: string, _size: 480 | 960) {
+  return sourceUrl;
 }
 
 function catalogEntry(input: Omit<CanonicalArtworkCatalogEntry, "thumbnailUrl" | "retinaThumbnailUrl" | "previewUrl" | "width" | "height" | "aspectRatio">): CanonicalArtworkCatalogEntry {

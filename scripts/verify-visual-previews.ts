@@ -147,7 +147,7 @@ async function main() {
   assert(Boolean(missingPreview.requirement?.actionLabel), "Missing preview should include a direct action.");
 
   const webMappedPreview = visual.resolveProductionAssetPreview(mockAsset({
-    platformMappings: { web: { path: "/assets/roblox-art/asset_dashboard_background/asset_dashboard_background.png", status: "published" } }
+    platformMappings: { web: { path: "/assets/game-art/asset_dashboard_background/asset_dashboard_background.png", status: "published" } }
   }));
   assert(webMappedPreview.status === "Published", "A valid Web mapping must be enough to render a preview.");
   assert(webMappedPreview.url.includes("asset_dashboard_background"), "Web-mapped preview should use the published path.");
@@ -157,7 +157,7 @@ async function main() {
     name: "Dashboard Background",
     artKey: "dashboard_background",
     aliases: ["assets/UI/hud_background_1920x1080.png"],
-    platformMappings: { web: { path: "/assets/roblox-art/asset_dashboard_background/asset_dashboard_background.png" } }
+    platformMappings: { web: { path: "/assets/game-art/asset_dashboard_background/asset_dashboard_background.png" } }
   });
   const aliasMatch = visual.findAssetForPreviewKeys([aliasAsset], ["dashboard_hero"]);
   assert(aliasMatch?.id === "asset_dashboard_background", "Screen design aliases should resolve to imported canonical assets.");

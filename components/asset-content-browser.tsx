@@ -30,6 +30,7 @@ const browserPreferenceKeys = {
 };
 
 const contentTree: ContentBrowserNode[] = [
+  { id: "all-assets", label: "All Uploaded Art", terms: ["asset"] },
   { id: "favorites", label: "Favorites", terms: ["favorite"] },
   { id: "recently-used", label: "Recently Used", terms: ["recent"] },
   { id: "recently-opened", label: "Recently Opened", terms: ["recent"] },
@@ -120,7 +121,7 @@ const contentTree: ContentBrowserNode[] = [
 ];
 
 const defaultExpanded = ["universe", "civilization", "discovery", "world-systems", "user-interface"];
-const statusFilters: Array<"all" | InventoryStatus | "missing_art"> = ["all", "missing_art", "approved", "published", "needs_review", "missing", "uploaded", "unmapped"];
+const statusFilters: Array<"all" | Exclude<InventoryStatus, "missing">> = ["all", "approved", "published", "needs_review", "uploaded", "processing", "invalid", "unmapped"];
 const sortOptions = ["name", "newest", "oldest", "status", "recently_updated", "recently_used"] as const;
 const engineFilters = ["all", "web", "roblox", "ios", "android"] as const;
 const typeFilters = ["all", "icon", "background", "panel", "animation", "audio", "video", "artwork"] as const;
@@ -163,7 +164,7 @@ const categoryInitialNodeMap: Partial<Record<InventoryItem["categoryId"], string
 function resolveInitialNode(value?: string | null) {
   if (value && flatNodes.some((node) => node.id === value)) return value;
   if (value && value in categoryInitialNodeMap) return categoryInitialNodeMap[value as InventoryItem["categoryId"]] ?? "user-interface";
-  return "user-interface";
+  return "all-assets";
 }
 
 function safeReadArray(key: string) {
@@ -213,6 +214,7 @@ function searchText(item: InventoryItem) {
 }
 
 function itemMatchesNode(item: InventoryItem, node: ContentBrowserNode, memory?: { favorites: Set<string>; recentlyUsed: string[]; recentlyOpened: string[] }) {
+  if (node.id === "all-assets") return true;
   if (node.id === "favorites") return memory?.favorites.has(item.id) ?? false;
   if (node.id === "recently-used") return memory?.recentlyUsed.includes(item.id) ?? false;
   if (node.id === "recently-opened") return memory?.recentlyOpened.includes(item.id) ?? false;
@@ -232,7 +234,12 @@ function itemHref(item: InventoryItem) {
 }
 
 function imageFor(item: InventoryItem) {
-  return item.previewUrl;
+  if (item.previewUrl?.startsWith("/")) return item.previewUrl;
+  return null;
+}
+
+function isUploadedAssetItem(item: InventoryItem) {
+  return item.sourceType === "asset_registry" && Boolean(item.sourceAssetId) && Boolean(item.previewUrl?.startsWith("/"));
 }
 
 function resolutionBucket(item: InventoryItem) {
@@ -378,7 +385,7 @@ function PreviewSurface({ item, className = "h-full" }: { item: InventoryItem; c
     <div className={`${className} grid w-full place-items-center bg-[radial-gradient(circle_at_35%_25%,rgba(103,232,249,0.12),transparent_34%),linear-gradient(135deg,rgba(15,23,42,0.88),rgba(2,6,23,0.96))]`}>
       <div className="text-center">
         <FileImage className="mx-auto h-5 w-5 text-cyan-100/40" />
-        <p className="mt-2 text-xs font-black text-slate-300">{item.status === "missing" ? "Artwork Needed" : statusLabel(item.status)}</p>
+        <p className="mt-2 text-xs font-black text-slate-300">Preview Unavailable</p>
       </div>
     </div>
   );
@@ -709,6 +716,7 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
   const [inspectorItem, setInspectorItem] = useState<InventoryItem | null>(null);
   const [contextMenu, setContextMenu] = useState<{ item: InventoryItem; x: number; y: number } | null>(null);
   const activeNode = nodeById(activeNodeId);
+  const assetItems = useMemo(() => state.assetLibraryInventory.items.filter(isUploadedAssetItem), [state.assetLibraryInventory.items]);
 
   useEffect(() => {
     const storedNode = window.localStorage.getItem(browserPreferenceKeys.activeNode);
@@ -750,26 +758,25 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
     const next = new Map<string, number>();
     const memory = { favorites, recentlyUsed, recentlyOpened };
     for (const node of flatNodes) {
-      next.set(node.id, state.assetLibraryInventory.items.filter((item) => itemMatchesNode(item, node, memory)).length);
+      next.set(node.id, assetItems.filter((item) => itemMatchesNode(item, node, memory)).length);
     }
     return next;
-  }, [favorites, recentlyOpened, recentlyUsed, state.assetLibraryInventory.items]);
+  }, [assetItems, favorites, recentlyOpened, recentlyUsed]);
 
   const filteredItems = useMemo(() => {
     const needle = query.trim().toLowerCase();
     const memory = { favorites, recentlyUsed, recentlyOpened };
-    const nodeItems = state.assetLibraryInventory.items.filter((item) => itemMatchesNode(item, activeNode, memory));
+    const nodeItems = assetItems.filter((item) => itemMatchesNode(item, activeNode, memory));
     return sortItems(nodeItems.filter((item) => {
       if (needle && !searchText(item).includes(needle)) return false;
-      if (statusFilter === "missing_art" && !["missing", "unmapped", "invalid"].includes(item.status)) return false;
-      if (statusFilter !== "all" && statusFilter !== "missing_art" && item.status !== statusFilter) return false;
+      if (statusFilter !== "all" && item.status !== statusFilter) return false;
       if (engineFilter !== "all" && item.platformReadiness[engineFilter] !== "ready") return false;
       if (typeFilter !== "all" && !`${item.role} ${item.semanticAssetKey}`.toLowerCase().includes(typeFilter.replace("_", " "))) return false;
       if (resolutionFilter !== "all" && resolutionBucket(item) !== resolutionFilter) return false;
       if (animatedOnly && !isAnimated(item)) return false;
       return true;
     }), sort);
-  }, [activeNode, animatedOnly, engineFilter, favorites, query, recentlyOpened, recentlyUsed, resolutionFilter, sort, state.assetLibraryInventory.items, statusFilter, typeFilter]);
+  }, [activeNode, animatedOnly, assetItems, engineFilter, favorites, query, recentlyOpened, recentlyUsed, resolutionFilter, sort, statusFilter, typeFilter]);
 
   useEffect(() => {
     setSelectedId((current) => current && filteredItems.some((item) => item.id === current) ? current : filteredItems[0]?.id ?? null);
@@ -874,7 +881,7 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
   }
 
   function handleTreeDrop(assetId: string, nodeId: string) {
-    const item = state.assetLibraryInventory.items.find((candidate) => candidate.id === assetId);
+    const item = assetItems.find((candidate) => candidate.id === assetId);
     if (!item) return;
     setBulkMessage(`Move prepared: ${item.displayName} → ${nodeById(nodeId).label}. No canonical ID changed; confirm in Asset Detail to preserve provenance.`);
   }
@@ -884,7 +891,7 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
       <header className="rounded-md border border-cyan-300/15 bg-[#07101e]/88 px-4 py-3 shadow-glow">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.22em] text-cyan-200">Content Browser</p>
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-cyan-200">Uploaded Art Browser</p>
             <h1 className="text-2xl font-black text-white">Asset Library</h1>
           </div>
           <div className="flex flex-wrap gap-2 text-xs font-bold text-slate-400">
@@ -920,7 +927,7 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
                 {Object.entries(thumbnailSizes).map(([id, option]) => <option key={id} value={id}>{option.label}</option>)}
               </select>
               <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as typeof statusFilter)} className="h-11 rounded-md border border-cyan-300/15 bg-slate-950/80 px-3 text-sm font-bold text-white outline-none">
-                {statusFilters.map((status) => <option key={status} value={status}>{status === "all" ? "All Status" : status === "missing_art" ? "Missing Art" : statusLabel(status)}</option>)}
+                {statusFilters.map((status) => <option key={status} value={status}>{status === "all" ? "All Status" : statusLabel(status)}</option>)}
               </select>
               <select value={engineFilter} onChange={(event) => setEngineFilter(event.target.value as typeof engineFilter)} className="h-11 rounded-md border border-cyan-300/15 bg-slate-950/80 px-3 text-sm font-bold text-white outline-none">
                 {engineFilters.map((engine) => <option key={engine} value={engine}>{engine === "all" ? "All Engines" : engine.toUpperCase()}</option>)}
@@ -940,7 +947,7 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
                 <input type="checkbox" checked={animatedOnly} onChange={(event) => setAnimatedOnly(event.target.checked)} className="h-4 w-4 accent-cyan-300" />
                 Animated
               </label>
-              <p className="text-xs font-semibold text-slate-500">{visibleItems.length} shown / {filteredItems.length} matched / {state.assetLibraryInventory.items.length} indexed</p>
+              <p className="text-xs font-semibold text-slate-500">{visibleItems.length} shown / {filteredItems.length} matched / {assetItems.length} uploaded assets</p>
             </div>
           </div>
           <BulkActionBar selectedCount={selectedIds.size} message={bulkMessage || "Keyboard: arrows navigate, Enter opens, Space previews, I inspects, Command/Ctrl+A selects visible assets."} onAction={runBulkAction} />

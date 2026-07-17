@@ -199,7 +199,7 @@ function inferredRobloxPngUrl(asset: ProductionAsset) {
   if (webUrl) return webUrl;
   const hasRobloxMapping = Boolean(asset.platformMappings?.roblox);
   if (!hasRobloxMapping) return "";
-  return sanitizePreviewUrl(`/assets/roblox-art/${asset.id}/${asset.id}.png`);
+  return sanitizePreviewUrl(`/assets/game-art/${asset.id}/${asset.id}.png`);
 }
 
 export function findAssetForPreviewKeys(assets: ProductionAsset[] | undefined, keys: Array<string | undefined>) {

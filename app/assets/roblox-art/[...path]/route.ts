@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { NextResponse } from "next/server";
 
-const robloxArtRoot = path.join(process.cwd(), "public", "assets", "roblox-art");
+const gameArtRoot = path.join(process.cwd(), "public", "assets", "game-art");
 
 function contentTypeFor(filePath: string) {
   const ext = path.extname(filePath).toLowerCase();
@@ -20,8 +20,8 @@ export async function GET(_request: Request, context: { params: Promise<{ path: 
     return new NextResponse("Not found", { status: 404 });
   }
 
-  const filePath = path.join(robloxArtRoot, ...safeSegments);
-  const relative = path.relative(robloxArtRoot, filePath);
+  const filePath = path.join(gameArtRoot, ...safeSegments);
+  const relative = path.relative(gameArtRoot, filePath);
   if (relative.startsWith("..") || path.isAbsolute(relative)) {
     return new NextResponse("Not found", { status: 404 });
   }

@@ -165,13 +165,13 @@ function readinessFromAsset(asset?: ProductionAsset | null) {
 
 function previewUrlForAsset(asset?: ProductionAsset | null) {
   const webPath = (asset?.platformMappings.web as { path?: unknown } | undefined)?.path;
-  if (typeof webPath === "string" && webPath) return webPath;
+  if (typeof webPath === "string" && webPath) return webPath.replace("/assets/roblox-art/", "/assets/game-art/");
   const publicDerivative = asset?.derivatives.find((item) => {
     const url = item.publicUrl || item.storagePath;
     return Boolean(url) && !url.startsWith("rbxassetid://");
   });
-  if (publicDerivative) return publicDerivative.publicUrl || publicDerivative.storagePath;
-  return asset?.sourceFiles.find((source) => source.previewUrl)?.previewUrl ?? null;
+  if (publicDerivative) return (publicDerivative.publicUrl || publicDerivative.storagePath).replace("/assets/roblox-art/", "/assets/game-art/");
+  return asset?.sourceFiles.find((source) => source.previewUrl)?.previewUrl?.replace("/assets/roblox-art/", "/assets/game-art/") ?? null;
 }
 
 function currentDimensions(asset?: ProductionAsset | null) {
@@ -303,7 +303,7 @@ export async function buildAssetLibraryInventory(input: {
       sourceType: "asset_registry",
       status: statusForAsset(asset),
       sourceAssetId: asset.id,
-      previewUrl: asset.derivatives[0]?.publicUrl ?? asset.sourceFiles.find((source) => source.previewUrl)?.previewUrl ?? null,
+      previewUrl: previewUrlForAsset(asset),
       currentDimensions: currentDimensions(asset),
       reference: { type: "asset_registry", id: asset.id, name: asset.name, href: `/assets/${encodeURIComponent(asset.id)}` }
     });

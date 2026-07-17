@@ -21,7 +21,7 @@
       "preferredDownloadType": "derivative",
       "reasonCode": "derivative_available",
       "userMessage": "This record references an external project source from an import manifest. Upload or publish a Studio-managed source copy to enable source downloads. A published derivative is available instead.",
-      "derivativeUrl": "/assets/roblox-art/asset_top_bar_resource_panel_strip/asset_top_bar_resource_panel_strip.png"
+      "derivativeUrl": "/assets/game-art/asset_top_bar_resource_panel_strip/asset_top_bar_resource_panel_strip.png"
     }
   },
   "assetRecordAudit": {

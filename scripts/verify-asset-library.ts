@@ -42,7 +42,8 @@ async function main() {
   assertIncludes("Asset Library page", assetLibraryPage, "AssetContentBrowser");
   assertIncludes("Asset Library page", assetLibraryPage, "initialNode={folder ?? category ?? section ?? null}");
   for (const expected of [
-    "Content Browser",
+    "Uploaded Art Browser",
+    "All Uploaded Art",
     "ContentBrowserTree",
     "AssetBrowserCard",
     "BulkActionBar",
@@ -65,7 +66,9 @@ async function main() {
     "categoryInitialNodeMap",
     "project-genesis-content-browser-expanded",
     "Search name, tags, semantic role, category, status, canonical ID",
-    "Missing Art",
+    "isUploadedAssetItem",
+    "assetItems.length",
+    "uploaded assets",
     "All Engines",
     "Any Resolution",
     "Animated",
@@ -73,6 +76,8 @@ async function main() {
   ]) {
     assertIncludes("Asset Content Browser", assetContentBrowser, expected);
   }
+  assertNotIncludes("Asset Content Browser", assetContentBrowser, "missing_art");
+  assertNotIncludes("Asset Content Browser", assetContentBrowser, "Artwork Needed");
   for (const expected of ["Delete", "Move", "Replace", "Tag", "Publish", "Approve"]) {
     assertIncludes("Asset Content Browser bulk actions", assetContentBrowser, expected);
   }
@@ -162,11 +167,19 @@ async function main() {
   const { buildGameEngineExport } = await import("@/lib/export/game-engine");
 
   const state = await getAssetProductionState();
+  const uploadedAssetItems = state.assetLibraryInventory.items.filter((item) => item.sourceType === "asset_registry" && Boolean(item.sourceAssetId) && Boolean(item.previewUrl?.startsWith("/")));
+  const registryItemsWithoutPreview = state.assetLibraryInventory.items.filter((item) => item.sourceType === "asset_registry" && Boolean(item.sourceAssetId) && !item.previewUrl?.startsWith("/"));
   assert(state.assets.length > 0, "Asset Library must resolve existing canonical asset records.");
   assert(state.missingRequirements.length >= 0, "Asset Library missing-assets collection must resolve.");
   assert(state.dashboard.totalAssets === state.assets.length, "Asset Library dashboard must count canonical assets.");
   assert(state.assetLibraryInventory.defaultFilter === "all", "Asset Library must default to all statuses.");
-  assert(state.assetLibraryInventory.items.length > state.assets.length, "Asset Library inventory must include derived requirements, not only published assets.");
+  assert(uploadedAssetItems.length > 0, "Asset Library browser must have uploaded/rendered art to show.");
+  assert(uploadedAssetItems.length + registryItemsWithoutPreview.length === state.assets.length, `Asset Library browser accounting must split uploaded art from registry records without previews; received ${uploadedAssetItems.length} visible and ${registryItemsWithoutPreview.length} hidden for ${state.assets.length} assets.`);
+  assert(state.assetLibraryInventory.items.length > uploadedAssetItems.length, "Asset Library reconciliation inventory must retain derived requirements outside the browser.");
+  assert(uploadedAssetItems.every((item) => item.previewUrl?.startsWith("/assets/game-art/") || item.previewUrl?.startsWith("/images/") || item.previewUrl?.startsWith("/")), "Uploaded asset previews must resolve to browser-safe public paths.");
+  assert(uploadedAssetItems.every((item) => !item.previewUrl?.startsWith("rbxassetid://")), "Uploaded asset previews must not render Roblox-only IDs directly.");
+  assert(!uploadedAssetItems.some((item) => item.sourceType !== "asset_registry"), "Generated requirements must not appear in the Asset Library browsing set.");
+  assert(registryItemsWithoutPreview.length === 1 && registryItemsWithoutPreview[0]?.sourceAssetId === "asset_click_interface_circle", `Only the known Roblox-ID-only click interface asset may be hidden for missing preview; received ${registryItemsWithoutPreview.map((item) => item.sourceAssetId).join(", ") || "(none)"}.`);
   assert(state.assetLibraryInventory.duplicateSemanticKeys.length === 0, `Duplicate semantic keys found: ${state.assetLibraryInventory.duplicateSemanticKeys.map((item) => item.semanticAssetKey).join(", ")}`);
 
   const topHud = state.assetLibraryInventory.categorySummaries["top-hud"];
@@ -193,7 +206,7 @@ async function main() {
     assert(item, `Top HUD inventory is missing ${semanticAssetKey}.`);
     assert(item.sourceAssetId === sourceAssetId, `${semanticAssetKey} must resolve to imported Roblox asset ${sourceAssetId}; received ${item.sourceAssetId ?? "(none)"}.`);
     assert(item.status === "published", `${semanticAssetKey} must be published after Roblox/Web alias reconciliation; received ${item.status}.`);
-    assert(Boolean(item.previewUrl?.startsWith("/assets/roblox-art/")), `${semanticAssetKey} must use the public Web derivative as preview; received ${item.previewUrl ?? "(none)"}.`);
+    assert(Boolean(item.previewUrl?.startsWith("/assets/game-art/")), `${semanticAssetKey} must use the public Web derivative as preview; received ${item.previewUrl ?? "(none)"}.`);
   }
   const identityFrame = state.assetLibraryInventory.items.find((row) => row.semanticAssetKey === "civilization_identity_frame");
   assert(identityFrame?.status === "missing", "Civilization identity frame must remain missing until the rbxassetid://0 placeholder is replaced.");
@@ -225,6 +238,9 @@ async function main() {
     route: "/asset-library",
     deprecatedRoute: "/game-art-import",
     assets: state.assets.length,
+    browserItems: uploadedAssetItems.length,
+    hiddenRegistryWithoutPreview: registryItemsWithoutPreview.length,
+    hiddenRequirementItems: state.assetLibraryInventory.items.length - uploadedAssetItems.length,
     missingAssets: state.missingRequirements.length,
     inventoryItems: state.assetLibraryInventory.items.length,
     categoryCounts: {

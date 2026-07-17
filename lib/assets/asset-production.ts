@@ -1805,7 +1805,7 @@ function replacementTask(input: { id: string; title: string; linkedObject: strin
 export async function publishImportedRobloxArtForWeb(options: { sourceRoot?: string; publicRoot?: string } = {}) {
   const now = new Date().toISOString();
   const sourceRoot = path.resolve(options.sourceRoot ?? path.join(process.cwd(), "Roblox"));
-  const publicRoot = path.resolve(options.publicRoot ?? path.join(process.cwd(), "public", "assets", "roblox-art"));
+  const publicRoot = path.resolve(options.publicRoot ?? path.join(process.cwd(), "public", "assets", "game-art"));
   const store = await readProductionStore();
   const latestManifestReport = store.robloxManifestReports?.[0];
   const copiedFiles: RobloxArtWebPublishReport["copiedFiles"] = [];
@@ -1864,7 +1864,7 @@ export async function publishImportedRobloxArtForWeb(options: { sourceRoot?: str
     const filename = safePublicFilename(assetId, currentSource);
     const outputDir = path.join(publicRoot, assetId);
     const outputPath = path.join(outputDir, filename);
-    const publicPath = `/assets/roblox-art/${assetId}/${filename}`;
+    const publicPath = `/assets/game-art/${assetId}/${filename}`;
     await mkdir(outputDir, { recursive: true });
     await copyFile(sourcePath, outputPath);
 
@@ -1921,7 +1921,7 @@ export async function publishImportedRobloxArtForWeb(options: { sourceRoot?: str
     const priorityGroup = dashboardPriorityGroup(asset.id, asset.category, asset.usageReferences);
     if (!priorityGroup) continue;
     const webPath = (asset.platformMappings.web as Record<string, unknown> | undefined)?.path;
-    const webReady = typeof webPath === "string" && webPath.startsWith("/assets/roblox-art/");
+    const webReady = typeof webPath === "string" && webPath.startsWith("/assets/game-art/");
     dashboardReadiness.push({
       assetId: asset.id,
       artKey: asset.artKey,

@@ -57,7 +57,10 @@ async function main() {
   assert(existsSync(path.join(process.cwd(), "docs/studio-gold-checklist.md")), "Studio Gold checklist is missing.");
 
   const assetState = await getAssetProductionState();
-  assert(assetState.assetLibraryInventory.items.length > assetState.assets.length, "Content Browser must index derived requirements as well as registry assets.");
+  const uploadedAssetItems = assetState.assetLibraryInventory.items.filter((item) => item.sourceType === "asset_registry" && Boolean(item.sourceAssetId) && Boolean(item.previewUrl?.startsWith("/")));
+  const registryItemsWithoutPreview = assetState.assetLibraryInventory.items.filter((item) => item.sourceType === "asset_registry" && Boolean(item.sourceAssetId) && !item.previewUrl?.startsWith("/"));
+  assert(uploadedAssetItems.length + registryItemsWithoutPreview.length === assetState.assets.length, "Asset Browser must browse only uploaded/imported asset records with real previews.");
+  assert(assetState.assetLibraryInventory.items.length > uploadedAssetItems.length, "Studio search and production audits must retain derived requirements outside the Asset Browser.");
 
   const search = await searchStudio("labor", 12);
   assert(search.totalIndexed > 1000, `Global search index is unexpectedly small: ${search.totalIndexed}.`);
