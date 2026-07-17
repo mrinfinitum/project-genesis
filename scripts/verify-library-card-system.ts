@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { handoffData } from "@/data/handoff";
+import { resolveCanonicalRecordArtwork } from "@/lib/artwork/canonical-record-artwork";
 import { canonicalBuildingLibrary } from "@/lib/buildings/taxonomy";
 import { getUniverseLibraryData } from "@/lib/universe/library";
 import type { ResearchNode } from "@/types/schema";
@@ -45,8 +46,22 @@ const researchRows = handoffData.research as ResearchNode[];
 const generatedRecordTotal = universeRecords.length + canonicalBuildingLibrary.length + researchRows.length;
 const thumbnailUrls = [
   ...universeRecords.map((record) => record.thumbnailUrl),
-  ...canonicalBuildingLibrary.map(() => "/assets/roblox-art/asset_buildings_icon/asset_buildings_icon.png"),
-  ...researchRows.map(() => "/assets/roblox-art/asset_research_icon/asset_research_icon.png")
+  ...canonicalBuildingLibrary.map((record) => resolveCanonicalRecordArtwork({
+    id: record.id,
+    name: record.displayName,
+    type: record.familyName,
+    classification: record.subcategoryName,
+    parent: record.era,
+    tone: "building"
+  }).thumbnail.url),
+  ...researchRows.map((record) => resolveCanonicalRecordArtwork({
+    id: record.id,
+    name: record.name,
+    type: record.primary_unlock_type || record.branch_id || "Research",
+    classification: record.travel_tier || record.space_system_unlocked || "Research Node",
+    parent: record.era,
+    tone: "research"
+  }).thumbnail.url)
 ];
 const missingThumbnails = thumbnailUrls.filter((url) => !url);
 const brokenThumbnails = thumbnailUrls.filter((url) => {
@@ -66,7 +81,7 @@ function main() {
   assert(card.includes("export function resolveLibraryCardArtwork"), "GeneratedLibraryCard must expose resolveLibraryCardArtwork.");
   assert(card.includes("aspect-video"), "Library card image area must use a stable 16:9 thumbnail region.");
   assert(card.includes("object-cover"), "Library thumbnails must use object-fit cover.");
-  assert(card.includes("width={480}") && card.includes("height={270}"), "Library thumbnails must reserve 480x270 dimensions.");
+  assert(card.includes("width={artwork.thumbnail.width}") && card.includes("height={artwork.thumbnail.height}"), "Library thumbnails must reserve resolver-provided dimensions.");
   assert(card.includes("alt={artwork.altText}"), "Library thumbnails must expose meaningful alt text.");
   assert(card.includes("loading=\"lazy\""), "Library thumbnails must lazy load.");
   assert(card.includes("decoding=\"async\""), "Library thumbnails must async decode.");
@@ -78,8 +93,12 @@ function main() {
 
   assert(universeComponent.includes("GeneratedLibraryCard"), "Universe libraries must render GeneratedLibraryCard.");
   assert(!universeComponent.includes("function GeneratedRecordCard"), "Universe libraries must not keep custom card implementations.");
+  assert(!read("lib/universe/library.ts").includes("libraryThumbnails"), "Universe Library must not use a hardcoded thumbnail table.");
+  assert(!read("lib/universe/library.ts").includes("asset_galaxy_icon"), "Universe Library must not use the generic galaxy icon for generated records.");
   assert(read("app/buildings/page.tsx").includes("GeneratedLibraryCard"), "Building Library must use GeneratedLibraryCard.");
   assert(read("app/research/page.tsx").includes("GeneratedLibraryCard"), "Research Library must use GeneratedLibraryCard.");
+  assert(!read("app/buildings/page.tsx").includes("asset_buildings_icon"), "Building Library should let the canonical artwork resolver choose thumbnails.");
+  assert(!read("app/research/page.tsx").includes("asset_research_icon"), "Research Library should let the canonical artwork resolver choose thumbnails.");
   assert(assetProduction.includes("library_thumbnail") && assetProduction.includes("480, 270") && assetProduction.includes("\"WebP\""), "Asset derivative presets must include library_thumbnail 480x270 WebP.");
   assert(assetProduction.includes("library_thumbnail_retina") && assetProduction.includes("960, 540"), "Asset derivative presets must include library_thumbnail_retina 960x540.");
   assert(assetProduction.includes("quick_preview") && assetProduction.includes("Never use full-resolution source images"), "Asset derivative presets must include quick_preview guidance.");

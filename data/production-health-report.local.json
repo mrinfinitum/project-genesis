@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-17T02:31:36.383Z",
+  "generatedAt": "2026-07-17T17:58:06.566Z",
   "architectureVersion": "1.0.0",
   "runtimeVersion": "game-runtime-v1",
   "contentVersion": 32,
@@ -58,15 +58,15 @@
     "totalChecked": 152,
     "brokenThumbnailCount": 0,
     "missingThumbnailCount": 0,
-    "averageThumbnailBytes": 21191,
-    "largestThumbnailBytes": 22707,
+    "averageThumbnailBytes": 12122,
+    "largestThumbnailBytes": 18856,
     "warningOver120KbCount": 0,
-    "initialLibraryImagePayloadBytes": 3221092
+    "initialLibraryImagePayloadBytes": 1842478
   },
   "performance": {
     "buildAvailable": true,
-    "chunkCount": 30,
-    "totalChunkBytes": 2447290,
+    "chunkCount": 31,
+    "totalChunkBytes": 2647084,
     "largestChunk": {
       "file": "7644-17efa35068cc0740.js",
       "bytes": 979837

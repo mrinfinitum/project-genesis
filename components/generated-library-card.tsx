@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Database } from "lucide-react";
+import { resolveCanonicalRecordArtwork, type CanonicalArtworkFallbackReason, type CanonicalArtworkState } from "@/lib/artwork/canonical-record-artwork";
 import { cn } from "@/lib/utils";
 
 export type GeneratedLibraryCardTone = "galaxy" | "sector" | "system" | "star" | "planet" | "discovery" | "civilization" | "building" | "research" | "neutral";
@@ -20,24 +21,44 @@ export type GeneratedLibraryCardRecord = {
   thumbnailUrl?: string;
   thumbnailAvifUrl?: string;
   thumbnailWebpUrl?: string;
+  thumbnailRetinaUrl?: string;
   thumbnailSrcSet?: string;
   mediumPreviewUrl?: string;
+  previewUrl?: string;
+  artworkUrl?: string;
+  primaryArtworkAssetId?: string;
+  thumbnailAssetId?: string;
+  previewAssetId?: string;
+  approvedArtworkVersionId?: string;
   focalPoint?: string;
+  artworkState?: CanonicalArtworkState;
+  artworkFallbackReason?: CanonicalArtworkFallbackReason;
+  artworkSourceAssetId?: string;
+  artworkAltText?: string;
+  artworkAspectRatio?: number;
+  artworkWidth?: number;
+  artworkHeight?: number;
 };
 
 export type LibraryCardArtworkResolution = {
   sourceAssetId: string;
   thumbnail: {
     url?: string;
+    retinaUrl?: string;
     avifUrl?: string;
     webpUrl?: string;
     srcSet?: string;
+    width: number;
+    height: number;
+    aspectRatio: number;
   };
   quickPreviewUrl?: string;
   focalPoint: string;
   altText: string;
   status: "resolved" | "fallback" | "missing";
-  fallbackReason: "published_thumbnail" | "canonical_derivative" | "type_fallback" | "missing_art";
+  fallbackReason: CanonicalArtworkFallbackReason;
+  artworkState: CanonicalArtworkState;
+  sourceAvailability: "record_specific" | "semantic_catalog" | "type_fallback" | "none";
 };
 
 const toneClasses: Record<GeneratedLibraryCardTone, string> = {
@@ -54,23 +75,22 @@ const toneClasses: Record<GeneratedLibraryCardTone, string> = {
 };
 
 export function resolveLibraryCardArtwork(record: GeneratedLibraryCardRecord): LibraryCardArtworkResolution {
-  const hasThumbnail = Boolean(record.thumbnailUrl || record.thumbnailAvifUrl || record.thumbnailWebpUrl || record.thumbnailSrcSet);
-  const hasPreview = Boolean(record.mediumPreviewUrl);
-  const thumbnailUrl = record.thumbnailUrl ?? record.thumbnailWebpUrl ?? record.thumbnailAvifUrl ?? record.mediumPreviewUrl;
-  const status = hasThumbnail ? "resolved" : hasPreview ? "fallback" : "missing";
+  const artwork = resolveCanonicalRecordArtwork({
+    ...record,
+    altText: record.artworkAltText
+  });
   return {
-    sourceAssetId: record.id,
+    sourceAssetId: artwork.sourceAssetId,
     thumbnail: {
-      url: thumbnailUrl,
-      avifUrl: record.thumbnailAvifUrl,
-      webpUrl: record.thumbnailWebpUrl,
-      srcSet: record.thumbnailSrcSet
+      ...artwork.thumbnail
     },
-    quickPreviewUrl: record.mediumPreviewUrl,
-    focalPoint: record.focalPoint ?? "center",
-    altText: `${record.name} ${record.type} thumbnail`,
-    status,
-    fallbackReason: hasThumbnail ? "published_thumbnail" : hasPreview ? "canonical_derivative" : "missing_art"
+    quickPreviewUrl: artwork.previewUrl,
+    focalPoint: artwork.focalPoint,
+    altText: artwork.altText,
+    status: artwork.status,
+    fallbackReason: artwork.fallbackReason,
+    artworkState: artwork.artworkState,
+    sourceAvailability: artwork.sourceAvailability
   };
 }
 
@@ -106,8 +126,8 @@ function CardThumbnail({ record, hovered }: { record: GeneratedLibraryCardRecord
             srcSet={useThumbnailSources ? artwork.thumbnail.srcSet : undefined}
             sizes="(min-width: 1536px) 23vw, (min-width: 1280px) 30vw, (min-width: 640px) 45vw, 92vw"
             alt={artwork.altText}
-            width={480}
-            height={270}
+            width={artwork.thumbnail.width}
+            height={artwork.thumbnail.height}
             loading="lazy"
             decoding="async"
             className="h-full w-full object-cover"

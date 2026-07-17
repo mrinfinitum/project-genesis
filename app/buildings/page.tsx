@@ -9,8 +9,6 @@ import type { Building } from "@/types/schema";
 
 export const dynamic = "force-dynamic";
 
-const BUILDING_LIBRARY_THUMBNAIL = "/assets/roblox-art/asset_buildings_icon/asset_buildings_icon.png";
-
 function buildingLibraryCard(definition: (typeof canonicalBuildingLibrary)[number]): GeneratedLibraryCardRecord {
   return {
     id: definition.id,
@@ -22,8 +20,6 @@ function buildingLibraryCard(definition: (typeof canonicalBuildingLibrary)[numbe
     status: "Draft",
     href: `/buildings?record=${encodeURIComponent(definition.id)}`,
     tone: "building",
-    thumbnailUrl: BUILDING_LIBRARY_THUMBNAIL,
-    mediumPreviewUrl: BUILDING_LIBRARY_THUMBNAIL,
     focalPoint: "center"
   };
 }

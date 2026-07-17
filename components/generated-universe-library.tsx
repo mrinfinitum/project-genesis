@@ -28,9 +28,17 @@ function toGeneratedCardRecord(record: UniverseLibraryRecord): GeneratedLibraryC
     thumbnailUrl: record.thumbnailUrl,
     thumbnailWebpUrl: record.thumbnailWebpUrl,
     thumbnailAvifUrl: record.thumbnailAvifUrl,
+    thumbnailRetinaUrl: record.thumbnailRetinaUrl,
     thumbnailSrcSet: record.thumbnailSrcSet,
     mediumPreviewUrl: record.mediumPreviewUrl,
-    focalPoint: record.focalPoint
+    focalPoint: record.focalPoint,
+    artworkState: record.artworkState,
+    artworkFallbackReason: record.artworkFallbackReason,
+    artworkSourceAssetId: record.artworkSourceAssetId,
+    artworkAltText: record.artworkAltText,
+    artworkAspectRatio: record.artworkAspectRatio,
+    artworkWidth: record.artworkWidth,
+    artworkHeight: record.artworkHeight
   };
 }
 

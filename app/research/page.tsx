@@ -8,8 +8,6 @@ import type { ResearchNode } from "@/types/schema";
 
 export const dynamic = "force-dynamic";
 
-const RESEARCH_LIBRARY_THUMBNAIL = "/assets/roblox-art/asset_research_icon/asset_research_icon.png";
-
 function researchLibraryCard(node: ResearchNode): GeneratedLibraryCardRecord {
   return {
     id: node.id,
@@ -21,8 +19,6 @@ function researchLibraryCard(node: ResearchNode): GeneratedLibraryCardRecord {
     status: node.status || "Ready",
     href: `/research?record=${encodeURIComponent(node.id)}`,
     tone: "research",
-    thumbnailUrl: RESEARCH_LIBRARY_THUMBNAIL,
-    mediumPreviewUrl: RESEARCH_LIBRARY_THUMBNAIL,
     focalPoint: "center"
   };
 }
