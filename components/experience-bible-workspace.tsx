@@ -353,7 +353,8 @@ export function ExperienceBibleWorkspace({
 }) {
   const [query, setQuery] = useState("");
   const counts = statusCounts(state.chapters);
-  const activePart = partId ? state.parts.find((part) => part.id === partId) : chapter ? partForChapter(state, chapter) : undefined;
+  const readingChapter = chapter ?? (mode === "landing" ? state.chapters[0] : undefined);
+  const activePart = partId ? state.parts.find((part) => part.id === partId) : readingChapter ? partForChapter(state, readingChapter) : undefined;
   const normalized = query.trim().toLowerCase();
   const visibleChapters = state.chapters.filter((item) => {
     const partMatch = mode === "part" && partId ? item.partId === partId : true;
@@ -367,17 +368,11 @@ export function ExperienceBibleWorkspace({
       <WorkspaceHeader
         eyebrow="DV-02 / Experience Bible"
         title={mode === "part" && activePart ? activePart.title : state.title}
-        description="The living creative bible for NOVERIS. DV-02A owns the structure and DV-02B drafts Part I as reviewable creative guidance without publishing anything to runtime."
-        stats={[
-          { label: "Release", value: `${state.release.id} v${state.release.version}` },
-          { label: "Status", value: state.status },
-          { label: "Parts", value: state.parts.length },
-          { label: "Chapters", value: state.chapters.length }
-        ]}
+        description="A premium reading surface for the NOVERIS creative canon. The table of contents stays beside the current chapter so the book opens directly into the work."
       />
 
       <section className="grid gap-5 xl:grid-cols-[22rem_minmax(0,1fr)]">
-        <PartToc state={state} activePartId={activePart?.id} activeChapterId={chapter?.id} />
+        <PartToc state={state} activePartId={activePart?.id} activeChapterId={readingChapter?.id} />
         <div className="space-y-5">
           {mode === "versions" ? (
             <WorkspacePanel title="Bible Version History" icon={History}>
@@ -409,9 +404,9 @@ export function ExperienceBibleWorkspace({
             </WorkspacePanel>
           ) : null}
 
-          {chapter ? <ChapterDetail state={state} chapter={chapter} mode={mode === "edit" || mode === "history" || mode === "review" ? mode : "chapter"} /> : null}
+          {readingChapter ? <ChapterDetail state={state} chapter={readingChapter} mode={mode === "edit" || mode === "history" || mode === "review" ? mode : "chapter"} /> : null}
 
-          {!chapter ? (
+          {!chapter && mode !== "landing" ? (
             <>
               <section className="grid gap-3 md:grid-cols-5">
                 <WorkspaceStatTile label="Approved" value={counts.approved} />
@@ -426,13 +421,6 @@ export function ExperienceBibleWorkspace({
                   {state.governanceRules.map((rule) => <p key={rule} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3 text-sm text-slate-300">{rule}</p>)}
                 </div>
               </WorkspacePanel>
-
-              {mode === "landing" ? (
-                <>
-                  <SignaturePanel state={state} />
-                  <VisualDnaPanel state={state} />
-                </>
-              ) : null}
 
               <WorkspacePanel title="noveris.life Reference Framework" icon={BookOpen}>
                 <div className="grid gap-3 lg:grid-cols-[1fr_18rem]">

@@ -721,6 +721,8 @@ async function main() {
   assert(read("components/app-shell.tsx").includes('href: "/experience-design/components"'), "Sidebar must link to Component Library.");
   assert(read("components/app-shell.tsx").includes('href: "/experience-design/patterns"'), "Sidebar must link to Interaction Patterns.");
   assert(read("app/experience-design/[section]/page.tsx").includes('redirect("/experience-design/inspiration-boards")'), "Old mood board route must redirect to Inspiration Boards.");
+  assert(read("app/experience-design/page.tsx").includes("ExperienceDesignWorkspace"), "Experience Design Home must render the shared workspace.");
+  assert(read("app/experience-design/[section]/page.tsx").includes("initialSection={section}"), "Experience Design section routes must pass the requested content workspace directly.");
   assert(read("components/studio-command-palette.tsx").includes("Open Experience Design"), "Command palette must expose Experience Design.");
   assert(read("components/studio-command-palette.tsx").includes("Open Inspiration Boards"), "Command palette must expose Inspiration Boards.");
   assert(read("components/studio-command-palette.tsx").includes("Open Screen Library"), "Command palette must expose Screen Library.");
@@ -731,6 +733,9 @@ async function main() {
   assert(read("components/studio-command-palette.tsx").includes("Open Interaction Patterns"), "Command palette must expose Interaction Patterns.");
   const experienceWorkspaceSource = read("components/experience-design-workspace.tsx");
   assert(experienceWorkspaceSource.includes("InspirationBoardsWorkspace"), "Experience Design workspace must expose Inspiration Boards workspace.");
+  assert(experienceWorkspaceSource.includes("Experience Design Home"), "Experience Design must have a dedicated Home for dashboard-style widgets.");
+  assert(experienceWorkspaceSource.includes("Content First Workspace"), "Experience Design section routes must use content-first workspace entry.");
+  assert(experienceWorkspaceSource.includes("if (!isHome)"), "Experience Design must bypass dashboard chrome for individual workspaces.");
   assert(experienceWorkspaceSource.includes("NOVERIS Inspiration Wall"), "Inspiration Boards must open into the NOVERIS Inspiration Wall canvas.");
   assert(experienceWorkspaceSource.includes("Inspiration Board infinite masonry canvas"), "Inspiration Boards must expose an infinite masonry canvas region.");
   assert(experienceWorkspaceSource.includes("Creative reference wall"), "Inspiration Boards must frame the canvas as a creative reference wall.");
@@ -741,15 +746,28 @@ async function main() {
   assert(experienceWorkspaceSource.includes("Civilization Gold"), "Inspiration Boards must include color cards.");
   assert(experienceWorkspaceSource.includes("accent.civilization.gold"), "Inspiration Boards must expose token relationship notes on color cards.");
   assert(experienceWorkspaceSource.includes("Typography Card"), "Inspiration Boards must include typography cards.");
+  for (const entryLabel of ["Token Browser", "Material Gallery", "Motion Library", "Component Browser", "Pattern Browser", "Screen Gallery"]) {
+    assert(experienceWorkspaceSource.includes(entryLabel), `Experience Design content-first workspace missing ${entryLabel}.`);
+  }
   assert(!experienceWorkspaceSource.includes('WorkspacePanel title="Board Categories"'), "Inspiration Boards must not render a database-style Board Categories panel.");
   assert(!experienceWorkspaceSource.includes('WorkspacePanel title="Annotations, Relationships, and Review"'), "Inspiration Boards must not render a permanent metadata inspector panel.");
   assert(!experienceWorkspaceSource.includes('WorkspaceMiniStat label="References"'), "Inspiration Board cards must not expose database metadata blocks by default.");
+  assert(!experienceWorkspaceSource.includes('WorkspacePanel title="Semantic Libraries"'), "Design Tokens must not open with a dashboard-style Semantic Libraries panel.");
+  assert(!experienceWorkspaceSource.includes('WorkspacePanel title="Material Categories"'), "Material Library must not open with a dashboard-style categories panel.");
+  assert(!experienceWorkspaceSource.includes('WorkspacePanel title="Motion Categories"'), "Motion Library must not open with a dashboard-style categories panel.");
+  assert(!experienceWorkspaceSource.includes('WorkspacePanel title="Component Categories"'), "Component Library must not open with a dashboard-style categories panel.");
+  assert(!experienceWorkspaceSource.includes('WorkspacePanel title="Pattern Categories"'), "Pattern Library must not open with a dashboard-style categories panel.");
+  assert(!experienceWorkspaceSource.includes('WorkspacePanel title="Screen Categories"'), "Screen Library must not open with a dashboard-style categories panel.");
   assert(read("components/experience-design-workspace.tsx").includes("ScreenLibraryWorkspace"), "Experience Design workspace must expose Screen Library workspace.");
   assert(experienceWorkspaceSource.includes("DesignTokensWorkspace"), "Experience Design workspace must expose Design Tokens workspace.");
   assert(experienceWorkspaceSource.includes("MaterialsWorkspace"), "Experience Design workspace must expose Materials workspace.");
   assert(experienceWorkspaceSource.includes("MotionWorkspace"), "Experience Design workspace must expose Motion workspace.");
   assert(experienceWorkspaceSource.includes("ComponentLibraryWorkspace"), "Experience Design workspace must expose Component Library workspace.");
   assert(experienceWorkspaceSource.includes("InteractionPatternsWorkspace"), "Experience Design workspace must expose Interaction Patterns workspace.");
+  const bibleWorkspaceSource = read("components/experience-bible-workspace.tsx");
+  assert(bibleWorkspaceSource.includes("readingChapter"), "Experience Bible landing must select a current chapter for reading mode.");
+  assert(bibleWorkspaceSource.includes("table of contents stays beside the current chapter"), "Experience Bible must describe its content-first reading mode.");
+  assert(!bibleWorkspaceSource.includes('{ label: "Release", value:'), "Experience Bible header must not open with dashboard statistics.");
 
   const search = await searchStudio("Inspiration Boards", 10);
   assert(search.results.some((result) => result.type === "Experience Design" && /Inspiration Boards|Inspiration Board/i.test(result.title)), "Global search must return Experience Design Inspiration Board results.");

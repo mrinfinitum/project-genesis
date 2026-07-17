@@ -284,53 +284,18 @@ function DesignTokenCard({ token }: { token: ExperienceDesignToken }) {
 function DesignTokensWorkspace({ state, tokens }: { state: ExperienceDesignState; tokens: ExperienceDesignToken[] }) {
   return (
     <div className="space-y-4 lg:col-span-2 2xl:col-span-3">
-      <section className="studio-material-command rounded-lg p-5">
-        <div className="flex flex-wrap items-start justify-between gap-4">
+      <section aria-label="Token Browser" className="rounded-2xl border border-cyan-300/10 bg-slate-950/35 p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-300">{state.designTokens.id} / Version {state.designTokens.version}</p>
-            <h3 className="mt-2 text-2xl font-black text-white">{state.designTokens.title}</h3>
-            <p className="mt-3 max-w-4xl text-sm leading-6 text-slate-300">{state.designTokens.purpose}</p>
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-200">Token Browser</p>
+            <h3 className="mt-1 text-2xl font-black text-white">Color, Typography, Spacing, Motion, Glass</h3>
           </div>
           <WorkspaceBadge value={state.designTokens.status} />
         </div>
-        <div className="mt-4 grid gap-3 md:grid-cols-4">
-          <WorkspaceMiniStat label="Libraries" value={state.designTokens.libraries.length} />
-          <WorkspaceMiniStat label="Tokens" value={state.designTokens.tokens.length} />
-          <WorkspaceMiniStat label="Values" value={state.designTokens.implementationValuesPublished ? "Published" : "Not Published"} />
-          <WorkspaceMiniStat label="Runtime" value="Future Milestone" />
+        <div className="mt-4 flex flex-wrap gap-2">
+          {state.designTokens.libraries.slice(0, 12).map((library) => <WorkspaceBadge key={library.id} value={library.name.replace(" Tokens", "")} />)}
         </div>
       </section>
-
-      <WorkspacePanel title="Semantic Libraries" icon={Palette}>
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-          {state.designTokens.libraries.map((library) => (
-            <div key={library.id} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
-              <div className="flex items-start justify-between gap-3">
-                <p className="text-sm font-black text-white">{library.name}</p>
-                <WorkspaceBadge value={`${library.tokenIds.length}`} className="text-[0.62rem]" />
-              </div>
-              <p className="mt-2 line-clamp-3 text-xs leading-5 text-slate-400">{library.purpose}</p>
-            </div>
-          ))}
-        </div>
-      </WorkspacePanel>
-
-      <WorkspacePanel title="Rules and Boundaries" icon={ShieldCheck}>
-        <div className="grid gap-4 lg:grid-cols-3">
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Philosophy</p>
-            <p className="mt-2 text-sm leading-6 text-slate-300">{state.designTokens.philosophy.join(" ")}</p>
-          </div>
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Naming Rules</p>
-            <p className="mt-2 text-sm leading-6 text-slate-300">{state.designTokens.namingRules.join(" ")}</p>
-          </div>
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Consumers</p>
-            <p className="mt-2 text-sm leading-6 text-slate-300">{state.designTokens.consumers.join(", ")}</p>
-          </div>
-        </div>
-      </WorkspacePanel>
 
       <section className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
         {tokens.map((token) => <DesignTokenCard key={token.id} token={token} />)}
@@ -366,53 +331,18 @@ function MaterialDefinitionCard({ material }: { material: ExperienceMaterialDefi
 function MaterialsWorkspace({ state, materials }: { state: ExperienceDesignState; materials: ExperienceMaterialDefinition[] }) {
   return (
     <div className="space-y-4 lg:col-span-2 2xl:col-span-3">
-      <section className="studio-material-command rounded-lg p-5">
-        <div className="flex flex-wrap items-start justify-between gap-4">
+      <section aria-label="Material Gallery" className="rounded-2xl border border-cyan-300/10 bg-slate-950/35 p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-300">{state.materials.id} / Version {state.materials.version}</p>
-            <h3 className="mt-2 text-2xl font-black text-white">{state.materials.title}</h3>
-            <p className="mt-3 max-w-4xl text-sm leading-6 text-slate-300">{state.materials.purpose}</p>
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-200">Material Gallery</p>
+            <h3 className="mt-1 text-2xl font-black text-white">Glass, Projection, Energy, Atmosphere, Planetary</h3>
           </div>
           <WorkspaceBadge value={state.materials.status} />
         </div>
-        <div className="mt-4 grid gap-3 md:grid-cols-4">
-          <WorkspaceMiniStat label="Categories" value={state.materials.categories.length} />
-          <WorkspaceMiniStat label="Materials" value={state.materials.materials.length} />
-          <WorkspaceMiniStat label="Preview Modes" value={state.materials.previewSupport.length} />
-          <WorkspaceMiniStat label="Runtime" value="Future Milestone" />
+        <div className="mt-4 flex flex-wrap gap-2">
+          {state.materials.categories.slice(0, 12).map((category) => <WorkspaceBadge key={category.id} value={category.name} />)}
         </div>
       </section>
-
-      <WorkspacePanel title="Material Categories" icon={Layers3}>
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-          {state.materials.categories.map((category) => (
-            <div key={category.id} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
-              <div className="flex items-start justify-between gap-3">
-                <p className="text-sm font-black text-white">{category.name}</p>
-                <WorkspaceBadge value={`${category.materialIds.length}`} className="text-[0.62rem]" />
-              </div>
-              <p className="mt-2 line-clamp-3 text-xs leading-5 text-slate-400">{category.purpose}</p>
-            </div>
-          ))}
-        </div>
-      </WorkspacePanel>
-
-      <WorkspacePanel title="Material Rules and Preview Support" icon={ShieldCheck}>
-        <div className="grid gap-4 lg:grid-cols-3">
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Philosophy</p>
-            <p className="mt-2 text-sm leading-6 text-slate-300">{state.materials.philosophy.join(" ")}</p>
-          </div>
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Relationships</p>
-            <p className="mt-2 text-sm leading-6 text-slate-300">{state.materials.relationshipTargets.join(", ")}</p>
-          </div>
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Preview Metadata</p>
-            <p className="mt-2 text-sm leading-6 text-slate-300">{state.materials.previewSupport.join(", ")}</p>
-          </div>
-        </div>
-      </WorkspacePanel>
 
       <section className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
         {materials.map((material) => <MaterialDefinitionCard key={material.id} material={material} />)}
@@ -448,65 +378,18 @@ function MotionDefinitionCard({ motion }: { motion: ExperienceMotionDefinition }
 function MotionWorkspace({ state, motions }: { state: ExperienceDesignState; motions: ExperienceMotionDefinition[] }) {
   return (
     <div className="space-y-4 lg:col-span-2 2xl:col-span-3">
-      <section className="studio-material-command rounded-lg p-5">
-        <div className="flex flex-wrap items-start justify-between gap-4">
+      <section aria-label="Motion Library" className="rounded-2xl border border-cyan-300/10 bg-slate-950/35 p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-300">{state.motion.id} / Version {state.motion.version}</p>
-            <h3 className="mt-2 text-2xl font-black text-white">{state.motion.title}</h3>
-            <p className="mt-3 max-w-4xl text-sm leading-6 text-slate-300">{state.motion.purpose}</p>
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-200">Motion Library</p>
+            <h3 className="mt-1 text-2xl font-black text-white">Arrival, Focus, Discovery, Navigation, Camera</h3>
           </div>
           <WorkspaceBadge value={state.motion.status} />
         </div>
-        <div className="mt-4 grid gap-3 md:grid-cols-4">
-          <WorkspaceMiniStat label="Categories" value={state.motion.categories.length} />
-          <WorkspaceMiniStat label="Motions" value={state.motion.motions.length} />
-          <WorkspaceMiniStat label="Camera Moves" value={state.motion.cameraLanguage.length} />
-          <WorkspaceMiniStat label="Runtime" value="Future Milestone" />
+        <div className="mt-4 flex flex-wrap gap-2">
+          {state.motion.categories.slice(0, 12).map((category) => <WorkspaceBadge key={category.id} value={category.name} />)}
         </div>
       </section>
-
-      <WorkspacePanel title="Motion Categories" icon={Route}>
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-          {state.motion.categories.map((category) => (
-            <div key={category.id} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
-              <div className="flex items-start justify-between gap-3">
-                <p className="text-sm font-black text-white">{category.name}</p>
-                <WorkspaceBadge value={`${category.motionIds.length}`} className="text-[0.62rem]" />
-              </div>
-              <p className="mt-2 line-clamp-3 text-xs leading-5 text-slate-400">{category.purpose}</p>
-            </div>
-          ))}
-        </div>
-      </WorkspacePanel>
-
-      <WorkspacePanel title="Camera Language" icon={Eye}>
-        <div className="grid gap-3 md:grid-cols-5">
-          {state.motion.cameraLanguage.map((cameraMove) => (
-            <div key={cameraMove.id} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
-              <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">{cameraMove.from}</p>
-              <p className="mt-2 text-lg font-black text-white">{cameraMove.to}</p>
-              <p className="mt-2 line-clamp-3 text-xs leading-5 text-slate-400">{cameraMove.purpose}</p>
-            </div>
-          ))}
-        </div>
-      </WorkspacePanel>
-
-      <WorkspacePanel title="Rules and Accessibility" icon={ShieldCheck}>
-        <div className="grid gap-4 lg:grid-cols-3">
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Always</p>
-            <p className="mt-2 text-sm leading-6 text-slate-300">{state.motion.rules.always.join(", ")}</p>
-          </div>
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Never</p>
-            <p className="mt-2 text-sm leading-6 text-slate-300">{state.motion.rules.never.join(", ")}</p>
-          </div>
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Accessibility</p>
-            <p className="mt-2 text-sm leading-6 text-slate-300">{state.motion.accessibilitySupport.join(", ")}</p>
-          </div>
-        </div>
-      </WorkspacePanel>
 
       <section className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
         {motions.map((motion) => <MotionDefinitionCard key={motion.id} motion={motion} />)}
@@ -542,53 +425,18 @@ function ComponentDefinitionCard({ component }: { component: ExperienceComponent
 function ComponentLibraryWorkspace({ state, components }: { state: ExperienceDesignState; components: ExperienceComponentDefinition[] }) {
   return (
     <div className="space-y-4 lg:col-span-2 2xl:col-span-3">
-      <section className="studio-material-command rounded-lg p-5">
-        <div className="flex flex-wrap items-start justify-between gap-4">
+      <section aria-label="Component Browser" className="rounded-2xl border border-cyan-300/10 bg-slate-950/35 p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-300">{state.componentLibrary.id} / Version {state.componentLibrary.version}</p>
-            <h3 className="mt-2 text-2xl font-black text-white">{state.componentLibrary.title}</h3>
-            <p className="mt-3 max-w-4xl text-sm leading-6 text-slate-300">{state.componentLibrary.purpose}</p>
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-200">Component Browser</p>
+            <h3 className="mt-1 text-2xl font-black text-white">Navigation, Command, Layout, Information, Runtime</h3>
           </div>
           <WorkspaceBadge value={state.componentLibrary.status} />
         </div>
-        <div className="mt-4 grid gap-3 md:grid-cols-4">
-          <WorkspaceMiniStat label="Categories" value={state.componentLibrary.categories.length} />
-          <WorkspaceMiniStat label="Components" value={state.componentLibrary.components.length} />
-          <WorkspaceMiniStat label="States" value={state.componentLibrary.states.length} />
-          <WorkspaceMiniStat label="Runtime" value="Future Milestone" />
+        <div className="mt-4 flex flex-wrap gap-2">
+          {state.componentLibrary.categories.map((category) => <WorkspaceBadge key={category.id} value={category.name} />)}
         </div>
       </section>
-
-      <WorkspacePanel title="Component Categories" icon={Library}>
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-          {state.componentLibrary.categories.map((category) => (
-            <div key={category.id} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
-              <div className="flex items-start justify-between gap-3">
-                <p className="text-sm font-black text-white">{category.name}</p>
-                <WorkspaceBadge value={`${category.componentIds.length}`} className="text-[0.62rem]" />
-              </div>
-              <p className="mt-2 line-clamp-3 text-xs leading-5 text-slate-400">{category.purpose}</p>
-            </div>
-          ))}
-        </div>
-      </WorkspacePanel>
-
-      <WorkspacePanel title="States, Sizes, and Accessibility" icon={ShieldCheck}>
-        <div className="grid gap-4 lg:grid-cols-3">
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Semantic States</p>
-            <p className="mt-2 text-sm leading-6 text-slate-300">{state.componentLibrary.states.join(", ")}</p>
-          </div>
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Semantic Sizes</p>
-            <p className="mt-2 text-sm leading-6 text-slate-300">{state.componentLibrary.sizes.join(", ")}</p>
-          </div>
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Accessibility</p>
-            <p className="mt-2 text-sm leading-6 text-slate-300">{state.componentLibrary.accessibilitySupport.join(", ")}</p>
-          </div>
-        </div>
-      </WorkspacePanel>
 
       <section className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
         {components.map((component) => <ComponentDefinitionCard key={component.id} component={component} />)}
@@ -624,50 +472,18 @@ function InteractionPatternCard({ pattern }: { pattern: ExperienceInteractionPat
 function InteractionPatternsWorkspace({ state, patterns }: { state: ExperienceDesignState; patterns: ExperienceInteractionPatternDefinition[] }) {
   return (
     <div className="space-y-4 lg:col-span-2 2xl:col-span-3">
-      <section className="studio-material-command rounded-lg p-5">
-        <div className="flex flex-wrap items-start justify-between gap-4">
+      <section aria-label="Pattern Browser" className="rounded-2xl border border-cyan-300/10 bg-slate-950/35 p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-300">{state.interactionPatterns.id} / Version {state.interactionPatterns.version}</p>
-            <h3 className="mt-2 text-2xl font-black text-white">{state.interactionPatterns.title}</h3>
-            <p className="mt-3 max-w-4xl text-sm leading-6 text-slate-300">{state.interactionPatterns.purpose}</p>
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-200">Pattern Browser</p>
+            <h3 className="mt-1 text-2xl font-black text-white">Navigation, Workspace, Exploration, Review, Runtime</h3>
           </div>
           <WorkspaceBadge value={state.interactionPatterns.status} />
         </div>
-        <div className="mt-4 grid gap-3 md:grid-cols-4">
-          <WorkspaceMiniStat label="Categories" value={state.interactionPatterns.categories.length} />
-          <WorkspaceMiniStat label="Patterns" value={state.interactionPatterns.patterns.length} />
-          <WorkspaceMiniStat label="Contracts" value={state.interactionPatterns.designContracts.status} />
-          <WorkspaceMiniStat label="Runtime" value="Future Milestone" />
+        <div className="mt-4 flex flex-wrap gap-2">
+          {state.interactionPatterns.categories.slice(0, 12).map((category) => <WorkspaceBadge key={category.id} value={category.name} />)}
         </div>
       </section>
-
-      <WorkspacePanel title="Pattern Categories" icon={Route}>
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-          {state.interactionPatterns.categories.map((category) => (
-            <div key={category.id} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
-              <div className="flex items-start justify-between gap-3">
-                <p className="text-sm font-black text-white">{category.name}</p>
-                <WorkspaceBadge value={`${category.patternIds.length}`} className="text-[0.62rem]" />
-              </div>
-              <p className="mt-2 line-clamp-3 text-xs leading-5 text-slate-400">{category.purpose}</p>
-            </div>
-          ))}
-        </div>
-      </WorkspacePanel>
-
-      <WorkspacePanel title="Design Contracts" icon={ShieldCheck}>
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-          {state.interactionPatterns.designContracts.checks.map((check) => (
-            <div key={check.id} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
-              <div className="flex items-start justify-between gap-3">
-                <p className="text-sm font-black text-white">{check.label}</p>
-                <WorkspaceBadge value={check.status} className="text-[0.62rem]" />
-              </div>
-              <p className="mt-2 line-clamp-3 text-xs leading-5 text-slate-400">{check.notes}</p>
-            </div>
-          ))}
-        </div>
-      </WorkspacePanel>
 
       <section className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
         {patterns.map((pattern) => <InteractionPatternCard key={pattern.id} pattern={pattern} />)}
@@ -703,50 +519,18 @@ function ScreenDefinitionCard({ screen }: { screen: ExperienceScreenDefinition }
 function ScreenLibraryWorkspace({ state, screens }: { state: ExperienceDesignState; screens: ExperienceScreenDefinition[] }) {
   return (
     <div className="space-y-4 lg:col-span-2 2xl:col-span-3">
-      <section className="studio-material-command rounded-lg p-5">
-        <div className="flex flex-wrap items-start justify-between gap-4">
+      <section aria-label="Screen Gallery" className="rounded-2xl border border-cyan-300/10 bg-slate-950/35 p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-300">{state.screenLibrary.id} / Version {state.screenLibrary.version}</p>
-            <h3 className="mt-2 text-2xl font-black text-white">{state.screenLibrary.title}</h3>
-            <p className="mt-3 max-w-4xl text-sm leading-6 text-slate-300">{state.screenLibrary.purpose}</p>
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-200">Screen Gallery</p>
+            <h3 className="mt-1 text-2xl font-black text-white">Civilization, Universe, Colony, Economy, Runtime</h3>
           </div>
           <WorkspaceBadge value={state.screenLibrary.status} />
         </div>
-        <div className="mt-4 grid gap-3 md:grid-cols-4">
-          <WorkspaceMiniStat label="Categories" value={state.screenLibrary.categories.length} />
-          <WorkspaceMiniStat label="Screens" value={state.screenLibrary.screens.length} />
-          <WorkspaceMiniStat label="Contracts" value={state.screenLibrary.designContracts.status} />
-          <WorkspaceMiniStat label="Runtime" value="Future Milestone" />
+        <div className="mt-4 flex flex-wrap gap-2">
+          {state.screenLibrary.categories.map((category) => <WorkspaceBadge key={category.id} value={category.name} />)}
         </div>
       </section>
-
-      <WorkspacePanel title="Screen Categories" icon={Layers3}>
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {state.screenLibrary.categories.map((category) => (
-            <div key={category.id} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
-              <div className="flex items-start justify-between gap-3">
-                <p className="text-sm font-black text-white">{category.name}</p>
-                <WorkspaceBadge value={`${category.screenIds.length}`} className="text-[0.62rem]" />
-              </div>
-              <p className="mt-2 line-clamp-3 text-xs leading-5 text-slate-400">{category.purpose}</p>
-            </div>
-          ))}
-        </div>
-      </WorkspacePanel>
-
-      <WorkspacePanel title="Design Contracts" icon={ShieldCheck}>
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-          {state.screenLibrary.designContracts.checks.map((check) => (
-            <div key={check.id} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
-              <div className="flex items-start justify-between gap-3">
-                <p className="text-sm font-black text-white">{check.label}</p>
-                <WorkspaceBadge value={check.status} className="text-[0.62rem]" />
-              </div>
-              <p className="mt-2 line-clamp-3 text-xs leading-5 text-slate-400">{check.notes}</p>
-            </div>
-          ))}
-        </div>
-      </WorkspacePanel>
 
       <section className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
         {screens.map((screen) => <ScreenDefinitionCard key={screen.id} screen={screen} />)}
@@ -757,6 +541,7 @@ function ScreenLibraryWorkspace({ state, screens }: { state: ExperienceDesignSta
 
 export function ExperienceDesignWorkspace({ state, initialSection = "dashboard" }: { state: ExperienceDesignState; initialSection?: string }) {
   const resolvedSection = state.sections.some((section) => section.id === initialSection) ? initialSection : "dashboard";
+  const isHome = resolvedSection === "dashboard";
   const [query, setQuery] = useState("");
   const [tab, setTab] = useState<ExperienceTab>(resolvedSection === "dashboard" ? "dashboard" : "library");
   const [sectionId, setSectionId] = useState(resolvedSection);
@@ -980,12 +765,65 @@ export function ExperienceDesignWorkspace({ state, initialSection = "dashboard" 
     count: state.records.filter((record) => record.status === status).length
   }));
 
+  if (!isHome) {
+    const workspaceContent = (
+      <>
+        {currentSection.id === "inspiration-boards" ? <InspirationBoardsWorkspace state={state} boards={filteredBoards} /> : null}
+        {currentSection.id === "tokens" ? <DesignTokensWorkspace state={state} tokens={filteredTokens} /> : null}
+        {currentSection.id === "materials" ? <MaterialsWorkspace state={state} materials={filteredMaterials} /> : null}
+        {currentSection.id === "motion" ? <MotionWorkspace state={state} motions={filteredMotions} /> : null}
+        {currentSection.id === "components" ? <ComponentLibraryWorkspace state={state} components={filteredComponents} /> : null}
+        {currentSection.id === "patterns" ? <InteractionPatternsWorkspace state={state} patterns={filteredPatterns} /> : null}
+        {currentSection.id === "screens" ? <ScreenLibraryWorkspace state={state} screens={filteredScreens} /> : null}
+        {currentSection.id !== "inspiration-boards" && currentSection.id !== "tokens" && currentSection.id !== "materials" && currentSection.id !== "motion" && currentSection.id !== "components" && currentSection.id !== "patterns" && currentSection.id !== "screens" ? filteredRecords.map((record) => <ExperienceRecordCard key={record.id} state={state} record={record} />) : null}
+      </>
+    );
+
+    return (
+      <main className="space-y-5">
+        {currentSection.id === "inspiration-boards" ? (
+          <InspirationBoardsWorkspace state={state} boards={filteredBoards} />
+        ) : (
+          <>
+            <header className="rounded-2xl border border-cyan-300/10 bg-slate-950/35 p-4">
+              <div className="flex flex-wrap items-end justify-between gap-4">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.22em] text-cyan-300">
+                    <Link href="/experience-design" className="hover:text-cyan-100">Experience Design Home</Link>
+                    <span className="mx-2 text-slate-600">/</span>
+                    Content First Workspace
+                  </p>
+                  <h1 className="mt-2 text-3xl font-black text-white">{currentSection.label}</h1>
+                  <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">{currentSection.description}</p>
+                </div>
+                <WorkspaceBadge value="Content First" />
+              </div>
+            </header>
+
+            <WorkspaceSearchBar value={query} onChange={setQuery} placeholder={`Search ${currentSection.label}`} />
+
+            <section aria-label={`${currentSection.label} content-first workspace`} className={currentSection.id === "tokens" || currentSection.id === "materials" || currentSection.id === "motion" || currentSection.id === "components" || currentSection.id === "patterns" || currentSection.id === "screens" ? "" : "grid gap-4 lg:grid-cols-2 2xl:grid-cols-3"}>
+              {workspaceContent}
+              {currentSection.id === "tokens" && !filteredTokens.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Design Tokens match this search.</p> : null}
+              {currentSection.id === "materials" && !filteredMaterials.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Materials match this search.</p> : null}
+              {currentSection.id === "motion" && !filteredMotions.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Motion definitions match this search.</p> : null}
+              {currentSection.id === "components" && !filteredComponents.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Component definitions match this search.</p> : null}
+              {currentSection.id === "patterns" && !filteredPatterns.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Interaction Patterns match this search.</p> : null}
+              {currentSection.id === "screens" && !filteredScreens.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Screen definitions match this search.</p> : null}
+              {currentSection.id !== "tokens" && currentSection.id !== "materials" && currentSection.id !== "motion" && currentSection.id !== "components" && currentSection.id !== "patterns" && currentSection.id !== "screens" && !filteredRecords.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Experience Design records match this search.</p> : null}
+            </section>
+          </>
+        )}
+      </main>
+    );
+  }
+
   return (
     <main className="space-y-6">
       <WorkspaceHeader
-        eyebrow="Canonical Creative Authoring"
-        title="Experience Design"
-        description="ED-01 establishes Studio as the source of truth for NOVERIS creative direction: Bible, inspiration boards, concepts, screen intent, design systems, motion, themes, journeys, reviews, and history. Runtime and game implementation remain untouched."
+        eyebrow="Creative Direction Command"
+        title="Experience Design Home"
+        description="Progress, recent activity, reviews, approval queue, creative health, status, and library overview live here. Individual workspaces now open directly into their creative content."
         stats={[
           { label: "Framework", value: state.frameworkId },
           { label: "Version", value: state.version },
