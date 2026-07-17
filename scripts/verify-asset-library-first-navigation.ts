@@ -39,7 +39,8 @@ async function main() {
   assert(!assetContentBrowser.includes("grid-cols-[16rem_minmax(0,1fr)_20rem]"), "Asset Library must not reserve a third inspector column.");
   assert(assetContentBrowser.includes("grid-cols-[16rem_minmax(0,1fr)]"), "Asset Library must use a two-column folder tree and asset grid layout.");
   assert(assetContentBrowser.includes("project-genesis-content-browser-expanded"), "Content Browser tree expansion state must persist.");
-  assert(assetContentBrowser.includes("repeat(auto-fill, minmax(180px, 220px))"), "Asset cards must stay in the 180-220px browser-card range.");
+  assert(assetContentBrowser.includes("thumbnailSizes"), "Asset Library must expose persisted thumbnail size control.");
+  assert(assetContentBrowser.includes("repeat(auto-fill, minmax(${thumbnailSizes[thumbnailSize].min}px, ${thumbnailSizes[thumbnailSize].max}px))"), "Asset cards must use the selected thumbnail size range.");
   assert(assetContentBrowser.includes("onDoubleClick"), "Double-click must open the asset detail.");
   assert(assetContentBrowser.includes("handleGridKeyDown"), "Asset grid must support keyboard navigation.");
   assert(assetContentBrowser.includes('role="grid"'), "Asset grid must expose grid semantics for keyboard users.");

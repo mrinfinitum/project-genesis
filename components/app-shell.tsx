@@ -44,6 +44,7 @@ import {
   UploadCloud
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { StudioCommandPalette } from "@/components/studio-command-palette";
 import { cn } from "@/lib/utils";
 
 type StudioHealthMetric = {
@@ -467,6 +468,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </header>
         <main className="genesis-grid min-h-[calc(100vh-4rem)] px-5 py-6 lg:px-8">{children}</main>
       </div>
+      <StudioCommandPalette />
     </div>
   );
 }

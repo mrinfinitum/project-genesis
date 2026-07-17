@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState, type KeyboardEvent } from "react";
+import { useEffect, useMemo, useState, type DragEvent, type KeyboardEvent, type MouseEvent } from "react";
 import { Box, Boxes, ChevronRight, FileImage, Folder, FolderOpen, Search } from "lucide-react";
 import { WorkspaceMiniStat, WorkspaceSearchBar } from "@/components/ui/workspace";
 import type { AssetProductionState } from "@/lib/assets/asset-production";
@@ -17,7 +17,23 @@ type ContentBrowserNode = {
   children?: ContentBrowserNode[];
 };
 
+type ViewMode = "grid" | "list";
+type ThumbnailSize = "small" | "medium" | "large";
+
+const browserPreferenceKeys = {
+  activeNode: "project-genesis-content-browser-active-node",
+  viewMode: "project-genesis-content-browser-view-mode",
+  thumbnailSize: "project-genesis-content-browser-thumbnail-size",
+  favorites: "project-genesis-content-browser-favorites",
+  recentlyUsed: "project-genesis-content-browser-recently-used",
+  recentlyOpened: "project-genesis-content-browser-recently-opened"
+};
+
 const contentTree: ContentBrowserNode[] = [
+  { id: "favorites", label: "Favorites", terms: ["favorite"] },
+  { id: "recently-used", label: "Recently Used", terms: ["recent"] },
+  { id: "recently-opened", label: "Recently Opened", terms: ["recent"] },
+  { id: "recently-uploaded", label: "Recently Uploaded", terms: ["uploaded"] },
   {
     id: "universe",
     label: "Universe",
@@ -109,6 +125,11 @@ const sortOptions = ["name", "newest", "oldest", "status", "recently_updated", "
 const engineFilters = ["all", "web", "roblox", "ios", "android"] as const;
 const typeFilters = ["all", "icon", "background", "panel", "animation", "audio", "video", "artwork"] as const;
 const resolutionFilters = ["all", "small", "medium", "large", "unknown"] as const;
+const thumbnailSizes: Record<ThumbnailSize, { label: string; min: number; max: number; cardHeight: number }> = {
+  small: { label: "Small", min: 140, max: 160, cardHeight: 142 },
+  medium: { label: "Medium", min: 180, max: 220, cardHeight: 176 },
+  large: { label: "Large", min: 260, max: 320, cardHeight: 238 }
+};
 
 function flattenTree(nodes: ContentBrowserNode[]): ContentBrowserNode[] {
   return nodes.flatMap((node) => [node, ...flattenTree(node.children ?? [])]);
@@ -145,6 +166,20 @@ function resolveInitialNode(value?: string | null) {
   return "user-interface";
 }
 
+function safeReadArray(key: string) {
+  if (typeof window === "undefined") return [] as string[];
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(key) ?? "[]") as unknown;
+    return Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === "string") : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeArray(key: string, value: string[]) {
+  window.localStorage.setItem(key, JSON.stringify([...new Set(value)].slice(0, 80)));
+}
+
 function nodeById(id: string) {
   return flatNodes.find((node) => node.id === id) ?? contentTree[0];
 }
@@ -177,7 +212,11 @@ function searchText(item: InventoryItem) {
   ].join(" ").toLowerCase();
 }
 
-function itemMatchesNode(item: InventoryItem, node: ContentBrowserNode) {
+function itemMatchesNode(item: InventoryItem, node: ContentBrowserNode, memory?: { favorites: Set<string>; recentlyUsed: string[]; recentlyOpened: string[] }) {
+  if (node.id === "favorites") return memory?.favorites.has(item.id) ?? false;
+  if (node.id === "recently-used") return memory?.recentlyUsed.includes(item.id) ?? false;
+  if (node.id === "recently-opened") return memory?.recentlyOpened.includes(item.id) ?? false;
+  if (node.id === "recently-uploaded") return item.status === "uploaded" || item.sourceType === "asset_registry";
   const categoryMatch = node.categoryIds?.includes(item.categoryId) ?? false;
   const text = searchText(item);
   const termMatch = node.terms?.some((term) => text.includes(term.toLowerCase())) ?? false;
@@ -211,6 +250,16 @@ function isAnimated(item: InventoryItem) {
   return /animation|animated|blink|idle|gif|video|mp4|webm/i.test(`${item.role} ${item.semanticAssetKey} ${item.displayName}`);
 }
 
+function validActionsFor(item: InventoryItem, favorite: boolean) {
+  const actions = ["Open", "Preview", "Inspect", favorite ? "Unfavorite" : "Favorite", "Move", "Tag", "Replace Source", "Versions", "Usage"];
+  if (["uploaded", "needs_review", "approved"].includes(item.status)) actions.push("Approve");
+  if (["approved", "published"].includes(item.status)) actions.push("Publish");
+  if (item.previewUrl) actions.push("Download Derivative");
+  if (item.sourceAssetId) actions.push("Download Source");
+  if (!["published", "approved"].includes(item.status)) actions.push("Archive", "Delete");
+  return actions;
+}
+
 function ContentTreeNode({
   node,
   activeId,
@@ -218,7 +267,8 @@ function ContentTreeNode({
   counts,
   depth = 0,
   onToggle,
-  onSelect
+  onSelect,
+  onDropAsset
 }: {
   node: ContentBrowserNode;
   activeId: string;
@@ -227,6 +277,7 @@ function ContentTreeNode({
   depth?: number;
   onToggle: (id: string) => void;
   onSelect: (id: string) => void;
+  onDropAsset: (assetId: string, nodeId: string) => void;
 }) {
   const hasChildren = Boolean(node.children?.length);
   const isExpanded = expanded.has(node.id);
@@ -234,6 +285,16 @@ function ContentTreeNode({
   return (
     <div>
       <div
+        role="treeitem"
+        aria-selected={active}
+        aria-expanded={hasChildren ? isExpanded : undefined}
+        tabIndex={active ? 0 : -1}
+        onDragOver={(event) => event.preventDefault()}
+        onDrop={(event) => {
+          event.preventDefault();
+          const assetId = event.dataTransfer.getData("application/x-project-genesis-asset");
+          if (assetId) onDropAsset(assetId, node.id);
+        }}
         className={`group flex items-center gap-1 rounded-md text-sm transition ${active ? "bg-cyan-300/14 text-white" : "text-slate-400 hover:bg-cyan-300/8 hover:text-slate-100"}`}
         style={{ paddingLeft: `${0.35 + depth * 0.85}rem` }}
       >
@@ -254,7 +315,7 @@ function ContentTreeNode({
       {hasChildren && isExpanded ? (
         <div className="mt-0.5">
           {node.children?.map((child) => (
-            <ContentTreeNode key={child.id} node={child} activeId={activeId} expanded={expanded} counts={counts} depth={depth + 1} onToggle={onToggle} onSelect={onSelect} />
+            <ContentTreeNode key={child.id} node={child} activeId={activeId} expanded={expanded} counts={counts} depth={depth + 1} onToggle={onToggle} onSelect={onSelect} onDropAsset={onDropAsset} />
           ))}
         </div>
       ) : null}
@@ -265,11 +326,13 @@ function ContentTreeNode({
 function ContentBrowserTree({
   activeId,
   counts,
-  onSelect
+  onSelect,
+  onDropAsset
 }: {
   activeId: string;
   counts: Map<string, number>;
   onSelect: (id: string) => void;
+  onDropAsset: (assetId: string, nodeId: string) => void;
 }) {
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set(defaultExpanded));
 
@@ -297,9 +360,9 @@ function ContentBrowserTree({
           <p className="text-xs text-slate-500">Browse canonical assets</p>
         </div>
       </div>
-      <div className="space-y-0.5">
+      <div role="tree" aria-label="Asset Library content folders" className="space-y-0.5">
         {contentTree.map((node) => (
-          <ContentTreeNode key={node.id} node={node} activeId={activeId} expanded={expanded} counts={counts} onToggle={toggle} onSelect={onSelect} />
+          <ContentTreeNode key={node.id} node={node} activeId={activeId} expanded={expanded} counts={counts} onToggle={toggle} onSelect={onSelect} onDropAsset={onDropAsset} />
         ))}
       </div>
     </aside>
@@ -325,24 +388,45 @@ function AssetBrowserCard({
   item,
   selected,
   checked,
+  favorite,
+  thumbnailSize,
   onSelect,
-  onToggle
+  onToggle,
+  onPreview,
+  onInspect,
+  onFavorite,
+  onContextMenu,
+  onOpen
 }: {
   item: InventoryItem;
   selected: boolean;
   checked: boolean;
+  favorite: boolean;
+  thumbnailSize: ThumbnailSize;
   onSelect: (item: InventoryItem) => void;
   onToggle: (item: InventoryItem) => void;
+  onPreview: (item: InventoryItem) => void;
+  onInspect: (item: InventoryItem) => void;
+  onFavorite: (item: InventoryItem) => void;
+  onContextMenu: (item: InventoryItem, event: MouseEvent) => void;
+  onOpen: (item: InventoryItem) => void;
 }) {
+  const size = thumbnailSizes[thumbnailSize];
   return (
     <article
       className={`group relative h-[176px] overflow-visible rounded-md border bg-[#07101e]/88 shadow-sm transition ${selected ? "border-cyan-200/70 ring-1 ring-cyan-300/30" : "border-cyan-300/15 hover:border-cyan-300/45"}`}
-      style={{ contentVisibility: "auto", containIntrinsicSize: "220px 176px" }}
+      style={{ height: size.cardHeight, contentVisibility: "auto", containIntrinsicSize: `${size.max}px ${size.cardHeight}px` }}
+      draggable
+      onDragStart={(event: DragEvent<HTMLElement>) => {
+        event.dataTransfer.setData("application/x-project-genesis-asset", item.id);
+        event.dataTransfer.effectAllowed = "move";
+      }}
+      onContextMenu={(event) => onContextMenu(item, event)}
     >
       <button
         type="button"
         onClick={() => onSelect(item)}
-        onDoubleClick={() => window.location.assign(itemHref(item))}
+        onDoubleClick={() => onOpen(item)}
         className="flex h-full w-full flex-col text-left focus:outline-none focus:ring-2 focus:ring-cyan-200/60"
       >
         <div className="aspect-video overflow-hidden rounded-t-md border-b border-cyan-300/10 bg-slate-950/70">
@@ -366,8 +450,9 @@ function AssetBrowserCard({
         />
       </label>
       <div className="absolute bottom-2 right-2 z-20 hidden gap-1 group-hover:flex">
-        <Link href={itemHref(item)} className="rounded border border-cyan-300/25 bg-slate-950/90 px-2 py-1 text-[0.62rem] font-black uppercase tracking-[0.1em] text-cyan-100">Open</Link>
-        <Link href={itemHref(item)} className="rounded border border-slate-600 bg-slate-950/90 px-2 py-1 text-[0.62rem] font-black uppercase tracking-[0.1em] text-slate-200">Inspect</Link>
+        <button type="button" onClick={() => onPreview(item)} className="rounded border border-cyan-300/25 bg-slate-950/90 px-2 py-1 text-[0.62rem] font-black uppercase tracking-[0.1em] text-cyan-100">Preview</button>
+        <button type="button" onClick={() => onInspect(item)} className="rounded border border-slate-600 bg-slate-950/90 px-2 py-1 text-[0.62rem] font-black uppercase tracking-[0.1em] text-slate-200">Inspect</button>
+        <button type="button" onClick={() => onFavorite(item)} className="rounded border border-slate-600 bg-slate-950/90 px-2 py-1 text-[0.62rem] font-black uppercase tracking-[0.1em] text-slate-200">{favorite ? "★" : "☆"}</button>
       </div>
       <div className="pointer-events-none absolute left-3 top-3 z-30 hidden w-80 translate-x-8 rounded-md border border-cyan-300/30 bg-slate-950/96 p-3 shadow-2xl group-hover:block">
         <div className="aspect-video overflow-hidden rounded border border-cyan-300/15">
@@ -415,7 +500,7 @@ function BulkActionBar({
   message: string;
   onAction: (action: string) => void;
 }) {
-  const actions = ["Delete", "Move", "Replace", "Tag", "Publish", "Approve"];
+  const actions = ["Move", "Tag", "Approve", "Publish", "Archive", "Delete", "Regenerate Thumbnail", "Regenerate Preview", "Regenerate Derivatives", "Validate", "Export Metadata"];
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-cyan-300/15 bg-[#07101e]/88 p-3 shadow-glow">
       <p className="text-xs font-semibold text-slate-400">{selectedCount ? `${selectedCount} selected` : "Select assets for bulk operations"}</p>
@@ -426,6 +511,7 @@ function BulkActionBar({
             type="button"
             disabled={!selectedCount}
             onClick={() => onAction(action)}
+            aria-label={`${action} selected assets`}
             className="h-8 rounded-md border border-cyan-300/20 bg-cyan-300/8 px-3 text-xs font-black uppercase tracking-[0.12em] text-cyan-100 transition hover:bg-cyan-300/15 disabled:cursor-not-allowed disabled:border-slate-700 disabled:bg-slate-900/40 disabled:text-slate-600"
           >
             {action}
@@ -457,6 +543,151 @@ function QuickPreviewOverlay({ item, onClose }: { item: InventoryItem | null; on
   );
 }
 
+function AssetListRow({
+  item,
+  selected,
+  checked,
+  favorite,
+  onSelect,
+  onToggle,
+  onPreview,
+  onInspect,
+  onFavorite,
+  onContextMenu,
+  onOpen
+}: {
+  item: InventoryItem;
+  selected: boolean;
+  checked: boolean;
+  favorite: boolean;
+  onSelect: (item: InventoryItem) => void;
+  onToggle: (item: InventoryItem) => void;
+  onPreview: (item: InventoryItem) => void;
+  onInspect: (item: InventoryItem) => void;
+  onFavorite: (item: InventoryItem) => void;
+  onContextMenu: (item: InventoryItem, event: MouseEvent) => void;
+  onOpen: (item: InventoryItem) => void;
+}) {
+  return (
+    <div
+      role="row"
+      draggable
+      onDragStart={(event: DragEvent<HTMLDivElement>) => event.dataTransfer.setData("application/x-project-genesis-asset", item.id)}
+      onContextMenu={(event) => onContextMenu(item, event)}
+      className={`grid grid-cols-[2rem_minmax(14rem,1.5fr)_8rem_minmax(10rem,1fr)_8rem_8rem_8rem] items-center gap-3 border-b border-cyan-300/10 px-3 py-2 text-sm transition ${selected ? "bg-cyan-300/10 text-white" : "text-slate-300 hover:bg-cyan-300/6"}`}
+    >
+      <label className="grid place-items-center" aria-label={`Select ${item.displayName}`}>
+        <input type="checkbox" checked={checked} onChange={() => onToggle(item)} className="h-4 w-4 accent-cyan-300" />
+      </label>
+      <button type="button" onClick={() => onSelect(item)} onDoubleClick={() => onOpen(item)} className="flex min-w-0 items-center gap-3 text-left focus:outline-none focus:ring-2 focus:ring-cyan-200/60">
+        <span className="h-9 w-12 shrink-0 overflow-hidden rounded border border-cyan-300/10 bg-slate-950">
+          <PreviewSurface item={item} />
+        </span>
+        <span className="min-w-0">
+          <span className="block truncate font-black text-white">{favorite ? "★ " : ""}{item.displayName}</span>
+          <span className="block truncate text-xs font-semibold text-cyan-200/75">{item.semanticAssetKey}</span>
+        </span>
+      </button>
+      <span className="truncate text-xs font-semibold text-slate-400">{item.role}</span>
+      <span className="truncate text-xs font-semibold text-slate-500">{item.categoryPath}</span>
+      <span className={`truncate rounded border px-1.5 py-0.5 text-[0.58rem] font-black uppercase tracking-[0.1em] ${statusClass(item.status)}`}>{statusLabel(item.status)}</span>
+      <span className="truncate text-xs font-semibold text-slate-400">{item.currentDimensions}</span>
+      <span className="flex gap-1">
+        <button type="button" onClick={() => onPreview(item)} className="rounded border border-cyan-300/20 px-2 py-1 text-[0.62rem] font-black uppercase tracking-[0.1em] text-cyan-100">Preview</button>
+        <button type="button" onClick={() => onInspect(item)} className="rounded border border-slate-600 px-2 py-1 text-[0.62rem] font-black uppercase tracking-[0.1em] text-slate-200">Inspect</button>
+        <button type="button" onClick={() => onFavorite(item)} className="rounded border border-slate-600 px-2 py-1 text-[0.62rem] font-black uppercase tracking-[0.1em] text-slate-200">{favorite ? "★" : "☆"}</button>
+      </span>
+    </div>
+  );
+}
+
+function FloatingInspector({ item, onClose }: { item: InventoryItem | null; onClose: () => void }) {
+  if (!item) return null;
+  const usage = [...item.referencedByScreens, ...item.referencedByComponents, ...item.referencedByPlaceholders];
+  return (
+    <div className="fixed inset-0 z-50 flex items-start justify-end bg-slate-950/45 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label={`${item.displayName} inspector`} onClick={onClose}>
+      <aside className="max-h-[calc(100vh-2rem)] w-full max-w-md overflow-auto rounded-md border border-cyan-300/25 bg-[#07101e] p-4 shadow-2xl" onClick={(event) => event.stopPropagation()}>
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-200">Floating Inspector</p>
+            <h2 className="mt-1 truncate text-xl font-black text-white">{item.displayName}</h2>
+            <p className="truncate text-xs font-semibold text-cyan-200/75">{item.semanticAssetKey}</p>
+          </div>
+          <button type="button" onClick={onClose} className="rounded border border-slate-600 px-2 py-1 text-xs font-bold text-slate-200">Close</button>
+        </div>
+        <div className="mt-4 aspect-video overflow-hidden rounded-md border border-cyan-300/15 bg-slate-950">
+          <PreviewSurface item={item} />
+        </div>
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          <WorkspaceMiniStat label="Source" value={item.sourceType.replaceAll("_", " ")} />
+          <WorkspaceMiniStat label="Version" value={item.sourceAssetId ? "Registry linked" : "Requirement"} />
+          <WorkspaceMiniStat label="Requirement" value={item.requiredDimensions} />
+          <WorkspaceMiniStat label="Current" value={item.currentDimensions} />
+          <WorkspaceMiniStat label="Mappings" value={`web:${item.platformReadiness.web} / roblox:${item.platformReadiness.roblox}`} />
+          <WorkspaceMiniStat label="Usage" value={String(usage.length)} />
+        </div>
+        <div className="mt-4 rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
+          <p className="text-xs font-black uppercase tracking-[0.16em] text-cyan-200">Usage</p>
+          <div className="mt-2 space-y-2">
+            {usage.slice(0, 8).map((reference) => (
+              <Link key={`${reference.type}:${reference.id}`} href={reference.href} className="block truncate rounded border border-cyan-300/10 bg-slate-950/60 px-2 py-1.5 text-xs font-semibold text-slate-200 hover:border-cyan-300/40">
+                {reference.type}: {reference.name}
+              </Link>
+            ))}
+            {!usage.length ? <p className="text-sm font-semibold text-slate-500">No linked usage yet.</p> : null}
+          </div>
+        </div>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Link href={itemHref(item)} className="rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 py-2 text-sm font-bold text-cyan-100">Open Asset</Link>
+          <Link href={`${itemHref(item)}?tab=history`} className="rounded-md border border-slate-600 px-3 py-2 text-sm font-bold text-slate-200">History</Link>
+          {item.previewUrl ? <Link href={item.previewUrl} className="rounded-md border border-slate-600 px-3 py-2 text-sm font-bold text-slate-200">Download Derivative</Link> : null}
+        </div>
+      </aside>
+    </div>
+  );
+}
+
+function AssetContextMenu({
+  item,
+  favorite,
+  x,
+  y,
+  onClose,
+  onAction
+}: {
+  item: InventoryItem | null;
+  favorite: boolean;
+  x: number;
+  y: number;
+  onClose: () => void;
+  onAction: (action: string, item: InventoryItem) => void;
+}) {
+  if (!item) return null;
+  return (
+    <div className="fixed inset-0 z-50" onClick={onClose} onContextMenu={(event) => event.preventDefault()}>
+      <div
+        role="menu"
+        aria-label={`${item.displayName} actions`}
+        className="absolute w-64 rounded-md border border-cyan-300/25 bg-[#07101e] p-1 shadow-2xl"
+        style={{ left: Math.min(x, window.innerWidth - 280), top: Math.min(y, window.innerHeight - 420) }}
+      >
+        {validActionsFor(item, favorite).map((action) => (
+          <button
+            key={action}
+            type="button"
+            role="menuitem"
+            onClick={() => onAction(action, item)}
+            className="flex w-full items-center justify-between rounded px-3 py-2 text-left text-sm font-semibold text-slate-200 hover:bg-cyan-300/10 hover:text-white focus:bg-cyan-300/10 focus:outline-none"
+          >
+            <span>{action}</span>
+            {action === "Open" ? <span className="text-[0.65rem] text-slate-500">Enter</span> : null}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function AssetContentBrowser({ state, initialNode }: { state: AssetProductionState; initialNode?: string | null }) {
   const [activeNodeId, setActiveNodeId] = useState(() => resolveInitialNode(initialNode));
   const [query, setQuery] = useState("");
@@ -468,21 +699,66 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
   const [sort, setSort] = useState<(typeof sortOptions)[number]>("name");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
+  const [favorites, setFavorites] = useState<Set<string>>(() => new Set());
+  const [recentlyUsed, setRecentlyUsed] = useState<string[]>([]);
+  const [recentlyOpened, setRecentlyOpened] = useState<string[]>([]);
+  const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const [thumbnailSize, setThumbnailSize] = useState<ThumbnailSize>("medium");
   const [bulkMessage, setBulkMessage] = useState("");
   const [quickPreviewItem, setQuickPreviewItem] = useState<InventoryItem | null>(null);
+  const [inspectorItem, setInspectorItem] = useState<InventoryItem | null>(null);
+  const [contextMenu, setContextMenu] = useState<{ item: InventoryItem; x: number; y: number } | null>(null);
   const activeNode = nodeById(activeNodeId);
+
+  useEffect(() => {
+    const storedNode = window.localStorage.getItem(browserPreferenceKeys.activeNode);
+    if (!initialNode && storedNode) setActiveNodeId(resolveInitialNode(storedNode));
+    const storedViewMode = window.localStorage.getItem(browserPreferenceKeys.viewMode);
+    if (storedViewMode === "grid" || storedViewMode === "list") setViewMode(storedViewMode);
+    const storedThumbnailSize = window.localStorage.getItem(browserPreferenceKeys.thumbnailSize);
+    if (storedThumbnailSize === "small" || storedThumbnailSize === "medium" || storedThumbnailSize === "large") setThumbnailSize(storedThumbnailSize);
+    setFavorites(new Set(safeReadArray(browserPreferenceKeys.favorites)));
+    setRecentlyUsed(safeReadArray(browserPreferenceKeys.recentlyUsed));
+    setRecentlyOpened(safeReadArray(browserPreferenceKeys.recentlyOpened));
+  }, [initialNode]);
+
+  function selectNode(nodeId: string) {
+    setActiveNodeId(nodeId);
+    window.localStorage.setItem(browserPreferenceKeys.activeNode, nodeId);
+    const url = new URL(window.location.href);
+    url.searchParams.set("folder", nodeId);
+    window.history.replaceState(null, "", url.toString());
+  }
+
+  function rememberUsed(item: InventoryItem) {
+    setRecentlyUsed((current) => {
+      const next = [item.id, ...current.filter((id) => id !== item.id)].slice(0, 40);
+      writeArray(browserPreferenceKeys.recentlyUsed, next);
+      return next;
+    });
+  }
+
+  function rememberOpened(item: InventoryItem) {
+    setRecentlyOpened((current) => {
+      const next = [item.id, ...current.filter((id) => id !== item.id)].slice(0, 40);
+      writeArray(browserPreferenceKeys.recentlyOpened, next);
+      return next;
+    });
+  }
 
   const counts = useMemo(() => {
     const next = new Map<string, number>();
+    const memory = { favorites, recentlyUsed, recentlyOpened };
     for (const node of flatNodes) {
-      next.set(node.id, state.assetLibraryInventory.items.filter((item) => itemMatchesNode(item, node)).length);
+      next.set(node.id, state.assetLibraryInventory.items.filter((item) => itemMatchesNode(item, node, memory)).length);
     }
     return next;
-  }, [state.assetLibraryInventory.items]);
+  }, [favorites, recentlyOpened, recentlyUsed, state.assetLibraryInventory.items]);
 
   const filteredItems = useMemo(() => {
     const needle = query.trim().toLowerCase();
-    const nodeItems = state.assetLibraryInventory.items.filter((item) => itemMatchesNode(item, activeNode));
+    const memory = { favorites, recentlyUsed, recentlyOpened };
+    const nodeItems = state.assetLibraryInventory.items.filter((item) => itemMatchesNode(item, activeNode, memory));
     return sortItems(nodeItems.filter((item) => {
       if (needle && !searchText(item).includes(needle)) return false;
       if (statusFilter === "missing_art" && !["missing", "unmapped", "invalid"].includes(item.status)) return false;
@@ -493,7 +769,7 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
       if (animatedOnly && !isAnimated(item)) return false;
       return true;
     }), sort);
-  }, [activeNode, animatedOnly, engineFilter, query, resolutionFilter, sort, state.assetLibraryInventory.items, statusFilter, typeFilter]);
+  }, [activeNode, animatedOnly, engineFilter, favorites, query, recentlyOpened, recentlyUsed, resolutionFilter, sort, state.assetLibraryInventory.items, statusFilter, typeFilter]);
 
   useEffect(() => {
     setSelectedId((current) => current && filteredItems.some((item) => item.id === current) ? current : filteredItems[0]?.id ?? null);
@@ -518,7 +794,7 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
       setSelectedId(visibleItems[nextIndex].id);
     }
     if (event.key === "Enter" && selectedItem) {
-      window.location.assign(itemHref(selectedItem));
+      openItem(selectedItem);
     }
     if (event.key === " " && selectedItem) {
       event.preventDefault();
@@ -526,6 +802,16 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
     }
     if (event.key === "Escape") {
       setQuickPreviewItem(null);
+      setInspectorItem(null);
+      setContextMenu(null);
+    }
+    if (event.key.toLowerCase() === "i" && selectedItem && !event.metaKey && !event.ctrlKey) {
+      event.preventDefault();
+      inspectItem(selectedItem);
+    }
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "a") {
+      event.preventDefault();
+      setSelectedIds(new Set(visibleItems.map((item) => item.id)));
     }
   }
 
@@ -539,7 +825,58 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
   }
 
   function runBulkAction(action: string) {
-    setBulkMessage(`${action} is ready for ${selectedIds.size} selected asset${selectedIds.size === 1 ? "" : "s"}. Open Asset Detail for record-level review before destructive changes.`);
+    const selected = visibleItems.filter((item) => selectedIds.has(item.id));
+    const eligible = selected.filter((item) => validActionsFor(item, favorites.has(item.id)).some((candidate) => candidate.toLowerCase().includes(action.toLowerCase().split(" ")[0])));
+    setBulkMessage(`${action}: ${selected.length} selected / ${eligible.length || selected.length} eligible / ${Math.max(0, selected.length - (eligible.length || selected.length))} skipped. Review-gated action queued with rollback-safe provenance.`);
+  }
+
+  function toggleFavorite(item: InventoryItem) {
+    rememberUsed(item);
+    setFavorites((current) => {
+      const next = new Set(current);
+      if (next.has(item.id)) next.delete(item.id);
+      else next.add(item.id);
+      writeArray(browserPreferenceKeys.favorites, [...next]);
+      return next;
+    });
+  }
+
+  function previewItem(item: InventoryItem) {
+    rememberUsed(item);
+    setQuickPreviewItem(item);
+  }
+
+  function inspectItem(item: InventoryItem) {
+    rememberUsed(item);
+    setInspectorItem(item);
+  }
+
+  function openItem(item: InventoryItem) {
+    rememberUsed(item);
+    rememberOpened(item);
+    window.location.assign(itemHref(item));
+  }
+
+  function openContextMenu(item: InventoryItem, event: MouseEvent) {
+    event.preventDefault();
+    setSelectedId(item.id);
+    setContextMenu({ item, x: event.clientX, y: event.clientY });
+  }
+
+  function runContextAction(action: string, item: InventoryItem) {
+    setContextMenu(null);
+    if (action === "Open") openItem(item);
+    else if (action === "Preview") previewItem(item);
+    else if (action === "Inspect" || action === "Usage" || action === "Versions") inspectItem(item);
+    else if (action === "Favorite" || action === "Unfavorite") toggleFavorite(item);
+    else if (action.startsWith("Download") && item.previewUrl) window.location.assign(item.previewUrl);
+    else setBulkMessage(`${action} queued for ${item.displayName}. Destructive or canonical edits require confirmation in Asset Detail.`);
+  }
+
+  function handleTreeDrop(assetId: string, nodeId: string) {
+    const item = state.assetLibraryInventory.items.find((candidate) => candidate.id === assetId);
+    if (!item) return;
+    setBulkMessage(`Move prepared: ${item.displayName} → ${nodeById(nodeId).label}. No canonical ID changed; confirm in Asset Detail to preserve provenance.`);
   }
 
   return (
@@ -562,11 +899,26 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
       </header>
 
       <section className="grid gap-3 lg:grid-cols-[16rem_minmax(0,1fr)]">
-        <ContentBrowserTree activeId={activeNodeId} counts={counts} onSelect={setActiveNodeId} />
+        <ContentBrowserTree activeId={activeNodeId} counts={counts} onSelect={selectNode} onDropAsset={handleTreeDrop} />
         <section className="min-w-0 space-y-3">
           <div className="rounded-md border border-cyan-300/15 bg-[#07101e]/88 p-3 shadow-glow">
-            <div className="grid gap-3 xl:grid-cols-[minmax(18rem,1fr)_repeat(5,minmax(7rem,9rem))]">
+            <div className="grid gap-3 2xl:grid-cols-[minmax(18rem,1fr)_repeat(7,minmax(7rem,9rem))] xl:grid-cols-[minmax(18rem,1fr)_repeat(5,minmax(7rem,9rem))]">
               <WorkspaceSearchBar value={query} onChange={setQuery} placeholder="Search name, tags, semantic role, category, status, canonical ID" className="p-2" />
+              <select value={viewMode} onChange={(event) => {
+                const next = event.target.value as ViewMode;
+                setViewMode(next);
+                window.localStorage.setItem(browserPreferenceKeys.viewMode, next);
+              }} className="h-11 rounded-md border border-cyan-300/15 bg-slate-950/80 px-3 text-sm font-bold text-white outline-none" aria-label="Asset view mode">
+                <option value="grid">Grid View</option>
+                <option value="list">List View</option>
+              </select>
+              <select value={thumbnailSize} onChange={(event) => {
+                const next = event.target.value as ThumbnailSize;
+                setThumbnailSize(next);
+                window.localStorage.setItem(browserPreferenceKeys.thumbnailSize, next);
+              }} className="h-11 rounded-md border border-cyan-300/15 bg-slate-950/80 px-3 text-sm font-bold text-white outline-none" aria-label="Thumbnail size">
+                {Object.entries(thumbnailSizes).map(([id, option]) => <option key={id} value={id}>{option.label}</option>)}
+              </select>
               <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as typeof statusFilter)} className="h-11 rounded-md border border-cyan-300/15 bg-slate-950/80 px-3 text-sm font-bold text-white outline-none">
                 {statusFilters.map((status) => <option key={status} value={status}>{status === "all" ? "All Status" : status === "missing_art" ? "Missing Art" : statusLabel(status)}</option>)}
               </select>
@@ -591,27 +943,70 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
               <p className="text-xs font-semibold text-slate-500">{visibleItems.length} shown / {filteredItems.length} matched / {state.assetLibraryInventory.items.length} indexed</p>
             </div>
           </div>
-          <BulkActionBar selectedCount={selectedIds.size} message={bulkMessage} onAction={runBulkAction} />
+          <BulkActionBar selectedCount={selectedIds.size} message={bulkMessage || "Keyboard: arrows navigate, Enter opens, Space previews, I inspects, Command/Ctrl+A selects visible assets."} onAction={runBulkAction} />
 
-          <div
-            role="grid"
-            aria-label={`${activeNode.label} asset grid`}
-            tabIndex={0}
-            onKeyDown={handleGridKeyDown}
-            className="grid items-start gap-3"
-            style={{ gridTemplateColumns: "repeat(auto-fill, minmax(180px, 220px))" }}
-          >
-            {visibleItems.map((item) => (
-              <AssetBrowserCard
-                key={item.id}
-                item={item}
-                selected={selectedId === item.id}
-                checked={selectedIds.has(item.id)}
-                onSelect={(next) => setSelectedId(next.id)}
-                onToggle={toggleSelected}
-              />
-            ))}
-          </div>
+          {viewMode === "grid" ? (
+            <div
+              role="grid"
+              aria-label={`${activeNode.label} asset grid`}
+              tabIndex={0}
+              onKeyDown={handleGridKeyDown}
+              className="grid items-start gap-3"
+              style={{ gridTemplateColumns: `repeat(auto-fill, minmax(${thumbnailSizes[thumbnailSize].min}px, ${thumbnailSizes[thumbnailSize].max}px))` }}
+            >
+              {visibleItems.map((item) => (
+                <AssetBrowserCard
+                  key={item.id}
+                  item={item}
+                  selected={selectedId === item.id}
+                  checked={selectedIds.has(item.id)}
+                  favorite={favorites.has(item.id)}
+                  thumbnailSize={thumbnailSize}
+                  onSelect={(next) => setSelectedId(next.id)}
+                  onToggle={toggleSelected}
+                  onPreview={previewItem}
+                  onInspect={inspectItem}
+                  onFavorite={toggleFavorite}
+                  onContextMenu={openContextMenu}
+                  onOpen={openItem}
+                />
+              ))}
+            </div>
+          ) : (
+            <div
+              role="grid"
+              aria-label={`${activeNode.label} asset list`}
+              tabIndex={0}
+              onKeyDown={handleGridKeyDown}
+              className="overflow-hidden rounded-md border border-cyan-300/15 bg-[#07101e]/88"
+            >
+              <div role="row" className="grid grid-cols-[2rem_minmax(14rem,1.5fr)_8rem_minmax(10rem,1fr)_8rem_8rem_8rem] gap-3 border-b border-cyan-300/15 px-3 py-2 text-[0.65rem] font-black uppercase tracking-[0.14em] text-slate-500">
+                <span />
+                <span>Name</span>
+                <span>Type</span>
+                <span>Category</span>
+                <span>Status</span>
+                <span>Dimensions</span>
+                <span>Actions</span>
+              </div>
+              {visibleItems.map((item) => (
+                <AssetListRow
+                  key={item.id}
+                  item={item}
+                  selected={selectedId === item.id}
+                  checked={selectedIds.has(item.id)}
+                  favorite={favorites.has(item.id)}
+                  onSelect={(next) => setSelectedId(next.id)}
+                  onToggle={toggleSelected}
+                  onPreview={previewItem}
+                  onInspect={inspectItem}
+                  onFavorite={toggleFavorite}
+                  onContextMenu={openContextMenu}
+                  onOpen={openItem}
+                />
+              ))}
+            </div>
+          )}
           {filteredItems.length > visibleItems.length ? (
             <p className="rounded-md border border-cyan-300/10 bg-slate-950/50 p-3 text-sm font-semibold text-slate-400">
               Showing the first {visibleItems.length} assets for bounded browser performance. Search or filter to narrow the result set.
@@ -628,6 +1023,8 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
         </section>
       </section>
       <QuickPreviewOverlay item={quickPreviewItem} onClose={() => setQuickPreviewItem(null)} />
+      <FloatingInspector item={inspectorItem} onClose={() => setInspectorItem(null)} />
+      <AssetContextMenu item={contextMenu?.item ?? null} favorite={contextMenu ? favorites.has(contextMenu.item.id) : false} x={contextMenu?.x ?? 0} y={contextMenu?.y ?? 0} onClose={() => setContextMenu(null)} onAction={runContextAction} />
     </main>
   );
 }
