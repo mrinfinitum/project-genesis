@@ -84,7 +84,7 @@ export type ExperienceBibleChapter = {
 };
 
 export type ExperienceBibleRelease = {
-  id: "DV-02" | "DV-02B" | "DV-02C" | "DV-03" | "DV-04" | "DS-02" | "DS-03";
+  id: "DV-02" | "DV-02B" | "DV-02C" | "DV-03" | "DV-04" | "DS-02" | "DS-03" | "DS-04";
   version: "0.1";
   status: "Draft";
   title: string;
@@ -848,6 +848,20 @@ export const experienceBibleMaterialLibraryRelease: ExperienceBibleRelease = {
   ]
 };
 
+export const experienceBibleMotionSystemRelease: ExperienceBibleRelease = {
+  id: "DS-04",
+  version: "0.1",
+  status: "Draft",
+  title: "Canonical Motion System",
+  createdAt: "2026-07-17T00:00:00.000Z",
+  chapterIds: [],
+  notes: [
+    "Creates the canonical semantic Motion System for NOVERIS.",
+    "Defines motion categories, semantic motion records, camera language, microinteraction intent, accessibility support, search, preview metadata, review workflow, and versioning.",
+    "DS-04 is not CSS animation, easing curves, React transitions, Three.js camera code, Unity animation clips, Unreal timelines, runtime gameplay data, or an engine export contract."
+  ]
+};
+
 export const experienceBibleSignatureRelease: ExperienceBibleRelease = {
   id: "DV-02C",
   version: "0.1",
@@ -909,7 +923,7 @@ export function getExperienceBibleState(): ExperienceBibleState {
     parts: experienceBibleParts,
     chapters: experienceBibleChapters,
     release: experienceBibleRelease,
-    contentReleases: [experienceBibleRelease, experienceBiblePartIRelease, experienceBibleSignatureRelease, experienceBibleVisualDnaRelease, experienceBibleInspirationBoardRelease, experienceBibleDesignTokensRelease, experienceBibleMaterialLibraryRelease],
+    contentReleases: [experienceBibleRelease, experienceBiblePartIRelease, experienceBibleSignatureRelease, experienceBibleVisualDnaRelease, experienceBibleInspirationBoardRelease, experienceBibleDesignTokensRelease, experienceBibleMaterialLibraryRelease, experienceBibleMotionSystemRelease],
     signature: experienceBibleSignature,
     visualDna: experienceBibleVisualDna,
     governanceRules: experienceBibleGovernanceRules,

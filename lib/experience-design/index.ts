@@ -300,6 +300,115 @@ export type ExperienceMaterialLibrary = {
   runtimePublication: "future_design_runtime_milestone";
 };
 
+export type ExperienceMotionCategory =
+  | "Arrival"
+  | "Departure"
+  | "Focus"
+  | "Selection"
+  | "Confirmation"
+  | "Discovery"
+  | "Navigation"
+  | "Transition"
+  | "Camera"
+  | "Progress"
+  | "Research"
+  | "Construction"
+  | "Civilization"
+  | "Mission"
+  | "Timeline"
+  | "Galaxy"
+  | "Planet"
+  | "Colony"
+  | "Notification"
+  | "Celebration"
+  | "Ambient";
+
+export type ExperienceMotionAttentionLevel = "Background" | "Peripheral" | "Primary" | "Critical";
+
+export type ExperienceMotionIntensity = "Still" | "Subtle" | "Standard" | "Emphasized" | "Celebratory" | "Emergency";
+
+export type ExperienceMotionPreviewSupport =
+  | "Animated Preview"
+  | "Storyboard"
+  | "Motion Timeline"
+  | "Interaction Sequence"
+  | "Camera Path";
+
+export type ExperienceMotionDefinition = {
+  id: string;
+  name: string;
+  category: ExperienceMotionCategory;
+  purpose: string;
+  description: string;
+  emotionalIntent: string;
+  trigger: string;
+  completionCondition: string;
+  expectedDuration: string;
+  intensity: ExperienceMotionIntensity;
+  playerAttentionLevel: ExperienceMotionAttentionLevel;
+  accessibilityNotes: string[];
+  visualDnaReferences: string[];
+  experienceBibleReferences: string[];
+  relatedTokens: string[];
+  relatedMaterials: string[];
+  relatedComponents: string[];
+  relatedScreens: string[];
+  relatedInspirationBoards: string[];
+  futureRuntimeMapping: "future_design_runtime_milestone";
+  previewSupport: ExperienceMotionPreviewSupport[];
+  owner: string;
+  reviewStatus: ExperienceDesignStatus;
+  status: ExperienceDesignStatus;
+  version: "0.1";
+  history: ExperienceHistoryEntry[];
+  tags: string[];
+};
+
+export type ExperienceMotionCategoryDefinition = {
+  id: string;
+  name: ExperienceMotionCategory;
+  purpose: string;
+  motionIds: string[];
+  status: ExperienceDesignStatus;
+  version: "0.1";
+  reviewStatus: ExperienceDesignStatus;
+};
+
+export type ExperienceMotionSystem = {
+  id: "DS-04";
+  title: "Canonical Motion System";
+  version: "0.1";
+  status: "Draft";
+  purpose: string;
+  workspaceRoute: string;
+  philosophy: string[];
+  rules: {
+    always: string[];
+    never: string[];
+  };
+  attentionLevels: ExperienceMotionAttentionLevel[];
+  intensityLevels: ExperienceMotionIntensity[];
+  accessibilitySupport: string[];
+  searchFields: string[];
+  relationshipTargets: string[];
+  previewSupport: ExperienceMotionPreviewSupport[];
+  reviewWorkflow: ExperienceDesignStatus[];
+  categories: ExperienceMotionCategoryDefinition[];
+  motions: ExperienceMotionDefinition[];
+  cameraLanguage: Array<{
+    id: string;
+    from: string;
+    to: string;
+    purpose: string;
+    emotionalIntent: string;
+    expectedDuration: string;
+    playerContext: string;
+    accessibilityNotes: string[];
+    visualDnaReferences: string[];
+  }>;
+  runtimePublication: "future_design_runtime_milestone";
+};
+
 export type ExperienceContentModel = {
   kind: ExperienceDesignKind;
   displayName: string;
@@ -339,6 +448,7 @@ export type ExperienceDesignState = {
   inspirationBoards: ExperienceInspirationBoardLibrary;
   designTokens: ExperienceDesignTokenSystem;
   materials: ExperienceMaterialLibrary;
+  motion: ExperienceMotionSystem;
 };
 
 export const EXPERIENCE_DESIGN_ROUTE = "/experience-design";
@@ -353,7 +463,7 @@ export const experienceDesignSections: ExperienceDesignSection[] = [
   { id: "screens", label: "Screen Library", description: "Canonical experience intent for screens without client implementation ownership.", route: `${EXPERIENCE_DESIGN_ROUTE}/screens`, kinds: ["screen_definition"] },
   { id: "tokens", label: "Design Tokens", description: "DS-02 canonical semantic token libraries for NOVERIS meaning, relationships, review, search, and future renderer consumption.", route: `${EXPERIENCE_DESIGN_ROUTE}/tokens`, kinds: ["design_token_collection"] },
   { id: "materials", label: "Material Library", description: "DS-03 semantic material library for glass, projection, energy, atmosphere, planetary, architectural, natural, industrial, ancient, organic, liquid, surface, structural, lighting, and special materials.", route: `${EXPERIENCE_DESIGN_ROUTE}/materials`, kinds: ["material_definition"] },
-  { id: "motion", label: "Motion Library", description: "Canonical motion purposes, accessibility notes, references, and intent.", route: `${EXPERIENCE_DESIGN_ROUTE}/motion`, kinds: ["motion_definition"] },
+  { id: "motion", label: "Motion Library", description: "DS-04 canonical semantic motion system for arrival, departure, focus, selection, confirmation, discovery, navigation, transition, camera, progress, research, construction, civilization, mission, timeline, galaxy, planet, colony, notification, celebration, and ambient motion.", route: `${EXPERIENCE_DESIGN_ROUTE}/motion`, kinds: ["motion_definition"] },
   { id: "components", label: "Component Library", description: "Design definitions for components, separate from React, Roblox, or CSS implementation.", route: `${EXPERIENCE_DESIGN_ROUTE}/components`, kinds: ["component_definition"] },
   { id: "themes", label: "Theme Library", description: "Future theme framework for default, accessibility, minimal, presentation, and prototype themes.", route: `${EXPERIENCE_DESIGN_ROUTE}/themes`, kinds: ["theme"] },
   { id: "brand", label: "Brand System", description: "Brand guidelines, tone, usage, and creative constraints for NOVERIS.", route: `${EXPERIENCE_DESIGN_ROUTE}/brand`, kinds: ["brand_guideline"] },
@@ -369,7 +479,7 @@ export const experienceContentModels: ExperienceContentModel[] = [
   model("screen_definition", "Screen Definition", "Canonical screen intent, player goals, emotional goals, layout notes, interaction zones, accessibility, references, and approved concepts.", ["purpose", "playerGoals", "emotionalGoals", "narrativePurpose", "layoutNotes", "interactionZones"], ["attachments", "related components", "version history"], "screens"),
   model("design_token_collection", "Canonical Design Tokens", "DS-02 semantic design token records for meaning, purpose, references, relationships, review, versioning, and search without implementation values.", ["tokenLibraries", "semanticPath", "purpose", "experienceBibleReferences", "visualDnaReferences", "relatedMaterials", "relatedComponents", "relatedScreens", "owner", "reviewStatus"], ["color", "typography", "spacing", "radius", "elevation", "shadow", "blur", "opacity", "motion", "timing", "breakpoints", "z-layer", "icons", "grid", "stroke", "glow", "atmosphere", "glass", "background", "transition", "search", "relationships", "versioning"], "tokens"),
   model("material_definition", "Canonical Material Library", "DS-03 semantic material definitions for purpose, emotion, light behavior, relationships, preview support, review, versioning, and future renderer interpretation without implementation code.", ["category", "purpose", "emotionalIntent", "visualDnaReferences", "experienceBibleReferences", "relatedTokens", "relatedComponents", "relatedScreens", "relatedInspirationBoards", "lightingNotes", "transparencyNotes", "reflectionNotes", "depthNotes", "motionNotes", "accessibilityNotes", "futureRuntimeMapping", "owner", "reviewStatus"], ["glass", "projection", "energy", "atmosphere", "planetary", "architecture", "natural", "industrial", "ancient", "organic", "liquid", "surface", "structural", "lighting", "special", "preview metadata", "relationships", "search", "versioning"], "materials"),
-  model("motion_definition", "Motion Definition", "Canonical motion intent such as Fade, Expand, Orbit, Travel, Discovery, Projection, Notification, and Research.", ["purpose", "duration", "curve", "accessibilityNotes", "references"], ["reduced motion", "review workflow"], "motion"),
+  model("motion_definition", "Canonical Motion System", "DS-04 semantic motion definitions for purpose, confidence, intelligence, discovery, civilization, scale, mastery, accessibility, relationships, preview metadata, and future renderer interpretation without animation implementation.", ["category", "purpose", "emotionalIntent", "trigger", "completionCondition", "expectedDuration", "intensity", "playerAttentionLevel", "accessibilityNotes", "visualDnaReferences", "experienceBibleReferences", "relatedTokens", "relatedMaterials", "relatedComponents", "relatedScreens", "relatedInspirationBoards", "futureRuntimeMapping", "reviewStatus"], ["arrival", "departure", "focus", "selection", "confirmation", "discovery", "navigation", "transition", "camera", "progress", "research", "construction", "civilization", "mission", "timeline", "galaxy", "planet", "colony", "notification", "celebration", "ambient", "microinteractions", "camera language", "accessibility", "preview metadata", "relationships", "search", "versioning"], "motion"),
   model("component_definition", "Component Definition", "Design description for Button, Panel, Card, HUD, Sidebar, Dialog, Tree, List, Table, Tooltip, and Notification.", ["purpose", "states", "variants", "accessibility", "references"], ["component relationships", "approval workflow"], "components"),
   model("theme", "Theme", "Future theme framework for Default, Accessibility, Minimal, Presentation, and Prototype.", ["themeIntent", "status", "approval"], ["token relationships", "accessibility notes"], "themes"),
   model("brand_guideline", "Brand Guideline", "Brand system guidance for NOVERIS tone, naming, marks, usage, and creative boundaries.", ["principle", "usage", "constraints"], ["cross references", "history"], "brand"),
@@ -811,6 +921,200 @@ export const experienceMaterialLibrary: ExperienceMaterialLibrary = {
   runtimePublication: "future_design_runtime_milestone"
 };
 
+const motionCategorySeeds: Array<{ name: ExperienceMotionCategory; purpose: string; motions: string[] }> = [
+  { name: "Arrival", purpose: "Introduce information without demanding attention.", motions: ["motion.arrival.standard", "motion.arrival.panel", "motion.arrival.dialog", "motion.arrival.workspace"] },
+  { name: "Departure", purpose: "Remove information while preserving orientation and confidence.", motions: ["motion.departure.standard", "motion.departure.panel", "motion.departure.dialog", "motion.departure.workspace"] },
+  { name: "Focus", purpose: "Direct attention naturally and never aggressively.", motions: ["motion.focus.inspect", "motion.focus.selection", "motion.focus.highlight", "motion.focus.reference"] },
+  { name: "Selection", purpose: "Confirm choice and spatial focus without decoration.", motions: ["motion.selection.hover", "motion.selection.active", "motion.selection.multi", "motion.selection.clear"] },
+  { name: "Confirmation", purpose: "Make approval, completion, saving, and publication feel reliable.", motions: ["motion.confirmation.save", "motion.confirmation.approve", "motion.confirmation.publish", "motion.confirmation.complete"] },
+  { name: "Discovery", purpose: "Make discovery rewarding without becoming explosive.", motions: ["motion.discovery.reveal", "motion.discovery.scan", "motion.discovery.signal", "motion.discovery.unlock"] },
+  { name: "Navigation", purpose: "Move through the product with orientation and calm context.", motions: ["motion.navigation.section", "motion.navigation.drilldown", "motion.navigation.backtrack", "motion.navigation.breadcrumb"] },
+  { name: "Transition", purpose: "Connect related states so the player understands continuity.", motions: ["motion.transition.standard", "motion.transition.workspace", "motion.transition.reference", "motion.transition.reading"] },
+  { name: "Camera", purpose: "Describe camera movement intent while leaving renderer implementation to clients.", motions: ["motion.camera.zoom", "motion.camera.pan", "motion.camera.orbit", "motion.camera.settle"] },
+  { name: "Progress", purpose: "Show advancement, waiting, and completion without impatience.", motions: ["motion.progress.fill", "motion.progress.step", "motion.progress.resolve", "motion.progress.paused"] },
+  { name: "Research", purpose: "Make research feel intelligent, careful, and unfolding.", motions: ["motion.research.begin", "motion.research.analyze", "motion.research.breakthrough", "motion.research.archive"] },
+  { name: "Construction", purpose: "Show building and production as deliberate civilization work.", motions: ["motion.construction.begin", "motion.construction.assemble", "motion.construction.complete", "motion.construction.upgrade"] },
+  { name: "Civilization", purpose: "Make growth feel deliberate, never rushed.", motions: ["motion.civilization.expand", "motion.civilization.complete", "motion.civilization.activate", "motion.civilization.advance"] },
+  { name: "Mission", purpose: "Communicate mission start, status, outcome, and handoff without interrupting play.", motions: ["motion.mission.begin", "motion.mission.route", "motion.mission.update", "motion.mission.complete"] },
+  { name: "Timeline", purpose: "Make history and change feel sequential, readable, and meaningful.", motions: ["motion.timeline.advance", "motion.timeline.branch", "motion.timeline.reveal", "motion.timeline.focus"] },
+  { name: "Galaxy", purpose: "Make the player feel they are traveling through space, not switching pages.", motions: ["motion.galaxy.travel", "motion.galaxy.zoom", "motion.galaxy.arrival", "motion.galaxy.orbit"] },
+  { name: "Planet", purpose: "Connect celestial scale to specific planet inspection and action.", motions: ["motion.planet.descend", "motion.planet.inspect", "motion.planet.scan", "motion.planet.colonize"] },
+  { name: "Colony", purpose: "Make settlement changes feel inhabited, stable, and consequential.", motions: ["motion.colony.found", "motion.colony.grow", "motion.colony.alert", "motion.colony.stabilize"] },
+  { name: "Notification", purpose: "Communicate without interrupting.", motions: ["motion.notification.success", "motion.notification.warning", "motion.notification.discovery", "motion.notification.research", "motion.notification.mission"] },
+  { name: "Celebration", purpose: "Acknowledge major achievement without breaking calm mastery.", motions: ["motion.celebration.milestone", "motion.celebration.discovery", "motion.celebration.research", "motion.celebration.civilization"] },
+  { name: "Ambient", purpose: "Keep environments alive with subtle, meaningful movement.", motions: ["motion.ambient.orbital-drift", "motion.ambient.atmospheric-movement", "motion.ambient.background-parallax", "motion.ambient.civilization-light-pulse", "motion.ambient.nebula-movement", "motion.ambient.research-energy"] }
+];
+
+const motionPreviewSupport: ExperienceMotionPreviewSupport[] = ["Animated Preview", "Storyboard", "Motion Timeline", "Interaction Sequence", "Camera Path"];
+const motionAttentionLevels: ExperienceMotionAttentionLevel[] = ["Background", "Peripheral", "Primary", "Critical"];
+const motionIntensityLevels: ExperienceMotionIntensity[] = ["Still", "Subtle", "Standard", "Emphasized", "Celebratory", "Emergency"];
+const motionAccessibilitySupport = ["Reduced Motion", "No Motion", "Alternative Feedback", "Timing Adjustments"];
+
+function motionName(semanticPath: string) {
+  return semanticPath.replace(/^motion\./, "").split(".").map((part) => part.split("-").map((piece) => piece[0].toUpperCase() + piece.slice(1)).join(" ")).join(" / ");
+}
+
+function motionIntensity(category: ExperienceMotionCategory, semanticPath: string): ExperienceMotionIntensity {
+  if (semanticPath.includes("warning") || semanticPath.includes("alert")) return "Emphasized";
+  if (semanticPath.includes("celebration") || semanticPath.includes("milestone")) return "Celebratory";
+  if (category === "Ambient") return "Subtle";
+  if (category === "Focus" || category === "Selection" || category === "Progress") return "Standard";
+  if (category === "Notification") return semanticPath.includes("warning") ? "Emphasized" : "Standard";
+  return "Standard";
+}
+
+function motionAttention(category: ExperienceMotionCategory, semanticPath: string): ExperienceMotionAttentionLevel {
+  if (category === "Ambient") return "Background";
+  if (category === "Notification") return semanticPath.includes("warning") ? "Critical" : "Peripheral";
+  if (category === "Discovery" || category === "Celebration" || category === "Galaxy" || category === "Planet") return "Primary";
+  if (category === "Focus" || category === "Selection" || category === "Progress") return "Peripheral";
+  return "Primary";
+}
+
+function motionDuration(category: ExperienceMotionCategory, semanticPath: string) {
+  if (category === "Ambient") return "continuous and subtle";
+  if (category === "Galaxy" || category === "Camera" || semanticPath.includes("cinematic")) return "deliberate spatial travel";
+  if (category === "Notification") return "brief and non-blocking";
+  return "standard interaction timing";
+}
+
+function motionTokens(semanticPath: string) {
+  const tokens = new Set<string>(["motion.fade.standard"]);
+  if (semanticPath.includes("focus")) tokens.add("motion.focus").add("glow.focus");
+  if (semanticPath.includes("selection")) tokens.add("motion.selection").add("status.active");
+  if (semanticPath.includes("discovery")) tokens.add("motion.discovery").add("accent.discovery.violet");
+  if (semanticPath.includes("travel") || semanticPath.includes("orbit") || semanticPath.includes("galaxy")) tokens.add("motion.travel").add("motion.orbit");
+  if (semanticPath.includes("research")) tokens.add("motion.research").add("background.research");
+  if (semanticPath.includes("notification")) tokens.add("motion.notification");
+  if (semanticPath.includes("civilization") || semanticPath.includes("construction")) tokens.add("accent.civilization.gold").add("glow.civilization");
+  return Array.from(tokens);
+}
+
+function motionMaterials(semanticPath: string) {
+  const materials = new Set<string>();
+  if (semanticPath.includes("discovery")) materials.add("material-projection-projection-discovery").add("material-energy-discovery-energy");
+  if (semanticPath.includes("research")) materials.add("material-energy-research-energy").add("material-glass-research-glass");
+  if (semanticPath.includes("galaxy") || semanticPath.includes("ambient")) materials.add("material-atmosphere-deep-space");
+  if (semanticPath.includes("civilization") || semanticPath.includes("construction")) materials.add("material-energy-civilization-energy");
+  if (semanticPath.includes("notification") || semanticPath.includes("warning")) materials.add("material-special-highlight");
+  if (materials.size === 0) materials.add("material-glass-command-glass");
+  return Array.from(materials);
+}
+
+function motionReferences(category: ExperienceMotionCategory, semanticPath: string) {
+  const bibleReferences = ["core-creative-philosophy", "dv02-chapter-21-motion-and-transition"];
+  const visualDnaReferences = ["dv-03-section-12-motion"];
+  if (category === "Galaxy" || category === "Planet" || category === "Camera") visualDnaReferences.push("dv-03-section-06-composition", "dv-03-section-07-scale");
+  if (category === "Discovery") bibleReferences.push("dv02-chapter-26-first-discovery");
+  if (category === "Civilization" || category === "Construction") bibleReferences.push("dv-02c-section-02-monumental-civilization");
+  return { bibleReferences, visualDnaReferences };
+}
+
+export const experienceMotions: ExperienceMotionDefinition[] = motionCategorySeeds.flatMap((category) => category.motions.map((semanticPath) => {
+  const references = motionReferences(category.name, semanticPath);
+  return {
+    id: semanticPath,
+    name: motionName(semanticPath),
+    category: category.name,
+    purpose: `${motionName(semanticPath)} communicates ${category.name.toLowerCase()} intent while improving understanding.`,
+    description: "Canonical motion definition only. Renderers may interpret this later, but DS-04 does not define CSS animation, easing curves, React transitions, camera code, engine clips, or timelines.",
+    emotionalIntent: category.name === "Discovery"
+      ? "Rewarding, legible, and never explosive."
+      : category.name === "Galaxy"
+      ? "Spatial, vast, calm, and continuous."
+      : category.name === "Ambient"
+      ? "Subtle life and atmosphere without visual competition."
+      : "Calm, confident, purposeful, and clear.",
+    trigger: `${category.name} context requests ${semanticPath}.`,
+    completionCondition: "The user understands what changed and can continue interacting without delay.",
+    expectedDuration: motionDuration(category.name, semanticPath),
+    intensity: motionIntensity(category.name, semanticPath),
+    playerAttentionLevel: motionAttention(category.name, semanticPath),
+    accessibilityNotes: motionAccessibilitySupport,
+    visualDnaReferences: references.visualDnaReferences,
+    experienceBibleReferences: references.bibleReferences,
+    relatedTokens: motionTokens(semanticPath),
+    relatedMaterials: motionMaterials(semanticPath),
+    relatedComponents: semanticPath.includes("panel") || semanticPath.includes("dialog") ? ["component-design-panel"] : semanticPath.includes("navigation") ? ["component-navigation"] : [],
+    relatedScreens: semanticPath.includes("galaxy") ? ["screen-galaxy"] : semanticPath.includes("planet") ? ["screen-planet"] : semanticPath.includes("research") ? ["screen-research"] : semanticPath.includes("colony") ? ["screen-colony"] : [],
+    relatedInspirationBoards: [`inspiration-board-${slugify(category.name)}`, "inspiration-board-motion"],
+    futureRuntimeMapping: "future_design_runtime_milestone",
+    previewSupport: motionPreviewSupport,
+    owner: "Motion Design",
+    reviewStatus: "Draft",
+    status: "Draft",
+    version: "0.1",
+    history: [
+      {
+        id: `${semanticPath}-ds-04-created`,
+        action: "created",
+        author: "Motion Design",
+        timestamp: "2026-07-17T00:00:00.000Z",
+        notes: "Created semantic motion definition for DS-04."
+      }
+    ],
+    tags: ["ds-04", "motion", slugify(category.name), ...semanticPath.split(".")]
+  };
+}));
+
+export const experienceMotionCategories: ExperienceMotionCategoryDefinition[] = motionCategorySeeds.map((category) => ({
+  id: `motion-category-${slugify(category.name)}`,
+  name: category.name,
+  purpose: category.purpose,
+  motionIds: category.motions,
+  status: "Draft",
+  version: "0.1",
+  reviewStatus: "Draft"
+}));
+
+export const experienceMotionCameraLanguage: ExperienceMotionSystem["cameraLanguage"] = [
+  ["Galaxy", "Sector"],
+  ["Sector", "Star System"],
+  ["Star System", "Planet"],
+  ["Planet", "Colony"],
+  ["Colony", "Building"]
+].map(([from, to]) => ({
+  id: `camera-${slugify(from)}-to-${slugify(to)}`,
+  from,
+  to,
+  purpose: `Move from ${from} context to ${to} context while preserving spatial understanding.`,
+  emotionalIntent: "Scale, continuity, confidence, and calm orientation.",
+  expectedDuration: "deliberate spatial travel",
+  playerContext: `The player is moving from ${from} level authorship into ${to} level detail.`,
+  accessibilityNotes: motionAccessibilitySupport,
+  visualDnaReferences: ["dv-03-section-06-composition", "dv-03-section-07-scale", "dv-03-section-12-motion"]
+}));
+
+export const experienceMotionSystem: ExperienceMotionSystem = {
+  id: "DS-04",
+  title: "Canonical Motion System",
+  version: "0.1",
+  status: "Draft",
+  purpose: "Create the canonical semantic motion language for NOVERIS so renderers implement movement from shared intent instead of local animation guesses.",
+  workspaceRoute: `${EXPERIENCE_DESIGN_ROUTE}/motion`,
+  philosophy: [
+    "Motion exists to improve understanding.",
+    "Never animate for decoration.",
+    "Every movement must answer why it moved.",
+    "Motion should reinforce calm, confidence, purpose, and clarity."
+  ],
+  rules: {
+    always: ["reinforce understanding", "respect hierarchy", "support readability", "maintain calm"],
+    never: ["bounce without meaning", "spin for decoration", "flash unnecessarily", "compete with gameplay", "delay interaction"]
+  },
+  attentionLevels: motionAttentionLevels,
+  intensityLevels: motionIntensityLevels,
+  accessibilitySupport: motionAccessibilitySupport,
+  searchFields: ["Purpose", "Emotion", "Category", "Trigger", "Attention Level", "Intensity", "Related Screen", "Related Component", "Visual DNA", "Experience Bible"],
+  relationshipTargets: ["Design Tokens", "Materials", "Visual DNA", "Experience Bible", "Inspiration Boards", "Components", "Screen Templates", "Themes", "Brand"],
+  previewSupport: motionPreviewSupport,
+  reviewWorkflow: experienceReviewWorkflow,
+  categories: experienceMotionCategories,
+  motions: experienceMotions,
+  cameraLanguage: experienceMotionCameraLanguage,
+  runtimePublication: "future_design_runtime_milestone"
+};
+
 export const experienceDesignRecords: ExperienceDesignRecord[] = [
   record("experience-bible-framework", "experience_bible", "Experience Bible Framework", "Framework for NOVERIS creative canon chapters, annotations, cross references, and linked concepts.", "Draft", "Creative Direction", ["bible", "canon", "dv-02"], ["DV-02A seeds the complete 65-chapter framework; do not populate the full Bible yet."], {
     parts: experienceBibleParts.map((partItem) => partItem.id),
@@ -864,11 +1168,16 @@ export const experienceDesignRecords: ExperienceDesignRecord[] = [
     runtimePublication: experienceMaterialLibrary.runtimePublication,
     implementationValuesPublished: false
   }),
-  record("motion-discovery", "motion_definition", "Discovery Motion", "Motion intent for discovery reveal moments and reduced-motion alternatives.", "Draft", "Motion Design", ["motion", "discovery", "accessibility"], ["No implementation curves are final."], {
-    purpose: "Signal a meaningful reveal without blocking interaction.",
-    duration: "Framework pending",
-    curve: "Framework pending",
-    accessibilityNotes: "Must support reduced motion and non-motion affordances."
+  record("motion-discovery", "motion_definition", "Canonical Motion System", "DS-04 semantic motion system for NOVERIS purpose, confidence, intelligence, discovery, civilization, scale, mastery, accessibility, relationships, preview metadata, and future renderer interpretation.", "Draft", "Motion Design", ["motion", "discovery", "accessibility", "ds-04"], ["Do not define CSS animation, easing curves, React transitions, Three.js camera code, Unity animation clips, Unreal timelines, or renderer implementation."], {
+    canonicalSystem: experienceMotionSystem.id,
+    motionCategories: experienceMotionCategories.map((category) => category.name),
+    motionCount: experienceMotions.length,
+    previewSupport: experienceMotionSystem.previewSupport,
+    attentionLevels: experienceMotionSystem.attentionLevels,
+    intensityLevels: experienceMotionSystem.intensityLevels,
+    accessibilitySupport: experienceMotionSystem.accessibilitySupport,
+    runtimePublication: experienceMotionSystem.runtimePublication,
+    implementationValuesPublished: false
   }),
   record("component-design-panel", "component_definition", "Panel Design Definition", "Design definition for panels across NOVERIS without React, Roblox, or CSS implementation details.", "Draft", "Component Design", ["component", "panel"], ["Implementation remains client-owned."], {
     purpose: "Readable grouping surface.",
@@ -1190,7 +1499,8 @@ export function getExperienceDesignState(): ExperienceDesignState {
     experienceBible,
     inspirationBoards: inspirationBoardLibrary,
     designTokens: experienceDesignTokenSystem,
-    materials: experienceMaterialLibrary
+    materials: experienceMaterialLibrary,
+    motion: experienceMotionSystem
   };
 }
 

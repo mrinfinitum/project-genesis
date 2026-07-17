@@ -344,6 +344,50 @@ Preview support is metadata only: Static Preview, Animated Preview, Reference Im
 
 DS-03 is Draft at version 0.1. It does not define CSS, shaders, GLSL, Three.js materials, Unity materials, Unreal materials, Roblox implementation, renderer code, gameplay data, runtime gameplay contracts, contentVersion changes, runtimeVersion changes, or engine export changes.
 
+## DS-04 Canonical Motion System
+
+DS-04 creates the canonical Motion System for NOVERIS. Motion is a semantic design language that communicates purpose, confidence, intelligence, discovery, civilization, scale, and mastery.
+
+Motion exists to improve understanding, never animation for decoration. Every movement answers one question: why did this move? If there is no clear answer, the animation should not exist.
+
+DS-04 canonical motion categories:
+
+- Arrival
+- Departure
+- Focus
+- Selection
+- Confirmation
+- Discovery
+- Navigation
+- Transition
+- Camera
+- Progress
+- Research
+- Construction
+- Civilization
+- Mission
+- Timeline
+- Galaxy
+- Planet
+- Colony
+- Notification
+- Celebration
+- Ambient
+
+Camera language supports the motion hierarchy Galaxy -> Sector -> Star System -> Planet -> Colony -> Building. Each movement defines purpose, emotional intent, expected duration, player context, accessibility notes, and Visual DNA references.
+
+Microinteraction motion covers hover, selection, expansion, collapse, confirmation, deletion, approval, publication, search, filtering, sorting, navigation, and reading.
+
+Notification motion communicates without interrupting. Ambient motion remains subtle through orbital drift, atmospheric movement, background parallax, civilization light pulse, nebula movement, and research energy.
+
+Player attention levels are Background, Peripheral, Primary, and Critical. Semantic intensity levels are Still, Subtle, Standard, Emphasized, Celebratory, and Emergency.
+
+Every motion supports Reduced Motion, No Motion, Alternative Feedback, and Timing Adjustments.
+
+Preview support is metadata only: Animated Preview, Storyboard, Motion Timeline, Interaction Sequence, and Camera Path.
+
+DS-04 is Draft at version 0.1. It does not define CSS animation, easing curves, React transitions, Three.js camera code, Unity animation clips, Unreal timelines, gameplay runtime data, runtime gameplay contracts, contentVersion changes, runtimeVersion changes, or engine export changes.
+
 ## Approval
 
 Review states:

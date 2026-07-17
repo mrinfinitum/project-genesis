@@ -128,3 +128,45 @@ Canonical material categories:
 DS-03 preview support is metadata only: Static Preview, Animated Preview, Reference Image, Material Study, Lighting Study, and Comparison.
 
 DS-03 remains Draft at version 0.1. Material definitions are not published yet; future runtime publication belongs to a later Design Runtime milestone.
+
+## DS-04 Canonical Motion System
+
+DS-04 creates the canonical semantic Motion System for NOVERIS.
+
+Motion is an authoring language that communicates purpose, confidence, intelligence, discovery, civilization, scale, and mastery. Motion exists to improve understanding, never for decoration.
+
+Every movement should answer: why did this move? If there is no clear answer, the animation should not exist.
+
+Canonical motion categories:
+
+- Arrival
+- Departure
+- Focus
+- Selection
+- Confirmation
+- Discovery
+- Navigation
+- Transition
+- Camera
+- Progress
+- Research
+- Construction
+- Civilization
+- Mission
+- Timeline
+- Galaxy
+- Planet
+- Colony
+- Notification
+- Celebration
+- Ambient
+
+Player attention levels are Background, Peripheral, Primary, and Critical.
+
+Intensity levels are Still, Subtle, Standard, Emphasized, Celebratory, and Emergency.
+
+Motion accessibility must support Reduced Motion, No Motion, Alternative Feedback, and Timing Adjustments.
+
+DS-04 preview support is metadata only: Animated Preview, Storyboard, Motion Timeline, Interaction Sequence, and Camera Path.
+
+DS-04 remains Draft at version 0.1. Motion definitions are not CSS animation, easing curves, React transitions, Three.js camera code, Unity animation clips, Unreal timelines, gameplay runtime data, or engine exports.

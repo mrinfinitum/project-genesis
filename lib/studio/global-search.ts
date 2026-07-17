@@ -54,6 +54,7 @@ const workspaceResults: StudioSearchResult[] = [
   workspace("inspiration-boards", "Inspiration Boards", "/experience-design/inspiration-boards", "Canonical visual memory and reference boards"),
   workspace("design-tokens", "Design Tokens", "/experience-design/tokens", "DS-02 canonical semantic token libraries"),
   workspace("material-library", "Material Library", "/experience-design/materials", "DS-03 canonical semantic material library"),
+  workspace("motion-library", "Motion Library", "/experience-design/motion", "DS-04 canonical semantic motion system"),
   workspace("screen-library", "Screen Library", "/experience-design/screens", "Canonical screen intent"),
   workspace("upload-asset", "Upload Asset", "/assets?upload=asset", "Asset pipeline"),
   workspace("regenerate-derivatives", "Regenerate Derivatives", "/asset-library?status=needs_review", "Asset pipeline"),
@@ -239,6 +240,44 @@ export async function buildStudioSearchIndex(): Promise<StudioSearchIndex> {
         material.visualDnaReferences.join(" "),
         material.previewSupport.join(" "),
         material.tags.join(" ")
+      ]
+    })),
+    ...experienceDesign.motion.categories.map((category) => result({
+      id: category.id,
+      type: "Experience Design" as const,
+      title: `${category.name} Motions`,
+      subtitle: `Motion Category / ${experienceDesign.motion.id} / ${category.status}`,
+      href: experienceDesign.motion.workspaceRoute,
+      status: category.status,
+      aliases: [category.purpose, category.motionIds.join(" "), category.reviewStatus, "semantic motion"]
+    })),
+    ...experienceDesign.motion.motions.map((motion) => result({
+      id: motion.id,
+      type: "Experience Design" as const,
+      title: motion.id,
+      subtitle: `${motion.category} Motion / ${motion.status}`,
+      href: `${experienceDesign.motion.workspaceRoute}#${motion.id}`,
+      status: motion.status,
+      aliases: [
+        motion.name,
+        motion.purpose,
+        motion.description,
+        motion.emotionalIntent,
+        motion.trigger,
+        motion.completionCondition,
+        motion.expectedDuration,
+        motion.intensity,
+        motion.playerAttentionLevel,
+        motion.accessibilityNotes.join(" "),
+        motion.relatedTokens.join(" "),
+        motion.relatedMaterials.join(" "),
+        motion.relatedComponents.join(" "),
+        motion.relatedScreens.join(" "),
+        motion.relatedInspirationBoards.join(" "),
+        motion.experienceBibleReferences.join(" "),
+        motion.visualDnaReferences.join(" "),
+        motion.previewSupport.join(" "),
+        motion.tags.join(" ")
       ]
     })),
     ...experienceDesign.experienceBible.parts.map((part) => result({

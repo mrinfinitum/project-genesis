@@ -44,6 +44,8 @@ function assertNoRuntimeLeak(label: string, value: unknown) {
   assert(!text.includes("Canonical Design Tokens"), `${label} leaked Canonical Design Token data.`);
   assert(!text.includes("DS-03"), `${label} leaked DS-03 Material Library data.`);
   assert(!text.includes("Canonical Material Library"), `${label} leaked Canonical Material Library data.`);
+  assert(!text.includes("DS-04"), `${label} leaked DS-04 Motion System data.`);
+  assert(!text.includes("Canonical Motion System"), `${label} leaked Canonical Motion System data.`);
   assert(!/"bodySections"\s*:/.test(text), `${label} leaked Bible body sections.`);
 }
 
@@ -92,6 +94,13 @@ async function main() {
   assert(materialLibraryRelease.chapterIds.length === 0, "DS-03 must be a Material Library system release, not a numbered chapter release.");
   assert(materialLibraryRelease.notes.some((note) => note.includes("not CSS")), "DS-03 release must reject CSS ownership.");
   assert(materialLibraryRelease.notes.some((note) => note.includes("not CSS, shaders, textures, rendering code")), "DS-03 release must reject renderer implementation ownership.");
+  const motionSystemRelease = bible.contentReleases.find((release) => release.id === "DS-04");
+  assert(motionSystemRelease, "Missing DS-04 Canonical Motion System content release.");
+  assert(motionSystemRelease.version === "0.1", "DS-04 must be version 0.1.");
+  assert(motionSystemRelease.status === "Draft", "DS-04 must remain Draft.");
+  assert(motionSystemRelease.chapterIds.length === 0, "DS-04 must be a Motion System release, not a numbered chapter release.");
+  assert(motionSystemRelease.notes.some((note) => note.includes("not CSS animation")), "DS-04 release must reject CSS animation ownership.");
+  assert(motionSystemRelease.notes.some((note) => note.includes("Three.js camera code")), "DS-04 release must reject camera implementation ownership.");
   assert(experience.experienceBible.chapters.length === 65, "Experience Design state must expose Bible chapters.");
 
   assert(bible.signature.id === "DV-02C", "Signature section ID must be DV-02C.");
@@ -540,6 +549,8 @@ async function main() {
   assert(read("docs/experience-bible.md").includes("Canonical Design Tokens"), "Experience Bible documentation must document Canonical Design Tokens.");
   assert(read("docs/experience-bible.md").includes("DS-03"), "Experience Bible documentation must document DS-03.");
   assert(read("docs/experience-bible.md").includes("Canonical Material Library"), "Experience Bible documentation must document Canonical Material Library.");
+  assert(read("docs/experience-bible.md").includes("DS-04"), "Experience Bible documentation must document DS-04.");
+  assert(read("docs/experience-bible.md").includes("Canonical Motion System"), "Experience Bible documentation must document Canonical Motion System.");
   assert(read("components/experience-bible-workspace.tsx").includes("aria-label=\"Experience Bible table of contents\""), "TOC must expose accessible label.");
   assert(read("components/experience-bible-workspace.tsx").includes("window.localStorage.setItem(storageKey"), "TOC expansion state must be remembered.");
   assert(read("components/experience-bible-workspace.tsx").includes("state.contentReleases"), "Bible versions view must expose all content releases.");
@@ -603,6 +614,12 @@ async function main() {
       version: materialLibraryRelease.version,
       status: materialLibraryRelease.status,
       chapters: materialLibraryRelease.chapterIds.length
+    },
+    motionSystemRelease: {
+      id: motionSystemRelease.id,
+      version: motionSystemRelease.version,
+      status: motionSystemRelease.status,
+      chapters: motionSystemRelease.chapterIds.length
     },
     searchResults: {
       futureWeBuild: search.returned,

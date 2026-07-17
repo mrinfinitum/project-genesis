@@ -23,6 +23,8 @@ function assertNoExperienceRuntimeLeak(label: string, value: unknown) {
   assert(!/"inspirationBoards"\s*:/.test(text), `${label} leaked Inspiration Board library data.`);
   assert(!/"designTokens"\s*:/.test(text), `${label} leaked Design Token system data.`);
   assert(!/"materials"\s*:/.test(text), `${label} leaked Material Library data.`);
+  assert(!/"motions"\s*:/.test(text), `${label} leaked Motion System definitions.`);
+  assert(!/"cameraLanguage"\s*:/.test(text), `${label} leaked Motion System camera language.`);
   assert(!/"experience_bible"\s*:/.test(text), `${label} leaked Experience Bible model data.`);
   assert(!/"mood_board"\s*:/.test(text), `${label} leaked Mood Board model data.`);
   assert(!text.includes("Inspiration Board Library"), `${label} leaked DV-04 Inspiration Board data.`);
@@ -30,6 +32,8 @@ function assertNoExperienceRuntimeLeak(label: string, value: unknown) {
   assert(!text.includes("Canonical Design Tokens"), `${label} leaked Canonical Design Token data.`);
   assert(!text.includes("DS-03"), `${label} leaked DS-03 Material Library data.`);
   assert(!text.includes("Canonical Material Library"), `${label} leaked Canonical Material Library data.`);
+  assert(!text.includes("DS-04"), `${label} leaked DS-04 Motion System data.`);
+  assert(!text.includes("Canonical Motion System"), `${label} leaked Canonical Motion System data.`);
   assert(!/"screen_definition"\s*:/.test(text), `${label} leaked Screen Definition model data.`);
 }
 
@@ -252,6 +256,90 @@ async function main() {
   assert(materialRecord.fields.canonicalSystem === "DS-03", "Material starter record must point to DS-03.");
   assert(materialRecord.fields.implementationValuesPublished === false, "Material starter record must not publish implementation values.");
 
+  const motionSection = state.sections.find((item) => item.id === "motion");
+  assert(motionSection?.label === "Motion Library", "Experience Design must expose Motion Library workspace.");
+  assert(motionSection.route === "/experience-design/motion", "Motion Library route must be canonical.");
+  assert(motionSection.description.includes("DS-04"), "Motion Library section must identify DS-04.");
+  const motionModel = state.contentModels.find((model) => model.kind === "motion_definition");
+  assert(motionModel?.displayName === "Canonical Motion System", "Motion model must be presented as Canonical Motion System.");
+  for (const required of ["category", "purpose", "emotionalIntent", "trigger", "completionCondition", "expectedDuration", "intensity", "playerAttentionLevel", "accessibilityNotes", "visualDnaReferences", "experienceBibleReferences", "relatedTokens", "relatedMaterials", "relatedComponents", "relatedScreens", "relatedInspirationBoards", "futureRuntimeMapping", "reviewStatus"]) {
+    assert(motionModel?.requiredFields.includes(required), `Motion content model missing ${required}.`);
+  }
+  for (const capability of ["arrival", "departure", "focus", "selection", "confirmation", "discovery", "navigation", "transition", "camera", "progress", "research", "construction", "civilization", "mission", "timeline", "galaxy", "planet", "colony", "notification", "celebration", "ambient", "microinteractions", "camera language", "accessibility", "preview metadata", "relationships", "search", "versioning"]) {
+    assert(motionModel?.supportedCapabilities.includes(capability), `Motion content model missing capability ${capability}.`);
+  }
+
+  assert(state.motion.id === "DS-04", "Motion System ID must be DS-04.");
+  assert(state.motion.title === "Canonical Motion System", "DS-04 title must be Canonical Motion System.");
+  assert(state.motion.version === "0.1", "DS-04 must be version 0.1.");
+  assert(state.motion.status === "Draft", "DS-04 must remain Draft.");
+  assert(state.motion.workspaceRoute === "/experience-design/motion", "DS-04 workspace route must be /experience-design/motion.");
+  assert(state.motion.runtimePublication === "future_design_runtime_milestone", "DS-04 runtime publication must be deferred to a future Design Runtime milestone.");
+  for (const philosophy of ["Motion exists to improve understanding.", "Never animate for decoration.", "Every movement must answer why it moved."]) {
+    assert(state.motion.philosophy.includes(philosophy), `DS-04 philosophy missing ${philosophy}.`);
+  }
+  for (const always of ["reinforce understanding", "respect hierarchy", "support readability", "maintain calm"]) {
+    assert(state.motion.rules.always.includes(always), `DS-04 always rule missing ${always}.`);
+  }
+  for (const never of ["bounce without meaning", "spin for decoration", "flash unnecessarily", "compete with gameplay", "delay interaction"]) {
+    assert(state.motion.rules.never.includes(never), `DS-04 never rule missing ${never}.`);
+  }
+  const expectedMotionCategories = ["Arrival", "Departure", "Focus", "Selection", "Confirmation", "Discovery", "Navigation", "Transition", "Camera", "Progress", "Research", "Construction", "Civilization", "Mission", "Timeline", "Galaxy", "Planet", "Colony", "Notification", "Celebration", "Ambient"];
+  assert(state.motion.categories.map((category) => category.name).join("|") === expectedMotionCategories.join("|"), "DS-04 motion categories must match the canonical list.");
+  assert(state.motion.categories.length === 21, "DS-04 must expose 21 canonical motion categories.");
+  assert(state.motion.motions.length >= 80, "DS-04 must expose a meaningful starter motion inventory.");
+  const motionIds = new Set(state.motion.motions.map((motion) => motion.id));
+  assert(motionIds.size === state.motion.motions.length, "DS-04 motion IDs must be unique.");
+  for (const expectedMotion of ["motion.arrival.standard", "motion.focus.inspect", "motion.discovery.reveal", "motion.civilization.expand", "motion.galaxy.travel", "motion.planet.descend", "motion.notification.success", "motion.ambient.orbital-drift"]) {
+    assert(motionIds.has(expectedMotion), `DS-04 missing canonical motion ${expectedMotion}.`);
+  }
+  assert(state.motion.attentionLevels.join("|") === "Background|Peripheral|Primary|Critical", "DS-04 attention levels must match canonical list.");
+  assert(state.motion.intensityLevels.join("|") === "Still|Subtle|Standard|Emphasized|Celebratory|Emergency", "DS-04 intensity levels must match canonical list.");
+  for (const accessibility of ["Reduced Motion", "No Motion", "Alternative Feedback", "Timing Adjustments"]) {
+    assert(state.motion.accessibilitySupport.includes(accessibility), `DS-04 accessibility support missing ${accessibility}.`);
+  }
+  for (const preview of ["Animated Preview", "Storyboard", "Motion Timeline", "Interaction Sequence", "Camera Path"]) {
+    assert(state.motion.previewSupport.includes(preview as never), `DS-04 preview support missing ${preview}.`);
+  }
+  for (const target of ["Design Tokens", "Materials", "Visual DNA", "Experience Bible", "Inspiration Boards", "Components", "Screen Templates", "Themes", "Brand"]) {
+    assert(state.motion.relationshipTargets.includes(target), `DS-04 relationship targets missing ${target}.`);
+  }
+  const cameraPath = state.motion.cameraLanguage.map((cameraMove) => `${cameraMove.from}->${cameraMove.to}`).join("|");
+  assert(cameraPath === "Galaxy->Sector|Sector->Star System|Star System->Planet|Planet->Colony|Colony->Building", "DS-04 camera language must follow Galaxy -> Sector -> Star System -> Planet -> Colony -> Building.");
+  const tokenIdsForMotion = new Set(state.designTokens.tokens.map((token) => token.id));
+  const materialIdsForMotion = new Set(state.materials.materials.map((material) => material.id));
+  for (const category of state.motion.categories) {
+    assert(category.status === "Draft", `DS-04 category ${category.id} must remain Draft.`);
+    assert(category.version === "0.1", `DS-04 category ${category.id} must be version 0.1.`);
+    assert(category.motionIds.length > 0, `DS-04 category ${category.id} must contain motions.`);
+    for (const motionId of category.motionIds) assert(motionIds.has(motionId), `DS-04 category ${category.id} references missing motion ${motionId}.`);
+  }
+  for (const motion of state.motion.motions) {
+    assert(motion.id.startsWith("motion."), `DS-04 motion ${motion.id} must use motion.* semantic ID.`);
+    assert(motion.status === "Draft", `DS-04 motion ${motion.id} must remain Draft.`);
+    assert(motion.version === "0.1", `DS-04 motion ${motion.id} must be version 0.1.`);
+    assert(motion.owner === "Motion Design", `DS-04 motion ${motion.id} must be owned by Motion Design.`);
+    assert(motion.reviewStatus === motion.status, `DS-04 motion ${motion.id} review status must match current draft state.`);
+    assert(motion.futureRuntimeMapping === "future_design_runtime_milestone", `DS-04 motion ${motion.id} must defer runtime mapping.`);
+    assert(motion.experienceBibleReferences.length > 0, `DS-04 motion ${motion.id} must link to Experience Bible guidance.`);
+    assert(motion.visualDnaReferences.length > 0, `DS-04 motion ${motion.id} must link to Visual DNA guidance.`);
+    assert(motion.relatedTokens.length > 0, `DS-04 motion ${motion.id} must link to design tokens.`);
+    for (const tokenId of motion.relatedTokens) assert(tokenIdsForMotion.has(tokenId), `DS-04 motion ${motion.id} references missing token ${tokenId}.`);
+    assert(motion.relatedMaterials.length > 0, `DS-04 motion ${motion.id} must link to materials.`);
+    for (const materialId of motion.relatedMaterials) assert(materialIdsForMotion.has(materialId), `DS-04 motion ${motion.id} references missing material ${materialId}.`);
+    assert(motion.relatedInspirationBoards.length > 0, `DS-04 motion ${motion.id} must link to Inspiration Boards.`);
+    assert(motion.previewSupport.length === state.motion.previewSupport.length, `DS-04 motion ${motion.id} must support all preview metadata types.`);
+    assert(motion.accessibilityNotes.join("|") === state.motion.accessibilitySupport.join("|"), `DS-04 motion ${motion.id} must support all accessibility modes.`);
+    assert(motion.history.length > 0, `DS-04 motion ${motion.id} must include history.`);
+    const text = JSON.stringify(motion);
+    assert(!/cubic-bezier|keyframes|@keyframes|requestAnimationFrame|gsap|framer-motion/i.test(text), `DS-04 motion ${motion.id} must not define animation implementation.`);
+    assert(!/[0-9]+(?:ms|s)\b/.test(text), `DS-04 motion ${motion.id} must not define numeric timing values.`);
+  }
+  const motionRecord = state.records.find((record) => record.id === "motion-discovery");
+  assert(motionRecord?.name === "Canonical Motion System", "Motion starter record must be Canonical Motion System.");
+  assert(motionRecord.fields.canonicalSystem === "DS-04", "Motion starter record must point to DS-04.");
+  assert(motionRecord.fields.implementationValuesPublished === false, "Motion starter record must not publish implementation values.");
+
   const inspirationSection = state.sections.find((item) => item.id === "inspiration-boards");
   assert(inspirationSection?.label === "Inspiration Boards", "Experience Design must expose Inspiration Boards workspace.");
   assert(inspirationSection.route === "/experience-design/inspiration-boards", "Inspiration Boards route must be canonical.");
@@ -317,14 +405,17 @@ async function main() {
   assert(read("components/app-shell.tsx").includes('href: "/experience-design/inspiration-boards"'), "Sidebar must link to Inspiration Boards.");
   assert(read("components/app-shell.tsx").includes('href: "/experience-design/tokens"'), "Sidebar must link to Design Tokens.");
   assert(read("components/app-shell.tsx").includes('href: "/experience-design/materials"'), "Sidebar must link to Material Library.");
+  assert(read("components/app-shell.tsx").includes('href: "/experience-design/motion"'), "Sidebar must link to Motion Library.");
   assert(read("app/experience-design/[section]/page.tsx").includes('redirect("/experience-design/inspiration-boards")'), "Old mood board route must redirect to Inspiration Boards.");
   assert(read("components/studio-command-palette.tsx").includes("Open Experience Design"), "Command palette must expose Experience Design.");
   assert(read("components/studio-command-palette.tsx").includes("Open Inspiration Boards"), "Command palette must expose Inspiration Boards.");
   assert(read("components/studio-command-palette.tsx").includes("Open Design Tokens"), "Command palette must expose Design Tokens.");
   assert(read("components/studio-command-palette.tsx").includes("Open Material Library"), "Command palette must expose Material Library.");
+  assert(read("components/studio-command-palette.tsx").includes("Open Motion Library"), "Command palette must expose Motion Library.");
   assert(read("components/experience-design-workspace.tsx").includes("InspirationBoardsWorkspace"), "Experience Design workspace must expose Inspiration Boards workspace.");
   assert(read("components/experience-design-workspace.tsx").includes("DesignTokensWorkspace"), "Experience Design workspace must expose Design Tokens workspace.");
   assert(read("components/experience-design-workspace.tsx").includes("MaterialsWorkspace"), "Experience Design workspace must expose Materials workspace.");
+  assert(read("components/experience-design-workspace.tsx").includes("MotionWorkspace"), "Experience Design workspace must expose Motion workspace.");
 
   const search = await searchStudio("Inspiration Boards", 10);
   assert(search.results.some((result) => result.type === "Experience Design" && /Inspiration Boards|Inspiration Board/i.test(result.title)), "Global search must return Experience Design Inspiration Board results.");
@@ -351,6 +442,12 @@ async function main() {
   assert(energyMaterialSearch.results.some((result) => result.type === "Experience Design" && result.href.includes("/experience-design/materials#material-energy-civilization-energy")), "Global search must return semantic energy material results.");
   const scanningMaterialSearch = await searchStudio("Scanning related token", 20);
   assert(scanningMaterialSearch.results.some((result) => result.type === "Experience Design" && result.href.includes("/experience-design/materials#material-special-scanning")), "Global search must return interaction material results.");
+  const motionSearchExact = await searchStudio("motion.discovery.reveal", 20);
+  assert(motionSearchExact.results.some((result) => result.type === "Experience Design" && result.href === "/experience-design/motion#motion.discovery.reveal"), "Global search must return exact DS-04 motion results.");
+  const galaxyMotionSearch = await searchStudio("galaxy travel through space", 20);
+  assert(galaxyMotionSearch.results.some((result) => result.type === "Experience Design" && result.href.includes("/experience-design/motion#motion.galaxy.travel")), "Global search must return galaxy motion results.");
+  const accessibilityMotionSearch = await searchStudio("Reduced Motion Alternative Feedback", 20);
+  assert(accessibilityMotionSearch.results.some((result) => result.type === "Experience Design" && result.href.includes("/experience-design/motion#")), "Global search must return accessibility motion results.");
 
   const canonicalRuntime = await buildCanonicalRuntimeExportPayload();
   assertNoExperienceRuntimeLeak("Canonical runtime", canonicalRuntime);
@@ -396,6 +493,15 @@ async function main() {
       materials: state.materials.materials.length,
       previewSupport: state.materials.previewSupport.length
     },
+    motion: {
+      id: state.motion.id,
+      version: state.motion.version,
+      status: state.motion.status,
+      categories: state.motion.categories.length,
+      motions: state.motion.motions.length,
+      cameraLanguage: state.motion.cameraLanguage.length,
+      previewSupport: state.motion.previewSupport.length
+    },
     inspirationSearchReturned: search.returned,
     nasaSearchReturned: nasaSearch.returned,
     boardSearchReturned: boardSearch.returned,
@@ -405,6 +511,9 @@ async function main() {
     materialSearchReturned: materialSearch.returned,
     energyMaterialSearchReturned: energyMaterialSearch.returned,
     scanningMaterialSearchReturned: scanningMaterialSearch.returned,
+    motionSearchReturned: motionSearchExact.returned,
+    galaxyMotionSearchReturned: galaxyMotionSearch.returned,
+    accessibilityMotionSearchReturned: accessibilityMotionSearch.returned,
     runtimePublishing: state.runtimePublishing,
     engineExports: Object.fromEntries(engineExports.map((engineExport, index) => [targets[index], engineExport.metadata.validationStatus]))
   }, null, 2));

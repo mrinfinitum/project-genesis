@@ -25,6 +25,7 @@ const commandSeeds: PaletteResult[] = [
   { id: "command:inspiration-boards", type: "Experience Design", title: "Open Inspiration Boards", subtitle: "Canonical visual memory and reference boards", href: "/experience-design/inspiration-boards" },
   { id: "command:design-tokens", type: "Experience Design", title: "Open Design Tokens", subtitle: "DS-02 canonical semantic token libraries", href: "/experience-design/tokens" },
   { id: "command:material-library", type: "Experience Design", title: "Open Material Library", subtitle: "DS-03 canonical semantic material library", href: "/experience-design/materials" },
+  { id: "command:motion-library", type: "Experience Design", title: "Open Motion Library", subtitle: "DS-04 canonical semantic motion system", href: "/experience-design/motion" },
   { id: "command:verification", type: "Verification", title: "Run Verification", subtitle: "Open validation engine", href: "/validation-engine" },
   { id: "command:publish-runtime", type: "Runtime", title: "Publish Runtime", subtitle: "Content release workflow", href: "/content-releases" },
   { id: "command:recent-assets", type: "Asset Library", title: "Open Recent Assets", subtitle: "Recently opened Studio assets", href: "/asset-library?folder=recently-opened" },
