@@ -32,14 +32,17 @@ async function main() {
   assert(assetContentBrowser.includes("Content Browser"), "Asset Library must identify as a Content Browser.");
   assert(assetContentBrowser.includes("ContentBrowserTree"), "Asset Library must include a left content tree.");
   assert(assetContentBrowser.includes("AssetBrowserCard"), "Asset Library must include compact browser cards.");
-  assert(assetContentBrowser.includes("AssetInspector"), "Asset Library must include a right inspector.");
-  assert(assetContentBrowser.includes("grid-cols-[16rem_minmax(0,1fr)_20rem]"), "Asset Library must use a three-column desktop layout.");
+  assert(assetContentBrowser.includes("BulkActionBar"), "Asset Library must expose bulk actions without relying on an inspector.");
+  assert(assetContentBrowser.includes("QuickPreviewOverlay"), "Asset Library must support lightweight quick preview.");
+  assert(!assetContentBrowser.includes("AssetInspector"), "Asset Library browser must not include a persistent right inspector.");
+  assert(!assetContentBrowser.includes("LazyAssetInspector"), "Asset Library browser must not lazy load a persistent inspector.");
+  assert(!assetContentBrowser.includes("grid-cols-[16rem_minmax(0,1fr)_20rem]"), "Asset Library must not reserve a third inspector column.");
+  assert(assetContentBrowser.includes("grid-cols-[16rem_minmax(0,1fr)]"), "Asset Library must use a two-column folder tree and asset grid layout.");
   assert(assetContentBrowser.includes("project-genesis-content-browser-expanded"), "Content Browser tree expansion state must persist.");
   assert(assetContentBrowser.includes("repeat(auto-fill, minmax(180px, 220px))"), "Asset cards must stay in the 180-220px browser-card range.");
   assert(assetContentBrowser.includes("onDoubleClick"), "Double-click must open the asset detail.");
   assert(assetContentBrowser.includes("handleGridKeyDown"), "Asset grid must support keyboard navigation.");
   assert(assetContentBrowser.includes('role="grid"'), "Asset grid must expose grid semantics for keyboard users.");
-  assert(assetContentBrowser.includes("LazyAssetInspector"), "Inspector must be lazy loaded.");
   assert(assetContentBrowser.includes("contentVisibility"), "Large grids must use browser-level virtualization/content visibility.");
   assert(assetContentBrowser.includes("Showing the first"), "Large result sets must be bounded.");
   assert(assetContentBrowser.includes("Search name, tags, semantic role, category, status, canonical ID"), "Global search must cover the requested fields.");
@@ -47,6 +50,9 @@ async function main() {
   assert(assetContentBrowser.includes("All Engines"), "Engine filter must exist.");
   assert(assetContentBrowser.includes("Any Resolution"), "Resolution filter must exist.");
   assert(assetContentBrowser.includes("Animated"), "Animated filter must exist.");
+  for (const action of ["Delete", "Move", "Replace", "Tag", "Publish", "Approve"]) {
+    assert(assetContentBrowser.includes(action), `Bulk action ${action} must be available from the browser.`);
+  }
 
   assert(creativeRoute.includes("redirect("), "Creative Production route must redirect.");
   assert(creativeRoute.includes("/assets?"), "Creative Production route must redirect into /assets compatibility routes.");
@@ -74,9 +80,11 @@ async function main() {
       assets: "/assets?category=:categoryId"
     },
     contentBrowser: {
-      layout: "Content Tree / Asset Grid / Inspector",
+      layout: "Content Tree / Asset Grid",
       cardWidth: "180-220px",
       treeState: "remembered",
+      quickPreview: "hover-or-spacebar",
+      persistentInspector: false,
       boundedGrid: true
     },
     categoryCount: assetLibraryCategoryIds.length,

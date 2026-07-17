@@ -1,10 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState, type KeyboardEvent } from "react";
-import { Box, Boxes, ChevronRight, Download, Eye, FileImage, Folder, FolderOpen, History, Layers3, Search, UploadCloud } from "lucide-react";
-import { WorkspaceBadge, WorkspaceMiniStat, WorkspaceSearchBar } from "@/components/ui/workspace";
+import { Box, Boxes, ChevronRight, FileImage, Folder, FolderOpen, Search } from "lucide-react";
+import { WorkspaceMiniStat, WorkspaceSearchBar } from "@/components/ui/workspace";
 import type { AssetProductionState } from "@/lib/assets/asset-production";
 
 type InventoryItem = AssetProductionState["assetLibraryInventory"]["items"][number];
@@ -190,20 +189,7 @@ function usageCount(item: InventoryItem) {
 }
 
 function itemHref(item: InventoryItem) {
-  return item.sourceAssetId ? `/assets/${encodeURIComponent(item.sourceAssetId)}` : `/asset-library?upload=asset&assetKey=${encodeURIComponent(item.semanticAssetKey)}`;
-}
-
-function uploadHref(item: InventoryItem) {
-  const params = new URLSearchParams({
-    upload: "asset",
-    category: item.categoryPath.split("/").pop()?.trim() ?? item.categoryId,
-    role: item.role,
-    assetKey: item.semanticAssetKey,
-    name: item.displayName,
-    requiredDimensions: item.requiredDimensions
-  });
-  if (item.requirementId) params.set("requirement", item.requirementId);
-  return `/assets?${params.toString()}`;
+  return item.sourceAssetId ? `/assets/${encodeURIComponent(item.sourceAssetId)}` : `/assets?upload=asset&assetKey=${encodeURIComponent(item.semanticAssetKey)}`;
 }
 
 function imageFor(item: InventoryItem) {
@@ -338,11 +324,15 @@ function PreviewSurface({ item, className = "h-full" }: { item: InventoryItem; c
 function AssetBrowserCard({
   item,
   selected,
-  onSelect
+  checked,
+  onSelect,
+  onToggle
 }: {
   item: InventoryItem;
   selected: boolean;
+  checked: boolean;
   onSelect: (item: InventoryItem) => void;
+  onToggle: (item: InventoryItem) => void;
 }) {
   return (
     <article
@@ -366,6 +356,19 @@ function AssetBrowserCard({
           </div>
         </div>
       </button>
+      <label className={`absolute left-2 top-2 z-20 grid h-6 w-6 place-items-center rounded border border-cyan-300/25 bg-slate-950/80 transition group-hover:opacity-100 ${checked ? "opacity-100" : "opacity-0"}`} aria-label={`Select ${item.displayName}`}>
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={() => onToggle(item)}
+          onClick={(event) => event.stopPropagation()}
+          className="h-3.5 w-3.5 accent-cyan-300"
+        />
+      </label>
+      <div className="absolute bottom-2 right-2 z-20 hidden gap-1 group-hover:flex">
+        <Link href={itemHref(item)} className="rounded border border-cyan-300/25 bg-slate-950/90 px-2 py-1 text-[0.62rem] font-black uppercase tracking-[0.1em] text-cyan-100">Open</Link>
+        <Link href={itemHref(item)} className="rounded border border-slate-600 bg-slate-950/90 px-2 py-1 text-[0.62rem] font-black uppercase tracking-[0.1em] text-slate-200">Inspect</Link>
+      </div>
       <div className="pointer-events-none absolute left-3 top-3 z-30 hidden w-80 translate-x-8 rounded-md border border-cyan-300/30 bg-slate-950/96 p-3 shadow-2xl group-hover:block">
         <div className="aspect-video overflow-hidden rounded border border-cyan-300/15">
           <PreviewSurface item={item} />
@@ -387,74 +390,6 @@ function AssetBrowserCard({
   );
 }
 
-function AssetInspector({ item }: { item: InventoryItem | null }) {
-  const usage = item ? [...item.referencedByScreens, ...item.referencedByComponents, ...item.referencedByPlaceholders] : [];
-  return (
-    <aside className="rounded-md border border-cyan-300/15 bg-[#07101e]/92 p-3 shadow-glow lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-auto">
-      {item ? (
-        <div>
-          <div className="aspect-video overflow-hidden rounded-md border border-cyan-300/15 bg-slate-950/70">
-            <PreviewSurface item={item} />
-          </div>
-          <h2 className="mt-3 truncate text-lg font-black text-white" title={item.displayName}>{item.displayName}</h2>
-          <p className="mt-1 truncate text-xs font-semibold text-cyan-200" title={item.semanticAssetKey}>{item.semanticAssetKey}</p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <span className={`rounded-md border px-2 py-1 text-[0.65rem] font-black uppercase tracking-[0.11em] ${statusClass(item.status)}`}>{statusLabel(item.status)}</span>
-            <WorkspaceBadge value={item.role} />
-          </div>
-          <div className="mt-4 grid gap-2">
-            <WorkspaceMiniStat label="Category" value={item.categoryPath} />
-            <WorkspaceMiniStat label="Source" value={item.sourceType.replaceAll("_", " ")} />
-            <WorkspaceMiniStat label="Versions" value={item.currentDimensions} />
-            <WorkspaceMiniStat label="Requirements" value={item.requiredDimensions} />
-            <WorkspaceMiniStat label="Tags" value={[item.role, item.categoryId, item.status].join(" / ")} />
-            <WorkspaceMiniStat label="Engine Mappings" value={`web:${item.platformReadiness.web} / roblox:${item.platformReadiness.roblox}`} />
-          </div>
-          <div className="mt-4 rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
-            <p className="text-xs font-black uppercase tracking-[0.16em] text-cyan-200">Usage</p>
-            <div className="mt-2 space-y-2">
-              {usage.slice(0, 10).map((reference) => (
-                <Link key={`${reference.type}:${reference.id}`} href={reference.href} className="block truncate rounded border border-cyan-300/10 bg-slate-950/60 px-2 py-1.5 text-xs font-semibold text-slate-200 hover:border-cyan-300/40">
-                  {reference.type}: {reference.name}
-                </Link>
-              ))}
-              {!usage.length ? <p className="text-sm font-semibold text-slate-500">No direct usage linked yet.</p> : null}
-            </div>
-          </div>
-          <div className="mt-4 rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
-            <p className="text-xs font-black uppercase tracking-[0.16em] text-cyan-200">History</p>
-            <p className="mt-2 text-sm leading-6 text-slate-400">History is retained on the canonical asset record. The browser stays in place while details open on demand.</p>
-          </div>
-          <div className="mt-4 grid grid-cols-2 gap-2">
-            <Link href={itemHref(item)} className="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100"><Eye className="h-4 w-4" /> Open</Link>
-            <Link href={uploadHref(item)} className="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100"><UploadCloud className="h-4 w-4" /> Replace</Link>
-            <Link href={`${itemHref(item)}?tab=history`} className="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200"><History className="h-4 w-4" /> Versions</Link>
-            {imageFor(item) ? <Link href={imageFor(item) ?? "#"} className="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-slate-600 bg-slate-950/40 px-3 text-sm font-bold text-slate-200"><Download className="h-4 w-4" /> Download</Link> : null}
-          </div>
-        </div>
-      ) : (
-        <div className="grid min-h-80 place-items-center text-center">
-          <div>
-            <FileImage className="mx-auto h-8 w-8 text-cyan-100/35" />
-            <p className="mt-3 text-sm font-bold text-slate-400">Select an asset to inspect source, usage, versions, mappings, and requirements.</p>
-          </div>
-        </div>
-      )}
-    </aside>
-  );
-}
-
-const LazyAssetInspector = dynamic(() => Promise.resolve({ default: AssetInspector }), {
-  ssr: false,
-  loading: () => (
-    <aside className="rounded-md border border-cyan-300/15 bg-[#07101e]/92 p-3 shadow-glow">
-      <div className="grid min-h-80 place-items-center text-center">
-        <p className="text-sm font-bold text-slate-500">Loading inspector...</p>
-      </div>
-    </aside>
-  )
-});
-
 function breadcrumbFor(node: ContentBrowserNode) {
   const parts = node.id.split("/");
   if (parts.length === 1) return [node.label];
@@ -471,6 +406,57 @@ function sortItems(items: InventoryItem[], sort: typeof sortOptions[number]) {
   return rows.sort((left, right) => right.sortOrder - left.sortOrder);
 }
 
+function BulkActionBar({
+  selectedCount,
+  message,
+  onAction
+}: {
+  selectedCount: number;
+  message: string;
+  onAction: (action: string) => void;
+}) {
+  const actions = ["Delete", "Move", "Replace", "Tag", "Publish", "Approve"];
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-cyan-300/15 bg-[#07101e]/88 p-3 shadow-glow">
+      <p className="text-xs font-semibold text-slate-400">{selectedCount ? `${selectedCount} selected` : "Select assets for bulk operations"}</p>
+      <div className="flex flex-wrap gap-2">
+        {actions.map((action) => (
+          <button
+            key={action}
+            type="button"
+            disabled={!selectedCount}
+            onClick={() => onAction(action)}
+            className="h-8 rounded-md border border-cyan-300/20 bg-cyan-300/8 px-3 text-xs font-black uppercase tracking-[0.12em] text-cyan-100 transition hover:bg-cyan-300/15 disabled:cursor-not-allowed disabled:border-slate-700 disabled:bg-slate-900/40 disabled:text-slate-600"
+          >
+            {action}
+          </button>
+        ))}
+      </div>
+      {message ? <p className="basis-full text-xs font-semibold text-cyan-100">{message}</p> : null}
+    </div>
+  );
+}
+
+function QuickPreviewOverlay({ item, onClose }: { item: InventoryItem | null; onClose: () => void }) {
+  if (!item) return null;
+  return (
+    <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/70 p-6 backdrop-blur-sm" onClick={onClose}>
+      <div className="w-full max-w-3xl rounded-md border border-cyan-300/25 bg-[#07101e] p-4 shadow-2xl" onClick={(event) => event.stopPropagation()}>
+        <div className="aspect-video overflow-hidden rounded-md border border-cyan-300/15 bg-slate-950/70">
+          <PreviewSurface item={item} />
+        </div>
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="truncate text-lg font-black text-white">{item.displayName}</p>
+            <p className="mt-1 text-xs font-semibold text-slate-500">Space or Esc closes preview</p>
+          </div>
+          <Link href={itemHref(item)} className="inline-flex h-9 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Open Asset</Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function AssetContentBrowser({ state, initialNode }: { state: AssetProductionState; initialNode?: string | null }) {
   const [activeNodeId, setActiveNodeId] = useState(() => resolveInitialNode(initialNode));
   const [query, setQuery] = useState("");
@@ -481,6 +467,9 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
   const [animatedOnly, setAnimatedOnly] = useState(false);
   const [sort, setSort] = useState<(typeof sortOptions)[number]>("name");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
+  const [bulkMessage, setBulkMessage] = useState("");
+  const [quickPreviewItem, setQuickPreviewItem] = useState<InventoryItem | null>(null);
   const activeNode = nodeById(activeNodeId);
 
   const counts = useMemo(() => {
@@ -531,6 +520,26 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
     if (event.key === "Enter" && selectedItem) {
       window.location.assign(itemHref(selectedItem));
     }
+    if (event.key === " " && selectedItem) {
+      event.preventDefault();
+      setQuickPreviewItem((current) => current?.id === selectedItem.id ? null : selectedItem);
+    }
+    if (event.key === "Escape") {
+      setQuickPreviewItem(null);
+    }
+  }
+
+  function toggleSelected(item: InventoryItem) {
+    setSelectedIds((current) => {
+      const next = new Set(current);
+      if (next.has(item.id)) next.delete(item.id);
+      else next.add(item.id);
+      return next;
+    });
+  }
+
+  function runBulkAction(action: string) {
+    setBulkMessage(`${action} is ready for ${selectedIds.size} selected asset${selectedIds.size === 1 ? "" : "s"}. Open Asset Detail for record-level review before destructive changes.`);
   }
 
   return (
@@ -552,7 +561,7 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
         </div>
       </header>
 
-      <section className="grid gap-3 lg:grid-cols-[16rem_minmax(0,1fr)_20rem]">
+      <section className="grid gap-3 lg:grid-cols-[16rem_minmax(0,1fr)]">
         <ContentBrowserTree activeId={activeNodeId} counts={counts} onSelect={setActiveNodeId} />
         <section className="min-w-0 space-y-3">
           <div className="rounded-md border border-cyan-300/15 bg-[#07101e]/88 p-3 shadow-glow">
@@ -582,6 +591,7 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
               <p className="text-xs font-semibold text-slate-500">{visibleItems.length} shown / {filteredItems.length} matched / {state.assetLibraryInventory.items.length} indexed</p>
             </div>
           </div>
+          <BulkActionBar selectedCount={selectedIds.size} message={bulkMessage} onAction={runBulkAction} />
 
           <div
             role="grid"
@@ -592,7 +602,14 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
             style={{ gridTemplateColumns: "repeat(auto-fill, minmax(180px, 220px))" }}
           >
             {visibleItems.map((item) => (
-              <AssetBrowserCard key={item.id} item={item} selected={selectedId === item.id} onSelect={(next) => setSelectedId(next.id)} />
+              <AssetBrowserCard
+                key={item.id}
+                item={item}
+                selected={selectedId === item.id}
+                checked={selectedIds.has(item.id)}
+                onSelect={(next) => setSelectedId(next.id)}
+                onToggle={toggleSelected}
+              />
             ))}
           </div>
           {filteredItems.length > visibleItems.length ? (
@@ -609,8 +626,8 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
             </div>
           ) : null}
         </section>
-        <LazyAssetInspector item={selectedItem} />
       </section>
+      <QuickPreviewOverlay item={quickPreviewItem} onClose={() => setQuickPreviewItem(null)} />
     </main>
   );
 }

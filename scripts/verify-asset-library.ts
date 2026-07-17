@@ -45,7 +45,8 @@ async function main() {
     "Content Browser",
     "ContentBrowserTree",
     "AssetBrowserCard",
-    "AssetInspector",
+    "BulkActionBar",
+    "QuickPreviewOverlay",
     "Universe",
     "Civilization",
     "Discovery",
@@ -60,7 +61,6 @@ async function main() {
     "onDoubleClick",
     "handleGridKeyDown",
     "role=\"grid\"",
-    "LazyAssetInspector",
     "categoryInitialNodeMap",
     "project-genesis-content-browser-expanded",
     "Search name, tags, semantic role, category, status, canonical ID",
@@ -72,6 +72,13 @@ async function main() {
   ]) {
     assertIncludes("Asset Content Browser", assetContentBrowser, expected);
   }
+  for (const expected of ["Delete", "Move", "Replace", "Tag", "Publish", "Approve"]) {
+    assertIncludes("Asset Content Browser bulk actions", assetContentBrowser, expected);
+  }
+  assertNotIncludes("Asset Content Browser", assetContentBrowser, "AssetInspector");
+  assertNotIncludes("Asset Content Browser", assetContentBrowser, "LazyAssetInspector");
+  assertNotIncludes("Asset Content Browser", assetContentBrowser, "grid-cols-[16rem_minmax(0,1fr)_20rem]");
+  assertIncludes("Asset Content Browser", assetContentBrowser, "grid-cols-[16rem_minmax(0,1fr)]");
   assertIncludes("Deprecated Game Art Import route", deprecatedGameArtRoute, "redirect");
   assertIncludes("Deprecated Game Art Import route", deprecatedGameArtRoute, "/asset-library?deprecated=game-art-import");
 
