@@ -14,7 +14,7 @@ Experience Design supports:
 - Inspiration Boards
 - Concept Library
 - Screen Library
-- Design Token Collections
+- Canonical Design Tokens
 - Material Library
 - Motion Library
 - Component Library
@@ -63,3 +63,38 @@ The Game owns layout implementation, rendering, camera, shaders, controls, CSS, 
 ED-01 is authoring framework only.
 
 It must not modify gameplay, engine exports, public runtime payloads, checksums, or contentVersion.
+
+## DS-02 Canonical Design Tokens
+
+DS-02 creates the canonical semantic Design Token system for NOVERIS.
+
+Tokens are authoring records that describe meaning, purpose, relationships, review state, and version history. They are not CSS variables, Tailwind classes, renderer settings, shader values, or implementation code.
+
+Canonical token libraries:
+
+- Color Tokens
+- Typography Tokens
+- Spacing Tokens
+- Radius Tokens
+- Elevation Tokens
+- Shadow Tokens
+- Blur Tokens
+- Opacity Tokens
+- Motion Tokens
+- Timing Tokens
+- Breakpoint Tokens
+- Z-Layer Tokens
+- Icon Tokens
+- Grid Tokens
+- Stroke Tokens
+- Glow Tokens
+- Atmosphere Tokens
+- Glass Tokens
+- Background Tokens
+- Transition Tokens
+
+Good token names describe purpose, such as `accent.civilization.gold`, `surface.command.glass`, `text.primary`, and `motion.fade.standard`.
+
+Bad token names describe raw appearance or implementation, such as `gold500`, `blue100`, `radius12`, or `blur24`.
+
+DS-02 remains Draft at version 0.1. Token values are not published yet; future runtime publication belongs to a later Design Runtime milestone.

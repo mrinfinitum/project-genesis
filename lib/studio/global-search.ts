@@ -52,6 +52,7 @@ const workspaceResults: StudioSearchResult[] = [
   workspace("experience-design", "Experience Design", "/experience-design", "Creative direction authoring"),
   workspace("experience-bible", "Experience Bible", "/experience-design/bible", "Creative canon framework"),
   workspace("inspiration-boards", "Inspiration Boards", "/experience-design/inspiration-boards", "Canonical visual memory and reference boards"),
+  workspace("design-tokens", "Design Tokens", "/experience-design/tokens", "DS-02 canonical semantic token libraries"),
   workspace("screen-library", "Screen Library", "/experience-design/screens", "Canonical screen intent"),
   workspace("upload-asset", "Upload Asset", "/assets?upload=asset", "Asset pipeline"),
   workspace("regenerate-derivatives", "Regenerate Derivatives", "/asset-library?status=needs_review", "Asset pipeline"),
@@ -173,6 +174,34 @@ export async function buildStudioSearchIndex(): Promise<StudioSearchIndex> {
         board.annotationCategories.join(" "),
         board.signatureReinforcement.join(" "),
         Object.entries(board.inspirationScores).map(([key, value]) => `${key} ${value}`).join(" ")
+      ]
+    })),
+    ...experienceDesign.designTokens.libraries.map((library) => result({
+      id: library.id,
+      type: "Experience Design" as const,
+      title: library.name,
+      subtitle: `Design Token Library / ${experienceDesign.designTokens.id} / ${library.status}`,
+      href: experienceDesign.designTokens.workspaceRoute,
+      status: library.status,
+      aliases: [library.purpose, library.tokenIds.join(" "), library.reviewStatus, "semantic tokens"]
+    })),
+    ...experienceDesign.designTokens.tokens.map((token) => result({
+      id: token.id,
+      type: "Experience Design" as const,
+      title: token.semanticPath,
+      subtitle: `${token.category} / ${token.status}`,
+      href: `${experienceDesign.designTokens.workspaceRoute}#${token.id}`,
+      status: token.status,
+      aliases: [
+        token.name,
+        token.purpose,
+        token.description,
+        token.tags.join(" "),
+        token.experienceBibleReferences.join(" "),
+        token.visualDnaReferences.join(" "),
+        token.relatedMaterials.join(" "),
+        token.relatedComponents.join(" "),
+        token.relatedScreens.join(" ")
       ]
     })),
     ...experienceDesign.experienceBible.parts.map((part) => result({

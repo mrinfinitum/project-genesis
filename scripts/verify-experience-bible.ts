@@ -40,6 +40,8 @@ function assertNoRuntimeLeak(label: string, value: unknown) {
   assert(!text.includes("Deep Space Navy"), `${label} leaked color philosophy guidance.`);
   assert(!text.includes("DV-04"), `${label} leaked DV-04 Inspiration Board data.`);
   assert(!text.includes("Inspiration Board Library"), `${label} leaked Inspiration Board Library data.`);
+  assert(!text.includes("DS-02"), `${label} leaked DS-02 Design Token data.`);
+  assert(!text.includes("Canonical Design Tokens"), `${label} leaked Canonical Design Token data.`);
   assert(!/"bodySections"\s*:/.test(text), `${label} leaked Bible body sections.`);
 }
 
@@ -74,6 +76,13 @@ async function main() {
   assert(inspirationBoardRelease.version === "0.1", "DV-04 must be version 0.1.");
   assert(inspirationBoardRelease.status === "Draft", "DV-04 must remain Draft.");
   assert(inspirationBoardRelease.chapterIds.length === 0, "DV-04 must be an Inspiration Board Library release, not a numbered chapter release.");
+  const designTokensRelease = bible.contentReleases.find((release) => release.id === "DS-02");
+  assert(designTokensRelease, "Missing DS-02 Canonical Design Tokens content release.");
+  assert(designTokensRelease.version === "0.1", "DS-02 must be version 0.1.");
+  assert(designTokensRelease.status === "Draft", "DS-02 must remain Draft.");
+  assert(designTokensRelease.chapterIds.length === 0, "DS-02 must be a Design Token system release, not a numbered chapter release.");
+  assert(designTokensRelease.notes.some((note) => note.includes("not CSS variables")), "DS-02 release must reject CSS variable ownership.");
+  assert(designTokensRelease.notes.some((note) => note.includes("implementation code")), "DS-02 release must reject implementation ownership.");
   assert(experience.experienceBible.chapters.length === 65, "Experience Design state must expose Bible chapters.");
 
   assert(bible.signature.id === "DV-02C", "Signature section ID must be DV-02C.");
@@ -518,6 +527,8 @@ async function main() {
   assert(read("docs/experience-bible.md").includes("Visual DNA"), "Experience Bible documentation must document Visual DNA.");
   assert(read("docs/experience-bible.md").includes("DV-04"), "Experience Bible documentation must document DV-04.");
   assert(read("docs/experience-bible.md").includes("Inspiration Board Library"), "Experience Bible documentation must document Inspiration Board Library.");
+  assert(read("docs/experience-bible.md").includes("DS-02"), "Experience Bible documentation must document DS-02.");
+  assert(read("docs/experience-bible.md").includes("Canonical Design Tokens"), "Experience Bible documentation must document Canonical Design Tokens.");
   assert(read("components/experience-bible-workspace.tsx").includes("aria-label=\"Experience Bible table of contents\""), "TOC must expose accessible label.");
   assert(read("components/experience-bible-workspace.tsx").includes("window.localStorage.setItem(storageKey"), "TOC expansion state must be remembered.");
   assert(read("components/experience-bible-workspace.tsx").includes("state.contentReleases"), "Bible versions view must expose all content releases.");
@@ -569,6 +580,12 @@ async function main() {
       version: inspirationBoardRelease.version,
       status: inspirationBoardRelease.status,
       chapters: inspirationBoardRelease.chapterIds.length
+    },
+    designTokensRelease: {
+      id: designTokensRelease.id,
+      version: designTokensRelease.version,
+      status: designTokensRelease.status,
+      chapters: designTokensRelease.chapterIds.length
     },
     searchResults: {
       futureWeBuild: search.returned,

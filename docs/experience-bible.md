@@ -271,6 +271,43 @@ The dedicated Brand Reference Board supports approved noveris.life screenshots, 
 
 DV-04 uses the existing Experience Design `mood_board` content model. It does not create a duplicate model, duplicate Asset Library binaries, publish runtime data, or alter engine exports.
 
+## DS-02 Canonical Design Tokens
+
+DS-02 creates the canonical Design Token system for NOVERIS. This is the single semantic source of truth for visual design decisions across Project Genesis Studio, NOVERIS Game, noveris.life, Steam, Marketing, and future platforms.
+
+Design Tokens represent meaning, never implementation. They describe purpose, not raw appearance. DS-02 therefore records names, categories, purposes, descriptions, Experience Bible references, Visual DNA references, related materials, related components, related screens, status, version, history, tags, owner, and review status.
+
+DS-02 canonical libraries:
+
+- Color Tokens
+- Typography Tokens
+- Spacing Tokens
+- Radius Tokens
+- Elevation Tokens
+- Shadow Tokens
+- Blur Tokens
+- Opacity Tokens
+- Motion Tokens
+- Timing Tokens
+- Breakpoint Tokens
+- Z-Layer Tokens
+- Icon Tokens
+- Grid Tokens
+- Stroke Tokens
+- Glow Tokens
+- Atmosphere Tokens
+- Glass Tokens
+- Background Tokens
+- Transition Tokens
+
+Examples of approved semantic names include `accent.civilization.gold`, `accent.projection.cyan`, `surface.command.glass`, `text.primary`, `motion.fade.standard`, `glass.command`, `atmosphere.deep-space`, `grid.workspace`, and `background.universe`.
+
+Examples of rejected implementation or appearance names include `gold500`, `blue100`, `radius12`, and `blur24`.
+
+Tokens participate in Studio search by purpose, emotion, category, relationships, Experience Bible chapter, and Visual DNA section.
+
+DS-02 is Draft at version 0.1. It does not define hexadecimal values, CSS variables, Tailwind classes, implementation code, gameplay data, runtime gameplay contracts, contentVersion changes, runtimeVersion changes, or engine export changes.
+
 ## Approval
 
 Review states:

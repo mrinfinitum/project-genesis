@@ -22,7 +22,7 @@ import {
   Sparkles
 } from "lucide-react";
 import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, WorkspaceSearchBar, WorkspaceStatTile, WorkspaceTabs } from "@/components/ui/workspace";
-import type { ExperienceDesignKind, ExperienceDesignRecord, ExperienceDesignSection, ExperienceDesignState, ExperienceInspirationBoard } from "@/lib/experience-design";
+import type { ExperienceDesignKind, ExperienceDesignRecord, ExperienceDesignSection, ExperienceDesignState, ExperienceDesignToken, ExperienceInspirationBoard } from "@/lib/experience-design";
 import { cn } from "@/lib/utils";
 
 type ExperienceTab = "dashboard" | "library" | "models" | "reviews" | "history";
@@ -222,6 +222,88 @@ function InspirationBoardsWorkspace({ state, boards }: { state: ExperienceDesign
   );
 }
 
+function DesignTokenCard({ token }: { token: ExperienceDesignToken }) {
+  return (
+    <article id={token.id} className="scroll-mt-24 rounded-md border border-cyan-300/15 bg-slate-950/45 p-4">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="truncate text-xs font-black uppercase tracking-[0.18em] text-cyan-300">{token.category}</p>
+          <h3 className="mt-2 truncate text-xl font-black text-white" title={token.semanticPath}>{token.semanticPath}</h3>
+          <p className="mt-1 truncate text-sm font-semibold text-slate-500">{token.name}</p>
+        </div>
+        <WorkspaceBadge value={token.status} />
+      </div>
+      <p className="mt-3 line-clamp-4 text-sm leading-6 text-slate-300">{token.purpose}</p>
+      <div className="mt-4 grid gap-2 sm:grid-cols-3">
+        <WorkspaceMiniStat label="Version" value={token.version} />
+        <WorkspaceMiniStat label="Owner" value={token.owner} />
+        <WorkspaceMiniStat label="Review" value={token.reviewStatus} />
+      </div>
+      <div className="mt-4 flex flex-wrap gap-2">
+        {token.tags.slice(0, 6).map((tag) => <WorkspaceBadge key={tag} value={tag} className="text-[0.62rem]" />)}
+      </div>
+    </article>
+  );
+}
+
+function DesignTokensWorkspace({ state, tokens }: { state: ExperienceDesignState; tokens: ExperienceDesignToken[] }) {
+  return (
+    <div className="space-y-4 lg:col-span-2 2xl:col-span-3">
+      <section className="studio-material-command rounded-lg p-5">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-300">{state.designTokens.id} / Version {state.designTokens.version}</p>
+            <h3 className="mt-2 text-2xl font-black text-white">{state.designTokens.title}</h3>
+            <p className="mt-3 max-w-4xl text-sm leading-6 text-slate-300">{state.designTokens.purpose}</p>
+          </div>
+          <WorkspaceBadge value={state.designTokens.status} />
+        </div>
+        <div className="mt-4 grid gap-3 md:grid-cols-4">
+          <WorkspaceMiniStat label="Libraries" value={state.designTokens.libraries.length} />
+          <WorkspaceMiniStat label="Tokens" value={state.designTokens.tokens.length} />
+          <WorkspaceMiniStat label="Values" value={state.designTokens.implementationValuesPublished ? "Published" : "Not Published"} />
+          <WorkspaceMiniStat label="Runtime" value="Future Milestone" />
+        </div>
+      </section>
+
+      <WorkspacePanel title="Semantic Libraries" icon={Palette}>
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          {state.designTokens.libraries.map((library) => (
+            <div key={library.id} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
+              <div className="flex items-start justify-between gap-3">
+                <p className="text-sm font-black text-white">{library.name}</p>
+                <WorkspaceBadge value={`${library.tokenIds.length}`} className="text-[0.62rem]" />
+              </div>
+              <p className="mt-2 line-clamp-3 text-xs leading-5 text-slate-400">{library.purpose}</p>
+            </div>
+          ))}
+        </div>
+      </WorkspacePanel>
+
+      <WorkspacePanel title="Rules and Boundaries" icon={ShieldCheck}>
+        <div className="grid gap-4 lg:grid-cols-3">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Philosophy</p>
+            <p className="mt-2 text-sm leading-6 text-slate-300">{state.designTokens.philosophy.join(" ")}</p>
+          </div>
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Naming Rules</p>
+            <p className="mt-2 text-sm leading-6 text-slate-300">{state.designTokens.namingRules.join(" ")}</p>
+          </div>
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Consumers</p>
+            <p className="mt-2 text-sm leading-6 text-slate-300">{state.designTokens.consumers.join(", ")}</p>
+          </div>
+        </div>
+      </WorkspacePanel>
+
+      <section className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
+        {tokens.map((token) => <DesignTokenCard key={token.id} token={token} />)}
+      </section>
+    </div>
+  );
+}
+
 export function ExperienceDesignWorkspace({ state, initialSection = "dashboard" }: { state: ExperienceDesignState; initialSection?: string }) {
   const resolvedSection = state.sections.some((section) => section.id === initialSection) ? initialSection : "dashboard";
   const [query, setQuery] = useState("");
@@ -263,6 +345,28 @@ export function ExperienceDesignWorkspace({ state, initialSection = "dashboard" 
       return text.includes(normalized);
     });
   }, [query, state.inspirationBoards.boards]);
+
+  const filteredTokens = useMemo(() => {
+    const normalized = query.trim().toLowerCase();
+    return state.designTokens.tokens.filter((token) => {
+      if (!normalized) return true;
+      const text = [
+        token.id,
+        token.name,
+        token.semanticPath,
+        token.category,
+        token.purpose,
+        token.description,
+        token.tags.join(" "),
+        token.experienceBibleReferences.join(" "),
+        token.visualDnaReferences.join(" "),
+        token.relatedMaterials.join(" "),
+        token.relatedComponents.join(" "),
+        token.relatedScreens.join(" ")
+      ].join(" ").toLowerCase();
+      return text.includes(normalized);
+    });
+  }, [query, state.designTokens.tokens]);
 
   const reviewCounts = state.reviewWorkflow.map((status) => ({
     status,
@@ -373,9 +477,12 @@ export function ExperienceDesignWorkspace({ state, initialSection = "dashboard" 
 
       {tab === "library" ? (
         <section className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
-          {currentSection.id === "inspiration-boards" ? <InspirationBoardsWorkspace state={state} boards={filteredBoards} /> : filteredRecords.map((record) => <ExperienceRecordCard key={record.id} state={state} record={record} />)}
-          {currentSection.id !== "inspiration-boards" && !filteredRecords.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Experience Design records match this view.</p> : null}
+          {currentSection.id === "inspiration-boards" ? <InspirationBoardsWorkspace state={state} boards={filteredBoards} /> : null}
+          {currentSection.id === "tokens" ? <DesignTokensWorkspace state={state} tokens={filteredTokens} /> : null}
+          {currentSection.id !== "inspiration-boards" && currentSection.id !== "tokens" ? filteredRecords.map((record) => <ExperienceRecordCard key={record.id} state={state} record={record} />) : null}
+          {currentSection.id !== "inspiration-boards" && currentSection.id !== "tokens" && !filteredRecords.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Experience Design records match this view.</p> : null}
           {currentSection.id === "inspiration-boards" && !filteredBoards.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Inspiration Boards match this view.</p> : null}
+          {currentSection.id === "tokens" && !filteredTokens.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Design Tokens match this view.</p> : null}
         </section>
       ) : null}
 

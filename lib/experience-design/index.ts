@@ -147,6 +147,77 @@ export type ExperienceInspirationBoardLibrary = {
   accessibilityRequirements: string[];
 };
 
+export type ExperienceDesignTokenCategory =
+  | "Color Tokens"
+  | "Typography Tokens"
+  | "Spacing Tokens"
+  | "Radius Tokens"
+  | "Elevation Tokens"
+  | "Shadow Tokens"
+  | "Blur Tokens"
+  | "Opacity Tokens"
+  | "Motion Tokens"
+  | "Timing Tokens"
+  | "Breakpoint Tokens"
+  | "Z-Layer Tokens"
+  | "Icon Tokens"
+  | "Grid Tokens"
+  | "Stroke Tokens"
+  | "Glow Tokens"
+  | "Atmosphere Tokens"
+  | "Glass Tokens"
+  | "Background Tokens"
+  | "Transition Tokens";
+
+export type ExperienceDesignToken = {
+  id: string;
+  name: string;
+  semanticPath: string;
+  category: ExperienceDesignTokenCategory;
+  purpose: string;
+  description: string;
+  experienceBibleReferences: string[];
+  visualDnaReferences: string[];
+  relatedMaterials: string[];
+  relatedComponents: string[];
+  relatedScreens: string[];
+  status: ExperienceDesignStatus;
+  version: "0.1";
+  history: ExperienceHistoryEntry[];
+  tags: string[];
+  owner: string;
+  reviewStatus: ExperienceDesignStatus;
+};
+
+export type ExperienceDesignTokenLibrary = {
+  id: string;
+  name: ExperienceDesignTokenCategory;
+  purpose: string;
+  tokenIds: string[];
+  status: ExperienceDesignStatus;
+  version: "0.1";
+  reviewStatus: ExperienceDesignStatus;
+};
+
+export type ExperienceDesignTokenSystem = {
+  id: "DS-02";
+  title: "Canonical Design Tokens";
+  version: "0.1";
+  status: "Draft";
+  purpose: string;
+  workspaceRoute: string;
+  consumers: string[];
+  boundaries: string[];
+  philosophy: string[];
+  namingRules: string[];
+  searchFields: string[];
+  reviewWorkflow: ExperienceDesignStatus[];
+  libraries: ExperienceDesignTokenLibrary[];
+  tokens: ExperienceDesignToken[];
+  implementationValuesPublished: false;
+  runtimePublication: "future_design_runtime_milestone";
+};
+
 export type ExperienceContentModel = {
   kind: ExperienceDesignKind;
   displayName: string;
@@ -184,6 +255,7 @@ export type ExperienceDesignState = {
   };
   experienceBible: ReturnType<typeof getExperienceBibleState>;
   inspirationBoards: ExperienceInspirationBoardLibrary;
+  designTokens: ExperienceDesignTokenSystem;
 };
 
 export const EXPERIENCE_DESIGN_ROUTE = "/experience-design";
@@ -196,7 +268,7 @@ export const experienceDesignSections: ExperienceDesignSection[] = [
   { id: "inspiration-boards", label: "Inspiration Boards", description: "Canonical visual memory, reference boards, annotations, relationships, presentation mode, and creative review.", route: `${EXPERIENCE_DESIGN_ROUTE}/inspiration-boards`, kinds: ["mood_board"] },
   { id: "concepts", label: "Concept Library", description: "Versioned concept art, illustration, interface, material, and motion references.", route: `${EXPERIENCE_DESIGN_ROUTE}/concepts`, kinds: ["concept"] },
   { id: "screens", label: "Screen Library", description: "Canonical experience intent for screens without client implementation ownership.", route: `${EXPERIENCE_DESIGN_ROUTE}/screens`, kinds: ["screen_definition"] },
-  { id: "tokens", label: "Design Tokens", description: "Framework for future color, type, spacing, radius, motion, and breakpoint collections.", route: `${EXPERIENCE_DESIGN_ROUTE}/tokens`, kinds: ["design_token_collection"] },
+  { id: "tokens", label: "Design Tokens", description: "DS-02 canonical semantic token libraries for NOVERIS meaning, relationships, review, search, and future renderer consumption.", route: `${EXPERIENCE_DESIGN_ROUTE}/tokens`, kinds: ["design_token_collection"] },
   { id: "materials", label: "Material Library", description: "Canonical material definitions such as glass, crystal, atmosphere, and energy.", route: `${EXPERIENCE_DESIGN_ROUTE}/materials`, kinds: ["material_definition"] },
   { id: "motion", label: "Motion Library", description: "Canonical motion purposes, accessibility notes, references, and intent.", route: `${EXPERIENCE_DESIGN_ROUTE}/motion`, kinds: ["motion_definition"] },
   { id: "components", label: "Component Library", description: "Design definitions for components, separate from React, Roblox, or CSS implementation.", route: `${EXPERIENCE_DESIGN_ROUTE}/components`, kinds: ["component_definition"] },
@@ -212,7 +284,7 @@ export const experienceContentModels: ExperienceContentModel[] = [
   model("mood_board", "Inspiration Board", "Canonical inspiration board with references, annotations, creative goals, Bible links, Visual DNA links, approval, history, favorites, and presentation mode.", ["title", "subtitle", "purpose", "creativeGoal", "experienceBibleReferences", "visualDnaReferences", "references", "annotations", "lightingNotes", "colorNotes", "compositionNotes"], ["categories", "collections", "boards", "subboards", "references", "annotations", "relationships", "versions", "approval", "history", "search", "favorites", "presentation mode"], "inspiration-boards"),
   model("concept", "Concept", "Versioned concept record for art, interface, environment, lighting, typography, material, or animation reference.", ["preview", "sourceAsset", "notes", "tags", "relationships"], ["approval workflow", "source asset links"], "concepts"),
   model("screen_definition", "Screen Definition", "Canonical screen intent, player goals, emotional goals, layout notes, interaction zones, accessibility, references, and approved concepts.", ["purpose", "playerGoals", "emotionalGoals", "narrativePurpose", "layoutNotes", "interactionZones"], ["attachments", "related components", "version history"], "screens"),
-  model("design_token_collection", "Design Token Collection", "Framework for future token collections without defining token values yet.", ["tokenFamilies", "status", "approval"], ["color", "typography", "spacing", "radius", "blur", "elevation", "shadow", "opacity", "motion", "breakpoints"], "tokens"),
+  model("design_token_collection", "Canonical Design Tokens", "DS-02 semantic design token records for meaning, purpose, references, relationships, review, versioning, and search without implementation values.", ["tokenLibraries", "semanticPath", "purpose", "experienceBibleReferences", "visualDnaReferences", "relatedMaterials", "relatedComponents", "relatedScreens", "owner", "reviewStatus"], ["color", "typography", "spacing", "radius", "elevation", "shadow", "blur", "opacity", "motion", "timing", "breakpoints", "z-layer", "icons", "grid", "stroke", "glow", "atmosphere", "glass", "background", "transition", "search", "relationships", "versioning"], "tokens"),
   model("material_definition", "Material Definition", "Material intent for Space Glass, Projection Glass, Nebula, Crystal, Atmosphere, Energy, Highlight, Selection, Warning, and Danger.", ["purpose", "visualIntent", "references"], ["accessibility notes", "asset relationships"], "materials"),
   model("motion_definition", "Motion Definition", "Canonical motion intent such as Fade, Expand, Orbit, Travel, Discovery, Projection, Notification, and Research.", ["purpose", "duration", "curve", "accessibilityNotes", "references"], ["reduced motion", "review workflow"], "motion"),
   model("component_definition", "Component Definition", "Design description for Button, Panel, Card, HUD, Sidebar, Dialog, Tree, List, Table, Tooltip, and Notification.", ["purpose", "states", "variants", "accessibility", "references"], ["component relationships", "approval workflow"], "components"),
@@ -221,6 +293,234 @@ export const experienceContentModels: ExperienceContentModel[] = [
   model("experience_moment", "Experience Moment", "Journey record describing player emotion, visual goal, audio goal, interaction goal, narrative goal, and references.", ["playerEmotion", "visualGoal", "audioGoal", "interactionGoal", "narrativeGoal"], ["journey sequencing", "related screens"], "journey"),
   model("review", "Review", "Creative review workflow record with Draft, In Review, Approved, Deprecated, and Archived states.", ["subjectId", "reviewState", "comments", "decision"], ["diff", "restore", "comments", "author", "timestamp"], "reviews")
 ];
+
+const tokenLibrarySeeds: Array<{ name: ExperienceDesignTokenCategory; purpose: string; tokens: string[] }> = [
+  {
+    name: "Color Tokens",
+    purpose: "Semantic color identities that describe NOVERIS meaning without hexadecimal values or implementation palettes.",
+    tokens: [
+      "accent.civilization.gold",
+      "accent.projection.cyan",
+      "accent.discovery.violet",
+      "surface.space.primary",
+      "surface.space.secondary",
+      "surface.command.glass",
+      "surface.reading.paper",
+      "surface.reference.glass",
+      "text.primary",
+      "text.secondary",
+      "text.muted",
+      "status.success",
+      "status.warning",
+      "status.danger",
+      "status.info",
+      "status.discovery",
+      "status.locked",
+      "status.active",
+      "status.inactive"
+    ]
+  },
+  {
+    name: "Typography Tokens",
+    purpose: "Semantic text roles that describe hierarchy, reading mode, command surfaces, metrics, and code references.",
+    tokens: ["display.hero", "display.section", "heading.primary", "heading.secondary", "body.primary", "body.secondary", "caption", "label", "metric", "navigation", "code", "quote"]
+  },
+  {
+    name: "Spacing Tokens",
+    purpose: "Semantic spatial rhythm for dense tools, readable creative records, cinematic presentation, and monumental moments.",
+    tokens: ["spacing.tight", "spacing.compact", "spacing.standard", "spacing.relaxed", "spacing.cinematic", "spacing.monumental"]
+  },
+  {
+    name: "Radius Tokens",
+    purpose: "Semantic corner language for command controls, panels, cards, and modal surfaces.",
+    tokens: ["radius.none", "radius.soft", "radius.command", "radius.panel", "radius.card", "radius.modal"]
+  },
+  {
+    name: "Elevation Tokens",
+    purpose: "Semantic depth order for background, surfaces, overlays, modals, and focused objects.",
+    tokens: ["elevation.background", "elevation.surface", "elevation.panel", "elevation.overlay", "elevation.modal", "elevation.focus"]
+  },
+  {
+    name: "Shadow Tokens",
+    purpose: "Semantic shadow intent for quiet depth, floating command surfaces, reading surfaces, and modal separation.",
+    tokens: ["shadow.surface.soft", "shadow.panel.command", "shadow.modal.focus", "shadow.reading.depth"]
+  },
+  {
+    name: "Blur Tokens",
+    purpose: "Semantic blur intent for glass, distant atmosphere, modal separation, and non-dominant backgrounds.",
+    tokens: ["blur.glass.subtle", "blur.glass.command", "blur.atmosphere.distant", "blur.overlay.focus"]
+  },
+  {
+    name: "Opacity Tokens",
+    purpose: "Semantic transparency intent for disabled states, supporting surfaces, reference overlays, and atmospheric layers.",
+    tokens: ["opacity.disabled", "opacity.supporting", "opacity.reference", "opacity.atmosphere"]
+  },
+  {
+    name: "Motion Tokens",
+    purpose: "Semantic motion language for reveal, focus, travel, orbit, research, and notification behavior.",
+    tokens: ["motion.fade.standard", "motion.expand.standard", "motion.discovery", "motion.travel", "motion.orbit", "motion.research", "motion.notification", "motion.focus", "motion.selection"]
+  },
+  {
+    name: "Timing Tokens",
+    purpose: "Semantic pacing for fast confirmation, standard UI response, deliberate review, and cinematic emphasis.",
+    tokens: ["timing.fast", "timing.standard", "timing.deliberate", "timing.cinematic"]
+  },
+  {
+    name: "Breakpoint Tokens",
+    purpose: "Semantic adaptation points for compact phones, tablets, desktop tools, widescreen workstations, and presentation contexts.",
+    tokens: ["breakpoint.compact", "breakpoint.tablet", "breakpoint.desktop", "breakpoint.wide", "breakpoint.presentation"]
+  },
+  {
+    name: "Z-Layer Tokens",
+    purpose: "Semantic stacking intent for background, content, docked tools, overlays, and modal focus.",
+    tokens: ["z.background", "z.content", "z.docked", "z.overlay", "z.modal"]
+  },
+  {
+    name: "Icon Tokens",
+    purpose: "Semantic icon roles and relative importance for navigation, resources, metrics, inline copy, and hero presentation.",
+    tokens: ["icon.navigation", "icon.resource", "icon.metric", "icon.inline", "icon.hero"]
+  },
+  {
+    name: "Grid Tokens",
+    purpose: "Semantic layout structures for dashboards, workspaces, reading, galleries, canvases, and screen specifications.",
+    tokens: ["grid.dashboard", "grid.workspace", "grid.reading", "grid.gallery", "grid.canvas", "grid.screen"]
+  },
+  {
+    name: "Stroke Tokens",
+    purpose: "Semantic line weight and boundary intent for panels, dividers, focus rings, and celestial geometry.",
+    tokens: ["stroke.panel", "stroke.divider", "stroke.focus", "stroke.celestial"]
+  },
+  {
+    name: "Glow Tokens",
+    purpose: "Semantic light emission for civilization progress, projection intelligence, discovery, warnings, and focus.",
+    tokens: ["glow.civilization", "glow.projection", "glow.discovery", "glow.warning", "glow.focus"]
+  },
+  {
+    name: "Atmosphere Tokens",
+    purpose: "Semantic environmental identity for space, nebulae, planets, colonies, research, and runtime contexts.",
+    tokens: ["atmosphere.deep-space", "atmosphere.nebula", "atmosphere.planet", "atmosphere.colony", "atmosphere.research", "atmosphere.runtime"]
+  },
+  {
+    name: "Glass Tokens",
+    purpose: "Semantic material identities for command, projection, reading, navigation, reference, and observation glass.",
+    tokens: ["glass.command", "glass.projection", "glass.reading", "glass.navigation", "glass.reference", "glass.observation"]
+  },
+  {
+    name: "Background Tokens",
+    purpose: "Semantic background identities for universe, civilization, discovery, research, runtime, and Studio surfaces.",
+    tokens: ["background.universe", "background.civilization", "background.discovery", "background.research", "background.runtime", "background.studio"]
+  },
+  {
+    name: "Transition Tokens",
+    purpose: "Semantic transitions for standard view changes, workspace movement, discovery reveals, and cinematic travel.",
+    tokens: ["transition.standard", "transition.workspace", "transition.discovery", "transition.cinematic"]
+  }
+];
+
+function tokenDisplayName(semanticPath: string) {
+  return semanticPath.split(".").map((part) => part[0].toUpperCase() + part.slice(1).replaceAll("-", " ")).join(" / ");
+}
+
+function tokenPurpose(category: ExperienceDesignTokenCategory, semanticPath: string) {
+  const library = tokenLibrarySeeds.find((item) => item.name === category);
+  return `${tokenDisplayName(semanticPath)} expresses ${semanticPath.replaceAll(".", " ")} as a NOVERIS ${category.replace(" Tokens", "").toLowerCase()} decision. ${library?.purpose ?? "It is semantic design guidance."}`;
+}
+
+function tokenReferences(semanticPath: string) {
+  const text = semanticPath.toLowerCase();
+  const bibleReferences = ["core-creative-philosophy", "what-noveris-is", "dv-02c-section-01-the-noveris-signature"];
+  const visualReferences = ["dv-03-section-01-visual-dna"];
+  if (text.includes("civilization") || text.includes("gold") || text.includes("monumental")) {
+    bibleReferences.push("dv-02c-section-05-light-as-civilization");
+    visualReferences.push("dv-03-section-02-color-philosophy", "dv-03-section-03-light-philosophy");
+  }
+  if (text.includes("projection") || text.includes("command") || text.includes("glass")) {
+    bibleReferences.push("dv02-chapter-17-the-interface-is-part-of-the-world");
+    visualReferences.push("dv-03-section-09-material-language");
+  }
+  if (text.includes("discovery")) {
+    bibleReferences.push("dv02-chapter-26-first-discovery");
+    visualReferences.push("dv-03-section-12-motion");
+  }
+  return { bibleReferences, visualReferences };
+}
+
+export const experienceDesignTokens: ExperienceDesignToken[] = tokenLibrarySeeds.flatMap((library) => library.tokens.map((semanticPath) => {
+  const references = tokenReferences(semanticPath);
+  return {
+    id: semanticPath,
+    name: tokenDisplayName(semanticPath),
+    semanticPath,
+    category: library.name,
+    purpose: tokenPurpose(library.name, semanticPath),
+    description: "Canonical meaning record only. Do not attach CSS variables, Tailwind classes, pixels, hexadecimal values, shader settings, or renderer-specific implementation values.",
+    experienceBibleReferences: references.bibleReferences,
+    visualDnaReferences: references.visualReferences,
+    relatedMaterials: semanticPath.includes("glass") || semanticPath.includes("surface") ? ["material-space-glass"] : semanticPath.includes("atmosphere") ? ["material-atmosphere"] : [],
+    relatedComponents: semanticPath.includes("navigation") ? ["component-navigation"] : semanticPath.includes("panel") || semanticPath.includes("command") ? ["component-design-panel"] : [],
+    relatedScreens: semanticPath.includes("dashboard") ? ["screen-dashboard"] : semanticPath.includes("discovery") ? ["screen-discovery"] : semanticPath.includes("runtime") ? ["screen-runtime"] : [],
+    status: "Draft",
+    version: "0.1",
+    history: [
+      {
+        id: `${semanticPath}-ds-02-created`,
+        action: "created",
+        author: "Design Systems",
+        timestamp: "2026-07-17T00:00:00.000Z",
+        notes: "Created semantic token definition for DS-02."
+      }
+    ],
+    tags: ["ds-02", "design-token", slugify(library.name), ...semanticPath.split(".")],
+    owner: "Design Systems",
+    reviewStatus: "Draft"
+  };
+}));
+
+export const experienceDesignTokenLibraries: ExperienceDesignTokenLibrary[] = tokenLibrarySeeds.map((library) => ({
+  id: `token-library-${slugify(library.name)}`,
+  name: library.name,
+  purpose: library.purpose,
+  tokenIds: library.tokens,
+  status: "Draft",
+  version: "0.1",
+  reviewStatus: "Draft"
+}));
+
+export const experienceDesignTokenSystem: ExperienceDesignTokenSystem = {
+  id: "DS-02",
+  title: "Canonical Design Tokens",
+  version: "0.1",
+  status: "Draft",
+  purpose: "Create the canonical semantic design token source of truth for Project Genesis Studio, NOVERIS Game, noveris.life, Steam, Marketing, and future platforms.",
+  workspaceRoute: `${EXPERIENCE_DESIGN_ROUTE}/tokens`,
+  consumers: ["Project Genesis Studio", "NOVERIS Game", "noveris.life", "Steam", "Marketing", "Future platforms"],
+  boundaries: [
+    "Design Tokens are canonical authoring records.",
+    "Design Tokens are not CSS variables.",
+    "Design Tokens are not Tailwind classes.",
+    "Design Tokens are not implementation code.",
+    "Do not publish token values until a future Design Runtime milestone.",
+    "Do not modify gameplay, runtime gameplay contracts, engine exports, runtimeVersion, or contentVersion."
+  ],
+  philosophy: [
+    "Tokens represent meaning.",
+    "Tokens describe purpose, not appearance.",
+    "Token names must remain semantic, stable, and renderer-agnostic.",
+    "Implementation values belong to future platform adapters, not DS-02."
+  ],
+  namingRules: [
+    "Use semantic paths such as accent.civilization.gold, surface.command.glass, text.primary, and motion.fade.standard.",
+    "Reject appearance-only names such as gold500, blue100, radius12, and blur24.",
+    "Keep canonical IDs stable after approval.",
+    "Every token must include purpose, references, relationships, status, version, history, owner, and review status."
+  ],
+  searchFields: ["purpose", "emotion", "category", "relationships", "Experience Bible chapter", "Visual DNA section"],
+  reviewWorkflow: experienceReviewWorkflow,
+  libraries: experienceDesignTokenLibraries,
+  tokens: experienceDesignTokens,
+  implementationValuesPublished: false,
+  runtimePublication: "future_design_runtime_milestone"
+};
 
 export const experienceDesignRecords: ExperienceDesignRecord[] = [
   record("experience-bible-framework", "experience_bible", "Experience Bible Framework", "Framework for NOVERIS creative canon chapters, annotations, cross references, and linked concepts.", "Draft", "Creative Direction", ["bible", "canon", "dv-02"], ["DV-02A seeds the complete 65-chapter framework; do not populate the full Bible yet."], {
@@ -258,9 +558,14 @@ export const experienceDesignRecords: ExperienceDesignRecord[] = [
     layoutNotes: "Reference screenshots and annotations only.",
     interactionZones: ["Primary start action", "Status context", "Optional settings"]
   }),
-  record("design-token-framework", "design_token_collection", "Design Token Framework", "Framework for token families without defining final token values.", "Draft", "Design Systems", ["tokens", "framework"], ["Do not define token values yet."], {
-    tokenFamilies: ["Color", "Typography", "Spacing", "Radius", "Blur", "Elevation", "Shadow", "Opacity", "Motion", "Breakpoints"],
-    tokenValuesDefined: false
+  record("design-token-framework", "design_token_collection", "Canonical Design Tokens", "DS-02 semantic token library for NOVERIS meaning, purpose, relationships, review, search, and future renderer consumption.", "Draft", "Design Systems", ["tokens", "framework", "ds-02", "semantic"], ["Do not define token values yet.", "Do not attach CSS variables, Tailwind classes, hexadecimal values, pixel values, or implementation code."], {
+    canonicalSystem: experienceDesignTokenSystem.id,
+    tokenLibraries: experienceDesignTokenLibraries.map((library) => library.name),
+    tokenCount: experienceDesignTokens.length,
+    tokenValuesDefined: false,
+    implementationValuesPublished: false,
+    consumers: experienceDesignTokenSystem.consumers,
+    runtimePublication: experienceDesignTokenSystem.runtimePublication
   }),
   record("material-space-glass", "material_definition", "Space Glass", "Material definition framework for projected, transparent, readable surfaces.", "Draft", "Art Direction", ["material", "glass", "interface"], ["Framework only; no shader or CSS implementation."], {
     purpose: "Canonical material intent.",
@@ -591,7 +896,8 @@ export function getExperienceDesignState(): ExperienceDesignState {
       countsByKind
     },
     experienceBible,
-    inspirationBoards: inspirationBoardLibrary
+    inspirationBoards: inspirationBoardLibrary,
+    designTokens: experienceDesignTokenSystem
   };
 }
 

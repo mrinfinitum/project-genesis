@@ -21,9 +21,12 @@ function assertNoExperienceRuntimeLeak(label: string, value: unknown) {
   const text = JSON.stringify(value);
   assert(!/"experienceDesign"\s*:/.test(text), `${label} leaked experienceDesign root data.`);
   assert(!/"inspirationBoards"\s*:/.test(text), `${label} leaked Inspiration Board library data.`);
+  assert(!/"designTokens"\s*:/.test(text), `${label} leaked Design Token system data.`);
   assert(!/"experience_bible"\s*:/.test(text), `${label} leaked Experience Bible model data.`);
   assert(!/"mood_board"\s*:/.test(text), `${label} leaked Mood Board model data.`);
   assert(!text.includes("Inspiration Board Library"), `${label} leaked DV-04 Inspiration Board data.`);
+  assert(!text.includes("DS-02"), `${label} leaked DS-02 Design Token data.`);
+  assert(!text.includes("Canonical Design Tokens"), `${label} leaked Canonical Design Token data.`);
   assert(!/"screen_definition"\s*:/.test(text), `${label} leaked Screen Definition model data.`);
 }
 
@@ -84,6 +87,96 @@ async function main() {
   for (const section of ["bible", "inspiration-boards", "concepts", "screens", "tokens", "materials", "motion", "components", "themes", "brand", "accessibility", "journey", "reviews"]) {
     assert(state.sections.some((item) => item.id === section), `Experience Design section missing ${section}.`);
   }
+
+  const tokenSection = state.sections.find((item) => item.id === "tokens");
+  assert(tokenSection?.label === "Design Tokens", "Experience Design must expose Design Tokens workspace.");
+  assert(tokenSection.route === "/experience-design/tokens", "Design Tokens route must be canonical.");
+  assert(tokenSection.description.includes("DS-02"), "Design Tokens section must identify DS-02.");
+  const tokenModel = state.contentModels.find((model) => model.kind === "design_token_collection");
+  assert(tokenModel?.displayName === "Canonical Design Tokens", "Design token model must be presented as Canonical Design Tokens.");
+  for (const required of ["tokenLibraries", "semanticPath", "purpose", "experienceBibleReferences", "visualDnaReferences", "relatedMaterials", "relatedComponents", "relatedScreens", "owner", "reviewStatus"]) {
+    assert(tokenModel?.requiredFields.includes(required), `Design token content model missing ${required}.`);
+  }
+  for (const capability of ["color", "typography", "spacing", "radius", "elevation", "shadow", "blur", "opacity", "motion", "timing", "breakpoints", "z-layer", "icons", "grid", "stroke", "glow", "atmosphere", "glass", "background", "transition", "search", "relationships", "versioning"]) {
+    assert(tokenModel?.supportedCapabilities.includes(capability), `Design token content model missing capability ${capability}.`);
+  }
+
+  assert(state.designTokens.id === "DS-02", "Design Token system ID must be DS-02.");
+  assert(state.designTokens.title === "Canonical Design Tokens", "DS-02 title must be Canonical Design Tokens.");
+  assert(state.designTokens.version === "0.1", "DS-02 must be version 0.1.");
+  assert(state.designTokens.status === "Draft", "DS-02 must remain Draft.");
+  assert(state.designTokens.workspaceRoute === "/experience-design/tokens", "DS-02 workspace route must be /experience-design/tokens.");
+  assert(!state.designTokens.implementationValuesPublished, "DS-02 must not publish implementation values.");
+  assert(state.designTokens.runtimePublication === "future_design_runtime_milestone", "DS-02 runtime publication must be deferred to a future Design Runtime milestone.");
+  for (const consumer of ["Project Genesis Studio", "NOVERIS Game", "noveris.life", "Steam", "Marketing", "Future platforms"]) {
+    assert(state.designTokens.consumers.includes(consumer), `DS-02 consumer list missing ${consumer}.`);
+  }
+  for (const boundary of ["not CSS variables", "not Tailwind classes", "not implementation code", "Do not publish token values", "Do not modify gameplay", "contentVersion"]) {
+    assert(state.designTokens.boundaries.join(" ").includes(boundary), `DS-02 boundary missing ${boundary}.`);
+  }
+  for (const philosophy of ["Tokens represent meaning.", "Tokens describe purpose, not appearance."]) {
+    assert(state.designTokens.philosophy.includes(philosophy), `DS-02 philosophy missing ${philosophy}.`);
+  }
+  for (const searchField of ["purpose", "emotion", "category", "relationships", "Experience Bible chapter", "Visual DNA section"]) {
+    assert(state.designTokens.searchFields.includes(searchField), `DS-02 search fields missing ${searchField}.`);
+  }
+  const expectedTokenLibraries = [
+    "Color Tokens",
+    "Typography Tokens",
+    "Spacing Tokens",
+    "Radius Tokens",
+    "Elevation Tokens",
+    "Shadow Tokens",
+    "Blur Tokens",
+    "Opacity Tokens",
+    "Motion Tokens",
+    "Timing Tokens",
+    "Breakpoint Tokens",
+    "Z-Layer Tokens",
+    "Icon Tokens",
+    "Grid Tokens",
+    "Stroke Tokens",
+    "Glow Tokens",
+    "Atmosphere Tokens",
+    "Glass Tokens",
+    "Background Tokens",
+    "Transition Tokens"
+  ];
+  assert(state.designTokens.libraries.map((library) => library.name).join("|") === expectedTokenLibraries.join("|"), "DS-02 token libraries must match the canonical list.");
+  assert(state.designTokens.libraries.length === 20, "DS-02 must expose 20 canonical token libraries.");
+  assert(state.designTokens.tokens.length >= 90, "DS-02 must expose a meaningful starter semantic token inventory.");
+  const tokenIds = new Set(state.designTokens.tokens.map((token) => token.id));
+  assert(tokenIds.size === state.designTokens.tokens.length, "DS-02 token IDs must be unique.");
+  for (const expectedToken of ["accent.civilization.gold", "accent.projection.cyan", "accent.discovery.violet", "surface.command.glass", "text.primary", "motion.fade.standard", "glass.command", "atmosphere.deep-space", "grid.workspace", "background.universe"]) {
+    assert(tokenIds.has(expectedToken), `DS-02 missing canonical token ${expectedToken}.`);
+  }
+  for (const badToken of ["gold500", "blue100", "radius12", "blur24"]) {
+    assert(!tokenIds.has(badToken), `DS-02 must not include implementation token ${badToken}.`);
+  }
+  for (const library of state.designTokens.libraries) {
+    assert(library.status === "Draft", `DS-02 library ${library.id} must remain Draft.`);
+    assert(library.version === "0.1", `DS-02 library ${library.id} must be version 0.1.`);
+    assert(library.tokenIds.length > 0, `DS-02 library ${library.id} must contain tokens.`);
+    for (const tokenId of library.tokenIds) assert(tokenIds.has(tokenId), `DS-02 library ${library.id} references missing token ${tokenId}.`);
+  }
+  for (const token of state.designTokens.tokens) {
+    assert(token.id === token.semanticPath, `DS-02 token ${token.id} must use semanticPath as stable ID.`);
+    assert(token.status === "Draft", `DS-02 token ${token.id} must remain Draft.`);
+    assert(token.version === "0.1", `DS-02 token ${token.id} must be version 0.1.`);
+    assert(token.owner === "Design Systems", `DS-02 token ${token.id} must be owned by Design Systems.`);
+    assert(token.reviewStatus === token.status, `DS-02 token ${token.id} review status must match current draft state.`);
+    assert(token.experienceBibleReferences.length > 0, `DS-02 token ${token.id} must link to Experience Bible guidance.`);
+    assert(token.visualDnaReferences.length > 0, `DS-02 token ${token.id} must link to Visual DNA guidance.`);
+    assert(token.history.length > 0, `DS-02 token ${token.id} must include history.`);
+    assert(!/^#/.test(token.semanticPath), `DS-02 token ${token.id} must not be a hexadecimal value.`);
+    assert(!/(^|\.)(gold|blue|cyan|violet|gray|slate|amber)[0-9]{2,4}$/i.test(token.semanticPath), `DS-02 token ${token.id} must not use palette-step naming.`);
+    assert(!/[0-9]+(?:px|rem|em|vh|vw)/.test(token.semanticPath), `DS-02 token ${token.id} must not use implementation units.`);
+  }
+  const tokenRecord = state.records.find((record) => record.id === "design-token-framework");
+  assert(tokenRecord?.name === "Canonical Design Tokens", "Design token starter record must be Canonical Design Tokens.");
+  assert(tokenRecord.fields.canonicalSystem === "DS-02", "Design token starter record must point to DS-02.");
+  assert(tokenRecord.fields.tokenValuesDefined === false, "Design token starter record must not define token values.");
+  assert(tokenRecord.fields.implementationValuesPublished === false, "Design token starter record must not publish implementation values.");
 
   const inspirationSection = state.sections.find((item) => item.id === "inspiration-boards");
   assert(inspirationSection?.label === "Inspiration Boards", "Experience Design must expose Inspiration Boards workspace.");
@@ -148,10 +241,13 @@ async function main() {
   assert(read("components/app-shell.tsx").includes('id: "experience-design"'), "Sidebar must expose Experience Design as a primary workspace.");
   assert(read("components/app-shell.tsx").includes('href: "/experience-design/bible"'), "Sidebar must link to Experience Bible.");
   assert(read("components/app-shell.tsx").includes('href: "/experience-design/inspiration-boards"'), "Sidebar must link to Inspiration Boards.");
+  assert(read("components/app-shell.tsx").includes('href: "/experience-design/tokens"'), "Sidebar must link to Design Tokens.");
   assert(read("app/experience-design/[section]/page.tsx").includes('redirect("/experience-design/inspiration-boards")'), "Old mood board route must redirect to Inspiration Boards.");
   assert(read("components/studio-command-palette.tsx").includes("Open Experience Design"), "Command palette must expose Experience Design.");
   assert(read("components/studio-command-palette.tsx").includes("Open Inspiration Boards"), "Command palette must expose Inspiration Boards.");
+  assert(read("components/studio-command-palette.tsx").includes("Open Design Tokens"), "Command palette must expose Design Tokens.");
   assert(read("components/experience-design-workspace.tsx").includes("InspirationBoardsWorkspace"), "Experience Design workspace must expose Inspiration Boards workspace.");
+  assert(read("components/experience-design-workspace.tsx").includes("DesignTokensWorkspace"), "Experience Design workspace must expose Design Tokens workspace.");
 
   const search = await searchStudio("Inspiration Boards", 10);
   assert(search.results.some((result) => result.type === "Experience Design" && /Inspiration Boards|Inspiration Board/i.test(result.title)), "Global search must return Experience Design Inspiration Board results.");
@@ -166,6 +262,12 @@ async function main() {
   assert(nasaSearch.results.some((result) => result.type === "Experience Design" && result.href.includes("/experience-design/inspiration-boards")), "Global search must return NASA Inspiration Board content.");
   const boardSearch = await searchStudio("Light Represents Progress", 20);
   assert(boardSearch.results.some((result) => result.type === "Experience Design" && result.href.includes("/experience-design/inspiration-boards")), "Global search must return signature-tagged Inspiration Board content.");
+  const tokenSearch = await searchStudio("accent.civilization.gold", 20);
+  assert(tokenSearch.results.some((result) => result.type === "Experience Design" && result.href === "/experience-design/tokens#accent.civilization.gold"), "Global search must return exact DS-02 token results.");
+  const glassTokenSearch = await searchStudio("surface command glass", 20);
+  assert(glassTokenSearch.results.some((result) => result.type === "Experience Design" && result.href.includes("/experience-design/tokens#surface.command.glass")), "Global search must return semantic glass token results.");
+  const motionTokenSearch = await searchStudio("motion fade standard", 20);
+  assert(motionTokenSearch.results.some((result) => result.type === "Experience Design" && result.href.includes("/experience-design/tokens#motion.fade.standard")), "Global search must return semantic motion token results.");
 
   const canonicalRuntime = await buildCanonicalRuntimeExportPayload();
   assertNoExperienceRuntimeLeak("Canonical runtime", canonicalRuntime);
@@ -195,9 +297,20 @@ async function main() {
       annotations: state.inspirationBoards.annotationCategories.length,
       viewModes: state.inspirationBoards.viewModes
     },
+    designTokens: {
+      id: state.designTokens.id,
+      version: state.designTokens.version,
+      status: state.designTokens.status,
+      libraries: state.designTokens.libraries.length,
+      tokens: state.designTokens.tokens.length,
+      implementationValuesPublished: state.designTokens.implementationValuesPublished
+    },
     inspirationSearchReturned: search.returned,
     nasaSearchReturned: nasaSearch.returned,
     boardSearchReturned: boardSearch.returned,
+    tokenSearchReturned: tokenSearch.returned,
+    glassTokenSearchReturned: glassTokenSearch.returned,
+    motionTokenSearchReturned: motionTokenSearch.returned,
     runtimePublishing: state.runtimePublishing,
     engineExports: Object.fromEntries(engineExports.map((engineExport, index) => [targets[index], engineExport.metadata.validationStatus]))
   }, null, 2));
