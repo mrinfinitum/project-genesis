@@ -43,6 +43,7 @@
     "verify:upgrade-category-assets": "tsx scripts/verify-upgrade-category-assets.ts",
     "verify:asset-library": "tsx scripts/verify-asset-library.ts",
     "verify:asset-library-first-navigation": "tsx scripts/verify-asset-library-first-navigation.ts",
+    "verify:navigation-architecture": "tsx scripts/verify-navigation-architecture.ts",
     "audit:asset-census": "tsx scripts/audit-asset-census.ts",
     "verify:creative-production": "npm run verify:asset-library-first-navigation",
     "verify:production-classification": "npm run verify:asset-library-first-navigation",

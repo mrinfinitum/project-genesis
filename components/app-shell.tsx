@@ -84,145 +84,52 @@ const navigationGroups: NavigationGroup[] = [
     ]
   },
   {
-    id: "studio",
-    label: "Advanced / Systems Authoring",
-    icon: FileText,
-    fallbackProgress: 92,
-    systemIds: ["architecture", "research", "unlock-matrix", "buildings", "upgrades", "dashboard-metrics"],
-    items: [
-      { href: "/civilizations", label: "Civilization Library", icon: Landmark },
-      { href: "/content-authoring", label: "Content Authoring", icon: CopyPlus },
-      { href: "/research", label: "Research Designer", icon: FlaskConical },
-      { href: "/unlock-matrix", label: "Unlock Matrix", icon: GitBranch },
-      { href: "/exploration-progression", label: "Exploration Progression", icon: Compass },
-      { href: "/upgrades", label: "Upgrade Designer", icon: Gauge },
-      { href: "/buildings", label: "Building Designer", icon: Building2 },
-      { href: "/wonders", label: "Wonder Designer", icon: Sparkles },
-      { href: "/districts", label: "District Designer", icon: Network },
-      { href: "/economy-designer", label: "Economy Designer", icon: BadgeDollarSign },
-      { href: "/architecture", label: "Architecture", icon: FileText },
-      { href: "/advanced/deprecated/visual-builder", label: "Deprecated Visual Builder Archive", icon: Archive }
-    ]
-  },
-  {
-    id: "universe",
-    label: "Universe Libraries",
-    icon: Star,
+    id: "content-libraries",
+    label: "Content Libraries",
+    icon: PackageCheck,
     fallbackProgress: 58,
-    systemIds: ["planet-generation", "ancient-civilizations", "planet-traits", "anomalies", "hazards", "expeditions"],
+    systemIds: ["assets", "planet-generation", "ancient-civilizations", "planet-traits", "anomalies", "hazards", "expeditions"],
     items: [
+      { href: "/asset-library", label: "Asset Library", icon: PackageCheck },
       { href: "/galaxy", label: "Galaxy Library", icon: Star },
       { href: "/sector-map", label: "Sector Library", icon: Map },
       { href: "/star-system-map", label: "Star System Library", icon: Radar },
       { href: "/celestial-bodies", label: "Star Library", icon: CircleDot },
       { href: "/planets", label: "Planet Library", icon: Orbit },
       { href: "/discovery-journal", label: "Discovery Library", icon: ScrollText },
-      { href: "/universe-timeline", label: "Universe Timeline", icon: History },
-      { href: "/missions", label: "Missions", icon: ClipboardList },
-      { href: "/planetary-rules", label: "Rules", icon: GitBranch }
+      { href: "/civilizations", label: "Civilization Library", icon: Landmark },
+      { href: "/encyclopedia", label: "Encyclopedia", icon: BookOpen }
     ]
   },
   {
-    id: "operations",
-    label: "World & Operations",
+    id: "world-systems",
+    label: "World Systems",
     icon: BadgeDollarSign,
     fallbackProgress: 52,
-    systemIds: ["resources", "collectibles", "ancient-civilizations"],
+    systemIds: ["resources", "collectibles", "ancient-civilizations", "expeditions"],
     items: [
-      { href: "/factions", label: "Factions", icon: Landmark },
+      { href: "/actions", label: "Actions", icon: ListChecks },
       { href: "/colonies", label: "Colonies", icon: Building2 },
+      { href: "/population", label: "Population", icon: Landmark },
       { href: "/economy", label: "Economy & Trade", icon: BadgeDollarSign },
-      { href: "/celestial-bodies", label: "Star Library", icon: CircleDot }
+      { href: "/missions", label: "Missions", icon: ClipboardList },
+      { href: "/dynamic-events", label: "Dynamic Events", icon: Sparkles }
     ]
   },
   {
-    id: "asset-library",
-    label: "Asset Library",
-    icon: PackageCheck,
-    fallbackProgress: 65,
-    systemIds: ["assets", "research", "buildings", "upgrades"],
-    items: [
-      { href: "/asset-library", label: "All Categories", icon: PackageCheck },
-      { href: "/asset-library?category=top-hud", label: "Top HUD", icon: MonitorCog },
-      { href: "/asset-library?category=left-navigation", label: "Left Navigation", icon: Map },
-      { href: "/asset-library?category=upgrade-categories", label: "Upgrades", icon: Gauge },
-      { href: "/asset-library?category=research-ui", label: "Research", icon: FlaskConical },
-      { href: "/asset-library?category=buildings-ui", label: "Buildings", icon: Building2 },
-      { href: "/asset-library?category=galaxy-ui", label: "Galaxy", icon: Star },
-      { href: "/asset-library?category=planet-ui", label: "Planets", icon: Orbit },
-      { href: "/asset-library?category=discovery", label: "Discovery", icon: Search },
-      { href: "/asset-library?category=encyclopedia", label: "Encyclopedia", icon: BookOpen },
-      { href: "/asset-library?category=ai-agents", label: "AI Agents", icon: Bot },
-      { href: "/asset-library?category=icons", label: "Icons", icon: PackageCheck },
-      { href: "/asset-library?category=backgrounds", label: "Backgrounds", icon: Sparkles },
-      { href: "/asset-library?category=animations", label: "Animations", icon: Sparkles },
-      { href: "/asset-library?category=audio", label: "Audio", icon: BadgeDollarSign },
-      { href: "/asset-library?category=video", label: "Video", icon: FileCode2 }
-    ]
-  },
-  {
-    id: "resources",
-    label: "Resources",
-    icon: Gem,
-    fallbackProgress: 47,
-    systemIds: ["resources", "collectibles"],
-    items: [
-      { href: "/resource-catalog", label: "Resource Catalog", icon: Gem },
-      { href: "/planet-resource-profiles", label: "Planet Resource Profiles", icon: CircleDot },
-      { label: "Resource Distribution", icon: Pickaxe, future: true },
-      { href: "/collectibles", label: "Collectibles", icon: Archive }
-    ]
-  },
-  {
-    id: "creative",
-    label: "Creative",
-    icon: Palette,
-    fallbackProgress: 18,
-    systemIds: ["assets"],
-    items: [
-      { href: "/planet-artwork", label: "Planet Artwork", icon: Sparkles },
-      { href: "/surface-landscapes", label: "Surface Landscapes", icon: Palette },
-      { href: "/hero-discovery-shots", label: "Hero Discovery", icon: Star },
-      { href: "/prompt-library", label: "Prompt Library", icon: ScrollText },
-      { href: "/ai-agents", label: "AI Agents", icon: Bot },
-      { href: "/discovery", label: "Discovery", icon: Search },
-      { href: "/encyclopedia", label: "Civilization Encyclopedia", icon: BookOpen },
-      { href: "/screen-designer", label: "Screen Specifications", icon: MonitorCog },
-      { href: "/component-library", label: "Component Library", icon: PackageCheck },
-      { href: "/conceptual-art", label: "Concept Art", icon: Palette }
-    ]
-  },
-  {
-    id: "engine",
-    label: "Engine & Validation",
+    id: "authoring",
+    label: "Authoring",
     icon: GitBranch,
-    fallbackProgress: 61,
-    systemIds: ["unlock-matrix"],
+    fallbackProgress: 92,
+    systemIds: ["architecture", "research", "unlock-matrix", "buildings", "upgrades", "dashboard-metrics", "resources", "assets"],
     items: [
-      { href: "/game-engine-exports", label: "Game Engine Exports", icon: FileCode2 },
-      { href: "/game-data-import", label: "Game Data Import", icon: UploadCloud },
-      { href: "/content-releases", label: "Content Releases", icon: FileCheck2 },
-      { href: "/prototype-content", label: "Prototype Content", icon: ClipboardList },
-      { href: "/building-relationships", label: "Relationship Graph", icon: Network },
-      { href: "/validation-engine", label: "Validation Center", icon: Database },
-      { href: "/building-chains", label: "Balance Designer", icon: Gauge },
-      { label: "Rule Engine", icon: Cpu, future: true }
-    ]
-  },
-  {
-    id: "developer",
-    label: "Developer",
-    icon: Settings,
-    fallbackProgress: 52,
-    systemIds: ["tasks", "release-notes", "changelog", "codex-handoffs"],
-    items: [
-      { href: "/tasks", label: "ChatGPT Tasks", icon: ListChecks, activePaths: [] },
-      { href: "/database", label: "Database", icon: Database },
-      { href: "/settings#imports-exports", label: "Imports / Exports", icon: UploadCloud, activePaths: [] },
-      { href: "/universe-explorer", label: "Developer Seed Explorer", icon: Compass },
-      { href: "/changelog", label: "Changelog", icon: History },
-      { href: "/releases", label: "Release Notes", icon: ScrollText },
-      { href: "/settings", label: "Settings", icon: Settings }
+      { href: "/research", label: "Research", icon: FlaskConical },
+      { href: "/buildings", label: "Buildings", icon: Building2 },
+      { href: "/resource-catalog", label: "Resources", icon: Gem },
+      { href: "/ai-agents", label: "AI Agents", icon: Bot },
+      { href: "/runtime", label: "Runtime", icon: Database },
+      { href: "/game-engine-exports", label: "Exports", icon: FileCode2 },
+      { href: "/architecture", label: "Architecture", icon: FileText }
     ]
   }
 ];

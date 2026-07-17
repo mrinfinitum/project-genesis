@@ -31,8 +31,8 @@ async function main() {
   assert(read("app/visual-screen-builder/page.tsx").includes("redirect(\"/assets?deprecated=visual-builder\")"), "General builder route must redirect to Asset Library.");
   assert(read("app/advanced/deprecated/visual-builder/page.tsx").includes("Deprecated — historical reference only"), "Archive page must be clearly labeled deprecated.");
 
-  assert(appShell.includes("Deprecated Visual Builder Archive"), "Advanced nav must include the read-only deprecated archive.");
-  assert(appShell.includes('label: "Screen Specifications"'), "Primary creative nav must use Screen Specifications naming.");
+  assert(!appShell.includes("Deprecated Visual Builder Archive"), "Deprecated archive must not clutter primary navigation.");
+  assert(read("app/screen-designer/page.tsx").includes("ScreenDesignerWorkspace"), "Screen Specifications route must remain available.");
   assert(!appShell.includes('label: "Visual Builder"'), "App shell must not include active Visual Builder nav.");
   assert(!appShell.includes('label: "Visual Screen Builder"'), "App shell must not include active Visual Screen Builder nav.");
 

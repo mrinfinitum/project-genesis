@@ -21,11 +21,8 @@ async function main() {
   assert(existsSync(path.join(process.cwd(), "app/creative-production/[...path]/page.tsx")), "Creative Production catch-all redirect must exist.");
   assert(!appShell.includes('label: "Creative Production"'), "Creative Production must not appear as a primary navigation group.");
   assert(!appShell.includes('href: "/creative-production?area='), "Primary navigation must not link to Creative Production area URLs.");
-  assert(appShell.includes('id: "asset-library"'), "Asset Library must be a primary navigation group.");
-  assert(appShell.includes('label: "Asset Library"'), "Asset Library primary navigation label is missing.");
-  assert(appShell.includes('href: "/asset-library?category=top-hud"'), "Asset Library nav must expose category links.");
-  assert(appShell.includes('href: "/asset-library?category=buildings-ui"'), "Asset Library nav must expose Buildings.");
-  assert(appShell.includes('href: "/asset-library?category=upgrade-categories"'), "Asset Library nav must expose Upgrades.");
+  assert(appShell.includes('id: "content-libraries"'), "Asset Library must live under Content Libraries.");
+  assert(appShell.includes('href: "/asset-library", label: "Asset Library"'), "Asset Library primary navigation item is missing.");
 
   assert(assetLibraryPage.includes("category ?? section"), "Asset Library page must prefer category routes while preserving section compatibility.");
   assert(assetsPage.includes("category ?? section"), "Legacy /assets route must support category routes.");
@@ -53,7 +50,7 @@ async function main() {
 
   console.log(JSON.stringify({
     ok: true,
-    primaryNavigation: "Asset Library",
+    primaryNavigation: "Content Libraries / Asset Library",
     retiredPrimaryNavigation: "Creative Production",
     routeCompatibility: {
       creativeProduction: "/assets?deprecated=creative-production",
