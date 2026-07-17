@@ -1,5 +1,4 @@
 import { canonicalDiscoveries } from "@/lib/discovery";
-import { resolveCanonicalRecordArtwork, type CanonicalArtworkFallbackReason, type CanonicalArtworkState, type CanonicalRecordArtworkTone } from "@/lib/artwork/canonical-record-artwork";
 import { generateFaction, generateFallbackFactions, type FactionRecord } from "@/lib/factions/procedural";
 import {
   generateCelestialBodies,
@@ -35,17 +34,9 @@ export type UniverseLibraryRecord = {
   thumbnailUrl?: string;
   thumbnailAvifUrl?: string;
   thumbnailWebpUrl?: string;
-  thumbnailRetinaUrl?: string;
   thumbnailSrcSet?: string;
   mediumPreviewUrl?: string;
   focalPoint?: string;
-  artworkState?: CanonicalArtworkState;
-  artworkFallbackReason?: CanonicalArtworkFallbackReason;
-  artworkSourceAssetId?: string;
-  artworkAltText?: string;
-  artworkAspectRatio?: number;
-  artworkWidth?: number;
-  artworkHeight?: number;
   meta?: Array<{ label: string; value: string | number }>;
 };
 
@@ -98,39 +89,6 @@ function recordStatus(status?: string | null): UniverseLibraryRecord["status"] {
   if (status === "needs_review") return "Needs Review";
   if (status === "invalid") return "Invalid";
   return "Generated";
-}
-
-function libraryArtwork(input: {
-  id: string;
-  name: string;
-  type: string;
-  subtype?: string;
-  parentLabel?: string;
-  previewTone: CanonicalRecordArtworkTone;
-}) {
-  const artwork = resolveCanonicalRecordArtwork({
-    id: input.id,
-    name: input.name,
-    type: input.type,
-    classification: input.subtype,
-    parent: input.parentLabel,
-    tone: input.previewTone
-  });
-  return {
-    thumbnailUrl: artwork.thumbnail.url,
-    thumbnailWebpUrl: artwork.thumbnail.webpUrl,
-    thumbnailRetinaUrl: artwork.thumbnail.retinaUrl,
-    thumbnailSrcSet: artwork.thumbnail.srcSet,
-    mediumPreviewUrl: artwork.previewUrl,
-    focalPoint: artwork.focalPoint,
-    artworkState: artwork.artworkState,
-    artworkFallbackReason: artwork.fallbackReason,
-    artworkSourceAssetId: artwork.sourceAssetId,
-    artworkAltText: artwork.altText,
-    artworkAspectRatio: artwork.thumbnail.aspectRatio,
-    artworkWidth: artwork.thumbnail.width,
-    artworkHeight: artwork.thumbnail.height
-  };
 }
 
 function hasCanonicalId(record: Record<string, unknown>) {
@@ -252,7 +210,6 @@ export function getUniverseLibraryData(): UniverseLibraryData {
         readiness: "Ready",
         href: `/galaxy?record=${encodeURIComponent(galaxy.id)}`,
         previewTone: "galaxy",
-        ...libraryArtwork({ id: galaxy.id, name: galaxy.name, type: galaxy.galaxy_type, subtype: galaxy.galaxy_size, previewTone: "galaxy" }),
         meta: [{ label: "Export", value: "Ready" }]
       };
     });
@@ -274,7 +231,6 @@ export function getUniverseLibraryData(): UniverseLibraryData {
         readiness: "Ready",
         href: `/sector-map?record=${encodeURIComponent(sector.id)}`,
         previewTone: "sector",
-        ...libraryArtwork({ id: sector.id, name: sector.sector_name, type: sector.sector_type, subtype: sector.sector_rarity, parentLabel: galaxyById.get(sector.galaxy_id)?.name ?? sector.galaxy_id, previewTone: "sector" }),
         meta: [{ label: "Export", value: "Ready" }]
       };
     });
@@ -294,7 +250,6 @@ export function getUniverseLibraryData(): UniverseLibraryData {
       readiness: "Ready",
       href: `/star-system-map?record=${encodeURIComponent(system.id)}`,
       previewTone: "system",
-      ...libraryArtwork({ id: system.id, name: system.system_name, type: system.system_type, subtype: system.star_type, parentLabel: sectorById.get(system.sector_id)?.sector_name ?? system.sector_id, previewTone: "system" }),
       meta: [{ label: "Export", value: "Ready" }]
     }));
 
@@ -313,7 +268,6 @@ export function getUniverseLibraryData(): UniverseLibraryData {
       readiness: "Ready",
       href: `/celestial-bodies?record=${encodeURIComponent(star.id)}`,
       previewTone: "star",
-      ...libraryArtwork({ id: star.id, name: star.star_name, type: star.star_type, subtype: star.star_size, parentLabel: systemById.get(star.system_id)?.system_name ?? star.system_id, previewTone: "star" }),
       meta: [{ label: "Export", value: "Ready" }]
     }));
 
@@ -332,7 +286,6 @@ export function getUniverseLibraryData(): UniverseLibraryData {
       readiness: "Ready",
       href: `/planets?record=${encodeURIComponent(body.id)}`,
       previewTone: "planet",
-      ...libraryArtwork({ id: body.id, name: body.name, type: body.celestial_body_type, subtype: [body.planet_class, body.planet_subclass].filter(Boolean).join(" / ") || "Celestial body", parentLabel: systemById.get(body.system_id)?.system_name ?? body.system_id, previewTone: "planet" }),
       meta: [{ label: "Export", value: "Ready" }]
     }));
 
@@ -349,7 +302,6 @@ export function getUniverseLibraryData(): UniverseLibraryData {
       readiness: discovery.publicationStatus === "published" || discovery.publicationStatus === "approved" ? "Ready" : "Not Published",
       href: `/discovery-journal?record=${encodeURIComponent(discovery.id)}`,
       previewTone: "discovery",
-      ...libraryArtwork({ id: discovery.id, name: discovery.displayName, type: discovery.categoryId.replace(/-/g, " "), subtype: discovery.rarity, previewTone: "discovery" }),
       meta: [{ label: "Export", value: discovery.publicationStatus === "hidden" ? "Not Published" : "Ready" }]
     }));
 
@@ -368,7 +320,6 @@ export function getUniverseLibraryData(): UniverseLibraryData {
       readiness: "Ready",
       href: `/civilizations?record=${encodeURIComponent(civilization.id)}`,
       previewTone: "civilization",
-      ...libraryArtwork({ id: civilization.id, name: civilization.name, type: civilization.type, subtype: civilization.government, parentLabel: systemById.get(civilization.homeStarSystemId)?.system_name ?? civilization.homeStarSystemId, previewTone: "civilization" }),
       meta: [{ label: "Export", value: "Ready" }]
     }));
 

@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Database } from "lucide-react";
-import { resolveCanonicalRecordArtwork, type CanonicalArtworkFallbackReason, type CanonicalArtworkState } from "@/lib/artwork/canonical-record-artwork";
 import { cn } from "@/lib/utils";
 
 export type GeneratedLibraryCardTone = "galaxy" | "sector" | "system" | "star" | "planet" | "discovery" | "civilization" | "building" | "research" | "neutral";
@@ -21,44 +20,9 @@ export type GeneratedLibraryCardRecord = {
   thumbnailUrl?: string;
   thumbnailAvifUrl?: string;
   thumbnailWebpUrl?: string;
-  thumbnailRetinaUrl?: string;
   thumbnailSrcSet?: string;
   mediumPreviewUrl?: string;
-  previewUrl?: string;
-  artworkUrl?: string;
-  primaryArtworkAssetId?: string;
-  thumbnailAssetId?: string;
-  previewAssetId?: string;
-  approvedArtworkVersionId?: string;
   focalPoint?: string;
-  artworkState?: CanonicalArtworkState;
-  artworkFallbackReason?: CanonicalArtworkFallbackReason;
-  artworkSourceAssetId?: string;
-  artworkAltText?: string;
-  artworkAspectRatio?: number;
-  artworkWidth?: number;
-  artworkHeight?: number;
-};
-
-export type LibraryCardArtworkResolution = {
-  sourceAssetId: string;
-  thumbnail: {
-    url?: string;
-    retinaUrl?: string;
-    avifUrl?: string;
-    webpUrl?: string;
-    srcSet?: string;
-    width: number;
-    height: number;
-    aspectRatio: number;
-  };
-  quickPreviewUrl?: string;
-  focalPoint: string;
-  altText: string;
-  status: "resolved" | "fallback" | "missing";
-  fallbackReason: CanonicalArtworkFallbackReason;
-  artworkState: CanonicalArtworkState;
-  sourceAvailability: "record_specific" | "semantic_catalog" | "type_fallback" | "none";
 };
 
 const toneClasses: Record<GeneratedLibraryCardTone, string> = {
@@ -73,26 +37,6 @@ const toneClasses: Record<GeneratedLibraryCardTone, string> = {
   research: "from-sky-300/25 via-cyan-300/10 to-indigo-500/15",
   neutral: "from-cyan-300/20 via-slate-700/20 to-slate-950/20"
 };
-
-export function resolveLibraryCardArtwork(record: GeneratedLibraryCardRecord): LibraryCardArtworkResolution {
-  const artwork = resolveCanonicalRecordArtwork({
-    ...record,
-    altText: record.artworkAltText
-  });
-  return {
-    sourceAssetId: artwork.sourceAssetId,
-    thumbnail: {
-      ...artwork.thumbnail
-    },
-    quickPreviewUrl: artwork.previewUrl,
-    focalPoint: artwork.focalPoint,
-    altText: artwork.altText,
-    status: artwork.status,
-    fallbackReason: artwork.fallbackReason,
-    artworkState: artwork.artworkState,
-    sourceAvailability: artwork.sourceAvailability
-  };
-}
 
 function statusClass(status: string) {
   if (/ready|published|approved|generated|active|complete/i.test(status)) return "border-emerald-300/35 bg-emerald-400/10 text-emerald-100";
@@ -112,26 +56,22 @@ function MetadataField({ label, value }: { label: string; value?: string }) {
 
 function CardThumbnail({ record, hovered }: { record: GeneratedLibraryCardRecord; hovered: boolean }) {
   const tone = record.tone ?? "neutral";
-  const artwork = resolveLibraryCardArtwork(record);
-  const imageUrl = hovered && artwork.quickPreviewUrl ? artwork.quickPreviewUrl : artwork.thumbnail.url;
-  const useThumbnailSources = !hovered || !artwork.quickPreviewUrl;
+  const imageUrl = hovered && record.mediumPreviewUrl ? record.mediumPreviewUrl : record.thumbnailUrl;
   return (
     <div className={cn("relative aspect-video overflow-hidden rounded-md border border-cyan-300/15 bg-gradient-to-br", toneClasses[tone])}>
       {imageUrl ? (
         <picture>
-          {useThumbnailSources && artwork.thumbnail.avifUrl ? <source srcSet={artwork.thumbnail.avifUrl} type="image/avif" /> : null}
-          {useThumbnailSources && (artwork.thumbnail.webpUrl || artwork.thumbnail.srcSet) ? <source srcSet={artwork.thumbnail.srcSet ?? artwork.thumbnail.webpUrl} type="image/webp" /> : null}
+          {record.thumbnailAvifUrl ? <source srcSet={record.thumbnailAvifUrl} type="image/avif" /> : null}
+          {record.thumbnailWebpUrl || record.thumbnailSrcSet ? <source srcSet={record.thumbnailSrcSet ?? record.thumbnailWebpUrl} type="image/webp" /> : null}
           <img
             src={imageUrl}
-            srcSet={useThumbnailSources ? artwork.thumbnail.srcSet : undefined}
+            srcSet={record.thumbnailSrcSet}
             sizes="(min-width: 1536px) 23vw, (min-width: 1280px) 30vw, (min-width: 640px) 45vw, 92vw"
-            alt={artwork.altText}
-            width={artwork.thumbnail.width}
-            height={artwork.thumbnail.height}
+            alt=""
             loading="lazy"
             decoding="async"
             className="h-full w-full object-cover"
-            style={{ objectPosition: artwork.focalPoint }}
+            style={{ objectPosition: record.focalPoint ?? "center" }}
           />
         </picture>
       ) : (

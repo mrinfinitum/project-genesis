@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-07-17T17:58:06.566Z",
+  "generatedAt": "2026-07-17T19:04:55.389Z",
   "architectureVersion": "1.0.0",
   "runtimeVersion": "game-runtime-v1",
   "contentVersion": 32,
-  "checksum": "62140cbd4f9070f61175b2608e5d71dfb2d456a4db057c27b6c9d959b68fda48",
+  "checksum": "fcdedc545e0b791da777b83aaebf6f4c1eccc162511fd32b23701de4694b82a5",
   "rootCause": "Top Bar Resource Panel Strip is an imported Roblox manifest source reference. The source path is provenance, not a Studio-hosted downloadable object. A published Web derivative is available and should be used until a Studio-managed source is uploaded.",
   "sourceAvailabilityModel": {
     "imported_manifest_reference": 95
@@ -57,16 +57,16 @@
   "libraryThumbnails": {
     "totalChecked": 152,
     "brokenThumbnailCount": 0,
-    "missingThumbnailCount": 0,
-    "averageThumbnailBytes": 12122,
-    "largestThumbnailBytes": 18856,
+    "missingThumbnailCount": 152,
+    "averageThumbnailBytes": 0,
+    "largestThumbnailBytes": 0,
     "warningOver120KbCount": 0,
-    "initialLibraryImagePayloadBytes": 1842478
+    "initialLibraryImagePayloadBytes": 0
   },
   "performance": {
     "buildAvailable": true,
-    "chunkCount": 31,
-    "totalChunkBytes": 2647084,
+    "chunkCount": 32,
+    "totalChunkBytes": 2658249,
     "largestChunk": {
       "file": "7644-17efa35068cc0740.js",
       "bytes": 979837
@@ -74,7 +74,7 @@
     "bundleWarnings": []
   },
   "runtimePayload": {
-    "canonicalRuntimeBytes": 3647182,
+    "canonicalRuntimeBytes": 3646994,
     "engineExportBytes": {
       "generic": 7849400,
       "roblox": 8225560,

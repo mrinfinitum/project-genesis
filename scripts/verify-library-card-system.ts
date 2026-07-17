@@ -1,9 +1,11 @@
-import { existsSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { handoffData } from "@/data/handoff";
-import { resolveCanonicalRecordArtwork } from "@/lib/artwork/canonical-record-artwork";
+import { getAssetProductionState } from "@/lib/assets/asset-production";
 import { canonicalBuildingLibrary } from "@/lib/buildings/taxonomy";
-import { getUniverseLibraryData } from "@/lib/universe/library";
+import { buildGameEngineExport, type EngineTarget } from "@/lib/export/game-engine";
+import { buildCanonicalRuntimeExportPayload } from "@/lib/runtime/game-runtime";
+import { getUniverseLibraryData, getUniverseLibrarySource, isGeneratedGameRecord, type UniverseLibraryRecord } from "@/lib/universe/library";
 import type { ResearchNode } from "@/types/schema";
 
 function assert(condition: unknown, message: string): asserts condition {
@@ -14,142 +16,269 @@ function read(relativePath: string) {
   return readFileSync(path.join(process.cwd(), relativePath), "utf8");
 }
 
-function publicPath(url?: string) {
-  if (!url || !url.startsWith("/")) return null;
-  return path.join(process.cwd(), "public", url.replace(/^\//, ""));
+function assertIncludes(label: string, text: string, expected: string) {
+  assert(text.includes(expected), `${label} must include ${expected}.`);
 }
 
-function fileSize(url?: string) {
-  const resolved = publicPath(url);
-  if (!resolved || !existsSync(resolved)) return null;
-  return statSync(resolved).size;
+function assertNotIncludes(label: string, text: string, blocked: string) {
+  assert(!text.includes(blocked), `${label} must not include ${blocked}.`);
 }
 
-function assertNoFullResolutionUsage(relativePath: string) {
-  const content = read(relativePath);
-  for (const pattern of ["3244x1804", "2048x2048", "hero_3840", "hero_2560", "sourceFilePath", "/Users/"]) {
-    assert(!content.includes(pattern), `${relativePath} contains full-resolution or private-path Library card usage: ${pattern}`);
+function assertFile(relativePath: string) {
+  assert(existsSync(path.join(process.cwd(), relativePath)), `Expected file is missing: ${relativePath}`);
+}
+
+const generatedLibraryFiles = [
+  "components/generated-library-card.tsx",
+  "components/generated-universe-library.tsx",
+  "lib/universe/library.ts",
+  "app/galaxy/page.tsx",
+  "app/sector-map/page.tsx",
+  "app/star-system-map/page.tsx",
+  "app/celestial-bodies/page.tsx",
+  "app/planets/page.tsx",
+  "app/discovery-journal/page.tsx",
+  "app/civilizations/page.tsx",
+  "app/buildings/page.tsx",
+  "app/research/page.tsx"
+];
+
+const forbiddenGeneratedLibraryTerms = [
+  "resolveCanonicalRecordArtwork",
+  "canonical-record-artwork",
+  "CANONICAL_LIBRARY_ARTWORK_CATALOG",
+  "libraryArtwork(",
+  "thumbnailRetinaUrl",
+  "artworkFallbackReason",
+  "artworkSourceAssetId",
+  "asset_galaxy_icon",
+  "asset_planet_icon",
+  "libraryThumbnails",
+  "Artwork Needed",
+  "Missing Preview",
+  "Background Needed",
+  "sourceFilePath",
+  "/Users/"
+];
+
+const expectedPlanetSamples = ["Earth", "Moon", "Mercury", "Venus", "Mars", "Phobos", "Deimos", "Asteroid Belt"];
+const targets: EngineTarget[] = ["generic", "roblox", "web", "unity", "unreal", "godot"];
+
+type ArtworkDecision = {
+  source: "direct_saved_record_image" | "neutral_fallback";
+  url: string | null;
+};
+
+function directRecordImage(record: Record<string, unknown>): string | null {
+  const fields = [
+    "thumbnailUrl",
+    "thumbnail_url",
+    "imageUrl",
+    "image_url",
+    "previewUrl",
+    "preview_url",
+    "artworkUrl",
+    "artwork_url",
+    "renderUrl",
+    "render_url",
+    "heroImageUrl",
+    "hero_image_url",
+    "cardImageUrl",
+    "card_image_url"
+  ];
+  for (const field of fields) {
+    const value = record[field];
+    if (typeof value === "string" && value.trim().startsWith("/")) return value.trim();
   }
+  return null;
 }
 
-const universe = getUniverseLibraryData();
-const universeRecords = [
-  ...universe.galaxies,
-  ...universe.sectors,
-  ...universe.starSystems,
-  ...universe.stars,
-  ...universe.planets,
-  ...universe.discoveries,
-  ...universe.civilizations
-];
-const researchRows = handoffData.research as ResearchNode[];
-const generatedRecordTotal = universeRecords.length + canonicalBuildingLibrary.length + researchRows.length;
-const thumbnailUrls = [
-  ...universeRecords.map((record) => record.thumbnailUrl),
-  ...canonicalBuildingLibrary.map((record) => resolveCanonicalRecordArtwork({
-    id: record.id,
-    name: record.displayName,
-    type: record.familyName,
-    classification: record.subcategoryName,
-    parent: record.era,
-    tone: "building"
-  }).thumbnail.url),
-  ...researchRows.map((record) => resolveCanonicalRecordArtwork({
-    id: record.id,
-    name: record.name,
-    type: record.primary_unlock_type || record.branch_id || "Research",
-    classification: record.travel_tier || record.space_system_unlocked || "Research Node",
-    parent: record.era,
-    tone: "research"
-  }).thumbnail.url)
-];
-const missingThumbnails = thumbnailUrls.filter((url) => !url);
-const brokenThumbnails = thumbnailUrls.filter((url) => {
-  const resolved = publicPath(url);
-  return resolved ? !existsSync(resolved) : false;
-});
-const thumbnailSizes = thumbnailUrls.map(fileSize).filter((size): size is number => typeof size === "number");
-const averageThumbnailBytes = Math.round(thumbnailSizes.reduce((sum, size) => sum + size, 0) / Math.max(1, thumbnailSizes.length));
+function artworkDecisionFor(record: UniverseLibraryRecord, sourceRecord: Record<string, unknown>): ArtworkDecision {
+  const direct = directRecordImage(sourceRecord);
+  if (direct) {
+    assert(record.thumbnailUrl === direct, `${record.name} must use its direct saved image field.`);
+    return { source: "direct_saved_record_image", url: direct };
+  }
+  assert(!record.thumbnailUrl, `${record.name} has no direct saved image and must use the neutral fallback, not ${record.thumbnailUrl}.`);
+  return { source: "neutral_fallback", url: null };
+}
 
-function main() {
+function verifyGeneratedLibraryCode() {
   const card = read("components/generated-library-card.tsx");
   const universeComponent = read("components/generated-universe-library.tsx");
-  const assetProduction = read("lib/assets/asset-production.ts");
-  const packageJson = JSON.parse(read("package.json")) as { scripts?: Record<string, string> };
 
-  assert(card.includes("export function GeneratedLibraryCard"), "GeneratedLibraryCard must be exported as the shared Library card component.");
-  assert(card.includes("export function resolveLibraryCardArtwork"), "GeneratedLibraryCard must expose resolveLibraryCardArtwork.");
-  assert(card.includes("aspect-video"), "Library card image area must use a stable 16:9 thumbnail region.");
-  assert(card.includes("object-cover"), "Library thumbnails must use object-fit cover.");
-  assert(card.includes("width={artwork.thumbnail.width}") && card.includes("height={artwork.thumbnail.height}"), "Library thumbnails must reserve resolver-provided dimensions.");
-  assert(card.includes("alt={artwork.altText}"), "Library thumbnails must expose meaningful alt text.");
-  assert(card.includes("loading=\"lazy\""), "Library thumbnails must lazy load.");
-  assert(card.includes("decoding=\"async\""), "Library thumbnails must async decode.");
-  assert(card.includes("sizes="), "Library thumbnails must publish responsive sizes.");
-  assert(card.includes("srcSet"), "Library thumbnails must support srcset.");
-  assert(!card.includes("label=\"Seed\""), "GeneratedLibraryCard must not render Seed on compact cards.");
-  assert(!card.includes("label=\"ID\""), "GeneratedLibraryCard must not render canonical IDs on compact cards.");
-  assert(!card.includes("Registry"), "GeneratedLibraryCard must keep registry/developer fields out of compact cards.");
-
-  assert(universeComponent.includes("GeneratedLibraryCard"), "Universe libraries must render GeneratedLibraryCard.");
-  assert(!universeComponent.includes("function GeneratedRecordCard"), "Universe libraries must not keep custom card implementations.");
-  assert(!read("lib/universe/library.ts").includes("libraryThumbnails"), "Universe Library must not use a hardcoded thumbnail table.");
-  assert(!read("lib/universe/library.ts").includes("asset_galaxy_icon"), "Universe Library must not use the generic galaxy icon for generated records.");
-  assert(read("app/buildings/page.tsx").includes("GeneratedLibraryCard"), "Building Library must use GeneratedLibraryCard.");
-  assert(read("app/research/page.tsx").includes("GeneratedLibraryCard"), "Research Library must use GeneratedLibraryCard.");
-  assert(!read("app/buildings/page.tsx").includes("asset_buildings_icon"), "Building Library should let the canonical artwork resolver choose thumbnails.");
-  assert(!read("app/research/page.tsx").includes("asset_research_icon"), "Research Library should let the canonical artwork resolver choose thumbnails.");
-  assert(assetProduction.includes("library_thumbnail") && assetProduction.includes("480, 270") && assetProduction.includes("\"WebP\""), "Asset derivative presets must include library_thumbnail 480x270 WebP.");
-  assert(assetProduction.includes("library_thumbnail_retina") && assetProduction.includes("960, 540"), "Asset derivative presets must include library_thumbnail_retina 960x540.");
-  assert(assetProduction.includes("quick_preview") && assetProduction.includes("Never use full-resolution source images"), "Asset derivative presets must include quick_preview guidance.");
-  assert(packageJson.scripts?.["verify:library-card-system"], "verify:library-card-system script must be registered.");
-  assert(packageJson.scripts?.["verify:library-card-consistency"], "verify:library-card-consistency script must be registered.");
-
-  for (const relativePath of [
-    "components/generated-library-card.tsx",
-    "components/generated-universe-library.tsx",
-    "app/buildings/page.tsx",
-    "app/research/page.tsx",
-    "lib/universe/library.ts"
-  ]) {
-    assertNoFullResolutionUsage(relativePath);
+  for (const file of generatedLibraryFiles) {
+    const content = read(file);
+    for (const term of forbiddenGeneratedLibraryTerms) {
+      assertNotIncludes(file, content, term);
+    }
   }
 
-  assert(generatedRecordTotal > 0, "Generated-record Library cards must have records to audit.");
-  assert(missingThumbnails.length === 0, `Library cards are missing thumbnail paths: ${missingThumbnails.length}`);
-  assert(brokenThumbnails.length === 0, `Library cards reference broken thumbnail paths: ${brokenThumbnails.join(", ")}`);
-  assert(averageThumbnailBytes <= 60_000, `Average Library thumbnail size must stay near the 60KB target; received ${averageThumbnailBytes} bytes.`);
+  assertIncludes("GeneratedLibraryCard", card, "export function GeneratedLibraryCard");
+  assertIncludes("GeneratedLibraryCard", card, "aspect-video");
+  assertIncludes("GeneratedLibraryCard", card, "object-cover");
+  assertIncludes("GeneratedLibraryCard", card, "loading=\"lazy\"");
+  assertIncludes("GeneratedLibraryCard", card, "decoding=\"async\"");
+  assertIncludes("GeneratedLibraryCard", card, "srcSet");
+  assertIncludes("GeneratedLibraryCard", card, "sizes=");
+  assertIncludes("GeneratedLibraryCard", card, "record.thumbnailUrl");
+  assertIncludes("GeneratedLibraryCard", card, "record.mediumPreviewUrl");
+  assertIncludes("GeneratedLibraryCard", card, "<Database");
+  assertNotIncludes("GeneratedLibraryCard", card, "label=\"Seed\"");
+  assertNotIncludes("GeneratedLibraryCard", card, "label=\"ID\"");
+  assertNotIncludes("GeneratedLibraryCard", card, "Registry");
+
+  assertIncludes("GeneratedUniverseLibrary", universeComponent, "GeneratedLibraryCard");
+  assertNotIncludes("GeneratedUniverseLibrary", universeComponent, "function GeneratedRecordCard");
+  assertIncludes("Building Library", read("app/buildings/page.tsx"), "GeneratedLibraryCard");
+  assertIncludes("Research Library", read("app/research/page.tsx"), "GeneratedLibraryCard");
+}
+
+function verifyUniverseRecords() {
+  const source = getUniverseLibrarySource();
+  const data = getUniverseLibraryData();
+  const samples = expectedPlanetSamples.map((name) => {
+    const raw = source.bodies.find((body) => body.name === name);
+    assert(raw, `Planet Library source is missing ${name}.`);
+    const record = data.planets.find((planet) => planet.name === name);
+    assert(record, `Planet Library card is missing ${name}.`);
+    assert(record.id === raw.id, `${name} card ID changed from source record ${raw.id} to ${record.id}.`);
+    assert(record.type === raw.celestial_body_type, `${name} card type must come from celestial_body_type.`);
+    assert(record.parentId === raw.system_id, `${name} parent relationship must resolve to its star system.`);
+    assert(record.href === `/planets?record=${encodeURIComponent(raw.id)}`, `${name} detail route is incorrect: ${record.href}.`);
+    return {
+      name,
+      id: record.id,
+      source: "generateCelestialBodies(system)",
+      displayedImage: artworkDecisionFor(record, raw as unknown as Record<string, unknown>),
+      route: record.href
+    };
+  });
+
+  assert(data.galaxies.length === 1, `Galaxy Library should currently expose only generated galaxies; received ${data.galaxies.length}.`);
+  assert(data.galaxies[0]?.name === "Milky Way", "Galaxy Library must expose Milky Way from the generated source.");
+  assert(data.sectors.length === 1, `Sector Library should currently expose only generated sectors; received ${data.sectors.length}.`);
+  assert(data.starSystems.length === 12, `Star System Library expected 12 generated systems; received ${data.starSystems.length}.`);
+  assert(data.stars.length === 22, `Star Library expected 22 generated stars; received ${data.stars.length}.`);
+  assert(data.planets.length === 98, `Planet Library expected 98 generated celestial bodies; received ${data.planets.length}.`);
+  assert(data.discoveries.length === 10, `Discovery Library expected 10 canonical discovery records; received ${data.discoveries.length}.`);
+  assert(data.civilizations.length === 8, `Civilization Library expected 8 generated/fallback factions; received ${data.civilizations.length}.`);
+
+  const allRecords = [
+    ...data.galaxies,
+    ...data.sectors,
+    ...data.starSystems,
+    ...data.stars,
+    ...data.planets,
+    ...data.discoveries,
+    ...data.civilizations
+  ];
+  const ids = new Set<string>();
+  for (const record of allRecords) {
+    assert(record.id.trim(), `${record.name} is missing an ID.`);
+    assert(!ids.has(record.id), `Duplicate generated-library record ID: ${record.id}.`);
+    ids.add(record.id);
+    assert(record.href.includes(encodeURIComponent(record.id)), `${record.name} route does not point at its own ID.`);
+    assert(!record.thumbnailUrl?.startsWith("/images/"), `${record.name} must not use fuzzy /images substitution.`);
+  }
+
+  for (const galaxy of source.galaxies) assert(isGeneratedGameRecord(galaxy as unknown as Record<string, unknown>, "galaxies", source), `Galaxy failed generated-record validation: ${galaxy.id}`);
+  for (const sector of source.sectors) assert(isGeneratedGameRecord(sector as unknown as Record<string, unknown>, "sectors", source), `Sector failed generated-record validation: ${sector.id}`);
+  for (const system of source.starSystems) assert(isGeneratedGameRecord(system as unknown as Record<string, unknown>, "star-systems", source), `Star system failed generated-record validation: ${system.id}`);
+  for (const star of source.stars) assert(isGeneratedGameRecord(star as unknown as Record<string, unknown>, "stars", source), `Star failed generated-record validation: ${star.id}`);
+  const displayedPlanetIds = new Set(data.planets.map((planet) => planet.id));
+  for (const body of source.bodies.filter((row) => displayedPlanetIds.has(row.id))) {
+    assert(isGeneratedGameRecord(body as unknown as Record<string, unknown>, "planets", source), `Planet Library record failed generated-record validation: ${body.id}`);
+  }
+
+  const planetNames = data.planets.map((record) => `${record.name} ${record.id}`.toLowerCase());
+  for (const forbidden of ["planetary power grid", "rare earth elements", "planet seed", "planet background", "planet card background"]) {
+    assert(!planetNames.some((value) => value.includes(forbidden)), `Planet Library still includes non-celestial record: ${forbidden}`);
+  }
+
+  return { data, samples };
+}
+
+async function verifyAssetLibraryDefaults() {
+  const assetContentBrowser = read("components/asset-content-browser.tsx");
+  assertIncludes("Asset Content Browser", assetContentBrowser, "function isUploadedAssetItem");
+  assertIncludes("Asset Content Browser", assetContentBrowser, "item.sourceType === \"asset_registry\"");
+  assertIncludes("Asset Content Browser", assetContentBrowser, "item.previewUrl?.startsWith(\"/\")");
+  assertIncludes("Asset Content Browser", assetContentBrowser, "state.assetLibraryInventory.items.filter(isUploadedAssetItem)");
+  assertNotIncludes("Asset Content Browser", assetContentBrowser, "Artwork Needed");
+  assertNotIncludes("Asset Content Browser", assetContentBrowser, "missing_art");
+  assertNotIncludes("Asset Content Browser", assetContentBrowser, "grid-cols-[16rem_minmax(0,1fr)_20rem]");
+
+  const state = await getAssetProductionState();
+  const visibleBrowserItems = state.assetLibraryInventory.items.filter((item) => item.sourceType === "asset_registry" && Boolean(item.sourceAssetId) && Boolean(item.previewUrl?.startsWith("/")));
+  const hiddenRegistryWithoutPreview = state.assetLibraryInventory.items.filter((item) => item.sourceType === "asset_registry" && Boolean(item.sourceAssetId) && !item.previewUrl?.startsWith("/"));
+  const hiddenRequirementItems = state.assetLibraryInventory.items.filter((item) => item.sourceType !== "asset_registry");
+
+  assert(state.assets.length > 0, "Asset Library must preserve real asset records.");
+  assert(visibleBrowserItems.length > 0, "Default Asset Library browser must show real uploaded/imported assets.");
+  assert(visibleBrowserItems.length + hiddenRegistryWithoutPreview.length === state.assets.length, "Default Asset Library accounting must split real asset records from the one known no-preview record.");
+  assert(hiddenRegistryWithoutPreview.length === 1 && hiddenRegistryWithoutPreview[0]?.sourceAssetId === "asset_click_interface_circle", "Only the known Roblox-ID-only click interface asset may be hidden from the default browser.");
+  assert(hiddenRequirementItems.length > 0, "Production requirement records should remain available outside default browsing.");
+  assert(!visibleBrowserItems.some((item) => item.sourceType !== "asset_registry"), "Requirement-only cards must not appear in the default Asset Library browser.");
+  assert(!visibleBrowserItems.some((item) => item.status === "missing"), "Missing requirement cards must not appear in the default Asset Library browser.");
+  assert(!visibleBrowserItems.some((item) => item.previewUrl?.includes("/Users/") || item.previewUrl?.startsWith("rbxassetid://")), "Default Asset Library previews must be browser-safe public paths.");
+
+  return {
+    realAssets: state.assets.length,
+    visibleBrowserItems: visibleBrowserItems.length,
+    hiddenRegistryWithoutPreview: hiddenRegistryWithoutPreview.length,
+    hiddenRequirementItems: hiddenRequirementItems.length
+  };
+}
+
+async function verifyRuntimeAndExports() {
+  const runtime = await buildCanonicalRuntimeExportPayload();
+  assert(runtime.metadata.validationStatus === "Ready", `Runtime must remain Ready; received ${runtime.metadata.validationStatus}.`);
+  const exports = await Promise.all(targets.map((target) => buildGameEngineExport(target)));
+  for (const [index, engineExport] of exports.entries()) {
+    assert(engineExport.validation.status === "Ready", `${targets[index]} export must remain Ready; received ${engineExport.validation.status}.`);
+  }
+  return {
+    contentVersion: runtime.metadata.contentVersion,
+    runtimeVersion: runtime.metadata.schemaVersion,
+    checksum: runtime.metadata.checksum,
+    exports: Object.fromEntries(exports.map((engineExport, index) => [targets[index], engineExport.validation.status]))
+  };
+}
+
+async function main() {
+  assertFile("components/generated-library-card.tsx");
+  assertFile("components/generated-universe-library.tsx");
+  verifyGeneratedLibraryCode();
+  const universe = verifyUniverseRecords();
+  const assetLibrary = await verifyAssetLibraryDefaults();
+  const runtime = await verifyRuntimeAndExports();
+  const researchRows = handoffData.research as ResearchNode[];
 
   console.log(JSON.stringify({
     status: "ok",
-    sharedComponent: "GeneratedLibraryCard",
-    generatedRecordTotal,
-    thumbnailProfile: {
-      id: "library_thumbnail",
-      width: 480,
-      height: 270,
-      format: "WebP",
-      targetBytes: 60000
+    baseline: {
+      selected: "2a61656^",
+      reason: "Direct generated-record library fields and neutral fallback before canonical artwork substitution and generated thumbnail layers."
     },
-    performance: {
-      thumbnailCount: thumbnailUrls.length,
-      missingThumbnailCount: missingThumbnails.length,
-      brokenThumbnailCount: brokenThumbnails.length,
-      averageThumbnailBytes,
-      fullResolutionReferences: 0
-    },
-    libraries: {
-      galaxies: universe.galaxies.length,
-      sectors: universe.sectors.length,
-      starSystems: universe.starSystems.length,
-      stars: universe.stars.length,
-      planets: universe.planets.length,
-      discoveries: universe.discoveries.length,
-      civilizations: universe.civilizations.length,
+    universeLibraries: {
+      galaxies: universe.data.galaxies.length,
+      sectors: universe.data.sectors.length,
+      starSystems: universe.data.starSystems.length,
+      stars: universe.data.stars.length,
+      planets: universe.data.planets.length,
+      discoveries: universe.data.discoveries.length,
+      civilizations: universe.data.civilizations.length,
       buildings: canonicalBuildingLibrary.length,
       research: researchRows.length
-    }
+    },
+    planetSamples: universe.samples,
+    assetLibrary,
+    runtime
   }, null, 2));
 }
 
-main();
+main().catch((error) => {
+  console.error(error instanceof Error ? error.message : error);
+  process.exit(1);
+});
