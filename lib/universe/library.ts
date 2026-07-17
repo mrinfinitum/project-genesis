@@ -103,15 +103,6 @@ function imageSet(url: string, focalPoint = "center"): Pick<UniverseLibraryRecor
   };
 }
 
-const libraryFallbackArt = {
-  galaxy: imageSet("/images/20-civilization-horizon.png"),
-  sector: imageSet("/images/14-stellar-nursery.png"),
-  system: imageSet("/images/01-aurora-gate.png"),
-  star: imageSet("/images/08-solar-forge.png"),
-  discovery: imageSet("/images/17-quantum-obelisk.png"),
-  civilization: imageSet("/images/11-night-side-megacity.png")
-};
-
 const solBodyPreviewSlugs = new Set(["sol", "earth", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "europa", "ganymede", "titan", "enceladus"]);
 
 function solBodyPreview(body: Pick<CelestialBodyNode, "name" | "is_fixed">) {
@@ -119,20 +110,6 @@ function solBodyPreview(body: Pick<CelestialBodyNode, "name" | "is_fixed">) {
   const bodySlug = slug(body.name);
   if (!solBodyPreviewSlugs.has(bodySlug)) return null;
   return imageSet(`/assets/game-art/planet-renders/sol/${bodySlug === "sol" ? "sol" : `sol_${bodySlug}`}.png`);
-}
-
-function planetFallbackArt(body: CelestialBodyNode) {
-  const terms = [body.celestial_body_type, body.planet_class, body.planet_subclass, body.biome].join(" ").toLowerCase();
-
-  if (terms.includes("asteroid belt")) return imageSet("/images/08-asteroid-city.png");
-  if (terms.includes("gas giant") || terms.includes("ice giant") || terms.includes("storm giant") || terms.includes("cyclone")) return imageSet("/images/07-gravity-harvesters.png");
-  if (terms.includes("ice") || terms.includes("frozen") || terms.includes("glacial") || terms.includes("cryovolcanic")) return imageSet("/images/13-subglacial-ocean.png");
-  if (terms.includes("toxic") || terms.includes("sulfur") || terms.includes("volcanic") || terms.includes("lava")) return imageSet("/images/06-crystal-storm-world.png");
-  if (terms.includes("moon") || terms.includes("dead") || terms.includes("barren") || terms.includes("airless")) return imageSet("/images/03-archive-moon.png");
-  if (terms.includes("ocean") || terms.includes("water")) return imageSet("/images/04-living-reef-orbit.png");
-  if (terms.includes("artificial") || terms.includes("ancient")) return imageSet("/images/15-ancient-ringworld.png");
-  if (terms.includes("desert")) return imageSet("/images/16-desert-skyport.png");
-  return imageSet("/images/09-cradle-world.png");
 }
 
 function hasCanonicalId(record: Record<string, unknown>) {
@@ -254,7 +231,6 @@ export function getUniverseLibraryData(): UniverseLibraryData {
         readiness: "Ready",
         href: `/galaxy?record=${encodeURIComponent(galaxy.id)}`,
         previewTone: "galaxy",
-        ...libraryFallbackArt.galaxy,
         meta: [{ label: "Export", value: "Ready" }]
       };
     });
@@ -276,7 +252,6 @@ export function getUniverseLibraryData(): UniverseLibraryData {
         readiness: "Ready",
         href: `/sector-map?record=${encodeURIComponent(sector.id)}`,
         previewTone: "sector",
-        ...libraryFallbackArt.sector,
         meta: [{ label: "Export", value: "Ready" }]
       };
     });
@@ -296,7 +271,6 @@ export function getUniverseLibraryData(): UniverseLibraryData {
       readiness: "Ready",
       href: `/star-system-map?record=${encodeURIComponent(system.id)}`,
       previewTone: "system",
-      ...libraryFallbackArt.system,
       meta: [{ label: "Export", value: "Ready" }]
     }));
 
@@ -315,14 +289,13 @@ export function getUniverseLibraryData(): UniverseLibraryData {
       readiness: "Ready",
       href: `/celestial-bodies?record=${encodeURIComponent(star.id)}`,
       previewTone: "star",
-      ...libraryFallbackArt.star,
       meta: [{ label: "Export", value: "Ready" }]
     }));
 
   const planets = source.bodies
     .filter((record) => isGeneratedGameRecord(record as unknown as Record<string, unknown>, "planets", source))
     .map((body): UniverseLibraryRecord => {
-      const art = solBodyPreview(body) ?? planetFallbackArt(body);
+      const art = solBodyPreview(body) ?? {};
       return {
         id: body.id,
         name: body.name,
@@ -354,7 +327,6 @@ export function getUniverseLibraryData(): UniverseLibraryData {
       readiness: discovery.publicationStatus === "published" || discovery.publicationStatus === "approved" ? "Ready" : "Not Published",
       href: `/discovery-journal?record=${encodeURIComponent(discovery.id)}`,
       previewTone: "discovery",
-      ...libraryFallbackArt.discovery,
       meta: [{ label: "Export", value: discovery.publicationStatus === "hidden" ? "Not Published" : "Ready" }]
     }));
 
@@ -373,7 +345,6 @@ export function getUniverseLibraryData(): UniverseLibraryData {
       readiness: "Ready",
       href: `/civilizations?record=${encodeURIComponent(civilization.id)}`,
       previewTone: "civilization",
-      ...libraryFallbackArt.civilization,
       meta: [{ label: "Export", value: "Ready" }]
     }));
 

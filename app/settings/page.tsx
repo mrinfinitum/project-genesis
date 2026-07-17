@@ -16,7 +16,11 @@ export default async function SettingsPage() {
         screenSpecHref="/screen-designer/settings"
       />
       <AccountSecurityPanel />
-      {access.isAdmin ? <UserManagementPanel /> : null}
+      {access.isAdmin ? (
+        <div id="users">
+          <UserManagementPanel />
+        </div>
+      ) : null}
     </div>
   );
 }

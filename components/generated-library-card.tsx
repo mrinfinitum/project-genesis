@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Database } from "lucide-react";
+import { ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type GeneratedLibraryCardTone = "galaxy" | "sector" | "system" | "star" | "planet" | "discovery" | "civilization" | "building" | "research" | "neutral";
@@ -76,14 +76,10 @@ function CardThumbnail({ record, hovered }: { record: GeneratedLibraryCardRecord
         </picture>
       ) : (
         <>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_35%_35%,rgba(255,255,255,0.18),transparent_34%),linear-gradient(135deg,rgba(6,182,212,0.15),transparent_55%)]" />
-          <div className="absolute inset-x-5 top-5 h-px bg-cyan-200/25" />
-          <div className="absolute left-5 top-4 h-5 w-20 rounded-sm border border-cyan-200/25 bg-cyan-200/10" />
-          <div className="absolute bottom-4 left-5 right-5">
-            <div className="h-1.5 w-2/3 rounded-full bg-cyan-200/45" />
-            <div className="mt-2 h-1.5 w-1/3 rounded-full bg-white/20" />
-          </div>
-          <Database className="absolute left-1/2 top-1/2 h-8 w-8 -translate-x-1/2 -translate-y-1/2 text-cyan-100/35" />
+          <div className="absolute inset-0 bg-slate-950/45" />
+          <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(103,232,249,0.08),transparent_56%)]" />
+          <ImageIcon className="absolute left-1/2 top-1/2 h-8 w-8 -translate-x-1/2 -translate-y-1/2 text-slate-500/65" />
+          <span className="sr-only">Missing library thumbnail</span>
         </>
       )}
     </div>

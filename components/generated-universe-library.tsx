@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { Database, Filter, Plus, Search } from "lucide-react";
 import { GeneratedLibraryCard, type GeneratedLibraryCardRecord } from "@/components/generated-library-card";
+import { CanonicalIndex } from "@/components/ui/workspace";
 import type { UniverseLibraryKind, UniverseLibraryRecord } from "@/lib/universe/library";
 
 type GeneratedUniverseLibraryProps = {
@@ -37,6 +38,18 @@ function toGeneratedCardRecord(record: UniverseLibraryRecord): GeneratedLibraryC
 export function GeneratedUniverseLibrary({ title, description, generateLabel, records, emptyMessage }: GeneratedUniverseLibraryProps) {
   const [query, setQuery] = useState("");
   const [readiness, setReadiness] = useState("all");
+  const indexItems = useMemo(() => {
+    const readyCount = records.filter((record) => /^ready$/i.test(record.readiness)).length;
+    const typeCount = new Set(records.map((record) => record.type).filter(Boolean)).size;
+    const parentCount = new Set(records.map((record) => record.parentLabel).filter(Boolean)).size;
+
+    return [
+      { label: "Records", value: records.length.toLocaleString(), detail: "generated only" },
+      { label: "Ready", value: readyCount.toLocaleString(), detail: "runtime ready" },
+      { label: "Types", value: typeCount.toLocaleString(), detail: "canonical classes" },
+      { label: "Parents", value: parentCount.toLocaleString(), detail: "resolved links" }
+    ];
+  }, [records]);
   const filteredRecords = useMemo(() => {
     const needle = query.trim().toLowerCase();
     return records.filter((record) => {
@@ -66,6 +79,12 @@ export function GeneratedUniverseLibrary({ title, description, generateLabel, re
           </div>
         </div>
       </section>
+
+      <CanonicalIndex
+        title={title}
+        description="Generated canonical records only. Gameplay progression, screen workflows, and implementation details live in their dedicated workspaces."
+        items={indexItems}
+      />
 
       <section className="rounded-md border border-cyan-300/15 bg-[#07101e]/78 p-4">
         <div className="grid gap-3 lg:grid-cols-[1fr_16rem]">

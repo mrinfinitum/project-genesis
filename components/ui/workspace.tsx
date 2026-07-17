@@ -41,6 +41,39 @@ export function WorkspaceMiniStat({ label, value, className }: { label: string; 
   );
 }
 
+export function CanonicalIndex({
+  title = "Canonical Index",
+  description,
+  items,
+  className
+}: {
+  title?: string;
+  description?: string;
+  items: Array<{ label: string; value: string | number; detail?: string }>;
+  className?: string;
+}) {
+  return (
+    <section className={cn("studio-material-command rounded-md p-4", className)}>
+      <div className="flex flex-col gap-2 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.22em] text-cyan-300">Canonical Index</p>
+          <h2 className="mt-1 text-2xl font-black text-white">{title}</h2>
+        </div>
+        {description ? <p className="max-w-3xl text-sm leading-6 text-slate-300">{description}</p> : null}
+      </div>
+      <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {items.map((item) => (
+          <div key={item.label} className="min-w-0 rounded-md border border-cyan-300/10 bg-slate-950/35 p-3">
+            <p className="truncate text-[0.62rem] font-black uppercase tracking-[0.18em] text-slate-500">{item.label}</p>
+            <p className="mt-1 truncate text-2xl font-black text-white" title={String(item.value)}>{item.value}</p>
+            {item.detail ? <p className="mt-1 truncate text-xs font-semibold text-cyan-100/80" title={item.detail}>{item.detail}</p> : null}
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function WorkspaceProgressBar({ value, className }: { value: number; className?: string }) {
   return (
     <div className={cn("h-2 overflow-hidden rounded-full bg-slate-900", className)}>

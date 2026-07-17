@@ -40,7 +40,6 @@ import {
   Route,
   ScrollText,
   Search,
-  Settings,
   ShieldCheck,
   Sparkles,
   Star,
@@ -151,7 +150,8 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/content-releases", label: "Content Releases", icon: Archive },
       { href: "/game-engine-exports", label: "Exports", icon: FileCode2 },
       { href: "/validation-engine", label: "Verification", icon: FileCheck2 },
-      { href: "/architecture", label: "Architecture", icon: FileText }
+      { href: "/architecture", label: "Architecture", icon: FileText },
+      { href: "/settings#users", label: "Admin Users", icon: ShieldCheck }
     ]
   }
 ];

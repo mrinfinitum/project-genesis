@@ -3,6 +3,7 @@
 import { useMemo, useState, type CSSProperties } from "react";
 import { Download, ImageIcon, Orbit, Plus, Search, Sparkles, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CanonicalIndex } from "@/components/ui/workspace";
 import { PLANET_CLASS_MODEL } from "@/lib/planets/class-model";
 import { normalizePlanetRarity } from "@/lib/planets/rarity";
 import { hasLockedPlanetRender } from "@/lib/planets/render-lock";
@@ -317,6 +318,18 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
 
     return rows.filter((row) => planetSearchText(row).includes(search));
   }, [query, rows]);
+  const indexItems = useMemo(() => {
+    const renderedCount = rows.filter((row) => Boolean(largestVariant(row) || row.image_url)).length;
+    const classCount = new Set(rows.map((row) => row.planet_class).filter(Boolean)).size;
+    const solBodyCount = rows.filter(isFixedSolPlanet).length;
+
+    return [
+      { label: "Records", value: rows.length.toLocaleString(), detail: "generated bodies" },
+      { label: "Shown", value: filteredRows.length.toLocaleString(), detail: "current filter" },
+      { label: "Rendered", value: renderedCount.toLocaleString(), detail: "art linked" },
+      { label: "Classes", value: classCount.toLocaleString(), detail: solBodyCount ? `${solBodyCount} Sol bodies` : "planet classes" }
+    ];
+  }, [filteredRows.length, rows]);
   const selectedPlanetClassDefinition = useMemo(
     () => PLANET_CLASS_MODEL.find((planetClass) => planetClass.name === selectedPlanetClass) ?? null,
     [selectedPlanetClass]
@@ -526,6 +539,12 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
           </Button>
         </div>
       </section>
+
+      <CanonicalIndex
+        title="Planet Library"
+        description="Generated canonical celestial records. Cards stay focused on browsing; detailed seeds, resources, and render controls open from the record."
+        items={indexItems}
+      />
 
       <div className="flex flex-col gap-3 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-3 sm:flex-row sm:items-center">
         <Search className="h-4 w-4 text-slate-500" />
