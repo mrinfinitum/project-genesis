@@ -9,6 +9,9 @@ Status: Draft
 Signature Draft: DV-02C v0.1  
 Status: Draft
 
+Visual DNA Draft: DV-03 v0.1  
+Status: Draft
+
 The NOVERIS Experience Bible is the living creative reference for Project Genesis Studio. It is a structured Studio workspace, not a single markdown document and not a game implementation surface.
 
 ## What It Owns
@@ -124,6 +127,78 @@ DV-02C names future relationships only and does not define them yet:
 - DS-05 Components
 - DS-06 Screen Library
 - ED-02 Studio Experience
+
+## DV-03 Visual DNA
+
+DV-03 authors the draft Visual DNA of NOVERIS. Visual DNA defines the artistic physics of the project: why NOVERIS looks the way it does, and what emotional and artistic rules every future visual decision inherits.
+
+Visual DNA statement:
+
+NOVERIS Visual DNA is the shared artistic physics of the project: deep space calm, warm civilization achievement, soft projection intelligence, rare violet transcendence, meaningful atmosphere, generous negative space, universe-first composition, emotional scale, ordered celestial geometry, durable materials, monumental architecture, quiet density, deliberate motion, and contrast built through light, depth, spacing, scale, and focus rather than saturation.
+
+DV-03 expands DS-01, DV-02A, DV-02B, and DV-02C without modifying approved chapters. It is not UI implementation, CSS, rendering, shaders, design tokens, component code, runtime data, or an engine export contract.
+
+DV-03 is inherited by:
+
+- Mood Boards
+- Design Tokens
+- Materials
+- Motion
+- Components
+- Screen Templates
+- Studio Experience
+- Game Experience
+
+The DV-03 section defines:
+
+- Visual DNA
+- Color Philosophy
+- Light Philosophy
+- Atmosphere
+- Space
+- Composition
+- Scale
+- Geometry
+- Material Language
+- Architecture
+- Information Density
+- Motion
+- Visual Contrast
+- The NOVERIS Image Test
+- Future Relationships
+
+Color philosophy is emotional, not hexadecimal:
+
+- Deep Space Navy: infinity, calm, knowledge, possibility.
+- Warm Civilization Gold: achievement, humanity, legacy, engineering, hope.
+- Soft Projection Cyan: analysis, guidance, AI, interfaces.
+- Rare Violet: ancient technology, rare discoveries, transcendence, advanced civilization.
+- White: clarity, knowledge, precision.
+- Black: distance, scale, unknown.
+
+Light tells the story:
+
+- Warm light means civilization, success, engineering, and human presence.
+- Cool light means technology, projection, and systems.
+- Darkness means mystery, distance, and possibility, not horror.
+- As civilizations evolve, environments should become warmer, cleaner, more elegant, and more ordered.
+
+Composition follows this order:
+
+Universe -> Civilization -> Player Focus -> Information -> Controls
+
+The environment is always first. The interface is never the dominant element.
+
+DV-03 names future relationships only and does not define implementation:
+
+- DV-04 Inspiration Boards
+- DS-02 Design Tokens
+- DS-03 Material Library
+- DS-04 Motion Library
+- DS-05 Components
+- DS-06 Screen Library
+- ED-02 Studio Experience
+- Game Rendering
 
 ## Approval
 

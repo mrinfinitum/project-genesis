@@ -84,7 +84,7 @@ export type ExperienceBibleChapter = {
 };
 
 export type ExperienceBibleRelease = {
-  id: "DV-02" | "DV-02B" | "DV-02C";
+  id: "DV-02" | "DV-02B" | "DV-02C" | "DV-03";
   version: "0.1";
   status: "Draft";
   title: string;
@@ -111,6 +111,25 @@ export type ExperienceBibleSignature = {
   changeHistory: ExperienceHistoryEntry[];
 };
 
+export type ExperienceBibleVisualDna = {
+  id: "DV-03";
+  title: "Visual DNA";
+  version: "0.1";
+  status: "Draft";
+  createdAt: string;
+  purpose: string;
+  visualDnaStatement: string;
+  expands: string[];
+  inheritedBy: string[];
+  boundaries: string[];
+  tags: string[];
+  keywords: string[];
+  sections: ExperienceBibleBodySection[];
+  futureRelationships: Array<{ id: string; label: string; notes: string }>;
+  reviewNotes: string[];
+  changeHistory: ExperienceHistoryEntry[];
+};
+
 export type ExperienceBibleState = {
   id: "DV-02";
   title: "The NOVERIS Experience Bible";
@@ -125,6 +144,7 @@ export type ExperienceBibleState = {
   release: ExperienceBibleRelease;
   contentReleases: ExperienceBibleRelease[];
   signature: ExperienceBibleSignature;
+  visualDna: ExperienceBibleVisualDna;
   governanceRules: string[];
   noverisLifeReferenceFramework: {
     enabled: true;
@@ -626,6 +646,18 @@ function signatureSection(order: number, type: ExperienceBibleSectionType, title
   };
 }
 
+function visualDnaSection(order: number, type: ExperienceBibleSectionType, title: string, summary: string, content: string): ExperienceBibleBodySection {
+  return {
+    id: `dv-03-section-${String(order).padStart(2, "0")}-${slugify(title)}`,
+    type,
+    title,
+    summary,
+    content,
+    relationships: [],
+    status: "Draft"
+  };
+}
+
 export const experienceBibleSignature: ExperienceBibleSignature = {
   id: "DV-02C",
   title: "The NOVERIS Signature",
@@ -686,6 +718,91 @@ export const experienceBibleSignature: ExperienceBibleSignature = {
       timestamp: "2026-07-17T00:00:00.000Z",
       notes: "Created DV-02C The NOVERIS Signature as draft visual identity guidance."
     }
+  ]
+};
+
+export const experienceBibleVisualDna: ExperienceBibleVisualDna = {
+  id: "DV-03",
+  title: "Visual DNA",
+  version: "0.1",
+  status: "Draft",
+  createdAt: "2026-07-17T00:00:00.000Z",
+  purpose: "Author the canonical artistic physics of NOVERIS: why it looks the way it does and what emotional rules every future visual decision inherits.",
+  visualDnaStatement: "NOVERIS Visual DNA is the shared artistic physics of the project: deep space calm, warm civilization achievement, soft projection intelligence, rare violet transcendence, meaningful atmosphere, generous negative space, universe-first composition, emotional scale, ordered celestial geometry, durable materials, monumental architecture, quiet density, deliberate motion, and contrast built through light, depth, spacing, scale, and focus rather than saturation.",
+  expands: ["DS-01", "DV-02A", "DV-02B", "DV-02C"],
+  inheritedBy: ["Mood Boards", "Design Tokens", "Materials", "Motion", "Components", "Screen Templates", "Studio Experience", "Game Experience"],
+  boundaries: [
+    "DV-03 is emotional and artistic guidance, not UI implementation.",
+    "DV-03 does not define CSS, rendering, shaders, design tokens, component code, or engine-specific output.",
+    "Visual DNA must survive across Game, Studio, Website, Steam, Marketing, and Cinematics."
+  ],
+  tags: ["experience-bible", "dv-03", "visual-dna", "artistic-physics", "visual-principles"],
+  keywords: [
+    "Visual DNA",
+    "color philosophy",
+    "light philosophy",
+    "atmosphere",
+    "negative space",
+    "composition",
+    "scale",
+    "geometry",
+    "material language",
+    "architecture",
+    "information density",
+    "motion",
+    "visual contrast",
+    "NOVERIS Image Test"
+  ],
+  sections: [
+    visualDnaSection(1, "principle", "Visual DNA", "The recurring artistic principles, emotional language, visual physics, compositional rules, and atmospheric identity shared by every part of NOVERIS.", "Visual DNA explains why NOVERIS looks the way it does. It is inherited by the Game, Studio, Website, Steam, Marketing, and Cinematics. It creates continuity across Mood Boards, Design Tokens, Materials, Motion, Components, Screen Templates, Studio Experience, and Game Experience without becoming implementation."),
+    visualDnaSection(2, "principle", "Color Philosophy", "Colors are emotional civilization meanings, not UI-only values or hexadecimal tokens.", "Deep Space Navy represents infinity, calm, knowledge, and possibility. Warm Civilization Gold represents achievement, humanity, legacy, engineering, and hope. Soft Projection Cyan represents analysis, guidance, AI, and interfaces. Rare Violet represents ancient technology, rare discoveries, transcendence, and advanced civilization. White represents clarity, knowledge, and precision. Black represents distance, scale, and the unknown. These belong to the civilization, not only to UI components."),
+    visualDnaSection(3, "principle", "Light Philosophy", "Light tells the story of civilization, technology, and distance.", "Warm light means civilization, success, engineering, and human presence. Cool light means technology, projection, and systems. Darkness means mystery, distance, and possibility, not horror. As civilizations evolve, their environments should become warmer, cleaner, more elegant, and more ordered."),
+    visualDnaSection(4, "principle", "Atmosphere", "Atmosphere is a storytelling layer that communicates wonder, immensity, time, and space.", "NOVERIS atmosphere may use stellar dust, nebula, fog, planet haze, volumetric depth, light scattering, distance, and scale. Atmosphere should create wonder and depth. Never become visual clutter."),
+    visualDnaSection(5, "principle", "Space", "Negative space is intentional and creates scale, anticipation, focus, beauty, and calm.", "Do not fill every region with detail. Empty space and silence are part of the experience. Silence is part of the experience. The universe should be allowed to breathe so the player can feel distance, possibility, and focus."),
+    visualDnaSection(6, "principle", "Composition", "The eye should move from Universe to Civilization to Player Focus to Information to Controls.", "The environment is always first. The interface is never the dominant element. Composition should reveal the world, then civilization, then what the player should care about, then supporting information, then controls."),
+    visualDnaSection(7, "principle", "Scale", "Scale is emotional.", "Large planets. Large skies. Large structures. Large civilizations. Small UI. These choices should make the player constantly feel part of something much larger. Scale should be felt before it is measured."),
+    visualDnaSection(8, "principle", "Geometry", "Canonical geometry represents order within the universe.", "NOVERIS geometry includes circles, orbits, celestial arcs, navigation paths, stellar vectors, projection grids, and constellation lines. These forms should express order, relationship, navigation, and discovery. Avoid arbitrary decoration."),
+    visualDnaSection(9, "principle", "Material Language", "Materials communicate knowledge, craftsmanship, engineering, and longevity.", "Glass, Projection, Crystal, Stone, Metal, Energy, and Atmosphere should feel purposeful and durable. Materials should suggest learned craft and long-lived civilization. Avoid disposable aesthetics."),
+    visualDnaSection(10, "principle", "Architecture", "Civilization architecture should feel intentional, engineered, timeless, monumental, and optimistic.", "Every structure should appear worthy of surviving centuries. Architecture should feel like civilization choosing to endure, not temporary set dressing or fragile decoration."),
+    visualDnaSection(11, "principle", "Information Density", "Data may be dense; visual clutter is forbidden.", "Prefer hierarchy, spacing, typography, grouping, and whitespace instead of boxes, heavy borders, and visual noise. Dense systems should still feel calm, legible, and intelligently organized."),
+    visualDnaSection(12, "principle", "Motion", "Movement communicates confidence.", "Motion should feel purposeful, deliberate, and calm. No frantic animation. Motion reinforces understanding, flow, and consequence. Never distraction."),
+    visualDnaSection(13, "principle", "Visual Contrast", "Contrast is created primarily through light, depth, spacing, scale, and focus.", "Contrast is created through light, depth, spacing, scale, and focus, not saturated color. NOVERIS should achieve emphasis through composition, dimensionality, atmosphere, hierarchy, and lighting discipline."),
+    visualDnaSection(14, "checklist", "The NOVERIS Image Test", "Every screenshot should prove the world can breathe and the identity still feels timeless.", "Every screenshot should answer: Can the world breathe? Can the player feel scale? Is civilization celebrated? Is humanity visible? Does light tell a story? Would this still feel timeless ten years from now?"),
+    visualDnaSection(15, "reference", "Future Relationships", "DV-03 prepares relationships for future visual systems without defining implementation.", "DV-03 prepares relationships for DV-04 Inspiration Boards, DS-02 Design Tokens, DS-03 Material Library, DS-04 Motion Library, DS-05 Components, DS-06 Screen Library, ED-02 Studio Experience, and Game Rendering. It does not define implementation.")
+  ],
+  futureRelationships: [
+    { id: "DV-04", label: "Inspiration Boards", notes: "Future relationship only; not defined in DV-03." },
+    { id: "DS-02", label: "Design Tokens", notes: "Future relationship only; not defined in DV-03." },
+    { id: "DS-03", label: "Material Library", notes: "Future relationship only; not defined in DV-03." },
+    { id: "DS-04", label: "Motion Library", notes: "Future relationship only; not defined in DV-03." },
+    { id: "DS-05", label: "Components", notes: "Future relationship only; not defined in DV-03." },
+    { id: "DS-06", label: "Screen Library", notes: "Future relationship only; not defined in DV-03." },
+    { id: "ED-02", label: "Studio Experience", notes: "Future relationship only; not defined in DV-03." },
+    { id: "GAME-RENDERING", label: "Game Rendering", notes: "Future relationship only; not defined in DV-03." }
+  ],
+  reviewNotes: ["Route DV-03 through Experience Design review before treating it as approved canonical visual guidance."],
+  changeHistory: [
+    {
+      id: "dv-03-visual-dna-created",
+      action: "created",
+      author: "Experience Design",
+      timestamp: "2026-07-17T00:00:00.000Z",
+      notes: "Created DV-03 Visual DNA as draft artistic physics guidance."
+    }
+  ]
+};
+
+export const experienceBibleVisualDnaRelease: ExperienceBibleRelease = {
+  id: "DV-03",
+  version: "0.1",
+  status: "Draft",
+  title: "Visual DNA",
+  createdAt: "2026-07-17T00:00:00.000Z",
+  chapterIds: [],
+  notes: [
+    "Defines the artistic physics, emotional language, composition, atmosphere, material, motion, and contrast principles of NOVERIS.",
+    "Expands DS-01, DV-02A, DV-02B, and DV-02C without modifying existing chapters.",
+    "DV-03 is not UI implementation, CSS, rendering, shaders, design tokens, runtime data, or an engine export contract."
   ]
 };
 
@@ -750,8 +867,9 @@ export function getExperienceBibleState(): ExperienceBibleState {
     parts: experienceBibleParts,
     chapters: experienceBibleChapters,
     release: experienceBibleRelease,
-    contentReleases: [experienceBibleRelease, experienceBiblePartIRelease, experienceBibleSignatureRelease],
+    contentReleases: [experienceBibleRelease, experienceBiblePartIRelease, experienceBibleSignatureRelease, experienceBibleVisualDnaRelease],
     signature: experienceBibleSignature,
+    visualDna: experienceBibleVisualDna,
     governanceRules: experienceBibleGovernanceRules,
     noverisLifeReferenceFramework: {
       enabled: true,

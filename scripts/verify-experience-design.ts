@@ -96,6 +96,8 @@ async function main() {
   assert(bibleSearch.results.some((result) => result.type === "Experience Design" && result.href === "/experience-design/bible/chapter/core-creative-philosophy"), "Global search must return authored Experience Bible philosophy content.");
   const signatureSearch = await searchStudio("The NOVERIS Signature", 20);
   assert(signatureSearch.results.some((result) => result.type === "Experience Design" && result.href === "/experience-design/bible#dv-02c-noveris-signature"), "Global search must return DV-02C NOVERIS Signature content.");
+  const visualDnaSearch = await searchStudio("Deep Space Navy", 20);
+  assert(visualDnaSearch.results.some((result) => result.type === "Experience Design" && result.href === "/experience-design/bible#dv-03-visual-dna"), "Global search must return DV-03 Visual DNA content.");
 
   const canonicalRuntime = await buildCanonicalRuntimeExportPayload();
   assertNoExperienceRuntimeLeak("Canonical runtime", canonicalRuntime);
@@ -118,6 +120,7 @@ async function main() {
     searchReturned: search.returned,
     bibleSearchReturned: bibleSearch.returned,
     signatureSearchReturned: signatureSearch.returned,
+    visualDnaSearchReturned: visualDnaSearch.returned,
     runtimePublishing: state.runtimePublishing,
     engineExports: Object.fromEntries(engineExports.map((engineExport, index) => [targets[index], engineExport.metadata.validationStatus]))
   }, null, 2));

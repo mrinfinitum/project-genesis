@@ -35,6 +35,9 @@ function assertNoRuntimeLeak(label: string, value: unknown) {
   assert(!text.includes("DV-02C"), `${label} leaked DV-02C signature data.`);
   assert(!text.includes("The NOVERIS Signature"), `${label} leaked NOVERIS Signature data.`);
   assert(!text.includes("Civilization Gold"), `${label} leaked visual identity guidance.`);
+  assert(!text.includes("DV-03"), `${label} leaked DV-03 Visual DNA data.`);
+  assert(!text.includes("Visual DNA"), `${label} leaked Visual DNA guidance.`);
+  assert(!text.includes("Deep Space Navy"), `${label} leaked color philosophy guidance.`);
   assert(!/"bodySections"\s*:/.test(text), `${label} leaked Bible body sections.`);
 }
 
@@ -59,6 +62,11 @@ async function main() {
   assert(signatureRelease.version === "0.1", "DV-02C must be version 0.1.");
   assert(signatureRelease.status === "Draft", "DV-02C must remain Draft.");
   assert(signatureRelease.chapterIds.length === 0, "DV-02C must be a signature section, not a numbered chapter release.");
+  const visualDnaRelease = bible.contentReleases.find((release) => release.id === "DV-03");
+  assert(visualDnaRelease, "Missing DV-03 Visual DNA content release.");
+  assert(visualDnaRelease.version === "0.1", "DV-03 must be version 0.1.");
+  assert(visualDnaRelease.status === "Draft", "DV-03 must remain Draft.");
+  assert(visualDnaRelease.chapterIds.length === 0, "DV-03 must be a Visual DNA section, not a numbered chapter release.");
   assert(experience.experienceBible.chapters.length === 65, "Experience Design state must expose Bible chapters.");
 
   assert(bible.signature.id === "DV-02C", "Signature section ID must be DV-02C.");
@@ -152,6 +160,138 @@ async function main() {
   assert(bible.signature.futureRelationships.map((relationship) => relationship.id).join("|") === expectedFutureRelationships.join("|"), "DV-02C future relationships must match the approved list.");
   for (const relationship of bible.signature.futureRelationships) {
     assert(relationship.notes.includes("not defined in DV-02C"), `DV-02C must not define future relationship ${relationship.id}.`);
+  }
+
+  assert(bible.visualDna.id === "DV-03", "Visual DNA section ID must be DV-03.");
+  assert(bible.visualDna.title === "Visual DNA", "Visual DNA section title must be Visual DNA.");
+  assert(bible.visualDna.version === "0.1", "Visual DNA section must be version 0.1.");
+  assert(bible.visualDna.status === "Draft", "Visual DNA section must remain Draft.");
+  assert(bible.visualDna.expands.join("|") === "DS-01|DV-02A|DV-02B|DV-02C", "DV-03 must expand DS-01, DV-02A, DV-02B, and DV-02C.");
+  for (const inherited of ["Mood Boards", "Design Tokens", "Materials", "Motion", "Components", "Screen Templates", "Studio Experience", "Game Experience"]) {
+    assert(bible.visualDna.inheritedBy.includes(inherited), `DV-03 must be inherited by ${inherited}.`);
+  }
+  for (const boundary of ["not UI implementation", "CSS", "rendering", "shaders", "design tokens", "engine-specific"]) {
+    assert(bible.visualDna.boundaries.join(" ").includes(boundary), `DV-03 boundary missing ${boundary}.`);
+  }
+  for (const context of ["Game", "Studio", "Website", "Steam", "Marketing", "Cinematics"]) {
+    assert(bible.visualDna.boundaries.join(" ").includes(context), `DV-03 must survive across ${context}.`);
+  }
+  const expectedVisualDnaSectionTitles = [
+    "Visual DNA",
+    "Color Philosophy",
+    "Light Philosophy",
+    "Atmosphere",
+    "Space",
+    "Composition",
+    "Scale",
+    "Geometry",
+    "Material Language",
+    "Architecture",
+    "Information Density",
+    "Motion",
+    "Visual Contrast",
+    "The NOVERIS Image Test",
+    "Future Relationships"
+  ];
+  assert(bible.visualDna.sections.length === expectedVisualDnaSectionTitles.length, `DV-03 must include ${expectedVisualDnaSectionTitles.length} sections.`);
+  for (const [index, title] of expectedVisualDnaSectionTitles.entries()) {
+    const section = bible.visualDna.sections[index];
+    assert(section.title === title, `DV-03 section ${index + 1} must be ${title}.`);
+    assert(section.status === "Draft", `DV-03 section ${title} must remain Draft.`);
+    assert(section.id.startsWith(`dv-03-section-${String(index + 1).padStart(2, "0")}-`), `DV-03 section ${title} must use stable ID convention.`);
+  }
+  const visualDnaText = JSON.stringify(bible.visualDna);
+  for (const required of [
+    "artistic physics",
+    "emotional language",
+    "visual physics",
+    "compositional rules",
+    "atmospheric identity",
+    "Deep Space Navy",
+    "infinity",
+    "calm",
+    "knowledge",
+    "possibility",
+    "Warm Civilization Gold",
+    "achievement",
+    "humanity",
+    "legacy",
+    "engineering",
+    "hope",
+    "Soft Projection Cyan",
+    "analysis",
+    "guidance",
+    "AI",
+    "interfaces",
+    "Rare Violet",
+    "ancient technology",
+    "rare discoveries",
+    "transcendence",
+    "advanced civilization",
+    "White represents clarity",
+    "Black represents distance",
+    "not only to UI components",
+    "Warm light means civilization",
+    "Cool light means technology",
+    "Darkness means mystery",
+    "not horror",
+    "warmer, cleaner, more elegant, and more ordered",
+    "stellar dust",
+    "nebula",
+    "fog",
+    "planet haze",
+    "volumetric depth",
+    "light scattering",
+    "wonder",
+    "immensity",
+    "Never become visual clutter",
+    "Negative space is intentional",
+    "Silence",
+    "Universe",
+    "Civilization",
+    "Player Focus",
+    "Information",
+    "Controls",
+    "The environment is always first",
+    "Large planets",
+    "Large skies",
+    "Small UI",
+    "circles",
+    "orbits",
+    "celestial arcs",
+    "navigation paths",
+    "stellar vectors",
+    "projection grids",
+    "constellation lines",
+    "Avoid arbitrary decoration",
+    "Glass",
+    "Projection",
+    "Crystal",
+    "Stone",
+    "Metal",
+    "Energy",
+    "Atmosphere",
+    "Avoid disposable aesthetics",
+    "surviving centuries",
+    "Data may be dense",
+    "visual clutter is forbidden",
+    "hierarchy",
+    "spacing",
+    "typography",
+    "grouping",
+    "whitespace",
+    "No frantic animation",
+    "Never distraction",
+    "not saturated color",
+    "Can the world breathe",
+    "Would this still feel timeless ten years from now"
+  ]) {
+    assert(visualDnaText.includes(required), `DV-03 Visual DNA guidance missing ${required}.`);
+  }
+  const expectedVisualDnaRelationships = ["DV-04", "DS-02", "DS-03", "DS-04", "DS-05", "DS-06", "ED-02", "GAME-RENDERING"];
+  assert(bible.visualDna.futureRelationships.map((relationship) => relationship.id).join("|") === expectedVisualDnaRelationships.join("|"), "DV-03 future relationships must match the approved list.");
+  for (const relationship of bible.visualDna.futureRelationships) {
+    assert(relationship.notes.includes("not defined in DV-03"), `DV-03 must not define future relationship ${relationship.id}.`);
   }
 
   const expectedPartIds = [
@@ -349,6 +489,14 @@ async function main() {
   assert(goldSearch.results.some((result) => result.href === "/experience-design/bible#dv-02c-noveris-signature"), "Search must index Civilization Gold guidance.");
   const logoSearch = await searchStudio("if the logo disappeared", 20);
   assert(logoSearch.results.some((result) => result.href === "/experience-design/bible#dv-02c-noveris-signature"), "Search must index the NOVERIS Test.");
+  const visualDnaSearch = await searchStudio("Visual DNA", 20);
+  assert(visualDnaSearch.results.some((result) => result.href === "/experience-design/bible#dv-03-visual-dna"), "Search must deep-link to DV-03 Visual DNA.");
+  const colorSearch = await searchStudio("Deep Space Navy", 20);
+  assert(colorSearch.results.some((result) => result.href === "/experience-design/bible#dv-03-visual-dna"), "Search must index DV-03 color philosophy.");
+  const motionSearch = await searchStudio("No frantic animation", 20);
+  assert(motionSearch.results.some((result) => result.href === "/experience-design/bible#dv-03-visual-dna"), "Search must index DV-03 motion guidance.");
+  const imageTestSearch = await searchStudio("Can the world breathe", 20);
+  assert(imageTestSearch.results.some((result) => result.href === "/experience-design/bible#dv-03-visual-dna"), "Search must index the NOVERIS Image Test.");
 
   assert(bible.noverisLifeReferenceFramework.enabled, "noveris.life reference framework must be enabled.");
   assert(bible.noverisLifeReferenceFramework.guidance.some((rule) => rule.includes("brand benchmark")), "noveris.life must be framed as brand benchmark.");
@@ -359,10 +507,13 @@ async function main() {
   assert(read("docs/experience-bible.md").includes("DV-02B"), "Experience Bible documentation must document DV-02B.");
   assert(read("docs/experience-bible.md").includes("DV-02C"), "Experience Bible documentation must document DV-02C.");
   assert(read("docs/experience-bible.md").includes("The NOVERIS Signature"), "Experience Bible documentation must document The NOVERIS Signature.");
+  assert(read("docs/experience-bible.md").includes("DV-03"), "Experience Bible documentation must document DV-03.");
+  assert(read("docs/experience-bible.md").includes("Visual DNA"), "Experience Bible documentation must document Visual DNA.");
   assert(read("components/experience-bible-workspace.tsx").includes("aria-label=\"Experience Bible table of contents\""), "TOC must expose accessible label.");
   assert(read("components/experience-bible-workspace.tsx").includes("window.localStorage.setItem(storageKey"), "TOC expansion state must be remembered.");
   assert(read("components/experience-bible-workspace.tsx").includes("state.contentReleases"), "Bible versions view must expose all content releases.");
   assert(read("components/experience-bible-workspace.tsx").includes("dv-02c-noveris-signature"), "Bible workspace must expose DV-02C signature panel.");
+  assert(read("components/experience-bible-workspace.tsx").includes("dv-03-visual-dna"), "Bible workspace must expose DV-03 Visual DNA panel.");
   assert(read("components/experience-bible-workspace.tsx").includes("focus-visible:outline"), "Bible workspace must expose visible focus styling.");
 
   const runtime = await buildCanonicalRuntimeExportPayload();
@@ -397,6 +548,13 @@ async function main() {
       sections: bible.signature.sections.length,
       futureRelationships: bible.signature.futureRelationships.length
     },
+    visualDnaRelease: {
+      id: visualDnaRelease.id,
+      version: visualDnaRelease.version,
+      status: visualDnaRelease.status,
+      sections: bible.visualDna.sections.length,
+      futureRelationships: bible.visualDna.futureRelationships.length
+    },
     searchResults: {
       futureWeBuild: search.returned,
       philosophy: philosophySearch.returned,
@@ -406,7 +564,11 @@ async function main() {
       noverisLife: noverisLifeSearch.returned,
       signature: signatureSearch.returned,
       civilizationGold: goldSearch.returned,
-      noverisTest: logoSearch.returned
+      noverisTest: logoSearch.returned,
+      visualDna: visualDnaSearch.returned,
+      colorPhilosophy: colorSearch.returned,
+      motion: motionSearch.returned,
+      imageTest: imageTestSearch.returned
     },
     runtime: {
       contentVersion: runtime.metadata.contentVersion,

@@ -183,6 +183,26 @@ export async function buildStudioSearchIndex(): Promise<StudioSearchIndex> {
         experienceDesign.experienceBible.signature.futureRelationships.map((relationship) => `${relationship.id} ${relationship.label} ${relationship.notes}`).join(" ")
       ]
     }),
+    result({
+      id: `experience-bible-visual-dna:${experienceDesign.experienceBible.visualDna.id}`,
+      type: "Experience Design" as const,
+      title: experienceDesign.experienceBible.visualDna.title,
+      subtitle: `Experience Bible / ${experienceDesign.experienceBible.visualDna.id} / ${experienceDesign.experienceBible.visualDna.status}`,
+      href: "/experience-design/bible#dv-03-visual-dna",
+      status: experienceDesign.experienceBible.visualDna.status,
+      aliases: [
+        experienceDesign.experienceBible.visualDna.id,
+        experienceDesign.experienceBible.visualDna.purpose,
+        experienceDesign.experienceBible.visualDna.visualDnaStatement,
+        experienceDesign.experienceBible.visualDna.expands.join(" "),
+        experienceDesign.experienceBible.visualDna.inheritedBy.join(" "),
+        experienceDesign.experienceBible.visualDna.boundaries.join(" "),
+        experienceDesign.experienceBible.visualDna.tags.join(" "),
+        experienceDesign.experienceBible.visualDna.keywords.join(" "),
+        experienceDesign.experienceBible.visualDna.sections.map((section) => `${section.title} ${section.summary} ${section.content}`).join(" "),
+        experienceDesign.experienceBible.visualDna.futureRelationships.map((relationship) => `${relationship.id} ${relationship.label} ${relationship.notes}`).join(" ")
+      ]
+    }),
     ...experienceDesign.experienceBible.chapters.map((chapter) => {
       const part = experienceDesign.experienceBible.parts.find((item) => item.id === chapter.partId);
       return result({
