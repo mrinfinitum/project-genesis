@@ -63,8 +63,11 @@ function main() {
   const packageJson = JSON.parse(read("package.json")) as { scripts?: Record<string, string> };
 
   assert(card.includes("export function GeneratedLibraryCard"), "GeneratedLibraryCard must be exported as the shared Library card component.");
+  assert(card.includes("export function resolveLibraryCardArtwork"), "GeneratedLibraryCard must expose resolveLibraryCardArtwork.");
   assert(card.includes("aspect-video"), "Library card image area must use a stable 16:9 thumbnail region.");
   assert(card.includes("object-cover"), "Library thumbnails must use object-fit cover.");
+  assert(card.includes("width={480}") && card.includes("height={270}"), "Library thumbnails must reserve 480x270 dimensions.");
+  assert(card.includes("alt={artwork.altText}"), "Library thumbnails must expose meaningful alt text.");
   assert(card.includes("loading=\"lazy\""), "Library thumbnails must lazy load.");
   assert(card.includes("decoding=\"async\""), "Library thumbnails must async decode.");
   assert(card.includes("sizes="), "Library thumbnails must publish responsive sizes.");
@@ -78,7 +81,10 @@ function main() {
   assert(read("app/buildings/page.tsx").includes("GeneratedLibraryCard"), "Building Library must use GeneratedLibraryCard.");
   assert(read("app/research/page.tsx").includes("GeneratedLibraryCard"), "Research Library must use GeneratedLibraryCard.");
   assert(assetProduction.includes("library_thumbnail") && assetProduction.includes("480, 270") && assetProduction.includes("\"WebP\""), "Asset derivative presets must include library_thumbnail 480x270 WebP.");
+  assert(assetProduction.includes("library_thumbnail_retina") && assetProduction.includes("960, 540"), "Asset derivative presets must include library_thumbnail_retina 960x540.");
+  assert(assetProduction.includes("quick_preview") && assetProduction.includes("Never use full-resolution source images"), "Asset derivative presets must include quick_preview guidance.");
   assert(packageJson.scripts?.["verify:library-card-system"], "verify:library-card-system script must be registered.");
+  assert(packageJson.scripts?.["verify:library-card-consistency"], "verify:library-card-consistency script must be registered.");
 
   for (const relativePath of [
     "components/generated-library-card.tsx",

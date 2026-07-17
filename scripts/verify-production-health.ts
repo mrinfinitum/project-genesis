@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { buildGameEngineExport, type EngineTarget } from "@/lib/export/game-engine";
 import { getAssetProductionState } from "@/lib/assets/asset-production";
@@ -23,6 +23,24 @@ function publicPath(url?: string | null) {
 function publicUrlExists(url?: string | null) {
   const resolved = publicPath(url);
   return resolved ? existsSync(resolved) : true;
+}
+
+function publicUrlSize(url?: string | null) {
+  const resolved = publicPath(url);
+  return resolved && existsSync(resolved) ? statSync(resolved).size : 0;
+}
+
+function byteLength(value: unknown) {
+  return Buffer.byteLength(JSON.stringify(value));
+}
+
+function chunkFiles() {
+  const chunkDir = path.join(process.cwd(), ".next", "static", "chunks");
+  if (!existsSync(chunkDir)) return [] as Array<{ file: string; bytes: number }>;
+  return readdirSync(chunkDir)
+    .filter((file) => file.endsWith(".js"))
+    .map((file) => ({ file, bytes: statSync(path.join(chunkDir, file)).size }))
+    .sort((a, b) => b.bytes - a.bytes);
 }
 
 function providerFor(storagePath: string) {
@@ -92,6 +110,11 @@ async function main() {
     ...library.civilizations
   ];
   const brokenLibraryThumbnails = libraryRecords.filter((record) => record.thumbnailUrl && !publicUrlExists(record.thumbnailUrl));
+  const libraryThumbnailSizes = libraryRecords.map((record) => publicUrlSize(record.thumbnailUrl)).filter((size) => size > 0);
+  const averageLibraryThumbnailBytes = Math.round(libraryThumbnailSizes.reduce((sum, size) => sum + size, 0) / Math.max(1, libraryThumbnailSizes.length));
+  const largestLibraryThumbnailBytes = Math.max(0, ...libraryThumbnailSizes);
+  const libraryThumbnailWarningsOver120Kb = libraryThumbnailSizes.filter((size) => size > 120_000).length;
+  const initialLibraryImagePayloadBytes = libraryThumbnailSizes.reduce((sum, size) => sum + size, 0);
 
   const coreRoutes = [
     "app/api/assets/production/source/[id]/route.ts",
@@ -126,6 +149,9 @@ async function main() {
   const engineTargets: EngineTarget[] = ["generic", "roblox", "web", "unity", "unreal", "godot"];
   const engineExports = await Promise.all(engineTargets.map((target) => buildGameEngineExport(target)));
   const engineStatuses = Object.fromEntries(engineExports.map((payload) => [payload.target.id, payload.metadata.validationStatus]));
+  const engineExportSizes: Record<string, number> = Object.fromEntries(engineExports.map((payload) => [payload.target.id, byteLength(payload)]));
+  const chunks = chunkFiles();
+  const largestChunk = chunks[0] ?? { file: "not-built", bytes: 0 };
   for (const payload of engineExports) assert(payload.metadata.validationStatus === "Ready", `${payload.target.id} export must remain Ready.`);
   assert(canonicalRuntime.metadata.contentVersion === gameRuntimeContentVersion, "Runtime contentVersion must match canonical runtime constant.");
 
@@ -185,7 +211,25 @@ async function main() {
     libraryThumbnails: {
       totalChecked: libraryRecords.length,
       brokenThumbnailCount: brokenLibraryThumbnails.length,
-      missingThumbnailCount: libraryRecords.filter((record) => !record.thumbnailUrl).length
+      missingThumbnailCount: libraryRecords.filter((record) => !record.thumbnailUrl).length,
+      averageThumbnailBytes: averageLibraryThumbnailBytes,
+      largestThumbnailBytes: largestLibraryThumbnailBytes,
+      warningOver120KbCount: libraryThumbnailWarningsOver120Kb,
+      initialLibraryImagePayloadBytes
+    },
+    performance: {
+      buildAvailable: chunks.length > 0,
+      chunkCount: chunks.length,
+      totalChunkBytes: chunks.reduce((sum, chunk) => sum + chunk.bytes, 0),
+      largestChunk,
+      bundleWarnings: largestChunk.bytes > 1_500_000 ? [`Largest chunk exceeds 1.5MB: ${largestChunk.file}`] : []
+    },
+    runtimePayload: {
+      canonicalRuntimeBytes: byteLength(canonicalRuntime),
+      engineExportBytes: engineExportSizes,
+      largestEngineExportBytes: Math.max(0, ...Object.values(engineExportSizes)),
+      duplicatedExpandedRecordRisk: "review_required_before_removal",
+      authoringFieldsRemovedFromPublicRuntime: true
     },
     privatePathBoundary: {
       publicRuntimeViolations: privatePathViolations

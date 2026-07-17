@@ -575,6 +575,8 @@ const psdV3DerivativePresets: AssetDerivativePreset[] = [
     preset(`thumbnail_${size}_png`, `Thumbnail ${size} PNG`, "thumbnails", "thumbnail", size, size, "1:1", "PNG", { outputRole: "thumbnail", engineTargets: ["roblox", "unity", "unreal", "godot"], robloxReady: true })
   ]),
   preset("library_thumbnail", "Library Thumbnail", "library_cards", "library_thumbnail", 480, 270, "16:9", "WebP", { outputRole: "thumbnail", engineTargets: ["web"], required: true, cropMode: "cover", webOptimized: true, notes: "Canonical Library card derivative. Target 60KB. Use srcset/sizes/lazy/async decode; never use full-resolution art in Library cards." }),
+  preset("library_thumbnail_retina", "Library Thumbnail Retina", "library_cards", "library_thumbnail_retina", 960, 540, "16:9", "WebP", { outputRole: "thumbnail", engineTargets: ["web"], required: false, cropMode: "cover", webOptimized: true, notes: "Retina Library card derivative. Target 140KB. Used in srcset for high-density displays." }),
+  preset("quick_preview", "Quick Preview", "library_cards", "quick_preview", 960, 540, "16:9", "WebP", { outputRole: "thumbnail", engineTargets: ["web"], required: false, cropMode: "cover", webOptimized: true, notes: "Medium hover/focus preview derivative. Never use full-resolution source images for Library quick preview." }),
   ...[
     ["viewport_1366x768", 1366, 768],
     ["viewport_1600x900", 1600, 900],
