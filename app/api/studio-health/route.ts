@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { NextResponse } from "next/server";
@@ -19,6 +20,14 @@ type HealthMetric = {
   details: string[];
 };
 
+type StudioStatus = {
+  studioOnline: boolean;
+  contentVersion: number | string;
+  architectureVersion: string;
+  runtimeReady: boolean;
+  gitClean: boolean;
+};
+
 function percent(numerator: number, denominator: number) {
   if (denominator <= 0) return 0;
   return Math.round((numerator / denominator) * 100);
@@ -32,6 +41,14 @@ function isMissingDefinition(value: unknown) {
   if (!value || typeof value !== "object") return false;
   const row = value as Record<string, unknown>;
   return /missing|gap|placeholder|planned|todo|draft/i.test(String(row.status ?? row.publicationStatus ?? row.severity ?? row.type ?? row.id ?? ""));
+}
+
+function isGitClean() {
+  try {
+    return execFileSync("git", ["status", "--short", "--untracked-files=no"], { cwd: process.cwd(), encoding: "utf8" }).trim().length === 0;
+  } catch {
+    return false;
+  }
 }
 
 function contentReadiness(canonical: Record<string, unknown>): HealthMetric {
@@ -173,16 +190,32 @@ async function verification(): Promise<HealthMetric> {
   };
 }
 
+async function studioStatus(): Promise<StudioStatus> {
+  const [runtime, architecture] = await Promise.all([
+    buildCanonicalRuntimeExportPayload(),
+    getArchitectureState()
+  ]);
+
+  return {
+    studioOnline: true,
+    contentVersion: runtime.metadata.contentVersion,
+    architectureVersion: architecture.architectureVersion.current,
+    runtimeReady: runtime.metadata.validationStatus === "Ready",
+    gitClean: isGitClean()
+  };
+}
+
 export async function GET() {
-  const [contentExport, art, exportsMetric, verificationMetric] = await Promise.all([
+  const [contentExport, art, exportsMetric, verificationMetric, status] = await Promise.all([
     buildGameEngineExport("generic"),
     artProduction(),
     engineExports(),
-    verification()
+    verification(),
+    studioStatus()
   ]);
   const content = contentReadiness(contentExport.canonical as Record<string, unknown>);
   const generatedAt = new Date().toISOString();
   const metrics = [content, art, exportsMetric, verificationMetric];
 
-  return NextResponse.json({ generatedAt, metrics });
+  return NextResponse.json({ generatedAt, status, metrics });
 }

@@ -55,6 +55,14 @@ type StudioHealthMetric = {
   details: string[];
 };
 
+type StudioStatus = {
+  studioOnline: boolean;
+  contentVersion: number | string;
+  architectureVersion: string;
+  runtimeReady: boolean;
+  gitClean: boolean;
+};
+
 type NavigationItem = {
   href?: string;
   label: string;
@@ -180,38 +188,68 @@ function uniqueSections(ids: Array<string | undefined>) {
   return ids.filter((id, index, values): id is string => Boolean(id) && values.indexOf(id) === index);
 }
 
-function healthColorClass(percent: number) {
-  if (percent >= 100) return "from-emerald-300 to-emerald-400 text-emerald-100";
-  if (percent >= 75) return "from-cyan-300 to-blue-400 text-cyan-100";
-  if (percent >= 50) return "from-yellow-300 to-amber-300 text-yellow-100";
-  if (percent >= 25) return "from-orange-300 to-orange-500 text-orange-100";
-  return "from-rose-300 to-red-500 text-rose-100";
+function healthLineClass(percent: number) {
+  if (percent >= 100) return "bg-slate-500";
+  if (percent >= 75) return "bg-cyan-500/70";
+  if (percent >= 50) return "bg-amber-400/70";
+  if (percent >= 25) return "bg-orange-400/80";
+  return "bg-rose-400";
 }
 
-function StudioHealthPanel({ metrics }: { metrics: StudioHealthMetric[] }) {
+function metricLabel(metric: StudioHealthMetric) {
+  if (metric.id === "content") return "Content";
+  if (metric.id === "art") return "Art";
+  if (metric.id === "exports") return "Exports";
+  return "Verification";
+}
+
+function metricValue(metric: StudioHealthMetric) {
+  if (metric.id === "exports" && metric.percent === 100) return "Ready";
+  return `${metric.percent}%`;
+}
+
+function StatusChip({ label, ok, muted }: { label: string; ok?: boolean; muted?: boolean }) {
   return (
-    <section className="mb-4 rounded-md border border-cyan-400/15 bg-slate-950/35 p-3 shadow-glow">
-      <p className="text-xs font-black uppercase tracking-[0.22em] text-cyan-200">Project Genesis Studio</p>
-      <div className="mt-3 space-y-3">
+    <span
+      className={cn(
+        "rounded border px-1.5 py-0.5 text-[0.62rem] font-semibold leading-none",
+        muted && "border-slate-700/70 bg-transparent text-slate-500",
+        ok === true && "border-slate-700/70 bg-transparent text-slate-400",
+        ok === false && "border-amber-400/35 bg-amber-400/5 text-amber-200"
+      )}
+    >
+      {label}
+    </span>
+  );
+}
+
+function StudioHealthPanel({ metrics, status }: { metrics: StudioHealthMetric[]; status?: StudioStatus }) {
+  return (
+    <section className="mb-4 border-y border-cyan-400/10 py-3">
+      <div className="flex flex-wrap gap-1.5">
+        <StatusChip label={status?.studioOnline ? "Studio Online" : "Studio Offline"} ok={status?.studioOnline ?? true} />
+        <StatusChip label={`v${status?.contentVersion ?? "..."}`} muted />
+        <StatusChip label={`Arch ${status?.architectureVersion ?? "..."}`} muted />
+        <StatusChip label={status?.runtimeReady ? "Runtime Ready" : "Runtime Issue"} ok={status?.runtimeReady ?? true} />
+        <StatusChip label={status?.gitClean ? "Git Clean" : "Git Dirty"} ok={status?.gitClean ?? true} />
+      </div>
+
+      <div className="mt-3 space-y-2">
         {metrics.length ? metrics.map((metric) => {
-          const color = healthColorClass(metric.percent);
-          const textColor = color.split(" ").slice(-1)[0];
+          const alert = metric.percent < 50 || (metric.id === "exports" && metric.percent < 100) || (metric.id === "verification" && metric.percent < 100);
           return (
-            <Link key={metric.id} href={metric.href} title={`${metric.tooltip} ${metric.details.join(" ")}`} className="group block rounded-md border border-cyan-300/10 bg-[#07101e]/70 p-3 transition hover:border-cyan-300/35 hover:bg-cyan-300/5">
-              <span className="flex items-center justify-between gap-3">
-                <span className="truncate text-[0.68rem] font-black uppercase tracking-[0.18em] text-slate-300">{metric.label}</span>
-                <span className={cn("text-sm font-black", textColor)}>{metric.percent}%</span>
+            <Link key={metric.id} href={metric.href} title={`${metric.tooltip} ${metric.details.join(" ")}`} className="group block rounded-sm text-slate-500 transition hover:text-slate-200">
+              <span className="flex items-center justify-between gap-3 text-[0.68rem]">
+                <span className="truncate font-semibold uppercase tracking-[0.16em]">{metricLabel(metric)}</span>
+                <span className={cn("font-semibold tabular-nums", alert ? "text-amber-200" : "text-slate-400")}>{metricValue(metric)}</span>
               </span>
-              <span className="mt-2 block h-2 overflow-hidden rounded-full bg-slate-800">
-                <span className={cn("block h-full rounded-full bg-gradient-to-r transition-all", color)} style={{ width: `${Math.max(0, Math.min(100, metric.percent))}%` }} />
+              <span className="mt-1 block h-px overflow-hidden rounded-full bg-slate-800/80">
+                <span className={cn("block h-full rounded-full transition-all", healthLineClass(metric.percent))} style={{ width: `${Math.max(0, Math.min(100, metric.percent))}%` }} />
               </span>
-              <span className="mt-1 block truncate text-[0.65rem] font-semibold text-slate-500 group-hover:text-slate-300">{metric.details[0] ?? metric.tooltip}</span>
             </Link>
           );
         }) : (
-          <p className="rounded-md border border-cyan-300/10 bg-[#07101e]/70 p-3 text-xs font-semibold text-slate-500">
-            Calculating production health from canonical data...
-          </p>
+          <p className="text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-slate-600">Calculating health...</p>
         )}
       </div>
     </section>
@@ -226,6 +264,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const activeGroup = useMemo(() => activeGroupForPath(pathname), [pathname]);
   const [expandedGroups, setExpandedGroups] = useState<string[]>(() => uniqueSections(["command-center", activeGroup?.id]));
   const [healthMetrics, setHealthMetrics] = useState<StudioHealthMetric[]>([]);
+  const [studioStatus, setStudioStatus] = useState<StudioStatus>();
 
   useEffect(() => {
     const storedSections = window.localStorage.getItem(STORAGE_SECTIONS_KEY);
@@ -264,14 +303,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
     fetch("/api/studio-health")
       .then((response) => (response.ok ? response.json() : null))
-      .then((payload: { metrics?: StudioHealthMetric[] } | null) => {
+      .then((payload: { status?: StudioStatus; metrics?: StudioHealthMetric[] } | null) => {
         if (!cancelled && payload?.metrics) {
           setHealthMetrics(payload.metrics);
+          setStudioStatus(payload.status);
         }
       })
       .catch(() => {
         if (!cancelled) {
           setHealthMetrics([]);
+          setStudioStatus(undefined);
         }
       });
 
@@ -304,9 +345,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <span className="block text-xl font-bold text-white">Genesis Studio</span>
           </span>
         </Link>
-        <StudioHealthPanel metrics={healthMetrics} />
+        <StudioHealthPanel metrics={healthMetrics} status={studioStatus} />
 
-        <nav className="h-[calc(100vh-20rem)] space-y-2 overflow-y-auto pr-1">
+        <nav className="h-[calc(100vh-16rem)] space-y-2 overflow-y-auto pr-1">
           {navigationGroups.map((group) => {
             const Icon = group.icon;
             const expanded = expandedGroups.includes(group.id);

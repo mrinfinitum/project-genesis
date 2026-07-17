@@ -13,6 +13,14 @@ type HealthMetric = {
   details: string[];
 };
 
+type StudioStatus = {
+  studioOnline: boolean;
+  contentVersion: number | string;
+  architectureVersion: string;
+  runtimeReady: boolean;
+  gitClean: boolean;
+};
+
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
@@ -30,10 +38,16 @@ async function main() {
 
   assert(packageJson.scripts?.["verify:studio-health-dashboard"], "verify:studio-health-dashboard script must be registered.");
   assert(appShell.includes('fetch("/api/studio-health")'), "Sidebar must load health metrics from /api/studio-health.");
-  assert(appShell.includes("<StudioHealthPanel metrics={healthMetrics} />"), "Sidebar must render the Studio health panel.");
+  assert(appShell.includes("<StudioHealthPanel metrics={healthMetrics} status={studioStatus} />"), "Sidebar must render the Studio health panel with status.");
   assert(appShell.includes('href={metric.href}'), "Health metrics must be clickable links.");
   assert(appShell.includes("title={`${metric.tooltip}"), "Health metrics must expose calculation tooltips.");
   assert(appShell.includes("percent >= 100") && appShell.includes("percent >= 75") && appShell.includes("percent >= 50") && appShell.includes("percent >= 25"), "Health color thresholds must match the health-state contract.");
+  assert(appShell.includes("Studio Online"), "Top status must include Studio Online.");
+  assert(appShell.includes("Runtime Ready"), "Top status must include Runtime Ready.");
+  assert(appShell.includes("Git Clean"), "Top status must include Git Clean.");
+  assert(appShell.includes("h-px"), "Health indicators must use thin progress lines.");
+  assert(!appShell.includes("h-2 overflow-hidden rounded-full"), "Large health progress bars must be removed.");
+  assert(!appShell.includes("shadow-glow\">\n      <p className=\"text-xs font-black uppercase tracking-[0.22em]"), "Health panel must not render as a heavy dashboard card.");
   assert(appShell.includes("STORAGE_SECTIONS_KEY"), "Navigation collapse behavior must remain persisted.");
   assert(appShell.includes("window.localStorage.setItem(STORAGE_SECTIONS_KEY"), "Navigation collapse state must be remembered.");
 
@@ -51,7 +65,12 @@ async function main() {
 
   const response = await GET();
   assert(response.status === 200, `Studio health route returned HTTP ${response.status}.`);
-  const payload = (await response.json()) as { metrics?: HealthMetric[] };
+  const payload = (await response.json()) as { status?: StudioStatus; metrics?: HealthMetric[] };
+  assert(payload.status?.studioOnline === true, "Studio Online status must be true when the health endpoint responds.");
+  assert(payload.status?.contentVersion !== undefined, "contentVersion status chip source is missing.");
+  assert(/^\d+\.\d+\.\d+$/.test(String(payload.status?.architectureVersion)), "architectureVersion status chip must be a semantic version.");
+  assert(typeof payload.status?.runtimeReady === "boolean", "Runtime Ready status must be boolean.");
+  assert(typeof payload.status?.gitClean === "boolean", "Git Clean status must be boolean.");
   const metrics = payload.metrics ?? [];
   const expected = [
     { id: "content", label: "Content Readiness", href: "/encyclopedia" },
