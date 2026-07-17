@@ -3,6 +3,9 @@
 Release: DV-02 v0.1  
 Status: Draft
 
+Authored Draft: DV-02B v0.1  
+Status: Draft
+
 The NOVERIS Experience Bible is the living creative reference for Project Genesis Studio. It is a structured Studio workspace, not a single markdown document and not a game implementation surface.
 
 ## What It Owns
@@ -24,7 +27,31 @@ DV-02 v0.1 seeds:
 - Attachment and relationship fields
 - noveris.life reference framework
 
-The seeded chapters are intentionally minimal. They establish the authoring framework without writing the full Bible.
+The seeded chapters outside Part I are intentionally minimal. They establish the authoring framework without writing the full Bible.
+
+## DV-02B Part I: The Soul of NOVERIS
+
+DV-02B authors Part I as a draft content release. It includes chapters 1-7:
+
+- The Future We Build
+- The Promise to the Player
+- Core Creative Philosophy
+- Emotional Pillars
+- Humanity's Role
+- What NOVERIS Is
+- What NOVERIS Is Not
+
+Part I defines the creative north star for NOVERIS: an optimistic, premium civilization experience about discovery, stewardship, scientific exploration, human advancement, mastery, beauty, scale, hope, achievement, and legacy.
+
+Each authored chapter includes:
+
+- Core Principles
+- Must Always
+- Must Never
+- Creative Notes
+- Future Considerations
+
+DV-02B remains Draft. It is reviewable creative guidance, not approved canon, not gameplay rules, not runtime data, and not a client implementation contract.
 
 ## Approval
 

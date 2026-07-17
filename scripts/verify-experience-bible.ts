@@ -45,6 +45,12 @@ async function main() {
   assert(bible.parts.length === 7, `Expected 7 Bible parts; received ${bible.parts.length}.`);
   assert(bible.chapters.length === 65, `Expected 65 Bible chapters; received ${bible.chapters.length}.`);
   assert(bible.release.chapterIds.length === 65, "Bible release must include all 65 seeded chapters.");
+  assert(bible.contentReleases.length >= 2, "Bible must expose structural and authored content releases.");
+  const partIRelease = bible.contentReleases.find((release) => release.id === "DV-02B");
+  assert(partIRelease, "Missing DV-02B Part I authored content release.");
+  assert(partIRelease.version === "0.1", "DV-02B must be version 0.1.");
+  assert(partIRelease.status === "Draft", "DV-02B must remain Draft.");
+  assert(partIRelease.chapterIds.length === 7, "DV-02B must include only Part I chapters 1-7.");
   assert(experience.experienceBible.chapters.length === 65, "Experience Design state must expose Bible chapters.");
 
   const expectedPartIds = [
@@ -140,6 +146,33 @@ async function main() {
   assert(getExperienceBibleChapter("noveris-life-translation")?.chapterNumber === 51, "Chapter slug lookup failed for noveris.life Translation.");
   assert(getExperienceBibleChapter("experience-bible-release-checklist")?.chapterNumber === 65, "Chapter slug lookup failed for Release Checklist.");
 
+  const partIChapters = bible.chapters.filter((chapter) => chapter.partId === "part-01-soul-of-noveris");
+  assert(partIChapters.length === 7, `Expected 7 Part I chapters; received ${partIChapters.length}.`);
+  const requiredPartISectionTitles = ["Core Principles", "Must Always", "Must Never", "Creative Notes", "Future Considerations"];
+  for (const chapter of partIChapters) {
+    assert(partIRelease.chapterIds.includes(chapter.id), `DV-02B release is missing chapter ${chapter.id}.`);
+    assert(chapter.tags.includes("dv-02b"), `Part I chapter ${chapter.id} missing dv-02b tag.`);
+    assert(chapter.tags.includes("part-i-authored"), `Part I chapter ${chapter.id} missing part-i-authored tag.`);
+    assert(chapter.reviewStatus === "Draft", `Part I chapter ${chapter.id} must remain Draft.`);
+    assert(chapter.canonicalStatus === "Draft", `Part I chapter ${chapter.id} must not be canonical yet.`);
+    assert(chapter.approvedAt === null, `Part I chapter ${chapter.id} must not have approval timestamp.`);
+    assert(chapter.designPrinciples.length >= 3, `Part I chapter ${chapter.id} must include design principles.`);
+    assert(chapter.mustAlways.length >= 3, `Part I chapter ${chapter.id} must include must-always guidance.`);
+    assert(chapter.mustNever.length >= 3, `Part I chapter ${chapter.id} must include must-never guidance.`);
+    for (const sectionTitle of requiredPartISectionTitles) {
+      assert(chapter.bodySections.some((section) => section.title === sectionTitle), `Part I chapter ${chapter.id} missing ${sectionTitle} section.`);
+    }
+    for (const target of ["DS-01", "ED-01", "DV-02A"]) {
+      assert(chapter.references.some((reference) => reference.target === target), `Part I chapter ${chapter.id} missing ${target} reference.`);
+    }
+    assert(chapter.implementationNotes.some((note) => note.includes("creative guidance only")), `Part I chapter ${chapter.id} must state creative guidance boundary.`);
+    assert(chapter.reviewNotes.some((note) => note.includes("DV-02B authored draft")), `Part I chapter ${chapter.id} must include DV-02B review note.`);
+    assert(chapter.changeHistory.some((entry) => entry.id.endsWith("dv-02b-authored")), `Part I chapter ${chapter.id} missing DV-02B history entry.`);
+  }
+
+  const futureChapters = bible.chapters.filter((chapter) => chapter.chapterNumber > 7);
+  assert(futureChapters.every((chapter) => !chapter.tags.includes("dv-02b") && !chapter.tags.includes("part-i-authored")), "DV-02B authored tags must not leak into future chapters.");
+
   for (const route of [
     "app/experience-design/bible/page.tsx",
     "app/experience-design/bible/part/[partId]/page.tsx",
@@ -154,6 +187,10 @@ async function main() {
 
   const search = await searchStudio("The Future We Build", 20);
   assert(search.results.some((result) => result.href === "/experience-design/bible/chapter/the-future-we-build"), "Search must deep-link to Bible chapter The Future We Build.");
+  const philosophySearch = await searchStudio("Technology serves humanity", 20);
+  assert(philosophySearch.results.some((result) => result.href === "/experience-design/bible/chapter/core-creative-philosophy"), "Search must index authored Part I philosophy content.");
+  const boundarySearch = await searchStudio("not admin software", 20);
+  assert(boundarySearch.results.some((result) => result.href === "/experience-design/bible/chapter/what-noveris-is-not"), "Search must index authored Part I boundary content.");
   const noverisLifeSearch = await searchStudio("noveris.life", 20);
   assert(noverisLifeSearch.results.some((result) => result.href === "/experience-design/bible/chapter/noveris-life-translation"), "Search must include noveris.life Bible reference chapter.");
 
@@ -163,8 +200,10 @@ async function main() {
   assert(bible.governanceRules.some((rule) => rule.includes("Design guidance cannot invent gameplay mechanics")), "Bible governance must prevent gameplay invention.");
 
   assert(read("docs/experience-bible.md").includes("DV-02"), "Experience Bible documentation must document DV-02.");
+  assert(read("docs/experience-bible.md").includes("DV-02B"), "Experience Bible documentation must document DV-02B.");
   assert(read("components/experience-bible-workspace.tsx").includes("aria-label=\"Experience Bible table of contents\""), "TOC must expose accessible label.");
   assert(read("components/experience-bible-workspace.tsx").includes("window.localStorage.setItem(storageKey"), "TOC expansion state must be remembered.");
+  assert(read("components/experience-bible-workspace.tsx").includes("state.contentReleases"), "Bible versions view must expose all content releases.");
   assert(read("components/experience-bible-workspace.tsx").includes("focus-visible:outline"), "Bible workspace must expose visible focus styling.");
 
   const runtime = await buildCanonicalRuntimeExportPayload();
@@ -186,8 +225,16 @@ async function main() {
     parts: bible.parts.length,
     chapters: bible.chapters.length,
     releaseChapterCount: bible.release.chapterIds.length,
+    authoredRelease: {
+      id: partIRelease.id,
+      version: partIRelease.version,
+      status: partIRelease.status,
+      chapters: partIRelease.chapterIds.length
+    },
     searchResults: {
       futureWeBuild: search.returned,
+      philosophy: philosophySearch.returned,
+      boundary: boundarySearch.returned,
       noverisLife: noverisLifeSearch.returned
     },
     engineExports: Object.fromEntries(engineExports.map((engineExport, index) => [targets[index], engineExport.metadata.validationStatus]))

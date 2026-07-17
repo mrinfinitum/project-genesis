@@ -281,7 +281,7 @@ export function ExperienceBibleWorkspace({
       <WorkspaceHeader
         eyebrow="DV-02 / Experience Bible"
         title={mode === "part" && activePart ? activePart.title : state.title}
-        description="The living creative bible for NOVERIS. DV-02A seeds the structure, chapter model, review/versioning workflow, references, and governance without writing the full Bible or publishing anything to runtime."
+        description="The living creative bible for NOVERIS. DV-02A owns the structure and DV-02B drafts Part I as reviewable creative guidance without publishing anything to runtime."
         stats={[
           { label: "Release", value: `${state.release.id} v${state.release.version}` },
           { label: "Status", value: state.status },
@@ -296,12 +296,29 @@ export function ExperienceBibleWorkspace({
           {mode === "versions" ? (
             <WorkspacePanel title="Bible Version History" icon={History}>
               <div className="grid gap-3 md:grid-cols-3">
-                <WorkspaceMiniStat label="Release" value={`${state.release.id} v${state.release.version}`} />
-                <WorkspaceMiniStat label="Status" value={state.release.status} />
-                <WorkspaceMiniStat label="Chapters" value={state.release.chapterIds.length} />
+                <WorkspaceMiniStat label="Releases" value={state.contentReleases.length} />
+                <WorkspaceMiniStat label="Latest Draft" value={`${state.contentReleases.at(-1)?.id ?? state.release.id} v${state.contentReleases.at(-1)?.version ?? state.release.version}`} />
+                <WorkspaceMiniStat label="Status" value={state.contentReleases.at(-1)?.status ?? state.release.status} />
               </div>
-              <div className="mt-4 space-y-2">
-                {state.release.notes.map((note) => <p key={note} className="rounded-md border border-cyan-300/10 p-3 text-sm text-slate-300">{note}</p>)}
+              <div className="mt-4 space-y-3">
+                {state.contentReleases.map((release) => (
+                  <section key={release.id} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-4">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div>
+                        <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">{release.id} / v{release.version}</p>
+                        <h3 className="mt-1 text-lg font-black text-white">{release.title}</h3>
+                      </div>
+                      <WorkspaceBadge value={release.status} />
+                    </div>
+                    <div className="mt-3 grid gap-3 md:grid-cols-2">
+                      <WorkspaceMiniStat label="Created" value={release.createdAt.slice(0, 10)} />
+                      <WorkspaceMiniStat label="Chapters" value={release.chapterIds.length} />
+                    </div>
+                    <div className="mt-3 space-y-2">
+                      {release.notes.map((note) => <p key={note} className="text-sm leading-6 text-slate-300">{note}</p>)}
+                    </div>
+                  </section>
+                ))}
               </div>
             </WorkspacePanel>
           ) : null}
