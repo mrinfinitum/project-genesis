@@ -171,6 +171,25 @@ export function ExperienceDesignWorkspace({ state, initialSection = "dashboard" 
         </WorkspacePanel>
       </section>
 
+      <WorkspacePanel title="Experience Bible" icon={BookOpen}>
+        <div className="grid gap-4 lg:grid-cols-[1fr_16rem]">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-300">{state.experienceBible.id} / Version {state.experienceBible.version}</p>
+            <h2 className="mt-2 text-2xl font-black text-white">{state.experienceBible.title}</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-300">A living creative bible with stable Parts I-VII, Chapters 1-65, structured authoring, review, version history, references, and no runtime publication.</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Link href="/experience-design/bible" className="rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 py-2 text-sm font-bold text-cyan-100">Open Experience Bible</Link>
+              <Link href="/experience-design/bible/versions" className="rounded-md border border-slate-600 px-3 py-2 text-sm font-bold text-slate-200">Version History</Link>
+            </div>
+          </div>
+          <div className="grid gap-2">
+            <WorkspaceMiniStat label="Parts" value={state.experienceBible.parts.length} />
+            <WorkspaceMiniStat label="Chapters" value={state.experienceBible.chapters.length} />
+            <WorkspaceMiniStat label="Status" value={state.experienceBible.status} />
+          </div>
+        </div>
+      </WorkspacePanel>
+
       <div className="flex flex-wrap items-center gap-3">
         <WorkspaceTabs tabs={["dashboard", "library", "models", "reviews", "history"]} active={tab} onChange={setTab} />
         <div className="flex items-center gap-2 rounded-md border border-cyan-300/15 bg-[#07101e]/85 px-3 py-2">

@@ -154,6 +154,39 @@ export async function buildStudioSearchIndex(): Promise<StudioSearchIndex> {
         status: record.status,
         aliases: [record.description, record.author, record.tags.join(" "), record.notes.join(" "), JSON.stringify(record.fields)]
       });
+    }),
+    ...experienceDesign.experienceBible.parts.map((part) => result({
+      id: `experience-bible-part:${part.id}`,
+      type: "Experience Design" as const,
+      title: `Experience Bible / Part ${part.roman}: ${part.title}`,
+      subtitle: part.summary,
+      href: `/experience-design/bible/part/${part.id}`,
+      status: experienceDesign.experienceBible.status,
+      aliases: [part.id, part.title, part.summary, "DV-02", "Experience Bible"]
+    })),
+    ...experienceDesign.experienceBible.chapters.map((chapter) => {
+      const part = experienceDesign.experienceBible.parts.find((item) => item.id === chapter.partId);
+      return result({
+        id: chapter.id,
+        type: "Experience Design" as const,
+        title: chapter.title,
+        subtitle: `Experience Bible / Part ${part?.roman ?? "?"} / Chapter ${chapter.chapterNumber} / ${chapter.reviewStatus}`,
+        href: `/experience-design/bible/chapter/${chapter.slug}`,
+        status: chapter.reviewStatus,
+        aliases: [
+          chapter.subtitle,
+          chapter.summary,
+          chapter.purpose,
+          chapter.tags.join(" "),
+          chapter.keywords.join(" "),
+          chapter.bodySections.map((section) => `${section.title} ${section.summary} ${section.content}`).join(" "),
+          chapter.designPrinciples.join(" "),
+          chapter.mustAlways.join(" "),
+          chapter.mustNever.join(" "),
+          chapter.references.map((reference) => `${reference.label} ${reference.notes}`).join(" "),
+          chapter.openQuestions.join(" ")
+        ]
+      });
     })
   ];
 

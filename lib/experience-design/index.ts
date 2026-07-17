@@ -1,3 +1,6 @@
+import { getExperienceBibleState, experienceBibleChapters, experienceBibleParts } from "@/lib/experience-design/bible";
+export * from "@/lib/experience-design/bible";
+
 export type ExperienceDesignStatus = "Draft" | "In Review" | "Approved" | "Deprecated" | "Archived";
 
 export type ExperienceDesignKind =
@@ -94,6 +97,7 @@ export type ExperienceDesignState = {
     approvedChanges: ExperienceDesignRecord[];
     countsByKind: Record<ExperienceDesignKind, number>;
   };
+  experienceBible: ReturnType<typeof getExperienceBibleState>;
 };
 
 export const EXPERIENCE_DESIGN_ROUTE = "/experience-design";
@@ -133,12 +137,15 @@ export const experienceContentModels: ExperienceContentModel[] = [
 ];
 
 export const experienceDesignRecords: ExperienceDesignRecord[] = [
-  record("experience-bible-framework", "experience_bible", "Experience Bible Framework", "Framework for NOVERIS creative canon chapters, annotations, cross references, and linked concepts.", "Draft", "Creative Direction", ["bible", "canon"], ["Create chapter scaffolding only; do not populate the complete Bible yet."], {
-    chapters: ["Creative Pillars", "World Tone", "Interface Philosophy", "Moments of Wonder"],
-    subchapters: ["Pending authoring"],
+  record("experience-bible-framework", "experience_bible", "Experience Bible Framework", "Framework for NOVERIS creative canon chapters, annotations, cross references, and linked concepts.", "Draft", "Creative Direction", ["bible", "canon", "dv-02"], ["DV-02A seeds the complete 65-chapter framework; do not populate the full Bible yet."], {
+    parts: experienceBibleParts.map((partItem) => partItem.id),
+    chapters: experienceBibleChapters.map((chapter) => chapter.id),
+    releaseVersion: "DV-02 v0.1",
+    subchapters: ["Supported"],
     annotations: ["Supported"],
     crossReferences: ["Supported"],
-    linkedConcepts: ["Supported"]
+    linkedConcepts: ["Supported"],
+    tableOfContents: "Part -> Chapter hierarchy"
   }),
   record("mood-board-galaxy", "mood_board", "Galaxy Mood Board", "Reference board for galaxy-scale wonder, navigation distance, light, scale, and discovery tone.", "Draft", "Art Direction", ["galaxy", "lighting", "composition"], ["Framework board; images can be attached later."], {
     category: "Galaxy",
@@ -269,6 +276,7 @@ function record(
 }
 
 export function getExperienceDesignState(): ExperienceDesignState {
+  const experienceBible = getExperienceBibleState();
   const countsByKind = experienceContentModels.reduce((accumulator, item) => {
     accumulator[item.kind] = experienceDesignRecords.filter((recordItem) => recordItem.kind === item.kind).length;
     return accumulator;
@@ -304,6 +312,7 @@ export function getExperienceDesignState(): ExperienceDesignState {
       draftReviews: experienceDesignRecords.filter((item) => item.status === "Draft" || item.status === "In Review"),
       approvedChanges: experienceDesignRecords.filter((item) => item.status === "Approved"),
       countsByKind
-    }
+    },
+    experienceBible
   };
 }
