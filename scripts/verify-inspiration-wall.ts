@@ -38,6 +38,7 @@ function assertUnique(values: string[], label: string) {
 async function main() {
   const manifest = await getInspirationWallManifest();
   const component = read("components/experience-design-workspace.tsx");
+  const homeRoute = read("app/experience-design/page.tsx");
   const dynamicRoute = read("app/experience-design/[section]/page.tsx");
   const manifestRoute = read("app/api/experience-design/inspiration-wall/route.ts");
   const uploadRoute = read("app/api/experience-design/inspiration-wall/upload/route.ts");
@@ -104,6 +105,7 @@ async function main() {
   assert(dynamicRoute.includes('redirect("/experience-design/inspiration-wall")'), "Old routes must redirect to Inspiration Wall.");
   assert(dynamicRoute.includes("getInspirationWallManifest"), "Section route must load the server-side image manifest.");
   assert(dynamicRoute.includes('section === "inspiration-wall"'), "Section route must recognize inspiration-wall.");
+  assert(homeRoute.includes("getInspirationWallManifest") && homeRoute.includes("inspirationWall={inspirationWall}"), "Experience Design home must pass the Inspiration Wall manifest for tab-based browsing.");
 
   assert(experienceIndex.includes('id: "inspiration-wall"'), "Experience Design sections must expose inspiration-wall.");
   assert(experienceIndex.toLowerCase().includes("local image") && experienceIndex.includes("public/images"), "Experience Design section copy must describe local image source.");
@@ -114,6 +116,10 @@ async function main() {
 
   assert(component.includes("Inspiration Wall"), "Workspace must render Inspiration Wall title.");
   assert(component.includes("public/images"), "Workspace must disclose public/images source.");
+  assert(component.includes("resolvedWall") && component.includes("setResolvedWall"), "Workspace must keep a resolved client-side Inspiration Wall manifest.");
+  assert(component.includes('fetch("/api/experience-design/inspiration-wall"'), "Workspace must fetch the Inspiration Wall manifest when server props are empty.");
+  assert(component.includes('cache: "no-store"'), "Client-side Inspiration Wall manifest fetch must avoid stale empty results.");
+  assert(component.includes("Loading local images"), "Workspace must distinguish manifest loading from an empty image folder.");
   assert(component.includes('loading="lazy"'), "Image tiles must lazy-load.");
   assert(component.includes('decoding="async"'), "Image tiles must async decode.");
   assert(component.includes("break-inside-avoid"), "Image tiles must opt out of masonry breaks.");

@@ -242,7 +242,9 @@ function InspirationWallMetadata({ image, onClose }: { image: InspirationWallIma
 }
 
 function InspirationBoardsWorkspace({ wall }: { wall?: InspirationWallManifest }) {
-  const images = wall?.images ?? [];
+  const [resolvedWall, setResolvedWall] = useState<InspirationWallManifest | undefined>(wall);
+  const [manifestStatus, setManifestStatus] = useState<"ready" | "loading" | "error">(wall?.images?.length ? "ready" : "loading");
+  const images = resolvedWall?.images ?? [];
   const folders = Array.from(new Set(images.map((image) => image.folder))).sort();
   const [query, setQuery] = useState("");
   const [orientation, setOrientation] = useState("all");
@@ -252,6 +254,42 @@ function InspirationBoardsWorkspace({ wall }: { wall?: InspirationWallManifest }
   const [metadataOpen, setMetadataOpen] = useState(false);
   const [presentation, setPresentation] = useState(false);
   const [uploadMessage, setUploadMessage] = useState("");
+
+  useEffect(() => {
+    if (wall?.images?.length) {
+      setResolvedWall(wall);
+      setManifestStatus("ready");
+      return;
+    }
+
+    let cancelled = false;
+    setManifestStatus("loading");
+    fetch("/api/experience-design/inspiration-wall", { cache: "no-store" })
+      .then((response) => {
+        if (!response.ok) throw new Error(`Inspiration Wall manifest returned ${response.status}.`);
+        return response.json() as Promise<InspirationWallManifest>;
+      })
+      .then((manifest) => {
+        if (cancelled) return;
+        setResolvedWall(manifest);
+        setManifestStatus("ready");
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setManifestStatus("error");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [wall]);
+
+  useEffect(() => {
+    if (!images.length) {
+      setSelectedId("");
+      return;
+    }
+    setSelectedId((current) => current && images.some((image) => image.id === current) ? current : images[0].id);
+  }, [images]);
 
   const filteredImages = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -356,12 +394,22 @@ function InspirationBoardsWorkspace({ wall }: { wall?: InspirationWallManifest }
             />
           ))}
         </div>
+      ) : manifestStatus === "loading" ? (
+        <div className="grid min-h-[50vh] place-items-center rounded-2xl border border-white/10 bg-white/[0.03] p-8 text-center">
+          <div>
+            <ImageIcon className="mx-auto h-10 w-10 text-slate-500" />
+            <h2 className="mt-4 text-xl font-black">Loading local images</h2>
+            <p className="mt-2 max-w-xl text-sm leading-6 text-slate-400">Reading the current Inspiration Wall manifest from public/images.</p>
+          </div>
+        </div>
       ) : (
         <div className="grid min-h-[50vh] place-items-center rounded-2xl border border-white/10 bg-white/[0.03] p-8 text-center">
           <div>
             <ImageIcon className="mx-auto h-10 w-10 text-slate-500" />
-            <h2 className="mt-4 text-xl font-black">No supported images found</h2>
-            <p className="mt-2 max-w-xl text-sm leading-6 text-slate-400">Add jpg, jpeg, png, webp, avif, or gif images to public/images, or upload in local development mode.</p>
+            <h2 className="mt-4 text-xl font-black">{manifestStatus === "error" ? "Could not load local images" : "No supported images found"}</h2>
+            <p className="mt-2 max-w-xl text-sm leading-6 text-slate-400">
+              {manifestStatus === "error" ? "The manifest route failed. Refresh or check /api/experience-design/inspiration-wall." : "Add jpg, jpeg, png, webp, avif, or gif images to public/images, or upload in local development mode."}
+            </p>
           </div>
         </div>
       )}
