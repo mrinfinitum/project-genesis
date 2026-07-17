@@ -2532,7 +2532,7 @@ export const inspirationBoardLibrary: ExperienceInspirationBoardLibrary = {
   relationshipTargets: ["Experience Bible Chapters", "Visual DNA Sections", "Screen Definitions", "Design Tokens", "Materials", "Motion Definitions", "Components", "Themes", "Brand Guidance", "Concept Art", "Future Tasks"],
   searchFields: ["emotion", "lighting", "color", "composition", "planet", "architecture", "NASA", "hope", "civilization", "monumentality", "calm", "geometry", "glass", "projection", "environment", "planetary", "orbit", "discovery", "legacy", "annotations"],
   filters: ["Status", "Approved", "Draft", "Category", "Lighting", "Emotion", "Material", "Theme", "Architecture", "Platform", "Relationship", "Tags", "Color Family"],
-  viewModes: ["Grid", "Masonry", "Canvas", "Presentation Mode"],
+  viewModes: ["Infinite Canvas", "Masonry", "Canvas", "Free Placement", "Clustering", "Presentation Mode"],
   presentationMode: {
     enabled: true,
     purpose: ["creative reviews", "art direction", "team discussions", "design workshops"]
@@ -2547,7 +2547,7 @@ export const inspirationBoardLibrary: ExperienceInspirationBoardLibrary = {
   },
   signatureTags,
   importSources: ["Asset Library", "Dropbox", "Local Upload", "Generated Concepts", "Approved Marketing Assets"],
-  performanceRequirements: ["lazy images", "virtualized grids", "responsive previews", "deferred loading", "fast search"],
+  performanceRequirements: ["lazy images", "virtualized masonry", "responsive images", "responsive previews", "deferred loading", "fast search", "future thousands of images"],
   accessibilityRequirements: ["keyboard navigation", "screen readers", "zoom", "reduced motion", "high contrast"]
 };
 

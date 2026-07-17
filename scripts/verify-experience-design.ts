@@ -675,7 +675,7 @@ async function main() {
   for (const target of ["Experience Bible Chapters", "Visual DNA Sections", "Screen Definitions", "Design Tokens", "Materials", "Motion Definitions", "Components", "Themes", "Brand Guidance", "Concept Art", "Future Tasks"]) {
     assert(state.inspirationBoards.relationshipTargets.includes(target), `DV-04 relationship targets missing ${target}.`);
   }
-  for (const mode of ["Grid", "Masonry", "Canvas", "Presentation Mode"]) {
+  for (const mode of ["Infinite Canvas", "Masonry", "Canvas", "Free Placement", "Clustering", "Presentation Mode"]) {
     assert(state.inspirationBoards.viewModes.includes(mode), `DV-04 view modes missing ${mode}.`);
   }
   assert(state.inspirationBoards.presentationMode.enabled, "DV-04 presentation mode must be enabled.");
@@ -691,7 +691,7 @@ async function main() {
   for (const importSource of ["Asset Library", "Dropbox", "Local Upload", "Generated Concepts", "Approved Marketing Assets"]) {
     assert(state.inspirationBoards.importSources.includes(importSource), `DV-04 import sources missing ${importSource}.`);
   }
-  for (const performance of ["lazy images", "virtualized grids", "responsive previews", "deferred loading", "fast search"]) {
+  for (const performance of ["lazy images", "virtualized masonry", "responsive images", "responsive previews", "deferred loading", "fast search", "future thousands of images"]) {
     assert(state.inspirationBoards.performanceRequirements.includes(performance), `DV-04 performance requirement missing ${performance}.`);
   }
   for (const accessibility of ["keyboard navigation", "screen readers", "zoom", "reduced motion", "high contrast"]) {
@@ -729,13 +729,27 @@ async function main() {
   assert(read("components/studio-command-palette.tsx").includes("Open Motion Library"), "Command palette must expose Motion Library.");
   assert(read("components/studio-command-palette.tsx").includes("Open Component Library"), "Command palette must expose Component Library.");
   assert(read("components/studio-command-palette.tsx").includes("Open Interaction Patterns"), "Command palette must expose Interaction Patterns.");
-  assert(read("components/experience-design-workspace.tsx").includes("InspirationBoardsWorkspace"), "Experience Design workspace must expose Inspiration Boards workspace.");
+  const experienceWorkspaceSource = read("components/experience-design-workspace.tsx");
+  assert(experienceWorkspaceSource.includes("InspirationBoardsWorkspace"), "Experience Design workspace must expose Inspiration Boards workspace.");
+  assert(experienceWorkspaceSource.includes("NOVERIS Inspiration Wall"), "Inspiration Boards must open into the NOVERIS Inspiration Wall canvas.");
+  assert(experienceWorkspaceSource.includes("Inspiration Board infinite masonry canvas"), "Inspiration Boards must expose an infinite masonry canvas region.");
+  assert(experienceWorkspaceSource.includes("Creative reference wall"), "Inspiration Boards must frame the canvas as a creative reference wall.");
+  assert(experienceWorkspaceSource.includes("columns-1 gap-5") && experienceWorkspaceSource.includes("break-inside-avoid"), "Inspiration Boards must use a masonry-style visual canvas.");
+  for (const toolbarAction of ["Upload", "Color", "Note", "Text", "Link", "Draw", "Zoom", "Present"]) {
+    assert(experienceWorkspaceSource.includes(toolbarAction), `Inspiration Board floating toolbar missing ${toolbarAction}.`);
+  }
+  assert(experienceWorkspaceSource.includes("Civilization Gold"), "Inspiration Boards must include color cards.");
+  assert(experienceWorkspaceSource.includes("accent.civilization.gold"), "Inspiration Boards must expose token relationship notes on color cards.");
+  assert(experienceWorkspaceSource.includes("Typography Card"), "Inspiration Boards must include typography cards.");
+  assert(!experienceWorkspaceSource.includes('WorkspacePanel title="Board Categories"'), "Inspiration Boards must not render a database-style Board Categories panel.");
+  assert(!experienceWorkspaceSource.includes('WorkspacePanel title="Annotations, Relationships, and Review"'), "Inspiration Boards must not render a permanent metadata inspector panel.");
+  assert(!experienceWorkspaceSource.includes('WorkspaceMiniStat label="References"'), "Inspiration Board cards must not expose database metadata blocks by default.");
   assert(read("components/experience-design-workspace.tsx").includes("ScreenLibraryWorkspace"), "Experience Design workspace must expose Screen Library workspace.");
-  assert(read("components/experience-design-workspace.tsx").includes("DesignTokensWorkspace"), "Experience Design workspace must expose Design Tokens workspace.");
-  assert(read("components/experience-design-workspace.tsx").includes("MaterialsWorkspace"), "Experience Design workspace must expose Materials workspace.");
-  assert(read("components/experience-design-workspace.tsx").includes("MotionWorkspace"), "Experience Design workspace must expose Motion workspace.");
-  assert(read("components/experience-design-workspace.tsx").includes("ComponentLibraryWorkspace"), "Experience Design workspace must expose Component Library workspace.");
-  assert(read("components/experience-design-workspace.tsx").includes("InteractionPatternsWorkspace"), "Experience Design workspace must expose Interaction Patterns workspace.");
+  assert(experienceWorkspaceSource.includes("DesignTokensWorkspace"), "Experience Design workspace must expose Design Tokens workspace.");
+  assert(experienceWorkspaceSource.includes("MaterialsWorkspace"), "Experience Design workspace must expose Materials workspace.");
+  assert(experienceWorkspaceSource.includes("MotionWorkspace"), "Experience Design workspace must expose Motion workspace.");
+  assert(experienceWorkspaceSource.includes("ComponentLibraryWorkspace"), "Experience Design workspace must expose Component Library workspace.");
+  assert(experienceWorkspaceSource.includes("InteractionPatternsWorkspace"), "Experience Design workspace must expose Interaction Patterns workspace.");
 
   const search = await searchStudio("Inspiration Boards", 10);
   assert(search.results.some((result) => result.type === "Experience Design" && /Inspiration Boards|Inspiration Board/i.test(result.title)), "Global search must return Experience Design Inspiration Board results.");

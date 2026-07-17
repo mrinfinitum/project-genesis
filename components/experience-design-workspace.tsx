@@ -12,14 +12,24 @@ import {
   FileText,
   GalleryHorizontalEnd,
   History,
+  Link2,
   Layers3,
   Library,
   MessageSquareText,
+  MousePointer2,
   Palette,
+  PenLine,
+  Presentation,
   Route,
   Search,
   ShieldCheck,
-  Sparkles
+  Settings,
+  Sparkles,
+  Trash2,
+  Type,
+  UploadCloud,
+  Users,
+  ZoomIn
 } from "lucide-react";
 import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, WorkspaceSearchBar, WorkspaceStatTile, WorkspaceTabs } from "@/components/ui/workspace";
 import type { ExperienceComponentDefinition, ExperienceDesignKind, ExperienceDesignRecord, ExperienceDesignSection, ExperienceDesignState, ExperienceDesignToken, ExperienceInspirationBoard, ExperienceInteractionPatternDefinition, ExperienceMaterialDefinition, ExperienceMotionDefinition, ExperienceScreenDefinition } from "@/lib/experience-design";
@@ -128,63 +138,96 @@ function ExperienceShowcasePanel({ state }: { state: ExperienceDesignState }) {
 }
 
 function InspirationBoardCanvasPreview({ state }: { state: ExperienceDesignState }) {
-  const notes = ["Lighting", "Composition", "References", "Visual DNA", "Annotations"];
+  const notes = ["Lighting", "Composition", "Atmosphere", "Scale", "Visual DNA"];
   return (
-    <section className="studio-material-command rounded-lg p-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-300">{state.inspirationBoards.id} / Creative Studio</p>
-          <h3 className="mt-1 text-xl font-black text-white">Inspiration Board Library</h3>
+    <section className="relative min-h-[28rem] overflow-hidden rounded-2xl border border-white/10 bg-[radial-gradient(circle_at_18%_12%,rgba(253,214,114,0.18),transparent_28%),radial-gradient(circle_at_74%_22%,rgba(92,229,255,0.14),transparent_30%),linear-gradient(135deg,rgba(246,241,226,0.10),rgba(9,17,31,0.94)_35%,rgba(4,8,17,0.98))] p-5 shadow-[0_30px_100px_rgba(0,0,0,0.42)]">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-full border border-white/10 bg-slate-950/35 px-4 py-3 backdrop-blur-xl">
+        <div className="min-w-0">
+          <p className="text-xs font-black uppercase tracking-[0.22em] text-cyan-200">{state.inspirationBoards.id} / Canvas</p>
+          <h3 className="truncate text-lg font-black text-white">NOVERIS Inspiration Wall</h3>
         </div>
-        <WorkspaceBadge value="Presentation Mode Ready" />
+        <div className="flex flex-wrap items-center gap-2 text-xs font-bold text-slate-300">
+          <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-3 py-1"><Users className="h-3.5 w-3.5 text-cyan-200" /> Creative Direction</span>
+          <button type="button" className="rounded-full border border-emerald-300/25 bg-emerald-400/10 px-3 py-1 text-emerald-100">Publish</button>
+          <button type="button" className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-slate-100">Export</button>
+          <button type="button" aria-label="Board settings" className="grid h-8 w-8 place-items-center rounded-full border border-white/10 bg-white/5 text-slate-200"><Settings className="h-4 w-4" /></button>
+        </div>
       </div>
-      <p className="mt-3 text-sm leading-6 text-slate-300">{state.inspirationBoards.purpose}</p>
-      <div className="studio-mood-board-canvas relative mt-4 rounded-md border border-cyan-300/15 p-5">
-        <div className="relative grid h-full min-h-72 gap-4 md:grid-cols-3">
-          {notes.map((note, index) => (
-            <div key={note} className={cn(
-              "studio-hover-drift rounded-md border border-cyan-300/15 bg-slate-950/45 p-4 shadow-[0_18px_50px_rgba(0,0,0,0.22)]",
-              index === 1 && "md:translate-y-10",
-              index === 2 && "md:-translate-y-4",
-              index === 3 && "md:translate-y-16",
-              index === 4 && "md:translate-y-2"
-            )}>
-              <p className="text-xs font-black uppercase tracking-[0.18em] text-amber-200">{note}</p>
-              <p className="mt-3 text-sm leading-6 text-slate-300">Zoomable reference cluster prepared for provenance, annotations, relationships, source links, and creative review.</p>
-            </div>
+      <div className="mt-5 flex gap-4">
+        <div className="sticky top-4 hidden h-max shrink-0 rounded-full border border-white/10 bg-slate-950/35 p-2 backdrop-blur-xl md:grid">
+          {[MousePointer2, UploadCloud, Palette, Type, Link2, PenLine, ZoomIn, Presentation, Trash2].map((Icon, index) => (
+            <button key={index} type="button" className="grid h-10 w-10 place-items-center rounded-full text-slate-300 transition hover:bg-cyan-300/15 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-200">
+              <Icon className="h-4 w-4" />
+            </button>
           ))}
         </div>
-      </div>
-      <div className="mt-4 grid gap-3 md:grid-cols-4">
-        <WorkspaceMiniStat label="Categories" value={state.inspirationBoards.categories.length} />
-        <WorkspaceMiniStat label="Boards" value={state.inspirationBoards.boards.length} />
-        <WorkspaceMiniStat label="View Modes" value={state.inspirationBoards.viewModes.length} />
-        <WorkspaceMiniStat label="Review States" value={state.inspirationBoards.reviewWorkflow.length} />
+        <div className="min-w-0 flex-1">
+          <div className="mb-4 flex flex-wrap items-center gap-2">
+            {["Upload", "Color", "Note", "Text", "Link", "Draw", "Zoom", "Present"].map((action) => (
+              <button key={action} type="button" className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-slate-200 backdrop-blur transition hover:border-cyan-200/40 hover:bg-cyan-300/10 hover:text-white">
+                {action}
+              </button>
+            ))}
+          </div>
+          <div className="columns-1 gap-4 sm:columns-2 xl:columns-3 2xl:columns-4">
+            {notes.map((note, index) => (
+              <div key={note} className={cn(
+                "group mb-4 break-inside-avoid overflow-hidden rounded-2xl bg-white/[0.065] shadow-[0_22px_60px_rgba(0,0,0,0.24)] ring-1 ring-white/10 transition duration-300 hover:-translate-y-1 hover:bg-white/[0.09] hover:shadow-[0_28px_80px_rgba(0,0,0,0.34)]",
+                index === 0 && "min-h-72",
+                index === 1 && "min-h-96",
+                index === 2 && "min-h-64",
+                index === 3 && "min-h-80",
+                index === 4 && "min-h-[26rem]"
+              )}>
+                <div className={cn(
+                  "h-full min-h-[inherit] bg-[radial-gradient(circle_at_24%_20%,rgba(253,214,114,0.28),transparent_32%),radial-gradient(circle_at_78%_30%,rgba(92,229,255,0.20),transparent_35%),linear-gradient(145deg,rgba(8,15,28,0.98),rgba(20,31,52,0.78))] p-5",
+                  index === 2 && "bg-[radial-gradient(circle_at_24%_20%,rgba(120,255,196,0.22),transparent_32%),linear-gradient(145deg,rgba(9,16,31,0.98),rgba(32,42,56,0.76))]",
+                  index === 3 && "bg-[radial-gradient(circle_at_72%_26%,rgba(168,118,255,0.22),transparent_36%),linear-gradient(145deg,rgba(7,12,27,0.98),rgba(28,30,60,0.76))]"
+                )}>
+                  <div className="flex h-full min-h-[inherit] flex-col justify-end">
+                    <div className="translate-y-2 opacity-0 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                      <p className="text-xs font-black uppercase tracking-[0.18em] text-amber-100">{note}</p>
+                      <p className="mt-2 text-sm leading-6 text-slate-100">Visual note layer prepared for annotations, Experience Bible links, Visual DNA, comments, and creative review.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+            <div className="mb-4 break-inside-avoid overflow-hidden rounded-2xl bg-[#d7ad4b] p-5 text-slate-950 shadow-[0_22px_60px_rgba(0,0,0,0.24)]">
+              <p className="text-xs font-black uppercase tracking-[0.18em]">Color Card</p>
+              <h4 className="mt-16 text-2xl font-black">Civilization Gold</h4>
+              <p className="mt-2 font-mono text-sm font-bold">#D7AD4B</p>
+              <p className="mt-3 text-sm font-semibold">Token relationship: accent.civilization.gold</p>
+            </div>
+            <div className="mb-4 break-inside-avoid rounded-2xl border border-white/10 bg-slate-950/55 p-6 shadow-[0_22px_60px_rgba(0,0,0,0.24)]">
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-200">Typography Card</p>
+              <h4 className="mt-8 text-4xl font-black text-white">Headlines</h4>
+              <p className="mt-4 text-sm leading-6 text-slate-300">Future font studies, reading rhythm, labels, navigation, and body tone belong on the canvas beside visual references.</p>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
 }
 
 function InspirationBoardCard({ board }: { board: ExperienceInspirationBoard }) {
+  const heights = ["h-72", "h-80", "h-96", "h-[28rem]", "h-[32rem]"];
+  const heightClass = heights[board.title.length % heights.length];
+
   return (
-    <article id={board.id} className="rounded-md border border-cyan-300/15 bg-slate-950/45 p-4 scroll-mt-24">
-      <div className="h-36 rounded-md border border-cyan-300/10 bg-[radial-gradient(circle_at_25%_20%,rgba(253,214,114,0.22),transparent_34%),radial-gradient(circle_at_78%_30%,rgba(92,229,255,0.18),transparent_34%),linear-gradient(135deg,rgba(6,15,30,0.95),rgba(11,22,45,0.78))]" aria-hidden="true" />
-      <div className="mt-4 flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="truncate text-xs font-black uppercase tracking-[0.18em] text-cyan-300">{board.categoryId.replace("inspiration-", "").replaceAll("-", " ")}</p>
-          <h3 className="mt-2 truncate text-xl font-black text-white" title={board.title}>{board.title}</h3>
-          <p className="mt-1 line-clamp-2 text-sm leading-5 text-slate-400">{board.subtitle}</p>
+    <article id={board.id} className="group mb-5 break-inside-avoid overflow-hidden rounded-2xl bg-white/[0.06] shadow-[0_22px_70px_rgba(0,0,0,0.26)] ring-1 ring-white/10 transition duration-300 hover:-translate-y-1 hover:bg-white/[0.09] hover:shadow-[0_30px_90px_rgba(0,0,0,0.34)] scroll-mt-24">
+      <div className={cn("relative min-h-64 bg-[radial-gradient(circle_at_25%_20%,rgba(253,214,114,0.24),transparent_34%),radial-gradient(circle_at_78%_30%,rgba(92,229,255,0.20),transparent_34%),linear-gradient(135deg,rgba(6,15,30,0.95),rgba(11,22,45,0.78))]", heightClass)} aria-label={`${board.title} visual reference card`}>
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/92 via-slate-950/40 to-transparent p-5">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-200">{board.categoryId.replace("inspiration-", "").replaceAll("-", " ")}</p>
+          <h3 className="mt-2 text-2xl font-black text-white" title={board.title}>{board.title.replace(" Inspiration Board", "")}</h3>
+          <div className="mt-3 translate-y-2 opacity-0 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+            <p className="line-clamp-3 text-sm leading-6 text-slate-200">{board.creativeGoal}</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {board.signatureReinforcement.slice(0, 3).map((tag) => <WorkspaceBadge key={tag} value={tag} className="border-white/15 bg-white/10 text-[0.58rem] text-white" />)}
+            </div>
+          </div>
         </div>
-        <WorkspaceBadge value={board.status} />
-      </div>
-      <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-300">{board.creativeGoal}</p>
-      <div className="mt-4 flex flex-wrap gap-2">
-        {board.signatureReinforcement.map((tag) => <WorkspaceBadge key={tag} value={tag} className="text-[0.62rem]" />)}
-      </div>
-      <div className="mt-4 grid gap-2 sm:grid-cols-3">
-        <WorkspaceMiniStat label="References" value={board.referenceCount} />
-        <WorkspaceMiniStat label="Annotations" value={board.annotationCategories.length} />
-        <WorkspaceMiniStat label="Favorite" value={board.favorite ? "Pinned" : "Available"} />
       </div>
     </article>
   );
@@ -192,31 +235,23 @@ function InspirationBoardCard({ board }: { board: ExperienceInspirationBoard }) 
 
 function InspirationBoardsWorkspace({ state, boards }: { state: ExperienceDesignState; boards: ExperienceInspirationBoard[] }) {
   return (
-    <div className="space-y-4 lg:col-span-2 2xl:col-span-3">
+    <div className="space-y-5 lg:col-span-2 2xl:col-span-3">
       <InspirationBoardCanvasPreview state={state} />
-      <WorkspacePanel title="Board Categories" icon={GalleryHorizontalEnd}>
-        <div className="flex flex-wrap gap-2">
-          {state.inspirationBoards.categories.map((category) => <WorkspaceBadge key={category.id} value={category.title} />)}
-        </div>
-      </WorkspacePanel>
-      <WorkspacePanel title="Annotations, Relationships, and Review" icon={MessageSquareText}>
-        <div className="grid gap-4 lg:grid-cols-3">
+      <section aria-label="Inspiration Board infinite masonry canvas" className="rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.035),rgba(255,255,255,0.015))] p-4 shadow-[0_28px_90px_rgba(0,0,0,0.22)]">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Annotations</p>
-            <p className="mt-2 text-sm leading-6 text-slate-300">{state.inspirationBoards.annotationCategories.join(", ")}</p>
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-200">Infinite Canvas / Masonry</p>
+            <h3 className="text-2xl font-black text-white">Creative reference wall</h3>
           </div>
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Relationships</p>
-            <p className="mt-2 text-sm leading-6 text-slate-300">{state.inspirationBoards.relationshipTargets.join(", ")}</p>
-          </div>
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Modes</p>
-            <p className="mt-2 text-sm leading-6 text-slate-300">{state.inspirationBoards.viewModes.join(", ")}</p>
+          <div className="flex flex-wrap gap-2">
+            {["Hope", "Wonder", "Civilization", "Discovery", "Architecture", "Galaxy", "Lighting"].map((cluster) => (
+              <span key={cluster} className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-bold text-slate-300">{cluster}</span>
+            ))}
           </div>
         </div>
-      </WorkspacePanel>
-      <section className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
+        <div className="columns-1 gap-5 sm:columns-2 xl:columns-3 2xl:columns-4">
         {boards.map((board) => <InspirationBoardCard key={board.id} board={board} />)}
+        </div>
       </section>
     </div>
   );
