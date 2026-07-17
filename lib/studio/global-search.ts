@@ -384,6 +384,71 @@ export async function buildStudioSearchIndex(): Promise<StudioSearchIndex> {
         pattern.tags.join(" ")
       ]
     })),
+    ...experienceDesign.screenLibrary.categories.map((category) => result({
+      id: category.id,
+      type: "Experience Design" as const,
+      title: `${category.name} Screens`,
+      subtitle: `Screen Category / ${experienceDesign.screenLibrary.id} / ${category.status}`,
+      href: experienceDesign.screenLibrary.workspaceRoute,
+      status: category.status,
+      aliases: [category.purpose, category.screenIds.join(" "), category.reviewStatus, "semantic screen library"]
+    })),
+    result({
+      id: experienceDesign.screenLibrary.designContracts.id,
+      type: "Experience Design" as const,
+      title: "DS-06 Screen Design Contracts",
+      subtitle: `Screen Contracts / ${experienceDesign.screenLibrary.designContracts.status}`,
+      href: experienceDesign.screenLibrary.workspaceRoute,
+      status: experienceDesign.screenLibrary.designContracts.status,
+      aliases: [
+        "verify screen library",
+        "screen composition",
+        "screen relationships",
+        "screen accessibility",
+        "screen versioning",
+        "Missing Patterns",
+        "Missing Components",
+        "Missing Materials",
+        "Missing Motion",
+        "Missing Tokens",
+        "Missing Experience Bible references",
+        "Missing Visual DNA references",
+        "Missing Inspiration Boards",
+        "Orphaned Screens",
+        "Circular Screen References",
+        "Broken Screen Graphs",
+        ...experienceDesign.screenLibrary.designContracts.checks.map((check) => `${check.label} ${check.status} ${check.notes}`)
+      ]
+    }),
+    ...experienceDesign.screenLibrary.screens.map((screen) => result({
+      id: screen.id,
+      type: "Experience Design" as const,
+      title: screen.name,
+      subtitle: `${screen.category} Screen / ${screen.status}`,
+      href: `${experienceDesign.screenLibrary.workspaceRoute}#${screen.id}`,
+      status: screen.status,
+      aliases: [
+        screen.id,
+        screen.purpose,
+        screen.playerGoal,
+        screen.studioGoal,
+        screen.emotionalGoal,
+        screen.summary,
+        screen.primaryInteractionPattern,
+        screen.supportingPatterns.join(" "),
+        screen.componentComposition.join(" "),
+        screen.materialComposition.join(" "),
+        screen.motionComposition.join(" "),
+        screen.tokenReferences.join(" "),
+        screen.interactionZones.join(" "),
+        screen.layoutRegions.join(" "),
+        screen.platformVariants.join(" "),
+        screen.experienceBibleReferences.join(" "),
+        screen.visualDnaReferences.join(" "),
+        screen.relatedInspirationBoards.join(" "),
+        screen.tags.join(" ")
+      ]
+    })),
     ...experienceDesign.experienceBible.parts.map((part) => result({
       id: `experience-bible-part:${part.id}`,
       type: "Experience Design" as const,

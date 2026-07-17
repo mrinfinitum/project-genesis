@@ -50,6 +50,8 @@ function assertNoRuntimeLeak(label: string, value: unknown) {
   assert(!text.includes("Canonical Component Library"), `${label} leaked Canonical Component Library data.`);
   assert(!text.includes("DS-05A"), `${label} leaked DS-05A Interaction Pattern Library data.`);
   assert(!text.includes("Canonical Interaction Pattern Library"), `${label} leaked Canonical Interaction Pattern Library data.`);
+  assert(!text.includes("DS-06"), `${label} leaked DS-06 Screen Library data.`);
+  assert(!text.includes("Canonical Screen Library"), `${label} leaked Canonical Screen Library data.`);
   assert(!/"bodySections"\s*:/.test(text), `${label} leaked Bible body sections.`);
 }
 
@@ -119,6 +121,14 @@ async function main() {
   assert(interactionPatternRelease.chapterIds.length === 0, "DS-05A must be an Interaction Pattern Library release, not a numbered chapter release.");
   assert(interactionPatternRelease.notes.some((note) => note.includes("not React layouts")), "DS-05A release must reject React layout ownership.");
   assert(interactionPatternRelease.notes.some((note) => note.includes("screen-specific code")), "DS-05A release must reject screen-specific implementation ownership.");
+  const screenLibraryRelease = bible.contentReleases.find((release) => release.id === "DS-06");
+  assert(screenLibraryRelease, "Missing DS-06 Canonical Screen Library content release.");
+  assert(screenLibraryRelease.version === "0.1", "DS-06 must be version 0.1.");
+  assert(screenLibraryRelease.status === "Draft", "DS-06 must remain Draft.");
+  assert(screenLibraryRelease.chapterIds.length === 0, "DS-06 must be a Screen Library release, not a numbered chapter release.");
+  assert(screenLibraryRelease.notes.some((note) => note.includes("not React pages")), "DS-06 release must reject React page ownership.");
+  assert(screenLibraryRelease.notes.some((note) => note.includes("routes")), "DS-06 release must reject routing ownership.");
+  assert(screenLibraryRelease.notes.some((note) => note.includes("runtime rendering code")), "DS-06 release must reject renderer implementation ownership.");
   assert(experience.experienceBible.chapters.length === 65, "Experience Design state must expose Bible chapters.");
 
   assert(bible.signature.id === "DV-02C", "Signature section ID must be DV-02C.");

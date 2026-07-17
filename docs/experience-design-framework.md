@@ -238,3 +238,37 @@ DS-05A preview support is metadata only: Static Preview, Interaction Diagram, Fl
 DS-05A adds design contract validation for missing tokens, missing materials, missing motion, missing components, missing patterns, missing Inspiration Boards, missing Experience Bible references, duplicate IDs, orphaned records, circular references, invalid semantic IDs, and broken relationships.
 
 DS-05A remains Draft at version 0.1. Interaction patterns are not published yet; future runtime publication belongs to a later Design Runtime milestone.
+
+## DS-06 Canonical Screen Library
+
+DS-06 creates the canonical semantic Screen Library for NOVERIS.
+
+Screen Definitions are the highest-level design assets. Patterns solve interaction behavior. Components provide reusable parts. Materials define visual surface language. Motion defines feeling. Tokens define semantic consistency. Screens compose all of them into a player-facing experience.
+
+Canonical screen categories:
+
+- Game Shell
+- Universe
+- Civilization
+- Gameplay
+- Creative
+- Studio
+- Reference
+- System
+- Runtime
+
+Every screen defines purpose, player goal, Studio goal, emotional goal, summary, Experience Bible references, Visual DNA references, related Inspiration Boards, primary interaction pattern, supporting patterns, component composition, material composition, motion composition, token references, background model, lighting model, information hierarchy, interaction zones, primary actions, secondary actions, states, responsive behavior, accessibility notes, controller notes, touch notes, keyboard notes, platform variants, future runtime mapping, owner, review status, version, and history.
+
+Layout regions are Hero, Navigation, Sidebar, Content, Context Panel, Bottom Status, Overlay, Modal, Drawer, Floating Panel, Canvas, and Background.
+
+Interaction zones are Navigation, Content, Actions, Reference, Inspection, Creation, Review, and Visualization.
+
+Responsive targets are Desktop, Laptop, Tablet, Phone, Ultrawide, Steam Deck, and Controller.
+
+Platform variants are Web, Steam, macOS, Windows, iOS, Android, and Console.
+
+Preview support is metadata only: Static Preview, Wireframe, Composition Preview, Interaction Flow, Component Tree, Accessibility Preview, and Presentation Mode.
+
+DS-06 adds screen design contract validation for missing patterns, missing components, missing materials, missing motion, missing tokens, missing Experience Bible references, missing Visual DNA references, missing Inspiration Boards, duplicate IDs, orphaned screens, circular screen references, missing dependencies, invalid semantic IDs, and broken screen graphs.
+
+DS-06 remains Draft at version 0.1. Screen definitions are not React pages, HTML layouts, CSS, implementation, routes, runtime rendering code, gameplay runtime data, runtime gameplay contracts, contentVersion changes, runtimeVersion changes, or engine export changes.

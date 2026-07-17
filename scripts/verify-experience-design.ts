@@ -27,6 +27,7 @@ function assertNoExperienceRuntimeLeak(label: string, value: unknown) {
   assert(!/"cameraLanguage"\s*:/.test(text), `${label} leaked Motion System camera language.`);
   assert(!/"componentLibrary"\s*:/.test(text), `${label} leaked Component Library data.`);
   assert(!/"interactionPatterns"\s*:/.test(text), `${label} leaked Interaction Pattern Library data.`);
+  assert(!/"screenLibrary"\s*:/.test(text), `${label} leaked Screen Library data.`);
   assert(!/"experience_bible"\s*:/.test(text), `${label} leaked Experience Bible model data.`);
   assert(!/"mood_board"\s*:/.test(text), `${label} leaked Mood Board model data.`);
   assert(!text.includes("Inspiration Board Library"), `${label} leaked DV-04 Inspiration Board data.`);
@@ -40,6 +41,8 @@ function assertNoExperienceRuntimeLeak(label: string, value: unknown) {
   assert(!text.includes("Canonical Component Library"), `${label} leaked Canonical Component Library data.`);
   assert(!text.includes("DS-05A"), `${label} leaked DS-05A Interaction Pattern Library data.`);
   assert(!text.includes("Canonical Interaction Pattern Library"), `${label} leaked Canonical Interaction Pattern Library data.`);
+  assert(!text.includes("DS-06"), `${label} leaked DS-06 Screen Library data.`);
+  assert(!text.includes("Canonical Screen Library"), `${label} leaked Canonical Screen Library data.`);
   assert(!/"screen_definition"\s*:/.test(text), `${label} leaked Screen Definition model data.`);
 }
 
@@ -525,6 +528,129 @@ async function main() {
   assert(patternRecord.fields.canonicalSystem === "DS-05A", "Pattern starter record must point to DS-05A.");
   assert(patternRecord.fields.implementationValuesPublished === false, "Pattern starter record must not publish implementation values.");
 
+  const screenSection = state.sections.find((item) => item.id === "screens");
+  assert(screenSection?.label === "Screen Library", "Experience Design must expose Screen Library workspace.");
+  assert(screenSection.route === "/experience-design/screens", "Screen Library route must be canonical.");
+  assert(screenSection.description.includes("DS-06"), "Screen Library section must identify DS-06.");
+  const screenModel = state.contentModels.find((model) => model.kind === "screen_definition");
+  assert(screenModel?.displayName === "Canonical Screen Library", "Screen model must be presented as Canonical Screen Library.");
+  for (const required of ["purpose", "playerGoal", "studioGoal", "emotionalGoal", "experienceBibleReferences", "visualDnaReferences", "primaryInteractionPattern", "supportingPatterns", "componentComposition", "materialComposition", "motionComposition", "tokenReferences", "background", "lighting", "informationHierarchy", "interactionZones", "layoutRegions", "states", "responsiveBehavior", "accessibilityNotes", "platformVariants", "futureRuntimeMapping", "owner", "reviewStatus"]) {
+    assert(screenModel?.requiredFields.includes(required), `Screen content model missing ${required}.`);
+  }
+  for (const capability of ["screen categories", "layout regions", "interaction zones", "platform variants", "responsive targets", "preview metadata", "relationships", "search", "accessibility", "versioning"]) {
+    assert(screenModel?.supportedCapabilities.includes(capability), `Screen content model missing capability ${capability}.`);
+  }
+
+  assert(state.screenLibrary.id === "DS-06", "Screen Library ID must be DS-06.");
+  assert(state.screenLibrary.title === "Canonical Screen Library", "DS-06 title must be Canonical Screen Library.");
+  assert(state.screenLibrary.version === "0.1", "DS-06 must be version 0.1.");
+  assert(state.screenLibrary.status === "Draft", "DS-06 must remain Draft.");
+  assert(state.screenLibrary.workspaceRoute === "/experience-design/screens", "DS-06 workspace route must be /experience-design/screens.");
+  assert(state.screenLibrary.runtimePublication === "future_design_runtime_milestone", "DS-06 runtime publication must be deferred to a future Design Runtime milestone.");
+  for (const philosophy of ["Screen Definitions are the highest-level design assets.", "Patterns solve interaction behavior.", "Components provide reusable parts.", "Materials define visual surface language.", "Motion defines feeling.", "Tokens define semantic consistency.", "Screens compose all of them into a player-facing experience."]) {
+    assert(state.screenLibrary.philosophy.includes(philosophy), `DS-06 philosophy missing ${philosophy}.`);
+  }
+  for (const boundary of ["Screen Definitions are not React pages.", "Screen Definitions are not HTML layouts.", "Screen Definitions are not CSS.", "Screen Definitions are not implementation.", "Screen Definitions are not routes.", "Screen Definitions are not runtime rendering code."]) {
+    assert(state.screenLibrary.boundaries.includes(boundary), `DS-06 boundary missing ${boundary}.`);
+  }
+  const expectedScreenCategories = ["Game Shell", "Universe", "Civilization", "Gameplay", "Creative", "Studio", "Reference", "System", "Runtime"];
+  assert(state.screenLibrary.categories.map((category) => category.name).join("|") === expectedScreenCategories.join("|"), "DS-06 screen categories must match the canonical list.");
+  assert(state.screenLibrary.categories.length === 9, "DS-06 must expose nine canonical screen categories.");
+  assert(state.screenLibrary.screens.length >= 60, "DS-06 must expose a meaningful starter screen inventory.");
+  const screenIds = new Set(state.screenLibrary.screens.map((screen) => screen.id));
+  assert(screenIds.size === state.screenLibrary.screens.length, "DS-06 screen IDs must be unique.");
+  for (const expectedScreen of ["screen.game-shell.startup", "screen.game-shell.civilization-command", "screen.universe.galaxy", "screen.universe.star-system", "screen.civilization.research", "screen.gameplay.mission", "screen.creative.experience-bible", "screen.studio.asset-library", "screen.reference.specification-reference", "screen.system.command-palette", "screen.runtime.runtime-status"]) {
+    assert(screenIds.has(expectedScreen), `DS-06 missing canonical screen ${expectedScreen}.`);
+  }
+  for (const region of ["Hero", "Navigation", "Sidebar", "Content", "Context Panel", "Bottom Status", "Overlay", "Modal", "Drawer", "Floating Panel", "Canvas", "Background"]) {
+    assert(state.screenLibrary.layoutRegions.includes(region as never), `DS-06 layout regions missing ${region}.`);
+  }
+  for (const zone of ["Navigation", "Content", "Actions", "Reference", "Inspection", "Creation", "Review", "Visualization"]) {
+    assert(state.screenLibrary.interactionZones.includes(zone as never), `DS-06 interaction zones missing ${zone}.`);
+  }
+  assert(state.screenLibrary.informationHierarchyLevels.join("|") === "primary|secondary|supporting|decorative", "DS-06 information hierarchy levels must match the canonical list.");
+  for (const target of ["Desktop", "Laptop", "Tablet", "Phone", "Ultrawide", "Steam Deck", "Controller"]) {
+    assert(state.screenLibrary.responsiveTargets.includes(target), `DS-06 responsive target missing ${target}.`);
+  }
+  for (const platform of ["Web", "Steam", "macOS", "Windows", "iOS", "Android", "Console"]) {
+    assert(state.screenLibrary.platformVariants.includes(platform), `DS-06 platform variant missing ${platform}.`);
+  }
+  for (const preview of ["Static Preview", "Wireframe", "Composition Preview", "Interaction Flow", "Component Tree", "Accessibility Preview", "Presentation Mode"]) {
+    assert(state.screenLibrary.previewSupport.includes(preview), `DS-06 preview support missing ${preview}.`);
+  }
+  for (const target of ["Patterns", "Components", "Materials", "Motion", "Tokens", "Themes", "Experience Bible", "Visual DNA", "Inspiration Boards"]) {
+    assert(state.screenLibrary.relationshipTargets.includes(target), `DS-06 relationship target missing ${target}.`);
+  }
+
+  const tokenIdsForScreens = new Set(state.designTokens.tokens.map((token) => token.id));
+  const materialIdsForScreens = new Set(state.materials.materials.map((material) => material.id));
+  const motionIdsForScreens = new Set(state.motion.motions.map((motion) => motion.id));
+  const componentIdsForScreens = new Set(state.componentLibrary.components.map((component) => component.id));
+  const boardIdsForScreens = new Set(state.inspirationBoards.boards.map((board) => board.id));
+  const bibleReferenceIdsForScreens = new Set([
+    ...state.experienceBible.chapters.map((chapter) => chapter.id),
+    ...state.experienceBible.signature.sections.map((section) => section.id)
+  ]);
+  const visualDnaReferenceIdsForScreens = new Set(state.experienceBible.visualDna.sections.map((section) => section.id));
+  for (const category of state.screenLibrary.categories) {
+    assert(category.status === "Draft", `DS-06 category ${category.id} must remain Draft.`);
+    assert(category.version === "0.1", `DS-06 category ${category.id} must be version 0.1.`);
+    assert(category.screenIds.length > 0, `DS-06 category ${category.id} must contain screens.`);
+    for (const screenId of category.screenIds) assert(screenIds.has(screenId), `DS-06 category ${category.id} references missing screen ${screenId}.`);
+  }
+  for (const screen of state.screenLibrary.screens) {
+    assert(/^screen\.[a-z0-9-]+\.[a-z0-9-]+$/.test(screen.id), `DS-06 screen ${screen.id} must use screen.category.name semantic ID.`);
+    assert(screen.status === "Draft", `DS-06 screen ${screen.id} must remain Draft.`);
+    assert(screen.version === "0.1", `DS-06 screen ${screen.id} must be version 0.1.`);
+    assert(screen.owner === "Screen Design", `DS-06 screen ${screen.id} must be owned by Screen Design.`);
+    assert(screen.reviewStatus === screen.status, `DS-06 screen ${screen.id} review status must match current draft state.`);
+    assert(screen.futureRuntimeMapping === "future_design_runtime_milestone", `DS-06 screen ${screen.id} must defer runtime mapping.`);
+    assert(screen.summary.includes("does not define React pages"), `DS-06 screen ${screen.id} must reject React page implementation ownership.`);
+    assert(screen.summary.includes("routes"), `DS-06 screen ${screen.id} must reject route ownership.`);
+    assert(screen.summary.includes("renderer behavior"), `DS-06 screen ${screen.id} must reject renderer ownership.`);
+    assert(screen.experienceBibleReferences.length > 0, `DS-06 screen ${screen.id} must link to Experience Bible guidance.`);
+    for (const referenceId of screen.experienceBibleReferences) assert(bibleReferenceIdsForScreens.has(referenceId), `DS-06 screen ${screen.id} references missing Bible guidance ${referenceId}.`);
+    assert(screen.visualDnaReferences.length > 0, `DS-06 screen ${screen.id} must link to Visual DNA guidance.`);
+    for (const referenceId of screen.visualDnaReferences) assert(visualDnaReferenceIdsForScreens.has(referenceId), `DS-06 screen ${screen.id} references missing Visual DNA guidance ${referenceId}.`);
+    assert(boardIdsForScreens.has(screen.relatedInspirationBoards[0]), `DS-06 screen ${screen.id} must link to at least one Inspiration Board.`);
+    for (const boardId of screen.relatedInspirationBoards) assert(boardIdsForScreens.has(boardId), `DS-06 screen ${screen.id} references missing Inspiration Board ${boardId}.`);
+    assert(patternIds.has(screen.primaryInteractionPattern), `DS-06 screen ${screen.id} primary pattern ${screen.primaryInteractionPattern} must resolve.`);
+    for (const patternId of screen.supportingPatterns) assert(patternIds.has(patternId), `DS-06 screen ${screen.id} references missing supporting pattern ${patternId}.`);
+    assert(screen.componentComposition.length > 0, `DS-06 screen ${screen.id} must compose components.`);
+    for (const componentId of screen.componentComposition) assert(componentIdsForScreens.has(componentId), `DS-06 screen ${screen.id} references missing component ${componentId}.`);
+    assert(screen.materialComposition.length > 0, `DS-06 screen ${screen.id} must compose materials.`);
+    for (const materialId of screen.materialComposition) assert(materialIdsForScreens.has(materialId), `DS-06 screen ${screen.id} references missing material ${materialId}.`);
+    assert(screen.motionComposition.length > 0, `DS-06 screen ${screen.id} must compose motion.`);
+    for (const motionId of screen.motionComposition) assert(motionIdsForScreens.has(motionId), `DS-06 screen ${screen.id} references missing motion ${motionId}.`);
+    assert(screen.tokenReferences.length > 0, `DS-06 screen ${screen.id} must reference tokens.`);
+    for (const tokenId of screen.tokenReferences) assert(tokenIdsForScreens.has(tokenId), `DS-06 screen ${screen.id} references missing token ${tokenId}.`);
+    for (const region of state.screenLibrary.layoutRegions) assert(screen.layoutRegions.includes(region), `DS-06 screen ${screen.id} missing layout region ${region}.`);
+    for (const zone of state.screenLibrary.interactionZones) assert(screen.interactionZones.includes(zone), `DS-06 screen ${screen.id} missing interaction zone ${zone}.`);
+    for (const stateField of ["entryState", "normalState", "busyState", "successState", "failureState", "emptyState", "loadingState"] as const) {
+      assert(Boolean(screen.states[stateField]), `DS-06 screen ${screen.id} missing state ${stateField}.`);
+    }
+    for (const hierarchyField of ["primary", "secondary", "supporting", "decorative"] as const) {
+      assert(screen.informationHierarchy[hierarchyField].length > 0, `DS-06 screen ${screen.id} missing ${hierarchyField} information hierarchy.`);
+    }
+    assert(screen.responsiveBehavior.length === state.screenLibrary.responsiveTargets.length, `DS-06 screen ${screen.id} must describe every responsive target.`);
+    assert(screen.platformVariants.join("|") === state.screenLibrary.platformVariants.join("|"), `DS-06 screen ${screen.id} must support all canonical platform variants.`);
+    assert(screen.accessibilityNotes.join("|") === state.interactionPatterns.accessibilitySupport.join("|"), `DS-06 screen ${screen.id} must support all accessibility modes.`);
+    assert(screen.controllerNotes.length > 0 && screen.touchNotes.length > 0 && screen.keyboardNotes.length > 0, `DS-06 screen ${screen.id} must include input modality notes.`);
+    assert(screen.history.length > 0, `DS-06 screen ${screen.id} must include history.`);
+  }
+  assert(state.screenLibrary.designContracts.id === "DS-06-CONTRACTS", "DS-06 design contracts ID must be stable.");
+  assert(state.screenLibrary.designContracts.status === "Ready", "DS-06 design contracts must be Ready.");
+  for (const check of ["Missing Patterns", "Missing Components", "Missing Materials", "Missing Motion", "Missing Tokens", "Missing Experience Bible References", "Missing Visual DNA References", "Missing Inspiration Boards", "Duplicate IDs", "Orphaned Screens", "Circular Screen References", "Missing Dependencies", "Invalid Semantic IDs", "Broken Screen Graphs"]) {
+    const contractCheck = state.screenLibrary.designContracts.checks.find((item) => item.label === check);
+    assert(contractCheck, `DS-06 design contracts missing ${check}.`);
+    assert(contractCheck.status === "Pass", `DS-06 design contract ${check} must pass.`);
+    assert(contractCheck.count === 0, `DS-06 design contract ${check} must have zero issues.`);
+  }
+  const screenRecord = state.records.find((record) => record.id === "screen-definition-library");
+  assert(screenRecord?.name === "Canonical Screen Library", "Screen starter record must be Canonical Screen Library.");
+  assert(screenRecord.fields.canonicalSystem === "DS-06", "Screen starter record must point to DS-06.");
+  assert(screenRecord.fields.implementationValuesPublished === false, "Screen starter record must not publish implementation values.");
+
   const inspirationSection = state.sections.find((item) => item.id === "inspiration-boards");
   assert(inspirationSection?.label === "Inspiration Boards", "Experience Design must expose Inspiration Boards workspace.");
   assert(inspirationSection.route === "/experience-design/inspiration-boards", "Inspiration Boards route must be canonical.");
@@ -588,6 +714,7 @@ async function main() {
   assert(read("components/app-shell.tsx").includes('id: "experience-design"'), "Sidebar must expose Experience Design as a primary workspace.");
   assert(read("components/app-shell.tsx").includes('href: "/experience-design/bible"'), "Sidebar must link to Experience Bible.");
   assert(read("components/app-shell.tsx").includes('href: "/experience-design/inspiration-boards"'), "Sidebar must link to Inspiration Boards.");
+  assert(read("components/app-shell.tsx").includes('href: "/experience-design/screens"'), "Sidebar must link to Screen Library.");
   assert(read("components/app-shell.tsx").includes('href: "/experience-design/tokens"'), "Sidebar must link to Design Tokens.");
   assert(read("components/app-shell.tsx").includes('href: "/experience-design/materials"'), "Sidebar must link to Material Library.");
   assert(read("components/app-shell.tsx").includes('href: "/experience-design/motion"'), "Sidebar must link to Motion Library.");
@@ -596,12 +723,14 @@ async function main() {
   assert(read("app/experience-design/[section]/page.tsx").includes('redirect("/experience-design/inspiration-boards")'), "Old mood board route must redirect to Inspiration Boards.");
   assert(read("components/studio-command-palette.tsx").includes("Open Experience Design"), "Command palette must expose Experience Design.");
   assert(read("components/studio-command-palette.tsx").includes("Open Inspiration Boards"), "Command palette must expose Inspiration Boards.");
+  assert(read("components/studio-command-palette.tsx").includes("Open Screen Library"), "Command palette must expose Screen Library.");
   assert(read("components/studio-command-palette.tsx").includes("Open Design Tokens"), "Command palette must expose Design Tokens.");
   assert(read("components/studio-command-palette.tsx").includes("Open Material Library"), "Command palette must expose Material Library.");
   assert(read("components/studio-command-palette.tsx").includes("Open Motion Library"), "Command palette must expose Motion Library.");
   assert(read("components/studio-command-palette.tsx").includes("Open Component Library"), "Command palette must expose Component Library.");
   assert(read("components/studio-command-palette.tsx").includes("Open Interaction Patterns"), "Command palette must expose Interaction Patterns.");
   assert(read("components/experience-design-workspace.tsx").includes("InspirationBoardsWorkspace"), "Experience Design workspace must expose Inspiration Boards workspace.");
+  assert(read("components/experience-design-workspace.tsx").includes("ScreenLibraryWorkspace"), "Experience Design workspace must expose Screen Library workspace.");
   assert(read("components/experience-design-workspace.tsx").includes("DesignTokensWorkspace"), "Experience Design workspace must expose Design Tokens workspace.");
   assert(read("components/experience-design-workspace.tsx").includes("MaterialsWorkspace"), "Experience Design workspace must expose Materials workspace.");
   assert(read("components/experience-design-workspace.tsx").includes("MotionWorkspace"), "Experience Design workspace must expose Motion workspace.");
@@ -647,10 +776,16 @@ async function main() {
   assert(navigationComponentSearch.results.some((result) => result.type === "Experience Design" && result.href.includes("/experience-design/components#component.navigation.navigation-rail")), "Global search must return navigation component results.");
   const patternSearch = await searchStudio("pattern.navigation.navigation-rail", 20);
   assert(patternSearch.results.some((result) => result.type === "Experience Design" && result.href === "/experience-design/patterns#pattern.navigation.navigation-rail"), "Global search must return exact DS-05A pattern results.");
-  const patternFlowSearch = await searchStudio("Failure States Recovery pattern", 20);
+  const patternFlowSearch = await searchStudio("Failure States Recovery pattern", 80);
   assert(patternFlowSearch.results.some((result) => result.type === "Experience Design" && result.href.includes("/experience-design/patterns#")), "Global search must return interaction flow pattern results.");
   const designContractSearch = await searchStudio("Missing Tokens Missing Components design contracts", 20);
   assert(designContractSearch.results.some((result) => result.type === "Experience Design" && result.href.includes("/experience-design/patterns")), "Global search must return design contract pattern results.");
+  const screenSearch = await searchStudio("screen.universe.galaxy", 20);
+  assert(screenSearch.results.some((result) => result.type === "Experience Design" && result.href === "/experience-design/screens#screen.universe.galaxy"), "Global search must return exact DS-06 screen results.");
+  const screenCompositionSearch = await searchStudio("Component Tree Accessibility Preview Screen Library", 20);
+  assert(screenCompositionSearch.results.some((result) => result.type === "Experience Design" && result.href.includes("/experience-design/screens")), "Global search must return screen composition results.");
+  const screenContractSearch = await searchStudio("Orphaned Screens Broken Screen Graphs", 20);
+  assert(screenContractSearch.results.some((result) => result.type === "Experience Design" && result.href.includes("/experience-design/screens")), "Global search must return screen contract results.");
 
   const canonicalRuntime = await buildCanonicalRuntimeExportPayload();
   assertNoExperienceRuntimeLeak("Canonical runtime", canonicalRuntime);
@@ -724,6 +859,15 @@ async function main() {
       designContracts: state.interactionPatterns.designContracts.status,
       previewSupport: state.interactionPatterns.previewSupport.length
     },
+    screenLibrary: {
+      id: state.screenLibrary.id,
+      version: state.screenLibrary.version,
+      status: state.screenLibrary.status,
+      categories: state.screenLibrary.categories.length,
+      screens: state.screenLibrary.screens.length,
+      designContracts: state.screenLibrary.designContracts.status,
+      previewSupport: state.screenLibrary.previewSupport.length
+    },
     inspirationSearchReturned: search.returned,
     nasaSearchReturned: nasaSearch.returned,
     boardSearchReturned: boardSearch.returned,
@@ -742,6 +886,9 @@ async function main() {
     patternSearchReturned: patternSearch.returned,
     patternFlowSearchReturned: patternFlowSearch.returned,
     designContractSearchReturned: designContractSearch.returned,
+    screenSearchReturned: screenSearch.returned,
+    screenCompositionSearchReturned: screenCompositionSearch.returned,
+    screenContractSearchReturned: screenContractSearch.returned,
     runtimePublishing: state.runtimePublishing,
     engineExports: Object.fromEntries(engineExports.map((engineExport, index) => [targets[index], engineExport.metadata.validationStatus]))
   }, null, 2));

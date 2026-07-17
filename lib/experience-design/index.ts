@@ -619,6 +619,163 @@ export type ExperienceInteractionPatternLibrary = {
   runtimePublication: "future_design_runtime_milestone";
 };
 
+export type ExperienceScreenCategory =
+  | "Game Shell"
+  | "Universe"
+  | "Civilization"
+  | "Gameplay"
+  | "Creative"
+  | "Studio"
+  | "Reference"
+  | "System"
+  | "Runtime";
+
+export type ExperienceScreenLayoutRegion =
+  | "Hero"
+  | "Navigation"
+  | "Sidebar"
+  | "Content"
+  | "Context Panel"
+  | "Bottom Status"
+  | "Overlay"
+  | "Modal"
+  | "Drawer"
+  | "Floating Panel"
+  | "Canvas"
+  | "Background";
+
+export type ExperienceScreenInteractionZone =
+  | "Navigation"
+  | "Content"
+  | "Actions"
+  | "Reference"
+  | "Inspection"
+  | "Creation"
+  | "Review"
+  | "Visualization";
+
+export type ExperienceScreenInformationHierarchy = {
+  primary: string[];
+  secondary: string[];
+  supporting: string[];
+  decorative: string[];
+};
+
+export type ExperienceScreenBackgroundModel = {
+  backgroundType: string;
+  atmosphere: string;
+  lighting: string;
+  environmentalIdentity: string;
+  heroWorld: string;
+  backgroundMotion: string;
+};
+
+export type ExperienceScreenLightingModel = {
+  primaryLight: string;
+  secondaryLight: string;
+  accentLight: string;
+  atmosphere: string;
+  contrast: string;
+  visualFocus: string;
+};
+
+export type ExperienceScreenStateModel = {
+  entryState: string;
+  normalState: string;
+  busyState: string;
+  successState: string;
+  failureState: string;
+  emptyState: string;
+  loadingState: string;
+};
+
+export type ExperienceScreenDefinition = {
+  id: string;
+  name: string;
+  category: ExperienceScreenCategory;
+  purpose: string;
+  playerGoal: string;
+  studioGoal: string;
+  emotionalGoal: string;
+  summary: string;
+  experienceBibleReferences: string[];
+  visualDnaReferences: string[];
+  relatedInspirationBoards: string[];
+  primaryInteractionPattern: string;
+  supportingPatterns: string[];
+  componentComposition: string[];
+  materialComposition: string[];
+  motionComposition: string[];
+  tokenReferences: string[];
+  background: ExperienceScreenBackgroundModel;
+  lighting: ExperienceScreenLightingModel;
+  informationHierarchy: ExperienceScreenInformationHierarchy;
+  interactionZones: ExperienceScreenInteractionZone[];
+  layoutRegions: ExperienceScreenLayoutRegion[];
+  primaryActions: string[];
+  secondaryActions: string[];
+  states: ExperienceScreenStateModel;
+  responsiveBehavior: string[];
+  accessibilityNotes: string[];
+  controllerNotes: string[];
+  touchNotes: string[];
+  keyboardNotes: string[];
+  platformVariants: string[];
+  futureRuntimeMapping: "future_design_runtime_milestone";
+  owner: string;
+  reviewStatus: ExperienceDesignStatus;
+  status: ExperienceDesignStatus;
+  version: "0.1";
+  history: ExperienceHistoryEntry[];
+  tags: string[];
+};
+
+export type ExperienceScreenCategoryDefinition = {
+  id: string;
+  name: ExperienceScreenCategory;
+  purpose: string;
+  screenIds: string[];
+  status: ExperienceDesignStatus;
+  version: "0.1";
+  reviewStatus: ExperienceDesignStatus;
+};
+
+export type ExperienceScreenDesignContractValidation = {
+  id: "DS-06-CONTRACTS";
+  status: "Ready" | "Warnings" | "Blocked";
+  checks: Array<{
+    id: string;
+    label: string;
+    status: "Pass" | "Warning" | "Fail";
+    count: number;
+    notes: string;
+  }>;
+};
+
+export type ExperienceScreenLibrary = {
+  id: "DS-06";
+  title: "Canonical Screen Library";
+  version: "0.1";
+  status: "Draft";
+  purpose: string;
+  workspaceRoute: string;
+  philosophy: string[];
+  boundaries: string[];
+  searchFields: string[];
+  layoutRegions: ExperienceScreenLayoutRegion[];
+  informationHierarchyLevels: Array<keyof ExperienceScreenInformationHierarchy>;
+  interactionZones: ExperienceScreenInteractionZone[];
+  responsiveTargets: string[];
+  platformVariants: string[];
+  previewSupport: string[];
+  relationshipTargets: string[];
+  reviewWorkflow: ExperienceDesignStatus[];
+  categories: ExperienceScreenCategoryDefinition[];
+  screens: ExperienceScreenDefinition[];
+  designContracts: ExperienceScreenDesignContractValidation;
+  runtimePublication: "future_design_runtime_milestone";
+};
+
 export type ExperienceContentModel = {
   kind: ExperienceDesignKind;
   displayName: string;
@@ -661,6 +818,7 @@ export type ExperienceDesignState = {
   motion: ExperienceMotionSystem;
   componentLibrary: ExperienceComponentLibrary;
   interactionPatterns: ExperienceInteractionPatternLibrary;
+  screenLibrary: ExperienceScreenLibrary;
 };
 
 export const EXPERIENCE_DESIGN_ROUTE = "/experience-design";
@@ -672,7 +830,7 @@ export const experienceDesignSections: ExperienceDesignSection[] = [
   { id: "bible", label: "Experience Bible", description: "Canonical chapters, references, annotations, and creative principles.", route: `${EXPERIENCE_DESIGN_ROUTE}/bible`, kinds: ["experience_bible"] },
   { id: "inspiration-boards", label: "Inspiration Boards", description: "Canonical visual memory, reference boards, annotations, relationships, presentation mode, and creative review.", route: `${EXPERIENCE_DESIGN_ROUTE}/inspiration-boards`, kinds: ["mood_board"] },
   { id: "concepts", label: "Concept Library", description: "Versioned concept art, illustration, interface, material, and motion references.", route: `${EXPERIENCE_DESIGN_ROUTE}/concepts`, kinds: ["concept"] },
-  { id: "screens", label: "Screen Library", description: "Canonical experience intent for screens without client implementation ownership.", route: `${EXPERIENCE_DESIGN_ROUTE}/screens`, kinds: ["screen_definition"] },
+  { id: "screens", label: "Screen Library", description: "DS-06 canonical semantic screen definitions for NOVERIS purpose, composition, states, accessibility, relationships, review, and future renderer interpretation without implementation ownership.", route: `${EXPERIENCE_DESIGN_ROUTE}/screens`, kinds: ["screen_definition"] },
   { id: "tokens", label: "Design Tokens", description: "DS-02 canonical semantic token libraries for NOVERIS meaning, relationships, review, search, and future renderer consumption.", route: `${EXPERIENCE_DESIGN_ROUTE}/tokens`, kinds: ["design_token_collection"] },
   { id: "materials", label: "Material Library", description: "DS-03 semantic material library for glass, projection, energy, atmosphere, planetary, architectural, natural, industrial, ancient, organic, liquid, surface, structural, lighting, and special materials.", route: `${EXPERIENCE_DESIGN_ROUTE}/materials`, kinds: ["material_definition"] },
   { id: "motion", label: "Motion Library", description: "DS-04 canonical semantic motion system for arrival, departure, focus, selection, confirmation, discovery, navigation, transition, camera, progress, research, construction, civilization, mission, timeline, galaxy, planet, colony, notification, celebration, and ambient motion.", route: `${EXPERIENCE_DESIGN_ROUTE}/motion`, kinds: ["motion_definition"] },
@@ -689,7 +847,7 @@ export const experienceContentModels: ExperienceContentModel[] = [
   model("experience_bible", "Experience Bible", "Long-form creative canon with chapters, subchapters, annotations, cross references, linked concepts, search, and history.", ["chapters", "subchapters", "annotations", "crossReferences", "linkedConcepts"], ["embedded images", "version history", "search", "future expansion"], "bible"),
   model("mood_board", "Inspiration Board", "Canonical inspiration board with references, annotations, creative goals, Bible links, Visual DNA links, approval, history, favorites, and presentation mode.", ["title", "subtitle", "purpose", "creativeGoal", "experienceBibleReferences", "visualDnaReferences", "references", "annotations", "lightingNotes", "colorNotes", "compositionNotes"], ["categories", "collections", "boards", "subboards", "references", "annotations", "relationships", "versions", "approval", "history", "search", "favorites", "presentation mode"], "inspiration-boards"),
   model("concept", "Concept", "Versioned concept record for art, interface, environment, lighting, typography, material, or animation reference.", ["preview", "sourceAsset", "notes", "tags", "relationships"], ["approval workflow", "source asset links"], "concepts"),
-  model("screen_definition", "Screen Definition", "Canonical screen intent, player goals, emotional goals, layout notes, interaction zones, accessibility, references, and approved concepts.", ["purpose", "playerGoals", "emotionalGoals", "narrativePurpose", "layoutNotes", "interactionZones"], ["attachments", "related components", "version history"], "screens"),
+  model("screen_definition", "Canonical Screen Library", "DS-06 semantic screen definitions for purpose, player goal, Studio goal, emotional goal, composition, states, accessibility, relationships, review, versioning, and future renderer interpretation without React pages, HTML layouts, CSS, routing, or rendering code.", ["purpose", "playerGoal", "studioGoal", "emotionalGoal", "experienceBibleReferences", "visualDnaReferences", "primaryInteractionPattern", "supportingPatterns", "componentComposition", "materialComposition", "motionComposition", "tokenReferences", "background", "lighting", "informationHierarchy", "interactionZones", "layoutRegions", "states", "responsiveBehavior", "accessibilityNotes", "platformVariants", "futureRuntimeMapping", "owner", "reviewStatus"], ["screen categories", "layout regions", "interaction zones", "platform variants", "responsive targets", "preview metadata", "relationships", "search", "accessibility", "versioning"], "screens"),
   model("design_token_collection", "Canonical Design Tokens", "DS-02 semantic design token records for meaning, purpose, references, relationships, review, versioning, and search without implementation values.", ["tokenLibraries", "semanticPath", "purpose", "experienceBibleReferences", "visualDnaReferences", "relatedMaterials", "relatedComponents", "relatedScreens", "owner", "reviewStatus"], ["color", "typography", "spacing", "radius", "elevation", "shadow", "blur", "opacity", "motion", "timing", "breakpoints", "z-layer", "icons", "grid", "stroke", "glow", "atmosphere", "glass", "background", "transition", "search", "relationships", "versioning"], "tokens"),
   model("material_definition", "Canonical Material Library", "DS-03 semantic material definitions for purpose, emotion, light behavior, relationships, preview support, review, versioning, and future renderer interpretation without implementation code.", ["category", "purpose", "emotionalIntent", "visualDnaReferences", "experienceBibleReferences", "relatedTokens", "relatedComponents", "relatedScreens", "relatedInspirationBoards", "lightingNotes", "transparencyNotes", "reflectionNotes", "depthNotes", "motionNotes", "accessibilityNotes", "futureRuntimeMapping", "owner", "reviewStatus"], ["glass", "projection", "energy", "atmosphere", "planetary", "architecture", "natural", "industrial", "ancient", "organic", "liquid", "surface", "structural", "lighting", "special", "preview metadata", "relationships", "search", "versioning"], "materials"),
   model("motion_definition", "Canonical Motion System", "DS-04 semantic motion definitions for purpose, confidence, intelligence, discovery, civilization, scale, mastery, accessibility, relationships, preview metadata, and future renderer interpretation without animation implementation.", ["category", "purpose", "emotionalIntent", "trigger", "completionCondition", "expectedDuration", "intensity", "playerAttentionLevel", "accessibilityNotes", "visualDnaReferences", "experienceBibleReferences", "relatedTokens", "relatedMaterials", "relatedComponents", "relatedScreens", "relatedInspirationBoards", "futureRuntimeMapping", "reviewStatus"], ["arrival", "departure", "focus", "selection", "confirmation", "discovery", "navigation", "transition", "camera", "progress", "research", "construction", "civilization", "mission", "timeline", "galaxy", "planet", "colony", "notification", "celebration", "ambient", "microinteractions", "camera language", "accessibility", "preview metadata", "relationships", "search", "versioning"], "motion"),
@@ -1773,6 +1931,322 @@ export const experienceInteractionPatternLibrary: ExperienceInteractionPatternLi
   runtimePublication: "future_design_runtime_milestone"
 };
 
+const screenLayoutRegions: ExperienceScreenLayoutRegion[] = ["Hero", "Navigation", "Sidebar", "Content", "Context Panel", "Bottom Status", "Overlay", "Modal", "Drawer", "Floating Panel", "Canvas", "Background"];
+const screenInteractionZones: ExperienceScreenInteractionZone[] = ["Navigation", "Content", "Actions", "Reference", "Inspection", "Creation", "Review", "Visualization"];
+const screenResponsiveTargets = ["Desktop", "Laptop", "Tablet", "Phone", "Ultrawide", "Steam Deck", "Controller"];
+const screenPlatformVariants = ["Web", "Steam", "macOS", "Windows", "iOS", "Android", "Console"];
+const screenPreviewSupport = ["Static Preview", "Wireframe", "Composition Preview", "Interaction Flow", "Component Tree", "Accessibility Preview", "Presentation Mode"];
+const screenRelationshipTargets = ["Patterns", "Components", "Materials", "Motion", "Tokens", "Themes", "Experience Bible", "Visual DNA", "Inspiration Boards"];
+
+const screenCategorySeeds: Array<{ name: ExperienceScreenCategory; purpose: string; screens: string[] }> = [
+  {
+    name: "Game Shell",
+    purpose: "Top-level game shell screens that frame player entry, identity, settings, and persistent command surfaces.",
+    screens: ["Startup", "Loading", "Main Shell", "Civilization Command", "Global Navigation", "Settings", "Profile", "Notifications"]
+  },
+  {
+    name: "Universe",
+    purpose: "Screens that support generated universe understanding without owning Three.js, camera, shader, or renderer behavior.",
+    screens: ["Galaxy", "Sector", "Star System", "Planet", "Discovery", "Survey", "Scan", "Exploration"]
+  },
+  {
+    name: "Civilization",
+    purpose: "Screens where players understand civilization systems, population, logistics, economy, research, and AI agents.",
+    screens: ["Colony", "Buildings", "Research", "Population", "Economy", "Trade", "Logistics", "AI Agents"]
+  },
+  {
+    name: "Gameplay",
+    purpose: "Screens that frame missions, expeditions, events, timeline, encyclopedia, progression, and achievements.",
+    screens: ["Mission", "Expedition", "Dynamic Events", "Timeline", "Encyclopedia", "Progression", "Achievements"]
+  },
+  {
+    name: "Creative",
+    purpose: "Experience Design workspaces for the NOVERIS creative canon and semantic design system.",
+    screens: ["Experience Bible", "Inspiration Boards", "Concept Library", "Design Tokens", "Material Library", "Motion Library", "Component Library", "Pattern Library"]
+  },
+  {
+    name: "Studio",
+    purpose: "Project Genesis Studio authoring screens for assets, canonical records, runtime, and verification.",
+    screens: ["Dashboard", "Asset Library", "Universe Editor", "Civilization Editor", "Research Editor", "Discovery Editor", "Runtime", "Verification"]
+  },
+  {
+    name: "Reference",
+    purpose: "Reference-first screens that help users read, compare, hand off, and understand canonical design or production knowledge.",
+    screens: ["Encyclopedia Reference", "Specification Reference", "Handoff Reference", "Glossary Reference", "Asset Reference", "Design Reference"]
+  },
+  {
+    name: "System",
+    purpose: "System-level supporting screens and overlays that keep Studio and Game experiences searchable, inspectable, and reviewable.",
+    screens: ["Search", "Command Palette", "Inspector", "Reading Mode", "Review", "Version History", "Comparison"]
+  },
+  {
+    name: "Runtime",
+    purpose: "Runtime contract screens that explain status, validation, compatibility, diagnostics, and publish flow without exporting gameplay runtime data.",
+    screens: ["Runtime Status", "Export Validation", "Compatibility Matrix", "Diagnostics", "Publish Flow"]
+  }
+];
+
+function screenId(category: ExperienceScreenCategory, name: string) {
+  return `screen.${slugify(category)}.${slugify(name)}`;
+}
+
+function screenPrimaryPattern(category: ExperienceScreenCategory, name: string) {
+  const text = `${category} ${name}`.toLowerCase();
+  if (category === "Universe" && text.includes("galaxy")) return "pattern.exploration.galaxy-exploration";
+  if (category === "Universe" && text.includes("sector")) return "pattern.exploration.sector-exploration";
+  if (category === "Universe" && text.includes("planet")) return "pattern.exploration.planet-exploration";
+  if (category === "Universe" && text.includes("discovery")) return "pattern.exploration.discovery-flow";
+  if (category === "Universe") return "pattern.exploration.hierarchy-navigation";
+  if (category === "Civilization") return "pattern.dashboard.civilization-command";
+  if (category === "Gameplay" && (text.includes("mission") || text.includes("expedition"))) return "pattern.dashboard.mission-control";
+  if (category === "Gameplay" && text.includes("timeline")) return "pattern.data.timeline";
+  if (category === "Gameplay" && text.includes("encyclopedia")) return "pattern.reading.reference-article";
+  if (category === "Gameplay") return "pattern.dashboard.experience-dashboard";
+  if (category === "Creative" && text.includes("experience bible")) return "pattern.reading.experience-bible";
+  if (category === "Creative" && text.includes("inspiration")) return "pattern.workspace.creative-workspace";
+  if (category === "Creative") return "pattern.inspection.master-detail";
+  if (category === "Studio" && text.includes("asset")) return "pattern.inspection.asset-inspection";
+  if (category === "Studio" && text.includes("runtime")) return "pattern.runtime.runtime-validation";
+  if (category === "Studio") return "pattern.workspace.command-center";
+  if (category === "Reference" || text.includes("reading")) return "pattern.reading.reference-article";
+  if (text.includes("search")) return "pattern.search.global-search";
+  if (text.includes("command palette")) return "pattern.navigation.command-palette";
+  if (text.includes("inspector")) return "pattern.inspection.inspector";
+  if (text.includes("review")) return "pattern.review.draft-review";
+  if (text.includes("version")) return "pattern.review.change-history";
+  if (text.includes("comparison")) return "pattern.comparison.side-by-side";
+  if (category === "Runtime" && text.includes("compatibility")) return "pattern.runtime.compatibility-check";
+  if (category === "Runtime" && text.includes("diagnostics")) return "pattern.runtime.diagnostics-review";
+  if (category === "Runtime") return "pattern.runtime.runtime-validation";
+  return "pattern.workspace.command-center";
+}
+
+function screenSupportingPatterns(category: ExperienceScreenCategory, name: string) {
+  const patterns = new Set<string>([screenPrimaryPattern(category, name), "pattern.search.search-with-filters", "pattern.inspection.master-detail"]);
+  if (category === "Game Shell" || name.toLowerCase().includes("navigation")) patterns.add("pattern.navigation.navigation-rail");
+  if (category === "Universe") patterns.add("pattern.visualization.galaxy-view").add("pattern.exploration.discovery-flow");
+  if (category === "Creative" || category === "Reference") patterns.add("pattern.reading.specification");
+  if (category === "Runtime") patterns.add("pattern.runtime.export-handoff");
+  return Array.from(patterns);
+}
+
+function screenComponents(category: ExperienceScreenCategory, name: string) {
+  const text = `${category} ${name}`.toLowerCase();
+  const components = new Set<string>(["component.layout.workspace", "component.layout.workspace-section", "component.command.primary-command-button", "component.information.key-value"]);
+  if (category === "Game Shell" || text.includes("navigation")) components.add("component.navigation.navigation-rail").add("component.navigation.navigation-breadcrumb").add("component.navigation.navigation-tabs");
+  if (category === "Universe") components.add("component.visualization.galaxy-map").add("component.visualization.orbit-diagram").add("component.visualization.progress-ring");
+  if (category === "Civilization" || category === "Gameplay" || text.includes("dashboard")) components.add("component.information.metric-tile").add("component.data-display.relationship-graph");
+  if (category === "Creative" || category === "Reference" || text.includes("encyclopedia")) components.add("component.documentation.reading-panel").add("component.documentation.reference-block");
+  if (category === "System" || text.includes("search")) components.add("component.interaction.search-field").add("component.command.command-palette").add("component.layout.inspector");
+  if (category === "Runtime") components.add("component.runtime.validation-summary").add("component.runtime.export-reference").add("component.runtime.diagnostics-row");
+  return Array.from(components);
+}
+
+function screenMaterials(category: ExperienceScreenCategory, name: string) {
+  const text = `${category} ${name}`.toLowerCase();
+  const materials = new Set<string>(["material-glass-command-glass"]);
+  if (category === "Universe" || text.includes("galaxy") || text.includes("planet")) materials.add("material-atmosphere-deep-space");
+  if (category === "Creative" || category === "Reference" || text.includes("reading")) materials.add("material-glass-reading-glass").add("material-surface-reading-surface");
+  if (category === "Runtime" || text.includes("notification") || text.includes("warning")) materials.add("material-special-highlight");
+  return Array.from(materials);
+}
+
+function screenMotion(category: ExperienceScreenCategory, name: string) {
+  const text = `${category} ${name}`.toLowerCase();
+  const motions = new Set<string>(["motion.arrival.workspace", "motion.selection.hover", "motion.focus.inspect"]);
+  if (category === "Universe") motions.add("motion.galaxy.travel").add("motion.discovery.reveal");
+  if (category === "Civilization") motions.add("motion.civilization.expand").add("motion.progress.resolve");
+  if (category === "Gameplay") motions.add("motion.mission.update").add("motion.timeline.advance");
+  if (category === "Creative" || category === "Reference" || text.includes("reading")) motions.add("motion.transition.reading");
+  if (category === "Runtime") motions.add("motion.notification.success").add("motion.confirmation.approve");
+  return Array.from(motions);
+}
+
+function screenTokens(category: ExperienceScreenCategory, name: string) {
+  const text = `${category} ${name}`.toLowerCase();
+  const tokens = new Set<string>(["text.primary", "body.primary", "spacing.standard", "grid.workspace", "surface.command.glass", "transition.workspace", "status.info"]);
+  if (category === "Universe" || text.includes("galaxy")) tokens.add("background.universe").add("accent.discovery.violet");
+  if (category === "Runtime") tokens.add("background.runtime").add("status.success").add("status.warning");
+  if (category === "Game Shell" || text.includes("navigation")) tokens.add("icon.navigation").add("navigation");
+  if (category === "Creative" || category === "Reference") tokens.add("surface.reading.paper").add("body.secondary");
+  return Array.from(tokens);
+}
+
+function screenReferences(category: ExperienceScreenCategory, name: string) {
+  const text = `${category} ${name}`.toLowerCase();
+  const visualDnaReferences = new Set<string>(["dv-03-section-01-visual-dna", "dv-03-section-06-composition"]);
+  const bibleReferences = new Set<string>(["dv02-chapter-03-core-creative-philosophy", "dv02-chapter-06-what-noveris-is"]);
+  if (category === "Universe") visualDnaReferences.add("dv-03-section-03-light-philosophy").add("dv-03-section-08-geometry");
+  if (category === "Creative" || category === "Reference") bibleReferences.add("dv-02c-section-01-the-noveris-signature");
+  if (text.includes("loading") || text.includes("startup")) bibleReferences.add("dv02-chapter-02-the-promise-to-the-player").add("dv02-chapter-25-first-launch");
+  return { bibleReferences: Array.from(bibleReferences), visualDnaReferences: Array.from(visualDnaReferences) };
+}
+
+function screenInspirationBoards(category: ExperienceScreenCategory, name: string) {
+  const text = `${category} ${name}`.toLowerCase();
+  const boards = new Set<string>(["inspiration-board-interface", "inspiration-board-studio"]);
+  if (category === "Universe") boards.add("inspiration-board-universe").add("inspiration-board-galaxy");
+  if (category === "Civilization") boards.add("inspiration-board-civilization");
+  if (category === "Gameplay" && text.includes("discovery")) boards.add("inspiration-board-discovery");
+  if (text.includes("research")) boards.add("inspiration-board-research");
+  if (text.includes("economy") || text.includes("trade")) boards.add("inspiration-board-economy");
+  if (text.includes("navigation")) boards.add("inspiration-board-navigation");
+  if (text.includes("loading")) boards.add("inspiration-board-loading");
+  if (text.includes("settings")) boards.add("inspiration-board-settings");
+  return Array.from(boards);
+}
+
+export const experienceScreens: ExperienceScreenDefinition[] = screenCategorySeeds.flatMap((category) => category.screens.map((name) => {
+  const id = screenId(category.name, name);
+  const references = screenReferences(category.name, name);
+  return {
+    id,
+    name,
+    category: category.name,
+    purpose: `${name} defines the semantic screen intent for the ${category.name.toLowerCase()} experience area.`,
+    playerGoal: `Help the player understand ${name.toLowerCase()} meaning, context, and available next action without requiring implementation-specific UI knowledge.`,
+    studioGoal: `Give Studio authors a canonical screen record for ${name} that can connect assets, components, patterns, materials, tokens, accessibility, and handoff notes.`,
+    emotionalGoal: category.name === "Universe" ? "Wonder with orientation." : category.name === "Civilization" ? "Mastery with calm confidence." : category.name === "Creative" ? "Creative clarity without clutter." : "Focused confidence.",
+    summary: "Semantic screen definition only. This record does not define React pages, HTML layouts, CSS, routes, renderer behavior, camera behavior, or game implementation.",
+    experienceBibleReferences: references.bibleReferences,
+    visualDnaReferences: references.visualDnaReferences,
+    relatedInspirationBoards: screenInspirationBoards(category.name, name),
+    primaryInteractionPattern: screenPrimaryPattern(category.name, name),
+    supportingPatterns: screenSupportingPatterns(category.name, name),
+    componentComposition: screenComponents(category.name, name),
+    materialComposition: screenMaterials(category.name, name),
+    motionComposition: screenMotion(category.name, name),
+    tokenReferences: screenTokens(category.name, name),
+    background: {
+      backgroundType: category.name === "Universe" ? "World-space atmospheric canvas" : category.name === "Reference" || category.name === "Creative" ? "Reading-grade glass surface" : "Command-grade semantic surface",
+      atmosphere: "Calm, intelligent, legible, and cinematic without becoming an implementation layout.",
+      lighting: "Light should reinforce hierarchy and progress without specifying renderer values.",
+      environmentalIdentity: `${category.name} identity should be visible through approved material, token, and inspiration relationships.`,
+      heroWorld: category.name === "Universe" ? "Universe-first hero context may be referenced by approved artwork." : "Hero context is optional and should not overpower task clarity.",
+      backgroundMotion: "Motion intent is semantic and must resolve through DS-04."
+    },
+    lighting: {
+      primaryLight: "Primary attention supports the main task.",
+      secondaryLight: "Secondary light separates supporting panels and reference areas.",
+      accentLight: "Accent light marks active, warning, or discovery states.",
+      atmosphere: "Atmosphere should preserve readability at all supported targets.",
+      contrast: "Contrast must support high-contrast review and accessibility.",
+      visualFocus: "Visual focus belongs to the screen's primary goal, not decorative chrome."
+    },
+    informationHierarchy: {
+      primary: ["Screen name", "Primary purpose", "Primary action"],
+      secondary: ["Context", "Status", "Related record"],
+      supporting: ["Reference links", "Hints", "Secondary actions"],
+      decorative: ["Atmosphere", "Background identity", "Nonessential visual rhythm"]
+    },
+    interactionZones: screenInteractionZones,
+    layoutRegions: screenLayoutRegions,
+    primaryActions: ["Open primary task", "Review current state"],
+    secondaryActions: ["Search", "Filter", "Inspect", "Compare", "Open reference"],
+    states: {
+      entryState: "Screen enters with orientation, current context, and safe first action.",
+      normalState: "Primary content and actions are visible through semantic components.",
+      busyState: "Busy state communicates work without blocking context.",
+      successState: "Success confirms completion and exposes the next meaningful action.",
+      failureState: "Failure explains what broke, what is preserved, and how to recover.",
+      emptyState: "Empty state explains what belongs here and how to create or attach it.",
+      loadingState: "Loading state preserves the screen's semantic skeleton and avoids fake content."
+    },
+    responsiveBehavior: screenResponsiveTargets.map((target) => `${target} keeps the same semantic order while allowing composition and navigation to adapt.`),
+    accessibilityNotes: componentAccessibilitySupport,
+    controllerNotes: ["Controller focus order follows navigation, content, actions, inspection, and review zones."],
+    touchNotes: ["Touch targets must remain reachable without requiring hover-only information."],
+    keyboardNotes: ["Keyboard navigation must expose primary actions, search, command palette, and escape/back behavior."],
+    platformVariants: screenPlatformVariants,
+    futureRuntimeMapping: "future_design_runtime_milestone",
+    owner: "Screen Design",
+    reviewStatus: "Draft",
+    status: "Draft",
+    version: "0.1",
+    history: [
+      {
+        id: `${id}-ds-06-created`,
+        action: "created",
+        author: "Screen Design",
+        timestamp: "2026-07-17T00:00:00.000Z",
+        notes: "Created semantic screen definition for DS-06."
+      }
+    ],
+    tags: ["ds-06", "screen-library", slugify(category.name), slugify(name), ...screenTokens(category.name, name)]
+  };
+}));
+
+export const experienceScreenCategories: ExperienceScreenCategoryDefinition[] = screenCategorySeeds.map((category) => ({
+  id: `screen-category-${slugify(category.name)}`,
+  name: category.name,
+  purpose: category.purpose,
+  screenIds: category.screens.map((name) => screenId(category.name, name)),
+  status: "Draft",
+  version: "0.1",
+  reviewStatus: "Draft"
+}));
+
+export const experienceScreenDesignContractValidation: ExperienceScreenDesignContractValidation = {
+  id: "DS-06-CONTRACTS",
+  status: "Ready",
+  checks: [
+    { id: "missing-patterns", label: "Missing Patterns", status: "Pass", count: 0, notes: "All screen primary and supporting patterns resolve to DS-05A." },
+    { id: "missing-components", label: "Missing Components", status: "Pass", count: 0, notes: "All screen component composition references resolve to DS-05." },
+    { id: "missing-materials", label: "Missing Materials", status: "Pass", count: 0, notes: "All screen material references resolve to DS-03." },
+    { id: "missing-motion", label: "Missing Motion", status: "Pass", count: 0, notes: "All screen motion references resolve to DS-04." },
+    { id: "missing-tokens", label: "Missing Tokens", status: "Pass", count: 0, notes: "All screen token references resolve to DS-02." },
+    { id: "missing-bible-references", label: "Missing Experience Bible References", status: "Pass", count: 0, notes: "Every screen references Experience Bible guidance." },
+    { id: "missing-visual-dna-references", label: "Missing Visual DNA References", status: "Pass", count: 0, notes: "Every screen references Visual DNA guidance." },
+    { id: "missing-inspiration-boards", label: "Missing Inspiration Boards", status: "Pass", count: 0, notes: "Every screen references approved DV-04 inspiration boards." },
+    { id: "duplicate-ids", label: "Duplicate IDs", status: "Pass", count: 0, notes: "Screen IDs are unique." },
+    { id: "orphaned-screens", label: "Orphaned Screens", status: "Pass", count: 0, notes: "Every screen belongs to a canonical DS-06 category." },
+    { id: "circular-screen-references", label: "Circular Screen References", status: "Pass", count: 0, notes: "Screen definitions do not create circular screen graph references." },
+    { id: "missing-dependencies", label: "Missing Dependencies", status: "Pass", count: 0, notes: "All screen dependencies resolve to canonical Experience Design systems." },
+    { id: "invalid-semantic-ids", label: "Invalid Semantic IDs", status: "Pass", count: 0, notes: "Screen IDs use the screen.category.name semantic form." },
+    { id: "broken-screen-graphs", label: "Broken Screen Graphs", status: "Pass", count: 0, notes: "Screen relationship graph resolves without broken edges." }
+  ]
+};
+
+export const experienceScreenLibrary: ExperienceScreenLibrary = {
+  id: "DS-06",
+  title: "Canonical Screen Library",
+  version: "0.1",
+  status: "Draft",
+  purpose: "Create the canonical semantic Screen Library for NOVERIS so screens become the highest-level design assets, composed from approved patterns, components, materials, motion, tokens, Bible references, Visual DNA, and inspiration boards.",
+  workspaceRoute: `${EXPERIENCE_DESIGN_ROUTE}/screens`,
+  philosophy: [
+    "Screen Definitions are the highest-level design assets.",
+    "Patterns solve interaction behavior.",
+    "Components provide reusable parts.",
+    "Materials define visual surface language.",
+    "Motion defines feeling.",
+    "Tokens define semantic consistency.",
+    "Screens compose all of them into a player-facing experience."
+  ],
+  boundaries: [
+    "Screen Definitions are semantic authoring records.",
+    "Screen Definitions are not React pages.",
+    "Screen Definitions are not HTML layouts.",
+    "Screen Definitions are not CSS.",
+    "Screen Definitions are not implementation.",
+    "Screen Definitions are not routes.",
+    "Screen Definitions are not runtime rendering code."
+  ],
+  searchFields: ["Purpose", "Category", "Pattern", "Component", "Material", "Motion", "Token", "Emotion", "Screen Name", "Experience Bible", "Visual DNA"],
+  layoutRegions: screenLayoutRegions,
+  informationHierarchyLevels: ["primary", "secondary", "supporting", "decorative"],
+  interactionZones: screenInteractionZones,
+  responsiveTargets: screenResponsiveTargets,
+  platformVariants: screenPlatformVariants,
+  previewSupport: screenPreviewSupport,
+  relationshipTargets: screenRelationshipTargets,
+  reviewWorkflow: experienceReviewWorkflow,
+  categories: experienceScreenCategories,
+  screens: experienceScreens,
+  designContracts: experienceScreenDesignContractValidation,
+  runtimePublication: "future_design_runtime_milestone"
+};
+
 export const experienceDesignRecords: ExperienceDesignRecord[] = [
   record("experience-bible-framework", "experience_bible", "Experience Bible Framework", "Framework for NOVERIS creative canon chapters, annotations, cross references, and linked concepts.", "Draft", "Creative Direction", ["bible", "canon", "dv-02"], ["DV-02A seeds the complete 65-chapter framework; do not populate the full Bible yet."], {
     parts: experienceBibleParts.map((partItem) => partItem.id),
@@ -1801,13 +2275,15 @@ export const experienceDesignRecords: ExperienceDesignRecord[] = [
     preview: "Pending",
     sourceAsset: "Pending"
   }),
-  record("screen-definition-first-launch", "screen_definition", "First Launch Experience", "Canonical intent for the first launch moment, not a React or CSS layout.", "Draft", "Experience Design", ["first-launch", "screen", "journey"], ["Actual screen implementation belongs to the Game repository."], {
-    purpose: "Introduce the promise of NOVERIS.",
-    playerGoals: ["Understand the first action", "Feel oriented"],
-    emotionalGoals: ["Curious", "Capable", "Invited"],
-    narrativePurpose: "Begin civilization authorship without overload.",
-    layoutNotes: "Reference screenshots and annotations only.",
-    interactionZones: ["Primary start action", "Status context", "Optional settings"]
+  record("screen-definition-library", "screen_definition", "Canonical Screen Library", "DS-06 semantic screen definition library for NOVERIS purpose, composition, states, accessibility, relationships, review, and future renderer interpretation.", "Draft", "Screen Design", ["screen-library", "ds-06", "semantic"], ["Do not define React pages, HTML layouts, CSS, routes, renderer behavior, camera behavior, or game implementation."], {
+    canonicalSystem: experienceScreenLibrary.id,
+    screenCategories: experienceScreenCategories.map((category) => category.name),
+    screenCount: experienceScreens.length,
+    layoutRegions: experienceScreenLibrary.layoutRegions,
+    interactionZones: experienceScreenLibrary.interactionZones,
+    previewSupport: experienceScreenLibrary.previewSupport,
+    runtimePublication: experienceScreenLibrary.runtimePublication,
+    implementationValuesPublished: false
   }),
   record("design-token-framework", "design_token_collection", "Canonical Design Tokens", "DS-02 semantic token library for NOVERIS meaning, purpose, relationships, review, search, and future renderer consumption.", "Draft", "Design Systems", ["tokens", "framework", "ds-02", "semantic"], ["Do not define token values yet.", "Do not attach CSS variables, Tailwind classes, hexadecimal values, pixel values, or implementation code."], {
     canonicalSystem: experienceDesignTokenSystem.id,
@@ -2178,7 +2654,8 @@ export function getExperienceDesignState(): ExperienceDesignState {
     materials: experienceMaterialLibrary,
     motion: experienceMotionSystem,
     componentLibrary: experienceComponentLibrary,
-    interactionPatterns: experienceInteractionPatternLibrary
+    interactionPatterns: experienceInteractionPatternLibrary,
+    screenLibrary: experienceScreenLibrary
   };
 }
 

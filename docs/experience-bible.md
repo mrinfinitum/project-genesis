@@ -458,6 +458,34 @@ Preview support is metadata only: Static Preview, Interaction Diagram, Flow Diag
 
 DS-05A is Draft at version 0.1. It does not define React layouts, HTML templates, CSS, Tailwind, implementation, screen-specific code, gameplay runtime data, runtime gameplay contracts, contentVersion changes, runtimeVersion changes, or engine export changes.
 
+## DS-06 Canonical Screen Library
+
+DS-06 creates the canonical Screen Library for NOVERIS. Screens are semantic design definitions that compose approved patterns, components, materials, motion, tokens, Bible guidance, Visual DNA, and Inspiration Boards into high-level experience intent.
+
+Screen Definitions are the highest-level design assets. Patterns solve interaction behavior. Components provide reusable parts. Materials define visual surface language. Motion defines feeling. Tokens define semantic consistency. Screens compose all of them into a player-facing experience.
+
+DS-06 canonical screen categories:
+
+- Game Shell
+- Universe
+- Civilization
+- Gameplay
+- Creative
+- Studio
+- Reference
+- System
+- Runtime
+
+Every screen defines ID, name, category, purpose, player goal, Studio goal, emotional goal, summary, Experience Bible references, Visual DNA references, related Inspiration Boards, primary interaction pattern, supporting patterns, component composition, material composition, motion composition, token references, background, lighting, information hierarchy, interaction zones, primary actions, secondary actions, entry state, normal state, busy state, success state, failure state, empty state, loading state, responsive behavior, accessibility notes, controller notes, touch notes, keyboard notes, platform variants, future runtime mapping, owner, review status, version, and history.
+
+Screen composition may only reference existing canonical patterns, components, materials, motion definitions, tokens, Bible chapters or sections, Visual DNA sections, and Inspiration Boards.
+
+Design contract validation checks missing patterns, missing components, missing materials, missing motion, missing tokens, missing Experience Bible references, missing Visual DNA references, missing Inspiration Boards, duplicate IDs, orphaned screens, circular screen references, missing dependencies, invalid semantic IDs, and broken screen graphs.
+
+Preview support is metadata only: Static Preview, Wireframe, Composition Preview, Interaction Flow, Component Tree, Accessibility Preview, and Presentation Mode.
+
+DS-06 is Draft at version 0.1. It does not define React pages, HTML layouts, CSS, implementation, routes, runtime rendering code, gameplay runtime data, runtime gameplay contracts, contentVersion changes, runtimeVersion changes, or engine export changes.
+
 ## Approval
 
 Review states:
