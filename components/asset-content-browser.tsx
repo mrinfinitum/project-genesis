@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import dynamic from "next/dynamic";
+import { useEffect, useMemo, useState, type KeyboardEvent } from "react";
 import { Box, Boxes, ChevronRight, Download, Eye, FileImage, Folder, FolderOpen, History, Layers3, Search, UploadCloud } from "lucide-react";
 import { WorkspaceBadge, WorkspaceMiniStat, WorkspaceSearchBar } from "@/components/ui/workspace";
 import type { AssetProductionState } from "@/lib/assets/asset-production";
@@ -443,6 +444,17 @@ function AssetInspector({ item }: { item: InventoryItem | null }) {
   );
 }
 
+const LazyAssetInspector = dynamic(() => Promise.resolve({ default: AssetInspector }), {
+  ssr: false,
+  loading: () => (
+    <aside className="rounded-md border border-cyan-300/15 bg-[#07101e]/92 p-3 shadow-glow">
+      <div className="grid min-h-80 place-items-center text-center">
+        <p className="text-sm font-bold text-slate-500">Loading inspector...</p>
+      </div>
+    </aside>
+  )
+});
+
 function breadcrumbFor(node: ContentBrowserNode) {
   const parts = node.id.split("/");
   if (parts.length === 1) return [node.label];
@@ -502,6 +514,25 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
   const visibleItems = filteredItems.slice(0, 320);
   const crumbs = breadcrumbFor(activeNode);
 
+  function handleGridKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    if (!visibleItems.length) return;
+    const currentIndex = Math.max(0, visibleItems.findIndex((item) => item.id === selectedId));
+    const columnCount = window.matchMedia("(min-width: 1536px)").matches ? 5 : window.matchMedia("(min-width: 1280px)").matches ? 4 : window.matchMedia("(min-width: 1024px)").matches ? 3 : window.matchMedia("(min-width: 640px)").matches ? 2 : 1;
+    const nextIndex =
+      event.key === "ArrowRight" ? Math.min(visibleItems.length - 1, currentIndex + 1) :
+      event.key === "ArrowLeft" ? Math.max(0, currentIndex - 1) :
+      event.key === "ArrowDown" ? Math.min(visibleItems.length - 1, currentIndex + columnCount) :
+      event.key === "ArrowUp" ? Math.max(0, currentIndex - columnCount) :
+      currentIndex;
+    if (nextIndex !== currentIndex) {
+      event.preventDefault();
+      setSelectedId(visibleItems[nextIndex].id);
+    }
+    if (event.key === "Enter" && selectedItem) {
+      window.location.assign(itemHref(selectedItem));
+    }
+  }
+
   return (
     <main className="min-h-[calc(100vh-5rem)] space-y-3">
       <header className="rounded-md border border-cyan-300/15 bg-[#07101e]/88 px-4 py-3 shadow-glow">
@@ -553,6 +584,10 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
           </div>
 
           <div
+            role="grid"
+            aria-label={`${activeNode.label} asset grid`}
+            tabIndex={0}
+            onKeyDown={handleGridKeyDown}
             className="grid items-start gap-3"
             style={{ gridTemplateColumns: "repeat(auto-fill, minmax(180px, 220px))" }}
           >
@@ -574,7 +609,7 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
             </div>
           ) : null}
         </section>
-        <AssetInspector item={selectedItem} />
+        <LazyAssetInspector item={selectedItem} />
       </section>
     </main>
   );

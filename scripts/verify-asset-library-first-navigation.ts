@@ -37,6 +37,9 @@ async function main() {
   assert(assetContentBrowser.includes("project-genesis-content-browser-expanded"), "Content Browser tree expansion state must persist.");
   assert(assetContentBrowser.includes("repeat(auto-fill, minmax(180px, 220px))"), "Asset cards must stay in the 180-220px browser-card range.");
   assert(assetContentBrowser.includes("onDoubleClick"), "Double-click must open the asset detail.");
+  assert(assetContentBrowser.includes("handleGridKeyDown"), "Asset grid must support keyboard navigation.");
+  assert(assetContentBrowser.includes('role="grid"'), "Asset grid must expose grid semantics for keyboard users.");
+  assert(assetContentBrowser.includes("LazyAssetInspector"), "Inspector must be lazy loaded.");
   assert(assetContentBrowser.includes("contentVisibility"), "Large grids must use browser-level virtualization/content visibility.");
   assert(assetContentBrowser.includes("Showing the first"), "Large result sets must be bounded.");
   assert(assetContentBrowser.includes("Search name, tags, semantic role, category, status, canonical ID"), "Global search must cover the requested fields.");
