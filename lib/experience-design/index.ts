@@ -218,6 +218,88 @@ export type ExperienceDesignTokenSystem = {
   runtimePublication: "future_design_runtime_milestone";
 };
 
+export type ExperienceMaterialCategory =
+  | "Glass"
+  | "Projection"
+  | "Energy"
+  | "Atmosphere"
+  | "Planetary"
+  | "Architecture"
+  | "Natural"
+  | "Industrial"
+  | "Ancient"
+  | "Organic"
+  | "Liquid"
+  | "Surface"
+  | "Structural"
+  | "Lighting"
+  | "Special";
+
+export type ExperienceMaterialPreviewSupport =
+  | "Static Preview"
+  | "Animated Preview"
+  | "Reference Image"
+  | "Material Study"
+  | "Lighting Study"
+  | "Comparison";
+
+export type ExperienceMaterialDefinition = {
+  id: string;
+  name: string;
+  category: ExperienceMaterialCategory;
+  purpose: string;
+  description: string;
+  emotionalIntent: string;
+  visualDnaReferences: string[];
+  experienceBibleReferences: string[];
+  relatedTokens: string[];
+  relatedComponents: string[];
+  relatedScreens: string[];
+  relatedInspirationBoards: string[];
+  lightingNotes: string;
+  transparencyNotes: string;
+  reflectionNotes: string;
+  depthNotes: string;
+  motionNotes: string;
+  accessibilityNotes: string;
+  futureRuntimeMapping: "future_design_runtime_milestone";
+  previewSupport: ExperienceMaterialPreviewSupport[];
+  owner: string;
+  reviewStatus: ExperienceDesignStatus;
+  status: ExperienceDesignStatus;
+  version: "0.1";
+  history: ExperienceHistoryEntry[];
+  tags: string[];
+};
+
+export type ExperienceMaterialCategoryDefinition = {
+  id: string;
+  name: ExperienceMaterialCategory;
+  purpose: string;
+  materialIds: string[];
+  status: ExperienceDesignStatus;
+  version: "0.1";
+  reviewStatus: ExperienceDesignStatus;
+};
+
+export type ExperienceMaterialLibrary = {
+  id: "DS-03";
+  title: "Canonical Material Library";
+  version: "0.1";
+  status: "Draft";
+  purpose: string;
+  workspaceRoute: string;
+  philosophy: string[];
+  boundaries: string[];
+  searchFields: string[];
+  relationshipTargets: string[];
+  previewSupport: ExperienceMaterialPreviewSupport[];
+  reviewWorkflow: ExperienceDesignStatus[];
+  categories: ExperienceMaterialCategoryDefinition[];
+  materials: ExperienceMaterialDefinition[];
+  runtimePublication: "future_design_runtime_milestone";
+};
+
 export type ExperienceContentModel = {
   kind: ExperienceDesignKind;
   displayName: string;
@@ -256,6 +338,7 @@ export type ExperienceDesignState = {
   experienceBible: ReturnType<typeof getExperienceBibleState>;
   inspirationBoards: ExperienceInspirationBoardLibrary;
   designTokens: ExperienceDesignTokenSystem;
+  materials: ExperienceMaterialLibrary;
 };
 
 export const EXPERIENCE_DESIGN_ROUTE = "/experience-design";
@@ -269,7 +352,7 @@ export const experienceDesignSections: ExperienceDesignSection[] = [
   { id: "concepts", label: "Concept Library", description: "Versioned concept art, illustration, interface, material, and motion references.", route: `${EXPERIENCE_DESIGN_ROUTE}/concepts`, kinds: ["concept"] },
   { id: "screens", label: "Screen Library", description: "Canonical experience intent for screens without client implementation ownership.", route: `${EXPERIENCE_DESIGN_ROUTE}/screens`, kinds: ["screen_definition"] },
   { id: "tokens", label: "Design Tokens", description: "DS-02 canonical semantic token libraries for NOVERIS meaning, relationships, review, search, and future renderer consumption.", route: `${EXPERIENCE_DESIGN_ROUTE}/tokens`, kinds: ["design_token_collection"] },
-  { id: "materials", label: "Material Library", description: "Canonical material definitions such as glass, crystal, atmosphere, and energy.", route: `${EXPERIENCE_DESIGN_ROUTE}/materials`, kinds: ["material_definition"] },
+  { id: "materials", label: "Material Library", description: "DS-03 semantic material library for glass, projection, energy, atmosphere, planetary, architectural, natural, industrial, ancient, organic, liquid, surface, structural, lighting, and special materials.", route: `${EXPERIENCE_DESIGN_ROUTE}/materials`, kinds: ["material_definition"] },
   { id: "motion", label: "Motion Library", description: "Canonical motion purposes, accessibility notes, references, and intent.", route: `${EXPERIENCE_DESIGN_ROUTE}/motion`, kinds: ["motion_definition"] },
   { id: "components", label: "Component Library", description: "Design definitions for components, separate from React, Roblox, or CSS implementation.", route: `${EXPERIENCE_DESIGN_ROUTE}/components`, kinds: ["component_definition"] },
   { id: "themes", label: "Theme Library", description: "Future theme framework for default, accessibility, minimal, presentation, and prototype themes.", route: `${EXPERIENCE_DESIGN_ROUTE}/themes`, kinds: ["theme"] },
@@ -285,7 +368,7 @@ export const experienceContentModels: ExperienceContentModel[] = [
   model("concept", "Concept", "Versioned concept record for art, interface, environment, lighting, typography, material, or animation reference.", ["preview", "sourceAsset", "notes", "tags", "relationships"], ["approval workflow", "source asset links"], "concepts"),
   model("screen_definition", "Screen Definition", "Canonical screen intent, player goals, emotional goals, layout notes, interaction zones, accessibility, references, and approved concepts.", ["purpose", "playerGoals", "emotionalGoals", "narrativePurpose", "layoutNotes", "interactionZones"], ["attachments", "related components", "version history"], "screens"),
   model("design_token_collection", "Canonical Design Tokens", "DS-02 semantic design token records for meaning, purpose, references, relationships, review, versioning, and search without implementation values.", ["tokenLibraries", "semanticPath", "purpose", "experienceBibleReferences", "visualDnaReferences", "relatedMaterials", "relatedComponents", "relatedScreens", "owner", "reviewStatus"], ["color", "typography", "spacing", "radius", "elevation", "shadow", "blur", "opacity", "motion", "timing", "breakpoints", "z-layer", "icons", "grid", "stroke", "glow", "atmosphere", "glass", "background", "transition", "search", "relationships", "versioning"], "tokens"),
-  model("material_definition", "Material Definition", "Material intent for Space Glass, Projection Glass, Nebula, Crystal, Atmosphere, Energy, Highlight, Selection, Warning, and Danger.", ["purpose", "visualIntent", "references"], ["accessibility notes", "asset relationships"], "materials"),
+  model("material_definition", "Canonical Material Library", "DS-03 semantic material definitions for purpose, emotion, light behavior, relationships, preview support, review, versioning, and future renderer interpretation without implementation code.", ["category", "purpose", "emotionalIntent", "visualDnaReferences", "experienceBibleReferences", "relatedTokens", "relatedComponents", "relatedScreens", "relatedInspirationBoards", "lightingNotes", "transparencyNotes", "reflectionNotes", "depthNotes", "motionNotes", "accessibilityNotes", "futureRuntimeMapping", "owner", "reviewStatus"], ["glass", "projection", "energy", "atmosphere", "planetary", "architecture", "natural", "industrial", "ancient", "organic", "liquid", "surface", "structural", "lighting", "special", "preview metadata", "relationships", "search", "versioning"], "materials"),
   model("motion_definition", "Motion Definition", "Canonical motion intent such as Fade, Expand, Orbit, Travel, Discovery, Projection, Notification, and Research.", ["purpose", "duration", "curve", "accessibilityNotes", "references"], ["reduced motion", "review workflow"], "motion"),
   model("component_definition", "Component Definition", "Design description for Button, Panel, Card, HUD, Sidebar, Dialog, Tree, List, Table, Tooltip, and Notification.", ["purpose", "states", "variants", "accessibility", "references"], ["component relationships", "approval workflow"], "components"),
   model("theme", "Theme", "Future theme framework for Default, Accessibility, Minimal, Presentation, and Prototype.", ["themeIntent", "status", "approval"], ["token relationships", "accessibility notes"], "themes"),
@@ -522,6 +605,212 @@ export const experienceDesignTokenSystem: ExperienceDesignTokenSystem = {
   runtimePublication: "future_design_runtime_milestone"
 };
 
+const materialCategorySeeds: Array<{ name: ExperienceMaterialCategory; purpose: string; materials: string[] }> = [
+  {
+    name: "Glass",
+    purpose: "Semantic translucent materials for command, projection, reading, observation, navigation, reference, civilization, research, and review surfaces.",
+    materials: ["Command Glass", "Projection Glass", "Reading Glass", "Observation Glass", "Navigation Glass", "Reference Glass", "Civilization Glass", "Research Glass", "Review Glass"]
+  },
+  {
+    name: "Projection",
+    purpose: "Semantic projected-light materials for analysis, navigation, discovery, missions, warnings, focus, selection, and holographic information.",
+    materials: ["Projection Standard", "Projection Analysis", "Projection Navigation", "Projection Discovery", "Projection Mission", "Projection Warning", "Projection Focus", "Projection Selection", "Projection Hologram"]
+  },
+  {
+    name: "Energy",
+    purpose: "Semantic energy materials that describe what progress, research, discovery, ancient systems, fusion, quantum behavior, and rare phenomena should feel like.",
+    materials: ["Civilization Energy", "Research Energy", "Discovery Energy", "Ancient Energy", "Quantum Energy", "Fusion Energy", "Rare Energy"]
+  },
+  {
+    name: "Atmosphere",
+    purpose: "Semantic environmental materials for space, nebulae, planets, clouds, dust, mist, research spaces, and colonies.",
+    materials: ["Deep Space", "Nebula", "Planet Atmosphere", "Cloud Layer", "Dust", "Volumetric Mist", "Research Atmosphere", "Colony Atmosphere"]
+  },
+  {
+    name: "Planetary",
+    purpose: "Semantic planetary surface materials used to describe worlds without becoming renderer textures.",
+    materials: ["Ice", "Rock", "Crystal", "Forest", "Ocean", "Desert", "Lava", "Gas Giant", "Artificial Surface", "Terraforming Surface"]
+  },
+  {
+    name: "Architecture",
+    purpose: "Semantic built-environment materials that make civilization feel engineered, durable, intentional, and worth building.",
+    materials: ["Civilization Stone", "Civilization Alloy", "Advanced Ceramic", "Structural Composite", "Living Architecture", "Ancient Monument", "Future Concrete", "Engineering Steel"]
+  },
+  {
+    name: "Natural",
+    purpose: "Semantic natural-world materials for life, terrain, water, snow, sand, vegetation, coral, and roots.",
+    materials: ["Water", "Snow", "Sand", "Vegetation", "Natural Ice", "Organic Growth", "Coral", "Roots"]
+  },
+  {
+    name: "Industrial",
+    purpose: "Semantic industrial materials for production, manufacturing, engineering, infrastructure, and resource processing.",
+    materials: ["Factory Alloy", "Refinery Surface", "Industrial Concrete", "Machine Housing", "Logistics Rail", "Storage Composite"]
+  },
+  {
+    name: "Ancient",
+    purpose: "Semantic ancient materials that feel mysterious and advanced without becoming fantasy.",
+    materials: ["Ancient Alloy", "Ancient Crystal", "Ancient Stone", "Ancient Energy", "Ruined Architecture", "Lost Civilization Material"]
+  },
+  {
+    name: "Organic",
+    purpose: "Semantic organic materials for living systems, cultivated environments, biomes, and bio-engineered forms.",
+    materials: ["Living Tissue", "Biofilm", "Cultivated Bark", "Bioluminescent Growth", "Seed Matrix"]
+  },
+  {
+    name: "Liquid",
+    purpose: "Semantic liquid materials for water, coolant, fuel, oceans, research fluids, and hazardous flows.",
+    materials: ["Clean Water", "Research Fluid", "Coolant Flow", "Fuel Gel", "Toxic Liquid"]
+  },
+  {
+    name: "Surface",
+    purpose: "Semantic readable surface materials for panels, cards, workspaces, maps, logs, and reference pages.",
+    materials: ["Command Surface", "Reading Surface", "Reference Surface", "Map Surface", "Archive Surface"]
+  },
+  {
+    name: "Structural",
+    purpose: "Semantic support materials for frames, beams, foundations, pressure hulls, and orbital structures.",
+    materials: ["Frame Structure", "Orbital Truss", "Foundation Plate", "Pressure Hull", "Megastructure Spine"]
+  },
+  {
+    name: "Lighting",
+    purpose: "Semantic light-bearing materials for civilization warmth, projection guidance, discovery reveals, danger, and focus.",
+    materials: ["Civilization Light", "Projection Light", "Discovery Light", "Warning Light", "Focus Light"]
+  },
+  {
+    name: "Special",
+    purpose: "Semantic interaction-support materials for selection, focus, highlight, danger, locked, unavailable, construction, and scanning states.",
+    materials: ["Selection", "Focus", "Highlight", "Danger", "Locked", "Unavailable", "Construction", "Scanning"]
+  }
+];
+
+const materialPreviewSupport: ExperienceMaterialPreviewSupport[] = ["Static Preview", "Animated Preview", "Reference Image", "Material Study", "Lighting Study", "Comparison"];
+
+function materialId(category: ExperienceMaterialCategory, name: string) {
+  return `material-${slugify(category)}-${slugify(name)}`;
+}
+
+function materialTokens(category: ExperienceMaterialCategory, name: string) {
+  const text = `${category} ${name}`.toLowerCase();
+  const tokens = new Set<string>();
+  if (text.includes("glass")) tokens.add("glass.command").add("surface.command.glass");
+  if (text.includes("projection")) tokens.add("accent.projection.cyan").add("glass.projection");
+  if (text.includes("civilization") || text.includes("gold")) tokens.add("accent.civilization.gold").add("glow.civilization");
+  if (text.includes("discovery")) tokens.add("accent.discovery.violet").add("status.discovery");
+  if (text.includes("danger") || text.includes("warning")) tokens.add("status.danger").add("glow.warning");
+  if (text.includes("locked") || text.includes("unavailable")) tokens.add("status.locked").add("opacity.disabled");
+  if (text.includes("atmosphere") || text.includes("space") || text.includes("nebula")) tokens.add("atmosphere.deep-space").add("background.universe");
+  if (text.includes("research")) tokens.add("motion.research").add("background.research");
+  if (text.includes("focus") || text.includes("selection")) tokens.add("motion.focus").add("glow.focus");
+  if (text.includes("reading") || text.includes("reference")) tokens.add("surface.reading.paper").add("surface.reference.glass");
+  if (tokens.size === 0) tokens.add("surface.space.primary");
+  return Array.from(tokens);
+}
+
+function materialReferences(category: ExperienceMaterialCategory, name: string) {
+  const text = `${category} ${name}`.toLowerCase();
+  const bibleReferences = ["core-creative-philosophy", "dv-02c-section-01-the-noveris-signature"];
+  const visualDnaReferences = ["dv-03-section-09-material-language", "dv-03-section-03-light-philosophy"];
+  if (text.includes("civilization") || text.includes("architecture")) bibleReferences.push("dv-02c-section-02-monumental-civilization");
+  if (text.includes("space") || text.includes("atmosphere") || text.includes("nebula")) visualDnaReferences.push("dv-03-section-04-atmosphere", "dv-03-section-05-space");
+  if (text.includes("ancient")) bibleReferences.push("dv02-chapter-26-first-discovery");
+  if (text.includes("warning") || text.includes("danger") || text.includes("locked")) visualDnaReferences.push("dv-03-section-13-visual-contrast");
+  return { bibleReferences, visualDnaReferences };
+}
+
+function materialEmotion(category: ExperienceMaterialCategory, name: string) {
+  const text = `${category} ${name}`.toLowerCase();
+  if (text.includes("civilization")) return "Warmth, achievement, durability, and human progress.";
+  if (text.includes("research") || text.includes("analysis")) return "Calm intelligence, clarity, and useful discovery.";
+  if (text.includes("ancient")) return "Mystery, age, restraint, and non-fantasy wonder.";
+  if (text.includes("danger") || text.includes("warning")) return "Urgency without panic; clear risk communication.";
+  if (text.includes("locked") || text.includes("unavailable")) return "Unavailable but understandable; constraint without hostility.";
+  if (text.includes("space") || text.includes("nebula")) return "Scale, quiet, depth, and breathable wonder.";
+  return "Purposeful, legible, and emotionally aligned with the NOVERIS Visual DNA.";
+}
+
+export const experienceMaterials: ExperienceMaterialDefinition[] = materialCategorySeeds.flatMap((category) => category.materials.map((name) => {
+  const references = materialReferences(category.name, name);
+  const id = materialId(category.name, name);
+  return {
+    id,
+    name,
+    category: category.name,
+    purpose: `${name} defines the semantic material intent for ${category.name.toLowerCase()} contexts in NOVERIS.`,
+    description: "Canonical material definition only. Renderers may interpret this later, but DS-03 does not define CSS, shaders, textures, engine materials, or renderer code.",
+    emotionalIntent: materialEmotion(category.name, name),
+    visualDnaReferences: references.visualDnaReferences,
+    experienceBibleReferences: references.bibleReferences,
+    relatedTokens: materialTokens(category.name, name),
+    relatedComponents: name.includes("Navigation") ? ["component-navigation"] : name.includes("Reading") || name.includes("Reference") || name.includes("Command") ? ["component-design-panel"] : [],
+    relatedScreens: category.name === "Planetary" ? ["screen-planet"] : category.name === "Atmosphere" ? ["screen-galaxy"] : category.name === "Special" ? ["screen-runtime"] : [],
+    relatedInspirationBoards: [`inspiration-board-${slugify(category.name)}`, name.includes("Glass") || name.includes("Projection") ? "inspiration-board-interface" : "inspiration-board-materials"],
+    lightingNotes: `${name} should communicate its role through light behavior, not raw decoration.`,
+    transparencyNotes: category.name === "Glass" || category.name === "Projection" ? "Transparency supports legibility and world integration; it must not obscure primary information." : "Transparency is optional and should not be assumed.",
+    reflectionNotes: category.name === "Glass" || category.name === "Energy" ? "Reflection should suggest depth and material presence without becoming noisy." : "Reflection should remain subordinate to clarity.",
+    depthNotes: "Depth should support hierarchy, scale, and readable focus.",
+    motionNotes: category.name === "Projection" || category.name === "Energy" || category.name === "Special" ? "Motion may communicate state change, scanning, focus, or discovery while supporting reduced-motion alternatives." : "Motion is optional and should remain deliberate.",
+    accessibilityNotes: "Must preserve contrast, legibility, non-color state cues, and reduced-motion alternatives where motion is used.",
+    futureRuntimeMapping: "future_design_runtime_milestone",
+    previewSupport: materialPreviewSupport,
+    owner: "Material Design",
+    reviewStatus: "Draft",
+    status: "Draft",
+    version: "0.1",
+    history: [
+      {
+        id: `${id}-ds-03-created`,
+        action: "created",
+        author: "Material Design",
+        timestamp: "2026-07-17T00:00:00.000Z",
+        notes: "Created semantic material definition for DS-03."
+      }
+    ],
+    tags: ["ds-03", "material", slugify(category.name), slugify(name), ...materialTokens(category.name, name)]
+  };
+}));
+
+export const experienceMaterialCategories: ExperienceMaterialCategoryDefinition[] = materialCategorySeeds.map((category) => ({
+  id: `material-category-${slugify(category.name)}`,
+  name: category.name,
+  purpose: category.purpose,
+  materialIds: category.materials.map((name) => materialId(category.name, name)),
+  status: "Draft",
+  version: "0.1",
+  reviewStatus: "Draft"
+}));
+
+export const experienceMaterialLibrary: ExperienceMaterialLibrary = {
+  id: "DS-03",
+  title: "Canonical Material Library",
+  version: "0.1",
+  status: "Draft",
+  purpose: "Create the canonical semantic material source of truth for NOVERIS so every renderer can interpret material meaning without Studio defining renderer implementation.",
+  workspaceRoute: `${EXPERIENCE_DESIGN_ROUTE}/materials`,
+  philosophy: [
+    "Materials communicate meaning.",
+    "Players should understand civilization by how materials behave.",
+    "A material is part of storytelling, not decoration.",
+    "Every renderer interprets these semantic definitions later."
+  ],
+  boundaries: [
+    "Materials are not CSS.",
+    "Materials are not shaders.",
+    "Materials are not textures.",
+    "Materials are not rendering code.",
+    "Materials are not Unreal materials.",
+    "Materials are not Unity materials.",
+    "Materials are not Three.js materials.",
+    "Materials are not Roblox implementation."
+  ],
+  searchFields: ["Purpose", "Emotion", "Material Type", "Lighting", "Transparency", "Reflection", "Related Token", "Related Screen", "Experience Bible Chapter", "Visual DNA Section"],
+  relationshipTargets: ["Design Tokens", "Visual DNA", "Experience Bible", "Inspiration Boards", "Components", "Screen Templates", "Themes", "Brand"],
+  previewSupport: materialPreviewSupport,
+  reviewWorkflow: experienceReviewWorkflow,
+  categories: experienceMaterialCategories,
+  materials: experienceMaterials,
+  runtimePublication: "future_design_runtime_milestone"
+};
+
 export const experienceDesignRecords: ExperienceDesignRecord[] = [
   record("experience-bible-framework", "experience_bible", "Experience Bible Framework", "Framework for NOVERIS creative canon chapters, annotations, cross references, and linked concepts.", "Draft", "Creative Direction", ["bible", "canon", "dv-02"], ["DV-02A seeds the complete 65-chapter framework; do not populate the full Bible yet."], {
     parts: experienceBibleParts.map((partItem) => partItem.id),
@@ -567,10 +856,13 @@ export const experienceDesignRecords: ExperienceDesignRecord[] = [
     consumers: experienceDesignTokenSystem.consumers,
     runtimePublication: experienceDesignTokenSystem.runtimePublication
   }),
-  record("material-space-glass", "material_definition", "Space Glass", "Material definition framework for projected, transparent, readable surfaces.", "Draft", "Art Direction", ["material", "glass", "interface"], ["Framework only; no shader or CSS implementation."], {
-    purpose: "Canonical material intent.",
-    visualIntent: "Subtle depth, transparency, and legibility.",
-    references: ["Pending Inspiration Board attachments"]
+  record("material-space-glass", "material_definition", "Canonical Material Library", "DS-03 semantic material library for NOVERIS material meaning, light behavior, emotion, relationships, preview metadata, and future renderer interpretation.", "Draft", "Material Design", ["material", "ds-03", "semantic"], ["Do not define shader code, CSS, GLSL, Three.js, Unity, Unreal, Roblox, texture, or renderer implementation."], {
+    canonicalSystem: experienceMaterialLibrary.id,
+    materialCategories: experienceMaterialCategories.map((category) => category.name),
+    materialCount: experienceMaterials.length,
+    previewSupport: experienceMaterialLibrary.previewSupport,
+    runtimePublication: experienceMaterialLibrary.runtimePublication,
+    implementationValuesPublished: false
   }),
   record("motion-discovery", "motion_definition", "Discovery Motion", "Motion intent for discovery reveal moments and reduced-motion alternatives.", "Draft", "Motion Design", ["motion", "discovery", "accessibility"], ["No implementation curves are final."], {
     purpose: "Signal a meaningful reveal without blocking interaction.",
@@ -897,7 +1189,8 @@ export function getExperienceDesignState(): ExperienceDesignState {
     },
     experienceBible,
     inspirationBoards: inspirationBoardLibrary,
-    designTokens: experienceDesignTokenSystem
+    designTokens: experienceDesignTokenSystem,
+    materials: experienceMaterialLibrary
   };
 }
 

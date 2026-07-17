@@ -53,6 +53,7 @@ const workspaceResults: StudioSearchResult[] = [
   workspace("experience-bible", "Experience Bible", "/experience-design/bible", "Creative canon framework"),
   workspace("inspiration-boards", "Inspiration Boards", "/experience-design/inspiration-boards", "Canonical visual memory and reference boards"),
   workspace("design-tokens", "Design Tokens", "/experience-design/tokens", "DS-02 canonical semantic token libraries"),
+  workspace("material-library", "Material Library", "/experience-design/materials", "DS-03 canonical semantic material library"),
   workspace("screen-library", "Screen Library", "/experience-design/screens", "Canonical screen intent"),
   workspace("upload-asset", "Upload Asset", "/assets?upload=asset", "Asset pipeline"),
   workspace("regenerate-derivatives", "Regenerate Derivatives", "/asset-library?status=needs_review", "Asset pipeline"),
@@ -202,6 +203,42 @@ export async function buildStudioSearchIndex(): Promise<StudioSearchIndex> {
         token.relatedMaterials.join(" "),
         token.relatedComponents.join(" "),
         token.relatedScreens.join(" ")
+      ]
+    })),
+    ...experienceDesign.materials.categories.map((category) => result({
+      id: category.id,
+      type: "Experience Design" as const,
+      title: `${category.name} Materials`,
+      subtitle: `Material Category / ${experienceDesign.materials.id} / ${category.status}`,
+      href: experienceDesign.materials.workspaceRoute,
+      status: category.status,
+      aliases: [category.purpose, category.materialIds.join(" "), category.reviewStatus, "semantic materials"]
+    })),
+    ...experienceDesign.materials.materials.map((material) => result({
+      id: material.id,
+      type: "Experience Design" as const,
+      title: material.name,
+      subtitle: `${material.category} Material / ${material.status}`,
+      href: `${experienceDesign.materials.workspaceRoute}#${material.id}`,
+      status: material.status,
+      aliases: [
+        material.purpose,
+        material.description,
+        material.emotionalIntent,
+        material.lightingNotes,
+        material.transparencyNotes,
+        material.reflectionNotes,
+        material.depthNotes,
+        material.motionNotes,
+        material.accessibilityNotes,
+        material.relatedTokens.join(" "),
+        material.relatedComponents.join(" "),
+        material.relatedScreens.join(" "),
+        material.relatedInspirationBoards.join(" "),
+        material.experienceBibleReferences.join(" "),
+        material.visualDnaReferences.join(" "),
+        material.previewSupport.join(" "),
+        material.tags.join(" ")
       ]
     })),
     ...experienceDesign.experienceBible.parts.map((part) => result({

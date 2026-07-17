@@ -308,6 +308,42 @@ Tokens participate in Studio search by purpose, emotion, category, relationships
 
 DS-02 is Draft at version 0.1. It does not define hexadecimal values, CSS variables, Tailwind classes, implementation code, gameplay data, runtime gameplay contracts, contentVersion changes, runtimeVersion changes, or engine export changes.
 
+## DS-03 Canonical Material Library
+
+DS-03 creates the canonical Material Library for NOVERIS. Materials are semantic design assets that describe purpose, emotional intent, interaction with light, relationship to civilization, and relationship to the Experience Bible.
+
+Materials communicate meaning. Players should understand civilization by how materials behave. A material is part of storytelling, not decoration.
+
+DS-03 canonical categories:
+
+- Glass
+- Projection
+- Energy
+- Atmosphere
+- Planetary
+- Architecture
+- Natural
+- Industrial
+- Ancient
+- Organic
+- Liquid
+- Surface
+- Structural
+- Lighting
+- Special
+
+Example Glass materials include Command Glass, Projection Glass, Reading Glass, Observation Glass, Navigation Glass, Reference Glass, Civilization Glass, Research Glass, and Review Glass.
+
+Example Projection materials include Projection Standard, Projection Analysis, Projection Navigation, Projection Discovery, Projection Mission, Projection Warning, Projection Focus, Projection Selection, and Projection Hologram.
+
+Example Energy materials include Civilization Energy, Research Energy, Discovery Energy, Ancient Energy, Quantum Energy, Fusion Energy, and Rare Energy.
+
+Every material supports purpose, description, emotional intent, Visual DNA references, Experience Bible references, related tokens, related components, related screens, related Inspiration Boards, lighting notes, transparency notes, reflection notes, depth notes, motion notes, accessibility notes, future runtime mapping, owner, review status, version, and history.
+
+Preview support is metadata only: Static Preview, Animated Preview, Reference Image, Material Study, Lighting Study, and Comparison.
+
+DS-03 is Draft at version 0.1. It does not define CSS, shaders, GLSL, Three.js materials, Unity materials, Unreal materials, Roblox implementation, renderer code, gameplay data, runtime gameplay contracts, contentVersion changes, runtimeVersion changes, or engine export changes.
+
 ## Approval
 
 Review states:

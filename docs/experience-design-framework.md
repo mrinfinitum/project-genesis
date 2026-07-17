@@ -98,3 +98,33 @@ Good token names describe purpose, such as `accent.civilization.gold`, `surface.
 Bad token names describe raw appearance or implementation, such as `gold500`, `blue100`, `radius12`, or `blur24`.
 
 DS-02 remains Draft at version 0.1. Token values are not published yet; future runtime publication belongs to a later Design Runtime milestone.
+
+## DS-03 Canonical Material Library
+
+DS-03 creates the canonical semantic Material Library for NOVERIS.
+
+Materials are authoring records that describe purpose, emotional intent, interaction with light, relationship to civilization, Experience Bible references, Visual DNA references, related tokens, related components, related screens, related Inspiration Boards, preview support, review state, and version history.
+
+Materials are not CSS, shaders, textures, rendering code, Unreal materials, Unity materials, Three.js materials, or Roblox implementation.
+
+Canonical material categories:
+
+- Glass
+- Projection
+- Energy
+- Atmosphere
+- Planetary
+- Architecture
+- Natural
+- Industrial
+- Ancient
+- Organic
+- Liquid
+- Surface
+- Structural
+- Lighting
+- Special
+
+DS-03 preview support is metadata only: Static Preview, Animated Preview, Reference Image, Material Study, Lighting Study, and Comparison.
+
+DS-03 remains Draft at version 0.1. Material definitions are not published yet; future runtime publication belongs to a later Design Runtime milestone.

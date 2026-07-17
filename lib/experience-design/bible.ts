@@ -84,7 +84,7 @@ export type ExperienceBibleChapter = {
 };
 
 export type ExperienceBibleRelease = {
-  id: "DV-02" | "DV-02B" | "DV-02C" | "DV-03" | "DV-04" | "DS-02";
+  id: "DV-02" | "DV-02B" | "DV-02C" | "DV-03" | "DV-04" | "DS-02" | "DS-03";
   version: "0.1";
   status: "Draft";
   title: string;
@@ -834,6 +834,20 @@ export const experienceBibleDesignTokensRelease: ExperienceBibleRelease = {
   ]
 };
 
+export const experienceBibleMaterialLibraryRelease: ExperienceBibleRelease = {
+  id: "DS-03",
+  version: "0.1",
+  status: "Draft",
+  title: "Canonical Material Library",
+  createdAt: "2026-07-17T00:00:00.000Z",
+  chapterIds: [],
+  notes: [
+    "Creates the canonical semantic Material Library for NOVERIS.",
+    "Defines material categories, semantic material records, relationships, search, preview metadata, review workflow, and versioning.",
+    "DS-03 is not CSS, shaders, textures, rendering code, engine materials, runtime gameplay data, or an engine export contract."
+  ]
+};
+
 export const experienceBibleSignatureRelease: ExperienceBibleRelease = {
   id: "DV-02C",
   version: "0.1",
@@ -895,7 +909,7 @@ export function getExperienceBibleState(): ExperienceBibleState {
     parts: experienceBibleParts,
     chapters: experienceBibleChapters,
     release: experienceBibleRelease,
-    contentReleases: [experienceBibleRelease, experienceBiblePartIRelease, experienceBibleSignatureRelease, experienceBibleVisualDnaRelease, experienceBibleInspirationBoardRelease, experienceBibleDesignTokensRelease],
+    contentReleases: [experienceBibleRelease, experienceBiblePartIRelease, experienceBibleSignatureRelease, experienceBibleVisualDnaRelease, experienceBibleInspirationBoardRelease, experienceBibleDesignTokensRelease, experienceBibleMaterialLibraryRelease],
     signature: experienceBibleSignature,
     visualDna: experienceBibleVisualDna,
     governanceRules: experienceBibleGovernanceRules,

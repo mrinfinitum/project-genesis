@@ -22,7 +22,7 @@ import {
   Sparkles
 } from "lucide-react";
 import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, WorkspaceSearchBar, WorkspaceStatTile, WorkspaceTabs } from "@/components/ui/workspace";
-import type { ExperienceDesignKind, ExperienceDesignRecord, ExperienceDesignSection, ExperienceDesignState, ExperienceDesignToken, ExperienceInspirationBoard } from "@/lib/experience-design";
+import type { ExperienceDesignKind, ExperienceDesignRecord, ExperienceDesignSection, ExperienceDesignState, ExperienceDesignToken, ExperienceInspirationBoard, ExperienceMaterialDefinition } from "@/lib/experience-design";
 import { cn } from "@/lib/utils";
 
 type ExperienceTab = "dashboard" | "library" | "models" | "reviews" | "history";
@@ -304,6 +304,88 @@ function DesignTokensWorkspace({ state, tokens }: { state: ExperienceDesignState
   );
 }
 
+function MaterialDefinitionCard({ material }: { material: ExperienceMaterialDefinition }) {
+  return (
+    <article id={material.id} className="scroll-mt-24 rounded-md border border-cyan-300/15 bg-slate-950/45 p-4">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="truncate text-xs font-black uppercase tracking-[0.18em] text-cyan-300">{material.category}</p>
+          <h3 className="mt-2 truncate text-xl font-black text-white" title={material.name}>{material.name}</h3>
+          <p className="mt-1 truncate text-sm font-semibold text-slate-500">{material.id}</p>
+        </div>
+        <WorkspaceBadge value={material.status} />
+      </div>
+      <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-300">{material.emotionalIntent}</p>
+      <div className="mt-4 grid gap-2 sm:grid-cols-3">
+        <WorkspaceMiniStat label="Tokens" value={material.relatedTokens.length} />
+        <WorkspaceMiniStat label="Previews" value={material.previewSupport.length} />
+        <WorkspaceMiniStat label="Runtime" value="Future" />
+      </div>
+      <div className="mt-4 flex flex-wrap gap-2">
+        {material.relatedTokens.slice(0, 5).map((token) => <WorkspaceBadge key={token} value={token} className="text-[0.62rem]" />)}
+      </div>
+    </article>
+  );
+}
+
+function MaterialsWorkspace({ state, materials }: { state: ExperienceDesignState; materials: ExperienceMaterialDefinition[] }) {
+  return (
+    <div className="space-y-4 lg:col-span-2 2xl:col-span-3">
+      <section className="studio-material-command rounded-lg p-5">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-300">{state.materials.id} / Version {state.materials.version}</p>
+            <h3 className="mt-2 text-2xl font-black text-white">{state.materials.title}</h3>
+            <p className="mt-3 max-w-4xl text-sm leading-6 text-slate-300">{state.materials.purpose}</p>
+          </div>
+          <WorkspaceBadge value={state.materials.status} />
+        </div>
+        <div className="mt-4 grid gap-3 md:grid-cols-4">
+          <WorkspaceMiniStat label="Categories" value={state.materials.categories.length} />
+          <WorkspaceMiniStat label="Materials" value={state.materials.materials.length} />
+          <WorkspaceMiniStat label="Preview Modes" value={state.materials.previewSupport.length} />
+          <WorkspaceMiniStat label="Runtime" value="Future Milestone" />
+        </div>
+      </section>
+
+      <WorkspacePanel title="Material Categories" icon={Layers3}>
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+          {state.materials.categories.map((category) => (
+            <div key={category.id} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
+              <div className="flex items-start justify-between gap-3">
+                <p className="text-sm font-black text-white">{category.name}</p>
+                <WorkspaceBadge value={`${category.materialIds.length}`} className="text-[0.62rem]" />
+              </div>
+              <p className="mt-2 line-clamp-3 text-xs leading-5 text-slate-400">{category.purpose}</p>
+            </div>
+          ))}
+        </div>
+      </WorkspacePanel>
+
+      <WorkspacePanel title="Material Rules and Preview Support" icon={ShieldCheck}>
+        <div className="grid gap-4 lg:grid-cols-3">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Philosophy</p>
+            <p className="mt-2 text-sm leading-6 text-slate-300">{state.materials.philosophy.join(" ")}</p>
+          </div>
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Relationships</p>
+            <p className="mt-2 text-sm leading-6 text-slate-300">{state.materials.relationshipTargets.join(", ")}</p>
+          </div>
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Preview Metadata</p>
+            <p className="mt-2 text-sm leading-6 text-slate-300">{state.materials.previewSupport.join(", ")}</p>
+          </div>
+        </div>
+      </WorkspacePanel>
+
+      <section className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
+        {materials.map((material) => <MaterialDefinitionCard key={material.id} material={material} />)}
+      </section>
+    </div>
+  );
+}
+
 export function ExperienceDesignWorkspace({ state, initialSection = "dashboard" }: { state: ExperienceDesignState; initialSection?: string }) {
   const resolvedSection = state.sections.some((section) => section.id === initialSection) ? initialSection : "dashboard";
   const [query, setQuery] = useState("");
@@ -367,6 +449,36 @@ export function ExperienceDesignWorkspace({ state, initialSection = "dashboard" 
       return text.includes(normalized);
     });
   }, [query, state.designTokens.tokens]);
+
+  const filteredMaterials = useMemo(() => {
+    const normalized = query.trim().toLowerCase();
+    return state.materials.materials.filter((material) => {
+      if (!normalized) return true;
+      const text = [
+        material.id,
+        material.name,
+        material.category,
+        material.purpose,
+        material.description,
+        material.emotionalIntent,
+        material.lightingNotes,
+        material.transparencyNotes,
+        material.reflectionNotes,
+        material.depthNotes,
+        material.motionNotes,
+        material.accessibilityNotes,
+        material.relatedTokens.join(" "),
+        material.relatedComponents.join(" "),
+        material.relatedScreens.join(" "),
+        material.relatedInspirationBoards.join(" "),
+        material.experienceBibleReferences.join(" "),
+        material.visualDnaReferences.join(" "),
+        material.previewSupport.join(" "),
+        material.tags.join(" ")
+      ].join(" ").toLowerCase();
+      return text.includes(normalized);
+    });
+  }, [query, state.materials.materials]);
 
   const reviewCounts = state.reviewWorkflow.map((status) => ({
     status,
@@ -479,10 +591,12 @@ export function ExperienceDesignWorkspace({ state, initialSection = "dashboard" 
         <section className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
           {currentSection.id === "inspiration-boards" ? <InspirationBoardsWorkspace state={state} boards={filteredBoards} /> : null}
           {currentSection.id === "tokens" ? <DesignTokensWorkspace state={state} tokens={filteredTokens} /> : null}
-          {currentSection.id !== "inspiration-boards" && currentSection.id !== "tokens" ? filteredRecords.map((record) => <ExperienceRecordCard key={record.id} state={state} record={record} />) : null}
-          {currentSection.id !== "inspiration-boards" && currentSection.id !== "tokens" && !filteredRecords.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Experience Design records match this view.</p> : null}
+          {currentSection.id === "materials" ? <MaterialsWorkspace state={state} materials={filteredMaterials} /> : null}
+          {currentSection.id !== "inspiration-boards" && currentSection.id !== "tokens" && currentSection.id !== "materials" ? filteredRecords.map((record) => <ExperienceRecordCard key={record.id} state={state} record={record} />) : null}
+          {currentSection.id !== "inspiration-boards" && currentSection.id !== "tokens" && currentSection.id !== "materials" && !filteredRecords.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Experience Design records match this view.</p> : null}
           {currentSection.id === "inspiration-boards" && !filteredBoards.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Inspiration Boards match this view.</p> : null}
           {currentSection.id === "tokens" && !filteredTokens.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Design Tokens match this view.</p> : null}
+          {currentSection.id === "materials" && !filteredMaterials.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Materials match this view.</p> : null}
         </section>
       ) : null}
 
