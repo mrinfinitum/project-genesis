@@ -193,6 +193,17 @@ function activeGroupForPath(pathname: string) {
   );
 }
 
+function workspaceEnvironmentForPath(pathname: string) {
+  if (/experience-design|architecture/.test(pathname)) return "experience";
+  if (/asset|component-library|screen-designer|visual-screen-builder/.test(pathname)) return "assets";
+  if (/discovery/.test(pathname)) return "discovery";
+  if (/galaxy|sector|star|planet|civilization|universe/.test(pathname)) return "universe";
+  if (/research|resource|building|ai-agents/.test(pathname)) return "research";
+  if (/economy|population|colonies|missions|dynamic-events|actions/.test(pathname)) return "civilization";
+  if (/runtime|export|validation|database/.test(pathname)) return "runtime";
+  return "command";
+}
+
 function isItemActive(item: NavigationItem, pathname: string, searchParams: { get: (key: string) => string | null; has: (key: string) => boolean }) {
   if (!item.href) {
     return false;
@@ -313,6 +324,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const currentSearchParams = useMemo(() => new URLSearchParams(currentSearch), [currentSearch]);
   const isAuthRoute = pathname === "/login" || pathname.startsWith("/auth/");
   const activeGroup = useMemo(() => activeGroupForPath(pathname), [pathname]);
+  const environment = useMemo(() => workspaceEnvironmentForPath(pathname), [pathname]);
   const [expandedGroups, setExpandedGroups] = useState<string[]>(() => uniqueSections(["command-center", activeGroup?.id]));
   const [healthMetrics, setHealthMetrics] = useState<StudioHealthMetric[]>([]);
   const [healthChecks, setHealthChecks] = useState<StudioHealthCheck[]>([]);
@@ -388,10 +400,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-genesis-void text-slate-100">
-      <aside className="fixed inset-y-0 left-0 z-20 hidden w-80 border-r border-cyan-400/15 bg-[#07101e]/95 px-4 py-5 shadow-glow backdrop-blur lg:block">
+    <div data-studio-environment={environment} className="studio-cinematic-shell min-h-screen bg-genesis-void text-slate-100">
+      <aside className="studio-material-navigation fixed inset-y-0 left-0 z-20 hidden w-80 px-4 py-5 lg:block">
         <Link href="/" className="mb-6 flex items-center gap-3">
-          <span className="grid h-11 w-11 place-items-center rounded-md border border-cyan-300/35 bg-cyan-300/10">
+          <span className="grid h-11 w-11 place-items-center rounded-md border border-cyan-300/35 bg-cyan-300/10 shadow-[0_0_28px_rgba(34,211,238,0.14)]">
             <Cpu className="h-5 w-5 text-cyan-200" />
           </span>
           <span>
@@ -411,7 +423,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <section
                 key={group.id}
                 className={cn(
-                  "rounded-md border border-cyan-400/10 bg-slate-950/25 transition",
+                  "rounded-md border border-cyan-400/10 bg-slate-950/20 transition",
                   expanded && !groupActive && "border-cyan-400/20 shadow-[0_0_18px_rgba(34,211,238,0.06)]",
                   groupActive && "border-cyan-300/35 shadow-[0_0_24px_rgba(34,211,238,0.10)]"
                 )}
@@ -477,7 +489,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </aside>
 
       <div className="lg:pl-80">
-        <header className="sticky top-0 z-10 border-b border-cyan-400/15 bg-[#07101e]/85 backdrop-blur">
+        <header className="sticky top-0 z-10 border-b border-cyan-400/10 bg-[#06111f]/68 backdrop-blur-xl">
           <div className="flex min-h-16 items-center justify-between gap-4 px-5 lg:px-8">
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">Universe Authoring IDE</p>
@@ -490,7 +502,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </div>
           </div>
         </header>
-        <main className="genesis-grid min-h-[calc(100vh-4rem)] px-5 py-6 lg:px-8">{children}</main>
+        <main className="studio-orbital-grid min-h-[calc(100vh-4rem)] px-5 py-8 lg:px-10">{children}</main>
       </div>
       <StudioCommandPalette />
     </div>

@@ -99,6 +99,65 @@ function ExperienceRecordCard({ state, record }: { state: ExperienceDesignState;
   );
 }
 
+function ExperienceShowcasePanel({ state }: { state: ExperienceDesignState }) {
+  const pillars = ["Civilization Before Technology", "Universe Always Present", "Monumental Achievement", "Light as Progress", "Calm Intelligence"];
+  return (
+    <section className="studio-material-reading relative overflow-hidden rounded-lg p-6 lg:p-8">
+      <div className="pointer-events-none absolute inset-0 opacity-35" aria-hidden="true">
+        <div className="absolute right-[-8rem] top-[-10rem] h-80 w-80 rounded-full border border-cyan-300/25" />
+        <div className="absolute right-20 top-16 h-52 w-52 rounded-full border border-amber-300/15" />
+        <div className="absolute bottom-8 left-10 h-px w-2/3 bg-gradient-to-r from-transparent via-cyan-200/30 to-transparent" />
+      </div>
+      <div className="relative grid gap-6 lg:grid-cols-[1fr_24rem]">
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.24em] text-amber-200">Civilization Observatory</p>
+          <h2 className="mt-3 text-3xl font-black text-white">Experience Design is the creative command center for NOVERIS.</h2>
+          <p className="mt-4 max-w-3xl text-base leading-8 text-slate-300">The Bible, mood boards, concept library, screen intent, design tokens, materials, motion, and themes now share one premium reading and review environment. Studio remains the canonical authoring surface while the Game owns implementation.</p>
+          <div className="mt-5 flex flex-wrap gap-2">
+            {pillars.map((pillar) => <WorkspaceBadge key={pillar} value={pillar} />)}
+          </div>
+        </div>
+        <div className="grid gap-3">
+          <WorkspaceMiniStat label="Bible Releases" value={state.experienceBible.contentReleases.length} />
+          <WorkspaceMiniStat label="Creative Records" value={state.records.length} />
+          <WorkspaceMiniStat label="Runtime Boundary" value={state.runtimePublishing.replaceAll("_", " ")} />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function MoodBoardCanvasPreview() {
+  const notes = ["Lighting Notes", "Composition", "References", "Asset Links", "Annotations"];
+  return (
+    <section className="studio-material-command rounded-lg p-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-300">Immersive Canvas</p>
+          <h3 className="mt-1 text-xl font-black text-white">Mood Board Experience</h3>
+        </div>
+        <WorkspaceBadge value="PureRef Inspired" />
+      </div>
+      <div className="studio-mood-board-canvas relative mt-4 rounded-md border border-cyan-300/15 p-5">
+        <div className="relative grid h-full min-h-72 gap-4 md:grid-cols-3">
+          {notes.map((note, index) => (
+            <div key={note} className={cn(
+              "studio-hover-drift rounded-md border border-cyan-300/15 bg-slate-950/45 p-4 shadow-[0_18px_50px_rgba(0,0,0,0.22)]",
+              index === 1 && "md:translate-y-10",
+              index === 2 && "md:-translate-y-4",
+              index === 3 && "md:translate-y-16",
+              index === 4 && "md:translate-y-2"
+            )}>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-amber-200">{note}</p>
+              <p className="mt-3 text-sm leading-6 text-slate-300">Zoomable reference cluster prepared for annotations, lighting notes, source links, and future asset relationships.</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function ExperienceDesignWorkspace({ state, initialSection = "dashboard" }: { state: ExperienceDesignState; initialSection?: string }) {
   const resolvedSection = state.sections.some((section) => section.id === initialSection) ? initialSection : "dashboard";
   const [query, setQuery] = useState("");
@@ -135,6 +194,8 @@ export function ExperienceDesignWorkspace({ state, initialSection = "dashboard" 
           { label: "Runtime", value: "Not Published" }
         ]}
       />
+
+      <ExperienceShowcasePanel state={state} />
 
       <WorkspacePanel title="Ownership Boundary" icon={ShieldCheck}>
         <div className="grid gap-3 lg:grid-cols-3">
@@ -224,6 +285,7 @@ export function ExperienceDesignWorkspace({ state, initialSection = "dashboard" 
 
       {tab === "library" ? (
         <section className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
+          {currentSection.id === "mood-boards" ? <div className="lg:col-span-2 2xl:col-span-3"><MoodBoardCanvasPreview /></div> : null}
           {filteredRecords.map((record) => <ExperienceRecordCard key={record.id} state={state} record={record} />)}
           {!filteredRecords.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Experience Design records match this view.</p> : null}
         </section>

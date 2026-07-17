@@ -211,11 +211,11 @@ function ChapterDetail({ state, chapter, mode }: { state: ExperienceBibleState; 
       ) : null}
 
       {reading ? (
-        <WorkspacePanel title="Reading Mode" icon={BookOpen} className="bg-[#081322]/95">
-          <article className="mx-auto max-w-4xl space-y-6">
+        <WorkspacePanel title="Reading Mode" icon={BookOpen} className="studio-material-reading">
+          <article className="studio-reading-prose mx-auto max-w-4xl space-y-7">
             <p className="text-xl leading-9 text-slate-200">{chapter.summary}</p>
             {chapter.bodySections.map((section) => (
-              <section key={section.id} id={section.id} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-5">
+              <section key={section.id} id={section.id} className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-5 scroll-mt-24">
                 <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">{section.type.replaceAll("_", " ")}</p>
                 <h2 className="mt-2 text-2xl font-black text-white">{section.title}</h2>
                 <p className="mt-3 leading-7 text-slate-300">{section.content}</p>

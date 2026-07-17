@@ -25,7 +25,7 @@ export function WorkspaceBadge({ value, className }: { value: string; className?
 
 export function WorkspaceStatTile({ label, value, className }: { label: string; value: string | number; className?: string }) {
   return (
-    <div className={cn("rounded-md border border-cyan-300/10 bg-slate-950/45 p-4", className)}>
+    <div className={cn("studio-material-projection rounded-md p-4", className)}>
       <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">{label}</p>
       <p className="mt-2 text-2xl font-black text-white">{value}</p>
     </div>
@@ -34,7 +34,7 @@ export function WorkspaceStatTile({ label, value, className }: { label: string; 
 
 export function WorkspaceMiniStat({ label, value, className }: { label: string; value: string | number; className?: string }) {
   return (
-    <div className={cn("rounded-md border border-cyan-300/10 bg-slate-950/45 p-3", className)}>
+    <div className={cn("rounded-md border border-cyan-300/10 bg-slate-950/35 p-3 backdrop-blur", className)}>
       <p className="text-[0.65rem] uppercase tracking-[0.16em] text-slate-500">{label}</p>
       <p className="mt-1 truncate text-sm font-bold text-slate-100">{value}</p>
     </div>
@@ -51,7 +51,7 @@ export function WorkspaceProgressBar({ value, className }: { value: number; clas
 
 export function WorkspacePanel({ title, children, icon: Icon, className }: { title?: string; children: React.ReactNode; icon?: LucideIcon; className?: string }) {
   return (
-    <section className={cn("rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-4 shadow-glow", className)}>
+    <section className={cn("studio-material-command rounded-md p-4", className)}>
       {title ? (
         <div className="flex items-center gap-2">
           {Icon ? <Icon className="h-5 w-5 text-cyan-200" /> : null}
@@ -75,7 +75,8 @@ export function WorkspaceHeader({
   stats?: Array<{ label: string; value: string | number }>;
 }) {
   return (
-    <section className="grid gap-5 xl:grid-cols-[1fr_28rem]">
+    <section className="studio-material-command rounded-lg p-5 lg:p-7">
+      <div className="grid gap-5 xl:grid-cols-[1fr_28rem]">
       <div>
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">{eyebrow}</p>
         <h1 className="mt-3 text-5xl font-black tracking-tight text-white">{title}</h1>
@@ -88,13 +89,14 @@ export function WorkspaceHeader({
           ))}
         </div>
       ) : null}
+      </div>
     </section>
   );
 }
 
 export function WorkspaceSearchBar({ value, onChange, placeholder, className }: { value: string; onChange: (value: string) => void; placeholder: string; className?: string }) {
   return (
-    <div className={cn("flex items-center gap-3 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-3", className)}>
+    <div className={cn("studio-material-projection flex items-center gap-3 rounded-md p-3", className)}>
       <Search className="h-4 w-4 text-slate-500" />
       <input value={value} onChange={(event) => onChange(event.target.value)} className="h-10 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-slate-500" placeholder={placeholder} />
     </div>
@@ -103,7 +105,7 @@ export function WorkspaceSearchBar({ value, onChange, placeholder, className }: 
 
 export function WorkspaceTabs<T extends string>({ tabs, active, onChange, labels }: { tabs: T[]; active: T; onChange: (tab: T) => void; labels?: Partial<Record<T, string>> }) {
   return (
-    <div className="flex flex-wrap gap-2 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-2">
+    <div className="studio-material-projection flex flex-wrap gap-2 rounded-md p-2">
       {tabs.map((item) => (
         <button key={item} type="button" onClick={() => onChange(item)} className={cn("rounded-md px-3 py-2 text-sm font-bold capitalize transition", active === item ? "bg-cyan-300/20 text-white" : "text-slate-400 hover:bg-cyan-300/10 hover:text-slate-100")}>
           {labels?.[item] ?? item.replaceAll("_", " ")}
