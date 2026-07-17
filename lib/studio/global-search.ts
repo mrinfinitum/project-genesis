@@ -164,6 +164,25 @@ export async function buildStudioSearchIndex(): Promise<StudioSearchIndex> {
       status: experienceDesign.experienceBible.status,
       aliases: [part.id, part.title, part.summary, "DV-02", "Experience Bible"]
     })),
+    result({
+      id: `experience-bible-signature:${experienceDesign.experienceBible.signature.id}`,
+      type: "Experience Design" as const,
+      title: experienceDesign.experienceBible.signature.title,
+      subtitle: `Experience Bible / ${experienceDesign.experienceBible.signature.id} / ${experienceDesign.experienceBible.signature.status}`,
+      href: "/experience-design/bible#dv-02c-noveris-signature",
+      status: experienceDesign.experienceBible.signature.status,
+      aliases: [
+        experienceDesign.experienceBible.signature.id,
+        experienceDesign.experienceBible.signature.purpose,
+        experienceDesign.experienceBible.signature.signatureStatement,
+        experienceDesign.experienceBible.signature.expands.join(" "),
+        experienceDesign.experienceBible.signature.boundaries.join(" "),
+        experienceDesign.experienceBible.signature.tags.join(" "),
+        experienceDesign.experienceBible.signature.keywords.join(" "),
+        experienceDesign.experienceBible.signature.sections.map((section) => `${section.title} ${section.summary} ${section.content}`).join(" "),
+        experienceDesign.experienceBible.signature.futureRelationships.map((relationship) => `${relationship.id} ${relationship.label} ${relationship.notes}`).join(" ")
+      ]
+    }),
     ...experienceDesign.experienceBible.chapters.map((chapter) => {
       const part = experienceDesign.experienceBible.parts.find((item) => item.id === chapter.partId);
       return result({

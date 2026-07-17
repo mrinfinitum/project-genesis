@@ -94,6 +94,8 @@ async function main() {
   assert(search.diagnostics.sourceCollections.includes("experience design"), "Global search diagnostics must include Experience Design source collection.");
   const bibleSearch = await searchStudio("Technology serves humanity", 20);
   assert(bibleSearch.results.some((result) => result.type === "Experience Design" && result.href === "/experience-design/bible/chapter/core-creative-philosophy"), "Global search must return authored Experience Bible philosophy content.");
+  const signatureSearch = await searchStudio("The NOVERIS Signature", 20);
+  assert(signatureSearch.results.some((result) => result.type === "Experience Design" && result.href === "/experience-design/bible#dv-02c-noveris-signature"), "Global search must return DV-02C NOVERIS Signature content.");
 
   const canonicalRuntime = await buildCanonicalRuntimeExportPayload();
   assertNoExperienceRuntimeLeak("Canonical runtime", canonicalRuntime);
@@ -115,6 +117,7 @@ async function main() {
     reviewWorkflow: state.reviewWorkflow,
     searchReturned: search.returned,
     bibleSearchReturned: bibleSearch.returned,
+    signatureSearchReturned: signatureSearch.returned,
     runtimePublishing: state.runtimePublishing,
     engineExports: Object.fromEntries(engineExports.map((engineExport, index) => [targets[index], engineExport.metadata.validationStatus]))
   }, null, 2));

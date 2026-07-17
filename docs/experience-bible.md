@@ -6,6 +6,9 @@ Status: Draft
 Authored Draft: DV-02B v0.1  
 Status: Draft
 
+Signature Draft: DV-02C v0.1  
+Status: Draft
+
 The NOVERIS Experience Bible is the living creative reference for Project Genesis Studio. It is a structured Studio workspace, not a single markdown document and not a game implementation surface.
 
 ## What It Owns
@@ -68,6 +71,59 @@ Part I also establishes these draft visual-experience pillars:
 The canonical art-direction statement is: "A civilization worthy of humanity's future."
 
 The approved high-level brand relationship is that noveris.life is a primary brand benchmark. The Game should feel like a natural extension of the website through atmosphere, restraint, typography hierarchy, premium spacing, lighting philosophy, and brand tone, while adapting the brand for interactive use. The Game must not literally reproduce website layouts.
+
+## DV-02C The NOVERIS Signature
+
+DV-02C authors the draft visual signature of NOVERIS. It answers: "What makes a screenshot instantly recognizable as NOVERIS?"
+
+Signature statement:
+
+NOVERIS is recognized by monumental civilization set against an ever-present universe: calm, intelligent interfaces projected into celestial space; orbital geometry and deep scale; warm Civilization Gold carrying achievement and hope; restrained cyan analysis light; rare violet mystery; and a future that feels engineered, durable, beautiful, and worth building.
+
+DV-02C expands DS-01, DV-02A, and DV-02B without replacing existing chapters. It is not gameplay, implementation, rendering, CSS, design tokens, shader logic, component code, or engine-specific guidance. The signature should survive across Studio, Game, Website, Steam, Marketing, and Trailers independent of resolution, engine, platform, renderer, or UI framework.
+
+The DV-02C section defines:
+
+- The NOVERIS Signature
+- Monumental Civilization
+- The Universe Is The Hero
+- Celestial Geometry
+- Light As Civilization
+- Scale Before Detail
+- Calm Intelligence
+- Hopeful Futurism
+- Civilization Gold
+- The NOVERIS Test
+- Visual Checklist
+- Future Relationships
+
+Civilization Gold is a visual philosophy, not an economy value. It represents legacy, achievement, warmth, human accomplishment, guidance, and hope.
+
+The NOVERIS Test asks: if the logo disappeared, would someone still know this is NOVERIS? If not, the design has failed.
+
+The reusable DV-02C checklist asks:
+
+- Is the universe visible?
+- Is civilization celebrated?
+- Is the atmosphere optimistic?
+- Does the interface support the world?
+- Is scale immediately obvious?
+- Does lighting tell a story?
+- Does this feel calm?
+- Does this feel intelligent?
+- Does this feel monumental?
+- Would this still feel timeless in ten years?
+
+DV-02C names future relationships only and does not define them yet:
+
+- DV-03 Visual DNA
+- DV-04 Mood Boards
+- DS-02 Design Tokens
+- DS-03 Materials
+- DS-04 Motion
+- DS-05 Components
+- DS-06 Screen Library
+- ED-02 Studio Experience
 
 ## Approval
 

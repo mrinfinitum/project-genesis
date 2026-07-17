@@ -254,6 +254,49 @@ function ChapterDetail({ state, chapter, mode }: { state: ExperienceBibleState; 
   );
 }
 
+function SignaturePanel({ state }: { state: ExperienceBibleState }) {
+  const signature = state.signature;
+
+  return (
+    <WorkspacePanel title={signature.title} icon={FileText}>
+      <div id="dv-02c-noveris-signature" className="space-y-4 scroll-mt-24">
+        <div className="grid gap-3 md:grid-cols-4">
+          <WorkspaceMiniStat label="Release" value={`${signature.id} v${signature.version}`} />
+          <WorkspaceMiniStat label="Status" value={signature.status} />
+          <WorkspaceMiniStat label="Sections" value={signature.sections.length} />
+          <WorkspaceMiniStat label="Expands" value={signature.expands.join(" / ")} />
+        </div>
+        <section className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-4">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Signature Statement</p>
+          <p className="mt-2 text-sm leading-7 text-slate-200">{signature.signatureStatement}</p>
+        </section>
+        <div className="grid gap-3 lg:grid-cols-2">
+          {signature.sections.map((bodySection) => (
+            <section key={bodySection.id} id={bodySection.id} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-4 scroll-mt-24">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">{bodySection.type.replaceAll("_", " ")}</p>
+                  <h3 className="mt-1 text-lg font-black text-white">{bodySection.title}</h3>
+                </div>
+                <WorkspaceBadge value={bodySection.status} />
+              </div>
+              <p className="mt-2 text-sm font-bold text-slate-200">{bodySection.summary}</p>
+              <p className="mt-2 text-sm leading-6 text-slate-300">{bodySection.content}</p>
+            </section>
+          ))}
+        </div>
+        <section className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-4">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Future Relationships</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {signature.futureRelationships.map((relationship) => <WorkspaceBadge key={relationship.id} value={`${relationship.id} ${relationship.label}`} />)}
+          </div>
+          <p className="mt-3 text-sm leading-6 text-slate-400">These relationships are named for future Experience Design work only; DV-02C does not define them.</p>
+        </section>
+      </div>
+    </WorkspacePanel>
+  );
+}
+
 export function ExperienceBibleWorkspace({
   state,
   mode = "landing",
@@ -340,6 +383,8 @@ export function ExperienceBibleWorkspace({
                   {state.governanceRules.map((rule) => <p key={rule} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3 text-sm text-slate-300">{rule}</p>)}
                 </div>
               </WorkspacePanel>
+
+              {mode === "landing" ? <SignaturePanel state={state} /> : null}
 
               <WorkspacePanel title="noveris.life Reference Framework" icon={BookOpen}>
                 <div className="grid gap-3 lg:grid-cols-[1fr_18rem]">

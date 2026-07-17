@@ -84,13 +84,31 @@ export type ExperienceBibleChapter = {
 };
 
 export type ExperienceBibleRelease = {
-  id: "DV-02" | "DV-02B";
+  id: "DV-02" | "DV-02B" | "DV-02C";
   version: "0.1";
   status: "Draft";
   title: string;
   createdAt: string;
   chapterIds: string[];
   notes: string[];
+};
+
+export type ExperienceBibleSignature = {
+  id: "DV-02C";
+  title: "The NOVERIS Signature";
+  version: "0.1";
+  status: "Draft";
+  createdAt: string;
+  purpose: string;
+  signatureStatement: string;
+  expands: string[];
+  boundaries: string[];
+  tags: string[];
+  keywords: string[];
+  sections: ExperienceBibleBodySection[];
+  futureRelationships: Array<{ id: string; label: string; notes: string }>;
+  reviewNotes: string[];
+  changeHistory: ExperienceHistoryEntry[];
 };
 
 export type ExperienceBibleState = {
@@ -106,6 +124,7 @@ export type ExperienceBibleState = {
   chapters: ExperienceBibleChapter[];
   release: ExperienceBibleRelease;
   contentReleases: ExperienceBibleRelease[];
+  signature: ExperienceBibleSignature;
   governanceRules: string[];
   noverisLifeReferenceFramework: {
     enabled: true;
@@ -595,6 +614,95 @@ function section(type: ExperienceBibleSectionType, title: string, summary: strin
   };
 }
 
+function signatureSection(order: number, type: ExperienceBibleSectionType, title: string, summary: string, content: string): ExperienceBibleBodySection {
+  return {
+    id: `dv-02c-section-${String(order).padStart(2, "0")}-${slugify(title)}`,
+    type,
+    title,
+    summary,
+    content,
+    relationships: [],
+    status: "Draft"
+  };
+}
+
+export const experienceBibleSignature: ExperienceBibleSignature = {
+  id: "DV-02C",
+  title: "The NOVERIS Signature",
+  version: "0.1",
+  status: "Draft",
+  createdAt: "2026-07-17T00:00:00.000Z",
+  purpose: "Define the recurring visual identity that makes a NOVERIS screenshot recognizable before a logo, caption, or UI label is visible.",
+  signatureStatement: "NOVERIS is recognized by monumental civilization set against an ever-present universe: calm, intelligent interfaces projected into celestial space; orbital geometry and deep scale; warm Civilization Gold carrying achievement and hope; restrained cyan analysis light; rare violet mystery; and a future that feels engineered, durable, beautiful, and worth building.",
+  expands: ["DS-01", "DV-02A", "DV-02B"],
+  boundaries: [
+    "DV-02C is creative identity guidance, not gameplay.",
+    "DV-02C is not implementation, rendering, CSS, design tokens, component code, shader logic, or engine-specific instruction.",
+    "The signature must survive across Studio, Game, Website, Steam, Marketing, and Trailers independent of resolution, engine, platform, renderer, or UI framework."
+  ],
+  tags: ["experience-bible", "dv-02c", "noveris-signature", "visual-identity", "creative-direction"],
+  keywords: [
+    "NOVERIS Signature",
+    "monumental civilization",
+    "the universe is the hero",
+    "celestial geometry",
+    "light as civilization",
+    "scale before detail",
+    "calm intelligence",
+    "hopeful futurism",
+    "Civilization Gold",
+    "instantly recognizable"
+  ],
+  sections: [
+    signatureSection(1, "principle", "The NOVERIS Signature", "A cross-platform visual identity independent of renderer, resolution, and client framework.", "A NOVERIS screenshot should be recognizable even if the logo, route title, and labels disappear. The recurring signature is monumental civilization framed by an ever-present universe, calm intelligent systems, celestial geometry, purposeful light, and scale that arrives before detail. This signature must survive across Studio, Game, Website, Steam, Marketing, and Trailers without depending on Three.js, CSS, Roblox, Web, mobile layout, or any single renderer."),
+    signatureSection(2, "principle", "Monumental Civilization", "Civilization should feel engineered, intentional, timeless, precise, optimistic, and durable.", "NOVERIS architecture should never feel temporary. Civilizations should look like the accumulated work of generations: purposeful structures, knowledge made visible, durable infrastructure, ceremonial scale, and precise engineering. Architecture communicates purpose, knowledge, achievement, continuity, and scale before it communicates decoration."),
+    signatureSection(3, "principle", "The Universe Is The Hero", "The world remains visually dominant; the interface supports it.", "The universe is always the primary visual subject. Interfaces support the world, reveal context, and clarify consequence, but they never replace the world. Backgrounds remain meaningful, space remains visible, planets remain present, civilization remains present, and the interface should feel projected into the world rather than pasted over it."),
+    signatureSection(4, "principle", "Celestial Geometry", "Orbital and navigational geometry is part of the brand, not ornament.", "Celestial geometry is a canonical NOVERIS motif: orbital arcs, planet trajectories, constellation lines, navigation circles, gravitational geometry, projection grids, and stellar paths. These forms should recur as intentional brand language and should suggest systems, motion, discovery, and relationship rather than decorative sci-fi noise."),
+    signatureSection(5, "principle", "Light As Civilization", "Light carries story, progress, intelligence, distance, and mystery.", "Warm civilization light represents achievement, engineering, humanity, knowledge, and progress. Soft cyan represents interface, projection, AI, and analysis. Rare violet represents advanced energy, ancient technology, and rare discoveries. Darkness represents distance, scale, and mystery, not fear. Light should reveal what civilization has earned and what the universe still withholds."),
+    signatureSection(6, "principle", "Scale Before Detail", "Players should notice the world before buttons, statistics, or fine ornament.", "The first read should be the world: large skies, large planets, large structures, large distances, and civilization situated inside cosmic scale. Detail supports scale. UI density, buttons, statistics, and decorative fragments must not become the first impression."),
+    signatureSection(7, "principle", "Calm Intelligence", "NOVERIS should feel capable, thoughtful, strategic, and deliberate.", "The experience should never feel frantic. Complexity becomes elegant rather than chaotic. Information should feel organized by an intelligent civilization, not dumped by a dashboard. The player should feel calm, capable, strategic, thoughtful, and deliberate even when systems are deep."),
+    signatureSection(8, "do_do_not", "Hopeful Futurism", "The future is worth building.", "NOVERIS is not grimdark, decaying, rust-first, war-first, or resource-misery science fiction. Its future is built from prosperity, science, engineering, beauty, responsibility, and civilization. Tension may exist, but the core fantasy is constructive: a humane, intelligent future that players want to help create."),
+    signatureSection(9, "principle", "Civilization Gold", "Civilization Gold is a visual philosophy, not an economy value.", "Civilization Gold represents legacy, achievement, warmth, human accomplishment, guidance, and hope. It should recur as a recognizable visual identity for civilization-level progress and meaningful human achievement. It is not a token value, currency rule, or gameplay mechanic."),
+    signatureSection(10, "callout", "The NOVERIS Test", "If the logo disappeared, the work should still read as NOVERIS.", "Every future screen, illustration, cinematic, trailer, website page, and interface should pass one test: if the logo disappeared, would someone still know this is NOVERIS? If not, the design has failed and should return to the signature principles."),
+    signatureSection(11, "checklist", "Visual Checklist", "A reusable screen and art-direction review checklist.", "Every future screen should answer yes to these questions: Is the universe visible? Is civilization celebrated? Is the atmosphere optimistic? Does the interface support the world? Is scale immediately obvious? Does lighting tell a story? Does this feel calm? Does this feel intelligent? Does this feel monumental? Would this still feel timeless in ten years?"),
+    signatureSection(12, "reference", "Future Relationships", "DV-02C names future relationship points without defining them.", "DV-02C creates relationship placeholders for future work only: DV-03 Visual DNA, DV-04 Mood Boards, DS-02 Design Tokens, DS-03 Materials, DS-04 Motion, DS-05 Components, DS-06 Screen Library, and ED-02 Studio Experience. These future documents are not defined here.")
+  ],
+  futureRelationships: [
+    { id: "DV-03", label: "Visual DNA", notes: "Future relationship only; not defined in DV-02C." },
+    { id: "DV-04", label: "Mood Boards", notes: "Future relationship only; not defined in DV-02C." },
+    { id: "DS-02", label: "Design Tokens", notes: "Future relationship only; not defined in DV-02C." },
+    { id: "DS-03", label: "Materials", notes: "Future relationship only; not defined in DV-02C." },
+    { id: "DS-04", label: "Motion", notes: "Future relationship only; not defined in DV-02C." },
+    { id: "DS-05", label: "Components", notes: "Future relationship only; not defined in DV-02C." },
+    { id: "DS-06", label: "Screen Library", notes: "Future relationship only; not defined in DV-02C." },
+    { id: "ED-02", label: "Studio Experience", notes: "Future relationship only; not defined in DV-02C." }
+  ],
+  reviewNotes: ["Route DV-02C through Experience Design review before treating it as approved canonical guidance."],
+  changeHistory: [
+    {
+      id: "dv-02c-signature-created",
+      action: "created",
+      author: "Experience Design",
+      timestamp: "2026-07-17T00:00:00.000Z",
+      notes: "Created DV-02C The NOVERIS Signature as draft visual identity guidance."
+    }
+  ]
+};
+
+export const experienceBibleSignatureRelease: ExperienceBibleRelease = {
+  id: "DV-02C",
+  version: "0.1",
+  status: "Draft",
+  title: "The NOVERIS Signature",
+  createdAt: "2026-07-17T00:00:00.000Z",
+  chapterIds: [],
+  notes: [
+    "Defines the recurring visual identity that makes NOVERIS recognizable across Studio, Game, Website, Steam, Marketing, and Trailers.",
+    "Expands DS-01, DV-02A, and DV-02B without replacing existing chapters.",
+    "DV-02C is not gameplay, rendering, CSS, design tokens, implementation, runtime data, or an engine export contract."
+  ]
+};
+
 export const experienceBibleRelease: ExperienceBibleRelease = {
   id: "DV-02",
   version: "0.1",
@@ -642,7 +750,8 @@ export function getExperienceBibleState(): ExperienceBibleState {
     parts: experienceBibleParts,
     chapters: experienceBibleChapters,
     release: experienceBibleRelease,
-    contentReleases: [experienceBibleRelease, experienceBiblePartIRelease],
+    contentReleases: [experienceBibleRelease, experienceBiblePartIRelease, experienceBibleSignatureRelease],
+    signature: experienceBibleSignature,
     governanceRules: experienceBibleGovernanceRules,
     noverisLifeReferenceFramework: {
       enabled: true,

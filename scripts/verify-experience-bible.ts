@@ -32,6 +32,9 @@ function assertNoRuntimeLeak(label: string, value: unknown) {
   const text = JSON.stringify(value);
   assert(!/"experienceBible"\s*:/.test(text), `${label} leaked Experience Bible root data.`);
   assert(!/"DV-02"\s*:/.test(text), `${label} leaked DV-02 as runtime data.`);
+  assert(!text.includes("DV-02C"), `${label} leaked DV-02C signature data.`);
+  assert(!text.includes("The NOVERIS Signature"), `${label} leaked NOVERIS Signature data.`);
+  assert(!text.includes("Civilization Gold"), `${label} leaked visual identity guidance.`);
   assert(!/"bodySections"\s*:/.test(text), `${label} leaked Bible body sections.`);
 }
 
@@ -45,13 +48,111 @@ async function main() {
   assert(bible.parts.length === 7, `Expected 7 Bible parts; received ${bible.parts.length}.`);
   assert(bible.chapters.length === 65, `Expected 65 Bible chapters; received ${bible.chapters.length}.`);
   assert(bible.release.chapterIds.length === 65, "Bible release must include all 65 seeded chapters.");
-  assert(bible.contentReleases.length >= 2, "Bible must expose structural and authored content releases.");
+  assert(bible.contentReleases.length >= 3, "Bible must expose structural, authored, and signature content releases.");
   const partIRelease = bible.contentReleases.find((release) => release.id === "DV-02B");
   assert(partIRelease, "Missing DV-02B Part I authored content release.");
   assert(partIRelease.version === "0.1", "DV-02B must be version 0.1.");
   assert(partIRelease.status === "Draft", "DV-02B must remain Draft.");
   assert(partIRelease.chapterIds.length === 7, "DV-02B must include only Part I chapters 1-7.");
+  const signatureRelease = bible.contentReleases.find((release) => release.id === "DV-02C");
+  assert(signatureRelease, "Missing DV-02C NOVERIS Signature content release.");
+  assert(signatureRelease.version === "0.1", "DV-02C must be version 0.1.");
+  assert(signatureRelease.status === "Draft", "DV-02C must remain Draft.");
+  assert(signatureRelease.chapterIds.length === 0, "DV-02C must be a signature section, not a numbered chapter release.");
   assert(experience.experienceBible.chapters.length === 65, "Experience Design state must expose Bible chapters.");
+
+  assert(bible.signature.id === "DV-02C", "Signature section ID must be DV-02C.");
+  assert(bible.signature.title === "The NOVERIS Signature", "Signature section title must be The NOVERIS Signature.");
+  assert(bible.signature.version === "0.1", "Signature section must be version 0.1.");
+  assert(bible.signature.status === "Draft", "Signature section must remain Draft.");
+  assert(bible.signature.expands.join("|") === "DS-01|DV-02A|DV-02B", "DV-02C must expand DS-01, DV-02A, and DV-02B.");
+  for (const boundary of ["not gameplay", "not implementation", "rendering", "CSS", "design tokens", "engine-specific"]) {
+    assert(bible.signature.boundaries.join(" ").includes(boundary), `DV-02C boundary missing ${boundary}.`);
+  }
+  for (const context of ["Studio", "Game", "Website", "Steam", "Marketing", "Trailers"]) {
+    assert(bible.signature.boundaries.join(" ").includes(context), `DV-02C must survive across ${context}.`);
+  }
+  for (const independence of ["resolution", "engine", "platform", "renderer", "UI framework"]) {
+    assert(bible.signature.boundaries.join(" ").includes(independence), `DV-02C must be independent of ${independence}.`);
+  }
+  const expectedSignatureSectionTitles = [
+    "The NOVERIS Signature",
+    "Monumental Civilization",
+    "The Universe Is The Hero",
+    "Celestial Geometry",
+    "Light As Civilization",
+    "Scale Before Detail",
+    "Calm Intelligence",
+    "Hopeful Futurism",
+    "Civilization Gold",
+    "The NOVERIS Test",
+    "Visual Checklist",
+    "Future Relationships"
+  ];
+  assert(bible.signature.sections.length === expectedSignatureSectionTitles.length, `DV-02C must include ${expectedSignatureSectionTitles.length} sections.`);
+  for (const [index, title] of expectedSignatureSectionTitles.entries()) {
+    const section = bible.signature.sections[index];
+    assert(section.title === title, `DV-02C section ${index + 1} must be ${title}.`);
+    assert(section.status === "Draft", `DV-02C section ${title} must remain Draft.`);
+    assert(section.id.startsWith(`dv-02c-section-${String(index + 1).padStart(2, "0")}-`), `DV-02C section ${title} must use stable ID convention.`);
+  }
+  const signatureText = JSON.stringify(bible.signature);
+  for (const required of [
+    "monumental civilization",
+    "ever-present universe",
+    "calm, intelligent interfaces",
+    "orbital geometry",
+    "deep scale",
+    "Civilization Gold",
+    "engineered, durable, beautiful, and worth building",
+    "engineered",
+    "intentional",
+    "timeless",
+    "monumental",
+    "precise",
+    "optimistic",
+    "durable",
+    "accumulated work of generations",
+    "The universe is always the primary visual subject",
+    "projected into the world",
+    "orbital arcs",
+    "planet trajectories",
+    "constellation lines",
+    "navigation circles",
+    "gravitational geometry",
+    "projection grids",
+    "stellar paths",
+    "Warm civilization light represents achievement",
+    "Soft cyan represents interface",
+    "Rare violet represents advanced energy",
+    "Darkness represents distance",
+    "large skies",
+    "large planets",
+    "capable",
+    "strategic",
+    "grimdark",
+    "resource-misery",
+    "prosperity",
+    "science",
+    "engineering",
+    "beauty",
+    "responsibility",
+    "legacy",
+    "achievement",
+    "warmth",
+    "human accomplishment",
+    "guidance",
+    "hope",
+    "if the logo disappeared",
+    "Would this still feel timeless in ten years"
+  ]) {
+    assert(signatureText.includes(required), `DV-02C signature guidance missing ${required}.`);
+  }
+  const expectedFutureRelationships = ["DV-03", "DV-04", "DS-02", "DS-03", "DS-04", "DS-05", "DS-06", "ED-02"];
+  assert(bible.signature.futureRelationships.map((relationship) => relationship.id).join("|") === expectedFutureRelationships.join("|"), "DV-02C future relationships must match the approved list.");
+  for (const relationship of bible.signature.futureRelationships) {
+    assert(relationship.notes.includes("not defined in DV-02C"), `DV-02C must not define future relationship ${relationship.id}.`);
+  }
 
   const expectedPartIds = [
     "part-01-soul-of-noveris",
@@ -242,6 +343,12 @@ async function main() {
   assert(boundarySearch.results.some((result) => result.href === "/experience-design/bible/chapter/what-noveris-is-not"), "Search must index authored Part I boundary content.");
   const noverisLifeSearch = await searchStudio("noveris.life", 20);
   assert(noverisLifeSearch.results.some((result) => result.href === "/experience-design/bible/chapter/noveris-life-translation"), "Search must include noveris.life Bible reference chapter.");
+  const signatureSearch = await searchStudio("The NOVERIS Signature", 20);
+  assert(signatureSearch.results.some((result) => result.href === "/experience-design/bible#dv-02c-noveris-signature"), "Search must deep-link to DV-02C NOVERIS Signature.");
+  const goldSearch = await searchStudio("Civilization Gold", 20);
+  assert(goldSearch.results.some((result) => result.href === "/experience-design/bible#dv-02c-noveris-signature"), "Search must index Civilization Gold guidance.");
+  const logoSearch = await searchStudio("if the logo disappeared", 20);
+  assert(logoSearch.results.some((result) => result.href === "/experience-design/bible#dv-02c-noveris-signature"), "Search must index the NOVERIS Test.");
 
   assert(bible.noverisLifeReferenceFramework.enabled, "noveris.life reference framework must be enabled.");
   assert(bible.noverisLifeReferenceFramework.guidance.some((rule) => rule.includes("brand benchmark")), "noveris.life must be framed as brand benchmark.");
@@ -250,9 +357,12 @@ async function main() {
 
   assert(read("docs/experience-bible.md").includes("DV-02"), "Experience Bible documentation must document DV-02.");
   assert(read("docs/experience-bible.md").includes("DV-02B"), "Experience Bible documentation must document DV-02B.");
+  assert(read("docs/experience-bible.md").includes("DV-02C"), "Experience Bible documentation must document DV-02C.");
+  assert(read("docs/experience-bible.md").includes("The NOVERIS Signature"), "Experience Bible documentation must document The NOVERIS Signature.");
   assert(read("components/experience-bible-workspace.tsx").includes("aria-label=\"Experience Bible table of contents\""), "TOC must expose accessible label.");
   assert(read("components/experience-bible-workspace.tsx").includes("window.localStorage.setItem(storageKey"), "TOC expansion state must be remembered.");
   assert(read("components/experience-bible-workspace.tsx").includes("state.contentReleases"), "Bible versions view must expose all content releases.");
+  assert(read("components/experience-bible-workspace.tsx").includes("dv-02c-noveris-signature"), "Bible workspace must expose DV-02C signature panel.");
   assert(read("components/experience-bible-workspace.tsx").includes("focus-visible:outline"), "Bible workspace must expose visible focus styling.");
 
   const runtime = await buildCanonicalRuntimeExportPayload();
@@ -280,13 +390,23 @@ async function main() {
       status: partIRelease.status,
       chapters: partIRelease.chapterIds.length
     },
+    signatureRelease: {
+      id: signatureRelease.id,
+      version: signatureRelease.version,
+      status: signatureRelease.status,
+      sections: bible.signature.sections.length,
+      futureRelationships: bible.signature.futureRelationships.length
+    },
     searchResults: {
       futureWeBuild: search.returned,
       philosophy: philosophySearch.returned,
       pillars: pillarSearch.returned,
       artDirection: artDirectionSearch.returned,
       boundary: boundarySearch.returned,
-      noverisLife: noverisLifeSearch.returned
+      noverisLife: noverisLifeSearch.returned,
+      signature: signatureSearch.returned,
+      civilizationGold: goldSearch.returned,
+      noverisTest: logoSearch.returned
     },
     runtime: {
       contentVersion: runtime.metadata.contentVersion,
