@@ -1,0 +1,38 @@
+{
+  "architecture": {
+    "sections": 31,
+    "decisions": 24,
+    "outstandingDecisions": 1,
+    "healthScore": 100
+  },
+  "experience": {
+    "sections": 15,
+    "contentModels": 13,
+    "records": 14,
+    "bibleParts": 7,
+    "bibleChapters": 65,
+    "contentReleases": 11,
+    "inspirationBoards": 37,
+    "tokenLibraries": 20,
+    "tokens": 126,
+    "materialCategories": 15,
+    "materials": 104,
+    "motionCategories": 21,
+    "motions": 87,
+    "componentCategories": 13,
+    "components": 129,
+    "patternCategories": 15,
+    "patterns": 91,
+    "screenCategories": 9,
+    "screens": 65
+  },
+  "engineExports": {
+    "generic": "Ready",
+    "roblox": "Ready",
+    "web": "Ready",
+    "unity": "Ready",
+    "unreal": "Ready",
+    "godot": "Ready"
+  }
+}
+

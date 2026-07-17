@@ -1,0 +1,21 @@
+{
+  "architectureVersion": "1.0.0",
+  "runtimeVersion": "game-runtime-v1",
+  "contentVersion": 32,
+  "runtimeValidationStatus": "Ready",
+  "runtimeChecksum": "62140cbd4f9070f61175b2608e5d71dfb2d456a4db057c27b6c9d959b68fda48",
+  "experienceDesign": {
+    "frameworkId": "ED-01",
+    "frameworkVersion": "1.0",
+    "bible": "DV-02",
+    "visualDna": "DV-03",
+    "inspirationBoards": "DV-04",
+    "tokens": "DS-02",
+    "materials": "DS-03",
+    "motion": "DS-04",
+    "components": "DS-05",
+    "patterns": "DS-05A",
+    "screens": "DS-06"
+  }
+}
+

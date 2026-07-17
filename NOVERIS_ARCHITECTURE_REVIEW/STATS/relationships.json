@@ -1,0 +1,44 @@
+{
+  "sourceOfTruth": {
+    "studio": [
+      "canonical content",
+      "assets",
+      "architecture",
+      "runtime contracts",
+      "engine exports",
+      "Experience Design"
+    ],
+    "game": [
+      "rendering",
+      "client implementation",
+      "player state",
+      "platform-specific presentation"
+    ]
+  },
+  "experienceDesignFlow": [
+    "Experience Bible",
+    "Visual DNA",
+    "Inspiration Boards",
+    "Design Tokens",
+    "Materials",
+    "Motion",
+    "Components",
+    "Patterns",
+    "Screens"
+  ],
+  "runtimeFlow": [
+    "Studio Canonical Data",
+    "Canonical Runtime Builder",
+    "Runtime Validation",
+    "Engine Export Adapters",
+    "Game Clients"
+  ],
+  "engineTargets": [
+    "Generic",
+    "Roblox",
+    "Web",
+    "Unity",
+    "Unreal",
+    "Godot"
+  ]
+}
