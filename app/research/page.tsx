@@ -8,24 +8,7 @@ import type { ResearchNode } from "@/types/schema";
 
 export const dynamic = "force-dynamic";
 
-const researchArtworkByCue = [
-  { cues: ["labor", "workforce", "settlement", "population"], url: "/assets/game-art/asset_population_icon/asset_population_icon.png" },
-  { cues: ["industry", "construction", "production", "manufacturing"], url: "/assets/game-art/asset_industrial_management/asset_industrial_management.png" },
-  { cues: ["science", "research", "laboratory", "education"], url: "/assets/game-art/asset_research_icon/asset_research_icon.png" },
-  { cues: ["technology", "digital", "cyber", "ai", "quantum"], url: "/assets/game-art/asset_quantum_processor_icon/asset_quantum_processor_icon.png" },
-  { cues: ["trade", "commerce", "credits", "finance"], url: "/assets/game-art/asset_global_finance/asset_global_finance.png" },
-  { cues: ["energy", "power"], url: "/assets/game-art/asset_civilization_energy_icon/asset_civilization_energy_icon.png" },
-  { cues: ["space", "interstellar", "galaxy", "travel"], url: "/images/01-aurora-gate.png" },
-  { cues: ["government", "civic", "administration"], url: "/assets/game-art/asset_government_administration/asset_government_administration.png" }
-];
-
-function researchArtworkFor(node: ResearchNode) {
-  const text = [node.name, node.branch_id, node.primary_unlock_type, node.unlock_summary, node.space_system_unlocked, node.era].join(" ").toLowerCase();
-  return researchArtworkByCue.find((entry) => entry.cues.some((cue) => text.includes(cue)))?.url ?? "/assets/game-art/asset_research_icon/asset_research_icon.png";
-}
-
 function researchLibraryCard(node: ResearchNode): GeneratedLibraryCardRecord {
-  const thumbnailUrl = researchArtworkFor(node);
   return {
     id: node.id,
     name: node.name,
@@ -36,8 +19,6 @@ function researchLibraryCard(node: ResearchNode): GeneratedLibraryCardRecord {
     status: node.status || "Ready",
     href: `/research?record=${encodeURIComponent(node.id)}`,
     tone: "research",
-    thumbnailUrl,
-    mediumPreviewUrl: thumbnailUrl,
     focalPoint: "center"
   };
 }

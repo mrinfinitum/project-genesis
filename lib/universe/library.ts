@@ -78,80 +78,6 @@ const allowedBodyTypes = new Set([
   "Asteroid Belt"
 ]);
 
-const galaxyArtwork = "/images/20-civilization-horizon.png";
-const sectorArtwork = "/images/14-stellar-nursery.png";
-const systemArtwork = [
-  "/images/01-aurora-gate.png",
-  "/images/10-wormhole-survey.png",
-  "/images/10-black-hole-route.png",
-  "/images/05-nebula-ark.png",
-  "/images/18-migrating-arks.png"
-];
-const starArtwork = [
-  "/images/08-solar-forge.png",
-  "/images/14-stellar-nursery.png",
-  "/images/19-atlas-beacon-field.png"
-];
-const planetArtworkByCue = [
-  { cues: ["earth", "terrestrial", "forest", "habitable", "living", "organic", "temperate"], url: "/images/09-cradle-world.png" },
-  { cues: ["ocean", "water", "reef", "coral", "abyssal"], url: "/images/04-living-reef-orbit.png" },
-  { cues: ["ice", "frozen", "glacier", "snow", "arctic"], url: "/images/13-subglacial-ocean.png" },
-  { cues: ["desert", "dune", "arid", "mesa", "canyon"], url: "/images/16-desert-skyport.png" },
-  { cues: ["lava", "volcanic", "magma", "inferno", "molten"], url: "/images/06-crystal-storm-world.png" },
-  { cues: ["gas", "giant", "jovian", "storm"], url: "/images/07-gravity-harvesters.png" },
-  { cues: ["moon", "archive", "crater", "dead", "barren"], url: "/images/03-archive-moon.png" },
-  { cues: ["asteroid", "belt", "mining"], url: "/images/03-ring-miner-convoy.png" },
-  { cues: ["artificial", "machine", "ring", "ancient"], url: "/images/15-ancient-ringworld.png" },
-  { cues: ["void", "exotic", "quantum", "anomaly"], url: "/images/17-quantum-obelisk.png" },
-  { cues: ["toxic", "crystal", "storm"], url: "/images/06-crystal-storm-world.png" }
-];
-const planetArtworkFallbacks = [
-  "/images/09-lost-garden-orbit.png",
-  "/images/02-rogue-planet-camps.png",
-  "/images/12-terraforming-mirrors.png",
-  "/images/04-ancient-machine-moon.png"
-];
-const discoveryArtworkByCategory: Record<string, string> = {
-  flora: "/images/02-biome-cathedral.png",
-  fauna: "/images/07-ocean-leviathan-scan.png",
-  "living-systems": "/images/04-living-reef-orbit.png",
-  elements: "/images/06-crystal-storm-world.png",
-  "rare-matter": "/images/06-crystal-storm-world.png",
-  "exotic-matter": "/images/17-quantum-obelisk.png",
-  artifacts: "/images/15-ancient-ringworld.png",
-  "ancient-alien-technology": "/images/04-ancient-machine-moon.png",
-  ruins: "/images/03-archive-moon.png",
-  signals: "/images/01-aurora-gate.png",
-  anomalies: "/images/10-black-hole-route.png"
-};
-const civilizationArtwork = [
-  "/images/20-civilization-horizon.png",
-  "/images/11-night-side-megacity.png",
-  "/images/06-dawn-colony-ridge.png",
-  "/images/01-orbital-elevator.png"
-];
-
-function stableIndex(seed: string | null | undefined, length: number) {
-  if (length <= 0) return 0;
-  const text = String(seed ?? "");
-  let hash = 2166136261;
-  for (let index = 0; index < text.length; index += 1) {
-    hash ^= text.charCodeAt(index);
-    hash = Math.imul(hash, 16777619);
-  }
-  return (hash >>> 0) % length;
-}
-
-function pickStable<T>(items: T[], seed: string | null | undefined) {
-  return items[stableIndex(seed, items.length)];
-}
-
-function artworkFromCue(text: string, fallbackSeed: string) {
-  const normalized = text.toLowerCase();
-  const match = planetArtworkByCue.find((entry) => entry.cues.some((cue) => normalized.includes(cue)));
-  return match?.url ?? pickStable(planetArtworkFallbacks, fallbackSeed);
-}
-
 function compactCount(value: number, singular: string, plural = `${singular}s`) {
   return `${value.toLocaleString()} ${value === 1 ? singular : plural}`;
 }
@@ -284,9 +210,6 @@ export function getUniverseLibraryData(): UniverseLibraryData {
         readiness: "Ready",
         href: `/galaxy?record=${encodeURIComponent(galaxy.id)}`,
         previewTone: "galaxy",
-        thumbnailUrl: galaxyArtwork,
-        mediumPreviewUrl: galaxyArtwork,
-        focalPoint: "center",
         meta: [{ label: "Export", value: "Ready" }]
       };
     });
@@ -308,9 +231,6 @@ export function getUniverseLibraryData(): UniverseLibraryData {
         readiness: "Ready",
         href: `/sector-map?record=${encodeURIComponent(sector.id)}`,
         previewTone: "sector",
-        thumbnailUrl: sectorArtwork,
-        mediumPreviewUrl: sectorArtwork,
-        focalPoint: "center",
         meta: [{ label: "Export", value: "Ready" }]
       };
     });
@@ -330,9 +250,6 @@ export function getUniverseLibraryData(): UniverseLibraryData {
       readiness: "Ready",
       href: `/star-system-map?record=${encodeURIComponent(system.id)}`,
       previewTone: "system",
-      thumbnailUrl: pickStable(systemArtwork, system.id),
-      mediumPreviewUrl: pickStable(systemArtwork, system.id),
-      focalPoint: "center",
       meta: [{ label: "Export", value: "Ready" }]
     }));
 
@@ -351,9 +268,6 @@ export function getUniverseLibraryData(): UniverseLibraryData {
       readiness: "Ready",
       href: `/celestial-bodies?record=${encodeURIComponent(star.id)}`,
       previewTone: "star",
-      thumbnailUrl: pickStable(starArtwork, star.id),
-      mediumPreviewUrl: pickStable(starArtwork, star.id),
-      focalPoint: "center",
       meta: [{ label: "Export", value: "Ready" }]
     }));
 
@@ -372,9 +286,6 @@ export function getUniverseLibraryData(): UniverseLibraryData {
       readiness: "Ready",
       href: `/planets?record=${encodeURIComponent(body.id)}`,
       previewTone: "planet",
-      thumbnailUrl: artworkFromCue([body.name, body.celestial_body_type, body.planet_class, body.planet_subclass, body.biome, body.notes].filter(Boolean).join(" "), body.id),
-      mediumPreviewUrl: artworkFromCue([body.name, body.celestial_body_type, body.planet_class, body.planet_subclass, body.biome, body.notes].filter(Boolean).join(" "), body.id),
-      focalPoint: "center",
       meta: [{ label: "Export", value: "Ready" }]
     }));
 
@@ -391,9 +302,6 @@ export function getUniverseLibraryData(): UniverseLibraryData {
       readiness: discovery.publicationStatus === "published" || discovery.publicationStatus === "approved" ? "Ready" : "Not Published",
       href: `/discovery-journal?record=${encodeURIComponent(discovery.id)}`,
       previewTone: "discovery",
-      thumbnailUrl: discoveryArtworkByCategory[discovery.categoryId] ?? pickStable(planetArtworkFallbacks, discovery.id),
-      mediumPreviewUrl: discoveryArtworkByCategory[discovery.categoryId] ?? pickStable(planetArtworkFallbacks, discovery.id),
-      focalPoint: "center",
       meta: [{ label: "Export", value: discovery.publicationStatus === "hidden" ? "Not Published" : "Ready" }]
     }));
 
@@ -412,9 +320,6 @@ export function getUniverseLibraryData(): UniverseLibraryData {
       readiness: "Ready",
       href: `/civilizations?record=${encodeURIComponent(civilization.id)}`,
       previewTone: "civilization",
-      thumbnailUrl: pickStable(civilizationArtwork, civilization.id),
-      mediumPreviewUrl: pickStable(civilizationArtwork, civilization.id),
-      focalPoint: "center",
       meta: [{ label: "Export", value: "Ready" }]
     }));
 
