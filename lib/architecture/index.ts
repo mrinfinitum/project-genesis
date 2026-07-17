@@ -1,5 +1,6 @@
 import { buildCanonicalRuntimeExportPayload } from "@/lib/runtime/game-runtime";
 import { ARCHITECTURE_VERSION } from "@/lib/architecture/version";
+import { buildCoreArchitectureAudit, type CoreArchitectureAudit, validateCoreArchitectureAudit } from "@/lib/architecture/core-audit";
 
 export type ArchitectureSectionStatus = "Current" | "Needs Review" | "Draft" | "Outdated";
 export type ArchitectureDecisionStatus = "Accepted" | "Proposed" | "Superseded" | "Needs Review";
@@ -55,6 +56,7 @@ export type ArchitectureState = {
   decisions: ArchitectureDecision[];
   recentDecisions: ArchitectureDecision[];
   outstandingDecisions: ArchitectureDecision[];
+  coreArchitectureAudit: CoreArchitectureAudit;
   searchTags: string[];
   codexHandoffRule: string;
   runtimeSafetyRule: string;
@@ -232,11 +234,19 @@ export function validateArchitectureState(state: ArchitectureState): Architectur
   if (!state.runtimeSafetyRule.includes("not runtime gameplay")) {
     issues.push({ severity: "error", code: "missing_runtime_safety_rule", message: "Architecture must state that it is documentation and not runtime gameplay.", records: ["runtimeSafetyRule"] });
   }
+  for (const issue of validateCoreArchitectureAudit(state.coreArchitectureAudit, [])) {
+    issues.push({ severity: "error", code: "invalid_core_architecture_audit", message: issue, records: ["coreArchitectureAudit"] });
+  }
   return issues;
 }
 
 export async function getArchitectureState(): Promise<ArchitectureState> {
   const runtime = await buildCanonicalRuntimeExportPayload();
+  const coreArchitectureAudit = buildCoreArchitectureAudit({
+    architectureVersion: ARCHITECTURE_VERSION,
+    runtimeVersion: runtime.metadata.schemaVersion,
+    contentVersion: runtime.metadata.contentVersion
+  });
   const outstanding = architectureDecisions.filter((decision) => decision.status === "Proposed" || decision.status === "Needs Review");
   const currentSections = architectureSections.filter((item) => item.status === "Current").length;
   const healthScore = Math.round((currentSections / architectureSections.length) * 100);
@@ -256,6 +266,7 @@ export async function getArchitectureState(): Promise<ArchitectureState> {
     decisions: architectureDecisions,
     recentDecisions: architectureDecisions.slice(0, 6),
     outstandingDecisions: outstanding,
+    coreArchitectureAudit,
     searchTags: ["Topic", "System", "Client", "Decision", "Component", "Economy", "AI", "Runtime", "Mobile"],
     codexHandoffRule: "Every generated Codex prompt should begin with: Read Architecture Workspace. Follow Architecture. If implementation conflicts with Architecture: Architecture wins.",
     runtimeSafetyRule: "Architecture is authoritative project documentation, not runtime gameplay. Only explicit canonical gameplay definitions become runtime."

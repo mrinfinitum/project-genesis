@@ -1,12 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { BookOpen, CheckCircle2, FileText, GitBranch, Landmark, Search, ShieldCheck, TriangleAlert } from "lucide-react";
+import { BookOpen, CheckCircle2, FileText, GitBranch, Landmark, Network, Search, ShieldCheck, TriangleAlert } from "lucide-react";
 import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, WorkspaceSearchBar, WorkspaceStatTile, WorkspaceTabs } from "@/components/ui/workspace";
 import type { ArchitectureDecision, ArchitectureSection, ArchitectureState } from "@/lib/architecture";
 import { cn } from "@/lib/utils";
 
-type ArchitectureTab = "sections" | "decisions" | "standards" | "clients";
+type ArchitectureTab = "sections" | "decisions" | "standards" | "clients" | "audit";
 
 function statusTone(status: string) {
   if (/accepted|current|healthy/i.test(status)) return "border-emerald-300/35 bg-emerald-400/10 text-emerald-100";
@@ -62,6 +62,7 @@ function DecisionCard({ decision }: { decision: ArchitectureDecision }) {
 }
 
 function ArchitectureHealth({ state }: { state: ArchitectureState }) {
+  const blockers = state.coreArchitectureAudit.healthMetrics.find((metric) => metric.id === "game_ingestion_blockers")?.value ?? 0;
   return (
     <WorkspacePanel title="Architecture Health" icon={ShieldCheck}>
       <div className="grid gap-3 md:grid-cols-4">
@@ -69,6 +70,7 @@ function ArchitectureHealth({ state }: { state: ArchitectureState }) {
         <WorkspaceStatTile label="Sections" value={state.sections.length} />
         <WorkspaceStatTile label="Decisions" value={state.decisions.length} />
         <WorkspaceStatTile label="Outstanding" value={state.outstandingDecisions.length} />
+        <WorkspaceStatTile label="Blockers" value={blockers} />
       </div>
       <div className="mt-4 rounded-md border border-cyan-300/10 bg-slate-950/45 p-4">
         <div className="flex items-center gap-3">
@@ -77,6 +79,42 @@ function ArchitectureHealth({ state }: { state: ArchitectureState }) {
         </div>
         <p className="mt-2 text-sm leading-6 text-slate-300">{state.codexHandoffRule}</p>
         <p className="mt-2 text-sm leading-6 text-slate-400">{state.runtimeSafetyRule}</p>
+      </div>
+    </WorkspacePanel>
+  );
+}
+
+function CoreAuditPanel({ state }: { state: ArchitectureState }) {
+  const audit = state.coreArchitectureAudit;
+  const needsReview = audit.healthMetrics.filter((metric) => metric.status !== "Healthy");
+  return (
+    <WorkspacePanel title="Core Architecture Audit" icon={Network}>
+      <div className="grid gap-3 md:grid-cols-4">
+        <WorkspaceStatTile label="Ownership Rows" value={audit.ownershipMatrix.length} />
+        <WorkspaceStatTile label="Dependency Edges" value={audit.dependencyGraph.length} />
+        <WorkspaceStatTile label="Runtime Roots" value={audit.runtimeRootFieldInventory.length} />
+        <WorkspaceStatTile label="Gaps" value={audit.missingFoundationGaps.length} />
+      </div>
+      <div className="mt-4 grid gap-3 lg:grid-cols-2">
+        <div className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-4">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Needs Review</p>
+          <div className="mt-3 space-y-2">
+            {needsReview.map((metric) => (
+              <div key={metric.id} className="flex items-center justify-between gap-3 rounded-md border border-cyan-300/10 px-3 py-2">
+                <span className="text-sm font-bold text-slate-300">{metric.label}</span>
+                <WorkspaceBadge value={`${metric.value}`} />
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-4">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Safe Remediation</p>
+          <div className="mt-3 space-y-2">
+            {audit.safeRemediationPerformed.map((item) => (
+              <p key={item} className="rounded-md border border-cyan-300/10 px-3 py-2 text-sm text-slate-300">{item}</p>
+            ))}
+          </div>
+        </div>
       </div>
     </WorkspacePanel>
   );
@@ -138,6 +176,8 @@ export function ArchitectureWorkspace({ state }: { state: ArchitectureState }) {
         <ArchitectureHealth state={state} />
       </section>
 
+      <CoreAuditPanel state={state} />
+
       <section className="grid gap-4 lg:grid-cols-3">
         <WorkspacePanel title="Recent Decisions" icon={GitBranch}>
           <div className="space-y-3">
@@ -172,7 +212,7 @@ export function ArchitectureWorkspace({ state }: { state: ArchitectureState }) {
 
       <WorkspaceSearchBar value={query} onChange={setQuery} placeholder="Search by topic, system, client, decision, component, economy, AI, runtime, or mobile" />
       <div className="flex flex-wrap items-center gap-3">
-        <WorkspaceTabs tabs={["sections", "decisions", "standards", "clients"]} active={tab} onChange={setTab} />
+        <WorkspaceTabs tabs={["sections", "decisions", "standards", "clients", "audit"]} active={tab} onChange={setTab} />
         <div className="flex items-center gap-2 rounded-md border border-cyan-300/15 bg-[#07101e]/85 px-3 py-2">
           <Search className="h-4 w-4 text-slate-500" />
           <select value={category} onChange={(event) => setCategory(event.target.value)} className="bg-transparent text-sm font-bold text-slate-200 outline-none">
@@ -199,6 +239,55 @@ export function ArchitectureWorkspace({ state }: { state: ArchitectureState }) {
       {tab === "clients" ? (
         <section className="grid gap-4 lg:grid-cols-2">
           {clientSections.map((section) => <SectionCard key={section.id} section={section} />)}
+        </section>
+      ) : null}
+      {tab === "audit" ? (
+        <section className="space-y-4">
+          <WorkspacePanel title="Ownership Matrix" icon={ShieldCheck}>
+            <div className="grid gap-3 lg:grid-cols-2">
+              {state.coreArchitectureAudit.ownershipMatrix.map((row) => (
+                <article key={row.domain} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-xs font-black uppercase tracking-[0.16em] text-cyan-300">{row.canonicalOwner}</p>
+                      <h3 className="mt-1 font-black text-white">{row.domain}</h3>
+                    </div>
+                    <WorkspaceBadge value={row.runtimePublisher} />
+                  </div>
+                  <p className="mt-2 text-sm text-slate-400">{row.publicExportedData.join(", ")}</p>
+                </article>
+              ))}
+            </div>
+          </WorkspacePanel>
+          <WorkspacePanel title="Dependency Graph" icon={GitBranch}>
+            <div className="grid gap-3 lg:grid-cols-2">
+              {state.coreArchitectureAudit.dependencyGraph.map((edge) => (
+                <article key={`${edge.from}-${edge.to}`} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-black text-white">{edge.from}</span>
+                    <span className="text-cyan-300">-&gt;</span>
+                    <span className="font-black text-white">{edge.to}</span>
+                    <WorkspaceBadge value={edge.kind} />
+                  </div>
+                  <p className="mt-2 text-sm text-slate-400">{edge.reason}</p>
+                </article>
+              ))}
+            </div>
+          </WorkspacePanel>
+          <WorkspacePanel title="Prioritized Gaps" icon={TriangleAlert}>
+            <div className="grid gap-3 lg:grid-cols-2">
+              {state.coreArchitectureAudit.missingFoundationGaps.map((gap) => (
+                <article key={gap.id} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="font-black text-white">{gap.title}</h3>
+                    <WorkspaceBadge value={gap.priority} />
+                  </div>
+                  <p className="mt-2 text-sm text-slate-400">{gap.reason}</p>
+                  <p className="mt-2 text-sm text-cyan-100">{gap.recommendedFollowUp}</p>
+                </article>
+              ))}
+            </div>
+          </WorkspacePanel>
         </section>
       ) : null}
 
