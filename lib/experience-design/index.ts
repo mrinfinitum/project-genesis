@@ -828,7 +828,7 @@ export const experienceReviewWorkflow: ExperienceDesignStatus[] = ["Draft", "In 
 export const experienceDesignSections: ExperienceDesignSection[] = [
   { id: "dashboard", label: "Dashboard", description: "Creative direction command center for ED-01.", route: EXPERIENCE_DESIGN_ROUTE, kinds: [] },
   { id: "bible", label: "Experience Bible", description: "Canonical chapters, references, annotations, and creative principles.", route: `${EXPERIENCE_DESIGN_ROUTE}/bible`, kinds: ["experience_bible"] },
-  { id: "inspiration-boards", label: "Inspiration Boards", description: "Canonical visual memory, reference boards, annotations, relationships, presentation mode, and creative review.", route: `${EXPERIENCE_DESIGN_ROUTE}/inspiration-boards`, kinds: ["mood_board"] },
+  { id: "inspiration-wall", label: "Inspiration Wall", description: "Content-first local image wall powered by public/images with masonry browsing, viewer mode, search, palettes, and lightweight metadata on demand.", route: `${EXPERIENCE_DESIGN_ROUTE}/inspiration-wall`, kinds: ["mood_board"] },
   { id: "concepts", label: "Concept Library", description: "Versioned concept art, illustration, interface, material, and motion references.", route: `${EXPERIENCE_DESIGN_ROUTE}/concepts`, kinds: ["concept"] },
   { id: "screens", label: "Screen Library", description: "DS-06 canonical semantic screen definitions for NOVERIS purpose, composition, states, accessibility, relationships, review, and future renderer interpretation without implementation ownership.", route: `${EXPERIENCE_DESIGN_ROUTE}/screens`, kinds: ["screen_definition"] },
   { id: "tokens", label: "Design Tokens", description: "DS-02 canonical semantic token libraries for NOVERIS meaning, relationships, review, search, and future renderer consumption.", route: `${EXPERIENCE_DESIGN_ROUTE}/tokens`, kinds: ["design_token_collection"] },
@@ -2500,7 +2500,7 @@ export const inspirationBoardLibrary: ExperienceInspirationBoardLibrary = {
   version: "0.1",
   status: "Draft",
   purpose: "The canonical visual memory of NOVERIS. Every approved image, concept, photograph, render, illustration, architectural study, lighting reference, typography example, cinematic frame, interface reference, and composition study should ultimately live here.",
-  workspaceRoute: `${EXPERIENCE_DESIGN_ROUTE}/inspiration-boards`,
+  workspaceRoute: `${EXPERIENCE_DESIGN_ROUTE}/inspiration-wall`,
   categories: inspirationBoardCategories,
   boards: inspirationBoards,
   referenceModelFields: [

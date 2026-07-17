@@ -1,38 +1,36 @@
 "use client";
 
 import Link from "next/link";
-import type { ComponentType } from "react";
-import { useMemo, useState } from "react";
+import type { ChangeEvent, ComponentType } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Archive,
   BookOpen,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
   Clock3,
   Eye,
   FileText,
   GalleryHorizontalEnd,
   History,
-  Link2,
+  ImageIcon,
+  Info,
   Layers3,
   Library,
   MessageSquareText,
-  MousePointer2,
   Palette,
-  PenLine,
   Presentation,
   Route,
   Search,
   ShieldCheck,
-  Settings,
   Sparkles,
-  Trash2,
-  Type,
   UploadCloud,
-  Users,
-  ZoomIn
+  X,
 } from "lucide-react";
 import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, WorkspaceSearchBar, WorkspaceStatTile, WorkspaceTabs } from "@/components/ui/workspace";
-import type { ExperienceComponentDefinition, ExperienceDesignKind, ExperienceDesignRecord, ExperienceDesignSection, ExperienceDesignState, ExperienceDesignToken, ExperienceInspirationBoard, ExperienceInteractionPatternDefinition, ExperienceMaterialDefinition, ExperienceMotionDefinition, ExperienceScreenDefinition } from "@/lib/experience-design";
+import type { ExperienceComponentDefinition, ExperienceDesignKind, ExperienceDesignRecord, ExperienceDesignSection, ExperienceDesignState, ExperienceDesignToken, ExperienceInteractionPatternDefinition, ExperienceMaterialDefinition, ExperienceMotionDefinition, ExperienceScreenDefinition } from "@/lib/experience-design";
+import type { InspirationWallImage, InspirationWallManifest } from "@/lib/experience-design/inspiration-wall";
 import { cn } from "@/lib/utils";
 
 type ExperienceTab = "dashboard" | "library" | "models" | "reviews" | "history";
@@ -40,7 +38,7 @@ type ExperienceTab = "dashboard" | "library" | "models" | "reviews" | "history";
 const sectionIcons: Record<string, ComponentType<{ className?: string }>> = {
   dashboard: Palette,
   bible: BookOpen,
-  "inspiration-boards": GalleryHorizontalEnd,
+  "inspiration-wall": GalleryHorizontalEnd,
   concepts: Sparkles,
   screens: Layers3,
   tokens: Palette,
@@ -137,124 +135,253 @@ function ExperienceShowcasePanel({ state }: { state: ExperienceDesignState }) {
   );
 }
 
-function InspirationBoardCanvasPreview({ state }: { state: ExperienceDesignState }) {
-  const notes = ["Lighting", "Composition", "Atmosphere", "Scale", "Visual DNA"];
+function InspirationWallImageTile({
+  image,
+  selected,
+  onSelect,
+  onOpen
+}: {
+  image: InspirationWallImage;
+  selected: boolean;
+  onSelect: () => void;
+  onOpen: () => void;
+}) {
   return (
-    <section className="relative min-h-[28rem] overflow-hidden rounded-2xl border border-white/10 bg-[radial-gradient(circle_at_18%_12%,rgba(253,214,114,0.18),transparent_28%),radial-gradient(circle_at_74%_22%,rgba(92,229,255,0.14),transparent_30%),linear-gradient(135deg,rgba(246,241,226,0.10),rgba(9,17,31,0.94)_35%,rgba(4,8,17,0.98))] p-5 shadow-[0_30px_100px_rgba(0,0,0,0.42)]">
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-full border border-white/10 bg-slate-950/35 px-4 py-3 backdrop-blur-xl">
+    <button
+      type="button"
+      onClick={onSelect}
+      onDoubleClick={onOpen}
+      className={cn(
+        "group mb-3 block w-full break-inside-avoid overflow-hidden rounded-lg bg-slate-950 text-left shadow-[0_18px_55px_rgba(0,0,0,0.30)] ring-1 ring-white/5 transition hover:ring-cyan-200/35 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-200",
+        selected && "ring-2 ring-cyan-200/70"
+      )}
+      aria-label={`Select ${image.title}`}
+    >
+      <img
+        src={image.publicUrl}
+        alt={image.title}
+        width={image.width}
+        height={image.height}
+        loading="lazy"
+        decoding="async"
+        className="h-auto w-full bg-slate-950 object-cover"
+        style={{ aspectRatio: `${image.width} / ${image.height}` }}
+      />
+      <span className="sr-only">{image.filename}</span>
+    </button>
+  );
+}
+
+function InspirationWallViewer({
+  image,
+  index,
+  total,
+  onClose,
+  onPrevious,
+  onNext,
+  onMetadata
+}: {
+  image: InspirationWallImage;
+  index: number;
+  total: number;
+  onClose: () => void;
+  onPrevious: () => void;
+  onNext: () => void;
+  onMetadata: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-[80] flex flex-col bg-black/96 text-white" role="dialog" aria-modal="true" aria-label={`${image.title} viewer`}>
+      <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
         <div className="min-w-0">
-          <p className="text-xs font-black uppercase tracking-[0.22em] text-cyan-200">{state.inspirationBoards.id} / Canvas</p>
-          <h3 className="truncate text-lg font-black text-white">NOVERIS Inspiration Wall</h3>
+          <p className="truncate text-sm font-black">{image.title}</p>
+          <p className="text-xs text-slate-500">{index + 1} / {total}</p>
         </div>
-        <div className="flex flex-wrap items-center gap-2 text-xs font-bold text-slate-300">
-          <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-3 py-1"><Users className="h-3.5 w-3.5 text-cyan-200" /> Creative Direction</span>
-          <button type="button" className="rounded-full border border-emerald-300/25 bg-emerald-400/10 px-3 py-1 text-emerald-100">Publish</button>
-          <button type="button" className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-slate-100">Export</button>
-          <button type="button" aria-label="Board settings" className="grid h-8 w-8 place-items-center rounded-full border border-white/10 bg-white/5 text-slate-200"><Settings className="h-4 w-4" /></button>
+        <div className="flex items-center gap-2">
+          <button type="button" onClick={onMetadata} className="rounded-md border border-white/15 px-3 py-2 text-xs font-bold text-slate-200 hover:bg-white/10"><Info className="inline h-4 w-4" /> Metadata</button>
+          <button type="button" onClick={onClose} className="grid h-9 w-9 place-items-center rounded-md border border-white/15 hover:bg-white/10" aria-label="Close viewer"><X className="h-5 w-5" /></button>
         </div>
       </div>
-      <div className="mt-5 flex gap-4">
-        <div className="sticky top-4 hidden h-max shrink-0 rounded-full border border-white/10 bg-slate-950/35 p-2 backdrop-blur-xl md:grid">
-          {[MousePointer2, UploadCloud, Palette, Type, Link2, PenLine, ZoomIn, Presentation, Trash2].map((Icon, index) => (
-            <button key={index} type="button" className="grid h-10 w-10 place-items-center rounded-full text-slate-300 transition hover:bg-cyan-300/15 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-200">
-              <Icon className="h-4 w-4" />
-            </button>
-          ))}
-        </div>
-        <div className="min-w-0 flex-1">
-          <div className="mb-4 flex flex-wrap items-center gap-2">
-            {["Upload", "Color", "Note", "Text", "Link", "Draw", "Zoom", "Present"].map((action) => (
-              <button key={action} type="button" className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-slate-200 backdrop-blur transition hover:border-cyan-200/40 hover:bg-cyan-300/10 hover:text-white">
-                {action}
-              </button>
-            ))}
-          </div>
-          <div className="columns-1 gap-4 sm:columns-2 xl:columns-3 2xl:columns-4">
-            {notes.map((note, index) => (
-              <div key={note} className={cn(
-                "group mb-4 break-inside-avoid overflow-hidden rounded-2xl bg-white/[0.065] shadow-[0_22px_60px_rgba(0,0,0,0.24)] ring-1 ring-white/10 transition duration-300 hover:-translate-y-1 hover:bg-white/[0.09] hover:shadow-[0_28px_80px_rgba(0,0,0,0.34)]",
-                index === 0 && "min-h-72",
-                index === 1 && "min-h-96",
-                index === 2 && "min-h-64",
-                index === 3 && "min-h-80",
-                index === 4 && "min-h-[26rem]"
-              )}>
-                <div className={cn(
-                  "h-full min-h-[inherit] bg-[radial-gradient(circle_at_24%_20%,rgba(253,214,114,0.28),transparent_32%),radial-gradient(circle_at_78%_30%,rgba(92,229,255,0.20),transparent_35%),linear-gradient(145deg,rgba(8,15,28,0.98),rgba(20,31,52,0.78))] p-5",
-                  index === 2 && "bg-[radial-gradient(circle_at_24%_20%,rgba(120,255,196,0.22),transparent_32%),linear-gradient(145deg,rgba(9,16,31,0.98),rgba(32,42,56,0.76))]",
-                  index === 3 && "bg-[radial-gradient(circle_at_72%_26%,rgba(168,118,255,0.22),transparent_36%),linear-gradient(145deg,rgba(7,12,27,0.98),rgba(28,30,60,0.76))]"
-                )}>
-                  <div className="flex h-full min-h-[inherit] flex-col justify-end">
-                    <div className="translate-y-2 opacity-0 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                      <p className="text-xs font-black uppercase tracking-[0.18em] text-amber-100">{note}</p>
-                      <p className="mt-2 text-sm leading-6 text-slate-100">Visual note layer prepared for annotations, Experience Bible links, Visual DNA, comments, and creative review.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-            <div className="mb-4 break-inside-avoid overflow-hidden rounded-2xl bg-[#d7ad4b] p-5 text-slate-950 shadow-[0_22px_60px_rgba(0,0,0,0.24)]">
-              <p className="text-xs font-black uppercase tracking-[0.18em]">Color Card</p>
-              <h4 className="mt-16 text-2xl font-black">Civilization Gold</h4>
-              <p className="mt-2 font-mono text-sm font-bold">#D7AD4B</p>
-              <p className="mt-3 text-sm font-semibold">Token relationship: accent.civilization.gold</p>
-            </div>
-            <div className="mb-4 break-inside-avoid rounded-2xl border border-white/10 bg-slate-950/55 p-6 shadow-[0_22px_60px_rgba(0,0,0,0.24)]">
-              <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-200">Typography Card</p>
-              <h4 className="mt-8 text-4xl font-black text-white">Headlines</h4>
-              <p className="mt-4 text-sm leading-6 text-slate-300">Future font studies, reading rhythm, labels, navigation, and body tone belong on the canvas beside visual references.</p>
-            </div>
-          </div>
-        </div>
+      <div className="relative flex min-h-0 flex-1 items-center justify-center p-4">
+        <button type="button" onClick={onPrevious} className="absolute left-4 grid h-12 w-12 place-items-center rounded-full bg-black/45 text-white ring-1 ring-white/15 hover:bg-white/10" aria-label="Previous image"><ChevronLeft className="h-7 w-7" /></button>
+        <img src={image.publicUrl} alt={image.title} className="max-h-full max-w-full object-contain" decoding="async" />
+        <button type="button" onClick={onNext} className="absolute right-4 grid h-12 w-12 place-items-center rounded-full bg-black/45 text-white ring-1 ring-white/15 hover:bg-white/10" aria-label="Next image"><ChevronRight className="h-7 w-7" /></button>
       </div>
-    </section>
-  );
-}
-
-function InspirationBoardCard({ board }: { board: ExperienceInspirationBoard }) {
-  const heights = ["h-72", "h-80", "h-96", "h-[28rem]", "h-[32rem]"];
-  const heightClass = heights[board.title.length % heights.length];
-
-  return (
-    <article id={board.id} className="group mb-5 break-inside-avoid overflow-hidden rounded-2xl bg-white/[0.06] shadow-[0_22px_70px_rgba(0,0,0,0.26)] ring-1 ring-white/10 transition duration-300 hover:-translate-y-1 hover:bg-white/[0.09] hover:shadow-[0_30px_90px_rgba(0,0,0,0.34)] scroll-mt-24">
-      <div className={cn("relative min-h-64 bg-[radial-gradient(circle_at_25%_20%,rgba(253,214,114,0.24),transparent_34%),radial-gradient(circle_at_78%_30%,rgba(92,229,255,0.20),transparent_34%),linear-gradient(135deg,rgba(6,15,30,0.95),rgba(11,22,45,0.78))]", heightClass)} aria-label={`${board.title} visual reference card`}>
-        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/92 via-slate-950/40 to-transparent p-5">
-          <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-200">{board.categoryId.replace("inspiration-", "").replaceAll("-", " ")}</p>
-          <h3 className="mt-2 text-2xl font-black text-white" title={board.title}>{board.title.replace(" Inspiration Board", "")}</h3>
-          <div className="mt-3 translate-y-2 opacity-0 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-            <p className="line-clamp-3 text-sm leading-6 text-slate-200">{board.creativeGoal}</p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {board.signatureReinforcement.slice(0, 3).map((tag) => <WorkspaceBadge key={tag} value={tag} className="border-white/15 bg-white/10 text-[0.58rem] text-white" />)}
-            </div>
-          </div>
-        </div>
-      </div>
-    </article>
-  );
-}
-
-function InspirationBoardsWorkspace({ state, boards }: { state: ExperienceDesignState; boards: ExperienceInspirationBoard[] }) {
-  return (
-    <div className="space-y-5 lg:col-span-2 2xl:col-span-3">
-      <InspirationBoardCanvasPreview state={state} />
-      <section aria-label="Inspiration Board infinite masonry canvas" className="rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.035),rgba(255,255,255,0.015))] p-4 shadow-[0_28px_90px_rgba(0,0,0,0.22)]">
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-200">Infinite Canvas / Masonry</p>
-            <h3 className="text-2xl font-black text-white">Creative reference wall</h3>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {["Hope", "Wonder", "Civilization", "Discovery", "Architecture", "Galaxy", "Lighting"].map((cluster) => (
-              <span key={cluster} className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-bold text-slate-300">{cluster}</span>
-            ))}
-          </div>
-        </div>
-        <div className="columns-1 gap-5 sm:columns-2 xl:columns-3 2xl:columns-4">
-        {boards.map((board) => <InspirationBoardCard key={board.id} board={board} />)}
-        </div>
-      </section>
     </div>
   );
+}
+
+function InspirationWallMetadata({ image, onClose }: { image: InspirationWallImage; onClose: () => void }) {
+  return (
+    <div className="fixed inset-x-4 bottom-4 z-[90] mx-auto max-w-4xl rounded-2xl border border-white/10 bg-slate-950/95 p-4 text-white shadow-[0_30px_100px_rgba(0,0,0,0.5)] backdrop-blur-xl" role="dialog" aria-label={`${image.title} metadata`}>
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-200">Image Metadata</p>
+          <h3 className="mt-1 truncate text-xl font-black">{image.title}</h3>
+          <p className="mt-1 truncate text-sm text-slate-400">{image.publicUrl}</p>
+        </div>
+        <button type="button" onClick={onClose} className="grid h-9 w-9 place-items-center rounded-md border border-white/15 hover:bg-white/10" aria-label="Close metadata"><X className="h-4 w-4" /></button>
+      </div>
+      <div className="mt-4 grid gap-3 md:grid-cols-4">
+        <WorkspaceMiniStat label="Dimensions" value={`${image.width}x${image.height}`} />
+        <WorkspaceMiniStat label="Aspect" value={image.aspectRatio} />
+        <WorkspaceMiniStat label="Folder" value={image.folder} />
+        <WorkspaceMiniStat label="Size" value={`${Math.round(image.fileSize / 1024)} KB`} />
+      </div>
+      <div className="mt-4 flex flex-wrap gap-2">
+        {image.palette.map((color) => (
+          <button key={color} type="button" onClick={() => navigator.clipboard?.writeText(color)} className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-bold text-slate-200">
+            <span className="h-4 w-4 rounded-full ring-1 ring-white/20" style={{ backgroundColor: color }} />
+            {color}
+          </button>
+        ))}
+        <WorkspaceBadge value={`${image.warmth} palette`} />
+        <WorkspaceBadge value={`${image.luminance} luminance`} />
+      </div>
+    </div>
+  );
+}
+
+function InspirationBoardsWorkspace({ wall }: { wall?: InspirationWallManifest }) {
+  const images = wall?.images ?? [];
+  const folders = Array.from(new Set(images.map((image) => image.folder))).sort();
+  const [query, setQuery] = useState("");
+  const [orientation, setOrientation] = useState("all");
+  const [folder, setFolder] = useState("all");
+  const [selectedId, setSelectedId] = useState(images[0]?.id ?? "");
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [metadataOpen, setMetadataOpen] = useState(false);
+  const [presentation, setPresentation] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState("");
+
+  const filteredImages = useMemo(() => {
+    const normalized = query.trim().toLowerCase();
+    return images.filter((image) => {
+      if (orientation !== "all" && image.orientation !== orientation) return false;
+      if (folder !== "all" && image.folder !== folder) return false;
+      if (!normalized) return true;
+      return [image.filename, image.title, image.folder, image.relativePath].join(" ").toLowerCase().includes(normalized);
+    });
+  }, [folder, images, orientation, query]);
+
+  const selectedImage = filteredImages.find((image) => image.id === selectedId) ?? filteredImages[0];
+  const selectedIndex = selectedImage ? Math.max(0, filteredImages.findIndex((image) => image.id === selectedImage.id)) : -1;
+
+  function selectOffset(offset: number) {
+    if (!filteredImages.length) return;
+    const currentIndex = selectedImage ? filteredImages.findIndex((image) => image.id === selectedImage.id) : 0;
+    const nextIndex = (currentIndex + offset + filteredImages.length) % filteredImages.length;
+    setSelectedId(filteredImages[nextIndex].id);
+  }
+
+  async function uploadImage(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.currentTarget.files?.[0];
+    event.currentTarget.value = "";
+    if (!file) return;
+    setUploadMessage("Uploading to local public/images...");
+    const formData = new FormData();
+    formData.append("file", file);
+    const response = await fetch("/api/experience-design/inspiration-wall/upload", { method: "POST", body: formData });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      setUploadMessage(payload.error ?? "Upload failed.");
+      return;
+    }
+    setUploadMessage(`Uploaded ${payload.publicUrl}. Refresh if the image is not visible yet.`);
+  }
+
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (!selectedImage) return;
+      if (event.key === "ArrowRight") selectOffset(1);
+      if (event.key === "ArrowLeft") selectOffset(-1);
+      if (event.key === "Enter") setViewerOpen(true);
+      if (event.key === " ") {
+        event.preventDefault();
+        setViewerOpen(true);
+      }
+      if (event.key === "Escape") {
+        setViewerOpen(false);
+        setMetadataOpen(false);
+        setPresentation(false);
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [filteredImages, selectedImage]);
+
+  const wallContent = (
+    <section className={cn("min-h-screen bg-[#05070b] text-white", presentation && "fixed inset-0 z-[70] overflow-auto p-4")}>
+      <div className="sticky top-0 z-20 -mx-1 mb-4 flex flex-wrap items-center gap-3 border-b border-white/10 bg-[#05070b]/92 px-1 py-3 backdrop-blur-xl">
+        <div className="min-w-0 flex-1">
+          <h1 className="text-xl font-black">Inspiration Wall</h1>
+          <p className="text-xs text-slate-500">{filteredImages.length} / {images.length} images from public/images</p>
+        </div>
+        <div className="flex min-w-[16rem] flex-1 items-center gap-2 rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
+          <Search className="h-4 w-4 text-slate-500" />
+          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search images, folders, filenames" className="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-slate-600" />
+        </div>
+        <select value={orientation} onChange={(event) => setOrientation(event.target.value)} className="h-10 rounded-md border border-white/10 bg-slate-950 px-3 text-sm font-bold text-slate-200">
+          {["all", "landscape", "portrait", "square", "panoramic"].map((item) => <option key={item} value={item}>{item}</option>)}
+        </select>
+        <select value={folder} onChange={(event) => setFolder(event.target.value)} className="h-10 rounded-md border border-white/10 bg-slate-950 px-3 text-sm font-bold text-slate-200">
+          <option value="all">all folders</option>
+          {folders.map((item) => <option key={item} value={item}>{item}</option>)}
+        </select>
+        <label className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border border-cyan-300/20 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100 hover:bg-cyan-300/15">
+          <UploadCloud className="h-4 w-4" />
+          Upload
+          <input type="file" accept="image/png,image/jpeg,image/webp,image/avif,image/gif" className="sr-only" onChange={uploadImage} />
+        </label>
+        <button type="button" onClick={() => setPresentation((current) => !current)} className="inline-flex h-10 items-center gap-2 rounded-md border border-white/10 px-3 text-sm font-bold text-slate-200 hover:bg-white/10">
+          <Presentation className="h-4 w-4" />
+          {presentation ? "Exit" : "Present"}
+        </button>
+        {selectedImage ? <button type="button" onClick={() => setMetadataOpen(true)} className="grid h-10 w-10 place-items-center rounded-md border border-white/10 text-slate-300 hover:bg-white/10" aria-label="Reveal metadata"><Info className="h-4 w-4" /></button> : null}
+      </div>
+
+      {uploadMessage ? <p className="mb-3 rounded-md border border-cyan-300/15 bg-cyan-300/10 px-3 py-2 text-sm text-cyan-100">{uploadMessage}</p> : null}
+
+      {filteredImages.length ? (
+        <div className="columns-1 gap-3 sm:columns-2 lg:columns-3 xl:columns-4 2xl:columns-5 min-[1800px]:columns-6">
+          {filteredImages.map((image) => (
+            <InspirationWallImageTile
+              key={image.id}
+              image={image}
+              selected={selectedImage?.id === image.id}
+              onSelect={() => setSelectedId(image.id)}
+              onOpen={() => {
+                setSelectedId(image.id);
+                setViewerOpen(true);
+              }}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="grid min-h-[50vh] place-items-center rounded-2xl border border-white/10 bg-white/[0.03] p-8 text-center">
+          <div>
+            <ImageIcon className="mx-auto h-10 w-10 text-slate-500" />
+            <h2 className="mt-4 text-xl font-black">No supported images found</h2>
+            <p className="mt-2 max-w-xl text-sm leading-6 text-slate-400">Add jpg, jpeg, png, webp, avif, or gif images to public/images, or upload in local development mode.</p>
+          </div>
+        </div>
+      )}
+
+      {selectedImage && metadataOpen ? <InspirationWallMetadata image={selectedImage} onClose={() => setMetadataOpen(false)} /> : null}
+      {selectedImage && viewerOpen ? (
+        <InspirationWallViewer
+          image={selectedImage}
+          index={selectedIndex}
+          total={filteredImages.length}
+          onClose={() => setViewerOpen(false)}
+          onPrevious={() => selectOffset(-1)}
+          onNext={() => selectOffset(1)}
+          onMetadata={() => setMetadataOpen(true)}
+        />
+      ) : null}
+    </section>
+  );
+
+  return presentation ? wallContent : <div className="lg:col-span-2 2xl:col-span-3">{wallContent}</div>;
 }
 
 function DesignTokenCard({ token }: { token: ExperienceDesignToken }) {
@@ -539,7 +666,7 @@ function ScreenLibraryWorkspace({ state, screens }: { state: ExperienceDesignSta
   );
 }
 
-export function ExperienceDesignWorkspace({ state, initialSection = "dashboard" }: { state: ExperienceDesignState; initialSection?: string }) {
+export function ExperienceDesignWorkspace({ state, initialSection = "dashboard", inspirationWall }: { state: ExperienceDesignState; initialSection?: string; inspirationWall?: InspirationWallManifest }) {
   const resolvedSection = state.sections.some((section) => section.id === initialSection) ? initialSection : "dashboard";
   const isHome = resolvedSection === "dashboard";
   const [query, setQuery] = useState("");
@@ -557,30 +684,6 @@ export function ExperienceDesignWorkspace({ state, initialSection = "dashboard" 
       return text.includes(normalized);
     });
   }, [currentSection.kinds, query, sectionId, state.records]);
-
-  const filteredBoards = useMemo(() => {
-    const normalized = query.trim().toLowerCase();
-    return state.inspirationBoards.boards.filter((board) => {
-      if (!normalized) return true;
-      const text = [
-        board.id,
-        board.title,
-        board.subtitle,
-        board.purpose,
-        board.creativeGoal,
-        board.status,
-        board.owner,
-        board.tags.join(" "),
-        board.keywords.join(" "),
-        board.notes.join(" "),
-        board.annotationCategories.join(" "),
-        board.signatureReinforcement.join(" "),
-        board.experienceBibleReferences.join(" "),
-        board.visualDnaReferences.join(" ")
-      ].join(" ").toLowerCase();
-      return text.includes(normalized);
-    });
-  }, [query, state.inspirationBoards.boards]);
 
   const filteredTokens = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -768,21 +871,21 @@ export function ExperienceDesignWorkspace({ state, initialSection = "dashboard" 
   if (!isHome) {
     const workspaceContent = (
       <>
-        {currentSection.id === "inspiration-boards" ? <InspirationBoardsWorkspace state={state} boards={filteredBoards} /> : null}
+        {currentSection.id === "inspiration-wall" ? <InspirationBoardsWorkspace wall={inspirationWall} /> : null}
         {currentSection.id === "tokens" ? <DesignTokensWorkspace state={state} tokens={filteredTokens} /> : null}
         {currentSection.id === "materials" ? <MaterialsWorkspace state={state} materials={filteredMaterials} /> : null}
         {currentSection.id === "motion" ? <MotionWorkspace state={state} motions={filteredMotions} /> : null}
         {currentSection.id === "components" ? <ComponentLibraryWorkspace state={state} components={filteredComponents} /> : null}
         {currentSection.id === "patterns" ? <InteractionPatternsWorkspace state={state} patterns={filteredPatterns} /> : null}
         {currentSection.id === "screens" ? <ScreenLibraryWorkspace state={state} screens={filteredScreens} /> : null}
-        {currentSection.id !== "inspiration-boards" && currentSection.id !== "tokens" && currentSection.id !== "materials" && currentSection.id !== "motion" && currentSection.id !== "components" && currentSection.id !== "patterns" && currentSection.id !== "screens" ? filteredRecords.map((record) => <ExperienceRecordCard key={record.id} state={state} record={record} />) : null}
+        {currentSection.id !== "inspiration-wall" && currentSection.id !== "tokens" && currentSection.id !== "materials" && currentSection.id !== "motion" && currentSection.id !== "components" && currentSection.id !== "patterns" && currentSection.id !== "screens" ? filteredRecords.map((record) => <ExperienceRecordCard key={record.id} state={state} record={record} />) : null}
       </>
     );
 
     return (
       <main className="space-y-5">
-        {currentSection.id === "inspiration-boards" ? (
-          <InspirationBoardsWorkspace state={state} boards={filteredBoards} />
+        {currentSection.id === "inspiration-wall" ? (
+          <InspirationBoardsWorkspace wall={inspirationWall} />
         ) : (
           <>
             <header className="rounded-2xl border border-cyan-300/10 bg-slate-950/35 p-4">
@@ -810,7 +913,7 @@ export function ExperienceDesignWorkspace({ state, initialSection = "dashboard" 
               {currentSection.id === "components" && !filteredComponents.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Component definitions match this search.</p> : null}
               {currentSection.id === "patterns" && !filteredPatterns.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Interaction Patterns match this search.</p> : null}
               {currentSection.id === "screens" && !filteredScreens.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Screen definitions match this search.</p> : null}
-              {currentSection.id !== "tokens" && currentSection.id !== "materials" && currentSection.id !== "motion" && currentSection.id !== "components" && currentSection.id !== "patterns" && currentSection.id !== "screens" && !filteredRecords.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Experience Design records match this search.</p> : null}
+              {currentSection.id !== "inspiration-wall" && currentSection.id !== "tokens" && currentSection.id !== "materials" && currentSection.id !== "motion" && currentSection.id !== "components" && currentSection.id !== "patterns" && currentSection.id !== "screens" && !filteredRecords.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Experience Design records match this search.</p> : null}
             </section>
           </>
         )}
@@ -922,16 +1025,15 @@ export function ExperienceDesignWorkspace({ state, initialSection = "dashboard" 
 
       {tab === "library" ? (
         <section className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
-          {currentSection.id === "inspiration-boards" ? <InspirationBoardsWorkspace state={state} boards={filteredBoards} /> : null}
+          {currentSection.id === "inspiration-wall" ? <InspirationBoardsWorkspace wall={inspirationWall} /> : null}
           {currentSection.id === "tokens" ? <DesignTokensWorkspace state={state} tokens={filteredTokens} /> : null}
           {currentSection.id === "materials" ? <MaterialsWorkspace state={state} materials={filteredMaterials} /> : null}
           {currentSection.id === "motion" ? <MotionWorkspace state={state} motions={filteredMotions} /> : null}
           {currentSection.id === "components" ? <ComponentLibraryWorkspace state={state} components={filteredComponents} /> : null}
           {currentSection.id === "patterns" ? <InteractionPatternsWorkspace state={state} patterns={filteredPatterns} /> : null}
           {currentSection.id === "screens" ? <ScreenLibraryWorkspace state={state} screens={filteredScreens} /> : null}
-          {currentSection.id !== "inspiration-boards" && currentSection.id !== "tokens" && currentSection.id !== "materials" && currentSection.id !== "motion" && currentSection.id !== "components" && currentSection.id !== "patterns" && currentSection.id !== "screens" ? filteredRecords.map((record) => <ExperienceRecordCard key={record.id} state={state} record={record} />) : null}
-          {currentSection.id !== "inspiration-boards" && currentSection.id !== "tokens" && currentSection.id !== "materials" && currentSection.id !== "motion" && currentSection.id !== "components" && currentSection.id !== "patterns" && currentSection.id !== "screens" && !filteredRecords.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Experience Design records match this view.</p> : null}
-          {currentSection.id === "inspiration-boards" && !filteredBoards.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Inspiration Boards match this view.</p> : null}
+          {currentSection.id !== "inspiration-wall" && currentSection.id !== "tokens" && currentSection.id !== "materials" && currentSection.id !== "motion" && currentSection.id !== "components" && currentSection.id !== "patterns" && currentSection.id !== "screens" ? filteredRecords.map((record) => <ExperienceRecordCard key={record.id} state={state} record={record} />) : null}
+          {currentSection.id !== "inspiration-wall" && currentSection.id !== "tokens" && currentSection.id !== "materials" && currentSection.id !== "motion" && currentSection.id !== "components" && currentSection.id !== "patterns" && currentSection.id !== "screens" && !filteredRecords.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Experience Design records match this view.</p> : null}
           {currentSection.id === "tokens" && !filteredTokens.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Design Tokens match this view.</p> : null}
           {currentSection.id === "materials" && !filteredMaterials.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Materials match this view.</p> : null}
           {currentSection.id === "motion" && !filteredMotions.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Motion definitions match this view.</p> : null}

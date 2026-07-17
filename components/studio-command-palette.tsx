@@ -22,7 +22,7 @@ const commandSeeds: PaletteResult[] = [
   { id: "command:exports", type: "Exports", title: "Open Game Engine Exports", subtitle: "Generic, Roblox, Web, Unity, Unreal, Godot", href: "/game-engine-exports" },
   { id: "command:experience-design", type: "Experience Design", title: "Open Experience Design", subtitle: "Creative direction authoring", href: "/experience-design" },
   { id: "command:experience-bible", type: "Experience Design", title: "Open Experience Bible", subtitle: "NOVERIS creative canon framework", href: "/experience-design/bible" },
-  { id: "command:inspiration-boards", type: "Experience Design", title: "Open Inspiration Boards", subtitle: "Canonical visual memory and reference boards", href: "/experience-design/inspiration-boards" },
+  { id: "command:inspiration-wall", type: "Experience Design", title: "Open Inspiration Wall", subtitle: "Local public/images visual reference wall", href: "/experience-design/inspiration-wall" },
   { id: "command:screen-library", type: "Experience Design", title: "Open Screen Library", subtitle: "DS-06 canonical semantic screen definitions", href: "/experience-design/screens" },
   { id: "command:design-tokens", type: "Experience Design", title: "Open Design Tokens", subtitle: "DS-02 canonical semantic token libraries", href: "/experience-design/tokens" },
   { id: "command:material-library", type: "Experience Design", title: "Open Material Library", subtitle: "DS-03 canonical semantic material library", href: "/experience-design/materials" },

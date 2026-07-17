@@ -58,7 +58,7 @@ async function main() {
   const expectedGroups = [
     { id: "command-center", label: "Command Center", items: ["Dashboard", "Current Sprint"] },
     { id: "content-libraries", label: "Content Libraries", items: ["Asset Library", "Galaxy Library", "Sector Library", "Star System Library", "Star Library", "Planet Library", "Discovery Library", "Civilization Library", "Encyclopedia"] },
-    { id: "experience-design", label: "Experience Design", items: ["Dashboard", "Experience Bible", "Inspiration Boards", "Concept Library", "Screen Library", "Design Tokens", "Material Library", "Motion Library", "Component Library", "Theme Library", "Brand System", "Accessibility", "Experience Journey", "Reviews"] },
+    { id: "experience-design", label: "Experience Design", items: ["Dashboard", "Experience Bible", "Inspiration Wall", "Concept Library", "Screen Library", "Design Tokens", "Material Library", "Motion Library", "Component Library", "Theme Library", "Brand System", "Accessibility", "Experience Journey", "Reviews"] },
     { id: "world-systems", label: "World Systems", items: ["Actions", "Colonies", "Population", "Economy & Trade", "Missions", "Dynamic Events"] },
     { id: "authoring", label: "Authoring", items: ["Research", "Buildings", "Resources", "AI Agents", "Runtime", "Exports", "Architecture"] }
   ];

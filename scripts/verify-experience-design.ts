@@ -101,7 +101,7 @@ async function main() {
     assert(state.reviewWorkflow.includes(status as never), `Review workflow missing ${status}.`);
   }
 
-  for (const section of ["bible", "inspiration-boards", "concepts", "screens", "tokens", "materials", "motion", "components", "patterns", "themes", "brand", "accessibility", "journey", "reviews"]) {
+  for (const section of ["bible", "inspiration-wall", "concepts", "screens", "tokens", "materials", "motion", "components", "patterns", "themes", "brand", "accessibility", "journey", "reviews"]) {
     assert(state.sections.some((item) => item.id === section), `Experience Design section missing ${section}.`);
   }
 
@@ -651,9 +651,9 @@ async function main() {
   assert(screenRecord.fields.canonicalSystem === "DS-06", "Screen starter record must point to DS-06.");
   assert(screenRecord.fields.implementationValuesPublished === false, "Screen starter record must not publish implementation values.");
 
-  const inspirationSection = state.sections.find((item) => item.id === "inspiration-boards");
-  assert(inspirationSection?.label === "Inspiration Boards", "Experience Design must expose Inspiration Boards workspace.");
-  assert(inspirationSection.route === "/experience-design/inspiration-boards", "Inspiration Boards route must be canonical.");
+  const inspirationSection = state.sections.find((item) => item.id === "inspiration-wall");
+  assert(inspirationSection?.label === "Inspiration Wall", "Experience Design must expose Inspiration Wall workspace.");
+  assert(inspirationSection.route === "/experience-design/inspiration-wall", "Inspiration Wall route must be canonical.");
   const boardModel = state.contentModels.find((model) => model.kind === "mood_board");
   assert(boardModel?.displayName === "Inspiration Board", "Existing mood_board model must be presented as Inspiration Board.");
   for (const required of ["title", "subtitle", "purpose", "creativeGoal", "experienceBibleReferences", "visualDnaReferences", "references", "annotations"]) {
@@ -666,7 +666,7 @@ async function main() {
   assert(state.inspirationBoards.id === "DV-04", "Inspiration Board Library ID must be DV-04.");
   assert(state.inspirationBoards.title === "Inspiration Board Library", "DV-04 title must be Inspiration Board Library.");
   assert(state.inspirationBoards.status === "Draft", "DV-04 must remain Draft.");
-  assert(state.inspirationBoards.workspaceRoute === "/experience-design/inspiration-boards", "DV-04 workspace route must be /experience-design/inspiration-boards.");
+  assert(state.inspirationBoards.workspaceRoute === "/experience-design/inspiration-wall", "DV-04 workspace route must be /experience-design/inspiration-wall.");
   const expectedCategories = ["Universe", "Galaxy", "Sector", "Star System", "Planet", "Moon", "Colony", "Civilization", "Architecture", "Megastructures", "Discovery", "Research", "Population", "Economy", "Logistics", "AI", "Interface", "HUD", "Navigation", "Loading", "Main Menu", "Settings", "Studio", "Typography", "Lighting", "Color", "Materials", "Motion", "Brand", "Marketing", "Website", "Steam", "Trailers", "Photography", "NASA", "Engineering", "Natural Phenomena"];
   assert(state.inspirationBoards.categories.map((category) => category.title).join("|") === expectedCategories.join("|"), "DV-04 categories must match the canonical list.");
   assert(state.inspirationBoards.boards.length === expectedCategories.length, "DV-04 must create one starter board per canonical category.");
@@ -713,18 +713,18 @@ async function main() {
   assert(exists("app/experience-design/[section]/page.tsx"), "Experience Design section route is missing.");
   assert(read("components/app-shell.tsx").includes('id: "experience-design"'), "Sidebar must expose Experience Design as a primary workspace.");
   assert(read("components/app-shell.tsx").includes('href: "/experience-design/bible"'), "Sidebar must link to Experience Bible.");
-  assert(read("components/app-shell.tsx").includes('href: "/experience-design/inspiration-boards"'), "Sidebar must link to Inspiration Boards.");
+  assert(read("components/app-shell.tsx").includes('href: "/experience-design/inspiration-wall"'), "Sidebar must link to Inspiration Wall.");
   assert(read("components/app-shell.tsx").includes('href: "/experience-design/screens"'), "Sidebar must link to Screen Library.");
   assert(read("components/app-shell.tsx").includes('href: "/experience-design/tokens"'), "Sidebar must link to Design Tokens.");
   assert(read("components/app-shell.tsx").includes('href: "/experience-design/materials"'), "Sidebar must link to Material Library.");
   assert(read("components/app-shell.tsx").includes('href: "/experience-design/motion"'), "Sidebar must link to Motion Library.");
   assert(read("components/app-shell.tsx").includes('href: "/experience-design/components"'), "Sidebar must link to Component Library.");
   assert(read("components/app-shell.tsx").includes('href: "/experience-design/patterns"'), "Sidebar must link to Interaction Patterns.");
-  assert(read("app/experience-design/[section]/page.tsx").includes('redirect("/experience-design/inspiration-boards")'), "Old mood board route must redirect to Inspiration Boards.");
+  assert(read("app/experience-design/[section]/page.tsx").includes('redirect("/experience-design/inspiration-wall")'), "Old mood board routes must redirect to Inspiration Wall.");
   assert(read("app/experience-design/page.tsx").includes("ExperienceDesignWorkspace"), "Experience Design Home must render the shared workspace.");
   assert(read("app/experience-design/[section]/page.tsx").includes("initialSection={section}"), "Experience Design section routes must pass the requested content workspace directly.");
   assert(read("components/studio-command-palette.tsx").includes("Open Experience Design"), "Command palette must expose Experience Design.");
-  assert(read("components/studio-command-palette.tsx").includes("Open Inspiration Boards"), "Command palette must expose Inspiration Boards.");
+  assert(read("components/studio-command-palette.tsx").includes("Open Inspiration Wall"), "Command palette must expose Inspiration Wall.");
   assert(read("components/studio-command-palette.tsx").includes("Open Screen Library"), "Command palette must expose Screen Library.");
   assert(read("components/studio-command-palette.tsx").includes("Open Design Tokens"), "Command palette must expose Design Tokens.");
   assert(read("components/studio-command-palette.tsx").includes("Open Material Library"), "Command palette must expose Material Library.");
@@ -732,20 +732,21 @@ async function main() {
   assert(read("components/studio-command-palette.tsx").includes("Open Component Library"), "Command palette must expose Component Library.");
   assert(read("components/studio-command-palette.tsx").includes("Open Interaction Patterns"), "Command palette must expose Interaction Patterns.");
   const experienceWorkspaceSource = read("components/experience-design-workspace.tsx");
-  assert(experienceWorkspaceSource.includes("InspirationBoardsWorkspace"), "Experience Design workspace must expose Inspiration Boards workspace.");
+  assert(experienceWorkspaceSource.includes("InspirationBoardsWorkspace"), "Experience Design workspace must expose Inspiration Wall workspace.");
   assert(experienceWorkspaceSource.includes("Experience Design Home"), "Experience Design must have a dedicated Home for dashboard-style widgets.");
   assert(experienceWorkspaceSource.includes("Content First Workspace"), "Experience Design section routes must use content-first workspace entry.");
   assert(experienceWorkspaceSource.includes("if (!isHome)"), "Experience Design must bypass dashboard chrome for individual workspaces.");
-  assert(experienceWorkspaceSource.includes("NOVERIS Inspiration Wall"), "Inspiration Boards must open into the NOVERIS Inspiration Wall canvas.");
-  assert(experienceWorkspaceSource.includes("Inspiration Board infinite masonry canvas"), "Inspiration Boards must expose an infinite masonry canvas region.");
-  assert(experienceWorkspaceSource.includes("Creative reference wall"), "Inspiration Boards must frame the canvas as a creative reference wall.");
-  assert(experienceWorkspaceSource.includes("columns-1 gap-5") && experienceWorkspaceSource.includes("break-inside-avoid"), "Inspiration Boards must use a masonry-style visual canvas.");
-  for (const toolbarAction of ["Upload", "Color", "Note", "Text", "Link", "Draw", "Zoom", "Present"]) {
-    assert(experienceWorkspaceSource.includes(toolbarAction), `Inspiration Board floating toolbar missing ${toolbarAction}.`);
+  assert(experienceWorkspaceSource.includes("Inspiration Wall"), "Inspiration Wall must open directly into the local image wall.");
+  assert(experienceWorkspaceSource.includes("public/images"), "Inspiration Wall must disclose its local image source.");
+  assert(experienceWorkspaceSource.includes("/api/experience-design/inspiration-wall/upload"), "Inspiration Wall must use the local upload endpoint.");
+  assert(experienceWorkspaceSource.includes("columns-1 gap-3") && experienceWorkspaceSource.includes("break-inside-avoid"), "Inspiration Wall must use a masonry-style visual wall.");
+  assert(experienceWorkspaceSource.includes('loading="lazy"') && experienceWorkspaceSource.includes('decoding="async"'), "Inspiration Wall images must lazy-load and async decode.");
+  assert(experienceWorkspaceSource.includes('role="dialog"'), "Inspiration Wall viewer must expose dialog semantics.");
+  for (const requiredAction of ["Upload", "Present", "Metadata"]) {
+    assert(experienceWorkspaceSource.includes(requiredAction), `Inspiration Wall missing ${requiredAction} workflow.`);
   }
-  assert(experienceWorkspaceSource.includes("Civilization Gold"), "Inspiration Boards must include color cards.");
-  assert(experienceWorkspaceSource.includes("accent.civilization.gold"), "Inspiration Boards must expose token relationship notes on color cards.");
-  assert(experienceWorkspaceSource.includes("Typography Card"), "Inspiration Boards must include typography cards.");
+  assert(!experienceWorkspaceSource.includes("Civilization Gold"), "Inspiration Wall must not render token color demo cards.");
+  assert(!experienceWorkspaceSource.includes("Typography Card"), "Inspiration Wall must not render typography demo cards.");
   for (const entryLabel of ["Token Browser", "Material Gallery", "Motion Library", "Component Browser", "Pattern Browser", "Screen Gallery"]) {
     assert(experienceWorkspaceSource.includes(entryLabel), `Experience Design content-first workspace missing ${entryLabel}.`);
   }
@@ -769,8 +770,8 @@ async function main() {
   assert(bibleWorkspaceSource.includes("table of contents stays beside the current chapter"), "Experience Bible must describe its content-first reading mode.");
   assert(!bibleWorkspaceSource.includes('{ label: "Release", value:'), "Experience Bible header must not open with dashboard statistics.");
 
-  const search = await searchStudio("Inspiration Boards", 10);
-  assert(search.results.some((result) => result.type === "Experience Design" && /Inspiration Boards|Inspiration Board/i.test(result.title)), "Global search must return Experience Design Inspiration Board results.");
+  const search = await searchStudio("Inspiration Wall", 10);
+  assert(search.results.some((result) => result.type === "Experience Design" && /Inspiration Wall/i.test(result.title)), "Global search must return Experience Design Inspiration Wall results.");
   assert(search.diagnostics.sourceCollections.includes("experience design"), "Global search diagnostics must include Experience Design source collection.");
   const bibleSearch = await searchStudio("Technology serves humanity", 20);
   assert(bibleSearch.results.some((result) => result.type === "Experience Design" && result.href === "/experience-design/bible/chapter/core-creative-philosophy"), "Global search must return authored Experience Bible philosophy content.");
@@ -779,9 +780,9 @@ async function main() {
   const visualDnaSearch = await searchStudio("Deep Space Navy", 20);
   assert(visualDnaSearch.results.some((result) => result.type === "Experience Design" && result.href === "/experience-design/bible#dv-03-visual-dna"), "Global search must return DV-03 Visual DNA content.");
   const nasaSearch = await searchStudio("NASA", 20);
-  assert(nasaSearch.results.some((result) => result.type === "Experience Design" && result.href.includes("/experience-design/inspiration-boards")), "Global search must return NASA Inspiration Board content.");
+  assert(nasaSearch.results.some((result) => result.type === "Experience Design" && result.href.includes("/experience-design/inspiration-wall")), "Global search must return NASA Inspiration Board content.");
   const boardSearch = await searchStudio("Light Represents Progress", 20);
-  assert(boardSearch.results.some((result) => result.type === "Experience Design" && result.href.includes("/experience-design/inspiration-boards")), "Global search must return signature-tagged Inspiration Board content.");
+  assert(boardSearch.results.some((result) => result.type === "Experience Design" && result.href.includes("/experience-design/inspiration-wall")), "Global search must return signature-tagged Inspiration Board content.");
   const tokenSearch = await searchStudio("accent.civilization.gold", 20);
   assert(tokenSearch.results.some((result) => result.type === "Experience Design" && result.href === "/experience-design/tokens#accent.civilization.gold"), "Global search must return exact DS-02 token results.");
   const glassTokenSearch = await searchStudio("surface command glass", 20);

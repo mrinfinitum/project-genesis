@@ -51,7 +51,7 @@ const workspaceResults: StudioSearchResult[] = [
   workspace("architecture", "Architecture", "/architecture", "Architecture Workspace"),
   workspace("experience-design", "Experience Design", "/experience-design", "Creative direction authoring"),
   workspace("experience-bible", "Experience Bible", "/experience-design/bible", "Creative canon framework"),
-  workspace("inspiration-boards", "Inspiration Boards", "/experience-design/inspiration-boards", "Canonical visual memory and reference boards"),
+  workspace("inspiration-wall", "Inspiration Wall", "/experience-design/inspiration-wall", "Local public/images visual reference wall"),
   workspace("design-tokens", "Design Tokens", "/experience-design/tokens", "DS-02 canonical semantic token libraries"),
   workspace("material-library", "Material Library", "/experience-design/materials", "DS-03 canonical semantic material library"),
   workspace("motion-library", "Motion Library", "/experience-design/motion", "DS-04 canonical semantic motion system"),
