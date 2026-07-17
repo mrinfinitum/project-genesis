@@ -202,3 +202,39 @@ Component accessibility support includes Keyboard, Touch, Controller, Reduced Mo
 DS-05 preview support is metadata only: Static Preview, Interactive Preview, State Preview, Accessibility Preview, and Comparison Preview.
 
 DS-05 remains Draft at version 0.1. Component definitions are not published yet; future runtime publication belongs to a later Design Runtime milestone.
+
+## DS-05A Canonical Interaction Pattern Library
+
+DS-05A creates the canonical semantic Interaction Pattern Library for NOVERIS.
+
+Components are atoms. Patterns are molecules. Screens are organisms.
+
+Patterns define how canonical components work together to solve recurring interaction problems. They are semantic authoring assets, not React layouts, HTML templates, CSS, Tailwind, implementation, or screen-specific code.
+
+Canonical pattern categories:
+
+- Navigation
+- Workspace
+- Exploration
+- Inspection
+- Creation
+- Review
+- Reading
+- Search
+- Dashboard
+- Data
+- Comparison
+- Visualization
+- Notification
+- Approval
+- Runtime
+
+Every pattern defines an interaction flow: Entry, Primary Action, Secondary Actions, Completion, Exit, Failure States, and Recovery.
+
+Pattern accessibility support includes Keyboard, Touch, Controller, Reduced Motion, High Contrast, Screen Reader, and Localization.
+
+DS-05A preview support is metadata only: Static Preview, Interaction Diagram, Flow Diagram, Sequence, and Accessibility Preview.
+
+DS-05A adds design contract validation for missing tokens, missing materials, missing motion, missing components, missing patterns, missing Inspiration Boards, missing Experience Bible references, duplicate IDs, orphaned records, circular references, invalid semantic IDs, and broken relationships.
+
+DS-05A remains Draft at version 0.1. Interaction patterns are not published yet; future runtime publication belongs to a later Design Runtime milestone.

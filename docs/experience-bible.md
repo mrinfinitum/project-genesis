@@ -422,6 +422,42 @@ Preview support is metadata only: Static Preview, Interactive Preview, State Pre
 
 DS-05 is Draft at version 0.1. It does not define React components, Vue components, HTML, CSS, Tailwind, UIKit, Material UI, implementation code, gameplay runtime data, runtime gameplay contracts, contentVersion changes, runtimeVersion changes, or engine export changes.
 
+## DS-05A Canonical Interaction Pattern Library
+
+DS-05A creates the canonical Interaction Pattern Library for NOVERIS. Patterns define how canonical components work together as reusable interaction models.
+
+Components are atoms. Patterns are molecules. Screens are organisms.
+
+Patterns solve recurring interaction problems and prevent every screen from inventing its own behavior.
+
+DS-05A canonical pattern categories:
+
+- Navigation
+- Workspace
+- Exploration
+- Inspection
+- Creation
+- Review
+- Reading
+- Search
+- Dashboard
+- Data
+- Comparison
+- Visualization
+- Notification
+- Approval
+- Runtime
+
+Every pattern defines ID, name, category, purpose, problem solved, description, primary user intent, Studio intent, gameplay intent, Experience Bible references, Visual DNA references, related tokens, related materials, related motion, related components, related screens, related Inspiration Boards, accessibility notes, responsive notes, interaction flow, future runtime mapping, review status, version, and history.
+
+Every interaction flow defines Entry, Primary Action, Secondary Actions, Completion, Exit, Failure States, and Recovery.
+
+Design contract validation checks missing tokens, missing materials, missing motion, missing components, missing patterns, missing Inspiration Boards, missing Experience Bible references, duplicate IDs, orphaned records, circular references, invalid semantic IDs, and broken relationships.
+
+Preview support is metadata only: Static Preview, Interaction Diagram, Flow Diagram, Sequence, and Accessibility Preview.
+
+DS-05A is Draft at version 0.1. It does not define React layouts, HTML templates, CSS, Tailwind, implementation, screen-specific code, gameplay runtime data, runtime gameplay contracts, contentVersion changes, runtimeVersion changes, or engine export changes.
+
 ## Approval
 
 Review states:

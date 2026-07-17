@@ -26,6 +26,7 @@ function assertNoExperienceRuntimeLeak(label: string, value: unknown) {
   assert(!/"motions"\s*:/.test(text), `${label} leaked Motion System definitions.`);
   assert(!/"cameraLanguage"\s*:/.test(text), `${label} leaked Motion System camera language.`);
   assert(!/"componentLibrary"\s*:/.test(text), `${label} leaked Component Library data.`);
+  assert(!/"interactionPatterns"\s*:/.test(text), `${label} leaked Interaction Pattern Library data.`);
   assert(!/"experience_bible"\s*:/.test(text), `${label} leaked Experience Bible model data.`);
   assert(!/"mood_board"\s*:/.test(text), `${label} leaked Mood Board model data.`);
   assert(!text.includes("Inspiration Board Library"), `${label} leaked DV-04 Inspiration Board data.`);
@@ -37,6 +38,8 @@ function assertNoExperienceRuntimeLeak(label: string, value: unknown) {
   assert(!text.includes("Canonical Motion System"), `${label} leaked Canonical Motion System data.`);
   assert(!text.includes("DS-05"), `${label} leaked DS-05 Component Library data.`);
   assert(!text.includes("Canonical Component Library"), `${label} leaked Canonical Component Library data.`);
+  assert(!text.includes("DS-05A"), `${label} leaked DS-05A Interaction Pattern Library data.`);
+  assert(!text.includes("Canonical Interaction Pattern Library"), `${label} leaked Canonical Interaction Pattern Library data.`);
   assert(!/"screen_definition"\s*:/.test(text), `${label} leaked Screen Definition model data.`);
 }
 
@@ -60,6 +63,7 @@ async function main() {
     "material_definition",
     "motion_definition",
     "component_definition",
+    "interaction_pattern",
     "theme",
     "brand_guideline",
     "experience_moment",
@@ -94,7 +98,7 @@ async function main() {
     assert(state.reviewWorkflow.includes(status as never), `Review workflow missing ${status}.`);
   }
 
-  for (const section of ["bible", "inspiration-boards", "concepts", "screens", "tokens", "materials", "motion", "components", "themes", "brand", "accessibility", "journey", "reviews"]) {
+  for (const section of ["bible", "inspiration-boards", "concepts", "screens", "tokens", "materials", "motion", "components", "patterns", "themes", "brand", "accessibility", "journey", "reviews"]) {
     assert(state.sections.some((item) => item.id === section), `Experience Design section missing ${section}.`);
   }
 
@@ -427,6 +431,100 @@ async function main() {
   assert(componentRecord.fields.canonicalSystem === "DS-05", "Component starter record must point to DS-05.");
   assert(componentRecord.fields.implementationValuesPublished === false, "Component starter record must not publish implementation values.");
 
+  const patternSection = state.sections.find((item) => item.id === "patterns");
+  assert(patternSection?.label === "Interaction Patterns", "Experience Design must expose Interaction Patterns workspace.");
+  assert(patternSection.route === "/experience-design/patterns", "Interaction Patterns route must be canonical.");
+  assert(patternSection.description.includes("DS-05A"), "Interaction Patterns section must identify DS-05A.");
+  const patternModel = state.contentModels.find((model) => model.kind === "interaction_pattern");
+  assert(patternModel?.displayName === "Canonical Interaction Pattern Library", "Pattern model must be presented as Canonical Interaction Pattern Library.");
+  for (const required of ["category", "purpose", "problemSolved", "primaryUserIntent", "studioIntent", "gameplayIntent", "experienceBibleReferences", "visualDnaReferences", "relatedTokens", "relatedMaterials", "relatedMotion", "relatedComponents", "relatedScreens", "relatedInspirationBoards", "accessibilityNotes", "responsiveNotes", "interactionFlow", "futureRuntimeMapping", "reviewStatus"]) {
+    assert(patternModel?.requiredFields.includes(required), `Pattern content model missing ${required}.`);
+  }
+  for (const capability of ["navigation", "workspace", "exploration", "inspection", "creation", "review", "reading", "search", "dashboard", "data", "comparison", "visualization", "notification", "approval", "runtime", "interaction flow", "design contracts", "relationships", "search", "accessibility", "versioning"]) {
+    assert(patternModel?.supportedCapabilities.includes(capability), `Pattern content model missing capability ${capability}.`);
+  }
+
+  assert(state.interactionPatterns.id === "DS-05A", "Interaction Pattern Library ID must be DS-05A.");
+  assert(state.interactionPatterns.title === "Canonical Interaction Pattern Library", "DS-05A title must be Canonical Interaction Pattern Library.");
+  assert(state.interactionPatterns.version === "0.1", "DS-05A must be version 0.1.");
+  assert(state.interactionPatterns.status === "Draft", "DS-05A must remain Draft.");
+  assert(state.interactionPatterns.workspaceRoute === "/experience-design/patterns", "DS-05A workspace route must be /experience-design/patterns.");
+  assert(state.interactionPatterns.runtimePublication === "future_design_runtime_milestone", "DS-05A runtime publication must be deferred to a future Design Runtime milestone.");
+  for (const philosophy of ["Components are atoms.", "Patterns are molecules.", "Screens are organisms.", "Patterns solve recurring interaction problems.", "Patterns prevent every screen from inventing its own behavior."]) {
+    assert(state.interactionPatterns.philosophy.includes(philosophy), `DS-05A philosophy missing ${philosophy}.`);
+  }
+  for (const boundary of ["Patterns are not React layouts.", "Patterns are not HTML templates.", "Patterns are not CSS.", "Patterns are not Tailwind.", "Patterns are not implementation.", "Patterns are not screen-specific code."]) {
+    assert(state.interactionPatterns.boundaries.includes(boundary), `DS-05A boundary missing ${boundary}.`);
+  }
+  const expectedPatternCategories = ["Navigation", "Workspace", "Exploration", "Inspection", "Creation", "Review", "Reading", "Search", "Dashboard", "Data", "Comparison", "Visualization", "Notification", "Approval", "Runtime"];
+  assert(state.interactionPatterns.categories.map((category) => category.name).join("|") === expectedPatternCategories.join("|"), "DS-05A pattern categories must match the canonical list.");
+  assert(state.interactionPatterns.categories.length === 15, "DS-05A must expose 15 canonical pattern categories.");
+  assert(state.interactionPatterns.patterns.length >= 90, "DS-05A must expose a meaningful starter pattern inventory.");
+  const patternIds = new Set(state.interactionPatterns.patterns.map((pattern) => pattern.id));
+  assert(patternIds.size === state.interactionPatterns.patterns.length, "DS-05A pattern IDs must be unique.");
+  for (const expectedPattern of ["pattern.navigation.navigation-rail", "pattern.workspace.command-center", "pattern.exploration.galaxy-exploration", "pattern.inspection.master-detail", "pattern.search.global-search", "pattern.reading.experience-bible", "pattern.approval.publish-release", "pattern.runtime.runtime-validation"]) {
+    assert(patternIds.has(expectedPattern), `DS-05A missing canonical pattern ${expectedPattern}.`);
+  }
+  for (const preview of ["Static Preview", "Interaction Diagram", "Flow Diagram", "Sequence", "Accessibility Preview"]) {
+    assert(state.interactionPatterns.previewSupport.includes(preview as never), `DS-05A preview support missing ${preview}.`);
+  }
+  for (const accessibility of ["Keyboard", "Touch", "Controller", "Reduced Motion", "High Contrast", "Screen Reader", "Localization"]) {
+    assert(state.interactionPatterns.accessibilitySupport.includes(accessibility), `DS-05A accessibility support missing ${accessibility}.`);
+  }
+  for (const target of ["Components", "Tokens", "Materials", "Motion", "Screen Templates", "Themes", "Experience Bible", "Visual DNA"]) {
+    assert(state.interactionPatterns.relationshipTargets.includes(target), `DS-05A relationship target missing ${target}.`);
+  }
+  const tokenIdsForPatterns = new Set(state.designTokens.tokens.map((token) => token.id));
+  const materialIdsForPatterns = new Set(state.materials.materials.map((material) => material.id));
+  const motionIdsForPatterns = new Set(state.motion.motions.map((motion) => motion.id));
+  const componentIdsForPatterns = new Set(state.componentLibrary.components.map((component) => component.id));
+  const boardIdsForPatterns = new Set(state.inspirationBoards.boards.map((board) => board.id));
+  for (const category of state.interactionPatterns.categories) {
+    assert(category.status === "Draft", `DS-05A category ${category.id} must remain Draft.`);
+    assert(category.version === "0.1", `DS-05A category ${category.id} must be version 0.1.`);
+    assert(category.patternIds.length > 0, `DS-05A category ${category.id} must contain patterns.`);
+    for (const patternId of category.patternIds) assert(patternIds.has(patternId), `DS-05A category ${category.id} references missing pattern ${patternId}.`);
+  }
+  for (const pattern of state.interactionPatterns.patterns) {
+    assert(pattern.id.startsWith("pattern."), `DS-05A pattern ${pattern.id} must use pattern.* semantic ID.`);
+    assert(pattern.status === "Draft", `DS-05A pattern ${pattern.id} must remain Draft.`);
+    assert(pattern.version === "0.1", `DS-05A pattern ${pattern.id} must be version 0.1.`);
+    assert(pattern.owner === "Interaction Design", `DS-05A pattern ${pattern.id} must be owned by Interaction Design.`);
+    assert(pattern.reviewStatus === pattern.status, `DS-05A pattern ${pattern.id} review status must match current draft state.`);
+    assert(pattern.futureRuntimeMapping === "future_design_runtime_milestone", `DS-05A pattern ${pattern.id} must defer runtime mapping.`);
+    assert(pattern.experienceBibleReferences.length > 0, `DS-05A pattern ${pattern.id} must link to Experience Bible guidance.`);
+    assert(pattern.visualDnaReferences.length > 0, `DS-05A pattern ${pattern.id} must link to Visual DNA guidance.`);
+    assert(pattern.relatedTokens.length > 0, `DS-05A pattern ${pattern.id} must link to design tokens.`);
+    for (const tokenId of pattern.relatedTokens) assert(tokenIdsForPatterns.has(tokenId), `DS-05A pattern ${pattern.id} references missing token ${tokenId}.`);
+    assert(pattern.relatedMaterials.length > 0, `DS-05A pattern ${pattern.id} must link to materials.`);
+    for (const materialId of pattern.relatedMaterials) assert(materialIdsForPatterns.has(materialId), `DS-05A pattern ${pattern.id} references missing material ${materialId}.`);
+    assert(pattern.relatedMotion.length > 0, `DS-05A pattern ${pattern.id} must link to motion.`);
+    for (const motionId of pattern.relatedMotion) assert(motionIdsForPatterns.has(motionId), `DS-05A pattern ${pattern.id} references missing motion ${motionId}.`);
+    assert(pattern.relatedComponents.length > 0, `DS-05A pattern ${pattern.id} must link to components.`);
+    for (const componentId of pattern.relatedComponents) assert(componentIdsForPatterns.has(componentId), `DS-05A pattern ${pattern.id} references missing component ${componentId}.`);
+    assert(pattern.relatedInspirationBoards.length > 0, `DS-05A pattern ${pattern.id} must link to Inspiration Boards.`);
+    for (const boardId of pattern.relatedInspirationBoards) assert(boardIdsForPatterns.has(boardId), `DS-05A pattern ${pattern.id} references missing Inspiration Board ${boardId}.`);
+    assert(pattern.accessibilityNotes.join("|") === state.interactionPatterns.accessibilitySupport.join("|"), `DS-05A pattern ${pattern.id} must support all accessibility modes.`);
+    assert(pattern.previewSupport.length === state.interactionPatterns.previewSupport.length, `DS-05A pattern ${pattern.id} must support all preview metadata types.`);
+    for (const flowField of ["entry", "primaryAction", "secondaryActions", "completion", "exit", "failureStates", "recovery"] as const) {
+      const value = pattern.interactionFlow[flowField];
+      assert(Array.isArray(value) ? value.length > 0 : Boolean(value), `DS-05A pattern ${pattern.id} interaction flow missing ${flowField}.`);
+    }
+    assert(pattern.history.length > 0, `DS-05A pattern ${pattern.id} must include history.`);
+  }
+  assert(state.interactionPatterns.designContracts.id === "DS-05A-CONTRACTS", "DS-05A design contracts ID must be stable.");
+  assert(state.interactionPatterns.designContracts.status === "Ready", "DS-05A design contracts must be Ready.");
+  for (const check of ["Missing Tokens", "Missing Materials", "Missing Motion", "Missing Components", "Missing Patterns", "Missing Inspiration Boards", "Missing Experience Bible References", "Duplicate IDs", "Orphaned Records", "Circular References", "Invalid Semantic IDs", "Broken Relationships"]) {
+    const contractCheck = state.interactionPatterns.designContracts.checks.find((item) => item.label === check);
+    assert(contractCheck, `DS-05A design contracts missing ${check}.`);
+    assert(contractCheck.status === "Pass", `DS-05A design contract ${check} must pass.`);
+    assert(contractCheck.count === 0, `DS-05A design contract ${check} must have zero issues.`);
+  }
+  const patternRecord = state.records.find((record) => record.id === "interaction-pattern-library");
+  assert(patternRecord?.name === "Canonical Interaction Pattern Library", "Pattern starter record must be Canonical Interaction Pattern Library.");
+  assert(patternRecord.fields.canonicalSystem === "DS-05A", "Pattern starter record must point to DS-05A.");
+  assert(patternRecord.fields.implementationValuesPublished === false, "Pattern starter record must not publish implementation values.");
+
   const inspirationSection = state.sections.find((item) => item.id === "inspiration-boards");
   assert(inspirationSection?.label === "Inspiration Boards", "Experience Design must expose Inspiration Boards workspace.");
   assert(inspirationSection.route === "/experience-design/inspiration-boards", "Inspiration Boards route must be canonical.");
@@ -494,6 +592,7 @@ async function main() {
   assert(read("components/app-shell.tsx").includes('href: "/experience-design/materials"'), "Sidebar must link to Material Library.");
   assert(read("components/app-shell.tsx").includes('href: "/experience-design/motion"'), "Sidebar must link to Motion Library.");
   assert(read("components/app-shell.tsx").includes('href: "/experience-design/components"'), "Sidebar must link to Component Library.");
+  assert(read("components/app-shell.tsx").includes('href: "/experience-design/patterns"'), "Sidebar must link to Interaction Patterns.");
   assert(read("app/experience-design/[section]/page.tsx").includes('redirect("/experience-design/inspiration-boards")'), "Old mood board route must redirect to Inspiration Boards.");
   assert(read("components/studio-command-palette.tsx").includes("Open Experience Design"), "Command palette must expose Experience Design.");
   assert(read("components/studio-command-palette.tsx").includes("Open Inspiration Boards"), "Command palette must expose Inspiration Boards.");
@@ -501,11 +600,13 @@ async function main() {
   assert(read("components/studio-command-palette.tsx").includes("Open Material Library"), "Command palette must expose Material Library.");
   assert(read("components/studio-command-palette.tsx").includes("Open Motion Library"), "Command palette must expose Motion Library.");
   assert(read("components/studio-command-palette.tsx").includes("Open Component Library"), "Command palette must expose Component Library.");
+  assert(read("components/studio-command-palette.tsx").includes("Open Interaction Patterns"), "Command palette must expose Interaction Patterns.");
   assert(read("components/experience-design-workspace.tsx").includes("InspirationBoardsWorkspace"), "Experience Design workspace must expose Inspiration Boards workspace.");
   assert(read("components/experience-design-workspace.tsx").includes("DesignTokensWorkspace"), "Experience Design workspace must expose Design Tokens workspace.");
   assert(read("components/experience-design-workspace.tsx").includes("MaterialsWorkspace"), "Experience Design workspace must expose Materials workspace.");
   assert(read("components/experience-design-workspace.tsx").includes("MotionWorkspace"), "Experience Design workspace must expose Motion workspace.");
   assert(read("components/experience-design-workspace.tsx").includes("ComponentLibraryWorkspace"), "Experience Design workspace must expose Component Library workspace.");
+  assert(read("components/experience-design-workspace.tsx").includes("InteractionPatternsWorkspace"), "Experience Design workspace must expose Interaction Patterns workspace.");
 
   const search = await searchStudio("Inspiration Boards", 10);
   assert(search.results.some((result) => result.type === "Experience Design" && /Inspiration Boards|Inspiration Board/i.test(result.title)), "Global search must return Experience Design Inspiration Board results.");
@@ -544,6 +645,12 @@ async function main() {
   assert(componentAccessibilitySearch.results.some((result) => result.type === "Experience Design" && result.href.includes("/experience-design/components#")), "Global search must return accessibility component results.");
   const navigationComponentSearch = await searchStudio("Navigation Rail orientation", 20);
   assert(navigationComponentSearch.results.some((result) => result.type === "Experience Design" && result.href.includes("/experience-design/components#component.navigation.navigation-rail")), "Global search must return navigation component results.");
+  const patternSearch = await searchStudio("pattern.navigation.navigation-rail", 20);
+  assert(patternSearch.results.some((result) => result.type === "Experience Design" && result.href === "/experience-design/patterns#pattern.navigation.navigation-rail"), "Global search must return exact DS-05A pattern results.");
+  const patternFlowSearch = await searchStudio("Failure States Recovery pattern", 20);
+  assert(patternFlowSearch.results.some((result) => result.type === "Experience Design" && result.href.includes("/experience-design/patterns#")), "Global search must return interaction flow pattern results.");
+  const designContractSearch = await searchStudio("Missing Tokens Missing Components design contracts", 20);
+  assert(designContractSearch.results.some((result) => result.type === "Experience Design" && result.href.includes("/experience-design/patterns")), "Global search must return design contract pattern results.");
 
   const canonicalRuntime = await buildCanonicalRuntimeExportPayload();
   assertNoExperienceRuntimeLeak("Canonical runtime", canonicalRuntime);
@@ -608,6 +715,15 @@ async function main() {
       sizes: state.componentLibrary.sizes.length,
       previewSupport: state.componentLibrary.previewSupport.length
     },
+    interactionPatterns: {
+      id: state.interactionPatterns.id,
+      version: state.interactionPatterns.version,
+      status: state.interactionPatterns.status,
+      categories: state.interactionPatterns.categories.length,
+      patterns: state.interactionPatterns.patterns.length,
+      designContracts: state.interactionPatterns.designContracts.status,
+      previewSupport: state.interactionPatterns.previewSupport.length
+    },
     inspirationSearchReturned: search.returned,
     nasaSearchReturned: nasaSearch.returned,
     boardSearchReturned: boardSearch.returned,
@@ -623,6 +739,9 @@ async function main() {
     componentSearchReturned: componentSearch.returned,
     componentAccessibilitySearchReturned: componentAccessibilitySearch.returned,
     navigationComponentSearchReturned: navigationComponentSearch.returned,
+    patternSearchReturned: patternSearch.returned,
+    patternFlowSearchReturned: patternFlowSearch.returned,
+    designContractSearchReturned: designContractSearch.returned,
     runtimePublishing: state.runtimePublishing,
     engineExports: Object.fromEntries(engineExports.map((engineExport, index) => [targets[index], engineExport.metadata.validationStatus]))
   }, null, 2));

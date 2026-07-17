@@ -22,7 +22,7 @@ import {
   Sparkles
 } from "lucide-react";
 import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, WorkspaceSearchBar, WorkspaceStatTile, WorkspaceTabs } from "@/components/ui/workspace";
-import type { ExperienceComponentDefinition, ExperienceDesignKind, ExperienceDesignRecord, ExperienceDesignSection, ExperienceDesignState, ExperienceDesignToken, ExperienceInspirationBoard, ExperienceMaterialDefinition, ExperienceMotionDefinition } from "@/lib/experience-design";
+import type { ExperienceComponentDefinition, ExperienceDesignKind, ExperienceDesignRecord, ExperienceDesignSection, ExperienceDesignState, ExperienceDesignToken, ExperienceInspirationBoard, ExperienceInteractionPatternDefinition, ExperienceMaterialDefinition, ExperienceMotionDefinition } from "@/lib/experience-design";
 import { cn } from "@/lib/utils";
 
 type ExperienceTab = "dashboard" | "library" | "models" | "reviews" | "history";
@@ -562,6 +562,85 @@ function ComponentLibraryWorkspace({ state, components }: { state: ExperienceDes
   );
 }
 
+function InteractionPatternCard({ pattern }: { pattern: ExperienceInteractionPatternDefinition }) {
+  return (
+    <article id={pattern.id} className="scroll-mt-24 rounded-md border border-cyan-300/15 bg-slate-950/45 p-4">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="truncate text-xs font-black uppercase tracking-[0.18em] text-cyan-300">{pattern.category}</p>
+          <h3 className="mt-2 truncate text-xl font-black text-white" title={pattern.name}>{pattern.name}</h3>
+          <p className="mt-1 truncate text-sm font-semibold text-slate-500">{pattern.id}</p>
+        </div>
+        <WorkspaceBadge value={pattern.status} />
+      </div>
+      <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-300">{pattern.problemSolved}</p>
+      <div className="mt-4 grid gap-2 sm:grid-cols-3">
+        <WorkspaceMiniStat label="Components" value={pattern.relatedComponents.length} />
+        <WorkspaceMiniStat label="Flow Steps" value={7} />
+        <WorkspaceMiniStat label="Runtime" value="Future" />
+      </div>
+      <div className="mt-4 flex flex-wrap gap-2">
+        {pattern.previewSupport.slice(0, 4).map((preview) => <WorkspaceBadge key={preview} value={preview} className="text-[0.62rem]" />)}
+      </div>
+    </article>
+  );
+}
+
+function InteractionPatternsWorkspace({ state, patterns }: { state: ExperienceDesignState; patterns: ExperienceInteractionPatternDefinition[] }) {
+  return (
+    <div className="space-y-4 lg:col-span-2 2xl:col-span-3">
+      <section className="studio-material-command rounded-lg p-5">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-300">{state.interactionPatterns.id} / Version {state.interactionPatterns.version}</p>
+            <h3 className="mt-2 text-2xl font-black text-white">{state.interactionPatterns.title}</h3>
+            <p className="mt-3 max-w-4xl text-sm leading-6 text-slate-300">{state.interactionPatterns.purpose}</p>
+          </div>
+          <WorkspaceBadge value={state.interactionPatterns.status} />
+        </div>
+        <div className="mt-4 grid gap-3 md:grid-cols-4">
+          <WorkspaceMiniStat label="Categories" value={state.interactionPatterns.categories.length} />
+          <WorkspaceMiniStat label="Patterns" value={state.interactionPatterns.patterns.length} />
+          <WorkspaceMiniStat label="Contracts" value={state.interactionPatterns.designContracts.status} />
+          <WorkspaceMiniStat label="Runtime" value="Future Milestone" />
+        </div>
+      </section>
+
+      <WorkspacePanel title="Pattern Categories" icon={Route}>
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+          {state.interactionPatterns.categories.map((category) => (
+            <div key={category.id} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
+              <div className="flex items-start justify-between gap-3">
+                <p className="text-sm font-black text-white">{category.name}</p>
+                <WorkspaceBadge value={`${category.patternIds.length}`} className="text-[0.62rem]" />
+              </div>
+              <p className="mt-2 line-clamp-3 text-xs leading-5 text-slate-400">{category.purpose}</p>
+            </div>
+          ))}
+        </div>
+      </WorkspacePanel>
+
+      <WorkspacePanel title="Design Contracts" icon={ShieldCheck}>
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          {state.interactionPatterns.designContracts.checks.map((check) => (
+            <div key={check.id} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
+              <div className="flex items-start justify-between gap-3">
+                <p className="text-sm font-black text-white">{check.label}</p>
+                <WorkspaceBadge value={check.status} className="text-[0.62rem]" />
+              </div>
+              <p className="mt-2 line-clamp-3 text-xs leading-5 text-slate-400">{check.notes}</p>
+            </div>
+          ))}
+        </div>
+      </WorkspacePanel>
+
+      <section className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
+        {patterns.map((pattern) => <InteractionPatternCard key={pattern.id} pattern={pattern} />)}
+      </section>
+    </div>
+  );
+}
+
 export function ExperienceDesignWorkspace({ state, initialSection = "dashboard" }: { state: ExperienceDesignState; initialSection?: string }) {
   const resolvedSection = state.sections.some((section) => section.id === initialSection) ? initialSection : "dashboard";
   const [query, setQuery] = useState("");
@@ -719,6 +798,38 @@ export function ExperienceDesignWorkspace({ state, initialSection = "dashboard" 
     });
   }, [query, state.componentLibrary.components]);
 
+  const filteredPatterns = useMemo(() => {
+    const normalized = query.trim().toLowerCase();
+    return state.interactionPatterns.patterns.filter((pattern) => {
+      if (!normalized) return true;
+      const text = [
+        pattern.id,
+        pattern.name,
+        pattern.category,
+        pattern.purpose,
+        pattern.problemSolved,
+        pattern.description,
+        pattern.primaryUserIntent,
+        pattern.studioIntent,
+        pattern.gameplayIntent,
+        Object.values(pattern.interactionFlow).flat().join(" "),
+        pattern.accessibilityNotes.join(" "),
+        pattern.responsiveNotes.join(" "),
+        pattern.relatedTokens.join(" "),
+        pattern.relatedMaterials.join(" "),
+        pattern.relatedMotion.join(" "),
+        pattern.relatedComponents.join(" "),
+        pattern.relatedScreens.join(" "),
+        pattern.relatedInspirationBoards.join(" "),
+        pattern.experienceBibleReferences.join(" "),
+        pattern.visualDnaReferences.join(" "),
+        pattern.previewSupport.join(" "),
+        pattern.tags.join(" ")
+      ].join(" ").toLowerCase();
+      return text.includes(normalized);
+    });
+  }, [query, state.interactionPatterns.patterns]);
+
   const reviewCounts = state.reviewWorkflow.map((status) => ({
     status,
     count: state.records.filter((record) => record.status === status).length
@@ -833,13 +944,15 @@ export function ExperienceDesignWorkspace({ state, initialSection = "dashboard" 
           {currentSection.id === "materials" ? <MaterialsWorkspace state={state} materials={filteredMaterials} /> : null}
           {currentSection.id === "motion" ? <MotionWorkspace state={state} motions={filteredMotions} /> : null}
           {currentSection.id === "components" ? <ComponentLibraryWorkspace state={state} components={filteredComponents} /> : null}
-          {currentSection.id !== "inspiration-boards" && currentSection.id !== "tokens" && currentSection.id !== "materials" && currentSection.id !== "motion" && currentSection.id !== "components" ? filteredRecords.map((record) => <ExperienceRecordCard key={record.id} state={state} record={record} />) : null}
-          {currentSection.id !== "inspiration-boards" && currentSection.id !== "tokens" && currentSection.id !== "materials" && currentSection.id !== "motion" && currentSection.id !== "components" && !filteredRecords.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Experience Design records match this view.</p> : null}
+          {currentSection.id === "patterns" ? <InteractionPatternsWorkspace state={state} patterns={filteredPatterns} /> : null}
+          {currentSection.id !== "inspiration-boards" && currentSection.id !== "tokens" && currentSection.id !== "materials" && currentSection.id !== "motion" && currentSection.id !== "components" && currentSection.id !== "patterns" ? filteredRecords.map((record) => <ExperienceRecordCard key={record.id} state={state} record={record} />) : null}
+          {currentSection.id !== "inspiration-boards" && currentSection.id !== "tokens" && currentSection.id !== "materials" && currentSection.id !== "motion" && currentSection.id !== "components" && currentSection.id !== "patterns" && !filteredRecords.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Experience Design records match this view.</p> : null}
           {currentSection.id === "inspiration-boards" && !filteredBoards.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Inspiration Boards match this view.</p> : null}
           {currentSection.id === "tokens" && !filteredTokens.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Design Tokens match this view.</p> : null}
           {currentSection.id === "materials" && !filteredMaterials.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Materials match this view.</p> : null}
           {currentSection.id === "motion" && !filteredMotions.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Motion definitions match this view.</p> : null}
           {currentSection.id === "components" && !filteredComponents.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Component definitions match this view.</p> : null}
+          {currentSection.id === "patterns" && !filteredPatterns.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Interaction Patterns match this view.</p> : null}
         </section>
       ) : null}
 

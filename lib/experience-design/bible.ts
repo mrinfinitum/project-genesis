@@ -84,7 +84,7 @@ export type ExperienceBibleChapter = {
 };
 
 export type ExperienceBibleRelease = {
-  id: "DV-02" | "DV-02B" | "DV-02C" | "DV-03" | "DV-04" | "DS-02" | "DS-03" | "DS-04" | "DS-05";
+  id: "DV-02" | "DV-02B" | "DV-02C" | "DV-03" | "DV-04" | "DS-02" | "DS-03" | "DS-04" | "DS-05" | "DS-05A";
   version: "0.1";
   status: "Draft";
   title: string;
@@ -876,6 +876,20 @@ export const experienceBibleComponentLibraryRelease: ExperienceBibleRelease = {
   ]
 };
 
+export const experienceBibleInteractionPatternRelease: ExperienceBibleRelease = {
+  id: "DS-05A",
+  version: "0.1",
+  status: "Draft",
+  title: "Canonical Interaction Pattern Library",
+  createdAt: "2026-07-17T00:00:00.000Z",
+  chapterIds: [],
+  notes: [
+    "Creates the canonical semantic Interaction Pattern Library for NOVERIS.",
+    "Defines pattern categories, reusable interaction models, interaction flows, relationships, design contract validation, search, accessibility support, preview metadata, review workflow, and versioning.",
+    "DS-05A is not React layouts, HTML templates, CSS, Tailwind, implementation, screen-specific code, runtime gameplay data, or an engine export contract."
+  ]
+};
+
 export const experienceBibleSignatureRelease: ExperienceBibleRelease = {
   id: "DV-02C",
   version: "0.1",
@@ -937,7 +951,7 @@ export function getExperienceBibleState(): ExperienceBibleState {
     parts: experienceBibleParts,
     chapters: experienceBibleChapters,
     release: experienceBibleRelease,
-    contentReleases: [experienceBibleRelease, experienceBiblePartIRelease, experienceBibleSignatureRelease, experienceBibleVisualDnaRelease, experienceBibleInspirationBoardRelease, experienceBibleDesignTokensRelease, experienceBibleMaterialLibraryRelease, experienceBibleMotionSystemRelease, experienceBibleComponentLibraryRelease],
+    contentReleases: [experienceBibleRelease, experienceBiblePartIRelease, experienceBibleSignatureRelease, experienceBibleVisualDnaRelease, experienceBibleInspirationBoardRelease, experienceBibleDesignTokensRelease, experienceBibleMaterialLibraryRelease, experienceBibleMotionSystemRelease, experienceBibleComponentLibraryRelease, experienceBibleInteractionPatternRelease],
     signature: experienceBibleSignature,
     visualDna: experienceBibleVisualDna,
     governanceRules: experienceBibleGovernanceRules,

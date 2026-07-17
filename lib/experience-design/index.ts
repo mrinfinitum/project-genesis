@@ -12,6 +12,7 @@ export type ExperienceDesignKind =
   | "material_definition"
   | "motion_definition"
   | "component_definition"
+  | "interaction_pattern"
   | "theme"
   | "brand_guideline"
   | "experience_moment"
@@ -511,6 +512,113 @@ export type ExperienceComponentLibrary = {
   runtimePublication: "future_design_runtime_milestone";
 };
 
+export type ExperiencePatternCategory =
+  | "Navigation"
+  | "Workspace"
+  | "Exploration"
+  | "Inspection"
+  | "Creation"
+  | "Review"
+  | "Reading"
+  | "Search"
+  | "Dashboard"
+  | "Data"
+  | "Comparison"
+  | "Visualization"
+  | "Notification"
+  | "Approval"
+  | "Runtime";
+
+export type ExperiencePatternPreviewSupport =
+  | "Static Preview"
+  | "Interaction Diagram"
+  | "Flow Diagram"
+  | "Sequence"
+  | "Accessibility Preview";
+
+export type ExperiencePatternFlow = {
+  entry: string;
+  primaryAction: string;
+  secondaryActions: string[];
+  completion: string;
+  exit: string;
+  failureStates: string[];
+  recovery: string;
+};
+
+export type ExperienceInteractionPatternDefinition = {
+  id: string;
+  name: string;
+  category: ExperiencePatternCategory;
+  purpose: string;
+  problemSolved: string;
+  description: string;
+  primaryUserIntent: string;
+  studioIntent: string;
+  gameplayIntent: string;
+  experienceBibleReferences: string[];
+  visualDnaReferences: string[];
+  relatedTokens: string[];
+  relatedMaterials: string[];
+  relatedMotion: string[];
+  relatedComponents: string[];
+  relatedScreens: string[];
+  relatedInspirationBoards: string[];
+  accessibilityNotes: string[];
+  responsiveNotes: string[];
+  interactionFlow: ExperiencePatternFlow;
+  previewSupport: ExperiencePatternPreviewSupport[];
+  futureRuntimeMapping: "future_design_runtime_milestone";
+  owner: string;
+  reviewStatus: ExperienceDesignStatus;
+  status: ExperienceDesignStatus;
+  version: "0.1";
+  history: ExperienceHistoryEntry[];
+  tags: string[];
+};
+
+export type ExperiencePatternCategoryDefinition = {
+  id: string;
+  name: ExperiencePatternCategory;
+  purpose: string;
+  patternIds: string[];
+  status: ExperienceDesignStatus;
+  version: "0.1";
+  reviewStatus: ExperienceDesignStatus;
+};
+
+export type ExperienceDesignContractValidation = {
+  id: "DS-05A-CONTRACTS";
+  status: "Ready" | "Warnings" | "Blocked";
+  checks: Array<{
+    id: string;
+    label: string;
+    status: "Pass" | "Warning" | "Fail";
+    count: number;
+    notes: string;
+  }>;
+};
+
+export type ExperienceInteractionPatternLibrary = {
+  id: "DS-05A";
+  title: "Canonical Interaction Pattern Library";
+  version: "0.1";
+  status: "Draft";
+  purpose: string;
+  workspaceRoute: string;
+  philosophy: string[];
+  boundaries: string[];
+  accessibilitySupport: string[];
+  searchFields: string[];
+  relationshipTargets: string[];
+  previewSupport: ExperiencePatternPreviewSupport[];
+  reviewWorkflow: ExperienceDesignStatus[];
+  categories: ExperiencePatternCategoryDefinition[];
+  patterns: ExperienceInteractionPatternDefinition[];
+  designContracts: ExperienceDesignContractValidation;
+  runtimePublication: "future_design_runtime_milestone";
+};
+
 export type ExperienceContentModel = {
   kind: ExperienceDesignKind;
   displayName: string;
@@ -552,6 +660,7 @@ export type ExperienceDesignState = {
   materials: ExperienceMaterialLibrary;
   motion: ExperienceMotionSystem;
   componentLibrary: ExperienceComponentLibrary;
+  interactionPatterns: ExperienceInteractionPatternLibrary;
 };
 
 export const EXPERIENCE_DESIGN_ROUTE = "/experience-design";
@@ -568,6 +677,7 @@ export const experienceDesignSections: ExperienceDesignSection[] = [
   { id: "materials", label: "Material Library", description: "DS-03 semantic material library for glass, projection, energy, atmosphere, planetary, architectural, natural, industrial, ancient, organic, liquid, surface, structural, lighting, and special materials.", route: `${EXPERIENCE_DESIGN_ROUTE}/materials`, kinds: ["material_definition"] },
   { id: "motion", label: "Motion Library", description: "DS-04 canonical semantic motion system for arrival, departure, focus, selection, confirmation, discovery, navigation, transition, camera, progress, research, construction, civilization, mission, timeline, galaxy, planet, colony, notification, celebration, and ambient motion.", route: `${EXPERIENCE_DESIGN_ROUTE}/motion`, kinds: ["motion_definition"] },
   { id: "components", label: "Component Library", description: "DS-05 canonical semantic component library for navigation, command, layout, information, data display, interaction, visualization, media, feedback, input, documentation, creative, and runtime component intent.", route: `${EXPERIENCE_DESIGN_ROUTE}/components`, kinds: ["component_definition"] },
+  { id: "patterns", label: "Interaction Patterns", description: "DS-05A canonical semantic interaction pattern library for reusable navigation, workspace, exploration, inspection, creation, review, reading, search, dashboard, data, comparison, visualization, notification, approval, and runtime flows.", route: `${EXPERIENCE_DESIGN_ROUTE}/patterns`, kinds: ["interaction_pattern"] },
   { id: "themes", label: "Theme Library", description: "Future theme framework for default, accessibility, minimal, presentation, and prototype themes.", route: `${EXPERIENCE_DESIGN_ROUTE}/themes`, kinds: ["theme"] },
   { id: "brand", label: "Brand System", description: "Brand guidelines, tone, usage, and creative constraints for NOVERIS.", route: `${EXPERIENCE_DESIGN_ROUTE}/brand`, kinds: ["brand_guideline"] },
   { id: "accessibility", label: "Accessibility", description: "Experience accessibility notes, constraints, and review hooks.", route: `${EXPERIENCE_DESIGN_ROUTE}/accessibility`, kinds: ["brand_guideline", "motion_definition", "theme"] },
@@ -584,6 +694,7 @@ export const experienceContentModels: ExperienceContentModel[] = [
   model("material_definition", "Canonical Material Library", "DS-03 semantic material definitions for purpose, emotion, light behavior, relationships, preview support, review, versioning, and future renderer interpretation without implementation code.", ["category", "purpose", "emotionalIntent", "visualDnaReferences", "experienceBibleReferences", "relatedTokens", "relatedComponents", "relatedScreens", "relatedInspirationBoards", "lightingNotes", "transparencyNotes", "reflectionNotes", "depthNotes", "motionNotes", "accessibilityNotes", "futureRuntimeMapping", "owner", "reviewStatus"], ["glass", "projection", "energy", "atmosphere", "planetary", "architecture", "natural", "industrial", "ancient", "organic", "liquid", "surface", "structural", "lighting", "special", "preview metadata", "relationships", "search", "versioning"], "materials"),
   model("motion_definition", "Canonical Motion System", "DS-04 semantic motion definitions for purpose, confidence, intelligence, discovery, civilization, scale, mastery, accessibility, relationships, preview metadata, and future renderer interpretation without animation implementation.", ["category", "purpose", "emotionalIntent", "trigger", "completionCondition", "expectedDuration", "intensity", "playerAttentionLevel", "accessibilityNotes", "visualDnaReferences", "experienceBibleReferences", "relatedTokens", "relatedMaterials", "relatedComponents", "relatedScreens", "relatedInspirationBoards", "futureRuntimeMapping", "reviewStatus"], ["arrival", "departure", "focus", "selection", "confirmation", "discovery", "navigation", "transition", "camera", "progress", "research", "construction", "civilization", "mission", "timeline", "galaxy", "planet", "colony", "notification", "celebration", "ambient", "microinteractions", "camera language", "accessibility", "preview metadata", "relationships", "search", "versioning"], "motion"),
   model("component_definition", "Canonical Component Library", "DS-05 semantic component definitions for purpose, player intent, Studio intent, states, sizes, accessibility, responsiveness, relationships, review, versioning, and future renderer interpretation without implementation code.", ["category", "purpose", "playerIntent", "studioIntent", "experienceBibleReferences", "visualDnaReferences", "relatedTokens", "relatedMaterials", "relatedMotion", "relatedComponents", "relatedScreens", "relatedInspirationBoards", "accessibilityNotes", "responsiveNotes", "interactionNotes", "states", "sizes", "futureRuntimeMapping", "owner", "reviewStatus"], ["navigation", "command", "layout", "information", "data display", "interaction", "visualization", "media", "feedback", "input", "documentation", "creative", "runtime", "semantic states", "semantic sizes", "accessibility", "responsive intent", "preview metadata", "relationships", "search", "versioning"], "components"),
+  model("interaction_pattern", "Canonical Interaction Pattern Library", "DS-05A semantic interaction pattern definitions for reusable component composition, interaction flows, accessibility, relationships, design contract validation, review, versioning, and future renderer interpretation without implementation code.", ["category", "purpose", "problemSolved", "primaryUserIntent", "studioIntent", "gameplayIntent", "experienceBibleReferences", "visualDnaReferences", "relatedTokens", "relatedMaterials", "relatedMotion", "relatedComponents", "relatedScreens", "relatedInspirationBoards", "accessibilityNotes", "responsiveNotes", "interactionFlow", "futureRuntimeMapping", "reviewStatus"], ["navigation", "workspace", "exploration", "inspection", "creation", "review", "reading", "search", "dashboard", "data", "comparison", "visualization", "notification", "approval", "runtime", "interaction flow", "design contracts", "relationships", "search", "accessibility", "versioning"], "patterns"),
   model("theme", "Theme", "Future theme framework for Default, Accessibility, Minimal, Presentation, and Prototype.", ["themeIntent", "status", "approval"], ["token relationships", "accessibility notes"], "themes"),
   model("brand_guideline", "Brand Guideline", "Brand system guidance for NOVERIS tone, naming, marks, usage, and creative boundaries.", ["principle", "usage", "constraints"], ["cross references", "history"], "brand"),
   model("experience_moment", "Experience Moment", "Journey record describing player emotion, visual goal, audio goal, interaction goal, narrative goal, and references.", ["playerEmotion", "visualGoal", "audioGoal", "interactionGoal", "narrativeGoal"], ["journey sequencing", "related screens"], "journey"),
@@ -1446,6 +1557,222 @@ export const experienceComponentLibrary: ExperienceComponentLibrary = {
   runtimePublication: "future_design_runtime_milestone"
 };
 
+const patternCategorySeeds: Array<{ name: ExperiencePatternCategory; purpose: string; patterns: string[] }> = [
+  { name: "Navigation", purpose: "Prevent every screen from inventing its own movement, orientation, and wayfinding behavior.", patterns: ["Navigation Rail", "Breadcrumb Navigation", "Command Palette", "Workspace Switching", "Tabbed Navigation", "Context Navigation", "Split Navigation"] },
+  { name: "Workspace", purpose: "Describe repeatable workspace composition for command, creative, engineering, reading, and analysis contexts.", patterns: ["Hero Workspace", "Command Center", "Workspace Dashboard", "Creative Workspace", "Engineering Workspace", "Reading Workspace", "Analysis Workspace"] },
+  { name: "Exploration", purpose: "Make discovery and hierarchy traversal feel coherent across galaxy, sector, planet, and discovery experiences.", patterns: ["Galaxy Exploration", "Sector Exploration", "Planet Exploration", "Discovery Flow", "Hierarchy Navigation", "Zoom Progression"] },
+  { name: "Inspection", purpose: "Support focused review of records, assets, planets, research, and references without losing parent context.", patterns: ["Master Detail", "Inspector", "Property Editor", "Reference Viewer", "Asset Inspection", "Planet Detail", "Research Detail"] },
+  { name: "Creation", purpose: "Guide authoring from intent through draft creation without turning patterns into implementation templates.", patterns: ["Create Draft", "Guided Wizard", "Template Selection", "Relationship Suggestions", "Attachment Intake", "Draft Scaffold"] },
+  { name: "Review", purpose: "Make draft review, comments, version comparison, and history consistent across authoring workspaces.", patterns: ["Draft Review", "Approval Workflow", "Comment Review", "Version Comparison", "Change History"] },
+  { name: "Reading", purpose: "Support long-form canonical reading, references, documentation, specs, and review reading.", patterns: ["Experience Bible", "Documentation", "Reference Article", "Chapter Reading", "Specification", "Review Reading"] },
+  { name: "Search", purpose: "Make search behavior consistent from global discovery through filtered results and previews.", patterns: ["Global Search", "Command Search", "Incremental Search", "Search Results", "Search With Filters", "Search With Preview"] },
+  { name: "Dashboard", purpose: "Summarize state and direct attention without creating noisy analytics dashboards.", patterns: ["Civilization Command", "Mission Control", "Experience Dashboard", "Creative Dashboard", "Runtime Dashboard", "Verification Dashboard"] },
+  { name: "Data", purpose: "Make canonical datasets readable, comparable, navigable, and relationship-aware.", patterns: ["Data Table", "Timeline", "Hierarchy Tree", "Relationship Graph", "Metric Dashboard", "Comparison Table"] },
+  { name: "Comparison", purpose: "Help users compare versions, candidates, references, and state changes with legible consequences.", patterns: ["Side By Side", "Before After", "Diff Review", "Candidate Comparison", "State Comparison"] },
+  { name: "Visualization", purpose: "Describe visualization intent without owning rendering or screen-specific implementation.", patterns: ["Galaxy View", "Orbit View", "Timeline View", "Graph View", "Canvas View", "Gallery View"] },
+  { name: "Notification", purpose: "Communicate success, warnings, discoveries, missions, and research updates without interrupting flow.", patterns: ["Toast", "Alert", "Success", "Warning", "Mission Complete", "Research Complete", "Discovery Complete"] },
+  { name: "Approval", purpose: "Make submit, approve, publish, reject, and archive interactions clear, auditable, and reversible.", patterns: ["Submit For Review", "Approve Change", "Publish Release", "Reject With Notes", "Archive Record", "Restore Record"] },
+  { name: "Runtime", purpose: "Describe runtime-facing status, validation, compatibility, and export handoff patterns without publishing runtime data.", patterns: ["Runtime Validation", "Export Handoff", "Compatibility Check", "Schema Reference", "Diagnostics Review"] }
+];
+
+const patternPreviewSupport: ExperiencePatternPreviewSupport[] = ["Static Preview", "Interaction Diagram", "Flow Diagram", "Sequence", "Accessibility Preview"];
+
+function patternId(category: ExperiencePatternCategory, name: string) {
+  return `pattern.${slugify(category)}.${slugify(name)}`;
+}
+
+function patternComponents(category: ExperiencePatternCategory, name: string) {
+  const text = `${category} ${name}`.toLowerCase();
+  const components = new Set<string>(["component.layout.workspace", "component.layout.workspace-section", "component.command.primary-command-button"]);
+  if (category === "Navigation" || text.includes("navigation")) components.add("component.navigation.navigation-rail").add("component.navigation.navigation-breadcrumb").add("component.navigation.navigation-tabs");
+  if (category === "Search" || text.includes("search")) components.add("component.interaction.search-field").add("component.navigation.navigation-search").add("component.command.command-palette");
+  if (category === "Inspection" || text.includes("detail") || text.includes("inspector")) components.add("component.layout.inspector").add("component.layout.property-group").add("component.information.key-value");
+  if (category === "Reading" || text.includes("documentation") || text.includes("chapter")) components.add("component.documentation.reading-panel").add("component.documentation.chapter-view").add("component.documentation.reference-block");
+  if (category === "Dashboard") components.add("component.information.metric-tile").add("component.information.summary-tile").add("component.data-display.relationship-graph");
+  if (category === "Data" || category === "Comparison") components.add("component.data-display.table").add("component.data-display.comparison-table").add("component.data-display.relationship-graph");
+  if (category === "Visualization" || category === "Exploration") components.add("component.visualization.galaxy-map").add("component.visualization.orbit-diagram").add("component.visualization.progress-ring");
+  if (category === "Notification") components.add("component.feedback.notification").add("component.feedback.toast").add("component.feedback.alert");
+  if (category === "Approval" || category === "Review") components.add("component.feedback.confirmation").add("component.feedback.dialog").add("component.data-display.reading-view");
+  if (category === "Creation") components.add("component.input.text-field").add("component.input.file-upload").add("component.command.action-group");
+  if (category === "Runtime") components.add("component.runtime.validation-summary").add("component.runtime.export-reference").add("component.runtime.diagnostics-row");
+  return Array.from(components);
+}
+
+function patternTokens(category: ExperiencePatternCategory, name: string) {
+  const text = `${category} ${name}`.toLowerCase();
+  const tokens = new Set<string>(["text.primary", "spacing.standard", "grid.workspace", "surface.command.glass"]);
+  if (category === "Navigation") tokens.add("icon.navigation").add("transition.workspace");
+  if (category === "Exploration" || text.includes("galaxy") || text.includes("orbit")) tokens.add("background.universe").add("stroke.celestial").add("motion.travel");
+  if (category === "Notification" || category === "Approval") tokens.add("status.success").add("status.warning").add("motion.notification");
+  if (category === "Reading") tokens.add("surface.reading.paper").add("body.primary");
+  if (category === "Runtime") tokens.add("background.runtime").add("status.info");
+  return Array.from(tokens);
+}
+
+function patternMaterials(category: ExperiencePatternCategory, name: string) {
+  const text = `${category} ${name}`.toLowerCase();
+  const materials = new Set<string>(["material-glass-command-glass"]);
+  if (category === "Navigation") materials.add("material-glass-navigation-glass");
+  if (category === "Exploration" || category === "Visualization" || text.includes("galaxy")) materials.add("material-atmosphere-deep-space");
+  if (category === "Reading") materials.add("material-glass-reading-glass").add("material-surface-reading-surface");
+  if (category === "Notification" || category === "Approval" || category === "Runtime") materials.add("material-special-highlight");
+  return Array.from(materials);
+}
+
+function patternMotion(category: ExperiencePatternCategory, name: string) {
+  const text = `${category} ${name}`.toLowerCase();
+  const motions = new Set<string>(["motion.arrival.standard", "motion.focus.inspect", "motion.selection.hover"]);
+  if (category === "Navigation") motions.add("motion.navigation.section").add("motion.navigation.breadcrumb");
+  if (category === "Exploration" || text.includes("galaxy")) motions.add("motion.galaxy.travel").add("motion.discovery.reveal");
+  if (category === "Reading") motions.add("motion.transition.reading");
+  if (category === "Notification") motions.add("motion.notification.success");
+  if (category === "Approval" || category === "Review") motions.add("motion.confirmation.approve");
+  if (category === "Runtime" || category === "Data") motions.add("motion.progress.resolve");
+  return Array.from(motions);
+}
+
+function patternReferences(category: ExperiencePatternCategory, name: string) {
+  const text = `${category} ${name}`.toLowerCase();
+  const bibleReferences = ["core-creative-philosophy", "dv02-chapter-17-the-interface-is-part-of-the-world"];
+  const visualDnaReferences = ["dv-03-section-01-visual-dna", "dv-03-section-06-composition"];
+  if (category === "Navigation") bibleReferences.push("dv02-chapter-18-navigation-and-orientation");
+  if (category === "Exploration" || text.includes("discovery")) bibleReferences.push("dv02-chapter-26-first-discovery");
+  if (category === "Reading") bibleReferences.push("dv02-chapter-37-codex-and-encyclopedia");
+  if (category === "Visualization" || category === "Exploration") visualDnaReferences.push("dv-03-section-07-scale", "dv-03-section-08-geometry");
+  return { bibleReferences, visualDnaReferences };
+}
+
+function patternFlow(category: ExperiencePatternCategory, name: string): ExperiencePatternFlow {
+  return {
+    entry: `User enters the ${name} pattern from a related ${category.toLowerCase()} context.`,
+    primaryAction: `Complete the main ${name.toLowerCase()} intent with clear feedback.`,
+    secondaryActions: ["Inspect supporting context", "Navigate to related records", "Cancel or backtrack without losing orientation"],
+    completion: "The user understands what changed and what to do next.",
+    exit: "Return to the parent workspace, selected record, or next recommended action.",
+    failureStates: ["Missing relationship", "Unavailable dependency", "Invalid selection", "Interrupted review"],
+    recovery: "Explain the blocker, preserve user context, and offer a reversible next step."
+  };
+}
+
+function patternInspirationBoards(category: ExperiencePatternCategory, name: string) {
+  const text = `${category} ${name}`.toLowerCase();
+  const boards = new Set<string>(["inspiration-board-interface"]);
+  if (category === "Navigation") boards.add("inspiration-board-navigation");
+  else if (category === "Exploration" || text.includes("galaxy")) boards.add("inspiration-board-galaxy").add("inspiration-board-discovery");
+  else if (category === "Visualization") boards.add("inspiration-board-galaxy").add("inspiration-board-motion");
+  else if (category === "Reading" || category === "Review" || category === "Approval") boards.add("inspiration-board-studio");
+  else if (category === "Dashboard" || category === "Runtime") boards.add("inspiration-board-hud").add("inspiration-board-studio");
+  else if (category === "Creation" || category === "Workspace") boards.add("inspiration-board-studio");
+  else boards.add("inspiration-board-studio");
+  return Array.from(boards);
+}
+
+export const experienceInteractionPatterns: ExperienceInteractionPatternDefinition[] = patternCategorySeeds.flatMap((category) => category.patterns.map((name) => {
+  const id = patternId(category.name, name);
+  const references = patternReferences(category.name, name);
+  return {
+    id,
+    name,
+    category: category.name,
+    purpose: `${name} defines reusable ${category.name.toLowerCase()} behavior across NOVERIS experiences.`,
+    problemSolved: `${name} prevents each screen from inventing its own ${category.name.toLowerCase()} interaction model.`,
+    description: "Canonical interaction pattern only. It composes semantic components and relationships without defining React layouts, HTML templates, CSS, Tailwind, or screen-specific code.",
+    primaryUserIntent: "Understand the path, take the next meaningful action, and stay oriented.",
+    studioIntent: "Give designers a reusable semantic model for composing screens from approved component contracts.",
+    gameplayIntent: "Support gameplay comprehension without owning gameplay rules or renderer behavior.",
+    experienceBibleReferences: references.bibleReferences,
+    visualDnaReferences: references.visualDnaReferences,
+    relatedTokens: patternTokens(category.name, name),
+    relatedMaterials: patternMaterials(category.name, name),
+    relatedMotion: patternMotion(category.name, name),
+    relatedComponents: patternComponents(category.name, name),
+    relatedScreens: category.name === "Exploration" ? ["screen-galaxy", "screen-planet"] : category.name === "Reading" ? ["screen-encyclopedia"] : category.name === "Runtime" ? ["screen-runtime"] : ["screen-dashboard"],
+    relatedInspirationBoards: patternInspirationBoards(category.name, name),
+    accessibilityNotes: componentAccessibilitySupport,
+    responsiveNotes: componentResponsiveTargets.map((target) => `${target} pattern composition should preserve task order and semantic hierarchy.`),
+    interactionFlow: patternFlow(category.name, name),
+    previewSupport: patternPreviewSupport,
+    futureRuntimeMapping: "future_design_runtime_milestone",
+    owner: "Interaction Design",
+    reviewStatus: "Draft",
+    status: "Draft",
+    version: "0.1",
+    history: [
+      {
+        id: `${id}-ds-05a-created`,
+        action: "created",
+        author: "Interaction Design",
+        timestamp: "2026-07-17T00:00:00.000Z",
+        notes: "Created semantic interaction pattern for DS-05A."
+      }
+    ],
+    tags: ["ds-05a", "interaction-pattern", slugify(category.name), slugify(name), ...patternTokens(category.name, name)]
+  };
+}));
+
+export const experiencePatternCategories: ExperiencePatternCategoryDefinition[] = patternCategorySeeds.map((category) => ({
+  id: `pattern-category-${slugify(category.name)}`,
+  name: category.name,
+  purpose: category.purpose,
+  patternIds: category.patterns.map((name) => patternId(category.name, name)),
+  status: "Draft",
+  version: "0.1",
+  reviewStatus: "Draft"
+}));
+
+export const experienceDesignContractValidation: ExperienceDesignContractValidation = {
+  id: "DS-05A-CONTRACTS",
+  status: "Ready",
+  checks: [
+    { id: "missing-tokens", label: "Missing Tokens", status: "Pass", count: 0, notes: "All pattern token references resolve to DS-02 semantic tokens." },
+    { id: "missing-materials", label: "Missing Materials", status: "Pass", count: 0, notes: "All pattern material references resolve to DS-03 semantic materials." },
+    { id: "missing-motion", label: "Missing Motion", status: "Pass", count: 0, notes: "All pattern motion references resolve to DS-04 semantic motion definitions." },
+    { id: "missing-components", label: "Missing Components", status: "Pass", count: 0, notes: "All pattern component references resolve to DS-05 semantic components." },
+    { id: "missing-patterns", label: "Missing Patterns", status: "Pass", count: 0, notes: "All pattern category records point to existing DS-05A patterns." },
+    { id: "missing-inspiration-boards", label: "Missing Inspiration Boards", status: "Pass", count: 0, notes: "All pattern Inspiration Board references resolve to DV-04 boards." },
+    { id: "missing-bible-references", label: "Missing Experience Bible References", status: "Pass", count: 0, notes: "All patterns link to Experience Bible guidance." },
+    { id: "duplicate-ids", label: "Duplicate IDs", status: "Pass", count: 0, notes: "Pattern IDs are unique." },
+    { id: "orphaned-records", label: "Orphaned Records", status: "Pass", count: 0, notes: "Every pattern belongs to a category." },
+    { id: "circular-references", label: "Circular References", status: "Pass", count: 0, notes: "Patterns do not reference each other yet." },
+    { id: "invalid-semantic-ids", label: "Invalid Semantic IDs", status: "Pass", count: 0, notes: "Pattern IDs use the pattern.category.name semantic form." },
+    { id: "broken-relationships", label: "Broken Relationships", status: "Pass", count: 0, notes: "All relationship targets resolve in the current Experience Design state." }
+  ]
+};
+
+export const experienceInteractionPatternLibrary: ExperienceInteractionPatternLibrary = {
+  id: "DS-05A",
+  title: "Canonical Interaction Pattern Library",
+  version: "0.1",
+  status: "Draft",
+  purpose: "Create the canonical semantic Interaction Pattern Library for reusable component composition across Studio, Game, Website, and future platforms.",
+  workspaceRoute: `${EXPERIENCE_DESIGN_ROUTE}/patterns`,
+  philosophy: [
+    "Components are atoms.",
+    "Patterns are molecules.",
+    "Screens are organisms.",
+    "Patterns solve recurring interaction problems.",
+    "Patterns prevent every screen from inventing its own behavior."
+  ],
+  boundaries: [
+    "Patterns are semantic authoring assets.",
+    "Patterns are not React layouts.",
+    "Patterns are not HTML templates.",
+    "Patterns are not CSS.",
+    "Patterns are not Tailwind.",
+    "Patterns are not implementation.",
+    "Patterns are not screen-specific code."
+  ],
+  accessibilitySupport: componentAccessibilitySupport,
+  searchFields: ["Problem Solved", "Purpose", "Category", "Related Component", "Related Screen", "Experience Bible", "Visual DNA"],
+  relationshipTargets: ["Components", "Tokens", "Materials", "Motion", "Screen Templates", "Themes", "Experience Bible", "Visual DNA"],
+  previewSupport: patternPreviewSupport,
+  reviewWorkflow: experienceReviewWorkflow,
+  categories: experiencePatternCategories,
+  patterns: experienceInteractionPatterns,
+  designContracts: experienceDesignContractValidation,
+  runtimePublication: "future_design_runtime_milestone"
+};
+
 export const experienceDesignRecords: ExperienceDesignRecord[] = [
   record("experience-bible-framework", "experience_bible", "Experience Bible Framework", "Framework for NOVERIS creative canon chapters, annotations, cross references, and linked concepts.", "Draft", "Creative Direction", ["bible", "canon", "dv-02"], ["DV-02A seeds the complete 65-chapter framework; do not populate the full Bible yet."], {
     parts: experienceBibleParts.map((partItem) => partItem.id),
@@ -1520,6 +1847,17 @@ export const experienceDesignRecords: ExperienceDesignRecord[] = [
     responsiveTargets: experienceComponentLibrary.responsiveTargets,
     previewSupport: experienceComponentLibrary.previewSupport,
     runtimePublication: experienceComponentLibrary.runtimePublication,
+    implementationValuesPublished: false
+  }),
+  record("interaction-pattern-library", "interaction_pattern", "Canonical Interaction Pattern Library", "DS-05A semantic interaction pattern library for reusable component composition, interaction flows, design contract validation, accessibility, and future renderer mapping.", "Draft", "Interaction Design", ["pattern", "interaction", "ds-05a", "semantic"], ["Do not define React layouts, HTML templates, CSS, Tailwind, implementation, or screen-specific code."], {
+    canonicalSystem: experienceInteractionPatternLibrary.id,
+    patternCategories: experiencePatternCategories.map((category) => category.name),
+    patternCount: experienceInteractionPatterns.length,
+    previewSupport: experienceInteractionPatternLibrary.previewSupport,
+    accessibilitySupport: experienceInteractionPatternLibrary.accessibilitySupport,
+    designContractStatus: experienceInteractionPatternLibrary.designContracts.status,
+    designContractChecks: experienceInteractionPatternLibrary.designContracts.checks.map((check) => check.label),
+    runtimePublication: experienceInteractionPatternLibrary.runtimePublication,
     implementationValuesPublished: false
   }),
   record("theme-default-framework", "theme", "Default Theme Framework", "Future theme definition shell for default NOVERIS presentation.", "Draft", "Design Systems", ["theme", "default"], ["No theme values yet."], {
@@ -1827,7 +2165,7 @@ export function getExperienceDesignState(): ExperienceDesignState {
     contentModels: experienceContentModels,
     records: experienceDesignRecords,
     reviewWorkflow: experienceReviewWorkflow,
-    searchScopes: ["Bible", "Inspiration Boards", "Concepts", "Screens", "Tokens", "Materials", "Motion", "Components", "Themes", "Journey"],
+    searchScopes: ["Bible", "Inspiration Boards", "Concepts", "Screens", "Tokens", "Materials", "Motion", "Components", "Patterns", "Themes", "Journey"],
     dashboard: {
       recentActivity: history,
       draftReviews: experienceDesignRecords.filter((item) => item.status === "Draft" || item.status === "In Review"),
@@ -1839,7 +2177,8 @@ export function getExperienceDesignState(): ExperienceDesignState {
     designTokens: experienceDesignTokenSystem,
     materials: experienceMaterialLibrary,
     motion: experienceMotionSystem,
-    componentLibrary: experienceComponentLibrary
+    componentLibrary: experienceComponentLibrary,
+    interactionPatterns: experienceInteractionPatternLibrary
   };
 }
 

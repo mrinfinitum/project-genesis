@@ -56,6 +56,7 @@ const workspaceResults: StudioSearchResult[] = [
   workspace("material-library", "Material Library", "/experience-design/materials", "DS-03 canonical semantic material library"),
   workspace("motion-library", "Motion Library", "/experience-design/motion", "DS-04 canonical semantic motion system"),
   workspace("component-library", "Component Library", "/experience-design/components", "DS-05 canonical semantic component library"),
+  workspace("interaction-patterns", "Interaction Patterns", "/experience-design/patterns", "DS-05A canonical semantic interaction pattern library"),
   workspace("screen-library", "Screen Library", "/experience-design/screens", "Canonical screen intent"),
   workspace("upload-asset", "Upload Asset", "/assets?upload=asset", "Asset pipeline"),
   workspace("regenerate-derivatives", "Regenerate Derivatives", "/asset-library?status=needs_review", "Asset pipeline"),
@@ -318,6 +319,69 @@ export async function buildStudioSearchIndex(): Promise<StudioSearchIndex> {
         component.visualDnaReferences.join(" "),
         component.previewSupport.join(" "),
         component.tags.join(" ")
+      ]
+    })),
+    ...experienceDesign.interactionPatterns.categories.map((category) => result({
+      id: category.id,
+      type: "Experience Design" as const,
+      title: `${category.name} Patterns`,
+      subtitle: `Pattern Category / ${experienceDesign.interactionPatterns.id} / ${category.status}`,
+      href: experienceDesign.interactionPatterns.workspaceRoute,
+      status: category.status,
+      aliases: [category.purpose, category.patternIds.join(" "), category.reviewStatus, "semantic interaction pattern"]
+    })),
+    result({
+      id: experienceDesign.interactionPatterns.designContracts.id,
+      type: "Experience Design" as const,
+      title: "DS-05A Design Contracts",
+      subtitle: `Interaction Pattern Contracts / ${experienceDesign.interactionPatterns.designContracts.status}`,
+      href: experienceDesign.interactionPatterns.workspaceRoute,
+      status: experienceDesign.interactionPatterns.designContracts.status,
+      aliases: [
+        "verify design contracts",
+        "Missing Tokens",
+        "Missing Materials",
+        "Missing Motion",
+        "Missing Components",
+        "Missing Patterns",
+        "Missing Inspiration Boards",
+        "Missing Experience Bible references",
+        "Duplicate IDs",
+        "Orphaned records",
+        "Circular references",
+        "Invalid semantic IDs",
+        "Broken relationships",
+        ...experienceDesign.interactionPatterns.designContracts.checks.map((check) => `${check.label} ${check.status} ${check.notes}`)
+      ]
+    }),
+    ...experienceDesign.interactionPatterns.patterns.map((pattern) => result({
+      id: pattern.id,
+      type: "Experience Design" as const,
+      title: pattern.name,
+      subtitle: `${pattern.category} Pattern / ${pattern.status}`,
+      href: `${experienceDesign.interactionPatterns.workspaceRoute}#${pattern.id}`,
+      status: pattern.status,
+      aliases: [
+        pattern.id,
+        pattern.purpose,
+        pattern.problemSolved,
+        pattern.description,
+        pattern.primaryUserIntent,
+        pattern.studioIntent,
+        pattern.gameplayIntent,
+        Object.values(pattern.interactionFlow).flat().join(" "),
+        pattern.accessibilityNotes.join(" "),
+        pattern.responsiveNotes.join(" "),
+        pattern.relatedTokens.join(" "),
+        pattern.relatedMaterials.join(" "),
+        pattern.relatedMotion.join(" "),
+        pattern.relatedComponents.join(" "),
+        pattern.relatedScreens.join(" "),
+        pattern.relatedInspirationBoards.join(" "),
+        pattern.experienceBibleReferences.join(" "),
+        pattern.visualDnaReferences.join(" "),
+        pattern.previewSupport.join(" "),
+        pattern.tags.join(" ")
       ]
     })),
     ...experienceDesign.experienceBible.parts.map((part) => result({

@@ -48,6 +48,8 @@ function assertNoRuntimeLeak(label: string, value: unknown) {
   assert(!text.includes("Canonical Motion System"), `${label} leaked Canonical Motion System data.`);
   assert(!text.includes("DS-05"), `${label} leaked DS-05 Component Library data.`);
   assert(!text.includes("Canonical Component Library"), `${label} leaked Canonical Component Library data.`);
+  assert(!text.includes("DS-05A"), `${label} leaked DS-05A Interaction Pattern Library data.`);
+  assert(!text.includes("Canonical Interaction Pattern Library"), `${label} leaked Canonical Interaction Pattern Library data.`);
   assert(!/"bodySections"\s*:/.test(text), `${label} leaked Bible body sections.`);
 }
 
@@ -110,6 +112,13 @@ async function main() {
   assert(componentLibraryRelease.chapterIds.length === 0, "DS-05 must be a Component Library release, not a numbered chapter release.");
   assert(componentLibraryRelease.notes.some((note) => note.includes("not React components")), "DS-05 release must reject React component ownership.");
   assert(componentLibraryRelease.notes.some((note) => note.includes("not React components, Vue components, HTML, CSS")), "DS-05 release must reject renderer implementation ownership.");
+  const interactionPatternRelease = bible.contentReleases.find((release) => release.id === "DS-05A");
+  assert(interactionPatternRelease, "Missing DS-05A Canonical Interaction Pattern Library content release.");
+  assert(interactionPatternRelease.version === "0.1", "DS-05A must be version 0.1.");
+  assert(interactionPatternRelease.status === "Draft", "DS-05A must remain Draft.");
+  assert(interactionPatternRelease.chapterIds.length === 0, "DS-05A must be an Interaction Pattern Library release, not a numbered chapter release.");
+  assert(interactionPatternRelease.notes.some((note) => note.includes("not React layouts")), "DS-05A release must reject React layout ownership.");
+  assert(interactionPatternRelease.notes.some((note) => note.includes("screen-specific code")), "DS-05A release must reject screen-specific implementation ownership.");
   assert(experience.experienceBible.chapters.length === 65, "Experience Design state must expose Bible chapters.");
 
   assert(bible.signature.id === "DV-02C", "Signature section ID must be DV-02C.");
@@ -562,6 +571,8 @@ async function main() {
   assert(read("docs/experience-bible.md").includes("Canonical Motion System"), "Experience Bible documentation must document Canonical Motion System.");
   assert(read("docs/experience-bible.md").includes("DS-05"), "Experience Bible documentation must document DS-05.");
   assert(read("docs/experience-bible.md").includes("Canonical Component Library"), "Experience Bible documentation must document Canonical Component Library.");
+  assert(read("docs/experience-bible.md").includes("DS-05A"), "Experience Bible documentation must document DS-05A.");
+  assert(read("docs/experience-bible.md").includes("Canonical Interaction Pattern Library"), "Experience Bible documentation must document Canonical Interaction Pattern Library.");
   assert(read("components/experience-bible-workspace.tsx").includes("aria-label=\"Experience Bible table of contents\""), "TOC must expose accessible label.");
   assert(read("components/experience-bible-workspace.tsx").includes("window.localStorage.setItem(storageKey"), "TOC expansion state must be remembered.");
   assert(read("components/experience-bible-workspace.tsx").includes("state.contentReleases"), "Bible versions view must expose all content releases.");
@@ -637,6 +648,12 @@ async function main() {
       version: componentLibraryRelease.version,
       status: componentLibraryRelease.status,
       chapters: componentLibraryRelease.chapterIds.length
+    },
+    interactionPatternRelease: {
+      id: interactionPatternRelease.id,
+      version: interactionPatternRelease.version,
+      status: interactionPatternRelease.status,
+      chapters: interactionPatternRelease.chapterIds.length
     },
     searchResults: {
       futureWeBuild: search.returned,
