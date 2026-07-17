@@ -46,10 +46,13 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type ProjectSystemProgress = {
-  id: string;
-  group_name: string;
-  completion_percent: number;
+type StudioHealthMetric = {
+  id: "content" | "art" | "exports" | "verification";
+  label: string;
+  percent: number;
+  href: string;
+  tooltip: string;
+  details: string[];
 };
 
 type NavigationItem = {
@@ -64,8 +67,6 @@ type NavigationGroup = {
   id: string;
   label: string;
   icon: LucideIcon;
-  fallbackProgress: number;
-  systemIds: string[];
   items: NavigationItem[];
 };
 
@@ -76,8 +77,6 @@ const navigationGroups: NavigationGroup[] = [
     id: "command-center",
     label: "Command Center",
     icon: LayoutDashboard,
-    fallbackProgress: 64,
-    systemIds: ["dashboard-metrics", "tasks"],
     items: [
       { href: "/", label: "Dashboard", icon: LayoutDashboard, activePaths: ["/"] },
       { href: "/tasks", label: "Current Sprint", icon: ListChecks }
@@ -87,8 +86,6 @@ const navigationGroups: NavigationGroup[] = [
     id: "content-libraries",
     label: "Content Libraries",
     icon: PackageCheck,
-    fallbackProgress: 58,
-    systemIds: ["assets", "planet-generation", "ancient-civilizations", "planet-traits", "anomalies", "hazards", "expeditions"],
     items: [
       { href: "/asset-library", label: "Asset Library", icon: PackageCheck },
       { href: "/galaxy", label: "Galaxy Library", icon: Star },
@@ -105,8 +102,6 @@ const navigationGroups: NavigationGroup[] = [
     id: "world-systems",
     label: "World Systems",
     icon: BadgeDollarSign,
-    fallbackProgress: 52,
-    systemIds: ["resources", "collectibles", "ancient-civilizations", "expeditions"],
     items: [
       { href: "/actions", label: "Actions", icon: ListChecks },
       { href: "/colonies", label: "Colonies", icon: Building2 },
@@ -120,8 +115,6 @@ const navigationGroups: NavigationGroup[] = [
     id: "authoring",
     label: "Authoring",
     icon: GitBranch,
-    fallbackProgress: 92,
-    systemIds: ["architecture", "research", "unlock-matrix", "buildings", "upgrades", "dashboard-metrics", "resources", "assets"],
     items: [
       { href: "/research", label: "Research", icon: FlaskConical },
       { href: "/buildings", label: "Buildings", icon: Building2 },
@@ -133,19 +126,6 @@ const navigationGroups: NavigationGroup[] = [
     ]
   }
 ];
-
-function clampPercent(value: number) {
-  return Math.min(100, Math.max(0, Number.isFinite(value) ? value : 0));
-}
-
-function progressForGroup(group: NavigationGroup, systems: ProjectSystemProgress[]) {
-  const matches = systems.filter((system) => group.systemIds.includes(system.id));
-  if (!matches.length) {
-    return group.fallbackProgress;
-  }
-
-  return Math.round(matches.reduce((sum, system) => sum + clampPercent(system.completion_percent), 0) / matches.length);
-}
 
 function hrefPath(href: string) {
   return href.split("#")[0].split("?")[0];
@@ -200,6 +180,44 @@ function uniqueSections(ids: Array<string | undefined>) {
   return ids.filter((id, index, values): id is string => Boolean(id) && values.indexOf(id) === index);
 }
 
+function healthColorClass(percent: number) {
+  if (percent >= 100) return "from-emerald-300 to-emerald-400 text-emerald-100";
+  if (percent >= 75) return "from-cyan-300 to-blue-400 text-cyan-100";
+  if (percent >= 50) return "from-yellow-300 to-amber-300 text-yellow-100";
+  if (percent >= 25) return "from-orange-300 to-orange-500 text-orange-100";
+  return "from-rose-300 to-red-500 text-rose-100";
+}
+
+function StudioHealthPanel({ metrics }: { metrics: StudioHealthMetric[] }) {
+  return (
+    <section className="mb-4 rounded-md border border-cyan-400/15 bg-slate-950/35 p-3 shadow-glow">
+      <p className="text-xs font-black uppercase tracking-[0.22em] text-cyan-200">Project Genesis Studio</p>
+      <div className="mt-3 space-y-3">
+        {metrics.length ? metrics.map((metric) => {
+          const color = healthColorClass(metric.percent);
+          const textColor = color.split(" ").slice(-1)[0];
+          return (
+            <Link key={metric.id} href={metric.href} title={`${metric.tooltip} ${metric.details.join(" ")}`} className="group block rounded-md border border-cyan-300/10 bg-[#07101e]/70 p-3 transition hover:border-cyan-300/35 hover:bg-cyan-300/5">
+              <span className="flex items-center justify-between gap-3">
+                <span className="truncate text-[0.68rem] font-black uppercase tracking-[0.18em] text-slate-300">{metric.label}</span>
+                <span className={cn("text-sm font-black", textColor)}>{metric.percent}%</span>
+              </span>
+              <span className="mt-2 block h-2 overflow-hidden rounded-full bg-slate-800">
+                <span className={cn("block h-full rounded-full bg-gradient-to-r transition-all", color)} style={{ width: `${Math.max(0, Math.min(100, metric.percent))}%` }} />
+              </span>
+              <span className="mt-1 block truncate text-[0.65rem] font-semibold text-slate-500 group-hover:text-slate-300">{metric.details[0] ?? metric.tooltip}</span>
+            </Link>
+          );
+        }) : (
+          <p className="rounded-md border border-cyan-300/10 bg-[#07101e]/70 p-3 text-xs font-semibold text-slate-500">
+            Calculating production health from canonical data...
+          </p>
+        )}
+      </div>
+    </section>
+  );
+}
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [currentSearch, setCurrentSearch] = useState("");
@@ -207,7 +225,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const isAuthRoute = pathname === "/login" || pathname.startsWith("/auth/");
   const activeGroup = useMemo(() => activeGroupForPath(pathname), [pathname]);
   const [expandedGroups, setExpandedGroups] = useState<string[]>(() => uniqueSections(["command-center", activeGroup?.id]));
-  const [systems, setSystems] = useState<ProjectSystemProgress[]>([]);
+  const [healthMetrics, setHealthMetrics] = useState<StudioHealthMetric[]>([]);
 
   useEffect(() => {
     const storedSections = window.localStorage.getItem(STORAGE_SECTIONS_KEY);
@@ -244,16 +262,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let cancelled = false;
 
-    fetch("/api/data/project_systems")
+    fetch("/api/studio-health")
       .then((response) => (response.ok ? response.json() : null))
-      .then((payload: { rows?: ProjectSystemProgress[] } | null) => {
-        if (!cancelled && payload?.rows) {
-          setSystems(payload.rows);
+      .then((payload: { metrics?: StudioHealthMetric[] } | null) => {
+        if (!cancelled && payload?.metrics) {
+          setHealthMetrics(payload.metrics);
         }
       })
       .catch(() => {
         if (!cancelled) {
-          setSystems([]);
+          setHealthMetrics([]);
         }
       });
 
@@ -286,13 +304,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <span className="block text-xl font-bold text-white">Genesis Studio</span>
           </span>
         </Link>
+        <StudioHealthPanel metrics={healthMetrics} />
 
-        <nav className="h-[calc(100vh-6.5rem)] space-y-2 overflow-y-auto pr-1">
+        <nav className="h-[calc(100vh-20rem)] space-y-2 overflow-y-auto pr-1">
           {navigationGroups.map((group) => {
             const Icon = group.icon;
             const expanded = expandedGroups.includes(group.id);
             const groupActive = activeGroup?.id === group.id;
-            const progress = progressForGroup(group, systems);
 
             return (
               <section
@@ -313,16 +331,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     <Icon className="h-4 w-4" />
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="flex items-center justify-between gap-2">
-                      <span className="truncate text-xs font-bold uppercase tracking-[0.2em] text-slate-100">{group.label}</span>
-                      <span className="text-[0.65rem] font-semibold text-cyan-200">{progress}%</span>
-                    </span>
-                    <span className="mt-2 block h-1.5 overflow-hidden rounded-full bg-slate-800">
-                      <span
-                        className="block h-full rounded-full bg-gradient-to-r from-cyan-300 to-emerald-300 transition-all"
-                        style={{ width: `${progress}%` }}
-                      />
-                    </span>
+                    <span className="truncate text-xs font-bold uppercase tracking-[0.2em] text-slate-100">{group.label}</span>
                   </span>
                   {expanded ? <ChevronDown className="h-4 w-4 text-slate-400" /> : <ChevronRight className="h-4 w-4 text-slate-500" />}
                 </button>

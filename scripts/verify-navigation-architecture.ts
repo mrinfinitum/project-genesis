@@ -34,7 +34,7 @@ function hrefsFor(groupSource: string) {
 
 async function main() {
   const appShell = read("components/app-shell.tsx");
-  const navigationSource = section(appShell, "const navigationGroups", "function clampPercent");
+  const navigationSource = section(appShell, "const navigationGroups", "function hrefPath");
   const expectedGroups = [
     { id: "command-center", label: "Command Center", items: ["Dashboard", "Current Sprint"] },
     { id: "content-libraries", label: "Content Libraries", items: ["Asset Library", "Galaxy Library", "Sector Library", "Star System Library", "Star Library", "Planet Library", "Discovery Library", "Civilization Library", "Encyclopedia"] },
