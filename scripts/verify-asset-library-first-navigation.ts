@@ -13,6 +13,7 @@ function read(relativePath: string) {
 async function main() {
   const appShell = read("components/app-shell.tsx");
   const assetWorkspace = read("components/asset-production-workspace.tsx");
+  const assetContentBrowser = read("components/asset-content-browser.tsx");
   const assetLibraryPage = read("app/asset-library/page.tsx");
   const assetsPage = read("app/assets/page.tsx");
   const creativeRoute = read("app/creative-production/page.tsx");
@@ -24,13 +25,25 @@ async function main() {
   assert(appShell.includes('id: "content-libraries"'), "Asset Library must live under Content Libraries.");
   assert(appShell.includes('href: "/asset-library", label: "Asset Library"'), "Asset Library primary navigation item is missing.");
 
-  assert(assetLibraryPage.includes("category ?? section"), "Asset Library page must prefer category routes while preserving section compatibility.");
+  assert(assetLibraryPage.includes("AssetContentBrowser"), "Asset Library page must render the Content Browser.");
+  assert(assetLibraryPage.includes("initialNode={folder ?? category ?? section ?? null}"), "Asset Library page must support folder/category/section deep links.");
+  assert(assetContentBrowser.includes("categoryInitialNodeMap"), "Content Browser must map legacy category links into tree folders.");
   assert(assetsPage.includes("category ?? section"), "Legacy /assets route must support category routes.");
-  assert(assetWorkspace.includes("GeneratedLibraryCard"), "Asset Library category landing must use the shared GeneratedLibraryCard.");
-  assert(assetWorkspace.includes("AssetCategoryLanding"), "Asset Library must render category cards as the first screen.");
-  assert(assetWorkspace.includes('activeNode === "dashboard" ? <AssetCategoryLanding'), "Dashboard must open directly to category cards.");
-  assert(assetWorkspace.includes("activeNode === \"dashboard\" ? null : <AssetProductionTree"), "Default Asset Library landing must not show the duplicate internal tree.");
-  assert(assetWorkspace.includes("?category="), "Asset Library card navigation must use category routes.");
+  assert(assetContentBrowser.includes("Content Browser"), "Asset Library must identify as a Content Browser.");
+  assert(assetContentBrowser.includes("ContentBrowserTree"), "Asset Library must include a left content tree.");
+  assert(assetContentBrowser.includes("AssetBrowserCard"), "Asset Library must include compact browser cards.");
+  assert(assetContentBrowser.includes("AssetInspector"), "Asset Library must include a right inspector.");
+  assert(assetContentBrowser.includes("grid-cols-[16rem_minmax(0,1fr)_20rem]"), "Asset Library must use a three-column desktop layout.");
+  assert(assetContentBrowser.includes("project-genesis-content-browser-expanded"), "Content Browser tree expansion state must persist.");
+  assert(assetContentBrowser.includes("repeat(auto-fill, minmax(180px, 220px))"), "Asset cards must stay in the 180-220px browser-card range.");
+  assert(assetContentBrowser.includes("onDoubleClick"), "Double-click must open the asset detail.");
+  assert(assetContentBrowser.includes("contentVisibility"), "Large grids must use browser-level virtualization/content visibility.");
+  assert(assetContentBrowser.includes("Showing the first"), "Large result sets must be bounded.");
+  assert(assetContentBrowser.includes("Search name, tags, semantic role, category, status, canonical ID"), "Global search must cover the requested fields.");
+  assert(assetContentBrowser.includes("Missing Art"), "Missing Art filter must exist.");
+  assert(assetContentBrowser.includes("All Engines"), "Engine filter must exist.");
+  assert(assetContentBrowser.includes("Any Resolution"), "Resolution filter must exist.");
+  assert(assetContentBrowser.includes("Animated"), "Animated filter must exist.");
 
   assert(creativeRoute.includes("redirect("), "Creative Production route must redirect.");
   assert(creativeRoute.includes("/assets?"), "Creative Production route must redirect into /assets compatibility routes.");
@@ -57,7 +70,12 @@ async function main() {
       assetLibrary: "/asset-library?category=:categoryId",
       assets: "/assets?category=:categoryId"
     },
-    sharedCardComponent: "GeneratedLibraryCard",
+    contentBrowser: {
+      layout: "Content Tree / Asset Grid / Inspector",
+      cardWidth: "180-220px",
+      treeState: "remembered",
+      boundedGrid: true
+    },
     categoryCount: assetLibraryCategoryIds.length,
     categoryTotals
   }, null, 2));

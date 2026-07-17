@@ -23,6 +23,7 @@ async function main() {
   const assetLibraryPage = read("app/asset-library/page.tsx");
   const deprecatedGameArtRoute = read("app/game-art-import/page.tsx");
   const assetWorkspace = read("components/asset-production-workspace.tsx");
+  const assetContentBrowser = read("components/asset-content-browser.tsx");
   const componentLibrary = read("components/component-library-workspace.tsx");
   const screenDesigner = read("components/screen-designer-workspace.tsx");
   const upgradeArt = read("components/upgrade-art-workspace.tsx");
@@ -38,8 +39,36 @@ async function main() {
   assertNotIncludes("App shell", appShell, 'label: "Game Art Import"');
   assertNotIncludes("App shell", appShell, 'href: "/game-art-import"');
 
-  assertIncludes("Asset Library page", assetLibraryPage, "AssetProductionWorkspace");
-  assertIncludes("Asset Library page", assetLibraryPage, 'preferredRoute="/asset-library"');
+  assertIncludes("Asset Library page", assetLibraryPage, "AssetContentBrowser");
+  assertIncludes("Asset Library page", assetLibraryPage, "initialNode={folder ?? category ?? section ?? null}");
+  for (const expected of [
+    "Content Browser",
+    "ContentBrowserTree",
+    "AssetBrowserCard",
+    "AssetInspector",
+    "Universe",
+    "Civilization",
+    "Discovery",
+    "World Systems",
+    "User Interface",
+    "Audio",
+    "Video",
+    "Marketing",
+    "Components",
+    "Engine",
+    "repeat(auto-fill, minmax(180px, 220px))",
+    "onDoubleClick",
+    "categoryInitialNodeMap",
+    "project-genesis-content-browser-expanded",
+    "Search name, tags, semantic role, category, status, canonical ID",
+    "Missing Art",
+    "All Engines",
+    "Any Resolution",
+    "Animated",
+    "contentVisibility"
+  ]) {
+    assertIncludes("Asset Content Browser", assetContentBrowser, expected);
+  }
   assertIncludes("Deprecated Game Art Import route", deprecatedGameArtRoute, "redirect");
   assertIncludes("Deprecated Game Art Import route", deprecatedGameArtRoute, "/asset-library?deprecated=game-art-import");
 
