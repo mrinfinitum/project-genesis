@@ -149,10 +149,13 @@ async function main() {
   const partIChapters = bible.chapters.filter((chapter) => chapter.partId === "part-01-soul-of-noveris");
   assert(partIChapters.length === 7, `Expected 7 Part I chapters; received ${partIChapters.length}.`);
   const requiredPartISectionTitles = ["Core Principles", "Must Always", "Must Never", "Creative Notes", "Future Considerations"];
+  const requiredEmotionalPillars = ["Wonder", "Discovery", "Progress", "Beauty", "Scale", "Hope", "Achievement", "Legacy", "Intelligence", "Optimism", "Calm Mastery"];
+  const requiredVisualPillars = ["Civilization Before Technology", "The Universe Is Always Present", "Monumental Human Achievement", "Light Represents Progress", "Calm Intelligence"];
   for (const chapter of partIChapters) {
     assert(partIRelease.chapterIds.includes(chapter.id), `DV-02B release is missing chapter ${chapter.id}.`);
     assert(chapter.tags.includes("dv-02b"), `Part I chapter ${chapter.id} missing dv-02b tag.`);
     assert(chapter.tags.includes("part-i-authored"), `Part I chapter ${chapter.id} missing part-i-authored tag.`);
+    assert(chapter.version === "0.1", `Part I chapter ${chapter.id} must be version 0.1.`);
     assert(chapter.reviewStatus === "Draft", `Part I chapter ${chapter.id} must remain Draft.`);
     assert(chapter.canonicalStatus === "Draft", `Part I chapter ${chapter.id} must not be canonical yet.`);
     assert(chapter.approvedAt === null, `Part I chapter ${chapter.id} must not have approval timestamp.`);
@@ -166,9 +169,51 @@ async function main() {
       assert(chapter.references.some((reference) => reference.target === target), `Part I chapter ${chapter.id} missing ${target} reference.`);
     }
     assert(chapter.implementationNotes.some((note) => note.includes("creative guidance only")), `Part I chapter ${chapter.id} must state creative guidance boundary.`);
+    assert(chapter.implementationNotes.some((note) => note.includes("does not define gameplay mechanics")), `Part I chapter ${chapter.id} must not invent gameplay.`);
     assert(chapter.reviewNotes.some((note) => note.includes("DV-02B authored draft")), `Part I chapter ${chapter.id} must include DV-02B review note.`);
     assert(chapter.changeHistory.some((entry) => entry.id.endsWith("dv-02b-authored")), `Part I chapter ${chapter.id} missing DV-02B history entry.`);
   }
+
+  const emotionalChapter = getExperienceBibleChapter("emotional-pillars");
+  assert(emotionalChapter, "Missing Emotional Pillars chapter.");
+  const emotionalText = JSON.stringify(emotionalChapter.bodySections);
+  for (const pillar of requiredEmotionalPillars) {
+    assert(emotionalText.includes(pillar), `Emotional Pillars chapter missing ${pillar}.`);
+  }
+  assert(emotionalText.includes("failure mode") || emotionalText.includes("Failure mode"), "Emotional Pillars must describe failure modes.");
+
+  const philosophyChapter = getExperienceBibleChapter("core-creative-philosophy");
+  assert(philosophyChapter, "Missing Core Creative Philosophy chapter.");
+  const philosophyText = JSON.stringify(philosophyChapter.bodySections);
+  for (const pillar of requiredVisualPillars) {
+    assert(philosophyText.includes(pillar), `Core Creative Philosophy missing visual-experience pillar ${pillar}.`);
+  }
+  assert(philosophyText.includes("The universe is the primary stage"), "Core Creative Philosophy must state that the universe is the primary stage.");
+  assert(philosophyText.includes("Automation represents fluency") || philosophyText.includes("Automation represents mastery"), "Core Creative Philosophy must frame automation as mastery.");
+
+  const futureChapter = getExperienceBibleChapter("the-future-we-build");
+  assert(futureChapter, "Missing The Future We Build chapter.");
+  const futureText = JSON.stringify(futureChapter.bodySections);
+  assert(futureText.includes("A civilization worthy of humanity's future"), "The Future We Build must include the canonical art-direction statement.");
+  assert(futureText.includes("The Future We Build remains the primary brand and thematic statement"), "The Future We Build must preserve primary brand/thematic statement.");
+
+  const identityChapter = getExperienceBibleChapter("what-noveris-is");
+  assert(identityChapter, "Missing What NOVERIS Is chapter.");
+  const identityText = JSON.stringify(identityChapter.bodySections);
+  assert(identityText.includes("noveris.life is a primary brand benchmark"), "What NOVERIS Is must define noveris.life as a primary brand benchmark.");
+  assert(identityText.includes("must not literally reproduce website layouts"), "What NOVERIS Is must prohibit literal website layout reproduction.");
+  assert(identityText.includes("NOVERIS Signature Future Seed"), "What NOVERIS Is must seed future signature guidance.");
+  for (const signature of ["monumental civilization architecture", "deep-space navy environments", "warm amber", "restrained cyan", "celestial geometry", "orbital arcs", "scale before detail", "calm intelligence"]) {
+    assert(identityText.includes(signature), `NOVERIS signature seed missing ${signature}.`);
+  }
+
+  const boundaryChapter = getExperienceBibleChapter("what-noveris-is-not");
+  assert(boundaryChapter, "Missing What NOVERIS Is Not chapter.");
+  const boundaryText = JSON.stringify(boundaryChapter.bodySections);
+  for (const boundary of ["grimdark", "military-first", "conquest-first", "cyberpunk", "post-apocalyptic", "resource-misery", "constant-warfare", "generic-dashboard", "admin-software"]) {
+    assert(boundaryText.includes(boundary), `What NOVERIS Is Not missing boundary ${boundary}.`);
+  }
+  assert(boundaryText.includes("must not become a clone of any single inspiration"), "What NOVERIS Is Not must preserve distinct identity.");
 
   const futureChapters = bible.chapters.filter((chapter) => chapter.chapterNumber > 7);
   assert(futureChapters.every((chapter) => !chapter.tags.includes("dv-02b") && !chapter.tags.includes("part-i-authored")), "DV-02B authored tags must not leak into future chapters.");
@@ -189,6 +234,10 @@ async function main() {
   assert(search.results.some((result) => result.href === "/experience-design/bible/chapter/the-future-we-build"), "Search must deep-link to Bible chapter The Future We Build.");
   const philosophySearch = await searchStudio("Technology serves humanity", 20);
   assert(philosophySearch.results.some((result) => result.href === "/experience-design/bible/chapter/core-creative-philosophy"), "Search must index authored Part I philosophy content.");
+  const pillarSearch = await searchStudio("Civilization Before Technology", 20);
+  assert(pillarSearch.results.some((result) => result.href === "/experience-design/bible/chapter/core-creative-philosophy"), "Search must index visual-experience pillars.");
+  const artDirectionSearch = await searchStudio("A civilization worthy of humanity's future", 20);
+  assert(artDirectionSearch.results.some((result) => result.href === "/experience-design/bible/chapter/the-future-we-build"), "Search must index art-direction statement.");
   const boundarySearch = await searchStudio("not admin software", 20);
   assert(boundarySearch.results.some((result) => result.href === "/experience-design/bible/chapter/what-noveris-is-not"), "Search must index authored Part I boundary content.");
   const noverisLifeSearch = await searchStudio("noveris.life", 20);
@@ -234,8 +283,15 @@ async function main() {
     searchResults: {
       futureWeBuild: search.returned,
       philosophy: philosophySearch.returned,
+      pillars: pillarSearch.returned,
+      artDirection: artDirectionSearch.returned,
       boundary: boundarySearch.returned,
       noverisLife: noverisLifeSearch.returned
+    },
+    runtime: {
+      contentVersion: runtime.metadata.contentVersion,
+      runtimeVersion: runtime.metadata.schemaVersion,
+      validationStatus: runtime.metadata.validationStatus
     },
     engineExports: Object.fromEntries(engineExports.map((engineExport, index) => [targets[index], engineExport.metadata.validationStatus]))
   }, null, 2));

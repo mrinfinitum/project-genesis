@@ -53,6 +53,22 @@ Each authored chapter includes:
 
 DV-02B remains Draft. It is reviewable creative guidance, not approved canon, not gameplay rules, not runtime data, and not a client implementation contract.
 
+When Part I is approved, it becomes authoritative for creative decisions across visual direction, interaction tone, motion, audio, narrative presentation, brand continuity, and future Experience Bible volumes. Future volumes should cite the relevant Part I chapters when extending the creative direction.
+
+Implementation must not invent gameplay from Part I creative guidance. If a future visual, interaction, motion, audio, narrative, brand, or presentation decision intentionally diverges from approved Part I guidance, that divergence must be documented through the Experience Design review workflow.
+
+Part I also establishes these draft visual-experience pillars:
+
+- Civilization Before Technology
+- The Universe Is Always Present
+- Monumental Human Achievement
+- Light Represents Progress
+- Calm Intelligence
+
+The canonical art-direction statement is: "A civilization worthy of humanity's future."
+
+The approved high-level brand relationship is that noveris.life is a primary brand benchmark. The Game should feel like a natural extension of the website through atmosphere, restraint, typography hierarchy, premium spacing, lighting philosophy, and brand tone, while adapting the brand for interactive use. The Game must not literally reproduce website layouts.
+
 ## Approval
 
 Review states:

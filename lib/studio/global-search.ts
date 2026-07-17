@@ -224,7 +224,7 @@ export async function searchStudio(query: string, limit = 24) {
   const results = !terms.length
     ? index.results.slice(0, limit)
     : index.results
-      .map((row) => ({ row, score: score(row, terms) }))
+      .map((row) => ({ row, score: score(row, terms, needle) }))
       .filter((entry) => entry.score > 0)
       .sort((left, right) => right.score - left.score || left.row.title.localeCompare(right.row.title))
       .slice(0, limit)
@@ -241,10 +241,12 @@ export async function searchStudio(query: string, limit = 24) {
   };
 }
 
-function score(row: StudioSearchResult, terms: string[]) {
-  return terms.reduce((total, term) => {
-    if (normalize(row.title).startsWith(term)) return total + 8;
-    if (normalize(row.title).includes(term)) return total + 5;
+function score(row: StudioSearchResult, terms: string[], phrase: string) {
+  const normalizedTitle = normalize(row.title);
+  const phraseScore = phrase && row.searchText.includes(phrase) ? 30 : 0;
+  return phraseScore + terms.reduce((total, term) => {
+    if (normalizedTitle.startsWith(term)) return total + 8;
+    if (normalizedTitle.includes(term)) return total + 5;
     if (row.id.toLowerCase().includes(term)) return total + 4;
     if (row.searchText.includes(term)) return total + 2;
     return total;

@@ -106,6 +106,7 @@
     "verify:experience-bible-versioning": "tsx scripts/verify-experience-bible.ts",
     "verify:experience-bible-content": "tsx scripts/verify-experience-bible.ts",
     "verify:experience-philosophy": "tsx scripts/verify-experience-bible.ts",
+    "verify:experience-pillars": "tsx scripts/verify-experience-bible.ts",
     "verify:experience-review": "tsx scripts/verify-experience-bible.ts",
     "verify:engine-export-parity": "tsx scripts/verify-engine-export-parity.ts",
     "verify:knowledge-visibility-parity": "tsx scripts/verify-knowledge-visibility-parity.ts",

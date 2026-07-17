@@ -246,6 +246,31 @@ type AuthoredPartIChapter = {
   futureConsiderations: string[];
 };
 
+const visualExperiencePillars = [
+  {
+    title: "Civilization Before Technology",
+    content: "Technology supports civilization. Technology is not the hero by itself; its meaning comes from the futures it allows humanity to build, protect, understand, and inherit."
+  },
+  {
+    title: "The Universe Is Always Present",
+    content: "The player should retain awareness of place, scale, and environment. The world should not disappear behind software-like UI, even when systems become deep."
+  },
+  {
+    title: "Monumental Human Achievement",
+    content: "Civilization should feel engineered, intentional, durable, and worthy of long-term investment. Nothing should feel temporary without narrative or systemic reason."
+  },
+  {
+    title: "Light Represents Progress",
+    content: "As civilization advances, environments may become warmer, brighter, more refined, and more ordered. Darkness represents distance, mystery, and the unknown, not fear by default."
+  },
+  {
+    title: "Calm Intelligence",
+    content: "The experience should feel deliberate and controlled. Complexity should increasingly feel mastered. The player should feel capable, not frantic."
+  }
+];
+
+const noverisSignatureFutureGuidance = "Future DV-02C and DV-03 elaboration should explore monumental civilization architecture, deep-space navy environments, warm amber and gold civilization light, restrained cyan technology light, rare violet advanced energy, celestial geometry, orbital arcs, navigation lines, worlds dominating composition, projected world-space interface language, scale before detail, hopeful futurism, and calm intelligence without defining final token values here.";
+
 const partIAuthoredContent: Record<string, AuthoredPartIChapter> = {
   "The Future We Build": {
     subtitle: "The philosophical north star for NOVERIS.",
@@ -328,16 +353,17 @@ const partIAuthoredContent: Record<string, AuthoredPartIChapter> = {
       section("principle", "Legacy", "Purpose: make time feel meaningful.", "Legacy matters because the game spans long horizons. Visuals should imply continuity. Interactions should connect present choices to future consequences."),
       section("principle", "Intelligence", "Purpose: make the player feel capable.", "Intelligence matters because complexity should reward understanding. Visuals should clarify relationships. Interactions should reveal logic rather than hide it."),
       section("principle", "Optimism", "Purpose: define the overall posture.", "Optimism matters because it keeps the experience constructive. Visuals should favor possibility over decay. Interactions should leave the player feeling that better futures are achievable."),
+      section("principle", "Calm Mastery", "Purpose: make complexity feel increasingly controlled.", "Calm Mastery matters because late-game civilization should feel more capable, not more frantic. Visuals should reduce noise as information deepens. Interactions should favor confidence, clear priorities, and stable orientation. Pacing should allow meaningful anticipation. Audio should support focus and controlled momentum. Failure mode: turning advanced play into alert spam, clutter, or panic."),
       section("principle", "Core Principles", "The chapter closes with operating principles.", "Each pillar should appear in visual, interaction, audio, and narrative decisions without becoming a slogan."),
-      section("checklist", "Must Always", "Required creative behavior.", "Always protect wonder, discovery, progress, beauty, scale, hope, achievement, legacy, intelligence, and optimism."),
+      section("checklist", "Must Always", "Required creative behavior.", "Always protect wonder, discovery, progress, beauty, scale, hope, achievement, legacy, intelligence, optimism, and calm mastery."),
       section("checklist", "Must Never", "Protected boundaries.", "Never let efficiency remove wonder. Never let scale remove intimacy. Never let achievement become empty reward noise."),
       section("annotation", "Creative Notes", "Practical authoring note.", "Not every screen needs every pillar equally, but every major experience should know which pillars it serves."),
       section("open_question", "Future Considerations", "Questions for later review.", "Which pillars should be primary for each major screen definition?")
     ],
-    designPrinciples: ["Protect emotional clarity", "Balance scale with agency", "Make beauty functional", "Make intelligence feel inviting"],
-    mustAlways: ["Name the primary emotional pillar for major experiences", "Use visual and interaction design to support the chosen pillar", "Keep optimism present"],
-    mustNever: ["Use rewards as a substitute for emotion", "Let density erase beauty", "Let scale become disorientation"],
-    keywords: ["wonder", "discovery", "progress", "beauty", "scale", "hope", "achievement", "legacy", "intelligence", "optimism"],
+    designPrinciples: ["Protect emotional clarity", "Balance scale with agency", "Make beauty functional", "Make intelligence feel inviting", "Let calm mastery emerge from complexity"],
+    mustAlways: ["Name the primary emotional pillar for major experiences", "Use visual and interaction design to support the chosen pillar", "Keep optimism present", "Make late-game depth feel controlled rather than frantic"],
+    mustNever: ["Use rewards as a substitute for emotion", "Let density erase beauty", "Let scale become disorientation", "Turn advanced play into alert spam"],
+    keywords: ["wonder", "discovery", "progress", "beauty", "scale", "hope", "achievement", "legacy", "intelligence", "optimism", "calm mastery"],
     creativeNotes: ["This chapter can become a review checklist for future screens and trailers."],
     futureConsiderations: ["Add pillar mappings to Screen Definitions after screen library authoring expands."]
   },
@@ -397,7 +423,7 @@ const partIAuthoredContent: Record<string, AuthoredPartIChapter> = {
       section("principle", "Not Admin Software", "Depth must not look like bureaucracy.", "The Studio may author complex systems, but the player-facing experience should not feel like enterprise tools, generic dashboards, or unloved management panels."),
       section("principle", "Core Principles", "The chapter closes with operating principles.", "Use boundaries to protect the promise. Challenge can exist. Cynicism should not become the brand."),
       section("checklist", "Must Always", "Required creative behavior.", "Always test new concepts against the optimistic civilization identity. Always document intentional divergence."),
-      section("checklist", "Must Never", "Protected boundaries.", "Never default to grimdark, military-first, cyberpunk, post-apocalyptic, resource-misery, constant-warfare, generic-dashboard, or admin-software language."),
+      section("checklist", "Must Never", "Protected boundaries.", "Never default to grimdark, military-first, conquest-first, cyberpunk, post-apocalyptic, resource-misery, constant-warfare, generic-dashboard, or admin-software language."),
       section("annotation", "Creative Notes", "Practical authoring note.", "This chapter should be used in reviews when a proposed asset, screen, event, or feature feels impressive but off-identity."),
       section("open_question", "Future Considerations", "Questions for later review.", "What review rubric should flag creative drift before it reaches client implementation?")
     ],
@@ -428,13 +454,13 @@ export const experienceBibleChapters: ExperienceBibleChapter[] = chapterSeeds.ma
     author: "Experience Design",
     owner: ownerForPart(partId),
     reviewers: ["Creative Direction", "UX Direction"],
-    version: "0.1.0",
+    version: authored ? "0.1" : "0.1.0",
     createdAt,
     updatedAt: createdAt,
     approvedAt: null,
     tags: ["experience-bible", slug, partId, ...(authored ? ["dv-02b", "part-i-authored"] : [])],
     keywords: [...keywordsFor(title), ...(authored?.keywords ?? [])],
-    bodySections: authored ? authored.bodySections.map((bodySection, index) => ({
+    bodySections: authored ? sectionsForPartIChapter(title, authored).map((bodySection, index) => ({
       ...bodySection,
       id: `${id}-${String(index + 1).padStart(2, "0")}-${slugify(bodySection.title)}`,
       relationships: [],
@@ -517,6 +543,48 @@ export const experienceBiblePartIRelease: ExperienceBibleRelease = {
     "DV-02B does not approve content automatically and does not publish content to runtime."
   ]
 };
+
+function sectionsForPartIChapter(title: string, authored: AuthoredPartIChapter): Array<Omit<ExperienceBibleBodySection, "id" | "relationships" | "status">> {
+  const supplements: Array<Omit<ExperienceBibleBodySection, "id" | "relationships" | "status">> = [];
+
+  if (title === "The Future We Build") {
+    supplements.push(
+      section("principle", "Art-Direction Statement", "A civilization worthy of humanity's future.", "This statement means NOVERIS should not be merely futuristic, visually impressive, or technologically advanced. It should present a future worthy in values, scale, responsibility, and purpose: a future players should want to help create. The Future We Build remains the primary brand and thematic statement."),
+      section("principle", "The Future Worth Inheriting", "Long-range decisions should feel meaningful across generations.", "The player is not only accumulating resources or clearing objectives. The player participates in shaping a civilization that remembers, improves, adapts, and leaves behind something more coherent than it inherited.")
+    );
+  }
+
+  if (title === "Core Creative Philosophy") {
+    supplements.push(
+      section("principle", "The Five Visual-Experience Pillars", "Part I establishes the core presentation pillars for future visual and interaction work.", visualExperiencePillars.map((pillar, index) => `Pillar ${index + 1}: ${pillar.title}. ${pillar.content}`).join("\n\n")),
+      section("principle", "Interface Supports the World", "The universe is the primary stage.", "The interface should help the player understand place, scale, progress, and consequence. It should not replace the world with a detached software layer or make the universe feel secondary to panels."),
+      section("principle", "Automation as Mastery", "Automation represents fluency, not disengagement.", "NOVERIS is not about controlling every individual detail forever. It is about understanding systems, setting direction, and shaping a civilization that grows beyond manual control while preserving the player's authorship.")
+    );
+  }
+
+  if (title === "What NOVERIS Is") {
+    supplements.push(
+      section("reference", "noveris.life Brand Relationship", "noveris.life is a primary brand benchmark.", "The Game should feel like a natural extension of the website through atmosphere, restraint, typography hierarchy, premium spacing, lighting philosophy, and brand tone. The Game must adapt that brand for interactive use and must not literally reproduce website layouts. Website references must be versioned and reviewed through the Experience Design framework."),
+      section("principle", "NOVERIS Signature Future Seed", "Signature art language is reserved for future visual volumes.", noverisSignatureFutureGuidance)
+    );
+  }
+
+  if (title === "What NOVERIS Is Not") {
+    supplements.push(
+      section("reference", "Influence Boundary", "Influences may inform strengths, but NOVERIS must remain distinct.", "Future reviews may compare individual qualities such as readability, scale, restraint, atmosphere, or clarity, but NOVERIS must not become a clone of any single inspiration or collapse into generic sci-fi presentation."),
+      section("reference", "Brand Translation Boundary", "Do not overfit the Game to noveris.life layouts.", "The website relationship belongs to Experience Design review and future Brand Translation standards. Do not scrape noveris.life, invent website details, or treat the website as a literal screen layout source.")
+    );
+  }
+
+  if (!supplements.length) return authored.bodySections;
+  const closingIndex = authored.bodySections.findIndex((bodySection) => bodySection.title === "Core Principles");
+  if (closingIndex < 0) return [...authored.bodySections, ...supplements];
+  return [
+    ...authored.bodySections.slice(0, closingIndex),
+    ...supplements,
+    ...authored.bodySections.slice(closingIndex)
+  ];
+}
 
 function section(type: ExperienceBibleSectionType, title: string, summary: string, content: string): Omit<ExperienceBibleBodySection, "id" | "relationships" | "status"> {
   return {
