@@ -170,3 +170,35 @@ Motion accessibility must support Reduced Motion, No Motion, Alternative Feedbac
 DS-04 preview support is metadata only: Animated Preview, Storyboard, Motion Timeline, Interaction Sequence, and Camera Path.
 
 DS-04 remains Draft at version 0.1. Motion definitions are not CSS animation, easing curves, React transitions, Three.js camera code, Unity animation clips, Unreal timelines, gameplay runtime data, or engine exports.
+
+## DS-05 Canonical Component Library
+
+DS-05 creates the canonical semantic Component Library for NOVERIS.
+
+Components are the atomic building blocks of Studio, Game, Website, Steam, Marketing, and future platform interfaces. They describe meaning, purpose, state, accessibility, responsiveness, relationships, and future renderer mapping. They are not React components, Vue components, HTML, CSS, Tailwind, UIKit, Material UI, or implementation code.
+
+Canonical component categories:
+
+- Navigation
+- Command
+- Layout
+- Information
+- Data Display
+- Interaction
+- Visualization
+- Media
+- Feedback
+- Input
+- Documentation
+- Creative
+- Runtime
+
+Every component supports semantic states: Default, Hover, Focus, Active, Selected, Pressed, Disabled, Loading, Success, Warning, Danger, Locked, and Unavailable.
+
+Every component supports semantic sizes: Compact, Standard, Comfortable, and Hero.
+
+Component accessibility support includes Keyboard, Touch, Controller, Reduced Motion, High Contrast, Screen Reader, and Localization.
+
+DS-05 preview support is metadata only: Static Preview, Interactive Preview, State Preview, Accessibility Preview, and Comparison Preview.
+
+DS-05 remains Draft at version 0.1. Component definitions are not published yet; future runtime publication belongs to a later Design Runtime milestone.

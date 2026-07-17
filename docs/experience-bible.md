@@ -388,6 +388,40 @@ Preview support is metadata only: Animated Preview, Storyboard, Motion Timeline,
 
 DS-04 is Draft at version 0.1. It does not define CSS animation, easing curves, React transitions, Three.js camera code, Unity animation clips, Unreal timelines, gameplay runtime data, runtime gameplay contracts, contentVersion changes, runtimeVersion changes, or engine export changes.
 
+## DS-05 Canonical Component Library
+
+DS-05 creates the canonical Component Library for NOVERIS. Components are semantic design definitions that communicate information with clarity while preserving the emotional identity of NOVERIS.
+
+Components should disappear into the experience. The player notices the civilization, not the controls.
+
+DS-05 canonical component categories:
+
+- Navigation
+- Command
+- Layout
+- Information
+- Data Display
+- Interaction
+- Visualization
+- Media
+- Feedback
+- Input
+- Documentation
+- Creative
+- Runtime
+
+Every component defines purpose, description, player intent, Studio intent, Experience Bible references, Visual DNA references, related tokens, related materials, related motion, related components, related screens, related Inspiration Boards, accessibility notes, responsive notes, interaction notes, future runtime mapping, owner, review status, version, and history.
+
+Semantic states are Default, Hover, Focus, Active, Selected, Pressed, Disabled, Loading, Success, Warning, Danger, Locked, and Unavailable.
+
+Semantic sizes are Compact, Standard, Comfortable, and Hero.
+
+Accessibility support includes Keyboard, Touch, Controller, Reduced Motion, High Contrast, Screen Reader, and Localization. Responsive targets include Desktop, Laptop, Tablet, Phone, and Ultrawide.
+
+Preview support is metadata only: Static Preview, Interactive Preview, State Preview, Accessibility Preview, and Comparison Preview.
+
+DS-05 is Draft at version 0.1. It does not define React components, Vue components, HTML, CSS, Tailwind, UIKit, Material UI, implementation code, gameplay runtime data, runtime gameplay contracts, contentVersion changes, runtimeVersion changes, or engine export changes.
+
 ## Approval
 
 Review states:

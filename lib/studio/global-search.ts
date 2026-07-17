@@ -55,6 +55,7 @@ const workspaceResults: StudioSearchResult[] = [
   workspace("design-tokens", "Design Tokens", "/experience-design/tokens", "DS-02 canonical semantic token libraries"),
   workspace("material-library", "Material Library", "/experience-design/materials", "DS-03 canonical semantic material library"),
   workspace("motion-library", "Motion Library", "/experience-design/motion", "DS-04 canonical semantic motion system"),
+  workspace("component-library", "Component Library", "/experience-design/components", "DS-05 canonical semantic component library"),
   workspace("screen-library", "Screen Library", "/experience-design/screens", "Canonical screen intent"),
   workspace("upload-asset", "Upload Asset", "/assets?upload=asset", "Asset pipeline"),
   workspace("regenerate-derivatives", "Regenerate Derivatives", "/asset-library?status=needs_review", "Asset pipeline"),
@@ -278,6 +279,45 @@ export async function buildStudioSearchIndex(): Promise<StudioSearchIndex> {
         motion.visualDnaReferences.join(" "),
         motion.previewSupport.join(" "),
         motion.tags.join(" ")
+      ]
+    })),
+    ...experienceDesign.componentLibrary.categories.map((category) => result({
+      id: category.id,
+      type: "Experience Design" as const,
+      title: `${category.name} Components`,
+      subtitle: `Component Category / ${experienceDesign.componentLibrary.id} / ${category.status}`,
+      href: experienceDesign.componentLibrary.workspaceRoute,
+      status: category.status,
+      aliases: [category.purpose, category.componentIds.join(" "), category.reviewStatus, "semantic component"]
+    })),
+    ...experienceDesign.componentLibrary.components.map((component) => result({
+      id: component.id,
+      type: "Experience Design" as const,
+      title: component.name,
+      subtitle: `${component.category} Component / ${component.status}`,
+      href: `${experienceDesign.componentLibrary.workspaceRoute}#${component.id}`,
+      status: component.status,
+      aliases: [
+        component.id,
+        component.purpose,
+        component.description,
+        component.playerIntent,
+        component.studioIntent,
+        component.states.join(" "),
+        component.sizes.join(" "),
+        component.accessibilityNotes.join(" "),
+        component.responsiveNotes.join(" "),
+        component.interactionNotes.join(" "),
+        component.relatedTokens.join(" "),
+        component.relatedMaterials.join(" "),
+        component.relatedMotion.join(" "),
+        component.relatedComponents.join(" "),
+        component.relatedScreens.join(" "),
+        component.relatedInspirationBoards.join(" "),
+        component.experienceBibleReferences.join(" "),
+        component.visualDnaReferences.join(" "),
+        component.previewSupport.join(" "),
+        component.tags.join(" ")
       ]
     })),
     ...experienceDesign.experienceBible.parts.map((part) => result({

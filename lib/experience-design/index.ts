@@ -409,6 +409,108 @@ export type ExperienceMotionSystem = {
   runtimePublication: "future_design_runtime_milestone";
 };
 
+export type ExperienceComponentCategory =
+  | "Navigation"
+  | "Command"
+  | "Layout"
+  | "Information"
+  | "Data Display"
+  | "Interaction"
+  | "Visualization"
+  | "Media"
+  | "Feedback"
+  | "Input"
+  | "Documentation"
+  | "Creative"
+  | "Runtime";
+
+export type ExperienceComponentState =
+  | "Default"
+  | "Hover"
+  | "Focus"
+  | "Active"
+  | "Selected"
+  | "Pressed"
+  | "Disabled"
+  | "Loading"
+  | "Success"
+  | "Warning"
+  | "Danger"
+  | "Locked"
+  | "Unavailable";
+
+export type ExperienceComponentSize = "Compact" | "Standard" | "Comfortable" | "Hero";
+
+export type ExperienceComponentPreviewSupport =
+  | "Static Preview"
+  | "Interactive Preview"
+  | "State Preview"
+  | "Accessibility Preview"
+  | "Comparison Preview";
+
+export type ExperienceComponentDefinition = {
+  id: string;
+  name: string;
+  category: ExperienceComponentCategory;
+  purpose: string;
+  description: string;
+  playerIntent: string;
+  studioIntent: string;
+  experienceBibleReferences: string[];
+  visualDnaReferences: string[];
+  relatedTokens: string[];
+  relatedMaterials: string[];
+  relatedMotion: string[];
+  relatedComponents: string[];
+  relatedScreens: string[];
+  relatedInspirationBoards: string[];
+  accessibilityNotes: string[];
+  responsiveNotes: string[];
+  interactionNotes: string[];
+  states: ExperienceComponentState[];
+  sizes: ExperienceComponentSize[];
+  previewSupport: ExperienceComponentPreviewSupport[];
+  futureRuntimeMapping: "future_design_runtime_milestone";
+  owner: string;
+  reviewStatus: ExperienceDesignStatus;
+  status: ExperienceDesignStatus;
+  version: "0.1";
+  history: ExperienceHistoryEntry[];
+  tags: string[];
+};
+
+export type ExperienceComponentCategoryDefinition = {
+  id: string;
+  name: ExperienceComponentCategory;
+  purpose: string;
+  componentIds: string[];
+  status: ExperienceDesignStatus;
+  version: "0.1";
+  reviewStatus: ExperienceDesignStatus;
+};
+
+export type ExperienceComponentLibrary = {
+  id: "DS-05";
+  title: "Canonical Component Library";
+  version: "0.1";
+  status: "Draft";
+  purpose: string;
+  workspaceRoute: string;
+  philosophy: string[];
+  boundaries: string[];
+  states: ExperienceComponentState[];
+  sizes: ExperienceComponentSize[];
+  accessibilitySupport: string[];
+  responsiveTargets: string[];
+  searchFields: string[];
+  relationshipTargets: string[];
+  previewSupport: ExperienceComponentPreviewSupport[];
+  reviewWorkflow: ExperienceDesignStatus[];
+  categories: ExperienceComponentCategoryDefinition[];
+  components: ExperienceComponentDefinition[];
+  runtimePublication: "future_design_runtime_milestone";
+};
+
 export type ExperienceContentModel = {
   kind: ExperienceDesignKind;
   displayName: string;
@@ -449,6 +551,7 @@ export type ExperienceDesignState = {
   designTokens: ExperienceDesignTokenSystem;
   materials: ExperienceMaterialLibrary;
   motion: ExperienceMotionSystem;
+  componentLibrary: ExperienceComponentLibrary;
 };
 
 export const EXPERIENCE_DESIGN_ROUTE = "/experience-design";
@@ -464,7 +567,7 @@ export const experienceDesignSections: ExperienceDesignSection[] = [
   { id: "tokens", label: "Design Tokens", description: "DS-02 canonical semantic token libraries for NOVERIS meaning, relationships, review, search, and future renderer consumption.", route: `${EXPERIENCE_DESIGN_ROUTE}/tokens`, kinds: ["design_token_collection"] },
   { id: "materials", label: "Material Library", description: "DS-03 semantic material library for glass, projection, energy, atmosphere, planetary, architectural, natural, industrial, ancient, organic, liquid, surface, structural, lighting, and special materials.", route: `${EXPERIENCE_DESIGN_ROUTE}/materials`, kinds: ["material_definition"] },
   { id: "motion", label: "Motion Library", description: "DS-04 canonical semantic motion system for arrival, departure, focus, selection, confirmation, discovery, navigation, transition, camera, progress, research, construction, civilization, mission, timeline, galaxy, planet, colony, notification, celebration, and ambient motion.", route: `${EXPERIENCE_DESIGN_ROUTE}/motion`, kinds: ["motion_definition"] },
-  { id: "components", label: "Component Library", description: "Design definitions for components, separate from React, Roblox, or CSS implementation.", route: `${EXPERIENCE_DESIGN_ROUTE}/components`, kinds: ["component_definition"] },
+  { id: "components", label: "Component Library", description: "DS-05 canonical semantic component library for navigation, command, layout, information, data display, interaction, visualization, media, feedback, input, documentation, creative, and runtime component intent.", route: `${EXPERIENCE_DESIGN_ROUTE}/components`, kinds: ["component_definition"] },
   { id: "themes", label: "Theme Library", description: "Future theme framework for default, accessibility, minimal, presentation, and prototype themes.", route: `${EXPERIENCE_DESIGN_ROUTE}/themes`, kinds: ["theme"] },
   { id: "brand", label: "Brand System", description: "Brand guidelines, tone, usage, and creative constraints for NOVERIS.", route: `${EXPERIENCE_DESIGN_ROUTE}/brand`, kinds: ["brand_guideline"] },
   { id: "accessibility", label: "Accessibility", description: "Experience accessibility notes, constraints, and review hooks.", route: `${EXPERIENCE_DESIGN_ROUTE}/accessibility`, kinds: ["brand_guideline", "motion_definition", "theme"] },
@@ -480,7 +583,7 @@ export const experienceContentModels: ExperienceContentModel[] = [
   model("design_token_collection", "Canonical Design Tokens", "DS-02 semantic design token records for meaning, purpose, references, relationships, review, versioning, and search without implementation values.", ["tokenLibraries", "semanticPath", "purpose", "experienceBibleReferences", "visualDnaReferences", "relatedMaterials", "relatedComponents", "relatedScreens", "owner", "reviewStatus"], ["color", "typography", "spacing", "radius", "elevation", "shadow", "blur", "opacity", "motion", "timing", "breakpoints", "z-layer", "icons", "grid", "stroke", "glow", "atmosphere", "glass", "background", "transition", "search", "relationships", "versioning"], "tokens"),
   model("material_definition", "Canonical Material Library", "DS-03 semantic material definitions for purpose, emotion, light behavior, relationships, preview support, review, versioning, and future renderer interpretation without implementation code.", ["category", "purpose", "emotionalIntent", "visualDnaReferences", "experienceBibleReferences", "relatedTokens", "relatedComponents", "relatedScreens", "relatedInspirationBoards", "lightingNotes", "transparencyNotes", "reflectionNotes", "depthNotes", "motionNotes", "accessibilityNotes", "futureRuntimeMapping", "owner", "reviewStatus"], ["glass", "projection", "energy", "atmosphere", "planetary", "architecture", "natural", "industrial", "ancient", "organic", "liquid", "surface", "structural", "lighting", "special", "preview metadata", "relationships", "search", "versioning"], "materials"),
   model("motion_definition", "Canonical Motion System", "DS-04 semantic motion definitions for purpose, confidence, intelligence, discovery, civilization, scale, mastery, accessibility, relationships, preview metadata, and future renderer interpretation without animation implementation.", ["category", "purpose", "emotionalIntent", "trigger", "completionCondition", "expectedDuration", "intensity", "playerAttentionLevel", "accessibilityNotes", "visualDnaReferences", "experienceBibleReferences", "relatedTokens", "relatedMaterials", "relatedComponents", "relatedScreens", "relatedInspirationBoards", "futureRuntimeMapping", "reviewStatus"], ["arrival", "departure", "focus", "selection", "confirmation", "discovery", "navigation", "transition", "camera", "progress", "research", "construction", "civilization", "mission", "timeline", "galaxy", "planet", "colony", "notification", "celebration", "ambient", "microinteractions", "camera language", "accessibility", "preview metadata", "relationships", "search", "versioning"], "motion"),
-  model("component_definition", "Component Definition", "Design description for Button, Panel, Card, HUD, Sidebar, Dialog, Tree, List, Table, Tooltip, and Notification.", ["purpose", "states", "variants", "accessibility", "references"], ["component relationships", "approval workflow"], "components"),
+  model("component_definition", "Canonical Component Library", "DS-05 semantic component definitions for purpose, player intent, Studio intent, states, sizes, accessibility, responsiveness, relationships, review, versioning, and future renderer interpretation without implementation code.", ["category", "purpose", "playerIntent", "studioIntent", "experienceBibleReferences", "visualDnaReferences", "relatedTokens", "relatedMaterials", "relatedMotion", "relatedComponents", "relatedScreens", "relatedInspirationBoards", "accessibilityNotes", "responsiveNotes", "interactionNotes", "states", "sizes", "futureRuntimeMapping", "owner", "reviewStatus"], ["navigation", "command", "layout", "information", "data display", "interaction", "visualization", "media", "feedback", "input", "documentation", "creative", "runtime", "semantic states", "semantic sizes", "accessibility", "responsive intent", "preview metadata", "relationships", "search", "versioning"], "components"),
   model("theme", "Theme", "Future theme framework for Default, Accessibility, Minimal, Presentation, and Prototype.", ["themeIntent", "status", "approval"], ["token relationships", "accessibility notes"], "themes"),
   model("brand_guideline", "Brand Guideline", "Brand system guidance for NOVERIS tone, naming, marks, usage, and creative boundaries.", ["principle", "usage", "constraints"], ["cross references", "history"], "brand"),
   model("experience_moment", "Experience Moment", "Journey record describing player emotion, visual goal, audio goal, interaction goal, narrative goal, and references.", ["playerEmotion", "visualGoal", "audioGoal", "interactionGoal", "narrativeGoal"], ["journey sequencing", "related screens"], "journey"),
@@ -1115,6 +1218,234 @@ export const experienceMotionSystem: ExperienceMotionSystem = {
   runtimePublication: "future_design_runtime_milestone"
 };
 
+const componentCategorySeeds: Array<{ name: ExperienceComponentCategory; purpose: string; components: string[] }> = [
+  {
+    name: "Navigation",
+    purpose: "Help users move through NOVERIS and Studio with orientation, continuity, and calm confidence.",
+    components: ["Navigation Rail", "Navigation Group", "Navigation Item", "Navigation Section", "Navigation Breadcrumb", "Navigation Tabs", "Navigation Drawer", "Navigation Overlay", "Navigation Search", "Navigation Header", "Navigation Footer"]
+  },
+  {
+    name: "Command",
+    purpose: "Express available actions without letting controls become the emotional focus.",
+    components: ["Primary Command Button", "Secondary Command Button", "Inline Action", "Icon Button", "Toolbar", "Action Group", "Floating Command", "Split Button", "Command Palette"]
+  },
+  {
+    name: "Layout",
+    purpose: "Organize workspaces, content regions, context panels, and durable information surfaces.",
+    components: ["Workspace", "Workspace Header", "Workspace Section", "Workspace Sidebar", "Workspace Footer", "Hero Region", "Content Region", "Context Panel", "Inspector", "Property Group", "Panel", "Card", "Stack", "Divider", "Grid", "Canvas"]
+  },
+  {
+    name: "Information",
+    purpose: "Communicate status, meaning, measurements, properties, and emphasis with minimal noise.",
+    components: ["Status Chip", "Badge", "Tag", "Label", "Metric", "Metric Tile", "Summary Tile", "Progress", "Timeline", "Key Value", "Statistic", "Property", "Callout"]
+  },
+  {
+    name: "Data Display",
+    purpose: "Make dense canonical content readable, comparable, searchable, and trustworthy.",
+    components: ["Table", "Tree", "List", "Gallery", "Masonry", "Reading View", "Article", "Code Block", "Relationship Graph", "Comparison Table", "Hierarchy View"]
+  },
+  {
+    name: "Interaction",
+    purpose: "Support direct manipulation, choice, selection, and configuration without implementation assumptions.",
+    components: ["Checkbox", "Switch", "Radio", "Slider", "Stepper", "Dropdown", "Autocomplete", "Date Picker", "Search Field", "Command Search"]
+  },
+  {
+    name: "Visualization",
+    purpose: "Explain progress, relationships, or spatial context while keeping the universe and content primary.",
+    components: ["Chart", "Timeline Visualization", "Orbit Diagram", "Galaxy Map", "Relationship Diagram", "Progress Ring", "Activity Graph"]
+  },
+  {
+    name: "Media",
+    purpose: "Present approved visual references, artwork, thumbnails, previews, and media without becoming a renderer.",
+    components: ["Image", "Hero Image", "Media Gallery", "Video", "Preview", "Asset Card", "Thumbnail", "Concept Card"]
+  },
+  {
+    name: "Feedback",
+    purpose: "Tell users what happened, what changed, and what needs attention without interruption.",
+    components: ["Notification", "Toast", "Alert", "Banner", "Confirmation", "Dialog", "Modal", "Tooltip", "Popover", "Status Overlay"]
+  },
+  {
+    name: "Input",
+    purpose: "Capture user intent with accessible, semantic, and platform-adaptable input patterns.",
+    components: ["Text Field", "Text Area", "Number Field", "Select Field", "File Upload", "Color Swatch", "Toggle Group", "Segmented Control", "Filter Input", "Range Input"]
+  },
+  {
+    name: "Documentation",
+    purpose: "Support canonical reading, reference, annotation, glossary, and implementation handoff without owning code.",
+    components: ["Reading Panel", "Chapter View", "Reference Block", "Quote", "Code Sample", "Illustration", "Annotation", "Glossary Entry"]
+  },
+  {
+    name: "Creative",
+    purpose: "Represent creative authoring objects such as boards, patterns, materials, motion, tokens, and screens.",
+    components: ["Mood Board Card", "Inspiration Card", "Creative Concept Card", "Material Card", "Motion Card", "Token Card", "Pattern Card", "Screen Card"]
+  },
+  {
+    name: "Runtime",
+    purpose: "Describe runtime-facing component intent for future mapping without publishing runtime data yet.",
+    components: ["Runtime Status", "Validation Summary", "Export Reference", "Contract Badge", "Schema Note", "Compatibility Notice", "Runtime Preview", "Diagnostics Row"]
+  }
+];
+
+const componentStates: ExperienceComponentState[] = ["Default", "Hover", "Focus", "Active", "Selected", "Pressed", "Disabled", "Loading", "Success", "Warning", "Danger", "Locked", "Unavailable"];
+const componentSizes: ExperienceComponentSize[] = ["Compact", "Standard", "Comfortable", "Hero"];
+const componentAccessibilitySupport = ["Keyboard", "Touch", "Controller", "Reduced Motion", "High Contrast", "Screen Reader", "Localization"];
+const componentResponsiveTargets = ["Desktop", "Laptop", "Tablet", "Phone", "Ultrawide"];
+const componentPreviewSupport: ExperienceComponentPreviewSupport[] = ["Static Preview", "Interactive Preview", "State Preview", "Accessibility Preview", "Comparison Preview"];
+
+function componentId(category: ExperienceComponentCategory, name: string) {
+  return `component.${slugify(category)}.${slugify(name)}`;
+}
+
+function componentTokens(category: ExperienceComponentCategory, name: string) {
+  const text = `${category} ${name}`.toLowerCase();
+  const tokens = new Set<string>(["text.primary", "body.primary", "spacing.compact"]);
+  if (category === "Navigation" || text.includes("breadcrumb") || text.includes("tabs")) tokens.add("icon.navigation").add("glass.navigation").add("transition.workspace");
+  if (category === "Command" || text.includes("button") || text.includes("action")) tokens.add("surface.command.glass").add("motion.selection").add("glow.focus");
+  if (category === "Layout" || text.includes("panel") || text.includes("card")) tokens.add("surface.command.glass").add("radius.panel").add("grid.workspace");
+  if (category === "Information" || text.includes("status") || text.includes("metric")) tokens.add("metric").add("status.info").add("icon.metric");
+  if (category === "Data Display" || text.includes("table") || text.includes("list")) tokens.add("grid.workspace").add("surface.reference.glass").add("caption");
+  if (category === "Feedback" || text.includes("alert") || text.includes("warning")) tokens.add("status.warning").add("motion.notification").add("glow.warning");
+  if (category === "Visualization" || text.includes("galaxy") || text.includes("orbit")) tokens.add("stroke.celestial").add("background.universe").add("motion.orbit");
+  if (category === "Media" || category === "Creative") tokens.add("grid.gallery").add("background.studio");
+  if (category === "Documentation") tokens.add("surface.reading.paper").add("quote");
+  if (category === "Runtime") tokens.add("background.runtime").add("status.success");
+  return Array.from(tokens);
+}
+
+function componentMaterials(category: ExperienceComponentCategory, name: string) {
+  const text = `${category} ${name}`.toLowerCase();
+  const materials = new Set<string>(["material-glass-command-glass"]);
+  if (category === "Navigation") materials.add("material-glass-navigation-glass");
+  if (category === "Information" || category === "Feedback" || category === "Runtime") materials.add("material-special-highlight");
+  if (category === "Visualization" || text.includes("galaxy") || text.includes("orbit")) materials.add("material-atmosphere-deep-space");
+  if (category === "Documentation") materials.add("material-glass-reading-glass").add("material-surface-reading-surface");
+  if (category === "Creative" || category === "Media") materials.add("material-glass-reference-glass");
+  return Array.from(materials);
+}
+
+function componentMotion(category: ExperienceComponentCategory, name: string) {
+  const text = `${category} ${name}`.toLowerCase();
+  const motions = new Set<string>(["motion.arrival.standard", "motion.selection.hover", "motion.focus.inspect"]);
+  if (category === "Navigation") motions.add("motion.navigation.section");
+  if (category === "Command" || text.includes("button")) motions.add("motion.confirmation.save");
+  if (category === "Feedback") motions.add("motion.notification.success");
+  if (category === "Visualization" || text.includes("galaxy") || text.includes("orbit")) motions.add("motion.ambient.orbital-drift").add("motion.galaxy.travel");
+  if (category === "Documentation") motions.add("motion.transition.reading");
+  if (category === "Runtime") motions.add("motion.progress.resolve");
+  return Array.from(motions);
+}
+
+function componentReferences(category: ExperienceComponentCategory, name: string) {
+  const text = `${category} ${name}`.toLowerCase();
+  const bibleReferences = ["core-creative-philosophy", "dv02-chapter-17-the-interface-is-part-of-the-world"];
+  const visualDnaReferences = ["dv-03-section-01-visual-dna", "dv-03-section-06-composition"];
+  if (category === "Navigation") bibleReferences.push("dv02-chapter-18-navigation-and-orientation");
+  if (category === "Feedback") bibleReferences.push("dv02-chapter-22-feedback-and-state");
+  if (text.includes("galaxy") || text.includes("orbit")) visualDnaReferences.push("dv-03-section-07-scale", "dv-03-section-08-geometry");
+  if (category === "Documentation") bibleReferences.push("dv02-chapter-37-codex-and-encyclopedia");
+  return { bibleReferences, visualDnaReferences };
+}
+
+function componentRelatedScreens(category: ExperienceComponentCategory, name: string) {
+  const text = `${category} ${name}`.toLowerCase();
+  if (category === "Navigation") return ["screen-dashboard", "screen-galaxy"];
+  if (text.includes("galaxy")) return ["screen-galaxy"];
+  if (text.includes("runtime") || text.includes("export")) return ["screen-runtime"];
+  if (category === "Documentation") return ["screen-encyclopedia"];
+  if (category === "Creative" || category === "Media") return ["screen-asset-library"];
+  return ["screen-dashboard"];
+}
+
+export const experienceComponentDefinitions: ExperienceComponentDefinition[] = componentCategorySeeds.flatMap((category) => category.components.map((name) => {
+  const id = componentId(category.name, name);
+  const references = componentReferences(category.name, name);
+  return {
+    id,
+    name,
+    category: category.name,
+    purpose: `${name} communicates ${category.name.toLowerCase()} intent with clarity while preserving the emotional identity of NOVERIS.`,
+    description: "Canonical component definition only. Studio owns meaning, relationships, states, accessibility, and review; renderers own implementation.",
+    playerIntent: "Understand what this element means, what can be done with it, and how it relates to the civilization experience.",
+    studioIntent: "Provide a reusable semantic contract that can be reviewed, searched, linked, and later mapped by platform renderers.",
+    experienceBibleReferences: references.bibleReferences,
+    visualDnaReferences: references.visualDnaReferences,
+    relatedTokens: componentTokens(category.name, name),
+    relatedMaterials: componentMaterials(category.name, name),
+    relatedMotion: componentMotion(category.name, name),
+    relatedComponents: [],
+    relatedScreens: componentRelatedScreens(category.name, name),
+    relatedInspirationBoards: [`inspiration-board-${slugify(category.name)}`, "inspiration-board-interface"],
+    accessibilityNotes: componentAccessibilitySupport,
+    responsiveNotes: componentResponsiveTargets.map((target) => `${target} presentation should preserve meaning and hierarchy without fixed implementation rules.`),
+    interactionNotes: ["States are semantic.", "Controls must support keyboard, touch, and controller intent where relevant.", "Locked or unavailable states must explain requirements without disappearing."],
+    states: componentStates,
+    sizes: componentSizes,
+    previewSupport: componentPreviewSupport,
+    futureRuntimeMapping: "future_design_runtime_milestone",
+    owner: "Component Design",
+    reviewStatus: "Draft",
+    status: "Draft",
+    version: "0.1",
+    history: [
+      {
+        id: `${id}-ds-05-created`,
+        action: "created",
+        author: "Component Design",
+        timestamp: "2026-07-17T00:00:00.000Z",
+        notes: "Created semantic component definition for DS-05."
+      }
+    ],
+    tags: ["ds-05", "component", slugify(category.name), slugify(name), ...componentTokens(category.name, name)]
+  };
+}));
+
+export const experienceComponentCategories: ExperienceComponentCategoryDefinition[] = componentCategorySeeds.map((category) => ({
+  id: `component-category-${slugify(category.name)}`,
+  name: category.name,
+  purpose: category.purpose,
+  componentIds: category.components.map((name) => componentId(category.name, name)),
+  status: "Draft",
+  version: "0.1",
+  reviewStatus: "Draft"
+}));
+
+export const experienceComponentLibrary: ExperienceComponentLibrary = {
+  id: "DS-05",
+  title: "Canonical Component Library",
+  version: "0.1",
+  status: "Draft",
+  purpose: "Create the canonical semantic component library for NOVERIS across Studio, Game, Website, Steam, Marketing, and future platforms while keeping rendering implementation client-owned.",
+  workspaceRoute: `${EXPERIENCE_DESIGN_ROUTE}/components`,
+  philosophy: [
+    "Components communicate information with clarity.",
+    "Components should disappear into the experience.",
+    "The player notices the civilization, not the controls.",
+    "Every renderer implements from shared meaning instead of local guesses."
+  ],
+  boundaries: [
+    "Components are semantic definitions.",
+    "Components are not React components.",
+    "Components are not Vue components.",
+    "Components are not HTML.",
+    "Components are not CSS.",
+    "Components are not Tailwind.",
+    "Components are not UIKit.",
+    "Components are not Material UI.",
+    "Components are not implementation code."
+  ],
+  states: componentStates,
+  sizes: componentSizes,
+  accessibilitySupport: componentAccessibilitySupport,
+  responsiveTargets: componentResponsiveTargets,
+  searchFields: ["Purpose", "Category", "State", "Related Screen", "Related Token", "Related Material", "Related Motion", "Experience Bible", "Visual DNA"],
+  relationshipTargets: ["Design Tokens", "Materials", "Motion", "Visual DNA", "Experience Bible", "Inspiration Boards", "Screen Templates", "Themes", "Brand"],
+  previewSupport: componentPreviewSupport,
+  reviewWorkflow: experienceReviewWorkflow,
+  categories: experienceComponentCategories,
+  components: experienceComponentDefinitions,
+  runtimePublication: "future_design_runtime_milestone"
+};
+
 export const experienceDesignRecords: ExperienceDesignRecord[] = [
   record("experience-bible-framework", "experience_bible", "Experience Bible Framework", "Framework for NOVERIS creative canon chapters, annotations, cross references, and linked concepts.", "Draft", "Creative Direction", ["bible", "canon", "dv-02"], ["DV-02A seeds the complete 65-chapter framework; do not populate the full Bible yet."], {
     parts: experienceBibleParts.map((partItem) => partItem.id),
@@ -1179,10 +1510,17 @@ export const experienceDesignRecords: ExperienceDesignRecord[] = [
     runtimePublication: experienceMotionSystem.runtimePublication,
     implementationValuesPublished: false
   }),
-  record("component-design-panel", "component_definition", "Panel Design Definition", "Design definition for panels across NOVERIS without React, Roblox, or CSS implementation details.", "Draft", "Component Design", ["component", "panel"], ["Implementation remains client-owned."], {
-    purpose: "Readable grouping surface.",
-    states: ["default", "focused", "loading", "error", "disabled"],
-    variants: ["standard", "dense", "modal"]
+  record("component-design-panel", "component_definition", "Canonical Component Library", "DS-05 semantic component library for NOVERIS component purpose, states, sizes, accessibility, responsiveness, relationships, review, and future renderer mapping.", "Draft", "Component Design", ["component", "ds-05", "semantic"], ["Do not define React, Vue, HTML, CSS, Tailwind, UIKit, Material UI, or implementation code."], {
+    canonicalSystem: experienceComponentLibrary.id,
+    componentCategories: experienceComponentCategories.map((category) => category.name),
+    componentCount: experienceComponentDefinitions.length,
+    states: experienceComponentLibrary.states,
+    sizes: experienceComponentLibrary.sizes,
+    accessibilitySupport: experienceComponentLibrary.accessibilitySupport,
+    responsiveTargets: experienceComponentLibrary.responsiveTargets,
+    previewSupport: experienceComponentLibrary.previewSupport,
+    runtimePublication: experienceComponentLibrary.runtimePublication,
+    implementationValuesPublished: false
   }),
   record("theme-default-framework", "theme", "Default Theme Framework", "Future theme definition shell for default NOVERIS presentation.", "Draft", "Design Systems", ["theme", "default"], ["No theme values yet."], {
     themeIntent: "Canonical default presentation intent.",
@@ -1500,7 +1838,8 @@ export function getExperienceDesignState(): ExperienceDesignState {
     inspirationBoards: inspirationBoardLibrary,
     designTokens: experienceDesignTokenSystem,
     materials: experienceMaterialLibrary,
-    motion: experienceMotionSystem
+    motion: experienceMotionSystem,
+    componentLibrary: experienceComponentLibrary
   };
 }
 

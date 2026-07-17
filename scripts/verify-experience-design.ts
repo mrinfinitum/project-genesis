@@ -25,6 +25,7 @@ function assertNoExperienceRuntimeLeak(label: string, value: unknown) {
   assert(!/"materials"\s*:/.test(text), `${label} leaked Material Library data.`);
   assert(!/"motions"\s*:/.test(text), `${label} leaked Motion System definitions.`);
   assert(!/"cameraLanguage"\s*:/.test(text), `${label} leaked Motion System camera language.`);
+  assert(!/"componentLibrary"\s*:/.test(text), `${label} leaked Component Library data.`);
   assert(!/"experience_bible"\s*:/.test(text), `${label} leaked Experience Bible model data.`);
   assert(!/"mood_board"\s*:/.test(text), `${label} leaked Mood Board model data.`);
   assert(!text.includes("Inspiration Board Library"), `${label} leaked DV-04 Inspiration Board data.`);
@@ -34,6 +35,8 @@ function assertNoExperienceRuntimeLeak(label: string, value: unknown) {
   assert(!text.includes("Canonical Material Library"), `${label} leaked Canonical Material Library data.`);
   assert(!text.includes("DS-04"), `${label} leaked DS-04 Motion System data.`);
   assert(!text.includes("Canonical Motion System"), `${label} leaked Canonical Motion System data.`);
+  assert(!text.includes("DS-05"), `${label} leaked DS-05 Component Library data.`);
+  assert(!text.includes("Canonical Component Library"), `${label} leaked Canonical Component Library data.`);
   assert(!/"screen_definition"\s*:/.test(text), `${label} leaked Screen Definition model data.`);
 }
 
@@ -340,6 +343,90 @@ async function main() {
   assert(motionRecord.fields.canonicalSystem === "DS-04", "Motion starter record must point to DS-04.");
   assert(motionRecord.fields.implementationValuesPublished === false, "Motion starter record must not publish implementation values.");
 
+  const componentSection = state.sections.find((item) => item.id === "components");
+  assert(componentSection?.label === "Component Library", "Experience Design must expose Component Library workspace.");
+  assert(componentSection.route === "/experience-design/components", "Component Library route must be canonical.");
+  assert(componentSection.description.includes("DS-05"), "Component Library section must identify DS-05.");
+  const componentModel = state.contentModels.find((model) => model.kind === "component_definition");
+  assert(componentModel?.displayName === "Canonical Component Library", "Component model must be presented as Canonical Component Library.");
+  for (const required of ["category", "purpose", "playerIntent", "studioIntent", "experienceBibleReferences", "visualDnaReferences", "relatedTokens", "relatedMaterials", "relatedMotion", "relatedComponents", "relatedScreens", "relatedInspirationBoards", "accessibilityNotes", "responsiveNotes", "interactionNotes", "states", "sizes", "futureRuntimeMapping", "owner", "reviewStatus"]) {
+    assert(componentModel?.requiredFields.includes(required), `Component content model missing ${required}.`);
+  }
+  for (const capability of ["navigation", "command", "layout", "information", "data display", "interaction", "visualization", "media", "feedback", "input", "documentation", "creative", "runtime", "semantic states", "semantic sizes", "accessibility", "responsive intent", "preview metadata", "relationships", "search", "versioning"]) {
+    assert(componentModel?.supportedCapabilities.includes(capability), `Component content model missing capability ${capability}.`);
+  }
+
+  assert(state.componentLibrary.id === "DS-05", "Component Library ID must be DS-05.");
+  assert(state.componentLibrary.title === "Canonical Component Library", "DS-05 title must be Canonical Component Library.");
+  assert(state.componentLibrary.version === "0.1", "DS-05 must be version 0.1.");
+  assert(state.componentLibrary.status === "Draft", "DS-05 must remain Draft.");
+  assert(state.componentLibrary.workspaceRoute === "/experience-design/components", "DS-05 workspace route must be /experience-design/components.");
+  assert(state.componentLibrary.runtimePublication === "future_design_runtime_milestone", "DS-05 runtime publication must be deferred to a future Design Runtime milestone.");
+  for (const philosophy of ["Components communicate information with clarity.", "Components should disappear into the experience.", "The player notices the civilization, not the controls."]) {
+    assert(state.componentLibrary.philosophy.includes(philosophy), `DS-05 philosophy missing ${philosophy}.`);
+  }
+  for (const boundary of ["Components are not React components.", "Components are not Vue components.", "Components are not HTML.", "Components are not CSS.", "Components are not Tailwind.", "Components are not UIKit.", "Components are not Material UI.", "Components are not implementation code."]) {
+    assert(state.componentLibrary.boundaries.includes(boundary), `DS-05 boundary missing ${boundary}.`);
+  }
+  const expectedComponentCategories = ["Navigation", "Command", "Layout", "Information", "Data Display", "Interaction", "Visualization", "Media", "Feedback", "Input", "Documentation", "Creative", "Runtime"];
+  assert(state.componentLibrary.categories.map((category) => category.name).join("|") === expectedComponentCategories.join("|"), "DS-05 component categories must match the canonical list.");
+  assert(state.componentLibrary.categories.length === 13, "DS-05 must expose 13 canonical component categories.");
+  assert(state.componentLibrary.components.length >= 100, "DS-05 must expose a meaningful starter component inventory.");
+  const componentIds = new Set(state.componentLibrary.components.map((component) => component.id));
+  assert(componentIds.size === state.componentLibrary.components.length, "DS-05 component IDs must be unique.");
+  for (const expectedComponent of ["component.navigation.navigation-rail", "component.command.primary-command-button", "component.layout.workspace", "component.information.status-chip", "component.data-display.table", "component.feedback.notification", "component.documentation.reading-panel", "component.runtime.validation-summary"]) {
+    assert(componentIds.has(expectedComponent), `DS-05 missing canonical component ${expectedComponent}.`);
+  }
+  assert(state.componentLibrary.states.join("|") === "Default|Hover|Focus|Active|Selected|Pressed|Disabled|Loading|Success|Warning|Danger|Locked|Unavailable", "DS-05 states must match canonical semantic states.");
+  assert(state.componentLibrary.sizes.join("|") === "Compact|Standard|Comfortable|Hero", "DS-05 sizes must match canonical semantic sizes.");
+  for (const accessibility of ["Keyboard", "Touch", "Controller", "Reduced Motion", "High Contrast", "Screen Reader", "Localization"]) {
+    assert(state.componentLibrary.accessibilitySupport.includes(accessibility), `DS-05 accessibility support missing ${accessibility}.`);
+  }
+  for (const responsive of ["Desktop", "Laptop", "Tablet", "Phone", "Ultrawide"]) {
+    assert(state.componentLibrary.responsiveTargets.includes(responsive), `DS-05 responsive target missing ${responsive}.`);
+  }
+  for (const preview of ["Static Preview", "Interactive Preview", "State Preview", "Accessibility Preview", "Comparison Preview"]) {
+    assert(state.componentLibrary.previewSupport.includes(preview as never), `DS-05 preview support missing ${preview}.`);
+  }
+  for (const target of ["Design Tokens", "Materials", "Motion", "Visual DNA", "Experience Bible", "Inspiration Boards", "Screen Templates", "Themes", "Brand"]) {
+    assert(state.componentLibrary.relationshipTargets.includes(target), `DS-05 relationship target missing ${target}.`);
+  }
+  const tokenIdsForComponents = new Set(state.designTokens.tokens.map((token) => token.id));
+  const materialIdsForComponents = new Set(state.materials.materials.map((material) => material.id));
+  const motionIdsForComponents = new Set(state.motion.motions.map((motion) => motion.id));
+  for (const category of state.componentLibrary.categories) {
+    assert(category.status === "Draft", `DS-05 category ${category.id} must remain Draft.`);
+    assert(category.version === "0.1", `DS-05 category ${category.id} must be version 0.1.`);
+    assert(category.componentIds.length > 0, `DS-05 category ${category.id} must contain components.`);
+    for (const componentId of category.componentIds) assert(componentIds.has(componentId), `DS-05 category ${category.id} references missing component ${componentId}.`);
+  }
+  for (const component of state.componentLibrary.components) {
+    assert(component.id.startsWith("component."), `DS-05 component ${component.id} must use component.* semantic ID.`);
+    assert(component.status === "Draft", `DS-05 component ${component.id} must remain Draft.`);
+    assert(component.version === "0.1", `DS-05 component ${component.id} must be version 0.1.`);
+    assert(component.owner === "Component Design", `DS-05 component ${component.id} must be owned by Component Design.`);
+    assert(component.reviewStatus === component.status, `DS-05 component ${component.id} review status must match current draft state.`);
+    assert(component.futureRuntimeMapping === "future_design_runtime_milestone", `DS-05 component ${component.id} must defer runtime mapping.`);
+    assert(component.experienceBibleReferences.length > 0, `DS-05 component ${component.id} must link to Experience Bible guidance.`);
+    assert(component.visualDnaReferences.length > 0, `DS-05 component ${component.id} must link to Visual DNA guidance.`);
+    assert(component.relatedTokens.length > 0, `DS-05 component ${component.id} must link to design tokens.`);
+    for (const tokenId of component.relatedTokens) assert(tokenIdsForComponents.has(tokenId), `DS-05 component ${component.id} references missing token ${tokenId}.`);
+    assert(component.relatedMaterials.length > 0, `DS-05 component ${component.id} must link to materials.`);
+    for (const materialId of component.relatedMaterials) assert(materialIdsForComponents.has(materialId), `DS-05 component ${component.id} references missing material ${materialId}.`);
+    assert(component.relatedMotion.length > 0, `DS-05 component ${component.id} must link to motion.`);
+    for (const motionId of component.relatedMotion) assert(motionIdsForComponents.has(motionId), `DS-05 component ${component.id} references missing motion ${motionId}.`);
+    assert(component.relatedInspirationBoards.length > 0, `DS-05 component ${component.id} must link to Inspiration Boards.`);
+    assert(component.states.join("|") === state.componentLibrary.states.join("|"), `DS-05 component ${component.id} must support all semantic states.`);
+    assert(component.sizes.join("|") === state.componentLibrary.sizes.join("|"), `DS-05 component ${component.id} must support all semantic sizes.`);
+    assert(component.accessibilityNotes.join("|") === state.componentLibrary.accessibilitySupport.join("|"), `DS-05 component ${component.id} must support all accessibility modes.`);
+    assert(component.previewSupport.length === state.componentLibrary.previewSupport.length, `DS-05 component ${component.id} must support all preview metadata types.`);
+    assert(component.history.length > 0, `DS-05 component ${component.id} must include history.`);
+  }
+  const componentRecord = state.records.find((record) => record.id === "component-design-panel");
+  assert(componentRecord?.name === "Canonical Component Library", "Component starter record must be Canonical Component Library.");
+  assert(componentRecord.fields.canonicalSystem === "DS-05", "Component starter record must point to DS-05.");
+  assert(componentRecord.fields.implementationValuesPublished === false, "Component starter record must not publish implementation values.");
+
   const inspirationSection = state.sections.find((item) => item.id === "inspiration-boards");
   assert(inspirationSection?.label === "Inspiration Boards", "Experience Design must expose Inspiration Boards workspace.");
   assert(inspirationSection.route === "/experience-design/inspiration-boards", "Inspiration Boards route must be canonical.");
@@ -406,16 +493,19 @@ async function main() {
   assert(read("components/app-shell.tsx").includes('href: "/experience-design/tokens"'), "Sidebar must link to Design Tokens.");
   assert(read("components/app-shell.tsx").includes('href: "/experience-design/materials"'), "Sidebar must link to Material Library.");
   assert(read("components/app-shell.tsx").includes('href: "/experience-design/motion"'), "Sidebar must link to Motion Library.");
+  assert(read("components/app-shell.tsx").includes('href: "/experience-design/components"'), "Sidebar must link to Component Library.");
   assert(read("app/experience-design/[section]/page.tsx").includes('redirect("/experience-design/inspiration-boards")'), "Old mood board route must redirect to Inspiration Boards.");
   assert(read("components/studio-command-palette.tsx").includes("Open Experience Design"), "Command palette must expose Experience Design.");
   assert(read("components/studio-command-palette.tsx").includes("Open Inspiration Boards"), "Command palette must expose Inspiration Boards.");
   assert(read("components/studio-command-palette.tsx").includes("Open Design Tokens"), "Command palette must expose Design Tokens.");
   assert(read("components/studio-command-palette.tsx").includes("Open Material Library"), "Command palette must expose Material Library.");
   assert(read("components/studio-command-palette.tsx").includes("Open Motion Library"), "Command palette must expose Motion Library.");
+  assert(read("components/studio-command-palette.tsx").includes("Open Component Library"), "Command palette must expose Component Library.");
   assert(read("components/experience-design-workspace.tsx").includes("InspirationBoardsWorkspace"), "Experience Design workspace must expose Inspiration Boards workspace.");
   assert(read("components/experience-design-workspace.tsx").includes("DesignTokensWorkspace"), "Experience Design workspace must expose Design Tokens workspace.");
   assert(read("components/experience-design-workspace.tsx").includes("MaterialsWorkspace"), "Experience Design workspace must expose Materials workspace.");
   assert(read("components/experience-design-workspace.tsx").includes("MotionWorkspace"), "Experience Design workspace must expose Motion workspace.");
+  assert(read("components/experience-design-workspace.tsx").includes("ComponentLibraryWorkspace"), "Experience Design workspace must expose Component Library workspace.");
 
   const search = await searchStudio("Inspiration Boards", 10);
   assert(search.results.some((result) => result.type === "Experience Design" && /Inspiration Boards|Inspiration Board/i.test(result.title)), "Global search must return Experience Design Inspiration Board results.");
@@ -448,6 +538,12 @@ async function main() {
   assert(galaxyMotionSearch.results.some((result) => result.type === "Experience Design" && result.href.includes("/experience-design/motion#motion.galaxy.travel")), "Global search must return galaxy motion results.");
   const accessibilityMotionSearch = await searchStudio("Reduced Motion Alternative Feedback", 20);
   assert(accessibilityMotionSearch.results.some((result) => result.type === "Experience Design" && result.href.includes("/experience-design/motion#")), "Global search must return accessibility motion results.");
+  const componentSearch = await searchStudio("Primary Command Button", 20);
+  assert(componentSearch.results.some((result) => result.type === "Experience Design" && result.href === "/experience-design/components#component.command.primary-command-button"), "Global search must return exact DS-05 component results.");
+  const componentAccessibilitySearch = await searchStudio("Screen Reader Localization component", 20);
+  assert(componentAccessibilitySearch.results.some((result) => result.type === "Experience Design" && result.href.includes("/experience-design/components#")), "Global search must return accessibility component results.");
+  const navigationComponentSearch = await searchStudio("Navigation Rail orientation", 20);
+  assert(navigationComponentSearch.results.some((result) => result.type === "Experience Design" && result.href.includes("/experience-design/components#component.navigation.navigation-rail")), "Global search must return navigation component results.");
 
   const canonicalRuntime = await buildCanonicalRuntimeExportPayload();
   assertNoExperienceRuntimeLeak("Canonical runtime", canonicalRuntime);
@@ -502,6 +598,16 @@ async function main() {
       cameraLanguage: state.motion.cameraLanguage.length,
       previewSupport: state.motion.previewSupport.length
     },
+    componentLibrary: {
+      id: state.componentLibrary.id,
+      version: state.componentLibrary.version,
+      status: state.componentLibrary.status,
+      categories: state.componentLibrary.categories.length,
+      components: state.componentLibrary.components.length,
+      states: state.componentLibrary.states.length,
+      sizes: state.componentLibrary.sizes.length,
+      previewSupport: state.componentLibrary.previewSupport.length
+    },
     inspirationSearchReturned: search.returned,
     nasaSearchReturned: nasaSearch.returned,
     boardSearchReturned: boardSearch.returned,
@@ -514,6 +620,9 @@ async function main() {
     motionSearchReturned: motionSearchExact.returned,
     galaxyMotionSearchReturned: galaxyMotionSearch.returned,
     accessibilityMotionSearchReturned: accessibilityMotionSearch.returned,
+    componentSearchReturned: componentSearch.returned,
+    componentAccessibilitySearchReturned: componentAccessibilitySearch.returned,
+    navigationComponentSearchReturned: navigationComponentSearch.returned,
     runtimePublishing: state.runtimePublishing,
     engineExports: Object.fromEntries(engineExports.map((engineExport, index) => [targets[index], engineExport.metadata.validationStatus]))
   }, null, 2));

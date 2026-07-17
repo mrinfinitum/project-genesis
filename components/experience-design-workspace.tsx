@@ -22,7 +22,7 @@ import {
   Sparkles
 } from "lucide-react";
 import { WorkspaceBadge, WorkspaceHeader, WorkspaceMiniStat, WorkspacePanel, WorkspaceSearchBar, WorkspaceStatTile, WorkspaceTabs } from "@/components/ui/workspace";
-import type { ExperienceDesignKind, ExperienceDesignRecord, ExperienceDesignSection, ExperienceDesignState, ExperienceDesignToken, ExperienceInspirationBoard, ExperienceMaterialDefinition, ExperienceMotionDefinition } from "@/lib/experience-design";
+import type { ExperienceComponentDefinition, ExperienceDesignKind, ExperienceDesignRecord, ExperienceDesignSection, ExperienceDesignState, ExperienceDesignToken, ExperienceInspirationBoard, ExperienceMaterialDefinition, ExperienceMotionDefinition } from "@/lib/experience-design";
 import { cn } from "@/lib/utils";
 
 type ExperienceTab = "dashboard" | "library" | "models" | "reviews" | "history";
@@ -480,6 +480,88 @@ function MotionWorkspace({ state, motions }: { state: ExperienceDesignState; mot
   );
 }
 
+function ComponentDefinitionCard({ component }: { component: ExperienceComponentDefinition }) {
+  return (
+    <article id={component.id} className="scroll-mt-24 rounded-md border border-cyan-300/15 bg-slate-950/45 p-4">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="truncate text-xs font-black uppercase tracking-[0.18em] text-cyan-300">{component.category}</p>
+          <h3 className="mt-2 truncate text-xl font-black text-white" title={component.name}>{component.name}</h3>
+          <p className="mt-1 truncate text-sm font-semibold text-slate-500">{component.id}</p>
+        </div>
+        <WorkspaceBadge value={component.status} />
+      </div>
+      <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-300">{component.purpose}</p>
+      <div className="mt-4 grid gap-2 sm:grid-cols-3">
+        <WorkspaceMiniStat label="States" value={component.states.length} />
+        <WorkspaceMiniStat label="Sizes" value={component.sizes.length} />
+        <WorkspaceMiniStat label="Runtime" value="Future" />
+      </div>
+      <div className="mt-4 flex flex-wrap gap-2">
+        {component.accessibilityNotes.slice(0, 4).map((note) => <WorkspaceBadge key={note} value={note} className="text-[0.62rem]" />)}
+      </div>
+    </article>
+  );
+}
+
+function ComponentLibraryWorkspace({ state, components }: { state: ExperienceDesignState; components: ExperienceComponentDefinition[] }) {
+  return (
+    <div className="space-y-4 lg:col-span-2 2xl:col-span-3">
+      <section className="studio-material-command rounded-lg p-5">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-300">{state.componentLibrary.id} / Version {state.componentLibrary.version}</p>
+            <h3 className="mt-2 text-2xl font-black text-white">{state.componentLibrary.title}</h3>
+            <p className="mt-3 max-w-4xl text-sm leading-6 text-slate-300">{state.componentLibrary.purpose}</p>
+          </div>
+          <WorkspaceBadge value={state.componentLibrary.status} />
+        </div>
+        <div className="mt-4 grid gap-3 md:grid-cols-4">
+          <WorkspaceMiniStat label="Categories" value={state.componentLibrary.categories.length} />
+          <WorkspaceMiniStat label="Components" value={state.componentLibrary.components.length} />
+          <WorkspaceMiniStat label="States" value={state.componentLibrary.states.length} />
+          <WorkspaceMiniStat label="Runtime" value="Future Milestone" />
+        </div>
+      </section>
+
+      <WorkspacePanel title="Component Categories" icon={Library}>
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          {state.componentLibrary.categories.map((category) => (
+            <div key={category.id} className="rounded-md border border-cyan-300/10 bg-slate-950/45 p-3">
+              <div className="flex items-start justify-between gap-3">
+                <p className="text-sm font-black text-white">{category.name}</p>
+                <WorkspaceBadge value={`${category.componentIds.length}`} className="text-[0.62rem]" />
+              </div>
+              <p className="mt-2 line-clamp-3 text-xs leading-5 text-slate-400">{category.purpose}</p>
+            </div>
+          ))}
+        </div>
+      </WorkspacePanel>
+
+      <WorkspacePanel title="States, Sizes, and Accessibility" icon={ShieldCheck}>
+        <div className="grid gap-4 lg:grid-cols-3">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Semantic States</p>
+            <p className="mt-2 text-sm leading-6 text-slate-300">{state.componentLibrary.states.join(", ")}</p>
+          </div>
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Semantic Sizes</p>
+            <p className="mt-2 text-sm leading-6 text-slate-300">{state.componentLibrary.sizes.join(", ")}</p>
+          </div>
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">Accessibility</p>
+            <p className="mt-2 text-sm leading-6 text-slate-300">{state.componentLibrary.accessibilitySupport.join(", ")}</p>
+          </div>
+        </div>
+      </WorkspacePanel>
+
+      <section className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
+        {components.map((component) => <ComponentDefinitionCard key={component.id} component={component} />)}
+      </section>
+    </div>
+  );
+}
+
 export function ExperienceDesignWorkspace({ state, initialSection = "dashboard" }: { state: ExperienceDesignState; initialSection?: string }) {
   const resolvedSection = state.sections.some((section) => section.id === initialSection) ? initialSection : "dashboard";
   const [query, setQuery] = useState("");
@@ -605,6 +687,38 @@ export function ExperienceDesignWorkspace({ state, initialSection = "dashboard" 
     });
   }, [query, state.motion.motions]);
 
+  const filteredComponents = useMemo(() => {
+    const normalized = query.trim().toLowerCase();
+    return state.componentLibrary.components.filter((component) => {
+      if (!normalized) return true;
+      const text = [
+        component.id,
+        component.name,
+        component.category,
+        component.purpose,
+        component.description,
+        component.playerIntent,
+        component.studioIntent,
+        component.states.join(" "),
+        component.sizes.join(" "),
+        component.accessibilityNotes.join(" "),
+        component.responsiveNotes.join(" "),
+        component.interactionNotes.join(" "),
+        component.relatedTokens.join(" "),
+        component.relatedMaterials.join(" "),
+        component.relatedMotion.join(" "),
+        component.relatedComponents.join(" "),
+        component.relatedScreens.join(" "),
+        component.relatedInspirationBoards.join(" "),
+        component.experienceBibleReferences.join(" "),
+        component.visualDnaReferences.join(" "),
+        component.previewSupport.join(" "),
+        component.tags.join(" ")
+      ].join(" ").toLowerCase();
+      return text.includes(normalized);
+    });
+  }, [query, state.componentLibrary.components]);
+
   const reviewCounts = state.reviewWorkflow.map((status) => ({
     status,
     count: state.records.filter((record) => record.status === status).length
@@ -718,12 +832,14 @@ export function ExperienceDesignWorkspace({ state, initialSection = "dashboard" 
           {currentSection.id === "tokens" ? <DesignTokensWorkspace state={state} tokens={filteredTokens} /> : null}
           {currentSection.id === "materials" ? <MaterialsWorkspace state={state} materials={filteredMaterials} /> : null}
           {currentSection.id === "motion" ? <MotionWorkspace state={state} motions={filteredMotions} /> : null}
-          {currentSection.id !== "inspiration-boards" && currentSection.id !== "tokens" && currentSection.id !== "materials" && currentSection.id !== "motion" ? filteredRecords.map((record) => <ExperienceRecordCard key={record.id} state={state} record={record} />) : null}
-          {currentSection.id !== "inspiration-boards" && currentSection.id !== "tokens" && currentSection.id !== "materials" && currentSection.id !== "motion" && !filteredRecords.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Experience Design records match this view.</p> : null}
+          {currentSection.id === "components" ? <ComponentLibraryWorkspace state={state} components={filteredComponents} /> : null}
+          {currentSection.id !== "inspiration-boards" && currentSection.id !== "tokens" && currentSection.id !== "materials" && currentSection.id !== "motion" && currentSection.id !== "components" ? filteredRecords.map((record) => <ExperienceRecordCard key={record.id} state={state} record={record} />) : null}
+          {currentSection.id !== "inspiration-boards" && currentSection.id !== "tokens" && currentSection.id !== "materials" && currentSection.id !== "motion" && currentSection.id !== "components" && !filteredRecords.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Experience Design records match this view.</p> : null}
           {currentSection.id === "inspiration-boards" && !filteredBoards.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Inspiration Boards match this view.</p> : null}
           {currentSection.id === "tokens" && !filteredTokens.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Design Tokens match this view.</p> : null}
           {currentSection.id === "materials" && !filteredMaterials.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Materials match this view.</p> : null}
           {currentSection.id === "motion" && !filteredMotions.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Motion definitions match this view.</p> : null}
+          {currentSection.id === "components" && !filteredComponents.length ? <p className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-6 text-sm font-semibold text-slate-400">No Component definitions match this view.</p> : null}
         </section>
       ) : null}
 

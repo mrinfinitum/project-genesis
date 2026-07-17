@@ -84,7 +84,7 @@ export type ExperienceBibleChapter = {
 };
 
 export type ExperienceBibleRelease = {
-  id: "DV-02" | "DV-02B" | "DV-02C" | "DV-03" | "DV-04" | "DS-02" | "DS-03" | "DS-04";
+  id: "DV-02" | "DV-02B" | "DV-02C" | "DV-03" | "DV-04" | "DS-02" | "DS-03" | "DS-04" | "DS-05";
   version: "0.1";
   status: "Draft";
   title: string;
@@ -862,6 +862,20 @@ export const experienceBibleMotionSystemRelease: ExperienceBibleRelease = {
   ]
 };
 
+export const experienceBibleComponentLibraryRelease: ExperienceBibleRelease = {
+  id: "DS-05",
+  version: "0.1",
+  status: "Draft",
+  title: "Canonical Component Library",
+  createdAt: "2026-07-17T00:00:00.000Z",
+  chapterIds: [],
+  notes: [
+    "Creates the canonical semantic Component Library for NOVERIS.",
+    "Defines component categories, semantic component records, states, sizes, accessibility support, responsive notes, relationships, search, preview metadata, review workflow, and versioning.",
+    "DS-05 is not React components, Vue components, HTML, CSS, Tailwind, UIKit, Material UI, implementation code, runtime gameplay data, or an engine export contract."
+  ]
+};
+
 export const experienceBibleSignatureRelease: ExperienceBibleRelease = {
   id: "DV-02C",
   version: "0.1",
@@ -923,7 +937,7 @@ export function getExperienceBibleState(): ExperienceBibleState {
     parts: experienceBibleParts,
     chapters: experienceBibleChapters,
     release: experienceBibleRelease,
-    contentReleases: [experienceBibleRelease, experienceBiblePartIRelease, experienceBibleSignatureRelease, experienceBibleVisualDnaRelease, experienceBibleInspirationBoardRelease, experienceBibleDesignTokensRelease, experienceBibleMaterialLibraryRelease, experienceBibleMotionSystemRelease],
+    contentReleases: [experienceBibleRelease, experienceBiblePartIRelease, experienceBibleSignatureRelease, experienceBibleVisualDnaRelease, experienceBibleInspirationBoardRelease, experienceBibleDesignTokensRelease, experienceBibleMaterialLibraryRelease, experienceBibleMotionSystemRelease, experienceBibleComponentLibraryRelease],
     signature: experienceBibleSignature,
     visualDna: experienceBibleVisualDna,
     governanceRules: experienceBibleGovernanceRules,
