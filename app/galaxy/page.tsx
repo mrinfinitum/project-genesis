@@ -1,15 +1,5 @@
-import { GeneratedUniverseLibrary } from "@/components/generated-universe-library";
-import { getUniverseLibraryRecords } from "@/lib/universe/library";
+import { GalaxyCommandCenter } from "@/components/galaxy-command-center";
 
-export default function GalaxyLibraryPage() {
-  return (
-    <GeneratedUniverseLibrary
-      kind="galaxies"
-      title="Galaxy Library"
-      description="Manage canonical generated galaxy records that can be exported and consumed by the Game."
-      generateLabel="Generate Galaxy"
-      records={getUniverseLibraryRecords("galaxies")}
-      emptyMessage="No generated galaxies yet."
-    />
-  );
+export default function GalaxyPage() {
+  return <GalaxyCommandCenter />;
 }

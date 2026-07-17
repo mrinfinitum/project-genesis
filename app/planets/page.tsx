@@ -1,15 +1,15 @@
-import { GeneratedUniverseLibrary } from "@/components/generated-universe-library";
-import { getUniverseLibraryRecords } from "@/lib/universe/library";
+import { GeneratedPlanetsGallery } from "@/components/generated-planets-gallery";
+import { getRows } from "@/lib/data";
+import { withFixedSolGeneratedPlanets } from "@/lib/planets/fixed-sol-planets";
+import type { GeneratedPlanet, PlanetRenderLibraryRecord } from "@/types/schema";
 
-export default function PlanetLibraryPage() {
-  return (
-    <GeneratedUniverseLibrary
-      kind="planets"
-      title="Planet Library"
-      description="Manage canonical generated planets, moons, and major celestial bodies that belong in the Game."
-      generateLabel="Generate Planet"
-      records={getUniverseLibraryRecords("planets")}
-      emptyMessage="No generated planets or celestial bodies yet."
-    />
-  );
+export const dynamic = "force-dynamic";
+
+export default async function PlanetsPage() {
+  const [rows, renderLibrary] = await Promise.all([
+    getRows("generated_planets") as Promise<GeneratedPlanet[]>,
+    getRows("planet_render_library").catch(() => []) as Promise<PlanetRenderLibraryRecord[]>
+  ]);
+
+  return <GeneratedPlanetsGallery initialRows={withFixedSolGeneratedPlanets(rows, renderLibrary)} />;
 }

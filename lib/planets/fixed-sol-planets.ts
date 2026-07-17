@@ -26,6 +26,14 @@ function fixedPlanetId(body: CelestialBodyNode) {
   return `fixed-sol-${slug(body.name)}`;
 }
 
+const localSolPreviewNames = new Set(["sol", "earth", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "europa", "ganymede", "titan", "enceladus"]);
+
+function localSolPreviewUrl(body: CelestialBodyNode) {
+  const bodySlug = slug(body.name);
+  if (!localSolPreviewNames.has(bodySlug)) return "";
+  return `/assets/game-art/planet-renders/sol/${bodySlug === "sol" ? "sol" : `sol_${bodySlug}`}.png`;
+}
+
 function bodyMoons(body: CelestialBodyNode, allBodies: CelestialBodyNode[]) {
   return allBodies.filter((candidate) => candidate.orbit_parent === body.name && candidate.celestial_body_type === "Moon").length;
 }
@@ -73,6 +81,7 @@ function generatedPlanetFromSolBody(body: CelestialBodyNode, allBodies: Celestia
   const gasGiant = body.uses_orbital_gameplay || body.planet_class === "Gas Giant";
   const rarity = body.planet_rarity ?? "Common";
   const moonCount = bodyMoons(body, allBodies);
+  const localPreviewUrl = localSolPreviewUrl(body);
 
   const planet: GeneratedPlanet = {
     id: fixedPlanetId(body),
@@ -148,15 +157,26 @@ function generatedPlanetFromSolBody(body: CelestialBodyNode, allBodies: Celestia
     discovery_points: rarityDiscoveryPoints[rarity] ?? 150,
     completion_percent: body.is_starting_body ? 100 : 25,
     orbit_view_prompt: null,
-    orbit_view_image_url: null,
+    orbit_view_image_url: localPreviewUrl || null,
     surface_landscape_prompt: null,
     surface_landscape_image_url: null,
     surface_landscape_status: "Placeholder",
     surface_landscape_notes: "Fixed Sol body. Add unique canonical Sol artwork from the planet render library when available.",
-    image_url: null,
+    image_url: localPreviewUrl || null,
     image_prompt: null,
-    image_status: "Placeholder Artwork",
-    image_variants: null,
+    image_status: localPreviewUrl ? "Local Preview" : "Placeholder Artwork",
+    image_variants: localPreviewUrl
+      ? [
+          {
+            size: 480,
+            width: 480,
+            height: 480,
+            url: localPreviewUrl,
+            path: localPreviewUrl,
+            filename: localPreviewUrl.split("/").pop() ?? `${slug(body.name)}.png`
+          }
+        ]
+      : null,
     created_at: "2000-01-01T00:00:00.000Z",
     notes: `${body.notes}\nFixed Sol System record.`
   };
