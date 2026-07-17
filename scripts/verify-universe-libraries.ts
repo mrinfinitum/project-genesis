@@ -60,7 +60,7 @@ function main() {
   }
 
   assertNoForbiddenUi("components/generated-universe-library.tsx");
-  assert(component.includes("GeneratedRecordCard"), "Shared library cards must use a dedicated generated-record card component.");
+  assert(component.includes("GeneratedLibraryCard"), "Shared library cards must use the GeneratedLibraryCard component.");
   assert(component.includes("records.length"), "Shared library must report record counts from canonical sources.");
   assert(!existsSync(path.join(process.cwd(), "components/interactive-galaxy-map.tsx")), "Interactive Galaxy map must not exist in Studio libraries.");
   assert(!packageJson.scripts?.["verify:galaxy-map"], "Old Galaxy map verifier script must be removed.");

@@ -77,6 +77,7 @@
     "generate:component-previews": "tsx scripts/generate-component-preview-specimens.ts",
     "verify:visual-previews": "tsx scripts/verify-visual-previews.ts",
     "verify:universe-libraries": "tsx scripts/verify-universe-libraries.ts",
+    "verify:library-card-system": "tsx scripts/verify-library-card-system.ts",
     "verify:mobile-readiness": "npm run verify:mobile-profiles",
     "sync:studio-runtime": "tsx scripts/sync-studio-runtime.ts"
   },

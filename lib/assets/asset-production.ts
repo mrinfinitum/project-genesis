@@ -574,6 +574,7 @@ const psdV3DerivativePresets: AssetDerivativePreset[] = [
     preset(`thumbnail_${size}_webp`, `Thumbnail ${size} WebP`, "thumbnails", "thumbnail", size, size, "1:1", "WebP", { outputRole: "thumbnail", required: size === 256 }),
     preset(`thumbnail_${size}_png`, `Thumbnail ${size} PNG`, "thumbnails", "thumbnail", size, size, "1:1", "PNG", { outputRole: "thumbnail", engineTargets: ["roblox", "unity", "unreal", "godot"], robloxReady: true })
   ]),
+  preset("library_thumbnail", "Library Thumbnail", "library_cards", "library_thumbnail", 480, 270, "16:9", "WebP", { outputRole: "thumbnail", engineTargets: ["web"], required: true, cropMode: "cover", webOptimized: true, notes: "Canonical Library card derivative. Target 60KB. Use srcset/sizes/lazy/async decode; never use full-resolution art in Library cards." }),
   ...[
     ["viewport_1366x768", 1366, 768],
     ["viewport_1600x900", 1600, 900],

@@ -1,9 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Database, Filter, Plus, Search } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { GeneratedLibraryCard, type GeneratedLibraryCardRecord } from "@/components/generated-library-card";
 import type { UniverseLibraryKind, UniverseLibraryRecord } from "@/lib/universe/library";
 
 type GeneratedUniverseLibraryProps = {
@@ -15,86 +14,24 @@ type GeneratedUniverseLibraryProps = {
   emptyMessage: string;
 };
 
-const previewStyles: Record<UniverseLibraryRecord["previewTone"], string> = {
-  galaxy: "from-indigo-400/30 via-cyan-300/15 to-fuchsia-300/20",
-  sector: "from-cyan-300/25 via-slate-700/20 to-blue-500/20",
-  system: "from-amber-300/25 via-cyan-300/10 to-slate-800/20",
-  star: "from-amber-200/45 via-orange-300/20 to-slate-900/20",
-  planet: "from-emerald-300/25 via-cyan-300/10 to-blue-500/20",
-  discovery: "from-violet-300/25 via-cyan-300/10 to-slate-900/20",
-  civilization: "from-rose-300/20 via-cyan-300/10 to-amber-300/15"
-};
-
-function statusClass(status: UniverseLibraryRecord["status"]) {
-  if (status === "Published" || status === "Approved" || status === "Generated") return "border-emerald-300/35 bg-emerald-400/10 text-emerald-100";
-  if (status === "Invalid") return "border-rose-300/35 bg-rose-400/10 text-rose-100";
-  return "border-amber-300/35 bg-amber-400/10 text-amber-100";
-}
-
-function readinessClass(readiness: UniverseLibraryRecord["readiness"]) {
-  if (readiness === "Ready") return "border-cyan-300/35 bg-cyan-400/10 text-cyan-100";
-  if (readiness === "Invalid" || readiness === "Missing Required Relationship") return "border-rose-300/35 bg-rose-400/10 text-rose-100";
-  return "border-amber-300/35 bg-amber-400/10 text-amber-100";
-}
-
-function LibraryPreview({ record }: { record: UniverseLibraryRecord }) {
-  return (
-    <div className={cn("relative h-28 overflow-hidden rounded-md border border-cyan-300/15 bg-gradient-to-br", previewStyles[record.previewTone])}>
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_35%_35%,rgba(255,255,255,0.18),transparent_34%),linear-gradient(135deg,rgba(6,182,212,0.15),transparent_55%)]" />
-      <div className="absolute inset-x-5 top-5 h-px bg-cyan-200/25" />
-      <div className="absolute bottom-4 left-5 right-5">
-        <div className="h-1.5 w-2/3 rounded-full bg-cyan-200/45" />
-        <div className="mt-2 h-1.5 w-1/3 rounded-full bg-white/20" />
-      </div>
-    </div>
-  );
-}
-
-function GeneratedRecordCard({ record }: { record: UniverseLibraryRecord }) {
-  return (
-    <Link
-      href={record.href}
-      className="group block rounded-md border border-cyan-300/15 bg-[#07101e]/88 p-3 transition hover:border-cyan-300/55 hover:bg-cyan-300/5 focus-visible:border-cyan-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/30"
-    >
-      <LibraryPreview record={record} />
-      <div className="mt-3 flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="truncate text-lg font-black text-white">{record.name}</p>
-          <p className="mt-1 truncate text-sm font-semibold text-cyan-100">{record.type}</p>
-          {record.subtype ? <p className="truncate text-xs font-semibold text-slate-400">{record.subtype}</p> : null}
-        </div>
-        <span className={cn("shrink-0 rounded-md border px-2 py-1 text-[0.62rem] font-black uppercase tracking-[0.14em]", statusClass(record.status))}>{record.status}</span>
-      </div>
-      <div className="mt-3 grid gap-2 text-xs">
-        {record.parentLabel ? (
-          <div className="flex items-center justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/35 px-3 py-2">
-            <span className="text-slate-500">Parent</span>
-            <span className="truncate font-bold text-slate-200">{record.parentLabel}</span>
-          </div>
-        ) : null}
-        <div className="flex items-center justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/35 px-3 py-2">
-          <span className="text-slate-500">ID</span>
-          <span className="truncate font-mono text-cyan-100">{record.id}</span>
-        </div>
-        {record.seed ? (
-          <div className="flex items-center justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/35 px-3 py-2">
-            <span className="text-slate-500">Seed</span>
-            <span className="truncate font-mono text-slate-200">{record.seed}</span>
-          </div>
-        ) : null}
-        {record.childCountLabel ? (
-          <div className="flex items-center justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/35 px-3 py-2">
-            <span className="text-slate-500">Contains</span>
-            <span className="truncate font-bold text-slate-200">{record.childCountLabel}</span>
-          </div>
-        ) : null}
-      </div>
-      <div className="mt-3 flex items-center justify-between gap-3">
-        <span className={cn("rounded-md border px-2.5 py-1 text-[0.62rem] font-black uppercase tracking-[0.14em]", readinessClass(record.readiness))}>{record.readiness}</span>
-        <span className="text-sm font-black text-cyan-100 transition group-hover:text-white">Open</span>
-      </div>
-    </Link>
-  );
+function toGeneratedCardRecord(record: UniverseLibraryRecord): GeneratedLibraryCardRecord {
+  return {
+    id: record.id,
+    name: record.name,
+    type: record.type,
+    classification: record.subtype,
+    parent: record.parentLabel,
+    contains: record.childCountLabel,
+    status: record.readiness,
+    href: record.href,
+    tone: record.previewTone,
+    thumbnailUrl: record.thumbnailUrl,
+    thumbnailWebpUrl: record.thumbnailWebpUrl,
+    thumbnailAvifUrl: record.thumbnailAvifUrl,
+    thumbnailSrcSet: record.thumbnailSrcSet,
+    mediumPreviewUrl: record.mediumPreviewUrl,
+    focalPoint: record.focalPoint
+  };
 }
 
 export function GeneratedUniverseLibrary({ title, description, generateLabel, records, emptyMessage }: GeneratedUniverseLibraryProps) {
@@ -159,8 +96,8 @@ export function GeneratedUniverseLibrary({ title, description, generateLabel, re
       </section>
 
       {filteredRecords.length ? (
-        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-          {filteredRecords.map((record) => <GeneratedRecordCard key={record.id} record={record} />)}
+        <section className="grid auto-rows-fr gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+          {filteredRecords.map((record) => <GeneratedLibraryCard key={record.id} record={toGeneratedCardRecord(record)} />)}
         </section>
       ) : (
         <section className="rounded-md border border-cyan-300/15 bg-[#07101e]/78 p-8 text-center">

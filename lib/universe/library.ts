@@ -31,6 +31,12 @@ export type UniverseLibraryRecord = {
   readiness: "Ready" | "Not Published" | "Invalid" | "Missing Required Relationship";
   href: string;
   previewTone: "galaxy" | "sector" | "system" | "star" | "planet" | "discovery" | "civilization";
+  thumbnailUrl?: string;
+  thumbnailAvifUrl?: string;
+  thumbnailWebpUrl?: string;
+  thumbnailSrcSet?: string;
+  mediumPreviewUrl?: string;
+  focalPoint?: string;
   meta?: Array<{ label: string; value: string | number }>;
 };
 
@@ -74,6 +80,24 @@ const allowedBodyTypes = new Set([
 
 function compactCount(value: number, singular: string, plural = `${singular}s`) {
   return `${value.toLocaleString()} ${value === 1 ? singular : plural}`;
+}
+
+const libraryThumbnails = {
+  galaxy: "/assets/roblox-art/asset_galaxy_icon/asset_galaxy_icon.png",
+  sector: "/assets/roblox-art/asset_galaxy_icon/asset_galaxy_icon.png",
+  system: "/assets/roblox-art/asset_galaxy_icon/asset_galaxy_icon.png",
+  star: "/assets/roblox-art/asset_critical_star_icon/asset_critical_star_icon.png",
+  planet: "/assets/roblox-art/asset_galaxy_icon/asset_galaxy_icon.png",
+  discovery: "/assets/roblox-art/asset_research_icon/asset_research_icon.png",
+  civilization: "/assets/roblox-art/asset_civilization_points_icon/asset_civilization_points_icon.png"
+} satisfies Record<UniverseLibraryRecord["previewTone"], string>;
+
+function libraryThumbnail(tone: UniverseLibraryRecord["previewTone"]) {
+  return {
+    thumbnailUrl: libraryThumbnails[tone],
+    mediumPreviewUrl: libraryThumbnails[tone],
+    focalPoint: "center"
+  };
 }
 
 function recordStatus(status?: string | null): UniverseLibraryRecord["status"] {
@@ -204,6 +228,7 @@ export function getUniverseLibraryData(): UniverseLibraryData {
         readiness: "Ready",
         href: `/galaxy?record=${encodeURIComponent(galaxy.id)}`,
         previewTone: "galaxy",
+        ...libraryThumbnail("galaxy"),
         meta: [{ label: "Export", value: "Ready" }]
       };
     });
@@ -225,6 +250,7 @@ export function getUniverseLibraryData(): UniverseLibraryData {
         readiness: "Ready",
         href: `/sector-map?record=${encodeURIComponent(sector.id)}`,
         previewTone: "sector",
+        ...libraryThumbnail("sector"),
         meta: [{ label: "Export", value: "Ready" }]
       };
     });
@@ -244,6 +270,7 @@ export function getUniverseLibraryData(): UniverseLibraryData {
       readiness: "Ready",
       href: `/star-system-map?record=${encodeURIComponent(system.id)}`,
       previewTone: "system",
+      ...libraryThumbnail("system"),
       meta: [{ label: "Export", value: "Ready" }]
     }));
 
@@ -262,6 +289,7 @@ export function getUniverseLibraryData(): UniverseLibraryData {
       readiness: "Ready",
       href: `/celestial-bodies?record=${encodeURIComponent(star.id)}`,
       previewTone: "star",
+      ...libraryThumbnail("star"),
       meta: [{ label: "Export", value: "Ready" }]
     }));
 
@@ -280,6 +308,7 @@ export function getUniverseLibraryData(): UniverseLibraryData {
       readiness: "Ready",
       href: `/planets?record=${encodeURIComponent(body.id)}`,
       previewTone: "planet",
+      ...libraryThumbnail("planet"),
       meta: [{ label: "Export", value: "Ready" }]
     }));
 
@@ -296,6 +325,7 @@ export function getUniverseLibraryData(): UniverseLibraryData {
       readiness: discovery.publicationStatus === "published" || discovery.publicationStatus === "approved" ? "Ready" : "Not Published",
       href: `/discovery-journal?record=${encodeURIComponent(discovery.id)}`,
       previewTone: "discovery",
+      ...libraryThumbnail("discovery"),
       meta: [{ label: "Export", value: discovery.publicationStatus === "hidden" ? "Not Published" : "Ready" }]
     }));
 
@@ -314,6 +344,7 @@ export function getUniverseLibraryData(): UniverseLibraryData {
       readiness: "Ready",
       href: `/civilizations?record=${encodeURIComponent(civilization.id)}`,
       previewTone: "civilization",
+      ...libraryThumbnail("civilization"),
       meta: [{ label: "Export", value: "Ready" }]
     }));
 

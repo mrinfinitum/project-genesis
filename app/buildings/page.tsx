@@ -1,4 +1,5 @@
 import { DataWorkspace } from "@/components/data-workspace";
+import { GeneratedLibraryCard, type GeneratedLibraryCardRecord } from "@/components/generated-library-card";
 import { ReferenceScreenWorkflow } from "@/components/reference-screen-workflow";
 import { WorkspaceBadge, WorkspacePanel, WorkspaceStatTile } from "@/components/ui/workspace";
 import { buildBuildingClassifications, canonicalBuildingLibrary, canonicalBuildingTaxonomy, legacyBuildingCategoryMapping } from "@/lib/buildings/taxonomy";
@@ -8,6 +9,25 @@ import type { Building } from "@/types/schema";
 
 export const dynamic = "force-dynamic";
 
+const BUILDING_LIBRARY_THUMBNAIL = "/assets/roblox-art/asset_buildings_icon/asset_buildings_icon.png";
+
+function buildingLibraryCard(definition: (typeof canonicalBuildingLibrary)[number]): GeneratedLibraryCardRecord {
+  return {
+    id: definition.id,
+    name: definition.displayName,
+    type: definition.familyName,
+    classification: definition.subcategoryName,
+    parent: definition.familyName,
+    contains: `${definition.era} / Tier ${definition.tier}`,
+    status: "Draft",
+    href: `/buildings?record=${encodeURIComponent(definition.id)}`,
+    tone: "building",
+    thumbnailUrl: BUILDING_LIBRARY_THUMBNAIL,
+    mediumPreviewUrl: BUILDING_LIBRARY_THUMBNAIL,
+    focalPoint: "center"
+  };
+}
+
 export default async function BuildingsPage() {
   const rows = await getRows("buildings");
   const buildings = rows as Building[];
@@ -15,6 +35,7 @@ export default async function BuildingsPage() {
   const populatedFamilyIds = new Set(classifications.map((classification) => classification.primaryFamilyId));
   const subcategoryCount = canonicalBuildingTaxonomy.reduce((sum, family) => sum + family.subcategories.length, 0);
   const categoryRows = canonicalBuildingTaxonomy;
+  const buildingCards = canonicalBuildingLibrary.map(buildingLibraryCard);
   return (
     <div className="space-y-6">
       <ReferenceScreenWorkflow
@@ -60,6 +81,14 @@ export default async function BuildingsPage() {
             ))}
           </div>
         </details>
+      </WorkspacePanel>
+      <WorkspacePanel title="Building Library">
+        <p className="max-w-4xl text-sm leading-6 text-slate-300">
+          Canonical generated building definitions use the shared Library card system. Cards stay compact and keep IDs, seeds, and schema details inside the opened record.
+        </p>
+        <div className="mt-4 grid auto-rows-fr gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+          {buildingCards.map((record) => <GeneratedLibraryCard key={record.id} record={record} />)}
+        </div>
       </WorkspacePanel>
       <DataWorkspace
         config={tableConfigs.buildings}
