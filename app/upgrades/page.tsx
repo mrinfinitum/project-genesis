@@ -1,5 +1,4 @@
-import { ReferenceScreenWorkflow } from "@/components/reference-screen-workflow";
-import { UpgradeArtWorkspace } from "@/components/upgrade-art-workspace";
+import { UpgradeLibrary } from "@/components/upgrade-library";
 import { getAssetProductionState } from "@/lib/assets/asset-production";
 import { getRows } from "@/lib/data";
 import { buildUpgradeArtReport } from "@/lib/upgrades/art-previews";
@@ -11,16 +10,5 @@ export default async function UpgradesPage() {
   const [rows, assetState] = await Promise.all([getRows("upgrades"), getAssetProductionState()]);
   const upgrades = rows as Upgrade[];
   const report = buildUpgradeArtReport(upgrades, assetState.assets);
-  return (
-    <div className="space-y-6">
-      <ReferenceScreenWorkflow
-        featureId="upgrades"
-        assetsHref="/asset-library?screen=upgrades"
-        componentsHref="/component-library?screen=upgrades"
-        handoffHref="/screen-designer/upgrades#handoff"
-        screenSpecHref="/screen-designer/upgrades"
-      />
-      <UpgradeArtWorkspace upgrades={upgrades} report={report} />
-    </div>
-  );
+  return <UpgradeLibrary upgrades={upgrades} report={report} />;
 }
