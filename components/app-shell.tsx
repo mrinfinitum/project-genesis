@@ -103,6 +103,14 @@ const navigationGroups: NavigationGroup[] = [
     ]
   },
   {
+    id: "render",
+    label: "Render",
+    icon: Cpu,
+    items: [
+      { href: "/render", label: "Render", icon: Cpu }
+    ]
+  },
+  {
     id: "civilization",
     label: "Civilization",
     icon: Landmark,
@@ -207,6 +215,7 @@ function activeGroupForPath(pathname: string) {
 
 function workspaceEnvironmentForPath(pathname: string) {
   if (/experience-design|architecture/.test(pathname)) return "experience";
+  if (/render/.test(pathname)) return "assets";
   if (/production/.test(pathname)) return "assets";
   if (/asset|component-library|screen-designer|visual-screen-builder/.test(pathname)) return "assets";
   if (/discovery/.test(pathname)) return "discovery";
