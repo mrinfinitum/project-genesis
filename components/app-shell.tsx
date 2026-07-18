@@ -22,7 +22,6 @@ import {
   FileCheck2,
   FileText,
   FlaskConical,
-  Gauge,
   Gem,
   History,
   Landmark,
@@ -30,12 +29,12 @@ import {
   LayoutDashboard,
   ListChecks,
   Map,
+  Menu,
   MonitorCog,
   Network,
   Orbit,
   Palette,
   PackageCheck,
-  Pickaxe,
   Radar,
   Route,
   ScrollText,
@@ -44,7 +43,8 @@ import {
   Sparkles,
   Star,
   UploadCloud,
-  WandSparkles
+  WandSparkles,
+  X
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { StudioCommandPalette } from "@/components/studio-command-palette";
@@ -69,28 +69,28 @@ const STORAGE_SECTIONS_KEY = "project-genesis-nav-sections";
 
 const navigationGroups: NavigationGroup[] = [
   {
-    id: "command-center",
-    label: "Command Center",
+    id: "home",
+    label: "Home",
     icon: LayoutDashboard,
     items: [
-      { href: "/", label: "Dashboard", icon: LayoutDashboard, activePaths: ["/"] },
-      { href: "/tasks", label: "Current Sprint", icon: ListChecks }
+      { href: "/", label: "Universe Command Center", icon: LayoutDashboard, activePaths: ["/"] }
     ]
   },
   {
-    id: "content-libraries",
-    label: "Content Libraries",
-    icon: PackageCheck,
+    id: "universe",
+    label: "Universe",
+    icon: Orbit,
     items: [
-      { href: "/asset-library", label: "Asset Library", icon: PackageCheck },
       { href: "/galaxy", label: "Galaxy Library", icon: Star },
       { href: "/sector-map", label: "Sector Library", icon: Map },
       { href: "/star-system-map", label: "Star System Library", icon: Radar },
       { href: "/celestial-bodies", label: "Star Library", icon: CircleDot },
       { href: "/planets", label: "Planet Library", icon: Orbit },
-      { href: "/discovery-journal", label: "Discovery Library", icon: ScrollText },
-      { href: "/civilizations", label: "Civilization Library", icon: Landmark },
-      { href: "/encyclopedia", label: "Encyclopedia", icon: BookOpen }
+      { href: "/planet-generation", label: "Planet Generation", icon: Orbit },
+      { href: "/prompt-library", label: "Prompt Library", icon: Search },
+      { href: "/planet-artwork", label: "Planet Artwork", icon: Palette },
+      { href: "/surface-landscapes", label: "Surface Landscapes", icon: UploadCloud },
+      { href: "/hero-discovery-shots", label: "Hero Discovery Shots", icon: Sparkles }
     ]
   },
   {
@@ -104,8 +104,60 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/population", label: "Population", icon: Landmark },
       { href: "/colonies", label: "Colonies", icon: Building2 },
       { href: "/districts", label: "Districts", icon: Layers3 },
+      { href: "/civilizations", label: "Civilization Library", icon: Landmark },
       { href: "/ai-agents", label: "AI Agents", icon: Bot },
       { href: "/era-starter-kits", label: "Era Starter Kits", icon: WandSparkles }
+    ]
+  },
+  {
+    id: "discovery",
+    label: "Discovery",
+    icon: Compass,
+    items: [
+      { href: "/discovery-journal", label: "Discovery Library", icon: ScrollText },
+      { href: "/discovery", label: "Discovery Catalog", icon: Compass },
+      { href: "/universe-timeline", label: "Universe Timeline", icon: History },
+      { href: "/encyclopedia", label: "Encyclopedia", icon: BookOpen }
+    ]
+  },
+  {
+    id: "asset-library",
+    label: "Asset Library",
+    icon: PackageCheck,
+    items: [
+      { href: "/asset-library", label: "Asset Library", icon: PackageCheck }
+    ]
+  },
+  {
+    id: "inspiration-wall",
+    label: "Inspiration Wall",
+    icon: Palette,
+    items: [
+      { href: "/experience-design/inspiration-wall", label: "Inspiration Wall", icon: Palette }
+    ]
+  },
+  {
+    id: "runtime",
+    label: "Runtime",
+    icon: Database,
+    items: [
+      { href: "/runtime", label: "Runtime", icon: Database },
+      { href: "/content-releases", label: "Content Releases", icon: Archive },
+      { href: "/game-engine-exports", label: "Exports", icon: FileCode2 },
+      { href: "/actions", label: "Actions", icon: ListChecks },
+      { href: "/economy", label: "Economy & Trade", icon: BadgeDollarSign },
+      { href: "/missions", label: "Missions", icon: ClipboardList },
+      { href: "/dynamic-events", label: "Dynamic Events", icon: Sparkles }
+    ]
+  },
+  {
+    id: "verification",
+    label: "Verification",
+    icon: FileCheck2,
+    items: [
+      { href: "/validation-engine", label: "Verification", icon: FileCheck2 },
+      { href: "/architecture", label: "Architecture", icon: FileText },
+      { href: "/settings#users", label: "Admin Users", icon: ShieldCheck }
     ]
   },
   {
@@ -115,7 +167,6 @@ const navigationGroups: NavigationGroup[] = [
     items: [
       { href: "/experience-design", label: "Dashboard", icon: Palette },
       { href: "/experience-design/bible", label: "Experience Bible", icon: BookOpen },
-      { href: "/experience-design/inspiration-wall", label: "Inspiration Wall", icon: Palette },
       { href: "/experience-design/concepts", label: "Concept Library", icon: Sparkles },
       { href: "/experience-design/screens", label: "Screen Library", icon: MonitorCog },
       { href: "/experience-design/tokens", label: "Design Tokens", icon: CopyPlus },
@@ -128,30 +179,6 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/experience-design/accessibility", label: "Accessibility", icon: Eye },
       { href: "/experience-design/journey", label: "Experience Journey", icon: Compass },
       { href: "/experience-design/reviews", label: "Reviews", icon: FileCheck2 }
-    ]
-  },
-  {
-    id: "world-systems",
-    label: "World Systems",
-    icon: BadgeDollarSign,
-    items: [
-      { href: "/actions", label: "Actions", icon: ListChecks },
-      { href: "/economy", label: "Economy & Trade", icon: BadgeDollarSign },
-      { href: "/missions", label: "Missions", icon: ClipboardList },
-      { href: "/dynamic-events", label: "Dynamic Events", icon: Sparkles }
-    ]
-  },
-  {
-    id: "runtime-verification",
-    label: "Runtime & Verification",
-    icon: FileCheck2,
-    items: [
-      { href: "/runtime", label: "Runtime", icon: Database },
-      { href: "/content-releases", label: "Content Releases", icon: Archive },
-      { href: "/game-engine-exports", label: "Exports", icon: FileCode2 },
-      { href: "/validation-engine", label: "Verification", icon: FileCheck2 },
-      { href: "/architecture", label: "Architecture", icon: FileText },
-      { href: "/settings#users", label: "Admin Users", icon: ShieldCheck }
     ]
   }
 ];
@@ -223,11 +250,12 @@ function uniqueSections(ids: Array<string | undefined>) {
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [currentSearch, setCurrentSearch] = useState("");
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const currentSearchParams = useMemo(() => new URLSearchParams(currentSearch), [currentSearch]);
   const isAuthRoute = pathname === "/login" || pathname.startsWith("/auth/");
   const activeGroup = useMemo(() => activeGroupForPath(pathname), [pathname]);
   const environment = useMemo(() => workspaceEnvironmentForPath(pathname), [pathname]);
-  const [expandedGroups, setExpandedGroups] = useState<string[]>(() => uniqueSections(["command-center", activeGroup?.id]));
+  const [expandedGroups, setExpandedGroups] = useState<string[]>(() => uniqueSections(["home", "universe", activeGroup?.id]));
 
   useEffect(() => {
     const storedSections = window.localStorage.getItem(STORAGE_SECTIONS_KEY);
@@ -246,7 +274,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       window.localStorage.removeItem("project-genesis-nav-section");
     }
 
-    const defaults = uniqueSections(["command-center", activeGroup?.id]);
+    const defaults = uniqueSections(["home", "universe", activeGroup?.id]);
     const next = stored.length ? uniqueSections([...stored, activeGroup?.id]) : defaults;
     setExpandedGroups(next);
     window.localStorage.setItem(STORAGE_SECTIONS_KEY, JSON.stringify(next));
@@ -273,10 +301,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     window.localStorage.setItem(STORAGE_SECTIONS_KEY, JSON.stringify(next));
   }
 
-  return (
-    <div data-studio-environment={environment} className="studio-cinematic-shell min-h-screen bg-genesis-void text-slate-100">
-      <aside className="studio-material-navigation fixed inset-y-0 left-0 z-20 hidden w-80 px-4 py-5 lg:block">
-        <Link href="/" className="mb-6 flex items-center gap-3">
+  function NavigationPanel({ mobile = false }: { mobile?: boolean }) {
+    return (
+      <>
+        <Link href="/" className="mb-6 flex items-center gap-3" onClick={() => mobile && setMobileNavOpen(false)}>
           <span className="grid h-11 w-11 place-items-center rounded-md border border-cyan-300/35 bg-cyan-300/10 shadow-[0_0_28px_rgba(34,211,238,0.14)]">
             <Cpu className="h-5 w-5 text-cyan-200" />
           </span>
@@ -285,7 +313,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <span className="block text-xl font-bold text-white">Genesis Studio</span>
           </span>
         </Link>
-        <nav className="h-[calc(100vh-7rem)] space-y-2 overflow-y-auto pr-1">
+        <nav className={cn("space-y-2 overflow-y-auto pr-1", mobile ? "max-h-[calc(100vh-6rem)]" : "h-[calc(100vh-7rem)]")}>
           {navigationGroups.map((group) => {
             const Icon = group.icon;
             const expanded = expandedGroups.includes(group.id);
@@ -341,7 +369,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                         <Link
                           key={`${group.id}-${item.label}`}
                           href={item.href}
-                          onClick={() => setCurrentSearch(hrefSearch(item.href ?? "") ? `?${hrefSearch(item.href ?? "")}` : "")}
+                          onClick={() => {
+                            setCurrentSearch(hrefSearch(item.href ?? "") ? `?${hrefSearch(item.href ?? "")}` : "");
+                            if (mobile) setMobileNavOpen(false);
+                          }}
                           className={cn(
                             "flex h-8 items-center gap-3 rounded-md border border-transparent px-2 text-sm font-semibold text-slate-400 transition hover:border-cyan-300/20 hover:bg-cyan-300/10 hover:text-cyan-50",
                             active && "border-cyan-300/35 bg-cyan-300/15 text-cyan-50 shadow-[inset_2px_0_0_rgba(103,232,249,0.9)]"
@@ -358,24 +389,57 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             );
           })}
         </nav>
+      </>
+    );
+  }
+
+  return (
+    <div data-studio-environment={environment} className="studio-cinematic-shell min-h-screen bg-genesis-void text-slate-100">
+      <aside className="studio-material-navigation fixed inset-y-0 left-0 z-20 hidden w-80 px-4 py-5 lg:block">
+        <NavigationPanel />
       </aside>
 
       <div className="lg:pl-80">
         <header className="sticky top-0 z-10 border-b border-cyan-400/10 bg-[#06111f]/68 backdrop-blur-xl">
           <div className="flex min-h-16 items-center justify-between gap-4 px-5 lg:px-8">
-            <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">Canonical Content IDE</p>
+            <div className="flex min-w-0 items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setMobileNavOpen(true)}
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 text-cyan-100 lg:hidden"
+                aria-label="Open navigation"
+              >
+                <Menu className="h-5 w-5" />
+              </button>
+              <div className="min-w-0">
+              <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">Universe Creation Studio</p>
               <h1 className="text-lg font-semibold text-white">Project Genesis Studio</h1>
+              </div>
             </div>
             <div className="flex items-center gap-3 text-xs text-slate-300">
               <span className="rounded-full border border-green-300/25 bg-green-300/10 px-3 py-1 text-green-200">Studio Online</span>
               <span className="hidden rounded-full border border-cyan-300/20 px-3 py-1 sm:inline-flex">v0.1.0</span>
-              <span className="hidden rounded-full border border-blue-300/20 px-3 py-1 sm:inline-flex">Sprint: Phase 1</span>
             </div>
           </div>
         </header>
         <main className="studio-orbital-grid min-h-[calc(100vh-4rem)] px-5 py-8 lg:px-10">{children}</main>
       </div>
+      {mobileNavOpen ? (
+        <div className="fixed inset-0 z-40 lg:hidden">
+          <button type="button" className="absolute inset-0 bg-slate-950/70 backdrop-blur-sm" aria-label="Close navigation" onClick={() => setMobileNavOpen(false)} />
+          <aside className="studio-material-navigation relative h-full w-[min(22rem,calc(100vw-2rem))] overflow-hidden px-4 py-5 shadow-[0_0_60px_rgba(0,0,0,0.45)]">
+            <button
+              type="button"
+              onClick={() => setMobileNavOpen(false)}
+              className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-md border border-cyan-300/20 bg-slate-950/70 text-slate-200"
+              aria-label="Close navigation"
+            >
+              <X className="h-4 w-4" />
+            </button>
+            <NavigationPanel mobile />
+          </aside>
+        </div>
+      ) : null}
       <StudioCommandPalette />
     </div>
   );

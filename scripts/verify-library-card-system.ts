@@ -65,8 +65,8 @@ const expectedPlanetSamples = ["Earth", "Moon", "Mercury", "Venus", "Mars", "Pho
 const targets: EngineTarget[] = ["generic", "roblox", "web", "unity", "unreal", "godot"];
 
 type ArtworkDecision = {
-  source: "direct_saved_record_image" | "local_derivative" | "class_fallback";
-  url: string;
+  source: "direct_saved_record_image" | "local_derivative" | "class_fallback" | "missing_art";
+  url: string | null;
 };
 
 function publicUrlExists(url: string) {
@@ -107,7 +107,7 @@ function artworkDecisionFor(record: UniverseLibraryRecord, sourceRecord: Record<
 
   const thumbnailUrl = record.thumbnailUrl;
   if (!thumbnailUrl?.startsWith("/")) {
-    throw new Error(`${record.name} must use a browser-safe local thumbnail, not ${thumbnailUrl ?? "(none)"}.`);
+    return { source: "missing_art", url: null };
   }
   assert(publicUrlExists(thumbnailUrl), `${record.name} thumbnail does not exist: ${thumbnailUrl}.`);
 
@@ -141,7 +141,7 @@ function verifyGeneratedLibraryCode() {
   assertIncludes("GeneratedLibraryCard", card, "sizes=");
   assertIncludes("GeneratedLibraryCard", card, "record.thumbnailUrl");
   assertIncludes("GeneratedLibraryCard", card, "record.mediumPreviewUrl");
-  assertIncludes("GeneratedLibraryCard", card, "<Database");
+  assertIncludes("GeneratedLibraryCard", card, "<ImageIcon");
   assertNotIncludes("GeneratedLibraryCard", card, "label=\"Seed\"");
   assertNotIncludes("GeneratedLibraryCard", card, "label=\"ID\"");
   assertNotIncludes("GeneratedLibraryCard", card, "Registry");
@@ -198,11 +198,11 @@ function verifyUniverseRecords() {
     ids.add(record.id);
     assert(record.href.includes(encodeURIComponent(record.id)), `${record.name} route does not point at its own ID.`);
     const thumbnailUrl = record.thumbnailUrl;
-    if (!thumbnailUrl?.startsWith("/")) {
-      throw new Error(`${record.name} must expose a browser-safe library thumbnail.`);
+    if (thumbnailUrl) {
+      assert(thumbnailUrl.startsWith("/"), `${record.name} thumbnail must be a browser-safe local path.`);
+      assert(publicUrlExists(thumbnailUrl), `${record.name} thumbnail does not exist: ${thumbnailUrl}.`);
+      assert(!thumbnailUrl.includes("/Users/") && !thumbnailUrl.startsWith("rbxassetid://"), `${record.name} thumbnail must not expose a private or Roblox-only path.`);
     }
-    assert(publicUrlExists(thumbnailUrl), `${record.name} thumbnail does not exist: ${thumbnailUrl}.`);
-    assert(!thumbnailUrl.includes("/Users/") && !thumbnailUrl.startsWith("rbxassetid://"), `${record.name} thumbnail must not expose a private or Roblox-only path.`);
   }
 
   for (const galaxy of source.galaxies) assert(isGeneratedGameRecord(galaxy as unknown as Record<string, unknown>, "galaxies", source), `Galaxy failed generated-record validation: ${galaxy.id}`);

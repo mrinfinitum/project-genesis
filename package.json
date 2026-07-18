@@ -200,6 +200,10 @@
     "verify:universe-libraries": "tsx scripts/verify-universe-libraries.ts",
     "verify:library-card-system": "tsx scripts/verify-library-card-system.ts",
     "verify:mobile-readiness": "npm run verify:mobile-profiles",
+    "verify:universe-first": "node scripts/verify-universe-first.mjs",
+    "verify:generator-workflow": "node scripts/verify-universe-first.mjs",
+    "verify:creation-first": "node scripts/verify-universe-first.mjs",
+    "verify:library-workflow": "node scripts/verify-universe-first.mjs",
     "sync:studio-runtime": "tsx scripts/sync-studio-runtime.ts"
   },
   "dependencies": {
