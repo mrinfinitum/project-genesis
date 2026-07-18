@@ -95,6 +95,14 @@ const navigationGroups: NavigationGroup[] = [
     ]
   },
   {
+    id: "production",
+    label: "Production",
+    icon: ClipboardList,
+    items: [
+      { href: "/production", label: "Production", icon: ClipboardList }
+    ]
+  },
+  {
     id: "civilization",
     label: "Civilization",
     icon: Landmark,
@@ -199,6 +207,7 @@ function activeGroupForPath(pathname: string) {
 
 function workspaceEnvironmentForPath(pathname: string) {
   if (/experience-design|architecture/.test(pathname)) return "experience";
+  if (/production/.test(pathname)) return "assets";
   if (/asset|component-library|screen-designer|visual-screen-builder/.test(pathname)) return "assets";
   if (/discovery/.test(pathname)) return "discovery";
   if (/galaxy|sector|star|planet|civilization|universe/.test(pathname)) return "universe";
