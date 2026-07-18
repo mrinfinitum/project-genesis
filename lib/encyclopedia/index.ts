@@ -4,11 +4,13 @@ import { colonyLevelDefinitions } from "@/lib/colonies/procedural";
 import { canonicalEconomyDefinitions } from "@/lib/economy/definitions";
 import { canonicalDiscoveries, discoveryCategories, type DiscoveryRecord } from "@/lib/discovery";
 import { generateFallbackFactions } from "@/lib/factions/procedural";
+import { getCanonicalRuntimeEras } from "@/lib/runtime/game-runtime";
 import { ResourceService } from "@/lib/resources/service";
 import type { ProductionAsset } from "@/lib/assets/asset-production";
 import type { GameData, GeneratedPlanet } from "@/types/schema";
 
 export type EncyclopediaEntityType =
+  | "era"
   | "building"
   | "research"
   | "resource"
@@ -397,6 +399,7 @@ function entryBase(input: {
   effects?: string[];
   inputs?: string[];
   outputs?: string[];
+  progression?: string[];
   unlockRequirements?: string[];
   dependencies?: string[];
   locations?: string[];
@@ -437,7 +440,7 @@ function entryBase(input: {
     locations: input.locations ?? [],
     civilizations: [],
     planets: [],
-    progression: [],
+    progression: input.progression ?? [],
     lore: {
       editorialStatus: hasDescription ? "draft" : "missing",
       shortSummary: text(input.summary),
@@ -543,10 +546,39 @@ function discoveryEntry(row: DiscoveryRecord, assets: ProductionAsset[]): Encycl
   return entry;
 }
 
+function eraEntry(row: ReturnType<typeof getCanonicalRuntimeEras>[number], assets: ProductionAsset[]): EncyclopediaEntry {
+  const previousEraId = typeof row.unlockRequirements.previousEraId === "string" ? row.unlockRequirements.previousEraId : "";
+  const entry = entryBase({
+    entityType: "era",
+    canonicalRecordId: row.id,
+    displayName: row.displayName,
+    description: row.description,
+    summary: `Era ${row.index} / ${row.shortDisplayName ?? row.displayName}`,
+    category: "civilization era",
+    subcategory: row.index === 1 ? "starting era" : "progression era",
+    era: row.id,
+    tier: row.index,
+    tags: compactStrings(row.tags, row.themeKey, row.iconKey, row.artKey),
+    unlockRequirements: previousEraId ? [`Previous era: ${previousEraId}`] : ["Starting era"],
+    dependencies: compactStrings(previousEraId),
+    effects: compactStrings(`Research progress ${row.researchProgress ?? 0}%`, `Building progress ${row.buildingProgress ?? 0}%`, row.missingArtwork ? "Missing artwork" : "Artwork ready"),
+    progression: compactStrings(`Completion ${row.completionPercent ?? 0}%`, `Mastery requirements ${Object.keys(row.masteryRequirements ?? {}).length}`),
+    publicationState: "canonical_draft",
+    priority: row.index <= 3 ? "P1" : "P2",
+    references: [{ type: "runtime_era", id: row.id, label: "Runtime Era Definition", href: "/runtime" }]
+  }, assets);
+  entry.iconArtKey = row.iconKey;
+  entry.heroArtKey = row.artKey;
+  entry.galleryArtKeys = [row.artKey, row.iconKey].filter(Boolean);
+  entry.relatedEntries = previousEraId ? [{ entryId: `era_${slug(previousEraId)}`, relationshipType: "requires" }] : [];
+  return entry;
+}
+
 function buildEntries(data: GameData, assets: ProductionAsset[]) {
   const aiModules = getAiAgentRuntimeModules();
   const fallbackFactions = generateFallbackFactions();
   return [
+    ...getCanonicalRuntimeEras().map((row) => eraEntry(row, assets)),
     ...canonicalBuildingLibrary.map((definition) => buildingEntry(definition, assets)),
     ...data.research.map((row) => entryBase({
       entityType: "research",
@@ -814,6 +846,7 @@ function section(id: EncyclopediaEntityType, label: string, description: string,
 function buildSections(entries: EncyclopediaEntry[]): EncyclopediaSection[] {
   const byType = (type: EncyclopediaEntityType) => entries.filter((entry) => entry.entityType === type);
   return [
+    section("era", "Eras", "Canonical civilization era definitions, order, short labels, unlocks, and presentation keys.", ["Era"], byType("era")),
     section("building", "Buildings", "Canonical building families, subcategories, and scaffold definitions.", ["Family", "Subcategory", "Building"], byType("building")),
     section("research", "Research", "Research branches, nodes, costs, prerequisites, and downstream unlocks.", ["Branch", "Node"], byType("research")),
     section("resource", "Resources", "Economy values and canonical material/world resources.", ["Category", "Resource"], byType("resource")),

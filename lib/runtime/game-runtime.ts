@@ -288,6 +288,10 @@ function defaultEras(): EraDefinition[] {
   });
 }
 
+export function getCanonicalRuntimeEras(): EraDefinition[] {
+  return defaultEras();
+}
+
 function defaultCategories(): UpgradeCategory[] {
   return [
     ["workforce", "Workforce", "Population, labor, carrying capacity, and manual productivity."],

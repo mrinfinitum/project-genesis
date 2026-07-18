@@ -6,7 +6,7 @@ import { getGameData } from "@/lib/data";
 import { canonicalDiscoveries } from "@/lib/discovery";
 import { buildCivilizationEncyclopediaState } from "@/lib/encyclopedia";
 import { buildGameEngineExport, type EngineTarget } from "@/lib/export/game-engine";
-import { buildCanonicalRuntimeExportPayload } from "@/lib/runtime/game-runtime";
+import { buildCanonicalRuntimeExportPayload, getCanonicalRuntimeEras } from "@/lib/runtime/game-runtime";
 
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
@@ -18,6 +18,7 @@ function read(relativePath: string) {
 
 async function main() {
   const page = read("app/encyclopedia/page.tsx");
+  const browser = read("components/encyclopedia-browser.tsx");
   const shell = read("components/app-shell.tsx");
   const assetRouting = read("lib/assets/asset-library-routing.ts");
   const creativeProduction = read("components/creative-production-workspace.tsx");
@@ -25,17 +26,23 @@ async function main() {
   const assetState = await getAssetProductionState();
   const state = buildCivilizationEncyclopediaState(data, assetState.assets);
 
-  assert(page.includes("Civilization Encyclopedia"), "/encyclopedia page must present the workspace name.");
-  assert(shell.includes('href: "/encyclopedia"') && shell.includes("Civilization Encyclopedia"), "Primary navigation must link to Civilization Encyclopedia.");
+  assert(page.includes("buildCivilizationEncyclopediaState") && browser.includes(">Encyclopedia<"), "/encyclopedia page must present the workspace name.");
+  assert(shell.includes('href: "/encyclopedia"') && shell.includes("Encyclopedia"), "Primary navigation must link to Encyclopedia.");
   assert(assetRouting.includes('"encyclopedia"') && assetRouting.includes("galactopedia"), "Asset Library must expose Encyclopedia/Galactopedia routing.");
   assert(creativeProduction.includes('id: "encyclopedia"'), "Creative Production must include an Encyclopedia readiness area.");
 
   assert(state.route === "/encyclopedia", "Encyclopedia route metadata must be /encyclopedia.");
   assert(state.validation.status === "Ready", `Encyclopedia validation must be Ready; received ${state.validation.status}: ${state.validation.issues.map((issue) => issue.message).join("; ")}`);
   assert(state.sections.length >= 20, "Encyclopedia must expose the requested section surface.");
-  for (const section of ["building", "research", "resource", "planet", "district", "colony", "ai_agent", "civilization", "faction", "upgrade", "wonder", "discovery"]) {
+  for (const section of ["era", "building", "research", "resource", "planet", "district", "colony", "ai_agent", "civilization", "faction", "upgrade", "wonder", "discovery"]) {
     assert(state.sections.some((item) => item.id === section && item.status === "active"), `${section} section must be backed by canonical records.`);
   }
+  const canonicalEras = getCanonicalRuntimeEras();
+  const eraSection = state.sections.find((item) => item.id === "era");
+  assert(eraSection?.entries.length === canonicalEras.length, `Era encyclopedia must include all ${canonicalEras.length} canonical eras.`);
+  assert(eraSection.entries.map((entry) => entry.canonicalRecordId).join("|") === canonicalEras.map((era) => era.id).join("|"), "Era encyclopedia entries must preserve canonical era order.");
+  assert(eraSection.entries[3]?.canonicalRecordId === "renaissance", "Era encyclopedia must include Renaissance at position 4.");
+  assert(eraSection.entries.every((entry) => entry.references.some((reference) => reference.type === "runtime_era")), "Every era entry must link back to runtime era definitions.");
   for (const section of ["star", "star_system", "sector", "galaxy", "ship", "species", "event", "trade"]) {
     assert(state.sections.some((item) => item.id === section && item.status === "planned"), `${section} must be marked planned rather than fabricated.`);
   }
