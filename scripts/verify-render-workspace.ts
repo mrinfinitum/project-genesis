@@ -3,19 +3,24 @@ import { join } from "node:path";
 import {
   batchJobs,
   formatRenderContract,
+  formatRendererContractEditor,
   formatRenderOutput,
   formatRenderProfile,
   formatRendererTemplate,
   futureIntegrations,
   globalRendererSettings,
   planetRenderContractFields,
+  planetRendererContract,
   planetRendererDetail,
   renderHomeCards,
   renderOutputs,
   renderPipelineSteps,
   renderProfiles,
   renderQueueStatuses,
-  rendererTemplates
+  rendererContractDefaults,
+  rendererContractPayload,
+  rendererTemplates,
+  validateRendererContract
 } from "../lib/render";
 
 const root = process.cwd();
@@ -39,6 +44,7 @@ const routeFiles = [
   "app/render/queue/page.tsx",
   "app/render/profiles/page.tsx",
   "app/render/contracts/page.tsx",
+  "app/render/contracts/planet-renderer/page.tsx",
   "app/render/outputs/page.tsx",
   "app/render/settings/page.tsx",
   "app/render/batch-jobs/page.tsx",
@@ -47,6 +53,7 @@ const routeFiles = [
 
 for (const file of routeFiles) assertFile(file);
 assertFile("components/production/render-contract-detail.tsx");
+assertFile("components/render/renderer-contract-editor.tsx");
 assertFile("lib/render/index.ts");
 
 const nav = read("components/app-shell.tsx");
@@ -59,7 +66,9 @@ assert(rendererTemplates.length === 8, `Expected 8 renderer templates, received 
 assert(rendererTemplates.some((template) => template.id === "planet-renderer"), "Planet Renderer template missing.");
 assert(planetRendererDetail.masterBlendFile === "Planet_Master.blend", "Planet Renderer master blend file mismatch.");
 assert(planetRendererDetail.futureBlenderIntegration.includes("No Blender execution"), "Future Blender integration must remain placeholder-only.");
-assert(planetRenderContractFields.length === 26, `Expected 26 planet render contract fields, received ${planetRenderContractFields.length}.`);
+assert(planetRenderContractFields.length === 29, `Expected 29 planet render contract fields, received ${planetRenderContractFields.length}.`);
+assert(planetRendererContract.groups.map((group) => group.name).join(",") === "Planet,Surface,Clouds,Atmosphere,Lighting,Rings,Moons,Output", "Planet renderer contract group order mismatch.");
+assert(validateRendererContract(planetRendererContract).valid, "Planet renderer contract must validate.");
 
 for (const path of [
   "planet.seed",
@@ -87,7 +96,10 @@ for (const path of [
   "rings.enabled",
   "rings.size",
   "rings.brightness",
-  "moons.count"
+  "moons.count",
+  "output.profile",
+  "output.transparentBackground",
+  "output.fileFormat"
 ]) {
   assert(planetRenderContractFields.some((field) => field.path === path), `Missing render contract field: ${path}`);
 }
@@ -103,12 +115,18 @@ assert(renderPipelineSteps.join(" -> ") === "Planet Record -> Render Contract ->
 
 const plainContract = formatRenderContract("plain");
 assert(plainContract.includes("Planet Render Contract"), "Plain render contract heading missing.");
-assert(plainContract.includes("- planet.seed — string"), "Plain render contract field missing.");
+assert(plainContract.includes("- planet.seed — String"), "Plain render contract field missing.");
 const markdownContract = formatRenderContract("markdown");
 assert(markdownContract.startsWith("# Planet Render Contract"), "Markdown render contract heading missing.");
 const jsonContract = formatRenderContract("json");
 JSON.parse(jsonContract);
-assert(JSON.parse(jsonContract).id === "planet-render-contract", "JSON render contract id mismatch.");
+assert(JSON.parse(jsonContract).id === "planet-renderer-contract", "JSON render contract id mismatch.");
+assert((rendererContractDefaults(planetRendererContract).planet as { seed?: string }).seed === "planet-seed", "Renderer contract defaults must include nested planet seed.");
+const rendererContractJson = JSON.parse(formatRendererContractEditor("json", planetRendererContract));
+assert(rendererContractJson.defaults.output.fileFormat === "webp", "Renderer contract JSON must include output defaults.");
+assert(rendererContractPayload(planetRendererContract).validation.valid, "Renderer contract payload must include validation success.");
+assert(formatRendererContractEditor("markdown", planetRendererContract).includes("## Atmosphere"), "Renderer contract markdown must include grouped sections.");
+assert(formatRendererContractEditor("plain", planetRendererContract).includes("output.fileFormat"), "Renderer contract plain text must include output fields.");
 
 assert(formatRendererTemplate(rendererTemplates[0]).includes("Output Types"), "Template copy text missing output types.");
 assert(formatRenderProfile(renderProfiles[0]).includes("Compression:"), "Render profile copy text missing compression.");
@@ -117,9 +135,14 @@ assert(formatRenderOutput(renderOutputs[0]).includes("Runtime Usage:"), "Render 
 const renderFiles = [
   ...routeFiles,
   "components/production/render-contract-detail.tsx",
+  "components/render/renderer-contract-editor.tsx",
   "lib/render/index.ts"
 ].map(read).join("\n");
 assert(renderFiles.includes("ProductionCopyButton"), "Render pages must use the existing Production copy component.");
+assert(renderFiles.includes("RendererContractEditor"), "Renderer Contract Editor component missing from render routes.");
+assert(renderFiles.includes("Parameter Inspector"), "Renderer Contract Editor inspector missing.");
+assert(renderFiles.includes("Live JSON"), "Renderer Contract Editor live JSON preview missing.");
+assert(renderFiles.includes("Copy") && renderFiles.includes("Download"), "Renderer Contract Editor copy/download controls missing.");
 assert(!renderFiles.includes("child_process"), "Render workspace must not launch subprocesses.");
 assert(!renderFiles.includes("spawn("), "Render workspace must not spawn external commands.");
 assert(!renderFiles.includes("exec("), "Render workspace must not execute external commands.");

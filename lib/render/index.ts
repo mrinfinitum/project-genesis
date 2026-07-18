@@ -16,6 +16,46 @@ export type RenderContractField = {
   description: string;
 };
 
+export type RendererParameterType = "Boolean" | "Integer" | "Float" | "String" | "Enum" | "Color" | "File" | "Vector2" | "Vector3";
+export type RendererContractStatus = "Draft" | "Review" | "Approved" | "Deprecated";
+
+export type RendererContractParameter = {
+  key: string;
+  displayName: string;
+  description: string;
+  type: RendererParameterType;
+  defaultValue: string | number | boolean | Array<string | number>;
+  minimum?: number;
+  maximum?: number;
+  required: boolean;
+  unit?: string;
+  enumOptions?: string[];
+  rendererMapping: string;
+  validation: string;
+  notes: string;
+};
+
+export type RendererContractGroup = {
+  id: string;
+  name: string;
+  parameters: RendererContractParameter[];
+};
+
+export type RendererContract = {
+  id: string;
+  name: string;
+  version: string;
+  status: RendererContractStatus;
+  renderer: string;
+  description: string;
+  groups: RendererContractGroup[];
+};
+
+export type RendererContractValidationIssue = {
+  key: string;
+  message: string;
+};
+
 export type RenderProfile = {
   id: string;
   title: string;
@@ -57,34 +97,119 @@ export const rendererTemplates: RendererTemplate[] = [
   { id: "ship-renderer", name: "Ship Renderer", version: "v1.0", description: "Future renderer template for ships and vehicles.", status: "Contract Only", renderer: "Future NOVERIS Render Engine", outputTypes: ["Hero Render", "Card Render", "Icon"] }
 ];
 
-export const planetRenderContractFields: RenderContractField[] = [
-  { path: "planet.seed", type: "string", description: "Stable procedural seed." },
-  { path: "planet.rotation", type: "number", description: "Planet rotation in degrees." },
-  { path: "planet.radius", type: "number", description: "Canonical radius value." },
-  { path: "planet.scale", type: "number", description: "Render scale multiplier." },
-  { path: "surface.type", type: "string", description: "Surface material archetype." },
-  { path: "surface.hue", type: "number", description: "Surface hue control." },
-  { path: "surface.saturation", type: "number", description: "Surface saturation control." },
-  { path: "surface.value", type: "number", description: "Surface value/brightness control." },
-  { path: "surface.oceanCoverage", type: "number", description: "Ocean coverage percentage." },
-  { path: "surface.mountainStrength", type: "number", description: "Mountain displacement strength." },
-  { path: "clouds.enabled", type: "boolean", description: "Cloud layer toggle." },
-  { path: "clouds.density", type: "number", description: "Cloud opacity/density control." },
-  { path: "clouds.rotation", type: "number", description: "Cloud layer rotation." },
-  { path: "clouds.height", type: "number", description: "Cloud shell height." },
-  { path: "clouds.brightness", type: "number", description: "Cloud brightness control." },
-  { path: "atmosphere.enabled", type: "boolean", description: "Atmosphere toggle." },
-  { path: "atmosphere.color", type: "string", description: "Atmosphere color." },
-  { path: "atmosphere.density", type: "number", description: "Atmosphere density." },
-  { path: "atmosphere.glow", type: "number", description: "Atmospheric glow strength." },
-  { path: "lighting.temperature", type: "number", description: "Lighting temperature." },
-  { path: "lighting.intensity", type: "number", description: "Lighting intensity." },
-  { path: "lighting.nightLights", type: "boolean", description: "Night-light city emission toggle." },
-  { path: "rings.enabled", type: "boolean", description: "Ring system toggle." },
-  { path: "rings.size", type: "number", description: "Ring size multiplier." },
-  { path: "rings.brightness", type: "number", description: "Ring brightness control." },
-  { path: "moons.count", type: "number", description: "Expected moon count for presentation." }
-];
+function parameter(
+  key: string,
+  type: RendererParameterType,
+  description: string,
+  defaultValue: RendererContractParameter["defaultValue"],
+  options: Partial<Omit<RendererContractParameter, "key" | "type" | "description" | "defaultValue" | "displayName" | "required" | "rendererMapping" | "notes">> = {}
+): RendererContractParameter {
+  const displayName = key.split(".").pop()?.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/\b\w/g, (letter) => letter.toUpperCase()) ?? key;
+  return {
+    key,
+    displayName,
+    description,
+    type,
+    defaultValue,
+    required: true,
+    rendererMapping: `renderer.parameters.${key}`,
+    validation: "Required default must match type and range.",
+    notes: "Contract definition only. The Studio does not execute renderer code.",
+    ...options
+  };
+}
+
+export const planetRendererContract: RendererContract = {
+  id: "planet-renderer-contract",
+  name: "Planet Renderer Contract",
+  version: "1.0.0",
+  status: "Draft",
+  renderer: "Any renderer / Blender-compatible adapter",
+  description: "Schema-style contract describing what a future planet renderer expects. This does not perform rendering.",
+  groups: [
+    {
+      id: "planet",
+      name: "Planet",
+      parameters: [
+        parameter("planet.seed", "String", "Stable procedural seed.", "planet-seed"),
+        parameter("planet.rotation", "Float", "Planet rotation in degrees.", 0, { minimum: 0, maximum: 360, unit: "degrees" }),
+        parameter("planet.radius", "Float", "Canonical radius value.", 1, { minimum: 0.1, maximum: 100, unit: "earth radii" }),
+        parameter("planet.scale", "Float", "Render scale multiplier.", 1, { minimum: 0.1, maximum: 10, unit: "multiplier" })
+      ]
+    },
+    {
+      id: "surface",
+      name: "Surface",
+      parameters: [
+        parameter("surface.type", "Enum", "Surface material archetype.", "rocky", { enumOptions: ["rocky", "earthlike", "ocean", "desert", "frozen", "volcanic", "toxic", "crystal", "artificial"] }),
+        parameter("surface.hue", "Float", "Surface hue control.", 180, { minimum: 0, maximum: 360, unit: "degrees" }),
+        parameter("surface.saturation", "Float", "Surface saturation control.", 55, { minimum: 0, maximum: 100, unit: "%" }),
+        parameter("surface.value", "Float", "Surface value/brightness control.", 60, { minimum: 0, maximum: 100, unit: "%" }),
+        parameter("surface.oceanCoverage", "Float", "Ocean coverage percentage.", 35, { minimum: 0, maximum: 100, unit: "%" }),
+        parameter("surface.mountainStrength", "Float", "Mountain displacement strength.", 0.35, { minimum: 0, maximum: 1, unit: "normalized" })
+      ]
+    },
+    {
+      id: "clouds",
+      name: "Clouds",
+      parameters: [
+        parameter("clouds.enabled", "Boolean", "Cloud layer toggle.", true),
+        parameter("clouds.density", "Float", "Cloud opacity/density control.", 0.45, { minimum: 0, maximum: 1, unit: "normalized" }),
+        parameter("clouds.rotation", "Float", "Cloud layer rotation.", 0, { minimum: 0, maximum: 360, unit: "degrees" }),
+        parameter("clouds.height", "Float", "Cloud shell height.", 1.03, { minimum: 1, maximum: 1.3, unit: "planet scale" }),
+        parameter("clouds.brightness", "Float", "Cloud brightness control.", 0.8, { minimum: 0, maximum: 2, unit: "multiplier" })
+      ]
+    },
+    {
+      id: "atmosphere",
+      name: "Atmosphere",
+      parameters: [
+        parameter("atmosphere.enabled", "Boolean", "Atmosphere toggle.", true),
+        parameter("atmosphere.color", "Color", "Atmosphere color.", "#7dd3fc", { validation: "Required hex color in #RRGGBB format." }),
+        parameter("atmosphere.density", "Float", "Atmosphere density.", 0.35, { minimum: 0, maximum: 1, unit: "normalized" }),
+        parameter("atmosphere.glow", "Float", "Atmospheric glow strength.", 0.5, { minimum: 0, maximum: 2, unit: "multiplier" })
+      ]
+    },
+    {
+      id: "lighting",
+      name: "Lighting",
+      parameters: [
+        parameter("lighting.temperature", "Integer", "Lighting temperature.", 6500, { minimum: 1000, maximum: 20000, unit: "kelvin" }),
+        parameter("lighting.intensity", "Float", "Lighting intensity.", 1, { minimum: 0, maximum: 10, unit: "multiplier" }),
+        parameter("lighting.nightLights", "Boolean", "Night-light city emission toggle.", false)
+      ]
+    },
+    {
+      id: "rings",
+      name: "Rings",
+      parameters: [
+        parameter("rings.enabled", "Boolean", "Ring system toggle.", false),
+        parameter("rings.size", "Float", "Ring size multiplier.", 1.5, { minimum: 0, maximum: 10, unit: "planet scale" }),
+        parameter("rings.brightness", "Float", "Ring brightness control.", 0.7, { minimum: 0, maximum: 2, unit: "multiplier" })
+      ]
+    },
+    {
+      id: "moons",
+      name: "Moons",
+      parameters: [
+        parameter("moons.count", "Integer", "Expected moon count for presentation.", 0, { minimum: 0, maximum: 24, unit: "moons" })
+      ]
+    },
+    {
+      id: "output",
+      name: "Output",
+      parameters: [
+        parameter("output.profile", "Enum", "Named output profile.", "library", { enumOptions: ["hero", "card", "library", "thumbnail", "icon"] }),
+        parameter("output.transparentBackground", "Boolean", "Render with transparent background.", false),
+        parameter("output.fileFormat", "Enum", "Primary file format.", "webp", { enumOptions: ["png", "webp", "avif", "jpg"] })
+      ]
+    }
+  ]
+};
+
+export const planetRenderContractFields: RenderContractField[] = planetRendererContract.groups.flatMap((group) =>
+  group.parameters.map((field) => ({ path: field.key, type: field.type, description: field.description }))
+);
 
 export const planetRendererDetail = {
   rendererVersion: "v1.0",
@@ -154,9 +279,102 @@ export const futureIntegrations = ["Blender", "Unreal", "Unity", "Godot", "Roblo
 
 export const renderPipelineSteps = ["Planet Record", "Render Contract", "Renderer Template", "Render Queue", "Renderer", "Outputs", "Asset Library", "Game"];
 
+function setNestedValue(target: Record<string, unknown>, path: string, value: unknown) {
+  const parts = path.split(".");
+  let current = target;
+  for (const part of parts.slice(0, -1)) {
+    const next = current[part];
+    if (!next || typeof next !== "object" || Array.isArray(next)) current[part] = {};
+    current = current[part] as Record<string, unknown>;
+  }
+  current[parts[parts.length - 1]] = value;
+}
+
+function contractParameters(contract: RendererContract) {
+  return contract.groups.flatMap((group) => group.parameters.map((parameter) => ({ group, parameter })));
+}
+
+function defaultMatchesType(parameter: RendererContractParameter) {
+  const value = parameter.defaultValue;
+  if (parameter.type === "Boolean") return typeof value === "boolean";
+  if (parameter.type === "Integer") return typeof value === "number" && Number.isInteger(value);
+  if (parameter.type === "Float") return typeof value === "number" && Number.isFinite(value);
+  if (parameter.type === "String" || parameter.type === "Enum" || parameter.type === "Color" || parameter.type === "File") return typeof value === "string";
+  if (parameter.type === "Vector2") return Array.isArray(value) && value.length === 2 && value.every((item) => typeof item === "number");
+  if (parameter.type === "Vector3") return Array.isArray(value) && value.length === 3 && value.every((item) => typeof item === "number");
+  return false;
+}
+
+export function rendererContractDefaults(contract: RendererContract = planetRendererContract) {
+  const payload: Record<string, unknown> = {};
+  for (const { parameter } of contractParameters(contract)) setNestedValue(payload, parameter.key, parameter.defaultValue);
+  return payload;
+}
+
+export function validateRendererContract(contract: RendererContract = planetRendererContract) {
+  const issues: RendererContractValidationIssue[] = [];
+  const keyCounts = new Map<string, number>();
+
+  for (const { group, parameter } of contractParameters(contract)) {
+    const key = parameter.key.trim();
+    keyCounts.set(key, (keyCounts.get(key) ?? 0) + 1);
+    if (!key.includes(".")) issues.push({ key, message: "Parameter key must use grouped dot notation." });
+    if (parameter.required && (parameter.defaultValue === "" || parameter.defaultValue === null || typeof parameter.defaultValue === "undefined")) {
+      issues.push({ key, message: "Required parameter is missing a default value." });
+    }
+    if (!defaultMatchesType(parameter)) issues.push({ key, message: `Default value does not match ${parameter.type}.` });
+    if (typeof parameter.defaultValue === "number") {
+      if (typeof parameter.minimum === "number" && parameter.defaultValue < parameter.minimum) issues.push({ key, message: "Default value is below minimum." });
+      if (typeof parameter.maximum === "number" && parameter.defaultValue > parameter.maximum) issues.push({ key, message: "Default value is above maximum." });
+      if (typeof parameter.minimum === "number" && typeof parameter.maximum === "number" && parameter.minimum > parameter.maximum) issues.push({ key, message: "Minimum cannot be greater than maximum." });
+    }
+    if (parameter.type === "Enum" && (!parameter.enumOptions?.length || !parameter.enumOptions.includes(String(parameter.defaultValue)))) {
+      issues.push({ key, message: "Enum default must match one of the enum options." });
+    }
+    if (parameter.type === "Color" && typeof parameter.defaultValue === "string" && !/^#[0-9a-f]{6}$/i.test(parameter.defaultValue)) {
+      issues.push({ key, message: "Color default must use #RRGGBB." });
+    }
+    if (parameter.rendererMapping.trim().length === 0) issues.push({ key, message: "Renderer mapping is required." });
+    if (group.name.trim().length === 0) issues.push({ key, message: "Group name is required." });
+  }
+
+  for (const [key, count] of keyCounts) {
+    if (count > 1) issues.push({ key, message: "Duplicate parameter key." });
+  }
+
+  return {
+    valid: issues.length === 0,
+    issues
+  };
+}
+
+export function rendererContractPayload(contract: RendererContract = planetRendererContract) {
+  return {
+    id: contract.id,
+    name: contract.name,
+    version: contract.version,
+    status: contract.status,
+    renderer: contract.renderer,
+    description: contract.description,
+    groups: contract.groups,
+    defaults: rendererContractDefaults(contract),
+    validation: validateRendererContract(contract)
+  };
+}
+
+export function formatRendererContractEditor(format: CopyFormat, contract: RendererContract = planetRendererContract) {
+  if (format === "json") return JSON.stringify(rendererContractPayload(contract), null, 2);
+  const lines = contract.groups.flatMap((group) => [
+    format === "markdown" ? `## ${group.name}` : group.name,
+    ...group.parameters.map((parameter) => `- ${parameter.key} | ${parameter.type} | default: ${JSON.stringify(parameter.defaultValue)} | ${parameter.description}`)
+  ]);
+  if (format === "markdown") return `# ${contract.name}\n\nStatus: ${contract.status}\nRenderer: ${contract.renderer}\n\n${lines.join("\n")}`;
+  return `${contract.name}\n\nStatus: ${contract.status}\nRenderer: ${contract.renderer}\n\n${lines.join("\n")}`;
+}
+
 export function formatRenderContract(format: CopyFormat) {
   if (format === "json") {
-    return JSON.stringify({ id: "planet-render-contract", fields: planetRenderContractFields }, null, 2);
+    return formatRendererContractEditor("json");
   }
   const lines = planetRenderContractFields.map((field) => `- ${field.path} — ${field.type} — ${field.description}`);
   if (format === "markdown") {
