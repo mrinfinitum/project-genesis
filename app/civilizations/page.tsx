@@ -1,15 +1,5 @@
-import { GeneratedUniverseLibrary } from "@/components/generated-universe-library";
-import { getUniverseLibraryRecords } from "@/lib/universe/library";
+import { redirect } from "next/navigation";
 
-export default function CivilizationLibraryPage() {
-  return (
-    <GeneratedUniverseLibrary
-      kind="civilizations"
-      title="Civilization Library"
-      description="Manage canonical generated civilization and faction records with resolved universe parent links."
-      generateLabel="Generate Civilization"
-      records={getUniverseLibraryRecords("civilizations")}
-      emptyMessage="No generated civilizations yet."
-    />
-  );
+export default function RemovedCivilizationLibraryPage() {
+  redirect("/encyclopedia?section=civilization");
 }

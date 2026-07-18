@@ -1,5 +1,5 @@
-import { DiscoveryJournalWorkspace } from "@/components/discovery-journal-workspace";
+import { redirect } from "next/navigation";
 
-export default function UniverseTimelinePage() {
-  return <DiscoveryJournalWorkspace mode="timeline" />;
+export default function RemovedUniverseTimelinePage() {
+  redirect("/discovery-journal");
 }

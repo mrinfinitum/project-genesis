@@ -28,7 +28,7 @@ const commandSeeds: PaletteResult[] = [
   { id: "command:resource-catalog", type: "Library", title: "Open Resource Catalog", subtitle: "Create and manage canonical resources", href: "/resource-catalog" },
   { id: "command:create-resource", type: "Library Action", title: "Create Resource", subtitle: "Open Resource Catalog creation tools", href: "/resource-catalog?action=create" },
   { id: "command:ai-agents", type: "Library", title: "Open AI Agents", subtitle: "Create and manage AI agent definitions", href: "/ai-agents" },
-  { id: "command:era-starter-kits", type: "Scaffold", title: "Open Era Starter Kits", subtitle: "Generate draft future-era scaffolds", href: "/era-starter-kits" },
+  { id: "command:encyclopedia", type: "Library", title: "Open Encyclopedia", subtitle: "Canonical knowledge browser", href: "/encyclopedia" },
   { id: "command:production-health", type: "Health", title: "Open Production Health", subtitle: "Assets, routes, exports, verification", href: "/asset-library?section=all-assets" },
   { id: "command:runtime", type: "Runtime", title: "Open Runtime", subtitle: "Published canonical runtime", href: "/runtime" },
   { id: "command:exports", type: "Exports", title: "Open Game Engine Exports", subtitle: "Generic, Roblox, Web, Unity, Unreal, Godot", href: "/game-engine-exports" },

@@ -30,8 +30,7 @@ export default async function DashboardPage() {
     { label: "Star System Library", href: "/star-system-map", rows: universeLibraries.starSystems },
     { label: "Star Library", href: "/celestial-bodies", rows: universeLibraries.stars },
     { label: "Planet Library", href: "/planets", rows: universeLibraries.planets },
-    { label: "Discovery Library", href: "/discovery-journal", rows: universeLibraries.discoveries },
-    { label: "Civilization Library", href: "/civilizations", rows: universeLibraries.civilizations }
+    { label: "Discovery Library", href: "/discovery-journal", rows: universeLibraries.discoveries }
   ].map((library) => ({
     label: library.label,
     href: library.href,

@@ -56,7 +56,7 @@ const workspaceResults: StudioSearchResult[] = [
   workspace("resource-catalog", "Resource Catalog", "/resource-catalog", "Canonical resource records"),
   workspace("create-resource", "Create Resource", "/resource-catalog?action=create", "Resource Catalog action"),
   workspace("ai-agents", "AI Agents", "/ai-agents", "AI agent definitions and variants"),
-  workspace("era-starter-kits", "Era Starter Kits", "/era-starter-kits", "Draft future-era scaffolds"),
+  workspace("encyclopedia", "Encyclopedia", "/encyclopedia", "Canonical knowledge browser"),
   workspace("production-health", "Production Health", "/asset-library?section=all-assets", "Studio health and asset readiness"),
   workspace("runtime", "Runtime", "/runtime", "Canonical runtime"),
   workspace("exports", "Game Engine Exports", "/game-engine-exports", "Engine export targets"),

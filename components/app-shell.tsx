@@ -23,7 +23,6 @@ import {
   FileText,
   FlaskConical,
   Gem,
-  History,
   Landmark,
   Layers3,
   LayoutDashboard,
@@ -74,7 +73,8 @@ const navigationGroups: NavigationGroup[] = [
     icon: LayoutDashboard,
     items: [
       { href: "/", label: "Universe Command Center", icon: LayoutDashboard, activePaths: ["/"] },
-      { href: "/asset-library", label: "Asset Library", icon: PackageCheck }
+      { href: "/asset-library", label: "Asset Library", icon: PackageCheck },
+      { href: "/encyclopedia", label: "Encyclopedia", icon: BookOpen }
     ]
   },
   {
@@ -101,13 +101,12 @@ const navigationGroups: NavigationGroup[] = [
     items: [
       { href: "/buildings", label: "Building Library", icon: Building2 },
       { href: "/research", label: "Research Library", icon: FlaskConical },
+      { href: "/upgrades", label: "Upgrade Library", icon: WandSparkles },
       { href: "/resource-catalog", label: "Resource Catalog", icon: Gem },
       { href: "/population", label: "Population", icon: Landmark },
       { href: "/colonies", label: "Colonies", icon: Building2 },
       { href: "/districts", label: "Districts", icon: Layers3 },
-      { href: "/civilizations", label: "Civilization Library", icon: Landmark },
-      { href: "/ai-agents", label: "AI Agents", icon: Bot },
-      { href: "/era-starter-kits", label: "Era Starter Kits", icon: WandSparkles }
+      { href: "/ai-agents", label: "AI Agents", icon: Bot }
     ]
   },
   {
@@ -116,9 +115,7 @@ const navigationGroups: NavigationGroup[] = [
     icon: Compass,
     items: [
       { href: "/discovery-journal", label: "Discovery Library", icon: ScrollText },
-      { href: "/discovery", label: "Discovery Catalog", icon: Compass },
-      { href: "/universe-timeline", label: "Universe Timeline", icon: History },
-      { href: "/encyclopedia", label: "Encyclopedia", icon: BookOpen }
+      { href: "/discovery", label: "Discovery Catalog", icon: Compass }
     ]
   },
   {

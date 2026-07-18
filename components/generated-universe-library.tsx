@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Database, Filter, Plus, Search } from "lucide-react";
 import { GeneratedLibraryCard, type GeneratedLibraryCardRecord } from "@/components/generated-library-card";
 import { CanonicalIndex } from "@/components/ui/workspace";
@@ -35,29 +35,46 @@ function toGeneratedCardRecord(record: UniverseLibraryRecord): GeneratedLibraryC
   };
 }
 
-export function GeneratedUniverseLibrary({ title, description, generateLabel, records, emptyMessage }: GeneratedUniverseLibraryProps) {
+export function GeneratedUniverseLibrary({ kind, title, description, generateLabel, records, emptyMessage }: GeneratedUniverseLibraryProps) {
   const [query, setQuery] = useState("");
   const [readiness, setReadiness] = useState("all");
+  const storageKey = `project-genesis-hidden-library-records:${kind}`;
+  const [hiddenIds, setHiddenIds] = useState<string[]>([]);
+  useEffect(() => {
+    try {
+      setHiddenIds(JSON.parse(window.localStorage.getItem(storageKey) ?? "[]") as string[]);
+    } catch {
+      setHiddenIds([]);
+    }
+  }, [storageKey]);
+  const visibleRecords = useMemo(() => records.filter((record) => !hiddenIds.includes(record.id)), [hiddenIds, records]);
   const indexItems = useMemo(() => {
-    const readyCount = records.filter((record) => /^ready$/i.test(record.readiness)).length;
-    const typeCount = new Set(records.map((record) => record.type).filter(Boolean)).size;
-    const parentCount = new Set(records.map((record) => record.parentLabel).filter(Boolean)).size;
+    const readyCount = visibleRecords.filter((record) => /^ready$/i.test(record.readiness)).length;
+    const typeCount = new Set(visibleRecords.map((record) => record.type).filter(Boolean)).size;
+    const parentCount = new Set(visibleRecords.map((record) => record.parentLabel).filter(Boolean)).size;
 
     return [
-      { label: "Records", value: records.length.toLocaleString(), detail: "generated only" },
+      { label: "Records", value: visibleRecords.length.toLocaleString(), detail: "generated only" },
       { label: "Ready", value: readyCount.toLocaleString(), detail: "runtime ready" },
       { label: "Types", value: typeCount.toLocaleString(), detail: "canonical classes" },
       { label: "Parents", value: parentCount.toLocaleString(), detail: "resolved links" }
     ];
-  }, [records]);
+  }, [visibleRecords]);
   const filteredRecords = useMemo(() => {
     const needle = query.trim().toLowerCase();
-    return records.filter((record) => {
+    return visibleRecords.filter((record) => {
       const matchesReadiness = readiness === "all" || record.readiness === readiness;
       const matchesQuery = !needle || [record.name, record.id, record.type, record.subtype, record.parentLabel, record.seed].some((value) => String(value ?? "").toLowerCase().includes(needle));
       return matchesReadiness && matchesQuery;
     });
-  }, [query, readiness, records]);
+  }, [query, readiness, visibleRecords]);
+  const hideRecord = (record: GeneratedLibraryCardRecord) => {
+    setHiddenIds((current) => {
+      const next = current.includes(record.id) ? current : [...current, record.id];
+      window.localStorage.setItem(storageKey, JSON.stringify(next));
+      return next;
+    });
+  };
 
   return (
     <main className="space-y-6">
@@ -110,13 +127,13 @@ export function GeneratedUniverseLibrary({ title, description, generateLabel, re
         </div>
         <div className="mt-3 inline-flex items-center gap-2 rounded-md border border-cyan-300/10 bg-slate-950/40 px-3 py-2 text-sm font-bold text-slate-300">
           <Database className="h-4 w-4 text-cyan-200" />
-          {filteredRecords.length.toLocaleString()} shown / {records.length.toLocaleString()} total
+          {filteredRecords.length.toLocaleString()} shown / {visibleRecords.length.toLocaleString()} total
         </div>
       </section>
 
       {filteredRecords.length ? (
         <section className="grid auto-rows-fr gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-          {filteredRecords.map((record) => <GeneratedLibraryCard key={record.id} record={toGeneratedCardRecord(record)} />)}
+          {filteredRecords.map((record) => <GeneratedLibraryCard key={record.id} record={toGeneratedCardRecord(record)} onDelete={hideRecord} />)}
         </section>
       ) : (
         <section className="rounded-md border border-cyan-300/15 bg-[#07101e]/78 p-8 text-center">
