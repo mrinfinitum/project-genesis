@@ -17,9 +17,12 @@ const appShell = read("components/app-shell.tsx");
 const dashboard = read("components/command-center-dashboard.tsx");
 const tasksPage = read("app/tasks/page.tsx");
 
-for (const label of ["Home", "Universe", "Civilization", "Discovery", "Asset Library", "Inspiration Wall", "Runtime", "Verification", "Experience Design"]) {
+for (const label of ["Home", "Universe", "Civilization", "Discovery", "Inspiration Wall", "Runtime", "Verification", "Experience Design"]) {
   assert(appShell.includes(`label: "${label}"`), `Primary navigation is missing ${label}.`);
 }
+
+assert(appShell.includes('id: "home"') && appShell.includes('href: "/asset-library"'), "Home navigation must include Asset Library.");
+assert(!appShell.includes('id: "asset-library"'), "Asset Library should not be its own primary navigation group.");
 
 for (const href of ["/planet-generation", "/prompt-library", "/planet-artwork", "/surface-landscapes", "/hero-discovery-shots"]) {
   assert(appShell.includes(`href: "${href}"`), `Planet prompt workspace is not discoverable in navigation: ${href}.`);

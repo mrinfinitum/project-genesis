@@ -73,7 +73,8 @@ const navigationGroups: NavigationGroup[] = [
     label: "Home",
     icon: LayoutDashboard,
     items: [
-      { href: "/", label: "Universe Command Center", icon: LayoutDashboard, activePaths: ["/"] }
+      { href: "/", label: "Universe Command Center", icon: LayoutDashboard, activePaths: ["/"] },
+      { href: "/asset-library", label: "Asset Library", icon: PackageCheck }
     ]
   },
   {
@@ -118,14 +119,6 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/discovery", label: "Discovery Catalog", icon: Compass },
       { href: "/universe-timeline", label: "Universe Timeline", icon: History },
       { href: "/encyclopedia", label: "Encyclopedia", icon: BookOpen }
-    ]
-  },
-  {
-    id: "asset-library",
-    label: "Asset Library",
-    icon: PackageCheck,
-    items: [
-      { href: "/asset-library", label: "Asset Library", icon: PackageCheck }
     ]
   },
   {
