@@ -112,6 +112,14 @@ function solBodyPreview(body: Pick<CelestialBodyNode, "name" | "is_fixed">) {
   return imageSet(`/assets/game-art/planet-renders/sol/${bodySlug === "sol" ? "sol" : `sol_${bodySlug}`}.png`);
 }
 
+function starPreview(star: Pick<StarNode, "star_name" | "is_fixed">) {
+  if (star.is_fixed && slug(star.star_name) === "sol") {
+    return imageSet("/assets/game-art/planet-renders/sol/sol.png");
+  }
+
+  return {};
+}
+
 function hasCanonicalId(record: Record<string, unknown>) {
   return typeof record.id === "string" && record.id.trim().length > 0;
 }
@@ -276,21 +284,25 @@ export function getUniverseLibraryData(): UniverseLibraryData {
 
   const stars = source.stars
     .filter((record) => isGeneratedGameRecord(record as unknown as Record<string, unknown>, "stars", source))
-    .map((star): UniverseLibraryRecord => ({
-      id: star.id,
-      name: star.star_name,
-      type: star.star_type,
-      subtype: star.star_size,
-      parentLabel: systemById.get(star.system_id)?.system_name ?? star.system_id,
-      parentId: star.system_id,
-      seed: star.star_seed,
-      childCountLabel: `${star.star_temperature.toLocaleString()}K`,
-      status: recordStatus(),
-      readiness: "Ready",
-      href: `/celestial-bodies?record=${encodeURIComponent(star.id)}`,
-      previewTone: "star",
-      meta: [{ label: "Export", value: "Ready" }]
-    }));
+    .map((star): UniverseLibraryRecord => {
+      const art = starPreview(star);
+      return {
+        id: star.id,
+        name: star.star_name,
+        type: star.star_type,
+        subtype: star.star_size,
+        parentLabel: systemById.get(star.system_id)?.system_name ?? star.system_id,
+        parentId: star.system_id,
+        seed: star.star_seed,
+        childCountLabel: `${star.star_temperature.toLocaleString()}K`,
+        status: recordStatus(),
+        readiness: "Ready",
+        href: `/celestial-bodies?record=${encodeURIComponent(star.id)}`,
+        previewTone: "star",
+        ...art,
+        meta: [{ label: "Export", value: "Ready" }]
+      };
+    });
 
   const planets = source.bodies
     .filter((record) => isGeneratedGameRecord(record as unknown as Record<string, unknown>, "planets", source))

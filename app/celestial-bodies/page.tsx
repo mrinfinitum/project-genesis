@@ -1,21 +1,15 @@
-import { CelestialBodyDesigner } from "@/components/celestial-body-designer";
-import { getRows } from "@/lib/data";
-import { generatedCelestialBodyRows } from "@/lib/universe/fallback-data";
-import type { CelestialBodyRecord } from "@/types/schema";
+import { GeneratedUniverseLibrary } from "@/components/generated-universe-library";
+import { getUniverseLibraryRecords } from "@/lib/universe/library";
 
-export const dynamic = "force-dynamic";
-
-function withFixedSolBodies(rows: CelestialBodyRecord[], fallbackRows: CelestialBodyRecord[]) {
-  const fixedSolRows = fallbackRows.filter((row) => row.system_id === "system-sol" && row.is_fixed);
-  const existingIds = new Set(rows.map((row) => row.id));
-  const missingFixedRows = fixedSolRows.filter((row) => !existingIds.has(row.id));
-
-  return [...rows, ...missingFixedRows];
-}
-
-export default async function CelestialBodiesPage() {
-  const rows = (await getRows("celestial_bodies")) as CelestialBodyRecord[];
-  const fallbackRows = generatedCelestialBodyRows(5) as CelestialBodyRecord[];
-
-  return <CelestialBodyDesigner rows={rows.length ? withFixedSolBodies(rows, fallbackRows) : fallbackRows} />;
+export default function StarLibraryPage() {
+  return (
+    <GeneratedUniverseLibrary
+      kind="stars"
+      title="Star Library"
+      description="Browse generated canonical star records only. Planets, moons, belts, and other celestial bodies live in the Planet Library."
+      generateLabel="Generate Star"
+      records={getUniverseLibraryRecords("stars")}
+      emptyMessage="No generated stars yet."
+    />
+  );
 }
