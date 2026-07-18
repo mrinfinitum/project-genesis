@@ -26,15 +26,11 @@ const browserPreferenceKeys = {
   thumbnailSize: "project-genesis-content-browser-thumbnail-size",
   favorites: "project-genesis-content-browser-favorites",
   recentlyUsed: "project-genesis-content-browser-recently-used",
-  recentlyOpened: "project-genesis-content-browser-recently-opened"
+  recentlyOpened: "project-genesis-content-browser-recently-opened",
+  folderOverrides: "project-genesis-content-browser-folder-overrides"
 };
 
 const contentTree: ContentBrowserNode[] = [
-  { id: "all-assets", label: "All Uploaded Art", terms: ["asset"] },
-  { id: "favorites", label: "Favorites", terms: ["favorite"] },
-  { id: "recently-used", label: "Recently Used", terms: ["recent"] },
-  { id: "recently-opened", label: "Recently Opened", terms: ["recent"] },
-  { id: "recently-uploaded", label: "Recently Uploaded", terms: ["uploaded"] },
   {
     id: "universe",
     label: "Universe",
@@ -164,7 +160,7 @@ const categoryInitialNodeMap: Partial<Record<InventoryItem["categoryId"], string
 function resolveInitialNode(value?: string | null) {
   if (value && flatNodes.some((node) => node.id === value)) return value;
   if (value && value in categoryInitialNodeMap) return categoryInitialNodeMap[value as InventoryItem["categoryId"]] ?? "user-interface";
-  return "all-assets";
+  return "universe";
 }
 
 function safeReadArray(key: string) {
@@ -179,6 +175,25 @@ function safeReadArray(key: string) {
 
 function writeArray(key: string, value: string[]) {
   window.localStorage.setItem(key, JSON.stringify([...new Set(value)].slice(0, 80)));
+}
+
+function safeReadFolderOverrides() {
+  if (typeof window === "undefined") return {} as Record<string, string>;
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(browserPreferenceKeys.folderOverrides) ?? "{}") as unknown;
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return {};
+    return Object.fromEntries(
+      Object.entries(parsed).filter((entry): entry is [string, string] =>
+        typeof entry[0] === "string" && typeof entry[1] === "string" && flatNodes.some((node) => node.id === entry[1])
+      )
+    );
+  } catch {
+    return {};
+  }
+}
+
+function writeFolderOverrides(value: Record<string, string>) {
+  window.localStorage.setItem(browserPreferenceKeys.folderOverrides, JSON.stringify(value));
 }
 
 function nodeById(id: string) {
@@ -213,16 +228,22 @@ function searchText(item: InventoryItem) {
   ].join(" ").toLowerCase();
 }
 
-function itemMatchesNode(item: InventoryItem, node: ContentBrowserNode, memory?: { favorites: Set<string>; recentlyUsed: string[]; recentlyOpened: string[] }) {
-  if (node.id === "all-assets") return true;
-  if (node.id === "favorites") return memory?.favorites.has(item.id) ?? false;
-  if (node.id === "recently-used") return memory?.recentlyUsed.includes(item.id) ?? false;
-  if (node.id === "recently-opened") return memory?.recentlyOpened.includes(item.id) ?? false;
-  if (node.id === "recently-uploaded") return item.status === "uploaded" || item.sourceType === "asset_registry";
+function itemMatchesNode(item: InventoryItem, node: ContentBrowserNode, folderOverrides?: Record<string, string>) {
+  const movedTo = folderOverrides?.[item.id];
+  if (movedTo) {
+    return node.id === movedTo || movedTo.startsWith(`${node.id}/`);
+  }
+
   const categoryMatch = node.categoryIds?.includes(item.categoryId) ?? false;
   const text = searchText(item);
   const termMatch = node.terms?.some((term) => text.includes(term.toLowerCase())) ?? false;
   return categoryMatch || termMatch;
+}
+
+function folderLabel(nodeId: string) {
+  const node = nodeById(nodeId);
+  const crumb = breadcrumbFor(node);
+  return crumb.length > 1 ? crumb.join(" / ") : node.label;
 }
 
 function usageCount(item: InventoryItem) {
@@ -530,6 +551,54 @@ function BulkActionBar({
   );
 }
 
+function MoveAssetsDialog({
+  assetCount,
+  onClose,
+  onMove
+}: {
+  assetCount: number;
+  onClose: () => void;
+  onMove: (nodeId: string) => void;
+}) {
+  const [destination, setDestination] = useState(resolveInitialNode());
+  return (
+    <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/70 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Move assets">
+      <div className="w-full max-w-lg rounded-md border border-cyan-300/25 bg-[#07101e] p-4 shadow-2xl">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-200">Move Assets</p>
+            <h2 className="mt-1 text-xl font-black text-white">{assetCount} asset{assetCount === 1 ? "" : "s"} selected</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-400">
+              Choose a destination folder. This changes the Asset Library organization only; semantic keys, source files, and runtime mappings stay unchanged.
+            </p>
+          </div>
+          <button type="button" onClick={onClose} className="rounded border border-slate-600 px-2 py-1 text-xs font-bold text-slate-200">Close</button>
+        </div>
+        <label className="mt-4 block">
+          <span className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">Destination Folder</span>
+          <select
+            value={destination}
+            onChange={(event) => setDestination(event.target.value)}
+            className="mt-2 h-11 w-full rounded-md border border-cyan-300/20 bg-slate-950/80 px-3 text-sm font-bold text-white outline-none"
+          >
+            {flatNodes.map((node) => (
+              <option key={node.id} value={node.id} className="bg-slate-950">
+                {folderLabel(node.id)}
+              </option>
+            ))}
+          </select>
+        </label>
+        <div className="mt-5 flex flex-wrap justify-end gap-2">
+          <button type="button" onClick={onClose} className="h-10 rounded-md border border-slate-600 px-4 text-sm font-bold text-slate-200">Cancel</button>
+          <button type="button" onClick={() => onMove(destination)} className="h-10 rounded-md border border-cyan-300/25 bg-cyan-300/10 px-4 text-sm font-black text-cyan-100 hover:border-cyan-200/60">
+            Move to Folder
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function QuickPreviewOverlay({ item, onClose }: { item: InventoryItem | null; onClose: () => void }) {
   if (!item) return null;
   return (
@@ -715,6 +784,8 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
   const [quickPreviewItem, setQuickPreviewItem] = useState<InventoryItem | null>(null);
   const [inspectorItem, setInspectorItem] = useState<InventoryItem | null>(null);
   const [contextMenu, setContextMenu] = useState<{ item: InventoryItem; x: number; y: number } | null>(null);
+  const [folderOverrides, setFolderOverrides] = useState<Record<string, string>>(() => ({}));
+  const [moveDialog, setMoveDialog] = useState<{ assetIds: string[] } | null>(null);
   const activeNode = nodeById(activeNodeId);
   const assetItems = useMemo(() => state.assetLibraryInventory.items.filter(isUploadedAssetItem), [state.assetLibraryInventory.items]);
 
@@ -728,6 +799,7 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
     setFavorites(new Set(safeReadArray(browserPreferenceKeys.favorites)));
     setRecentlyUsed(safeReadArray(browserPreferenceKeys.recentlyUsed));
     setRecentlyOpened(safeReadArray(browserPreferenceKeys.recentlyOpened));
+    setFolderOverrides(safeReadFolderOverrides());
   }, [initialNode]);
 
   function selectNode(nodeId: string) {
@@ -756,17 +828,15 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
 
   const counts = useMemo(() => {
     const next = new Map<string, number>();
-    const memory = { favorites, recentlyUsed, recentlyOpened };
     for (const node of flatNodes) {
-      next.set(node.id, assetItems.filter((item) => itemMatchesNode(item, node, memory)).length);
+      next.set(node.id, assetItems.filter((item) => itemMatchesNode(item, node, folderOverrides)).length);
     }
     return next;
-  }, [assetItems, favorites, recentlyOpened, recentlyUsed]);
+  }, [assetItems, folderOverrides]);
 
   const filteredItems = useMemo(() => {
     const needle = query.trim().toLowerCase();
-    const memory = { favorites, recentlyUsed, recentlyOpened };
-    const nodeItems = assetItems.filter((item) => itemMatchesNode(item, activeNode, memory));
+    const nodeItems = assetItems.filter((item) => itemMatchesNode(item, activeNode, folderOverrides));
     return sortItems(nodeItems.filter((item) => {
       if (needle && !searchText(item).includes(needle)) return false;
       if (statusFilter !== "all" && item.status !== statusFilter) return false;
@@ -776,7 +846,7 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
       if (animatedOnly && !isAnimated(item)) return false;
       return true;
     }), sort);
-  }, [activeNode, animatedOnly, assetItems, engineFilter, favorites, query, recentlyOpened, recentlyUsed, resolutionFilter, sort, statusFilter, typeFilter]);
+  }, [activeNode, animatedOnly, assetItems, engineFilter, folderOverrides, query, resolutionFilter, sort, statusFilter, typeFilter]);
 
   useEffect(() => {
     setSelectedId((current) => current && filteredItems.some((item) => item.id === current) ? current : filteredItems[0]?.id ?? null);
@@ -833,8 +903,35 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
 
   function runBulkAction(action: string) {
     const selected = visibleItems.filter((item) => selectedIds.has(item.id));
+    if (action === "Move") {
+      if (!selected.length) {
+        setBulkMessage("Select one or more assets before moving them.");
+        return;
+      }
+      setMoveDialog({ assetIds: selected.map((item) => item.id) });
+      return;
+    }
     const eligible = selected.filter((item) => validActionsFor(item, favorites.has(item.id)).some((candidate) => candidate.toLowerCase().includes(action.toLowerCase().split(" ")[0])));
     setBulkMessage(`${action}: ${selected.length} selected / ${eligible.length || selected.length} eligible / ${Math.max(0, selected.length - (eligible.length || selected.length))} skipped. Review-gated action queued with rollback-safe provenance.`);
+  }
+
+  function moveAssetsToFolder(assetIds: string[], nodeId: string) {
+    const validIds = assetIds.filter((assetId) => assetItems.some((item) => item.id === assetId));
+    if (!validIds.length) return;
+    setFolderOverrides((current) => {
+      const next = { ...current };
+      for (const assetId of validIds) next[assetId] = nodeId;
+      writeFolderOverrides(next);
+      return next;
+    });
+    setMoveDialog(null);
+    setSelectedIds(new Set(validIds));
+    setActiveNodeId(nodeId);
+    window.localStorage.setItem(browserPreferenceKeys.activeNode, nodeId);
+    const url = new URL(window.location.href);
+    url.searchParams.set("folder", nodeId);
+    window.history.replaceState(null, "", url.toString());
+    setBulkMessage(`Moved ${validIds.length} asset${validIds.length === 1 ? "" : "s"} to ${folderLabel(nodeId)}. Canonical IDs and files were unchanged.`);
   }
 
   function toggleFavorite(item: InventoryItem) {
@@ -875,6 +972,7 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
     if (action === "Open") openItem(item);
     else if (action === "Preview") previewItem(item);
     else if (action === "Inspect" || action === "Usage" || action === "Versions") inspectItem(item);
+    else if (action === "Move") setMoveDialog({ assetIds: [item.id] });
     else if (action === "Favorite" || action === "Unfavorite") toggleFavorite(item);
     else if (action.startsWith("Download") && item.previewUrl) window.location.assign(item.previewUrl);
     else setBulkMessage(`${action} queued for ${item.displayName}. Destructive or canonical edits require confirmation in Asset Detail.`);
@@ -883,7 +981,8 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
   function handleTreeDrop(assetId: string, nodeId: string) {
     const item = assetItems.find((candidate) => candidate.id === assetId);
     if (!item) return;
-    setBulkMessage(`Move prepared: ${item.displayName} → ${nodeById(nodeId).label}. No canonical ID changed; confirm in Asset Detail to preserve provenance.`);
+    const selectedDropIds = selectedIds.has(assetId) ? [...selectedIds] : [assetId];
+    moveAssetsToFolder(selectedDropIds, nodeId);
   }
 
   return (
@@ -1030,6 +1129,7 @@ export function AssetContentBrowser({ state, initialNode }: { state: AssetProduc
         </section>
       </section>
       <QuickPreviewOverlay item={quickPreviewItem} onClose={() => setQuickPreviewItem(null)} />
+      {moveDialog ? <MoveAssetsDialog assetCount={moveDialog.assetIds.length} onClose={() => setMoveDialog(null)} onMove={(nodeId) => moveAssetsToFolder(moveDialog.assetIds, nodeId)} /> : null}
       <FloatingInspector item={inspectorItem} onClose={() => setInspectorItem(null)} />
       <AssetContextMenu item={contextMenu?.item ?? null} favorite={contextMenu ? favorites.has(contextMenu.item.id) : false} x={contextMenu?.x ?? 0} y={contextMenu?.y ?? 0} onClose={() => setContextMenu(null)} onAction={runContextAction} />
     </main>

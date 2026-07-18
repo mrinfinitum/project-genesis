@@ -43,10 +43,10 @@ async function main() {
   assertIncludes("Asset Library page", assetLibraryPage, "initialNode={folder ?? category ?? section ?? null}");
   for (const expected of [
     "Uploaded Art Browser",
-    "All Uploaded Art",
     "ContentBrowserTree",
     "AssetBrowserCard",
     "BulkActionBar",
+    "MoveAssetsDialog",
     "QuickPreviewOverlay",
     "Universe",
     "Civilization",
@@ -64,6 +64,8 @@ async function main() {
     "handleGridKeyDown",
     "role=\"grid\"",
     "categoryInitialNodeMap",
+    "folderOverrides",
+    "moveAssetsToFolder",
     "project-genesis-content-browser-expanded",
     "Search name, tags, semantic role, category, status, canonical ID",
     "isUploadedAssetItem",
@@ -75,6 +77,9 @@ async function main() {
     "contentVisibility"
   ]) {
     assertIncludes("Asset Content Browser", assetContentBrowser, expected);
+  }
+  for (const removedFolder of ["All Uploaded Art", "Favorites", "Recently Used", "Recently Opened", "Recently Uploaded"]) {
+    assertNotIncludes("Asset Content Browser utility folders", assetContentBrowser, `label: "${removedFolder}"`);
   }
   assertNotIncludes("Asset Content Browser", assetContentBrowser, "missing_art");
   assertNotIncludes("Asset Content Browser", assetContentBrowser, "Artwork Needed");

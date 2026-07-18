@@ -22,17 +22,21 @@ async function main() {
   assert(existsSync(path.join(process.cwd(), "app/creative-production/[...path]/page.tsx")), "Creative Production catch-all redirect must exist.");
   assert(!appShell.includes('label: "Creative Production"'), "Creative Production must not appear as a primary navigation group.");
   assert(!appShell.includes('href: "/creative-production?area='), "Primary navigation must not link to Creative Production area URLs.");
-  assert(appShell.includes('id: "content-libraries"'), "Asset Library must live under Content Libraries.");
-  assert(appShell.includes('href: "/asset-library", label: "Asset Library"'), "Asset Library primary navigation item is missing.");
+  assert(appShell.includes('id: "home"'), "Home navigation group must exist.");
+  assert(appShell.includes('href: "/asset-library", label: "Asset Library"'), "Asset Library Home navigation item is missing.");
+  assert(!appShell.includes('id: "asset-library"'), "Asset Library must not be a separate primary navigation group.");
 
   assert(assetLibraryPage.includes("AssetContentBrowser"), "Asset Library page must render the Content Browser.");
   assert(assetLibraryPage.includes("initialNode={folder ?? category ?? section ?? null}"), "Asset Library page must support folder/category/section deep links.");
   assert(assetContentBrowser.includes("categoryInitialNodeMap"), "Content Browser must map legacy category links into tree folders.");
   assert(assetsPage.includes("category ?? section"), "Legacy /assets route must support category routes.");
-  assert(assetContentBrowser.includes("Content Browser"), "Asset Library must identify as a Content Browser.");
+  assert(assetContentBrowser.includes("Uploaded Art Browser"), "Asset Library must identify as an uploaded art browser.");
   assert(assetContentBrowser.includes("ContentBrowserTree"), "Asset Library must include a left content tree.");
   assert(assetContentBrowser.includes("AssetBrowserCard"), "Asset Library must include compact browser cards.");
   assert(assetContentBrowser.includes("BulkActionBar"), "Asset Library must expose bulk actions without relying on an inspector.");
+  assert(assetContentBrowser.includes("MoveAssetsDialog"), "Asset Library must provide a real folder move dialog.");
+  assert(assetContentBrowser.includes("folderOverrides"), "Asset Library must persist browser folder moves.");
+  assert(assetContentBrowser.includes("moveAssetsToFolder"), "Asset Library drag/drop and bulk moves must update the browser folder assignment.");
   assert(assetContentBrowser.includes("QuickPreviewOverlay"), "Asset Library must support lightweight quick preview.");
   assert(!assetContentBrowser.includes("AssetInspector"), "Asset Library browser must not include a persistent right inspector.");
   assert(!assetContentBrowser.includes("LazyAssetInspector"), "Asset Library browser must not lazy load a persistent inspector.");
@@ -47,10 +51,12 @@ async function main() {
   assert(assetContentBrowser.includes("contentVisibility"), "Large grids must use browser-level virtualization/content visibility.");
   assert(assetContentBrowser.includes("Showing the first"), "Large result sets must be bounded.");
   assert(assetContentBrowser.includes("Search name, tags, semantic role, category, status, canonical ID"), "Global search must cover the requested fields.");
-  assert(assetContentBrowser.includes("Missing Art"), "Missing Art filter must exist.");
   assert(assetContentBrowser.includes("All Engines"), "Engine filter must exist.");
   assert(assetContentBrowser.includes("Any Resolution"), "Resolution filter must exist.");
   assert(assetContentBrowser.includes("Animated"), "Animated filter must exist.");
+  for (const removedFolder of ["All Uploaded Art", "Favorites", "Recently Used", "Recently Opened", "Recently Uploaded"]) {
+    assert(!assetContentBrowser.includes(`label: "${removedFolder}"`), `${removedFolder} must not appear as an Asset Library tree category.`);
+  }
   for (const action of ["Delete", "Move", "Replace", "Tag", "Publish", "Approve"]) {
     assert(assetContentBrowser.includes(action), `Bulk action ${action} must be available from the browser.`);
   }
@@ -73,7 +79,7 @@ async function main() {
 
   console.log(JSON.stringify({
     ok: true,
-    primaryNavigation: "Content Libraries / Asset Library",
+    primaryNavigation: "Home / Asset Library",
     retiredPrimaryNavigation: "Creative Production",
     routeCompatibility: {
       creativeProduction: "/assets?deprecated=creative-production",
