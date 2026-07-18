@@ -99,7 +99,8 @@ const navigationGroups: NavigationGroup[] = [
     label: "Production",
     icon: ClipboardList,
     items: [
-      { href: "/production", label: "Production", icon: ClipboardList }
+      { href: "/production", label: "Production", icon: ClipboardList },
+      { href: "/production/render-library", label: "Render Library", icon: Cpu }
     ]
   },
   {

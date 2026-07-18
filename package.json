@@ -95,6 +95,7 @@
     "verify:production-copy-formats": "tsx scripts/verify-production-workspace.ts",
     "verify:production-copy-accessibility": "tsx scripts/verify-production-workspace.ts",
     "verify:render-workspace": "tsx scripts/verify-render-workspace.ts",
+    "verify:render-library": "tsx scripts/verify-render-library.ts",
     "verify:render-contracts": "tsx scripts/verify-render-workspace.ts",
     "verify:render-navigation": "tsx scripts/verify-render-workspace.ts",
     "verify:render-copy": "tsx scripts/verify-render-workspace.ts",

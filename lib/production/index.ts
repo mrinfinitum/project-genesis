@@ -78,6 +78,7 @@ export type ProductionChecklist = {
 };
 
 export const productionHomeCards: ProductionCard[] = [
+  { id: "render-library", title: "Render Library", description: "Exact Blender render profiles, node graphs, Studio contracts, and copy-ready setup values.", href: "/production/render-library" },
   { id: "asset-specifications", title: "Asset Specifications", description: "Reference requirements for source files, maps, renders, metadata, and runtime outputs.", href: "/production/asset-specifications" },
   { id: "blender-templates", title: "Blender Templates", description: "Master scene templates and supported render outputs for asset creation.", href: "/production/blender-templates" },
   { id: "render-pipelines", title: "Render Pipelines", description: "Visual production workflows from canonical records to game-ready assets.", href: "/production/render-pipelines" },
