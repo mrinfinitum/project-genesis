@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "taxonomy": {
+    "Fauna": {
+      "Terrestrial Creatures": [
+        "Small Terrestrial",
+        "Large Terrestrial",
+        "Burrowing",
+        "Climbing",
+        "Herding",
+        "Solitary",
+        "Armored",
+        "Cave-Dwelling",
+        "Desert-Dwelling",
+        "Tundra-Dwelling"
+      ],
+      "Aerial Creatures": [
+        "Winged",
+        "Gliding",
+        "Floating",
+        "Atmospheric",
+        "Swarming",
+        "High-Altitude",
+        "Storm-Dwelling",
+        "Nocturnal Flyers",
+        "Pollinators",
+        "Aerial Predators"
+      ],
+      "Aquatic Creatures": [
+        "Shallow-Water",
+        "Deep-Ocean",
+        "Reef-Dwelling",
+        "River-Dwelling",
+        "Amphibious",
+        "Filter-Feeding",
+        "Abyssal",
+        "Leviathan",
+        "Gelatinous",
+        "Shell-Bearing"
+      ],
+      "Arthropods and Invertebrates": [
+        "Insects",
+        "Arachnid Forms",
+        "Crustacean Forms",
+        "Wormlike Forms",
+        "Mollusk Forms",
+        "Hive Organisms",
+        "Colonial Organisms",
+        "Gelatinous Forms",
+        "Burrowing Invertebrates",
+        "Parasitic Invertebrates"
+      ],
+      "Predators": [
+        "Ambush Predators",
+        "Pursuit Predators",
+        "Pack Predators",
+        "Aquatic Predators",
+        "Aerial Predators",
+        "Burrowing Predators",
+        "Venomous Predators",
+        "Camouflaged Predators",
+        "Apex Predators",
+        "Nocturnal Predators"
+      ],
+      "Herbivores and Grazers": [
+        "Grazers",
+        "Browsers",
+        "Nectar Feeders",
+        "Seed Feeders",
+        "Fungivores",
+        "Mineral Feeders",
+        "Filter Feeders",
+        "Forest Herbivores",
+        "Desert Herbivores",
+        "Aquatic Herbivores"
+      ],
+      "Symbiotic and Parasitic Life": [
+        "Mutualistic",
+        "Commensal",
+        "Cleaning Organisms",
+        "Colony-Bound",
+        "Host-Bound",
+        "Parasitic",
+        "Brood Parasites",
+        "Root Symbionts",
+        "Coral Symbionts",
+        "Hive Symbionts"
+      ],
+      "Microfauna": [
+        "Atmospheric Microfauna",
+        "Aquatic Microfauna",
+        "Soil Microfauna",
+        "Thermal Microfauna",
+        "Cryogenic Microfauna",
+        "Radiotrophic Microfauna",
+        "Crystal-Dwelling Microfauna",
+        "Biofilm Colonies",
+        "Magnetic Microfauna",
+        "Symbiotic Microfauna"
+      ]
+    }
+  }
+}

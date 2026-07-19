@@ -1,6 +1,8 @@
 import curiosityArtworkManifest from "@/data/curiosity-artwork-manifest.json";
 import biologicalCuriosityPack from "@/data/curiosity-volume-01-biological.json";
 import biologicalCuriosityTaxonomyPack from "@/data/curiosity-volume-01-biological-taxonomy.json";
+import faunaCuriosityPack from "@/data/curiosity-volume-02-fauna.json";
+import faunaCuriosityTaxonomyPack from "@/data/curiosity-volume-02-fauna-taxonomy.json";
 
 export const discoveryRarities = [
   { id: "common", displayName: "Common", displayOrder: 1, defaultSpawnWeight: 1 },
@@ -92,8 +94,8 @@ function slugify(value: string) {
     .replace(/^-+|-+$/g, "");
 }
 
-export function curiositySlug(record: Pick<DiscoveryRecord, "displayName" | "id">) {
-  return slugify(record.displayName) || record.id.toLowerCase();
+export function curiositySlug(record: Pick<DiscoveryRecord, "displayName" | "id"> & { slug?: string }) {
+  return record.slug ?? (slugify(record.displayName) || record.id.toLowerCase());
 }
 
 export type DiscoveryPublicationStatus = "draft" | "approved" | "published" | "hidden";
@@ -211,9 +213,10 @@ function curiosityCategory(displayName: string, displayOrder: number, descriptio
   };
 }
 
-type ImportedBiologicalCuriosity = {
+type ImportedCuriosity = {
   canonical_id: string;
   name: string;
+  slug?: string;
   scientific_name: string;
   category: string;
   class: string;
@@ -221,30 +224,61 @@ type ImportedBiologicalCuriosity = {
   rarity: string;
   compatible_planet_classes: string[];
   description: string;
+  discovery_location?: string;
+  collection_method?: string;
+  hazard_level?: string;
+  discovery_chance?: number;
+  required_scan_level?: number;
+  required_research_level?: number;
+  research_xp?: number;
+  research_value?: number;
+  trade_value?: number;
+  museum_value?: number;
+  collection_value?: number;
+  repeatable?: boolean;
+  maximum_known_instances?: number;
   art_prompt: string;
+  negative_prompt?: string;
   status: string;
   artwork_status: string;
   source_psd: string;
-  preview_image: string;
+  preview_image?: string;
+  preview_png?: string;
+  preview_webp?: string;
+  thumbnail_webp?: string;
   tags: string[];
 };
 
-type ImportedBiologicalPack = {
+type ImportedCuriosityPack = {
   schemaVersion: number;
-  volume: number;
+  packId?: string;
+  volumeId?: string;
+  volume?: number;
   title: string;
+  version?: string;
   recordCount: number;
   raritySystem: string[];
-  records: ImportedBiologicalCuriosity[];
+  records: ImportedCuriosity[];
 };
 
-type ImportedBiologicalTaxonomyPack = {
+type ImportedCuriosityTaxonomyPack = {
   schemaVersion: number;
   taxonomy: Record<string, Record<string, string[]>>;
 };
 
-export const biologicalCuriosityVolume = biologicalCuriosityPack as ImportedBiologicalPack;
-export const biologicalCuriosityTaxonomy = biologicalCuriosityTaxonomyPack as ImportedBiologicalTaxonomyPack;
+type CuriosityVolumeImportConfig = {
+  volumeId: string;
+  defaultTag: string;
+  defaultResearchIds: string[];
+  defaultEquipmentIds: string[];
+  specialEvent: string;
+  generationNotes: string;
+};
+
+export const biologicalCuriosityVolume = biologicalCuriosityPack as ImportedCuriosityPack;
+export const biologicalCuriosityTaxonomy = biologicalCuriosityTaxonomyPack as ImportedCuriosityTaxonomyPack;
+export const faunaCuriosityVolume = faunaCuriosityPack as ImportedCuriosityPack;
+export const faunaCuriosityTaxonomy = faunaCuriosityTaxonomyPack as ImportedCuriosityTaxonomyPack;
 
 const biologicalCategoryAliases: Record<string, string> = {
   Flora: "biological-flora",
@@ -255,6 +289,12 @@ const biologicalCategoryAliases: Record<string, string> = {
 
 function importedCategoryId(category: string) {
   return biologicalCategoryAliases[category] ?? slugify(category);
+}
+
+function importedVolumeNumber(pack: ImportedCuriosityPack) {
+  if (typeof pack.volume === "number") return pack.volume;
+  const match = pack.volumeId?.match(/volume-(\d+)/);
+  return match ? Number(match[1]) : 0;
 }
 
 function importedRarity(value: string): DiscoveryRarityId {
@@ -297,14 +337,14 @@ export const curiosityCategories: CuriosityCategory[] = [
     ["Coral and Reef Life", ["Mineral Coral", "Living Coral", "Bioluminescent Coral", "Thermal Reef Growth", "Floating Coral", "Deep-Sea Coral", "Crystal Reef Growth", "Symbiotic Coral"]]
   ], "Flora"),
   curiosityCategory("Fauna", 2, "Animal, aerial, aquatic, predatory, passive, symbiotic, and parasitic lifeform curiosities.", [
-    ["Terrestrial Creatures", ["Small Terrestrial", "Large Terrestrial", "Burrowing", "Herding", "Solitary", "Armored", "Climbing", "Cave-Dwelling"]],
-    ["Aerial Creatures", ["Winged", "Gliding", "Floating", "Atmospheric", "Swarming", "High-Altitude", "Storm-Dwelling", "Nocturnal Flyers"]],
-    ["Aquatic Creatures", ["Shallow-Water", "Deep-Ocean", "Reef-Dwelling", "Amphibious", "Filter-Feeding", "Leviathan", "Abyssal", "River-Dwelling"]],
-    ["Arthropods and Invertebrates", ["Insects", "Arachnid Forms", "Crustacean Forms", "Wormlike Forms", "Mollusk Forms", "Colonial Organisms", "Hive Organisms", "Gelatinous Forms"]],
-    ["Predators", ["Ambush Predators", "Pursuit Predators", "Pack Predators", "Aquatic Predators", "Aerial Predators", "Parasitic Predators", "Burrowing Predators", "Apex Predators"]],
-    ["Herbivores and Grazers", ["Grazers", "Browsers", "Filter Feeders", "Nectar Feeders", "Mineral Feeders", "Fungivores", "Seed Feeders", "Canopy Feeders"]],
-    ["Symbiotic and Parasitic Life", ["Symbiotic", "Parasitic", "Host-Bound", "Colony-Bound", "Mutualistic", "Commensal", "Brood Parasites", "Cleaning Organisms"]],
-    ["Microfauna", ["Microscopic Swimmers", "Soil Microfauna", "Atmospheric Microfauna", "Thermal Microfauna", "Cryogenic Microfauna", "Radiotrophic Microfauna", "Crystal-Dwelling Microfauna", "Biofilm Colonies"]]
+    ["Terrestrial Creatures", ["Small Terrestrial", "Large Terrestrial", "Burrowing", "Climbing", "Herding", "Solitary", "Armored", "Cave-Dwelling", "Desert-Dwelling", "Tundra-Dwelling"]],
+    ["Aerial Creatures", ["Winged", "Gliding", "Floating", "Atmospheric", "Swarming", "High-Altitude", "Storm-Dwelling", "Nocturnal Flyers", "Pollinators", "Aerial Predators"]],
+    ["Aquatic Creatures", ["Shallow-Water", "Deep-Ocean", "Reef-Dwelling", "River-Dwelling", "Amphibious", "Filter-Feeding", "Abyssal", "Leviathan", "Gelatinous", "Shell-Bearing"]],
+    ["Arthropods and Invertebrates", ["Insects", "Arachnid Forms", "Crustacean Forms", "Wormlike Forms", "Mollusk Forms", "Hive Organisms", "Colonial Organisms", "Gelatinous Forms", "Burrowing Invertebrates", "Parasitic Invertebrates"]],
+    ["Predators", ["Ambush Predators", "Pursuit Predators", "Pack Predators", "Aquatic Predators", "Aerial Predators", "Parasitic Predators", "Burrowing Predators", "Venomous Predators", "Camouflaged Predators", "Apex Predators", "Nocturnal Predators"]],
+    ["Herbivores and Grazers", ["Grazers", "Browsers", "Filter Feeders", "Nectar Feeders", "Mineral Feeders", "Fungivores", "Seed Feeders", "Canopy Feeders", "Forest Herbivores", "Desert Herbivores", "Aquatic Herbivores"]],
+    ["Symbiotic and Parasitic Life", ["Symbiotic", "Parasitic", "Host-Bound", "Colony-Bound", "Mutualistic", "Commensal", "Brood Parasites", "Cleaning Organisms", "Root Symbionts", "Coral Symbionts", "Hive Symbionts"]],
+    ["Microfauna", ["Microscopic Swimmers", "Soil Microfauna", "Atmospheric Microfauna", "Aquatic Microfauna", "Thermal Microfauna", "Cryogenic Microfauna", "Radiotrophic Microfauna", "Crystal-Dwelling Microfauna", "Biofilm Colonies", "Magnetic Microfauna", "Symbiotic Microfauna"]]
   ]),
   curiosityCategory("Intelligent Lifeforms", 3, "Primitive, advanced, ancient, and unknown intelligences discovered through survey and exploration.", [
     ["Primitive Lifeforms", ["Tribal", "Nomadic", "Tool-Using", "Aquatic", "Subterranean", "Hive-Based"]],
@@ -714,15 +754,19 @@ const coreDiscoveryRecords: DiscoveryRecord[] = [
   }
 ];
 
-function importedBiologicalRecord(record: ImportedBiologicalCuriosity): DiscoveryRecord {
+function importedCuriosityRecord(record: ImportedCuriosity, pack: ImportedCuriosityPack, config: CuriosityVolumeImportConfig): DiscoveryRecord {
   const rarity = importedRarity(record.rarity);
-  const slug = slugify(record.name);
+  const slug = `${slugify(record.name)}-${record.canonical_id.toLowerCase()}`;
   const categoryId = importedCategoryId(record.category);
   const classId = slugify(record.class);
   const subclassId = slugify(record.subclass);
-  const compatiblePlanetClasses = record.compatible_planet_classes.map(slugify).filter(Boolean);
+  const compatiblePlanetClasses = (record.compatible_planet_classes ?? []).map(slugify).filter(Boolean);
+  const scanLevelFromRarity = Math.max(1, Math.min(8, discoveryRarities.find((item) => item.id === rarity)?.displayOrder ?? 1));
+  const scanLevel = record.required_scan_level ?? scanLevelFromRarity;
+  const researchValue = record.research_value ?? rarityDiscoveryXp(rarity) * 8;
+  const tradeValue = record.trade_value ?? rarityDiscoveryXp(rarity) * 10;
   const tags = Array.from(new Set([
-    "biological",
+    config.defaultTag,
     record.category,
     record.class,
     record.subclass,
@@ -733,8 +777,8 @@ function importedBiologicalRecord(record: ImportedBiologicalCuriosity): Discover
   return {
     id: record.canonical_id,
     slug,
-    volumeId: "biological",
-    volumeName: biologicalCuriosityVolume.title,
+    volumeId: config.volumeId,
+    volumeName: pack.title,
     displayName: record.name,
     categoryId,
     classId,
@@ -743,64 +787,92 @@ function importedBiologicalRecord(record: ImportedBiologicalCuriosity): Discover
     scientificName: record.scientific_name,
     description: record.description,
     lore: record.description,
-    discoverySummary: `${record.name} is a ${record.rarity.toLowerCase()} biological curiosity cataloged in ${record.class} / ${record.subclass}.`,
+    scientificNotes: record.discovery_location ? `Discovery location: ${record.discovery_location}. Collection method: ${record.collection_method ?? "Unspecified"}. Hazard level: ${record.hazard_level ?? "Unspecified"}.` : undefined,
+    discoverySummary: `${record.name} is a ${record.rarity.toLowerCase()} ${config.defaultTag} curiosity cataloged in ${record.class} / ${record.subclass}.`,
     rarity,
     spawnWeight: raritySpawnWeight(rarity),
     discoveryXp: rarityDiscoveryXp(rarity),
-    creditsValue: rarityDiscoveryXp(rarity) * 12,
-    researchValue: rarityDiscoveryXp(rarity) * 8,
-    tradeValue: rarityDiscoveryXp(rarity) * 10,
+    creditsValue: record.collection_value ?? rarityDiscoveryXp(rarity) * 12,
+    researchValue,
+    tradeValue,
     unlocks: [],
-    relatedResearchIds: ["planet_scan", "planetary_ecology"],
+    relatedResearchIds: config.defaultResearchIds,
     relatedBuildingIds: [],
     relatedResourceIds: [],
     relatedPlanetIds: [],
     relatedCivilizationIds: [],
     relatedLifeformIds: [],
-    requiredEquipmentIds: ["bioscanner_basic"],
-    requiredScanLevel: Math.max(1, Math.min(8, discoveryRarities.find((item) => item.id === rarity)?.displayOrder ?? 1)),
+    requiredEquipmentIds: config.defaultEquipmentIds,
+    requiredScanLevel: scanLevel,
     compatiblePlanetClasses,
     spawnRules: {
       planetClass: compatiblePlanetClasses,
-      requiredResearchIds: ["planet_scan"],
-      specialEvents: ["biological-curiosity-volume-01"]
+      requiredResearchIds: config.defaultResearchIds,
+      requiredEquipmentIds: config.defaultEquipmentIds,
+      specialEvents: [config.specialEvent]
     },
-    assetProfile: assetProfile(`bio_${slugify(record.canonical_id)}`),
+    assetProfile: assetProfile(`${config.defaultTag}_${slugify(record.canonical_id)}`),
     promptProfile: {
       prompt: record.art_prompt,
       masterPrompt: record.art_prompt,
-      promptVersion: biologicalCuriosityVolume.schemaVersion,
-      generationNotes: "Imported from NOVERIS Curiosity Codex Volume I: Biological Curiosities."
+      negativePrompt: record.negative_prompt,
+      promptVersion: pack.schemaVersion,
+      generationNotes: config.generationNotes
     },
     publicationStatus: importedPublicationStatus(record.status),
     artworkStatus: importedArtworkStatus(record.artwork_status),
-    canonicalVersion: `volume-${biologicalCuriosityVolume.volume}.schema-${biologicalCuriosityVolume.schemaVersion}`,
+    canonicalVersion: `volume-${importedVolumeNumber(pack)}.schema-${pack.schemaVersion}`,
     tags
   };
 }
 
-export const biologicalCuriosityRecords = biologicalCuriosityVolume.records.map(importedBiologicalRecord);
-
-export const biologicalCuriosityNavigation = Object.entries(biologicalCuriosityTaxonomy.taxonomy).map(([categoryName, classes], categoryIndex) => ({
-  id: importedCategoryId(categoryName),
-  sourceCategoryName: categoryName,
-  displayName: categoryName,
-  displayOrder: categoryIndex + 1,
-  classes: Object.entries(classes).map(([className, subclasses], classIndex) => ({
-    id: slugify(className),
-    displayName: className,
-    displayOrder: classIndex + 1,
-    subclasses: subclasses.map((subclassName, subclassIndex) => ({
-      id: slugify(subclassName),
-      displayName: subclassName,
-      displayOrder: subclassIndex + 1
+function importedCuriosityNavigation(taxonomy: ImportedCuriosityTaxonomyPack) {
+  return Object.entries(taxonomy.taxonomy).map(([categoryName, classes], categoryIndex) => ({
+    id: importedCategoryId(categoryName),
+    sourceCategoryName: categoryName,
+    displayName: categoryName,
+    displayOrder: categoryIndex + 1,
+    classes: Object.entries(classes).map(([className, subclasses], classIndex) => ({
+      id: slugify(className),
+      displayName: className,
+      displayOrder: classIndex + 1,
+      subclasses: subclasses.map((subclassName, subclassIndex) => ({
+        id: slugify(subclassName),
+        displayName: subclassName,
+        displayOrder: subclassIndex + 1
+      }))
     }))
-  }))
-}));
+  }));
+}
+
+const biologicalImportConfig: CuriosityVolumeImportConfig = {
+  volumeId: "biological",
+  defaultTag: "biological",
+  defaultResearchIds: ["planet_scan", "planetary_ecology"],
+  defaultEquipmentIds: ["bioscanner_basic"],
+  specialEvent: "biological-curiosity-volume-01",
+  generationNotes: "Imported from NOVERIS Curiosity Codex Volume I: Biological Curiosities."
+};
+
+const faunaImportConfig: CuriosityVolumeImportConfig = {
+  volumeId: "fauna",
+  defaultTag: "fauna",
+  defaultResearchIds: ["planet_scan", "xenobiology"],
+  defaultEquipmentIds: ["bioscanner_basic", "field_sampler"],
+  specialEvent: "fauna-curiosity-volume-02",
+  generationNotes: "Imported from NOVERIS Curiosity Codex Volume II: Fauna Curiosities."
+};
+
+export const biologicalCuriosityRecords = biologicalCuriosityVolume.records.map((record) => importedCuriosityRecord(record, biologicalCuriosityVolume, biologicalImportConfig));
+export const faunaCuriosityRecords = faunaCuriosityVolume.records.map((record) => importedCuriosityRecord(record, faunaCuriosityVolume, faunaImportConfig));
+
+export const biologicalCuriosityNavigation = importedCuriosityNavigation(biologicalCuriosityTaxonomy);
+export const faunaCuriosityNavigation = importedCuriosityNavigation(faunaCuriosityTaxonomy);
 
 export const canonicalDiscoveries: DiscoveryRecord[] = [
   ...coreDiscoveryRecords,
-  ...biologicalCuriosityRecords
+  ...biologicalCuriosityRecords,
+  ...faunaCuriosityRecords
 ];
 
 export function getCuriositiesByVolume(volumeId: string) {

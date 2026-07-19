@@ -61,7 +61,7 @@ export default async function BiologicalCuriosityPage({ searchParams }: { search
         title="Biological Curiosities"
         description="Canonical biological curiosities grouped by Flora, Fauna, Organic Materials, and Fossils. This volume uses the same Curiosity Library record format so future volumes can be added cleanly."
         stats={[
-          { label: "Volume", value: biologicalCuriosityVolume.volume },
+          { label: "Volume", value: biologicalCuriosityVolume.volume ?? 1 },
           { label: "Records", value: records.length },
           { label: "Categories", value: biologicalCuriosityNavigation.length },
           { label: "Validation", value: validation.status }
