@@ -438,6 +438,8 @@ export const discoveryCategories = curiosityCategories.map((category) => ({
   subcategories: category.classes.flatMap((item) => item.subclasses)
 }));
 
+const curiosityCategoryById = new Map(curiosityCategories.map((category) => [category.id, category]));
+
 function assetProfile(id: string): DiscoveryAssetProfile {
   return {
     icon: `discovery_${id}_icon`,
@@ -901,8 +903,55 @@ export const canonicalDiscoveries: DiscoveryRecord[] = [
   ...geologicalCuriosityRecords
 ];
 
+export const supportedCuriosityVolumeIds = ["biological", "fauna", "geological"] as const;
+export type SupportedCuriosityVolumeId = typeof supportedCuriosityVolumeIds[number];
+
+function discoveryFolderKey(record: Pick<DiscoveryRecord, "volumeId" | "categoryId" | "classId" | "subclassId">, depth: "volume" | "category" | "class" | "subclass") {
+  if (!record.volumeId) return null;
+  if (depth === "volume") return record.volumeId;
+  if (!record.categoryId) return null;
+  if (depth === "category") return [record.volumeId, record.categoryId].join(":");
+  if (!record.classId) return null;
+  if (depth === "class") return [record.volumeId, record.categoryId, record.classId].join(":");
+  if (!record.subclassId) return null;
+  return [record.volumeId, record.categoryId, record.classId, record.subclassId].join(":");
+}
+
+function buildDiscoveryFolderIndex(records: DiscoveryRecord[]) {
+  const index = new Map<string, DiscoveryRecord[]>();
+
+  for (const record of records) {
+    for (const depth of ["volume", "category", "class", "subclass"] as const) {
+      const key = discoveryFolderKey(record, depth);
+      if (!key) continue;
+      const bucket = index.get(key);
+      if (bucket) bucket.push(record);
+      else index.set(key, [record]);
+    }
+  }
+
+  return index;
+}
+
+const discoveryRecordsByFolder = buildDiscoveryFolderIndex(canonicalDiscoveries);
+const discoveryRecordsById = new Map(canonicalDiscoveries.map((record) => [record.id, record]));
+
 export function getCuriositiesByVolume(volumeId: string) {
-  return canonicalDiscoveries.filter((record) => record.volumeId === volumeId);
+  return discoveryRecordsByFolder.get(volumeId) ?? [];
+}
+
+export function getCuriositiesByFolder(folder: string) {
+  if (!folder || folder === "all") return canonicalDiscoveries;
+  if (!supportedCuriosityVolumeIds.includes(folder.split(":")[0] as SupportedCuriosityVolumeId)) return canonicalDiscoveries;
+  return discoveryRecordsByFolder.get(folder) ?? [];
+}
+
+export function getCuriosityById(id: string | null | undefined) {
+  return id ? discoveryRecordsById.get(id) ?? null : null;
+}
+
+export function getCuriosityFolderCount(folder: string) {
+  return getCuriositiesByFolder(folder).length;
 }
 
 export const discoveryCollections = [
@@ -970,18 +1019,28 @@ export const discoveryPlayerCollectionSchema = {
 };
 
 export function getCuriosityClassification(record: Pick<DiscoveryRecord, "categoryId" | "classId" | "subclassId">) {
-  const category = curiosityCategories.find((item) => item.id === record.categoryId) ?? null;
+  const category = curiosityCategoryById.get(record.categoryId) ?? null;
   const classRecord = category?.classes.find((item) => item.id === record.classId) ?? null;
   const subclassRecord = classRecord?.subclasses.find((item) => item.id === record.subclassId) ?? null;
   return { category, classRecord, subclassRecord };
 }
 
+const curiosityArtworkByCuriosityId = new Map(curiosityArtwork.records.map((record) => [record.curiosityId, record]));
+const curiosityArtworkBySlug = new Map(curiosityArtwork.records.map((record) => [record.slug, record]));
+
 export function getCuriosityArtwork(record: Pick<DiscoveryRecord, "id" | "displayName">) {
   const slug = curiositySlug(record);
-  return curiosityArtwork.records.find((item) => item.curiosityId === record.id || item.slug === slug) ?? null;
+  return curiosityArtworkByCuriosityId.get(record.id) ?? curiosityArtworkBySlug.get(slug) ?? null;
 }
 
+let discoveryValidationCache: ReturnType<typeof runDiscoverySystemValidation> | null = null;
+
 export function validateDiscoverySystem() {
+  discoveryValidationCache ??= runDiscoverySystemValidation();
+  return discoveryValidationCache;
+}
+
+function runDiscoverySystemValidation() {
   const issues: Array<{ severity: "error" | "warning"; code: string; message: string; records: string[] }> = [];
   const categoryIds = new Set(discoveryCategories.map((category) => category.id));
   const rarityIds = new Set(discoveryRarities.map((rarity) => rarity.id));

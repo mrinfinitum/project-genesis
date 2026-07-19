@@ -11,14 +11,14 @@ import {
   faunaCuriosityVolume,
   geologicalCuriosityNavigation,
   geologicalCuriosityVolume,
+  getCuriositiesByFolder,
   getCuriosityArtwork,
+  getCuriosityById,
   getCuriosityClassification,
-  getCuriositiesByVolume,
+  getCuriosityFolderCount,
   validateDiscoverySystem,
   type DiscoveryRecord
 } from "@/lib/discovery";
-
-export const dynamic = "force-dynamic";
 
 type DiscoverySearchParams = Promise<Record<string, string | string[] | undefined>>;
 
@@ -42,6 +42,8 @@ function titleFromSlug(value: string) {
 function percent(value: number, total: number) {
   return total ? Math.round((value / total) * 100) : 0;
 }
+
+const discoveryGridRenderLimit = 240;
 
 function volumeNumber(volume: { volume?: number; volumeId?: string }) {
   if (typeof volume.volume === "number") return volume.volume;
@@ -102,28 +104,25 @@ function DiscoveryTreeItem({ node, activeFolder, depth = 0 }: { node: DiscoveryT
 }
 
 function buildDiscoveryTree(): DiscoveryTreeNode[] {
-  const biologicalRecords = getCuriositiesByVolume("biological");
-  const faunaRecords = getCuriositiesByVolume("fauna");
-  const geologicalRecords = getCuriositiesByVolume("geological");
-  const childrenForVolume = (volumeId: string, records: DiscoveryRecord[], navigation: typeof biologicalCuriosityNavigation) => navigation.map((category) => {
-    const categoryRecords = records.filter((record) => record.categoryId === category.id);
+  const childrenForVolume = (volumeId: string, navigation: typeof biologicalCuriosityNavigation) => navigation.map((category) => {
+    const categoryFolder = volumeFolderId(volumeId, category.id);
     return {
-      id: volumeFolderId(volumeId, category.id),
+      id: categoryFolder,
       label: category.displayName,
-      href: folderHref(volumeFolderId(volumeId, category.id)),
-      count: categoryRecords.length,
+      href: folderHref(categoryFolder),
+      count: getCuriosityFolderCount(categoryFolder),
       children: category.classes.map((classRecord) => {
-        const classRecords = categoryRecords.filter((record) => record.classId === classRecord.id);
+        const classFolder = volumeFolderId(volumeId, category.id, classRecord.id);
         return {
-          id: volumeFolderId(volumeId, category.id, classRecord.id),
+          id: classFolder,
           label: classRecord.displayName,
-          href: folderHref(volumeFolderId(volumeId, category.id, classRecord.id)),
-          count: classRecords.length,
+          href: folderHref(classFolder),
+          count: getCuriosityFolderCount(classFolder),
           children: classRecord.subclasses.map((subclassRecord) => ({
             id: volumeFolderId(volumeId, category.id, classRecord.id, subclassRecord.id),
             label: subclassRecord.displayName,
             href: folderHref(volumeFolderId(volumeId, category.id, classRecord.id, subclassRecord.id)),
-            count: classRecords.filter((record) => record.subclassId === subclassRecord.id).length
+            count: getCuriosityFolderCount(volumeFolderId(volumeId, category.id, classRecord.id, subclassRecord.id))
           }))
         };
       })
@@ -132,32 +131,23 @@ function buildDiscoveryTree(): DiscoveryTreeNode[] {
 
   return [
     { id: "all", label: "All Discoveries", href: folderHref("all"), count: canonicalDiscoveries.length, icon: "curiosity" },
-    { id: "biological", label: "Biological", href: folderHref("biological"), count: biologicalRecords.length, icon: "folder", children: childrenForVolume("biological", biologicalRecords, biologicalCuriosityNavigation) },
-    { id: "fauna", label: "Fauna", href: folderHref("fauna"), count: faunaRecords.length, icon: "folder", children: childrenForVolume("fauna", faunaRecords, faunaCuriosityNavigation) },
-    { id: "geological", label: "Geological", href: folderHref("geological"), count: geologicalRecords.length, icon: "folder", children: childrenForVolume("geological", geologicalRecords, geologicalCuriosityNavigation) },
+    { id: "biological", label: "Biological", href: folderHref("biological"), count: getCuriosityFolderCount("biological"), icon: "folder", children: childrenForVolume("biological", biologicalCuriosityNavigation) },
+    { id: "fauna", label: "Fauna", href: folderHref("fauna"), count: getCuriosityFolderCount("fauna"), icon: "folder", children: childrenForVolume("fauna", faunaCuriosityNavigation) },
+    { id: "geological", label: "Geological", href: folderHref("geological"), count: getCuriosityFolderCount("geological"), icon: "folder", children: childrenForVolume("geological", geologicalCuriosityNavigation) },
     { id: "journal", label: "Discovery Journal", href: "/discovery-journal", count: 0, icon: "journal" }
   ];
 }
 
 function resolveRecords(folder: string) {
-  if (!folder || folder === "all") return canonicalDiscoveries;
-  const [volumeId, categoryId, classId, subclassId] = folder.split(":");
-  if (!["biological", "fauna", "geological"].includes(volumeId)) return canonicalDiscoveries;
-
-  return getCuriositiesByVolume(volumeId).filter((record) => {
-    if (categoryId && record.categoryId !== categoryId) return false;
-    if (classId && record.classId !== classId) return false;
-    if (subclassId && record.subclassId !== subclassId) return false;
-    return true;
-  });
+  return getCuriositiesByFolder(folder);
 }
 
-function folderTitle(folder: string) {
+function folderTitle(folder: string, folderRecords: DiscoveryRecord[]) {
   if (folder === "biological") return "Biological";
   if (folder === "fauna") return "Fauna";
   if (folder === "geological") return "Geological";
   if (folder.startsWith("biological:") || folder.startsWith("fauna:") || folder.startsWith("geological:")) {
-    const first = resolveRecords(folder)[0];
+    const first = folderRecords[0];
     if (!first) return folder.startsWith("fauna:") ? "Fauna" : folder.startsWith("geological:") ? "Geological" : "Biological";
     const { category, classRecord, subclassRecord } = getCuriosityClassification(first);
     return subclassRecord?.displayName ?? classRecord?.displayName ?? category?.shortDisplayName ?? (folder.startsWith("fauna:") ? "Fauna" : folder.startsWith("geological:") ? "Geological" : "Biological");
@@ -176,7 +166,7 @@ export default async function DiscoveryLibraryPage({ searchParams }: { searchPar
   const validation = validateDiscoverySystem();
   const tree = buildDiscoveryTree();
   const folderRecords = resolveRecords(folder);
-  const selectedEntry = canonicalDiscoveries.find((record) => record.id === entryParam) ?? null;
+  const selectedEntry = getCuriosityById(entryParam);
   const visibleRecords = folderRecords.filter((record) => {
     const artwork = getCuriosityArtwork(record);
     const haystack = [record.id, record.displayName, record.scientificName, record.description, record.categoryId, record.classId, record.subclassId, record.rarity, record.volumeName, ...record.tags].join(" ").toLowerCase();
@@ -189,7 +179,8 @@ export default async function DiscoveryLibraryPage({ searchParams }: { searchPar
   const readyArtwork = folderRecords.filter((record) => getCuriosityArtwork(record)?.status === "artwork_ready").length;
   const published = folderRecords.filter((record) => record.publicationStatus === "published" || record.publicationStatus === "approved").length;
   const readiness = percent(published, folderRecords.length);
-  const activeTitle = folderTitle(folder);
+  const activeTitle = folderTitle(folder, folderRecords);
+  const renderedRecords = visibleRecords.slice(0, discoveryGridRenderLimit);
 
   return (
     <main className="min-h-[calc(100vh-5rem)] space-y-3">
@@ -279,13 +270,13 @@ export default async function DiscoveryLibraryPage({ searchParams }: { searchPar
             </form>
             <div className="mt-3 inline-flex items-center gap-2 rounded-md border border-cyan-300/10 bg-slate-950/40 px-3 py-2 text-sm font-bold text-slate-300">
               <FileText className="h-4 w-4 text-cyan-200" />
-              {visibleRecords.length.toLocaleString()} shown / {folderRecords.length.toLocaleString()} in folder / {canonicalDiscoveries.length.toLocaleString()} total
+              {renderedRecords.length.toLocaleString()} shown / {visibleRecords.length.toLocaleString()} matched / {folderRecords.length.toLocaleString()} in folder / {canonicalDiscoveries.length.toLocaleString()} total
             </div>
           </section>
 
-          {visibleRecords.length ? (
+          {renderedRecords.length ? (
             <section className="grid auto-rows-fr gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-              {visibleRecords.map((record) => {
+              {renderedRecords.map((record) => {
                 const preview = previewFor(record);
                 const { category, classRecord, subclassRecord } = getCuriosityClassification(record);
                 const href = `/discovery?folder=${encodeURIComponent(folder)}&entry=${encodeURIComponent(record.id)}`;
