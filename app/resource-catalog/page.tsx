@@ -1,5 +1,4 @@
 import { DataWorkspace } from "@/components/data-workspace";
-import { ReferenceScreenWorkflow } from "@/components/reference-screen-workflow";
 import { handoffData } from "@/data/handoff";
 import { getRows } from "@/lib/data";
 import { tableConfigs } from "@/lib/tables";
@@ -10,13 +9,6 @@ export default async function ResourceCatalogPage() {
   const rows = await getRows("resource_catalog");
   return (
     <div className="space-y-6">
-      <ReferenceScreenWorkflow
-        featureId="resources"
-        assetsHref="/asset-library?screen=resources"
-        componentsHref="/component-library?screen=resources"
-        handoffHref="/screen-designer/resources#handoff"
-        screenSpecHref="/screen-designer/resources"
-      />
       <DataWorkspace
         config={tableConfigs.resource_catalog}
         initialRows={rows.length ? rows : handoffData.resource_catalog}

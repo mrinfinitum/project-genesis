@@ -1,6 +1,4 @@
 import { getAiAgentLibraryState } from "@/lib/ai-agents";
-import { getComponentLibraryState } from "@/lib/component-library";
-import { getScreenDesignerState } from "@/lib/screen-designer";
 import type { AssetProductionState, MissingAssetRequirement, ProductionAsset } from "@/lib/assets/asset-production";
 import { assetLibraryCategoryIds, assetLibraryCategoryLabels, type AssetLibraryCategoryId } from "@/lib/assets/asset-library-routing";
 import type { VisualPreviewReport } from "@/lib/assets/visual-previews";
@@ -211,9 +209,7 @@ export async function buildAssetLibraryInventory(input: {
   upgradeCategoryAssets: AssetProductionState["upgradeCategoryAssets"];
   visualPreviewReport: VisualPreviewReport;
 }): Promise<AssetLibraryInventoryIndex> {
-  const [screenState, componentState, aiAgentState] = await Promise.all([
-    getScreenDesignerState(),
-    getComponentLibraryState(),
+  const [aiAgentState] = await Promise.all([
     getAiAgentLibraryState({ assets: input.assets } as AssetProductionState)
   ]);
   const assetsByKey = new Map<string, ProductionAsset>();
@@ -307,57 +303,6 @@ export async function buildAssetLibraryInventory(input: {
       currentDimensions: currentDimensions(asset),
       reference: { type: "asset_registry", id: asset.id, name: asset.name, href: `/assets/${encodeURIComponent(asset.id)}` }
     });
-  }
-
-  for (const record of screenState.records) {
-    for (const requirement of record.assetRequirements) {
-      const key = requirement.artKey ?? requirement.iconKey ?? requirement.id;
-      const role = roleFor(requirement.category, key, requirement.label);
-      upsert({
-        semanticAssetKey: key,
-        displayName: requirement.label,
-        categoryId: categoryFor({ key, label: requirement.label, role, screenId: record.screenId, sourceType: "screen_requirement" }),
-        role,
-        sourceType: "screen_requirement",
-        status: statusForRequirement(requirement.status),
-        sourceAssetId: findAsset(assetsByKey, key)?.id ?? null,
-        requirementId: `${record.screenId}:${requirement.id}`,
-        reference: { type: "screen", id: record.screenId, name: record.displayName, href: `/screen-designer/${encodeURIComponent(record.screenId)}` }
-      });
-    }
-    for (const component of record.componentSpecs) {
-      for (const key of component.assetKeys ?? []) {
-        const role = roleFor("placeholder", key, component.displayName);
-        upsert({
-          semanticAssetKey: key,
-          displayName: `${component.displayName} asset`,
-          categoryId: categoryFor({ key, label: component.displayName, role, screenId: record.screenId, componentId: component.componentLibraryId, sourceType: "visual_builder_placeholder" }),
-          role,
-          sourceType: "visual_builder_placeholder",
-          status: findAsset(assetsByKey, key) ? "uploaded" : "missing",
-          sourceAssetId: findAsset(assetsByKey, key)?.id ?? null,
-          requirementId: `${record.screenId}:${component.id}:${key}`,
-          reference: { type: "visual_builder", id: `${record.screenId}:${component.id}`, name: `${record.displayName} / ${component.displayName}`, href: `/screen-designer/${encodeURIComponent(record.screenId)}` }
-        });
-      }
-    }
-  }
-
-  for (const record of componentState.records) {
-    for (const requirement of record.assetKeys) {
-      const role = roleFor(record.category, requirement.assetKey, requirement.label);
-      upsert({
-        semanticAssetKey: requirement.assetKey,
-        displayName: requirement.label,
-        categoryId: categoryFor({ key: requirement.assetKey, label: requirement.label, role, componentId: record.componentId, sourceType: "component_requirement" }),
-        role,
-        sourceType: "component_requirement",
-        status: statusForRequirement(requirement.status),
-        sourceAssetId: requirement.linkedAssetId ?? findAsset(assetsByKey, requirement.assetKey)?.id ?? null,
-        requirementId: `${record.componentId}:${requirement.id}`,
-        reference: { type: "component", id: record.componentId, name: record.displayName, href: `/component-library/${encodeURIComponent(record.componentId)}` }
-      });
-    }
   }
 
   for (const missing of input.missingRequirements) {

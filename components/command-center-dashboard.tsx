@@ -93,7 +93,7 @@ const creationActions = [
   { label: "Generate Galaxy", href: "/galaxy", description: "Create or expand canonical galaxy records." },
   { label: "Generate Research", href: "/research", description: "Draft research records with dependencies and prompts." },
   { label: "Generate Building", href: "/buildings", description: "Create civilization building records and art requirements." },
-  { label: "Inspiration Wall", href: "/experience-design/inspiration-wall", description: "Open visual references for the next creation pass." }
+  { label: "Open Asset Library", href: "/asset-library", description: "Browse uploaded art and canonical asset records." }
 ];
 
 export function CommandCenterDashboard({ systems, healthChecks, metrics, totalRecords, libraryStats, contentStats, assetStats }: CommandCenterDashboardProps) {

@@ -565,7 +565,7 @@ function eraEntry(row: ReturnType<typeof getCanonicalRuntimeEras>[number], asset
     progression: compactStrings(`Completion ${row.completionPercent ?? 0}%`, `Mastery requirements ${Object.keys(row.masteryRequirements ?? {}).length}`),
     publicationState: "canonical_draft",
     priority: row.index <= 3 ? "P1" : "P2",
-    references: [{ type: "runtime_era", id: row.id, label: "Runtime Era Definition", href: "/runtime" }]
+    references: [{ type: "runtime_era", id: row.id, label: "Runtime Era Definition", href: "/architecture" }]
   }, assets);
   entry.iconArtKey = row.iconKey;
   entry.heroArtKey = row.artKey;

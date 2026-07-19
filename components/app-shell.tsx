@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import {
-  Archive,
   BadgeDollarSign,
   Bot,
   BookOpen,
@@ -14,12 +13,7 @@ import {
   CircleDot,
   ClipboardList,
   Compass,
-  CopyPlus,
   Cpu,
-  Database,
-  Eye,
-  FileCode2,
-  FileCheck2,
   FileText,
   FlaskConical,
   Gem,
@@ -29,19 +23,13 @@ import {
   ListChecks,
   Map,
   Menu,
-  MonitorCog,
-  Network,
   Orbit,
-  Palette,
   PackageCheck,
   Radar,
-  Route,
   ScrollText,
-  Search,
   ShieldCheck,
   Sparkles,
   Star,
-  UploadCloud,
   WandSparkles,
   X
 } from "lucide-react";
@@ -74,7 +62,9 @@ const navigationGroups: NavigationGroup[] = [
     items: [
       { href: "/", label: "Universe Command Center", icon: LayoutDashboard, activePaths: ["/"] },
       { href: "/asset-library", label: "Asset Library", icon: PackageCheck },
-      { href: "/encyclopedia", label: "Encyclopedia", icon: BookOpen }
+      { href: "/encyclopedia", label: "Encyclopedia", icon: BookOpen },
+      { href: "/architecture", label: "Architecture", icon: FileText },
+      { href: "/settings#users", label: "Admin Users", icon: ShieldCheck }
     ]
   },
   {
@@ -87,28 +77,7 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/star-system-map", label: "Star System Library", icon: Radar },
       { href: "/celestial-bodies", label: "Star Library", icon: CircleDot },
       { href: "/planets", label: "Planet Library", icon: Orbit },
-      { href: "/planet-generation", label: "Planet Generation", icon: Orbit },
-      { href: "/prompt-library", label: "Prompt Library", icon: Search },
-      { href: "/planet-artwork", label: "Planet Artwork", icon: Palette },
-      { href: "/surface-landscapes", label: "Surface Landscapes", icon: UploadCloud },
-      { href: "/hero-discovery-shots", label: "Hero Discovery Shots", icon: Sparkles }
-    ]
-  },
-  {
-    id: "production",
-    label: "Production",
-    icon: ClipboardList,
-    items: [
-      { href: "/production", label: "Production", icon: ClipboardList },
-      { href: "/production/render-library", label: "Render Library", icon: Cpu }
-    ]
-  },
-  {
-    id: "render",
-    label: "Render",
-    icon: Cpu,
-    items: [
-      { href: "/render", label: "Render", icon: Cpu }
+      { href: "/planet-generation", label: "Planet Generation", icon: Orbit }
     ]
   },
   {
@@ -116,6 +85,7 @@ const navigationGroups: NavigationGroup[] = [
     label: "Civilization",
     icon: Landmark,
     items: [
+      { href: "/actions", label: "Actions", icon: ListChecks },
       { href: "/buildings", label: "Building Library", icon: Building2 },
       { href: "/research", label: "Research Library", icon: FlaskConical },
       { href: "/upgrades", label: "Upgrade Library", icon: WandSparkles },
@@ -123,6 +93,9 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/population", label: "Population", icon: Landmark },
       { href: "/colonies", label: "Colonies", icon: Building2 },
       { href: "/districts", label: "Districts", icon: Layers3 },
+      { href: "/economy", label: "Economy & Trade", icon: BadgeDollarSign },
+      { href: "/missions", label: "Missions", icon: ClipboardList },
+      { href: "/dynamic-events", label: "Dynamic Events", icon: Sparkles },
       { href: "/ai-agents", label: "AI Agents", icon: Bot }
     ]
   },
@@ -135,59 +108,6 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/discovery", label: "Discovery Catalog", icon: Compass }
     ]
   },
-  {
-    id: "inspiration-wall",
-    label: "Inspiration Wall",
-    icon: Palette,
-    items: [
-      { href: "/experience-design/inspiration-wall", label: "Inspiration Wall", icon: Palette }
-    ]
-  },
-  {
-    id: "runtime",
-    label: "Runtime",
-    icon: Database,
-    items: [
-      { href: "/runtime", label: "Runtime", icon: Database },
-      { href: "/content-releases", label: "Content Releases", icon: Archive },
-      { href: "/game-engine-exports", label: "Exports", icon: FileCode2 },
-      { href: "/actions", label: "Actions", icon: ListChecks },
-      { href: "/economy", label: "Economy & Trade", icon: BadgeDollarSign },
-      { href: "/missions", label: "Missions", icon: ClipboardList },
-      { href: "/dynamic-events", label: "Dynamic Events", icon: Sparkles }
-    ]
-  },
-  {
-    id: "verification",
-    label: "Verification",
-    icon: FileCheck2,
-    items: [
-      { href: "/validation-engine", label: "Verification", icon: FileCheck2 },
-      { href: "/architecture", label: "Architecture", icon: FileText },
-      { href: "/settings#users", label: "Admin Users", icon: ShieldCheck }
-    ]
-  },
-  {
-    id: "experience-design",
-    label: "Experience Design",
-    icon: Palette,
-    items: [
-      { href: "/experience-design", label: "Dashboard", icon: Palette },
-      { href: "/experience-design/bible", label: "Experience Bible", icon: BookOpen },
-      { href: "/experience-design/concepts", label: "Concept Library", icon: Sparkles },
-      { href: "/experience-design/screens", label: "Screen Library", icon: MonitorCog },
-      { href: "/experience-design/tokens", label: "Design Tokens", icon: CopyPlus },
-      { href: "/experience-design/materials", label: "Material Library", icon: Layers3 },
-      { href: "/experience-design/motion", label: "Motion Library", icon: Orbit },
-      { href: "/experience-design/components", label: "Component Library", icon: Network },
-      { href: "/experience-design/patterns", label: "Interaction Patterns", icon: Route },
-      { href: "/experience-design/themes", label: "Theme Library", icon: Palette },
-      { href: "/experience-design/brand", label: "Brand System", icon: ShieldCheck },
-      { href: "/experience-design/accessibility", label: "Accessibility", icon: Eye },
-      { href: "/experience-design/journey", label: "Experience Journey", icon: Compass },
-      { href: "/experience-design/reviews", label: "Reviews", icon: FileCheck2 }
-    ]
-  }
 ];
 
 function hrefPath(href: string) {
@@ -215,15 +135,11 @@ function activeGroupForPath(pathname: string) {
 }
 
 function workspaceEnvironmentForPath(pathname: string) {
-  if (/experience-design|architecture/.test(pathname)) return "experience";
-  if (/render/.test(pathname)) return "assets";
-  if (/production/.test(pathname)) return "assets";
-  if (/asset|component-library|screen-designer|visual-screen-builder/.test(pathname)) return "assets";
+  if (/asset/.test(pathname)) return "assets";
   if (/discovery/.test(pathname)) return "discovery";
   if (/galaxy|sector|star|planet|civilization|universe/.test(pathname)) return "universe";
   if (/research|resource|building|ai-agents/.test(pathname)) return "research";
   if (/economy|population|colonies|missions|dynamic-events|actions/.test(pathname)) return "civilization";
-  if (/runtime|export|validation|database/.test(pathname)) return "runtime";
   return "command";
 }
 
@@ -313,7 +229,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   function NavigationPanel({ mobile = false }: { mobile?: boolean }) {
     return (
       <>
-        <Link href="/" className="mb-6 flex items-center gap-3" onClick={() => mobile && setMobileNavOpen(false)}>
+        <Link href="/" scroll={false} className="mb-6 flex items-center gap-3" onClick={() => mobile && setMobileNavOpen(false)}>
           <span className="grid h-11 w-11 place-items-center rounded-md border border-cyan-300/35 bg-cyan-300/10 shadow-[0_0_28px_rgba(34,211,238,0.14)]">
             <Cpu className="h-5 w-5 text-cyan-200" />
           </span>
@@ -378,6 +294,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                         <Link
                           key={`${group.id}-${item.label}`}
                           href={item.href}
+                          scroll={false}
                           onClick={() => {
                             setCurrentSearch(hrefSearch(item.href ?? "") ? `?${hrefSearch(item.href ?? "")}` : "");
                             if (mobile) setMobileNavOpen(false);

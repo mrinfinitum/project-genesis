@@ -1,6 +1,22 @@
 import type { AssetDerivativeRecord, MissingAssetRequirement, ProductionAsset, SourceFileRecord } from "@/lib/assets/asset-production";
-import type { ComponentDesignRecord } from "@/lib/component-library";
-import type { ScreenDesignRecord } from "@/lib/screen-designer";
+
+type ScreenPreviewRecord = {
+  screenId: string;
+  displayName: string;
+  referenceViewport: string;
+  references: Array<{ source: string; approvalStatus: string; type: string; viewport: string; date: string }>;
+  assetRequirements: Array<{ linkedAssetId?: string | null; artKey?: string; iconKey?: string; id: string; label: string; required: boolean; status: string }>;
+  componentSpecs: Array<{ assetOverride?: string | null; assetKeys?: string[] }>;
+};
+
+type ComponentPreviewRecord = {
+  componentId: string;
+  displayName: string;
+  references: Array<{ source: string; approvalStatus: string; type: string; viewport: string; version: number; width?: number | null; height?: number | null; format?: string; captureSource?: string; checksum?: string }>;
+  assetKeys: Array<{ linkedAssetId?: string | null; assetKey: string; label: string }>;
+  variants: unknown[];
+  states: Array<{ required: boolean; designed: boolean }>;
+};
 
 export type PreviewSize = "tiny" | "small" | "card" | "large" | "hero" | "fullscreen";
 export type PreviewMode = "thumbnail" | "card" | "hero" | "icon" | "panel" | "screenshot" | "state_comparison" | "variant_grid" | "before_after" | "overlay_comparison";
@@ -159,7 +175,7 @@ function previewTokens(value: unknown) {
   return normalizePreviewKey(value).split("_").filter((token) => token && !genericPreviewTokens.has(token));
 }
 
-function expandedPreviewKeys(keys: Array<string | undefined>) {
+function expandedPreviewKeys(keys: Array<string | null | undefined>) {
   const expanded = new Set<string>();
   for (const raw of keys) {
     const key = normalizePreviewKey(raw);
@@ -202,7 +218,7 @@ function inferredRobloxPngUrl(asset: ProductionAsset) {
   return sanitizePreviewUrl(`/assets/game-art/${asset.id}/${asset.id}.png`);
 }
 
-export function findAssetForPreviewKeys(assets: ProductionAsset[] | undefined, keys: Array<string | undefined>) {
+export function findAssetForPreviewKeys(assets: ProductionAsset[] | undefined, keys: Array<string | null | undefined>) {
   const expandedKeys = expandedPreviewKeys(keys);
   if (!assets?.length || !expandedKeys.length) return null;
 
@@ -491,7 +507,7 @@ export function resolveMissingRequirementPreview(requirement: MissingAssetRequir
   });
 }
 
-export function resolveScreenPreview(record: ScreenDesignRecord, assets?: ProductionAsset[]): VisualPreview {
+export function resolveScreenPreview(record: ScreenPreviewRecord, assets?: ProductionAsset[]): VisualPreview {
   const reference = record.references.find((item) => sanitizePreviewUrl(item.source) && item.approvalStatus === "Approved")
     ?? record.references.find((item) => sanitizePreviewUrl(item.source));
   if (reference) {
@@ -521,7 +537,7 @@ export function resolveScreenPreview(record: ScreenDesignRecord, assets?: Produc
     if (preview.url) return { ...preview, objectId: record.screenId, objectType: "screen", title: record.displayName };
   }
   const linkedAsset = findAssetForPreviewKeys(assets, [
-    ...record.componentSpecs.flatMap((item) => [item.assetOverride, ...item.assetKeys]),
+    ...record.componentSpecs.flatMap((item) => [item.assetOverride, ...(item.assetKeys ?? [])]),
     record.screenId,
     record.displayName
   ]);
@@ -537,8 +553,8 @@ export function resolveScreenPreview(record: ScreenDesignRecord, assets?: Produc
       dimensions: record.referenceViewport,
       format: "WebP / PNG",
       required: true,
-      actionHref: `/screen-designer/${record.screenId}`,
-      actionLabel: "Add Screenshot"
+      actionHref: "/asset-library?upload=asset",
+      actionLabel: "Add Preview Asset"
     },
     metadata: [
       { label: "Screen", value: record.screenId },
@@ -547,7 +563,7 @@ export function resolveScreenPreview(record: ScreenDesignRecord, assets?: Produc
   });
 }
 
-export function resolveComponentPreview(record: ComponentDesignRecord, assets?: ProductionAsset[]): VisualPreview {
+export function resolveComponentPreview(record: ComponentPreviewRecord, assets?: ProductionAsset[]): VisualPreview {
   const reference = record.references.find((item) => sanitizePreviewUrl(item.source) && item.approvalStatus === "Approved")
     ?? record.references.find((item) => sanitizePreviewUrl(item.source));
   if (reference) {
@@ -592,8 +608,8 @@ export function resolveComponentPreview(record: ComponentDesignRecord, assets?: 
       dimensions: "Default, hover, pressed, disabled",
       format: "WebP / PNG",
       required: true,
-      actionHref: `/component-library/${record.componentId}`,
-      actionLabel: "Add Preview"
+      actionHref: "/asset-library?upload=asset",
+      actionLabel: "Add Preview Asset"
     },
     metadata: [
       { label: "Component", value: record.componentId },
