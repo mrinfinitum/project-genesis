@@ -325,7 +325,7 @@ export function generateMissionBundle(input: MissionGenerationInput = {}): Missi
     const mission = missionBase({
       seedId: `${missionSeed}:scan-sol-planets`,
       title: "Scan Three Planets in Sol",
-      description: "Resolve planetary survey data for three Sol planets to expand the Discovery Library and unlock deeper local-space planning.",
+      description: "Resolve planetary survey data for three Sol planets to expand the Curiosity Library and unlock deeper local-space planning.",
       missionType: "Exploration",
       difficulty: "easy",
       rarity: "Common",

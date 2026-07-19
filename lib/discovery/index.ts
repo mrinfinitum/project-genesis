@@ -1,3 +1,5 @@
+import curiosityArtworkManifest from "@/data/curiosity-artwork-manifest.json";
+
 export const discoveryRarities = [
   { id: "common", displayName: "Common", displayOrder: 1, defaultSpawnWeight: 1 },
   { id: "uncommon", displayName: "Uncommon", displayOrder: 2, defaultSpawnWeight: 0.35 },
@@ -5,23 +7,92 @@ export const discoveryRarities = [
   { id: "epic", displayName: "Epic", displayOrder: 4, defaultSpawnWeight: 0.015 },
   { id: "legendary", displayName: "Legendary", displayOrder: 5, defaultSpawnWeight: 0.0005 },
   { id: "mythic", displayName: "Mythic", displayOrder: 6, defaultSpawnWeight: 0.0001 },
-  { id: "unique", displayName: "Unique", displayOrder: 7, defaultSpawnWeight: 0.00001 }
+  { id: "ancient", displayName: "Ancient", displayOrder: 7, defaultSpawnWeight: 0.00003 },
+  { id: "unique", displayName: "Unique", displayOrder: 8, defaultSpawnWeight: 0.00001 }
 ] as const;
 
 export type DiscoveryRarityId = typeof discoveryRarities[number]["id"];
 
-export type DiscoveryCategoryId =
-  | "flora"
-  | "fauna"
-  | "living-systems"
-  | "elements"
-  | "rare-matter"
-  | "exotic-matter"
-  | "artifacts"
-  | "ancient-alien-technology"
-  | "ruins"
-  | "signals"
-  | "anomalies";
+export type DiscoveryCategoryId = string;
+
+export type CuriositySubclass = {
+  id: string;
+  displayName: string;
+  displayOrder: number;
+  archived?: boolean;
+};
+
+export type CuriosityClass = {
+  id: string;
+  displayName: string;
+  displayOrder: number;
+  archived?: boolean;
+  subclasses: CuriositySubclass[];
+};
+
+export type CuriosityCategory = {
+  id: DiscoveryCategoryId;
+  displayName: string;
+  shortDisplayName: string;
+  displayOrder: number;
+  description: string;
+  archived?: boolean;
+  classes: CuriosityClass[];
+};
+
+export type CuriosityArtworkStatus = "missing" | "source_only" | "preview_ready" | "artwork_ready";
+
+export type CuriosityArtworkMetadata = {
+  curiosityId: string;
+  slug: string;
+  categoryId: string;
+  classId: string;
+  subclassId: string;
+  relativeArtworkFolder: string;
+  sourcePsdFilename: string | null;
+  pngPath: string | null;
+  webpPath: string | null;
+  thumbnailPath: string | null;
+  referenceFilenames: string[];
+  metadataPath: string | null;
+  prompt: string | null;
+  negativePrompt: string | null;
+  aiModel: string | null;
+  generationNotes: string | null;
+  artworkVersion: number;
+  lastSyncedAt: string;
+  status: CuriosityArtworkStatus;
+};
+
+type CuriosityArtworkManifest = {
+  schemaVersion: string;
+  generatedAt: string | null;
+  sourceRoot: string | null;
+  records: CuriosityArtworkMetadata[];
+  reports: {
+    matched: number;
+    unmatchedFolders: string[];
+    missingCuriosityRecords: string[];
+    missingSourcePsd: string[];
+    missingPreviewDerivatives: string[];
+    duplicateMatches: string[];
+    invalidClassificationPaths: string[];
+  };
+};
+
+export const curiosityArtwork = curiosityArtworkManifest as CuriosityArtworkManifest;
+
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+export function curiositySlug(record: Pick<DiscoveryRecord, "displayName" | "id">) {
+  return slugify(record.displayName) || record.id.toLowerCase();
+}
 
 export type DiscoveryPublicationStatus = "draft" | "approved" | "published" | "hidden";
 
@@ -70,12 +141,19 @@ export type DiscoveryAssetProfile = {
 
 export type DiscoveryRecord = {
   id: string;
+  slug?: string;
   displayName: string;
   categoryId: DiscoveryCategoryId;
+  classId: string;
+  subclassId: string;
   subcategoryId: string;
   scientificName: string;
+  alternateNames?: string[];
   description: string;
   lore: string;
+  scientificNotes?: string;
+  civilizationNotes?: string;
+  discoverySummary?: string;
   rarity: DiscoveryRarityId;
   spawnWeight: number;
   discoveryXp: number;
@@ -93,167 +171,137 @@ export type DiscoveryRecord = {
   requiredScanLevel: number;
   spawnRules: DiscoverySpawnRule;
   assetProfile: DiscoveryAssetProfile;
+  promptProfile?: {
+    masterPrompt?: string;
+    prompt?: string;
+    negativePrompt?: string;
+    aiModel?: string;
+    promptVersion?: number;
+    referenceImages?: string[];
+    generationNotes?: string;
+    linkedPromptRecordId?: string;
+  };
   publicationStatus: DiscoveryPublicationStatus;
+  artworkStatus?: CuriosityArtworkStatus;
+  canonicalVersion?: string;
   tags: string[];
 };
 
-export const discoveryCategories: Array<{
-  id: DiscoveryCategoryId;
-  displayName: string;
-  shortDisplayName: string;
-  displayOrder: number;
-  description: string;
-  subcategories: Array<{ id: string; displayName: string; displayOrder: number }>;
-}> = [
-  {
-    id: "flora",
-    displayName: "Flora",
-    shortDisplayName: "Flora",
-    displayOrder: 1,
-    description: "Plantlike discoveries including mosses, fungal flora, aquatic flora, and exotic growths.",
-    subcategories: [
-      { id: "bioluminescent-flora", displayName: "Bioluminescent Flora", displayOrder: 1 },
-      { id: "fungal-flora", displayName: "Fungal Flora", displayOrder: 2 },
-      { id: "aquatic-flora", displayName: "Aquatic Flora", displayOrder: 3 },
-      { id: "carnivorous-flora", displayName: "Carnivorous Flora", displayOrder: 4 },
-      { id: "crystalline-flora", displayName: "Crystalline Flora", displayOrder: 5 }
-    ]
-  },
-  {
-    id: "fauna",
-    displayName: "Fauna",
-    shortDisplayName: "Fauna",
-    displayOrder: 2,
-    description: "Animal, aerial, aquatic, passive, predatory, and burrowing lifeform discoveries.",
-    subcategories: [
-      { id: "flying-species", displayName: "Flying Species", displayOrder: 1 },
-      { id: "aquatic-life", displayName: "Aquatic Life", displayOrder: 2 },
-      { id: "predators", displayName: "Predators", displayOrder: 3 },
-      { id: "passive-species", displayName: "Passive Species", displayOrder: 4 },
-      { id: "burrowing-species", displayName: "Burrowing Species", displayOrder: 5 }
-    ]
-  },
-  {
-    id: "living-systems",
-    displayName: "Living Systems",
-    shortDisplayName: "Living",
-    displayOrder: 3,
-    description: "Planet-scale biological networks, ecosystem intelligences, and living infrastructure.",
-    subcategories: [
-      { id: "mycelial-networks", displayName: "Mycelial Networks", displayOrder: 1 },
-      { id: "planetary-intelligences", displayName: "Planetary Intelligences", displayOrder: 2 },
-      { id: "ecosystem-networks", displayName: "Ecosystem Networks", displayOrder: 3 },
-      { id: "living-machines", displayName: "Living Machines", displayOrder: 4 }
-    ]
-  },
-  {
-    id: "elements",
-    displayName: "Elements",
-    shortDisplayName: "Elements",
-    displayOrder: 4,
-    description: "Elemental, isotopic, mineral-vein, and atmospheric discoveries used by science and production.",
-    subcategories: [
-      { id: "cryogenic-deposits", displayName: "Cryogenic Deposits", displayOrder: 1 },
-      { id: "isotopes", displayName: "Isotopes", displayOrder: 2 },
-      { id: "mineral-veins", displayName: "Mineral Veins", displayOrder: 3 },
-      { id: "atmospheric-elements", displayName: "Atmospheric Elements", displayOrder: 4 },
-      { id: "fusion-fuels", displayName: "Fusion Fuels", displayOrder: 5 }
-    ]
-  },
-  {
-    id: "rare-matter",
-    displayName: "Rare Matter",
-    shortDisplayName: "Rare Matter",
-    displayOrder: 5,
-    description: "Rare crystals, energetic minerals, and high-value matter discoveries.",
-    subcategories: [
-      { id: "energy-crystals", displayName: "Energy Crystals", displayOrder: 1 },
-      { id: "rare-crystals", displayName: "Rare Crystals", displayOrder: 2 },
-      { id: "exotic-minerals", displayName: "Exotic Minerals", displayOrder: 3 },
-      { id: "sensor-materials", displayName: "Sensor Materials", displayOrder: 4 }
-    ]
-  },
-  {
-    id: "exotic-matter",
-    displayName: "Exotic Matter",
-    shortDisplayName: "Exotic",
-    displayOrder: 6,
-    description: "Dark, quantum, gravitational, and containment-gated matter discoveries.",
-    subcategories: [
-      { id: "umbral-condensates", displayName: "Umbral Condensates", displayOrder: 1 },
-      { id: "dark-matter", displayName: "Dark Matter", displayOrder: 2 },
-      { id: "quantum-matter", displayName: "Quantum Matter", displayOrder: 3 },
-      { id: "gravitational-matter", displayName: "Gravitational Matter", displayOrder: 4 }
-    ]
-  },
-  {
-    id: "artifacts",
-    displayName: "Artifacts",
-    shortDisplayName: "Artifacts",
-    displayOrder: 7,
-    description: "Collectible relics, legendary objects, ancient machines, and story-rich civilizational remains.",
-    subcategories: [
-      { id: "relics", displayName: "Relics", displayOrder: 1 },
-      { id: "civilizational-relics", displayName: "Civilizational Relics", displayOrder: 2 },
-      { id: "legendary-artifacts", displayName: "Legendary Artifacts", displayOrder: 3 },
-      { id: "ancient-machines", displayName: "Ancient Machines", displayOrder: 4 }
-    ]
-  },
-  {
-    id: "ancient-alien-technology",
-    displayName: "Ancient Alien Technology",
-    shortDisplayName: "Alien Tech",
-    displayOrder: 8,
-    description: "Precursor technology, memory systems, non-human engineering, and decoded alien machines.",
-    subcategories: [
-      { id: "memory-lattices", displayName: "Memory Lattices", displayOrder: 1 },
-      { id: "precursor-technology", displayName: "Precursor Technology", displayOrder: 2 },
-      { id: "ancient-alien-technology", displayName: "Ancient Alien Technology", displayOrder: 3 },
-      { id: "decoded-machines", displayName: "Decoded Machines", displayOrder: 4 }
-    ]
-  },
-  {
-    id: "ruins",
-    displayName: "Ruins",
-    shortDisplayName: "Ruins",
-    displayOrder: 9,
-    description: "Ancient ruins, precursor archives, vaults, abandoned colonies, and underground sites.",
-    subcategories: [
-      { id: "precursor-archives", displayName: "Precursor Archives", displayOrder: 1 },
-      { id: "vaults", displayName: "Vaults", displayOrder: 2 },
-      { id: "ancient-ruins", displayName: "Ancient Ruins", displayOrder: 3 },
-      { id: "underground-sites", displayName: "Underground Sites", displayOrder: 4 },
-      { id: "abandoned-colonies", displayName: "Abandoned Colonies", displayOrder: 5 }
-    ]
-  },
-  {
-    id: "signals",
-    displayName: "Signals",
-    shortDisplayName: "Signals",
-    displayOrder: 10,
-    description: "Unknown signals, deep-space anomalies, beacon trails, and first-contact hooks.",
-    subcategories: [
-      { id: "unknown-signals", displayName: "Unknown Signals", displayOrder: 1 },
-      { id: "deep-space-anomalies", displayName: "Deep Space Anomalies", displayOrder: 2 },
-      { id: "signal-triangulation", displayName: "Signal Triangulation", displayOrder: 3 },
-      { id: "transmission-echoes", displayName: "Transmission Echoes", displayOrder: 4 },
-      { id: "first-contact", displayName: "First Contact", displayOrder: 5 }
-    ]
-  },
-  {
-    id: "anomalies",
-    displayName: "Anomalies",
-    shortDisplayName: "Anomalies",
-    displayOrder: 11,
-    description: "Planetary, spatial, biological, and temporal anomalies that do not yet fit stable catalog classes.",
-    subcategories: [
-      { id: "planetary-anomalies", displayName: "Planetary Anomalies", displayOrder: 1 },
-      { id: "space-anomalies", displayName: "Space Anomalies", displayOrder: 2 },
-      { id: "biological-anomalies", displayName: "Biological Anomalies", displayOrder: 3 },
-      { id: "temporal-anomalies", displayName: "Temporal Anomalies", displayOrder: 4 }
-    ]
-  }
+function subclass(displayName: string, displayOrder: number): CuriositySubclass {
+  return { id: slugify(displayName), displayName, displayOrder };
+}
+
+function curiosityClass(displayName: string, displayOrder: number, subclasses: string[]): CuriosityClass {
+  return { id: slugify(displayName), displayName, displayOrder, subclasses: subclasses.map((item, index) => subclass(item, index + 1)) };
+}
+
+function curiosityCategory(displayName: string, displayOrder: number, description: string, classes: Array<[string, string[]]>, shortDisplayName = displayName): CuriosityCategory {
+  return {
+    id: slugify(displayName),
+    displayName,
+    shortDisplayName,
+    displayOrder,
+    description,
+    classes: classes.map(([className, subclasses], index) => curiosityClass(className, index + 1, subclasses))
+  };
+}
+
+export const curiosityCategories: CuriosityCategory[] = [
+  curiosityCategory("Biological Flora", 1, "Plantlike curiosities including mosses, fungi, trees, vines, flowers, groundcover, seeds, spores, and reef growth.", [
+    ["Mosses", ["Bioluminescent Mosses", "Aquatic Mosses", "Crystalline Mosses", "Parasitic Mosses", "Thermal Mosses", "Spore-Bearing Mosses"]],
+    ["Fungi", ["Cap Fungi", "Shelf Fungi", "Mycelial Networks", "Parasitic Fungi", "Bioluminescent Fungi", "Giant Fungi", "Aquatic Fungi"]],
+    ["Trees", ["Canopy Trees", "Crystal Trees", "Thermal Trees", "Aquatic Trees", "Desert Trees", "Fungal Trees", "Ancient Trees"]],
+    ["Vines", ["Climbing Vines", "Carnivorous Vines", "Parasitic Vines", "Bioluminescent Vines", "Aquatic Vines", "Thorned Vines"]],
+    ["Flowers", ["Bioluminescent Flowers", "Carnivorous Flowers", "Aquatic Flowers", "Crystalline Flowers", "Thermal Flowers", "Wind-Pollinated Flowers"]],
+    ["Grasses and Groundcover", ["Grasses", "Reeds", "Groundcover", "Floating Vegetation", "Mineral-Rooted Vegetation", "Spore Fields"]],
+    ["Seeds and Spores", ["Seeds", "Spores", "Pods", "Pollen Clusters", "Dormant Growth Cores"]],
+    ["Coral and Reef Life", ["Mineral Coral", "Living Coral", "Bioluminescent Coral", "Thermal Reef Growth", "Floating Coral"]]
+  ], "Flora"),
+  curiosityCategory("Fauna", 2, "Animal, aerial, aquatic, predatory, passive, symbiotic, and parasitic lifeform curiosities.", [
+    ["Terrestrial Creatures", ["Small Terrestrial", "Large Terrestrial", "Burrowing", "Herding", "Solitary", "Armored"]],
+    ["Aerial Creatures", ["Winged", "Gliding", "Floating", "Atmospheric", "Swarming", "High-Altitude"]],
+    ["Aquatic Creatures", ["Shallow-Water", "Deep-Ocean", "Reef-Dwelling", "Amphibious", "Filter-Feeding", "Leviathan"]],
+    ["Arthropods and Invertebrates", ["Insects", "Arachnid Forms", "Crustacean Forms", "Wormlike Forms", "Mollusk Forms", "Colonial Organisms"]],
+    ["Predators", ["Ambush Predators", "Pursuit Predators", "Pack Predators", "Aquatic Predators", "Aerial Predators", "Parasitic Predators"]],
+    ["Herbivores and Grazers", ["Grazers", "Browsers", "Filter Feeders", "Nectar Feeders", "Mineral Feeders"]],
+    ["Symbiotic and Parasitic Life", ["Symbiotic", "Parasitic", "Host-Bound", "Colony-Bound", "Mutualistic"]]
+  ]),
+  curiosityCategory("Intelligent Lifeforms", 3, "Primitive, advanced, ancient, and unknown intelligences discovered through survey and exploration.", [
+    ["Primitive Lifeforms", ["Tribal", "Nomadic", "Tool-Using", "Aquatic", "Subterranean", "Hive-Based"]],
+    ["Advanced Lifeforms", ["Industrial", "Spacefaring", "Synthetic", "Psionic", "Collective Intelligence", "Post-Biological"]],
+    ["Ancient Lifeforms", ["Precursor Species", "Dormant Species", "Extinct Species", "Preserved Species", "Ascended Species"]],
+    ["Unknown Intelligence", ["Unclassified Organisms", "Signal-Based Intelligence", "Distributed Intelligence", "Planetary Intelligence", "Machine-Life Hybrids"]]
+  ], "Lifeforms"),
+  curiosityCategory("Minerals", 4, "Mineral, crystal, superconductive, optical, and exotic geological curiosities.", [
+    ["Common Minerals", ["Silicates", "Carbonates", "Sulfides", "Oxides", "Salts", "Clays"]],
+    ["Rare Minerals", ["Rare Crystals", "Radioactive Minerals", "Piezoelectric Minerals", "Superconductive Minerals", "Optical Minerals"]],
+    ["Exotic Minerals", ["Gravity-Reactive Minerals", "Quantum Minerals", "Phase-Shifted Minerals", "Energy-Storing Minerals", "Time-Anomalous Minerals"]],
+    ["Crystal Formations", ["Single Crystals", "Crystal Clusters", "Crystal Caverns", "Floating Crystals", "Living Crystals", "Resonant Crystals"]]
+  ]),
+  curiosityCategory("Ores and Elements", 5, "Industrial, precious, radioactive, atmospheric, and exotic elemental curiosities.", [
+    ["Industrial Ores", ["Iron-Bearing", "Copper-Bearing", "Aluminum-Bearing", "Nickel-Bearing", "Titanium-Bearing", "Chromium-Bearing"]],
+    ["Precious Ores", ["Gold-Bearing", "Silver-Bearing", "Platinum-Group", "Gem-Bearing"]],
+    ["Radioactive Ores", ["Uranium-Bearing", "Thorium-Bearing", "Exotic Isotopes"]],
+    ["Atmospheric Elements", ["Noble Gases", "Reactive Gases", "Fuel Gases", "Exotic Atmospheric Compounds"]],
+    ["Exotic Elements", ["Stable Superheavy Elements", "Metastable Elements", "Alien Alloys", "Unknown Elements"]]
+  ], "Elements"),
+  curiosityCategory("Organic Materials", 6, "Biological samples, useful organics, and hazardous organic compounds.", [
+    ["Biological Samples", ["Tissue Samples", "Sap", "Venom", "Blood Analogues", "Chitin", "Bone Analogues", "Neural Tissue"]],
+    ["Useful Organics", ["Medicinal Compounds", "Nutrient Compounds", "Fibers", "Resins", "Oils", "Enzymes"]],
+    ["Hazardous Organics", ["Toxins", "Pathogens", "Spores", "Parasites", "Corrosive Secretions"]]
+  ], "Organics"),
+  curiosityCategory("Fossils and Preserved Life", 7, "Fossil, frozen, amber-preserved, and trace evidence of extinct or dormant life.", [
+    ["Flora Fossils", ["Petrified Plants", "Seed Fossils", "Spore Fossils", "Root Networks"]],
+    ["Fauna Fossils", ["Skeletons", "Shells", "Imprints", "Amber-Preserved Organisms", "Frozen Organisms"]],
+    ["Intelligent-Life Fossils", ["Remains", "Burial Sites", "Genetic Archives", "Preserved Specimens"]],
+    ["Trace Fossils", ["Tracks", "Burrows", "Nests", "Feeding Marks", "Colony Imprints"]]
+  ], "Fossils"),
+  curiosityCategory("Ancient Relics", 8, "Civilian, scientific, religious, military, and cultural relics from prior civilizations.", [
+    ["Civilian Relics", ["Tools", "Household Objects", "Navigation Devices", "Records", "Currency", "Art Objects"]],
+    ["Scientific Relics", ["Instruments", "Data Archives", "Research Devices", "Samples", "Observatories"]],
+    ["Religious Relics", ["Idols", "Ceremonial Objects", "Shrines", "Tablets", "Crowns", "Totems"]],
+    ["Military Relics", ["Armor", "Weapons", "Defense Systems", "Command Devices", "Fleet Markers"]],
+    ["Cultural Relics", ["Music Devices", "Memory Objects", "Artifacts of Governance", "Games", "Symbols", "Language Stones"]]
+  ], "Relics"),
+  curiosityCategory("Alien Technology", 9, "Alien computation, power, navigation, communication, terraforming, fabrication, and unidentified machines.", [
+    ["Computation", ["AI Cores", "Quantum Processors", "Neural Interfaces", "Data Crystals", "Memory Lattices"]],
+    ["Power Systems", ["Energy Cores", "Fusion Systems", "Antimatter Systems", "Zero-Point Systems", "Unknown Power Devices"]],
+    ["Navigation", ["Star Maps", "Navigation Cores", "Dimensional Compasses", "Jump Calculators", "Orbital Keys"]],
+    ["Communication", ["Signal Beacons", "Language Devices", "Long-Range Transmitters", "Quantum Communicators", "Thought Interfaces"]],
+    ["Terraforming", ["Atmosphere Devices", "Climate Regulators", "Biosphere Seeders", "Ocean Processors", "Planetary Stabilizers"]],
+    ["Fabrication", ["Molecular Forges", "Replicators", "Nanite Systems", "Material Printers", "Assembly Cores"]],
+    ["Unknown Technology", ["Unidentified Devices", "Inactive Machines", "Sealed Systems", "Impossible Mechanisms", "Fragmentary Technology"]]
+  ], "Alien Tech"),
+  curiosityCategory("Energy Sources", 10, "Natural, exotic, biological, and artificial energy-source curiosities.", [
+    ["Natural Energy", ["Geothermal", "Solar-Absorbing", "Chemical", "Radioactive", "Magnetic"]],
+    ["Exotic Energy", ["Plasma", "Quantum", "Dark Energy", "Vacuum Energy", "Gravitational Energy", "Neutrino Energy"]],
+    ["Biological Energy", ["Bioelectric Organisms", "Energy-Producing Flora", "Symbiotic Power Sources", "Living Batteries"]],
+    ["Artificial Energy", ["Power Cells", "Ancient Reactors", "Energy Capsules", "Stored Plasma", "Unknown Energy Devices"]]
+  ], "Energy"),
+  curiosityCategory("Ruins and Structures", 11, "Settlement, scientific, religious, industrial, and unknown structures discovered through exploration.", [
+    ["Settlements", ["Villages", "Cities", "Colonies", "Subterranean Settlements", "Floating Settlements"]],
+    ["Scientific Structures", ["Laboratories", "Observatories", "Archives", "Test Sites", "Research Stations"]],
+    ["Religious Structures", ["Temples", "Shrines", "Monuments", "Burial Structures", "Pilgrimage Sites"]],
+    ["Industrial Structures", ["Mines", "Factories", "Refineries", "Power Plants", "Fabrication Complexes"]],
+    ["Unknown Structures", ["Monoliths", "Vaults", "Sealed Chambers", "Geometric Complexes", "Impossible Architecture"]]
+  ], "Ruins"),
+  curiosityCategory("Unknown Objects", 12, "Unknown materials, devices, biological objects, signals, and anomalous objects.", [
+    ["Unknown Materials", ["Unclassified Solids", "Unclassified Liquids", "Unclassified Gases", "Phase-Variable Matter", "Self-Organizing Matter"]],
+    ["Unknown Devices", ["Sealed Devices", "Inactive Devices", "Responsive Devices", "Signal-Producing Devices", "Self-Repairing Devices"]],
+    ["Unknown Biological Objects", ["Eggs", "Cocoons", "Spores", "Dormant Organisms", "Biological Capsules"]],
+    ["Unknown Signals", ["Radio Signals", "Gravitational Signals", "Quantum Signals", "Biological Signals", "Repeating Patterns"]],
+    ["Anomalous Objects", ["Floating Objects", "Time-Displaced Objects", "Impossible Geometry", "Dimensional Fragments", "Reality-Distorting Objects"]]
+  ], "Unknown")
 ];
+
+export const discoveryCategories = curiosityCategories.map((category) => ({
+  id: category.id,
+  displayName: category.displayName,
+  shortDisplayName: category.shortDisplayName,
+  displayOrder: category.displayOrder,
+  description: category.description,
+  subcategories: category.classes.flatMap((item) => item.subclasses)
+}));
 
 function assetProfile(id: string): DiscoveryAssetProfile {
   return {
@@ -275,9 +323,12 @@ function assetProfile(id: string): DiscoveryAssetProfile {
 export const canonicalDiscoveries: DiscoveryRecord[] = [
   {
     id: "DISC-FLORA-LUMEN-MOSS",
+    slug: "lumen-moss",
     displayName: "Lumen Moss",
-    categoryId: "flora",
-    subcategoryId: "bioluminescent-flora",
+    categoryId: "biological-flora",
+    classId: "mosses",
+    subclassId: "bioluminescent-mosses",
+    subcategoryId: "bioluminescent-mosses",
     scientificName: "Luminophyta Noctis",
     description: "A glowing moss that converts trace geothermal radiation into soft blue bioluminescence.",
     lore: "Survey teams first noticed Lumen Moss when cave walls began to pulse softly after a geothermal tremor. Its light is weak, but stable enough to guide explorers through sealed underground habitats.",
@@ -303,9 +354,12 @@ export const canonicalDiscoveries: DiscoveryRecord[] = [
   },
   {
     id: "DISC-FAUNA-AEROVALE-SKIMMER",
+    slug: "aerovale-skimmer",
     displayName: "Aerovale Skimmer",
     categoryId: "fauna",
-    subcategoryId: "flying-species",
+    classId: "aerial-creatures",
+    subclassId: "gliding",
+    subcategoryId: "gliding",
     scientificName: "Aerovala membranis",
     description: "A graceful aerial organism that rides atmospheric currents using translucent wing membranes.",
     lore: "Skimmers rarely land. They fold themselves into cliffside mist, then unfold at dawn to follow warm coastal updrafts in long ribboning schools.",
@@ -331,8 +385,11 @@ export const canonicalDiscoveries: DiscoveryRecord[] = [
   },
   {
     id: "DISC-LIVING-MYCELIAL-WORLDNET",
+    slug: "mycelial-world-net",
     displayName: "Mycelial World-Net",
-    categoryId: "living-systems",
+    categoryId: "biological-flora",
+    classId: "fungi",
+    subclassId: "mycelial-networks",
     subcategoryId: "mycelial-networks",
     scientificName: "Mycelia Unitas Planetae",
     description: "A planetary fungal intelligence linking thousands of organisms into one biological communication network.",
@@ -359,9 +416,12 @@ export const canonicalDiscoveries: DiscoveryRecord[] = [
   },
   {
     id: "DISC-ELEMENT-HELIUM3-ICEVEIN",
+    slug: "helium-3-ice-vein",
     displayName: "Helium-3 Ice Vein",
-    categoryId: "elements",
-    subcategoryId: "cryogenic-deposits",
+    categoryId: "ores-and-elements",
+    classId: "atmospheric-elements",
+    subclassId: "fuel-gases",
+    subcategoryId: "fuel-gases",
     scientificName: "Helium-3 Cryovenarum",
     description: "A cryogenic isotope vein trapped inside old ice strata and useful for advanced fusion energy.",
     lore: "The vein glitters like trapped dawn beneath ancient ice. Early prospectors call it quiet fire: too cold to touch, too valuable to ignore.",
@@ -387,9 +447,12 @@ export const canonicalDiscoveries: DiscoveryRecord[] = [
   },
   {
     id: "DISC-MINERAL-VESPER-CRYSTAL",
+    slug: "vesper-crystal",
     displayName: "Vesper Crystal",
-    categoryId: "rare-matter",
-    subcategoryId: "energy-crystals",
+    categoryId: "minerals",
+    classId: "exotic-minerals",
+    subclassId: "energy-storing-minerals",
+    subcategoryId: "energy-storing-minerals",
     scientificName: "Vesperite Electrum",
     description: "A crystal capable of storing extraordinary electromagnetic energy.",
     lore: "Vesper Crystal hums after sunset, holding the charge of an entire storm in a lattice no larger than a clenched fist.",
@@ -415,9 +478,12 @@ export const canonicalDiscoveries: DiscoveryRecord[] = [
   },
   {
     id: "DISC-EXOTIC-UMBRAL-CONDENSATE",
+    slug: "umbral-condensate",
     displayName: "Umbral Condensate",
-    categoryId: "exotic-matter",
-    subcategoryId: "umbral-condensates",
+    categoryId: "unknown-objects",
+    classId: "anomalous-objects",
+    subclassId: "dimensional-fragments",
+    subcategoryId: "dimensional-fragments",
     scientificName: "Umbra Condensata",
     description: "A legendary condensate found only near extreme gravity wells and stabilized artificial worlds.",
     lore: "It beads against containment glass as if falling inward toward a center that is not in the room.",
@@ -443,9 +509,12 @@ export const canonicalDiscoveries: DiscoveryRecord[] = [
   },
   {
     id: "DISC-ARTIFACT-SILENT-SUN-ORRERY",
+    slug: "orrery-of-the-silent-sun",
     displayName: "Orrery of the Silent Sun",
-    categoryId: "artifacts",
-    subcategoryId: "legendary-artifacts",
+    categoryId: "ancient-relics",
+    classId: "scientific-relics",
+    subclassId: "observatories",
+    subcategoryId: "observatories",
     scientificName: "Machina Solaris Silentii",
     description: "An ancient mechanical model depicting a star system absent from all modern charts.",
     lore: "The orrery turns even when sealed in vacuum. One missing planet completes an orbit every thirteen days, and no telescope has yet found its star.",
@@ -471,8 +540,11 @@ export const canonicalDiscoveries: DiscoveryRecord[] = [
   },
   {
     id: "DISC-ALIENTECH-PRECURSOR-MEMORY-LATTICE",
+    slug: "precursor-memory-lattice",
     displayName: "Precursor Memory Lattice",
-    categoryId: "ancient-alien-technology",
+    categoryId: "alien-technology",
+    classId: "computation",
+    subclassId: "memory-lattices",
     subcategoryId: "memory-lattices",
     scientificName: "Lattice Memoriam Praecursor",
     description: "A crystalline computational matrix preserving fragmented memories of an extinct civilization.",
@@ -499,9 +571,12 @@ export const canonicalDiscoveries: DiscoveryRecord[] = [
   },
   {
     id: "DISC-RUINS-ECHO-VAULT",
+    slug: "echo-vault",
     displayName: "Echo Vault",
-    categoryId: "ruins",
-    subcategoryId: "precursor-archives",
+    categoryId: "ruins-and-structures",
+    classId: "scientific-structures",
+    subclassId: "archives",
+    subcategoryId: "archives",
     scientificName: "Archivum Resonans",
     description: "An underground precursor archive whose walls replay electromagnetic echoes of ancient events.",
     lore: "Inside the vault, footsteps return as voices. A lamp raised too high reveals cities, evacuation routes, and faces that vanish when directly observed.",
@@ -527,9 +602,12 @@ export const canonicalDiscoveries: DiscoveryRecord[] = [
   },
   {
     id: "DISC-ANOMALY-PALE-CHORUS",
+    slug: "the-pale-chorus",
     displayName: "The Pale Chorus",
-    categoryId: "signals",
-    subcategoryId: "deep-space-anomalies",
+    categoryId: "unknown-objects",
+    classId: "unknown-signals",
+    subclassId: "repeating-patterns",
+    subcategoryId: "repeating-patterns",
     scientificName: "Chorus Pallidus",
     description: "A repeating signal heard simultaneously across multiple star systems.",
     lore: "No receiver hears the same melody twice, but every decoded interval points inward, toward a triangulation no known map was built to display.",
@@ -597,12 +675,12 @@ export const discoveryChains = [
 ] as const;
 
 export const discoveryMilestones = [
-  { id: "alpha-discovery-core", displayName: "Alpha Discovery Core", milestoneType: "alpha", categoryIds: ["flora", "fauna", "elements", "rare-matter", "signals"], targetCount: 120 },
-  { id: "beta-living-worlds", displayName: "Beta Living Worlds", milestoneType: "beta", categoryIds: ["flora", "fauna", "living-systems"], targetCount: 400 },
-  { id: "launch-discovery-catalog", displayName: "Launch Discovery Catalog", milestoneType: "launch", categoryIds: ["flora", "fauna", "living-systems", "elements", "rare-matter", "artifacts", "ruins"], targetCount: 1200 },
-  { id: "story-precursor-thread", displayName: "Story Precursor Thread", milestoneType: "story", categoryIds: ["signals", "ruins", "artifacts", "ancient-alien-technology"], targetCount: 90 },
-  { id: "hidden-exotic-matter", displayName: "Hidden Exotic Matter", milestoneType: "hidden", categoryIds: ["exotic-matter"], targetCount: 60 },
-  { id: "unique-signals", displayName: "Unique Signals", milestoneType: "developer", categoryIds: ["signals", "anomalies"], targetCount: 25 }
+  { id: "alpha-discovery-core", displayName: "Alpha Curiosity Core", milestoneType: "alpha", categoryIds: ["biological-flora", "fauna", "ores-and-elements", "minerals", "unknown-objects"], targetCount: 120 },
+  { id: "beta-living-worlds", displayName: "Beta Living Worlds", milestoneType: "beta", categoryIds: ["biological-flora", "fauna", "intelligent-lifeforms"], targetCount: 400 },
+  { id: "launch-discovery-catalog", displayName: "Launch Curiosity Catalog", milestoneType: "launch", categoryIds: ["biological-flora", "fauna", "minerals", "ores-and-elements", "ancient-relics", "ruins-and-structures"], targetCount: 1200 },
+  { id: "story-precursor-thread", displayName: "Story Precursor Thread", milestoneType: "story", categoryIds: ["unknown-objects", "ruins-and-structures", "ancient-relics", "alien-technology"], targetCount: 90 },
+  { id: "hidden-exotic-matter", displayName: "Hidden Exotic Matter", milestoneType: "hidden", categoryIds: ["unknown-objects", "energy-sources"], targetCount: 60 },
+  { id: "unique-signals", displayName: "Unique Signals", milestoneType: "developer", categoryIds: ["unknown-objects"], targetCount: 25 }
 ] as const;
 
 export const discoveryPlayerCollectionSchema = {
@@ -619,43 +697,84 @@ export const discoveryPlayerCollectionSchema = {
   ]
 };
 
+export function getCuriosityClassification(record: Pick<DiscoveryRecord, "categoryId" | "classId" | "subclassId">) {
+  const category = curiosityCategories.find((item) => item.id === record.categoryId) ?? null;
+  const classRecord = category?.classes.find((item) => item.id === record.classId) ?? null;
+  const subclassRecord = classRecord?.subclasses.find((item) => item.id === record.subclassId) ?? null;
+  return { category, classRecord, subclassRecord };
+}
+
+export function getCuriosityArtwork(record: Pick<DiscoveryRecord, "id" | "displayName">) {
+  const slug = curiositySlug(record);
+  return curiosityArtwork.records.find((item) => item.curiosityId === record.id || item.slug === slug) ?? null;
+}
+
 export function validateDiscoverySystem() {
   const issues: Array<{ severity: "error" | "warning"; code: string; message: string; records: string[] }> = [];
   const categoryIds = new Set(discoveryCategories.map((category) => category.id));
   const rarityIds = new Set(discoveryRarities.map((rarity) => rarity.id));
   const discoveryIds = new Set<string>();
   const duplicateDiscoveryIds = new Set<string>();
+  const curiositySlugs = new Set<string>();
+  const duplicateCuriositySlugs = new Set<string>();
   const categoryOrders = new Set<number>();
 
-  for (const category of discoveryCategories) {
+  for (const category of curiosityCategories) {
     if (categoryOrders.has(category.displayOrder)) {
-      issues.push({ severity: "error", code: "duplicate_category_order", message: "Discovery categories must have unique display orders.", records: [category.id] });
+      issues.push({ severity: "error", code: "duplicate_category_order", message: "Curiosity categories must have unique display orders.", records: [category.id] });
     }
     categoryOrders.add(category.displayOrder);
-    if (!category.subcategories.length) {
-      issues.push({ severity: "error", code: "category_missing_subcategories", message: "Discovery categories must define at least one subcategory.", records: [category.id] });
+    if (!category.classes.length) {
+      issues.push({ severity: "error", code: "category_missing_classes", message: "Curiosity categories must define at least one class.", records: [category.id] });
+    }
+    const classIds = new Set<string>();
+    for (const classRecord of category.classes) {
+      if (classIds.has(classRecord.id)) issues.push({ severity: "error", code: "duplicate_class_slug", message: "Curiosity classes must be unique inside a category.", records: [category.id, classRecord.id] });
+      classIds.add(classRecord.id);
+      if (!classRecord.subclasses.length) issues.push({ severity: "error", code: "class_missing_subclasses", message: "Curiosity classes must define at least one subclass.", records: [category.id, classRecord.id] });
+      const subclassIds = new Set<string>();
+      for (const subclassRecord of classRecord.subclasses) {
+        if (subclassIds.has(subclassRecord.id)) issues.push({ severity: "error", code: "duplicate_subclass_slug", message: "Curiosity subclasses must be unique inside a class.", records: [category.id, classRecord.id, subclassRecord.id] });
+        subclassIds.add(subclassRecord.id);
+      }
     }
   }
 
   for (const discovery of canonicalDiscoveries) {
     if (discoveryIds.has(discovery.id)) duplicateDiscoveryIds.add(discovery.id);
     discoveryIds.add(discovery.id);
-    if (!categoryIds.has(discovery.categoryId)) issues.push({ severity: "error", code: "invalid_category", message: "Every discovery must belong to a valid category.", records: [discovery.id, discovery.categoryId] });
-    const category = discoveryCategories.find((item) => item.id === discovery.categoryId);
-    if (!category?.subcategories.some((item) => item.id === discovery.subcategoryId)) issues.push({ severity: "error", code: "invalid_subcategory", message: "Every discovery must belong to a valid subcategory.", records: [discovery.id, discovery.subcategoryId] });
-    if (!rarityIds.has(discovery.rarity)) issues.push({ severity: "error", code: "invalid_rarity", message: "Every discovery must use a valid rarity.", records: [discovery.id, discovery.rarity] });
-    if (!(discovery.spawnWeight > 0)) issues.push({ severity: "error", code: "invalid_spawn_weight", message: "Discovery spawn weight must be greater than zero.", records: [discovery.id] });
-    if (!discovery.assetProfile.icon || !discovery.assetProfile.card || !discovery.assetProfile.hero) issues.push({ severity: "error", code: "asset_profile_missing", message: "Every discovery must define required asset profile keys.", records: [discovery.id] });
+    const slug = curiositySlug(discovery);
+    if (curiositySlugs.has(slug)) duplicateCuriositySlugs.add(slug);
+    curiositySlugs.add(slug);
+    if (!categoryIds.has(discovery.categoryId)) issues.push({ severity: "error", code: "invalid_category", message: "Every curiosity must belong to a valid category.", records: [discovery.id, discovery.categoryId] });
+    const { classRecord, subclassRecord } = getCuriosityClassification(discovery);
+    if (!classRecord) issues.push({ severity: "error", code: "invalid_class", message: "Every curiosity must belong to a valid class.", records: [discovery.id, discovery.classId] });
+    if (!subclassRecord) issues.push({ severity: "error", code: "invalid_subclass", message: "Every curiosity must belong to a valid subclass.", records: [discovery.id, discovery.subclassId] });
+    if (discovery.subcategoryId !== discovery.subclassId) issues.push({ severity: "warning", code: "legacy_subcategory_alias_mismatch", message: "Legacy subcategory alias should match the canonical subclass.", records: [discovery.id, discovery.subcategoryId, discovery.subclassId] });
+    if (!rarityIds.has(discovery.rarity)) issues.push({ severity: "error", code: "invalid_rarity", message: "Every curiosity must use a valid rarity.", records: [discovery.id, discovery.rarity] });
+    if (!(discovery.spawnWeight > 0)) issues.push({ severity: "error", code: "invalid_spawn_weight", message: "Curiosity spawn weight must be greater than zero.", records: [discovery.id] });
+    if (!discovery.assetProfile.icon || !discovery.assetProfile.card || !discovery.assetProfile.hero) issues.push({ severity: "error", code: "asset_profile_missing", message: "Every curiosity must define required asset profile keys.", records: [discovery.id] });
   }
 
-  if (duplicateDiscoveryIds.size) issues.push({ severity: "error", code: "duplicate_discovery_id", message: "Discovery IDs must be unique.", records: [...duplicateDiscoveryIds] });
+  if (duplicateDiscoveryIds.size) issues.push({ severity: "error", code: "duplicate_discovery_id", message: "Curiosity IDs must be unique.", records: [...duplicateDiscoveryIds] });
+  if (duplicateCuriositySlugs.size) issues.push({ severity: "error", code: "duplicate_curiosity_slug", message: "Curiosity slugs must be unique.", records: [...duplicateCuriositySlugs] });
   for (const collection of discoveryCollections) {
     const missing = collection.discoveryIds.filter((id) => !discoveryIds.has(id));
-    if (missing.length) issues.push({ severity: "error", code: "collection_missing_discovery", message: "Discovery collections must reference canonical discoveries.", records: [collection.id, ...missing] });
+    if (missing.length) issues.push({ severity: "error", code: "collection_missing_discovery", message: "Curiosity collections must reference canonical curiosities.", records: [collection.id, ...missing] });
   }
   for (const chain of discoveryChains) {
     const missing = chain.nodes.map((node) => node.discoveryId).filter((id) => !discoveryIds.has(id));
-    if (missing.length) issues.push({ severity: "error", code: "chain_missing_discovery", message: "Discovery chains must reference canonical discoveries.", records: [chain.id, ...missing] });
+    if (missing.length) issues.push({ severity: "error", code: "chain_missing_discovery", message: "Curiosity chains must reference canonical curiosities.", records: [chain.id, ...missing] });
+  }
+  for (const record of curiosityArtwork.records) {
+    const match = canonicalDiscoveries.find((discovery) => discovery.id === record.curiosityId || curiositySlug(discovery) === record.slug);
+    if (!match) {
+      issues.push({ severity: "warning", code: "artwork_missing_curiosity", message: "Curiosity artwork manifest contains a record that does not match a canonical curiosity.", records: [record.curiosityId || record.slug] });
+      continue;
+    }
+    if (record.status === "artwork_ready" && !record.thumbnailPath && !record.webpPath && !record.pngPath) {
+      issues.push({ severity: "warning", code: "artwork_missing_preview", message: "Curiosity artwork marked ready should include a browser preview derivative.", records: [match.id] });
+    }
   }
 
   return {

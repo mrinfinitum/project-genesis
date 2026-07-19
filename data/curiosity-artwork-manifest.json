@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "curiosity-artwork-manifest-v1",
+  "generatedAt": null,
+  "sourceRoot": null,
+  "records": [],
+  "reports": {
+    "matched": 0,
+    "unmatchedFolders": [],
+    "missingCuriosityRecords": [],
+    "missingSourcePsd": [],
+    "missingPreviewDerivatives": [],
+    "duplicateMatches": [],
+    "invalidClassificationPaths": []
+  }
+}

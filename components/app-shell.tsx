@@ -104,8 +104,8 @@ const navigationGroups: NavigationGroup[] = [
     label: "Discovery",
     icon: Compass,
     items: [
-      { href: "/discovery-journal", label: "Discovery Library", icon: ScrollText },
-      { href: "/discovery", label: "Discovery Catalog", icon: Compass }
+      { href: "/discovery", label: "Curiosities", icon: Compass },
+      { href: "/discovery-journal", label: "Discovery Journal", icon: ScrollText }
     ]
   },
 ];

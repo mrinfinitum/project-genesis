@@ -5,11 +5,11 @@ export default function DiscoveryLibraryPage() {
   return (
     <GeneratedUniverseLibrary
       kind="discoveries"
-      title="Discovery Library"
-      description="Manage canonical discovery definitions that can be referenced by Game runtime and encyclopedia systems."
-      generateLabel="Generate Discovery"
+      title="Discovery Journal"
+      description="Browse discovery journal records and exploration history references that can be linked back to canonical curiosity definitions."
+      generateLabel="Generate Journal Entry"
       records={getUniverseLibraryRecords("discoveries")}
-      emptyMessage="No canonical discoveries yet."
+      emptyMessage="No discovery journal records yet."
     />
   );
 }
