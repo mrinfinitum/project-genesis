@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronRight, Compass, FileText, ImageIcon, Search } from "lucide-react";
 import { DiscoveryLibraryTree, type DiscoveryTreeNode } from "@/components/discovery-library-tree";
+import { ResizableDiscoveryLayout } from "@/components/resizable-discovery-layout";
 import { WorkspaceBadge, WorkspaceProgressBar, WorkspaceStatTile } from "@/components/ui/workspace";
 import {
   biologicalCuriosityNavigation,
@@ -175,7 +176,7 @@ export default async function DiscoveryLibraryPage({ searchParams }: { searchPar
         </div>
       </header>
 
-      <section className="grid gap-3 lg:grid-cols-[16rem_minmax(0,1fr)]">
+      <ResizableDiscoveryLayout sidebar={(
         <aside className="min-h-0 rounded-md border border-cyan-300/15 bg-[#07101e]/90 p-3 shadow-glow lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-auto">
           <div className="mb-3 flex items-center gap-2 px-1">
             <Compass className="h-4 w-4 text-cyan-200" />
@@ -186,7 +187,7 @@ export default async function DiscoveryLibraryPage({ searchParams }: { searchPar
           </div>
           <DiscoveryLibraryTree nodes={tree} activeFolder={folder} />
         </aside>
-
+      )}>
         <section className="min-w-0 space-y-3">
           <section className="rounded-md border border-cyan-300/15 bg-[#07101e]/88 p-4 shadow-glow">
             <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
@@ -350,7 +351,7 @@ export default async function DiscoveryLibraryPage({ searchParams }: { searchPar
             </section>
           ) : null}
         </section>
-      </section>
+      </ResizableDiscoveryLayout>
     </main>
   );
 }
