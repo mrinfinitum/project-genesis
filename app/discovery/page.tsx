@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { BookOpen, ChevronRight, Compass, FileText, Folder, FolderOpen, ImageIcon, Search } from "lucide-react";
+import { ChevronRight, Compass, FileText, ImageIcon, Search } from "lucide-react";
+import { DiscoveryLibraryTree, type DiscoveryTreeNode } from "@/components/discovery-library-tree";
 import { WorkspaceBadge, WorkspaceProgressBar, WorkspaceStatTile } from "@/components/ui/workspace";
 import {
   biologicalCuriosityNavigation,
@@ -23,15 +24,6 @@ import {
 } from "@/lib/discovery";
 
 type DiscoverySearchParams = Promise<Record<string, string | string[] | undefined>>;
-
-type DiscoveryTreeNode = {
-  id: string;
-  label: string;
-  href: string;
-  count: number;
-  icon?: "folder" | "curiosity" | "journal";
-  children?: DiscoveryTreeNode[];
-};
 
 function firstParam(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
@@ -64,45 +56,6 @@ function folderHref(folder: string) {
 
 function volumeFolderId(volumeId: string, ...parts: string[]) {
   return [volumeId, ...parts].join(":");
-}
-
-function isActiveAncestor(node: DiscoveryTreeNode, activeFolder: string): boolean {
-  return node.id === activeFolder || Boolean(node.children?.some((child) => isActiveAncestor(child, activeFolder)));
-}
-
-function TreeIcon({ node, expanded }: { node: DiscoveryTreeNode; expanded: boolean }) {
-  if (node.icon === "journal") return <BookOpen className="h-4 w-4 shrink-0 text-cyan-200/70" />;
-  if (node.icon === "curiosity") return <Compass className="h-4 w-4 shrink-0 text-cyan-200/70" />;
-  return expanded ? <FolderOpen className="h-4 w-4 shrink-0 text-cyan-200/80" /> : <Folder className="h-4 w-4 shrink-0 text-cyan-200/60" />;
-}
-
-function DiscoveryTreeItem({ node, activeFolder, depth = 0 }: { node: DiscoveryTreeNode; activeFolder: string; depth?: number }) {
-  const hasChildren = Boolean(node.children?.length);
-  const expanded = isActiveAncestor(node, activeFolder) || depth < 1;
-  const active = node.id === activeFolder;
-
-  return (
-    <div>
-      <Link
-        href={node.href}
-        scroll={false}
-        className={`group flex items-center gap-1 rounded-md text-sm transition ${active ? "bg-cyan-300/14 text-white" : "text-slate-400 hover:bg-cyan-300/8 hover:text-slate-100"}`}
-        style={{ paddingLeft: `${0.35 + depth * 0.85}rem` }}
-      >
-        <span className="grid h-7 w-6 shrink-0 place-items-center rounded text-slate-500 transition group-hover:bg-cyan-300/10 group-hover:text-cyan-100">
-          {hasChildren ? <ChevronRight className={`h-3.5 w-3.5 transition ${expanded ? "rotate-90" : ""}`} /> : <span className="h-1.5 w-1.5 rounded-full bg-slate-600" />}
-        </span>
-        <TreeIcon node={node} expanded={expanded} />
-        <span className="min-w-0 flex-1 truncate py-1.5 font-semibold">{node.label}</span>
-        <span className="rounded border border-cyan-300/10 bg-slate-950/45 px-1.5 py-0.5 text-[0.62rem] font-bold text-slate-500">{node.count}</span>
-      </Link>
-      {hasChildren && expanded ? (
-        <div className="mt-0.5">
-          {node.children?.map((child) => <DiscoveryTreeItem key={child.id} node={child} activeFolder={activeFolder} depth={depth + 1} />)}
-        </div>
-      ) : null}
-    </div>
-  );
 }
 
 function buildDiscoveryTree(): DiscoveryTreeNode[] {
@@ -231,9 +184,7 @@ export default async function DiscoveryLibraryPage({ searchParams }: { searchPar
               <p className="text-xs text-slate-500">Browse discoveries</p>
             </div>
           </div>
-          <div role="tree" aria-label="Discovery Library content folders" className="space-y-0.5">
-            {tree.map((node) => <DiscoveryTreeItem key={node.id} node={node} activeFolder={folder} />)}
-          </div>
+          <DiscoveryLibraryTree nodes={tree} activeFolder={folder} />
         </aside>
 
         <section className="min-w-0 space-y-3">
