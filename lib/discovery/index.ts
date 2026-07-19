@@ -1,4 +1,6 @@
 import curiosityArtworkManifest from "@/data/curiosity-artwork-manifest.json";
+import biologicalCuriosityPack from "@/data/curiosity-volume-01-biological.json";
+import biologicalCuriosityTaxonomyPack from "@/data/curiosity-volume-01-biological-taxonomy.json";
 
 export const discoveryRarities = [
   { id: "common", displayName: "Common", displayOrder: 1, defaultSpawnWeight: 1 },
@@ -142,6 +144,8 @@ export type DiscoveryAssetProfile = {
 export type DiscoveryRecord = {
   id: string;
   slug?: string;
+  volumeId?: string;
+  volumeName?: string;
   displayName: string;
   categoryId: DiscoveryCategoryId;
   classId: string;
@@ -170,6 +174,7 @@ export type DiscoveryRecord = {
   requiredEquipmentIds: string[];
   requiredScanLevel: number;
   spawnRules: DiscoverySpawnRule;
+  compatiblePlanetClasses?: string[];
   assetProfile: DiscoveryAssetProfile;
   promptProfile?: {
     masterPrompt?: string;
@@ -206,25 +211,100 @@ function curiosityCategory(displayName: string, displayOrder: number, descriptio
   };
 }
 
+type ImportedBiologicalCuriosity = {
+  canonical_id: string;
+  name: string;
+  scientific_name: string;
+  category: string;
+  class: string;
+  subclass: string;
+  rarity: string;
+  compatible_planet_classes: string[];
+  description: string;
+  art_prompt: string;
+  status: string;
+  artwork_status: string;
+  source_psd: string;
+  preview_image: string;
+  tags: string[];
+};
+
+type ImportedBiologicalPack = {
+  schemaVersion: number;
+  volume: number;
+  title: string;
+  recordCount: number;
+  raritySystem: string[];
+  records: ImportedBiologicalCuriosity[];
+};
+
+type ImportedBiologicalTaxonomyPack = {
+  schemaVersion: number;
+  taxonomy: Record<string, Record<string, string[]>>;
+};
+
+export const biologicalCuriosityVolume = biologicalCuriosityPack as ImportedBiologicalPack;
+export const biologicalCuriosityTaxonomy = biologicalCuriosityTaxonomyPack as ImportedBiologicalTaxonomyPack;
+
+const biologicalCategoryAliases: Record<string, string> = {
+  Flora: "biological-flora",
+  Fauna: "fauna",
+  "Organic Materials": "organic-materials",
+  "Fossils and Preserved Life": "fossils-and-preserved-life"
+};
+
+function importedCategoryId(category: string) {
+  return biologicalCategoryAliases[category] ?? slugify(category);
+}
+
+function importedRarity(value: string): DiscoveryRarityId {
+  const normalized = slugify(value);
+  return discoveryRarities.some((rarity) => rarity.id === normalized) ? normalized as DiscoveryRarityId : "common";
+}
+
+function importedPublicationStatus(value: string): DiscoveryPublicationStatus {
+  const normalized = slugify(value);
+  if (["approved", "published", "hidden"].includes(normalized)) return normalized as DiscoveryPublicationStatus;
+  return "draft";
+}
+
+function importedArtworkStatus(value: string): CuriosityArtworkStatus {
+  const normalized = slugify(value);
+  if (normalized.includes("ready")) return "artwork_ready";
+  if (normalized.includes("preview")) return "preview_ready";
+  if (normalized.includes("source")) return "source_only";
+  return "missing";
+}
+
+function raritySpawnWeight(rarityId: DiscoveryRarityId) {
+  return discoveryRarities.find((rarity) => rarity.id === rarityId)?.defaultSpawnWeight ?? 1;
+}
+
+function rarityDiscoveryXp(rarityId: DiscoveryRarityId) {
+  const rarity = discoveryRarities.find((item) => item.id === rarityId);
+  return (rarity?.displayOrder ?? 1) * 25;
+}
+
 export const curiosityCategories: CuriosityCategory[] = [
   curiosityCategory("Biological Flora", 1, "Plantlike curiosities including mosses, fungi, trees, vines, flowers, groundcover, seeds, spores, and reef growth.", [
-    ["Mosses", ["Bioluminescent Mosses", "Aquatic Mosses", "Crystalline Mosses", "Parasitic Mosses", "Thermal Mosses", "Spore-Bearing Mosses"]],
-    ["Fungi", ["Cap Fungi", "Shelf Fungi", "Mycelial Networks", "Parasitic Fungi", "Bioluminescent Fungi", "Giant Fungi", "Aquatic Fungi"]],
-    ["Trees", ["Canopy Trees", "Crystal Trees", "Thermal Trees", "Aquatic Trees", "Desert Trees", "Fungal Trees", "Ancient Trees"]],
-    ["Vines", ["Climbing Vines", "Carnivorous Vines", "Parasitic Vines", "Bioluminescent Vines", "Aquatic Vines", "Thorned Vines"]],
-    ["Flowers", ["Bioluminescent Flowers", "Carnivorous Flowers", "Aquatic Flowers", "Crystalline Flowers", "Thermal Flowers", "Wind-Pollinated Flowers"]],
-    ["Grasses and Groundcover", ["Grasses", "Reeds", "Groundcover", "Floating Vegetation", "Mineral-Rooted Vegetation", "Spore Fields"]],
-    ["Seeds and Spores", ["Seeds", "Spores", "Pods", "Pollen Clusters", "Dormant Growth Cores"]],
-    ["Coral and Reef Life", ["Mineral Coral", "Living Coral", "Bioluminescent Coral", "Thermal Reef Growth", "Floating Coral"]]
+    ["Mosses", ["Bioluminescent Mosses", "Aquatic Mosses", "Crystalline Mosses", "Parasitic Mosses", "Thermal Mosses", "Spore-Bearing Mosses", "Frozen Mosses", "Metallic Mosses"]],
+    ["Fungi", ["Cap Fungi", "Shelf Fungi", "Mycelial Networks", "Parasitic Fungi", "Bioluminescent Fungi", "Giant Fungi", "Aquatic Fungi", "Crystal Fungi"]],
+    ["Trees", ["Canopy Trees", "Crystal Trees", "Thermal Trees", "Aquatic Trees", "Desert Trees", "Fungal Trees", "Ancient Trees", "Metallic Trees"]],
+    ["Vines", ["Climbing Vines", "Carnivorous Vines", "Parasitic Vines", "Bioluminescent Vines", "Aquatic Vines", "Thorned Vines", "Floating Vines", "Mineral-Rooted Vines"]],
+    ["Flowers", ["Bioluminescent Flowers", "Carnivorous Flowers", "Aquatic Flowers", "Crystalline Flowers", "Thermal Flowers", "Wind-Pollinated Flowers", "Desert Flowers", "Nocturnal Flowers"]],
+    ["Groundcover", ["Grasses", "Reeds", "Groundcover", "Floating Vegetation", "Mineral-Rooted Vegetation", "Spore Fields", "Succulents", "Creeping Mats"]],
+    ["Seeds and Spores", ["Seeds", "Spores", "Pods", "Pollen Clusters", "Dormant Growth Cores", "Winged Seeds", "Crystal Seeds", "Thermal Spores"]],
+    ["Coral and Reef Life", ["Mineral Coral", "Living Coral", "Bioluminescent Coral", "Thermal Reef Growth", "Floating Coral", "Deep-Sea Coral", "Crystal Reef Growth", "Symbiotic Coral"]]
   ], "Flora"),
   curiosityCategory("Fauna", 2, "Animal, aerial, aquatic, predatory, passive, symbiotic, and parasitic lifeform curiosities.", [
-    ["Terrestrial Creatures", ["Small Terrestrial", "Large Terrestrial", "Burrowing", "Herding", "Solitary", "Armored"]],
-    ["Aerial Creatures", ["Winged", "Gliding", "Floating", "Atmospheric", "Swarming", "High-Altitude"]],
-    ["Aquatic Creatures", ["Shallow-Water", "Deep-Ocean", "Reef-Dwelling", "Amphibious", "Filter-Feeding", "Leviathan"]],
-    ["Arthropods and Invertebrates", ["Insects", "Arachnid Forms", "Crustacean Forms", "Wormlike Forms", "Mollusk Forms", "Colonial Organisms"]],
-    ["Predators", ["Ambush Predators", "Pursuit Predators", "Pack Predators", "Aquatic Predators", "Aerial Predators", "Parasitic Predators"]],
-    ["Herbivores and Grazers", ["Grazers", "Browsers", "Filter Feeders", "Nectar Feeders", "Mineral Feeders"]],
-    ["Symbiotic and Parasitic Life", ["Symbiotic", "Parasitic", "Host-Bound", "Colony-Bound", "Mutualistic"]]
+    ["Terrestrial Creatures", ["Small Terrestrial", "Large Terrestrial", "Burrowing", "Herding", "Solitary", "Armored", "Climbing", "Cave-Dwelling"]],
+    ["Aerial Creatures", ["Winged", "Gliding", "Floating", "Atmospheric", "Swarming", "High-Altitude", "Storm-Dwelling", "Nocturnal Flyers"]],
+    ["Aquatic Creatures", ["Shallow-Water", "Deep-Ocean", "Reef-Dwelling", "Amphibious", "Filter-Feeding", "Leviathan", "Abyssal", "River-Dwelling"]],
+    ["Arthropods and Invertebrates", ["Insects", "Arachnid Forms", "Crustacean Forms", "Wormlike Forms", "Mollusk Forms", "Colonial Organisms", "Hive Organisms", "Gelatinous Forms"]],
+    ["Predators", ["Ambush Predators", "Pursuit Predators", "Pack Predators", "Aquatic Predators", "Aerial Predators", "Parasitic Predators", "Burrowing Predators", "Apex Predators"]],
+    ["Herbivores and Grazers", ["Grazers", "Browsers", "Filter Feeders", "Nectar Feeders", "Mineral Feeders", "Fungivores", "Seed Feeders", "Canopy Feeders"]],
+    ["Symbiotic and Parasitic Life", ["Symbiotic", "Parasitic", "Host-Bound", "Colony-Bound", "Mutualistic", "Commensal", "Brood Parasites", "Cleaning Organisms"]],
+    ["Microfauna", ["Microscopic Swimmers", "Soil Microfauna", "Atmospheric Microfauna", "Thermal Microfauna", "Cryogenic Microfauna", "Radiotrophic Microfauna", "Crystal-Dwelling Microfauna", "Biofilm Colonies"]]
   ]),
   curiosityCategory("Intelligent Lifeforms", 3, "Primitive, advanced, ancient, and unknown intelligences discovered through survey and exploration.", [
     ["Primitive Lifeforms", ["Tribal", "Nomadic", "Tool-Using", "Aquatic", "Subterranean", "Hive-Based"]],
@@ -246,15 +326,16 @@ export const curiosityCategories: CuriosityCategory[] = [
     ["Exotic Elements", ["Stable Superheavy Elements", "Metastable Elements", "Alien Alloys", "Unknown Elements"]]
   ], "Elements"),
   curiosityCategory("Organic Materials", 6, "Biological samples, useful organics, and hazardous organic compounds.", [
-    ["Biological Samples", ["Tissue Samples", "Sap", "Venom", "Blood Analogues", "Chitin", "Bone Analogues", "Neural Tissue"]],
-    ["Useful Organics", ["Medicinal Compounds", "Nutrient Compounds", "Fibers", "Resins", "Oils", "Enzymes"]],
-    ["Hazardous Organics", ["Toxins", "Pathogens", "Spores", "Parasites", "Corrosive Secretions"]]
+    ["Biological Samples", ["Tissue Samples", "Sap", "Venom", "Blood Analogues", "Chitin", "Bone Analogues", "Neural Tissue", "Reproductive Samples"]],
+    ["Useful Organics", ["Medicinal Compounds", "Nutrient Compounds", "Fibers", "Resins", "Oils", "Enzymes", "Pigments", "Adhesives"]],
+    ["Hazardous Organics", ["Toxins", "Pathogens", "Spores", "Parasites", "Corrosive Secretions", "Neuroactive Compounds", "Hallucinogens", "Mutagens"]],
+    ["Biopolymers", ["Elastic Biopolymers", "Armor Biopolymers", "Conductive Biopolymers", "Transparent Biopolymers", "Self-Healing Biopolymers", "Thermal Biopolymers", "Cryogenic Biopolymers", "Memory Biopolymers"]]
   ], "Organics"),
   curiosityCategory("Fossils and Preserved Life", 7, "Fossil, frozen, amber-preserved, and trace evidence of extinct or dormant life.", [
-    ["Flora Fossils", ["Petrified Plants", "Seed Fossils", "Spore Fossils", "Root Networks"]],
-    ["Fauna Fossils", ["Skeletons", "Shells", "Imprints", "Amber-Preserved Organisms", "Frozen Organisms"]],
-    ["Intelligent-Life Fossils", ["Remains", "Burial Sites", "Genetic Archives", "Preserved Specimens"]],
-    ["Trace Fossils", ["Tracks", "Burrows", "Nests", "Feeding Marks", "Colony Imprints"]]
+    ["Flora Fossils", ["Petrified Plants", "Seed Fossils", "Spore Fossils", "Root Networks", "Leaf Impressions", "Pollen Beds", "Fossilized Reefs", "Ancient Growth Rings"]],
+    ["Fauna Fossils", ["Skeletons", "Shells", "Imprints", "Amber-Preserved Organisms", "Frozen Organisms", "Mineralized Carapaces", "Egg Fossils", "Mass Fossil Beds"]],
+    ["Intelligent-Life Fossils", ["Remains", "Burial Sites", "Genetic Archives", "Preserved Specimens", "Cranial Fossils", "Tool-Bearing Remains", "Ritual Interments", "Cloned Remnants"]],
+    ["Trace Fossils", ["Tracks", "Burrows", "Nests", "Feeding Marks", "Colony Imprints", "Migration Trails", "Molt Layers", "Coprolite Deposits"]]
   ], "Fossils"),
   curiosityCategory("Ancient Relics", 8, "Civilian, scientific, religious, military, and cultural relics from prior civilizations.", [
     ["Civilian Relics", ["Tools", "Household Objects", "Navigation Devices", "Records", "Currency", "Art Objects"]],
@@ -320,7 +401,7 @@ function assetProfile(id: string): DiscoveryAssetProfile {
   };
 }
 
-export const canonicalDiscoveries: DiscoveryRecord[] = [
+const coreDiscoveryRecords: DiscoveryRecord[] = [
   {
     id: "DISC-FLORA-LUMEN-MOSS",
     slug: "lumen-moss",
@@ -632,6 +713,99 @@ export const canonicalDiscoveries: DiscoveryRecord[] = [
     tags: ["signal", "unique", "story-chain", "deep-space-anomaly", "pale-chorus"]
   }
 ];
+
+function importedBiologicalRecord(record: ImportedBiologicalCuriosity): DiscoveryRecord {
+  const rarity = importedRarity(record.rarity);
+  const slug = slugify(record.name);
+  const categoryId = importedCategoryId(record.category);
+  const classId = slugify(record.class);
+  const subclassId = slugify(record.subclass);
+  const compatiblePlanetClasses = record.compatible_planet_classes.map(slugify).filter(Boolean);
+  const tags = Array.from(new Set([
+    "biological",
+    record.category,
+    record.class,
+    record.subclass,
+    rarity,
+    ...record.tags
+  ].map(slugify).filter(Boolean)));
+
+  return {
+    id: record.canonical_id,
+    slug,
+    volumeId: "biological",
+    volumeName: biologicalCuriosityVolume.title,
+    displayName: record.name,
+    categoryId,
+    classId,
+    subclassId,
+    subcategoryId: subclassId,
+    scientificName: record.scientific_name,
+    description: record.description,
+    lore: record.description,
+    discoverySummary: `${record.name} is a ${record.rarity.toLowerCase()} biological curiosity cataloged in ${record.class} / ${record.subclass}.`,
+    rarity,
+    spawnWeight: raritySpawnWeight(rarity),
+    discoveryXp: rarityDiscoveryXp(rarity),
+    creditsValue: rarityDiscoveryXp(rarity) * 12,
+    researchValue: rarityDiscoveryXp(rarity) * 8,
+    tradeValue: rarityDiscoveryXp(rarity) * 10,
+    unlocks: [],
+    relatedResearchIds: ["planet_scan", "planetary_ecology"],
+    relatedBuildingIds: [],
+    relatedResourceIds: [],
+    relatedPlanetIds: [],
+    relatedCivilizationIds: [],
+    relatedLifeformIds: [],
+    requiredEquipmentIds: ["bioscanner_basic"],
+    requiredScanLevel: Math.max(1, Math.min(8, discoveryRarities.find((item) => item.id === rarity)?.displayOrder ?? 1)),
+    compatiblePlanetClasses,
+    spawnRules: {
+      planetClass: compatiblePlanetClasses,
+      requiredResearchIds: ["planet_scan"],
+      specialEvents: ["biological-curiosity-volume-01"]
+    },
+    assetProfile: assetProfile(`bio_${slugify(record.canonical_id)}`),
+    promptProfile: {
+      prompt: record.art_prompt,
+      masterPrompt: record.art_prompt,
+      promptVersion: biologicalCuriosityVolume.schemaVersion,
+      generationNotes: "Imported from NOVERIS Curiosity Codex Volume I: Biological Curiosities."
+    },
+    publicationStatus: importedPublicationStatus(record.status),
+    artworkStatus: importedArtworkStatus(record.artwork_status),
+    canonicalVersion: `volume-${biologicalCuriosityVolume.volume}.schema-${biologicalCuriosityVolume.schemaVersion}`,
+    tags
+  };
+}
+
+export const biologicalCuriosityRecords = biologicalCuriosityVolume.records.map(importedBiologicalRecord);
+
+export const biologicalCuriosityNavigation = Object.entries(biologicalCuriosityTaxonomy.taxonomy).map(([categoryName, classes], categoryIndex) => ({
+  id: importedCategoryId(categoryName),
+  sourceCategoryName: categoryName,
+  displayName: categoryName,
+  displayOrder: categoryIndex + 1,
+  classes: Object.entries(classes).map(([className, subclasses], classIndex) => ({
+    id: slugify(className),
+    displayName: className,
+    displayOrder: classIndex + 1,
+    subclasses: subclasses.map((subclassName, subclassIndex) => ({
+      id: slugify(subclassName),
+      displayName: subclassName,
+      displayOrder: subclassIndex + 1
+    }))
+  }))
+}));
+
+export const canonicalDiscoveries: DiscoveryRecord[] = [
+  ...coreDiscoveryRecords,
+  ...biologicalCuriosityRecords
+];
+
+export function getCuriositiesByVolume(volumeId: string) {
+  return canonicalDiscoveries.filter((record) => record.volumeId === volumeId);
+}
 
 export const discoveryCollections = [
   { id: "primitive-biology", displayName: "Primitive Biology", discoveryIds: ["DISC-FLORA-LUMEN-MOSS", "DISC-FAUNA-AEROVALE-SKIMMER"], milestoneType: "launch" },

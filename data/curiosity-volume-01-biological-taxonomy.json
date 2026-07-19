@@ -1,0 +1,253 @@
+{
+  "schemaVersion": 1,
+  "taxonomy": {
+    "Flora": {
+      "Mosses": [
+        "Bioluminescent Mosses",
+        "Aquatic Mosses",
+        "Crystalline Mosses",
+        "Parasitic Mosses",
+        "Thermal Mosses",
+        "Spore-Bearing Mosses",
+        "Frozen Mosses",
+        "Metallic Mosses"
+      ],
+      "Fungi": [
+        "Cap Fungi",
+        "Shelf Fungi",
+        "Mycelial Networks",
+        "Parasitic Fungi",
+        "Bioluminescent Fungi",
+        "Giant Fungi",
+        "Aquatic Fungi",
+        "Crystal Fungi"
+      ],
+      "Trees": [
+        "Canopy Trees",
+        "Crystal Trees",
+        "Thermal Trees",
+        "Aquatic Trees",
+        "Desert Trees",
+        "Fungal Trees",
+        "Ancient Trees",
+        "Metallic Trees"
+      ],
+      "Vines": [
+        "Climbing Vines",
+        "Carnivorous Vines",
+        "Parasitic Vines",
+        "Bioluminescent Vines",
+        "Aquatic Vines",
+        "Thorned Vines",
+        "Floating Vines",
+        "Mineral-Rooted Vines"
+      ],
+      "Flowers": [
+        "Bioluminescent Flowers",
+        "Carnivorous Flowers",
+        "Aquatic Flowers",
+        "Crystalline Flowers",
+        "Thermal Flowers",
+        "Wind-Pollinated Flowers",
+        "Desert Flowers",
+        "Nocturnal Flowers"
+      ],
+      "Groundcover": [
+        "Grasses",
+        "Reeds",
+        "Groundcover",
+        "Floating Vegetation",
+        "Mineral-Rooted Vegetation",
+        "Spore Fields",
+        "Succulents",
+        "Creeping Mats"
+      ],
+      "Seeds and Spores": [
+        "Seeds",
+        "Spores",
+        "Pods",
+        "Pollen Clusters",
+        "Dormant Growth Cores",
+        "Winged Seeds",
+        "Crystal Seeds",
+        "Thermal Spores"
+      ],
+      "Coral and Reef Life": [
+        "Mineral Coral",
+        "Living Coral",
+        "Bioluminescent Coral",
+        "Thermal Reef Growth",
+        "Floating Coral",
+        "Deep-Sea Coral",
+        "Crystal Reef Growth",
+        "Symbiotic Coral"
+      ]
+    },
+    "Fauna": {
+      "Terrestrial Creatures": [
+        "Small Terrestrial",
+        "Large Terrestrial",
+        "Burrowing",
+        "Herding",
+        "Solitary",
+        "Armored",
+        "Climbing",
+        "Cave-Dwelling"
+      ],
+      "Aerial Creatures": [
+        "Winged",
+        "Gliding",
+        "Floating",
+        "Atmospheric",
+        "Swarming",
+        "High-Altitude",
+        "Storm-Dwelling",
+        "Nocturnal Flyers"
+      ],
+      "Aquatic Creatures": [
+        "Shallow-Water",
+        "Deep-Ocean",
+        "Reef-Dwelling",
+        "Amphibious",
+        "Filter-Feeding",
+        "Leviathan",
+        "Abyssal",
+        "River-Dwelling"
+      ],
+      "Arthropods and Invertebrates": [
+        "Insects",
+        "Arachnid Forms",
+        "Crustacean Forms",
+        "Wormlike Forms",
+        "Mollusk Forms",
+        "Colonial Organisms",
+        "Hive Organisms",
+        "Gelatinous Forms"
+      ],
+      "Predators": [
+        "Ambush Predators",
+        "Pursuit Predators",
+        "Pack Predators",
+        "Aquatic Predators",
+        "Aerial Predators",
+        "Parasitic Predators",
+        "Burrowing Predators",
+        "Apex Predators"
+      ],
+      "Herbivores and Grazers": [
+        "Grazers",
+        "Browsers",
+        "Filter Feeders",
+        "Nectar Feeders",
+        "Mineral Feeders",
+        "Fungivores",
+        "Seed Feeders",
+        "Canopy Feeders"
+      ],
+      "Symbiotic and Parasitic Life": [
+        "Symbiotic",
+        "Parasitic",
+        "Host-Bound",
+        "Colony-Bound",
+        "Mutualistic",
+        "Commensal",
+        "Brood Parasites",
+        "Cleaning Organisms"
+      ],
+      "Microfauna": [
+        "Microscopic Swimmers",
+        "Soil Microfauna",
+        "Atmospheric Microfauna",
+        "Thermal Microfauna",
+        "Cryogenic Microfauna",
+        "Radiotrophic Microfauna",
+        "Crystal-Dwelling Microfauna",
+        "Biofilm Colonies"
+      ]
+    },
+    "Organic Materials": {
+      "Biological Samples": [
+        "Tissue Samples",
+        "Sap",
+        "Venom",
+        "Blood Analogues",
+        "Chitin",
+        "Bone Analogues",
+        "Neural Tissue",
+        "Reproductive Samples"
+      ],
+      "Useful Organics": [
+        "Medicinal Compounds",
+        "Nutrient Compounds",
+        "Fibers",
+        "Resins",
+        "Oils",
+        "Enzymes",
+        "Pigments",
+        "Adhesives"
+      ],
+      "Hazardous Organics": [
+        "Toxins",
+        "Pathogens",
+        "Spores",
+        "Parasites",
+        "Corrosive Secretions",
+        "Neuroactive Compounds",
+        "Hallucinogens",
+        "Mutagens"
+      ],
+      "Biopolymers": [
+        "Elastic Biopolymers",
+        "Armor Biopolymers",
+        "Conductive Biopolymers",
+        "Transparent Biopolymers",
+        "Self-Healing Biopolymers",
+        "Thermal Biopolymers",
+        "Cryogenic Biopolymers",
+        "Memory Biopolymers"
+      ]
+    },
+    "Fossils and Preserved Life": {
+      "Flora Fossils": [
+        "Petrified Plants",
+        "Seed Fossils",
+        "Spore Fossils",
+        "Root Networks",
+        "Leaf Impressions",
+        "Pollen Beds",
+        "Fossilized Reefs",
+        "Ancient Growth Rings"
+      ],
+      "Fauna Fossils": [
+        "Skeletons",
+        "Shells",
+        "Imprints",
+        "Amber-Preserved Organisms",
+        "Frozen Organisms",
+        "Mineralized Carapaces",
+        "Egg Fossils",
+        "Mass Fossil Beds"
+      ],
+      "Intelligent-Life Fossils": [
+        "Remains",
+        "Burial Sites",
+        "Genetic Archives",
+        "Preserved Specimens",
+        "Cranial Fossils",
+        "Tool-Bearing Remains",
+        "Ritual Interments",
+        "Cloned Remnants"
+      ],
+      "Trace Fossils": [
+        "Tracks",
+        "Burrows",
+        "Nests",
+        "Feeding Marks",
+        "Colony Imprints",
+        "Migration Trails",
+        "Molt Layers",
+        "Coprolite Deposits"
+      ]
+    }
+  }
+}
