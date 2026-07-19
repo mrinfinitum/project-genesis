@@ -1,6 +1,5 @@
-import { RendererContractEditor } from "@/components/render/renderer-contract-editor";
-import { planetRendererContract } from "@/lib/render";
+import { redirect } from "next/navigation";
 
-export default function PlanetRendererContractPage() {
-  return <RendererContractEditor initialContract={planetRendererContract} />;
+export default function RenderRedirectPage() {
+  redirect("/render");
 }
