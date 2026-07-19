@@ -26,10 +26,8 @@ import {
   Orbit,
   PackageCheck,
   Radar,
-  ScrollText,
   ShieldCheck,
   Sparkles,
-  Sprout,
   Star,
   WandSparkles,
   X
@@ -63,6 +61,7 @@ const navigationGroups: NavigationGroup[] = [
     items: [
       { href: "/", label: "Universe Command Center", icon: LayoutDashboard, activePaths: ["/"] },
       { href: "/asset-library", label: "Asset Library", icon: PackageCheck },
+      { href: "/discovery", label: "Discovery Library", icon: Compass },
       { href: "/encyclopedia", label: "Encyclopedia", icon: BookOpen },
       { href: "/architecture", label: "Architecture", icon: FileText },
       { href: "/settings#users", label: "Admin Users", icon: ShieldCheck }
@@ -98,15 +97,6 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/missions", label: "Missions", icon: ClipboardList },
       { href: "/dynamic-events", label: "Dynamic Events", icon: Sparkles },
       { href: "/ai-agents", label: "AI Agents", icon: Bot }
-    ]
-  },
-  {
-    id: "discovery",
-    label: "Discovery",
-    icon: Compass,
-    items: [
-      { href: "/discovery/biological", label: "Biological", icon: Sprout },
-      { href: "/discovery-journal", label: "Discovery Journal", icon: ScrollText }
     ]
   },
 ];
