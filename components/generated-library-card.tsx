@@ -203,7 +203,7 @@ export function GeneratedLibraryCard({
       <CardThumbnail record={record} hovered={hovered} />
       <div className="mt-3 flex min-h-[4.25rem] items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="truncate text-lg font-black text-white" title={record.name}>{record.name}</p>
+          <p className="truncate text-base font-black text-white" title={record.name}>{record.name}</p>
           <p className="mt-1 truncate text-sm font-semibold text-cyan-100" title={record.type}>{record.type}</p>
           {record.classification ? <p className="truncate text-xs font-semibold text-slate-400" title={record.classification}>{record.classification}</p> : null}
         </div>

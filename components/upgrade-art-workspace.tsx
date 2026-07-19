@@ -132,7 +132,7 @@ function UpgradeCard({ item, layout, selected, onSelect }: { item: UpgradeArtCar
             <WorkspaceBadge value={statusTone(item)} />
             <WorkspaceBadge value={item.upgrade.era} />
           </div>
-          <h3 className="mt-2 truncate text-lg font-black text-white">{item.displayName}</h3>
+          <h3 className="mt-2 truncate text-base font-black text-white">{item.displayName}</h3>
           <p className="mt-1 truncate text-sm text-slate-400">{item.iconKey || "No icon key"} / {item.linkedAssetId ?? "Unlinked"}</p>
         </div>
         <div className="grid grid-cols-2 gap-2 md:w-56">

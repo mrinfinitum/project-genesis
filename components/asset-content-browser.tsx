@@ -680,7 +680,7 @@ function QuickPreviewOverlay({ item, onClose }: { item: InventoryItem | null; on
         </div>
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
           <div className="min-w-0">
-            <p className="truncate text-lg font-black text-white">{item.displayName}</p>
+            <p className="truncate text-base font-black text-white">{item.displayName}</p>
             <p className="mt-1 text-xs font-semibold text-slate-500">Space or Esc closes preview</p>
           </div>
           <Link href={itemHref(item)} className="inline-flex h-9 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Open Asset</Link>

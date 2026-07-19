@@ -209,7 +209,7 @@ function RequirementCard({
         <SharedAssetPreview preview={previewForEraCard(card)} allowFullscreen={false} />
         <div className="mt-4 flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="truncate text-lg font-black text-white">{card.assetName}</p>
+            <p className="truncate text-base font-black text-white">{card.assetName}</p>
             <p className="mt-1 truncate text-sm text-cyan-200">{card.canonicalAssetId}</p>
           </div>
           <WorkspaceBadge value={card.status} />

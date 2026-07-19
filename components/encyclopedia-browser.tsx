@@ -29,7 +29,7 @@ function EntryCard({ entry }: { entry: EncyclopediaEntry }) {
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="truncate text-xs font-black uppercase tracking-[0.2em] text-cyan-300">{entry.category}</p>
-          <h2 className="mt-2 truncate text-xl font-black text-white" title={entry.displayName}>{entry.displayName}</h2>
+          <h2 className="mt-2 truncate text-lg font-black text-white" title={entry.displayName}>{entry.displayName}</h2>
           <p className="mt-1 truncate text-sm font-bold text-cyan-100" title={entry.canonicalRecordId}>{entry.canonicalRecordId}</p>
         </div>
         <span className={cn("shrink-0 rounded-md border px-2 py-1 text-[0.58rem] font-black uppercase tracking-[0.14em]", statusClass(entry.publicationState))}>{entry.publicationState}</span>

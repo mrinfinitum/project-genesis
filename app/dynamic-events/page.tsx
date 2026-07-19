@@ -41,7 +41,7 @@ export default function DynamicEventsPage() {
           <article key={event.id} className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-4 shadow-glow">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <h2 className="truncate text-lg font-black text-white">{event.displayName}</h2>
+                <h2 className="truncate text-base font-black text-white">{event.displayName}</h2>
                 <p className="mt-1 truncate text-sm font-semibold text-cyan-100">{event.id}</p>
               </div>
               <WorkspaceBadge value={event.categoryId} />

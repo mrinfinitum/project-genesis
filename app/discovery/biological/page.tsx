@@ -166,7 +166,7 @@ export default async function BiologicalCuriosityPage({ searchParams }: { search
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <p className="text-[0.62rem] font-black uppercase tracking-[0.18em] text-cyan-200">{classRecord?.displayName ?? titleFromSlug(record.classId)}</p>
-                        <h2 className="mt-1 truncate text-xl font-black text-white">{record.displayName}</h2>
+                        <h2 className="mt-1 truncate text-lg font-black text-white">{record.displayName}</h2>
                         <p className="mt-1 truncate text-xs italic text-cyan-100/80">{record.scientificName}</p>
                       </div>
                       <WorkspaceBadge value={record.rarity} />
