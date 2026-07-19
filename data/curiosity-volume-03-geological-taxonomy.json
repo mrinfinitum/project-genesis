@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "taxonomy": {
+    "Geological": {
+      "Minerals": [
+        "Silicate Minerals",
+        "Carbonate Minerals",
+        "Sulfide Minerals",
+        "Oxide Minerals",
+        "Halide Minerals",
+        "Phosphate Minerals",
+        "Sulfate Minerals",
+        "Native Elements",
+        "Clay Minerals",
+        "Hydrated Minerals"
+      ],
+      "Ores": [
+        "Ferrous Ores",
+        "Copper Ores",
+        "Nickel Ores",
+        "Titanium Ores",
+        "Aluminum Ores",
+        "Rare-Earth Ores",
+        "Radioactive Ores",
+        "Precious-Metal Ores",
+        "Volatile-Rich Ores",
+        "Exotic-Metal Ores"
+      ],
+      "Crystals": [
+        "Prismatic Crystals",
+        "Luminescent Crystals",
+        "Piezoelectric Crystals",
+        "Thermal Crystals",
+        "Cryogenic Crystals",
+        "Magnetic Crystals",
+        "Resonant Crystals",
+        "Photonic Crystals",
+        "Plasma-Grown Crystals",
+        "Quantum Crystals"
+      ],
+      "Gems": [
+        "Transparent Gems",
+        "Opaque Gems",
+        "Iridescent Gems",
+        "Biogenic Gems",
+        "Meteoric Gems",
+        "Pressure-Formed Gems",
+        "Volcanic Gems",
+        "Oceanic Gems",
+        "Polar Gems",
+        "Exotic Gems"
+      ],
+      "Igneous Formations": [
+        "Basaltic Formations",
+        "Granitic Formations",
+        "Obsidian Fields",
+        "Lava Tubes",
+        "Caldera Deposits",
+        "Magma Chambers",
+        "Pyroclastic Beds",
+        "Volcanic Glass",
+        "Mantle Uplifts",
+        "Impact-Melt Formations"
+      ],
+      "Sedimentary Formations": [
+        "Layered Sandstone",
+        "Carbonate Reefs",
+        "Evaporite Beds",
+        "Shale Deposits",
+        "Deltaic Deposits",
+        "Aeolian Dunes",
+        "Glacial Deposits",
+        "Chemical Sediments",
+        "Organic Sediments",
+        "Deep-Basin Deposits"
+      ],
+      "Metamorphic Formations": [
+        "Slate Formations",
+        "Schist Formations",
+        "Gneiss Formations",
+        "Marble Formations",
+        "Quartzite Formations",
+        "Serpentinite Formations",
+        "High-Pressure Facies",
+        "Contact Metamorphic Zones",
+        "Shear-Zone Rocks",
+        "Shock-Metamorphic Rocks"
+      ],
+      "Exotic Planetary Materials": [
+        "Superdense Matter",
+        "Negative-Mass Minerals",
+        "Phase-Shifted Stone",
+        "Dark-Matter Inclusions",
+        "Gravitic Materials",
+        "Temporal Deposits",
+        "Vacuum Condensates",
+        "Dimensional Fragments",
+        "Neutron-Rich Matter",
+        "Unknown Geological Matter"
+      ]
+    }
+  }
+}

@@ -3,6 +3,8 @@ import biologicalCuriosityPack from "@/data/curiosity-volume-01-biological.json"
 import biologicalCuriosityTaxonomyPack from "@/data/curiosity-volume-01-biological-taxonomy.json";
 import faunaCuriosityPack from "@/data/curiosity-volume-02-fauna.json";
 import faunaCuriosityTaxonomyPack from "@/data/curiosity-volume-02-fauna-taxonomy.json";
+import geologicalCuriosityPack from "@/data/curiosity-volume-03-geological.json";
+import geologicalCuriosityTaxonomyPack from "@/data/curiosity-volume-03-geological-taxonomy.json";
 
 export const discoveryRarities = [
   { id: "common", displayName: "Common", displayOrder: 1, defaultSpawnWeight: 1 },
@@ -279,6 +281,8 @@ export const biologicalCuriosityVolume = biologicalCuriosityPack as ImportedCuri
 export const biologicalCuriosityTaxonomy = biologicalCuriosityTaxonomyPack as ImportedCuriosityTaxonomyPack;
 export const faunaCuriosityVolume = faunaCuriosityPack as ImportedCuriosityPack;
 export const faunaCuriosityTaxonomy = faunaCuriosityTaxonomyPack as ImportedCuriosityTaxonomyPack;
+export const geologicalCuriosityVolume = geologicalCuriosityPack as ImportedCuriosityPack;
+export const geologicalCuriosityTaxonomy = geologicalCuriosityTaxonomyPack as ImportedCuriosityTaxonomyPack;
 
 const biologicalCategoryAliases: Record<string, string> = {
   Flora: "biological-flora",
@@ -346,45 +350,55 @@ export const curiosityCategories: CuriosityCategory[] = [
     ["Symbiotic and Parasitic Life", ["Symbiotic", "Parasitic", "Host-Bound", "Colony-Bound", "Mutualistic", "Commensal", "Brood Parasites", "Cleaning Organisms", "Root Symbionts", "Coral Symbionts", "Hive Symbionts"]],
     ["Microfauna", ["Microscopic Swimmers", "Soil Microfauna", "Atmospheric Microfauna", "Aquatic Microfauna", "Thermal Microfauna", "Cryogenic Microfauna", "Radiotrophic Microfauna", "Crystal-Dwelling Microfauna", "Biofilm Colonies", "Magnetic Microfauna", "Symbiotic Microfauna"]]
   ]),
-  curiosityCategory("Intelligent Lifeforms", 3, "Primitive, advanced, ancient, and unknown intelligences discovered through survey and exploration.", [
+  curiosityCategory("Geological", 3, "Minerals, ores, crystals, gems, rock formations, and exotic planetary materials discovered through survey and sampling.", [
+    ["Minerals", ["Silicate Minerals", "Carbonate Minerals", "Sulfide Minerals", "Oxide Minerals", "Halide Minerals", "Phosphate Minerals", "Sulfate Minerals", "Native Elements", "Clay Minerals", "Hydrated Minerals"]],
+    ["Ores", ["Ferrous Ores", "Copper Ores", "Nickel Ores", "Titanium Ores", "Aluminum Ores", "Rare-Earth Ores", "Radioactive Ores", "Precious-Metal Ores", "Volatile-Rich Ores", "Exotic-Metal Ores"]],
+    ["Crystals", ["Prismatic Crystals", "Luminescent Crystals", "Piezoelectric Crystals", "Thermal Crystals", "Cryogenic Crystals", "Magnetic Crystals", "Resonant Crystals", "Photonic Crystals", "Plasma-Grown Crystals", "Quantum Crystals"]],
+    ["Gems", ["Transparent Gems", "Opaque Gems", "Iridescent Gems", "Biogenic Gems", "Meteoric Gems", "Pressure-Formed Gems", "Volcanic Gems", "Oceanic Gems", "Polar Gems", "Exotic Gems"]],
+    ["Igneous Formations", ["Basaltic Formations", "Granitic Formations", "Obsidian Fields", "Lava Tubes", "Caldera Deposits", "Magma Chambers", "Pyroclastic Beds", "Volcanic Glass", "Mantle Uplifts", "Impact-Melt Formations"]],
+    ["Sedimentary Formations", ["Layered Sandstone", "Carbonate Reefs", "Evaporite Beds", "Shale Deposits", "Deltaic Deposits", "Aeolian Dunes", "Glacial Deposits", "Chemical Sediments", "Organic Sediments", "Deep-Basin Deposits"]],
+    ["Metamorphic Formations", ["Slate Formations", "Schist Formations", "Gneiss Formations", "Marble Formations", "Quartzite Formations", "Serpentinite Formations", "High-Pressure Facies", "Contact Metamorphic Zones", "Shear-Zone Rocks", "Shock-Metamorphic Rocks"]],
+    ["Exotic Planetary Materials", ["Superdense Matter", "Negative-Mass Minerals", "Phase-Shifted Stone", "Dark-Matter Inclusions", "Gravitic Materials", "Temporal Deposits", "Vacuum Condensates", "Dimensional Fragments", "Neutron-Rich Matter", "Unknown Geological Matter"]]
+  ]),
+  curiosityCategory("Intelligent Lifeforms", 4, "Primitive, advanced, ancient, and unknown intelligences discovered through survey and exploration.", [
     ["Primitive Lifeforms", ["Tribal", "Nomadic", "Tool-Using", "Aquatic", "Subterranean", "Hive-Based"]],
     ["Advanced Lifeforms", ["Industrial", "Spacefaring", "Synthetic", "Psionic", "Collective Intelligence", "Post-Biological"]],
     ["Ancient Lifeforms", ["Precursor Species", "Dormant Species", "Extinct Species", "Preserved Species", "Ascended Species"]],
     ["Unknown Intelligence", ["Unclassified Organisms", "Signal-Based Intelligence", "Distributed Intelligence", "Planetary Intelligence", "Machine-Life Hybrids"]]
   ], "Lifeforms"),
-  curiosityCategory("Minerals", 4, "Mineral, crystal, superconductive, optical, and exotic geological curiosities.", [
+  curiosityCategory("Minerals", 5, "Mineral, crystal, superconductive, optical, and exotic geological curiosities.", [
     ["Common Minerals", ["Silicates", "Carbonates", "Sulfides", "Oxides", "Salts", "Clays"]],
     ["Rare Minerals", ["Rare Crystals", "Radioactive Minerals", "Piezoelectric Minerals", "Superconductive Minerals", "Optical Minerals"]],
     ["Exotic Minerals", ["Gravity-Reactive Minerals", "Quantum Minerals", "Phase-Shifted Minerals", "Energy-Storing Minerals", "Time-Anomalous Minerals"]],
     ["Crystal Formations", ["Single Crystals", "Crystal Clusters", "Crystal Caverns", "Floating Crystals", "Living Crystals", "Resonant Crystals"]]
   ]),
-  curiosityCategory("Ores and Elements", 5, "Industrial, precious, radioactive, atmospheric, and exotic elemental curiosities.", [
+  curiosityCategory("Ores and Elements", 6, "Industrial, precious, radioactive, atmospheric, and exotic elemental curiosities.", [
     ["Industrial Ores", ["Iron-Bearing", "Copper-Bearing", "Aluminum-Bearing", "Nickel-Bearing", "Titanium-Bearing", "Chromium-Bearing"]],
     ["Precious Ores", ["Gold-Bearing", "Silver-Bearing", "Platinum-Group", "Gem-Bearing"]],
     ["Radioactive Ores", ["Uranium-Bearing", "Thorium-Bearing", "Exotic Isotopes"]],
     ["Atmospheric Elements", ["Noble Gases", "Reactive Gases", "Fuel Gases", "Exotic Atmospheric Compounds"]],
     ["Exotic Elements", ["Stable Superheavy Elements", "Metastable Elements", "Alien Alloys", "Unknown Elements"]]
   ], "Elements"),
-  curiosityCategory("Organic Materials", 6, "Biological samples, useful organics, and hazardous organic compounds.", [
+  curiosityCategory("Organic Materials", 7, "Biological samples, useful organics, and hazardous organic compounds.", [
     ["Biological Samples", ["Tissue Samples", "Sap", "Venom", "Blood Analogues", "Chitin", "Bone Analogues", "Neural Tissue", "Reproductive Samples"]],
     ["Useful Organics", ["Medicinal Compounds", "Nutrient Compounds", "Fibers", "Resins", "Oils", "Enzymes", "Pigments", "Adhesives"]],
     ["Hazardous Organics", ["Toxins", "Pathogens", "Spores", "Parasites", "Corrosive Secretions", "Neuroactive Compounds", "Hallucinogens", "Mutagens"]],
     ["Biopolymers", ["Elastic Biopolymers", "Armor Biopolymers", "Conductive Biopolymers", "Transparent Biopolymers", "Self-Healing Biopolymers", "Thermal Biopolymers", "Cryogenic Biopolymers", "Memory Biopolymers"]]
   ], "Organics"),
-  curiosityCategory("Fossils and Preserved Life", 7, "Fossil, frozen, amber-preserved, and trace evidence of extinct or dormant life.", [
+  curiosityCategory("Fossils and Preserved Life", 8, "Fossil, frozen, amber-preserved, and trace evidence of extinct or dormant life.", [
     ["Flora Fossils", ["Petrified Plants", "Seed Fossils", "Spore Fossils", "Root Networks", "Leaf Impressions", "Pollen Beds", "Fossilized Reefs", "Ancient Growth Rings"]],
     ["Fauna Fossils", ["Skeletons", "Shells", "Imprints", "Amber-Preserved Organisms", "Frozen Organisms", "Mineralized Carapaces", "Egg Fossils", "Mass Fossil Beds"]],
     ["Intelligent-Life Fossils", ["Remains", "Burial Sites", "Genetic Archives", "Preserved Specimens", "Cranial Fossils", "Tool-Bearing Remains", "Ritual Interments", "Cloned Remnants"]],
     ["Trace Fossils", ["Tracks", "Burrows", "Nests", "Feeding Marks", "Colony Imprints", "Migration Trails", "Molt Layers", "Coprolite Deposits"]]
   ], "Fossils"),
-  curiosityCategory("Ancient Relics", 8, "Civilian, scientific, religious, military, and cultural relics from prior civilizations.", [
+  curiosityCategory("Ancient Relics", 9, "Civilian, scientific, religious, military, and cultural relics from prior civilizations.", [
     ["Civilian Relics", ["Tools", "Household Objects", "Navigation Devices", "Records", "Currency", "Art Objects"]],
     ["Scientific Relics", ["Instruments", "Data Archives", "Research Devices", "Samples", "Observatories"]],
     ["Religious Relics", ["Idols", "Ceremonial Objects", "Shrines", "Tablets", "Crowns", "Totems"]],
     ["Military Relics", ["Armor", "Weapons", "Defense Systems", "Command Devices", "Fleet Markers"]],
     ["Cultural Relics", ["Music Devices", "Memory Objects", "Artifacts of Governance", "Games", "Symbols", "Language Stones"]]
   ], "Relics"),
-  curiosityCategory("Alien Technology", 9, "Alien computation, power, navigation, communication, terraforming, fabrication, and unidentified machines.", [
+  curiosityCategory("Alien Technology", 10, "Alien computation, power, navigation, communication, terraforming, fabrication, and unidentified machines.", [
     ["Computation", ["AI Cores", "Quantum Processors", "Neural Interfaces", "Data Crystals", "Memory Lattices"]],
     ["Power Systems", ["Energy Cores", "Fusion Systems", "Antimatter Systems", "Zero-Point Systems", "Unknown Power Devices"]],
     ["Navigation", ["Star Maps", "Navigation Cores", "Dimensional Compasses", "Jump Calculators", "Orbital Keys"]],
@@ -393,20 +407,20 @@ export const curiosityCategories: CuriosityCategory[] = [
     ["Fabrication", ["Molecular Forges", "Replicators", "Nanite Systems", "Material Printers", "Assembly Cores"]],
     ["Unknown Technology", ["Unidentified Devices", "Inactive Machines", "Sealed Systems", "Impossible Mechanisms", "Fragmentary Technology"]]
   ], "Alien Tech"),
-  curiosityCategory("Energy Sources", 10, "Natural, exotic, biological, and artificial energy-source curiosities.", [
+  curiosityCategory("Energy Sources", 11, "Natural, exotic, biological, and artificial energy-source curiosities.", [
     ["Natural Energy", ["Geothermal", "Solar-Absorbing", "Chemical", "Radioactive", "Magnetic"]],
     ["Exotic Energy", ["Plasma", "Quantum", "Dark Energy", "Vacuum Energy", "Gravitational Energy", "Neutrino Energy"]],
     ["Biological Energy", ["Bioelectric Organisms", "Energy-Producing Flora", "Symbiotic Power Sources", "Living Batteries"]],
     ["Artificial Energy", ["Power Cells", "Ancient Reactors", "Energy Capsules", "Stored Plasma", "Unknown Energy Devices"]]
   ], "Energy"),
-  curiosityCategory("Ruins and Structures", 11, "Settlement, scientific, religious, industrial, and unknown structures discovered through exploration.", [
+  curiosityCategory("Ruins and Structures", 12, "Settlement, scientific, religious, industrial, and unknown structures discovered through exploration.", [
     ["Settlements", ["Villages", "Cities", "Colonies", "Subterranean Settlements", "Floating Settlements"]],
     ["Scientific Structures", ["Laboratories", "Observatories", "Archives", "Test Sites", "Research Stations"]],
     ["Religious Structures", ["Temples", "Shrines", "Monuments", "Burial Structures", "Pilgrimage Sites"]],
     ["Industrial Structures", ["Mines", "Factories", "Refineries", "Power Plants", "Fabrication Complexes"]],
     ["Unknown Structures", ["Monoliths", "Vaults", "Sealed Chambers", "Geometric Complexes", "Impossible Architecture"]]
   ], "Ruins"),
-  curiosityCategory("Unknown Objects", 12, "Unknown materials, devices, biological objects, signals, and anomalous objects.", [
+  curiosityCategory("Unknown Objects", 13, "Unknown materials, devices, biological objects, signals, and anomalous objects.", [
     ["Unknown Materials", ["Unclassified Solids", "Unclassified Liquids", "Unclassified Gases", "Phase-Variable Matter", "Self-Organizing Matter"]],
     ["Unknown Devices", ["Sealed Devices", "Inactive Devices", "Responsive Devices", "Signal-Producing Devices", "Self-Repairing Devices"]],
     ["Unknown Biological Objects", ["Eggs", "Cocoons", "Spores", "Dormant Organisms", "Biological Capsules"]],
@@ -863,16 +877,28 @@ const faunaImportConfig: CuriosityVolumeImportConfig = {
   generationNotes: "Imported from NOVERIS Curiosity Codex Volume II: Fauna Curiosities."
 };
 
+const geologicalImportConfig: CuriosityVolumeImportConfig = {
+  volumeId: "geological",
+  defaultTag: "geological",
+  defaultResearchIds: ["planet_scan", "resource_scan", "geology"],
+  defaultEquipmentIds: ["resource_scanner_basic", "geology_sampler"],
+  specialEvent: "geological-curiosity-volume-03",
+  generationNotes: "Imported from NOVERIS Curiosity Codex Volume III: Geological Curiosities."
+};
+
 export const biologicalCuriosityRecords = biologicalCuriosityVolume.records.map((record) => importedCuriosityRecord(record, biologicalCuriosityVolume, biologicalImportConfig));
 export const faunaCuriosityRecords = faunaCuriosityVolume.records.map((record) => importedCuriosityRecord(record, faunaCuriosityVolume, faunaImportConfig));
+export const geologicalCuriosityRecords = geologicalCuriosityVolume.records.map((record) => importedCuriosityRecord(record, geologicalCuriosityVolume, geologicalImportConfig));
 
 export const biologicalCuriosityNavigation = importedCuriosityNavigation(biologicalCuriosityTaxonomy);
 export const faunaCuriosityNavigation = importedCuriosityNavigation(faunaCuriosityTaxonomy);
+export const geologicalCuriosityNavigation = importedCuriosityNavigation(geologicalCuriosityTaxonomy);
 
 export const canonicalDiscoveries: DiscoveryRecord[] = [
   ...coreDiscoveryRecords,
   ...biologicalCuriosityRecords,
-  ...faunaCuriosityRecords
+  ...faunaCuriosityRecords,
+  ...geologicalCuriosityRecords
 ];
 
 export function getCuriositiesByVolume(volumeId: string) {

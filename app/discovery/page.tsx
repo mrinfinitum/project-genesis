@@ -9,6 +9,8 @@ import {
   discoveryRarities,
   faunaCuriosityNavigation,
   faunaCuriosityVolume,
+  geologicalCuriosityNavigation,
+  geologicalCuriosityVolume,
   getCuriosityArtwork,
   getCuriosityClassification,
   getCuriositiesByVolume,
@@ -102,6 +104,7 @@ function DiscoveryTreeItem({ node, activeFolder, depth = 0 }: { node: DiscoveryT
 function buildDiscoveryTree(): DiscoveryTreeNode[] {
   const biologicalRecords = getCuriositiesByVolume("biological");
   const faunaRecords = getCuriositiesByVolume("fauna");
+  const geologicalRecords = getCuriositiesByVolume("geological");
   const childrenForVolume = (volumeId: string, records: DiscoveryRecord[], navigation: typeof biologicalCuriosityNavigation) => navigation.map((category) => {
     const categoryRecords = records.filter((record) => record.categoryId === category.id);
     return {
@@ -131,6 +134,7 @@ function buildDiscoveryTree(): DiscoveryTreeNode[] {
     { id: "all", label: "All Discoveries", href: folderHref("all"), count: canonicalDiscoveries.length, icon: "curiosity" },
     { id: "biological", label: "Biological", href: folderHref("biological"), count: biologicalRecords.length, icon: "folder", children: childrenForVolume("biological", biologicalRecords, biologicalCuriosityNavigation) },
     { id: "fauna", label: "Fauna", href: folderHref("fauna"), count: faunaRecords.length, icon: "folder", children: childrenForVolume("fauna", faunaRecords, faunaCuriosityNavigation) },
+    { id: "geological", label: "Geological", href: folderHref("geological"), count: geologicalRecords.length, icon: "folder", children: childrenForVolume("geological", geologicalRecords, geologicalCuriosityNavigation) },
     { id: "journal", label: "Discovery Journal", href: "/discovery-journal", count: 0, icon: "journal" }
   ];
 }
@@ -138,7 +142,7 @@ function buildDiscoveryTree(): DiscoveryTreeNode[] {
 function resolveRecords(folder: string) {
   if (!folder || folder === "all") return canonicalDiscoveries;
   const [volumeId, categoryId, classId, subclassId] = folder.split(":");
-  if (!["biological", "fauna"].includes(volumeId)) return canonicalDiscoveries;
+  if (!["biological", "fauna", "geological"].includes(volumeId)) return canonicalDiscoveries;
 
   return getCuriositiesByVolume(volumeId).filter((record) => {
     if (categoryId && record.categoryId !== categoryId) return false;
@@ -151,11 +155,12 @@ function resolveRecords(folder: string) {
 function folderTitle(folder: string) {
   if (folder === "biological") return "Biological";
   if (folder === "fauna") return "Fauna";
-  if (folder.startsWith("biological:") || folder.startsWith("fauna:")) {
+  if (folder === "geological") return "Geological";
+  if (folder.startsWith("biological:") || folder.startsWith("fauna:") || folder.startsWith("geological:")) {
     const first = resolveRecords(folder)[0];
-    if (!first) return folder.startsWith("fauna:") ? "Fauna" : "Biological";
+    if (!first) return folder.startsWith("fauna:") ? "Fauna" : folder.startsWith("geological:") ? "Geological" : "Biological";
     const { category, classRecord, subclassRecord } = getCuriosityClassification(first);
-    return subclassRecord?.displayName ?? classRecord?.displayName ?? category?.shortDisplayName ?? (folder.startsWith("fauna:") ? "Fauna" : "Biological");
+    return subclassRecord?.displayName ?? classRecord?.displayName ?? category?.shortDisplayName ?? (folder.startsWith("fauna:") ? "Fauna" : folder.startsWith("geological:") ? "Geological" : "Biological");
   }
   return "All Discoveries";
 }
@@ -223,7 +228,7 @@ export default async function DiscoveryLibraryPage({ searchParams }: { searchPar
             <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <WorkspaceBadge value={folder === "biological" || folder.startsWith("biological:") ? `Volume ${volumeNumber(biologicalCuriosityVolume)}` : folder === "fauna" || folder.startsWith("fauna:") ? `Volume ${volumeNumber(faunaCuriosityVolume)}` : "Canonical"} />
+                  <WorkspaceBadge value={folder === "biological" || folder.startsWith("biological:") ? `Volume ${volumeNumber(biologicalCuriosityVolume)}` : folder === "fauna" || folder.startsWith("fauna:") ? `Volume ${volumeNumber(faunaCuriosityVolume)}` : folder === "geological" || folder.startsWith("geological:") ? `Volume ${volumeNumber(geologicalCuriosityVolume)}` : "Canonical"} />
                   <WorkspaceBadge value={validation.status} />
                   {folder === "biological" ? <Link href="/discovery/biological" className="rounded border border-cyan-300/20 bg-cyan-300/10 px-2 py-1 text-[0.62rem] font-black uppercase tracking-[0.14em] text-cyan-100">Open Biological Page</Link> : null}
                 </div>
@@ -233,6 +238,8 @@ export default async function DiscoveryLibraryPage({ searchParams }: { searchPar
                     ? "Volume I biological records organized by category, class, and subclass. Artwork stays PSD-first and syncs into records when previews are available."
                     : folder === "fauna" || folder.startsWith("fauna:")
                       ? "Volume II fauna records organized by category, class, and subclass. Artwork is intentionally pending until PSDs and preview derivatives are synced."
+                      : folder === "geological" || folder.startsWith("geological:")
+                        ? "Volume III geological records organized by category, class, and subclass. Artwork is intentionally pending until PSDs and preview derivatives are synced."
                     : "Discovery records, biological volume content, taxonomy, artwork status, and journal access gathered into an Asset Library-style browser."}
                 </p>
               </div>

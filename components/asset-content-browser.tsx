@@ -6,6 +6,7 @@ import { Box, Boxes, ChevronRight, FileImage, Folder, FolderOpen, Search } from 
 import { WorkspaceMiniStat, WorkspaceSearchBar } from "@/components/ui/workspace";
 import biologicalCuriosityTaxonomyPack from "@/data/curiosity-volume-01-biological-taxonomy.json";
 import faunaCuriosityTaxonomyPack from "@/data/curiosity-volume-02-fauna-taxonomy.json";
+import geologicalCuriosityTaxonomyPack from "@/data/curiosity-volume-03-geological-taxonomy.json";
 import type { AssetProductionState } from "@/lib/assets/asset-production";
 
 type InventoryItem = AssetProductionState["assetLibraryInventory"]["items"][number];
@@ -41,7 +42,7 @@ const legacyDiscoveryFolderRedirects: Record<string, string> = {
   "discovery/lifeforms": "discovery/fauna",
   "discovery/plants": "discovery/biological:biological-flora",
   "discovery/creatures": "discovery/fauna",
-  "discovery/rare-matter": "discovery",
+  "discovery/rare-matter": "discovery/geological",
   "discovery/signals": "discovery",
   "discovery/anomalies": "discovery"
 };
@@ -137,7 +138,8 @@ const contentTree: ContentBrowserNode[] = [
     categoryIds: ["discovery"],
     children: [
       discoveryVolumeNodes("biological", "Biological", biologicalCuriosityTaxonomyPack as CuriosityTaxonomyPack),
-      discoveryVolumeNodes("fauna", "Fauna", faunaCuriosityTaxonomyPack as CuriosityTaxonomyPack)
+      discoveryVolumeNodes("fauna", "Fauna", faunaCuriosityTaxonomyPack as CuriosityTaxonomyPack),
+      discoveryVolumeNodes("geological", "Geological", geologicalCuriosityTaxonomyPack as CuriosityTaxonomyPack)
     ]
   },
   {
@@ -177,7 +179,7 @@ const contentTree: ContentBrowserNode[] = [
   { id: "engine", label: "Engine", categoryIds: ["unmapped"], terms: ["runtime", "engine", "mapping"] }
 ];
 
-const defaultExpanded = ["universe", "civilization", "discovery", "discovery/biological", "discovery/fauna", "world-systems", "user-interface"];
+const defaultExpanded = ["universe", "civilization", "discovery", "discovery/biological", "discovery/fauna", "discovery/geological", "world-systems", "user-interface"];
 const statusFilters: Array<"all" | Exclude<InventoryStatus, "missing">> = ["all", "approved", "published", "needs_review", "uploaded", "processing", "invalid", "unmapped"];
 const sortOptions = ["name", "newest", "oldest", "status", "recently_updated", "recently_used"] as const;
 const engineFilters = ["all", "web", "roblox", "ios", "android"] as const;
