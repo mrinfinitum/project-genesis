@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "taxonomy": {
+    "Ancient Relics": {
+      "Civilian Artifacts": [
+        "Domestic Implements",
+        "Trade Tokens",
+        "Personal Adornments",
+        "Household Devices",
+        "Children's Objects",
+        "Travel Implements",
+        "Food Preparation Tools",
+        "Communication Keepsakes",
+        "Civic Identification",
+        "Everyday Containers"
+      ],
+      "Scientific Artifacts": [
+        "Astronomical Instruments",
+        "Biological Instruments",
+        "Geological Instruments",
+        "Medical Instruments",
+        "Analytical Devices",
+        "Measurement Standards",
+        "Experimental Chambers",
+        "Research Samples",
+        "Data Recording Devices",
+        "Field Survey Tools"
+      ],
+      "Religious Relics": [
+        "Prayer Objects",
+        "Sacred Icons",
+        "Pilgrimage Tokens",
+        "Funerary Objects",
+        "Temple Implements",
+        "Prophetic Devices",
+        "Ancestral Relics",
+        "Ritual Texts",
+        "Sacrificial Implements",
+        "Celestial Worship Objects"
+      ],
+      "Military Relics": [
+        "Defensive Equipment",
+        "Command Insignia",
+        "Field Instruments",
+        "Ceremonial Arms",
+        "Armor Fragments",
+        "Fortification Components",
+        "Unit Standards",
+        "Strategic Tablets",
+        "Veteran Keepsakes",
+        "Siege Mechanisms"
+      ],
+      "Cultural Objects": [
+        "Musical Instruments",
+        "Performance Masks",
+        "Sculptural Fragments",
+        "Painted Tablets",
+        "Storytelling Devices",
+        "Festival Objects",
+        "Language Stones",
+        "Culinary Heritage Objects",
+        "Games and Puzzles",
+        "Architectural Ornament"
+      ],
+      "Ceremonial Objects": [
+        "Coronation Regalia",
+        "Diplomatic Gifts",
+        "Oath Objects",
+        "Coming-of-Age Tokens",
+        "Marriage Relics",
+        "Harvest Ceremony Objects",
+        "Founding Relics",
+        "Victory Commemorations",
+        "Mourning Objects",
+        "Cosmic Cycle Relics"
+      ],
+      "Ancient Machines": [
+        "Mechanical Calculators",
+        "Automata",
+        "Energy Regulators",
+        "Navigation Engines",
+        "Terraforming Components",
+        "Fabrication Devices",
+        "Environmental Controllers",
+        "Memory Engines",
+        "Signal Beacons",
+        "Unknown Machines"
+      ],
+      "Lost Knowledge": [
+        "Encoded Tablets",
+        "Star Maps",
+        "Medical Archives",
+        "Engineering Schematics",
+        "Philosophical Records",
+        "Legal Codes",
+        "Historical Chronicles",
+        "Agricultural Archives",
+        "Language Archives",
+        "Forbidden Records"
+      ]
+    }
+  }
+}

@@ -5,6 +5,8 @@ import faunaCuriosityPack from "@/data/curiosity-volume-02-fauna.json";
 import faunaCuriosityTaxonomyPack from "@/data/curiosity-volume-02-fauna-taxonomy.json";
 import geologicalCuriosityPack from "@/data/curiosity-volume-03-geological.json";
 import geologicalCuriosityTaxonomyPack from "@/data/curiosity-volume-03-geological-taxonomy.json";
+import ancientRelicsCuriosityPack from "@/data/curiosity-volume-04-ancient-relics.json";
+import ancientRelicsCuriosityTaxonomyPack from "@/data/curiosity-volume-04-ancient-relics-taxonomy.json";
 
 export const discoveryRarities = [
   { id: "common", displayName: "Common", displayOrder: 1, defaultSpawnWeight: 1 },
@@ -156,6 +158,7 @@ export type DiscoveryRecord = {
   subclassId: string;
   subcategoryId: string;
   scientificName: string;
+  catalogName?: string;
   alternateNames?: string[];
   description: string;
   lore: string;
@@ -177,6 +180,21 @@ export type DiscoveryRecord = {
   relatedLifeformIds: string[];
   requiredEquipmentIds: string[];
   requiredScanLevel: number;
+  requiredResearchLevel?: number;
+  discoveryLocation?: string;
+  recoveryMethod?: string;
+  condition?: string;
+  hazardLevel?: string;
+  estimatedAgeYears?: number;
+  originConfidencePercent?: number;
+  translationProgressPercent?: number;
+  integrityPercent?: number;
+  museumValue?: number;
+  culturalValue?: number;
+  historicalValue?: number;
+  collectionValue?: number;
+  repeatable?: boolean;
+  maximumKnownInstances?: number;
   spawnRules: DiscoverySpawnRule;
   compatiblePlanetClasses?: string[];
   assetProfile: DiscoveryAssetProfile;
@@ -219,7 +237,8 @@ type ImportedCuriosity = {
   canonical_id: string;
   name: string;
   slug?: string;
-  scientific_name: string;
+  scientific_name?: string;
+  catalog_name?: string;
   category: string;
   class: string;
   subclass: string;
@@ -228,7 +247,13 @@ type ImportedCuriosity = {
   description: string;
   discovery_location?: string;
   collection_method?: string;
+  recovery_method?: string;
+  condition?: string;
   hazard_level?: string;
+  estimated_age_years?: number;
+  origin_confidence_percent?: number;
+  translation_progress_percent?: number;
+  integrity_percent?: number;
   discovery_chance?: number;
   required_scan_level?: number;
   required_research_level?: number;
@@ -236,6 +261,8 @@ type ImportedCuriosity = {
   research_value?: number;
   trade_value?: number;
   museum_value?: number;
+  cultural_value?: number;
+  historical_value?: number;
   collection_value?: number;
   repeatable?: boolean;
   maximum_known_instances?: number;
@@ -283,6 +310,8 @@ export const faunaCuriosityVolume = faunaCuriosityPack as ImportedCuriosityPack;
 export const faunaCuriosityTaxonomy = faunaCuriosityTaxonomyPack as ImportedCuriosityTaxonomyPack;
 export const geologicalCuriosityVolume = geologicalCuriosityPack as ImportedCuriosityPack;
 export const geologicalCuriosityTaxonomy = geologicalCuriosityTaxonomyPack as ImportedCuriosityTaxonomyPack;
+export const ancientRelicsCuriosityVolume = ancientRelicsCuriosityPack as ImportedCuriosityPack;
+export const ancientRelicsCuriosityTaxonomy = ancientRelicsCuriosityTaxonomyPack as ImportedCuriosityTaxonomyPack;
 
 const biologicalCategoryAliases: Record<string, string> = {
   Flora: "biological-flora",
@@ -391,12 +420,15 @@ export const curiosityCategories: CuriosityCategory[] = [
     ["Intelligent-Life Fossils", ["Remains", "Burial Sites", "Genetic Archives", "Preserved Specimens", "Cranial Fossils", "Tool-Bearing Remains", "Ritual Interments", "Cloned Remnants"]],
     ["Trace Fossils", ["Tracks", "Burrows", "Nests", "Feeding Marks", "Colony Imprints", "Migration Trails", "Molt Layers", "Coprolite Deposits"]]
   ], "Fossils"),
-  curiosityCategory("Ancient Relics", 9, "Civilian, scientific, religious, military, and cultural relics from prior civilizations.", [
-    ["Civilian Relics", ["Tools", "Household Objects", "Navigation Devices", "Records", "Currency", "Art Objects"]],
-    ["Scientific Relics", ["Instruments", "Data Archives", "Research Devices", "Samples", "Observatories"]],
-    ["Religious Relics", ["Idols", "Ceremonial Objects", "Shrines", "Tablets", "Crowns", "Totems"]],
-    ["Military Relics", ["Armor", "Weapons", "Defense Systems", "Command Devices", "Fleet Markers"]],
-    ["Cultural Relics", ["Music Devices", "Memory Objects", "Artifacts of Governance", "Games", "Symbols", "Language Stones"]]
+  curiosityCategory("Ancient Relics", 9, "Recovered civilian, scientific, religious, military, cultural, ceremonial, machine, and knowledge artifacts from prior civilizations.", [
+    ["Civilian Artifacts", ["Domestic Implements", "Trade Tokens", "Personal Adornments", "Household Devices", "Children's Objects", "Travel Implements", "Food Preparation Tools", "Communication Keepsakes", "Civic Identification", "Everyday Containers"]],
+    ["Scientific Artifacts", ["Astronomical Instruments", "Biological Instruments", "Geological Instruments", "Medical Instruments", "Analytical Devices", "Measurement Standards", "Experimental Chambers", "Research Samples", "Data Recording Devices", "Field Survey Tools"]],
+    ["Religious Relics", ["Prayer Objects", "Sacred Icons", "Pilgrimage Tokens", "Funerary Objects", "Temple Implements", "Prophetic Devices", "Ancestral Relics", "Ritual Texts", "Sacrificial Implements", "Celestial Worship Objects"]],
+    ["Military Relics", ["Defensive Equipment", "Command Insignia", "Field Instruments", "Ceremonial Arms", "Armor Fragments", "Fortification Components", "Unit Standards", "Strategic Tablets", "Veteran Keepsakes", "Siege Mechanisms"]],
+    ["Cultural Objects", ["Musical Instruments", "Performance Masks", "Sculptural Fragments", "Painted Tablets", "Storytelling Devices", "Festival Objects", "Language Stones", "Culinary Heritage Objects", "Games and Puzzles", "Architectural Ornament"]],
+    ["Ceremonial Objects", ["Coronation Regalia", "Diplomatic Gifts", "Oath Objects", "Coming-of-Age Tokens", "Marriage Relics", "Harvest Ceremony Objects", "Founding Relics", "Victory Commemorations", "Mourning Objects", "Cosmic Cycle Relics"]],
+    ["Ancient Machines", ["Mechanical Calculators", "Automata", "Energy Regulators", "Navigation Engines", "Terraforming Components", "Fabrication Devices", "Environmental Controllers", "Memory Engines", "Signal Beacons", "Unknown Machines"]],
+    ["Lost Knowledge", ["Encoded Tablets", "Star Maps", "Medical Archives", "Engineering Schematics", "Philosophical Records", "Legal Codes", "Historical Chronicles", "Agricultural Archives", "Language Archives", "Forbidden Records"]]
   ], "Relics"),
   curiosityCategory("Alien Technology", 10, "Alien computation, power, navigation, communication, terraforming, fabrication, and unidentified machines.", [
     ["Computation", ["AI Cores", "Quantum Processors", "Neural Interfaces", "Data Crystals", "Memory Lattices"]],
@@ -649,9 +681,9 @@ const coreDiscoveryRecords: DiscoveryRecord[] = [
     slug: "orrery-of-the-silent-sun",
     displayName: "Orrery of the Silent Sun",
     categoryId: "ancient-relics",
-    classId: "scientific-relics",
-    subclassId: "observatories",
-    subcategoryId: "observatories",
+    classId: "scientific-artifacts",
+    subclassId: "astronomical-instruments",
+    subcategoryId: "astronomical-instruments",
     scientificName: "Machina Solaris Silentii",
     description: "An ancient mechanical model depicting a star system absent from all modern charts.",
     lore: "The orrery turns even when sealed in vacuum. One missing planet completes an orbit every thirteen days, and no telescope has yet found its star.",
@@ -772,7 +804,9 @@ const coreDiscoveryRecords: DiscoveryRecord[] = [
 
 function importedCuriosityRecord(record: ImportedCuriosity, pack: ImportedCuriosityPack, config: CuriosityVolumeImportConfig): DiscoveryRecord {
   const rarity = importedRarity(record.rarity);
-  const slug = `${slugify(record.name)}-${record.canonical_id.toLowerCase()}`;
+  const slug = config.volumeId === "ancient-relics" && record.slug
+    ? record.slug
+    : `${slugify(record.name)}-${record.canonical_id.toLowerCase()}`;
   const categoryId = importedCategoryId(record.category);
   const classId = slugify(record.class);
   const subclassId = slugify(record.subclass);
@@ -800,10 +834,11 @@ function importedCuriosityRecord(record: ImportedCuriosity, pack: ImportedCurios
     classId,
     subclassId,
     subcategoryId: subclassId,
-    scientificName: record.scientific_name,
+    scientificName: record.scientific_name ?? record.catalog_name ?? record.name,
+    catalogName: record.catalog_name,
     description: record.description,
     lore: record.description,
-    scientificNotes: record.discovery_location ? `Discovery location: ${record.discovery_location}. Collection method: ${record.collection_method ?? "Unspecified"}. Hazard level: ${record.hazard_level ?? "Unspecified"}.` : undefined,
+    scientificNotes: record.discovery_location ? `Discovery location: ${record.discovery_location}. Recovery method: ${record.recovery_method ?? record.collection_method ?? "Unspecified"}. Hazard level: ${record.hazard_level ?? "Unspecified"}.` : undefined,
     discoverySummary: `${record.name} is a ${record.rarity.toLowerCase()} ${config.defaultTag} curiosity cataloged in ${record.class} / ${record.subclass}.`,
     rarity,
     spawnWeight: raritySpawnWeight(rarity),
@@ -820,6 +855,21 @@ function importedCuriosityRecord(record: ImportedCuriosity, pack: ImportedCurios
     relatedLifeformIds: [],
     requiredEquipmentIds: config.defaultEquipmentIds,
     requiredScanLevel: scanLevel,
+    requiredResearchLevel: record.required_research_level,
+    discoveryLocation: record.discovery_location,
+    recoveryMethod: record.recovery_method ?? record.collection_method,
+    condition: record.condition,
+    hazardLevel: record.hazard_level,
+    estimatedAgeYears: record.estimated_age_years,
+    originConfidencePercent: record.origin_confidence_percent,
+    translationProgressPercent: record.translation_progress_percent,
+    integrityPercent: record.integrity_percent,
+    museumValue: record.museum_value,
+    culturalValue: record.cultural_value,
+    historicalValue: record.historical_value,
+    collectionValue: record.collection_value,
+    repeatable: record.repeatable,
+    maximumKnownInstances: record.maximum_known_instances,
     compatiblePlanetClasses,
     spawnRules: {
       planetClass: compatiblePlanetClasses,
@@ -888,22 +938,34 @@ const geologicalImportConfig: CuriosityVolumeImportConfig = {
   generationNotes: "Imported from NOVERIS Curiosity Codex Volume III: Geological Curiosities."
 };
 
+const ancientRelicsImportConfig: CuriosityVolumeImportConfig = {
+  volumeId: "ancient-relics",
+  defaultTag: "ancient-relics",
+  defaultResearchIds: ["planet_scan", "archaeology", "ancient_civilizations"],
+  defaultEquipmentIds: ["archaeology_scanner", "recovery_probe"],
+  specialEvent: "ancient-relics-curiosity-volume-04",
+  generationNotes: "Imported from NOVERIS Curiosity Codex Volume IV: Ancient Relics."
+};
+
 export const biologicalCuriosityRecords = biologicalCuriosityVolume.records.map((record) => importedCuriosityRecord(record, biologicalCuriosityVolume, biologicalImportConfig));
 export const faunaCuriosityRecords = faunaCuriosityVolume.records.map((record) => importedCuriosityRecord(record, faunaCuriosityVolume, faunaImportConfig));
 export const geologicalCuriosityRecords = geologicalCuriosityVolume.records.map((record) => importedCuriosityRecord(record, geologicalCuriosityVolume, geologicalImportConfig));
+export const ancientRelicsCuriosityRecords = ancientRelicsCuriosityVolume.records.map((record) => importedCuriosityRecord(record, ancientRelicsCuriosityVolume, ancientRelicsImportConfig));
 
 export const biologicalCuriosityNavigation = importedCuriosityNavigation(biologicalCuriosityTaxonomy);
 export const faunaCuriosityNavigation = importedCuriosityNavigation(faunaCuriosityTaxonomy);
 export const geologicalCuriosityNavigation = importedCuriosityNavigation(geologicalCuriosityTaxonomy);
+export const ancientRelicsCuriosityNavigation = importedCuriosityNavigation(ancientRelicsCuriosityTaxonomy);
 
 export const canonicalDiscoveries: DiscoveryRecord[] = [
   ...coreDiscoveryRecords,
   ...biologicalCuriosityRecords,
   ...faunaCuriosityRecords,
-  ...geologicalCuriosityRecords
+  ...geologicalCuriosityRecords,
+  ...ancientRelicsCuriosityRecords
 ];
 
-export const supportedCuriosityVolumeIds = ["biological", "fauna", "geological"] as const;
+export const supportedCuriosityVolumeIds = ["biological", "fauna", "geological", "ancient-relics"] as const;
 export type SupportedCuriosityVolumeId = typeof supportedCuriosityVolumeIds[number];
 
 function discoveryFolderKey(record: Pick<DiscoveryRecord, "volumeId" | "categoryId" | "classId" | "subclassId">, depth: "volume" | "category" | "class" | "subclass") {
@@ -1089,6 +1151,20 @@ function runDiscoverySystemValidation() {
 
   if (duplicateDiscoveryIds.size) issues.push({ severity: "error", code: "duplicate_discovery_id", message: "Curiosity IDs must be unique.", records: [...duplicateDiscoveryIds] });
   if (duplicateCuriositySlugs.size) issues.push({ severity: "error", code: "duplicate_curiosity_slug", message: "Curiosity slugs must be unique.", records: [...duplicateCuriositySlugs] });
+  const ancientRelicNames = ancientRelicsCuriosityRecords.map((record) => record.displayName.trim().toLowerCase());
+  if (new Set(ancientRelicNames).size !== ancientRelicNames.length) {
+    issues.push({ severity: "error", code: "duplicate_ancient_relic_name", message: "Volume IV curiosity names must be unique.", records: ancientRelicsCuriosityRecords.map((record) => record.displayName) });
+  }
+  if (ancientRelicsCuriosityRecords.length !== ancientRelicsCuriosityVolume.recordCount) {
+    issues.push({ severity: "error", code: "ancient_relic_record_count", message: "Volume IV must load its declared canonical record count.", records: [String(ancientRelicsCuriosityRecords.length), String(ancientRelicsCuriosityVolume.recordCount)] });
+  }
+  if (ancientRelicsCuriosityRecords[0]?.id !== "REL-0001" || ancientRelicsCuriosityRecords.at(-1)?.id !== "REL-0600") {
+    issues.push({ severity: "error", code: "ancient_relic_id_range", message: "Volume IV must preserve the REL-0001 through REL-0600 canonical range.", records: [ancientRelicsCuriosityRecords[0]?.id ?? "missing", ancientRelicsCuriosityRecords.at(-1)?.id ?? "missing"] });
+  }
+  const invalidUniqueRelics = ancientRelicsCuriosityRecords.filter((record) => record.rarity === "unique" && (record.maximumKnownInstances !== 1 || record.repeatable !== false));
+  if (invalidUniqueRelics.length) {
+    issues.push({ severity: "error", code: "ancient_relic_unique_contract", message: "Unique relics must be non-repeatable and limited to one known instance.", records: invalidUniqueRelics.map((record) => record.id) });
+  }
   for (const collection of discoveryCollections) {
     const missing = collection.discoveryIds.filter((id) => !discoveryIds.has(id));
     if (missing.length) issues.push({ severity: "error", code: "collection_missing_discovery", message: "Curiosity collections must reference canonical curiosities.", records: [collection.id, ...missing] });
