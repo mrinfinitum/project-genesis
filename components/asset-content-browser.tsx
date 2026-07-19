@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useEffect, useMemo, useState, type DragEvent, type KeyboardEvent, type MouseEvent } from "react";
 import { Box, Boxes, ChevronRight, FileImage, Folder, FolderOpen, Search } from "lucide-react";
 import { WorkspaceMiniStat, WorkspaceSearchBar } from "@/components/ui/workspace";
+import biologicalCuriosityTaxonomyPack from "@/data/curiosity-volume-01-biological-taxonomy.json";
+import faunaCuriosityTaxonomyPack from "@/data/curiosity-volume-02-fauna-taxonomy.json";
 import type { AssetProductionState } from "@/lib/assets/asset-production";
 
 type InventoryItem = AssetProductionState["assetLibraryInventory"]["items"][number];
@@ -19,6 +21,9 @@ type ContentBrowserNode = {
 
 type ViewMode = "grid" | "list";
 type ThumbnailSize = "small" | "medium" | "large";
+type CuriosityTaxonomyPack = {
+  taxonomy: Record<string, Record<string, string[]>>;
+};
 
 const browserPreferenceKeys = {
   activeNode: "project-genesis-content-browser-active-node",
@@ -29,6 +34,68 @@ const browserPreferenceKeys = {
   recentlyOpened: "project-genesis-content-browser-recently-opened",
   folderOverrides: "project-genesis-content-browser-folder-overrides"
 };
+
+const legacyDiscoveryFolderRedirects: Record<string, string> = {
+  "discovery/artifacts": "discovery/biological:fossils-and-preserved-life",
+  "discovery/ancient-technology": "discovery/biological:fossils-and-preserved-life",
+  "discovery/lifeforms": "discovery/fauna",
+  "discovery/plants": "discovery/biological:biological-flora",
+  "discovery/creatures": "discovery/fauna",
+  "discovery/rare-matter": "discovery",
+  "discovery/signals": "discovery",
+  "discovery/anomalies": "discovery"
+};
+
+function slugifyFolder(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function discoveryCategoryFolderId(categoryName: string) {
+  if (categoryName === "Flora") return "biological-flora";
+  return slugifyFolder(categoryName);
+}
+
+function discoveryVolumeNodes(volumeId: string, label: string, taxonomyPack: CuriosityTaxonomyPack): ContentBrowserNode {
+  const categoryNodes = Object.entries(taxonomyPack.taxonomy).map(([categoryName, classes]) => {
+    const categoryId = discoveryCategoryFolderId(categoryName);
+    return {
+      id: `discovery/${volumeId}:${categoryId}`,
+      label: categoryName === "Flora" ? "Flora" : categoryName,
+      categoryIds: ["discovery"] as InventoryItem["categoryId"][],
+      terms: [volumeId, label, categoryName, categoryId],
+      children: Object.entries(classes).map(([className, subclasses]) => {
+        const classId = slugifyFolder(className);
+        return {
+          id: `discovery/${volumeId}:${categoryId}:${classId}`,
+          label: className,
+          categoryIds: ["discovery"] as InventoryItem["categoryId"][],
+          terms: [volumeId, label, categoryName, className, classId],
+          children: subclasses.map((subclassName) => {
+            const subclassId = slugifyFolder(subclassName);
+            return {
+              id: `discovery/${volumeId}:${categoryId}:${classId}:${subclassId}`,
+              label: subclassName,
+              categoryIds: ["discovery"] as InventoryItem["categoryId"][],
+              terms: [volumeId, label, categoryName, className, subclassName, subclassId]
+            };
+          })
+        };
+      })
+    };
+  });
+
+  return {
+    id: `discovery/${volumeId}`,
+    label,
+    categoryIds: ["discovery"],
+    terms: [volumeId, label],
+    children: categoryNodes
+  };
+}
 
 const contentTree: ContentBrowserNode[] = [
   {
@@ -69,14 +136,8 @@ const contentTree: ContentBrowserNode[] = [
     label: "Discovery",
     categoryIds: ["discovery"],
     children: [
-      { id: "discovery/artifacts", label: "Artifacts", categoryIds: ["discovery"], terms: ["artifact"] },
-      { id: "discovery/ancient-technology", label: "Ancient Technology", categoryIds: ["discovery"], terms: ["ancient", "technology"] },
-      { id: "discovery/lifeforms", label: "Lifeforms", categoryIds: ["discovery"], terms: ["lifeform"] },
-      { id: "discovery/plants", label: "Plants", categoryIds: ["discovery"], terms: ["plant"] },
-      { id: "discovery/creatures", label: "Creatures", categoryIds: ["discovery"], terms: ["creature"] },
-      { id: "discovery/rare-matter", label: "Rare Matter", categoryIds: ["discovery"], terms: ["rare matter"] },
-      { id: "discovery/signals", label: "Signals", categoryIds: ["discovery"], terms: ["signal"] },
-      { id: "discovery/anomalies", label: "Anomalies", categoryIds: ["discovery"], terms: ["anomaly", "anomalies"] }
+      discoveryVolumeNodes("biological", "Biological", biologicalCuriosityTaxonomyPack as CuriosityTaxonomyPack),
+      discoveryVolumeNodes("fauna", "Fauna", faunaCuriosityTaxonomyPack as CuriosityTaxonomyPack)
     ]
   },
   {
@@ -116,7 +177,7 @@ const contentTree: ContentBrowserNode[] = [
   { id: "engine", label: "Engine", categoryIds: ["unmapped"], terms: ["runtime", "engine", "mapping"] }
 ];
 
-const defaultExpanded = ["universe", "civilization", "discovery", "world-systems", "user-interface"];
+const defaultExpanded = ["universe", "civilization", "discovery", "discovery/biological", "discovery/fauna", "world-systems", "user-interface"];
 const statusFilters: Array<"all" | Exclude<InventoryStatus, "missing">> = ["all", "approved", "published", "needs_review", "uploaded", "processing", "invalid", "unmapped"];
 const sortOptions = ["name", "newest", "oldest", "status", "recently_updated", "recently_used"] as const;
 const engineFilters = ["all", "web", "roblox", "ios", "android"] as const;
@@ -158,6 +219,8 @@ const categoryInitialNodeMap: Partial<Record<InventoryItem["categoryId"], string
 };
 
 function resolveInitialNode(value?: string | null) {
+  const redirected = value ? legacyDiscoveryFolderRedirects[value] ?? value : value;
+  if (redirected && flatNodes.some((node) => node.id === redirected)) return redirected;
   if (value && flatNodes.some((node) => node.id === value)) return value;
   if (value && value in categoryInitialNodeMap) return categoryInitialNodeMap[value as InventoryItem["categoryId"]] ?? "user-interface";
   return "universe";
@@ -183,9 +246,11 @@ function safeReadFolderOverrides() {
     const parsed = JSON.parse(window.localStorage.getItem(browserPreferenceKeys.folderOverrides) ?? "{}") as unknown;
     if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return {};
     return Object.fromEntries(
-      Object.entries(parsed).filter((entry): entry is [string, string] =>
-        typeof entry[0] === "string" && typeof entry[1] === "string" && flatNodes.some((node) => node.id === entry[1])
-      )
+      Object.entries(parsed)
+        .map(([assetId, nodeId]) => [assetId, typeof nodeId === "string" ? legacyDiscoveryFolderRedirects[nodeId] ?? nodeId : nodeId])
+        .filter((entry): entry is [string, string] =>
+          typeof entry[0] === "string" && typeof entry[1] === "string" && flatNodes.some((node) => node.id === entry[1])
+        )
     );
   } catch {
     return {};
