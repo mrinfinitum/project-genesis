@@ -54,11 +54,17 @@ async function main() {
   const subrouteText = routeFiles.slice(1, 11).map(read).join("\n");
   const runtimeBefore = await buildCanonicalRuntimeExportPayload();
 
-  assert(nav.includes('href: "/render"') && nav.includes('label: "Render"'), "Existing Render navigation route must be preserved.");
-  assert(renderPage.includes("PlanetRenderEngineWorkspace"), "/render must render the NOVERIS Render Engine workspace.");
+  assert(nav.includes('href: "/render"') && nav.includes('label: "Planet Creator"'), "Existing /render route must be preserved with Planet Creator navigation.");
+  assert(renderPage.includes("PlanetRenderEngineWorkspace"), "/render must render the Planet Creator workspace.");
   assert(subrouteText.includes('redirect("/render")'), "Old Render subroutes must redirect to the new canonical Render workspace.");
-  assert(workspace.includes("NOVERIS Render Engine"), "Render workspace title missing.");
-  assert(workspace.includes("Surface Shader Editor"), "Surface Shader Editor label missing.");
+  assert(workspace.includes("Planet Creator"), "Planet Creator title missing.");
+  assert(workspace.includes("Design living worlds. The renderer takes care of the rest."), "Planet Creator subtitle missing.");
+  assert(workspace.includes("PlanetPreview"), "Hero planet preview must be the focal point.");
+  assert(workspace.includes("PlanetDNA"), "Planet DNA sidebar missing.");
+  assert(workspace.includes("Advanced Blender Controls"), "Advanced Blender Controls must remain available but collapsed.");
+  assert(workspace.includes("Earth-like") && workspace.includes("Archipelago") && workspace.includes("Ocean World") && workspace.includes("Supercontinent"), "Shape style cards missing.");
+  assert(workspace.includes("Mountain Height") && workspace.includes("Terrain Complexity"), "Terrain creative controls missing.");
+  assert(workspace.includes("Lowlands") && workspace.includes("Highlands") && workspace.includes("Mountains"), "Surface color regions missing.");
   assert(workspace.includes("Renderer Contract Ready"), "Renderer Contract Ready status missing.");
   assert(workspace.includes("External Blender execution is not connected"), "No-execution message missing.");
   assert(!workspace.includes("Send to Blender"), "Workspace must not expose a Send to Blender action.");

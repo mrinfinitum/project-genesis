@@ -105,10 +105,10 @@ const navigationGroups: NavigationGroup[] = [
   },
   {
     id: "render",
-    label: "Render",
+    label: "Planet Creator",
     icon: Cpu,
     items: [
-      { href: "/render", label: "Render", icon: Cpu }
+      { href: "/render", label: "Planet Creator", icon: Cpu }
     ]
   },
   {
