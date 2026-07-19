@@ -1,19 +1,13 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
-  cameraProfiles,
-  canonicalPlanetRenderContract,
-  cloudProfile,
-  compositorProfile,
-  layerProfiles,
-  lightingRig,
-  noverisPlanetRenderEngine,
-  planetRenderLayers,
-  renderOutputs,
-  surfaceProfileRock,
-  worldProfile
+  CANONICAL_SURFACE_PROFILE_ID,
+  blenderFieldMappings,
+  canonicalSurfaceShaderContract,
+  duplicateSurfaceProfile,
+  surfaceShaderModules
 } from "@/lib/render-engine/canonical-render-engine";
-import { validatePlanetRenderContract } from "@/lib/render-engine/render-validation";
+import { validateSurfaceProfile } from "@/lib/render-engine/render-validation";
 import { buildCanonicalRuntimeExportPayload } from "@/lib/runtime/game-runtime";
 
 const root = process.cwd();
@@ -42,7 +36,9 @@ async function main() {
     "app/render/outputs/page.tsx",
     "app/render/settings/page.tsx",
     "app/render/batch-jobs/page.tsx",
-    "app/render/integrations/page.tsx"
+    "app/render/integrations/page.tsx",
+    "app/api/export/render-surface-profiles.json/route.ts",
+    "app/api/render/surface-profiles/[profileId]/route.ts"
   ];
   for (const file of routeFiles) assertFile(file);
   assertFile("types/render-engine.ts");
@@ -53,89 +49,90 @@ async function main() {
   const renderPage = read("app/render/page.tsx");
   const workspace = read("components/render-engine/planet-render-engine-workspace.tsx");
   const nav = read("components/app-shell.tsx");
-  const subrouteText = routeFiles.slice(1).map(read).join("\n");
+  const exportRoute = read("app/api/export/render-surface-profiles.json/route.ts");
+  const profileRoute = read("app/api/render/surface-profiles/[profileId]/route.ts");
+  const subrouteText = routeFiles.slice(1, 11).map(read).join("\n");
   const runtimeBefore = await buildCanonicalRuntimeExportPayload();
 
   assert(nav.includes('href: "/render"') && nav.includes('label: "Render"'), "Existing Render navigation route must be preserved.");
-  assert(renderPage.includes("PlanetRenderEngineWorkspace"), "/render must render the NOVERIS Planet Render Engine workspace.");
+  assert(renderPage.includes("PlanetRenderEngineWorkspace"), "/render must render the NOVERIS Render Engine workspace.");
   assert(subrouteText.includes('redirect("/render")'), "Old Render subroutes must redirect to the new canonical Render workspace.");
-  assert(!renderPage.includes("renderHomeCards"), "Old Render dashboard cards must be removed from /render.");
+  assert(workspace.includes("NOVERIS Render Engine"), "Render workspace title missing.");
+  assert(workspace.includes("Surface Shader Editor"), "Surface Shader Editor label missing.");
+  assert(workspace.includes("Renderer Contract Ready"), "Renderer Contract Ready status missing.");
+  assert(workspace.includes("External Blender execution is not connected"), "No-execution message missing.");
+  assert(!workspace.includes("Send to Blender"), "Workspace must not expose a Send to Blender action.");
   assert(!workspace.includes("fake queue") && !workspace.includes("Batch Jobs") && !workspace.includes("Future Integrations"), "Old placeholder Render content must not appear in the new workspace.");
   assert(!workspace.includes("child_process") && !workspace.includes("spawn(") && !workspace.includes("exec("), "Render workspace must not execute Blender, Python, or subprocesses.");
 
-  assert(noverisPlanetRenderEngine.name === "NOVERIS Planet Render Engine", "Renderer title mismatch.");
-  assert(noverisPlanetRenderEngine.version === "1.0", "Renderer version mismatch.");
-  assert(noverisPlanetRenderEngine.blenderVersion === "5.2 LTS", "Blender version mismatch.");
-  assert(noverisPlanetRenderEngine.primaryEngine === "Eevee Next", "Primary render engine mismatch.");
-  assert(noverisPlanetRenderEngine.execution === "External only", "Renderer execution must remain external only.");
+  assert(canonicalSurfaceShaderContract.profileId === CANONICAL_SURFACE_PROFILE_ID, "Canonical surface profile ID mismatch.");
+  assert(canonicalSurfaceShaderContract.profileName === "Surface Profile Earth v001", "Canonical profile name mismatch.");
+  assert(canonicalSurfaceShaderContract.renderer === "blender", "Renderer mismatch.");
+  assert(canonicalSurfaceShaderContract.rendererVersion === "5.2-lts", "Renderer version mismatch.");
+  assert(canonicalSurfaceShaderContract.status === "Ready", "Seed profile status must be Ready.");
+  assert(canonicalSurfaceShaderContract.blenderMapping.objectName === "Planet Surface", "Blender object mapping mismatch.");
+  assert(canonicalSurfaceShaderContract.blenderMapping.materialName === "Surface_Profile_Earth_v001", "Blender material mapping mismatch.");
 
-  assert(planetRenderLayers.map((layer) => layer.layerName).join("|") === "Planet Surface|Cloud Sphere|Atmosphere Glow|Atmosphere Volume", "Planet layer order mismatch.");
-  assert(planetRenderLayers[0].scale === 1 && planetRenderLayers[1].scale === 1.015 && planetRenderLayers[2].scale === 1.025 && planetRenderLayers[3].scale === 1.08, "Layer scale stack mismatch.");
-  assert(planetRenderLayers[0].required && !planetRenderLayers[1].required && !planetRenderLayers[2].required && !planetRenderLayers[3].required, "Layer required/optional flags mismatch.");
+  assert(surfaceShaderModules.map((module) => module.title).join("|") === "Coordinates|Planet Generation|Terrain Generation|Elevation|Land Material|Ocean Material|Surface Detail|Output", "Surface pipeline module order mismatch.");
+  assert(surfaceShaderModules.length === 8, `Expected 8 modules, received ${surfaceShaderModules.length}.`);
+  assert(surfaceShaderModules.every((module) => module.status === "Ready"), "Seed modules must be Ready.");
+  assert(surfaceShaderModules.some((module) => module.id === "landMaterial" && module.parameters.some((parameter) => parameter.key === "terrainColorStops")), "Land Material color ramp editor contract missing.");
+  assert(surfaceShaderModules.some((module) => module.id === "output" && module.parameters.every((parameter) => parameter.readonly)), "Output module must be mostly read-only.");
 
-  assert(layerProfiles.length === 4, `Expected four layer profiles, received ${layerProfiles.length}.`);
-  assert(surfaceProfileRock.id === "Surface_Profile_Rock_v001" && surfaceProfileRock.status === "Canonical", "Surface profile metadata mismatch.");
-  assert(surfaceProfileRock.materialValues.noiseTexture.scale === 8.0, "Surface noise scale mismatch.");
-  assert(surfaceProfileRock.materialValues.noiseTexture.detail === 2.0, "Surface noise detail mismatch.");
-  assert(surfaceProfileRock.materialValues.noiseTexture.roughness === 0.5, "Surface noise roughness mismatch.");
-  assert(surfaceProfileRock.materialValues.voronoiTexture.scale === 12.0, "Surface Voronoi scale mismatch.");
-  assert(surfaceProfileRock.materialValues.voronoiTexture.randomness === 1.0, "Surface Voronoi randomness mismatch.");
-  assert(surfaceProfileRock.materialValues.mix.factor === 0.25, "Surface mix factor mismatch.");
-  assert(surfaceProfileRock.materialValues.colorRamp.interpolation === "Linear", "Surface ColorRamp interpolation mismatch.");
-  assert(surfaceProfileRock.materialValues.colorRamp.darkStop.position === 0.35 && surfaceProfileRock.materialValues.colorRamp.darkStop.hex === "#4B4742", "Surface dark stop mismatch.");
-  assert(surfaceProfileRock.materialValues.colorRamp.lightStop.position === 0.72 && surfaceProfileRock.materialValues.colorRamp.lightStop.hex === "#CFC8BE", "Surface light stop mismatch.");
-  assert(surfaceProfileRock.materialValues.bump.strength === 0.18 && surfaceProfileRock.materialValues.bump.distance === 0.1, "Surface bump values mismatch.");
-  assert(surfaceProfileRock.materialValues.principledBsdf.roughness === 0.8, "Surface Principled BSDF roughness mismatch.");
+  const profile = canonicalSurfaceShaderContract;
+  assert(profile.coordinates.coordinateSource === "generated" && profile.coordinates.mappingType === "point", "Coordinate defaults mismatch.");
+  assert(profile.coordinates.scale.join("/") === "1/1/1", "Coordinate scale defaults mismatch.");
+  assert(profile.planetGeneration.scale === 1.5 && profile.planetGeneration.detail === 0.5 && profile.planetGeneration.roughness === 0.35, "Planet generation defaults mismatch.");
+  assert(profile.planetGeneration.seaLevel.fromMin === 0.3 && profile.planetGeneration.seaLevel.fromMax === 0.7, "Sea level defaults mismatch.");
+  assert(profile.planetGeneration.continentMask.interpolation === "constant" && profile.planetGeneration.continentMask.blackPosition === 0.46 && profile.planetGeneration.continentMask.whitePosition === 0.47, "Continent mask defaults mismatch.");
+  assert(profile.terrainGeneration.scale === 8 && profile.terrainGeneration.blendMode === "multiply" && profile.terrainGeneration.blendFactor === 0.35, "Terrain defaults mismatch.");
+  assert(profile.elevation.mountainScale === 24 && profile.elevation.mountainDetail === 8 && profile.elevation.blendMode === "add", "Elevation defaults mismatch.");
+  assert(profile.landMaterial.colorStops.length === 3 && profile.landMaterial.colorStops[0].color === "#365C2C" && profile.landMaterial.colorStops[2].label === "Mountain Stone", "Land color stops mismatch.");
+  assert(profile.oceanMaterial.baseColor === "#0F4D8A" && profile.oceanMaterial.roughness === 0.03 && profile.oceanMaterial.ior === 1.333, "Ocean material defaults mismatch.");
+  assert(profile.surfaceDetail.normalStrength === 0.15 && profile.surfaceDetail.normalDistance === 0.1, "Surface detail defaults mismatch.");
+  assert(profile.output.mixFactorSource === "continentMask" && profile.output.target === "surface", "Output defaults mismatch.");
 
-  assert(cloudProfile.id === "Cloud_Profile_v001" && cloudProfile.status === "Canonical", "Cloud profile metadata mismatch.");
-  assert(cloudProfile.materialValues.noiseTexture.scale === 12.0 && cloudProfile.materialValues.noiseTexture.detail === 2.0 && cloudProfile.materialValues.noiseTexture.roughness === 0.5, "Cloud noise values mismatch.");
-  assert(cloudProfile.materialValues.colorRamp.blackStopPosition === 0.42 && cloudProfile.materialValues.colorRamp.whiteStopPosition === 0.58, "Cloud threshold values mismatch.");
-  assert(cloudProfile.materialValues.principledBsdf.baseColor === "#FFFFFF" && cloudProfile.materialValues.principledBsdf.roughness === 1.0, "Cloud BSDF values mismatch.");
+  const validation = validateSurfaceProfile(profile);
+  assert(validation.status === "Ready", `Canonical render validation must be Ready; received ${validation.status}: ${validation.issues.map((issue) => issue.message).join("; ")}`);
 
-  const glow = layerProfiles.find((profile) => profile.id === "Atmosphere_Glow_Profile_v001");
-  assert(glow?.status === "Pending Validation", "Atmosphere Glow must remain Pending Validation.");
-  assert(workspace.includes("Final Blender 5.2 node implementation remains under validation"), "Atmosphere Glow warning must be displayed.");
-  const volume = layerProfiles.find((profile) => profile.id === "Atmosphere_Volume_Profile_v001");
-  assert(volume?.status === "Canonical Draft", "Atmosphere Volume must be Canonical Draft.");
+  const invalidScale = structuredClone(profile);
+  invalidScale.coordinates.scale = [1, 0, 1];
+  assert(validateSurfaceProfile(invalidScale).status === "Error", "Zero coordinate scale must fail validation.");
 
-  assert(lightingRig.title === "Three-Light Planet Rig" && lightingRig.lights.length === 3, "Lighting rig mismatch.");
-  assert(lightingRig.lights.every((light) => light.fields.every((field) => field.value === "Not yet calibrated")), "Unapproved lighting fields must be Not yet calibrated.");
-  assert(cameraProfiles.length === 5 && cameraProfiles[0].name === "Hero Camera" && cameraProfiles[0].lens === "80 mm", "Camera profiles mismatch.");
-  assert(cameraProfiles[0].location.y === -8 && cameraProfiles[0].targetFraming.includes("75-80%"), "Hero Camera seeded values mismatch.");
-  assert(worldProfile.id === "Background_Profile_Space_v001" && worldProfile.status === "Draft", "World profile mismatch.");
-  assert(compositorProfile.note.includes("execution does not occur inside Studio"), "Compositor execution warning missing.");
-  assert(renderOutputs.length === 6, `Expected six render outputs, received ${renderOutputs.length}.`);
-  assert(renderOutputs.some((output) => output.id === "planet-runtime-preview" && output.format === "WEBP" && output.width === 1024), "Runtime preview output mismatch.");
+  const invalidRamp = structuredClone(profile);
+  invalidRamp.landMaterial.colorStops = [
+    { position: 0.8, color: "#FFFFFF", label: "Late" },
+    { position: 0.2, color: "#000000", label: "Early" }
+  ];
+  assert(validateSurfaceProfile(invalidRamp).status === "Error", "Unordered color stops must fail validation.");
 
-  assert(canonicalPlanetRenderContract.schemaVersion === "1.0.0", "Render contract schemaVersion mismatch.");
-  assert(canonicalPlanetRenderContract.templateId === "noveris-planet-renderer-v1", "Render contract templateId mismatch.");
-  assert(canonicalPlanetRenderContract.metadata.blenderExecutionEnabled === false, "Render contract must keep Blender execution disabled.");
-  assert(workspace.includes("Live JSON render contract editor") && workspace.includes("Reset to Canonical Defaults") && workspace.includes("Dirty Draft"), "Render Contract Editor controls missing.");
-  assert(workspace.includes("Copy Full Render Contract") && workspace.includes("Download Full Render Contract JSON") && workspace.includes("Send to Blender"), "Export controls missing.");
-  assert(workspace.includes("External renderer execution is not implemented"), "Send to Blender disabled tooltip/message missing.");
+  const duplicate = duplicateSurfaceProfile(profile);
+  assert(duplicate.profileId === `${profile.profileId}_copy` && duplicate.status === "Draft", "Profile duplication contract mismatch.");
 
-  const validation = validatePlanetRenderContract(canonicalPlanetRenderContract);
-  assert(validation.status === "Valid", `Canonical render validation must be Valid; received ${validation.status}: ${validation.issues.map((issue) => issue.message).join("; ")}`);
+  assert(blenderFieldMappings.some((row) => row.studioField === "continentScale" && row.blenderNode === "Continent Noise" && row.blenderSocket === "Scale"), "Continent scale Blender mapping missing.");
+  assert(blenderFieldMappings.some((row) => row.studioField === "terrainNormalStrength" && row.blenderNode === "Terrain Normals" && row.blenderSocket === "Strength"), "Terrain normal Blender mapping missing.");
+  assert(exportRoute.includes("profiles: [profile]") && exportRoute.includes("validateSurfaceProfile"), "Surface profile export route must return sanitized validated profiles.");
+  assert(profileRoute.includes("RENDER_SURFACE_PROFILE_NOT_FOUND") && profileRoute.includes("profileId !== profile.profileId"), "Profile endpoint must return a safe not-found envelope.");
 
   const runtimeAfter = await buildCanonicalRuntimeExportPayload();
-  assert(runtimeBefore.metadata.schemaVersion === runtimeAfter.metadata.schemaVersion, "Render replacement must not change runtimeVersion.");
+  assert(runtimeBefore.metadata.schemaVersion === runtimeAfter.metadata.schemaVersion, "Render replacement must not change runtime schemaVersion.");
   assert(runtimeBefore.metadata.contentVersion === runtimeAfter.metadata.contentVersion, "Render replacement must not change contentVersion.");
 
   console.log(JSON.stringify({
     status: "ok",
     route: "/render",
-    renderer: noverisPlanetRenderEngine.name,
-    version: noverisPlanetRenderEngine.version,
-    blenderVersion: noverisPlanetRenderEngine.blenderVersion,
-    primaryEngine: noverisPlanetRenderEngine.primaryEngine,
-    layers: planetRenderLayers.length,
-    profiles: layerProfiles.length,
-    cameras: cameraProfiles.length,
-    outputs: renderOutputs.length,
+    exportRoute: "/api/export/render-surface-profiles.json",
+    profileRoute: "/api/render/surface-profiles/surface_profile_earth_v001",
+    profileId: profile.profileId,
+    renderer: profile.renderer,
+    rendererVersion: profile.rendererVersion,
+    modules: surfaceShaderModules.length,
+    fields: surfaceShaderModules.reduce((total, module) => total + module.parameters.length, 0),
+    blenderMappings: blenderFieldMappings.length,
     validation: validation.status,
-    runtimeVersion: runtimeAfter.metadata.schemaVersion,
+    runtimeSchemaVersion: runtimeAfter.metadata.schemaVersion,
     contentVersion: runtimeAfter.metadata.contentVersion,
-    oldRenderSubroutesRedirected: routeFiles.length - 1
+    oldRenderSubroutesRedirected: 10
   }, null, 2));
 }
 
