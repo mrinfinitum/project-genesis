@@ -105,7 +105,6 @@ const navigationGroups: NavigationGroup[] = [
     label: "Discovery",
     icon: Compass,
     items: [
-      { href: "/discovery", label: "Curiosities", icon: Compass },
       { href: "/discovery/biological", label: "Biological", icon: Sprout },
       { href: "/discovery-journal", label: "Discovery Journal", icon: ScrollText }
     ]
