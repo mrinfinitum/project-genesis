@@ -9,6 +9,8 @@ import {
   biologicalCuriosityVolume,
   ancientRelicsCuriosityNavigation,
   ancientRelicsCuriosityVolume,
+  alienTechnologyCuriosityNavigation,
+  alienTechnologyCuriosityVolume,
   canonicalDiscoveries,
   discoveryRarities,
   faunaCuriosityNavigation,
@@ -91,6 +93,7 @@ function buildDiscoveryTree(): DiscoveryTreeNode[] {
     { id: "fauna", label: "Fauna", href: folderHref("fauna"), count: getCuriosityFolderCount("fauna"), icon: "folder", children: childrenForVolume("fauna", faunaCuriosityNavigation) },
     { id: "geological", label: "Geological", href: folderHref("geological"), count: getCuriosityFolderCount("geological"), icon: "folder", children: childrenForVolume("geological", geologicalCuriosityNavigation) },
     { id: "ancient-relics", label: "Ancient Relics", href: folderHref("ancient-relics"), count: getCuriosityFolderCount("ancient-relics"), icon: "folder", children: childrenForVolume("ancient-relics", ancientRelicsCuriosityNavigation) },
+    { id: "alien-technology", label: "Alien Technology", href: folderHref("alien-technology"), count: getCuriosityFolderCount("alien-technology"), icon: "folder", children: childrenForVolume("alien-technology", alienTechnologyCuriosityNavigation) },
     { id: "journal", label: "Discovery Journal", href: "/discovery-journal", count: 0, icon: "journal" }
   ];
 }
@@ -104,11 +107,12 @@ function folderTitle(folder: string, folderRecords: DiscoveryRecord[]) {
   if (folder === "fauna") return "Fauna";
   if (folder === "geological") return "Geological";
   if (folder === "ancient-relics") return "Ancient Relics";
-  if (folder.startsWith("biological:") || folder.startsWith("fauna:") || folder.startsWith("geological:") || folder.startsWith("ancient-relics:")) {
+  if (folder === "alien-technology") return "Alien Technology";
+  if (folder.startsWith("biological:") || folder.startsWith("fauna:") || folder.startsWith("geological:") || folder.startsWith("ancient-relics:") || folder.startsWith("alien-technology:")) {
     const first = folderRecords[0];
-    if (!first) return folder.startsWith("fauna:") ? "Fauna" : folder.startsWith("geological:") ? "Geological" : folder.startsWith("ancient-relics:") ? "Ancient Relics" : "Biological";
+    if (!first) return folder.startsWith("fauna:") ? "Fauna" : folder.startsWith("geological:") ? "Geological" : folder.startsWith("ancient-relics:") ? "Ancient Relics" : folder.startsWith("alien-technology:") ? "Alien Technology" : "Biological";
     const { category, classRecord, subclassRecord } = getCuriosityClassification(first);
-    return subclassRecord?.displayName ?? classRecord?.displayName ?? category?.shortDisplayName ?? (folder.startsWith("fauna:") ? "Fauna" : folder.startsWith("geological:") ? "Geological" : folder.startsWith("ancient-relics:") ? "Ancient Relics" : "Biological");
+    return subclassRecord?.displayName ?? classRecord?.displayName ?? category?.shortDisplayName ?? (folder.startsWith("fauna:") ? "Fauna" : folder.startsWith("geological:") ? "Geological" : folder.startsWith("ancient-relics:") ? "Ancient Relics" : folder.startsWith("alien-technology:") ? "Alien Technology" : "Biological");
   }
   return "All Discoveries";
 }
@@ -123,6 +127,8 @@ export default async function DiscoveryLibraryPage({ searchParams }: { searchPar
   const subclassParam = firstParam(params?.subclass);
   const hazardParam = firstParam(params?.hazard);
   const conditionParam = firstParam(params?.condition);
+  const operationalParam = firstParam(params?.operational);
+  const containmentParam = firstParam(params?.containment);
   const scanParam = firstParam(params?.scan);
   const planetParam = firstParam(params?.planet);
   const entryParam = firstParam(params?.entry);
@@ -134,6 +140,8 @@ export default async function DiscoveryLibraryPage({ searchParams }: { searchPar
   const subclassOptions = Array.from(new Map(folderRecords.filter((record) => !classParam || record.classId === classParam).map((record) => [record.subclassId, getCuriosityClassification(record).subclassRecord?.displayName ?? titleFromSlug(record.subclassId)])).entries()).sort((a, b) => a[1].localeCompare(b[1]));
   const hazardOptions = Array.from(new Set(folderRecords.map((record) => record.hazardLevel).filter((value): value is string => Boolean(value)))).sort();
   const conditionOptions = Array.from(new Set(folderRecords.map((record) => record.condition).filter((value): value is string => Boolean(value)))).sort();
+  const operationalOptions = Array.from(new Set(folderRecords.map((record) => record.operationalState).filter((value): value is string => Boolean(value)))).sort();
+  const containmentOptions = Array.from(new Set(folderRecords.map((record) => record.containmentRequirement).filter((value): value is string => Boolean(value)))).sort();
   const scanOptions = Array.from(new Set(folderRecords.map((record) => record.requiredScanLevel))).sort((a, b) => a - b);
   const planetOptions = Array.from(new Map(folderRecords.flatMap((record) => (record.compatiblePlanetClasses ?? []).map((planetClass) => [planetClass, titleFromSlug(planetClass)] as const))).entries()).sort((a, b) => a[1].localeCompare(b[1]));
   const selectedEntry = getCuriosityById(entryParam);
@@ -146,6 +154,8 @@ export default async function DiscoveryLibraryPage({ searchParams }: { searchPar
     if (subclassParam && record.subclassId !== subclassParam) return false;
     if (hazardParam && record.hazardLevel !== hazardParam) return false;
     if (conditionParam && record.condition !== conditionParam) return false;
+    if (operationalParam && record.operationalState !== operationalParam) return false;
+    if (containmentParam && record.containmentRequirement !== containmentParam) return false;
     if (scanParam && record.requiredScanLevel !== Number(scanParam)) return false;
     if (planetParam && !record.compatiblePlanetClasses?.includes(planetParam)) return false;
     if (artworkParam === "missing" && artwork?.status === "artwork_ready") return false;
@@ -193,7 +203,7 @@ export default async function DiscoveryLibraryPage({ searchParams }: { searchPar
             <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <WorkspaceBadge value={folder === "biological" || folder.startsWith("biological:") ? `Volume ${volumeNumber(biologicalCuriosityVolume)}` : folder === "fauna" || folder.startsWith("fauna:") ? `Volume ${volumeNumber(faunaCuriosityVolume)}` : folder === "geological" || folder.startsWith("geological:") ? `Volume ${volumeNumber(geologicalCuriosityVolume)}` : folder === "ancient-relics" || folder.startsWith("ancient-relics:") ? `Volume ${volumeNumber(ancientRelicsCuriosityVolume)}` : "Canonical"} />
+                  <WorkspaceBadge value={folder === "biological" || folder.startsWith("biological:") ? `Volume ${volumeNumber(biologicalCuriosityVolume)}` : folder === "fauna" || folder.startsWith("fauna:") ? `Volume ${volumeNumber(faunaCuriosityVolume)}` : folder === "geological" || folder.startsWith("geological:") ? `Volume ${volumeNumber(geologicalCuriosityVolume)}` : folder === "ancient-relics" || folder.startsWith("ancient-relics:") ? `Volume ${volumeNumber(ancientRelicsCuriosityVolume)}` : folder === "alien-technology" || folder.startsWith("alien-technology:") ? `Volume ${volumeNumber(alienTechnologyCuriosityVolume)}` : "Canonical"} />
                   <WorkspaceBadge value={validation.status} />
                   {folder === "biological" ? <Link href="/discovery/biological" className="rounded border border-cyan-300/20 bg-cyan-300/10 px-2 py-1 text-[0.62rem] font-black uppercase tracking-[0.14em] text-cyan-100">Open Biological Page</Link> : null}
                 </div>
@@ -207,6 +217,8 @@ export default async function DiscoveryLibraryPage({ searchParams }: { searchPar
                         ? "Volume III geological records organized by category, class, and subclass. Artwork is intentionally pending until PSDs and preview derivatives are synced."
                       : folder === "ancient-relics" || folder.startsWith("ancient-relics:")
                         ? "Volume IV ancient relic records organized by artifact class and subclass. Recovery, condition, age, translation, integrity, and value metadata remain attached to each canonical record."
+                      : folder === "alien-technology" || folder.startsWith("alien-technology:")
+                        ? "Volume V alien technology records organized by system class and subclass. Operational state, power, stability, containment, reverse-engineering, and strategic values remain attached to each canonical record."
                     : "Discovery records, biological volume content, taxonomy, artwork status, and journal access gathered into an Asset Library-style browser."}
                 </p>
               </div>
@@ -257,6 +269,14 @@ export default async function DiscoveryLibraryPage({ searchParams }: { searchPar
               {conditionOptions.length ? <select name="condition" defaultValue={conditionParam ?? ""} className="h-12 rounded-md border border-cyan-300/15 bg-slate-950/80 px-3 text-sm font-bold text-white outline-none">
                 <option value="">All Conditions</option>
                 {conditionOptions.map((value) => <option key={value} value={value}>{value}</option>)}
+              </select> : null}
+              {operationalOptions.length ? <select name="operational" defaultValue={operationalParam ?? ""} className="h-12 rounded-md border border-cyan-300/15 bg-slate-950/80 px-3 text-sm font-bold text-white outline-none">
+                <option value="">All Operational States</option>
+                {operationalOptions.map((value) => <option key={value} value={value}>{value}</option>)}
+              </select> : null}
+              {containmentOptions.length ? <select name="containment" defaultValue={containmentParam ?? ""} className="h-12 rounded-md border border-cyan-300/15 bg-slate-950/80 px-3 text-sm font-bold text-white outline-none">
+                <option value="">All Containment</option>
+                {containmentOptions.map((value) => <option key={value} value={value}>{value}</option>)}
               </select> : null}
               <select name="scan" defaultValue={scanParam ?? ""} className="h-12 rounded-md border border-cyan-300/15 bg-slate-950/80 px-3 text-sm font-bold text-white outline-none">
                 <option value="">All Scan Levels</option>
@@ -339,11 +359,16 @@ export default async function DiscoveryLibraryPage({ searchParams }: { searchPar
                     <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Class</span><span className="truncate text-cyan-100">{getCuriosityClassification(selectedEntry).classRecord?.displayName ?? selectedEntry.classId}</span></div>
                     <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Subclass</span><span className="truncate text-cyan-100">{getCuriosityClassification(selectedEntry).subclassRecord?.displayName ?? selectedEntry.subclassId}</span></div>
                     {selectedEntry.condition ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Condition</span><span className="truncate text-cyan-100">{selectedEntry.condition}</span></div> : null}
+                    {selectedEntry.operationalState ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Operational</span><span className="truncate text-cyan-100">{selectedEntry.operationalState}</span></div> : null}
                     {selectedEntry.hazardLevel ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Hazard</span><span className="truncate text-cyan-100">{selectedEntry.hazardLevel}</span></div> : null}
+                    {selectedEntry.containmentRequirement ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Containment</span><span className="truncate text-cyan-100">{selectedEntry.containmentRequirement}</span></div> : null}
                     {selectedEntry.recoveryMethod ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Recovery</span><span className="truncate text-cyan-100" title={selectedEntry.recoveryMethod}>{selectedEntry.recoveryMethod}</span></div> : null}
                     {typeof selectedEntry.estimatedAgeYears === "number" ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Estimated Age</span><span className="truncate text-cyan-100">{selectedEntry.estimatedAgeYears.toLocaleString()} years</span></div> : null}
                     {typeof selectedEntry.integrityPercent === "number" ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Integrity</span><span className="truncate text-cyan-100">{selectedEntry.integrityPercent}%</span></div> : null}
                     {typeof selectedEntry.translationProgressPercent === "number" ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Translation</span><span className="truncate text-cyan-100">{selectedEntry.translationProgressPercent}%</span></div> : null}
+                    {typeof selectedEntry.powerSignature === "number" ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Power</span><span className="truncate text-cyan-100">{selectedEntry.powerSignature}</span></div> : null}
+                    {typeof selectedEntry.stabilityPercent === "number" ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Stability</span><span className="truncate text-cyan-100">{selectedEntry.stabilityPercent}%</span></div> : null}
+                    {typeof selectedEntry.reverseEngineeringProgressPercent === "number" ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Reverse Engineering</span><span className="truncate text-cyan-100">{selectedEntry.reverseEngineeringProgressPercent}%</span></div> : null}
                     <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Prompt</span><span className="truncate text-cyan-100">{selectedEntry.promptProfile?.prompt ? "Ready" : "Missing"}</span></div>
                   </div>
                 </div>

@@ -7,6 +7,8 @@ import geologicalCuriosityPack from "@/data/curiosity-volume-03-geological.json"
 import geologicalCuriosityTaxonomyPack from "@/data/curiosity-volume-03-geological-taxonomy.json";
 import ancientRelicsCuriosityPack from "@/data/curiosity-volume-04-ancient-relics.json";
 import ancientRelicsCuriosityTaxonomyPack from "@/data/curiosity-volume-04-ancient-relics-taxonomy.json";
+import alienTechnologyCuriosityPack from "@/data/curiosity-volume-05-alien-technology.json";
+import alienTechnologyCuriosityTaxonomyPack from "@/data/curiosity-volume-05-alien-technology-taxonomy.json";
 
 export const discoveryRarities = [
   { id: "common", displayName: "Common", displayOrder: 1, defaultSpawnWeight: 1 },
@@ -150,6 +152,7 @@ export type DiscoveryAssetProfile = {
 export type DiscoveryRecord = {
   id: string;
   slug?: string;
+  sourceSlug?: string;
   volumeId?: string;
   volumeName?: string;
   displayName: string;
@@ -184,7 +187,12 @@ export type DiscoveryRecord = {
   discoveryLocation?: string;
   recoveryMethod?: string;
   condition?: string;
+  operationalState?: string;
   hazardLevel?: string;
+  powerSignature?: number;
+  stabilityPercent?: number;
+  reverseEngineeringProgressPercent?: number;
+  containmentRequirement?: string;
   estimatedAgeYears?: number;
   originConfidencePercent?: number;
   translationProgressPercent?: number;
@@ -192,6 +200,9 @@ export type DiscoveryRecord = {
   museumValue?: number;
   culturalValue?: number;
   historicalValue?: number;
+  technologicalValue?: number;
+  strategicValue?: number;
+  energyValue?: number;
   collectionValue?: number;
   repeatable?: boolean;
   maximumKnownInstances?: number;
@@ -249,7 +260,12 @@ type ImportedCuriosity = {
   collection_method?: string;
   recovery_method?: string;
   condition?: string;
+  operational_state?: string;
   hazard_level?: string;
+  power_signature?: number;
+  stability_percent?: number;
+  reverse_engineering_progress_percent?: number;
+  containment_requirement?: string;
   estimated_age_years?: number;
   origin_confidence_percent?: number;
   translation_progress_percent?: number;
@@ -263,6 +279,9 @@ type ImportedCuriosity = {
   museum_value?: number;
   cultural_value?: number;
   historical_value?: number;
+  technological_value?: number;
+  strategic_value?: number;
+  energy_value?: number;
   collection_value?: number;
   repeatable?: boolean;
   maximum_known_instances?: number;
@@ -312,6 +331,8 @@ export const geologicalCuriosityVolume = geologicalCuriosityPack as ImportedCuri
 export const geologicalCuriosityTaxonomy = geologicalCuriosityTaxonomyPack as ImportedCuriosityTaxonomyPack;
 export const ancientRelicsCuriosityVolume = ancientRelicsCuriosityPack as ImportedCuriosityPack;
 export const ancientRelicsCuriosityTaxonomy = ancientRelicsCuriosityTaxonomyPack as ImportedCuriosityTaxonomyPack;
+export const alienTechnologyCuriosityVolume = alienTechnologyCuriosityPack as ImportedCuriosityPack;
+export const alienTechnologyCuriosityTaxonomy = alienTechnologyCuriosityTaxonomyPack as ImportedCuriosityTaxonomyPack;
 
 const biologicalCategoryAliases: Record<string, string> = {
   Flora: "biological-flora",
@@ -430,14 +451,15 @@ export const curiosityCategories: CuriosityCategory[] = [
     ["Ancient Machines", ["Mechanical Calculators", "Automata", "Energy Regulators", "Navigation Engines", "Terraforming Components", "Fabrication Devices", "Environmental Controllers", "Memory Engines", "Signal Beacons", "Unknown Machines"]],
     ["Lost Knowledge", ["Encoded Tablets", "Star Maps", "Medical Archives", "Engineering Schematics", "Philosophical Records", "Legal Codes", "Historical Chronicles", "Agricultural Archives", "Language Archives", "Forbidden Records"]]
   ], "Relics"),
-  curiosityCategory("Alien Technology", 10, "Alien computation, power, navigation, communication, terraforming, fabrication, and unidentified machines.", [
-    ["Computation", ["AI Cores", "Quantum Processors", "Neural Interfaces", "Data Crystals", "Memory Lattices"]],
-    ["Power Systems", ["Energy Cores", "Fusion Systems", "Antimatter Systems", "Zero-Point Systems", "Unknown Power Devices"]],
-    ["Navigation", ["Star Maps", "Navigation Cores", "Dimensional Compasses", "Jump Calculators", "Orbital Keys"]],
-    ["Communication", ["Signal Beacons", "Language Devices", "Long-Range Transmitters", "Quantum Communicators", "Thought Interfaces"]],
-    ["Terraforming", ["Atmosphere Devices", "Climate Regulators", "Biosphere Seeders", "Ocean Processors", "Planetary Stabilizers"]],
-    ["Fabrication", ["Molecular Forges", "Replicators", "Nanite Systems", "Material Printers", "Assembly Cores"]],
-    ["Unknown Technology", ["Unidentified Devices", "Inactive Machines", "Sealed Systems", "Impossible Mechanisms", "Fragmentary Technology"]]
+  curiosityCategory("Alien Technology", 10, "Recovered alien computing, intelligence, navigation, communication, energy, terraforming, fabrication, and unknown technology systems.", [
+    ["Computing Systems", ["Quantum Processors", "Photonic Computers", "Biological Computers", "Crystal Logic Arrays", "Distributed Cores", "Probabilistic Engines", "Memory Lattices", "Simulation Cores", "Encrypted Archives", "Unknown Computing Devices"]],
+    ["Artificial Intelligence", ["Cognitive Cores", "Autonomous Agents", "Collective Minds", "Predictive Intelligences", "Caretaker Systems", "Strategic Intelligences", "Creative Intelligences", "Sentient Archives", "Dormant Machine Minds", "Unknown AI Constructs"]],
+    ["Navigation Technology", ["Star Mapping Devices", "Gravitational Compasses", "Slipstream Calculators", "Wormhole Navigators", "Temporal Navigation Devices", "Dimensional Positioning Systems", "Orbital Guidance Units", "Deep-Space Beacons", "Hazard Prediction Systems", "Unknown Navigation Devices"]],
+    ["Communications", ["Quantum Communicators", "Subspace Transmitters", "Long-Range Beacons", "Neural Interfaces", "Translation Engines", "Signal Amplifiers", "Encrypted Relay Nodes", "Holographic Projectors", "Emergency Broadcasters", "Unknown Communication Devices"]],
+    ["Energy Systems", ["Fusion Reactors", "Antimatter Containment", "Zero-Point Generators", "Solar Harvesters", "Geothermal Converters", "Plasma Regulators", "Quantum Batteries", "Dark-Energy Collectors", "Exotic Fuel Cells", "Unknown Energy Devices"]],
+    ["Terraforming Technology", ["Atmospheric Processors", "Climate Regulators", "Oceanic Seeders", "Soil Reconstruction Units", "Magnetosphere Generators", "Biosphere Catalysts", "Weather Control Systems", "Radiation Scrubbers", "Ecological Balancers", "Unknown Terraforming Devices"]],
+    ["Fabrication Systems", ["Molecular Assemblers", "Nanoforges", "Matter Printers", "Crystal Fabricators", "Biological Fabricators", "Automated Foundries", "Construction Swarms", "Repair Systems", "Resource Reclaimers", "Unknown Fabrication Devices"]],
+    ["Unknown Technology", ["Phase-Shifted Devices", "Temporal Machines", "Dimensional Engines", "Reality Editing Devices", "Gravitic Constructs", "Vacuum Mechanisms", "Neutron Devices", "Causality Engines", "Self-Replicating Machines", "Unclassifiable Technology"]]
   ], "Alien Tech"),
   curiosityCategory("Energy Sources", 11, "Natural, exotic, biological, and artificial energy-source curiosities.", [
     ["Natural Energy", ["Geothermal", "Solar-Absorbing", "Chemical", "Radioactive", "Magnetic"]],
@@ -712,7 +734,7 @@ const coreDiscoveryRecords: DiscoveryRecord[] = [
     slug: "precursor-memory-lattice",
     displayName: "Precursor Memory Lattice",
     categoryId: "alien-technology",
-    classId: "computation",
+    classId: "computing-systems",
     subclassId: "memory-lattices",
     subcategoryId: "memory-lattices",
     scientificName: "Lattice Memoriam Praecursor",
@@ -806,7 +828,7 @@ function importedCuriosityRecord(record: ImportedCuriosity, pack: ImportedCurios
   const rarity = importedRarity(record.rarity);
   const slug = config.volumeId === "ancient-relics" && record.slug
     ? record.slug
-    : `${slugify(record.name)}-${record.canonical_id.toLowerCase()}`;
+    : `${record.slug ?? slugify(record.name)}-${record.canonical_id.toLowerCase()}`;
   const categoryId = importedCategoryId(record.category);
   const classId = slugify(record.class);
   const subclassId = slugify(record.subclass);
@@ -827,6 +849,7 @@ function importedCuriosityRecord(record: ImportedCuriosity, pack: ImportedCurios
   return {
     id: record.canonical_id,
     slug,
+    sourceSlug: record.slug,
     volumeId: config.volumeId,
     volumeName: pack.title,
     displayName: record.name,
@@ -859,7 +882,12 @@ function importedCuriosityRecord(record: ImportedCuriosity, pack: ImportedCurios
     discoveryLocation: record.discovery_location,
     recoveryMethod: record.recovery_method ?? record.collection_method,
     condition: record.condition,
+    operationalState: record.operational_state,
     hazardLevel: record.hazard_level,
+    powerSignature: record.power_signature,
+    stabilityPercent: record.stability_percent,
+    reverseEngineeringProgressPercent: record.reverse_engineering_progress_percent,
+    containmentRequirement: record.containment_requirement,
     estimatedAgeYears: record.estimated_age_years,
     originConfidencePercent: record.origin_confidence_percent,
     translationProgressPercent: record.translation_progress_percent,
@@ -867,6 +895,9 @@ function importedCuriosityRecord(record: ImportedCuriosity, pack: ImportedCurios
     museumValue: record.museum_value,
     culturalValue: record.cultural_value,
     historicalValue: record.historical_value,
+    technologicalValue: record.technological_value,
+    strategicValue: record.strategic_value,
+    energyValue: record.energy_value,
     collectionValue: record.collection_value,
     repeatable: record.repeatable,
     maximumKnownInstances: record.maximum_known_instances,
@@ -947,25 +978,37 @@ const ancientRelicsImportConfig: CuriosityVolumeImportConfig = {
   generationNotes: "Imported from NOVERIS Curiosity Codex Volume IV: Ancient Relics."
 };
 
+const alienTechnologyImportConfig: CuriosityVolumeImportConfig = {
+  volumeId: "alien-technology",
+  defaultTag: "alien-technology",
+  defaultResearchIds: ["planet_scan", "xenoarchaeology", "reverse_engineering"],
+  defaultEquipmentIds: ["technology_scanner", "containment_probe"],
+  specialEvent: "alien-technology-curiosity-volume-05",
+  generationNotes: "Imported from NOVERIS Curiosity Codex Volume V: Alien Technology."
+};
+
 export const biologicalCuriosityRecords = biologicalCuriosityVolume.records.map((record) => importedCuriosityRecord(record, biologicalCuriosityVolume, biologicalImportConfig));
 export const faunaCuriosityRecords = faunaCuriosityVolume.records.map((record) => importedCuriosityRecord(record, faunaCuriosityVolume, faunaImportConfig));
 export const geologicalCuriosityRecords = geologicalCuriosityVolume.records.map((record) => importedCuriosityRecord(record, geologicalCuriosityVolume, geologicalImportConfig));
 export const ancientRelicsCuriosityRecords = ancientRelicsCuriosityVolume.records.map((record) => importedCuriosityRecord(record, ancientRelicsCuriosityVolume, ancientRelicsImportConfig));
+export const alienTechnologyCuriosityRecords = alienTechnologyCuriosityVolume.records.map((record) => importedCuriosityRecord(record, alienTechnologyCuriosityVolume, alienTechnologyImportConfig));
 
 export const biologicalCuriosityNavigation = importedCuriosityNavigation(biologicalCuriosityTaxonomy);
 export const faunaCuriosityNavigation = importedCuriosityNavigation(faunaCuriosityTaxonomy);
 export const geologicalCuriosityNavigation = importedCuriosityNavigation(geologicalCuriosityTaxonomy);
 export const ancientRelicsCuriosityNavigation = importedCuriosityNavigation(ancientRelicsCuriosityTaxonomy);
+export const alienTechnologyCuriosityNavigation = importedCuriosityNavigation(alienTechnologyCuriosityTaxonomy);
 
 export const canonicalDiscoveries: DiscoveryRecord[] = [
   ...coreDiscoveryRecords,
   ...biologicalCuriosityRecords,
   ...faunaCuriosityRecords,
   ...geologicalCuriosityRecords,
-  ...ancientRelicsCuriosityRecords
+  ...ancientRelicsCuriosityRecords,
+  ...alienTechnologyCuriosityRecords
 ];
 
-export const supportedCuriosityVolumeIds = ["biological", "fauna", "geological", "ancient-relics"] as const;
+export const supportedCuriosityVolumeIds = ["biological", "fauna", "geological", "ancient-relics", "alien-technology"] as const;
 export type SupportedCuriosityVolumeId = typeof supportedCuriosityVolumeIds[number];
 
 function discoveryFolderKey(record: Pick<DiscoveryRecord, "volumeId" | "categoryId" | "classId" | "subclassId">, depth: "volume" | "category" | "class" | "subclass") {
@@ -1164,6 +1207,20 @@ function runDiscoverySystemValidation() {
   const invalidUniqueRelics = ancientRelicsCuriosityRecords.filter((record) => record.rarity === "unique" && (record.maximumKnownInstances !== 1 || record.repeatable !== false));
   if (invalidUniqueRelics.length) {
     issues.push({ severity: "error", code: "ancient_relic_unique_contract", message: "Unique relics must be non-repeatable and limited to one known instance.", records: invalidUniqueRelics.map((record) => record.id) });
+  }
+  const alienTechnologyNames = alienTechnologyCuriosityRecords.map((record) => record.displayName.trim().toLowerCase());
+  if (new Set(alienTechnologyNames).size !== alienTechnologyNames.length) {
+    issues.push({ severity: "error", code: "duplicate_alien_technology_name", message: "Volume V curiosity names must be unique.", records: alienTechnologyCuriosityRecords.map((record) => record.displayName) });
+  }
+  if (alienTechnologyCuriosityRecords.length !== alienTechnologyCuriosityVolume.recordCount) {
+    issues.push({ severity: "error", code: "alien_technology_record_count", message: "Volume V must load its declared canonical record count.", records: [String(alienTechnologyCuriosityRecords.length), String(alienTechnologyCuriosityVolume.recordCount)] });
+  }
+  if (alienTechnologyCuriosityRecords[0]?.id !== "TEC-0001" || alienTechnologyCuriosityRecords.at(-1)?.id !== "TEC-0600") {
+    issues.push({ severity: "error", code: "alien_technology_id_range", message: "Volume V must preserve the TEC-0001 through TEC-0600 canonical range.", records: [alienTechnologyCuriosityRecords[0]?.id ?? "missing", alienTechnologyCuriosityRecords.at(-1)?.id ?? "missing"] });
+  }
+  const invalidUniqueTechnology = alienTechnologyCuriosityRecords.filter((record) => record.rarity === "unique" && (record.maximumKnownInstances !== 1 || record.repeatable !== false));
+  if (invalidUniqueTechnology.length) {
+    issues.push({ severity: "error", code: "alien_technology_unique_contract", message: "Unique alien technology must be non-repeatable and limited to one known instance.", records: invalidUniqueTechnology.map((record) => record.id) });
   }
   for (const collection of discoveryCollections) {
     const missing = collection.discoveryIds.filter((id) => !discoveryIds.has(id));

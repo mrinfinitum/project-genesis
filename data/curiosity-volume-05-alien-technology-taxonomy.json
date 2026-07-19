@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "taxonomy": {
+    "Alien Technology": {
+      "Computing Systems": [
+        "Quantum Processors",
+        "Photonic Computers",
+        "Biological Computers",
+        "Crystal Logic Arrays",
+        "Distributed Cores",
+        "Probabilistic Engines",
+        "Memory Lattices",
+        "Simulation Cores",
+        "Encrypted Archives",
+        "Unknown Computing Devices"
+      ],
+      "Artificial Intelligence": [
+        "Cognitive Cores",
+        "Autonomous Agents",
+        "Collective Minds",
+        "Predictive Intelligences",
+        "Caretaker Systems",
+        "Strategic Intelligences",
+        "Creative Intelligences",
+        "Sentient Archives",
+        "Dormant Machine Minds",
+        "Unknown AI Constructs"
+      ],
+      "Navigation Technology": [
+        "Star Mapping Devices",
+        "Gravitational Compasses",
+        "Slipstream Calculators",
+        "Wormhole Navigators",
+        "Temporal Navigation Devices",
+        "Dimensional Positioning Systems",
+        "Orbital Guidance Units",
+        "Deep-Space Beacons",
+        "Hazard Prediction Systems",
+        "Unknown Navigation Devices"
+      ],
+      "Communications": [
+        "Quantum Communicators",
+        "Subspace Transmitters",
+        "Long-Range Beacons",
+        "Neural Interfaces",
+        "Translation Engines",
+        "Signal Amplifiers",
+        "Encrypted Relay Nodes",
+        "Holographic Projectors",
+        "Emergency Broadcasters",
+        "Unknown Communication Devices"
+      ],
+      "Energy Systems": [
+        "Fusion Reactors",
+        "Antimatter Containment",
+        "Zero-Point Generators",
+        "Solar Harvesters",
+        "Geothermal Converters",
+        "Plasma Regulators",
+        "Quantum Batteries",
+        "Dark-Energy Collectors",
+        "Exotic Fuel Cells",
+        "Unknown Energy Devices"
+      ],
+      "Terraforming Technology": [
+        "Atmospheric Processors",
+        "Climate Regulators",
+        "Oceanic Seeders",
+        "Soil Reconstruction Units",
+        "Magnetosphere Generators",
+        "Biosphere Catalysts",
+        "Weather Control Systems",
+        "Radiation Scrubbers",
+        "Ecological Balancers",
+        "Unknown Terraforming Devices"
+      ],
+      "Fabrication Systems": [
+        "Molecular Assemblers",
+        "Nanoforges",
+        "Matter Printers",
+        "Crystal Fabricators",
+        "Biological Fabricators",
+        "Automated Foundries",
+        "Construction Swarms",
+        "Repair Systems",
+        "Resource Reclaimers",
+        "Unknown Fabrication Devices"
+      ],
+      "Unknown Technology": [
+        "Phase-Shifted Devices",
+        "Temporal Machines",
+        "Dimensional Engines",
+        "Reality Editing Devices",
+        "Gravitic Constructs",
+        "Vacuum Mechanisms",
+        "Neutron Devices",
+        "Causality Engines",
+        "Self-Replicating Machines",
+        "Unclassifiable Technology"
+      ]
+    }
+  }
+}
