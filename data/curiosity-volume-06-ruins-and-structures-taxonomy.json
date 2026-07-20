@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "taxonomy": {
+    "Ruins & Structures": {
+      "Settlements": [
+        "Village Ruins",
+        "Agricultural Settlements",
+        "Mining Settlements",
+        "Coastal Settlements",
+        "Desert Settlements",
+        "Tundra Settlements",
+        "Subterranean Settlements",
+        "Canopy Settlements",
+        "Floating Settlements",
+        "Abandoned Outposts"
+      ],
+      "Cities": [
+        "Walled Cities",
+        "Vertical Cities",
+        "Arcology Ruins",
+        "Canal Cities",
+        "Underground Cities",
+        "Crater Cities",
+        "Crystal Cities",
+        "Machine Cities",
+        "Ocean Cities",
+        "Planetary Capitals"
+      ],
+      "Laboratories": [
+        "Biological Laboratories",
+        "Geological Laboratories",
+        "Energy Laboratories",
+        "Quantum Laboratories",
+        "Medical Laboratories",
+        "Terraforming Laboratories",
+        "AI Research Facilities",
+        "Atmospheric Laboratories",
+        "Deep-Space Laboratories",
+        "Restricted Research Sites"
+      ],
+      "Temples": [
+        "Solar Temples",
+        "Lunar Temples",
+        "Ancestral Shrines",
+        "Pilgrimage Complexes",
+        "Funerary Temples",
+        "Machine Temples",
+        "Ocean Temples",
+        "Mountain Sanctuaries",
+        "Celestial Observance Halls",
+        "Forbidden Sanctums"
+      ],
+      "Observatories": [
+        "Optical Observatories",
+        "Radio Observatories",
+        "Gravitational Observatories",
+        "Neutrino Observatories",
+        "Solar Observatories",
+        "Deep-Space Arrays",
+        "Temporal Observatories",
+        "Dimensional Observatories",
+        "Planetary Survey Stations",
+        "Unknown Observation Sites"
+      ],
+      "Industrial Complexes": [
+        "Foundries",
+        "Refineries",
+        "Fabrication Plants",
+        "Power Stations",
+        "Mining Complexes",
+        "Orbital Shipyards",
+        "Resource Processing Hubs",
+        "Automated Factories",
+        "Waste Reclamation Sites",
+        "Planetary Megafactories"
+      ],
+      "Military Installations": [
+        "Fortresses",
+        "Watchtowers",
+        "Command Bunkers",
+        "Planetary Defense Sites",
+        "Orbital Defense Platforms",
+        "Training Grounds",
+        "Armories",
+        "Naval Bases",
+        "Missile Complexes",
+        "Abandoned War Citadels"
+      ],
+      "Megastructures": [
+        "Ringworld Segments",
+        "Dyson Infrastructure",
+        "Space Elevators",
+        "Orbital Habitats",
+        "World Engines",
+        "Planetary Shields",
+        "Stellar Gates",
+        "Atmospheric Towers",
+        "Planet-Spanning Networks",
+        "Unknown Megastructures"
+      ]
+    }
+  }
+}

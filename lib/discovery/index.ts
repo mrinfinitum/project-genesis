@@ -9,6 +9,8 @@ import ancientRelicsCuriosityPack from "@/data/curiosity-volume-04-ancient-relic
 import ancientRelicsCuriosityTaxonomyPack from "@/data/curiosity-volume-04-ancient-relics-taxonomy.json";
 import alienTechnologyCuriosityPack from "@/data/curiosity-volume-05-alien-technology.json";
 import alienTechnologyCuriosityTaxonomyPack from "@/data/curiosity-volume-05-alien-technology-taxonomy.json";
+import ruinsStructuresCuriosityPack from "@/data/curiosity-volume-06-ruins-and-structures.json";
+import ruinsStructuresCuriosityTaxonomyPack from "@/data/curiosity-volume-06-ruins-and-structures-taxonomy.json";
 
 export const discoveryRarities = [
   { id: "common", displayName: "Common", displayOrder: 1, defaultSpawnWeight: 1 },
@@ -187,6 +189,8 @@ export type DiscoveryRecord = {
   discoveryLocation?: string;
   recoveryMethod?: string;
   condition?: string;
+  surveyMethod?: string;
+  scale?: string;
   operationalState?: string;
   hazardLevel?: string;
   powerSignature?: number;
@@ -197,9 +201,13 @@ export type DiscoveryRecord = {
   originConfidencePercent?: number;
   translationProgressPercent?: number;
   integrityPercent?: number;
+  structuralIntegrityPercent?: number;
+  accessibleAreaPercent?: number;
+  mappingProgressPercent?: number;
   museumValue?: number;
   culturalValue?: number;
   historicalValue?: number;
+  architecturalValue?: number;
   technologicalValue?: number;
   strategicValue?: number;
   energyValue?: number;
@@ -260,6 +268,8 @@ type ImportedCuriosity = {
   collection_method?: string;
   recovery_method?: string;
   condition?: string;
+  survey_method?: string;
+  scale?: string;
   operational_state?: string;
   hazard_level?: string;
   power_signature?: number;
@@ -270,6 +280,9 @@ type ImportedCuriosity = {
   origin_confidence_percent?: number;
   translation_progress_percent?: number;
   integrity_percent?: number;
+  structural_integrity_percent?: number;
+  accessible_area_percent?: number;
+  mapping_progress_percent?: number;
   discovery_chance?: number;
   required_scan_level?: number;
   required_research_level?: number;
@@ -279,6 +292,7 @@ type ImportedCuriosity = {
   museum_value?: number;
   cultural_value?: number;
   historical_value?: number;
+  architectural_value?: number;
   technological_value?: number;
   strategic_value?: number;
   energy_value?: number;
@@ -333,6 +347,8 @@ export const ancientRelicsCuriosityVolume = ancientRelicsCuriosityPack as Import
 export const ancientRelicsCuriosityTaxonomy = ancientRelicsCuriosityTaxonomyPack as ImportedCuriosityTaxonomyPack;
 export const alienTechnologyCuriosityVolume = alienTechnologyCuriosityPack as ImportedCuriosityPack;
 export const alienTechnologyCuriosityTaxonomy = alienTechnologyCuriosityTaxonomyPack as ImportedCuriosityTaxonomyPack;
+export const ruinsStructuresCuriosityVolume = ruinsStructuresCuriosityPack as ImportedCuriosityPack;
+export const ruinsStructuresCuriosityTaxonomy = ruinsStructuresCuriosityTaxonomyPack as ImportedCuriosityTaxonomyPack;
 
 const biologicalCategoryAliases: Record<string, string> = {
   Flora: "biological-flora",
@@ -467,12 +483,15 @@ export const curiosityCategories: CuriosityCategory[] = [
     ["Biological Energy", ["Bioelectric Organisms", "Energy-Producing Flora", "Symbiotic Power Sources", "Living Batteries"]],
     ["Artificial Energy", ["Power Cells", "Ancient Reactors", "Energy Capsules", "Stored Plasma", "Unknown Energy Devices"]]
   ], "Energy"),
-  curiosityCategory("Ruins and Structures", 12, "Settlement, scientific, religious, industrial, and unknown structures discovered through exploration.", [
-    ["Settlements", ["Villages", "Cities", "Colonies", "Subterranean Settlements", "Floating Settlements"]],
-    ["Scientific Structures", ["Laboratories", "Observatories", "Archives", "Test Sites", "Research Stations"]],
-    ["Religious Structures", ["Temples", "Shrines", "Monuments", "Burial Structures", "Pilgrimage Sites"]],
-    ["Industrial Structures", ["Mines", "Factories", "Refineries", "Power Plants", "Fabrication Complexes"]],
-    ["Unknown Structures", ["Monoliths", "Vaults", "Sealed Chambers", "Geometric Complexes", "Impossible Architecture"]]
+  curiosityCategory("Ruins & Structures", 12, "Settlement, city, laboratory, temple, observatory, industrial, military, and megastructure sites discovered through exploration.", [
+    ["Settlements", ["Village Ruins", "Agricultural Settlements", "Mining Settlements", "Coastal Settlements", "Desert Settlements", "Tundra Settlements", "Subterranean Settlements", "Canopy Settlements", "Floating Settlements", "Abandoned Outposts"]],
+    ["Cities", ["Walled Cities", "Vertical Cities", "Arcology Ruins", "Canal Cities", "Underground Cities", "Crater Cities", "Crystal Cities", "Machine Cities", "Ocean Cities", "Planetary Capitals"]],
+    ["Laboratories", ["Biological Laboratories", "Geological Laboratories", "Energy Laboratories", "Quantum Laboratories", "Medical Laboratories", "Terraforming Laboratories", "AI Research Facilities", "Atmospheric Laboratories", "Deep-Space Laboratories", "Restricted Research Sites"]],
+    ["Temples", ["Solar Temples", "Lunar Temples", "Ancestral Shrines", "Pilgrimage Complexes", "Funerary Temples", "Machine Temples", "Ocean Temples", "Mountain Sanctuaries", "Celestial Observance Halls", "Forbidden Sanctums"]],
+    ["Observatories", ["Optical Observatories", "Radio Observatories", "Gravitational Observatories", "Neutrino Observatories", "Solar Observatories", "Deep-Space Arrays", "Temporal Observatories", "Dimensional Observatories", "Planetary Survey Stations", "Unknown Observation Sites"]],
+    ["Industrial Complexes", ["Foundries", "Refineries", "Fabrication Plants", "Power Stations", "Mining Complexes", "Orbital Shipyards", "Resource Processing Hubs", "Automated Factories", "Waste Reclamation Sites", "Planetary Megafactories"]],
+    ["Military Installations", ["Fortresses", "Watchtowers", "Command Bunkers", "Planetary Defense Sites", "Orbital Defense Platforms", "Training Grounds", "Armories", "Naval Bases", "Missile Complexes", "Abandoned War Citadels"]],
+    ["Megastructures", ["Ringworld Segments", "Dyson Infrastructure", "Space Elevators", "Orbital Habitats", "World Engines", "Planetary Shields", "Stellar Gates", "Atmospheric Towers", "Planet-Spanning Networks", "Unknown Megastructures"]]
   ], "Ruins"),
   curiosityCategory("Unknown Objects", 13, "Unknown materials, devices, biological objects, signals, and anomalous objects.", [
     ["Unknown Materials", ["Unclassified Solids", "Unclassified Liquids", "Unclassified Gases", "Phase-Variable Matter", "Self-Organizing Matter"]],
@@ -765,9 +784,9 @@ const coreDiscoveryRecords: DiscoveryRecord[] = [
     slug: "echo-vault",
     displayName: "Echo Vault",
     categoryId: "ruins-and-structures",
-    classId: "scientific-structures",
-    subclassId: "archives",
-    subcategoryId: "archives",
+    classId: "laboratories",
+    subclassId: "restricted-research-sites",
+    subcategoryId: "restricted-research-sites",
     scientificName: "Archivum Resonans",
     description: "An underground precursor archive whose walls replay electromagnetic echoes of ancient events.",
     lore: "Inside the vault, footsteps return as voices. A lamp raised too high reveals cities, evacuation routes, and faces that vanish when directly observed.",
@@ -882,6 +901,8 @@ function importedCuriosityRecord(record: ImportedCuriosity, pack: ImportedCurios
     discoveryLocation: record.discovery_location,
     recoveryMethod: record.recovery_method ?? record.collection_method,
     condition: record.condition,
+    surveyMethod: record.survey_method,
+    scale: record.scale,
     operationalState: record.operational_state,
     hazardLevel: record.hazard_level,
     powerSignature: record.power_signature,
@@ -892,9 +913,13 @@ function importedCuriosityRecord(record: ImportedCuriosity, pack: ImportedCurios
     originConfidencePercent: record.origin_confidence_percent,
     translationProgressPercent: record.translation_progress_percent,
     integrityPercent: record.integrity_percent,
+    structuralIntegrityPercent: record.structural_integrity_percent,
+    accessibleAreaPercent: record.accessible_area_percent,
+    mappingProgressPercent: record.mapping_progress_percent,
     museumValue: record.museum_value,
     culturalValue: record.cultural_value,
     historicalValue: record.historical_value,
+    architecturalValue: record.architectural_value,
     technologicalValue: record.technological_value,
     strategicValue: record.strategic_value,
     energyValue: record.energy_value,
@@ -987,17 +1012,28 @@ const alienTechnologyImportConfig: CuriosityVolumeImportConfig = {
   generationNotes: "Imported from NOVERIS Curiosity Codex Volume V: Alien Technology."
 };
 
+const ruinsStructuresImportConfig: CuriosityVolumeImportConfig = {
+  volumeId: "ruins-and-structures",
+  defaultTag: "ruins-and-structures",
+  defaultResearchIds: ["planet_scan", "archaeology", "structural_analysis"],
+  defaultEquipmentIds: ["structure_scanner", "survey_probe"],
+  specialEvent: "ruins-structures-curiosity-volume-06",
+  generationNotes: "Imported from NOVERIS Curiosity Codex Volume VI: Ruins & Structures."
+};
+
 export const biologicalCuriosityRecords = biologicalCuriosityVolume.records.map((record) => importedCuriosityRecord(record, biologicalCuriosityVolume, biologicalImportConfig));
 export const faunaCuriosityRecords = faunaCuriosityVolume.records.map((record) => importedCuriosityRecord(record, faunaCuriosityVolume, faunaImportConfig));
 export const geologicalCuriosityRecords = geologicalCuriosityVolume.records.map((record) => importedCuriosityRecord(record, geologicalCuriosityVolume, geologicalImportConfig));
 export const ancientRelicsCuriosityRecords = ancientRelicsCuriosityVolume.records.map((record) => importedCuriosityRecord(record, ancientRelicsCuriosityVolume, ancientRelicsImportConfig));
 export const alienTechnologyCuriosityRecords = alienTechnologyCuriosityVolume.records.map((record) => importedCuriosityRecord(record, alienTechnologyCuriosityVolume, alienTechnologyImportConfig));
+export const ruinsStructuresCuriosityRecords = ruinsStructuresCuriosityVolume.records.map((record) => importedCuriosityRecord(record, ruinsStructuresCuriosityVolume, ruinsStructuresImportConfig));
 
 export const biologicalCuriosityNavigation = importedCuriosityNavigation(biologicalCuriosityTaxonomy);
 export const faunaCuriosityNavigation = importedCuriosityNavigation(faunaCuriosityTaxonomy);
 export const geologicalCuriosityNavigation = importedCuriosityNavigation(geologicalCuriosityTaxonomy);
 export const ancientRelicsCuriosityNavigation = importedCuriosityNavigation(ancientRelicsCuriosityTaxonomy);
 export const alienTechnologyCuriosityNavigation = importedCuriosityNavigation(alienTechnologyCuriosityTaxonomy);
+export const ruinsStructuresCuriosityNavigation = importedCuriosityNavigation(ruinsStructuresCuriosityTaxonomy);
 
 export const canonicalDiscoveries: DiscoveryRecord[] = [
   ...coreDiscoveryRecords,
@@ -1005,10 +1041,11 @@ export const canonicalDiscoveries: DiscoveryRecord[] = [
   ...faunaCuriosityRecords,
   ...geologicalCuriosityRecords,
   ...ancientRelicsCuriosityRecords,
-  ...alienTechnologyCuriosityRecords
+  ...alienTechnologyCuriosityRecords,
+  ...ruinsStructuresCuriosityRecords
 ];
 
-export const supportedCuriosityVolumeIds = ["biological", "fauna", "geological", "ancient-relics", "alien-technology"] as const;
+export const supportedCuriosityVolumeIds = ["biological", "fauna", "geological", "ancient-relics", "alien-technology", "ruins-and-structures"] as const;
 export type SupportedCuriosityVolumeId = typeof supportedCuriosityVolumeIds[number];
 
 function discoveryFolderKey(record: Pick<DiscoveryRecord, "volumeId" | "categoryId" | "classId" | "subclassId">, depth: "volume" | "category" | "class" | "subclass") {
@@ -1221,6 +1258,20 @@ function runDiscoverySystemValidation() {
   const invalidUniqueTechnology = alienTechnologyCuriosityRecords.filter((record) => record.rarity === "unique" && (record.maximumKnownInstances !== 1 || record.repeatable !== false));
   if (invalidUniqueTechnology.length) {
     issues.push({ severity: "error", code: "alien_technology_unique_contract", message: "Unique alien technology must be non-repeatable and limited to one known instance.", records: invalidUniqueTechnology.map((record) => record.id) });
+  }
+  const ruinsStructuresNames = ruinsStructuresCuriosityRecords.map((record) => record.displayName.trim().toLowerCase());
+  if (new Set(ruinsStructuresNames).size !== ruinsStructuresNames.length) {
+    issues.push({ severity: "error", code: "duplicate_ruins_structures_name", message: "Volume VI curiosity names must be unique.", records: ruinsStructuresCuriosityRecords.map((record) => record.displayName) });
+  }
+  if (ruinsStructuresCuriosityRecords.length !== ruinsStructuresCuriosityVolume.recordCount) {
+    issues.push({ severity: "error", code: "ruins_structures_record_count", message: "Volume VI must load its declared canonical record count.", records: [String(ruinsStructuresCuriosityRecords.length), String(ruinsStructuresCuriosityVolume.recordCount)] });
+  }
+  if (ruinsStructuresCuriosityRecords[0]?.id !== "STR-0001" || ruinsStructuresCuriosityRecords.at(-1)?.id !== "STR-0600") {
+    issues.push({ severity: "error", code: "ruins_structures_id_range", message: "Volume VI must preserve the STR-0001 through STR-0600 canonical range.", records: [ruinsStructuresCuriosityRecords[0]?.id ?? "missing", ruinsStructuresCuriosityRecords.at(-1)?.id ?? "missing"] });
+  }
+  const invalidUniqueStructures = ruinsStructuresCuriosityRecords.filter((record) => record.rarity === "unique" && (record.maximumKnownInstances !== 1 || record.repeatable !== false));
+  if (invalidUniqueStructures.length) {
+    issues.push({ severity: "error", code: "ruins_structures_unique_contract", message: "Unique ruins and structures must be non-repeatable and limited to one known instance.", records: invalidUniqueStructures.map((record) => record.id) });
   }
   for (const collection of discoveryCollections) {
     const missing = collection.discoveryIds.filter((id) => !discoveryIds.has(id));

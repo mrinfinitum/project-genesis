@@ -169,7 +169,7 @@ export default async function BiologicalCuriosityPage({ searchParams }: { search
                         <h2 className="mt-1 truncate text-lg font-black text-white">{record.displayName}</h2>
                         <p className="mt-1 truncate text-xs italic text-cyan-100/80">{record.scientificName}</p>
                       </div>
-                      <WorkspaceBadge value={record.rarity} />
+                      <WorkspaceBadge value={record.rarity} className="px-2 py-0.5 text-[0.58rem] tracking-[0.1em]" />
                     </div>
                     <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-300">{record.description}</p>
                     <div className="mt-4 grid grid-cols-3 gap-2">
