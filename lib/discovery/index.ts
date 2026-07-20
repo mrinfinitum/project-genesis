@@ -19,6 +19,8 @@ import unknownObjectsCuriosityPack from "@/data/curiosity-volume-09-unknown-obje
 import unknownObjectsCuriosityTaxonomyPack from "@/data/curiosity-volume-09-unknown-objects-taxonomy.json";
 import geneticArchivesCuriosityPack from "@/data/curiosity-volume-10-genetic-archives.json";
 import geneticArchivesCuriosityTaxonomyPack from "@/data/curiosity-volume-10-genetic-archives-taxonomy.json";
+import organicMaterialsCuriosityPack from "@/data/curiosity-volume-11-organic-materials.json";
+import organicMaterialsCuriosityTaxonomyPack from "@/data/curiosity-volume-11-organic-materials-taxonomy.json";
 
 export const discoveryRarities = [
   { id: "common", displayName: "Common", displayOrder: 1, defaultSpawnWeight: 1 },
@@ -202,6 +204,7 @@ export type DiscoveryRecord = {
   operationalState?: string;
   objectState?: string;
   archiveState?: string;
+  materialState?: string;
   phenomenonState?: string;
   measurementMethod?: string;
   hazardLevel?: string;
@@ -219,6 +222,10 @@ export type DiscoveryRecord = {
   viabilityPercent?: number;
   sequenceCompletionPercent?: number;
   contaminationPercent?: number;
+  purityPercent?: number;
+  potencyPercent?: number;
+  bioactivityPercent?: number;
+  analysisProgressPercent?: number;
   powerSignature?: number;
   stabilityPercent?: number;
   reverseEngineeringProgressPercent?: number;
@@ -241,6 +248,7 @@ export type DiscoveryRecord = {
   mysteryValue?: number;
   scientificValue?: number;
   geneticValue?: number;
+  organicValue?: number;
   medicalValue?: number;
   collectionValue?: number;
   repeatable?: boolean;
@@ -315,6 +323,7 @@ type ImportedCuriosity = {
   operational_state?: string;
   object_state?: string;
   archive_state?: string;
+  material_state?: string;
   phenomenon_state?: string;
   measurement_method?: string;
   hazard_level?: string;
@@ -332,6 +341,10 @@ type ImportedCuriosity = {
   viability_percent?: number;
   sequence_completion_percent?: number;
   contamination_percent?: number;
+  purity_percent?: number;
+  potency_percent?: number;
+  bioactivity_percent?: number;
+  analysis_progress_percent?: number;
   power_signature?: number;
   stability_percent?: number;
   reverse_engineering_progress_percent?: number;
@@ -360,6 +373,7 @@ type ImportedCuriosity = {
   mystery_value?: number;
   scientific_value?: number;
   genetic_value?: number;
+  organic_value?: number;
   medical_value?: number;
   collection_value?: number;
   repeatable?: boolean;
@@ -422,6 +436,8 @@ export const unknownObjectsCuriosityVolume = unknownObjectsCuriosityPack as Impo
 export const unknownObjectsCuriosityTaxonomy = unknownObjectsCuriosityTaxonomyPack as ImportedCuriosityTaxonomyPack;
 export const geneticArchivesCuriosityVolume = geneticArchivesCuriosityPack as ImportedCuriosityPack;
 export const geneticArchivesCuriosityTaxonomy = geneticArchivesCuriosityTaxonomyPack as ImportedCuriosityTaxonomyPack;
+export const organicMaterialsCuriosityVolume = organicMaterialsCuriosityPack as ImportedCuriosityPack;
+export const organicMaterialsCuriosityTaxonomy = organicMaterialsCuriosityTaxonomyPack as ImportedCuriosityTaxonomyPack;
 
 const biologicalCategoryAliases: Record<string, string> = {
   Flora: "biological-flora",
@@ -518,12 +534,12 @@ export const curiosityCategories: CuriosityCategory[] = [
     ["Atmospheric Elements", ["Noble Gases", "Reactive Gases", "Fuel Gases", "Exotic Atmospheric Compounds"]],
     ["Exotic Elements", ["Stable Superheavy Elements", "Metastable Elements", "Alien Alloys", "Unknown Elements"]]
   ], "Elements"),
-  curiosityCategory("Organic Materials", 7, "Biological samples, useful organics, and hazardous organic compounds.", [
+  curiosityCategory("Organic Materials", 7, "Biological samples, useful organics, fibers, resins, oils, enzymes, pigments, polymers, and medical compounds.", mergeClassDefinitions([
     ["Biological Samples", ["Tissue Samples", "Sap", "Venom", "Blood Analogues", "Chitin", "Bone Analogues", "Neural Tissue", "Reproductive Samples"]],
     ["Useful Organics", ["Medicinal Compounds", "Nutrient Compounds", "Fibers", "Resins", "Oils", "Enzymes", "Pigments", "Adhesives"]],
     ["Hazardous Organics", ["Toxins", "Pathogens", "Spores", "Parasites", "Corrosive Secretions", "Neuroactive Compounds", "Hallucinogens", "Mutagens"]],
     ["Biopolymers", ["Elastic Biopolymers", "Armor Biopolymers", "Conductive Biopolymers", "Transparent Biopolymers", "Self-Healing Biopolymers", "Thermal Biopolymers", "Cryogenic Biopolymers", "Memory Biopolymers"]]
-  ], "Organics"),
+  ], Object.entries(organicMaterialsCuriosityTaxonomy.taxonomy["Organic Materials"] ?? {})), "Organics"),
   curiosityCategory("Fossils and Preserved Life", 8, "Fossil, frozen, amber-preserved, and trace evidence of extinct or dormant life.", [
     ["Flora Fossils", ["Petrified Plants", "Seed Fossils", "Spore Fossils", "Root Networks", "Leaf Impressions", "Pollen Beds", "Fossilized Reefs", "Ancient Growth Rings"]],
     ["Fauna Fossils", ["Skeletons", "Shells", "Imprints", "Amber-Preserved Organisms", "Frozen Organisms", "Mineralized Carapaces", "Egg Fossils", "Mass Fossil Beds"]],
@@ -998,6 +1014,7 @@ function importedCuriosityRecord(record: ImportedCuriosity, pack: ImportedCurios
     operationalState: record.operational_state,
     objectState: record.object_state,
     archiveState: record.archive_state,
+    materialState: record.material_state,
     phenomenonState: record.phenomenon_state,
     measurementMethod: record.measurement_method,
     hazardLevel: record.hazard_level,
@@ -1015,6 +1032,10 @@ function importedCuriosityRecord(record: ImportedCuriosity, pack: ImportedCurios
     viabilityPercent: record.viability_percent,
     sequenceCompletionPercent: record.sequence_completion_percent,
     contaminationPercent: record.contamination_percent,
+    purityPercent: record.purity_percent,
+    potencyPercent: record.potency_percent,
+    bioactivityPercent: record.bioactivity_percent,
+    analysisProgressPercent: record.analysis_progress_percent,
     powerSignature: record.power_signature,
     stabilityPercent: record.stability_percent,
     reverseEngineeringProgressPercent: record.reverse_engineering_progress_percent,
@@ -1037,6 +1058,7 @@ function importedCuriosityRecord(record: ImportedCuriosity, pack: ImportedCurios
     mysteryValue: record.mystery_value,
     scientificValue: record.scientific_value,
     geneticValue: record.genetic_value,
+    organicValue: record.organic_value,
     medicalValue: record.medical_value,
     collectionValue: record.collection_value,
     repeatable: record.repeatable,
@@ -1172,6 +1194,15 @@ const geneticArchivesImportConfig: CuriosityVolumeImportConfig = {
   generationNotes: "Imported from NOVERIS Curiosity Codex Volume X: Genetic Archives."
 };
 
+const organicMaterialsImportConfig: CuriosityVolumeImportConfig = {
+  volumeId: "organic-materials",
+  defaultTag: "organic-materials",
+  defaultResearchIds: ["planet_scan", "xenobiology", "organic_chemistry"],
+  defaultEquipmentIds: ["bioscanner_basic", "biosecure_container"],
+  specialEvent: "organic-materials-curiosity-volume-11",
+  generationNotes: "Imported from NOVERIS Curiosity Codex Volume XI: Organic Materials."
+};
+
 export const biologicalCuriosityRecords = biologicalCuriosityVolume.records.map((record) => importedCuriosityRecord(record, biologicalCuriosityVolume, biologicalImportConfig));
 export const faunaCuriosityRecords = faunaCuriosityVolume.records.map((record) => importedCuriosityRecord(record, faunaCuriosityVolume, faunaImportConfig));
 export const geologicalCuriosityRecords = geologicalCuriosityVolume.records.map((record) => importedCuriosityRecord(record, geologicalCuriosityVolume, geologicalImportConfig));
@@ -1182,6 +1213,7 @@ export const energyPhenomenaCuriosityRecords = energyPhenomenaCuriosityVolume.re
 export const anomaliesCuriosityRecords = anomaliesCuriosityVolume.records.map((record) => importedCuriosityRecord(record, anomaliesCuriosityVolume, anomaliesImportConfig));
 export const unknownObjectsCuriosityRecords = unknownObjectsCuriosityVolume.records.map((record) => importedCuriosityRecord(record, unknownObjectsCuriosityVolume, unknownObjectsImportConfig));
 export const geneticArchivesCuriosityRecords = geneticArchivesCuriosityVolume.records.map((record) => importedCuriosityRecord(record, geneticArchivesCuriosityVolume, geneticArchivesImportConfig));
+export const organicMaterialsCuriosityRecords = organicMaterialsCuriosityVolume.records.map((record) => importedCuriosityRecord(record, organicMaterialsCuriosityVolume, organicMaterialsImportConfig));
 
 export const biologicalCuriosityNavigation = importedCuriosityNavigation(biologicalCuriosityTaxonomy);
 export const faunaCuriosityNavigation = importedCuriosityNavigation(faunaCuriosityTaxonomy);
@@ -1193,6 +1225,7 @@ export const energyPhenomenaCuriosityNavigation = importedCuriosityNavigation(en
 export const anomaliesCuriosityNavigation = importedCuriosityNavigation(anomaliesCuriosityTaxonomy);
 export const unknownObjectsCuriosityNavigation = importedCuriosityNavigation(unknownObjectsCuriosityTaxonomy);
 export const geneticArchivesCuriosityNavigation = importedCuriosityNavigation(geneticArchivesCuriosityTaxonomy);
+export const organicMaterialsCuriosityNavigation = importedCuriosityNavigation(organicMaterialsCuriosityTaxonomy);
 
 export const canonicalDiscoveries: DiscoveryRecord[] = [
   ...coreDiscoveryRecords,
@@ -1205,10 +1238,11 @@ export const canonicalDiscoveries: DiscoveryRecord[] = [
   ...energyPhenomenaCuriosityRecords,
   ...anomaliesCuriosityRecords,
   ...unknownObjectsCuriosityRecords,
-  ...geneticArchivesCuriosityRecords
+  ...geneticArchivesCuriosityRecords,
+  ...organicMaterialsCuriosityRecords
 ];
 
-export const supportedCuriosityVolumeIds = ["biological", "fauna", "geological", "ancient-relics", "alien-technology", "ruins-and-structures", "energy-phenomena", "anomalies", "unknown-objects", "genetic-archives"] as const;
+export const supportedCuriosityVolumeIds = ["biological", "fauna", "geological", "ancient-relics", "alien-technology", "ruins-and-structures", "energy-phenomena", "anomalies", "unknown-objects", "genetic-archives", "organic-materials"] as const;
 export type SupportedCuriosityVolumeId = typeof supportedCuriosityVolumeIds[number];
 
 function discoveryFolderKey(record: Pick<DiscoveryRecord, "volumeId" | "categoryId" | "classId" | "subclassId">, depth: "volume" | "category" | "class" | "subclass") {
@@ -1507,6 +1541,28 @@ function runDiscoverySystemValidation() {
   const incompleteGeneticArchives = geneticArchivesCuriosityRecords.filter((record) => !record.archiveState || !record.recoveryMethod || typeof record.genomeIntegrityPercent !== "number" || typeof record.viabilityPercent !== "number" || typeof record.sequenceCompletionPercent !== "number" || typeof record.contaminationPercent !== "number" || typeof record.translationProgressPercent !== "number" || typeof record.originConfidencePercent !== "number");
   if (incompleteGeneticArchives.length) {
     issues.push({ severity: "error", code: "genetic_archive_analysis_contract", message: "Genetic archives must preserve archive state, recovery method, genome integrity, viability, sequence completion, contamination, translation progress, and origin confidence.", records: incompleteGeneticArchives.map((record) => record.id) });
+  }
+  const organicMaterialNames = organicMaterialsCuriosityRecords.map((record) => record.displayName.trim().toLowerCase());
+  if (new Set(organicMaterialNames).size !== organicMaterialNames.length) {
+    issues.push({ severity: "error", code: "duplicate_organic_material_name", message: "Volume XI curiosity names must be unique.", records: organicMaterialsCuriosityRecords.map((record) => record.displayName) });
+  }
+  if (organicMaterialsCuriosityRecords.length !== organicMaterialsCuriosityVolume.recordCount) {
+    issues.push({ severity: "error", code: "organic_material_record_count", message: "Volume XI must load its declared canonical record count.", records: [String(organicMaterialsCuriosityRecords.length), String(organicMaterialsCuriosityVolume.recordCount)] });
+  }
+  if (organicMaterialsCuriosityRecords[0]?.id !== "ORG-0001" || organicMaterialsCuriosityRecords.at(-1)?.id !== "ORG-0600") {
+    issues.push({ severity: "error", code: "organic_material_id_range", message: "Volume XI must preserve the ORG-0001 through ORG-0600 canonical range.", records: [organicMaterialsCuriosityRecords[0]?.id ?? "missing", organicMaterialsCuriosityRecords.at(-1)?.id ?? "missing"] });
+  }
+  const organicMaterialClasses = Object.values(organicMaterialsCuriosityTaxonomy.taxonomy["Organic Materials"] ?? {});
+  if (organicMaterialClasses.length !== 8 || organicMaterialClasses.flat().length !== 80) {
+    issues.push({ severity: "error", code: "organic_material_taxonomy_count", message: "Volume XI must preserve 8 classes and 80 subclasses.", records: [String(organicMaterialClasses.length), String(organicMaterialClasses.flat().length)] });
+  }
+  const invalidUniqueOrganicMaterials = organicMaterialsCuriosityRecords.filter((record) => record.rarity === "unique" && (record.maximumKnownInstances !== 1 || record.repeatable !== false));
+  if (invalidUniqueOrganicMaterials.length) {
+    issues.push({ severity: "error", code: "organic_material_unique_contract", message: "Unique organic materials must be non-repeatable and limited to one known instance.", records: invalidUniqueOrganicMaterials.map((record) => record.id) });
+  }
+  const incompleteOrganicMaterials = organicMaterialsCuriosityRecords.filter((record) => !record.materialState || !record.recoveryMethod || typeof record.purityPercent !== "number" || typeof record.potencyPercent !== "number" || typeof record.stabilityPercent !== "number" || typeof record.bioactivityPercent !== "number" || typeof record.contaminationPercent !== "number" || typeof record.analysisProgressPercent !== "number" || typeof record.originConfidencePercent !== "number");
+  if (incompleteOrganicMaterials.length) {
+    issues.push({ severity: "error", code: "organic_material_analysis_contract", message: "Organic materials must preserve material state, recovery method, purity, potency, stability, bioactivity, contamination, analysis progress, and origin confidence.", records: incompleteOrganicMaterials.map((record) => record.id) });
   }
   for (const collection of discoveryCollections) {
     const missing = collection.discoveryIds.filter((id) => !discoveryIds.has(id));

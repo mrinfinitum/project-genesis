@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "taxonomy": {
+    "Organic Materials": {
+      "Fibers": [
+        "Structural Fibers",
+        "Thermal Fibers",
+        "Conductive Fibers",
+        "Elastic Fibers",
+        "Armor Weaves",
+        "Sensory Filaments",
+        "Root Fibers",
+        "Aerial Fibers",
+        "Symbiotic Fibers",
+        "Unknown Fibrous Matter"
+      ],
+      "Resins": [
+        "Adhesive Resins",
+        "Protective Resins",
+        "Conductive Resins",
+        "Photosensitive Resins",
+        "Healing Resins",
+        "Structural Resins",
+        "Aromatic Resins",
+        "Reactive Resins",
+        "Fossilized Resins",
+        "Unknown Resinous Matter"
+      ],
+      "Oils": [
+        "Nutrient Oils",
+        "Lubricating Oils",
+        "Volatile Oils",
+        "Thermal Oils",
+        "Bioluminescent Oils",
+        "Medicinal Oils",
+        "Defensive Oils",
+        "Spore Oils",
+        "Ancient Organic Oils",
+        "Unknown Lipid Compounds"
+      ],
+      "Enzymes": [
+        "Digestive Enzymes",
+        "Repair Enzymes",
+        "Catalytic Enzymes",
+        "Photosynthetic Enzymes",
+        "Cryogenic Enzymes",
+        "Detoxifying Enzymes",
+        "Adaptive Enzymes",
+        "Synthetic Enzymes",
+        "Extinct Biocatalysts",
+        "Unknown Enzymatic Agents"
+      ],
+      "Toxins": [
+        "Neurotoxins",
+        "Hemotoxins",
+        "Cytotoxins",
+        "Respiratory Toxins",
+        "Dermal Toxins",
+        "Spore Toxins",
+        "Predatory Venoms",
+        "Defensive Secretions",
+        "Ancient Biotoxins",
+        "Unknown Toxic Agents"
+      ],
+      "Pigments": [
+        "Bioluminescent Pigments",
+        "Camouflage Pigments",
+        "Thermochromic Pigments",
+        "Photosynthetic Pigments",
+        "Warning Pigments",
+        "Mineral-Bound Pigments",
+        "Iridescent Pigments",
+        "Signal Pigments",
+        "Fossil Pigments",
+        "Unknown Chromatic Matter"
+      ],
+      "Biological Polymers": [
+        "Structural Biopolymers",
+        "Elastic Biopolymers",
+        "Conductive Biopolymers",
+        "Self-Healing Biopolymers",
+        "Insulating Biopolymers",
+        "Memory Biopolymers",
+        "Transparent Biopolymers",
+        "Reactive Biopolymers",
+        "Ancient Biopolymers",
+        "Unknown Polymeric Life Matter"
+      ],
+      "Medical Compounds": [
+        "Regenerative Compounds",
+        "Antimicrobial Compounds",
+        "Analgesic Compounds",
+        "Antiviral Compounds",
+        "Antitoxin Compounds",
+        "Immune Modulators",
+        "Neural Stabilizers",
+        "Metabolic Regulators",
+        "Longevity Compounds",
+        "Unknown Therapeutic Agents"
+      ]
+    }
+  }
+}
