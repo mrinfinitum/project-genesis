@@ -15,6 +15,8 @@
     "cleanup:remote-psd": "tsx scripts/cleanup-remote-psd-sources.ts",
     "sync:studio-runtime": "tsx scripts/sync-studio-runtime.ts",
     "export:planet-resource-handoff": "tsx scripts/export-planet-resource-seed-handoff.ts",
+    "export:resource-catalog-csv": "tsx scripts/export-resource-catalog-csv.ts",
+    "export:discovery-catalog-csv": "tsx scripts/export-discovery-catalog-csv.ts",
     "audit:resource-taxonomy": "tsx scripts/audit-resource-taxonomy.ts",
     "verify:resource-taxonomy": "tsx scripts/verify-resource-taxonomy.ts"
   },
