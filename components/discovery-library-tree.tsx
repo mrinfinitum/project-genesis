@@ -22,10 +22,19 @@ function ancestorIds(nodes: DiscoveryTreeNode[], activeId: string, parents: stri
   return [];
 }
 
+function nodeHasChildren(nodes: DiscoveryTreeNode[], id: string): boolean {
+  for (const node of nodes) {
+    if (node.id === id) return Boolean(node.children?.length);
+    if (nodeHasChildren(node.children ?? [], id)) return true;
+  }
+  return false;
+}
+
 function initiallyExpanded(nodes: DiscoveryTreeNode[], activeId: string, expandTopLevel: boolean) {
   return new Set([
     ...(expandTopLevel ? nodes.filter((node) => node.children?.length).map((node) => node.id) : []),
-    ...ancestorIds(nodes, activeId)
+    ...ancestorIds(nodes, activeId),
+    ...(nodeHasChildren(nodes, activeId) ? [activeId] : [])
   ]);
 }
 
@@ -112,10 +121,11 @@ export function DiscoveryLibraryTree({ nodes, activeFolder, ariaLabel = "Discove
 
   useEffect(() => {
     const activeAncestors = ancestorIds(nodes, activeFolder);
-    if (!activeAncestors.length) return;
+    const activeBranch = nodeHasChildren(nodes, activeFolder) ? [activeFolder] : [];
+    if (!activeAncestors.length && !activeBranch.length) return;
     setExpandedIds((current) => {
       const next = new Set(current);
-      activeAncestors.forEach((id) => next.add(id));
+      [...activeAncestors, ...activeBranch].forEach((id) => next.add(id));
       return next;
     });
   }, [activeFolder, nodes]);

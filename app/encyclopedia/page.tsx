@@ -24,11 +24,13 @@ export default async function EncyclopediaPage({ searchParams }: { searchParams?
   const [data, assetState] = await Promise.all([getGameData(), getAssetProductionState({ includeEncyclopediaRequirements: false })]);
   const state = buildCivilizationEncyclopediaState(data, assetState.assets);
   const selectedSection = state.sections.find((section) => section.id === selectedSectionId) ?? state.sections[0];
-  const sectionEntries = selectedSection?.entries ?? [];
+  const sectionEntries = (selectedSection?.entries ?? []).filter((entry) => selectedSection?.id !== "era" || entry.canonicalRecordId !== "survival");
   const needle = query.toLowerCase();
   const matchedEntries = sectionEntries.filter((entry) => {
-    if (selectedCategory && entry.category !== selectedCategory) return false;
-    if (selectedSubcategory && entry.subcategory !== selectedSubcategory) return false;
+    const category = selectedSection?.id === "era" ? entry.displayName : entry.category;
+    const subcategory = selectedSection?.id === "era" ? "" : entry.subcategory;
+    if (selectedCategory && category !== selectedCategory) return false;
+    if (selectedSubcategory && subcategory !== selectedSubcategory) return false;
     if (!needle) return true;
     return [entry.displayName, entry.canonicalRecordId, entry.category, entry.subcategory, entry.era, entry.summary, entry.description, ...entry.tags].join(" ").toLowerCase().includes(needle);
   });
@@ -37,14 +39,31 @@ export default async function EncyclopediaPage({ searchParams }: { searchParams?
     entityType: entry.entityType,
     canonicalRecordId: entry.canonicalRecordId,
     displayName: entry.displayName,
-    category: entry.category,
-    subcategory: entry.subcategory,
+    category: selectedSection?.id === "era" ? entry.displayName : entry.category,
+    subcategory: selectedSection?.id === "era" ? "" : entry.subcategory,
     summary: entry.summary,
     description: entry.description,
     publicationState: entry.publicationState,
     completeness: entry.completeness
   }));
   const sections: EncyclopediaBrowserSection[] = state.sections.map((section) => {
+    if (section.id === "era") {
+      const eras = section.entries
+        .filter((entry) => entry.canonicalRecordId !== "survival")
+        .sort((left, right) => (left.tier ?? 0) - (right.tier ?? 0));
+      return {
+        id: section.id,
+        label: section.label,
+        status: section.status,
+        count: eras.length,
+        categories: eras.map((entry) => ({
+          id: treeId(entry.canonicalRecordId),
+          label: entry.displayName,
+          count: 1,
+          subcategories: []
+        }))
+      };
+    }
     const categories = new Map<string, Map<string, number>>();
     for (const entry of section.entries) {
       const subcategories = categories.get(entry.category) ?? new Map<string, number>();
