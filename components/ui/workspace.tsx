@@ -27,7 +27,7 @@ export function WorkspaceStatTile({ label, value, className }: { label: string; 
   return (
     <div className={cn("studio-material-projection rounded-md p-4", className)}>
       <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">{label}</p>
-      <p className="mt-2 text-2xl font-black text-white">{value}</p>
+      <p className="mt-2 text-xl font-black text-white">{value}</p>
     </div>
   );
 }
