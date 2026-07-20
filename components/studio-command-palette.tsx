@@ -16,6 +16,7 @@ type PaletteResult = {
 const commandSeeds: PaletteResult[] = [
   { id: "command:dashboard", type: "Workspace", title: "Open Dashboard", subtitle: "Command Center", href: "/" },
   { id: "command:asset-library", type: "Workspace", title: "Open Asset Library", subtitle: "Content Browser", href: "/asset-library" },
+  { id: "command:inspiration-board", type: "Workspace", title: "Open Inspiration Board", subtitle: "Visual references and concept imagery", href: "/inspiration-board" },
   { id: "command:upload-asset", type: "Asset Pipeline", title: "Upload Asset", subtitle: "Create or replace source art", href: "/assets?upload=asset" },
   { id: "command:galaxy-library", type: "Library", title: "Open Galaxy Library", subtitle: "Create and manage generated galaxies", href: "/galaxy" },
   { id: "command:generate-galaxy", type: "Library Action", title: "Generate Galaxy", subtitle: "Open Galaxy Library generation tools", href: "/galaxy?action=generate" },

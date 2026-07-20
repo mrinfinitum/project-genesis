@@ -16,6 +16,7 @@ import {
   FileText,
   FlaskConical,
   Gem,
+  GalleryHorizontalEnd,
   Landmark,
   LayoutDashboard,
   ListChecks,
@@ -58,6 +59,7 @@ const navigationGroups: NavigationGroup[] = [
     items: [
       { href: "/", label: "Universe Command Center", icon: LayoutDashboard, activePaths: ["/"] },
       { href: "/asset-library", label: "Asset Library", icon: PackageCheck },
+      { href: "/inspiration-board", label: "Inspiration Board", icon: GalleryHorizontalEnd },
       { href: "/encyclopedia", label: "Encyclopedia", icon: BookOpen },
       { href: "/architecture", label: "Architecture", icon: FileText },
       { href: "/settings#users", label: "Admin Users", icon: ShieldCheck }
