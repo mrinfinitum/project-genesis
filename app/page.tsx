@@ -1,11 +1,15 @@
 import { CommandCenterDashboard } from "@/components/command-center-dashboard";
+import { getAssetProductionState } from "@/lib/assets/asset-production";
 import { getGameData } from "@/lib/data";
 import { getUniverseLibraryData } from "@/lib/universe/library";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const data = await getGameData();
+  const [data, assetState] = await Promise.all([
+    getGameData(),
+    getAssetProductionState({ includeEncyclopediaRequirements: false })
+  ]);
   const universeLibraries = getUniverseLibraryData();
   const totalRecords = [
     data.research,
@@ -23,7 +27,7 @@ export default async function DashboardPage() {
     data.planet_render_library,
     data.release_notes,
     data.changelog
-  ].reduce((sum, rows) => sum + rows.length, 0);
+  ].reduce((sum, rows) => sum + rows.length, 0) + universeLibraries.discoveries.length;
   const libraryStats = [
     { label: "Galaxy Library", href: "/galaxy", rows: universeLibraries.galaxies },
     { label: "Sector Library", href: "/sector-map", rows: universeLibraries.sectors },
@@ -55,15 +59,14 @@ export default async function DashboardPage() {
     }).length
   }));
   const assetStats = [
-    { label: "Asset Records", value: data.assets.length },
-    { label: "Concept Art", value: data.conceptual_art.length },
-    { label: "Planet Renders", value: data.planet_render_library.length },
-    { label: "Prompt Rows", value: data.planet_prompt_library.length }
+    { label: "Total Assets", value: assetState.dashboard.totalAssets },
+    { label: "Published", value: assetState.dashboard.published },
+    { label: "Source Files", value: assetState.dashboard.sourceFilesUploaded },
+    { label: "Preview Ready", value: assetState.dashboard.previewReady }
   ];
 
   return (
     <CommandCenterDashboard
-      systems={data.project_systems}
       healthChecks={data.data_health_checks}
       metrics={data.dashboard_metrics}
       totalRecords={totalRecords}
