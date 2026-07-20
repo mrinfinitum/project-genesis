@@ -467,6 +467,43 @@ export type EconomyCalculationRules = {
   laborFormula: { perSecond: string; perClick: string; notes: string };
 };
 
+export type LaborGenerationSource = {
+  id: "manual_labor" | "ai_assisted_labor" | "workforce_labor";
+  displayName: string;
+  economyId: "ECON-LABOR";
+  productionMode: "per_click" | "per_second" | "assigned_capacity";
+  producerIds: string[];
+  offlineEligible: boolean;
+  unlockRule: string;
+  formula: string;
+  modifierIds: string[];
+  notes: string;
+};
+
+export type LaborGenerationFramework = {
+  id: "labor_generation_framework_v1";
+  version: "1.1.0";
+  architectureDecisionId: "ARCH-DECISION-LABOR-FIRST-ECONOMY";
+  economyId: "ECON-LABOR";
+  populationEconomyId: "ECON-POPULATION";
+  actionSystemId: "canonical_action_system_v1";
+  ownership: { studioOwns: string[]; gameOwns: string[] };
+  sources: LaborGenerationSource[];
+  workforceConversion: {
+    stages: Array<"population" | "eligible_workforce" | "available_workforce_labor" | "assigned_labor">;
+    populationSpendable: false;
+    formula: string;
+    assignmentRule: string;
+  };
+  availableLaborFormula: string;
+  modifiers: Array<{ id: string; sourceSystem: string; appliesTo: string[]; operation: "add" | "multiply" | "reduce_requirement" | "increase_capacity"; notes: string }>;
+  upgradeEffects: Array<{ id: string; appliesTo: string; operation: "add" | "multiply" | "reduce_requirement" | "increase_capacity"; notes: string }>;
+  progressionPhases: Array<{ id: "early" | "mid" | "late"; primarySources: LaborGenerationSource["id"][]; playerRole: string; flow: string[] }>;
+  integrationSystems: string[];
+  saveContract: { storedBy: "game"; fields: string[]; migrationRules: string[] };
+  validationRules: string[];
+};
+
 export type EconomyUsageRelationships = {
   upgradeCosts: Record<string, string[]>;
   buildingCosts: Record<string, string[]>;
@@ -3018,6 +3055,7 @@ export type ActionSystemContract = {
   version: "1.0.0";
   architectureDecisionId: "ARCH-DECISION-CANONICAL-ACTION-FRAMEWORK";
   timeActionContractId: TimeActionContract["id"];
+  laborGenerationFrameworkId: LaborGenerationFramework["id"];
   ownership: {
     studioOwns: string[];
     gameOwns: string[];
@@ -3139,6 +3177,7 @@ export type GameRuntimeData = {
   economyRateBreakdownDefinitions: EconomyRateBreakdownDefinition[];
   offlineProgressionPolicies: OfflineProgressionPolicy[];
   economyCalculationRules: EconomyCalculationRules;
+  laborGenerationFramework: LaborGenerationFramework;
   aiAgents: AiAgentDefinition[];
   aiAgentVariants: AiAgentVariantDefinition[];
   aiAgentPersonalities: AiAgentPersonalityDefinition[];

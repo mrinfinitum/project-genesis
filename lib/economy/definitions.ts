@@ -541,7 +541,7 @@ export function buildResourceProducerDefinitions(data: GameData): ResourceProduc
       multipliers: [],
       offlineEligible: true,
       activeConditions: ["game_started", "not_paused"],
-      notes: "Base passive Labor is separate from AI Agent Labor Assistance."
+      notes: "Compatibility-floor Workforce Labor for Survival. It is separate from AI Assisted Labor and does not spend Population."
     },
     {
       id: "producer_labor_manual_click",
@@ -628,7 +628,7 @@ export function buildEconomyTransactionReasons(): EconomyTransactionReason[] {
 
 export function buildEconomyRateBreakdownDefinitions(): EconomyRateBreakdownDefinition[] {
   return [
-    { id: "rate_breakdown_labor", economyId: "ECON-LABOR", labels: [{ id: "base_passive", displayName: "Base Passive", sourceTypes: ["base_system"], operation: "add" }, { id: "ai_agent", displayName: "AI Agent", sourceTypes: ["ai_agent"], operation: "add" }, { id: "buildings", displayName: "Buildings", sourceTypes: ["building"], operation: "add" }, { id: "boosts", displayName: "Boosts", sourceTypes: ["event", "upgrade"], operation: "multiply" }], formula: "totalLaborPerSecond = basePassiveLabor + aiAgentLaborAssistance + buildingLaborProduction + otherCanonicalProduction; then apply approved multipliers in deterministic order.", displayRule: "Show Base Passive, AI Agent, Buildings, Boosts, and Total." },
+    { id: "rate_breakdown_labor", economyId: "ECON-LABOR", labels: [{ id: "workforce", displayName: "Workforce", sourceTypes: ["base_system", "building", "settlement", "colony"], operation: "add" }, { id: "ai_agent", displayName: "AI Assistant", sourceTypes: ["ai_agent"], operation: "add" }, { id: "manual", displayName: "Manual", sourceTypes: ["manual_click"], operation: "add" }, { id: "boosts", displayName: "Boosts", sourceTypes: ["event", "upgrade"], operation: "multiply" }], formula: "availableLabor = manualLabor + aiAssistedLabor + workforceLabor - assignedLabor; apply approved multipliers in deterministic order.", displayRule: "Show Manual, AI Assistant, Workforce, Assigned, Available, Boosts, and Total when relevant." },
     { id: "rate_breakdown_credits", economyId: "ECON-CREDITS", labels: [{ id: "commerce", displayName: "Commerce", sourceTypes: ["building", "trade_route"], operation: "add" }, { id: "missions", displayName: "Missions", sourceTypes: ["mission"], operation: "add" }, { id: "events", displayName: "Events", sourceTypes: ["event"], operation: "add" }], formula: "totalCreditsPerSecond = sum(active canonical Credits producers); no default fallback.", displayRule: "Only show sections with active producers." },
     { id: "rate_breakdown_population", economyId: "ECON-POPULATION", labels: [{ id: "capacity", displayName: "Capacity", sourceTypes: ["building", "settlement", "colony"], operation: "add" }, { id: "growth", displayName: "Growth", sourceTypes: ["building", "colony", "event"], operation: "add" }], formula: "currentPopulation, populationCapacity, assignedWorkforce, availableWorkforce, and populationGrowthRate remain distinct values.", displayRule: "Display whole-number current population and separate capacity/growth rows where available." },
     { id: "rate_breakdown_research", economyId: "ECON-RESEARCH", labels: [{ id: "labs", displayName: "Research Buildings", sourceTypes: ["building"], operation: "add" }, { id: "discoveries", displayName: "Discoveries", sourceTypes: ["discovery"], operation: "add" }, { id: "missions", displayName: "Missions", sourceTypes: ["mission"], operation: "add" }, { id: "boosts", displayName: "Boosts", sourceTypes: ["event", "upgrade"], operation: "multiply" }], formula: "totalResearchPerSecond = sum(active research producers); then apply approved multipliers.", displayRule: "Do not show passive Research until a canonical producer exists." },
@@ -661,9 +661,9 @@ export function buildEconomyCalculationRules(): EconomyCalculationRules {
       serializationFormat: "decimal_string_or_number"
     },
     laborFormula: {
-      perSecond: "totalLaborPerSecond = basePassiveLabor + aiAgentLaborAssistance + buildingLaborProduction + otherCanonicalProduction; apply multipliers in economy_calculation_rules_v1.multiplierOrder.",
+      perSecond: "totalLaborPerSecond = aiAssistedLaborRate + workforceLaborRate + otherCanonicalWorkforceProduction; apply multipliers in economy_calculation_rules_v1.multiplierOrder. The Survival +1/sec compatibility floor is classified as Workforce Labor.",
       perClick: "laborPerClick = baseClick + clickUpgradeBonuses; apply click multipliers and critical-click behavior after flat bonuses.",
-      notes: "AI Agent assistance is not base passive Labor."
+      notes: "Available Labor combines Manual, AI Assisted, and Workforce sources. AI Agent assistance is not base passive Labor, and Population is never spent during workforce conversion."
     }
   };
 }

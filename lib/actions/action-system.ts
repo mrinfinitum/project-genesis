@@ -572,6 +572,7 @@ export const canonicalActionSystem: ActionSystemContract = {
   version: "1.0.0",
   architectureDecisionId: "ARCH-DECISION-CANONICAL-ACTION-FRAMEWORK",
   timeActionContractId: timeActionContract.id,
+  laborGenerationFrameworkId: "labor_generation_framework_v1",
   ownership: {
     studioOwns: [
       "Action definitions",
@@ -643,6 +644,7 @@ export function validateActionSystem(system: ActionSystemContract = canonicalAct
 
   if (system.id !== "canonical_action_system_v1") issues.push(issue("error", "invalid_action_system_id", "Canonical Action System ID is invalid."));
   if (system.timeActionContractId !== timeContract.id) issues.push(issue("error", "invalid_time_action_contract", "Action System must reference the canonical Time Action Contract."));
+  if (system.laborGenerationFrameworkId !== "labor_generation_framework_v1") issues.push(issue("error", "invalid_labor_generation_framework", "Action System must reference the canonical Labor Generation Framework."));
   if (system.architectureDecisionId !== "ARCH-DECISION-CANONICAL-ACTION-FRAMEWORK") issues.push(issue("error", "missing_architecture_decision", "Action System must reference the accepted architecture decision."));
   for (const categoryId of actionCategoryIds) {
     if (!categoryIds.has(categoryId)) issues.push(issue("error", "missing_action_category", `Missing action category ${categoryId}.`, [categoryId]));

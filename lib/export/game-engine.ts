@@ -26,6 +26,7 @@ import {
   canonicalEconomyDefinitions,
   primaryHudEconomyIds
 } from "@/lib/economy/definitions";
+import { laborGenerationFramework, validateLaborGenerationFramework } from "@/lib/economy/labor-generation";
 import { resourceEconomyLogisticsFramework, validateResourceEconomyLogisticsFramework } from "@/lib/economy/logistics-framework";
 import { dynamicEventFramework, validateDynamicEventFramework } from "@/lib/events/framework";
 import { buildEconomyState, economySchemas, priceClamps, type MarketRecord, type ResourceListing, type TradeOpportunity, type TradeRoute } from "@/lib/economy/trade";
@@ -187,6 +188,7 @@ type CanonicalModules = {
   economy_rate_breakdown_definitions: ReturnType<typeof buildEconomyRateBreakdownDefinitions>;
   offline_progression_policies: ReturnType<typeof buildOfflineProgressionPolicies>;
   economy_calculation_rules: ReturnType<typeof buildEconomyCalculationRules>;
+  labor_generation_framework: typeof laborGenerationFramework;
   era_economy_profiles: ReturnType<typeof buildEraEconomyProfiles>;
   hud_profile: Array<ReturnType<typeof buildPrimaryHudSlots>[number]>;
   primary_hud_resources: string[];
@@ -595,6 +597,7 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
     economy_rate_breakdown_definitions: buildEconomyRateBreakdownDefinitions(),
     offline_progression_policies: buildOfflineProgressionPolicies(),
     economy_calculation_rules: buildEconomyCalculationRules(),
+    labor_generation_framework: laborGenerationFramework,
     era_economy_profiles: buildEraEconomyProfiles(),
     hud_profile: buildPrimaryHudSlots(),
     primary_hud_resources: [...primaryHudEconomyIds],
@@ -1593,6 +1596,9 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
     addIssue(issues, issue.severity, issue.code, issue.message, issue.records);
   }
   validateEconomy(issues, modules);
+  for (const issue of validateLaborGenerationFramework(modules.labor_generation_framework)) {
+    addIssue(issues, issue.severity, issue.code, issue.message, issue.records);
+  }
   validateEraNavigationProfiles(issues, modules);
   validateMissions(issues, modules);
   validateAiAgentModules(issues, modules);
@@ -1712,7 +1718,7 @@ function schemaNotes(target: EngineTarget) {
     timeActions: "Time Action Contract defines the shared action state machine, progress model, acceleration policy, and modifier families. Premium Crystals accelerate progress only and never bypass technology requirements.",
     actions: "Canonical Action System defines gameplay actions, categories, states, queues, requirements, inputs, outputs, modifiers, automation, history, and presentation intent. Future systems must use this framework instead of separate timer systems.",
     colonies: "Colony state, growth inputs, buildings, levels, and focus definitions are canonical Studio data shared by every engine target.",
-    economy: "Global economy definitions, behavior contracts, producer definitions, building resource effects, scope rules, ledger reason codes, offline policies, and HUD slots are engine-agnostic canonical data. HUD slots use economy IDs only; inventory materials stay in resource_catalog.",
+    economy: "Global economy definitions, Labor Generation Framework, behavior contracts, producer definitions, building resource effects, scope rules, ledger reason codes, offline policies, and HUD slots are engine-agnostic canonical data. HUD slots use economy IDs only; inventory materials stay in resource_catalog.",
     eraNavigation: "Studio owns navigation intent only. Dashboards should use current_journey with compact labels; clients own layout and rendering. The full Civilization Timeline remains the all-era view.",
     missions: "Missions, objectives, rewards, statuses, and generation metadata are deterministic canonical Studio data. Engine targets consume mission state and report progress back through objective IDs.",
     discovery: "Discovery categories, rarities, canonical discoverable records, spawn rules, collections, chains, and asset profiles are Studio-owned. Player collection completion stays game/save scoped.",
@@ -1789,6 +1795,7 @@ function compactModules(modules: CanonicalModules) {
     economy_rate_breakdown_definitions: modules.economy_rate_breakdown_definitions,
     offline_progression_policies: modules.offline_progression_policies,
     economy_calculation_rules: modules.economy_calculation_rules,
+    labor_generation_framework: modules.labor_generation_framework,
     era_economy_profiles: modules.era_economy_profiles,
     hud_profile: modules.hud_profile,
     primary_hud_resources: modules.primary_hud_resources,
@@ -1835,7 +1842,7 @@ function targetArtifacts(target: EngineTarget, modules: CanonicalModules) {
   if (target === "roblox") {
     return {
       "ResourceCatalogModule.lua": `local ResourceCatalog = ${luaValue(modules.resource_catalog)}\n\nreturn ResourceCatalog\n`,
-      "EconomyDefinitionsModule.lua": `local EconomyDefinitions = ${luaValue({ economyDefinitions: modules.economy_definitions, economyBehaviorContracts: modules.economy_behavior_contracts, resourceProducerDefinitions: modules.resource_producer_definitions, buildingResourceEffects: modules.building_resource_effects, economyScopeRules: modules.economy_scope_rules, transactionReasons: modules.economy_transaction_reasons, rateBreakdowns: modules.economy_rate_breakdown_definitions, offlinePolicies: modules.offline_progression_policies, calculationRules: modules.economy_calculation_rules, eraEconomyProfiles: modules.era_economy_profiles, hudProfile: modules.hud_profile, primaryHudResources: modules.primary_hud_resources })}\n\nreturn EconomyDefinitions\n`,
+      "EconomyDefinitionsModule.lua": `local EconomyDefinitions = ${luaValue({ economyDefinitions: modules.economy_definitions, laborGenerationFramework: modules.labor_generation_framework, economyBehaviorContracts: modules.economy_behavior_contracts, resourceProducerDefinitions: modules.resource_producer_definitions, buildingResourceEffects: modules.building_resource_effects, economyScopeRules: modules.economy_scope_rules, transactionReasons: modules.economy_transaction_reasons, rateBreakdowns: modules.economy_rate_breakdown_definitions, offlinePolicies: modules.offline_progression_policies, calculationRules: modules.economy_calculation_rules, eraEconomyProfiles: modules.era_economy_profiles, hudProfile: modules.hud_profile, primaryHudResources: modules.primary_hud_resources })}\n\nreturn EconomyDefinitions\n`,
       "AIAgentModule.lua": `local AIAgents = ${luaValue({ aiAgents: modules.ai_agents, aiAgentVariants: modules.ai_agent_variants, personalities: modules.ai_agent_personalities, animationProfiles: modules.ai_agent_animation_profiles, automationPresentation: modules.automation_presentation, defaultAiAgentId: modules.default_ai_agent_id, defaultAiAgentVariantId, saveSchema: modules.ai_agent_save_schema })}\n\nreturn AIAgents\n`,
       "DiscoveryCatalogModule.lua": `local DiscoveryCatalog = ${luaValue({ categories: modules.discovery_categories, rarities: modules.discovery_rarities, discoveries: modules.discoveries, collections: modules.discovery_collections, chains: modules.discovery_chains })}\n\nreturn DiscoveryCatalog\n`,
       "UniversalDiscoveryRegistryContract.lua": `local UniversalDiscoveryRegistryContract = ${luaValue(modules.universal_discovery_registry)}\n\nreturn UniversalDiscoveryRegistryContract\n`,

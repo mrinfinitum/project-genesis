@@ -13,6 +13,7 @@ import { colonizationFramework, validateColonizationFramework } from "@/lib/colo
 import { getGameData } from "@/lib/data";
 import { canonicalDiscoveries, discoveryCategories, discoveryChains, discoveryCollections, discoveryMilestones, discoveryPlayerCollectionSchema, discoveryPurposeCategories, discoveryRarities, validateDiscoverySystem } from "@/lib/discovery";
 import { universalDiscoveryRegistryContract, universalDiscoveryRegistryVersion, validateUniversalDiscoveryRegistryContract } from "@/lib/discovery/universal-registry";
+import { laborGenerationFramework, validateLaborGenerationFramework } from "@/lib/economy/labor-generation";
 import { resourceEconomyLogisticsFramework, validateResourceEconomyLogisticsFramework } from "@/lib/economy/logistics-framework";
 import { dynamicEventFramework, validateDynamicEventFramework } from "@/lib/events/framework";
 import { missionExpeditionFramework, validateMissionExpeditionFramework } from "@/lib/missions/framework";
@@ -65,7 +66,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 35;
+export const gameRuntimeContentVersion = 36;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -84,6 +85,7 @@ export type RobloxRuntimeExportPayload = {
   economyRateBreakdownDefinitions: GameRuntimeData["economyRateBreakdownDefinitions"];
   offlineProgressionPolicies: GameRuntimeData["offlineProgressionPolicies"];
   economyCalculationRules: GameRuntimeData["economyCalculationRules"];
+  laborGenerationFramework: GameRuntimeData["laborGenerationFramework"];
   aiAgents: GameRuntimeData["aiAgents"];
   aiAgentVariants: GameRuntimeData["aiAgentVariants"];
   aiAgentPersonalities: GameRuntimeData["aiAgentPersonalities"];
@@ -591,6 +593,7 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
     economyTransactionReasons: [...runtimeData.economyTransactionReasons].sort(byId),
     economyRateBreakdownDefinitions: [...runtimeData.economyRateBreakdownDefinitions].sort(byId),
     offlineProgressionPolicies: [...runtimeData.offlineProgressionPolicies].sort(byId),
+    laborGenerationFramework: runtimeData.laborGenerationFramework,
     aiAgents: [...runtimeData.aiAgents].sort(byId),
     aiAgentVariants: [...runtimeData.aiAgentVariants].sort(byId),
     aiAgentPersonalities: [...runtimeData.aiAgentPersonalities].sort(byId),
@@ -1967,6 +1970,7 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   validateEraEconomyProfiles(runtimeData, issues, "Canonical runtime");
   validateEconomyDefaults(runtimeData, issues, "Canonical runtime");
   validateResourceEconomyContracts(runtimeData, issues, "Canonical runtime");
+  issues.push(...validateLaborGenerationFramework(runtimeData.laborGenerationFramework));
   validateMobileClientProfiles(runtimeData, issues);
   validateAiAgents(runtimeData, issues);
   const discoveryValidation = validateDiscoverySystem();
@@ -2205,6 +2209,7 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     economyRateBreakdownDefinitions: sorted.economyRateBreakdownDefinitions,
     offlineProgressionPolicies: sorted.offlineProgressionPolicies,
     economyCalculationRules: sorted.economyCalculationRules,
+    laborGenerationFramework: sorted.laborGenerationFramework,
     aiAgents: sorted.aiAgents,
     aiAgentVariants: sorted.aiAgentVariants,
     aiAgentPersonalities: sorted.aiAgentPersonalities,
@@ -2292,6 +2297,7 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
     balance: payload.balance
   }, issues, "Roblox runtime");
   validateResourceEconomyContracts(payload, issues, "Roblox runtime");
+  issues.push(...validateLaborGenerationFramework(payload.laborGenerationFramework));
   validateAiAgents(payload, issues);
   for (const issue of validateGalaxyEnginePresentationContract(payload.galaxyEngineContract)) {
     issues.push(issue);
@@ -2488,6 +2494,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     economyRateBreakdownDefinitions: buildEconomyRateBreakdownDefinitions(),
     offlineProgressionPolicies: buildOfflineProgressionPolicies(),
     economyCalculationRules: buildEconomyCalculationRules(),
+    laborGenerationFramework,
     aiAgents: aiAgentModules.aiAgents,
     aiAgentVariants: aiAgentModules.aiAgentVariants,
     aiAgentPersonalities: aiAgentModules.aiAgentPersonalities,
@@ -2555,6 +2562,7 @@ export async function getGameRuntimeData() {
     economyRateBreakdownDefinitions: base.economyRateBreakdownDefinitions,
     offlineProgressionPolicies: base.offlineProgressionPolicies,
     economyCalculationRules: base.economyCalculationRules,
+    laborGenerationFramework: base.laborGenerationFramework,
     aiAgents: base.aiAgents,
     aiAgentVariants: base.aiAgentVariants,
     aiAgentPersonalities: base.aiAgentPersonalities,
@@ -2784,6 +2792,7 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     economyRateBreakdownDefinitions: base.economyRateBreakdownDefinitions,
     offlineProgressionPolicies: base.offlineProgressionPolicies,
     economyCalculationRules: base.economyCalculationRules,
+    laborGenerationFramework: base.laborGenerationFramework,
     discoveryCategories: base.discoveryCategories,
     discoveryPurposeCategories: base.discoveryPurposeCategories,
     discoveryRarities: base.discoveryRarities,
