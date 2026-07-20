@@ -25,6 +25,8 @@ import {
   geneticArchivesCuriosityVolume,
   organicMaterialsCuriosityNavigation,
   organicMaterialsCuriosityVolume,
+  rareCollectionsCuriosityNavigation,
+  rareCollectionsCuriosityVolume,
   ruinsStructuresCuriosityNavigation,
   ruinsStructuresCuriosityVolume,
   unknownObjectsCuriosityNavigation,
@@ -72,7 +74,8 @@ function volumeBadgeForFolder(folder: string) {
     ["anomalies", anomaliesCuriosityVolume],
     ["unknown-objects", unknownObjectsCuriosityVolume],
     ["genetic-archives", geneticArchivesCuriosityVolume],
-    ["organic-materials", organicMaterialsCuriosityVolume]
+    ["organic-materials", organicMaterialsCuriosityVolume],
+    ["rare-collections-and-wonders", rareCollectionsCuriosityVolume]
   ] as const;
   const match = volume.find(([id]) => folder === id || folder.startsWith(`${id}:`));
   return match ? `Volume ${volumeNumber(match[1])}` : "Canonical";
@@ -130,6 +133,7 @@ function buildDiscoveryTree(): DiscoveryTreeNode[] {
     { id: "unknown-objects", label: "Unknown Objects", href: folderHref("unknown-objects"), count: getCuriosityFolderCount("unknown-objects"), icon: "folder", children: childrenForVolume("unknown-objects", unknownObjectsCuriosityNavigation) },
     { id: "genetic-archives", label: "Genetic Archives", href: folderHref("genetic-archives"), count: getCuriosityFolderCount("genetic-archives"), icon: "folder", children: childrenForVolume("genetic-archives", geneticArchivesCuriosityNavigation) },
     { id: "organic-materials", label: "Organic Materials", href: folderHref("organic-materials"), count: getCuriosityFolderCount("organic-materials"), icon: "folder", children: childrenForVolume("organic-materials", organicMaterialsCuriosityNavigation) },
+    { id: "rare-collections-and-wonders", label: "Rare Collections & Wonders", href: folderHref("rare-collections-and-wonders"), count: getCuriosityFolderCount("rare-collections-and-wonders"), icon: "folder", children: childrenForVolume("rare-collections-and-wonders", rareCollectionsCuriosityNavigation) },
     { id: "journal", label: "Discovery Journal", href: "/discovery-journal", count: 0, icon: "journal" }
   ];
 }
@@ -150,11 +154,12 @@ function folderTitle(folder: string, folderRecords: DiscoveryRecord[]) {
   if (folder === "unknown-objects") return "Unknown Objects";
   if (folder === "genetic-archives") return "Genetic Archives";
   if (folder === "organic-materials") return "Organic Materials";
-  if (folder.startsWith("biological:") || folder.startsWith("fauna:") || folder.startsWith("geological:") || folder.startsWith("ancient-relics:") || folder.startsWith("alien-technology:") || folder.startsWith("ruins-and-structures:") || folder.startsWith("energy-phenomena:") || folder.startsWith("anomalies:") || folder.startsWith("unknown-objects:") || folder.startsWith("genetic-archives:") || folder.startsWith("organic-materials:")) {
+  if (folder === "rare-collections-and-wonders") return "Rare Collections & Wonders";
+  if (folder.startsWith("biological:") || folder.startsWith("fauna:") || folder.startsWith("geological:") || folder.startsWith("ancient-relics:") || folder.startsWith("alien-technology:") || folder.startsWith("ruins-and-structures:") || folder.startsWith("energy-phenomena:") || folder.startsWith("anomalies:") || folder.startsWith("unknown-objects:") || folder.startsWith("genetic-archives:") || folder.startsWith("organic-materials:") || folder.startsWith("rare-collections-and-wonders:")) {
     const first = folderRecords[0];
-    if (!first) return folder.startsWith("fauna:") ? "Fauna" : folder.startsWith("geological:") ? "Geological" : folder.startsWith("ancient-relics:") ? "Ancient Relics" : folder.startsWith("alien-technology:") ? "Alien Technology" : folder.startsWith("ruins-and-structures:") ? "Ruins & Structures" : folder.startsWith("energy-phenomena:") ? "Energy Phenomena" : folder.startsWith("anomalies:") ? "Anomalies" : folder.startsWith("unknown-objects:") ? "Unknown Objects" : folder.startsWith("genetic-archives:") ? "Genetic Archives" : folder.startsWith("organic-materials:") ? "Organic Materials" : "Biological";
+    if (!first) return folder.startsWith("fauna:") ? "Fauna" : folder.startsWith("geological:") ? "Geological" : folder.startsWith("ancient-relics:") ? "Ancient Relics" : folder.startsWith("alien-technology:") ? "Alien Technology" : folder.startsWith("ruins-and-structures:") ? "Ruins & Structures" : folder.startsWith("energy-phenomena:") ? "Energy Phenomena" : folder.startsWith("anomalies:") ? "Anomalies" : folder.startsWith("unknown-objects:") ? "Unknown Objects" : folder.startsWith("genetic-archives:") ? "Genetic Archives" : folder.startsWith("organic-materials:") ? "Organic Materials" : folder.startsWith("rare-collections-and-wonders:") ? "Rare Collections & Wonders" : "Biological";
     const { category, classRecord, subclassRecord } = getCuriosityClassification(first);
-    return subclassRecord?.displayName ?? classRecord?.displayName ?? category?.shortDisplayName ?? (folder.startsWith("fauna:") ? "Fauna" : folder.startsWith("geological:") ? "Geological" : folder.startsWith("ancient-relics:") ? "Ancient Relics" : folder.startsWith("alien-technology:") ? "Alien Technology" : folder.startsWith("ruins-and-structures:") ? "Ruins & Structures" : folder.startsWith("energy-phenomena:") ? "Energy Phenomena" : folder.startsWith("anomalies:") ? "Anomalies" : folder.startsWith("unknown-objects:") ? "Unknown Objects" : folder.startsWith("genetic-archives:") ? "Genetic Archives" : folder.startsWith("organic-materials:") ? "Organic Materials" : "Biological");
+    return subclassRecord?.displayName ?? classRecord?.displayName ?? category?.shortDisplayName ?? (folder.startsWith("fauna:") ? "Fauna" : folder.startsWith("geological:") ? "Geological" : folder.startsWith("ancient-relics:") ? "Ancient Relics" : folder.startsWith("alien-technology:") ? "Alien Technology" : folder.startsWith("ruins-and-structures:") ? "Ruins & Structures" : folder.startsWith("energy-phenomena:") ? "Energy Phenomena" : folder.startsWith("anomalies:") ? "Anomalies" : folder.startsWith("unknown-objects:") ? "Unknown Objects" : folder.startsWith("genetic-archives:") ? "Genetic Archives" : folder.startsWith("organic-materials:") ? "Organic Materials" : folder.startsWith("rare-collections-and-wonders:") ? "Rare Collections & Wonders" : "Biological");
   }
   return "All Discoveries";
 }
@@ -173,6 +178,8 @@ export default async function DiscoveryLibraryPage({ searchParams }: { searchPar
   const objectStateParam = firstParam(params?.objectState);
   const archiveStateParam = firstParam(params?.archiveState);
   const materialStateParam = firstParam(params?.materialState);
+  const preservationStateParam = firstParam(params?.preservationState);
+  const authenticityParam = firstParam(params?.authenticity);
   const phenomenonParam = firstParam(params?.phenomenon);
   const containmentParam = firstParam(params?.containment);
   const scaleParam = firstParam(params?.scale);
@@ -191,6 +198,8 @@ export default async function DiscoveryLibraryPage({ searchParams }: { searchPar
   const objectStateOptions = Array.from(new Set(folderRecords.map((record) => record.objectState).filter((value): value is string => Boolean(value)))).sort();
   const archiveStateOptions = Array.from(new Set(folderRecords.map((record) => record.archiveState).filter((value): value is string => Boolean(value)))).sort();
   const materialStateOptions = Array.from(new Set(folderRecords.map((record) => record.materialState).filter((value): value is string => Boolean(value)))).sort();
+  const preservationStateOptions = Array.from(new Set(folderRecords.map((record) => record.preservationState).filter((value): value is string => Boolean(value)))).sort();
+  const authenticityOptions = Array.from(new Set(folderRecords.map((record) => record.authenticityStatus).filter((value): value is string => Boolean(value)))).sort();
   const phenomenonOptions = Array.from(new Set(folderRecords.map((record) => record.phenomenonState).filter((value): value is string => Boolean(value)))).sort();
   const containmentOptions = Array.from(new Set(folderRecords.map((record) => record.containmentRequirement).filter((value): value is string => Boolean(value)))).sort();
   const scaleOptions = Array.from(new Set(folderRecords.map((record) => record.scale).filter((value): value is string => Boolean(value)))).sort();
@@ -210,6 +219,8 @@ export default async function DiscoveryLibraryPage({ searchParams }: { searchPar
     if (objectStateParam && record.objectState !== objectStateParam) return false;
     if (archiveStateParam && record.archiveState !== archiveStateParam) return false;
     if (materialStateParam && record.materialState !== materialStateParam) return false;
+    if (preservationStateParam && record.preservationState !== preservationStateParam) return false;
+    if (authenticityParam && record.authenticityStatus !== authenticityParam) return false;
     if (phenomenonParam && record.phenomenonState !== phenomenonParam) return false;
     if (containmentParam && record.containmentRequirement !== containmentParam) return false;
     if (scaleParam && record.scale !== scaleParam) return false;
@@ -288,6 +299,8 @@ export default async function DiscoveryLibraryPage({ searchParams }: { searchPar
                         ? "Volume X genetic archives organized by archive class and subclass. Archive state, recovery, genome integrity, viability, sequencing, contamination, translation, origin confidence, hazard, and containment remain attached to each canonical record."
                       : folder === "organic-materials" || folder.startsWith("organic-materials:")
                         ? "Volume XI organic materials organized by material class and subclass. Material state, recovery, purity, potency, stability, bioactivity, contamination, analysis progress, value, hazard, and containment remain attached to each canonical record."
+                      : folder === "rare-collections-and-wonders" || folder.startsWith("rare-collections-and-wonders:")
+                        ? "Volume XII rare collections and wonders organized by wonder class and subclass. Authenticity, preservation, recovery, significance, civilization influence, uniqueness, value, hazard, and containment remain attached to each canonical record."
                     : "Discovery records, biological volume content, taxonomy, artwork status, and journal access gathered into an Asset Library-style browser."}
                 </p>
               </div>
@@ -354,6 +367,14 @@ export default async function DiscoveryLibraryPage({ searchParams }: { searchPar
               {materialStateOptions.length ? <select name="materialState" defaultValue={materialStateParam ?? ""} className="h-12 rounded-md border border-cyan-300/15 bg-slate-950/80 px-3 text-sm font-bold text-white outline-none">
                 <option value="">All Material States</option>
                 {materialStateOptions.map((value) => <option key={value} value={value}>{value}</option>)}
+              </select> : null}
+              {preservationStateOptions.length ? <select name="preservationState" defaultValue={preservationStateParam ?? ""} className="h-12 rounded-md border border-cyan-300/15 bg-slate-950/80 px-3 text-sm font-bold text-white outline-none">
+                <option value="">All Preservation States</option>
+                {preservationStateOptions.map((value) => <option key={value} value={value}>{value}</option>)}
+              </select> : null}
+              {authenticityOptions.length ? <select name="authenticity" defaultValue={authenticityParam ?? ""} className="h-12 rounded-md border border-cyan-300/15 bg-slate-950/80 px-3 text-sm font-bold text-white outline-none">
+                <option value="">All Authenticity States</option>
+                {authenticityOptions.map((value) => <option key={value} value={value}>{value}</option>)}
               </select> : null}
               {phenomenonOptions.length ? <select name="phenomenon" defaultValue={phenomenonParam ?? ""} className="h-12 rounded-md border border-cyan-300/15 bg-slate-950/80 px-3 text-sm font-bold text-white outline-none">
                 <option value="">All Phenomenon States</option>
@@ -454,6 +475,8 @@ export default async function DiscoveryLibraryPage({ searchParams }: { searchPar
                     {selectedEntry.objectState ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Object State</span><span className="truncate text-cyan-100">{selectedEntry.objectState}</span></div> : null}
                     {selectedEntry.archiveState ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Archive State</span><span className="truncate text-cyan-100">{selectedEntry.archiveState}</span></div> : null}
                     {selectedEntry.materialState ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Material State</span><span className="truncate text-cyan-100">{selectedEntry.materialState}</span></div> : null}
+                    {selectedEntry.preservationState ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Preservation</span><span className="truncate text-cyan-100">{selectedEntry.preservationState}</span></div> : null}
+                    {selectedEntry.authenticityStatus ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Authenticity</span><span className="truncate text-cyan-100">{selectedEntry.authenticityStatus}</span></div> : null}
                     {selectedEntry.phenomenonState ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Phenomenon State</span><span className="truncate text-cyan-100">{selectedEntry.phenomenonState}</span></div> : null}
                     {selectedEntry.measurementMethod ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Measurement</span><span className="truncate text-cyan-100">{selectedEntry.measurementMethod}</span></div> : null}
                     {selectedEntry.hazardLevel ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Hazard</span><span className="truncate text-cyan-100">{selectedEntry.hazardLevel}</span></div> : null}
@@ -485,6 +508,13 @@ export default async function DiscoveryLibraryPage({ searchParams }: { searchPar
                     {typeof selectedEntry.potencyPercent === "number" ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Potency</span><span className="truncate text-cyan-100">{selectedEntry.potencyPercent}%</span></div> : null}
                     {typeof selectedEntry.bioactivityPercent === "number" ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Bioactivity</span><span className="truncate text-cyan-100">{selectedEntry.bioactivityPercent}%</span></div> : null}
                     {typeof selectedEntry.analysisProgressPercent === "number" ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Analysis</span><span className="truncate text-cyan-100">{selectedEntry.analysisProgressPercent}%</span></div> : null}
+                    {typeof selectedEntry.significancePercent === "number" ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Significance</span><span className="truncate text-cyan-100">{selectedEntry.significancePercent}%</span></div> : null}
+                    {typeof selectedEntry.preservationPercent === "number" ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Preserved</span><span className="truncate text-cyan-100">{selectedEntry.preservationPercent}%</span></div> : null}
+                    {typeof selectedEntry.civilizationInfluencePercent === "number" ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Civilization Influence</span><span className="truncate text-cyan-100">{selectedEntry.civilizationInfluencePercent}%</span></div> : null}
+                    {typeof selectedEntry.uniquenessPercent === "number" ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Uniqueness</span><span className="truncate text-cyan-100">{selectedEntry.uniquenessPercent}%</span></div> : null}
+                    {typeof selectedEntry.wonderValue === "number" ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Wonder Value</span><span className="truncate text-cyan-100">{selectedEntry.wonderValue}</span></div> : null}
+                    {typeof selectedEntry.prestigeValue === "number" ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Prestige Value</span><span className="truncate text-cyan-100">{selectedEntry.prestigeValue}</span></div> : null}
+                    {typeof selectedEntry.civilizationValue === "number" ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Civilization Value</span><span className="truncate text-cyan-100">{selectedEntry.civilizationValue}</span></div> : null}
                     {typeof selectedEntry.stabilityPercent === "number" ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Stability</span><span className="truncate text-cyan-100">{selectedEntry.stabilityPercent}%</span></div> : null}
                     {typeof selectedEntry.reverseEngineeringProgressPercent === "number" ? <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Reverse Engineering</span><span className="truncate text-cyan-100">{selectedEntry.reverseEngineeringProgressPercent}%</span></div> : null}
                     <div className="flex justify-between gap-3 rounded-md border border-cyan-300/10 bg-slate-950/45 px-3 py-2"><span className="text-slate-500">Prompt</span><span className="truncate text-cyan-100">{selectedEntry.promptProfile?.prompt ? "Ready" : "Missing"}</span></div>

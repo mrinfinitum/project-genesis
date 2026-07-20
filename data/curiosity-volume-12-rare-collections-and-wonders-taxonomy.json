@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "taxonomy": {
+    "Rare Collections & Wonders": {
+      "Planetary Wonders": [
+        "Geological Wonders",
+        "Atmospheric Wonders",
+        "Oceanic Wonders",
+        "Biological Wonders",
+        "Celestial Alignment Wonders",
+        "Planetary Scale Structures",
+        "Climate Wonders",
+        "Subterranean Wonders",
+        "Terraforming Wonders",
+        "Unknown Planetary Wonders"
+      ],
+      "Living Relics": [
+        "Ancient Organisms",
+        "Immortal Specimens",
+        "Symbiotic Relics",
+        "Dormant Lifeforms",
+        "Extinct Lineage Survivors",
+        "Living Fossils",
+        "Sentient Flora",
+        "Proto-Civilized Species",
+        "Regenerative Relics",
+        "Unknown Living Relics"
+      ],
+      "Legendary Finds": [
+        "Explorer Discoveries",
+        "Lost Expedition Finds",
+        "Mythic Coordinates",
+        "Forbidden Discoveries",
+        "Deep-Space Recoveries",
+        "Precursor Finds",
+        "Accidental Discoveries",
+        "Historic Firsts",
+        "Unverified Legendary Finds",
+        "Unknown Legendary Finds"
+      ],
+      "Civilization Treasures": [
+        "Royal Treasures",
+        "Religious Treasures",
+        "Cultural Masterpieces",
+        "Diplomatic Gifts",
+        "Founding Artifacts",
+        "Victory Relics",
+        "Archive Treasures",
+        "Ceremonial Objects",
+        "Lost Civilization Treasures",
+        "Unknown Civilization Treasures"
+      ],
+      "Crown Artifacts": [
+        "Coronation Artifacts",
+        "Imperial Regalia",
+        "Sovereign Seals",
+        "Dynastic Jewels",
+        "Throne Relics",
+        "Succession Artifacts",
+        "Council Crowns",
+        "Sacred Insignia",
+        "Disputed Crown Artifacts",
+        "Unknown Crown Artifacts"
+      ],
+      "Impossible Specimens": [
+        "Paradox Specimens",
+        "Non-Euclidean Specimens",
+        "Temporal Specimens",
+        "Quantum Specimens",
+        "Multiversal Specimens",
+        "Physics-Defying Organisms",
+        "Impossible Materials",
+        "Self-Contradicting Objects",
+        "Unclassifiable Specimens",
+        "Unknown Impossible Specimens"
+      ],
+      "One-of-a-Kind Objects": [
+        "Sole Surviving Objects",
+        "Irreplaceable Prototypes",
+        "Singular Natural Objects",
+        "Unique Cultural Objects",
+        "Unrepeatable Scientific Objects",
+        "Last Known Examples",
+        "Founder Originals",
+        "Universal Firsts",
+        "Unverified Singularities",
+        "Unknown One-of-a-Kind Objects"
+      ],
+      "Universal Wonders": [
+        "Galactic Wonders",
+        "Intergalactic Wonders",
+        "Cosmic Engineering Wonders",
+        "Universal Natural Wonders",
+        "Civilizational Megawonders",
+        "Temporal Wonders",
+        "Dimensional Wonders",
+        "Origin-Era Wonders",
+        "End-State Wonders",
+        "Unknown Universal Wonders"
+      ]
+    }
+  }
+}

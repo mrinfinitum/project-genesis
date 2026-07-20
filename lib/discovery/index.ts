@@ -21,6 +21,8 @@ import geneticArchivesCuriosityPack from "@/data/curiosity-volume-10-genetic-arc
 import geneticArchivesCuriosityTaxonomyPack from "@/data/curiosity-volume-10-genetic-archives-taxonomy.json";
 import organicMaterialsCuriosityPack from "@/data/curiosity-volume-11-organic-materials.json";
 import organicMaterialsCuriosityTaxonomyPack from "@/data/curiosity-volume-11-organic-materials-taxonomy.json";
+import rareCollectionsCuriosityPack from "@/data/curiosity-volume-12-rare-collections-and-wonders.json";
+import rareCollectionsCuriosityTaxonomyPack from "@/data/curiosity-volume-12-rare-collections-and-wonders-taxonomy.json";
 
 export const discoveryRarities = [
   { id: "common", displayName: "Common", displayOrder: 1, defaultSpawnWeight: 1 },
@@ -205,6 +207,8 @@ export type DiscoveryRecord = {
   objectState?: string;
   archiveState?: string;
   materialState?: string;
+  preservationState?: string;
+  authenticityStatus?: string;
   phenomenonState?: string;
   measurementMethod?: string;
   hazardLevel?: string;
@@ -226,6 +230,10 @@ export type DiscoveryRecord = {
   potencyPercent?: number;
   bioactivityPercent?: number;
   analysisProgressPercent?: number;
+  significancePercent?: number;
+  preservationPercent?: number;
+  civilizationInfluencePercent?: number;
+  uniquenessPercent?: number;
   powerSignature?: number;
   stabilityPercent?: number;
   reverseEngineeringProgressPercent?: number;
@@ -249,6 +257,9 @@ export type DiscoveryRecord = {
   scientificValue?: number;
   geneticValue?: number;
   organicValue?: number;
+  wonderValue?: number;
+  prestigeValue?: number;
+  civilizationValue?: number;
   medicalValue?: number;
   collectionValue?: number;
   repeatable?: boolean;
@@ -324,6 +335,8 @@ type ImportedCuriosity = {
   object_state?: string;
   archive_state?: string;
   material_state?: string;
+  preservation_state?: string;
+  authenticity_status?: string;
   phenomenon_state?: string;
   measurement_method?: string;
   hazard_level?: string;
@@ -345,6 +358,10 @@ type ImportedCuriosity = {
   potency_percent?: number;
   bioactivity_percent?: number;
   analysis_progress_percent?: number;
+  significance_percent?: number;
+  preservation_percent?: number;
+  civilization_influence_percent?: number;
+  uniqueness_percent?: number;
   power_signature?: number;
   stability_percent?: number;
   reverse_engineering_progress_percent?: number;
@@ -374,13 +391,16 @@ type ImportedCuriosity = {
   scientific_value?: number;
   genetic_value?: number;
   organic_value?: number;
+  wonder_value?: number;
+  prestige_value?: number;
+  civilization_value?: number;
   medical_value?: number;
   collection_value?: number;
   repeatable?: boolean;
   maximum_known_instances?: number;
   art_prompt: string;
   negative_prompt?: string;
-  status: string;
+  status?: string;
   artwork_status: string;
   source_psd: string;
   preview_image?: string;
@@ -438,6 +458,8 @@ export const geneticArchivesCuriosityVolume = geneticArchivesCuriosityPack as Im
 export const geneticArchivesCuriosityTaxonomy = geneticArchivesCuriosityTaxonomyPack as ImportedCuriosityTaxonomyPack;
 export const organicMaterialsCuriosityVolume = organicMaterialsCuriosityPack as ImportedCuriosityPack;
 export const organicMaterialsCuriosityTaxonomy = organicMaterialsCuriosityTaxonomyPack as ImportedCuriosityTaxonomyPack;
+export const rareCollectionsCuriosityVolume = rareCollectionsCuriosityPack as ImportedCuriosityPack;
+export const rareCollectionsCuriosityTaxonomy = rareCollectionsCuriosityTaxonomyPack as ImportedCuriosityTaxonomyPack;
 
 const biologicalCategoryAliases: Record<string, string> = {
   Flora: "biological-flora",
@@ -461,8 +483,8 @@ function importedRarity(value: string): DiscoveryRarityId {
   return discoveryRarities.some((rarity) => rarity.id === normalized) ? normalized as DiscoveryRarityId : "common";
 }
 
-function importedPublicationStatus(value: string): DiscoveryPublicationStatus {
-  const normalized = slugify(value);
+function importedPublicationStatus(value?: string): DiscoveryPublicationStatus {
+  const normalized = value ? slugify(value) : "draft";
   if (["approved", "published", "hidden"].includes(normalized)) return normalized as DiscoveryPublicationStatus;
   return "draft";
 }
@@ -607,6 +629,13 @@ export const curiosityCategories: CuriosityCategory[] = [
     "DNA repositories, seed vaults, embryo collections, cloning templates, gene libraries, species records, evolutionary samples, and extinct genomes preserved for study.",
     Object.entries(geneticArchivesCuriosityTaxonomy.taxonomy["Genetic Archives"] ?? {}),
     "Genetic"
+  ),
+  curiosityCategory(
+    "Rare Collections & Wonders",
+    17,
+    "Planetary and universal wonders, living relics, legendary finds, civilization treasures, crown artifacts, impossible specimens, and singular objects.",
+    Object.entries(rareCollectionsCuriosityTaxonomy.taxonomy["Rare Collections & Wonders"] ?? {}),
+    "Wonders"
   )
 ];
 
@@ -1015,6 +1044,8 @@ function importedCuriosityRecord(record: ImportedCuriosity, pack: ImportedCurios
     objectState: record.object_state,
     archiveState: record.archive_state,
     materialState: record.material_state,
+    preservationState: record.preservation_state,
+    authenticityStatus: record.authenticity_status,
     phenomenonState: record.phenomenon_state,
     measurementMethod: record.measurement_method,
     hazardLevel: record.hazard_level,
@@ -1036,6 +1067,10 @@ function importedCuriosityRecord(record: ImportedCuriosity, pack: ImportedCurios
     potencyPercent: record.potency_percent,
     bioactivityPercent: record.bioactivity_percent,
     analysisProgressPercent: record.analysis_progress_percent,
+    significancePercent: record.significance_percent,
+    preservationPercent: record.preservation_percent,
+    civilizationInfluencePercent: record.civilization_influence_percent,
+    uniquenessPercent: record.uniqueness_percent,
     powerSignature: record.power_signature,
     stabilityPercent: record.stability_percent,
     reverseEngineeringProgressPercent: record.reverse_engineering_progress_percent,
@@ -1059,6 +1094,9 @@ function importedCuriosityRecord(record: ImportedCuriosity, pack: ImportedCurios
     scientificValue: record.scientific_value,
     geneticValue: record.genetic_value,
     organicValue: record.organic_value,
+    wonderValue: record.wonder_value,
+    prestigeValue: record.prestige_value,
+    civilizationValue: record.civilization_value,
     medicalValue: record.medical_value,
     collectionValue: record.collection_value,
     repeatable: record.repeatable,
@@ -1203,6 +1241,15 @@ const organicMaterialsImportConfig: CuriosityVolumeImportConfig = {
   generationNotes: "Imported from NOVERIS Curiosity Codex Volume XI: Organic Materials."
 };
 
+const rareCollectionsImportConfig: CuriosityVolumeImportConfig = {
+  volumeId: "rare-collections-and-wonders",
+  defaultTag: "rare-collections-wonders",
+  defaultResearchIds: ["planet_scan", "artifact_analysis", "cultural_archives"],
+  defaultEquipmentIds: ["survey_scanner_advanced", "artifact_containment_unit"],
+  specialEvent: "rare-collections-wonders-volume-12",
+  generationNotes: "Imported from NOVERIS Curiosity Codex Volume XII: Rare Collections & Wonders."
+};
+
 export const biologicalCuriosityRecords = biologicalCuriosityVolume.records.map((record) => importedCuriosityRecord(record, biologicalCuriosityVolume, biologicalImportConfig));
 export const faunaCuriosityRecords = faunaCuriosityVolume.records.map((record) => importedCuriosityRecord(record, faunaCuriosityVolume, faunaImportConfig));
 export const geologicalCuriosityRecords = geologicalCuriosityVolume.records.map((record) => importedCuriosityRecord(record, geologicalCuriosityVolume, geologicalImportConfig));
@@ -1214,6 +1261,7 @@ export const anomaliesCuriosityRecords = anomaliesCuriosityVolume.records.map((r
 export const unknownObjectsCuriosityRecords = unknownObjectsCuriosityVolume.records.map((record) => importedCuriosityRecord(record, unknownObjectsCuriosityVolume, unknownObjectsImportConfig));
 export const geneticArchivesCuriosityRecords = geneticArchivesCuriosityVolume.records.map((record) => importedCuriosityRecord(record, geneticArchivesCuriosityVolume, geneticArchivesImportConfig));
 export const organicMaterialsCuriosityRecords = organicMaterialsCuriosityVolume.records.map((record) => importedCuriosityRecord(record, organicMaterialsCuriosityVolume, organicMaterialsImportConfig));
+export const rareCollectionsCuriosityRecords = rareCollectionsCuriosityVolume.records.map((record) => importedCuriosityRecord(record, rareCollectionsCuriosityVolume, rareCollectionsImportConfig));
 
 export const biologicalCuriosityNavigation = importedCuriosityNavigation(biologicalCuriosityTaxonomy);
 export const faunaCuriosityNavigation = importedCuriosityNavigation(faunaCuriosityTaxonomy);
@@ -1226,6 +1274,7 @@ export const anomaliesCuriosityNavigation = importedCuriosityNavigation(anomalie
 export const unknownObjectsCuriosityNavigation = importedCuriosityNavigation(unknownObjectsCuriosityTaxonomy);
 export const geneticArchivesCuriosityNavigation = importedCuriosityNavigation(geneticArchivesCuriosityTaxonomy);
 export const organicMaterialsCuriosityNavigation = importedCuriosityNavigation(organicMaterialsCuriosityTaxonomy);
+export const rareCollectionsCuriosityNavigation = importedCuriosityNavigation(rareCollectionsCuriosityTaxonomy);
 
 export const canonicalDiscoveries: DiscoveryRecord[] = [
   ...coreDiscoveryRecords,
@@ -1239,10 +1288,11 @@ export const canonicalDiscoveries: DiscoveryRecord[] = [
   ...anomaliesCuriosityRecords,
   ...unknownObjectsCuriosityRecords,
   ...geneticArchivesCuriosityRecords,
-  ...organicMaterialsCuriosityRecords
+  ...organicMaterialsCuriosityRecords,
+  ...rareCollectionsCuriosityRecords
 ];
 
-export const supportedCuriosityVolumeIds = ["biological", "fauna", "geological", "ancient-relics", "alien-technology", "ruins-and-structures", "energy-phenomena", "anomalies", "unknown-objects", "genetic-archives", "organic-materials"] as const;
+export const supportedCuriosityVolumeIds = ["biological", "fauna", "geological", "ancient-relics", "alien-technology", "ruins-and-structures", "energy-phenomena", "anomalies", "unknown-objects", "genetic-archives", "organic-materials", "rare-collections-and-wonders"] as const;
 export type SupportedCuriosityVolumeId = typeof supportedCuriosityVolumeIds[number];
 
 function discoveryFolderKey(record: Pick<DiscoveryRecord, "volumeId" | "categoryId" | "classId" | "subclassId">, depth: "volume" | "category" | "class" | "subclass") {
@@ -1563,6 +1613,28 @@ function runDiscoverySystemValidation() {
   const incompleteOrganicMaterials = organicMaterialsCuriosityRecords.filter((record) => !record.materialState || !record.recoveryMethod || typeof record.purityPercent !== "number" || typeof record.potencyPercent !== "number" || typeof record.stabilityPercent !== "number" || typeof record.bioactivityPercent !== "number" || typeof record.contaminationPercent !== "number" || typeof record.analysisProgressPercent !== "number" || typeof record.originConfidencePercent !== "number");
   if (incompleteOrganicMaterials.length) {
     issues.push({ severity: "error", code: "organic_material_analysis_contract", message: "Organic materials must preserve material state, recovery method, purity, potency, stability, bioactivity, contamination, analysis progress, and origin confidence.", records: incompleteOrganicMaterials.map((record) => record.id) });
+  }
+  const rareCollectionNames = rareCollectionsCuriosityRecords.map((record) => record.displayName.trim().toLowerCase());
+  if (new Set(rareCollectionNames).size !== rareCollectionNames.length) {
+    issues.push({ severity: "error", code: "duplicate_rare_collection_name", message: "Volume XII curiosity names must be unique.", records: rareCollectionsCuriosityRecords.map((record) => record.displayName) });
+  }
+  if (rareCollectionsCuriosityRecords.length !== rareCollectionsCuriosityVolume.recordCount) {
+    issues.push({ severity: "error", code: "rare_collection_record_count", message: "Volume XII must load its declared canonical record count.", records: [String(rareCollectionsCuriosityRecords.length), String(rareCollectionsCuriosityVolume.recordCount)] });
+  }
+  if (rareCollectionsCuriosityRecords[0]?.id !== "WON-0001" || rareCollectionsCuriosityRecords.at(-1)?.id !== "WON-0600") {
+    issues.push({ severity: "error", code: "rare_collection_id_range", message: "Volume XII must preserve the WON-0001 through WON-0600 canonical range.", records: [rareCollectionsCuriosityRecords[0]?.id ?? "missing", rareCollectionsCuriosityRecords.at(-1)?.id ?? "missing"] });
+  }
+  const rareCollectionClasses = Object.values(rareCollectionsCuriosityTaxonomy.taxonomy["Rare Collections & Wonders"] ?? {});
+  if (rareCollectionClasses.length !== 8 || rareCollectionClasses.flat().length !== 80) {
+    issues.push({ severity: "error", code: "rare_collection_taxonomy_count", message: "Volume XII must preserve 8 classes and 80 subclasses.", records: [String(rareCollectionClasses.length), String(rareCollectionClasses.flat().length)] });
+  }
+  const invalidUniqueRareCollections = rareCollectionsCuriosityRecords.filter((record) => record.rarity === "unique" && (record.maximumKnownInstances !== 1 || record.repeatable !== false));
+  if (invalidUniqueRareCollections.length) {
+    issues.push({ severity: "error", code: "rare_collection_unique_contract", message: "Unique wonders must be non-repeatable and limited to one known instance.", records: invalidUniqueRareCollections.map((record) => record.id) });
+  }
+  const incompleteRareCollections = rareCollectionsCuriosityRecords.filter((record) => !record.preservationState || !record.authenticityStatus || !record.recoveryMethod || typeof record.significancePercent !== "number" || typeof record.preservationPercent !== "number" || typeof record.civilizationInfluencePercent !== "number" || typeof record.uniquenessPercent !== "number" || typeof record.analysisProgressPercent !== "number");
+  if (incompleteRareCollections.length) {
+    issues.push({ severity: "error", code: "rare_collection_analysis_contract", message: "Rare collections and wonders must preserve state, authenticity, recovery, significance, preservation, civilization influence, uniqueness, and analysis progress.", records: incompleteRareCollections.map((record) => record.id) });
   }
   for (const collection of discoveryCollections) {
     const missing = collection.discoveryIds.filter((id) => !discoveryIds.has(id));

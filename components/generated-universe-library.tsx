@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { Database, Filter, Plus, Search } from "lucide-react";
 import { GeneratedLibraryCard, type GeneratedLibraryCardRecord } from "@/components/generated-library-card";
 import { CanonicalIndex } from "@/components/ui/workspace";
@@ -13,6 +14,10 @@ type GeneratedUniverseLibraryProps = {
   generateLabel: string;
   records: UniverseLibraryRecord[];
   emptyMessage: string;
+  totalRecords?: number;
+  currentPage?: number;
+  pageCount?: number;
+  pageHref?: string;
 };
 
 function toGeneratedCardRecord(record: UniverseLibraryRecord): GeneratedLibraryCardRecord {
@@ -35,7 +40,7 @@ function toGeneratedCardRecord(record: UniverseLibraryRecord): GeneratedLibraryC
   };
 }
 
-export function GeneratedUniverseLibrary({ kind, title, description, generateLabel, records, emptyMessage }: GeneratedUniverseLibraryProps) {
+export function GeneratedUniverseLibrary({ kind, title, description, generateLabel, records, emptyMessage, totalRecords, currentPage, pageCount, pageHref }: GeneratedUniverseLibraryProps) {
   const [query, setQuery] = useState("");
   const [readiness, setReadiness] = useState("all");
   const storageKey = `project-genesis-hidden-library-records:${kind}`;
@@ -54,12 +59,12 @@ export function GeneratedUniverseLibrary({ kind, title, description, generateLab
     const parentCount = new Set(visibleRecords.map((record) => record.parentLabel).filter(Boolean)).size;
 
     return [
-      { label: "Records", value: visibleRecords.length.toLocaleString(), detail: "generated only" },
+      { label: "Records", value: (totalRecords ?? visibleRecords.length).toLocaleString(), detail: "generated only" },
       { label: "Ready", value: readyCount.toLocaleString(), detail: "runtime ready" },
       { label: "Types", value: typeCount.toLocaleString(), detail: "canonical classes" },
       { label: "Parents", value: parentCount.toLocaleString(), detail: "resolved links" }
     ];
-  }, [visibleRecords]);
+  }, [totalRecords, visibleRecords]);
   const filteredRecords = useMemo(() => {
     const needle = query.trim().toLowerCase();
     return visibleRecords.filter((record) => {
@@ -127,8 +132,15 @@ export function GeneratedUniverseLibrary({ kind, title, description, generateLab
         </div>
         <div className="mt-3 inline-flex items-center gap-2 rounded-md border border-cyan-300/10 bg-slate-950/40 px-3 py-2 text-sm font-bold text-slate-300">
           <Database className="h-4 w-4 text-cyan-200" />
-          {filteredRecords.length.toLocaleString()} shown / {visibleRecords.length.toLocaleString()} total
+          {filteredRecords.length.toLocaleString()} shown / {(totalRecords ?? visibleRecords.length).toLocaleString()} total
         </div>
+        {pageHref && currentPage && pageCount && pageCount > 1 ? (
+          <nav className="mt-3 flex items-center justify-between gap-3 border-t border-cyan-300/10 pt-3" aria-label={`${title} pages`}>
+            <Link href={`${pageHref}?page=${Math.max(1, currentPage - 1)}`} scroll={false} aria-disabled={currentPage === 1} className={`rounded-md border px-3 py-2 text-xs font-black ${currentPage === 1 ? "pointer-events-none border-slate-700/40 text-slate-600" : "border-cyan-300/20 text-cyan-100 hover:border-cyan-300/50"}`}>Previous</Link>
+            <span className="text-xs font-bold text-slate-400">Page {currentPage.toLocaleString()} of {pageCount.toLocaleString()}</span>
+            <Link href={`${pageHref}?page=${Math.min(pageCount, currentPage + 1)}`} scroll={false} aria-disabled={currentPage === pageCount} className={`rounded-md border px-3 py-2 text-xs font-black ${currentPage === pageCount ? "pointer-events-none border-slate-700/40 text-slate-600" : "border-cyan-300/20 text-cyan-100 hover:border-cyan-300/50"}`}>Next</Link>
+          </nav>
+        ) : null}
       </section>
 
       {filteredRecords.length ? (
