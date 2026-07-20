@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { defaultAiAgentVariantId, getAiAgentRuntimeModules } from "@/lib/ai-agents";
+import { aiLibraryAssignmentRoles, aiLibraryCategories, aiLibraryPersonalities, aiLibraryRarities, aiLibraryVoices, canonicalAiLibraryAgents, validateCanonicalAiLibrary } from "@/lib/ai-agents/foundations";
 import { canonicalActionSystem, validateActionSystem } from "@/lib/actions/action-system";
 import { ARCHITECTURE_VERSION } from "@/lib/architecture/version";
 import { buildBuildingClassifications, canonicalBuildingLibrary, canonicalBuildingTaxonomy } from "@/lib/buildings/taxonomy";
@@ -195,6 +196,12 @@ type CanonicalModules = {
   era_navigation_profiles: Array<{ id: string; profileName: string; eraNavigation: ReturnType<typeof resolveEraNavigationProfile>; inheritsFrom: string | null; notes: string }>;
   client_profiles: Record<string, unknown>;
   mobile_asset_requirements: typeof mobileAssetRequirements;
+  ai_library: typeof canonicalAiLibraryAgents;
+  ai_categories: typeof aiLibraryCategories;
+  ai_rarity: Array<(typeof aiLibraryRarities)[number]>;
+  ai_personality_catalog: string[];
+  ai_voice_catalog: string[];
+  ai_assignment_roles: string[];
   ai_agents: ReturnType<typeof getAiAgentRuntimeModules>["aiAgents"];
   ai_agent_variants: ReturnType<typeof getAiAgentRuntimeModules>["aiAgentVariants"];
   ai_agent_personalities: ReturnType<typeof getAiAgentRuntimeModules>["aiAgentPersonalities"];
@@ -642,6 +649,12 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
       };
     })(),
     mobile_asset_requirements: mobileAssetRequirements,
+    ai_library: canonicalAiLibraryAgents,
+    ai_categories: aiLibraryCategories,
+    ai_rarity: aiLibraryRarities.map((rarity) => ({ ...rarity })),
+    ai_personality_catalog: [...aiLibraryPersonalities],
+    ai_voice_catalog: [...aiLibraryVoices],
+    ai_assignment_roles: [...aiLibraryAssignmentRoles],
     ai_agents: aiAgentModules.aiAgents,
     ai_agent_variants: aiAgentModules.aiAgentVariants,
     ai_agent_personalities: aiAgentModules.aiAgentPersonalities,
@@ -893,7 +906,8 @@ function validateStableIds(issues: ExportValidationIssue[], modules: CanonicalMo
     if (!Array.isArray(rows)) continue;
     const objectRows = rows.filter((row): row is Record<string, unknown> => Boolean(row) && typeof row === "object" && !Array.isArray(row));
     if (!objectRows.length) continue;
-    const missing = objectRows.map((row, index) => ({ row, index })).filter(({ row }) => typeof row.id !== "string");
+    const idFor = (row: Record<string, unknown>) => moduleName === "ai_library" ? row.ai_id : row.id;
+    const missing = objectRows.map((row, index) => ({ row, index })).filter(({ row }) => typeof idFor(row) !== "string");
     if (missing.length) {
       addIssue(issues, "error", "missing_id", `${moduleName} has records without stable string IDs.`, missing.map(({ index }) => `${moduleName}[${index}]`));
     }
@@ -901,7 +915,8 @@ function validateStableIds(issues: ExportValidationIssue[], modules: CanonicalMo
     const seen = new Set<string>();
     const duplicates = new Set<string>();
     for (const row of objectRows) {
-      const id = typeof row.id === "string" ? row.id : "";
+      const value = idFor(row);
+      const id = typeof value === "string" ? value : "";
       if (!id) continue;
       if (seen.has(id)) duplicates.add(id);
       seen.add(id);
@@ -1325,6 +1340,9 @@ function validateEraNavigationProfiles(issues: ExportValidationIssue[], modules:
 }
 
 function validateAiAgentModules(issues: ExportValidationIssue[], modules: CanonicalModules) {
+  for (const message of validateCanonicalAiLibrary(modules.ai_library).issues) {
+    issues.push({ severity: "error", code: "ai_library_invalid", message, records: ["ai_library"] });
+  }
   const agentIds = new Set(modules.ai_agents.map((agent) => agent.id));
   const variantIds = new Set(modules.ai_agent_variants.map((variant) => variant.id));
   const personalityIds = new Set(modules.ai_agent_personalities.map((personality) => personality.id));
@@ -1802,6 +1820,12 @@ function compactModules(modules: CanonicalModules) {
     era_navigation_profiles: modules.era_navigation_profiles,
     client_profiles: modules.client_profiles,
     mobile_asset_requirements: modules.mobile_asset_requirements,
+    ai_library: modules.ai_library,
+    ai_categories: modules.ai_categories,
+    ai_rarity: modules.ai_rarity,
+    ai_personality_catalog: modules.ai_personality_catalog,
+    ai_voice_catalog: modules.ai_voice_catalog,
+    ai_assignment_roles: modules.ai_assignment_roles,
     ai_agents: modules.ai_agents,
     ai_agent_variants: modules.ai_agent_variants,
     ai_agent_personalities: modules.ai_agent_personalities,
@@ -1843,7 +1867,7 @@ function targetArtifacts(target: EngineTarget, modules: CanonicalModules) {
     return {
       "ResourceCatalogModule.lua": `local ResourceCatalog = ${luaValue(modules.resource_catalog)}\n\nreturn ResourceCatalog\n`,
       "EconomyDefinitionsModule.lua": `local EconomyDefinitions = ${luaValue({ economyDefinitions: modules.economy_definitions, laborGenerationFramework: modules.labor_generation_framework, economyBehaviorContracts: modules.economy_behavior_contracts, resourceProducerDefinitions: modules.resource_producer_definitions, buildingResourceEffects: modules.building_resource_effects, economyScopeRules: modules.economy_scope_rules, transactionReasons: modules.economy_transaction_reasons, rateBreakdowns: modules.economy_rate_breakdown_definitions, offlinePolicies: modules.offline_progression_policies, calculationRules: modules.economy_calculation_rules, eraEconomyProfiles: modules.era_economy_profiles, hudProfile: modules.hud_profile, primaryHudResources: modules.primary_hud_resources })}\n\nreturn EconomyDefinitions\n`,
-      "AIAgentModule.lua": `local AIAgents = ${luaValue({ aiAgents: modules.ai_agents, aiAgentVariants: modules.ai_agent_variants, personalities: modules.ai_agent_personalities, animationProfiles: modules.ai_agent_animation_profiles, automationPresentation: modules.automation_presentation, defaultAiAgentId: modules.default_ai_agent_id, defaultAiAgentVariantId, saveSchema: modules.ai_agent_save_schema })}\n\nreturn AIAgents\n`,
+      "AIAgentModule.lua": `local AIAgents = ${luaValue({ library: modules.ai_library, categories: modules.ai_categories, rarity: modules.ai_rarity, personalityCatalog: modules.ai_personality_catalog, voiceCatalog: modules.ai_voice_catalog, assignmentRoles: modules.ai_assignment_roles, aiAgents: modules.ai_agents, aiAgentVariants: modules.ai_agent_variants, personalities: modules.ai_agent_personalities, animationProfiles: modules.ai_agent_animation_profiles, automationPresentation: modules.automation_presentation, defaultAiAgentId: modules.default_ai_agent_id, defaultAiAgentVariantId, saveSchema: modules.ai_agent_save_schema })}\n\nreturn AIAgents\n`,
       "DiscoveryCatalogModule.lua": `local DiscoveryCatalog = ${luaValue({ categories: modules.discovery_categories, rarities: modules.discovery_rarities, discoveries: modules.discoveries, collections: modules.discovery_collections, chains: modules.discovery_chains })}\n\nreturn DiscoveryCatalog\n`,
       "UniversalDiscoveryRegistryContract.lua": `local UniversalDiscoveryRegistryContract = ${luaValue(modules.universal_discovery_registry)}\n\nreturn UniversalDiscoveryRegistryContract\n`,
       "EraNavigationProfileModule.lua": `local EraNavigationProfiles = ${luaValue(modules.era_navigation_profiles)}\n\nreturn EraNavigationProfiles\n`,

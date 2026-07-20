@@ -3,6 +3,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { civilizationAges } from "@/data/civilization-identity";
 import { aiAgentSafePublishedDefaultArtKeys, defaultAiAgentId, defaultAiAgentVariantId, getAiAgentRuntimeModules } from "@/lib/ai-agents";
+import { aiLibraryAssignmentRoles, aiLibraryCategories, aiLibraryPersonalities, aiLibraryRarities, aiLibraryVoices, canonicalAiLibraryAgents, validateCanonicalAiLibrary } from "@/lib/ai-agents/foundations";
 import { canonicalActionSystem, validateActionSystem } from "@/lib/actions/action-system";
 import { ARCHITECTURE_VERSION } from "@/lib/architecture/version";
 import { getAssetProductionRuntimeOverrides } from "@/lib/assets/asset-production";
@@ -66,7 +67,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 36;
+export const gameRuntimeContentVersion = 37;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -86,6 +87,12 @@ export type RobloxRuntimeExportPayload = {
   offlineProgressionPolicies: GameRuntimeData["offlineProgressionPolicies"];
   economyCalculationRules: GameRuntimeData["economyCalculationRules"];
   laborGenerationFramework: GameRuntimeData["laborGenerationFramework"];
+  aiLibrary: GameRuntimeData["aiLibrary"];
+  aiCategories: GameRuntimeData["aiCategories"];
+  aiRarity: GameRuntimeData["aiRarity"];
+  aiPersonalityCatalog: GameRuntimeData["aiPersonalityCatalog"];
+  aiVoiceCatalog: GameRuntimeData["aiVoiceCatalog"];
+  aiAssignmentRoles: GameRuntimeData["aiAssignmentRoles"];
   aiAgents: GameRuntimeData["aiAgents"];
   aiAgentVariants: GameRuntimeData["aiAgentVariants"];
   aiAgentPersonalities: GameRuntimeData["aiAgentPersonalities"];
@@ -594,6 +601,12 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
     economyRateBreakdownDefinitions: [...runtimeData.economyRateBreakdownDefinitions].sort(byId),
     offlineProgressionPolicies: [...runtimeData.offlineProgressionPolicies].sort(byId),
     laborGenerationFramework: runtimeData.laborGenerationFramework,
+    aiLibrary: [...runtimeData.aiLibrary].sort((left, right) => left.ai_id.localeCompare(right.ai_id)),
+    aiCategories: [...runtimeData.aiCategories].sort(byId),
+    aiRarity: [...runtimeData.aiRarity].sort((left, right) => left.order - right.order || left.id.localeCompare(right.id)),
+    aiPersonalityCatalog: [...runtimeData.aiPersonalityCatalog].sort(),
+    aiVoiceCatalog: [...runtimeData.aiVoiceCatalog].sort(),
+    aiAssignmentRoles: [...runtimeData.aiAssignmentRoles].sort(),
     aiAgents: [...runtimeData.aiAgents].sort(byId),
     aiAgentVariants: [...runtimeData.aiAgentVariants].sort(byId),
     aiAgentPersonalities: [...runtimeData.aiAgentPersonalities].sort(byId),
@@ -1971,6 +1984,12 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   validateEconomyDefaults(runtimeData, issues, "Canonical runtime");
   validateResourceEconomyContracts(runtimeData, issues, "Canonical runtime");
   issues.push(...validateLaborGenerationFramework(runtimeData.laborGenerationFramework));
+  for (const message of validateCanonicalAiLibrary(runtimeData.aiLibrary).issues) {
+    issues.push({ severity: "error", code: "ai_library_invalid", message, records: ["aiLibrary"] });
+  }
+  if (runtimeData.aiCategories.length !== aiLibraryCategories.length || runtimeData.aiRarity.length !== aiLibraryRarities.length) {
+    issues.push({ severity: "error", code: "ai_library_catalog_invalid", message: "AI Library catalogs must match the canonical Foundations catalogs.", records: ["aiCategories", "aiRarity"] });
+  }
   validateMobileClientProfiles(runtimeData, issues);
   validateAiAgents(runtimeData, issues);
   const discoveryValidation = validateDiscoverySystem();
@@ -2210,6 +2229,12 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     offlineProgressionPolicies: sorted.offlineProgressionPolicies,
     economyCalculationRules: sorted.economyCalculationRules,
     laborGenerationFramework: sorted.laborGenerationFramework,
+    aiLibrary: sorted.aiLibrary,
+    aiCategories: sorted.aiCategories,
+    aiRarity: sorted.aiRarity,
+    aiPersonalityCatalog: sorted.aiPersonalityCatalog,
+    aiVoiceCatalog: sorted.aiVoiceCatalog,
+    aiAssignmentRoles: sorted.aiAssignmentRoles,
     aiAgents: sorted.aiAgents,
     aiAgentVariants: sorted.aiAgentVariants,
     aiAgentPersonalities: sorted.aiAgentPersonalities,
@@ -2280,6 +2305,9 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
   }
   if (payload.upgradeTabs.length !== 4) {
     issues.push({ severity: "error", code: "invalid_upgrade_tab_count", message: "Roblox runtime payload must expose exactly four upgrade tabs.", records: payload.upgradeTabs.map((tab) => tab.tabId) });
+  }
+  for (const message of validateCanonicalAiLibrary(payload.aiLibrary).issues) {
+    issues.push({ severity: "error", code: "ai_library_invalid", message, records: ["aiLibrary"] });
   }
   const tabPresentationValidation = validateUpgradeCategoryPresentation({ categories: payload.upgradeTabs.map((tab) => ({ id: tab.id, presentation: tab.presentation })) });
   for (const message of tabPresentationValidation.issues) {
@@ -2495,6 +2523,12 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     offlineProgressionPolicies: buildOfflineProgressionPolicies(),
     economyCalculationRules: buildEconomyCalculationRules(),
     laborGenerationFramework,
+    aiLibrary: canonicalAiLibraryAgents,
+    aiCategories: aiLibraryCategories,
+    aiRarity: aiLibraryRarities.map((rarity) => ({ ...rarity })),
+    aiPersonalityCatalog: [...aiLibraryPersonalities],
+    aiVoiceCatalog: [...aiLibraryVoices],
+    aiAssignmentRoles: [...aiLibraryAssignmentRoles],
     aiAgents: aiAgentModules.aiAgents,
     aiAgentVariants: aiAgentModules.aiAgentVariants,
     aiAgentPersonalities: aiAgentModules.aiAgentPersonalities,
@@ -2563,6 +2597,12 @@ export async function getGameRuntimeData() {
     offlineProgressionPolicies: base.offlineProgressionPolicies,
     economyCalculationRules: base.economyCalculationRules,
     laborGenerationFramework: base.laborGenerationFramework,
+    aiLibrary: base.aiLibrary,
+    aiCategories: base.aiCategories,
+    aiRarity: base.aiRarity,
+    aiPersonalityCatalog: base.aiPersonalityCatalog,
+    aiVoiceCatalog: base.aiVoiceCatalog,
+    aiAssignmentRoles: base.aiAssignmentRoles,
     aiAgents: base.aiAgents,
     aiAgentVariants: base.aiAgentVariants,
     aiAgentPersonalities: base.aiAgentPersonalities,
@@ -2825,6 +2865,12 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     assets: normalizeImportedAssets(payload, base.assets),
     balance: normalizeBalance(payload, base.balance),
     aiAgents: base.aiAgents,
+    aiLibrary: base.aiLibrary,
+    aiCategories: base.aiCategories,
+    aiRarity: base.aiRarity,
+    aiPersonalityCatalog: base.aiPersonalityCatalog,
+    aiVoiceCatalog: base.aiVoiceCatalog,
+    aiAssignmentRoles: base.aiAssignmentRoles,
     aiAgentVariants: base.aiAgentVariants,
     aiAgentPersonalities: base.aiAgentPersonalities,
     aiAgentAnimationProfiles: base.aiAgentAnimationProfiles,

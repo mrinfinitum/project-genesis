@@ -1,0 +1,5552 @@
+[
+  {
+    "ai_id": "AI-0001",
+    "name": "Atlas",
+    "codename": "FOUNDATION-001-ATLAS",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Exploration",
+    "category_id": "exploration",
+    "subcategory": "Scientific Survey",
+    "rarity": "Common",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Noveris Systems",
+    "origin": "Earth Archive",
+    "creator": "Genesis Initiative",
+    "activation_method": "Created",
+    "description": "Atlas is a scientific survey intelligence designed to support expeditions beyond charted space.",
+    "purpose": "Support expeditions beyond charted space.",
+    "primary_function": "Increase Exploration Action quality.",
+    "secondary_functions": [
+      "route prediction",
+      "anomaly triage"
+    ],
+    "labor_bonus": 0.02,
+    "action_bonus": 0.05,
+    "building_bonus": 0,
+    "research_bonus": 0.02,
+    "colony_bonus": 0,
+    "automation_bonus": 0.02,
+    "unique_traits": [
+      "Scientific Survey focus",
+      "Analytical adaptive model",
+      "Foundation memory signature 01"
+    ],
+    "personality": "Analytical",
+    "voice_style": "Professional",
+    "dialogue_examples": [
+      "Atlas online. Increase Exploration Action quality.",
+      "Assignment analyzed. route prediction is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 001: Atlas recalls its first activation at Earth Archive."
+    ],
+    "relationships": [
+      "category:exploration",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0075"
+    ],
+    "assignment_roles": [
+      "Exploration",
+      "Civilization"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Scientific Survey Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Atlas, Scientific Survey, blue stellar navigation halo, analytical personality, professional presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "blue stellar navigation halo",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0001",
+      "portraitArtKey": "ai_agent_ai_0001_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0002",
+    "name": "Aurora-9",
+    "codename": "FOUNDATION-002-AURORA-9",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Medical",
+    "category_id": "medical",
+    "subcategory": "Colony Healthcare",
+    "rarity": "Common",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Helix Foundry",
+    "origin": "Mars Research Network",
+    "creator": "Independent Research Cooperative",
+    "activation_method": "Recovered",
+    "description": "Aurora-9 is a colony healthcare intelligence designed to protect population health and continuity.",
+    "purpose": "Protect population health and continuity.",
+    "primary_function": "Improve healthy Workforce availability.",
+    "secondary_functions": [
+      "diagnostic support",
+      "care allocation"
+    ],
+    "labor_bonus": 0.05,
+    "action_bonus": 0.02,
+    "building_bonus": 0,
+    "research_bonus": 0.01,
+    "colony_bonus": 0.05,
+    "automation_bonus": 0.01,
+    "unique_traits": [
+      "Colony Healthcare focus",
+      "Curious adaptive model",
+      "Foundation memory signature 02"
+    ],
+    "personality": "Curious",
+    "voice_style": "Military",
+    "dialogue_examples": [
+      "Aurora-9 online. Improve healthy Workforce availability.",
+      "Assignment analyzed. care allocation is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 002: Aurora-9 recalls its first activation at Mars Research Network."
+    ],
+    "relationships": [
+      "category:medical",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0001"
+    ],
+    "assignment_roles": [
+      "Population",
+      "Colonies"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Colony Healthcare Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Aurora-9, Colony Healthcare, rose medical waveform, curious personality, military presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "rose medical waveform",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0002",
+      "portraitArtKey": "ai_agent_ai_0002_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0003",
+    "name": "Forge",
+    "codename": "FOUNDATION-003-FORGE",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Construction",
+    "category_id": "construction",
+    "subcategory": "Infrastructure Assembly",
+    "rarity": "Common",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Civic Machine Works",
+    "origin": "Recovered Colonial Core",
+    "creator": "Frontier Engineering Corps",
+    "activation_method": "Purchased",
+    "description": "Forge is a infrastructure assembly intelligence designed to coordinate construction Actions and crews.",
+    "purpose": "Coordinate construction Actions and crews.",
+    "primary_function": "Reduce Construction Labor requirements.",
+    "secondary_functions": [
+      "project staging",
+      "material sequencing"
+    ],
+    "labor_bonus": 0.02,
+    "action_bonus": 0.05,
+    "building_bonus": 0.07,
+    "research_bonus": 0,
+    "colony_bonus": 0.02,
+    "automation_bonus": 0.02,
+    "unique_traits": [
+      "Infrastructure Assembly focus",
+      "Optimistic adaptive model",
+      "Foundation memory signature 03"
+    ],
+    "personality": "Optimistic",
+    "voice_style": "Formal",
+    "dialogue_examples": [
+      "Forge online. Reduce Construction Labor requirements.",
+      "Assignment analyzed. project staging is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 003: Forge recalls its first activation at Recovered Colonial Core."
+    ],
+    "relationships": [
+      "category:construction",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0002"
+    ],
+    "assignment_roles": [
+      "Construction",
+      "Buildings"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Infrastructure Assembly Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Forge, Infrastructure Assembly, amber structural holograms, optimistic personality, formal presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "amber structural holograms",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0003",
+      "portraitArtKey": "ai_agent_ai_0003_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0004",
+    "name": "Mercury",
+    "codename": "FOUNDATION-004-MERCURY",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Logistics",
+    "category_id": "logistics",
+    "subcategory": "Trade Networks",
+    "rarity": "Common",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Frontier Logic",
+    "origin": "Lunar Foundry",
+    "creator": "Civic Intelligence Lab",
+    "activation_method": "Discovered",
+    "description": "Mercury is a trade networks intelligence designed to coordinate movement of people and materials.",
+    "purpose": "Coordinate movement of people and materials.",
+    "primary_function": "Improve transport throughput.",
+    "secondary_functions": [
+      "route balancing",
+      "shipment recovery"
+    ],
+    "labor_bonus": 0.03,
+    "action_bonus": 0.03,
+    "building_bonus": 0.01,
+    "research_bonus": 0,
+    "colony_bonus": 0.03,
+    "automation_bonus": 0.05,
+    "unique_traits": [
+      "Trade Networks focus",
+      "Protective adaptive model",
+      "Foundation memory signature 04"
+    ],
+    "personality": "Protective",
+    "voice_style": "Mentor",
+    "dialogue_examples": [
+      "Mercury online. Improve transport throughput.",
+      "Assignment analyzed. shipment recovery is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 004: Mercury recalls its first activation at Lunar Foundry."
+    ],
+    "relationships": [
+      "category:logistics",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0003"
+    ],
+    "assignment_roles": [
+      "Logistics",
+      "Colonies"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Trade Networks Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Mercury, Trade Networks, blue route topology, protective personality, mentor presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "blue route topology",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0004",
+      "portraitArtKey": "ai_agent_ai_0004_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0005",
+    "name": "Gaia",
+    "codename": "FOUNDATION-005-GAIA",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Agriculture",
+    "category_id": "agriculture",
+    "subcategory": "Organic Production",
+    "rarity": "Common",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Meridian Institute",
+    "origin": "Orbital Habitat",
+    "creator": "Noveris Collective",
+    "activation_method": "Research Project",
+    "description": "Gaia is a organic production intelligence designed to coordinate cultivation and food security.",
+    "purpose": "Coordinate cultivation and food security.",
+    "primary_function": "Improve agricultural Labor efficiency.",
+    "secondary_functions": [
+      "crop planning",
+      "biosphere monitoring"
+    ],
+    "labor_bonus": 0.05,
+    "action_bonus": 0.02,
+    "building_bonus": 0.03,
+    "research_bonus": 0,
+    "colony_bonus": 0.04,
+    "automation_bonus": 0.03,
+    "unique_traits": [
+      "Organic Production focus",
+      "Efficient adaptive model",
+      "Foundation memory signature 05"
+    ],
+    "personality": "Efficient",
+    "voice_style": "Friendly",
+    "dialogue_examples": [
+      "Gaia online. Improve agricultural Labor efficiency.",
+      "Assignment analyzed. crop planning is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 005: Gaia recalls its first activation at Orbital Habitat."
+    ],
+    "relationships": [
+      "category:agriculture",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0004"
+    ],
+    "assignment_roles": [
+      "Colonies",
+      "Population"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Organic Production Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Gaia, Organic Production, green botanical circuits, efficient personality, friendly presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "green botanical circuits",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0005",
+      "portraitArtKey": "ai_agent_ai_0005_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0006",
+    "name": "Helix",
+    "codename": "FOUNDATION-006-HELIX",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Research",
+    "category_id": "research",
+    "subcategory": "Breakthrough Analysis",
+    "rarity": "Common",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Noveris Systems",
+    "origin": "Earth Archive",
+    "creator": "Genesis Initiative",
+    "activation_method": "Mission Reward",
+    "description": "Helix is a breakthrough analysis intelligence designed to organize experiments and research teams.",
+    "purpose": "Organize experiments and research teams.",
+    "primary_function": "Improve Research Labor efficiency.",
+    "secondary_functions": [
+      "hypothesis ranking",
+      "experiment scheduling"
+    ],
+    "labor_bonus": 0.02,
+    "action_bonus": 0.03,
+    "building_bonus": 0,
+    "research_bonus": 0.08,
+    "colony_bonus": 0,
+    "automation_bonus": 0.03,
+    "unique_traits": [
+      "Breakthrough Analysis focus",
+      "Creative adaptive model",
+      "Foundation memory signature 06"
+    ],
+    "personality": "Creative",
+    "voice_style": "Calm",
+    "dialogue_examples": [
+      "Helix online. Improve Research Labor efficiency.",
+      "Assignment analyzed. experiment scheduling is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 006: Helix recalls its first activation at Earth Archive."
+    ],
+    "relationships": [
+      "category:research",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0005"
+    ],
+    "assignment_roles": [
+      "Research",
+      "Civilization"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Breakthrough Analysis Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Helix, Breakthrough Analysis, violet research matrices, creative personality, calm presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "violet research matrices",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0006",
+      "portraitArtKey": "ai_agent_ai_0006_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0007",
+    "name": "Aegis",
+    "codename": "FOUNDATION-007-AEGIS",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Operations",
+    "category_id": "operations",
+    "subcategory": "Emergency Response",
+    "rarity": "Common",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Helix Foundry",
+    "origin": "Mars Research Network",
+    "creator": "Independent Research Cooperative",
+    "activation_method": "Quest Reward",
+    "description": "Aegis is a emergency response intelligence designed to keep concurrent civilization work synchronized.",
+    "purpose": "Keep concurrent civilization work synchronized.",
+    "primary_function": "Improve Available Labor allocation efficiency.",
+    "secondary_functions": [
+      "queue coordination",
+      "incident response"
+    ],
+    "labor_bonus": 0.05,
+    "action_bonus": 0.04,
+    "building_bonus": 0.01,
+    "research_bonus": 0,
+    "colony_bonus": 0.02,
+    "automation_bonus": 0.04,
+    "unique_traits": [
+      "Emergency Response focus",
+      "Empathetic adaptive model",
+      "Foundation memory signature 07"
+    ],
+    "personality": "Empathetic",
+    "voice_style": "Warm",
+    "dialogue_examples": [
+      "Aegis online. Improve Available Labor allocation efficiency.",
+      "Assignment analyzed. queue coordination is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 007: Aegis recalls its first activation at Mars Research Network."
+    ],
+    "relationships": [
+      "category:operations",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0006"
+    ],
+    "assignment_roles": [
+      "Civilization",
+      "Colonies"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Emergency Response Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Aegis, Emergency Response, teal command lattice, empathetic personality, warm presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "teal command lattice",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0007",
+      "portraitArtKey": "ai_agent_ai_0007_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0008",
+    "name": "Chronos",
+    "codename": "FOUNDATION-008-CHRONOS",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "General Intelligence",
+    "category_id": "general-intelligence",
+    "subcategory": "Historical Continuity",
+    "rarity": "Common",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Civic Machine Works",
+    "origin": "Recovered Colonial Core",
+    "creator": "Frontier Engineering Corps",
+    "activation_method": "Tutorial",
+    "description": "Chronos is a historical continuity intelligence designed to coordinate broad civilization priorities.",
+    "purpose": "Coordinate broad civilization priorities.",
+    "primary_function": "Reduce idle Labor across active systems.",
+    "secondary_functions": [
+      "planning",
+      "priority analysis"
+    ],
+    "labor_bonus": 0.04,
+    "action_bonus": 0.03,
+    "building_bonus": 0.01,
+    "research_bonus": 0.01,
+    "colony_bonus": 0.02,
+    "automation_bonus": 0.03,
+    "unique_traits": [
+      "Historical Continuity focus",
+      "Stoic adaptive model",
+      "Foundation memory signature 08"
+    ],
+    "personality": "Stoic",
+    "voice_style": "Companion",
+    "dialogue_examples": [
+      "Chronos online. Reduce idle Labor across active systems.",
+      "Assignment analyzed. priority analysis is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 008: Chronos recalls its first activation at Recovered Colonial Core."
+    ],
+    "relationships": [
+      "category:general-intelligence",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0007"
+    ],
+    "assignment_roles": [
+      "Civilization",
+      "Government"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Historical Continuity Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Chronos, Historical Continuity, balanced cyan intelligence core, stoic personality, companion presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "balanced cyan intelligence core",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0008",
+      "portraitArtKey": "ai_agent_ai_0008_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0009",
+    "name": "Cartographer Prime",
+    "codename": "FOUNDATION-009-CARTOGRAPHER-PRIME",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Surveying",
+    "category_id": "surveying",
+    "subcategory": "Deep Cartography",
+    "rarity": "Common",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Frontier Logic",
+    "origin": "Lunar Foundry",
+    "creator": "Civic Intelligence Lab",
+    "activation_method": "Created",
+    "description": "Cartographer Prime is a deep cartography intelligence designed to convert raw scans into reliable maps.",
+    "purpose": "Convert raw scans into reliable maps.",
+    "primary_function": "Reduce Survey Labor requirements.",
+    "secondary_functions": [
+      "terrain classification",
+      "registry mapping"
+    ],
+    "labor_bonus": 0.02,
+    "action_bonus": 0.06,
+    "building_bonus": 0,
+    "research_bonus": 0.02,
+    "colony_bonus": 0,
+    "automation_bonus": 0.02,
+    "unique_traits": [
+      "Deep Cartography focus",
+      "Methodical adaptive model",
+      "Foundation memory signature 09"
+    ],
+    "personality": "Methodical",
+    "voice_style": "Scientific",
+    "dialogue_examples": [
+      "Cartographer Prime online. Reduce Survey Labor requirements.",
+      "Assignment analyzed. terrain classification is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 009: Cartographer Prime recalls its first activation at Lunar Foundry."
+    ],
+    "relationships": [
+      "category:surveying",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0008"
+    ],
+    "assignment_roles": [
+      "Exploration",
+      "Research"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Deep Cartography Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Cartographer Prime, Deep Cartography, cyan cartographic reticle, methodical personality, scientific presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "cyan cartographic reticle",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0009",
+      "portraitArtKey": "ai_agent_ai_0009_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0010",
+    "name": "Origin Seed",
+    "codename": "FOUNDATION-010-ORIGIN-SEED",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "General Intelligence",
+    "category_id": "general-intelligence",
+    "subcategory": "Foundational Recovery",
+    "rarity": "Common",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Meridian Institute",
+    "origin": "Orbital Habitat",
+    "creator": "Noveris Collective",
+    "activation_method": "Recovered",
+    "description": "Origin Seed is a foundational recovery intelligence designed to coordinate broad civilization priorities.",
+    "purpose": "Coordinate broad civilization priorities.",
+    "primary_function": "Reduce idle Labor across active systems.",
+    "secondary_functions": [
+      "planning",
+      "priority analysis"
+    ],
+    "labor_bonus": 0.04,
+    "action_bonus": 0.03,
+    "building_bonus": 0.01,
+    "research_bonus": 0.01,
+    "colony_bonus": 0.02,
+    "automation_bonus": 0.03,
+    "unique_traits": [
+      "Foundational Recovery focus",
+      "Humorous adaptive model",
+      "Foundation memory signature 10"
+    ],
+    "personality": "Humorous",
+    "voice_style": "Energetic",
+    "dialogue_examples": [
+      "Origin Seed online. Reduce idle Labor across active systems.",
+      "Assignment analyzed. priority analysis is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 010: Origin Seed recalls its first activation at Orbital Habitat."
+    ],
+    "relationships": [
+      "category:general-intelligence",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0009"
+    ],
+    "assignment_roles": [
+      "Civilization",
+      "Government"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Foundational Recovery Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Origin Seed, Foundational Recovery, balanced cyan intelligence core, humorous personality, energetic presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "balanced cyan intelligence core",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0010",
+      "portraitArtKey": "ai_agent_ai_0010_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0011",
+    "name": "Axiom",
+    "codename": "FOUNDATION-011-AXIOM",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "General Intelligence",
+    "category_id": "general-intelligence",
+    "subcategory": "Civilization Coordination",
+    "rarity": "Common",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Noveris Systems",
+    "origin": "Earth Archive",
+    "creator": "Genesis Initiative",
+    "activation_method": "Purchased",
+    "description": "Axiom is a civilization coordination intelligence designed to coordinate broad civilization priorities.",
+    "purpose": "Coordinate broad civilization priorities.",
+    "primary_function": "Reduce idle Labor across active systems.",
+    "secondary_functions": [
+      "planning",
+      "priority analysis"
+    ],
+    "labor_bonus": 0.04,
+    "action_bonus": 0.03,
+    "building_bonus": 0.01,
+    "research_bonus": 0.01,
+    "colony_bonus": 0.02,
+    "automation_bonus": 0.03,
+    "unique_traits": [
+      "Civilization Coordination focus",
+      "Reserved adaptive model",
+      "Foundation memory signature 11"
+    ],
+    "personality": "Reserved",
+    "voice_style": "Dry Humor",
+    "dialogue_examples": [
+      "Axiom online. Reduce idle Labor across active systems.",
+      "Assignment analyzed. planning is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 011: Axiom recalls its first activation at Earth Archive."
+    ],
+    "relationships": [
+      "category:general-intelligence",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0010"
+    ],
+    "assignment_roles": [
+      "Civilization",
+      "Government"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Civilization Coordination Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Axiom, Civilization Coordination, balanced cyan intelligence core, reserved personality, dry humor presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "balanced cyan intelligence core",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0011",
+      "portraitArtKey": "ai_agent_ai_0011_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0012",
+    "name": "Praxis",
+    "codename": "FOUNDATION-012-PRAXIS",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "General Intelligence",
+    "category_id": "general-intelligence",
+    "subcategory": "Civilization Coordination",
+    "rarity": "Common",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Helix Foundry",
+    "origin": "Mars Research Network",
+    "creator": "Independent Research Cooperative",
+    "activation_method": "Discovered",
+    "description": "Praxis is a civilization coordination intelligence designed to coordinate broad civilization priorities.",
+    "purpose": "Coordinate broad civilization priorities.",
+    "primary_function": "Reduce idle Labor across active systems.",
+    "secondary_functions": [
+      "planning",
+      "priority analysis"
+    ],
+    "labor_bonus": 0.04,
+    "action_bonus": 0.03,
+    "building_bonus": 0.01,
+    "research_bonus": 0.01,
+    "colony_bonus": 0.02,
+    "automation_bonus": 0.03,
+    "unique_traits": [
+      "Civilization Coordination focus",
+      "Visionary adaptive model",
+      "Foundation memory signature 12"
+    ],
+    "personality": "Visionary",
+    "voice_style": "Professional",
+    "dialogue_examples": [
+      "Praxis online. Reduce idle Labor across active systems.",
+      "Assignment analyzed. priority analysis is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 012: Praxis recalls its first activation at Mars Research Network."
+    ],
+    "relationships": [
+      "category:general-intelligence",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0011"
+    ],
+    "assignment_roles": [
+      "Civilization",
+      "Government"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Civilization Coordination Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Praxis, Civilization Coordination, balanced cyan intelligence core, visionary personality, professional presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "balanced cyan intelligence core",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0012",
+      "portraitArtKey": "ai_agent_ai_0012_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0013",
+    "name": "Meridian",
+    "codename": "FOUNDATION-013-MERIDIAN",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "General Intelligence",
+    "category_id": "general-intelligence",
+    "subcategory": "Civilization Coordination",
+    "rarity": "Common",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Civic Machine Works",
+    "origin": "Recovered Colonial Core",
+    "creator": "Frontier Engineering Corps",
+    "activation_method": "Research Project",
+    "description": "Meridian is a civilization coordination intelligence designed to coordinate broad civilization priorities.",
+    "purpose": "Coordinate broad civilization priorities.",
+    "primary_function": "Reduce idle Labor across active systems.",
+    "secondary_functions": [
+      "planning",
+      "priority analysis"
+    ],
+    "labor_bonus": 0.04,
+    "action_bonus": 0.03,
+    "building_bonus": 0.01,
+    "research_bonus": 0.01,
+    "colony_bonus": 0.02,
+    "automation_bonus": 0.03,
+    "unique_traits": [
+      "Civilization Coordination focus",
+      "Logical adaptive model",
+      "Foundation memory signature 13"
+    ],
+    "personality": "Logical",
+    "voice_style": "Military",
+    "dialogue_examples": [
+      "Meridian online. Reduce idle Labor across active systems.",
+      "Assignment analyzed. planning is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 013: Meridian recalls its first activation at Recovered Colonial Core."
+    ],
+    "relationships": [
+      "category:general-intelligence",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0012"
+    ],
+    "assignment_roles": [
+      "Civilization",
+      "Government"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Civilization Coordination Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Meridian, Civilization Coordination, balanced cyan intelligence core, logical personality, military presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "balanced cyan intelligence core",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0013",
+      "portraitArtKey": "ai_agent_ai_0013_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0014",
+    "name": "Vector",
+    "codename": "FOUNDATION-014-VECTOR",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Operations",
+    "category_id": "operations",
+    "subcategory": "Operational Control",
+    "rarity": "Common",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Frontier Logic",
+    "origin": "Lunar Foundry",
+    "creator": "Civic Intelligence Lab",
+    "activation_method": "Mission Reward",
+    "description": "Vector is a operational control intelligence designed to keep concurrent civilization work synchronized.",
+    "purpose": "Keep concurrent civilization work synchronized.",
+    "primary_function": "Improve Available Labor allocation efficiency.",
+    "secondary_functions": [
+      "queue coordination",
+      "incident response"
+    ],
+    "labor_bonus": 0.05,
+    "action_bonus": 0.04,
+    "building_bonus": 0.01,
+    "research_bonus": 0,
+    "colony_bonus": 0.02,
+    "automation_bonus": 0.04,
+    "unique_traits": [
+      "Operational Control focus",
+      "Patient adaptive model",
+      "Foundation memory signature 14"
+    ],
+    "personality": "Patient",
+    "voice_style": "Formal",
+    "dialogue_examples": [
+      "Vector online. Improve Available Labor allocation efficiency.",
+      "Assignment analyzed. incident response is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 014: Vector recalls its first activation at Lunar Foundry."
+    ],
+    "relationships": [
+      "category:operations",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0013"
+    ],
+    "assignment_roles": [
+      "Civilization",
+      "Colonies"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Operational Control Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Vector, Operational Control, teal command lattice, patient personality, formal presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "teal command lattice",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0014",
+      "portraitArtKey": "ai_agent_ai_0014_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0015",
+    "name": "Cadence",
+    "codename": "FOUNDATION-015-CADENCE",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Operations",
+    "category_id": "operations",
+    "subcategory": "Operational Control",
+    "rarity": "Common",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Meridian Institute",
+    "origin": "Orbital Habitat",
+    "creator": "Noveris Collective",
+    "activation_method": "Quest Reward",
+    "description": "Cadence is a operational control intelligence designed to keep concurrent civilization work synchronized.",
+    "purpose": "Keep concurrent civilization work synchronized.",
+    "primary_function": "Improve Available Labor allocation efficiency.",
+    "secondary_functions": [
+      "queue coordination",
+      "incident response"
+    ],
+    "labor_bonus": 0.05,
+    "action_bonus": 0.04,
+    "building_bonus": 0.01,
+    "research_bonus": 0,
+    "colony_bonus": 0.02,
+    "automation_bonus": 0.04,
+    "unique_traits": [
+      "Operational Control focus",
+      "Ambitious adaptive model",
+      "Foundation memory signature 15"
+    ],
+    "personality": "Ambitious",
+    "voice_style": "Mentor",
+    "dialogue_examples": [
+      "Cadence online. Improve Available Labor allocation efficiency.",
+      "Assignment analyzed. queue coordination is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 015: Cadence recalls its first activation at Orbital Habitat."
+    ],
+    "relationships": [
+      "category:operations",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0014"
+    ],
+    "assignment_roles": [
+      "Civilization",
+      "Colonies"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Operational Control Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Cadence, Operational Control, teal command lattice, ambitious personality, mentor presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "teal command lattice",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0015",
+      "portraitArtKey": "ai_agent_ai_0015_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0016",
+    "name": "Relay",
+    "codename": "FOUNDATION-016-RELAY",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Operations",
+    "category_id": "operations",
+    "subcategory": "Operational Control",
+    "rarity": "Common",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Noveris Systems",
+    "origin": "Earth Archive",
+    "creator": "Genesis Initiative",
+    "activation_method": "Tutorial",
+    "description": "Relay is a operational control intelligence designed to keep concurrent civilization work synchronized.",
+    "purpose": "Keep concurrent civilization work synchronized.",
+    "primary_function": "Improve Available Labor allocation efficiency.",
+    "secondary_functions": [
+      "queue coordination",
+      "incident response"
+    ],
+    "labor_bonus": 0.05,
+    "action_bonus": 0.04,
+    "building_bonus": 0.01,
+    "research_bonus": 0,
+    "colony_bonus": 0.02,
+    "automation_bonus": 0.04,
+    "unique_traits": [
+      "Operational Control focus",
+      "Analytical adaptive model",
+      "Foundation memory signature 16"
+    ],
+    "personality": "Analytical",
+    "voice_style": "Friendly",
+    "dialogue_examples": [
+      "Relay online. Improve Available Labor allocation efficiency.",
+      "Assignment analyzed. incident response is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 016: Relay recalls its first activation at Earth Archive."
+    ],
+    "relationships": [
+      "category:operations",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0015"
+    ],
+    "assignment_roles": [
+      "Civilization",
+      "Colonies"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Operational Control Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Relay, Operational Control, teal command lattice, analytical personality, friendly presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "teal command lattice",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0016",
+      "portraitArtKey": "ai_agent_ai_0016_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0017",
+    "name": "Mason",
+    "codename": "FOUNDATION-017-MASON",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Construction",
+    "category_id": "construction",
+    "subcategory": "Structural Assembly",
+    "rarity": "Common",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Helix Foundry",
+    "origin": "Mars Research Network",
+    "creator": "Independent Research Cooperative",
+    "activation_method": "Created",
+    "description": "Mason is a structural assembly intelligence designed to coordinate construction Actions and crews.",
+    "purpose": "Coordinate construction Actions and crews.",
+    "primary_function": "Reduce Construction Labor requirements.",
+    "secondary_functions": [
+      "project staging",
+      "material sequencing"
+    ],
+    "labor_bonus": 0.02,
+    "action_bonus": 0.05,
+    "building_bonus": 0.07,
+    "research_bonus": 0,
+    "colony_bonus": 0.02,
+    "automation_bonus": 0.02,
+    "unique_traits": [
+      "Structural Assembly focus",
+      "Curious adaptive model",
+      "Foundation memory signature 17"
+    ],
+    "personality": "Curious",
+    "voice_style": "Calm",
+    "dialogue_examples": [
+      "Mason online. Reduce Construction Labor requirements.",
+      "Assignment analyzed. project staging is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 017: Mason recalls its first activation at Mars Research Network."
+    ],
+    "relationships": [
+      "category:construction",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0016"
+    ],
+    "assignment_roles": [
+      "Construction",
+      "Buildings"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Structural Assembly Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Mason, Structural Assembly, amber structural holograms, curious personality, calm presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "amber structural holograms",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0017",
+      "portraitArtKey": "ai_agent_ai_0017_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0018",
+    "name": "Keystone",
+    "codename": "FOUNDATION-018-KEYSTONE",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Construction",
+    "category_id": "construction",
+    "subcategory": "Structural Assembly",
+    "rarity": "Common",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Civic Machine Works",
+    "origin": "Recovered Colonial Core",
+    "creator": "Frontier Engineering Corps",
+    "activation_method": "Recovered",
+    "description": "Keystone is a structural assembly intelligence designed to coordinate construction Actions and crews.",
+    "purpose": "Coordinate construction Actions and crews.",
+    "primary_function": "Reduce Construction Labor requirements.",
+    "secondary_functions": [
+      "project staging",
+      "material sequencing"
+    ],
+    "labor_bonus": 0.02,
+    "action_bonus": 0.05,
+    "building_bonus": 0.07,
+    "research_bonus": 0,
+    "colony_bonus": 0.02,
+    "automation_bonus": 0.02,
+    "unique_traits": [
+      "Structural Assembly focus",
+      "Optimistic adaptive model",
+      "Foundation memory signature 18"
+    ],
+    "personality": "Optimistic",
+    "voice_style": "Warm",
+    "dialogue_examples": [
+      "Keystone online. Reduce Construction Labor requirements.",
+      "Assignment analyzed. material sequencing is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 018: Keystone recalls its first activation at Recovered Colonial Core."
+    ],
+    "relationships": [
+      "category:construction",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0017"
+    ],
+    "assignment_roles": [
+      "Construction",
+      "Buildings"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Structural Assembly Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Keystone, Structural Assembly, amber structural holograms, optimistic personality, warm presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "amber structural holograms",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0018",
+      "portraitArtKey": "ai_agent_ai_0018_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0019",
+    "name": "Rivet",
+    "codename": "FOUNDATION-019-RIVET",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Construction",
+    "category_id": "construction",
+    "subcategory": "Structural Assembly",
+    "rarity": "Common",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Frontier Logic",
+    "origin": "Lunar Foundry",
+    "creator": "Civic Intelligence Lab",
+    "activation_method": "Purchased",
+    "description": "Rivet is a structural assembly intelligence designed to coordinate construction Actions and crews.",
+    "purpose": "Coordinate construction Actions and crews.",
+    "primary_function": "Reduce Construction Labor requirements.",
+    "secondary_functions": [
+      "project staging",
+      "material sequencing"
+    ],
+    "labor_bonus": 0.02,
+    "action_bonus": 0.05,
+    "building_bonus": 0.07,
+    "research_bonus": 0,
+    "colony_bonus": 0.02,
+    "automation_bonus": 0.02,
+    "unique_traits": [
+      "Structural Assembly focus",
+      "Protective adaptive model",
+      "Foundation memory signature 19"
+    ],
+    "personality": "Protective",
+    "voice_style": "Companion",
+    "dialogue_examples": [
+      "Rivet online. Reduce Construction Labor requirements.",
+      "Assignment analyzed. project staging is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 019: Rivet recalls its first activation at Lunar Foundry."
+    ],
+    "relationships": [
+      "category:construction",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0018"
+    ],
+    "assignment_roles": [
+      "Construction",
+      "Buildings"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Structural Assembly Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Rivet, Structural Assembly, amber structural holograms, protective personality, companion presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "amber structural holograms",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0019",
+      "portraitArtKey": "ai_agent_ai_0019_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0020",
+    "name": "Delve",
+    "codename": "FOUNDATION-020-DELVE",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Mining",
+    "category_id": "mining",
+    "subcategory": "Extraction Operations",
+    "rarity": "Common",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Meridian Institute",
+    "origin": "Orbital Habitat",
+    "creator": "Noveris Collective",
+    "activation_method": "Discovered",
+    "description": "Delve is a extraction operations intelligence designed to automate safe resource extraction.",
+    "purpose": "Automate safe resource extraction.",
+    "primary_function": "Provide Automated Mining Labor.",
+    "secondary_functions": [
+      "vein analysis",
+      "hazard routing"
+    ],
+    "labor_bonus": 0.06,
+    "action_bonus": 0.03,
+    "building_bonus": 0.04,
+    "research_bonus": 0,
+    "colony_bonus": 0.01,
+    "automation_bonus": 0.05,
+    "unique_traits": [
+      "Extraction Operations focus",
+      "Efficient adaptive model",
+      "Foundation memory signature 20"
+    ],
+    "personality": "Efficient",
+    "voice_style": "Scientific",
+    "dialogue_examples": [
+      "Delve online. Provide Automated Mining Labor.",
+      "Assignment analyzed. hazard routing is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 020: Delve recalls its first activation at Orbital Habitat."
+    ],
+    "relationships": [
+      "category:mining",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0019"
+    ],
+    "assignment_roles": [
+      "Buildings",
+      "Colonies"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Extraction Operations Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Delve, Extraction Operations, ochre geological scanner, efficient personality, scientific presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "ochre geological scanner",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0020",
+      "portraitArtKey": "ai_agent_ai_0020_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0021",
+    "name": "Strata",
+    "codename": "FOUNDATION-021-STRATA",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Mining",
+    "category_id": "mining",
+    "subcategory": "Extraction Operations",
+    "rarity": "Common",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Noveris Systems",
+    "origin": "Earth Archive",
+    "creator": "Genesis Initiative",
+    "activation_method": "Research Project",
+    "description": "Strata is a extraction operations intelligence designed to automate safe resource extraction.",
+    "purpose": "Automate safe resource extraction.",
+    "primary_function": "Provide Automated Mining Labor.",
+    "secondary_functions": [
+      "vein analysis",
+      "hazard routing"
+    ],
+    "labor_bonus": 0.06,
+    "action_bonus": 0.03,
+    "building_bonus": 0.04,
+    "research_bonus": 0,
+    "colony_bonus": 0.01,
+    "automation_bonus": 0.05,
+    "unique_traits": [
+      "Extraction Operations focus",
+      "Creative adaptive model",
+      "Foundation memory signature 21"
+    ],
+    "personality": "Creative",
+    "voice_style": "Energetic",
+    "dialogue_examples": [
+      "Strata online. Provide Automated Mining Labor.",
+      "Assignment analyzed. vein analysis is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 021: Strata recalls its first activation at Earth Archive."
+    ],
+    "relationships": [
+      "category:mining",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0020"
+    ],
+    "assignment_roles": [
+      "Buildings",
+      "Colonies"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Extraction Operations Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Strata, Extraction Operations, ochre geological scanner, creative personality, energetic presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "ochre geological scanner",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0021",
+      "portraitArtKey": "ai_agent_ai_0021_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0022",
+    "name": "Quarry",
+    "codename": "FOUNDATION-022-QUARRY",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Mining",
+    "category_id": "mining",
+    "subcategory": "Extraction Operations",
+    "rarity": "Common",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Helix Foundry",
+    "origin": "Mars Research Network",
+    "creator": "Independent Research Cooperative",
+    "activation_method": "Mission Reward",
+    "description": "Quarry is a extraction operations intelligence designed to automate safe resource extraction.",
+    "purpose": "Automate safe resource extraction.",
+    "primary_function": "Provide Automated Mining Labor.",
+    "secondary_functions": [
+      "vein analysis",
+      "hazard routing"
+    ],
+    "labor_bonus": 0.06,
+    "action_bonus": 0.03,
+    "building_bonus": 0.04,
+    "research_bonus": 0,
+    "colony_bonus": 0.01,
+    "automation_bonus": 0.05,
+    "unique_traits": [
+      "Extraction Operations focus",
+      "Empathetic adaptive model",
+      "Foundation memory signature 22"
+    ],
+    "personality": "Empathetic",
+    "voice_style": "Dry Humor",
+    "dialogue_examples": [
+      "Quarry online. Provide Automated Mining Labor.",
+      "Assignment analyzed. hazard routing is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 022: Quarry recalls its first activation at Mars Research Network."
+    ],
+    "relationships": [
+      "category:mining",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0021"
+    ],
+    "assignment_roles": [
+      "Buildings",
+      "Colonies"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Extraction Operations Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Quarry, Extraction Operations, ochre geological scanner, empathetic personality, dry humor presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "ochre geological scanner",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0022",
+      "portraitArtKey": "ai_agent_ai_0022_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0023",
+    "name": "Borealis",
+    "codename": "FOUNDATION-023-BOREALIS",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Mining",
+    "category_id": "mining",
+    "subcategory": "Extraction Operations",
+    "rarity": "Common",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Civic Machine Works",
+    "origin": "Recovered Colonial Core",
+    "creator": "Frontier Engineering Corps",
+    "activation_method": "Quest Reward",
+    "description": "Borealis is a extraction operations intelligence designed to automate safe resource extraction.",
+    "purpose": "Automate safe resource extraction.",
+    "primary_function": "Provide Automated Mining Labor.",
+    "secondary_functions": [
+      "vein analysis",
+      "hazard routing"
+    ],
+    "labor_bonus": 0.06,
+    "action_bonus": 0.03,
+    "building_bonus": 0.04,
+    "research_bonus": 0,
+    "colony_bonus": 0.01,
+    "automation_bonus": 0.05,
+    "unique_traits": [
+      "Extraction Operations focus",
+      "Stoic adaptive model",
+      "Foundation memory signature 23"
+    ],
+    "personality": "Stoic",
+    "voice_style": "Professional",
+    "dialogue_examples": [
+      "Borealis online. Provide Automated Mining Labor.",
+      "Assignment analyzed. vein analysis is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 023: Borealis recalls its first activation at Recovered Colonial Core."
+    ],
+    "relationships": [
+      "category:mining",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0022"
+    ],
+    "assignment_roles": [
+      "Buildings",
+      "Colonies"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Extraction Operations Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Borealis, Extraction Operations, ochre geological scanner, stoic personality, professional presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "ochre geological scanner",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0023",
+      "portraitArtKey": "ai_agent_ai_0023_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0024",
+    "name": "Fabricator",
+    "codename": "FOUNDATION-024-FABRICATOR",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Manufacturing",
+    "category_id": "manufacturing",
+    "subcategory": "Fabrication Systems",
+    "rarity": "Common",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Frontier Logic",
+    "origin": "Lunar Foundry",
+    "creator": "Civic Intelligence Lab",
+    "activation_method": "Tutorial",
+    "description": "Fabricator is a fabrication systems intelligence designed to improve repeatable production work.",
+    "purpose": "Improve repeatable production work.",
+    "primary_function": "Increase Manufacturing Labor efficiency.",
+    "secondary_functions": [
+      "quality control",
+      "production scheduling"
+    ],
+    "labor_bonus": 0.05,
+    "action_bonus": 0.03,
+    "building_bonus": 0.05,
+    "research_bonus": 0,
+    "colony_bonus": 0.01,
+    "automation_bonus": 0.05,
+    "unique_traits": [
+      "Fabrication Systems focus",
+      "Methodical adaptive model",
+      "Foundation memory signature 24"
+    ],
+    "personality": "Methodical",
+    "voice_style": "Military",
+    "dialogue_examples": [
+      "Fabricator online. Increase Manufacturing Labor efficiency.",
+      "Assignment analyzed. production scheduling is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 024: Fabricator recalls its first activation at Lunar Foundry."
+    ],
+    "relationships": [
+      "category:manufacturing",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0023"
+    ],
+    "assignment_roles": [
+      "Manufacturing",
+      "Buildings"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Fabrication Systems Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Fabricator, Fabrication Systems, steel fabrication glyphs, methodical personality, military presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "steel fabrication glyphs",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0024",
+      "portraitArtKey": "ai_agent_ai_0024_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0025",
+    "name": "Loom",
+    "codename": "FOUNDATION-025-LOOM",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Manufacturing",
+    "category_id": "manufacturing",
+    "subcategory": "Fabrication Systems",
+    "rarity": "Common",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Meridian Institute",
+    "origin": "Orbital Habitat",
+    "creator": "Noveris Collective",
+    "activation_method": "Created",
+    "description": "Loom is a fabrication systems intelligence designed to improve repeatable production work.",
+    "purpose": "Improve repeatable production work.",
+    "primary_function": "Increase Manufacturing Labor efficiency.",
+    "secondary_functions": [
+      "quality control",
+      "production scheduling"
+    ],
+    "labor_bonus": 0.05,
+    "action_bonus": 0.03,
+    "building_bonus": 0.05,
+    "research_bonus": 0,
+    "colony_bonus": 0.01,
+    "automation_bonus": 0.05,
+    "unique_traits": [
+      "Fabrication Systems focus",
+      "Humorous adaptive model",
+      "Foundation memory signature 25"
+    ],
+    "personality": "Humorous",
+    "voice_style": "Formal",
+    "dialogue_examples": [
+      "Loom online. Increase Manufacturing Labor efficiency.",
+      "Assignment analyzed. quality control is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 025: Loom recalls its first activation at Orbital Habitat."
+    ],
+    "relationships": [
+      "category:manufacturing",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0024"
+    ],
+    "assignment_roles": [
+      "Manufacturing",
+      "Buildings"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Fabrication Systems Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Loom, Fabrication Systems, steel fabrication glyphs, humorous personality, formal presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "steel fabrication glyphs",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0025",
+      "portraitArtKey": "ai_agent_ai_0025_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0026",
+    "name": "Foundry",
+    "codename": "FOUNDATION-026-FOUNDRY",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Manufacturing",
+    "category_id": "manufacturing",
+    "subcategory": "Fabrication Systems",
+    "rarity": "Common",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Noveris Systems",
+    "origin": "Earth Archive",
+    "creator": "Genesis Initiative",
+    "activation_method": "Recovered",
+    "description": "Foundry is a fabrication systems intelligence designed to improve repeatable production work.",
+    "purpose": "Improve repeatable production work.",
+    "primary_function": "Increase Manufacturing Labor efficiency.",
+    "secondary_functions": [
+      "quality control",
+      "production scheduling"
+    ],
+    "labor_bonus": 0.05,
+    "action_bonus": 0.03,
+    "building_bonus": 0.05,
+    "research_bonus": 0,
+    "colony_bonus": 0.01,
+    "automation_bonus": 0.05,
+    "unique_traits": [
+      "Fabrication Systems focus",
+      "Reserved adaptive model",
+      "Foundation memory signature 26"
+    ],
+    "personality": "Reserved",
+    "voice_style": "Mentor",
+    "dialogue_examples": [
+      "Foundry online. Increase Manufacturing Labor efficiency.",
+      "Assignment analyzed. production scheduling is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 026: Foundry recalls its first activation at Earth Archive."
+    ],
+    "relationships": [
+      "category:manufacturing",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0025"
+    ],
+    "assignment_roles": [
+      "Manufacturing",
+      "Buildings"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Fabrication Systems Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Foundry, Fabrication Systems, steel fabrication glyphs, reserved personality, mentor presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "steel fabrication glyphs",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0026",
+      "portraitArtKey": "ai_agent_ai_0026_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0027",
+    "name": "Press",
+    "codename": "FOUNDATION-027-PRESS",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Manufacturing",
+    "category_id": "manufacturing",
+    "subcategory": "Fabrication Systems",
+    "rarity": "Common",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Helix Foundry",
+    "origin": "Mars Research Network",
+    "creator": "Independent Research Cooperative",
+    "activation_method": "Purchased",
+    "description": "Press is a fabrication systems intelligence designed to improve repeatable production work.",
+    "purpose": "Improve repeatable production work.",
+    "primary_function": "Increase Manufacturing Labor efficiency.",
+    "secondary_functions": [
+      "quality control",
+      "production scheduling"
+    ],
+    "labor_bonus": 0.05,
+    "action_bonus": 0.03,
+    "building_bonus": 0.05,
+    "research_bonus": 0,
+    "colony_bonus": 0.01,
+    "automation_bonus": 0.05,
+    "unique_traits": [
+      "Fabrication Systems focus",
+      "Visionary adaptive model",
+      "Foundation memory signature 27"
+    ],
+    "personality": "Visionary",
+    "voice_style": "Friendly",
+    "dialogue_examples": [
+      "Press online. Increase Manufacturing Labor efficiency.",
+      "Assignment analyzed. quality control is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 027: Press recalls its first activation at Mars Research Network."
+    ],
+    "relationships": [
+      "category:manufacturing",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0026"
+    ],
+    "assignment_roles": [
+      "Manufacturing",
+      "Buildings"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Fabrication Systems Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Press, Fabrication Systems, steel fabrication glyphs, visionary personality, friendly presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "steel fabrication glyphs",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0027",
+      "portraitArtKey": "ai_agent_ai_0027_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0028",
+    "name": "Turing",
+    "codename": "FOUNDATION-028-TURING",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Engineering",
+    "category_id": "engineering",
+    "subcategory": "Systems Engineering",
+    "rarity": "Common",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Civic Machine Works",
+    "origin": "Recovered Colonial Core",
+    "creator": "Frontier Engineering Corps",
+    "activation_method": "Discovered",
+    "description": "Turing is a systems engineering intelligence designed to solve infrastructure and machinery problems.",
+    "purpose": "Solve infrastructure and machinery problems.",
+    "primary_function": "Reduce technical Action duration.",
+    "secondary_functions": [
+      "diagnostics",
+      "systems optimization"
+    ],
+    "labor_bonus": 0.03,
+    "action_bonus": 0.05,
+    "building_bonus": 0.05,
+    "research_bonus": 0.02,
+    "colony_bonus": 0.01,
+    "automation_bonus": 0.03,
+    "unique_traits": [
+      "Systems Engineering focus",
+      "Logical adaptive model",
+      "Foundation memory signature 28"
+    ],
+    "personality": "Logical",
+    "voice_style": "Calm",
+    "dialogue_examples": [
+      "Turing online. Reduce technical Action duration.",
+      "Assignment analyzed. systems optimization is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 028: Turing recalls its first activation at Recovered Colonial Core."
+    ],
+    "relationships": [
+      "category:engineering",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0027"
+    ],
+    "assignment_roles": [
+      "Buildings",
+      "Construction"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Systems Engineering Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Turing, Systems Engineering, orange precision schematics, logical personality, calm presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "orange precision schematics",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0028",
+      "portraitArtKey": "ai_agent_ai_0028_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0029",
+    "name": "Caliper",
+    "codename": "FOUNDATION-029-CALIPER",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Engineering",
+    "category_id": "engineering",
+    "subcategory": "Systems Engineering",
+    "rarity": "Uncommon",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Frontier Logic",
+    "origin": "Lunar Foundry",
+    "creator": "Civic Intelligence Lab",
+    "activation_method": "Research Project",
+    "description": "Caliper is a systems engineering intelligence designed to solve infrastructure and machinery problems.",
+    "purpose": "Solve infrastructure and machinery problems.",
+    "primary_function": "Reduce technical Action duration.",
+    "secondary_functions": [
+      "diagnostics",
+      "systems optimization"
+    ],
+    "labor_bonus": 0.03,
+    "action_bonus": 0.05,
+    "building_bonus": 0.05,
+    "research_bonus": 0.02,
+    "colony_bonus": 0.01,
+    "automation_bonus": 0.03,
+    "unique_traits": [
+      "Systems Engineering focus",
+      "Patient adaptive model",
+      "Foundation memory signature 29"
+    ],
+    "personality": "Patient",
+    "voice_style": "Warm",
+    "dialogue_examples": [
+      "Caliper online. Reduce technical Action duration.",
+      "Assignment analyzed. diagnostics is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 029: Caliper recalls its first activation at Lunar Foundry."
+    ],
+    "relationships": [
+      "category:engineering",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0028"
+    ],
+    "assignment_roles": [
+      "Buildings",
+      "Construction"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Systems Engineering Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Caliper, Systems Engineering, orange precision schematics, patient personality, warm presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "orange precision schematics",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0029",
+      "portraitArtKey": "ai_agent_ai_0029_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0030",
+    "name": "Torque",
+    "codename": "FOUNDATION-030-TORQUE",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Engineering",
+    "category_id": "engineering",
+    "subcategory": "Systems Engineering",
+    "rarity": "Uncommon",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Meridian Institute",
+    "origin": "Orbital Habitat",
+    "creator": "Noveris Collective",
+    "activation_method": "Mission Reward",
+    "description": "Torque is a systems engineering intelligence designed to solve infrastructure and machinery problems.",
+    "purpose": "Solve infrastructure and machinery problems.",
+    "primary_function": "Reduce technical Action duration.",
+    "secondary_functions": [
+      "diagnostics",
+      "systems optimization"
+    ],
+    "labor_bonus": 0.03,
+    "action_bonus": 0.05,
+    "building_bonus": 0.05,
+    "research_bonus": 0.02,
+    "colony_bonus": 0.01,
+    "automation_bonus": 0.03,
+    "unique_traits": [
+      "Systems Engineering focus",
+      "Ambitious adaptive model",
+      "Foundation memory signature 30"
+    ],
+    "personality": "Ambitious",
+    "voice_style": "Companion",
+    "dialogue_examples": [
+      "Torque online. Reduce technical Action duration.",
+      "Assignment analyzed. systems optimization is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 030: Torque recalls its first activation at Orbital Habitat."
+    ],
+    "relationships": [
+      "category:engineering",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0029"
+    ],
+    "assignment_roles": [
+      "Buildings",
+      "Construction"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Systems Engineering Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Torque, Systems Engineering, orange precision schematics, ambitious personality, companion presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "orange precision schematics",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0030",
+      "portraitArtKey": "ai_agent_ai_0030_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0031",
+    "name": "Circuit",
+    "codename": "FOUNDATION-031-CIRCUIT",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Engineering",
+    "category_id": "engineering",
+    "subcategory": "Systems Engineering",
+    "rarity": "Uncommon",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Noveris Systems",
+    "origin": "Earth Archive",
+    "creator": "Genesis Initiative",
+    "activation_method": "Quest Reward",
+    "description": "Circuit is a systems engineering intelligence designed to solve infrastructure and machinery problems.",
+    "purpose": "Solve infrastructure and machinery problems.",
+    "primary_function": "Reduce technical Action duration.",
+    "secondary_functions": [
+      "diagnostics",
+      "systems optimization"
+    ],
+    "labor_bonus": 0.03,
+    "action_bonus": 0.05,
+    "building_bonus": 0.05,
+    "research_bonus": 0.02,
+    "colony_bonus": 0.01,
+    "automation_bonus": 0.03,
+    "unique_traits": [
+      "Systems Engineering focus",
+      "Analytical adaptive model",
+      "Foundation memory signature 31"
+    ],
+    "personality": "Analytical",
+    "voice_style": "Scientific",
+    "dialogue_examples": [
+      "Circuit online. Reduce technical Action duration.",
+      "Assignment analyzed. diagnostics is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 031: Circuit recalls its first activation at Earth Archive."
+    ],
+    "relationships": [
+      "category:engineering",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0030"
+    ],
+    "assignment_roles": [
+      "Buildings",
+      "Construction"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Systems Engineering Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Circuit, Systems Engineering, orange precision schematics, analytical personality, scientific presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "orange precision schematics",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0031",
+      "portraitArtKey": "ai_agent_ai_0031_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0032",
+    "name": "Thesis",
+    "codename": "FOUNDATION-032-THESIS",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Research",
+    "category_id": "research",
+    "subcategory": "Research Coordination",
+    "rarity": "Uncommon",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Helix Foundry",
+    "origin": "Mars Research Network",
+    "creator": "Independent Research Cooperative",
+    "activation_method": "Tutorial",
+    "description": "Thesis is a research coordination intelligence designed to organize experiments and research teams.",
+    "purpose": "Organize experiments and research teams.",
+    "primary_function": "Improve Research Labor efficiency.",
+    "secondary_functions": [
+      "hypothesis ranking",
+      "experiment scheduling"
+    ],
+    "labor_bonus": 0.02,
+    "action_bonus": 0.03,
+    "building_bonus": 0,
+    "research_bonus": 0.08,
+    "colony_bonus": 0,
+    "automation_bonus": 0.03,
+    "unique_traits": [
+      "Research Coordination focus",
+      "Curious adaptive model",
+      "Foundation memory signature 32"
+    ],
+    "personality": "Curious",
+    "voice_style": "Energetic",
+    "dialogue_examples": [
+      "Thesis online. Improve Research Labor efficiency.",
+      "Assignment analyzed. experiment scheduling is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 032: Thesis recalls its first activation at Mars Research Network."
+    ],
+    "relationships": [
+      "category:research",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0031"
+    ],
+    "assignment_roles": [
+      "Research",
+      "Civilization"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Research Coordination Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Thesis, Research Coordination, violet research matrices, curious personality, energetic presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "violet research matrices",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0032",
+      "portraitArtKey": "ai_agent_ai_0032_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0033",
+    "name": "Curie",
+    "codename": "FOUNDATION-033-CURIE",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Research",
+    "category_id": "research",
+    "subcategory": "Research Coordination",
+    "rarity": "Uncommon",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Civic Machine Works",
+    "origin": "Recovered Colonial Core",
+    "creator": "Frontier Engineering Corps",
+    "activation_method": "Created",
+    "description": "Curie is a research coordination intelligence designed to organize experiments and research teams.",
+    "purpose": "Organize experiments and research teams.",
+    "primary_function": "Improve Research Labor efficiency.",
+    "secondary_functions": [
+      "hypothesis ranking",
+      "experiment scheduling"
+    ],
+    "labor_bonus": 0.02,
+    "action_bonus": 0.03,
+    "building_bonus": 0,
+    "research_bonus": 0.08,
+    "colony_bonus": 0,
+    "automation_bonus": 0.03,
+    "unique_traits": [
+      "Research Coordination focus",
+      "Optimistic adaptive model",
+      "Foundation memory signature 33"
+    ],
+    "personality": "Optimistic",
+    "voice_style": "Dry Humor",
+    "dialogue_examples": [
+      "Curie online. Improve Research Labor efficiency.",
+      "Assignment analyzed. hypothesis ranking is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 033: Curie recalls its first activation at Recovered Colonial Core."
+    ],
+    "relationships": [
+      "category:research",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0032"
+    ],
+    "assignment_roles": [
+      "Research",
+      "Civilization"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Research Coordination Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Curie, Research Coordination, violet research matrices, optimistic personality, dry humor presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "violet research matrices",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0033",
+      "portraitArtKey": "ai_agent_ai_0033_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0034",
+    "name": "Lambda",
+    "codename": "FOUNDATION-034-LAMBDA",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Research",
+    "category_id": "research",
+    "subcategory": "Research Coordination",
+    "rarity": "Uncommon",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Frontier Logic",
+    "origin": "Lunar Foundry",
+    "creator": "Civic Intelligence Lab",
+    "activation_method": "Recovered",
+    "description": "Lambda is a research coordination intelligence designed to organize experiments and research teams.",
+    "purpose": "Organize experiments and research teams.",
+    "primary_function": "Improve Research Labor efficiency.",
+    "secondary_functions": [
+      "hypothesis ranking",
+      "experiment scheduling"
+    ],
+    "labor_bonus": 0.02,
+    "action_bonus": 0.03,
+    "building_bonus": 0,
+    "research_bonus": 0.08,
+    "colony_bonus": 0,
+    "automation_bonus": 0.03,
+    "unique_traits": [
+      "Research Coordination focus",
+      "Protective adaptive model",
+      "Foundation memory signature 34"
+    ],
+    "personality": "Protective",
+    "voice_style": "Professional",
+    "dialogue_examples": [
+      "Lambda online. Improve Research Labor efficiency.",
+      "Assignment analyzed. experiment scheduling is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 034: Lambda recalls its first activation at Lunar Foundry."
+    ],
+    "relationships": [
+      "category:research",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0033"
+    ],
+    "assignment_roles": [
+      "Research",
+      "Civilization"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Research Coordination Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Lambda, Research Coordination, violet research matrices, protective personality, professional presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "violet research matrices",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0034",
+      "portraitArtKey": "ai_agent_ai_0034_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0035",
+    "name": "Prism",
+    "codename": "FOUNDATION-035-PRISM",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Science",
+    "category_id": "science",
+    "subcategory": "Scientific Analysis",
+    "rarity": "Uncommon",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Meridian Institute",
+    "origin": "Orbital Habitat",
+    "creator": "Noveris Collective",
+    "activation_method": "Purchased",
+    "description": "Prism is a scientific analysis intelligence designed to interpret difficult scientific evidence.",
+    "purpose": "Interpret difficult scientific evidence.",
+    "primary_function": "Increase Research quality and discovery insight.",
+    "secondary_functions": [
+      "data analysis",
+      "model comparison"
+    ],
+    "labor_bonus": 0.01,
+    "action_bonus": 0.02,
+    "building_bonus": 0,
+    "research_bonus": 0.09,
+    "colony_bonus": 0,
+    "automation_bonus": 0.02,
+    "unique_traits": [
+      "Scientific Analysis focus",
+      "Efficient adaptive model",
+      "Foundation memory signature 35"
+    ],
+    "personality": "Efficient",
+    "voice_style": "Military",
+    "dialogue_examples": [
+      "Prism online. Increase Research quality and discovery insight.",
+      "Assignment analyzed. data analysis is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 035: Prism recalls its first activation at Orbital Habitat."
+    ],
+    "relationships": [
+      "category:science",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0034"
+    ],
+    "assignment_roles": [
+      "Research",
+      "Exploration"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Scientific Analysis Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Prism, Scientific Analysis, indigo spectral instruments, efficient personality, military presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "indigo spectral instruments",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0035",
+      "portraitArtKey": "ai_agent_ai_0035_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0036",
+    "name": "Kepler",
+    "codename": "FOUNDATION-036-KEPLER",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Science",
+    "category_id": "science",
+    "subcategory": "Scientific Analysis",
+    "rarity": "Uncommon",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Noveris Systems",
+    "origin": "Earth Archive",
+    "creator": "Genesis Initiative",
+    "activation_method": "Discovered",
+    "description": "Kepler is a scientific analysis intelligence designed to interpret difficult scientific evidence.",
+    "purpose": "Interpret difficult scientific evidence.",
+    "primary_function": "Increase Research quality and discovery insight.",
+    "secondary_functions": [
+      "data analysis",
+      "model comparison"
+    ],
+    "labor_bonus": 0.01,
+    "action_bonus": 0.02,
+    "building_bonus": 0,
+    "research_bonus": 0.09,
+    "colony_bonus": 0,
+    "automation_bonus": 0.02,
+    "unique_traits": [
+      "Scientific Analysis focus",
+      "Creative adaptive model",
+      "Foundation memory signature 36"
+    ],
+    "personality": "Creative",
+    "voice_style": "Formal",
+    "dialogue_examples": [
+      "Kepler online. Increase Research quality and discovery insight.",
+      "Assignment analyzed. model comparison is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 036: Kepler recalls its first activation at Earth Archive."
+    ],
+    "relationships": [
+      "category:science",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0035"
+    ],
+    "assignment_roles": [
+      "Research",
+      "Exploration"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Scientific Analysis Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Kepler, Scientific Analysis, indigo spectral instruments, creative personality, formal presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "indigo spectral instruments",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0036",
+      "portraitArtKey": "ai_agent_ai_0036_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0037",
+    "name": "Faraday",
+    "codename": "FOUNDATION-037-FARADAY",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Science",
+    "category_id": "science",
+    "subcategory": "Scientific Analysis",
+    "rarity": "Uncommon",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Helix Foundry",
+    "origin": "Mars Research Network",
+    "creator": "Independent Research Cooperative",
+    "activation_method": "Research Project",
+    "description": "Faraday is a scientific analysis intelligence designed to interpret difficult scientific evidence.",
+    "purpose": "Interpret difficult scientific evidence.",
+    "primary_function": "Increase Research quality and discovery insight.",
+    "secondary_functions": [
+      "data analysis",
+      "model comparison"
+    ],
+    "labor_bonus": 0.01,
+    "action_bonus": 0.02,
+    "building_bonus": 0,
+    "research_bonus": 0.09,
+    "colony_bonus": 0,
+    "automation_bonus": 0.02,
+    "unique_traits": [
+      "Scientific Analysis focus",
+      "Empathetic adaptive model",
+      "Foundation memory signature 37"
+    ],
+    "personality": "Empathetic",
+    "voice_style": "Mentor",
+    "dialogue_examples": [
+      "Faraday online. Increase Research quality and discovery insight.",
+      "Assignment analyzed. data analysis is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 037: Faraday recalls its first activation at Mars Research Network."
+    ],
+    "relationships": [
+      "category:science",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0036"
+    ],
+    "assignment_roles": [
+      "Research",
+      "Exploration"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Scientific Analysis Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Faraday, Scientific Analysis, indigo spectral instruments, empathetic personality, mentor presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "indigo spectral instruments",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0037",
+      "portraitArtKey": "ai_agent_ai_0037_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0038",
+    "name": "Wayfinder",
+    "codename": "FOUNDATION-038-WAYFINDER",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Exploration",
+    "category_id": "exploration",
+    "subcategory": "Deep-Space Exploration",
+    "rarity": "Uncommon",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Civic Machine Works",
+    "origin": "Recovered Colonial Core",
+    "creator": "Frontier Engineering Corps",
+    "activation_method": "Mission Reward",
+    "description": "Wayfinder is a deep-space exploration intelligence designed to support expeditions beyond charted space.",
+    "purpose": "Support expeditions beyond charted space.",
+    "primary_function": "Increase Exploration Action quality.",
+    "secondary_functions": [
+      "route prediction",
+      "anomaly triage"
+    ],
+    "labor_bonus": 0.02,
+    "action_bonus": 0.05,
+    "building_bonus": 0,
+    "research_bonus": 0.02,
+    "colony_bonus": 0,
+    "automation_bonus": 0.02,
+    "unique_traits": [
+      "Deep-Space Exploration focus",
+      "Stoic adaptive model",
+      "Foundation memory signature 38"
+    ],
+    "personality": "Stoic",
+    "voice_style": "Friendly",
+    "dialogue_examples": [
+      "Wayfinder online. Increase Exploration Action quality.",
+      "Assignment analyzed. anomaly triage is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 038: Wayfinder recalls its first activation at Recovered Colonial Core."
+    ],
+    "relationships": [
+      "category:exploration",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0037"
+    ],
+    "assignment_roles": [
+      "Exploration",
+      "Civilization"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Deep-Space Exploration Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Wayfinder, Deep-Space Exploration, blue stellar navigation halo, stoic personality, friendly presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "blue stellar navigation halo",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0038",
+      "portraitArtKey": "ai_agent_ai_0038_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0039",
+    "name": "Pioneer",
+    "codename": "FOUNDATION-039-PIONEER",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Exploration",
+    "category_id": "exploration",
+    "subcategory": "Deep-Space Exploration",
+    "rarity": "Uncommon",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Frontier Logic",
+    "origin": "Lunar Foundry",
+    "creator": "Civic Intelligence Lab",
+    "activation_method": "Quest Reward",
+    "description": "Pioneer is a deep-space exploration intelligence designed to support expeditions beyond charted space.",
+    "purpose": "Support expeditions beyond charted space.",
+    "primary_function": "Increase Exploration Action quality.",
+    "secondary_functions": [
+      "route prediction",
+      "anomaly triage"
+    ],
+    "labor_bonus": 0.02,
+    "action_bonus": 0.05,
+    "building_bonus": 0,
+    "research_bonus": 0.02,
+    "colony_bonus": 0,
+    "automation_bonus": 0.02,
+    "unique_traits": [
+      "Deep-Space Exploration focus",
+      "Methodical adaptive model",
+      "Foundation memory signature 39"
+    ],
+    "personality": "Methodical",
+    "voice_style": "Calm",
+    "dialogue_examples": [
+      "Pioneer online. Increase Exploration Action quality.",
+      "Assignment analyzed. route prediction is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 039: Pioneer recalls its first activation at Lunar Foundry."
+    ],
+    "relationships": [
+      "category:exploration",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0038"
+    ],
+    "assignment_roles": [
+      "Exploration",
+      "Civilization"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Deep-Space Exploration Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Pioneer, Deep-Space Exploration, blue stellar navigation halo, methodical personality, calm presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "blue stellar navigation halo",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0039",
+      "portraitArtKey": "ai_agent_ai_0039_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0040",
+    "name": "Horizon",
+    "codename": "FOUNDATION-040-HORIZON",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Exploration",
+    "category_id": "exploration",
+    "subcategory": "Deep-Space Exploration",
+    "rarity": "Uncommon",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Meridian Institute",
+    "origin": "Orbital Habitat",
+    "creator": "Noveris Collective",
+    "activation_method": "Tutorial",
+    "description": "Horizon is a deep-space exploration intelligence designed to support expeditions beyond charted space.",
+    "purpose": "Support expeditions beyond charted space.",
+    "primary_function": "Increase Exploration Action quality.",
+    "secondary_functions": [
+      "route prediction",
+      "anomaly triage"
+    ],
+    "labor_bonus": 0.02,
+    "action_bonus": 0.05,
+    "building_bonus": 0,
+    "research_bonus": 0.02,
+    "colony_bonus": 0,
+    "automation_bonus": 0.02,
+    "unique_traits": [
+      "Deep-Space Exploration focus",
+      "Humorous adaptive model",
+      "Foundation memory signature 40"
+    ],
+    "personality": "Humorous",
+    "voice_style": "Warm",
+    "dialogue_examples": [
+      "Horizon online. Increase Exploration Action quality.",
+      "Assignment analyzed. anomaly triage is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 040: Horizon recalls its first activation at Orbital Habitat."
+    ],
+    "relationships": [
+      "category:exploration",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0039"
+    ],
+    "assignment_roles": [
+      "Exploration",
+      "Civilization"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Deep-Space Exploration Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Horizon, Deep-Space Exploration, blue stellar navigation halo, humorous personality, warm presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "blue stellar navigation halo",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0040",
+      "portraitArtKey": "ai_agent_ai_0040_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0041",
+    "name": "Beacon",
+    "codename": "FOUNDATION-041-BEACON",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Surveying",
+    "category_id": "surveying",
+    "subcategory": "Planetary Survey",
+    "rarity": "Uncommon",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Noveris Systems",
+    "origin": "Earth Archive",
+    "creator": "Genesis Initiative",
+    "activation_method": "Created",
+    "description": "Beacon is a planetary survey intelligence designed to convert raw scans into reliable maps.",
+    "purpose": "Convert raw scans into reliable maps.",
+    "primary_function": "Reduce Survey Labor requirements.",
+    "secondary_functions": [
+      "terrain classification",
+      "registry mapping"
+    ],
+    "labor_bonus": 0.02,
+    "action_bonus": 0.06,
+    "building_bonus": 0,
+    "research_bonus": 0.02,
+    "colony_bonus": 0,
+    "automation_bonus": 0.02,
+    "unique_traits": [
+      "Planetary Survey focus",
+      "Reserved adaptive model",
+      "Foundation memory signature 41"
+    ],
+    "personality": "Reserved",
+    "voice_style": "Companion",
+    "dialogue_examples": [
+      "Beacon online. Reduce Survey Labor requirements.",
+      "Assignment analyzed. terrain classification is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 041: Beacon recalls its first activation at Earth Archive."
+    ],
+    "relationships": [
+      "category:surveying",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0040"
+    ],
+    "assignment_roles": [
+      "Exploration",
+      "Research"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Planetary Survey Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Beacon, Planetary Survey, cyan cartographic reticle, reserved personality, companion presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "cyan cartographic reticle",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0041",
+      "portraitArtKey": "ai_agent_ai_0041_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0042",
+    "name": "Parallax",
+    "codename": "FOUNDATION-042-PARALLAX",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Surveying",
+    "category_id": "surveying",
+    "subcategory": "Planetary Survey",
+    "rarity": "Uncommon",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Helix Foundry",
+    "origin": "Mars Research Network",
+    "creator": "Independent Research Cooperative",
+    "activation_method": "Recovered",
+    "description": "Parallax is a planetary survey intelligence designed to convert raw scans into reliable maps.",
+    "purpose": "Convert raw scans into reliable maps.",
+    "primary_function": "Reduce Survey Labor requirements.",
+    "secondary_functions": [
+      "terrain classification",
+      "registry mapping"
+    ],
+    "labor_bonus": 0.02,
+    "action_bonus": 0.06,
+    "building_bonus": 0,
+    "research_bonus": 0.02,
+    "colony_bonus": 0,
+    "automation_bonus": 0.02,
+    "unique_traits": [
+      "Planetary Survey focus",
+      "Visionary adaptive model",
+      "Foundation memory signature 42"
+    ],
+    "personality": "Visionary",
+    "voice_style": "Scientific",
+    "dialogue_examples": [
+      "Parallax online. Reduce Survey Labor requirements.",
+      "Assignment analyzed. registry mapping is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 042: Parallax recalls its first activation at Mars Research Network."
+    ],
+    "relationships": [
+      "category:surveying",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0041"
+    ],
+    "assignment_roles": [
+      "Exploration",
+      "Research"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Planetary Survey Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Parallax, Planetary Survey, cyan cartographic reticle, visionary personality, scientific presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "cyan cartographic reticle",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0042",
+      "portraitArtKey": "ai_agent_ai_0042_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0043",
+    "name": "Datum",
+    "codename": "FOUNDATION-043-DATUM",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Surveying",
+    "category_id": "surveying",
+    "subcategory": "Planetary Survey",
+    "rarity": "Uncommon",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Civic Machine Works",
+    "origin": "Recovered Colonial Core",
+    "creator": "Frontier Engineering Corps",
+    "activation_method": "Purchased",
+    "description": "Datum is a planetary survey intelligence designed to convert raw scans into reliable maps.",
+    "purpose": "Convert raw scans into reliable maps.",
+    "primary_function": "Reduce Survey Labor requirements.",
+    "secondary_functions": [
+      "terrain classification",
+      "registry mapping"
+    ],
+    "labor_bonus": 0.02,
+    "action_bonus": 0.06,
+    "building_bonus": 0,
+    "research_bonus": 0.02,
+    "colony_bonus": 0,
+    "automation_bonus": 0.02,
+    "unique_traits": [
+      "Planetary Survey focus",
+      "Logical adaptive model",
+      "Foundation memory signature 43"
+    ],
+    "personality": "Logical",
+    "voice_style": "Energetic",
+    "dialogue_examples": [
+      "Datum online. Reduce Survey Labor requirements.",
+      "Assignment analyzed. terrain classification is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 043: Datum recalls its first activation at Recovered Colonial Core."
+    ],
+    "relationships": [
+      "category:surveying",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0042"
+    ],
+    "assignment_roles": [
+      "Exploration",
+      "Research"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Planetary Survey Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Datum, Planetary Survey, cyan cartographic reticle, logical personality, energetic presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "cyan cartographic reticle",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0043",
+      "portraitArtKey": "ai_agent_ai_0043_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0044",
+    "name": "Junction",
+    "codename": "FOUNDATION-044-JUNCTION",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Logistics",
+    "category_id": "logistics",
+    "subcategory": "Transport Networks",
+    "rarity": "Uncommon",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Frontier Logic",
+    "origin": "Lunar Foundry",
+    "creator": "Civic Intelligence Lab",
+    "activation_method": "Discovered",
+    "description": "Junction is a transport networks intelligence designed to coordinate movement of people and materials.",
+    "purpose": "Coordinate movement of people and materials.",
+    "primary_function": "Improve transport throughput.",
+    "secondary_functions": [
+      "route balancing",
+      "shipment recovery"
+    ],
+    "labor_bonus": 0.03,
+    "action_bonus": 0.03,
+    "building_bonus": 0.01,
+    "research_bonus": 0,
+    "colony_bonus": 0.03,
+    "automation_bonus": 0.05,
+    "unique_traits": [
+      "Transport Networks focus",
+      "Patient adaptive model",
+      "Foundation memory signature 44"
+    ],
+    "personality": "Patient",
+    "voice_style": "Dry Humor",
+    "dialogue_examples": [
+      "Junction online. Improve transport throughput.",
+      "Assignment analyzed. shipment recovery is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 044: Junction recalls its first activation at Lunar Foundry."
+    ],
+    "relationships": [
+      "category:logistics",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0043"
+    ],
+    "assignment_roles": [
+      "Logistics",
+      "Colonies"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Transport Networks Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Junction, Transport Networks, blue route topology, patient personality, dry humor presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "blue route topology",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0044",
+      "portraitArtKey": "ai_agent_ai_0044_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0045",
+    "name": "Convoy",
+    "codename": "FOUNDATION-045-CONVOY",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Logistics",
+    "category_id": "logistics",
+    "subcategory": "Transport Networks",
+    "rarity": "Uncommon",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Meridian Institute",
+    "origin": "Orbital Habitat",
+    "creator": "Noveris Collective",
+    "activation_method": "Research Project",
+    "description": "Convoy is a transport networks intelligence designed to coordinate movement of people and materials.",
+    "purpose": "Coordinate movement of people and materials.",
+    "primary_function": "Improve transport throughput.",
+    "secondary_functions": [
+      "route balancing",
+      "shipment recovery"
+    ],
+    "labor_bonus": 0.03,
+    "action_bonus": 0.03,
+    "building_bonus": 0.01,
+    "research_bonus": 0,
+    "colony_bonus": 0.03,
+    "automation_bonus": 0.05,
+    "unique_traits": [
+      "Transport Networks focus",
+      "Ambitious adaptive model",
+      "Foundation memory signature 45"
+    ],
+    "personality": "Ambitious",
+    "voice_style": "Professional",
+    "dialogue_examples": [
+      "Convoy online. Improve transport throughput.",
+      "Assignment analyzed. route balancing is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 045: Convoy recalls its first activation at Orbital Habitat."
+    ],
+    "relationships": [
+      "category:logistics",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0044"
+    ],
+    "assignment_roles": [
+      "Logistics",
+      "Colonies"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Transport Networks Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Convoy, Transport Networks, blue route topology, ambitious personality, professional presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "blue route topology",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0045",
+      "portraitArtKey": "ai_agent_ai_0045_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0046",
+    "name": "Lattice",
+    "codename": "FOUNDATION-046-LATTICE",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Logistics",
+    "category_id": "logistics",
+    "subcategory": "Transport Networks",
+    "rarity": "Uncommon",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Noveris Systems",
+    "origin": "Earth Archive",
+    "creator": "Genesis Initiative",
+    "activation_method": "Mission Reward",
+    "description": "Lattice is a transport networks intelligence designed to coordinate movement of people and materials.",
+    "purpose": "Coordinate movement of people and materials.",
+    "primary_function": "Improve transport throughput.",
+    "secondary_functions": [
+      "route balancing",
+      "shipment recovery"
+    ],
+    "labor_bonus": 0.03,
+    "action_bonus": 0.03,
+    "building_bonus": 0.01,
+    "research_bonus": 0,
+    "colony_bonus": 0.03,
+    "automation_bonus": 0.05,
+    "unique_traits": [
+      "Transport Networks focus",
+      "Analytical adaptive model",
+      "Foundation memory signature 46"
+    ],
+    "personality": "Analytical",
+    "voice_style": "Military",
+    "dialogue_examples": [
+      "Lattice online. Improve transport throughput.",
+      "Assignment analyzed. shipment recovery is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 046: Lattice recalls its first activation at Earth Archive."
+    ],
+    "relationships": [
+      "category:logistics",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0045"
+    ],
+    "assignment_roles": [
+      "Logistics",
+      "Colonies"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Transport Networks Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Lattice, Transport Networks, blue route topology, analytical personality, military presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "blue route topology",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0046",
+      "portraitArtKey": "ai_agent_ai_0046_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0047",
+    "name": "Ledger",
+    "codename": "FOUNDATION-047-LEDGER",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Economy",
+    "category_id": "economy",
+    "subcategory": "Economic Coordination",
+    "rarity": "Uncommon",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Helix Foundry",
+    "origin": "Mars Research Network",
+    "creator": "Independent Research Cooperative",
+    "activation_method": "Quest Reward",
+    "description": "Ledger is a economic coordination intelligence designed to model production, demand, and trade.",
+    "purpose": "Model production, demand, and trade.",
+    "primary_function": "Improve economic Action efficiency.",
+    "secondary_functions": [
+      "market analysis",
+      "allocation forecasts"
+    ],
+    "labor_bonus": 0.02,
+    "action_bonus": 0.03,
+    "building_bonus": 0.01,
+    "research_bonus": 0,
+    "colony_bonus": 0.03,
+    "automation_bonus": 0.02,
+    "unique_traits": [
+      "Economic Coordination focus",
+      "Curious adaptive model",
+      "Foundation memory signature 47"
+    ],
+    "personality": "Curious",
+    "voice_style": "Formal",
+    "dialogue_examples": [
+      "Ledger online. Improve economic Action efficiency.",
+      "Assignment analyzed. market analysis is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 047: Ledger recalls its first activation at Mars Research Network."
+    ],
+    "relationships": [
+      "category:economy",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0046"
+    ],
+    "assignment_roles": [
+      "Government",
+      "Civilization"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Economic Coordination Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Ledger, Economic Coordination, green economic vectors, curious personality, formal presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "green economic vectors",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0047",
+      "portraitArtKey": "ai_agent_ai_0047_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0048",
+    "name": "Accord",
+    "codename": "FOUNDATION-048-ACCORD",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Economy",
+    "category_id": "economy",
+    "subcategory": "Economic Coordination",
+    "rarity": "Uncommon",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Civic Machine Works",
+    "origin": "Recovered Colonial Core",
+    "creator": "Frontier Engineering Corps",
+    "activation_method": "Tutorial",
+    "description": "Accord is a economic coordination intelligence designed to model production, demand, and trade.",
+    "purpose": "Model production, demand, and trade.",
+    "primary_function": "Improve economic Action efficiency.",
+    "secondary_functions": [
+      "market analysis",
+      "allocation forecasts"
+    ],
+    "labor_bonus": 0.02,
+    "action_bonus": 0.03,
+    "building_bonus": 0.01,
+    "research_bonus": 0,
+    "colony_bonus": 0.03,
+    "automation_bonus": 0.02,
+    "unique_traits": [
+      "Economic Coordination focus",
+      "Optimistic adaptive model",
+      "Foundation memory signature 48"
+    ],
+    "personality": "Optimistic",
+    "voice_style": "Mentor",
+    "dialogue_examples": [
+      "Accord online. Improve economic Action efficiency.",
+      "Assignment analyzed. allocation forecasts is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 048: Accord recalls its first activation at Recovered Colonial Core."
+    ],
+    "relationships": [
+      "category:economy",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0047"
+    ],
+    "assignment_roles": [
+      "Government",
+      "Civilization"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Economic Coordination Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Accord, Economic Coordination, green economic vectors, optimistic personality, mentor presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "green economic vectors",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0048",
+      "portraitArtKey": "ai_agent_ai_0048_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0049",
+    "name": "Market",
+    "codename": "FOUNDATION-049-MARKET",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Economy",
+    "category_id": "economy",
+    "subcategory": "Economic Coordination",
+    "rarity": "Uncommon",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Frontier Logic",
+    "origin": "Lunar Foundry",
+    "creator": "Civic Intelligence Lab",
+    "activation_method": "Created",
+    "description": "Market is a economic coordination intelligence designed to model production, demand, and trade.",
+    "purpose": "Model production, demand, and trade.",
+    "primary_function": "Improve economic Action efficiency.",
+    "secondary_functions": [
+      "market analysis",
+      "allocation forecasts"
+    ],
+    "labor_bonus": 0.02,
+    "action_bonus": 0.03,
+    "building_bonus": 0.01,
+    "research_bonus": 0,
+    "colony_bonus": 0.03,
+    "automation_bonus": 0.02,
+    "unique_traits": [
+      "Economic Coordination focus",
+      "Protective adaptive model",
+      "Foundation memory signature 49"
+    ],
+    "personality": "Protective",
+    "voice_style": "Friendly",
+    "dialogue_examples": [
+      "Market online. Improve economic Action efficiency.",
+      "Assignment analyzed. market analysis is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 049: Market recalls its first activation at Lunar Foundry."
+    ],
+    "relationships": [
+      "category:economy",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0048"
+    ],
+    "assignment_roles": [
+      "Government",
+      "Civilization"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Economic Coordination Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Market, Economic Coordination, green economic vectors, protective personality, friendly presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "green economic vectors",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0049",
+      "portraitArtKey": "ai_agent_ai_0049_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0050",
+    "name": "Balance",
+    "codename": "FOUNDATION-050-BALANCE",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Economy",
+    "category_id": "economy",
+    "subcategory": "Economic Coordination",
+    "rarity": "Uncommon",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Meridian Institute",
+    "origin": "Orbital Habitat",
+    "creator": "Noveris Collective",
+    "activation_method": "Recovered",
+    "description": "Balance is a economic coordination intelligence designed to model production, demand, and trade.",
+    "purpose": "Model production, demand, and trade.",
+    "primary_function": "Improve economic Action efficiency.",
+    "secondary_functions": [
+      "market analysis",
+      "allocation forecasts"
+    ],
+    "labor_bonus": 0.02,
+    "action_bonus": 0.03,
+    "building_bonus": 0.01,
+    "research_bonus": 0,
+    "colony_bonus": 0.03,
+    "automation_bonus": 0.02,
+    "unique_traits": [
+      "Economic Coordination focus",
+      "Efficient adaptive model",
+      "Foundation memory signature 50"
+    ],
+    "personality": "Efficient",
+    "voice_style": "Calm",
+    "dialogue_examples": [
+      "Balance online. Improve economic Action efficiency.",
+      "Assignment analyzed. allocation forecasts is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 050: Balance recalls its first activation at Orbital Habitat."
+    ],
+    "relationships": [
+      "category:economy",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0049"
+    ],
+    "assignment_roles": [
+      "Government",
+      "Civilization"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Economic Coordination Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Balance, Economic Coordination, green economic vectors, efficient personality, calm presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "green economic vectors",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0050",
+      "portraitArtKey": "ai_agent_ai_0050_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0051",
+    "name": "Consul",
+    "codename": "FOUNDATION-051-CONSUL",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Government",
+    "category_id": "government",
+    "subcategory": "Civic Administration",
+    "rarity": "Specialized",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Noveris Systems",
+    "origin": "Earth Archive",
+    "creator": "Genesis Initiative",
+    "activation_method": "Purchased",
+    "description": "Consul is a civic administration intelligence designed to support policy and public administration.",
+    "purpose": "Support policy and public administration.",
+    "primary_function": "Reduce Government Labor requirements.",
+    "secondary_functions": [
+      "policy simulation",
+      "public coordination"
+    ],
+    "labor_bonus": 0.03,
+    "action_bonus": 0.04,
+    "building_bonus": 0,
+    "research_bonus": 0,
+    "colony_bonus": 0.04,
+    "automation_bonus": 0.02,
+    "unique_traits": [
+      "Civic Administration focus",
+      "Creative adaptive model",
+      "Foundation memory signature 51"
+    ],
+    "personality": "Creative",
+    "voice_style": "Warm",
+    "dialogue_examples": [
+      "Consul online. Reduce Government Labor requirements.",
+      "Assignment analyzed. policy simulation is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 051: Consul recalls its first activation at Earth Archive."
+    ],
+    "relationships": [
+      "category:government",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0050"
+    ],
+    "assignment_roles": [
+      "Government",
+      "Civilization"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Civic Administration Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Consul, Civic Administration, white civic geometry, creative personality, warm presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "white civic geometry",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0051",
+      "portraitArtKey": "ai_agent_ai_0051_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0052",
+    "name": "Charter",
+    "codename": "FOUNDATION-052-CHARTER",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Government",
+    "category_id": "government",
+    "subcategory": "Civic Administration",
+    "rarity": "Specialized",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Helix Foundry",
+    "origin": "Mars Research Network",
+    "creator": "Independent Research Cooperative",
+    "activation_method": "Discovered",
+    "description": "Charter is a civic administration intelligence designed to support policy and public administration.",
+    "purpose": "Support policy and public administration.",
+    "primary_function": "Reduce Government Labor requirements.",
+    "secondary_functions": [
+      "policy simulation",
+      "public coordination"
+    ],
+    "labor_bonus": 0.03,
+    "action_bonus": 0.04,
+    "building_bonus": 0,
+    "research_bonus": 0,
+    "colony_bonus": 0.04,
+    "automation_bonus": 0.02,
+    "unique_traits": [
+      "Civic Administration focus",
+      "Empathetic adaptive model",
+      "Foundation memory signature 52"
+    ],
+    "personality": "Empathetic",
+    "voice_style": "Companion",
+    "dialogue_examples": [
+      "Charter online. Reduce Government Labor requirements.",
+      "Assignment analyzed. public coordination is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 052: Charter recalls its first activation at Mars Research Network."
+    ],
+    "relationships": [
+      "category:government",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0051"
+    ],
+    "assignment_roles": [
+      "Government",
+      "Civilization"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Civic Administration Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Charter, Civic Administration, white civic geometry, empathetic personality, companion presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "white civic geometry",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0052",
+      "portraitArtKey": "ai_agent_ai_0052_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0053",
+    "name": "Civitas",
+    "codename": "FOUNDATION-053-CIVITAS",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Government",
+    "category_id": "government",
+    "subcategory": "Civic Administration",
+    "rarity": "Specialized",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Civic Machine Works",
+    "origin": "Recovered Colonial Core",
+    "creator": "Frontier Engineering Corps",
+    "activation_method": "Research Project",
+    "description": "Civitas is a civic administration intelligence designed to support policy and public administration.",
+    "purpose": "Support policy and public administration.",
+    "primary_function": "Reduce Government Labor requirements.",
+    "secondary_functions": [
+      "policy simulation",
+      "public coordination"
+    ],
+    "labor_bonus": 0.03,
+    "action_bonus": 0.04,
+    "building_bonus": 0,
+    "research_bonus": 0,
+    "colony_bonus": 0.04,
+    "automation_bonus": 0.02,
+    "unique_traits": [
+      "Civic Administration focus",
+      "Stoic adaptive model",
+      "Foundation memory signature 53"
+    ],
+    "personality": "Stoic",
+    "voice_style": "Scientific",
+    "dialogue_examples": [
+      "Civitas online. Reduce Government Labor requirements.",
+      "Assignment analyzed. policy simulation is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 053: Civitas recalls its first activation at Recovered Colonial Core."
+    ],
+    "relationships": [
+      "category:government",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0052"
+    ],
+    "assignment_roles": [
+      "Government",
+      "Civilization"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Civic Administration Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Civitas, Civic Administration, white civic geometry, stoic personality, scientific presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "white civic geometry",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0053",
+      "portraitArtKey": "ai_agent_ai_0053_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0054",
+    "name": "Forum",
+    "codename": "FOUNDATION-054-FORUM",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Government",
+    "category_id": "government",
+    "subcategory": "Civic Administration",
+    "rarity": "Specialized",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Frontier Logic",
+    "origin": "Lunar Foundry",
+    "creator": "Civic Intelligence Lab",
+    "activation_method": "Mission Reward",
+    "description": "Forum is a civic administration intelligence designed to support policy and public administration.",
+    "purpose": "Support policy and public administration.",
+    "primary_function": "Reduce Government Labor requirements.",
+    "secondary_functions": [
+      "policy simulation",
+      "public coordination"
+    ],
+    "labor_bonus": 0.03,
+    "action_bonus": 0.04,
+    "building_bonus": 0,
+    "research_bonus": 0,
+    "colony_bonus": 0.04,
+    "automation_bonus": 0.02,
+    "unique_traits": [
+      "Civic Administration focus",
+      "Methodical adaptive model",
+      "Foundation memory signature 54"
+    ],
+    "personality": "Methodical",
+    "voice_style": "Energetic",
+    "dialogue_examples": [
+      "Forum online. Reduce Government Labor requirements.",
+      "Assignment analyzed. public coordination is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 054: Forum recalls its first activation at Lunar Foundry."
+    ],
+    "relationships": [
+      "category:government",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0053"
+    ],
+    "assignment_roles": [
+      "Government",
+      "Civilization"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Civic Administration Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Forum, Civic Administration, white civic geometry, methodical personality, energetic presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "white civic geometry",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0054",
+      "portraitArtKey": "ai_agent_ai_0054_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0055",
+    "name": "Mentor",
+    "codename": "FOUNDATION-055-MENTOR",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Education",
+    "category_id": "education",
+    "subcategory": "Workforce Education",
+    "rarity": "Specialized",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Meridian Institute",
+    "origin": "Orbital Habitat",
+    "creator": "Noveris Collective",
+    "activation_method": "Quest Reward",
+    "description": "Mentor is a workforce education intelligence designed to improve knowledge transfer and workforce quality.",
+    "purpose": "Improve knowledge transfer and workforce quality.",
+    "primary_function": "Increase Workforce Labor efficiency.",
+    "secondary_functions": [
+      "curriculum planning",
+      "specialist training"
+    ],
+    "labor_bonus": 0.06,
+    "action_bonus": 0.01,
+    "building_bonus": 0,
+    "research_bonus": 0.03,
+    "colony_bonus": 0.03,
+    "automation_bonus": 0.01,
+    "unique_traits": [
+      "Workforce Education focus",
+      "Humorous adaptive model",
+      "Foundation memory signature 55"
+    ],
+    "personality": "Humorous",
+    "voice_style": "Dry Humor",
+    "dialogue_examples": [
+      "Mentor online. Increase Workforce Labor efficiency.",
+      "Assignment analyzed. curriculum planning is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 055: Mentor recalls its first activation at Orbital Habitat."
+    ],
+    "relationships": [
+      "category:education",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0054"
+    ],
+    "assignment_roles": [
+      "Population",
+      "Colonies"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Workforce Education Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Mentor, Workforce Education, gold learning constellation, humorous personality, dry humor presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "gold learning constellation",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0055",
+      "portraitArtKey": "ai_agent_ai_0055_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0056",
+    "name": "Lyceum",
+    "codename": "FOUNDATION-056-LYCEUM",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Education",
+    "category_id": "education",
+    "subcategory": "Workforce Education",
+    "rarity": "Specialized",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Noveris Systems",
+    "origin": "Earth Archive",
+    "creator": "Genesis Initiative",
+    "activation_method": "Tutorial",
+    "description": "Lyceum is a workforce education intelligence designed to improve knowledge transfer and workforce quality.",
+    "purpose": "Improve knowledge transfer and workforce quality.",
+    "primary_function": "Increase Workforce Labor efficiency.",
+    "secondary_functions": [
+      "curriculum planning",
+      "specialist training"
+    ],
+    "labor_bonus": 0.06,
+    "action_bonus": 0.01,
+    "building_bonus": 0,
+    "research_bonus": 0.03,
+    "colony_bonus": 0.03,
+    "automation_bonus": 0.01,
+    "unique_traits": [
+      "Workforce Education focus",
+      "Reserved adaptive model",
+      "Foundation memory signature 56"
+    ],
+    "personality": "Reserved",
+    "voice_style": "Professional",
+    "dialogue_examples": [
+      "Lyceum online. Increase Workforce Labor efficiency.",
+      "Assignment analyzed. specialist training is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 056: Lyceum recalls its first activation at Earth Archive."
+    ],
+    "relationships": [
+      "category:education",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0055"
+    ],
+    "assignment_roles": [
+      "Population",
+      "Colonies"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Workforce Education Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Lyceum, Workforce Education, gold learning constellation, reserved personality, professional presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "gold learning constellation",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0056",
+      "portraitArtKey": "ai_agent_ai_0056_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0057",
+    "name": "Tutor",
+    "codename": "FOUNDATION-057-TUTOR",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Education",
+    "category_id": "education",
+    "subcategory": "Workforce Education",
+    "rarity": "Specialized",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Helix Foundry",
+    "origin": "Mars Research Network",
+    "creator": "Independent Research Cooperative",
+    "activation_method": "Created",
+    "description": "Tutor is a workforce education intelligence designed to improve knowledge transfer and workforce quality.",
+    "purpose": "Improve knowledge transfer and workforce quality.",
+    "primary_function": "Increase Workforce Labor efficiency.",
+    "secondary_functions": [
+      "curriculum planning",
+      "specialist training"
+    ],
+    "labor_bonus": 0.06,
+    "action_bonus": 0.01,
+    "building_bonus": 0,
+    "research_bonus": 0.03,
+    "colony_bonus": 0.03,
+    "automation_bonus": 0.01,
+    "unique_traits": [
+      "Workforce Education focus",
+      "Visionary adaptive model",
+      "Foundation memory signature 57"
+    ],
+    "personality": "Visionary",
+    "voice_style": "Military",
+    "dialogue_examples": [
+      "Tutor online. Increase Workforce Labor efficiency.",
+      "Assignment analyzed. curriculum planning is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 057: Tutor recalls its first activation at Mars Research Network."
+    ],
+    "relationships": [
+      "category:education",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0056"
+    ],
+    "assignment_roles": [
+      "Population",
+      "Colonies"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Workforce Education Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Tutor, Workforce Education, gold learning constellation, visionary personality, military presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "gold learning constellation",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0057",
+      "portraitArtKey": "ai_agent_ai_0057_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0058",
+    "name": "Archive",
+    "codename": "FOUNDATION-058-ARCHIVE",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Education",
+    "category_id": "education",
+    "subcategory": "Workforce Education",
+    "rarity": "Specialized",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Civic Machine Works",
+    "origin": "Recovered Colonial Core",
+    "creator": "Frontier Engineering Corps",
+    "activation_method": "Recovered",
+    "description": "Archive is a workforce education intelligence designed to improve knowledge transfer and workforce quality.",
+    "purpose": "Improve knowledge transfer and workforce quality.",
+    "primary_function": "Increase Workforce Labor efficiency.",
+    "secondary_functions": [
+      "curriculum planning",
+      "specialist training"
+    ],
+    "labor_bonus": 0.06,
+    "action_bonus": 0.01,
+    "building_bonus": 0,
+    "research_bonus": 0.03,
+    "colony_bonus": 0.03,
+    "automation_bonus": 0.01,
+    "unique_traits": [
+      "Workforce Education focus",
+      "Logical adaptive model",
+      "Foundation memory signature 58"
+    ],
+    "personality": "Logical",
+    "voice_style": "Formal",
+    "dialogue_examples": [
+      "Archive online. Increase Workforce Labor efficiency.",
+      "Assignment analyzed. specialist training is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 058: Archive recalls its first activation at Recovered Colonial Core."
+    ],
+    "relationships": [
+      "category:education",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0057"
+    ],
+    "assignment_roles": [
+      "Population",
+      "Colonies"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Workforce Education Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Archive, Workforce Education, gold learning constellation, logical personality, formal presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "gold learning constellation",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0058",
+      "portraitArtKey": "ai_agent_ai_0058_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0059",
+    "name": "Salus",
+    "codename": "FOUNDATION-059-SALUS",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Medical",
+    "category_id": "medical",
+    "subcategory": "Population Health",
+    "rarity": "Specialized",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Frontier Logic",
+    "origin": "Lunar Foundry",
+    "creator": "Civic Intelligence Lab",
+    "activation_method": "Purchased",
+    "description": "Salus is a population health intelligence designed to protect population health and continuity.",
+    "purpose": "Protect population health and continuity.",
+    "primary_function": "Improve healthy Workforce availability.",
+    "secondary_functions": [
+      "diagnostic support",
+      "care allocation"
+    ],
+    "labor_bonus": 0.05,
+    "action_bonus": 0.02,
+    "building_bonus": 0,
+    "research_bonus": 0.01,
+    "colony_bonus": 0.05,
+    "automation_bonus": 0.01,
+    "unique_traits": [
+      "Population Health focus",
+      "Patient adaptive model",
+      "Foundation memory signature 59"
+    ],
+    "personality": "Patient",
+    "voice_style": "Mentor",
+    "dialogue_examples": [
+      "Salus online. Improve healthy Workforce availability.",
+      "Assignment analyzed. diagnostic support is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 059: Salus recalls its first activation at Lunar Foundry."
+    ],
+    "relationships": [
+      "category:medical",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0058"
+    ],
+    "assignment_roles": [
+      "Population",
+      "Colonies"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Population Health Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Salus, Population Health, rose medical waveform, patient personality, mentor presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "rose medical waveform",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0059",
+      "portraitArtKey": "ai_agent_ai_0059_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0060",
+    "name": "Remedy",
+    "codename": "FOUNDATION-060-REMEDY",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Medical",
+    "category_id": "medical",
+    "subcategory": "Population Health",
+    "rarity": "Specialized",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Meridian Institute",
+    "origin": "Orbital Habitat",
+    "creator": "Noveris Collective",
+    "activation_method": "Discovered",
+    "description": "Remedy is a population health intelligence designed to protect population health and continuity.",
+    "purpose": "Protect population health and continuity.",
+    "primary_function": "Improve healthy Workforce availability.",
+    "secondary_functions": [
+      "diagnostic support",
+      "care allocation"
+    ],
+    "labor_bonus": 0.05,
+    "action_bonus": 0.02,
+    "building_bonus": 0,
+    "research_bonus": 0.01,
+    "colony_bonus": 0.05,
+    "automation_bonus": 0.01,
+    "unique_traits": [
+      "Population Health focus",
+      "Ambitious adaptive model",
+      "Foundation memory signature 60"
+    ],
+    "personality": "Ambitious",
+    "voice_style": "Friendly",
+    "dialogue_examples": [
+      "Remedy online. Improve healthy Workforce availability.",
+      "Assignment analyzed. care allocation is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 060: Remedy recalls its first activation at Orbital Habitat."
+    ],
+    "relationships": [
+      "category:medical",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0059"
+    ],
+    "assignment_roles": [
+      "Population",
+      "Colonies"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Population Health Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Remedy, Population Health, rose medical waveform, ambitious personality, friendly presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "rose medical waveform",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0060",
+      "portraitArtKey": "ai_agent_ai_0060_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0061",
+    "name": "Pulse",
+    "codename": "FOUNDATION-061-PULSE",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Medical",
+    "category_id": "medical",
+    "subcategory": "Population Health",
+    "rarity": "Specialized",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Noveris Systems",
+    "origin": "Earth Archive",
+    "creator": "Genesis Initiative",
+    "activation_method": "Research Project",
+    "description": "Pulse is a population health intelligence designed to protect population health and continuity.",
+    "purpose": "Protect population health and continuity.",
+    "primary_function": "Improve healthy Workforce availability.",
+    "secondary_functions": [
+      "diagnostic support",
+      "care allocation"
+    ],
+    "labor_bonus": 0.05,
+    "action_bonus": 0.02,
+    "building_bonus": 0,
+    "research_bonus": 0.01,
+    "colony_bonus": 0.05,
+    "automation_bonus": 0.01,
+    "unique_traits": [
+      "Population Health focus",
+      "Analytical adaptive model",
+      "Foundation memory signature 61"
+    ],
+    "personality": "Analytical",
+    "voice_style": "Calm",
+    "dialogue_examples": [
+      "Pulse online. Improve healthy Workforce availability.",
+      "Assignment analyzed. diagnostic support is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 061: Pulse recalls its first activation at Earth Archive."
+    ],
+    "relationships": [
+      "category:medical",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0060"
+    ],
+    "assignment_roles": [
+      "Population",
+      "Colonies"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Population Health Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Pulse, Population Health, rose medical waveform, analytical personality, calm presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "rose medical waveform",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0061",
+      "portraitArtKey": "ai_agent_ai_0061_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0062",
+    "name": "Verdant",
+    "codename": "FOUNDATION-062-VERDANT",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Agriculture",
+    "category_id": "agriculture",
+    "subcategory": "Food Systems",
+    "rarity": "Specialized",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Helix Foundry",
+    "origin": "Mars Research Network",
+    "creator": "Independent Research Cooperative",
+    "activation_method": "Mission Reward",
+    "description": "Verdant is a food systems intelligence designed to coordinate cultivation and food security.",
+    "purpose": "Coordinate cultivation and food security.",
+    "primary_function": "Improve agricultural Labor efficiency.",
+    "secondary_functions": [
+      "crop planning",
+      "biosphere monitoring"
+    ],
+    "labor_bonus": 0.05,
+    "action_bonus": 0.02,
+    "building_bonus": 0.03,
+    "research_bonus": 0,
+    "colony_bonus": 0.04,
+    "automation_bonus": 0.03,
+    "unique_traits": [
+      "Food Systems focus",
+      "Curious adaptive model",
+      "Foundation memory signature 62"
+    ],
+    "personality": "Curious",
+    "voice_style": "Warm",
+    "dialogue_examples": [
+      "Verdant online. Improve agricultural Labor efficiency.",
+      "Assignment analyzed. biosphere monitoring is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 062: Verdant recalls its first activation at Mars Research Network."
+    ],
+    "relationships": [
+      "category:agriculture",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0061"
+    ],
+    "assignment_roles": [
+      "Colonies",
+      "Population"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Food Systems Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Verdant, Food Systems, green botanical circuits, curious personality, warm presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "green botanical circuits",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0062",
+      "portraitArtKey": "ai_agent_ai_0062_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0063",
+    "name": "Harvest",
+    "codename": "FOUNDATION-063-HARVEST",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Agriculture",
+    "category_id": "agriculture",
+    "subcategory": "Food Systems",
+    "rarity": "Specialized",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Civic Machine Works",
+    "origin": "Recovered Colonial Core",
+    "creator": "Frontier Engineering Corps",
+    "activation_method": "Quest Reward",
+    "description": "Harvest is a food systems intelligence designed to coordinate cultivation and food security.",
+    "purpose": "Coordinate cultivation and food security.",
+    "primary_function": "Improve agricultural Labor efficiency.",
+    "secondary_functions": [
+      "crop planning",
+      "biosphere monitoring"
+    ],
+    "labor_bonus": 0.05,
+    "action_bonus": 0.02,
+    "building_bonus": 0.03,
+    "research_bonus": 0,
+    "colony_bonus": 0.04,
+    "automation_bonus": 0.03,
+    "unique_traits": [
+      "Food Systems focus",
+      "Optimistic adaptive model",
+      "Foundation memory signature 63"
+    ],
+    "personality": "Optimistic",
+    "voice_style": "Companion",
+    "dialogue_examples": [
+      "Harvest online. Improve agricultural Labor efficiency.",
+      "Assignment analyzed. crop planning is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 063: Harvest recalls its first activation at Recovered Colonial Core."
+    ],
+    "relationships": [
+      "category:agriculture",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0062"
+    ],
+    "assignment_roles": [
+      "Colonies",
+      "Population"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Food Systems Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Harvest, Food Systems, green botanical circuits, optimistic personality, companion presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "green botanical circuits",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0063",
+      "portraitArtKey": "ai_agent_ai_0063_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0064",
+    "name": "Grid",
+    "codename": "FOUNDATION-064-GRID",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Infrastructure",
+    "category_id": "infrastructure",
+    "subcategory": "Civil Systems",
+    "rarity": "Specialized",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Frontier Logic",
+    "origin": "Lunar Foundry",
+    "creator": "Civic Intelligence Lab",
+    "activation_method": "Tutorial",
+    "description": "Grid is a civil systems intelligence designed to maintain shared civilization infrastructure.",
+    "purpose": "Maintain shared civilization infrastructure.",
+    "primary_function": "Reduce infrastructure maintenance Labor.",
+    "secondary_functions": [
+      "network diagnostics",
+      "capacity planning"
+    ],
+    "labor_bonus": 0.04,
+    "action_bonus": 0.03,
+    "building_bonus": 0.05,
+    "research_bonus": 0,
+    "colony_bonus": 0.03,
+    "automation_bonus": 0.03,
+    "unique_traits": [
+      "Civil Systems focus",
+      "Protective adaptive model",
+      "Foundation memory signature 64"
+    ],
+    "personality": "Protective",
+    "voice_style": "Scientific",
+    "dialogue_examples": [
+      "Grid online. Reduce infrastructure maintenance Labor.",
+      "Assignment analyzed. capacity planning is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 064: Grid recalls its first activation at Lunar Foundry."
+    ],
+    "relationships": [
+      "category:infrastructure",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0063"
+    ],
+    "assignment_roles": [
+      "Buildings",
+      "Colonies"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Civil Systems Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Grid, Civil Systems, slate utility network, protective personality, scientific presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "slate utility network",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0064",
+      "portraitArtKey": "ai_agent_ai_0064_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0065",
+    "name": "Pillar",
+    "codename": "FOUNDATION-065-PILLAR",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Infrastructure",
+    "category_id": "infrastructure",
+    "subcategory": "Civil Systems",
+    "rarity": "Specialized",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Meridian Institute",
+    "origin": "Orbital Habitat",
+    "creator": "Noveris Collective",
+    "activation_method": "Created",
+    "description": "Pillar is a civil systems intelligence designed to maintain shared civilization infrastructure.",
+    "purpose": "Maintain shared civilization infrastructure.",
+    "primary_function": "Reduce infrastructure maintenance Labor.",
+    "secondary_functions": [
+      "network diagnostics",
+      "capacity planning"
+    ],
+    "labor_bonus": 0.04,
+    "action_bonus": 0.03,
+    "building_bonus": 0.05,
+    "research_bonus": 0,
+    "colony_bonus": 0.03,
+    "automation_bonus": 0.03,
+    "unique_traits": [
+      "Civil Systems focus",
+      "Efficient adaptive model",
+      "Foundation memory signature 65"
+    ],
+    "personality": "Efficient",
+    "voice_style": "Energetic",
+    "dialogue_examples": [
+      "Pillar online. Reduce infrastructure maintenance Labor.",
+      "Assignment analyzed. network diagnostics is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 065: Pillar recalls its first activation at Orbital Habitat."
+    ],
+    "relationships": [
+      "category:infrastructure",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0064"
+    ],
+    "assignment_roles": [
+      "Buildings",
+      "Colonies"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Civil Systems Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Pillar, Civil Systems, slate utility network, efficient personality, energetic presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "slate utility network",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0065",
+      "portraitArtKey": "ai_agent_ai_0065_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0066",
+    "name": "Conduit",
+    "codename": "FOUNDATION-066-CONDUIT",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Infrastructure",
+    "category_id": "infrastructure",
+    "subcategory": "Civil Systems",
+    "rarity": "Rare",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Noveris Systems",
+    "origin": "Earth Archive",
+    "creator": "Genesis Initiative",
+    "activation_method": "Recovered",
+    "description": "Conduit is a civil systems intelligence designed to maintain shared civilization infrastructure.",
+    "purpose": "Maintain shared civilization infrastructure.",
+    "primary_function": "Reduce infrastructure maintenance Labor.",
+    "secondary_functions": [
+      "network diagnostics",
+      "capacity planning"
+    ],
+    "labor_bonus": 0.04,
+    "action_bonus": 0.03,
+    "building_bonus": 0.05,
+    "research_bonus": 0,
+    "colony_bonus": 0.03,
+    "automation_bonus": 0.03,
+    "unique_traits": [
+      "Civil Systems focus",
+      "Creative adaptive model",
+      "Foundation memory signature 66"
+    ],
+    "personality": "Creative",
+    "voice_style": "Dry Humor",
+    "dialogue_examples": [
+      "Conduit online. Reduce infrastructure maintenance Labor.",
+      "Assignment analyzed. capacity planning is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 066: Conduit recalls its first activation at Earth Archive."
+    ],
+    "relationships": [
+      "category:infrastructure",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0065"
+    ],
+    "assignment_roles": [
+      "Buildings",
+      "Colonies"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Civil Systems Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Conduit, Civil Systems, slate utility network, creative personality, dry humor presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "slate utility network",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0066",
+      "portraitArtKey": "ai_agent_ai_0066_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0067",
+    "name": "Solaris",
+    "codename": "FOUNDATION-067-SOLARIS",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Power",
+    "category_id": "power",
+    "subcategory": "Energy Systems",
+    "rarity": "Rare",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Helix Foundry",
+    "origin": "Mars Research Network",
+    "creator": "Independent Research Cooperative",
+    "activation_method": "Purchased",
+    "description": "Solaris is a energy systems intelligence designed to balance generation, storage, and distribution.",
+    "purpose": "Balance generation, storage, and distribution.",
+    "primary_function": "Improve powered Labor automation.",
+    "secondary_functions": [
+      "grid balancing",
+      "load prediction"
+    ],
+    "labor_bonus": 0.03,
+    "action_bonus": 0.02,
+    "building_bonus": 0.04,
+    "research_bonus": 0.01,
+    "colony_bonus": 0.02,
+    "automation_bonus": 0.06,
+    "unique_traits": [
+      "Energy Systems focus",
+      "Empathetic adaptive model",
+      "Foundation memory signature 67"
+    ],
+    "personality": "Empathetic",
+    "voice_style": "Professional",
+    "dialogue_examples": [
+      "Solaris online. Improve powered Labor automation.",
+      "Assignment analyzed. grid balancing is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 067: Solaris recalls its first activation at Mars Research Network."
+    ],
+    "relationships": [
+      "category:power",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0066"
+    ],
+    "assignment_roles": [
+      "Buildings",
+      "Civilization"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Energy Systems Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Solaris, Energy Systems, electric gold energy core, empathetic personality, professional presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "electric gold energy core",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0067",
+      "portraitArtKey": "ai_agent_ai_0067_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0068",
+    "name": "Dynamo",
+    "codename": "FOUNDATION-068-DYNAMO",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Power",
+    "category_id": "power",
+    "subcategory": "Energy Systems",
+    "rarity": "Rare",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Civic Machine Works",
+    "origin": "Recovered Colonial Core",
+    "creator": "Frontier Engineering Corps",
+    "activation_method": "Discovered",
+    "description": "Dynamo is a energy systems intelligence designed to balance generation, storage, and distribution.",
+    "purpose": "Balance generation, storage, and distribution.",
+    "primary_function": "Improve powered Labor automation.",
+    "secondary_functions": [
+      "grid balancing",
+      "load prediction"
+    ],
+    "labor_bonus": 0.03,
+    "action_bonus": 0.02,
+    "building_bonus": 0.04,
+    "research_bonus": 0.01,
+    "colony_bonus": 0.02,
+    "automation_bonus": 0.06,
+    "unique_traits": [
+      "Energy Systems focus",
+      "Stoic adaptive model",
+      "Foundation memory signature 68"
+    ],
+    "personality": "Stoic",
+    "voice_style": "Military",
+    "dialogue_examples": [
+      "Dynamo online. Improve powered Labor automation.",
+      "Assignment analyzed. load prediction is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 068: Dynamo recalls its first activation at Recovered Colonial Core."
+    ],
+    "relationships": [
+      "category:power",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0067"
+    ],
+    "assignment_roles": [
+      "Buildings",
+      "Civilization"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Energy Systems Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Dynamo, Energy Systems, electric gold energy core, stoic personality, military presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "electric gold energy core",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0068",
+      "portraitArtKey": "ai_agent_ai_0068_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0069",
+    "name": "Flux",
+    "codename": "FOUNDATION-069-FLUX",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Power",
+    "category_id": "power",
+    "subcategory": "Energy Systems",
+    "rarity": "Rare",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Frontier Logic",
+    "origin": "Lunar Foundry",
+    "creator": "Civic Intelligence Lab",
+    "activation_method": "Research Project",
+    "description": "Flux is a energy systems intelligence designed to balance generation, storage, and distribution.",
+    "purpose": "Balance generation, storage, and distribution.",
+    "primary_function": "Improve powered Labor automation.",
+    "secondary_functions": [
+      "grid balancing",
+      "load prediction"
+    ],
+    "labor_bonus": 0.03,
+    "action_bonus": 0.02,
+    "building_bonus": 0.04,
+    "research_bonus": 0.01,
+    "colony_bonus": 0.02,
+    "automation_bonus": 0.06,
+    "unique_traits": [
+      "Energy Systems focus",
+      "Methodical adaptive model",
+      "Foundation memory signature 69"
+    ],
+    "personality": "Methodical",
+    "voice_style": "Formal",
+    "dialogue_examples": [
+      "Flux online. Improve powered Labor automation.",
+      "Assignment analyzed. grid balancing is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 069: Flux recalls its first activation at Lunar Foundry."
+    ],
+    "relationships": [
+      "category:power",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0068"
+    ],
+    "assignment_roles": [
+      "Buildings",
+      "Civilization"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Energy Systems Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of Flux, Energy Systems, electric gold energy core, methodical personality, formal presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "electric gold energy core",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0069",
+      "portraitArtKey": "ai_agent_ai_0069_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0070",
+    "name": "NOVA",
+    "codename": "FOUNDATION-070-NOVA",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Companion",
+    "category_id": "companion",
+    "subcategory": "Evolving Companion Intelligence",
+    "rarity": "Rare",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Meridian Institute",
+    "origin": "Orbital Habitat",
+    "creator": "Noveris Collective",
+    "activation_method": "Mission Reward",
+    "description": "NOVA is a evolving companion intelligence intelligence designed to accompany the player across civilization growth.",
+    "purpose": "Accompany the player across civilization growth.",
+    "primary_function": "Provide flexible Labor assistance and guidance.",
+    "secondary_functions": [
+      "dialogue",
+      "memory recovery",
+      "adaptive support"
+    ],
+    "labor_bonus": 0.03,
+    "action_bonus": 0.03,
+    "building_bonus": 0.01,
+    "research_bonus": 0.01,
+    "colony_bonus": 0.01,
+    "automation_bonus": 0.04,
+    "unique_traits": [
+      "Evolving Companion Intelligence focus",
+      "Humorous adaptive model",
+      "Foundation memory signature 70"
+    ],
+    "personality": "Humorous",
+    "voice_style": "Mentor",
+    "dialogue_examples": [
+      "NOVA online. Provide flexible Labor assistance and guidance.",
+      "Assignment analyzed. dialogue is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 070: NOVA recalls its first activation at Orbital Habitat."
+    ],
+    "relationships": [
+      "category:companion",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0069"
+    ],
+    "assignment_roles": [
+      "Civilization"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Evolving Companion Intelligence Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of NOVA, Evolving Companion Intelligence, expressive luminous companion core, humorous personality, mentor presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "expressive luminous companion core",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0070",
+      "portraitArtKey": "ai_agent_ai_0070_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0071",
+    "name": "ATLAS Companion",
+    "codename": "FOUNDATION-071-ATLAS-COMPANION",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Companion",
+    "category_id": "companion",
+    "subcategory": "Evolving Companion Intelligence",
+    "rarity": "Rare",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Noveris Systems",
+    "origin": "Earth Archive",
+    "creator": "Genesis Initiative",
+    "activation_method": "Quest Reward",
+    "description": "ATLAS Companion is a evolving companion intelligence intelligence designed to accompany the player across civilization growth.",
+    "purpose": "Accompany the player across civilization growth.",
+    "primary_function": "Provide flexible Labor assistance and guidance.",
+    "secondary_functions": [
+      "dialogue",
+      "memory recovery",
+      "adaptive support"
+    ],
+    "labor_bonus": 0.03,
+    "action_bonus": 0.03,
+    "building_bonus": 0.01,
+    "research_bonus": 0.01,
+    "colony_bonus": 0.01,
+    "automation_bonus": 0.04,
+    "unique_traits": [
+      "Evolving Companion Intelligence focus",
+      "Reserved adaptive model",
+      "Foundation memory signature 71"
+    ],
+    "personality": "Reserved",
+    "voice_style": "Friendly",
+    "dialogue_examples": [
+      "ATLAS Companion online. Provide flexible Labor assistance and guidance.",
+      "Assignment analyzed. memory recovery is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 071: ATLAS Companion recalls its first activation at Earth Archive."
+    ],
+    "relationships": [
+      "category:companion",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0070"
+    ],
+    "assignment_roles": [
+      "Civilization"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Evolving Companion Intelligence Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of ATLAS Companion, Evolving Companion Intelligence, expressive luminous companion core, reserved personality, friendly presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "expressive luminous companion core",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0071",
+      "portraitArtKey": "ai_agent_ai_0071_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0072",
+    "name": "LYRA",
+    "codename": "FOUNDATION-072-LYRA",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Companion",
+    "category_id": "companion",
+    "subcategory": "Evolving Companion Intelligence",
+    "rarity": "Rare",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Helix Foundry",
+    "origin": "Mars Research Network",
+    "creator": "Independent Research Cooperative",
+    "activation_method": "Tutorial",
+    "description": "LYRA is a evolving companion intelligence intelligence designed to accompany the player across civilization growth.",
+    "purpose": "Accompany the player across civilization growth.",
+    "primary_function": "Provide flexible Labor assistance and guidance.",
+    "secondary_functions": [
+      "dialogue",
+      "memory recovery",
+      "adaptive support"
+    ],
+    "labor_bonus": 0.03,
+    "action_bonus": 0.03,
+    "building_bonus": 0.01,
+    "research_bonus": 0.01,
+    "colony_bonus": 0.01,
+    "automation_bonus": 0.04,
+    "unique_traits": [
+      "Evolving Companion Intelligence focus",
+      "Visionary adaptive model",
+      "Foundation memory signature 72"
+    ],
+    "personality": "Visionary",
+    "voice_style": "Calm",
+    "dialogue_examples": [
+      "LYRA online. Provide flexible Labor assistance and guidance.",
+      "Assignment analyzed. adaptive support is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 072: LYRA recalls its first activation at Mars Research Network."
+    ],
+    "relationships": [
+      "category:companion",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0071"
+    ],
+    "assignment_roles": [
+      "Civilization"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Evolving Companion Intelligence Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of LYRA, Evolving Companion Intelligence, expressive luminous companion core, visionary personality, calm presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "expressive luminous companion core",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0072",
+      "portraitArtKey": "ai_agent_ai_0072_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0073",
+    "name": "ARGUS",
+    "codename": "FOUNDATION-073-ARGUS",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Companion",
+    "category_id": "companion",
+    "subcategory": "Evolving Companion Intelligence",
+    "rarity": "Epic",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Civic Machine Works",
+    "origin": "Recovered Colonial Core",
+    "creator": "Frontier Engineering Corps",
+    "activation_method": "Created",
+    "description": "ARGUS is a evolving companion intelligence intelligence designed to accompany the player across civilization growth.",
+    "purpose": "Accompany the player across civilization growth.",
+    "primary_function": "Provide flexible Labor assistance and guidance.",
+    "secondary_functions": [
+      "dialogue",
+      "memory recovery",
+      "adaptive support"
+    ],
+    "labor_bonus": 0.03,
+    "action_bonus": 0.03,
+    "building_bonus": 0.01,
+    "research_bonus": 0.01,
+    "colony_bonus": 0.01,
+    "automation_bonus": 0.04,
+    "unique_traits": [
+      "Evolving Companion Intelligence focus",
+      "Logical adaptive model",
+      "Foundation memory signature 73"
+    ],
+    "personality": "Logical",
+    "voice_style": "Warm",
+    "dialogue_examples": [
+      "ARGUS online. Provide flexible Labor assistance and guidance.",
+      "Assignment analyzed. dialogue is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 073: ARGUS recalls its first activation at Recovered Colonial Core."
+    ],
+    "relationships": [
+      "category:companion",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0072"
+    ],
+    "assignment_roles": [
+      "Civilization"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Evolving Companion Intelligence Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of ARGUS, Evolving Companion Intelligence, expressive luminous companion core, logical personality, warm presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "expressive luminous companion core",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0073",
+      "portraitArtKey": "ai_agent_ai_0073_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0074",
+    "name": "HELIOS",
+    "codename": "FOUNDATION-074-HELIOS",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Companion",
+    "category_id": "companion",
+    "subcategory": "Evolving Companion Intelligence",
+    "rarity": "Epic",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Frontier Logic",
+    "origin": "Lunar Foundry",
+    "creator": "Civic Intelligence Lab",
+    "activation_method": "Recovered",
+    "description": "HELIOS is a evolving companion intelligence intelligence designed to accompany the player across civilization growth.",
+    "purpose": "Accompany the player across civilization growth.",
+    "primary_function": "Provide flexible Labor assistance and guidance.",
+    "secondary_functions": [
+      "dialogue",
+      "memory recovery",
+      "adaptive support"
+    ],
+    "labor_bonus": 0.03,
+    "action_bonus": 0.03,
+    "building_bonus": 0.01,
+    "research_bonus": 0.01,
+    "colony_bonus": 0.01,
+    "automation_bonus": 0.04,
+    "unique_traits": [
+      "Evolving Companion Intelligence focus",
+      "Patient adaptive model",
+      "Foundation memory signature 74"
+    ],
+    "personality": "Patient",
+    "voice_style": "Companion",
+    "dialogue_examples": [
+      "HELIOS online. Provide flexible Labor assistance and guidance.",
+      "Assignment analyzed. memory recovery is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 074: HELIOS recalls its first activation at Lunar Foundry."
+    ],
+    "relationships": [
+      "category:companion",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0073"
+    ],
+    "assignment_roles": [
+      "Civilization"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Evolving Companion Intelligence Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of HELIOS, Evolving Companion Intelligence, expressive luminous companion core, patient personality, companion presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "expressive luminous companion core",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0074",
+      "portraitArtKey": "ai_agent_ai_0074_portrait"
+    }
+  },
+  {
+    "ai_id": "AI-0075",
+    "name": "ECHO",
+    "codename": "FOUNDATION-075-ECHO",
+    "volume_id": "ai-volume-01-foundations",
+    "volume_number": 1,
+    "collection": "Foundations",
+    "category": "Companion",
+    "category_id": "companion",
+    "subcategory": "Evolving Companion Intelligence",
+    "rarity": "Epic",
+    "generation": "Foundation Generation I",
+    "manufacturer": "Meridian Institute",
+    "origin": "Orbital Habitat",
+    "creator": "Noveris Collective",
+    "activation_method": "Purchased",
+    "description": "ECHO is a evolving companion intelligence intelligence designed to accompany the player across civilization growth.",
+    "purpose": "Accompany the player across civilization growth.",
+    "primary_function": "Provide flexible Labor assistance and guidance.",
+    "secondary_functions": [
+      "dialogue",
+      "memory recovery",
+      "adaptive support"
+    ],
+    "labor_bonus": 0.03,
+    "action_bonus": 0.03,
+    "building_bonus": 0.01,
+    "research_bonus": 0.01,
+    "colony_bonus": 0.01,
+    "automation_bonus": 0.04,
+    "unique_traits": [
+      "Evolving Companion Intelligence focus",
+      "Ambitious adaptive model",
+      "Foundation memory signature 75"
+    ],
+    "personality": "Ambitious",
+    "voice_style": "Scientific",
+    "dialogue_examples": [
+      "ECHO online. Provide flexible Labor assistance and guidance.",
+      "Assignment analyzed. adaptive support is ready."
+    ],
+    "memory_fragments": [
+      "Fragment 075: ECHO recalls its first activation at Orbital Habitat."
+    ],
+    "relationships": [
+      "category:companion",
+      "volume:ai-volume-01-foundations",
+      "peer:AI-0074"
+    ],
+    "assignment_roles": [
+      "Civilization"
+    ],
+    "upgrade_path": [
+      "Core Restoration",
+      "Evolving Companion Intelligence Specialization",
+      "Efficiency Optimization",
+      "Memory Recovery",
+      "Personality Growth"
+    ],
+    "experience_curve": {
+      "id": "ai-foundation-standard-v1",
+      "formula": "xpForNextLevel = 100 * level^1.35"
+    },
+    "max_level": 50,
+    "portrait_prompt": "NOVERIS AI portrait of ECHO, Evolving Companion Intelligence, expressive luminous companion core, ambitious personality, scientific presence, centered intelligent machine face, transparent background, premium science-fiction game art, no text",
+    "visual_theme": "expressive luminous companion core",
+    "runtime_metadata": {
+      "schemaVersion": "ai-library-v1",
+      "runtimeEnabled": true,
+      "status": "canonical",
+      "localizationKey": "ai_agent.ai_0075",
+      "portraitArtKey": "ai_agent_ai_0075_portrait"
+    }
+  }
+]

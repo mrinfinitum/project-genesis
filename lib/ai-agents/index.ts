@@ -1,6 +1,6 @@
 import type { AssetProductionState, ProductionAsset } from "@/lib/assets/asset-production";
 import { findAssetForPreviewKeys, resolveProductionAssetPreview, type VisualPreview } from "@/lib/assets/visual-previews";
-import aiAgentModuleSeed from "@/data/ai-agents/NOVERIS_AI_Agents_Studio_Seed.json";
+import { AI_LIBRARY_VERSION, AI_LIBRARY_VOLUME_ID, aiLibraryAssignmentRoles, aiLibraryCategories, aiLibraryPersonalities as aiLibraryPersonalityCatalog, aiLibraryRarities, aiLibraryVoices, canonicalAiLibraryAgents, validateCanonicalAiLibrary } from "@/lib/ai-agents/foundations";
 import type {
   AiAgentAnimationProfileDefinition,
   AiAgentDefinition,
@@ -8,7 +8,8 @@ import type {
   AiAgentSaveSchemaDefinition,
   AiAgentVariantDefinition,
   AiAgentVisualState,
-  AutomationPresentationDefinition
+  AutomationPresentationDefinition,
+  CanonicalAiLibraryAgent
 } from "@/types/runtime";
 
 export type AiAgentState = "Idle" | "Blink" | "Thinking" | "Working" | "Research" | "Offline" | "Warning" | "Celebration" | "Sleeping" | "Surprised";
@@ -99,6 +100,7 @@ export type AiAgentRecord = {
   dialoguePackId?: string;
   runtimeEnabled?: boolean;
   sourceStatus?: string;
+  libraryDefinition?: CanonicalAiLibraryAgent;
 };
 
 export type AiAgentSummary = Pick<AiAgentRecord, "id" | "displayName" | "shortDisplayName" | "description" | "personalityId" | "rarity" | "colorTheme" | "unlockRequirements" | "defaultForNewPlayers" | "supportedStates" | "componentLibraryReferences" | "approvalState" | "publishState" | "agentClass" | "specialization" | "catalogRarity" | "catalogPersonality" | "terminalType" | "discoverySource" | "primaryBonusIds" | "unlockMethod" | "restorationAction" | "memoryIntegrityStart" | "levelCap" | "relationshipGroup" | "dialoguePackId" | "runtimeEnabled" | "sourceStatus"> & {
@@ -138,6 +140,13 @@ export type AiAgentLibraryModuleRecord = {
 };
 
 export type AiAgentLibraryState = {
+  volume: { id: typeof AI_LIBRARY_VOLUME_ID; number: 1; name: "Foundations"; version: typeof AI_LIBRARY_VERSION };
+  libraryAgents: CanonicalAiLibraryAgent[];
+  categories: typeof aiLibraryCategories;
+  rarityCatalog: typeof aiLibraryRarities;
+  personalityCatalog: typeof aiLibraryPersonalityCatalog;
+  voiceCatalog: typeof aiLibraryVoices;
+  assignmentRoles: typeof aiLibraryAssignmentRoles;
   agents: AiAgentSummary[];
   records: AiAgentRecord[];
   variants: AiAgentVariantDefinition[];
@@ -419,7 +428,68 @@ function importedAgentRecord(seed: ImportedAiAgentSeed): AiAgentRecord {
   };
 }
 
-const importedAgentRecords = (aiAgentModuleSeed.records as ImportedAiAgentSeed[]).map(importedAgentRecord);
+function foundationAgentRecord(definition: CanonicalAiLibraryAgent): AiAgentRecord {
+  const artPrefix = definition.runtime_metadata.portraitArtKey.replace(/_portrait$/, "");
+  const runtimePersonalityId = importedPersonalityIds[definition.personality] ?? defaultAiAgentPersonalityId;
+  const rarity = runtimeRarity(definition.rarity);
+  return {
+    id: definition.ai_id,
+    displayName: definition.name,
+    shortDisplayName: definition.name,
+    description: definition.description,
+    personalityId: runtimePersonalityId,
+    colorTheme: importedClassColors[definition.category] ?? { primary: "#67e8f9", secondary: "#334155", accent: "#f8fafc" },
+    rarity,
+    unlockRequirements: [definition.activation_method],
+    defaultForNewPlayers: false,
+    eraAvailability,
+    supportedStates: aiAgentStates,
+    artworkSlots: [
+      slot("head", "Head/Base Artwork", `${artPrefix}_head`, "head", "idle"),
+      slot("eyes-open", "Eyes Open Artwork", `${artPrefix}_eyes_open`, "eyes_open", "idle"),
+      slot("eyes-blink", "Blink / Eyes Closed Artwork", `${artPrefix}_eyes_blink`, "eyes_blink", "blink"),
+      slot("eyes-closed", "Offline Eyes Closed Artwork", `${artPrefix}_eyes_closed`, "eyes_closed", "offline")
+    ],
+    expressionVariants: [],
+    animationProfileId: defaultAiAgentAnimationProfileId,
+    dialogueProfile: {
+      id: `AI-DIALOGUE-${definition.ai_id}`,
+      tone: definition.personality,
+      greeting: definition.dialogue_examples[0],
+      thinkingLine: definition.dialogue_examples[1],
+      warningLine: `${definition.name}: assignment conditions require attention.`,
+      celebrationLine: `${definition.name}: assignment complete.`,
+      offlineLine: `${definition.name} is offline.`
+    },
+    voiceProfile: { id: `AI-VOICE-${definition.ai_id}`, status: "Planned", voiceKey: null, notes: definition.voice_style },
+    gameplayModifiers: {},
+    automationPresentationId,
+    status: "locked",
+    approvalState: "approved",
+    publishState: "published",
+    aliases: [definition.codename.toLowerCase()],
+    componentLibraryReferences: ["AiAgentPortrait", "AiAgentPanel", "AiAgentStatus", "AiAgentSelector", "AiAgentCard", "AiAgentVariantCard"],
+    notes: ["Canonical AI Library Volume I definition. Runtime bonuses are applied through Labor and the Action System."],
+    agentClass: definition.category,
+    specialization: definition.subcategory,
+    catalogRarity: definition.rarity,
+    catalogPersonality: definition.personality,
+    terminalType: definition.activation_method,
+    discoverySource: definition.origin,
+    primaryBonusIds: ["labor_bonus", "action_bonus", "building_bonus", "research_bonus", "colony_bonus", "automation_bonus"].filter((key) => definition[key as keyof CanonicalAiLibraryAgent] !== 0),
+    unlockMethod: definition.activation_method,
+    restorationAction: definition.activation_method === "Recovered" || definition.activation_method === "Discovered" ? "Recover AI Core" : "Activate AI Core",
+    memoryIntegrityStart: definition.activation_method === "Recovered" ? "20-80%" : "100%",
+    levelCap: definition.max_level,
+    relationshipGroup: definition.category_id,
+    dialoguePackId: `AI-DIALOGUE-${definition.ai_id}`,
+    runtimeEnabled: definition.runtime_metadata.runtimeEnabled,
+    sourceStatus: definition.runtime_metadata.status,
+    libraryDefinition: definition
+  };
+}
+
+const importedAgentRecords = canonicalAiLibraryAgents.map(foundationAgentRecord);
 
 const seedAgents: AiAgentRecord[] = [
   {
@@ -791,6 +861,13 @@ export async function getAiAgentLibraryState(assetState?: AssetProductionState):
   const dialoguePacks = importedRecords.filter((agent) => agent.dialoguePackId).map((agent) => ({ id: agent.dialoguePackId!, displayName: agent.dialoguePackId!, agentIds: [agent.id], status: "draft" as const }));
   const relationships = importedRecords.filter((agent) => agent.relationshipGroup).map((agent) => ({ id: agent.relationshipGroup!, displayName: agent.relationshipGroup!, agentIds: [agent.id], status: "draft" as const }));
   return {
+    volume: { id: AI_LIBRARY_VOLUME_ID, number: 1, name: "Foundations", version: AI_LIBRARY_VERSION },
+    libraryAgents: canonicalAiLibraryAgents,
+    categories: aiLibraryCategories,
+    rarityCatalog: aiLibraryRarities,
+    personalityCatalog: aiLibraryPersonalityCatalog,
+    voiceCatalog: aiLibraryVoices,
+    assignmentRoles: aiLibraryAssignmentRoles,
     agents,
     records,
     variants,
@@ -837,13 +914,12 @@ export function validateAiAgentLibrary(state: AiAgentLibraryState) {
   if (new Set(ids).size !== ids.length) issues.push("AI agent IDs must be unique.");
   if (new Set(variantIds).size !== variantIds.length) issues.push("AI agent variant IDs must be unique.");
   const importedIds = state.records.filter((agent) => /^AI-\d{4}$/.test(agent.id)).map((agent) => agent.id);
-  if (importedIds.length !== 10) issues.push("NOVERIS AI Agent module must contain exactly ten starter records.");
-  for (let index = 1; index <= 10; index += 1) {
+  if (importedIds.length !== 75) issues.push("AI Library Volume I must contain exactly 75 numbered records.");
+  for (let index = 1; index <= 75; index += 1) {
     const expectedId = `AI-${String(index).padStart(4, "0")}`;
-    if (!importedIds.includes(expectedId)) issues.push(`NOVERIS AI Agent module is missing ${expectedId}.`);
+    if (!importedIds.includes(expectedId)) issues.push(`AI Library Volume I is missing ${expectedId}.`);
   }
-  const terminalIds = new Set(state.terminals.flatMap((terminal) => terminal.agentIds));
-  for (const agentId of importedIds) if (!terminalIds.has(agentId)) issues.push(`${agentId} must resolve to a Forgotten Terminal record.`);
+  issues.push(...validateCanonicalAiLibrary().issues);
   if (!state.records.length) issues.push("At least one AI agent record is required.");
   if (!state.variants.length) issues.push("At least one AI agent variant record is required.");
   const defaults = state.records.filter((agent) => agent.defaultForNewPlayers);
@@ -884,6 +960,12 @@ export async function getAiAgentLibraryRuntimeExports(assetState?: AssetProducti
   if (!validation.valid) throw new Error(`AI Agent Library validation failed: ${validation.issues.join(" ")}`);
   const runtime = getAiAgentRuntimeModules(assetState);
   return {
+    ai_library: state.libraryAgents,
+    ai_categories: state.categories,
+    ai_rarity: state.rarityCatalog,
+    ai_personality_catalog: state.personalityCatalog,
+    ai_voice_catalog: state.voiceCatalog,
+    ai_assignment_roles: state.assignmentRoles,
     ai_agents: runtime.aiAgents,
     forgotten_terminals: state.terminals.filter((record) => record.status === "published"),
     memory_fragments: state.memoryFragments.filter((record) => record.status === "published"),

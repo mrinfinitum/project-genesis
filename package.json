@@ -21,7 +21,9 @@
     "verify:resource-taxonomy": "tsx scripts/verify-resource-taxonomy.ts",
     "audit:resource-discovery": "tsx scripts/audit-resource-discovery-reclassification.ts",
     "verify:resource-discovery": "tsx scripts/verify-resource-discovery-reclassification.ts",
-    "verify:labor-generation": "tsx scripts/verify-labor-generation.ts"
+    "verify:labor-generation": "tsx scripts/verify-labor-generation.ts",
+    "export:ai-library": "tsx scripts/export-ai-library.ts",
+    "verify:ai-library": "tsx scripts/verify-ai-library.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",

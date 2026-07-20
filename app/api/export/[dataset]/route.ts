@@ -63,6 +63,18 @@ const jsonDatasets = new Set([
   "civilization-bonuses",
   "ai_agents",
   "ai-agents",
+  "ai_library",
+  "ai-library",
+  "ai_categories",
+  "ai-categories",
+  "ai_rarity",
+  "ai-rarity",
+  "ai_personality_catalog",
+  "ai-personality-catalog",
+  "ai_voice_catalog",
+  "ai-voice-catalog",
+  "ai_assignment_roles",
+  "ai-assignment-roles",
   "forgotten_terminals",
   "forgotten-terminals",
   "memory_fragments",
@@ -119,6 +131,18 @@ const jsonDatasets = new Set([
   "civilization-bonuses.json",
   "ai_agents.json",
   "ai-agents.json",
+  "ai_library.json",
+  "ai-library.json",
+  "ai_categories.json",
+  "ai-categories.json",
+  "ai_rarity.json",
+  "ai-rarity.json",
+  "ai_personality_catalog.json",
+  "ai-personality-catalog.json",
+  "ai_voice_catalog.json",
+  "ai-voice-catalog.json",
+  "ai_assignment_roles.json",
+  "ai-assignment-roles.json",
   "forgotten_terminals.json",
   "forgotten-terminals.json",
   "memory_fragments.json",
@@ -183,7 +207,7 @@ export async function GET(request: Request, { params }: Params) {
     });
   }
 
-  if (["ai_agents", "forgotten_terminals", "memory_fragments", "ai_relationships", "dialogue_packs"].includes(normalized)) {
+  if (["ai_library", "ai_categories", "ai_rarity", "ai_personality_catalog", "ai_voice_catalog", "ai_assignment_roles", "ai_agents", "forgotten_terminals", "memory_fragments", "ai_relationships", "dialogue_packs"].includes(normalized)) {
     const exports = await getAiAgentLibraryRuntimeExports();
     return NextResponse.json(exports[normalized as keyof typeof exports]);
   }

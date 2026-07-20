@@ -682,6 +682,72 @@ export type AiAgentDefinition = {
   aliases?: string[];
 };
 
+export type CanonicalAiLibraryAgent = {
+  ai_id: string;
+  name: string;
+  codename: string;
+  volume_id: "ai-volume-01-foundations";
+  volume_number: 1;
+  collection: "Foundations";
+  category: string;
+  category_id: string;
+  subcategory: string;
+  rarity: string;
+  generation: string;
+  manufacturer: string;
+  origin: string;
+  creator: string;
+  activation_method: string;
+  description: string;
+  purpose: string;
+  primary_function: string;
+  secondary_functions: string[];
+  labor_bonus: number;
+  action_bonus: number;
+  building_bonus: number;
+  research_bonus: number;
+  colony_bonus: number;
+  automation_bonus: number;
+  unique_traits: string[];
+  personality: string;
+  voice_style: string;
+  dialogue_examples: string[];
+  memory_fragments: string[];
+  relationships: string[];
+  assignment_roles: string[];
+  upgrade_path: string[];
+  experience_curve: { id: "ai-foundation-standard-v1"; formula: string };
+  max_level: 50;
+  portrait_prompt: string;
+  visual_theme: string;
+  runtime_metadata: {
+    schemaVersion: "ai-library-v1";
+    runtimeEnabled: true;
+    status: "canonical";
+    localizationKey: string;
+    portraitArtKey: string;
+  };
+};
+
+export type AiLibraryCategoryDefinition = {
+  id: string;
+  displayName: string;
+  subcategory: string;
+  purpose: string;
+  primaryFunction: string;
+  secondaryFunctions: string[];
+  assignments: string[];
+  bonuses: { labor: number; action: number; building: number; research: number; colony: number; automation: number };
+  theme: string;
+};
+
+export type AiLibraryRarityDefinition = {
+  id: string;
+  displayName: string;
+  order: number;
+  volumeOneAllowed: boolean;
+};
+
 export type AiAgentVariantDefinition = {
   id: string;
   agentId: string;
@@ -3178,6 +3244,12 @@ export type GameRuntimeData = {
   offlineProgressionPolicies: OfflineProgressionPolicy[];
   economyCalculationRules: EconomyCalculationRules;
   laborGenerationFramework: LaborGenerationFramework;
+  aiLibrary: CanonicalAiLibraryAgent[];
+  aiCategories: AiLibraryCategoryDefinition[];
+  aiRarity: AiLibraryRarityDefinition[];
+  aiPersonalityCatalog: string[];
+  aiVoiceCatalog: string[];
+  aiAssignmentRoles: string[];
   aiAgents: AiAgentDefinition[];
   aiAgentVariants: AiAgentVariantDefinition[];
   aiAgentPersonalities: AiAgentPersonalityDefinition[];

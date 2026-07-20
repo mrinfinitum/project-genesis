@@ -1,0 +1,62 @@
+[
+  {
+    "id": "common",
+    "displayName": "Common",
+    "order": 1,
+    "volumeOneAllowed": true
+  },
+  {
+    "id": "uncommon",
+    "displayName": "Uncommon",
+    "order": 2,
+    "volumeOneAllowed": true
+  },
+  {
+    "id": "specialized",
+    "displayName": "Specialized",
+    "order": 3,
+    "volumeOneAllowed": true
+  },
+  {
+    "id": "rare",
+    "displayName": "Rare",
+    "order": 4,
+    "volumeOneAllowed": true
+  },
+  {
+    "id": "epic",
+    "displayName": "Epic",
+    "order": 5,
+    "volumeOneAllowed": true
+  },
+  {
+    "id": "legendary",
+    "displayName": "Legendary",
+    "order": 6,
+    "volumeOneAllowed": false
+  },
+  {
+    "id": "ancient",
+    "displayName": "Ancient",
+    "order": 7,
+    "volumeOneAllowed": false
+  },
+  {
+    "id": "genesis",
+    "displayName": "Genesis",
+    "order": 8,
+    "volumeOneAllowed": false
+  },
+  {
+    "id": "mythic",
+    "displayName": "Mythic",
+    "order": 9,
+    "volumeOneAllowed": false
+  },
+  {
+    "id": "singularity",
+    "displayName": "Singularity",
+    "order": 10,
+    "volumeOneAllowed": false
+  }
+]

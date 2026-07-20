@@ -14,5 +14,5 @@ export default async function AiAgentsPage({ searchParams }: { searchParams?: Ai
   const params = await searchParams;
   const assetState = await getAssetProductionState();
   const state = await getAiAgentLibraryState(assetState);
-  return <AiAgentsLibrary state={state} activeSection={firstParam(params?.section) ?? "agents"} activeEntry={firstParam(params?.entry)} />;
+  return <AiAgentsLibrary state={state} activeSection={firstParam(params?.section) ?? "library"} activeEntry={firstParam(params?.entry)} />;
 }

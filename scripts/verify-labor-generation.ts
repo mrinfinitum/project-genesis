@@ -17,7 +17,7 @@ async function main() {
 
   const runtime = await buildCanonicalRuntimeExportPayload();
   const runtimeValidation = validateGameRuntimeData(runtime);
-  assert(runtime.metadata.contentVersion === gameRuntimeContentVersion && gameRuntimeContentVersion === 36, "Runtime must publish Labor Generation Framework at contentVersion 36.");
+  assert(runtime.metadata.contentVersion === gameRuntimeContentVersion && gameRuntimeContentVersion >= 36, "Runtime must publish Labor Generation Framework at contentVersion 36 or newer.");
   assert(runtime.laborGenerationFramework.id === laborGenerationFramework.id, "Canonical runtime is missing Labor Generation Framework.");
   assert(Boolean(runtime.metadata.checksum), "Canonical runtime checksum is missing.");
   assert(!runtimeValidation.issues.some((issue) => issue.severity === "error"), runtimeValidation.issues.map((issue) => `${issue.code}: ${issue.message}`).join("\n"));
