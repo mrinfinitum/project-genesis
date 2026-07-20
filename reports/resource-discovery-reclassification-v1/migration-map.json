@@ -1,0 +1,242 @@
+[
+  {
+    "legacyResourceId": "RES-0108",
+    "legacyResourceName": "Ancient Circuit",
+    "replacementResourceId": "RES-0100",
+    "discoveryId": "DISC-MIGRATED-0108",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-0109",
+    "legacyResourceName": "Relic Fragments",
+    "replacementResourceId": "RES-0106",
+    "discoveryId": "DISC-MIGRATED-0109",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-0110",
+    "legacyResourceName": "Temple Stone",
+    "replacementResourceId": "RES-0001",
+    "discoveryId": "DISC-MIGRATED-0110",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-0111",
+    "legacyResourceName": "Lost Archive",
+    "replacementResourceId": "RES-0192",
+    "discoveryId": "DISC-MIGRATED-0111",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-0112",
+    "legacyResourceName": "Ancient Memory Crystal",
+    "replacementResourceId": "RES-0101",
+    "discoveryId": "DISC-MIGRATED-0112",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-0113",
+    "legacyResourceName": "Machine Relic",
+    "replacementResourceId": "RES-0099",
+    "discoveryId": "DISC-MIGRATED-0113",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-0114",
+    "legacyResourceName": "Empire Seal",
+    "replacementResourceId": "RES-0106",
+    "discoveryId": "DISC-MIGRATED-0114",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-0115",
+    "legacyResourceName": "Harmony Tablet",
+    "replacementResourceId": "RES-0101",
+    "discoveryId": "DISC-MIGRATED-0115",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-0116",
+    "legacyResourceName": "Void Tablet",
+    "replacementResourceId": "RES-0080",
+    "discoveryId": "REL-0149",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-0117",
+    "legacyResourceName": "First Civilization Artifact",
+    "replacementResourceId": "RES-0106",
+    "discoveryId": "DISC-MIGRATED-0117",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-0118",
+    "legacyResourceName": "Ancient Reactor",
+    "replacementResourceId": "RES-0102",
+    "discoveryId": "DISC-MIGRATED-0118",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-0119",
+    "legacyResourceName": "Relic Core",
+    "replacementResourceId": "RES-0102",
+    "discoveryId": "DISC-MIGRATED-0119",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-0120",
+    "legacyResourceName": "Lost Star Map",
+    "replacementResourceId": "RES-0193",
+    "discoveryId": "DISC-MIGRATED-0120",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-0121",
+    "legacyResourceName": "Arcology Blueprint",
+    "replacementResourceId": "RES-0092",
+    "discoveryId": "DISC-MIGRATED-0121",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-0122",
+    "legacyResourceName": "City Core",
+    "replacementResourceId": "RES-0092",
+    "discoveryId": "DISC-MIGRATED-0122",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-0123",
+    "legacyResourceName": "War Core",
+    "replacementResourceId": "RES-0093",
+    "discoveryId": "DISC-MIGRATED-0123",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-0124",
+    "legacyResourceName": "Capital Core",
+    "replacementResourceId": "RES-0092",
+    "discoveryId": "DISC-MIGRATED-0124",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-0125",
+    "legacyResourceName": "Universal Knowledge Fragment",
+    "replacementResourceId": "RES-0101",
+    "discoveryId": "DISC-MIGRATED-0125",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-PROFILE-ABYSSAL-RELIC",
+    "legacyResourceName": "Abyssal Relic",
+    "replacementResourceId": "RES-0107",
+    "discoveryId": "DISC-MIGRATED-PROFILE-ABYSSAL-RELIC",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-PROFILE-ANCIENT-AI-FRAGMENT",
+    "legacyResourceName": "Ancient AI Fragment",
+    "replacementResourceId": "RES-0100",
+    "discoveryId": "DISC-MIGRATED-PROFILE-ANCIENT-AI-FRAGMENT",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-PROFILE-ANCIENT-BONE",
+    "legacyResourceName": "Ancient Bone",
+    "replacementResourceId": "RES-0060",
+    "discoveryId": "DISC-MIGRATED-PROFILE-ANCIENT-BONE",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-PROFILE-ANCIENT-FOSSILS",
+    "legacyResourceName": "Ancient Fossils",
+    "replacementResourceId": "RES-0060",
+    "discoveryId": "DISC-MIGRATED-PROFILE-ANCIENT-FOSSILS",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-PROFILE-BATTLE-RELICS",
+    "legacyResourceName": "Battle Relics",
+    "replacementResourceId": "RES-0106",
+    "discoveryId": "DISC-MIGRATED-PROFILE-BATTLE-RELICS",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-PROFILE-COLLECTIVE-MIND-FRAGMENT",
+    "legacyResourceName": "Collective Mind Fragment",
+    "replacementResourceId": "RES-0103",
+    "discoveryId": "DISC-MIGRATED-PROFILE-COLLECTIVE-MIND-FRAGMENT",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-PROFILE-FOSSILS",
+    "legacyResourceName": "Fossils",
+    "replacementResourceId": "RES-0060",
+    "discoveryId": "DISC-MIGRATED-PROFILE-FOSSILS",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-PROFILE-HARMONY-FRAGMENT",
+    "legacyResourceName": "Harmony Fragment",
+    "replacementResourceId": "RES-0101",
+    "discoveryId": "DISC-MIGRATED-PROFILE-HARMONY-FRAGMENT",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-0159",
+    "legacyResourceName": "Ancient Core",
+    "replacementResourceId": "RES-0106",
+    "discoveryId": "DISC-MIGRATED-0159",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-PROFILE-UNIVERSAL-ANOMALY",
+    "legacyResourceName": "Universal Anomaly",
+    "replacementResourceId": "RES-0127",
+    "discoveryId": "DISC-MIGRATED-PROFILE-UNIVERSAL-ANOMALY",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-0174",
+    "legacyResourceName": "Genesis Heart",
+    "replacementResourceId": "RES-0173",
+    "discoveryId": "DISC-MIGRATED-0174",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  },
+  {
+    "legacyResourceId": "RES-0176",
+    "legacyResourceName": "Genesis Memory",
+    "replacementResourceId": "RES-0173",
+    "discoveryId": "DISC-MIGRATED-0176",
+    "decision": "MOVE_TO_DISCOVERY",
+    "compatibility": "Legacy resource ID remains deprecated and resolves to replacement resource"
+  }
+]

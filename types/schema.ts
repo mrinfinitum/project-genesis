@@ -231,6 +231,10 @@ export type ResourceCatalogItem = {
   extraction_method?: string;
   required_technology?: string[];
   resource_profile_eligible?: boolean;
+  recipe_ids?: string[];
+  produced_by_ids?: string[];
+  consumed_by_ids?: string[];
+  harvested_from_discovery_ids?: string[];
   element?: {
     atomic_number: number;
     chemical_symbol: string;

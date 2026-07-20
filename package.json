@@ -18,7 +18,9 @@
     "export:resource-catalog-csv": "tsx scripts/export-resource-catalog-csv.ts",
     "export:discovery-catalog-csv": "tsx scripts/export-discovery-catalog-csv.ts",
     "audit:resource-taxonomy": "tsx scripts/audit-resource-taxonomy.ts",
-    "verify:resource-taxonomy": "tsx scripts/verify-resource-taxonomy.ts"
+    "verify:resource-taxonomy": "tsx scripts/verify-resource-taxonomy.ts",
+    "audit:resource-discovery": "tsx scripts/audit-resource-discovery-reclassification.ts",
+    "verify:resource-discovery": "tsx scripts/verify-resource-discovery-reclassification.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",

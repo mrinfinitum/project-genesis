@@ -7,7 +7,7 @@ const outputPath = path.join(process.cwd(), "reports", "discovery-catalog", "can
 const nestedFields = new Set(["spawnRules", "assetProfile", "promptProfile"]);
 const leadingFields = [
   "id", "slug", "sourceSlug", "volumeId", "volumeName", "displayName", "scientificName", "catalogName",
-  "categoryId", "classId", "subclassId", "subcategoryId", "rarity", "publicationStatus", "artworkStatus",
+  "categoryId", "classId", "subclassId", "subcategoryId", "purposeCategoryId", "purposeSubcategoryId", "rarity", "publicationStatus", "artworkStatus",
   "canonicalVersion", "description", "lore", "scientificNotes", "civilizationNotes", "discoverySummary"
 ];
 

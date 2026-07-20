@@ -88,5 +88,65 @@
     "legacy_resource_id": "RES-0125",
     "canonical_discovery_id": "DISC-MIGRATED-0125",
     "existing_match_reused": false
+  },
+  {
+    "legacy_resource_id": "RES-PROFILE-ABYSSAL-RELIC",
+    "canonical_discovery_id": "DISC-MIGRATED-PROFILE-ABYSSAL-RELIC",
+    "existing_match_reused": false
+  },
+  {
+    "legacy_resource_id": "RES-PROFILE-ANCIENT-AI-FRAGMENT",
+    "canonical_discovery_id": "DISC-MIGRATED-PROFILE-ANCIENT-AI-FRAGMENT",
+    "existing_match_reused": false
+  },
+  {
+    "legacy_resource_id": "RES-PROFILE-ANCIENT-BONE",
+    "canonical_discovery_id": "DISC-MIGRATED-PROFILE-ANCIENT-BONE",
+    "existing_match_reused": false
+  },
+  {
+    "legacy_resource_id": "RES-PROFILE-ANCIENT-FOSSILS",
+    "canonical_discovery_id": "DISC-MIGRATED-PROFILE-ANCIENT-FOSSILS",
+    "existing_match_reused": false
+  },
+  {
+    "legacy_resource_id": "RES-PROFILE-BATTLE-RELICS",
+    "canonical_discovery_id": "DISC-MIGRATED-PROFILE-BATTLE-RELICS",
+    "existing_match_reused": false
+  },
+  {
+    "legacy_resource_id": "RES-PROFILE-COLLECTIVE-MIND-FRAGMENT",
+    "canonical_discovery_id": "DISC-MIGRATED-PROFILE-COLLECTIVE-MIND-FRAGMENT",
+    "existing_match_reused": false
+  },
+  {
+    "legacy_resource_id": "RES-PROFILE-FOSSILS",
+    "canonical_discovery_id": "DISC-MIGRATED-PROFILE-FOSSILS",
+    "existing_match_reused": false
+  },
+  {
+    "legacy_resource_id": "RES-PROFILE-HARMONY-FRAGMENT",
+    "canonical_discovery_id": "DISC-MIGRATED-PROFILE-HARMONY-FRAGMENT",
+    "existing_match_reused": false
+  },
+  {
+    "legacy_resource_id": "RES-0159",
+    "canonical_discovery_id": "DISC-MIGRATED-0159",
+    "existing_match_reused": false
+  },
+  {
+    "legacy_resource_id": "RES-PROFILE-UNIVERSAL-ANOMALY",
+    "canonical_discovery_id": "DISC-MIGRATED-PROFILE-UNIVERSAL-ANOMALY",
+    "existing_match_reused": false
+  },
+  {
+    "legacy_resource_id": "RES-0174",
+    "canonical_discovery_id": "DISC-MIGRATED-0174",
+    "existing_match_reused": false
+  },
+  {
+    "legacy_resource_id": "RES-0176",
+    "canonical_discovery_id": "DISC-MIGRATED-0176",
+    "existing_match_reused": false
   }
 ]

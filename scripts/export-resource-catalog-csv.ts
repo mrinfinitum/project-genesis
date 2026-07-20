@@ -1,6 +1,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { toCsv } from "@/lib/export/csv";
+import { canonicalDiscoveries } from "@/lib/discovery";
 import { ResourceService } from "@/lib/resources/service";
 
 const outputPath = path.join(process.cwd(), "reports", "resource-taxonomy-v3", "canonical-resource-catalog.csv");
@@ -10,6 +11,12 @@ function list(values: string[] | undefined) {
 }
 
 async function main() {
+  const harvestedFromByResourceId = new Map<string, string[]>();
+  for (const discovery of canonicalDiscoveries) {
+    for (const resourceId of discovery.harvestedResourceIds ?? []) {
+      harvestedFromByResourceId.set(resourceId, [...(harvestedFromByResourceId.get(resourceId) ?? []), discovery.id]);
+    }
+  }
   const rows = [...ResourceService.catalog]
     .sort((left, right) =>
       (left.primary_category ?? left.category).localeCompare(right.primary_category ?? right.category) ||
@@ -50,6 +57,10 @@ async function main() {
       minimum_research_tier: resource.minimum_research_tier ?? "",
       extraction_method: resource.extraction_method ?? "",
       required_technology: list(resource.required_technology),
+      recipe_ids: list(resource.recipe_ids),
+      produced_by_ids: list(resource.produced_by_ids),
+      consumed_by_ids: list(resource.consumed_by_ids),
+      harvested_from_discovery_ids: list(harvestedFromByResourceId.get(resource.id) ?? resource.harvested_from_discovery_ids),
       resource_profile_eligible: resource.resource_profile_eligible ?? true,
       atomic_number: resource.element?.atomic_number ?? "",
       chemical_symbol: resource.element?.chemical_symbol ?? "",

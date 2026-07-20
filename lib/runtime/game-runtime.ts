@@ -11,7 +11,7 @@ import { buildBuildingClassifications, canonicalBuildingLibrary, canonicalBuildi
 import { civilizationProgressionFramework, validateCivilizationProgressionFramework } from "@/lib/civilization/progression-framework";
 import { colonizationFramework, validateColonizationFramework } from "@/lib/colonization/framework";
 import { getGameData } from "@/lib/data";
-import { canonicalDiscoveries, discoveryCategories, discoveryChains, discoveryCollections, discoveryMilestones, discoveryPlayerCollectionSchema, discoveryRarities, validateDiscoverySystem } from "@/lib/discovery";
+import { canonicalDiscoveries, discoveryCategories, discoveryChains, discoveryCollections, discoveryMilestones, discoveryPlayerCollectionSchema, discoveryPurposeCategories, discoveryRarities, validateDiscoverySystem } from "@/lib/discovery";
 import { universalDiscoveryRegistryContract, universalDiscoveryRegistryVersion, validateUniversalDiscoveryRegistryContract } from "@/lib/discovery/universal-registry";
 import { resourceEconomyLogisticsFramework, validateResourceEconomyLogisticsFramework } from "@/lib/economy/logistics-framework";
 import { dynamicEventFramework, validateDynamicEventFramework } from "@/lib/events/framework";
@@ -65,7 +65,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 34;
+export const gameRuntimeContentVersion = 35;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -92,6 +92,7 @@ export type RobloxRuntimeExportPayload = {
   defaultAiAgentId: GameRuntimeData["defaultAiAgentId"];
   aiAgentSaveSchema: GameRuntimeData["aiAgentSaveSchema"];
   discoveryCategories: GameRuntimeData["discoveryCategories"];
+  discoveryPurposeCategories: GameRuntimeData["discoveryPurposeCategories"];
   discoveryRarities: GameRuntimeData["discoveryRarities"];
   discoveries: GameRuntimeData["discoveries"];
   discoveryCollections: GameRuntimeData["discoveryCollections"];
@@ -266,6 +267,10 @@ function resourceToRuntime(resource: ResourceCatalogItem): ResourceDefinition {
     primaryCategory: resource.primary_category,
     subcategory: resource.subcategory,
     secondaryCategories: resource.secondary_categories,
+    recipeIds: [...(resource.recipe_ids ?? [])],
+    producedByIds: [...(resource.produced_by_ids ?? [])],
+    consumedByIds: [...(resource.consumed_by_ids ?? [])],
+    harvestedFromDiscoveryIds: canonicalDiscoveries.filter((discovery) => discovery.harvestedResourceIds?.includes(resource.id)).map((discovery) => discovery.id),
     element: resource.element ? { ...resource.element } : undefined,
     availability: {
       earthAvailable: resource.earth_available,
@@ -594,6 +599,7 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
       ...category,
       subcategories: [...category.subcategories].sort(byDisplayOrderThenId)
     })),
+    discoveryPurposeCategories: [...runtimeData.discoveryPurposeCategories].sort(byDisplayOrderThenId),
     discoveryRarities: [...runtimeData.discoveryRarities].sort(byDisplayOrderThenId),
     discoveries: [...runtimeData.discoveries].sort(byId),
     discoveryCollections: [...runtimeData.discoveryCollections].sort(byId),
@@ -1950,7 +1956,7 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
     issues.push({ severity: "error", code: "resource_migration_reference_invalid", message: "Resource migrations reference missing canonical resource IDs.", records: invalidMigrationReferences });
   }
 
-  for (const [moduleName, rows] of Object.entries({ eras: runtimeData.eras, economyDefinitions: runtimeData.economyDefinitions, economyBehaviorContracts: runtimeData.economyBehaviorContracts, eraEconomyProfiles: runtimeData.eraEconomyProfiles, resourceProducerDefinitions: runtimeData.resourceProducerDefinitions, buildingResourceEffects: runtimeData.buildingResourceEffects, economyScopeRules: runtimeData.economyScopeRules, economyTransactionReasons: runtimeData.economyTransactionReasons, economyRateBreakdownDefinitions: runtimeData.economyRateBreakdownDefinitions, offlineProgressionPolicies: runtimeData.offlineProgressionPolicies, inventoryResourceMetadata: runtimeData.inventoryResourceMetadata, aiAgents: runtimeData.aiAgents, aiAgentVariants: runtimeData.aiAgentVariants, discoveryCategories: runtimeData.discoveryCategories, discoveryRarities: runtimeData.discoveryRarities, discoveries: runtimeData.discoveries, discoveryCollections: runtimeData.discoveryCollections, discoveryChains: runtimeData.discoveryChains, resources: runtimeData.resources, buildingTaxonomy: runtimeData.buildingTaxonomy, buildingLibrary: runtimeData.buildingLibrary, buildingClassifications: runtimeData.buildingClassifications, upgradeCategories: runtimeData.upgradeCategories, upgrades: runtimeData.upgrades, assets: runtimeData.assets })) {
+  for (const [moduleName, rows] of Object.entries({ eras: runtimeData.eras, economyDefinitions: runtimeData.economyDefinitions, economyBehaviorContracts: runtimeData.economyBehaviorContracts, eraEconomyProfiles: runtimeData.eraEconomyProfiles, resourceProducerDefinitions: runtimeData.resourceProducerDefinitions, buildingResourceEffects: runtimeData.buildingResourceEffects, economyScopeRules: runtimeData.economyScopeRules, economyTransactionReasons: runtimeData.economyTransactionReasons, economyRateBreakdownDefinitions: runtimeData.economyRateBreakdownDefinitions, offlineProgressionPolicies: runtimeData.offlineProgressionPolicies, inventoryResourceMetadata: runtimeData.inventoryResourceMetadata, aiAgents: runtimeData.aiAgents, aiAgentVariants: runtimeData.aiAgentVariants, discoveryCategories: runtimeData.discoveryCategories, discoveryPurposeCategories: runtimeData.discoveryPurposeCategories, discoveryRarities: runtimeData.discoveryRarities, discoveries: runtimeData.discoveries, discoveryCollections: runtimeData.discoveryCollections, discoveryChains: runtimeData.discoveryChains, resources: runtimeData.resources, buildingTaxonomy: runtimeData.buildingTaxonomy, buildingLibrary: runtimeData.buildingLibrary, buildingClassifications: runtimeData.buildingClassifications, upgradeCategories: runtimeData.upgradeCategories, upgrades: runtimeData.upgrades, assets: runtimeData.assets })) {
     const duplicates = duplicateIds(rows as Array<{ id: string }>);
     if (duplicates.length) {
       issues.push({ severity: "error", code: "duplicate_id", message: `${moduleName} contains duplicate IDs.`, records: duplicates });
@@ -2207,6 +2213,7 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     defaultAiAgentId: sorted.defaultAiAgentId,
     aiAgentSaveSchema: sorted.aiAgentSaveSchema,
     discoveryCategories: sorted.discoveryCategories,
+    discoveryPurposeCategories: sorted.discoveryPurposeCategories,
     discoveryRarities: sorted.discoveryRarities,
     discoveries: sorted.discoveries,
     discoveryCollections: sorted.discoveryCollections,
@@ -2489,6 +2496,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     defaultAiAgentId: aiAgentModules.defaultAiAgentId,
     aiAgentSaveSchema: aiAgentModules.aiAgentSaveSchema,
     discoveryCategories: discoveryCategories.map((category) => ({ ...category, subcategories: category.subcategories.map((subcategory) => ({ ...subcategory })) })),
+    discoveryPurposeCategories: discoveryPurposeCategories.map((category) => ({ ...category })),
     discoveryRarities: discoveryRarities.map((rarity) => ({ ...rarity })),
     discoveries: canonicalDiscoveries.map((discovery) => ({ ...discovery, assetProfile: { ...discovery.assetProfile, variants: [...discovery.assetProfile.variants] }, spawnRules: { ...discovery.spawnRules } })),
     discoveryCollections: discoveryCollections.map((collection) => ({ ...collection, discoveryIds: [...collection.discoveryIds] })),
@@ -2555,6 +2563,7 @@ export async function getGameRuntimeData() {
     defaultAiAgentId: base.defaultAiAgentId,
     aiAgentSaveSchema: base.aiAgentSaveSchema,
     discoveryCategories: base.discoveryCategories,
+    discoveryPurposeCategories: base.discoveryPurposeCategories,
     discoveryRarities: base.discoveryRarities,
     discoveries: base.discoveries,
     discoveryCollections: base.discoveryCollections,
@@ -2776,6 +2785,7 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     offlineProgressionPolicies: base.offlineProgressionPolicies,
     economyCalculationRules: base.economyCalculationRules,
     discoveryCategories: base.discoveryCategories,
+    discoveryPurposeCategories: base.discoveryPurposeCategories,
     discoveryRarities: base.discoveryRarities,
     discoveries: base.discoveries,
     discoveryCollections: base.discoveryCollections,

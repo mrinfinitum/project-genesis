@@ -1,0 +1,16 @@
+{
+  "generatedAt": "2026-07-20T16:05:30.820Z",
+  "taxonomyVersion": "resource-taxonomy-v3.1",
+  "activeResources": 354,
+  "deprecatedLegacyResources": 30,
+  "discoveryRecords": 7317,
+  "purposeCategories": 13,
+  "migratedResourceRecords": 30,
+  "validation": "Ready",
+  "relationshipCounts": {
+    "discoveriesWithResourceRelations": 44,
+    "discoveriesWithHarvestOutputs": 2311,
+    "resourceDiscoveryLinks": 51,
+    "harvestLinks": 5071
+  }
+}

@@ -12,11 +12,9 @@
   },
   {
     "category": "Ancient Materials",
-    "resourceCount": 8,
+    "resourceCount": 3,
     "subcategories": [
-      "Ancient Fragments",
-      "Fossils and Remains",
-      "Relic Materials"
+      "Engineered Ancient Materials"
     ]
   },
   {
@@ -34,10 +32,11 @@
   },
   {
     "category": "Chemicals and Compounds",
-    "resourceCount": 7,
+    "resourceCount": 9,
     "subcategories": [
       "Catalysts",
       "Chemical Waste",
+      "General Compounds",
       "Hydrocarbons",
       "Oxides",
       "Reactive Compounds",
@@ -46,7 +45,7 @@
   },
   {
     "category": "Crystals",
-    "resourceCount": 28,
+    "resourceCount": 27,
     "subcategories": [
       "Cryogenic Crystals",
       "Energy Crystals",
@@ -77,7 +76,7 @@
   },
   {
     "category": "Energy Materials",
-    "resourceCount": 21,
+    "resourceCount": 20,
     "subcategories": [
       "Condensed Energy Cores",
       "Energy Catalysts",
@@ -88,7 +87,7 @@
   },
   {
     "category": "Exotic Matter",
-    "resourceCount": 22,
+    "resourceCount": 21,
     "subcategories": [
       "Dark and Negative Matter",
       "General Exotic Matter",
@@ -103,7 +102,7 @@
   },
   {
     "category": "Fuels",
-    "resourceCount": 5,
+    "resourceCount": 6,
     "subcategories": [
       "Fossil Fuels",
       "Fusion Fuels",
@@ -113,7 +112,7 @@
   },
   {
     "category": "Gases",
-    "resourceCount": 22,
+    "resourceCount": 23,
     "subcategories": [
       "Biological Gases",
       "Chemical Gases",
@@ -125,7 +124,7 @@
   },
   {
     "category": "Genesis Matter",
-    "resourceCount": 14,
+    "resourceCount": 12,
     "subcategories": [
       "Genesis Alloys",
       "Genesis Biological Matter",
@@ -147,8 +146,9 @@
   },
   {
     "category": "Isotopes",
-    "resourceCount": 4,
+    "resourceCount": 8,
     "subcategories": [
+      "General Isotopes",
       "Helium and Solar Isotopes",
       "Hydrogen Isotopes"
     ]
@@ -179,20 +179,22 @@
   },
   {
     "category": "Minerals",
-    "resourceCount": 4,
+    "resourceCount": 9,
     "subcategories": [
       "Carbon Minerals",
+      "General Minerals",
       "Metallic Minerals",
       "Oxide Minerals"
     ]
   },
   {
     "category": "Ores",
-    "resourceCount": 6,
+    "resourceCount": 10,
     "subcategories": [
       "Critical Metal Ores",
       "Exotic Ores",
-      "Metal Ores"
+      "Metal Ores",
+      "Mineral Ores"
     ]
   },
   {
@@ -208,7 +210,7 @@
   },
   {
     "category": "Primordial Matter",
-    "resourceCount": 9,
+    "resourceCount": 8,
     "subcategories": [
       "Prime Matter",
       "World Seeds"

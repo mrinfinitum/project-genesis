@@ -1,0 +1,80 @@
+[
+  {
+    "id": "curiosities",
+    "displayName": "Curiosities",
+    "displayOrder": 1,
+    "recordCount": 1120
+  },
+  {
+    "id": "flora",
+    "displayName": "Flora",
+    "displayOrder": 2,
+    "recordCount": 210
+  },
+  {
+    "id": "fauna",
+    "displayName": "Fauna",
+    "displayOrder": 3,
+    "recordCount": 758
+  },
+  {
+    "id": "species",
+    "displayName": "Species",
+    "displayOrder": 4,
+    "recordCount": 752
+  },
+  {
+    "id": "artifacts",
+    "displayName": "Artifacts",
+    "displayOrder": 5,
+    "recordCount": 1118
+  },
+  {
+    "id": "ancient-structures",
+    "displayName": "Ancient Structures",
+    "displayOrder": 6,
+    "recordCount": 616
+  },
+  {
+    "id": "ruins",
+    "displayName": "Ruins",
+    "displayOrder": 7,
+    "recordCount": 5
+  },
+  {
+    "id": "civilizations",
+    "displayName": "Civilizations",
+    "displayOrder": 8,
+    "recordCount": 7
+  },
+  {
+    "id": "historical-records",
+    "displayName": "Historical Records",
+    "displayOrder": 9,
+    "recordCount": 107
+  },
+  {
+    "id": "ai-discoveries",
+    "displayName": "Ai Discoveries",
+    "displayOrder": 10,
+    "recordCount": 92
+  },
+  {
+    "id": "wonders",
+    "displayName": "Wonders",
+    "displayOrder": 11,
+    "recordCount": 614
+  },
+  {
+    "id": "geological-features",
+    "displayName": "Geological Features",
+    "displayOrder": 12,
+    "recordCount": 573
+  },
+  {
+    "id": "cosmic-phenomena",
+    "displayName": "Cosmic Phenomena",
+    "displayOrder": 13,
+    "recordCount": 1345
+  }
+]

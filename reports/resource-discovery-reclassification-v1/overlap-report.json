@@ -1,0 +1,50 @@
+[
+  {
+    "discoveryId": "GEO-0017",
+    "discoveryName": "Storm Core",
+    "resourceId": "RES-0185",
+    "intentionalRelationship": true
+  },
+  {
+    "discoveryId": "GEO-0027",
+    "discoveryName": "Void Crystal",
+    "resourceId": "RES-0080",
+    "intentionalRelationship": true
+  },
+  {
+    "discoveryId": "GEO-0527",
+    "discoveryName": "Iron Ore",
+    "resourceId": "RES-ORE-IRON",
+    "intentionalRelationship": true
+  },
+  {
+    "discoveryId": "TEC-0104",
+    "discoveryName": "Quantum Core",
+    "resourceId": "RES-0102",
+    "intentionalRelationship": true
+  },
+  {
+    "discoveryId": "UNK-0324",
+    "discoveryName": "Quantum Core",
+    "resourceId": "RES-0102",
+    "intentionalRelationship": true
+  },
+  {
+    "discoveryId": "UNK-0508",
+    "discoveryName": "Temporal Shard",
+    "resourceId": "RES-0138",
+    "intentionalRelationship": true
+  },
+  {
+    "discoveryId": "WON-0397",
+    "discoveryName": "Infinite Crystal",
+    "resourceId": "RES-PROFILE-INFINITE-CRYSTAL",
+    "intentionalRelationship": true
+  },
+  {
+    "discoveryId": "WON-0587",
+    "discoveryName": "Obsidian Crystal",
+    "resourceId": "RES-0088",
+    "intentionalRelationship": true
+  }
+]

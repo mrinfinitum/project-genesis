@@ -137,7 +137,39 @@ const profileSupplementalResourceCatalog: ResourceCatalogItem[] = [
     };
   });
 
-const sourceResourceCatalog = [...handoffResourceCatalog, ...supplementalResourceCatalog, ...profileSupplementalResourceCatalog];
+const classificationSupplementalResourceCatalog: ResourceCatalogItem[] = [
+  ["RES-ISOTOPE-TRITIUM", "Tritium", "Isotopes", "Rare", "Space", "Radioactive hydrogen isotope used in fusion systems and scientific research."],
+  ["RES-ISOTOPE-CARBON-14", "Carbon-14", "Isotopes", "Uncommon", "Planetary", "Radioactive carbon isotope used in dating, tracing, and research."],
+  ["RES-ISOTOPE-URANIUM-235", "Uranium-235", "Isotopes", "Rare", "Planetary", "Fissile uranium isotope used in advanced energy and research systems."],
+  ["RES-ISOTOPE-URANIUM-238", "Uranium-238", "Isotopes", "Uncommon", "Planetary", "Long-lived uranium isotope used in fuel cycles, shielding, and research."],
+  ["RES-MINERAL-CALCITE", "Calcite", "Minerals", "Common", "Earth", "Carbonate mineral used in construction, chemistry, and geological analysis."],
+  ["RES-MINERAL-CORUNDUM", "Corundum", "Minerals", "Uncommon", "Earth", "Hard aluminum oxide mineral used for abrasives and engineered materials."],
+  ["RES-MINERAL-HEMATITE", "Hematite", "Minerals", "Common", "Earth", "Iron oxide mineral and a principal repeatable source of iron."],
+  ["RES-ORE-IRON", "Iron Ore", "Ores", "Common", "Earth", "Mineable ore-grade material processed into canonical iron resources."],
+  ["RES-ORE-COPPER", "Copper Ore", "Ores", "Common", "Earth", "Mineable ore-grade material processed into canonical copper resources."],
+  ["RES-ORE-TITANIUM", "Titanium Ore", "Ores", "Uncommon", "Planetary", "Mineable titanium-bearing material used by advanced industry."],
+  ["RES-ORE-URANIUM", "Uranium Ore", "Ores", "Rare", "Planetary", "Mineable uranium-bearing material requiring radiation-safe extraction."],
+].map(([id, resource_name, category, rarity, discovery_tier, description]) => ({
+  id,
+  resource_name,
+  category,
+  rarity,
+  rarity_color: rarity === "Common" ? "#FFFFFF" : rarity === "Uncommon" ? "#2ECC71" : "#3498DB",
+  discovery_tier,
+  earth_available: discovery_tier === "Earth" ? "Yes" : "No",
+  first_unlock_requirement: discovery_tier === "Earth" ? "Material Analysis" : "Planetary Survey",
+  typical_planet_classes: ["Terrestrial", "Dead", "Desert", "Ice", "Lava"],
+  primary_uses: ["extraction", "processing", "industry", "research"],
+  base_trade_value: rarity === "Common" ? 12 : rarity === "Uncommon" ? 35 : 90,
+  stack_size: 9999,
+  description,
+  science_lore_notes: "Canonical classification baseline added by Resource and Discovery Reclassification v1.0.",
+  codex_implementation_notes: "Stable canonical ID. Do not rename or recycle.",
+  created_at: "2026-07-20T00:00:00.000Z",
+  updated_at: "2026-07-20T00:00:00.000Z"
+}));
+
+const sourceResourceCatalog = [...handoffResourceCatalog, ...supplementalResourceCatalog, ...profileSupplementalResourceCatalog, ...classificationSupplementalResourceCatalog];
 const deprecatedResourceCatalog = sourceResourceCatalog
   .filter((resource) => MOVED_RESOURCE_IDS.has(resource.id))
   .map((resource) => ({ ...normalizeResourceRecord(resource), status: "deprecated" as const }));

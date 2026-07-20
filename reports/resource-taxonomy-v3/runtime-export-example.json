@@ -1,6 +1,6 @@
 {
   "resourceTaxonomy": {
-    "version": "resource-taxonomy-v3.0",
+    "version": "resource-taxonomy-v3.1",
     "profileGenerationVersion": "planet-resource-taxonomy-v3",
     "validationStatus": "Ready"
   },
@@ -45,7 +45,7 @@
         "Fe"
       ],
       "legacy_category": "Metal",
-      "migration_version": "resource-taxonomy-v3.0",
+      "migration_version": "resource-taxonomy-v3.1",
       "status": "active",
       "radioactive": false,
       "synthetic": false,
@@ -58,6 +58,10 @@
         "Start"
       ],
       "resource_profile_eligible": true,
+      "recipe_ids": [],
+      "produced_by_ids": [],
+      "consumed_by_ids": [],
+      "harvested_from_discovery_ids": [],
       "element": {
         "atomic_number": 26,
         "resource_name": "Iron",
@@ -113,7 +117,7 @@
         "Cu"
       ],
       "legacy_category": "Metal",
-      "migration_version": "resource-taxonomy-v3.0",
+      "migration_version": "resource-taxonomy-v3.1",
       "status": "active",
       "radioactive": false,
       "synthetic": false,
@@ -126,6 +130,10 @@
         "Start"
       ],
       "resource_profile_eligible": true,
+      "recipe_ids": [],
+      "produced_by_ids": [],
+      "consumed_by_ids": [],
+      "harvested_from_discovery_ids": [],
       "element": {
         "atomic_number": 29,
         "resource_name": "Copper",
@@ -149,7 +157,7 @@
       "migration_action": "MOVE_TO_DISCOVERY",
       "canonical_resource_id": "RES-0100",
       "canonical_discovery_id": "DISC-MIGRATED-0108",
-      "migration_version": "resource-taxonomy-v3.0",
+      "migration_version": "resource-taxonomy-v3.1",
       "preserve_inventory_quantity": true,
       "conversion_rule": "Convert each legacy Ancient Circuit inventory unit to one unit of RES-0100; preserve the discovery unlock separately.",
       "notes": "Ancient Circuit is a unique found object, not a repeatable economic material."
@@ -160,7 +168,7 @@
       "migration_action": "MOVE_TO_DISCOVERY",
       "canonical_resource_id": "RES-0106",
       "canonical_discovery_id": "DISC-MIGRATED-0109",
-      "migration_version": "resource-taxonomy-v3.0",
+      "migration_version": "resource-taxonomy-v3.1",
       "preserve_inventory_quantity": true,
       "conversion_rule": "Convert each legacy Relic Fragments inventory unit to one unit of RES-0106; preserve the discovery unlock separately.",
       "notes": "Relic Fragments is a unique found object, not a repeatable economic material."

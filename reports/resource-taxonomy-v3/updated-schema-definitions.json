@@ -1,5 +1,5 @@
 {
-  "taxonomyVersion": "resource-taxonomy-v3.0",
+  "taxonomyVersion": "resource-taxonomy-v3.1",
   "profileGenerationVersion": "planet-resource-taxonomy-v3",
   "primaryCategories": [
     "Rocks and Geological Materials",
@@ -8,9 +8,9 @@
     "Chemicals and Compounds",
     "Fuels",
     "Elements",
-    "Crystals",
     "Minerals",
     "Ores",
+    "Crystals",
     "Ices and Frozen Volatiles",
     "Isotopes",
     "Biological Materials",
@@ -21,8 +21,7 @@
     "Exotic Matter",
     "Energy Materials",
     "Primordial Matter",
-    "Genesis Matter",
-    "Ancient Materials"
+    "Genesis Matter"
   ],
   "resourceFields": [
     "id",
@@ -59,6 +58,10 @@
     "extraction_method",
     "required_technology",
     "resource_profile_eligible",
+    "recipe_ids",
+    "produced_by_ids",
+    "consumed_by_ids",
+    "harvested_from_discovery_ids",
     "element"
   ],
   "elementFields": [

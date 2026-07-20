@@ -68,6 +68,10 @@ export type ResourceDefinition = {
     primary_category: string;
     subcategory: string;
   }>;
+  recipeIds?: string[];
+  producedByIds?: string[];
+  consumedByIds?: string[];
+  harvestedFromDiscoveryIds?: string[];
   element?: Record<string, unknown>;
   availability?: Record<string, unknown>;
 };
@@ -88,11 +92,19 @@ export type DiscoveryCategoryDefinition = {
   subcategories: Array<{ id: string; displayName: string; displayOrder: number }>;
 };
 
+export type DiscoveryPurposeCategoryDefinition = {
+  id: string;
+  displayName: string;
+  displayOrder: number;
+};
+
 export type DiscoveryDefinition = {
   id: string;
   displayName: string;
   categoryId: string;
   subcategoryId: string;
+  purposeCategoryId?: string;
+  purposeSubcategoryId?: string;
   scientificName: string;
   description: string;
   lore: string;
@@ -106,6 +118,12 @@ export type DiscoveryDefinition = {
   relatedResearchIds: string[];
   relatedBuildingIds: string[];
   relatedResourceIds: string[];
+  harvestedResourceIds?: string[];
+  relatedAiIds?: string[];
+  relatedSpeciesIds?: string[];
+  relatedStructureIds?: string[];
+  civilizationUnlockIds?: string[];
+  codexEntryId?: string;
   relatedPlanetIds: string[];
   relatedCivilizationIds: string[];
   relatedLifeformIds: string[];
@@ -3129,6 +3147,7 @@ export type GameRuntimeData = {
   defaultAiAgentId: string;
   aiAgentSaveSchema: AiAgentSaveSchemaDefinition;
   discoveryCategories: DiscoveryCategoryDefinition[];
+  discoveryPurposeCategories: DiscoveryPurposeCategoryDefinition[];
   discoveryRarities: DiscoveryRarityDefinition[];
   discoveries: DiscoveryDefinition[];
   discoveryCollections: DiscoveryCollectionDefinition[];

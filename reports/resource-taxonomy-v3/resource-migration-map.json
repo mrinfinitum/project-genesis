@@ -5,7 +5,7 @@
     "migration_action": "MOVE_TO_DISCOVERY",
     "canonical_resource_id": "RES-0100",
     "canonical_discovery_id": "DISC-MIGRATED-0108",
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "preserve_inventory_quantity": true,
     "conversion_rule": "Convert each legacy Ancient Circuit inventory unit to one unit of RES-0100; preserve the discovery unlock separately.",
     "notes": "Ancient Circuit is a unique found object, not a repeatable economic material."
@@ -16,7 +16,7 @@
     "migration_action": "MOVE_TO_DISCOVERY",
     "canonical_resource_id": "RES-0106",
     "canonical_discovery_id": "DISC-MIGRATED-0109",
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "preserve_inventory_quantity": true,
     "conversion_rule": "Convert each legacy Relic Fragments inventory unit to one unit of RES-0106; preserve the discovery unlock separately.",
     "notes": "Relic Fragments is a unique found object, not a repeatable economic material."
@@ -27,7 +27,7 @@
     "migration_action": "MOVE_TO_DISCOVERY",
     "canonical_resource_id": "RES-0001",
     "canonical_discovery_id": "DISC-MIGRATED-0110",
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "preserve_inventory_quantity": true,
     "conversion_rule": "Convert each legacy Temple Stone inventory unit to one unit of RES-0001; preserve the discovery unlock separately.",
     "notes": "Temple Stone is a unique found object, not a repeatable economic material."
@@ -38,7 +38,7 @@
     "migration_action": "MOVE_TO_DISCOVERY",
     "canonical_resource_id": "RES-0192",
     "canonical_discovery_id": "DISC-MIGRATED-0111",
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "preserve_inventory_quantity": true,
     "conversion_rule": "Convert each legacy Lost Archive inventory unit to one unit of RES-0192; preserve the discovery unlock separately.",
     "notes": "Lost Archive is a unique found object, not a repeatable economic material."
@@ -49,7 +49,7 @@
     "migration_action": "MOVE_TO_DISCOVERY",
     "canonical_resource_id": "RES-0101",
     "canonical_discovery_id": "DISC-MIGRATED-0112",
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "preserve_inventory_quantity": true,
     "conversion_rule": "Convert each legacy Ancient Memory Crystal inventory unit to one unit of RES-0101; preserve the discovery unlock separately.",
     "notes": "Ancient Memory Crystal is a unique found object, not a repeatable economic material."
@@ -60,7 +60,7 @@
     "migration_action": "MOVE_TO_DISCOVERY",
     "canonical_resource_id": "RES-0099",
     "canonical_discovery_id": "DISC-MIGRATED-0113",
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "preserve_inventory_quantity": true,
     "conversion_rule": "Convert each legacy Machine Relic inventory unit to one unit of RES-0099; preserve the discovery unlock separately.",
     "notes": "Machine Relic is a unique found object, not a repeatable economic material."
@@ -71,7 +71,7 @@
     "migration_action": "MOVE_TO_DISCOVERY",
     "canonical_resource_id": "RES-0106",
     "canonical_discovery_id": "DISC-MIGRATED-0114",
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "preserve_inventory_quantity": true,
     "conversion_rule": "Convert each legacy Empire Seal inventory unit to one unit of RES-0106; preserve the discovery unlock separately.",
     "notes": "Empire Seal is a unique found object, not a repeatable economic material."
@@ -82,7 +82,7 @@
     "migration_action": "MOVE_TO_DISCOVERY",
     "canonical_resource_id": "RES-0101",
     "canonical_discovery_id": "DISC-MIGRATED-0115",
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "preserve_inventory_quantity": true,
     "conversion_rule": "Convert each legacy Harmony Tablet inventory unit to one unit of RES-0101; preserve the discovery unlock separately.",
     "notes": "Harmony Tablet is a unique found object, not a repeatable economic material."
@@ -93,7 +93,7 @@
     "migration_action": "MOVE_TO_DISCOVERY",
     "canonical_resource_id": "RES-0080",
     "canonical_discovery_id": "REL-0149",
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "preserve_inventory_quantity": true,
     "conversion_rule": "Convert each legacy Void Tablet inventory unit to one unit of RES-0080; preserve the discovery unlock separately.",
     "notes": "Void Tablet is a unique found object, not a repeatable economic material."
@@ -104,7 +104,7 @@
     "migration_action": "MOVE_TO_DISCOVERY",
     "canonical_resource_id": "RES-0106",
     "canonical_discovery_id": "DISC-MIGRATED-0117",
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "preserve_inventory_quantity": true,
     "conversion_rule": "Convert each legacy First Civilization Artifact inventory unit to one unit of RES-0106; preserve the discovery unlock separately.",
     "notes": "First Civilization Artifact is a unique found object, not a repeatable economic material."
@@ -115,7 +115,7 @@
     "migration_action": "MOVE_TO_DISCOVERY",
     "canonical_resource_id": "RES-0102",
     "canonical_discovery_id": "DISC-MIGRATED-0118",
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "preserve_inventory_quantity": true,
     "conversion_rule": "Convert each legacy Ancient Reactor inventory unit to one unit of RES-0102; preserve the discovery unlock separately.",
     "notes": "Ancient Reactor is a unique found object, not a repeatable economic material."
@@ -126,7 +126,7 @@
     "migration_action": "MOVE_TO_DISCOVERY",
     "canonical_resource_id": "RES-0102",
     "canonical_discovery_id": "DISC-MIGRATED-0119",
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "preserve_inventory_quantity": true,
     "conversion_rule": "Convert each legacy Relic Core inventory unit to one unit of RES-0102; preserve the discovery unlock separately.",
     "notes": "Relic Core is a unique found object, not a repeatable economic material."
@@ -137,7 +137,7 @@
     "migration_action": "MOVE_TO_DISCOVERY",
     "canonical_resource_id": "RES-0193",
     "canonical_discovery_id": "DISC-MIGRATED-0120",
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "preserve_inventory_quantity": true,
     "conversion_rule": "Convert each legacy Lost Star Map inventory unit to one unit of RES-0193; preserve the discovery unlock separately.",
     "notes": "Lost Star Map is a unique found object, not a repeatable economic material."
@@ -148,7 +148,7 @@
     "migration_action": "MOVE_TO_DISCOVERY",
     "canonical_resource_id": "RES-0092",
     "canonical_discovery_id": "DISC-MIGRATED-0121",
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "preserve_inventory_quantity": true,
     "conversion_rule": "Convert each legacy Arcology Blueprint inventory unit to one unit of RES-0092; preserve the discovery unlock separately.",
     "notes": "Arcology Blueprint is a unique found object, not a repeatable economic material."
@@ -159,7 +159,7 @@
     "migration_action": "MOVE_TO_DISCOVERY",
     "canonical_resource_id": "RES-0092",
     "canonical_discovery_id": "DISC-MIGRATED-0122",
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "preserve_inventory_quantity": true,
     "conversion_rule": "Convert each legacy City Core inventory unit to one unit of RES-0092; preserve the discovery unlock separately.",
     "notes": "City Core is a unique found object, not a repeatable economic material."
@@ -170,7 +170,7 @@
     "migration_action": "MOVE_TO_DISCOVERY",
     "canonical_resource_id": "RES-0093",
     "canonical_discovery_id": "DISC-MIGRATED-0123",
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "preserve_inventory_quantity": true,
     "conversion_rule": "Convert each legacy War Core inventory unit to one unit of RES-0093; preserve the discovery unlock separately.",
     "notes": "War Core is a unique found object, not a repeatable economic material."
@@ -181,7 +181,7 @@
     "migration_action": "MOVE_TO_DISCOVERY",
     "canonical_resource_id": "RES-0092",
     "canonical_discovery_id": "DISC-MIGRATED-0124",
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "preserve_inventory_quantity": true,
     "conversion_rule": "Convert each legacy Capital Core inventory unit to one unit of RES-0092; preserve the discovery unlock separately.",
     "notes": "Capital Core is a unique found object, not a repeatable economic material."
@@ -192,9 +192,141 @@
     "migration_action": "MOVE_TO_DISCOVERY",
     "canonical_resource_id": "RES-0101",
     "canonical_discovery_id": "DISC-MIGRATED-0125",
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "preserve_inventory_quantity": true,
     "conversion_rule": "Convert each legacy Universal Knowledge Fragment inventory unit to one unit of RES-0101; preserve the discovery unlock separately.",
     "notes": "Universal Knowledge Fragment is a unique found object, not a repeatable economic material."
+  },
+  {
+    "id": "RESOURCE-MIGRATION-RES-PROFILE-ABYSSAL-RELIC",
+    "legacy_resource_id": "RES-PROFILE-ABYSSAL-RELIC",
+    "migration_action": "MOVE_TO_DISCOVERY",
+    "canonical_resource_id": "RES-0107",
+    "canonical_discovery_id": "DISC-MIGRATED-PROFILE-ABYSSAL-RELIC",
+    "migration_version": "resource-taxonomy-v3.1",
+    "preserve_inventory_quantity": true,
+    "conversion_rule": "Convert each legacy Abyssal Relic inventory unit to one unit of RES-0107; preserve the discovery unlock separately.",
+    "notes": "Abyssal Relic is a unique found object, not a repeatable economic material."
+  },
+  {
+    "id": "RESOURCE-MIGRATION-RES-PROFILE-ANCIENT-AI-FRAGMENT",
+    "legacy_resource_id": "RES-PROFILE-ANCIENT-AI-FRAGMENT",
+    "migration_action": "MOVE_TO_DISCOVERY",
+    "canonical_resource_id": "RES-0100",
+    "canonical_discovery_id": "DISC-MIGRATED-PROFILE-ANCIENT-AI-FRAGMENT",
+    "migration_version": "resource-taxonomy-v3.1",
+    "preserve_inventory_quantity": true,
+    "conversion_rule": "Convert each legacy Ancient AI Fragment inventory unit to one unit of RES-0100; preserve the discovery unlock separately.",
+    "notes": "Ancient AI Fragment is a unique found object, not a repeatable economic material."
+  },
+  {
+    "id": "RESOURCE-MIGRATION-RES-PROFILE-ANCIENT-BONE",
+    "legacy_resource_id": "RES-PROFILE-ANCIENT-BONE",
+    "migration_action": "MOVE_TO_DISCOVERY",
+    "canonical_resource_id": "RES-0060",
+    "canonical_discovery_id": "DISC-MIGRATED-PROFILE-ANCIENT-BONE",
+    "migration_version": "resource-taxonomy-v3.1",
+    "preserve_inventory_quantity": true,
+    "conversion_rule": "Convert each legacy Ancient Bone inventory unit to one unit of RES-0060; preserve the discovery unlock separately.",
+    "notes": "Ancient Bone is a unique found object, not a repeatable economic material."
+  },
+  {
+    "id": "RESOURCE-MIGRATION-RES-PROFILE-ANCIENT-FOSSILS",
+    "legacy_resource_id": "RES-PROFILE-ANCIENT-FOSSILS",
+    "migration_action": "MOVE_TO_DISCOVERY",
+    "canonical_resource_id": "RES-0060",
+    "canonical_discovery_id": "DISC-MIGRATED-PROFILE-ANCIENT-FOSSILS",
+    "migration_version": "resource-taxonomy-v3.1",
+    "preserve_inventory_quantity": true,
+    "conversion_rule": "Convert each legacy Ancient Fossils inventory unit to one unit of RES-0060; preserve the discovery unlock separately.",
+    "notes": "Ancient Fossils is a unique found object, not a repeatable economic material."
+  },
+  {
+    "id": "RESOURCE-MIGRATION-RES-PROFILE-BATTLE-RELICS",
+    "legacy_resource_id": "RES-PROFILE-BATTLE-RELICS",
+    "migration_action": "MOVE_TO_DISCOVERY",
+    "canonical_resource_id": "RES-0106",
+    "canonical_discovery_id": "DISC-MIGRATED-PROFILE-BATTLE-RELICS",
+    "migration_version": "resource-taxonomy-v3.1",
+    "preserve_inventory_quantity": true,
+    "conversion_rule": "Convert each legacy Battle Relics inventory unit to one unit of RES-0106; preserve the discovery unlock separately.",
+    "notes": "Battle Relics is a unique found object, not a repeatable economic material."
+  },
+  {
+    "id": "RESOURCE-MIGRATION-RES-PROFILE-COLLECTIVE-MIND-FRAGMENT",
+    "legacy_resource_id": "RES-PROFILE-COLLECTIVE-MIND-FRAGMENT",
+    "migration_action": "MOVE_TO_DISCOVERY",
+    "canonical_resource_id": "RES-0103",
+    "canonical_discovery_id": "DISC-MIGRATED-PROFILE-COLLECTIVE-MIND-FRAGMENT",
+    "migration_version": "resource-taxonomy-v3.1",
+    "preserve_inventory_quantity": true,
+    "conversion_rule": "Convert each legacy Collective Mind Fragment inventory unit to one unit of RES-0103; preserve the discovery unlock separately.",
+    "notes": "Collective Mind Fragment is a unique found object, not a repeatable economic material."
+  },
+  {
+    "id": "RESOURCE-MIGRATION-RES-PROFILE-FOSSILS",
+    "legacy_resource_id": "RES-PROFILE-FOSSILS",
+    "migration_action": "MOVE_TO_DISCOVERY",
+    "canonical_resource_id": "RES-0060",
+    "canonical_discovery_id": "DISC-MIGRATED-PROFILE-FOSSILS",
+    "migration_version": "resource-taxonomy-v3.1",
+    "preserve_inventory_quantity": true,
+    "conversion_rule": "Convert each legacy Fossils inventory unit to one unit of RES-0060; preserve the discovery unlock separately.",
+    "notes": "Fossils is a unique found object, not a repeatable economic material."
+  },
+  {
+    "id": "RESOURCE-MIGRATION-RES-PROFILE-HARMONY-FRAGMENT",
+    "legacy_resource_id": "RES-PROFILE-HARMONY-FRAGMENT",
+    "migration_action": "MOVE_TO_DISCOVERY",
+    "canonical_resource_id": "RES-0101",
+    "canonical_discovery_id": "DISC-MIGRATED-PROFILE-HARMONY-FRAGMENT",
+    "migration_version": "resource-taxonomy-v3.1",
+    "preserve_inventory_quantity": true,
+    "conversion_rule": "Convert each legacy Harmony Fragment inventory unit to one unit of RES-0101; preserve the discovery unlock separately.",
+    "notes": "Harmony Fragment is a unique found object, not a repeatable economic material."
+  },
+  {
+    "id": "RESOURCE-MIGRATION-RES-0159",
+    "legacy_resource_id": "RES-0159",
+    "migration_action": "MOVE_TO_DISCOVERY",
+    "canonical_resource_id": "RES-0106",
+    "canonical_discovery_id": "DISC-MIGRATED-0159",
+    "migration_version": "resource-taxonomy-v3.1",
+    "preserve_inventory_quantity": true,
+    "conversion_rule": "Convert each legacy Ancient Core inventory unit to one unit of RES-0106; preserve the discovery unlock separately.",
+    "notes": "Ancient Core is a unique found object, not a repeatable economic material."
+  },
+  {
+    "id": "RESOURCE-MIGRATION-RES-PROFILE-UNIVERSAL-ANOMALY",
+    "legacy_resource_id": "RES-PROFILE-UNIVERSAL-ANOMALY",
+    "migration_action": "MOVE_TO_DISCOVERY",
+    "canonical_resource_id": "RES-0127",
+    "canonical_discovery_id": "DISC-MIGRATED-PROFILE-UNIVERSAL-ANOMALY",
+    "migration_version": "resource-taxonomy-v3.1",
+    "preserve_inventory_quantity": true,
+    "conversion_rule": "Convert each legacy Universal Anomaly inventory unit to one unit of RES-0127; preserve the discovery unlock separately.",
+    "notes": "Universal Anomaly is a unique found object, not a repeatable economic material."
+  },
+  {
+    "id": "RESOURCE-MIGRATION-RES-0174",
+    "legacy_resource_id": "RES-0174",
+    "migration_action": "MOVE_TO_DISCOVERY",
+    "canonical_resource_id": "RES-0173",
+    "canonical_discovery_id": "DISC-MIGRATED-0174",
+    "migration_version": "resource-taxonomy-v3.1",
+    "preserve_inventory_quantity": true,
+    "conversion_rule": "Convert each legacy Genesis Heart inventory unit to one unit of RES-0173; preserve the discovery unlock separately.",
+    "notes": "Genesis Heart is a unique found object, not a repeatable economic material."
+  },
+  {
+    "id": "RESOURCE-MIGRATION-RES-0176",
+    "legacy_resource_id": "RES-0176",
+    "migration_action": "MOVE_TO_DISCOVERY",
+    "canonical_resource_id": "RES-0173",
+    "canonical_discovery_id": "DISC-MIGRATED-0176",
+    "migration_version": "resource-taxonomy-v3.1",
+    "preserve_inventory_quantity": true,
+    "conversion_rule": "Convert each legacy Genesis Memory inventory unit to one unit of RES-0173; preserve the discovery unlock separately.",
+    "notes": "Genesis Memory is a unique found object, not a repeatable economic material."
   }
 ]

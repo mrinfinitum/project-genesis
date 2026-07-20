@@ -25,6 +25,10 @@ import rareCollectionsCuriosityPack from "@/data/curiosity-volume-12-rare-collec
 import rareCollectionsCuriosityTaxonomyPack from "@/data/curiosity-volume-12-rare-collections-and-wonders-taxonomy.json";
 import { MOVED_RESOURCE_SPECS, RESOURCE_MIGRATION_BY_LEGACY_ID } from "@/lib/resources/taxonomy";
 import { resourceTaxonomyDiscoveryAdditions } from "@/lib/discovery/resource-taxonomy-additions";
+import { classifyDiscoveryPurpose, discoveryPurposeCategories, type DiscoveryPurposeCategoryId } from "@/lib/discovery/purpose-classification";
+import { ResourceService } from "@/lib/resources/service";
+
+export { discoveryPurposeCategories } from "@/lib/discovery/purpose-classification";
 
 export const discoveryRarities = [
   { id: "common", displayName: "Common", displayOrder: 1, defaultSpawnWeight: 1 },
@@ -176,6 +180,8 @@ export type DiscoveryRecord = {
   classId: string;
   subclassId: string;
   subcategoryId: string;
+  purposeCategoryId?: DiscoveryPurposeCategoryId;
+  purposeSubcategoryId?: string;
   scientificName: string;
   catalogName?: string;
   alternateNames?: string[];
@@ -194,6 +200,12 @@ export type DiscoveryRecord = {
   relatedResearchIds: string[];
   relatedBuildingIds: string[];
   relatedResourceIds: string[];
+  harvestedResourceIds?: string[];
+  relatedAiIds?: string[];
+  relatedSpeciesIds?: string[];
+  relatedStructureIds?: string[];
+  civilizationUnlockIds?: string[];
+  codexEntryId?: string;
   relatedPlanetIds: string[];
   relatedCivilizationIds: string[];
   relatedLifeformIds: string[];
@@ -1318,7 +1330,7 @@ export const geneticArchivesCuriosityNavigation = importedCuriosityNavigation(ge
 export const organicMaterialsCuriosityNavigation = importedCuriosityNavigation(organicMaterialsCuriosityTaxonomy);
 export const rareCollectionsCuriosityNavigation = importedCuriosityNavigation(rareCollectionsCuriosityTaxonomy);
 
-export const canonicalDiscoveries: DiscoveryRecord[] = [
+const sourceCanonicalDiscoveries: DiscoveryRecord[] = [
   ...coreDiscoveryRecords,
   ...migratedResourceDiscoveryRecords,
   ...resourceTaxonomyDiscoveryAdditions,
@@ -1335,6 +1347,67 @@ export const canonicalDiscoveries: DiscoveryRecord[] = [
   ...organicMaterialsCuriosityRecords,
   ...rareCollectionsCuriosityRecords
 ];
+
+const biologicalHarvestIds = {
+  biomass: "RES-0058",
+  genetic: "RES-0060",
+  fungal: "RES-0066",
+  mycelium: "RES-0067",
+  wood: "RES-0005",
+  worldTreeFiber: "RES-0069",
+  spores: "RES-0075",
+  chitin: "RES-0064",
+  neuralTissue: "RES-0063",
+  organicCompounds: "RES-0190"
+} as const;
+
+const legacyDiscoveryResourceAliases: Record<string, string> = {
+  resource_biomass: "RES-0058",
+  resource_water: "RES-0006",
+  resource_helium3: "RES-0049",
+  resource_ice: "RES-0041",
+  resource_energy: "RES-0079",
+  resource_crystal: "RES-0077",
+  resource_dark_matter: "RES-0126",
+  resource_quantum_crystal: "RES-0129"
+};
+
+function canonicalResourceId(value: string) {
+  return ResourceService.resolveId(value) ?? legacyDiscoveryResourceAliases[value];
+}
+
+function harvestedResourcesFor(record: DiscoveryRecord, purposeCategoryId: DiscoveryPurposeCategoryId) {
+  const taxonomy = `${record.volumeId ?? ""} ${record.categoryId} ${record.classId} ${record.subclassId}`.toLowerCase();
+  const ids: string[] = [];
+  if (purposeCategoryId === "flora") ids.push(biologicalHarvestIds.biomass, biologicalHarvestIds.genetic);
+  if (purposeCategoryId === "fauna") ids.push(biologicalHarvestIds.biomass, biologicalHarvestIds.genetic, biologicalHarvestIds.chitin, biologicalHarvestIds.neuralTissue);
+  if (purposeCategoryId === "species") ids.push(biologicalHarvestIds.genetic);
+  if (/fung|mushroom/.test(taxonomy)) ids.push(biologicalHarvestIds.fungal, biologicalHarvestIds.mycelium);
+  if (/tree|wood|bark|root/.test(taxonomy)) ids.push(biologicalHarvestIds.wood, biologicalHarvestIds.worldTreeFiber);
+  if (/spore/.test(taxonomy)) ids.push(biologicalHarvestIds.spores);
+  if (record.volumeId === "organic-materials") ids.push(biologicalHarvestIds.organicCompounds);
+  return [...new Set(ids)].filter((id) => ResourceService.getById(id));
+}
+
+export const canonicalDiscoveries: DiscoveryRecord[] = sourceCanonicalDiscoveries.map((record) => {
+  const purpose = classifyDiscoveryPurpose(record);
+  const exactResource = ResourceService.getByName(record.displayName);
+  const relatedResourceIds = [...new Set([
+    ...record.relatedResourceIds.map(canonicalResourceId).filter((id): id is string => Boolean(id)),
+    ...(exactResource ? [exactResource.id] : [])
+  ])];
+  return {
+    ...record,
+    ...purpose,
+    relatedResourceIds,
+    harvestedResourceIds: harvestedResourcesFor(record, purpose.purposeCategoryId),
+    relatedAiIds: [],
+    relatedSpeciesIds: [],
+    relatedStructureIds: [],
+    civilizationUnlockIds: [],
+    codexEntryId: record.id
+  };
+});
 
 export const supportedCuriosityVolumeIds = ["biological", "fauna", "geological", "ancient-relics", "alien-technology", "ruins-and-structures", "energy-phenomena", "anomalies", "unknown-objects", "genetic-archives", "organic-materials", "rare-collections-and-wonders"] as const;
 export type SupportedCuriosityVolumeId = typeof supportedCuriosityVolumeIds[number];
@@ -1442,6 +1515,13 @@ export const discoveryPlayerCollectionSchema = {
   owner: "game",
   studioOwnership: "canonical_definitions_only",
   studioRule: "Studio publishes canonical discovery objects only. Player completion, discovered counts, journal state, and scan progress belong to the game client/save service.",
+  instanceFields: {
+    discoveryId: "Canonical discovery record ID",
+    discoveredBy: "Game-owned player or civilization ID",
+    discoveredDate: "Game-owned ISO timestamp",
+    scanProgress: "Game-owned discovery progress",
+    journalState: "Game-owned collection state"
+  },
   futureStats: [
     { categoryId: "flora", example: "142 / 900" },
     { categoryId: "fauna", example: "381 / 2400" },
@@ -1482,6 +1562,7 @@ function runDiscoverySystemValidation() {
   const curiositySlugs = new Set<string>();
   const duplicateCuriositySlugs = new Set<string>();
   const categoryOrders = new Set<number>();
+  const purposeCategoryIds = new Set(discoveryPurposeCategories.map((category) => category.id));
 
   for (const category of curiosityCategories) {
     if (categoryOrders.has(category.displayOrder)) {
@@ -1516,6 +1597,11 @@ function runDiscoverySystemValidation() {
     if (!subclassRecord) issues.push({ severity: "error", code: "invalid_subclass", message: "Every curiosity must belong to a valid subclass.", records: [discovery.id, discovery.subclassId] });
     if (discovery.subcategoryId !== discovery.subclassId) issues.push({ severity: "warning", code: "legacy_subcategory_alias_mismatch", message: "Legacy subcategory alias should match the canonical subclass.", records: [discovery.id, discovery.subcategoryId, discovery.subclassId] });
     if (!rarityIds.has(discovery.rarity)) issues.push({ severity: "error", code: "invalid_rarity", message: "Every curiosity must use a valid rarity.", records: [discovery.id, discovery.rarity] });
+    if (!discovery.purposeCategoryId || !purposeCategoryIds.has(discovery.purposeCategoryId)) issues.push({ severity: "error", code: "invalid_purpose_category", message: "Every discovery must resolve to a canonical gameplay-purpose category.", records: [discovery.id, discovery.purposeCategoryId ?? "missing"] });
+    if (!discovery.purposeSubcategoryId) issues.push({ severity: "error", code: "missing_purpose_subcategory", message: "Every discovery must retain a gameplay-purpose subcategory.", records: [discovery.id] });
+    for (const resourceId of [...discovery.relatedResourceIds, ...(discovery.harvestedResourceIds ?? [])]) {
+      if (!ResourceService.getById(resourceId)) issues.push({ severity: "error", code: "invalid_discovery_resource_relationship", message: "Discovery resource relationships must resolve to active canonical resources.", records: [discovery.id, resourceId] });
+    }
     if (!(discovery.spawnWeight > 0)) issues.push({ severity: "error", code: "invalid_spawn_weight", message: "Curiosity spawn weight must be greater than zero.", records: [discovery.id] });
     if (!discovery.assetProfile.icon || !discovery.assetProfile.card || !discovery.assetProfile.hero) issues.push({ severity: "error", code: "asset_profile_missing", message: "Every curiosity must define required asset profile keys.", records: [discovery.id] });
   }

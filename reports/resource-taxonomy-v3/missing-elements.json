@@ -37,7 +37,7 @@
       "Alkaline Earth Metal",
       "Be"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -50,6 +50,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 4,
       "resource_name": "Beryllium",
@@ -108,7 +112,7 @@
       "Reactive Nonmetal",
       "N"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -121,6 +125,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 7,
       "resource_name": "Nitrogen",
@@ -179,7 +187,7 @@
       "Reactive Nonmetal",
       "O"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -192,6 +200,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 8,
       "resource_name": "Oxygen",
@@ -250,7 +262,7 @@
       "Halogen",
       "F"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -263,6 +275,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 9,
       "resource_name": "Fluorine",
@@ -321,7 +337,7 @@
       "Noble Gas",
       "Ne"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -334,6 +350,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 10,
       "resource_name": "Neon",
@@ -387,7 +407,7 @@
       "Alkali Metal",
       "Na"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -400,6 +420,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 11,
       "resource_name": "Sodium",
@@ -458,7 +482,7 @@
       "Halogen",
       "Cl"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -471,6 +495,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 17,
       "resource_name": "Chlorine",
@@ -529,7 +557,7 @@
       "Noble Gas",
       "Ar"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -542,6 +570,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 18,
       "resource_name": "Argon",
@@ -595,7 +627,7 @@
       "Alkali Metal",
       "K"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -608,6 +640,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 19,
       "resource_name": "Potassium",
@@ -661,7 +697,7 @@
       "Transition Metal",
       "Sc"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -674,6 +710,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 21,
       "resource_name": "Scandium",
@@ -727,7 +767,7 @@
       "Transition Metal",
       "V"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -740,6 +780,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 23,
       "resource_name": "Vanadium",
@@ -793,7 +837,7 @@
       "Transition Metal",
       "Mn"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -806,6 +850,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 25,
       "resource_name": "Manganese",
@@ -859,7 +907,7 @@
       "Post-Transition Metal",
       "Ga"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -872,6 +920,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 31,
       "resource_name": "Gallium",
@@ -925,7 +977,7 @@
       "Metalloid",
       "Ge"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -938,6 +990,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 32,
       "resource_name": "Germanium",
@@ -991,7 +1047,7 @@
       "Metalloid",
       "As"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -1004,6 +1060,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 33,
       "resource_name": "Arsenic",
@@ -1057,7 +1117,7 @@
       "Reactive Nonmetal",
       "Se"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -1070,6 +1130,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 34,
       "resource_name": "Selenium",
@@ -1128,7 +1192,7 @@
       "Halogen",
       "Br"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -1141,6 +1205,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 35,
       "resource_name": "Bromine",
@@ -1199,7 +1267,7 @@
       "Noble Gas",
       "Kr"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -1212,6 +1280,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 36,
       "resource_name": "Krypton",
@@ -1265,7 +1337,7 @@
       "Alkali Metal",
       "Rb"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -1278,6 +1350,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 37,
       "resource_name": "Rubidium",
@@ -1331,7 +1407,7 @@
       "Alkaline Earth Metal",
       "Sr"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -1344,6 +1420,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 38,
       "resource_name": "Strontium",
@@ -1397,7 +1477,7 @@
       "Transition Metal",
       "Y"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -1410,6 +1490,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 39,
       "resource_name": "Yttrium",
@@ -1463,7 +1547,7 @@
       "Transition Metal",
       "Zr"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -1476,6 +1560,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 40,
       "resource_name": "Zirconium",
@@ -1529,7 +1617,7 @@
       "Transition Metal",
       "Nb"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -1542,6 +1630,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 41,
       "resource_name": "Niobium",
@@ -1595,7 +1687,7 @@
       "Transition Metal",
       "Mo"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -1608,6 +1700,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 42,
       "resource_name": "Molybdenum",
@@ -1661,7 +1757,7 @@
       "Transition Metal",
       "Tc"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": false,
@@ -1674,6 +1770,10 @@
       "Radiation Handling"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 43,
       "resource_name": "Technetium",
@@ -1727,7 +1827,7 @@
       "Transition Metal",
       "Ru"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -1740,6 +1840,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 44,
       "resource_name": "Ruthenium",
@@ -1793,7 +1897,7 @@
       "Transition Metal",
       "Rh"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -1806,6 +1910,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 45,
       "resource_name": "Rhodium",
@@ -1859,7 +1967,7 @@
       "Transition Metal",
       "Cd"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -1872,6 +1980,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 48,
       "resource_name": "Cadmium",
@@ -1925,7 +2037,7 @@
       "Post-Transition Metal",
       "In"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -1938,6 +2050,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 49,
       "resource_name": "Indium",
@@ -1991,7 +2107,7 @@
       "Metalloid",
       "Sb"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -2004,6 +2120,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 51,
       "resource_name": "Antimony",
@@ -2057,7 +2177,7 @@
       "Metalloid",
       "Te"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -2070,6 +2190,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 52,
       "resource_name": "Tellurium",
@@ -2123,7 +2247,7 @@
       "Halogen",
       "I"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -2136,6 +2260,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 53,
       "resource_name": "Iodine",
@@ -2194,7 +2322,7 @@
       "Noble Gas",
       "Xe"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -2207,6 +2335,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 54,
       "resource_name": "Xenon",
@@ -2260,7 +2392,7 @@
       "Alkali Metal",
       "Cs"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -2273,6 +2405,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 55,
       "resource_name": "Cesium",
@@ -2326,7 +2462,7 @@
       "Alkaline Earth Metal",
       "Ba"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -2339,6 +2475,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 56,
       "resource_name": "Barium",
@@ -2392,7 +2532,7 @@
       "Lanthanide",
       "La"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -2405,6 +2545,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 57,
       "resource_name": "Lanthanum",
@@ -2457,7 +2601,7 @@
       "Lanthanide",
       "Ce"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -2470,6 +2614,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 58,
       "resource_name": "Cerium",
@@ -2522,7 +2670,7 @@
       "Lanthanide",
       "Pr"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -2535,6 +2683,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 59,
       "resource_name": "Praseodymium",
@@ -2587,7 +2739,7 @@
       "Lanthanide",
       "Nd"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -2600,6 +2752,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 60,
       "resource_name": "Neodymium",
@@ -2652,7 +2808,7 @@
       "Lanthanide",
       "Pm"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": false,
@@ -2665,6 +2821,10 @@
       "Radiation Handling"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 61,
       "resource_name": "Promethium",
@@ -2717,7 +2877,7 @@
       "Lanthanide",
       "Sm"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -2730,6 +2890,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 62,
       "resource_name": "Samarium",
@@ -2782,7 +2946,7 @@
       "Lanthanide",
       "Eu"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -2795,6 +2959,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 63,
       "resource_name": "Europium",
@@ -2847,7 +3015,7 @@
       "Lanthanide",
       "Gd"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -2860,6 +3028,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 64,
       "resource_name": "Gadolinium",
@@ -2912,7 +3084,7 @@
       "Lanthanide",
       "Tb"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -2925,6 +3097,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 65,
       "resource_name": "Terbium",
@@ -2977,7 +3153,7 @@
       "Lanthanide",
       "Dy"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -2990,6 +3166,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 66,
       "resource_name": "Dysprosium",
@@ -3042,7 +3222,7 @@
       "Lanthanide",
       "Ho"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -3055,6 +3235,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 67,
       "resource_name": "Holmium",
@@ -3107,7 +3291,7 @@
       "Lanthanide",
       "Er"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -3120,6 +3304,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 68,
       "resource_name": "Erbium",
@@ -3172,7 +3360,7 @@
       "Lanthanide",
       "Tm"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -3185,6 +3373,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 69,
       "resource_name": "Thulium",
@@ -3237,7 +3429,7 @@
       "Lanthanide",
       "Yb"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -3250,6 +3442,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 70,
       "resource_name": "Ytterbium",
@@ -3302,7 +3498,7 @@
       "Lanthanide",
       "Lu"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -3315,6 +3511,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 71,
       "resource_name": "Lutetium",
@@ -3367,7 +3567,7 @@
       "Transition Metal",
       "Hf"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -3380,6 +3580,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 72,
       "resource_name": "Hafnium",
@@ -3433,7 +3637,7 @@
       "Transition Metal",
       "Ta"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -3446,6 +3650,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 73,
       "resource_name": "Tantalum",
@@ -3499,7 +3707,7 @@
       "Transition Metal",
       "Re"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -3512,6 +3720,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 75,
       "resource_name": "Rhenium",
@@ -3565,7 +3777,7 @@
       "Transition Metal",
       "Os"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -3578,6 +3790,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 76,
       "resource_name": "Osmium",
@@ -3636,7 +3852,7 @@
       "Transition Metal",
       "Hg"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -3649,6 +3865,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 80,
       "resource_name": "Mercury",
@@ -3702,7 +3922,7 @@
       "Post-Transition Metal",
       "Tl"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -3715,6 +3935,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 81,
       "resource_name": "Thallium",
@@ -3768,7 +3992,7 @@
       "Post-Transition Metal",
       "Bi"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": false,
     "synthetic": false,
@@ -3781,6 +4005,10 @@
       "Element Analysis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 83,
       "resource_name": "Bismuth",
@@ -3834,7 +4062,7 @@
       "Post-Transition Metal",
       "Po"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": false,
@@ -3847,6 +4075,10 @@
       "Radiation Handling"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 84,
       "resource_name": "Polonium",
@@ -3900,7 +4132,7 @@
       "Halogen",
       "At"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": false,
@@ -3913,6 +4145,10 @@
       "Radiation Handling"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 85,
       "resource_name": "Astatine",
@@ -3971,7 +4207,7 @@
       "Noble Gas",
       "Rn"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": false,
@@ -3984,6 +4220,10 @@
       "Radiation Handling"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 86,
       "resource_name": "Radon",
@@ -4037,7 +4277,7 @@
       "Alkali Metal",
       "Fr"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": false,
@@ -4050,6 +4290,10 @@
       "Radiation Handling"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 87,
       "resource_name": "Francium",
@@ -4103,7 +4347,7 @@
       "Alkaline Earth Metal",
       "Ra"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": false,
@@ -4116,6 +4360,10 @@
       "Radiation Handling"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 88,
       "resource_name": "Radium",
@@ -4169,7 +4417,7 @@
       "Actinide",
       "Ac"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": false,
@@ -4182,6 +4430,10 @@
       "Radiation Handling"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 89,
       "resource_name": "Actinium",
@@ -4234,7 +4486,7 @@
       "Actinide",
       "Th"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": false,
@@ -4247,6 +4499,10 @@
       "Radiation Handling"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 90,
       "resource_name": "Thorium",
@@ -4299,7 +4555,7 @@
       "Actinide",
       "Pa"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": false,
@@ -4312,6 +4568,10 @@
       "Radiation Handling"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 91,
       "resource_name": "Protactinium",
@@ -4364,7 +4624,7 @@
       "Actinide",
       "Np"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": false,
@@ -4377,6 +4637,10 @@
       "Radiation Handling"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 93,
       "resource_name": "Neptunium",
@@ -4429,7 +4693,7 @@
       "Actinide",
       "Pu"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": false,
@@ -4442,6 +4706,10 @@
       "Radiation Handling"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 94,
       "resource_name": "Plutonium",
@@ -4494,7 +4762,7 @@
       "Actinide",
       "Am"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": true,
@@ -4507,6 +4775,10 @@
       "Particle Synthesis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 95,
       "resource_name": "Americium",
@@ -4559,7 +4831,7 @@
       "Actinide",
       "Cm"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": true,
@@ -4572,6 +4844,10 @@
       "Particle Synthesis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 96,
       "resource_name": "Curium",
@@ -4624,7 +4900,7 @@
       "Actinide",
       "Bk"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": true,
@@ -4637,6 +4913,10 @@
       "Particle Synthesis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 97,
       "resource_name": "Berkelium",
@@ -4689,7 +4969,7 @@
       "Actinide",
       "Cf"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": true,
@@ -4702,6 +4982,10 @@
       "Particle Synthesis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 98,
       "resource_name": "Californium",
@@ -4754,7 +5038,7 @@
       "Actinide",
       "Es"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": true,
@@ -4767,6 +5051,10 @@
       "Particle Synthesis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 99,
       "resource_name": "Einsteinium",
@@ -4819,7 +5107,7 @@
       "Actinide",
       "Fm"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": true,
@@ -4832,6 +5120,10 @@
       "Particle Synthesis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 100,
       "resource_name": "Fermium",
@@ -4884,7 +5176,7 @@
       "Actinide",
       "Md"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": true,
@@ -4897,6 +5189,10 @@
       "Particle Synthesis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 101,
       "resource_name": "Mendelevium",
@@ -4949,7 +5245,7 @@
       "Actinide",
       "No"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": true,
@@ -4962,6 +5258,10 @@
       "Particle Synthesis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 102,
       "resource_name": "Nobelium",
@@ -5014,7 +5314,7 @@
       "Actinide",
       "Lr"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": true,
@@ -5027,6 +5327,10 @@
       "Particle Synthesis"
     ],
     "resource_profile_eligible": true,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 103,
       "resource_name": "Lawrencium",
@@ -5076,7 +5380,7 @@
       "Transition Metal",
       "Rf"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": true,
@@ -5089,6 +5393,10 @@
       "Particle Synthesis"
     ],
     "resource_profile_eligible": false,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 104,
       "resource_name": "Rutherfordium",
@@ -5139,7 +5447,7 @@
       "Transition Metal",
       "Db"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": true,
@@ -5152,6 +5460,10 @@
       "Particle Synthesis"
     ],
     "resource_profile_eligible": false,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 105,
       "resource_name": "Dubnium",
@@ -5202,7 +5514,7 @@
       "Transition Metal",
       "Sg"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": true,
@@ -5215,6 +5527,10 @@
       "Particle Synthesis"
     ],
     "resource_profile_eligible": false,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 106,
       "resource_name": "Seaborgium",
@@ -5265,7 +5581,7 @@
       "Transition Metal",
       "Bh"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": true,
@@ -5278,6 +5594,10 @@
       "Particle Synthesis"
     ],
     "resource_profile_eligible": false,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 107,
       "resource_name": "Bohrium",
@@ -5328,7 +5648,7 @@
       "Transition Metal",
       "Hs"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": true,
@@ -5341,6 +5661,10 @@
       "Particle Synthesis"
     ],
     "resource_profile_eligible": false,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 108,
       "resource_name": "Hassium",
@@ -5391,7 +5715,7 @@
       "Transition Metal",
       "Mt"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": true,
@@ -5404,6 +5728,10 @@
       "Particle Synthesis"
     ],
     "resource_profile_eligible": false,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 109,
       "resource_name": "Meitnerium",
@@ -5454,7 +5782,7 @@
       "Transition Metal",
       "Ds"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": true,
@@ -5467,6 +5795,10 @@
       "Particle Synthesis"
     ],
     "resource_profile_eligible": false,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 110,
       "resource_name": "Darmstadtium",
@@ -5517,7 +5849,7 @@
       "Transition Metal",
       "Rg"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": true,
@@ -5530,6 +5862,10 @@
       "Particle Synthesis"
     ],
     "resource_profile_eligible": false,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 111,
       "resource_name": "Roentgenium",
@@ -5580,7 +5916,7 @@
       "Transition Metal",
       "Cn"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": true,
@@ -5593,6 +5929,10 @@
       "Particle Synthesis"
     ],
     "resource_profile_eligible": false,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 112,
       "resource_name": "Copernicium",
@@ -5643,7 +5983,7 @@
       "Post-Transition Metal",
       "Nh"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": true,
@@ -5656,6 +5996,10 @@
       "Particle Synthesis"
     ],
     "resource_profile_eligible": false,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 113,
       "resource_name": "Nihonium",
@@ -5706,7 +6050,7 @@
       "Post-Transition Metal",
       "Fl"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": true,
@@ -5719,6 +6063,10 @@
       "Particle Synthesis"
     ],
     "resource_profile_eligible": false,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 114,
       "resource_name": "Flerovium",
@@ -5769,7 +6117,7 @@
       "Post-Transition Metal",
       "Mc"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": true,
@@ -5782,6 +6130,10 @@
       "Particle Synthesis"
     ],
     "resource_profile_eligible": false,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 115,
       "resource_name": "Moscovium",
@@ -5832,7 +6184,7 @@
       "Post-Transition Metal",
       "Lv"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": true,
@@ -5845,6 +6197,10 @@
       "Particle Synthesis"
     ],
     "resource_profile_eligible": false,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 116,
       "resource_name": "Livermorium",
@@ -5895,7 +6251,7 @@
       "Halogen",
       "Ts"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": true,
@@ -5908,6 +6264,10 @@
       "Particle Synthesis"
     ],
     "resource_profile_eligible": false,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 117,
       "resource_name": "Tennessine",
@@ -5958,7 +6318,7 @@
       "Noble Gas",
       "Og"
     ],
-    "migration_version": "resource-taxonomy-v3.0",
+    "migration_version": "resource-taxonomy-v3.1",
     "status": "active",
     "radioactive": true,
     "synthetic": true,
@@ -5971,6 +6331,10 @@
       "Particle Synthesis"
     ],
     "resource_profile_eligible": false,
+    "recipe_ids": [],
+    "produced_by_ids": [],
+    "consumed_by_ids": [],
+    "harvested_from_discovery_ids": [],
     "element": {
       "atomic_number": 118,
       "resource_name": "Oganesson",

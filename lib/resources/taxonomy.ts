@@ -1,6 +1,6 @@
 import type { ResourceCatalogItem } from "@/types/schema";
 
-export const RESOURCE_TAXONOMY_VERSION = "resource-taxonomy-v3.0";
+export const RESOURCE_TAXONOMY_VERSION = "resource-taxonomy-v3.1";
 export const RESOURCE_PROFILE_GENERATION_VERSION = "planet-resource-taxonomy-v3";
 
 export const RESOURCE_PRIMARY_CATEGORIES = [
@@ -151,7 +151,22 @@ const movedResourceSpecs2 = [
   ["RES-0125", "Universal Knowledge Fragment", "RES-0101", "ancient-relics", "lost-knowledge", "encoded-tablets"]
 ] as const;
 
-export const MOVED_RESOURCE_SPECS = [...movedResourceSpecs, ...movedResourceSpecs2];
+const movedResourceSpecs3 = [
+  ["RES-PROFILE-ABYSSAL-RELIC", "Abyssal Relic", "RES-0107", "ancient-relics", "cultural-objects", "sculptural-fragments"],
+  ["RES-PROFILE-ANCIENT-AI-FRAGMENT", "Ancient AI Fragment", "RES-0100", "alien-technology", "artificial-intelligence", "cognitive-cores"],
+  ["RES-PROFILE-ANCIENT-BONE", "Ancient Bone", "RES-0060", "ancient-relics", "scientific-artifacts", "research-samples"],
+  ["RES-PROFILE-ANCIENT-FOSSILS", "Ancient Fossils", "RES-0060", "fossils-and-preserved-life", "flora-fossils", "petrified-plants"],
+  ["RES-PROFILE-BATTLE-RELICS", "Battle Relics", "RES-0106", "ancient-relics", "military-relics", "fortification-components"],
+  ["RES-PROFILE-COLLECTIVE-MIND-FRAGMENT", "Collective Mind Fragment", "RES-0103", "alien-technology", "artificial-intelligence", "collective-minds"],
+  ["RES-PROFILE-FOSSILS", "Fossils", "RES-0060", "fossils-and-preserved-life", "flora-fossils", "petrified-plants"],
+  ["RES-PROFILE-HARMONY-FRAGMENT", "Harmony Fragment", "RES-0101", "ancient-relics", "religious-relics", "ritual-texts"],
+  ["RES-0159", "Ancient Core", "RES-0106", "alien-technology", "computing-systems", "distributed-cores"],
+  ["RES-PROFILE-UNIVERSAL-ANOMALY", "Universal Anomaly", "RES-0127", "anomalies", "spatial-anomalies", "rift-zones"],
+  ["RES-0174", "Genesis Heart", "RES-0173", "unknown-objects", "unknown-materials", "energy-storing-materials"],
+  ["RES-0176", "Genesis Memory", "RES-0173", "unknown-objects", "unknown-materials", "memory-materials"]
+] as const;
+
+export const MOVED_RESOURCE_SPECS = [...movedResourceSpecs, ...movedResourceSpecs2, ...movedResourceSpecs3];
 export const MOVED_RESOURCE_IDS: ReadonlySet<string> = new Set(MOVED_RESOURCE_SPECS.map(([id]) => id));
 export const RESOURCE_MIGRATIONS: ResourceMigrationRecord[] = MOVED_RESOURCE_SPECS.map(([legacyId, name, replacementId]) => ({
   id: `RESOURCE-MIGRATION-${legacyId}`,
@@ -179,6 +194,7 @@ function categoryFor(resource: ResourceCatalogItem): ResourcePrimaryCategory {
   const name = resource.resource_name.toLowerCase();
   const category = resource.category.toLowerCase();
   if (PERIODIC_ELEMENT_BY_NAME.has(name)) return "Elements";
+  if (/^(quartz|magnetite|calcite|corundum|hematite|graphite|deep core minerals)$/.test(name)) return "Minerals";
   if (/genesis/.test(name) || category.includes("genesis")) return "Genesis Matter";
   if (/proto matter|prime matter|planet seed|world seed/.test(name) || category.includes("primordial")) return "Primordial Matter";
   if (category.includes("isotope") || /helium-3 trace/.test(name)) return "Isotopes";
@@ -194,7 +210,7 @@ function categoryFor(resource: ResourceCatalogItem): ResourcePrimaryCategory {
   if (/rare earth elements|rare metals|iron nodules|manganese nodules|quantum ore/.test(name) || / ore$/.test(name)) return "Ores";
   if (name.includes("crystal") || category.includes("crystal")) return "Crystals";
   if (/pearl/.test(name)) return "Crystals";
-  if (/stone|sand|clay|soil|limestone|granite|basalt|marble|obsidian|regolith|ash|molten rock|fresh crust|volcanic glass|dust|potash/.test(name)) return "Rocks and Geological Materials";
+  if (/stone|sand|clay|soil|limestone|granite|basalt|marble|obsidian|regolith|ash|molten rock|fresh crust|volcanic glass|dust/.test(name)) return "Rocks and Geological Materials";
   if (category.includes("liquid") || /water$|oil$|brine|solvent|fluid/.test(name)) return "Liquids";
   if (category.includes("ice") || / ice$|frozen|snow|water ice/.test(name)) return "Ices and Frozen Volatiles";
   if (category.includes("fuel") || /coal|natural gas|fusion fuel|hydrogen fuel|hydrate/.test(name)) return "Fuels";
@@ -241,10 +257,16 @@ function subcategoryFor(resource: ResourceCatalogItem, primaryCategory: Resource
 }
 
 function secondaryCategoriesFor(resource: ResourceCatalogItem, primaryCategory: ResourcePrimaryCategory, subcategory: string) {
+  const name = resource.resource_name.toLowerCase();
   const element = PERIODIC_ELEMENT_BY_NAME.get(resource.resource_name.toLowerCase());
   const placements = [...(resource.secondary_categories ?? [])];
   if (element?.standard_phase === "Gas") placements.push({ primary_category: "Gases", subcategory: "Elemental Gases" });
   if (element?.standard_phase === "Liquid") placements.push({ primary_category: "Liquids", subcategory: "Elemental Liquids" });
+  if (name === "oil") placements.push({ primary_category: "Fuels", subcategory: "Fossil Fuels" });
+  if (name === "natural gas") placements.push({ primary_category: "Gases", subcategory: "Chemical Gases" });
+  if (/solvent|lithium brine/.test(name)) placements.push({ primary_category: "Chemicals and Compounds", subcategory: "General Compounds" });
+  if (name === "proto water") placements.push({ primary_category: "Liquids", subcategory: "Specialized Water" });
+  if (/ancient alloy|precursor metal|living metal/.test(name)) placements.push({ primary_category: "Ancient Materials", subcategory: "Engineered Ancient Materials" });
   return placements.filter((placement, index, values) =>
     !(placement.primary_category === primaryCategory && placement.subcategory === subcategory) &&
     values.findIndex((candidate) => candidate.primary_category === placement.primary_category && candidate.subcategory === placement.subcategory) === index
@@ -280,6 +302,10 @@ export function normalizeResourceRecord(resource: ResourceCatalogItem): Resource
     extraction_method: resource.extraction_method ?? (element?.occurrence === "Synthetic" ? "Particle accelerator synthesis" : "Extraction, recovery, or processing"),
     required_technology: resource.required_technology ?? [resource.first_unlock_requirement].filter(Boolean),
     resource_profile_eligible: resource.resource_profile_eligible ?? !(element?.occurrence === "Synthetic"),
+    recipe_ids: resource.recipe_ids ?? [],
+    produced_by_ids: resource.produced_by_ids ?? [],
+    consumed_by_ids: resource.consumed_by_ids ?? [],
+    harvested_from_discovery_ids: resource.harvested_from_discovery_ids ?? [],
     element: element ? { ...element, scientific_reference_notes: `${element.resource_name} is chemical element ${element.atomic_number} (${element.chemical_symbol}). Scientific metadata is descriptive unless referenced by a gameplay rule.` } : undefined
   };
 }
