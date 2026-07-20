@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "taxonomy": {
+    "Energy Phenomena": {
+      "Stellar Energy": [
+        "Solar Flares",
+        "Coronal Loops",
+        "Prominence Fields",
+        "Radiation Bursts",
+        "Stellar Winds",
+        "Photospheric Waves",
+        "Chromospheric Storms",
+        "Magnetic Arcs",
+        "Neutrino Surges",
+        "Heliospheric Fronts"
+      ],
+      "Plasma Phenomena": [
+        "Plasma Vortices",
+        "Ion Storms",
+        "Arc Discharges",
+        "Plasma Filaments",
+        "Magnetized Plasma",
+        "Plasma Jets",
+        "Fusion Clouds",
+        "Charged Nebulae",
+        "Plasma Sheaths",
+        "Exotic Plasma"
+      ],
+      "Geothermal Energy": [
+        "Magma Convection",
+        "Hydrothermal Vents",
+        "Thermal Plumes",
+        "Mantle Hotspots",
+        "Geothermal Wells",
+        "Cryovolcanic Flux",
+        "Subsurface Steam",
+        "Tectonic Heat Zones",
+        "Core Leakage",
+        "Mineral Heat Sinks"
+      ],
+      "Electromagnetic Fields": [
+        "Auroral Currents",
+        "Magnetic Storms",
+        "Electrostatic Fields",
+        "Radio Bursts",
+        "Microwave Emissions",
+        "Induction Zones",
+        "Polarized Fields",
+        "Resonance Fields",
+        "Lightning Networks",
+        "Electromagnetic Nulls"
+      ],
+      "Quantum Energy": [
+        "Zero-Point Fluctuations",
+        "Quantum Tunneling Zones",
+        "Coherence Fields",
+        "Entanglement Bursts",
+        "Vacuum Energy",
+        "Probability Waves",
+        "Quantum Resonance",
+        "Wavefunction Echoes",
+        "Casimir Wells",
+        "Quantum Lattices"
+      ],
+      "Dark Energy": [
+        "Expansion Fields",
+        "Dark Flux",
+        "Repulsive Gravity Wells",
+        "Cosmic Acceleration Zones",
+        "Void Pressure",
+        "Dark Energy Blooms",
+        "Metric Distortions",
+        "Vacuum Drift",
+        "Horizon Tension",
+        "Unknown Dark Fields"
+      ],
+      "Exotic Energy": [
+        "Antimatter Fields",
+        "Graviton Streams",
+        "Temporal Flux",
+        "Dimensional Radiation",
+        "Tachyon Bursts",
+        "Negative Energy Wells",
+        "Neutron Flux",
+        "Singularity Emissions",
+        "Reality Shear",
+        "Exotic Particle Storms"
+      ],
+      "Living Energy": [
+        "Bioluminescent Fields",
+        "Bioelectric Storms",
+        "Neural Energy Clouds",
+        "Symbiotic Power Networks",
+        "Photosynthetic Flux",
+        "Metabolic Heat Seas",
+        "Hive Resonance",
+        "Regenerative Fields",
+        "Organic Plasma",
+        "Sentient Energy"
+      ]
+    }
+  }
+}

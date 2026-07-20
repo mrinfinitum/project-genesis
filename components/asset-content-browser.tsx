@@ -10,6 +10,7 @@ import geologicalCuriosityTaxonomyPack from "@/data/curiosity-volume-03-geologic
 import ancientRelicsCuriosityTaxonomyPack from "@/data/curiosity-volume-04-ancient-relics-taxonomy.json";
 import alienTechnologyCuriosityTaxonomyPack from "@/data/curiosity-volume-05-alien-technology-taxonomy.json";
 import ruinsStructuresCuriosityTaxonomyPack from "@/data/curiosity-volume-06-ruins-and-structures-taxonomy.json";
+import energyPhenomenaCuriosityTaxonomyPack from "@/data/curiosity-volume-07-energy-phenomena-taxonomy.json";
 import type { AssetProductionState } from "@/lib/assets/asset-production";
 
 type InventoryItem = AssetProductionState["assetLibraryInventory"]["items"][number];
@@ -145,7 +146,8 @@ const contentTree: ContentBrowserNode[] = [
       discoveryVolumeNodes("geological", "Geological", geologicalCuriosityTaxonomyPack as CuriosityTaxonomyPack),
       discoveryVolumeNodes("ancient-relics", "Ancient Relics", ancientRelicsCuriosityTaxonomyPack as CuriosityTaxonomyPack),
       discoveryVolumeNodes("alien-technology", "Alien Technology", alienTechnologyCuriosityTaxonomyPack as CuriosityTaxonomyPack),
-      discoveryVolumeNodes("ruins-and-structures", "Ruins & Structures", ruinsStructuresCuriosityTaxonomyPack as CuriosityTaxonomyPack)
+      discoveryVolumeNodes("ruins-and-structures", "Ruins & Structures", ruinsStructuresCuriosityTaxonomyPack as CuriosityTaxonomyPack),
+      discoveryVolumeNodes("energy-phenomena", "Energy Phenomena", energyPhenomenaCuriosityTaxonomyPack as CuriosityTaxonomyPack)
     ]
   },
   {
@@ -185,7 +187,7 @@ const contentTree: ContentBrowserNode[] = [
   { id: "engine", label: "Engine", categoryIds: ["unmapped"], terms: ["runtime", "engine", "mapping"] }
 ];
 
-const defaultExpanded = ["universe", "civilization", "discovery", "discovery/biological", "discovery/fauna", "discovery/geological", "discovery/ancient-relics", "discovery/alien-technology", "discovery/ruins-and-structures", "world-systems", "user-interface"];
+const defaultExpanded = ["universe", "civilization", "discovery", "discovery/biological", "discovery/fauna", "discovery/geological", "discovery/ancient-relics", "discovery/alien-technology", "discovery/ruins-and-structures", "discovery/energy-phenomena", "world-systems", "user-interface"];
 const statusFilters: Array<"all" | Exclude<InventoryStatus, "missing">> = ["all", "approved", "published", "needs_review", "uploaded", "processing", "invalid", "unmapped"];
 const sortOptions = ["name", "newest", "oldest", "status", "recently_updated", "recently_used"] as const;
 const engineFilters = ["all", "web", "roblox", "ios", "android"] as const;
