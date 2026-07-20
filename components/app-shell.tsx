@@ -11,7 +11,6 @@ import {
   ChevronDown,
   ChevronRight,
   CircleDot,
-  ClipboardList,
   Compass,
   Cpu,
   FileText,
@@ -61,10 +60,18 @@ const navigationGroups: NavigationGroup[] = [
     items: [
       { href: "/", label: "Universe Command Center", icon: LayoutDashboard, activePaths: ["/"] },
       { href: "/asset-library", label: "Asset Library", icon: PackageCheck },
-      { href: "/discovery", label: "Discovery Library", icon: Compass },
       { href: "/encyclopedia", label: "Encyclopedia", icon: BookOpen },
       { href: "/architecture", label: "Architecture", icon: FileText },
       { href: "/settings#users", label: "Admin Users", icon: ShieldCheck }
+    ]
+  },
+  {
+    id: "discoveries",
+    label: "Discoveries",
+    icon: Compass,
+    items: [
+      { href: "/discovery", label: "Discovery Library", icon: Compass },
+      { href: "/resource-catalog", label: "Resource Library", icon: Gem }
     ]
   },
   {
@@ -89,12 +96,10 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/buildings", label: "Building Library", icon: Building2 },
       { href: "/research", label: "Research Library", icon: FlaskConical },
       { href: "/upgrades", label: "Upgrade Library", icon: WandSparkles },
-      { href: "/resource-catalog", label: "Resource Catalog", icon: Gem },
       { href: "/population", label: "Population", icon: Landmark },
       { href: "/colonies", label: "Colonies", icon: Building2 },
       { href: "/districts", label: "Districts", icon: Layers3 },
       { href: "/economy", label: "Economy & Trade", icon: BadgeDollarSign },
-      { href: "/missions", label: "Missions", icon: ClipboardList },
       { href: "/dynamic-events", label: "Dynamic Events", icon: Sparkles },
       { href: "/ai-agents", label: "AI Agents", icon: Bot }
     ]

@@ -275,7 +275,7 @@ export const tableConfigs: Record<TableName, TableConfig> = {
   },
   resource_catalog: {
     table: "resource_catalog",
-    title: "Resource Catalog",
+    title: "Resource Library",
     description: "Master catalog of all resources, rarity labels, progression tiers, trade values, stack rules, and lore notes.",
     typeKey: "category",
     filterKeys: ["category", "rarity", "discovery_tier", "earth_available"],
