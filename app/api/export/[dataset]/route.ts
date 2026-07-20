@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getAiAgentLibraryRuntimeExports } from "@/lib/ai-agents";
 import { getGameData } from "@/lib/data";
 import { toCsv } from "@/lib/export/csv";
 import { getGameRuntimeData, validateGameRuntimeData } from "@/lib/runtime/game-runtime";
@@ -56,6 +57,16 @@ const jsonDatasets = new Set([
   "civilization-titles",
   "civilization_bonuses",
   "civilization-bonuses",
+  "ai_agents",
+  "ai-agents",
+  "forgotten_terminals",
+  "forgotten-terminals",
+  "memory_fragments",
+  "memory-fragments",
+  "ai_relationships",
+  "ai-relationships",
+  "dialogue_packs",
+  "dialogue-packs",
   "research.json",
   "game_runtime_data.json",
   "game-runtime-data.json",
@@ -97,7 +108,17 @@ const jsonDatasets = new Set([
   "civilization_titles.json",
   "civilization-titles.json",
   "civilization_bonuses.json",
-  "civilization-bonuses.json"
+  "civilization-bonuses.json",
+  "ai_agents.json",
+  "ai-agents.json",
+  "forgotten_terminals.json",
+  "forgotten-terminals.json",
+  "memory_fragments.json",
+  "memory-fragments.json",
+  "ai_relationships.json",
+  "ai-relationships.json",
+  "dialogue_packs.json",
+  "dialogue-packs.json"
 ]);
 
 function normalizeDataset(dataset: string) {
@@ -152,6 +173,11 @@ export async function GET(request: Request, { params }: Params) {
       ...runtimeData,
       validation: validateGameRuntimeData(runtimeData)
     });
+  }
+
+  if (["ai_agents", "forgotten_terminals", "memory_fragments", "ai_relationships", "dialogue_packs"].includes(normalized)) {
+    const exports = await getAiAgentLibraryRuntimeExports();
+    return NextResponse.json(exports[normalized as keyof typeof exports]);
   }
 
   if (!jsonDatasets.has(dataset) || !(normalized in data)) {

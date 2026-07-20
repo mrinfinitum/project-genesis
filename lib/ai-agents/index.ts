@@ -120,14 +120,14 @@ export type AiAgentTerminalRecord = {
   agentIds: string[];
   discoverySources: string[];
   restorationAction: string;
-  status: "draft";
+  status: "draft" | "published";
 };
 
 export type AiAgentCatalogPersonality = {
   id: string;
   displayName: string;
   agentIds: string[];
-  status: "draft";
+  status: "draft" | "published";
 };
 
 export type AiAgentLibraryModuleRecord = {
@@ -876,6 +876,20 @@ export function validateAiAgentLibrary(state: AiAgentLibraryState) {
     if (!variantRecord.progressionMapping.cosmeticIdentity || variantRecord.progressionMapping.automationPowerSource !== "automation_upgrade_levels") issues.push(`${variantRecord.id} must remain cosmetic and use automation upgrade levels for Labor Assistance strength.`);
   }
   return { valid: issues.length === 0, issues };
+}
+
+export async function getAiAgentLibraryRuntimeExports(assetState?: AssetProductionState) {
+  const state = await getAiAgentLibraryState(assetState);
+  const validation = validateAiAgentLibrary(state);
+  if (!validation.valid) throw new Error(`AI Agent Library validation failed: ${validation.issues.join(" ")}`);
+  const runtime = getAiAgentRuntimeModules(assetState);
+  return {
+    ai_agents: runtime.aiAgents,
+    forgotten_terminals: state.terminals.filter((record) => record.status === "published"),
+    memory_fragments: state.memoryFragments.filter((record) => record.status === "published"),
+    ai_relationships: state.relationships.filter((record) => record.status === "published"),
+    dialogue_packs: state.dialoguePacks.filter((record) => record.status === "published")
+  };
 }
 
 export const aiAgentInitialRecords = seedAgents;
