@@ -688,7 +688,7 @@ function buildEntries(data: GameData, assets: ProductionAsset[]) {
       era: row.civilization,
       tags: compactStrings(row.primary_stat, row.bonus, row.civilization, row.primary_buildings),
       priority: row.priority <= 2 ? "P1" : "P2",
-      references: [{ type: "district", id: row.id, label: "District Designer", href: "/districts" }]
+      references: [{ type: "district", id: row.id, label: "Building Library District", href: `/buildings?district=${encodeURIComponent(row.id)}` }]
     }, assets)),
     ...data.wonders.map((row) => entryBase({
       entityType: /dyson|ringworld|stellar|mega|galactic/i.test(`${row.name} ${row.notes}`) ? "megastructure" : "wonder",

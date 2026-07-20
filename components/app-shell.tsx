@@ -17,7 +17,6 @@ import {
   FlaskConical,
   Gem,
   Landmark,
-  Layers3,
   LayoutDashboard,
   ListChecks,
   Map,
@@ -98,7 +97,6 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/upgrades", label: "Upgrade Library", icon: WandSparkles },
       { href: "/population", label: "Population", icon: Landmark },
       { href: "/colonies", label: "Colonies", icon: Building2 },
-      { href: "/districts", label: "Districts", icon: Layers3 },
       { href: "/economy", label: "Economy & Trade", icon: BadgeDollarSign },
       { href: "/dynamic-events", label: "Dynamic Events", icon: Sparkles },
       { href: "/ai-agents", label: "AI Agents", icon: Bot }
