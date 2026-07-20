@@ -17,6 +17,8 @@ import anomaliesCuriosityPack from "@/data/curiosity-volume-08-anomalies.json";
 import anomaliesCuriosityTaxonomyPack from "@/data/curiosity-volume-08-anomalies-taxonomy.json";
 import unknownObjectsCuriosityPack from "@/data/curiosity-volume-09-unknown-objects.json";
 import unknownObjectsCuriosityTaxonomyPack from "@/data/curiosity-volume-09-unknown-objects-taxonomy.json";
+import geneticArchivesCuriosityPack from "@/data/curiosity-volume-10-genetic-archives.json";
+import geneticArchivesCuriosityTaxonomyPack from "@/data/curiosity-volume-10-genetic-archives-taxonomy.json";
 
 export const discoveryRarities = [
   { id: "common", displayName: "Common", displayOrder: 1, defaultSpawnWeight: 1 },
@@ -199,6 +201,7 @@ export type DiscoveryRecord = {
   scale?: string;
   operationalState?: string;
   objectState?: string;
+  archiveState?: string;
   phenomenonState?: string;
   measurementMethod?: string;
   hazardLevel?: string;
@@ -212,6 +215,10 @@ export type DiscoveryRecord = {
   observationConfidencePercent?: number;
   functionConfidencePercent?: number;
   realityVariancePercent?: number;
+  genomeIntegrityPercent?: number;
+  viabilityPercent?: number;
+  sequenceCompletionPercent?: number;
+  contaminationPercent?: number;
   powerSignature?: number;
   stabilityPercent?: number;
   reverseEngineeringProgressPercent?: number;
@@ -233,6 +240,8 @@ export type DiscoveryRecord = {
   anomalyValue?: number;
   mysteryValue?: number;
   scientificValue?: number;
+  geneticValue?: number;
+  medicalValue?: number;
   collectionValue?: number;
   repeatable?: boolean;
   maximumKnownInstances?: number;
@@ -305,6 +314,7 @@ type ImportedCuriosity = {
   scale?: string;
   operational_state?: string;
   object_state?: string;
+  archive_state?: string;
   phenomenon_state?: string;
   measurement_method?: string;
   hazard_level?: string;
@@ -318,6 +328,10 @@ type ImportedCuriosity = {
   observation_confidence_percent?: number;
   function_confidence_percent?: number;
   reality_variance_percent?: number;
+  genome_integrity_percent?: number;
+  viability_percent?: number;
+  sequence_completion_percent?: number;
+  contamination_percent?: number;
   power_signature?: number;
   stability_percent?: number;
   reverse_engineering_progress_percent?: number;
@@ -345,6 +359,8 @@ type ImportedCuriosity = {
   anomaly_value?: number;
   mystery_value?: number;
   scientific_value?: number;
+  genetic_value?: number;
+  medical_value?: number;
   collection_value?: number;
   repeatable?: boolean;
   maximum_known_instances?: number;
@@ -404,6 +420,8 @@ export const anomaliesCuriosityVolume = anomaliesCuriosityPack as ImportedCurios
 export const anomaliesCuriosityTaxonomy = anomaliesCuriosityTaxonomyPack as ImportedCuriosityTaxonomyPack;
 export const unknownObjectsCuriosityVolume = unknownObjectsCuriosityPack as ImportedCuriosityPack;
 export const unknownObjectsCuriosityTaxonomy = unknownObjectsCuriosityTaxonomyPack as ImportedCuriosityTaxonomyPack;
+export const geneticArchivesCuriosityVolume = geneticArchivesCuriosityPack as ImportedCuriosityPack;
+export const geneticArchivesCuriosityTaxonomy = geneticArchivesCuriosityTaxonomyPack as ImportedCuriosityTaxonomyPack;
 
 const biologicalCategoryAliases: Record<string, string> = {
   Flora: "biological-flora",
@@ -566,7 +584,14 @@ export const curiosityCategories: CuriosityCategory[] = [
     ["Unknown Biological Objects", ["Eggs", "Cocoons", "Spores", "Dormant Organisms", "Biological Capsules"]],
     ["Unknown Signals", ["Radio Signals", "Gravitational Signals", "Quantum Signals", "Biological Signals", "Repeating Patterns"]],
     ["Anomalous Objects", ["Floating Objects", "Time-Displaced Objects", "Impossible Geometry", "Dimensional Fragments", "Reality-Distorting Objects"]]
-  ], Object.entries(unknownObjectsCuriosityTaxonomy.taxonomy["Unknown Objects"] ?? {})), "Unknown")
+  ], Object.entries(unknownObjectsCuriosityTaxonomy.taxonomy["Unknown Objects"] ?? {})), "Unknown"),
+  curiosityCategory(
+    "Genetic Archives",
+    16,
+    "DNA repositories, seed vaults, embryo collections, cloning templates, gene libraries, species records, evolutionary samples, and extinct genomes preserved for study.",
+    Object.entries(geneticArchivesCuriosityTaxonomy.taxonomy["Genetic Archives"] ?? {}),
+    "Genetic"
+  )
 ];
 
 export const discoveryCategories = curiosityCategories.map((category) => ({
@@ -972,6 +997,7 @@ function importedCuriosityRecord(record: ImportedCuriosity, pack: ImportedCurios
     scale: record.scale,
     operationalState: record.operational_state,
     objectState: record.object_state,
+    archiveState: record.archive_state,
     phenomenonState: record.phenomenon_state,
     measurementMethod: record.measurement_method,
     hazardLevel: record.hazard_level,
@@ -985,6 +1011,10 @@ function importedCuriosityRecord(record: ImportedCuriosity, pack: ImportedCurios
     observationConfidencePercent: record.observation_confidence_percent,
     functionConfidencePercent: record.function_confidence_percent,
     realityVariancePercent: record.reality_variance_percent,
+    genomeIntegrityPercent: record.genome_integrity_percent,
+    viabilityPercent: record.viability_percent,
+    sequenceCompletionPercent: record.sequence_completion_percent,
+    contaminationPercent: record.contamination_percent,
     powerSignature: record.power_signature,
     stabilityPercent: record.stability_percent,
     reverseEngineeringProgressPercent: record.reverse_engineering_progress_percent,
@@ -1006,6 +1036,8 @@ function importedCuriosityRecord(record: ImportedCuriosity, pack: ImportedCurios
     anomalyValue: record.anomaly_value,
     mysteryValue: record.mystery_value,
     scientificValue: record.scientific_value,
+    geneticValue: record.genetic_value,
+    medicalValue: record.medical_value,
     collectionValue: record.collection_value,
     repeatable: record.repeatable,
     maximumKnownInstances: record.maximum_known_instances,
@@ -1131,6 +1163,15 @@ const unknownObjectsImportConfig: CuriosityVolumeImportConfig = {
   generationNotes: "Imported from NOVERIS Curiosity Codex Volume IX: Unknown Objects."
 };
 
+const geneticArchivesImportConfig: CuriosityVolumeImportConfig = {
+  volumeId: "genetic-archives",
+  defaultTag: "genetic-archives",
+  defaultResearchIds: ["planet_scan", "genetics", "xenobiology"],
+  defaultEquipmentIds: ["genetic_scanner", "biosecure_container"],
+  specialEvent: "genetic-archives-curiosity-volume-10",
+  generationNotes: "Imported from NOVERIS Curiosity Codex Volume X: Genetic Archives."
+};
+
 export const biologicalCuriosityRecords = biologicalCuriosityVolume.records.map((record) => importedCuriosityRecord(record, biologicalCuriosityVolume, biologicalImportConfig));
 export const faunaCuriosityRecords = faunaCuriosityVolume.records.map((record) => importedCuriosityRecord(record, faunaCuriosityVolume, faunaImportConfig));
 export const geologicalCuriosityRecords = geologicalCuriosityVolume.records.map((record) => importedCuriosityRecord(record, geologicalCuriosityVolume, geologicalImportConfig));
@@ -1140,6 +1181,7 @@ export const ruinsStructuresCuriosityRecords = ruinsStructuresCuriosityVolume.re
 export const energyPhenomenaCuriosityRecords = energyPhenomenaCuriosityVolume.records.map((record) => importedCuriosityRecord(record, energyPhenomenaCuriosityVolume, energyPhenomenaImportConfig));
 export const anomaliesCuriosityRecords = anomaliesCuriosityVolume.records.map((record) => importedCuriosityRecord(record, anomaliesCuriosityVolume, anomaliesImportConfig));
 export const unknownObjectsCuriosityRecords = unknownObjectsCuriosityVolume.records.map((record) => importedCuriosityRecord(record, unknownObjectsCuriosityVolume, unknownObjectsImportConfig));
+export const geneticArchivesCuriosityRecords = geneticArchivesCuriosityVolume.records.map((record) => importedCuriosityRecord(record, geneticArchivesCuriosityVolume, geneticArchivesImportConfig));
 
 export const biologicalCuriosityNavigation = importedCuriosityNavigation(biologicalCuriosityTaxonomy);
 export const faunaCuriosityNavigation = importedCuriosityNavigation(faunaCuriosityTaxonomy);
@@ -1150,6 +1192,7 @@ export const ruinsStructuresCuriosityNavigation = importedCuriosityNavigation(ru
 export const energyPhenomenaCuriosityNavigation = importedCuriosityNavigation(energyPhenomenaCuriosityTaxonomy);
 export const anomaliesCuriosityNavigation = importedCuriosityNavigation(anomaliesCuriosityTaxonomy);
 export const unknownObjectsCuriosityNavigation = importedCuriosityNavigation(unknownObjectsCuriosityTaxonomy);
+export const geneticArchivesCuriosityNavigation = importedCuriosityNavigation(geneticArchivesCuriosityTaxonomy);
 
 export const canonicalDiscoveries: DiscoveryRecord[] = [
   ...coreDiscoveryRecords,
@@ -1161,10 +1204,11 @@ export const canonicalDiscoveries: DiscoveryRecord[] = [
   ...ruinsStructuresCuriosityRecords,
   ...energyPhenomenaCuriosityRecords,
   ...anomaliesCuriosityRecords,
-  ...unknownObjectsCuriosityRecords
+  ...unknownObjectsCuriosityRecords,
+  ...geneticArchivesCuriosityRecords
 ];
 
-export const supportedCuriosityVolumeIds = ["biological", "fauna", "geological", "ancient-relics", "alien-technology", "ruins-and-structures", "energy-phenomena", "anomalies", "unknown-objects"] as const;
+export const supportedCuriosityVolumeIds = ["biological", "fauna", "geological", "ancient-relics", "alien-technology", "ruins-and-structures", "energy-phenomena", "anomalies", "unknown-objects", "genetic-archives"] as const;
 export type SupportedCuriosityVolumeId = typeof supportedCuriosityVolumeIds[number];
 
 function discoveryFolderKey(record: Pick<DiscoveryRecord, "volumeId" | "categoryId" | "classId" | "subclassId">, depth: "volume" | "category" | "class" | "subclass") {
@@ -1445,6 +1489,24 @@ function runDiscoverySystemValidation() {
   const incompleteUnknownObjects = unknownObjectsCuriosityRecords.filter((record) => !record.objectState || !record.recoveryMethod || typeof record.unknownSignature !== "number" || typeof record.originConfidencePercent !== "number" || typeof record.functionConfidencePercent !== "number" || typeof record.translationProgressPercent !== "number" || typeof record.realityVariancePercent !== "number");
   if (incompleteUnknownObjects.length) {
     issues.push({ severity: "error", code: "unknown_object_analysis_contract", message: "Unknown objects must preserve state, recovery method, signature, origin confidence, function confidence, translation progress, and reality variance.", records: incompleteUnknownObjects.map((record) => record.id) });
+  }
+  const geneticArchiveNames = geneticArchivesCuriosityRecords.map((record) => record.displayName.trim().toLowerCase());
+  if (new Set(geneticArchiveNames).size !== geneticArchiveNames.length) {
+    issues.push({ severity: "error", code: "duplicate_genetic_archive_name", message: "Volume X curiosity names must be unique.", records: geneticArchivesCuriosityRecords.map((record) => record.displayName) });
+  }
+  if (geneticArchivesCuriosityRecords.length !== geneticArchivesCuriosityVolume.recordCount) {
+    issues.push({ severity: "error", code: "genetic_archive_record_count", message: "Volume X must load its declared canonical record count.", records: [String(geneticArchivesCuriosityRecords.length), String(geneticArchivesCuriosityVolume.recordCount)] });
+  }
+  if (geneticArchivesCuriosityRecords[0]?.id !== "GEN-0001" || geneticArchivesCuriosityRecords.at(-1)?.id !== "GEN-0600") {
+    issues.push({ severity: "error", code: "genetic_archive_id_range", message: "Volume X must preserve the GEN-0001 through GEN-0600 canonical range.", records: [geneticArchivesCuriosityRecords[0]?.id ?? "missing", geneticArchivesCuriosityRecords.at(-1)?.id ?? "missing"] });
+  }
+  const invalidUniqueGeneticArchives = geneticArchivesCuriosityRecords.filter((record) => record.rarity === "unique" && (record.maximumKnownInstances !== 1 || record.repeatable !== false));
+  if (invalidUniqueGeneticArchives.length) {
+    issues.push({ severity: "error", code: "genetic_archive_unique_contract", message: "Unique genetic archives must be non-repeatable and limited to one known instance.", records: invalidUniqueGeneticArchives.map((record) => record.id) });
+  }
+  const incompleteGeneticArchives = geneticArchivesCuriosityRecords.filter((record) => !record.archiveState || !record.recoveryMethod || typeof record.genomeIntegrityPercent !== "number" || typeof record.viabilityPercent !== "number" || typeof record.sequenceCompletionPercent !== "number" || typeof record.contaminationPercent !== "number" || typeof record.translationProgressPercent !== "number" || typeof record.originConfidencePercent !== "number");
+  if (incompleteGeneticArchives.length) {
+    issues.push({ severity: "error", code: "genetic_archive_analysis_contract", message: "Genetic archives must preserve archive state, recovery method, genome integrity, viability, sequence completion, contamination, translation progress, and origin confidence.", records: incompleteGeneticArchives.map((record) => record.id) });
   }
   for (const collection of discoveryCollections) {
     const missing = collection.discoveryIds.filter((id) => !discoveryIds.has(id));

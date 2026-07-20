@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "taxonomy": {
+    "Genetic Archives": {
+      "DNA Archives": [
+        "Nuclear DNA Repositories",
+        "Mitochondrial Archives",
+        "Plasmid Libraries",
+        "Chromosomal Fragments",
+        "Epigenetic Records",
+        "Regulatory Sequences",
+        "Immune Repertoires",
+        "Pathogen Genomes",
+        "Symbiotic Genomes",
+        "Unknown Genetic Codes"
+      ],
+      "Seed Vaults": [
+        "Agricultural Seeds",
+        "Wild Flora Seeds",
+        "Aquatic Flora Seeds",
+        "Desert Flora Seeds",
+        "Tundra Flora Seeds",
+        "Medicinal Plant Seeds",
+        "Fungal Spores",
+        "Tree Germplasm",
+        "Ancient Seed Banks",
+        "Unknown Seed Collections"
+      ],
+      "Embryo Repositories": [
+        "Faunal Embryos",
+        "Aquatic Embryos",
+        "Aerial Embryos",
+        "Microfaunal Embryos",
+        "Intelligent Species Embryos",
+        "Synthetic Embryos",
+        "Hybrid Embryos",
+        "Cryogenic Embryos",
+        "Ancient Embryos",
+        "Unknown Developmental Forms"
+      ],
+      "Cloning Templates": [
+        "Flora Templates",
+        "Fauna Templates",
+        "Microbial Templates",
+        "Organ Templates",
+        "Tissue Templates",
+        "Synthetic Life Templates",
+        "Hybrid Templates",
+        "Adaptive Templates",
+        "Extinct Species Templates",
+        "Unknown Replication Patterns"
+      ],
+      "Gene Libraries": [
+        "Metabolic Genes",
+        "Environmental Adaptation Genes",
+        "Longevity Genes",
+        "Regeneration Genes",
+        "Sensory Genes",
+        "Cognitive Genes",
+        "Structural Genes",
+        "Resistance Genes",
+        "Bioluminescence Genes",
+        "Unknown Functional Genes"
+      ],
+      "Species Records": [
+        "Flora Lineages",
+        "Fauna Lineages",
+        "Microbial Lineages",
+        "Symbiotic Species",
+        "Domesticated Species",
+        "Intelligent Species",
+        "Synthetic Species",
+        "Hybrid Species",
+        "Endangered Species",
+        "Unknown Species Records"
+      ],
+      "Evolutionary Samples": [
+        "Transitional Forms",
+        "Adaptive Mutations",
+        "Founder Populations",
+        "Radiation Events",
+        "Convergent Evolution Samples",
+        "Speciation Records",
+        "Mass Extinction Survivors",
+        "Rapid Evolution Samples",
+        "Artificial Evolution Samples",
+        "Unknown Evolutionary Events"
+      ],
+      "Extinct Genomes": [
+        "Extinct Flora",
+        "Extinct Fauna",
+        "Extinct Microbes",
+        "Extinct Intelligent Species",
+        "Prehistoric Megafauna",
+        "Lost Aquatic Species",
+        "Lost Aerial Species",
+        "Ancient Symbionts",
+        "Civilization-Created Species",
+        "Unrecoverable Genomes"
+      ]
+    }
+  }
+}
