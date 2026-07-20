@@ -25,7 +25,6 @@ import {
   PackageCheck,
   Radar,
   ShieldCheck,
-  Sparkles,
   Star,
   WandSparkles,
   X
@@ -96,9 +95,7 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/research", label: "Research Library", icon: FlaskConical },
       { href: "/upgrades", label: "Upgrade Library", icon: WandSparkles },
       { href: "/population", label: "Population", icon: Landmark },
-      { href: "/colonies", label: "Colonies", icon: Building2 },
       { href: "/economy", label: "Economy & Trade", icon: BadgeDollarSign },
-      { href: "/dynamic-events", label: "Dynamic Events", icon: Sparkles },
       { href: "/ai-agents", label: "AI Agents", icon: Bot }
     ]
   },
