@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "taxonomy": {
+    "Anomalies": {
+      "Spatial Anomalies": [
+        "Folded Space",
+        "Micro Wormholes",
+        "Rift Zones",
+        "Space Tears",
+        "Pocket Dimensions",
+        "Spatial Mirrors",
+        "Null Space",
+        "Infinite Corridors",
+        "Compression Fields",
+        "Expansion Fields"
+      ],
+      "Temporal Anomalies": [
+        "Time Echoes",
+        "Frozen Time",
+        "Accelerated Time",
+        "Time Loops",
+        "Temporal Storms",
+        "Future Echoes",
+        "Past Echoes",
+        "Time Fractures",
+        "Aging Fields",
+        "Chronal Wells"
+      ],
+      "Gravitational Anomalies": [
+        "Gravity Wells",
+        "Reverse Gravity",
+        "Micro Singularities",
+        "Floating Regions",
+        "Tidal Distortions",
+        "Mass Compression Fields",
+        "Density Shifts",
+        "Orbital Chaos",
+        "Graviton Clouds",
+        "Collapse Zones"
+      ],
+      "Quantum Anomalies": [
+        "Quantum Foam",
+        "Probability Clouds",
+        "Quantum Mirrors",
+        "Observation Fields",
+        "Decoherence Zones",
+        "Quantum Seeds",
+        "Entangled Regions",
+        "Superposition Nodes",
+        "Wave Collapse Fields",
+        "Quantum Wells"
+      ],
+      "Dimensional Anomalies": [
+        "Reality Tears",
+        "Dimensional Windows",
+        "Alternate Reality Nodes",
+        "Multiversal Echoes",
+        "Hyperdimensional Space",
+        "Folded Dimensions",
+        "Interdimensional Bridges",
+        "Pocket Universes",
+        "Boundary Fields",
+        "Dimensional Storms"
+      ],
+      "Energy Anomalies": [
+        "Plasma Storms",
+        "Dark Energy Clouds",
+        "Antimatter Fields",
+        "Stellar Flares",
+        "Ion Storms",
+        "Energy Whirlpools",
+        "Fusion Clouds",
+        "Vacuum Energy",
+        "Radiation Blooms",
+        "Exotic Energy Fields"
+      ],
+      "Biological Anomalies": [
+        "Impossible Organisms",
+        "Living Energy",
+        "Self-Evolving Colonies",
+        "Sentient Ecosystems",
+        "Organic Time Fields",
+        "Regeneration Zones",
+        "Genetic Storms",
+        "Hive Consciousness",
+        "Reality Parasites",
+        "Bio-Quantum Organisms"
+      ],
+      "Reality Distortions": [
+        "Impossible Geometry",
+        "Endless Hallways",
+        "Infinite Horizons",
+        "Living Landscapes",
+        "Memory Fields",
+        "Gravity Inversions",
+        "Colorless Regions",
+        "Silent Zones",
+        "Impossible Mountains",
+        "Dreamspace Regions"
+      ]
+    }
+  }
+}
