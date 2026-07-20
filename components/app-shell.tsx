@@ -19,7 +19,6 @@ import {
   GalleryHorizontalEnd,
   Landmark,
   LayoutDashboard,
-  ListChecks,
   Map,
   Menu,
   Orbit,
@@ -92,7 +91,6 @@ const navigationGroups: NavigationGroup[] = [
     label: "Civilization",
     icon: Landmark,
     items: [
-      { href: "/actions", label: "Actions", icon: ListChecks },
       { href: "/buildings", label: "Building Library", icon: Building2 },
       { href: "/research", label: "Research Library", icon: FlaskConical },
       { href: "/upgrades", label: "Upgrade Library", icon: WandSparkles },
