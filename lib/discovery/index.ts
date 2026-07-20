@@ -23,6 +23,8 @@ import organicMaterialsCuriosityPack from "@/data/curiosity-volume-11-organic-ma
 import organicMaterialsCuriosityTaxonomyPack from "@/data/curiosity-volume-11-organic-materials-taxonomy.json";
 import rareCollectionsCuriosityPack from "@/data/curiosity-volume-12-rare-collections-and-wonders.json";
 import rareCollectionsCuriosityTaxonomyPack from "@/data/curiosity-volume-12-rare-collections-and-wonders-taxonomy.json";
+import { MOVED_RESOURCE_SPECS, RESOURCE_MIGRATION_BY_LEGACY_ID } from "@/lib/resources/taxonomy";
+import { resourceTaxonomyDiscoveryAdditions } from "@/lib/discovery/resource-taxonomy-additions";
 
 export const discoveryRarities = [
   { id: "common", displayName: "Common", displayOrder: 1, defaultSpawnWeight: 1 },
@@ -1263,6 +1265,46 @@ export const geneticArchivesCuriosityRecords = geneticArchivesCuriosityVolume.re
 export const organicMaterialsCuriosityRecords = organicMaterialsCuriosityVolume.records.map((record) => importedCuriosityRecord(record, organicMaterialsCuriosityVolume, organicMaterialsImportConfig));
 export const rareCollectionsCuriosityRecords = rareCollectionsCuriosityVolume.records.map((record) => importedCuriosityRecord(record, rareCollectionsCuriosityVolume, rareCollectionsImportConfig));
 
+export const migratedResourceDiscoveryRecords: DiscoveryRecord[] = MOVED_RESOURCE_SPECS
+  .filter(([, name]) => name !== "Void Tablet")
+  .map(([legacyResourceId, name, replacementResourceId, categoryId, classId, subclassId]) => {
+    const id = RESOURCE_MIGRATION_BY_LEGACY_ID.get(legacyResourceId)!.canonical_discovery_id!;
+    return {
+      id,
+      slug: slugify(name),
+      volumeId: categoryId,
+      volumeName: "Resource Taxonomy Migration",
+      displayName: name,
+      categoryId,
+      classId,
+      subclassId,
+      subcategoryId: subclassId,
+      scientificName: "Legacy classification pending",
+      description: `${name} is preserved as a canonical discovery after migration from the legacy Resource Catalog.`,
+      lore: "This unique found object is cataloged for research, preservation, and historical attribution rather than bulk extraction or logistics.",
+      rarity: "ancient",
+      spawnWeight: 0.00003,
+      discoveryXp: 250,
+      creditsValue: 0,
+      researchValue: 300,
+      tradeValue: 0,
+      unlocks: [],
+      relatedResearchIds: ["artifact_analysis"],
+      relatedBuildingIds: [],
+      relatedResourceIds: [replacementResourceId],
+      relatedPlanetIds: [],
+      relatedCivilizationIds: [],
+      relatedLifeformIds: [],
+      requiredEquipmentIds: ["artifact_containment_unit"],
+      requiredScanLevel: 3,
+      spawnRules: { ancientRuins: "required", requiredResearchIds: ["artifact_analysis"] },
+      assetProfile: assetProfile(`migrated_${legacyResourceId.toLowerCase()}`),
+      publicationStatus: "published",
+      canonicalVersion: "resource-taxonomy-v3.0",
+      tags: ["resource-migration", "unique-discovery", legacyResourceId]
+    };
+  });
+
 export const biologicalCuriosityNavigation = importedCuriosityNavigation(biologicalCuriosityTaxonomy);
 export const faunaCuriosityNavigation = importedCuriosityNavigation(faunaCuriosityTaxonomy);
 export const geologicalCuriosityNavigation = importedCuriosityNavigation(geologicalCuriosityTaxonomy);
@@ -1278,6 +1320,8 @@ export const rareCollectionsCuriosityNavigation = importedCuriosityNavigation(ra
 
 export const canonicalDiscoveries: DiscoveryRecord[] = [
   ...coreDiscoveryRecords,
+  ...migratedResourceDiscoveryRecords,
+  ...resourceTaxonomyDiscoveryAdditions,
   ...biologicalCuriosityRecords,
   ...faunaCuriosityRecords,
   ...geologicalCuriosityRecords,

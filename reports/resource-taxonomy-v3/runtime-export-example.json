@@ -1,0 +1,167 @@
+{
+  "resourceTaxonomy": {
+    "version": "resource-taxonomy-v3.0",
+    "profileGenerationVersion": "planet-resource-taxonomy-v3",
+    "validationStatus": "Ready"
+  },
+  "resources": [
+    {
+      "id": "RES-0010",
+      "resource_name": "Iron",
+      "category": "Elements",
+      "rarity": "Common",
+      "rarity_color": "#FFFFFF",
+      "discovery_tier": "Earth",
+      "earth_available": "Yes",
+      "first_unlock_requirement": "Start",
+      "typical_planet_classes": [
+        "Terrestrial",
+        "Desert",
+        "Dead",
+        "Lava"
+      ],
+      "primary_uses": [
+        "early buildings",
+        "basic industry",
+        "crafting",
+        "and trade"
+      ],
+      "base_trade_value": 10,
+      "stack_size": 9999,
+      "description": "Core metal for tools, buildings, factories, machines, and infrastructure.",
+      "science_lore_notes": "Earth-realistic common resource.",
+      "codex_implementation_notes": "Available before space exploration.",
+      "created_at": "2026-07-06T00:00:00.000Z",
+      "updated_at": "2026-07-06T00:00:00.000Z",
+      "primary_category": "Elements",
+      "resource_type": "Element",
+      "subcategory": "Transition Metal",
+      "tags": [
+        "Metal",
+        "Common",
+        "Earth",
+        "Transition Metal",
+        "Fe"
+      ],
+      "legacy_category": "Metal",
+      "migration_version": "resource-taxonomy-v3.0",
+      "status": "active",
+      "radioactive": false,
+      "synthetic": false,
+      "natural_occurrence": "Naturally Occurring",
+      "typical_star_system_conditions": [],
+      "minimum_planet_rarity": "Common",
+      "minimum_research_tier": "Start",
+      "extraction_method": "Extraction, recovery, or processing",
+      "required_technology": [
+        "Start"
+      ],
+      "resource_profile_eligible": true,
+      "element": {
+        "atomic_number": 26,
+        "resource_name": "Iron",
+        "chemical_symbol": "Fe",
+        "atomic_mass_display": "Standard atomic weight",
+        "element_family": "Transition Metal",
+        "period": 4,
+        "group_number": 8,
+        "standard_phase": "Solid",
+        "occurrence": "Naturally Occurring",
+        "radioactive": false,
+        "properties_status": "Observed",
+        "scientific_reference_notes": "Iron is chemical element 26 (Fe). Scientific metadata is descriptive unless referenced by a gameplay rule."
+      }
+    },
+    {
+      "id": "RES-0011",
+      "resource_name": "Copper",
+      "category": "Elements",
+      "rarity": "Common",
+      "rarity_color": "#FFFFFF",
+      "discovery_tier": "Earth",
+      "earth_available": "Yes",
+      "first_unlock_requirement": "Start",
+      "typical_planet_classes": [
+        "Terrestrial",
+        "Desert",
+        "Dead",
+        "Lava"
+      ],
+      "primary_uses": [
+        "early buildings",
+        "basic industry",
+        "crafting",
+        "and trade"
+      ],
+      "base_trade_value": 10,
+      "stack_size": 9999,
+      "description": "Conductive metal for wiring, electronics, motors, and trade goods.",
+      "science_lore_notes": "Earth-realistic common resource.",
+      "codex_implementation_notes": "Available before space exploration.",
+      "created_at": "2026-07-06T00:00:00.000Z",
+      "updated_at": "2026-07-06T00:00:00.000Z",
+      "primary_category": "Elements",
+      "resource_type": "Element",
+      "subcategory": "Transition Metal",
+      "tags": [
+        "Metal",
+        "Common",
+        "Earth",
+        "Transition Metal",
+        "Cu"
+      ],
+      "legacy_category": "Metal",
+      "migration_version": "resource-taxonomy-v3.0",
+      "status": "active",
+      "radioactive": false,
+      "synthetic": false,
+      "natural_occurrence": "Naturally Occurring",
+      "typical_star_system_conditions": [],
+      "minimum_planet_rarity": "Common",
+      "minimum_research_tier": "Start",
+      "extraction_method": "Extraction, recovery, or processing",
+      "required_technology": [
+        "Start"
+      ],
+      "resource_profile_eligible": true,
+      "element": {
+        "atomic_number": 29,
+        "resource_name": "Copper",
+        "chemical_symbol": "Cu",
+        "atomic_mass_display": "Standard atomic weight",
+        "element_family": "Transition Metal",
+        "period": 4,
+        "group_number": 11,
+        "standard_phase": "Solid",
+        "occurrence": "Naturally Occurring",
+        "radioactive": false,
+        "properties_status": "Observed",
+        "scientific_reference_notes": "Copper is chemical element 29 (Cu). Scientific metadata is descriptive unless referenced by a gameplay rule."
+      }
+    }
+  ],
+  "resourceMigrations": [
+    {
+      "id": "RESOURCE-MIGRATION-RES-0108",
+      "legacy_resource_id": "RES-0108",
+      "migration_action": "MOVE_TO_DISCOVERY",
+      "canonical_resource_id": "RES-0100",
+      "canonical_discovery_id": "DISC-MIGRATED-0108",
+      "migration_version": "resource-taxonomy-v3.0",
+      "preserve_inventory_quantity": true,
+      "conversion_rule": "Convert each legacy Ancient Circuit inventory unit to one unit of RES-0100; preserve the discovery unlock separately.",
+      "notes": "Ancient Circuit is a unique found object, not a repeatable economic material."
+    },
+    {
+      "id": "RESOURCE-MIGRATION-RES-0109",
+      "legacy_resource_id": "RES-0109",
+      "migration_action": "MOVE_TO_DISCOVERY",
+      "canonical_resource_id": "RES-0106",
+      "canonical_discovery_id": "DISC-MIGRATED-0109",
+      "migration_version": "resource-taxonomy-v3.0",
+      "preserve_inventory_quantity": true,
+      "conversion_rule": "Convert each legacy Relic Fragments inventory unit to one unit of RES-0106; preserve the discovery unlock separately.",
+      "notes": "Relic Fragments is a unique found object, not a repeatable economic material."
+    }
+  ]
+}

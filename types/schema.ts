@@ -210,6 +210,37 @@ export type ResourceCatalogItem = {
   codex_implementation_notes: string;
   created_at: string;
   updated_at: string;
+  resource_type?: string;
+  primary_category?: string;
+  subcategory?: string;
+  tags?: string[];
+  legacy_category?: string;
+  migration_version?: string;
+  status?: "active" | "deprecated";
+  parent_element_id?: string;
+  natural_occurrence?: string;
+  synthetic?: boolean;
+  radioactive?: boolean;
+  typical_star_system_conditions?: string[];
+  minimum_planet_rarity?: string;
+  minimum_research_tier?: string;
+  extraction_method?: string;
+  required_technology?: string[];
+  resource_profile_eligible?: boolean;
+  element?: {
+    atomic_number: number;
+    chemical_symbol: string;
+    atomic_mass_display: string;
+    element_family: string;
+    period: number;
+    group_number?: number;
+    standard_phase: "Solid" | "Liquid" | "Gas" | "Unknown";
+    occurrence: "Naturally Occurring" | "Trace Naturally Occurring" | "Primarily Synthetic" | "Synthetic";
+    radioactive: boolean;
+    stable_isotope_count?: number;
+    properties_status: "Observed" | "Partially Observed" | "Predicted";
+    scientific_reference_notes?: string;
+  };
 };
 
 export type UniverseRecord = {
@@ -430,6 +461,7 @@ export type GeneratedPlanet = {
   water_coverage: string;
   moons: string;
   resourceIds?: string[];
+  resource_generation_version?: string;
   resources: string[];
   flora: string;
   fauna: string;

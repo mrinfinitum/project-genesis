@@ -1,0 +1,92 @@
+[
+  {
+    "legacy_resource_id": "RES-0108",
+    "canonical_discovery_id": "DISC-MIGRATED-0108",
+    "existing_match_reused": false
+  },
+  {
+    "legacy_resource_id": "RES-0109",
+    "canonical_discovery_id": "DISC-MIGRATED-0109",
+    "existing_match_reused": false
+  },
+  {
+    "legacy_resource_id": "RES-0110",
+    "canonical_discovery_id": "DISC-MIGRATED-0110",
+    "existing_match_reused": false
+  },
+  {
+    "legacy_resource_id": "RES-0111",
+    "canonical_discovery_id": "DISC-MIGRATED-0111",
+    "existing_match_reused": false
+  },
+  {
+    "legacy_resource_id": "RES-0112",
+    "canonical_discovery_id": "DISC-MIGRATED-0112",
+    "existing_match_reused": false
+  },
+  {
+    "legacy_resource_id": "RES-0113",
+    "canonical_discovery_id": "DISC-MIGRATED-0113",
+    "existing_match_reused": false
+  },
+  {
+    "legacy_resource_id": "RES-0114",
+    "canonical_discovery_id": "DISC-MIGRATED-0114",
+    "existing_match_reused": false
+  },
+  {
+    "legacy_resource_id": "RES-0115",
+    "canonical_discovery_id": "DISC-MIGRATED-0115",
+    "existing_match_reused": false
+  },
+  {
+    "legacy_resource_id": "RES-0116",
+    "canonical_discovery_id": "REL-0149",
+    "existing_match_reused": true
+  },
+  {
+    "legacy_resource_id": "RES-0117",
+    "canonical_discovery_id": "DISC-MIGRATED-0117",
+    "existing_match_reused": false
+  },
+  {
+    "legacy_resource_id": "RES-0118",
+    "canonical_discovery_id": "DISC-MIGRATED-0118",
+    "existing_match_reused": false
+  },
+  {
+    "legacy_resource_id": "RES-0119",
+    "canonical_discovery_id": "DISC-MIGRATED-0119",
+    "existing_match_reused": false
+  },
+  {
+    "legacy_resource_id": "RES-0120",
+    "canonical_discovery_id": "DISC-MIGRATED-0120",
+    "existing_match_reused": false
+  },
+  {
+    "legacy_resource_id": "RES-0121",
+    "canonical_discovery_id": "DISC-MIGRATED-0121",
+    "existing_match_reused": false
+  },
+  {
+    "legacy_resource_id": "RES-0122",
+    "canonical_discovery_id": "DISC-MIGRATED-0122",
+    "existing_match_reused": false
+  },
+  {
+    "legacy_resource_id": "RES-0123",
+    "canonical_discovery_id": "DISC-MIGRATED-0123",
+    "existing_match_reused": false
+  },
+  {
+    "legacy_resource_id": "RES-0124",
+    "canonical_discovery_id": "DISC-MIGRATED-0124",
+    "existing_match_reused": false
+  },
+  {
+    "legacy_resource_id": "RES-0125",
+    "canonical_discovery_id": "DISC-MIGRATED-0125",
+    "existing_match_reused": false
+  }
+]

@@ -146,6 +146,12 @@ const targetOrder: EngineTarget[] = ["roblox", "unity", "unreal", "godot", "web"
 
 type CanonicalModules = {
   resource_catalog: typeof ResourceService.catalog;
+  resource_taxonomy: {
+    version: typeof ResourceService.taxonomyVersion;
+    profileGenerationVersion: typeof ResourceService.profileGenerationVersion;
+    validationStatus: ReturnType<typeof ResourceService.validate>["status"];
+  };
+  resource_migrations: typeof ResourceService.migrations;
   planet_resource_profiles: ReturnType<typeof normalizePlanetResourceProfiles>;
   research: GameData["research"];
   building_taxonomy: typeof canonicalBuildingTaxonomy;
@@ -520,6 +526,12 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
 
   return {
     resource_catalog: ResourceService.catalog,
+    resource_taxonomy: {
+      version: ResourceService.taxonomyVersion,
+      profileGenerationVersion: ResourceService.profileGenerationVersion,
+      validationStatus: ResourceService.validate().status
+    },
+    resource_migrations: ResourceService.migrations,
     planet_resource_profiles: validatePlanetResourceProfiles(data.planet_resource_profiles as PlanetResourceProfile[]),
     research: data.research,
     building_taxonomy: canonicalBuildingTaxonomy,
@@ -1503,9 +1515,24 @@ function validateArchitectureVersion(issues: ExportValidationIssue[]) {
   }
 }
 
+function validateResourceTaxonomyExport(issues: ExportValidationIssue[], modules: CanonicalModules) {
+  const serviceValidation = ResourceService.validate();
+  for (const message of serviceValidation.errors) addIssue(issues, "error", "resource_taxonomy_invalid", message);
+  for (const message of serviceValidation.warnings) addIssue(issues, "warning", "resource_taxonomy_warning", message);
+  if (modules.resource_taxonomy.version !== ResourceService.taxonomyVersion || modules.resource_taxonomy.profileGenerationVersion !== ResourceService.profileGenerationVersion) {
+    addIssue(issues, "error", "resource_taxonomy_version_mismatch", "Export taxonomy versions must match ResourceService.");
+  }
+  const resourceIds = new Set(modules.resource_catalog.map((resource) => resource.id));
+  const invalidMigrations = modules.resource_migrations.filter((migration) => migration.canonical_resource_id && !resourceIds.has(migration.canonical_resource_id));
+  if (invalidMigrations.length) {
+    addIssue(issues, "error", "resource_migration_reference_invalid", "Resource migrations must resolve to active canonical resources.", invalidMigrations.map((migration) => migration.legacy_resource_id));
+  }
+}
+
 function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
   const issues: ExportValidationIssue[] = [];
   validateArchitectureVersion(issues);
+  validateResourceTaxonomyExport(issues, modules);
   validateStableIds(issues, modules);
   validateResourceReferences(issues, modules);
   validateUnlocks(issues, modules);
@@ -1716,6 +1743,8 @@ function luaValue(value: unknown, indent = 0): string {
 function compactModules(modules: CanonicalModules) {
   return {
     resource_catalog: modules.resource_catalog,
+    resource_taxonomy: modules.resource_taxonomy,
+    resource_migrations: modules.resource_migrations,
     planet_resource_profiles: modules.planet_resource_profiles,
     research: modules.research,
     building_taxonomy: modules.building_taxonomy,

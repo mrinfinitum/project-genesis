@@ -1,0 +1,9 @@
+{
+  "generatedAt": "2026-07-20T13:38:20.168Z",
+  "assertions": {
+    "all118Elements": true,
+    "noValidationErrors": true,
+    "legacyIdsMapped": true,
+    "profilesResolvable": true
+  }
+}

@@ -36,6 +36,7 @@ import {
   resolveEconomyId
 } from "@/lib/economy/definitions";
 import { ResourceService } from "@/lib/resources/service";
+import { RESOURCE_PRIMARY_CATEGORIES } from "@/lib/resources/taxonomy";
 import { planetExplorationProgression, timeActionContract, validatePlanetExplorationProgression, validateTimeActionContract } from "@/lib/planets/exploration-progression";
 import { planetDevelopmentFramework, validatePlanetDevelopmentFramework } from "@/lib/planets/development-framework";
 import { canonicalPlanetOpportunityProfiles, validatePlanetOpportunityProfiles } from "@/lib/planets/opportunity-profiles";
@@ -64,7 +65,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 32;
+export const gameRuntimeContentVersion = 33;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -260,7 +261,20 @@ function resourceToRuntime(resource: ResourceCatalogItem): ResourceDefinition {
     discoveredEraId,
     usableEraId: discoveredEraId,
     tradable: Number(resource.base_trade_value) > 0,
-    tags: [...new Set([resource.category, resource.rarity, resource.discovery_tier, ...resource.primary_uses, ...resource.typical_planet_classes].filter(Boolean))]
+    tags: [...new Set([...(resource.tags ?? []), resource.category, resource.rarity, resource.discovery_tier, ...resource.primary_uses, ...resource.typical_planet_classes].filter(Boolean))],
+    resourceType: resource.resource_type,
+    primaryCategory: resource.primary_category,
+    subcategory: resource.subcategory,
+    element: resource.element ? { ...resource.element } : undefined,
+    availability: {
+      earthAvailable: resource.earth_available,
+      naturalOccurrence: resource.natural_occurrence,
+      minimumPlanetRarity: resource.minimum_planet_rarity,
+      minimumResearchTier: resource.minimum_research_tier,
+      extractionMethod: resource.extraction_method,
+      requiredTechnology: resource.required_technology,
+      resourceProfileEligible: resource.resource_profile_eligible
+    }
   };
 }
 
@@ -1918,6 +1932,22 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   if (!/^\d+\.\d+\.\d+$/.test(runtimeData.metadata.architectureVersion) || runtimeData.metadata.architectureVersion !== ARCHITECTURE_VERSION) {
     issues.push({ severity: "error", code: "metadata_architecture_version_invalid", message: "metadata.architectureVersion must be a valid semantic version matching the Architecture Workspace.", records: ["metadata", runtimeData.metadata.architectureVersion ?? "missing"] });
   }
+  if (runtimeData.resourceTaxonomy.version !== ResourceService.taxonomyVersion || runtimeData.resourceTaxonomy.profileGenerationVersion !== ResourceService.profileGenerationVersion) {
+    issues.push({ severity: "error", code: "resource_taxonomy_version_invalid", message: "Runtime resource taxonomy versions must match ResourceService.", records: [runtimeData.resourceTaxonomy.version, runtimeData.resourceTaxonomy.profileGenerationVersion] });
+  }
+  const runtimeElements = runtimeData.resources.filter((resource) => resource.primaryCategory === "Elements");
+  const elementAtomicNumbers = runtimeElements.map((resource) => Number(resource.element?.atomic_number));
+  const elementSymbols = runtimeElements.map((resource) => String(resource.element?.chemical_symbol ?? ""));
+  if (runtimeElements.length !== 118 || new Set(elementAtomicNumbers).size !== 118 || new Set(elementSymbols).size !== 118) {
+    issues.push({ severity: "error", code: "periodic_table_incomplete", message: "Runtime resources must contain exactly 118 uniquely numbered and symbolized elements.", records: runtimeElements.map((resource) => resource.id) });
+  }
+  const invalidMigrationReferences = runtimeData.resourceMigrations.flatMap((migration) => {
+    const canonicalResourceId = typeof migration.canonical_resource_id === "string" ? migration.canonical_resource_id : "";
+    return canonicalResourceId && !resourceIds.has(canonicalResourceId) ? [String(migration.legacy_resource_id ?? canonicalResourceId)] : [];
+  });
+  if (invalidMigrationReferences.length) {
+    issues.push({ severity: "error", code: "resource_migration_reference_invalid", message: "Resource migrations reference missing canonical resource IDs.", records: invalidMigrationReferences });
+  }
 
   for (const [moduleName, rows] of Object.entries({ eras: runtimeData.eras, economyDefinitions: runtimeData.economyDefinitions, economyBehaviorContracts: runtimeData.economyBehaviorContracts, eraEconomyProfiles: runtimeData.eraEconomyProfiles, resourceProducerDefinitions: runtimeData.resourceProducerDefinitions, buildingResourceEffects: runtimeData.buildingResourceEffects, economyScopeRules: runtimeData.economyScopeRules, economyTransactionReasons: runtimeData.economyTransactionReasons, economyRateBreakdownDefinitions: runtimeData.economyRateBreakdownDefinitions, offlineProgressionPolicies: runtimeData.offlineProgressionPolicies, inventoryResourceMetadata: runtimeData.inventoryResourceMetadata, aiAgents: runtimeData.aiAgents, aiAgentVariants: runtimeData.aiAgentVariants, discoveryCategories: runtimeData.discoveryCategories, discoveryRarities: runtimeData.discoveryRarities, discoveries: runtimeData.discoveries, discoveryCollections: runtimeData.discoveryCollections, discoveryChains: runtimeData.discoveryChains, resources: runtimeData.resources, buildingTaxonomy: runtimeData.buildingTaxonomy, buildingLibrary: runtimeData.buildingLibrary, buildingClassifications: runtimeData.buildingClassifications, upgradeCategories: runtimeData.upgradeCategories, upgrades: runtimeData.upgrades, assets: runtimeData.assets })) {
     const duplicates = duplicateIds(rows as Array<{ id: string }>);
@@ -2478,6 +2508,8 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     missionExpeditionFramework,
     dynamicEventFramework,
     resources: ResourceService.catalog.map(resourceToRuntime),
+    resourceTaxonomy: { version: ResourceService.taxonomyVersion, profileGenerationVersion: ResourceService.profileGenerationVersion, primaryCategories: RESOURCE_PRIMARY_CATEGORIES, validationStatus: ResourceService.validate().status },
+    resourceMigrations: ResourceService.migrations.map((migration) => ({ ...migration })),
     buildingTaxonomy: canonicalBuildingTaxonomy,
     buildingLibrary: canonicalBuildingLibrary,
     buildingClassifications: buildBuildingClassifications(data.buildings),
@@ -2541,6 +2573,8 @@ export async function getGameRuntimeData() {
     resourceEconomyLogisticsFramework: base.resourceEconomyLogisticsFramework,
     missionExpeditionFramework: base.missionExpeditionFramework,
     dynamicEventFramework: base.dynamicEventFramework,
+    resourceTaxonomy: base.resourceTaxonomy,
+    resourceMigrations: base.resourceMigrations,
     resources: base.resources,
     balance: {
       ...store.appliedRuntimeData.balance,
@@ -2760,6 +2794,8 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     resourceEconomyLogisticsFramework: base.resourceEconomyLogisticsFramework,
     missionExpeditionFramework: base.missionExpeditionFramework,
     dynamicEventFramework: base.dynamicEventFramework,
+    resourceTaxonomy: base.resourceTaxonomy,
+    resourceMigrations: base.resourceMigrations,
     resources: base.resources,
     buildingTaxonomy: base.buildingTaxonomy,
     buildingLibrary: base.buildingLibrary,

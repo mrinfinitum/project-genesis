@@ -14,7 +14,9 @@
     "regenerate:assets": "tsx scripts/regenerate-asset-variants.ts",
     "cleanup:remote-psd": "tsx scripts/cleanup-remote-psd-sources.ts",
     "sync:studio-runtime": "tsx scripts/sync-studio-runtime.ts",
-    "export:planet-resource-handoff": "tsx scripts/export-planet-resource-seed-handoff.ts"
+    "export:planet-resource-handoff": "tsx scripts/export-planet-resource-seed-handoff.ts",
+    "audit:resource-taxonomy": "tsx scripts/audit-resource-taxonomy.ts",
+    "verify:resource-taxonomy": "tsx scripts/verify-resource-taxonomy.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",

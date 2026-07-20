@@ -61,6 +61,11 @@ export type ResourceDefinition = {
   usableEraId: string;
   tradable: boolean;
   tags: string[];
+  resourceType?: string;
+  primaryCategory?: string;
+  subcategory?: string;
+  element?: Record<string, unknown>;
+  availability?: Record<string, unknown>;
 };
 
 export type DiscoveryRarityDefinition = {
@@ -3128,6 +3133,8 @@ export type GameRuntimeData = {
   discoveryPlayerCollectionSchema: Record<string, unknown>;
   universalDiscoveryRegistry: Record<string, unknown>;
   resources: ResourceDefinition[];
+  resourceTaxonomy: { version: string; profileGenerationVersion: string; primaryCategories: readonly string[]; validationStatus: string };
+  resourceMigrations: Array<Record<string, unknown>>;
   timeActionContract: TimeActionContract;
   actionSystem: ActionSystemContract;
   buildingTaxonomy: BuildingTaxonomyFamily[];

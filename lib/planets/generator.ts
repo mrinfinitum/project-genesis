@@ -11,6 +11,7 @@ import { generatePlanetRarity } from "@/lib/planets/rarity";
 import { buildOrbitViewPrompt } from "@/lib/planets/artwork-prompts";
 import { normalizePlanetResourceProfile, resourceNamesForIds, type NormalizedPlanetResourceProfile } from "@/lib/resources/planet-resource-profiles";
 import { ResourceService, resourceNames } from "@/lib/resources/service";
+import { RESOURCE_PROFILE_GENERATION_VERSION } from "@/lib/resources/taxonomy";
 
 type RandomSource = () => number;
 type GeneratePlanetOptions = {
@@ -602,6 +603,7 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
     water_coverage: pickRule(rules, "Water Coverage", random, "50%"),
     moons: pickRule(rules, "Moons", random, "1"),
     resourceIds,
+    resource_generation_version: RESOURCE_PROFILE_GENERATION_VERSION,
     resources,
     flora: pickRule(rules, "Flora", random, "Normal"),
     fauna: pickRule(rules, "Fauna", random, "Neutral"),

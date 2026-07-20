@@ -53,7 +53,10 @@ function resolveBucket(profile: PlanetResourceProfile, bucketName: string, value
     }
 
     if (seen.has(id)) {
-      throw new Error(`Duplicate resource ID in planet_resource_profiles: ${id} appears more than once in ${profile.id}.${bucketName}.`);
+      if (value === id) {
+        throw new Error(`Duplicate resource ID in planet_resource_profiles: ${id} appears more than once in ${profile.id}.${bucketName}.`);
+      }
+      continue;
     }
 
     if (!seen.has(id)) {

@@ -1,0 +1,26 @@
+{
+  "summary": {
+    "existing_resource_count_before_migration": 282,
+    "existing_element_count_before_migration": 27,
+    "missing_elements_added": 91,
+    "final_element_count": 118,
+    "final_active_resource_count": 355,
+    "resources_reclassified": 264,
+    "resources_moved_to_discoveries": 18,
+    "existing_discovery_matches_reused": 3,
+    "new_discovery_records_created": 95,
+    "duplicate_resources_merged": 0,
+    "legacy_ids_preserved": 18,
+    "planet_profiles_updated": 15,
+    "migration_records_created": 18,
+    "validation_errors_remaining": 0,
+    "resource_taxonomy_version": "resource-taxonomy-v3.0",
+    "generation_version": "planet-resource-taxonomy-v3"
+  },
+  "validation": {
+    "status": "Ready",
+    "errors": [],
+    "warnings": [],
+    "elementCount": 118
+  }
+}

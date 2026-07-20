@@ -1,5 +1,15 @@
 import { handoffResourceCatalog } from "@/data/handoff";
 import planetResourceProfilesRaw from "@/data/handoff/json/Planet_Resource_Profiles.json";
+import {
+  buildMissingElementRecords,
+  MOVED_RESOURCE_IDS,
+  normalizeResourceRecord,
+  RESOURCE_MIGRATION_BY_LEGACY_ID,
+  RESOURCE_MIGRATIONS,
+  RESOURCE_PROFILE_GENERATION_VERSION,
+  RESOURCE_TAXONOMY_VERSION,
+  validateResourceTaxonomy
+} from "@/lib/resources/taxonomy";
 import type { ResourceCatalogItem } from "@/types/schema";
 
 type ResourceLookup = {
@@ -127,8 +137,16 @@ const profileSupplementalResourceCatalog: ResourceCatalogItem[] = [
     };
   });
 
-const resourceCatalog = [...handoffResourceCatalog, ...supplementalResourceCatalog, ...profileSupplementalResourceCatalog];
+const sourceResourceCatalog = [...handoffResourceCatalog, ...supplementalResourceCatalog, ...profileSupplementalResourceCatalog];
+const deprecatedResourceCatalog = sourceResourceCatalog
+  .filter((resource) => MOVED_RESOURCE_IDS.has(resource.id))
+  .map((resource) => ({ ...normalizeResourceRecord(resource), status: "deprecated" as const }));
+const normalizedSourceCatalog = sourceResourceCatalog
+  .filter((resource) => !MOVED_RESOURCE_IDS.has(resource.id))
+  .map(normalizeResourceRecord);
+const resourceCatalog = [...normalizedSourceCatalog, ...buildMissingElementRecords(normalizedSourceCatalog)];
 const lookup = buildLookup(resourceCatalog);
+const legacyLookup = buildLookup(deprecatedResourceCatalog);
 
 const resourceAliases = new Map<string, string>([
   ["all earth resources", "RES-EARTH-ALL"],
@@ -157,9 +175,13 @@ const resourceAliases = new Map<string, string>([
 
 export const ResourceService = {
   catalog: resourceCatalog,
+  deprecatedCatalog: deprecatedResourceCatalog,
+  migrations: RESOURCE_MIGRATIONS,
+  taxonomyVersion: RESOURCE_TAXONOMY_VERSION,
+  profileGenerationVersion: RESOURCE_PROFILE_GENERATION_VERSION,
 
   getById(id: string) {
-    return lookup.byId.get(id) ?? null;
+    return lookup.byId.get(id) ?? legacyLookup.byId.get(id) ?? null;
   },
 
   getByName(name: string) {
@@ -175,8 +197,13 @@ export const ResourceService = {
       return resourceNameOrId;
     }
 
+    const migration = RESOURCE_MIGRATION_BY_LEGACY_ID.get(resourceNameOrId);
+    if (migration?.canonical_resource_id) return migration.canonical_resource_id;
+
     const normalized = normalize(resourceNameOrId);
-    return lookup.byName.get(normalized)?.id ?? resourceAliases.get(normalized) ?? null;
+    const legacy = legacyLookup.byName.get(normalized);
+    const legacyMigration = legacy ? RESOURCE_MIGRATION_BY_LEGACY_ID.get(legacy.id) : null;
+    return lookup.byName.get(normalized)?.id ?? legacyMigration?.canonical_resource_id ?? resourceAliases.get(normalized) ?? null;
   },
 
   nameForId(id: string) {
@@ -184,7 +211,7 @@ export const ResourceService = {
       return "All Earth Resources";
     }
 
-    return lookup.byId.get(id)?.resource_name ?? id;
+    return lookup.byId.get(id)?.resource_name ?? legacyLookup.byId.get(id)?.resource_name ?? id;
   },
 
   namesForIds(ids: string[]) {
@@ -210,6 +237,14 @@ export const ResourceService = {
     return resourceCatalog
       .filter((resource) => resource.typical_planet_classes.some((candidate) => normalize(candidate) === normalizedClass))
       .map((resource) => resource.resource_name);
+  },
+
+  resolveLegacyId(id: string) {
+    return RESOURCE_MIGRATION_BY_LEGACY_ID.get(id)?.canonical_resource_id ?? id;
+  },
+
+  validate() {
+    return validateResourceTaxonomy(resourceCatalog);
   }
 };
 

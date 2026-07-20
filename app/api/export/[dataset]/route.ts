@@ -37,6 +37,10 @@ const jsonDatasets = new Set([
   "resource_catalog",
   "resource-catalog",
   "resources",
+  "resource_migrations",
+  "resource-migrations",
+  "resource_taxonomy",
+  "resource-taxonomy",
   "generated_planets",
   "generated-planets",
   "planet_prompt_library",
@@ -89,6 +93,10 @@ const jsonDatasets = new Set([
   "resource_catalog.json",
   "resource-catalog.json",
   "resources.json",
+  "resource_migrations.json",
+  "resource-migrations.json",
+  "resource_taxonomy.json",
+  "resource-taxonomy.json",
   "generated_planets.json",
   "generated-planets.json",
   "planet_prompt_library.json",
@@ -179,6 +187,9 @@ export async function GET(request: Request, { params }: Params) {
     const exports = await getAiAgentLibraryRuntimeExports();
     return NextResponse.json(exports[normalized as keyof typeof exports]);
   }
+
+  if (normalized === "resource_migrations") return NextResponse.json(ResourceService.migrations);
+  if (normalized === "resource_taxonomy") return NextResponse.json({ version: ResourceService.taxonomyVersion, profileGenerationVersion: ResourceService.profileGenerationVersion, validation: ResourceService.validate() });
 
   if (!jsonDatasets.has(dataset) || !(normalized in data)) {
     return NextResponse.json({ error: "Unknown export dataset." }, { status: 404 });
