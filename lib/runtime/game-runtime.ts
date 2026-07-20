@@ -65,7 +65,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 33;
+export const gameRuntimeContentVersion = 34;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -265,6 +265,7 @@ function resourceToRuntime(resource: ResourceCatalogItem): ResourceDefinition {
     resourceType: resource.resource_type,
     primaryCategory: resource.primary_category,
     subcategory: resource.subcategory,
+    secondaryCategories: resource.secondary_categories,
     element: resource.element ? { ...resource.element } : undefined,
     availability: {
       earthAvailable: resource.earth_available,

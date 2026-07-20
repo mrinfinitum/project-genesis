@@ -50,6 +50,7 @@ async function main() {
       current_research_references: resource.primary_uses.filter((item) => /research|science/i.test(item)).length,
       proposed_primary_category: canonical?.primary_category ?? null,
       proposed_subcategory: canonical?.subcategory ?? null,
+      proposed_secondary_categories: canonical?.secondary_categories ?? [],
       proposed_tags: canonical?.tags ?? [],
       resource_type: canonical?.resource_type ?? null,
       keep_as_resource: !movedIds.has(resource.id),
@@ -92,12 +93,28 @@ async function main() {
     canonical_discovery_id: migration.canonical_discovery_id,
     existing_match_reused: migration.canonical_discovery_id === "REL-0149"
   }));
+  const categoryInventory = [...new Set(active.flatMap((resource) => [resource.primary_category, ...(resource.secondary_categories ?? []).map((placement) => placement.primary_category)]))]
+    .filter(Boolean)
+    .sort()
+    .map((category) => {
+      const placements = active.flatMap((resource) => {
+        const subcategories = resource.primary_category === category ? [resource.subcategory] : [];
+        subcategories.push(...(resource.secondary_categories ?? []).filter((placement) => placement.primary_category === category).map((placement) => placement.subcategory));
+        return subcategories.filter(Boolean).map((subcategory) => ({ resourceId: resource.id, subcategory }));
+      });
+      return {
+        category,
+        resourceCount: new Set(placements.map((placement) => placement.resourceId)).size,
+        subcategories: [...new Set(placements.map((placement) => placement.subcategory))].sort()
+      };
+    });
   await mkdir(reportDirectory, { recursive: true });
   await Promise.all([
     writeFile(path.join(reportDirectory, "resource-audit.json"), `${JSON.stringify(audit, null, 2)}\n`),
     writeFile(path.join(reportDirectory, "missing-elements.json"), `${JSON.stringify(addedElements, null, 2)}\n`),
     writeFile(path.join(reportDirectory, "resource-migration-map.json"), `${JSON.stringify(RESOURCE_MIGRATIONS, null, 2)}\n`),
     writeFile(path.join(reportDirectory, "discovery-migration-map.json"), `${JSON.stringify(discoveryMigrations, null, 2)}\n`),
+    writeFile(path.join(reportDirectory, "category-inventory.json"), `${JSON.stringify(categoryInventory, null, 2)}\n`),
     writeFile(path.join(reportDirectory, "validation-report.json"), `${JSON.stringify({ summary, validation }, null, 2)}\n`),
     writeFile(path.join(reportDirectory, "updated-schema-definitions.json"), `${JSON.stringify({ taxonomyVersion: ResourceService.taxonomyVersion, profileGenerationVersion: ResourceService.profileGenerationVersion, primaryCategories: [...new Set(active.map((item) => item.primary_category))], resourceFields: Object.keys(active[0]), elementFields: Object.keys(active.find((item) => item.element)!.element!) }, null, 2)}\n`),
     writeFile(path.join(reportDirectory, "runtime-export-example.json"), `${JSON.stringify({ resourceTaxonomy: { version: ResourceService.taxonomyVersion, profileGenerationVersion: ResourceService.profileGenerationVersion, validationStatus: validation.status }, resources: active.filter((item) => item.element).slice(0, 2), resourceMigrations: RESOURCE_MIGRATIONS.slice(0, 2) }, null, 2)}\n`),

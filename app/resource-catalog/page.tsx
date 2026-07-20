@@ -5,7 +5,7 @@ import { ResizableDiscoveryLayout } from "@/components/resizable-discovery-layou
 import { CanonicalIndex, WorkspaceBadge, WorkspaceStatTile } from "@/components/ui/workspace";
 import { getRows } from "@/lib/data";
 import { ResourceService } from "@/lib/resources/service";
-import { normalizeResourceRecord, RESOURCE_PRIMARY_CATEGORIES } from "@/lib/resources/taxonomy";
+import { normalizeResourceRecord, resourceCategoryPlacement, RESOURCE_PRIMARY_CATEGORIES } from "@/lib/resources/taxonomy";
 import type { ResourceCatalogItem } from "@/types/schema";
 
 export const dynamic = "force-dynamic";
@@ -34,8 +34,8 @@ function buildTree(records: ResourceCatalogItem[]): DiscoveryTreeNode[] {
   return [
     { id: "all", label: "All Resources", href: resourceHref("all"), count: records.length, icon: "curiosity" },
     ...RESOURCE_PRIMARY_CATEGORIES.map((category) => {
-      const categoryRecords = records.filter((record) => record.primary_category === category);
-      const subcategories = [...new Set(categoryRecords.map((record) => record.subcategory).filter(Boolean) as string[])].sort();
+      const categoryRecords = records.filter((record) => resourceCategoryPlacement(record, category));
+      const subcategories = [...new Set(categoryRecords.map((record) => resourceCategoryPlacement(record, category)).filter(Boolean) as string[])].sort();
       return {
         id: `category:${slug(category)}`,
         label: category,
@@ -46,7 +46,7 @@ function buildTree(records: ResourceCatalogItem[]): DiscoveryTreeNode[] {
           id: `subcategory:${slug(category)}:${slug(subcategory)}`,
           label: subcategory,
           href: resourceHref(`subcategory:${slug(category)}:${slug(subcategory)}`),
-          count: categoryRecords.filter((record) => record.subcategory === subcategory).length
+          count: categoryRecords.filter((record) => resourceCategoryPlacement(record, category) === subcategory).length
         }))
       };
     })
@@ -55,15 +55,20 @@ function buildTree(records: ResourceCatalogItem[]): DiscoveryTreeNode[] {
 
 function recordsForFolder(records: ResourceCatalogItem[], folder: string) {
   const [branch, category, subcategory] = folder.split(":");
-  if (branch === "category" && category) return records.filter((record) => slug(record.primary_category ?? record.category) === category);
-  if (branch === "subcategory" && category && subcategory) return records.filter((record) => slug(record.primary_category ?? record.category) === category && slug(record.subcategory ?? "") === subcategory);
+  const categoryName = RESOURCE_PRIMARY_CATEGORIES.find((candidate) => slug(candidate) === category);
+  if (branch === "category" && categoryName) return records.filter((record) => resourceCategoryPlacement(record, categoryName));
+  if (branch === "subcategory" && categoryName && subcategory) return records.filter((record) => slug(resourceCategoryPlacement(record, categoryName) ?? "") === subcategory);
   return records;
 }
 
 function folderTitle(records: ResourceCatalogItem[], folder: string) {
-  const first = recordsForFolder(records, folder)[0];
-  if (folder.startsWith("subcategory:")) return first?.subcategory ?? "Resource Subcategory";
-  if (folder.startsWith("category:")) return first?.primary_category ?? "Resource Category";
+  const [, category, subcategory] = folder.split(":");
+  const categoryName = RESOURCE_PRIMARY_CATEGORIES.find((candidate) => slug(candidate) === category);
+  if (folder.startsWith("subcategory:")) {
+    const first = recordsForFolder(records, folder)[0];
+    return categoryName && first ? resourceCategoryPlacement(first, categoryName) ?? "Resource Subcategory" : subcategory ?? "Resource Subcategory";
+  }
+  if (folder.startsWith("category:")) return categoryName ?? "Resource Category";
   return "All Resources";
 }
 

@@ -179,22 +179,30 @@ function categoryFor(resource: ResourceCatalogItem): ResourcePrimaryCategory {
   const name = resource.resource_name.toLowerCase();
   const category = resource.category.toLowerCase();
   if (PERIODIC_ELEMENT_BY_NAME.has(name)) return "Elements";
-  if (category.includes("isotope")) return "Isotopes";
-  if (name.includes("ore")) return "Ores";
+  if (/genesis/.test(name) || category.includes("genesis")) return "Genesis Matter";
+  if (/proto matter|prime matter|planet seed|world seed/.test(name) || category.includes("primordial")) return "Primordial Matter";
+  if (category.includes("isotope") || /helium-3 trace/.test(name)) return "Isotopes";
+  if (/survey data|cartography|defense matrix|machine parts|circuitry|industrial scrap/.test(name)) return "Manufactured Components";
+  if (/alloy|living metal|precursor metal/.test(name) || category.includes("metal") && category.includes("synthetic")) return "Alloys and Engineered Materials";
+  if (/acidic compounds|aluminum oxide|chemical waste|toxic catalyst/.test(name)) return "Chemicals and Compounds";
+  if (/living network/.test(name)) return "Biological Materials";
+  if (/ancient|relic|fossil|battle relic|harmony fragment/.test(name) || category.includes("archaeology")) return "Ancient Materials";
+  if (/negative matter|dark matter|exotic matter|quantum foam|gravitonium|void essence|void heart|reality fragment|temporal shard|singularity fragment|event horizon|black hole residue|stellar fragment|entropy shard|universal anomaly/.test(name)) return "Exotic Matter";
+  if (/quantum core|singularity core|gravity core|chrono core|zero point core|shadow core|void core/.test(name)) return "Exotic Matter";
+  if (/storm core|photon core|plasma core|electromagnetic core|lightning core|charge core|ion core|aurora core|infinite energy|solar energy|fusion catalyst|stellar plasma|storm plasma|^plasma$/.test(name)) return "Energy Materials";
+  if (/cellular core|evolution core|glow core|hive core|living core|living reef core|mutation core|mycelium core|parasite core|root core|spore core|symbiosis core/.test(name)) return "Biological Materials";
+  if (/rare earth elements|rare metals|iron nodules|manganese nodules|quantum ore/.test(name) || / ore$/.test(name)) return "Ores";
   if (name.includes("crystal") || category.includes("crystal")) return "Crystals";
-  if (/stone|sand|clay|soil|limestone|granite|basalt|marble|obsidian|regolith|ash|molten rock|fresh crust/.test(name)) return "Rocks and Geological Materials";
+  if (/pearl/.test(name)) return "Crystals";
+  if (/stone|sand|clay|soil|limestone|granite|basalt|marble|obsidian|regolith|ash|molten rock|fresh crust|volcanic glass|dust|potash/.test(name)) return "Rocks and Geological Materials";
   if (category.includes("liquid") || /water$|oil$|brine|solvent|fluid/.test(name)) return "Liquids";
-  if (category.includes("ice") || / ice$|frozen/.test(name)) return "Ices and Frozen Volatiles";
+  if (category.includes("ice") || / ice$|frozen|snow|water ice/.test(name)) return "Ices and Frozen Volatiles";
   if (category.includes("fuel") || /coal|natural gas|fusion fuel|hydrogen fuel|hydrate/.test(name)) return "Fuels";
   if (category.includes("gas")) return "Gases";
-  if (/alloy|metallic hydrogen|living metal|precursor metal/.test(name) || category.includes("metal") && category.includes("synthetic")) return "Alloys and Engineered Materials";
   if (category.includes("synthetic") && /part|circuit|core|storage|component/.test(name)) return "Manufactured Components";
   if (category.includes("synthetic")) return "Synthetic and Nanotechnology Materials";
-  if (category.includes("biological") || category.includes("biochemical") || /tissue|genome|biomass|coral/.test(name)) return "Biological Materials";
+  if (category.includes("biological") || category.includes("biochemical") || /tissue|genome|biomass|coral|enzyme/.test(name)) return "Biological Materials";
   if (category.includes("organic") || /wood|fungal|mycelium|chitin|spore|resin/.test(name)) return "Organic Materials";
-  if (category.includes("ancient")) return "Ancient Materials";
-  if (category.includes("genesis")) return "Genesis Matter";
-  if (category.includes("primordial")) return "Primordial Matter";
   if (/energy|plasma|charge|solar/.test(category) || /energy|plasma|storm core|photon core|lightning core|charge core/.test(name)) return "Energy Materials";
   if (/cosmic|exotic/.test(category)) return "Exotic Matter";
   if (category.includes("chemical") || /salt|ammonia|methane|hydrocarbon|mutagen/.test(name)) return "Chemicals and Compounds";
@@ -202,15 +210,63 @@ function categoryFor(resource: ResourceCatalogItem): ResourcePrimaryCategory {
   return "Minerals";
 }
 
+function subcategoryFor(resource: ResourceCatalogItem, primaryCategory: ResourcePrimaryCategory, element = PERIODIC_ELEMENT_BY_NAME.get(resource.resource_name.toLowerCase())) {
+  const name = resource.resource_name.toLowerCase();
+  if (element) return element.element_family;
+
+  const rules: Record<ResourcePrimaryCategory, Array<[RegExp, string]>> = {
+    Elements: [],
+    Isotopes: [[/helium|solar wind/, "Helium and Solar Isotopes"], [/deuterium|hydrogen/, "Hydrogen Isotopes"]],
+    Minerals: [[/graphite|carbon/, "Carbon Minerals"], [/magnetite/, "Oxide Minerals"], [/iron/, "Metallic Minerals"], [/nodule/, "Seafloor Minerals"], [/.*/, "General Minerals"]],
+    Ores: [[/rare earth|rare metal/, "Critical Metal Ores"], [/iron|manganese|metal/, "Metal Ores"], [/quantum/, "Exotic Ores"], [/.*/, "Mineral Ores"]],
+    Crystals: [[/diamond|quartz/, "Industrial Crystals"], [/amethyst|emerald|sapphire|pearl/, "Gemstones"], [/energy|photon|lightstone|zero point/, "Energy Crystals"], [/data|gravity|chrono/, "Information and Field Crystals"], [/cryo|ice/, "Cryogenic Crystals"], [/magma|obsidian/, "Volcanic Crystals"], [/living/, "Living Crystals"], [/genesis/, "Genesis Crystals"], [/void|dark|prismatic|infinite/, "Exotic Crystals"], [/.*/, "General Crystals"]],
+    "Rocks and Geological Materials": [[/sand|clay|soil|regolith|dust/, "Sediments and Soils"], [/obsidian|glass/, "Natural Glass"], [/molten rock/, "Molten Geological Materials"], [/ash|fresh crust/, "Volcanic Materials"], [/breathstone|charged stone|fractured stone/, "Exotic Geological Materials"], [/potash/, "Mineral Salts"], [/.*/, "Rock Types"]],
+    Liquids: [[/fresh water|storm water/, "Fresh and Atmospheric Water"], [/salt water|brine/, "Saline Liquids"], [/heavy water|proto water/, "Specialized Water"], [/oil/, "Hydrocarbon Liquids"], [/solvent/, "Industrial Solvents"], [/corrosive|toxic/, "Hazardous Liquids"], [/.*/, "General Liquids"]],
+    Gases: [[/bio gas|atmospheric organics/, "Biological Gases"], [/quantum|exotic|alien/, "Exotic Gases"], [/toxic/, "Toxic Gases"], [/ammonia|methane/, "Chemical Gases"], [/ion/, "Ionized Gases"], [/.*/, "General Gases"]],
+    "Ices and Frozen Volatiles": [[/water ice|snow/, "Water Ice"], [/ammonia|methane|nitrogen/, "Frozen Volatiles"], [/exotic|blue|fractured/, "Exotic Ices"], [/.*/, "General Ices"]],
+    Fuels: [[/coal|oil/, "Fossil Fuels"], [/natural gas|methane hydrate/, "Gaseous Fuels"], [/metallic hydrogen/, "High-Pressure Fuels"], [/fusion/, "Fusion Fuels"], [/.*/, "General Fuels"]],
+    "Chemicals and Compounds": [[/salt|potash/, "Salts"], [/hydrocarbon/, "Hydrocarbons"], [/oxide/, "Oxides"], [/acid|corrosive/, "Reactive Compounds"], [/catalyst/, "Catalysts"], [/waste/, "Chemical Waste"], [/.*/, "General Compounds"]],
+    "Biological Materials": [[/genome|genetic/, "Genetic Materials"], [/tissue/, "Biological Tissues"], [/biomass|bio gel/, "Biomass"], [/coral|reef/, "Coral Materials"], [/fiber|roots/, "Structural Biomaterials"], [/mutagen|enzyme/, "Biochemical Agents"], [/core|network/, "Living Cores and Networks"], [/.*/, "General Biological Materials"]],
+    "Organic Materials": [[/wood|fiber/, "Plant Fibers"], [/chitin/, "Structural Organics"], [/resin|polymer/, "Biopolymers and Resins"], [/fungal|mycelium/, "Fungal Materials"], [/.*/, "Organic Compounds"]],
+    "Manufactured Components": [[/survey|cartography/, "Data Products"], [/circuit/, "Electronics"], [/machine part/, "Mechanical Components"], [/defense matrix/, "Defense Systems"], [/scrap/, "Industrial Salvage"], [/.*/, "General Components"]],
+    "Alloys and Engineered Materials": [[/steel|structural/, "Structural Alloys"], [/armor/, "Armor Alloys"], [/living metal/, "Living Metals"], [/ancient|precursor/, "Ancient Alloys"], [/genesis/, "Genesis Alloys"], [/.*/, "Advanced Alloys"]],
+    "Synthetic and Nanotechnology Materials": [[/nano fiber/, "Nanomaterials"], [/nanite/, "Nanomachines"], [/neural|consciousness/, "Synthetic Intelligence Materials"], [/.*/, "Synthetic Matter"]],
+    "Energy Materials": [[/plasma/, "Plasma Materials"], [/solar/, "Stellar Energy"], [/infinite/, "Infinite Energy"], [/catalyst/, "Energy Catalysts"], [/core/, "Condensed Energy Cores"], [/.*/, "General Energy Materials"]],
+    "Ancient Materials": [[/fossil|bone/, "Fossils and Remains"], [/relic|battle/, "Relic Materials"], [/fragment/, "Ancient Fragments"], [/core/, "Ancient Cores"], [/.*/, "Archaeological Materials"]],
+    "Exotic Matter": [[/dark matter|negative matter/, "Dark and Negative Matter"], [/quantum/, "Quantum Matter"], [/gravit/, "Gravitic Matter"], [/temporal|chrono/, "Temporal Matter"], [/singularity|event horizon|black hole/, "Singularity Matter"], [/void/, "Void Matter"], [/reality|entropy|anomaly/, "Reality-Bending Matter"], [/stellar/, "Stellar Remnants"], [/.*/, "General Exotic Matter"]],
+    "Primordial Matter": [[/seed/, "World Seeds"], [/.*/, "Prime Matter"]],
+    "Genesis Matter": [[/seed/, "Genesis Seeds"], [/matrix|memory/, "Genesis Matrices"], [/heart|core/, "Genesis Cores"], [/energy/, "Genesis Energy"], [/biomass|genome/, "Genesis Biological Matter"], [/crystal/, "Genesis Crystals"], [/alloy/, "Genesis Alloys"], [/.*/, "General Genesis Matter"]]
+  };
+  return rules[primaryCategory].find(([pattern]) => pattern.test(name))?.[1] ?? `General ${primaryCategory}`;
+}
+
+function secondaryCategoriesFor(resource: ResourceCatalogItem, primaryCategory: ResourcePrimaryCategory, subcategory: string) {
+  const element = PERIODIC_ELEMENT_BY_NAME.get(resource.resource_name.toLowerCase());
+  const placements = [...(resource.secondary_categories ?? [])];
+  if (element?.standard_phase === "Gas") placements.push({ primary_category: "Gases", subcategory: "Elemental Gases" });
+  if (element?.standard_phase === "Liquid") placements.push({ primary_category: "Liquids", subcategory: "Elemental Liquids" });
+  return placements.filter((placement, index, values) =>
+    !(placement.primary_category === primaryCategory && placement.subcategory === subcategory) &&
+    values.findIndex((candidate) => candidate.primary_category === placement.primary_category && candidate.subcategory === placement.subcategory) === index
+  );
+}
+
+export function resourceCategoryPlacement(resource: ResourceCatalogItem, category: string) {
+  if ((resource.primary_category ?? resource.category) === category) return resource.subcategory ?? "General";
+  return resource.secondary_categories?.find((placement) => placement.primary_category === category)?.subcategory;
+}
+
 export function normalizeResourceRecord(resource: ResourceCatalogItem): ResourceCatalogItem {
   const primaryCategory = categoryFor(resource);
   const element = PERIODIC_ELEMENT_BY_NAME.get(resource.resource_name.toLowerCase());
+  const subcategory = subcategoryFor(resource, primaryCategory, element);
   return {
     ...resource,
     category: primaryCategory,
     primary_category: primaryCategory,
     resource_type: categoryType[primaryCategory],
-    subcategory: element?.element_family ?? (resource.category.includes("/") ? resource.category.split("/").slice(1).join(" / ") : undefined),
+    subcategory,
+    secondary_categories: secondaryCategoriesFor(resource, primaryCategory, subcategory),
     tags: [...new Set([...(resource.tags ?? []), resource.category, resource.rarity, resource.discovery_tier, ...(element ? [element.element_family, element.chemical_symbol] : [])].filter(Boolean))],
     legacy_category: resource.category === primaryCategory ? resource.legacy_category : resource.category,
     migration_version: RESOURCE_TAXONOMY_VERSION,
@@ -263,6 +319,17 @@ export function validateResourceTaxonomy(catalog: ResourceCatalogItem[]) {
     if (resource.primary_category?.includes("/")) errors.push(`${resource.id}: slash-separated primary category`);
     if (resource.primary_category === "Elements" && !resource.element) errors.push(`${resource.id}: element metadata missing`);
     if (resource.primary_category !== "Elements" && resource.element) errors.push(`${resource.id}: non-element has element metadata`);
+    if (!resource.subcategory?.trim()) errors.push(`${resource.id}: missing canonical subcategory`);
+    if (/^(ocean|cosmic|planetary|energy)$/i.test(resource.subcategory ?? "")) errors.push(`${resource.id}: invalid legacy subcategory ${resource.subcategory}`);
+    const placementKeys = new Set<string>();
+    for (const placement of resource.secondary_categories ?? []) {
+      if (!RESOURCE_PRIMARY_CATEGORIES.includes(placement.primary_category as ResourcePrimaryCategory)) errors.push(`${resource.id}: invalid secondary category ${placement.primary_category}`);
+      if (!placement.subcategory?.trim()) errors.push(`${resource.id}: missing secondary subcategory`);
+      const key = `${placement.primary_category}/${placement.subcategory}`;
+      if (placementKeys.has(key)) errors.push(`${resource.id}: duplicate secondary category placement ${key}`);
+      placementKeys.add(key);
+    }
+    if (resource.element?.standard_phase === "Gas" && resourceCategoryPlacement(resource, "Gases") !== "Elemental Gases") errors.push(`${resource.id}: gaseous element missing Gases placement`);
   }
   for (const resource of elements) {
     const element = resource.element!;

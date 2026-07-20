@@ -10,10 +10,10 @@
     "Elements",
     "Crystals",
     "Minerals",
+    "Ores",
     "Ices and Frozen Volatiles",
     "Isotopes",
     "Biological Materials",
-    "Ores",
     "Gases",
     "Alloys and Engineered Materials",
     "Synthetic and Nanotechnology Materials",
@@ -21,7 +21,8 @@
     "Exotic Matter",
     "Energy Materials",
     "Primordial Matter",
-    "Genesis Matter"
+    "Genesis Matter",
+    "Ancient Materials"
   ],
   "resourceFields": [
     "id",
@@ -44,6 +45,7 @@
     "primary_category",
     "resource_type",
     "subcategory",
+    "secondary_categories",
     "tags",
     "legacy_category",
     "migration_version",

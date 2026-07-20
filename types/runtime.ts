@@ -64,6 +64,10 @@ export type ResourceDefinition = {
   resourceType?: string;
   primaryCategory?: string;
   subcategory?: string;
+  secondaryCategories?: Array<{
+    primary_category: string;
+    subcategory: string;
+  }>;
   element?: Record<string, unknown>;
   availability?: Record<string, unknown>;
 };

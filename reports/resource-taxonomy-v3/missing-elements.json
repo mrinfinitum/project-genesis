@@ -29,6 +29,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Alkaline Earth Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -94,6 +95,12 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Reactive Nonmetal",
+    "secondary_categories": [
+      {
+        "primary_category": "Gases",
+        "subcategory": "Elemental Gases"
+      }
+    ],
     "tags": [
       "Elements",
       "Common",
@@ -159,6 +166,12 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Reactive Nonmetal",
+    "secondary_categories": [
+      {
+        "primary_category": "Gases",
+        "subcategory": "Elemental Gases"
+      }
+    ],
     "tags": [
       "Elements",
       "Common",
@@ -224,6 +237,12 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Halogen",
+    "secondary_categories": [
+      {
+        "primary_category": "Gases",
+        "subcategory": "Elemental Gases"
+      }
+    ],
     "tags": [
       "Elements",
       "Common",
@@ -289,6 +308,12 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Noble Gas",
+    "secondary_categories": [
+      {
+        "primary_category": "Gases",
+        "subcategory": "Elemental Gases"
+      }
+    ],
     "tags": [
       "Elements",
       "Common",
@@ -354,6 +379,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Alkali Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -419,6 +445,12 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Halogen",
+    "secondary_categories": [
+      {
+        "primary_category": "Gases",
+        "subcategory": "Elemental Gases"
+      }
+    ],
     "tags": [
       "Elements",
       "Common",
@@ -484,6 +516,12 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Noble Gas",
+    "secondary_categories": [
+      {
+        "primary_category": "Gases",
+        "subcategory": "Elemental Gases"
+      }
+    ],
     "tags": [
       "Elements",
       "Common",
@@ -549,6 +587,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Alkali Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -614,6 +653,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -679,6 +719,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -744,6 +785,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -809,6 +851,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Post-Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -874,6 +917,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Metalloid",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -939,6 +983,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Metalloid",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -1004,6 +1049,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Reactive Nonmetal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -1069,6 +1115,12 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Halogen",
+    "secondary_categories": [
+      {
+        "primary_category": "Liquids",
+        "subcategory": "Elemental Liquids"
+      }
+    ],
     "tags": [
       "Elements",
       "Common",
@@ -1134,6 +1186,12 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Noble Gas",
+    "secondary_categories": [
+      {
+        "primary_category": "Gases",
+        "subcategory": "Elemental Gases"
+      }
+    ],
     "tags": [
       "Elements",
       "Common",
@@ -1199,6 +1257,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Alkali Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -1264,6 +1323,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Alkaline Earth Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -1329,6 +1389,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -1394,6 +1455,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -1459,6 +1521,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -1524,6 +1587,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -1589,6 +1653,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Rare",
@@ -1654,6 +1719,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -1719,6 +1785,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -1784,6 +1851,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -1849,6 +1917,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Post-Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -1914,6 +1983,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Metalloid",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -1979,6 +2049,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Metalloid",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -2044,6 +2115,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Halogen",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -2109,6 +2181,12 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Noble Gas",
+    "secondary_categories": [
+      {
+        "primary_category": "Gases",
+        "subcategory": "Elemental Gases"
+      }
+    ],
     "tags": [
       "Elements",
       "Common",
@@ -2174,6 +2252,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Alkali Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -2239,6 +2318,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Alkaline Earth Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -2304,6 +2384,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Lanthanide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -2368,6 +2449,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Lanthanide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -2432,6 +2514,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Lanthanide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -2496,6 +2579,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Lanthanide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -2560,6 +2644,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Lanthanide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Rare",
@@ -2624,6 +2709,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Lanthanide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -2688,6 +2774,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Lanthanide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -2752,6 +2839,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Lanthanide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -2816,6 +2904,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Lanthanide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -2880,6 +2969,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Lanthanide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -2944,6 +3034,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Lanthanide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -3008,6 +3099,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Lanthanide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -3072,6 +3164,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Lanthanide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -3136,6 +3229,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Lanthanide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -3200,6 +3294,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Lanthanide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -3264,6 +3359,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -3329,6 +3425,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -3394,6 +3491,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -3459,6 +3557,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -3524,6 +3623,12 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Transition Metal",
+    "secondary_categories": [
+      {
+        "primary_category": "Liquids",
+        "subcategory": "Elemental Liquids"
+      }
+    ],
     "tags": [
       "Elements",
       "Common",
@@ -3589,6 +3694,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Post-Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -3654,6 +3760,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Post-Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Common",
@@ -3719,6 +3826,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Post-Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Rare",
@@ -3784,6 +3892,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Halogen",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Rare",
@@ -3849,6 +3958,12 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Noble Gas",
+    "secondary_categories": [
+      {
+        "primary_category": "Gases",
+        "subcategory": "Elemental Gases"
+      }
+    ],
     "tags": [
       "Elements",
       "Rare",
@@ -3914,6 +4029,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Alkali Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Rare",
@@ -3979,6 +4095,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Alkaline Earth Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Rare",
@@ -4044,6 +4161,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Actinide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Rare",
@@ -4108,6 +4226,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Actinide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Rare",
@@ -4172,6 +4291,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Actinide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Rare",
@@ -4236,6 +4356,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Actinide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Rare",
@@ -4300,6 +4421,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Actinide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Rare",
@@ -4364,6 +4486,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Actinide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Legendary",
@@ -4428,6 +4551,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Actinide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Legendary",
@@ -4492,6 +4616,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Actinide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Legendary",
@@ -4556,6 +4681,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Actinide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Legendary",
@@ -4620,6 +4746,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Actinide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Legendary",
@@ -4684,6 +4811,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Actinide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Legendary",
@@ -4748,6 +4876,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Actinide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Legendary",
@@ -4812,6 +4941,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Actinide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Legendary",
@@ -4876,6 +5006,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Actinide",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Legendary",
@@ -4937,6 +5068,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Legendary",
@@ -4999,6 +5131,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Legendary",
@@ -5061,6 +5194,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Legendary",
@@ -5123,6 +5257,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Legendary",
@@ -5185,6 +5320,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Legendary",
@@ -5247,6 +5383,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Legendary",
@@ -5309,6 +5446,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Legendary",
@@ -5371,6 +5509,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Legendary",
@@ -5433,6 +5572,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Legendary",
@@ -5495,6 +5635,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Post-Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Legendary",
@@ -5557,6 +5698,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Post-Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Legendary",
@@ -5619,6 +5761,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Post-Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Legendary",
@@ -5681,6 +5824,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Post-Transition Metal",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Legendary",
@@ -5743,6 +5887,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Halogen",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Legendary",
@@ -5805,6 +5950,7 @@
     "primary_category": "Elements",
     "resource_type": "Element",
     "subcategory": "Noble Gas",
+    "secondary_categories": [],
     "tags": [
       "Elements",
       "Legendary",

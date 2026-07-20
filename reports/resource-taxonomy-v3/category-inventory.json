@@ -1,0 +1,238 @@
+[
+  {
+    "category": "Alloys and Engineered Materials",
+    "resourceCount": 8,
+    "subcategories": [
+      "Advanced Alloys",
+      "Ancient Alloys",
+      "Armor Alloys",
+      "Living Metals",
+      "Structural Alloys"
+    ]
+  },
+  {
+    "category": "Ancient Materials",
+    "resourceCount": 8,
+    "subcategories": [
+      "Ancient Fragments",
+      "Fossils and Remains",
+      "Relic Materials"
+    ]
+  },
+  {
+    "category": "Biological Materials",
+    "resourceCount": 27,
+    "subcategories": [
+      "Biochemical Agents",
+      "Biological Tissues",
+      "Biomass",
+      "Coral Materials",
+      "Genetic Materials",
+      "Living Cores and Networks",
+      "Structural Biomaterials"
+    ]
+  },
+  {
+    "category": "Chemicals and Compounds",
+    "resourceCount": 7,
+    "subcategories": [
+      "Catalysts",
+      "Chemical Waste",
+      "Hydrocarbons",
+      "Oxides",
+      "Reactive Compounds",
+      "Salts"
+    ]
+  },
+  {
+    "category": "Crystals",
+    "resourceCount": 28,
+    "subcategories": [
+      "Cryogenic Crystals",
+      "Energy Crystals",
+      "Exotic Crystals",
+      "Gemstones",
+      "General Crystals",
+      "Industrial Crystals",
+      "Information and Field Crystals",
+      "Living Crystals",
+      "Volcanic Crystals"
+    ]
+  },
+  {
+    "category": "Elements",
+    "resourceCount": 118,
+    "subcategories": [
+      "Actinide",
+      "Alkali Metal",
+      "Alkaline Earth Metal",
+      "Halogen",
+      "Lanthanide",
+      "Metalloid",
+      "Noble Gas",
+      "Post-Transition Metal",
+      "Reactive Nonmetal",
+      "Transition Metal"
+    ]
+  },
+  {
+    "category": "Energy Materials",
+    "resourceCount": 21,
+    "subcategories": [
+      "Condensed Energy Cores",
+      "Energy Catalysts",
+      "Infinite Energy",
+      "Plasma Materials",
+      "Stellar Energy"
+    ]
+  },
+  {
+    "category": "Exotic Matter",
+    "resourceCount": 22,
+    "subcategories": [
+      "Dark and Negative Matter",
+      "General Exotic Matter",
+      "Gravitic Matter",
+      "Quantum Matter",
+      "Reality-Bending Matter",
+      "Singularity Matter",
+      "Stellar Remnants",
+      "Temporal Matter",
+      "Void Matter"
+    ]
+  },
+  {
+    "category": "Fuels",
+    "resourceCount": 5,
+    "subcategories": [
+      "Fossil Fuels",
+      "Fusion Fuels",
+      "Gaseous Fuels",
+      "High-Pressure Fuels"
+    ]
+  },
+  {
+    "category": "Gases",
+    "resourceCount": 22,
+    "subcategories": [
+      "Biological Gases",
+      "Chemical Gases",
+      "Elemental Gases",
+      "Exotic Gases",
+      "Ionized Gases",
+      "Toxic Gases"
+    ]
+  },
+  {
+    "category": "Genesis Matter",
+    "resourceCount": 14,
+    "subcategories": [
+      "Genesis Alloys",
+      "Genesis Biological Matter",
+      "Genesis Cores",
+      "Genesis Crystals",
+      "Genesis Energy",
+      "Genesis Matrices",
+      "Genesis Seeds"
+    ]
+  },
+  {
+    "category": "Ices and Frozen Volatiles",
+    "resourceCount": 10,
+    "subcategories": [
+      "Exotic Ices",
+      "Frozen Volatiles",
+      "Water Ice"
+    ]
+  },
+  {
+    "category": "Isotopes",
+    "resourceCount": 4,
+    "subcategories": [
+      "Helium and Solar Isotopes",
+      "Hydrogen Isotopes"
+    ]
+  },
+  {
+    "category": "Liquids",
+    "resourceCount": 12,
+    "subcategories": [
+      "Elemental Liquids",
+      "Fresh and Atmospheric Water",
+      "Hazardous Liquids",
+      "Hydrocarbon Liquids",
+      "Industrial Solvents",
+      "Saline Liquids",
+      "Specialized Water"
+    ]
+  },
+  {
+    "category": "Manufactured Components",
+    "resourceCount": 7,
+    "subcategories": [
+      "Data Products",
+      "Defense Systems",
+      "Electronics",
+      "Industrial Salvage",
+      "Mechanical Components"
+    ]
+  },
+  {
+    "category": "Minerals",
+    "resourceCount": 4,
+    "subcategories": [
+      "Carbon Minerals",
+      "Metallic Minerals",
+      "Oxide Minerals"
+    ]
+  },
+  {
+    "category": "Ores",
+    "resourceCount": 6,
+    "subcategories": [
+      "Critical Metal Ores",
+      "Exotic Ores",
+      "Metal Ores"
+    ]
+  },
+  {
+    "category": "Organic Materials",
+    "resourceCount": 12,
+    "subcategories": [
+      "Biopolymers and Resins",
+      "Fungal Materials",
+      "Organic Compounds",
+      "Plant Fibers",
+      "Structural Organics"
+    ]
+  },
+  {
+    "category": "Primordial Matter",
+    "resourceCount": 9,
+    "subcategories": [
+      "Prime Matter",
+      "World Seeds"
+    ]
+  },
+  {
+    "category": "Rocks and Geological Materials",
+    "resourceCount": 19,
+    "subcategories": [
+      "Exotic Geological Materials",
+      "Natural Glass",
+      "Rock Types",
+      "Sediments and Soils",
+      "Volcanic Materials"
+    ]
+  },
+  {
+    "category": "Synthetic and Nanotechnology Materials",
+    "resourceCount": 5,
+    "subcategories": [
+      "Nanomachines",
+      "Nanomaterials",
+      "Synthetic Intelligence Materials",
+      "Synthetic Matter"
+    ]
+  }
+]

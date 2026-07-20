@@ -213,6 +213,10 @@ export type ResourceCatalogItem = {
   resource_type?: string;
   primary_category?: string;
   subcategory?: string;
+  secondary_categories?: Array<{
+    primary_category: string;
+    subcategory: string;
+  }>;
   tags?: string[];
   legacy_category?: string;
   migration_version?: string;
