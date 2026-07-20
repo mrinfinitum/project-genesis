@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "taxonomy": {
+    "Unknown Objects": {
+      "Unknown Devices": [
+        "Dormant Devices",
+        "Reactive Devices",
+        "Self-Repairing Devices",
+        "Signal-Emitting Devices",
+        "Gravity-Defying Devices",
+        "Phase-Shifted Devices",
+        "Biological Devices",
+        "Quantum Devices",
+        "Temporal Devices",
+        "Unclassifiable Devices"
+      ],
+      "Unknown Organisms": [
+        "Dormant Organisms",
+        "Encased Organisms",
+        "Energy-Based Organisms",
+        "Synthetic Organisms",
+        "Microscopic Organisms",
+        "Collective Organisms",
+        "Phase-Shifted Organisms",
+        "Temporal Organisms",
+        "Signal-Responsive Organisms",
+        "Unclassifiable Lifeforms"
+      ],
+      "Unknown Materials": [
+        "Superdense Materials",
+        "Self-Assembling Materials",
+        "Living Materials",
+        "Phase-Shifted Materials",
+        "Negative-Mass Materials",
+        "Temporal Materials",
+        "Quantum Materials",
+        "Memory Materials",
+        "Energy-Storing Materials",
+        "Unclassifiable Substances"
+      ],
+      "Unknown Signals": [
+        "Repeating Signals",
+        "Encrypted Signals",
+        "Biological Signals",
+        "Quantum Signals",
+        "Temporal Signals",
+        "Gravitational Signals",
+        "Subspace Signals",
+        "Dreamlike Signals",
+        "Responsive Signals",
+        "Unclassifiable Transmissions"
+      ],
+      "Unknown Structures": [
+        "Buried Structures",
+        "Floating Structures",
+        "Organic Structures",
+        "Phase-Shifted Structures",
+        "Temporal Structures",
+        "Dimensional Structures",
+        "Microstructures",
+        "Planetary Structures",
+        "Orbital Structures",
+        "Unclassifiable Constructions"
+      ],
+      "Unknown Containers": [
+        "Sealed Containers",
+        "Living Containers",
+        "Cryogenic Containers",
+        "Quantum Containers",
+        "Temporal Containers",
+        "Dimensional Containers",
+        "Signal-Locked Containers",
+        "Self-Defending Containers",
+        "Empty Containers",
+        "Unclassifiable Vessels"
+      ],
+      "Unknown Artifacts": [
+        "Ceremonial Artifacts",
+        "Scientific Artifacts",
+        "Cultural Artifacts",
+        "Military Artifacts",
+        "Navigation Artifacts",
+        "Medical Artifacts",
+        "Communication Artifacts",
+        "Energy Artifacts",
+        "Memory Artifacts",
+        "Unclassifiable Relics"
+      ],
+      "Unclassified Discoveries": [
+        "Impossible Objects",
+        "Reality-Bending Objects",
+        "Observation-Dependent Objects",
+        "Vanishing Objects",
+        "Duplicating Objects",
+        "Sentient Objects",
+        "Causality-Breaking Objects",
+        "Dream Objects",
+        "Paradox Objects",
+        "Completely Unknown Finds"
+      ]
+    }
+  }
+}

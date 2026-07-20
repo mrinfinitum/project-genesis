@@ -15,6 +15,8 @@ import energyPhenomenaCuriosityPack from "@/data/curiosity-volume-07-energy-phen
 import energyPhenomenaCuriosityTaxonomyPack from "@/data/curiosity-volume-07-energy-phenomena-taxonomy.json";
 import anomaliesCuriosityPack from "@/data/curiosity-volume-08-anomalies.json";
 import anomaliesCuriosityTaxonomyPack from "@/data/curiosity-volume-08-anomalies-taxonomy.json";
+import unknownObjectsCuriosityPack from "@/data/curiosity-volume-09-unknown-objects.json";
+import unknownObjectsCuriosityTaxonomyPack from "@/data/curiosity-volume-09-unknown-objects-taxonomy.json";
 
 export const discoveryRarities = [
   { id: "common", displayName: "Common", displayOrder: 1, defaultSpawnWeight: 1 },
@@ -196,16 +198,20 @@ export type DiscoveryRecord = {
   surveyMethod?: string;
   scale?: string;
   operationalState?: string;
+  objectState?: string;
   phenomenonState?: string;
   measurementMethod?: string;
   hazardLevel?: string;
   energyIntensity?: number;
   anomalyIntensity?: number;
+  unknownSignature?: number;
   durationSeconds?: number;
   spatialVariancePercent?: number;
   temporalVariancePercent?: number;
   realityDistortionPercent?: number;
   observationConfidencePercent?: number;
+  functionConfidencePercent?: number;
+  realityVariancePercent?: number;
   powerSignature?: number;
   stabilityPercent?: number;
   reverseEngineeringProgressPercent?: number;
@@ -225,6 +231,8 @@ export type DiscoveryRecord = {
   strategicValue?: number;
   energyValue?: number;
   anomalyValue?: number;
+  mysteryValue?: number;
+  scientificValue?: number;
   collectionValue?: number;
   repeatable?: boolean;
   maximumKnownInstances?: number;
@@ -266,6 +274,17 @@ function curiosityCategory(displayName: string, displayOrder: number, descriptio
   };
 }
 
+function mergeClassDefinitions(...groups: Array<Array<[string, string[]]>>) {
+  const merged = new Map<string, string[]>();
+  for (const group of groups) {
+    for (const [className, subclasses] of group) {
+      const current = merged.get(className) ?? [];
+      merged.set(className, [...new Set([...current, ...subclasses])]);
+    }
+  }
+  return [...merged.entries()];
+}
+
 type ImportedCuriosity = {
   canonical_id: string;
   name: string;
@@ -285,16 +304,20 @@ type ImportedCuriosity = {
   survey_method?: string;
   scale?: string;
   operational_state?: string;
+  object_state?: string;
   phenomenon_state?: string;
   measurement_method?: string;
   hazard_level?: string;
   energy_intensity?: number;
   anomaly_intensity?: number;
+  unknown_signature?: number;
   duration_seconds?: number;
   spatial_variance_percent?: number;
   temporal_variance_percent?: number;
   reality_distortion_percent?: number;
   observation_confidence_percent?: number;
+  function_confidence_percent?: number;
+  reality_variance_percent?: number;
   power_signature?: number;
   stability_percent?: number;
   reverse_engineering_progress_percent?: number;
@@ -320,6 +343,8 @@ type ImportedCuriosity = {
   strategic_value?: number;
   energy_value?: number;
   anomaly_value?: number;
+  mystery_value?: number;
+  scientific_value?: number;
   collection_value?: number;
   repeatable?: boolean;
   maximum_known_instances?: number;
@@ -377,6 +402,8 @@ export const energyPhenomenaCuriosityVolume = energyPhenomenaCuriosityPack as Im
 export const energyPhenomenaCuriosityTaxonomy = energyPhenomenaCuriosityTaxonomyPack as ImportedCuriosityTaxonomyPack;
 export const anomaliesCuriosityVolume = anomaliesCuriosityPack as ImportedCuriosityPack;
 export const anomaliesCuriosityTaxonomy = anomaliesCuriosityTaxonomyPack as ImportedCuriosityTaxonomyPack;
+export const unknownObjectsCuriosityVolume = unknownObjectsCuriosityPack as ImportedCuriosityPack;
+export const unknownObjectsCuriosityTaxonomy = unknownObjectsCuriosityTaxonomyPack as ImportedCuriosityTaxonomyPack;
 
 const biologicalCategoryAliases: Record<string, string> = {
   Flora: "biological-flora",
@@ -533,13 +560,13 @@ export const curiosityCategories: CuriosityCategory[] = [
     "Spatial, temporal, gravitational, quantum, dimensional, energetic, biological, and reality-distortion anomalies documented through advanced survey.",
     Object.entries(anomaliesCuriosityTaxonomy.taxonomy.Anomalies ?? {})
   ),
-  curiosityCategory("Unknown Objects", 15, "Unknown materials, devices, biological objects, signals, and anomalous objects.", [
+  curiosityCategory("Unknown Objects", 15, "Unknown materials, devices, organisms, signals, structures, containers, artifacts, and unclassified discoveries whose origin or function remains unresolved.", mergeClassDefinitions([
     ["Unknown Materials", ["Unclassified Solids", "Unclassified Liquids", "Unclassified Gases", "Phase-Variable Matter", "Self-Organizing Matter"]],
     ["Unknown Devices", ["Sealed Devices", "Inactive Devices", "Responsive Devices", "Signal-Producing Devices", "Self-Repairing Devices"]],
     ["Unknown Biological Objects", ["Eggs", "Cocoons", "Spores", "Dormant Organisms", "Biological Capsules"]],
     ["Unknown Signals", ["Radio Signals", "Gravitational Signals", "Quantum Signals", "Biological Signals", "Repeating Patterns"]],
     ["Anomalous Objects", ["Floating Objects", "Time-Displaced Objects", "Impossible Geometry", "Dimensional Fragments", "Reality-Distorting Objects"]]
-  ], "Unknown")
+  ], Object.entries(unknownObjectsCuriosityTaxonomy.taxonomy["Unknown Objects"] ?? {})), "Unknown")
 ];
 
 export const discoveryCategories = curiosityCategories.map((category) => ({
@@ -944,16 +971,20 @@ function importedCuriosityRecord(record: ImportedCuriosity, pack: ImportedCurios
     surveyMethod: record.survey_method,
     scale: record.scale,
     operationalState: record.operational_state,
+    objectState: record.object_state,
     phenomenonState: record.phenomenon_state,
     measurementMethod: record.measurement_method,
     hazardLevel: record.hazard_level,
     energyIntensity: record.energy_intensity,
     anomalyIntensity: record.anomaly_intensity,
+    unknownSignature: record.unknown_signature,
     durationSeconds: record.duration_seconds,
     spatialVariancePercent: record.spatial_variance_percent,
     temporalVariancePercent: record.temporal_variance_percent,
     realityDistortionPercent: record.reality_distortion_percent,
     observationConfidencePercent: record.observation_confidence_percent,
+    functionConfidencePercent: record.function_confidence_percent,
+    realityVariancePercent: record.reality_variance_percent,
     powerSignature: record.power_signature,
     stabilityPercent: record.stability_percent,
     reverseEngineeringProgressPercent: record.reverse_engineering_progress_percent,
@@ -973,6 +1004,8 @@ function importedCuriosityRecord(record: ImportedCuriosity, pack: ImportedCurios
     strategicValue: record.strategic_value,
     energyValue: record.energy_value,
     anomalyValue: record.anomaly_value,
+    mysteryValue: record.mystery_value,
+    scientificValue: record.scientific_value,
     collectionValue: record.collection_value,
     repeatable: record.repeatable,
     maximumKnownInstances: record.maximum_known_instances,
@@ -1089,6 +1122,15 @@ const anomaliesImportConfig: CuriosityVolumeImportConfig = {
   generationNotes: "Imported from NOVERIS Curiosity Codex Volume VIII: Anomalies."
 };
 
+const unknownObjectsImportConfig: CuriosityVolumeImportConfig = {
+  volumeId: "unknown-objects",
+  defaultTag: "unknown-objects",
+  defaultResearchIds: ["planet_scan", "xenoarchaeology", "anomaly_science"],
+  defaultEquipmentIds: ["unknown_object_scanner", "containment_probe"],
+  specialEvent: "unknown-objects-curiosity-volume-09",
+  generationNotes: "Imported from NOVERIS Curiosity Codex Volume IX: Unknown Objects."
+};
+
 export const biologicalCuriosityRecords = biologicalCuriosityVolume.records.map((record) => importedCuriosityRecord(record, biologicalCuriosityVolume, biologicalImportConfig));
 export const faunaCuriosityRecords = faunaCuriosityVolume.records.map((record) => importedCuriosityRecord(record, faunaCuriosityVolume, faunaImportConfig));
 export const geologicalCuriosityRecords = geologicalCuriosityVolume.records.map((record) => importedCuriosityRecord(record, geologicalCuriosityVolume, geologicalImportConfig));
@@ -1097,6 +1139,7 @@ export const alienTechnologyCuriosityRecords = alienTechnologyCuriosityVolume.re
 export const ruinsStructuresCuriosityRecords = ruinsStructuresCuriosityVolume.records.map((record) => importedCuriosityRecord(record, ruinsStructuresCuriosityVolume, ruinsStructuresImportConfig));
 export const energyPhenomenaCuriosityRecords = energyPhenomenaCuriosityVolume.records.map((record) => importedCuriosityRecord(record, energyPhenomenaCuriosityVolume, energyPhenomenaImportConfig));
 export const anomaliesCuriosityRecords = anomaliesCuriosityVolume.records.map((record) => importedCuriosityRecord(record, anomaliesCuriosityVolume, anomaliesImportConfig));
+export const unknownObjectsCuriosityRecords = unknownObjectsCuriosityVolume.records.map((record) => importedCuriosityRecord(record, unknownObjectsCuriosityVolume, unknownObjectsImportConfig));
 
 export const biologicalCuriosityNavigation = importedCuriosityNavigation(biologicalCuriosityTaxonomy);
 export const faunaCuriosityNavigation = importedCuriosityNavigation(faunaCuriosityTaxonomy);
@@ -1106,6 +1149,7 @@ export const alienTechnologyCuriosityNavigation = importedCuriosityNavigation(al
 export const ruinsStructuresCuriosityNavigation = importedCuriosityNavigation(ruinsStructuresCuriosityTaxonomy);
 export const energyPhenomenaCuriosityNavigation = importedCuriosityNavigation(energyPhenomenaCuriosityTaxonomy);
 export const anomaliesCuriosityNavigation = importedCuriosityNavigation(anomaliesCuriosityTaxonomy);
+export const unknownObjectsCuriosityNavigation = importedCuriosityNavigation(unknownObjectsCuriosityTaxonomy);
 
 export const canonicalDiscoveries: DiscoveryRecord[] = [
   ...coreDiscoveryRecords,
@@ -1116,10 +1160,11 @@ export const canonicalDiscoveries: DiscoveryRecord[] = [
   ...alienTechnologyCuriosityRecords,
   ...ruinsStructuresCuriosityRecords,
   ...energyPhenomenaCuriosityRecords,
-  ...anomaliesCuriosityRecords
+  ...anomaliesCuriosityRecords,
+  ...unknownObjectsCuriosityRecords
 ];
 
-export const supportedCuriosityVolumeIds = ["biological", "fauna", "geological", "ancient-relics", "alien-technology", "ruins-and-structures", "energy-phenomena", "anomalies"] as const;
+export const supportedCuriosityVolumeIds = ["biological", "fauna", "geological", "ancient-relics", "alien-technology", "ruins-and-structures", "energy-phenomena", "anomalies", "unknown-objects"] as const;
 export type SupportedCuriosityVolumeId = typeof supportedCuriosityVolumeIds[number];
 
 function discoveryFolderKey(record: Pick<DiscoveryRecord, "volumeId" | "categoryId" | "classId" | "subclassId">, depth: "volume" | "category" | "class" | "subclass") {
@@ -1382,6 +1427,24 @@ function runDiscoverySystemValidation() {
   const incompleteAnomalies = anomaliesCuriosityRecords.filter((record) => !record.measurementMethod || !record.phenomenonState || typeof record.anomalyIntensity !== "number" || typeof record.spatialVariancePercent !== "number" || typeof record.temporalVariancePercent !== "number" || typeof record.realityDistortionPercent !== "number" || typeof record.observationConfidencePercent !== "number" || typeof record.durationSeconds !== "number");
   if (incompleteAnomalies.length) {
     issues.push({ severity: "error", code: "anomaly_measurement_contract", message: "Anomalies must preserve measurement method, state, intensity, duration, spatial variance, temporal variance, reality distortion, and observation confidence.", records: incompleteAnomalies.map((record) => record.id) });
+  }
+  const unknownObjectNames = unknownObjectsCuriosityRecords.map((record) => record.displayName.trim().toLowerCase());
+  if (new Set(unknownObjectNames).size !== unknownObjectNames.length) {
+    issues.push({ severity: "error", code: "duplicate_unknown_object_name", message: "Volume IX curiosity names must be unique.", records: unknownObjectsCuriosityRecords.map((record) => record.displayName) });
+  }
+  if (unknownObjectsCuriosityRecords.length !== unknownObjectsCuriosityVolume.recordCount) {
+    issues.push({ severity: "error", code: "unknown_object_record_count", message: "Volume IX must load its declared canonical record count.", records: [String(unknownObjectsCuriosityRecords.length), String(unknownObjectsCuriosityVolume.recordCount)] });
+  }
+  if (unknownObjectsCuriosityRecords[0]?.id !== "UNK-0001" || unknownObjectsCuriosityRecords.at(-1)?.id !== "UNK-0600") {
+    issues.push({ severity: "error", code: "unknown_object_id_range", message: "Volume IX must preserve the UNK-0001 through UNK-0600 canonical range.", records: [unknownObjectsCuriosityRecords[0]?.id ?? "missing", unknownObjectsCuriosityRecords.at(-1)?.id ?? "missing"] });
+  }
+  const invalidUniqueUnknownObjects = unknownObjectsCuriosityRecords.filter((record) => record.rarity === "unique" && (record.maximumKnownInstances !== 1 || record.repeatable !== false));
+  if (invalidUniqueUnknownObjects.length) {
+    issues.push({ severity: "error", code: "unknown_object_unique_contract", message: "Unique unknown objects must be non-repeatable and limited to one known instance.", records: invalidUniqueUnknownObjects.map((record) => record.id) });
+  }
+  const incompleteUnknownObjects = unknownObjectsCuriosityRecords.filter((record) => !record.objectState || !record.recoveryMethod || typeof record.unknownSignature !== "number" || typeof record.originConfidencePercent !== "number" || typeof record.functionConfidencePercent !== "number" || typeof record.translationProgressPercent !== "number" || typeof record.realityVariancePercent !== "number");
+  if (incompleteUnknownObjects.length) {
+    issues.push({ severity: "error", code: "unknown_object_analysis_contract", message: "Unknown objects must preserve state, recovery method, signature, origin confidence, function confidence, translation progress, and reality variance.", records: incompleteUnknownObjects.map((record) => record.id) });
   }
   for (const collection of discoveryCollections) {
     const missing = collection.discoveryIds.filter((id) => !discoveryIds.has(id));
