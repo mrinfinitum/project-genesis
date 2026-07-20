@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
 
-const preferenceKey = "project-genesis-discovery-tree-width";
+const defaultPreferenceKey = "project-genesis-discovery-tree-width";
 const minimumWidth = 220;
 const maximumWidth = 440;
 const defaultWidth = 256;
@@ -11,7 +11,7 @@ function clampWidth(value: number) {
   return Math.min(maximumWidth, Math.max(minimumWidth, Math.round(value)));
 }
 
-export function ResizableDiscoveryLayout({ sidebar, children }: { sidebar: ReactNode; children: ReactNode }) {
+export function ResizableDiscoveryLayout({ sidebar, children, preferenceKey = defaultPreferenceKey, label = "discovery tree" }: { sidebar: ReactNode; children: ReactNode; preferenceKey?: string; label?: string }) {
   const [sidebarWidth, setSidebarWidth] = useState(defaultWidth);
   const [dragging, setDragging] = useState(false);
   const dragStart = useRef({ x: 0, width: defaultWidth });
@@ -70,7 +70,7 @@ export function ResizableDiscoveryLayout({ sidebar, children }: { sidebar: React
       {sidebar}
       <div
         role="separator"
-        aria-label="Resize discovery tree"
+        aria-label={`Resize ${label}`}
         aria-orientation="vertical"
         aria-valuemin={minimumWidth}
         aria-valuemax={maximumWidth}
@@ -82,7 +82,7 @@ export function ResizableDiscoveryLayout({ sidebar, children }: { sidebar: React
         onPointerCancel={() => setDragging(false)}
         onKeyDown={resizeWithKeyboard}
         className="group relative hidden cursor-col-resize touch-none items-stretch justify-center lg:flex focus-visible:outline-none"
-        title="Drag to resize the discovery tree"
+        title={`Drag to resize the ${label}`}
       >
         <span className={`w-px transition-colors ${dragging ? "bg-cyan-200" : "bg-cyan-300/15 group-hover:bg-cyan-300/60 group-focus-visible:bg-cyan-200"}`} />
         <span className={`absolute left-1/2 top-1/2 h-12 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full transition ${dragging ? "bg-cyan-200" : "bg-cyan-300/0 group-hover:bg-cyan-300/50 group-focus-visible:bg-cyan-200"}`} />

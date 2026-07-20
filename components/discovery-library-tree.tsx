@@ -7,7 +7,7 @@ import { BookOpen, ChevronRight, Compass, Folder, FolderOpen } from "lucide-reac
 export type DiscoveryTreeNode = {
   id: string;
   label: string;
-  href: string;
+  href?: string;
   count: number;
   icon?: "folder" | "curiosity" | "journal";
   children?: DiscoveryTreeNode[];
@@ -22,9 +22,9 @@ function ancestorIds(nodes: DiscoveryTreeNode[], activeId: string, parents: stri
   return [];
 }
 
-function initiallyExpanded(nodes: DiscoveryTreeNode[], activeId: string) {
+function initiallyExpanded(nodes: DiscoveryTreeNode[], activeId: string, expandTopLevel: boolean) {
   return new Set([
-    ...nodes.filter((node) => node.children?.length).map((node) => node.id),
+    ...(expandTopLevel ? nodes.filter((node) => node.children?.length).map((node) => node.id) : []),
     ...ancestorIds(nodes, activeId)
   ]);
 }
@@ -40,12 +40,14 @@ function TreeItem({
   activeFolder,
   expandedIds,
   toggle,
+  onSelect,
   depth = 0
 }: {
   node: DiscoveryTreeNode;
   activeFolder: string;
   expandedIds: Set<string>;
   toggle: (id: string) => void;
+  onSelect?: (id: string) => void;
   depth?: number;
 }) {
   const hasChildren = Boolean(node.children?.length);
@@ -72,20 +74,32 @@ function TreeItem({
             <span className="h-1.5 w-1.5 rounded-full bg-slate-600" />
           </span>
         )}
-        <Link
-          href={node.href}
-          scroll={false}
-          className="flex min-w-0 flex-1 items-center gap-1.5 rounded py-1.5 pr-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-cyan-200"
-        >
-          <TreeIcon node={node} expanded={expanded} />
-          <span className="min-w-0 flex-1 truncate font-semibold">{node.label}</span>
-          <span className="rounded border border-cyan-300/10 bg-slate-950/45 px-1.5 py-0.5 text-[0.62rem] font-bold text-slate-500">{node.count}</span>
-        </Link>
+        {node.href ? (
+          <Link
+            href={node.href}
+            scroll={false}
+            className="flex min-w-0 flex-1 items-center gap-1.5 rounded py-1.5 pr-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-cyan-200"
+          >
+            <TreeIcon node={node} expanded={expanded} />
+            <span className="min-w-0 flex-1 truncate font-semibold">{node.label}</span>
+            <span className="rounded border border-cyan-300/10 bg-slate-950/45 px-1.5 py-0.5 text-[0.62rem] font-bold text-slate-500">{node.count}</span>
+          </Link>
+        ) : (
+          <button
+            type="button"
+            onClick={() => onSelect?.(node.id)}
+            className="flex min-w-0 flex-1 items-center gap-1.5 rounded py-1.5 pr-1 text-left focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-cyan-200"
+          >
+            <TreeIcon node={node} expanded={expanded} />
+            <span className="min-w-0 flex-1 truncate font-semibold">{node.label}</span>
+            <span className="rounded border border-cyan-300/10 bg-slate-950/45 px-1.5 py-0.5 text-[0.62rem] font-bold text-slate-500">{node.count}</span>
+          </button>
+        )}
       </div>
       {expanded ? (
         <div role="group" className="mt-0.5">
           {node.children?.map((child) => (
-            <TreeItem key={child.id} node={child} activeFolder={activeFolder} expandedIds={expandedIds} toggle={toggle} depth={depth + 1} />
+            <TreeItem key={child.id} node={child} activeFolder={activeFolder} expandedIds={expandedIds} toggle={toggle} onSelect={onSelect} depth={depth + 1} />
           ))}
         </div>
       ) : null}
@@ -93,8 +107,8 @@ function TreeItem({
   );
 }
 
-export function DiscoveryLibraryTree({ nodes, activeFolder }: { nodes: DiscoveryTreeNode[]; activeFolder: string }) {
-  const [expandedIds, setExpandedIds] = useState(() => initiallyExpanded(nodes, activeFolder));
+export function DiscoveryLibraryTree({ nodes, activeFolder, ariaLabel = "Discovery Library content folders", expandTopLevel = true, onSelect }: { nodes: DiscoveryTreeNode[]; activeFolder: string; ariaLabel?: string; expandTopLevel?: boolean; onSelect?: (id: string) => void }) {
+  const [expandedIds, setExpandedIds] = useState(() => initiallyExpanded(nodes, activeFolder, expandTopLevel));
 
   useEffect(() => {
     const activeAncestors = ancestorIds(nodes, activeFolder);
@@ -116,8 +130,8 @@ export function DiscoveryLibraryTree({ nodes, activeFolder }: { nodes: Discovery
   }
 
   return (
-    <div role="tree" aria-label="Discovery Library content folders" className="space-y-0.5">
-      {nodes.map((node) => <TreeItem key={node.id} node={node} activeFolder={activeFolder} expandedIds={expandedIds} toggle={toggle} />)}
+    <div role="tree" aria-label={ariaLabel} className="space-y-0.5">
+      {nodes.map((node) => <TreeItem key={node.id} node={node} activeFolder={activeFolder} expandedIds={expandedIds} toggle={toggle} onSelect={onSelect} />)}
     </div>
   );
 }

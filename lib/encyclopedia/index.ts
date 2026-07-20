@@ -263,9 +263,24 @@ function assetStatus(asset?: ProductionAsset | null): "missing" | "uploaded" | "
   return "uploaded";
 }
 
+const assetLookupCache = new WeakMap<ProductionAsset[], Map<string, ProductionAsset>>();
+
+function assetLookup(assets: ProductionAsset[]) {
+  const cached = assetLookupCache.get(assets);
+  if (cached) return cached;
+  const lookup = new Map<string, ProductionAsset>();
+  for (const asset of assets) {
+    for (const candidate of [asset.id, asset.artKey, asset.iconKey, ...asset.aliases]) {
+      const normalized = slug(candidate);
+      if (normalized && !lookup.has(normalized)) lookup.set(normalized, asset);
+    }
+  }
+  assetLookupCache.set(assets, lookup);
+  return lookup;
+}
+
 function findAsset(assets: ProductionAsset[], key: string) {
-  const normalized = slug(key);
-  return assets.find((asset) => [asset.id, asset.artKey, asset.iconKey, ...asset.aliases].some((candidate) => slug(candidate) === normalized)) ?? null;
+  return assetLookup(assets).get(slug(key)) ?? null;
 }
 
 export const encyclopediaAssetProfiles = {
