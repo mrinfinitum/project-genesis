@@ -1,5 +1,6 @@
 import type { AssetProductionState, ProductionAsset } from "@/lib/assets/asset-production";
 import { findAssetForPreviewKeys, resolveProductionAssetPreview, type VisualPreview } from "@/lib/assets/visual-previews";
+import aiAgentModuleSeed from "@/data/ai-agents/NOVERIS_AI_Agents_Studio_Seed.json";
 import type {
   AiAgentAnimationProfileDefinition,
   AiAgentDefinition,
@@ -83,9 +84,24 @@ export type AiAgentRecord = {
   aliases: string[];
   componentLibraryReferences: string[];
   notes: string[];
+  agentClass?: string;
+  specialization?: string;
+  catalogRarity?: string;
+  catalogPersonality?: string;
+  terminalType?: string;
+  discoverySource?: string;
+  primaryBonusIds?: string[];
+  unlockMethod?: string;
+  restorationAction?: string;
+  memoryIntegrityStart?: string;
+  levelCap?: number;
+  relationshipGroup?: string;
+  dialoguePackId?: string;
+  runtimeEnabled?: boolean;
+  sourceStatus?: string;
 };
 
-export type AiAgentSummary = Pick<AiAgentRecord, "id" | "displayName" | "shortDisplayName" | "description" | "personalityId" | "rarity" | "colorTheme" | "unlockRequirements" | "defaultForNewPlayers" | "supportedStates" | "componentLibraryReferences" | "approvalState" | "publishState"> & {
+export type AiAgentSummary = Pick<AiAgentRecord, "id" | "displayName" | "shortDisplayName" | "description" | "personalityId" | "rarity" | "colorTheme" | "unlockRequirements" | "defaultForNewPlayers" | "supportedStates" | "componentLibraryReferences" | "approvalState" | "publishState" | "agentClass" | "specialization" | "catalogRarity" | "catalogPersonality" | "terminalType" | "discoverySource" | "primaryBonusIds" | "unlockMethod" | "restorationAction" | "memoryIntegrityStart" | "levelCap" | "relationshipGroup" | "dialoguePackId" | "runtimeEnabled" | "sourceStatus"> & {
   artworkReady: number;
   artworkTotal: number;
   expressionReady: number;
@@ -96,6 +112,29 @@ export type AiAgentSummary = Pick<AiAgentRecord, "id" | "displayName" | "shortDi
   iosReady: boolean;
   androidReady: boolean;
   blockers: string[];
+};
+
+export type AiAgentTerminalRecord = {
+  id: string;
+  displayName: string;
+  agentIds: string[];
+  discoverySources: string[];
+  restorationAction: string;
+  status: "draft";
+};
+
+export type AiAgentCatalogPersonality = {
+  id: string;
+  displayName: string;
+  agentIds: string[];
+  status: "draft";
+};
+
+export type AiAgentLibraryModuleRecord = {
+  id: string;
+  displayName: string;
+  agentIds: string[];
+  status: "draft" | "published";
 };
 
 export type AiAgentLibraryState = {
@@ -109,6 +148,11 @@ export type AiAgentLibraryState = {
   saveSchema: AiAgentSaveSchemaDefinition;
   derivativePresetIds: string[];
   acceptedSourceFormats: AiAgentArtworkSlot["acceptedSourceFormats"];
+  terminals: AiAgentTerminalRecord[];
+  catalogPersonalities: AiAgentCatalogPersonality[];
+  memoryFragments: AiAgentLibraryModuleRecord[];
+  dialoguePacks: AiAgentLibraryModuleRecord[];
+  relationships: AiAgentLibraryModuleRecord[];
   stats: {
     total: number;
     published: number;
@@ -274,6 +318,109 @@ function expression(id: AiAgentVisualState, label: string, states: AiAgentState[
   return { id, label, supportedStates: states, artKey, requiredForV1, status: "Missing" };
 }
 
+type ImportedAiAgentSeed = {
+  agent_id: string;
+  name: string;
+  class: string;
+  specialization: string;
+  rarity: string;
+  description: string;
+  terminal_type: string;
+  discovery_source: string;
+  personality: string;
+  primary_bonuses: string;
+  unlock_method: string;
+  restoration_action: string;
+  memory_integrity_start: string;
+  level_cap: number;
+  relationship_group: string;
+  dialogue_pack: string;
+  runtime_enabled: boolean;
+  status: string;
+};
+
+const importedPersonalityIds: Record<string, string> = {
+  Curious: "AI-PERSONALITY-EXPLORER",
+  Compassionate: "AI-PERSONALITY-DIPLOMAT",
+  Pragmatic: "AI-PERSONALITY-ENGINEER",
+  Efficient: "AI-PERSONALITY-ANALYST",
+  Patient: "AI-PERSONALITY-MINIMALIST",
+  Analytical: "AI-PERSONALITY-SCIENTIST",
+  Protective: "AI-PERSONALITY-GUARDIAN",
+  Reflective: "AI-PERSONALITY-MINIMALIST",
+  Visionary: "AI-PERSONALITY-EXPLORER",
+  Enigmatic: "AI-PERSONALITY-MINIMALIST"
+};
+
+const importedClassColors: Record<string, AiAgentDefinition["colorTheme"]> = {
+  Explorer: { primary: "#67e8f9", secondary: "#2563eb", accent: "#f8fafc" },
+  Medical: { primary: "#fda4af", secondary: "#0f766e", accent: "#f8fafc" },
+  Engineer: { primary: "#fbbf24", secondary: "#b45309", accent: "#f8fafc" },
+  Logistics: { primary: "#38bdf8", secondary: "#0369a1", accent: "#f8fafc" },
+  Botanist: { primary: "#6ee7b7", secondary: "#047857", accent: "#f8fafc" },
+  Scientist: { primary: "#a78bfa", secondary: "#4338ca", accent: "#f8fafc" },
+  Security: { primary: "#fb7185", secondary: "#9f1239", accent: "#f8fafc" },
+  Historian: { primary: "#fcd34d", secondary: "#92400e", accent: "#f8fafc" },
+  "Galaxy Cartographer": { primary: "#22d3ee", secondary: "#4f46e5", accent: "#f8fafc" },
+  "Precursor Intelligence": { primary: "#c084fc", secondary: "#0e7490", accent: "#f8fafc" }
+};
+
+function runtimeRarity(rarity: string): AiAgentRarity {
+  return ["Common", "Uncommon", "Rare", "Epic", "Legendary"].includes(rarity) ? rarity as AiAgentRarity : "Legendary";
+}
+
+function importedAgentRecord(seed: ImportedAiAgentSeed): AiAgentRecord {
+  const artPrefix = `ai_agent_${seed.agent_id.toLowerCase().replace(/[^a-z0-9]+/g, "_")}`;
+  return {
+    id: seed.agent_id,
+    displayName: seed.name,
+    shortDisplayName: seed.name,
+    description: seed.description,
+    personalityId: importedPersonalityIds[seed.personality] ?? defaultAiAgentPersonalityId,
+    colorTheme: importedClassColors[seed.class] ?? { primary: "#67e8f9", secondary: "#334155", accent: "#f8fafc" },
+    rarity: runtimeRarity(seed.rarity),
+    unlockRequirements: [seed.unlock_method],
+    defaultForNewPlayers: false,
+    eraAvailability,
+    supportedStates: aiAgentStates,
+    artworkSlots: [
+      slot("head", "Head/Base Artwork", `${artPrefix}_head`, "head", "idle"),
+      slot("eyes-open", "Eyes Open Artwork", `${artPrefix}_eyes_open`, "eyes_open", "idle"),
+      slot("eyes-blink", "Blink / Eyes Closed Artwork", `${artPrefix}_eyes_blink`, "eyes_blink", "blink"),
+      slot("eyes-closed", "Offline Eyes Closed Artwork", `${artPrefix}_eyes_closed`, "eyes_closed", "offline")
+    ],
+    expressionVariants: [],
+    animationProfileId: defaultAiAgentAnimationProfileId,
+    dialogueProfile: { id: `AI-DIALOGUE-PENDING-${seed.agent_id}`, tone: "", greeting: "", thinkingLine: "", warningLine: "", celebrationLine: "", offlineLine: "" },
+    voiceProfile: { id: `AI-VOICE-FUTURE-${seed.agent_id}`, status: "Future", voiceKey: null, notes: "Voice profile is not yet authored." },
+    gameplayModifiers: {},
+    automationPresentationId,
+    status: "locked",
+    approvalState: "draft",
+    publishState: "draft",
+    aliases: [seed.name.toLowerCase().replace(/[^a-z0-9]+/g, "_")],
+    componentLibraryReferences: ["AiAgentPortrait", "AiAgentPanel", "AiAgentStatus", "AiAgentSelector", "AiAgentCard", "AiAgentVariantCard"],
+    notes: ["Imported from NOVERIS AI Agents Studio Module seed. Draft until artwork, dialogue, relationships, and runtime review are complete."],
+    agentClass: seed.class,
+    specialization: seed.specialization,
+    catalogRarity: seed.rarity,
+    catalogPersonality: seed.personality,
+    terminalType: seed.terminal_type,
+    discoverySource: seed.discovery_source,
+    primaryBonusIds: seed.primary_bonuses.split(",").map((value) => value.trim()).filter(Boolean),
+    unlockMethod: seed.unlock_method,
+    restorationAction: seed.restoration_action,
+    memoryIntegrityStart: seed.memory_integrity_start,
+    levelCap: seed.level_cap,
+    relationshipGroup: seed.relationship_group,
+    dialoguePackId: seed.dialogue_pack,
+    runtimeEnabled: seed.runtime_enabled,
+    sourceStatus: seed.status
+  };
+}
+
+const importedAgentRecords = (aiAgentModuleSeed.records as ImportedAiAgentSeed[]).map(importedAgentRecord);
+
 const seedAgents: AiAgentRecord[] = [
   {
     id: defaultAiAgentId,
@@ -380,7 +527,8 @@ const seedAgents: AiAgentRecord[] = [
     aliases: ["ai_agent_orion"],
     componentLibraryReferences: ["AiAgentPortrait", "AiAgentPanel", "AiAgentStatus", "AiAgentSelector", "AiAgentCard", "AiAgentVariantCard", "AiAgentExpressionPreview", "AiAgentBlinkPreview"],
     notes: ["Future cosmetic unlock. No gameplay modifiers or balance changes."]
-  }
+  },
+  ...importedAgentRecords
 ];
 
 function readinessFromAsset(match: ProductionAsset | null | undefined): AiAgentArtworkStatus {
@@ -445,6 +593,21 @@ function summarize(agent: AiAgentRecord): AiAgentSummary {
     componentLibraryReferences: agent.componentLibraryReferences,
     approvalState: agent.approvalState,
     publishState: agent.publishState,
+    agentClass: agent.agentClass,
+    specialization: agent.specialization,
+    catalogRarity: agent.catalogRarity,
+    catalogPersonality: agent.catalogPersonality,
+    terminalType: agent.terminalType,
+    discoverySource: agent.discoverySource,
+    primaryBonusIds: agent.primaryBonusIds,
+    unlockMethod: agent.unlockMethod,
+    restorationAction: agent.restorationAction,
+    memoryIntegrityStart: agent.memoryIntegrityStart,
+    levelCap: agent.levelCap,
+    relationshipGroup: agent.relationshipGroup,
+    dialoguePackId: agent.dialoguePackId,
+    runtimeEnabled: agent.runtimeEnabled,
+    sourceStatus: agent.sourceStatus,
     artworkReady,
     artworkTotal: agent.artworkSlots.length,
     expressionReady,
@@ -610,6 +773,23 @@ export async function getAiAgentLibraryState(assetState?: AssetProductionState):
     const requiredKinds = ["eyes_open", "eyes_blink", "eyes_closed"] as const;
     return requiredKinds.every((kind) => ["Approved", "Published"].includes(agent.artworkSlots.find((slotRecord) => slotRecord.kind === kind)?.status ?? "Missing"));
   }).length;
+  const importedRecords = records.filter((agent) => /^AI-\d{4}$/.test(agent.id));
+  const terminals = [...new Set(importedRecords.map((agent) => agent.terminalType).filter((value): value is string => Boolean(value)))].map((terminalType) => ({
+    id: `AI-TERMINAL-${terminalType.toUpperCase().replace(/[^A-Z0-9]+/g, "-")}`,
+    displayName: terminalType,
+    agentIds: importedRecords.filter((agent) => agent.terminalType === terminalType).map((agent) => agent.id),
+    discoverySources: [...new Set(importedRecords.filter((agent) => agent.terminalType === terminalType).map((agent) => agent.discoverySource).filter((value): value is string => Boolean(value)))],
+    restorationAction: importedRecords.find((agent) => agent.terminalType === terminalType)?.restorationAction ?? "",
+    status: "draft" as const
+  }));
+  const catalogPersonalities = [...new Set(importedRecords.map((agent) => agent.catalogPersonality).filter((value): value is string => Boolean(value)))].map((personality) => ({
+    id: `AI-CATALOG-PERSONALITY-${personality.toUpperCase().replace(/[^A-Z0-9]+/g, "-")}`,
+    displayName: personality,
+    agentIds: importedRecords.filter((agent) => agent.catalogPersonality === personality).map((agent) => agent.id),
+    status: "draft" as const
+  }));
+  const dialoguePacks = importedRecords.filter((agent) => agent.dialoguePackId).map((agent) => ({ id: agent.dialoguePackId!, displayName: agent.dialoguePackId!, agentIds: [agent.id], status: "draft" as const }));
+  const relationships = importedRecords.filter((agent) => agent.relationshipGroup).map((agent) => ({ id: agent.relationshipGroup!, displayName: agent.relationshipGroup!, agentIds: [agent.id], status: "draft" as const }));
   return {
     agents,
     records,
@@ -621,6 +801,11 @@ export async function getAiAgentLibraryState(assetState?: AssetProductionState):
     saveSchema: aiAgentSaveSchema,
     derivativePresetIds: aiAgentDerivativePresetIds,
     acceptedSourceFormats: ["PNG", "SVG", "PSD", "PSB", "source_package"],
+    terminals,
+    catalogPersonalities,
+    memoryFragments: [],
+    dialoguePacks,
+    relationships,
     stats: {
       total: records.length,
       published: records.filter((agent) => agent.publishState === "published").length,
@@ -651,6 +836,14 @@ export function validateAiAgentLibrary(state: AiAgentLibraryState) {
   const variantIds = state.variants.map((variant) => variant.id);
   if (new Set(ids).size !== ids.length) issues.push("AI agent IDs must be unique.");
   if (new Set(variantIds).size !== variantIds.length) issues.push("AI agent variant IDs must be unique.");
+  const importedIds = state.records.filter((agent) => /^AI-\d{4}$/.test(agent.id)).map((agent) => agent.id);
+  if (importedIds.length !== 10) issues.push("NOVERIS AI Agent module must contain exactly ten starter records.");
+  for (let index = 1; index <= 10; index += 1) {
+    const expectedId = `AI-${String(index).padStart(4, "0")}`;
+    if (!importedIds.includes(expectedId)) issues.push(`NOVERIS AI Agent module is missing ${expectedId}.`);
+  }
+  const terminalIds = new Set(state.terminals.flatMap((terminal) => terminal.agentIds));
+  for (const agentId of importedIds) if (!terminalIds.has(agentId)) issues.push(`${agentId} must resolve to a Forgotten Terminal record.`);
   if (!state.records.length) issues.push("At least one AI agent record is required.");
   if (!state.variants.length) issues.push("At least one AI agent variant record is required.");
   const defaults = state.records.filter((agent) => agent.defaultForNewPlayers);

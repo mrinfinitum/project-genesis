@@ -96,7 +96,7 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/upgrades", label: "Upgrade Library", icon: WandSparkles },
       { href: "/population", label: "Population", icon: Landmark },
       { href: "/economy", label: "Economy & Trade", icon: BadgeDollarSign },
-      { href: "/ai-agents", label: "AI Agents", icon: Bot }
+      { href: "/ai-agents", label: "AI Agent Libraries", icon: Bot }
     ]
   },
 ];

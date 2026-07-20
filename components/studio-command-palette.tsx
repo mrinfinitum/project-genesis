@@ -27,7 +27,7 @@ const commandSeeds: PaletteResult[] = [
   { id: "command:create-building", type: "Library Action", title: "Create Building", subtitle: "Open Building Library creation tools", href: "/buildings?action=create" },
   { id: "command:resource-library", type: "Library", title: "Open Resource Library", subtitle: "Create and manage canonical resources", href: "/resource-catalog" },
   { id: "command:create-resource", type: "Library Action", title: "Create Resource", subtitle: "Open Resource Library creation tools", href: "/resource-catalog?action=create" },
-  { id: "command:ai-agents", type: "Library", title: "Open AI Agents", subtitle: "Create and manage AI agent definitions", href: "/ai-agents" },
+  { id: "command:ai-agents", type: "Library", title: "Open AI Agent Libraries", subtitle: "Browse agents, terminals, personalities, memory, and dialogue", href: "/ai-agents" },
   { id: "command:encyclopedia", type: "Library", title: "Open Encyclopedia", subtitle: "Canonical knowledge browser", href: "/encyclopedia" },
   { id: "command:production-health", type: "Health", title: "Open Production Health", subtitle: "Assets, routes, exports, verification", href: "/asset-library?section=all-assets" },
   { id: "command:recent-assets", type: "Asset Library", title: "Open Recent Assets", subtitle: "Recently opened Studio assets", href: "/asset-library?folder=recently-opened" },

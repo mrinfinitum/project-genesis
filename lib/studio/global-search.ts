@@ -53,7 +53,7 @@ const workspaceResults: StudioSearchResult[] = [
   workspace("create-research", "Create Research", "/research?action=create", "Research Library action"),
   workspace("resource-library", "Resource Library", "/resource-catalog", "Canonical resource records"),
   workspace("create-resource", "Create Resource", "/resource-catalog?action=create", "Resource Library action"),
-  workspace("ai-agents", "AI Agents", "/ai-agents", "AI agent definitions and variants"),
+  workspace("ai-agents", "AI Agent Libraries", "/ai-agents", "Agents, terminals, personalities, memory, and dialogue"),
   workspace("encyclopedia", "Encyclopedia", "/encyclopedia", "Canonical knowledge browser"),
   workspace("production-health", "Production Health", "/asset-library?section=all-assets", "Studio health and asset readiness"),
   workspace("architecture", "Architecture", "/architecture", "Architecture Workspace"),
