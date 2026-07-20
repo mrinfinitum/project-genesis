@@ -13,7 +13,8 @@
     "sync:curiosity-artwork": "tsx scripts/sync-curiosity-artwork.ts",
     "regenerate:assets": "tsx scripts/regenerate-asset-variants.ts",
     "cleanup:remote-psd": "tsx scripts/cleanup-remote-psd-sources.ts",
-    "sync:studio-runtime": "tsx scripts/sync-studio-runtime.ts"
+    "sync:studio-runtime": "tsx scripts/sync-studio-runtime.ts",
+    "export:planet-resource-handoff": "tsx scripts/export-planet-resource-seed-handoff.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",
