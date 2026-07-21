@@ -430,7 +430,7 @@ function importedAgentRecord(seed: ImportedAiAgentSeed): AiAgentRecord {
 
 function foundationAgentRecord(definition: CanonicalAiLibraryAgent): AiAgentRecord {
   const artPrefix = definition.runtime_metadata.portraitArtKey.replace(/_portrait$/, "");
-  const runtimePersonalityId = importedPersonalityIds[definition.personality] ?? defaultAiAgentPersonalityId;
+  const runtimePersonalityId = importedPersonalityIds[definition.personality_primary] ?? defaultAiAgentPersonalityId;
   const rarity = runtimeRarity(definition.rarity);
   return {
     id: definition.ai_id,
@@ -440,7 +440,7 @@ function foundationAgentRecord(definition: CanonicalAiLibraryAgent): AiAgentReco
     personalityId: runtimePersonalityId,
     colorTheme: importedClassColors[definition.category] ?? { primary: "#67e8f9", secondary: "#334155", accent: "#f8fafc" },
     rarity,
-    unlockRequirements: [definition.activation_method],
+    unlockRequirements: [definition.discovery_method, definition.activation_method],
     defaultForNewPlayers: false,
     eraAvailability,
     supportedStates: aiAgentStates,
@@ -454,7 +454,7 @@ function foundationAgentRecord(definition: CanonicalAiLibraryAgent): AiAgentReco
     animationProfileId: defaultAiAgentAnimationProfileId,
     dialogueProfile: {
       id: `AI-DIALOGUE-${definition.ai_id}`,
-      tone: definition.personality,
+      tone: `${definition.personality_primary} / ${definition.personality_secondary}`,
       greeting: definition.dialogue_examples[0],
       thinkingLine: definition.dialogue_examples[1],
       warningLine: `${definition.name}: assignment conditions require attention.`,
@@ -473,13 +473,13 @@ function foundationAgentRecord(definition: CanonicalAiLibraryAgent): AiAgentReco
     agentClass: definition.category,
     specialization: definition.subcategory,
     catalogRarity: definition.rarity,
-    catalogPersonality: definition.personality,
-    terminalType: definition.activation_method,
+    catalogPersonality: definition.personality_primary,
+    terminalType: definition.discovery_method,
     discoverySource: definition.origin,
-    primaryBonusIds: ["labor_bonus", "action_bonus", "building_bonus", "research_bonus", "colony_bonus", "automation_bonus"].filter((key) => definition[key as keyof CanonicalAiLibraryAgent] !== 0),
+    primaryBonusIds: ["base_labor_per_second", "base_click_labor_bonus", "offline_generation_multiplier", definition.special_effect_type],
     unlockMethod: definition.activation_method,
-    restorationAction: definition.activation_method === "Recovered" || definition.activation_method === "Discovered" ? "Recover AI Core" : "Activate AI Core",
-    memoryIntegrityStart: definition.activation_method === "Recovered" ? "20-80%" : "100%",
+    restorationAction: definition.activation_method,
+    memoryIntegrityStart: "Fragments unlock at levels 10, 25, and 40",
     levelCap: definition.max_level,
     relationshipGroup: definition.category_id,
     dialoguePackId: `AI-DIALOGUE-${definition.ai_id}`,
@@ -843,7 +843,7 @@ export async function getAiAgentLibraryState(assetState?: AssetProductionState):
     const requiredKinds = ["eyes_open", "eyes_blink", "eyes_closed"] as const;
     return requiredKinds.every((kind) => ["Approved", "Published"].includes(agent.artworkSlots.find((slotRecord) => slotRecord.kind === kind)?.status ?? "Missing"));
   }).length;
-  const importedRecords = records.filter((agent) => /^AI-\d{4}$/.test(agent.id));
+  const importedRecords = records.filter((agent) => /^ai_v01_\d{3}_[a-z0-9_]+$/.test(agent.id));
   const terminals = [...new Set(importedRecords.map((agent) => agent.terminalType).filter((value): value is string => Boolean(value)))].map((terminalType) => ({
     id: `AI-TERMINAL-${terminalType.toUpperCase().replace(/[^A-Z0-9]+/g, "-")}`,
     displayName: terminalType,
@@ -913,11 +913,11 @@ export function validateAiAgentLibrary(state: AiAgentLibraryState) {
   const variantIds = state.variants.map((variant) => variant.id);
   if (new Set(ids).size !== ids.length) issues.push("AI agent IDs must be unique.");
   if (new Set(variantIds).size !== variantIds.length) issues.push("AI agent variant IDs must be unique.");
-  const importedIds = state.records.filter((agent) => /^AI-\d{4}$/.test(agent.id)).map((agent) => agent.id);
-  if (importedIds.length !== 75) issues.push("AI Library Volume I must contain exactly 75 numbered records.");
-  for (let index = 1; index <= 75; index += 1) {
-    const expectedId = `AI-${String(index).padStart(4, "0")}`;
-    if (!importedIds.includes(expectedId)) issues.push(`AI Library Volume I is missing ${expectedId}.`);
+  const importedIds = state.records.filter((agent) => /^ai_v01_\d{3}_[a-z0-9_]+$/.test(agent.id)).map((agent) => agent.id);
+  if (importedIds.length !== 100) issues.push("AI Library Volume I must contain exactly 100 numbered records.");
+  for (let index = 1; index <= 100; index += 1) {
+    const expectedPrefix = `ai_v01_${String(index).padStart(3, "0")}_`;
+    if (!importedIds.some((id) => id.startsWith(expectedPrefix))) issues.push(`AI Library Volume I is missing index ${String(index).padStart(3, "0")}.`);
   }
   issues.push(...validateCanonicalAiLibrary().issues);
   if (!state.records.length) issues.push("At least one AI agent record is required.");

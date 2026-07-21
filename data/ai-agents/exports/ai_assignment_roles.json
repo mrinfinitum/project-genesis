@@ -1,12 +1,5 @@
 [
-  "Buildings",
-  "Colonies",
-  "Research",
-  "Exploration",
-  "Logistics",
-  "Population",
-  "Construction",
-  "Manufacturing",
-  "Government",
-  "Civilization"
+  "Active AI Assistant",
+  "Labor Generation",
+  "Offline Labor Generation"
 ]

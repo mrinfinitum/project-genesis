@@ -15,7 +15,7 @@
     "id": "specialized",
     "displayName": "Specialized",
     "order": 3,
-    "volumeOneAllowed": true
+    "volumeOneAllowed": false
   },
   {
     "id": "rare",
@@ -33,19 +33,19 @@
     "id": "legendary",
     "displayName": "Legendary",
     "order": 6,
-    "volumeOneAllowed": false
+    "volumeOneAllowed": true
   },
   {
     "id": "ancient",
     "displayName": "Ancient",
     "order": 7,
-    "volumeOneAllowed": false
+    "volumeOneAllowed": true
   },
   {
     "id": "genesis",
     "displayName": "Genesis",
     "order": 8,
-    "volumeOneAllowed": false
+    "volumeOneAllowed": true
   },
   {
     "id": "mythic",
