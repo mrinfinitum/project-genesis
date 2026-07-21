@@ -2,12 +2,12 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import {
   AI_LIBRARY_VERSION,
-  AI_LIBRARY_VOLUME_ID,
   aiLibraryAssignmentRoles,
   aiLibraryCategories,
   aiLibraryLocalizationPlaceholders,
   aiLibraryPersonalities,
   aiLibraryRarities,
+  aiLibraryVolumes,
   aiLibraryVoices,
   canonicalAiLibraryAgents,
   validateCanonicalAiLibrary
@@ -42,7 +42,7 @@ async function main() {
     writeJson("ai_personality_catalog.json", aiLibraryPersonalities),
     writeJson("ai_voice_catalog.json", aiLibraryVoices),
     writeJson("ai_assignment_roles.json", aiLibraryAssignmentRoles),
-    writeJson("ai_validation_report.json", { libraryVersion: AI_LIBRARY_VERSION, volumeId: AI_LIBRARY_VOLUME_ID, ...validation }),
+    writeJson("ai_validation_report.json", { libraryVersion: AI_LIBRARY_VERSION, volumes: aiLibraryVolumes, ...validation }),
     writeJson("ai_statistics.json", { totalAgents: canonicalAiLibraryAgents.length, minimumLevelCap: Math.min(...canonicalAiLibraryAgents.map((agent) => agent.max_level)), maximumLevelCap: Math.max(...canonicalAiLibraryAgents.map((agent) => agent.max_level)), categoryCounts, rarityCounts }),
     writeFile(path.join(outputDirectory, "ai_library.csv"), toCsv(canonicalAiLibraryAgents as unknown as Array<Record<string, unknown>>), "utf8"),
     writeFile(path.join(outputDirectory, "ai_portrait_prompts.csv"), toCsv(canonicalAiLibraryAgents.map((agent) => ({ ai_id: agent.ai_id, name: agent.name, art_key: agent.runtime_metadata.portraitArtKey, portrait_prompt: agent.portrait_prompt }))), "utf8"),

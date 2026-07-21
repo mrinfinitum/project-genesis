@@ -1,6 +1,6 @@
 import type { AssetProductionState, ProductionAsset } from "@/lib/assets/asset-production";
 import { findAssetForPreviewKeys, resolveProductionAssetPreview, type VisualPreview } from "@/lib/assets/visual-previews";
-import { AI_LIBRARY_VERSION, AI_LIBRARY_VOLUME_ID, aiLibraryAssignmentRoles, aiLibraryCategories, aiLibraryPersonalities as aiLibraryPersonalityCatalog, aiLibraryRarities, aiLibraryVoices, canonicalAiLibraryAgents, validateCanonicalAiLibrary } from "@/lib/ai-agents/foundations";
+import { aiLibraryAssignmentRoles, aiLibraryCategories, aiLibraryPersonalities as aiLibraryPersonalityCatalog, aiLibraryRarities, aiLibraryVoices, aiLibraryVolumes, canonicalAiLibraryAgents, validateCanonicalAiLibrary } from "@/lib/ai-agents/foundations";
 import type {
   AiAgentAnimationProfileDefinition,
   AiAgentDefinition,
@@ -140,7 +140,7 @@ export type AiAgentLibraryModuleRecord = {
 };
 
 export type AiAgentLibraryState = {
-  volume: { id: typeof AI_LIBRARY_VOLUME_ID; number: 1; name: "Foundations"; version: typeof AI_LIBRARY_VERSION };
+  volumes: typeof aiLibraryVolumes;
   libraryAgents: CanonicalAiLibraryAgent[];
   categories: typeof aiLibraryCategories;
   rarityCatalog: typeof aiLibraryRarities;
@@ -843,7 +843,7 @@ export async function getAiAgentLibraryState(assetState?: AssetProductionState):
     const requiredKinds = ["eyes_open", "eyes_blink", "eyes_closed"] as const;
     return requiredKinds.every((kind) => ["Approved", "Published"].includes(agent.artworkSlots.find((slotRecord) => slotRecord.kind === kind)?.status ?? "Missing"));
   }).length;
-  const importedRecords = records.filter((agent) => /^ai_v01_\d{3}_[a-z0-9_]+$/.test(agent.id));
+  const importedRecords = records.filter((agent) => /^ai_v0[1-5]_\d{3}_[a-z0-9_]+$/.test(agent.id));
   const terminals = [...new Set(importedRecords.map((agent) => agent.terminalType).filter((value): value is string => Boolean(value)))].map((terminalType) => ({
     id: `AI-TERMINAL-${terminalType.toUpperCase().replace(/[^A-Z0-9]+/g, "-")}`,
     displayName: terminalType,
@@ -861,7 +861,7 @@ export async function getAiAgentLibraryState(assetState?: AssetProductionState):
   const dialoguePacks = importedRecords.filter((agent) => agent.dialoguePackId).map((agent) => ({ id: agent.dialoguePackId!, displayName: agent.dialoguePackId!, agentIds: [agent.id], status: "draft" as const }));
   const relationships = importedRecords.filter((agent) => agent.relationshipGroup).map((agent) => ({ id: agent.relationshipGroup!, displayName: agent.relationshipGroup!, agentIds: [agent.id], status: "draft" as const }));
   return {
-    volume: { id: AI_LIBRARY_VOLUME_ID, number: 1, name: "Foundations", version: AI_LIBRARY_VERSION },
+    volumes: aiLibraryVolumes,
     libraryAgents: canonicalAiLibraryAgents,
     categories: aiLibraryCategories,
     rarityCatalog: aiLibraryRarities,

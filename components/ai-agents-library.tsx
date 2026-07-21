@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Bot, ChevronRight, Database, Search } from "lucide-react";
 import { DiscoveryLibraryTree, type DiscoveryTreeNode } from "@/components/discovery-library-tree";
@@ -85,8 +85,11 @@ function sectionTitle(section: string) {
   return "AI Assistant Library";
 }
 
+const INITIAL_CARD_LIMIT = 48;
+
 export function AiAgentsLibrary({ state, activeSection = "library", activeEntry }: { state: AiAgentLibraryState; activeSection?: string; activeEntry?: string }) {
   const [query, setQuery] = useState("");
+  const [cardLimit, setCardLimit] = useState(INITIAL_CARD_LIMIT);
   const tree = useMemo(() => buildTree(state), [state]);
   const activeCategoryId = activeSection.startsWith("category:") ? activeSection.split(":")[1] : null;
   const activeSubcategory = activeSection.startsWith("subcategory:") ? activeSection.split(":") : null;
@@ -114,6 +117,12 @@ export function AiAgentsLibrary({ state, activeSection = "library", activeEntry 
     if (!needle) return records;
     return records.filter((record) => [record.id, record.name, record.type, record.classification, record.parent, record.contains, record.status].join(" ").toLowerCase().includes(needle));
   }, [query, records]);
+
+  useEffect(() => {
+    setCardLimit(INITIAL_CARD_LIMIT);
+  }, [activeSection, query]);
+
+  const renderedRecords = visibleRecords.slice(0, cardLimit);
 
   const indexItems = activeSection === "library" || activeSection.startsWith("category:") || activeSection.startsWith("subcategory:")
     ? [
@@ -157,7 +166,16 @@ export function AiAgentsLibrary({ state, activeSection = "library", activeEntry 
           </section>
 
           {visibleRecords.length ? (
-            <section className="grid auto-rows-fr gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">{visibleRecords.map((record) => <GeneratedLibraryCard key={record.id} record={record} />)}</section>
+            <>
+              <section className="grid auto-rows-fr gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">{renderedRecords.map((record) => <GeneratedLibraryCard key={record.id} record={record} />)}</section>
+              {renderedRecords.length < visibleRecords.length ? (
+                <div className="flex justify-center">
+                  <button type="button" onClick={() => setCardLimit((current) => current + INITIAL_CARD_LIMIT)} className="rounded-md border border-cyan-300/20 bg-cyan-300/5 px-4 py-2 text-sm font-black text-cyan-100 transition hover:bg-cyan-300/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200">
+                    Show more assistants ({visibleRecords.length - renderedRecords.length} remaining)
+                  </button>
+                </div>
+              ) : null}
+            </>
           ) : ["relationships", "runtime", "validation"].includes(activeSection) ? (
             <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
               {(activeSection === "relationships" ? ["Category peers", "Assignment compatibility", "Memory links"] : activeSection === "runtime" ? ["ai_library.json", "ai_categories.json", "ai_rarity.json", "ai_personality_catalog.json", "ai_voice_catalog.json", "ai_assignment_roles.json"] : ["100 unique IDs", "100 unique names", "100 unique codenames", "All categories resolve", "All rarities valid", "All required fields present"]).map((label) => <div key={label} className="rounded-md border border-cyan-300/15 bg-[#07101e]/78 p-4"><WorkspaceBadge value={activeSection === "validation" ? "Ready" : "Canonical"} /><p className="mt-3 font-black text-white">{label}</p></div>)}

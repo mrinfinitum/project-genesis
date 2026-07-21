@@ -1,6 +1,37 @@
 {
   "libraryVersion": "ai-library-1.1.0",
-  "volumeId": "ai-volume-01-foundations",
+  "volumes": [
+    {
+      "id": "ai-volume-01-foundations",
+      "number": 1,
+      "name": "Foundations",
+      "version": "ai-library-1.1.0"
+    },
+    {
+      "id": "ai-volume-02-industrial-systems",
+      "number": 2,
+      "name": "Industrial Systems",
+      "version": "ai-library-1.1.0"
+    },
+    {
+      "id": "ai-volume-03-scientific-systems",
+      "number": 3,
+      "name": "Scientific Systems",
+      "version": "ai-library-1.1.0"
+    },
+    {
+      "id": "ai-volume-04-exploration-systems",
+      "number": 4,
+      "name": "Exploration Systems",
+      "version": "ai-library-1.1.0"
+    },
+    {
+      "id": "ai-volume-05-civilization-systems",
+      "number": 5,
+      "name": "Civilization Systems",
+      "version": "ai-library-1.1.0"
+    }
+  ],
   "status": "Ready",
   "issues": []
 }

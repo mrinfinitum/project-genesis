@@ -1,8 +1,9 @@
 import sourceLibrary from "@/data/ai-agents/source/noveris_ai_library_volume_1_categorized.json";
+import sourceExpansionLibrary from "@/data/ai-agents/source/noveris_ai_library_volumes_02_to_05_master.json";
 import type { CanonicalAiLibraryAgent } from "@/types/runtime";
 
-export const AI_LIBRARY_VERSION = sourceLibrary.schemaVersion;
-export const AI_LIBRARY_CONTENT_VERSION = sourceLibrary.contentVersion;
+export const AI_LIBRARY_VERSION = sourceExpansionLibrary.schemaVersion;
+export const AI_LIBRARY_CONTENT_VERSION = Math.max(sourceLibrary.contentVersion, ...sourceExpansionLibrary.agents.map((agent) => agent.content_version));
 export const AI_LIBRARY_VOLUME_ID = "ai-volume-01-foundations";
 
 export const aiLibraryDesignContract = sourceLibrary.designContract;
@@ -20,7 +21,23 @@ export const aiLibraryRarities = [
   { id: "singularity", displayName: "Singularity", order: 10, volumeOneAllowed: false }
 ] as const;
 
-const sourceAgents = sourceLibrary.agents;
+const sourceAgents = [...sourceLibrary.agents, ...sourceExpansionLibrary.agents];
+
+const volumeTitles = new Map<number, string>([
+  [1, sourceLibrary.volume.title],
+  ...sourceExpansionLibrary.volumes.map((volume) => [volume.number, volume.title] as const)
+]);
+
+function volumeId(volume: number, title: string) {
+  return `ai-volume-${String(volume).padStart(2, "0")}-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}`;
+}
+
+export const aiLibraryVolumes = [...volumeTitles.entries()].map(([number, name]) => ({
+  id: volumeId(number, name),
+  number,
+  name,
+  version: AI_LIBRARY_VERSION
+}));
 
 export const aiLibraryPersonalities = [...new Set(sourceAgents.flatMap((agent) => [agent.personality_primary, agent.personality_secondary]))].sort();
 export const aiLibraryVoices = [...new Set(sourceAgents.map((agent) => agent.voice_style))].sort();
@@ -57,10 +74,10 @@ export const aiLibraryCategories: CategoryProfile[] = sourceLibrary.categorySche
 
 export const canonicalAiLibraryAgents: CanonicalAiLibraryAgent[] = sourceAgents.map((agent) => ({
   ...agent,
-  volume: 1,
-  volume_title: "Foundations",
-  volume_id: AI_LIBRARY_VOLUME_ID,
-  collection: sourceLibrary.volume.title,
+  volume: agent.volume as CanonicalAiLibraryAgent["volume"],
+  volume_title: agent.volume_title as CanonicalAiLibraryAgent["volume_title"],
+  volume_id: volumeId(agent.volume, agent.volume_title),
+  collection: volumeTitles.get(agent.volume) ?? agent.volume_title,
   category_id: agent.category_id,
   assignment_roles: agent.supports_offline_generation ? [...aiLibraryAssignmentRoles] : ["Active AI Assistant", "Labor Generation"],
   runtime_metadata: {
@@ -87,15 +104,18 @@ export function validateCanonicalAiLibrary(agents: CanonicalAiLibraryAgent[] = c
   const validRarities = new Set<string>(aiLibraryRarities.filter((rarity) => rarity.volumeOneAllowed).map((rarity) => rarity.displayName));
   const categories = new Map(aiLibraryCategories.map((category) => [category.id, category]));
 
-  if (agents.length !== sourceLibrary.volume.agentCount || agents.length !== 100) issues.push(`Volume I must contain exactly 100 agents; received ${agents.length}.`);
+  if (agents.length !== 500) issues.push(`AI Library Volumes I-V must contain exactly 500 agents; received ${agents.length}.`);
   if (!unique(agents.map((agent) => agent.ai_id))) issues.push("AI IDs must be unique.");
-  if (!unique(agents.map((agent) => agent.name.toLowerCase()))) issues.push("AI names must be unique.");
-  if (!unique(agents.map((agent) => agent.codename.toLowerCase()))) issues.push("AI codenames must be unique.");
-  if (!unique(agents.map((agent) => agent.library_index))) issues.push("AI library indexes must be unique.");
+  if (!unique(agents.map((agent) => `${agent.volume}:${agent.library_index}`))) issues.push("AI library indexes must be unique within each volume.");
+
+  for (const [volume, title] of [[1, "Foundations"], [2, "Industrial Systems"], [3, "Scientific Systems"], [4, "Exploration Systems"], [5, "Civilization Systems"]] as const) {
+    const volumeAgents = agents.filter((agent) => agent.volume === volume);
+    if (volumeAgents.length !== 100) issues.push(`Volume ${volume} must contain exactly 100 agents; received ${volumeAgents.length}.`);
+    if (volumeAgents.some((agent) => agent.volume_title !== title)) issues.push(`Volume ${volume} must use the title ${title}.`);
+  }
 
   for (const agent of agents) {
-    if (!/^ai_v01_\d{3}_[a-z0-9_]+$/.test(agent.ai_id)) issues.push(`${agent.ai_id} does not use the Volume I stable ID format.`);
-    if (agent.volume !== 1 || agent.volume_title !== "Foundations") issues.push(`${agent.ai_id} has invalid volume metadata.`);
+    if (!/^ai_v0[1-5]_\d{3}_[a-z0-9_]+$/.test(agent.ai_id)) issues.push(`${agent.ai_id} does not use the Volumes I-V stable ID format.`);
     const category = categories.get(agent.category_id);
     if (!category || category.displayName !== agent.category || !category.subcategories.includes(agent.subcategory)) issues.push(`${agent.ai_id} has invalid category metadata.`);
     if (!validRarities.has(agent.rarity)) issues.push(`${agent.ai_id} uses invalid Volume I rarity ${agent.rarity}.`);
@@ -106,7 +126,8 @@ export function validateCanonicalAiLibrary(agents: CanonicalAiLibraryAgent[] = c
   }
 
   const actualDistribution = Object.fromEntries(aiLibraryRarities.map((rarity) => [rarity.displayName, agents.filter((agent) => agent.rarity === rarity.displayName).length]));
-  for (const [rarity, expected] of Object.entries(sourceLibrary.rarityDistribution)) {
+  for (const [rarity, expectedPerVolume] of Object.entries(sourceLibrary.rarityDistribution)) {
+    const expected = expectedPerVolume * 5;
     if (actualDistribution[rarity] !== expected) issues.push(`${rarity} rarity count must be ${expected}; received ${actualDistribution[rarity] ?? 0}.`);
   }
 
