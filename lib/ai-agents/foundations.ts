@@ -1,4 +1,4 @@
-import sourceLibrary from "@/data/ai-agents/source/noveris_ai_library_volume_1_full.json";
+import sourceLibrary from "@/data/ai-agents/source/noveris_ai_library_volume_1_categorized.json";
 import type { CanonicalAiLibraryAgent } from "@/types/runtime";
 
 export const AI_LIBRARY_VERSION = sourceLibrary.schemaVersion;
@@ -30,6 +30,7 @@ export type CategoryProfile = {
   id: string;
   displayName: string;
   subcategory: string;
+  subcategories: string[];
   purpose: string;
   primaryFunction: string;
   secondaryFunctions: string[];
@@ -38,17 +39,21 @@ export type CategoryProfile = {
   theme: string;
 };
 
-export const aiLibraryCategories: CategoryProfile[] = [{
-  id: "ai-assistant",
-  displayName: "AI Assistant",
-  subcategory: "Labor Generation",
+export const aiLibraryCategories: CategoryProfile[] = sourceLibrary.categorySchema.map((category) => ({
+  id: category.category_id,
+  displayName: category.name,
+  subcategory: "Multiple specializations",
+  subcategories: [...new Set([
+    ...category.subcategories,
+    ...sourceAgents.filter((agent) => agent.category_id === category.category_id).map((agent) => agent.subcategory)
+  ])],
   purpose: aiLibraryDesignContract.primaryPurpose,
   primaryFunction: "Generate passive Labor",
   secondaryFunctions: ["Increase active click Labor", "Support offline Labor generation"],
   assignments: [...aiLibraryAssignmentRoles],
   bonuses: { labor: 1, action: 0, building: 0, research: 0, colony: 0, automation: 1 },
   theme: "Collectible NOVERIS companion intelligence"
-}];
+}));
 
 export const canonicalAiLibraryAgents: CanonicalAiLibraryAgent[] = sourceAgents.map((agent) => ({
   ...agent,
@@ -56,7 +61,7 @@ export const canonicalAiLibraryAgents: CanonicalAiLibraryAgent[] = sourceAgents.
   volume_title: "Foundations",
   volume_id: AI_LIBRARY_VOLUME_ID,
   collection: sourceLibrary.volume.title,
-  category_id: "ai-assistant",
+  category_id: agent.category_id,
   assignment_roles: agent.supports_offline_generation ? [...aiLibraryAssignmentRoles] : ["Active AI Assistant", "Labor Generation"],
   runtime_metadata: {
     schemaVersion: agent.schema_version,
@@ -80,6 +85,7 @@ export function validateCanonicalAiLibrary(agents: CanonicalAiLibraryAgent[] = c
   const issues: string[] = [];
   const unique = (values: Array<string | number>) => new Set(values).size === values.length;
   const validRarities = new Set<string>(aiLibraryRarities.filter((rarity) => rarity.volumeOneAllowed).map((rarity) => rarity.displayName));
+  const categories = new Map(aiLibraryCategories.map((category) => [category.id, category]));
 
   if (agents.length !== sourceLibrary.volume.agentCount || agents.length !== 100) issues.push(`Volume I must contain exactly 100 agents; received ${agents.length}.`);
   if (!unique(agents.map((agent) => agent.ai_id))) issues.push("AI IDs must be unique.");
@@ -90,7 +96,8 @@ export function validateCanonicalAiLibrary(agents: CanonicalAiLibraryAgent[] = c
   for (const agent of agents) {
     if (!/^ai_v01_\d{3}_[a-z0-9_]+$/.test(agent.ai_id)) issues.push(`${agent.ai_id} does not use the Volume I stable ID format.`);
     if (agent.volume !== 1 || agent.volume_title !== "Foundations") issues.push(`${agent.ai_id} has invalid volume metadata.`);
-    if (!agent.category || !agent.subcategory || agent.category_id !== "ai-assistant") issues.push(`${agent.ai_id} has invalid category metadata.`);
+    const category = categories.get(agent.category_id);
+    if (!category || category.displayName !== agent.category || !category.subcategories.includes(agent.subcategory)) issues.push(`${agent.ai_id} has invalid category metadata.`);
     if (!validRarities.has(agent.rarity)) issues.push(`${agent.ai_id} uses invalid Volume I rarity ${agent.rarity}.`);
     if (!agent.portrait_prompt || !agent.assignment_roles.length || !agent.primary_function || !agent.description || !agent.personality_primary || !agent.voice_style) issues.push(`${agent.ai_id} is missing required canonical fields.`);
     if (agent.starting_level !== 1 || agent.max_level < agent.starting_level) issues.push(`${agent.ai_id} has an invalid level range.`);

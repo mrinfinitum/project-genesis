@@ -1,8 +1,212 @@
 [
   {
-    "id": "ai-assistant",
-    "displayName": "AI Assistant",
-    "subcategory": "Labor Generation",
+    "id": "general_intelligence",
+    "displayName": "General Intelligence",
+    "subcategory": "Multiple specializations",
+    "subcategories": [
+      "Universal Assistant",
+      "Labor Optimization",
+      "Click Amplification",
+      "Offline Continuity",
+      "Adaptive Intelligence"
+    ],
+    "purpose": "Labor Generation",
+    "primaryFunction": "Generate passive Labor",
+    "secondaryFunctions": [
+      "Increase active click Labor",
+      "Support offline Labor generation"
+    ],
+    "assignments": [
+      "Active AI Assistant",
+      "Labor Generation",
+      "Offline Labor Generation"
+    ],
+    "bonuses": {
+      "labor": 1,
+      "action": 0,
+      "building": 0,
+      "research": 0,
+      "colony": 0,
+      "automation": 1
+    },
+    "theme": "Collectible NOVERIS companion intelligence"
+  },
+  {
+    "id": "industrial_systems",
+    "displayName": "Industrial Systems",
+    "subcategory": "Multiple specializations",
+    "subcategories": [
+      "Construction",
+      "Mining",
+      "Manufacturing",
+      "Engineering",
+      "Energy",
+      "Infrastructure"
+    ],
+    "purpose": "Labor Generation",
+    "primaryFunction": "Generate passive Labor",
+    "secondaryFunctions": [
+      "Increase active click Labor",
+      "Support offline Labor generation"
+    ],
+    "assignments": [
+      "Active AI Assistant",
+      "Labor Generation",
+      "Offline Labor Generation"
+    ],
+    "bonuses": {
+      "labor": 1,
+      "action": 0,
+      "building": 0,
+      "research": 0,
+      "colony": 0,
+      "automation": 1
+    },
+    "theme": "Collectible NOVERIS companion intelligence"
+  },
+  {
+    "id": "scientific_systems",
+    "displayName": "Scientific Systems",
+    "subcategory": "Multiple specializations",
+    "subcategories": [
+      "Research",
+      "Computing",
+      "Biology",
+      "Chemistry",
+      "Physics",
+      "Astronomy"
+    ],
+    "purpose": "Labor Generation",
+    "primaryFunction": "Generate passive Labor",
+    "secondaryFunctions": [
+      "Increase active click Labor",
+      "Support offline Labor generation"
+    ],
+    "assignments": [
+      "Active AI Assistant",
+      "Labor Generation",
+      "Offline Labor Generation"
+    ],
+    "bonuses": {
+      "labor": 1,
+      "action": 0,
+      "building": 0,
+      "research": 0,
+      "colony": 0,
+      "automation": 1
+    },
+    "theme": "Collectible NOVERIS companion intelligence"
+  },
+  {
+    "id": "exploration_systems",
+    "displayName": "Exploration Systems",
+    "subcategory": "Multiple specializations",
+    "subcategories": [
+      "Navigation",
+      "Surveying",
+      "Scanning",
+      "Planetology",
+      "Cartography",
+      "Deep-Space Exploration",
+      "Astronomy"
+    ],
+    "purpose": "Labor Generation",
+    "primaryFunction": "Generate passive Labor",
+    "secondaryFunctions": [
+      "Increase active click Labor",
+      "Support offline Labor generation"
+    ],
+    "assignments": [
+      "Active AI Assistant",
+      "Labor Generation",
+      "Offline Labor Generation"
+    ],
+    "bonuses": {
+      "labor": 1,
+      "action": 0,
+      "building": 0,
+      "research": 0,
+      "colony": 0,
+      "automation": 1
+    },
+    "theme": "Collectible NOVERIS companion intelligence"
+  },
+  {
+    "id": "civilization_systems",
+    "displayName": "Civilization Systems",
+    "subcategory": "Multiple specializations",
+    "subcategories": [
+      "Administration",
+      "Economy",
+      "Logistics",
+      "Population",
+      "Education",
+      "Medical",
+      "Culture"
+    ],
+    "purpose": "Labor Generation",
+    "primaryFunction": "Generate passive Labor",
+    "secondaryFunctions": [
+      "Increase active click Labor",
+      "Support offline Labor generation"
+    ],
+    "assignments": [
+      "Active AI Assistant",
+      "Labor Generation",
+      "Offline Labor Generation"
+    ],
+    "bonuses": {
+      "labor": 1,
+      "action": 0,
+      "building": 0,
+      "research": 0,
+      "colony": 0,
+      "automation": 1
+    },
+    "theme": "Collectible NOVERIS companion intelligence"
+  },
+  {
+    "id": "ancient_intelligence",
+    "displayName": "Ancient Intelligence",
+    "subcategory": "Multiple specializations",
+    "subcategories": [
+      "Precursor Mind",
+      "Archive Intelligence",
+      "Custodian Intelligence",
+      "Civilization Steward",
+      "Ancient Navigator"
+    ],
+    "purpose": "Labor Generation",
+    "primaryFunction": "Generate passive Labor",
+    "secondaryFunctions": [
+      "Increase active click Labor",
+      "Support offline Labor generation"
+    ],
+    "assignments": [
+      "Active AI Assistant",
+      "Labor Generation",
+      "Offline Labor Generation"
+    ],
+    "bonuses": {
+      "labor": 1,
+      "action": 0,
+      "building": 0,
+      "research": 0,
+      "colony": 0,
+      "automation": 1
+    },
+    "theme": "Collectible NOVERIS companion intelligence"
+  },
+  {
+    "id": "genesis_intelligence",
+    "displayName": "Genesis Intelligence",
+    "subcategory": "Multiple specializations",
+    "subcategories": [
+      "Origin Intelligence",
+      "Civilization Architect",
+      "Universal Coordinator",
+      "Genesis Core"
+    ],
     "purpose": "Labor Generation",
     "primaryFunction": "Generate passive Labor",
     "secondaryFunctions": [

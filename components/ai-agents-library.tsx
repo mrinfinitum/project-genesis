@@ -19,44 +19,35 @@ function href(section: string, entry?: string) {
   return `/ai-agents?${params.toString()}`;
 }
 
-const assistantCategoryLabels: Record<string, string> = {
-  balanced: "Balanced",
-  xp_focus: "Experience Focus",
-  level_scaling: "Level Scaling",
-  burst_generation: "Burst Generation",
-  stability: "Stability",
-  discovery_synergy: "Discovery Synergy",
-  population_synergy: "Population Synergy",
-  upgrade_discount: "Upgrade Efficiency",
-  click_focus: "Click Focus",
-  offline_focus: "Offline Focus"
-};
-
-function assistantCategories(state: AiAgentLibraryState) {
-  return Object.entries(assistantCategoryLabels).map(([id, displayName]) => ({
-    id,
-    displayName,
-    agents: state.libraryAgents
-      .filter((agent) => agent.special_effect_type === id)
-      .sort((left, right) => left.library_index - right.library_index)
-  }));
-}
-
 function buildTree(state: AiAgentLibraryState): DiscoveryTreeNode[] {
-  return assistantCategories(state).map((category) => {
+  return state.categories.map((category) => {
+    const categoryAgents = state.libraryAgents.filter((agent) => agent.category_id === category.id);
     return {
       id: `category:${category.id}`,
       label: category.displayName,
       href: href(`category:${category.id}`),
-      count: category.agents.length,
+      count: categoryAgents.length,
       icon: "folder" as const,
-      children: category.agents.map((agent) => ({
-        id: agent.ai_id,
-        label: agent.name,
-        href: href(`category:${category.id}`, agent.ai_id),
-        count: agent.library_index,
-        icon: "curiosity" as const
-      }))
+      children: category.subcategories.map((subcategory) => {
+        const subcategoryId = `subcategory:${category.id}:${slug(subcategory)}`;
+        const agents = categoryAgents
+          .filter((agent) => agent.subcategory === subcategory)
+          .sort((left, right) => left.library_index - right.library_index);
+        return {
+          id: subcategoryId,
+          label: subcategory,
+          href: href(subcategoryId),
+          count: agents.length,
+          icon: "folder" as const,
+          children: agents.map((agent) => ({
+            id: agent.ai_id,
+            label: agent.name,
+            href: href(subcategoryId, agent.ai_id),
+            count: agent.library_index,
+            icon: "curiosity" as const
+          }))
+        };
+      }).filter((subcategory) => subcategory.count > 0)
     };
   });
 }
@@ -98,8 +89,10 @@ export function AiAgentsLibrary({ state, activeSection = "library", activeEntry 
   const [query, setQuery] = useState("");
   const tree = useMemo(() => buildTree(state), [state]);
   const activeCategoryId = activeSection.startsWith("category:") ? activeSection.split(":")[1] : null;
-  const categories = useMemo(() => assistantCategories(state), [state]);
-  const title = categories.find((category) => category.id === activeCategoryId)?.displayName ?? sectionTitle(activeSection);
+  const activeSubcategory = activeSection.startsWith("subcategory:") ? activeSection.split(":") : null;
+  const title = activeSubcategory
+    ? state.categories.find((category) => category.id === activeSubcategory[1])?.subcategories.find((subcategory) => slug(subcategory) === activeSubcategory[2]) ?? sectionTitle(activeSection)
+    : state.categories.find((category) => category.id === activeCategoryId)?.displayName ?? sectionTitle(activeSection);
   const selectedAgent = state.records.find((agent) => agent.id === activeEntry);
   const selectedDefinition = state.libraryAgents.find((agent) => agent.ai_id === activeEntry);
 
@@ -109,8 +102,9 @@ export function AiAgentsLibrary({ state, activeSection = "library", activeEntry 
     if (activeSection === "personalities") return state.personalityCatalog.map((personality) => moduleCard({ id: `personality:${slug(personality)}`, displayName: personality, agentIds: state.libraryAgents.filter((agent) => agent.personality_primary === personality || agent.personality_secondary === personality).map((agent) => agent.ai_id), status: "canonical" }, activeSection, "Personality"));
     if (activeSection === "rarity") return state.rarityCatalog.map((rarity) => moduleCard({ id: `rarity:${rarity.id}`, displayName: rarity.displayName, agentIds: state.libraryAgents.filter((agent) => agent.rarity === rarity.displayName).map((agent) => agent.ai_id), status: rarity.volumeOneAllowed ? "canonical" : "future" }, activeSection, "Rarity"));
     if (["relationships", "runtime", "validation"].includes(activeSection)) return [];
-    const categoryId = activeSection.startsWith("category:") ? activeSection.split(":")[1] : null;
-    const allowedIds = new Set(state.libraryAgents.filter((agent) => !categoryId || categoryId === "ai-assistant" || agent.special_effect_type === categoryId).map((agent) => agent.ai_id));
+    const categoryId = activeSection.startsWith("category:") ? activeSection.split(":")[1] : activeSection.startsWith("subcategory:") ? activeSection.split(":")[1] : null;
+    const subcategorySlug = activeSection.startsWith("subcategory:") ? activeSection.split(":")[2] : null;
+    const allowedIds = new Set(state.libraryAgents.filter((agent) => (!categoryId || agent.category_id === categoryId) && (!subcategorySlug || slug(agent.subcategory) === subcategorySlug)).map((agent) => agent.ai_id));
     const agents = state.agents.filter((agent) => allowedIds.has(agent.id));
     return agents.map((agent) => agentCard(agent, activeSection));
   }, [activeSection, state]);
@@ -121,10 +115,10 @@ export function AiAgentsLibrary({ state, activeSection = "library", activeEntry 
     return records.filter((record) => [record.id, record.name, record.type, record.classification, record.parent, record.contains, record.status].join(" ").toLowerCase().includes(needle));
   }, [query, records]);
 
-  const indexItems = activeSection === "library" || activeSection.startsWith("category:")
+  const indexItems = activeSection === "library" || activeSection.startsWith("category:") || activeSection.startsWith("subcategory:")
     ? [
         { label: "Assistants", value: records.length, detail: `${state.libraryAgents.length} canonical records` },
-        { label: "Categories", value: categories.length, detail: "assistant specializations" },
+        { label: "Categories", value: state.categories.length, detail: "canonical assistant systems" },
         { label: "Rarities", value: new Set(state.libraryAgents.map((agent) => agent.rarity)).size, detail: "active rarity classes" },
         { label: "Level Cap", value: Math.max(...state.libraryAgents.map((agent) => agent.max_level)), detail: "maximum by rarity" }
       ]

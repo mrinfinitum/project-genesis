@@ -733,6 +733,12 @@ export type CanonicalAiLibraryAgent = {
   content_version: number;
   schema_version: string;
   tags: string[];
+  library_sort: {
+    primary: string;
+    secondary: string;
+    tertiary: string;
+    quaternary: string;
+  };
   volume_id: "ai-volume-01-foundations";
   collection: string;
   category_id: string;
@@ -750,6 +756,7 @@ export type AiLibraryCategoryDefinition = {
   id: string;
   displayName: string;
   subcategory: string;
+  subcategories: string[];
   purpose: string;
   primaryFunction: string;
   secondaryFunctions: string[];

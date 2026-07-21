@@ -3,7 +3,13 @@
   "minimumLevelCap": 40,
   "maximumLevelCap": 150,
   "categoryCounts": {
-    "ai-assistant": 100
+    "general_intelligence": 6,
+    "industrial_systems": 18,
+    "scientific_systems": 20,
+    "exploration_systems": 19,
+    "civilization_systems": 25,
+    "ancient_intelligence": 11,
+    "genesis_intelligence": 1
   },
   "rarityCounts": {
     "Common": 34,

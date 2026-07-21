@@ -15,6 +15,24 @@ async function main() {
   assert(Math.min(...canonicalAiLibraryAgents.map((agent) => agent.max_level)) === 40 && Math.max(...canonicalAiLibraryAgents.map((agent) => agent.max_level)) === 150, "Volume I rarity level caps must span 40 through 150.");
   assert(canonicalAiLibraryAgents.filter((agent) => agent.rarity === "Genesis").length === 1, "Volume I must contain exactly one Genesis agent.");
 
+  const expectedCategoryCounts = new Map([
+    ["civilization_systems", 25],
+    ["exploration_systems", 19],
+    ["general_intelligence", 6],
+    ["industrial_systems", 18],
+    ["scientific_systems", 20],
+    ["ancient_intelligence", 11],
+    ["genesis_intelligence", 1]
+  ]);
+  assert(aiLibraryCategories.length === expectedCategoryCounts.size, "Canonical AI Library must contain the seven authored categories.");
+  for (const category of aiLibraryCategories) {
+    const expectedCount = expectedCategoryCounts.get(category.id);
+    assert(expectedCount !== undefined, `Unexpected AI Library category ${category.id}.`);
+    assert(canonicalAiLibraryAgents.filter((agent) => agent.category_id === category.id).length === expectedCount, `${category.displayName} must contain ${expectedCount} agents.`);
+    assert(category.subcategories.length > 0, `${category.displayName} must define at least one subcategory.`);
+    assert(canonicalAiLibraryAgents.filter((agent) => agent.category_id === category.id).every((agent) => category.subcategories.includes(agent.subcategory)), `${category.displayName} contains an agent with an unresolved subcategory.`);
+  }
+
   const runtime = await buildCanonicalRuntimeExportPayload();
   const runtimeValidation = validateGameRuntimeData(runtime);
   assert(runtime.aiLibrary.length === 100, "Canonical runtime must export 100 AI Library records.");
