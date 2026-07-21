@@ -20,30 +20,25 @@ function href(section: string, entry?: string) {
 }
 
 function buildTree(state: AiAgentLibraryState): DiscoveryTreeNode[] {
-  return [
-    {
-      id: "library",
-      label: "Library",
-      href: href("library"),
-      count: state.libraryAgents.length,
-      icon: "folder",
-      children: [{
-        id: "volume:foundations",
-        label: "Volume I — Foundations",
-        href: href("volume:foundations"),
-        count: state.libraryAgents.length,
-        icon: "folder",
-        children: state.categories.map((category) => ({ id: `category:${category.id}`, label: category.displayName, href: href(`category:${category.id}`), count: state.libraryAgents.filter((agent) => agent.category_id === category.id).length }))
-      }]
-    },
-    { id: "categories", label: "Categories", href: href("categories"), count: state.categories.length, icon: "folder" },
-    { id: "assignments", label: "Assignments", href: href("assignments"), count: state.assignmentRoles.length, icon: "folder" },
-    { id: "personalities", label: "Personalities", href: href("personalities"), count: state.personalityCatalog.length, icon: "folder" },
-    { id: "rarity", label: "Rarity", href: href("rarity"), count: state.rarityCatalog.length, icon: "folder" },
-    { id: "relationships", label: "Relationships", href: href("relationships"), count: state.libraryAgents.length, icon: "folder" },
-    { id: "runtime", label: "Runtime", href: href("runtime"), count: 6, icon: "folder" },
-    { id: "validation", label: "Validation", href: href("validation"), count: 1, icon: "folder" }
-  ];
+  return state.categories.map((category) => {
+    const categoryAgents = state.libraryAgents
+      .filter((agent) => agent.category_id === category.id)
+      .sort((left, right) => left.library_index - right.library_index);
+    return {
+      id: `category:${category.id}`,
+      label: category.displayName,
+      href: href(`category:${category.id}`),
+      count: categoryAgents.length,
+      icon: "folder" as const,
+      children: categoryAgents.map((agent) => ({
+        id: agent.ai_id,
+        label: agent.name,
+        href: href(`category:${category.id}`, agent.ai_id),
+        count: agent.library_index,
+        icon: "curiosity" as const
+      }))
+    };
+  });
 }
 
 function agentCard(agent: AiAgentLibraryState["agents"][number], section: string): GeneratedLibraryCardRecord {
@@ -76,14 +71,14 @@ function moduleCard(record: { id: string; displayName: string; agentIds: string[
 }
 
 function sectionTitle(section: string) {
-  if (section.startsWith("category:")) return section.split(":")[1].replaceAll("-", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
-  return ({ library: "AI Library", "volume:foundations": "Volume I — Foundations", categories: "Categories", assignments: "Assignments", personalities: "Personalities", rarity: "Rarity", relationships: "Relationships", runtime: "Runtime", validation: "Validation" } as Record<string, string>)[section] ?? "AI Library";
+  return "AI Assistant Library";
 }
 
 export function AiAgentsLibrary({ state, activeSection = "library", activeEntry }: { state: AiAgentLibraryState; activeSection?: string; activeEntry?: string }) {
   const [query, setQuery] = useState("");
   const tree = useMemo(() => buildTree(state), [state]);
-  const title = sectionTitle(activeSection);
+  const activeCategoryId = activeSection.startsWith("category:") ? activeSection.split(":")[1] : null;
+  const title = state.categories.find((category) => category.id === activeCategoryId)?.displayName ?? sectionTitle(activeSection);
   const selectedAgent = state.records.find((agent) => agent.id === activeEntry);
   const selectedDefinition = state.libraryAgents.find((agent) => agent.ai_id === activeEntry);
 
@@ -104,11 +99,11 @@ export function AiAgentsLibrary({ state, activeSection = "library", activeEntry 
     return records.filter((record) => [record.id, record.name, record.type, record.classification, record.parent, record.contains, record.status].join(" ").toLowerCase().includes(needle));
   }, [query, records]);
 
-  const indexItems = ["library", "volume:foundations"].includes(activeSection) || activeSection.startsWith("category:")
+  const indexItems = activeSection === "library" || activeSection.startsWith("category:")
     ? [
-        { label: "Agents", value: records.length, detail: `${state.libraryAgents.length} in Volume I` },
-        { label: "Categories", value: state.categories.length, detail: "Foundations taxonomy" },
-        { label: "Rarities", value: new Set(state.libraryAgents.map((agent) => agent.rarity)).size, detail: "used in Volume I" },
+        { label: "Assistants", value: records.length, detail: `${state.libraryAgents.length} canonical records` },
+        { label: "Categories", value: state.categories.length, detail: "canonical taxonomy" },
+        { label: "Rarities", value: new Set(state.libraryAgents.map((agent) => agent.rarity)).size, detail: "active rarity classes" },
         { label: "Level Cap", value: Math.max(...state.libraryAgents.map((agent) => agent.max_level)), detail: "maximum by rarity" }
       ]
     : [
@@ -132,8 +127,8 @@ export function AiAgentsLibrary({ state, activeSection = "library", activeEntry 
         label="AI Agent tree"
         sidebar={(
           <aside className="min-h-0 rounded-md border border-cyan-300/15 bg-[#07101e]/90 p-3 shadow-glow lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-auto">
-            <div className="mb-3 flex items-center gap-2 px-1"><Bot className="h-4 w-4 text-cyan-200" /><div><p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-100">Content Tree</p><p className="text-xs text-slate-500">Browse AI systems</p></div></div>
-            <DiscoveryLibraryTree nodes={tree} activeFolder={activeSection} ariaLabel="AI Agent Library folders" expandTopLevel={false} />
+            <div className="mb-3 flex items-center gap-2 px-1"><Bot className="h-4 w-4 text-cyan-200" /><div><p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-100">Content Tree</p><p className="text-xs text-slate-500">Browse assistants by category</p></div></div>
+            <DiscoveryLibraryTree nodes={tree} activeFolder={activeEntry ?? activeSection} ariaLabel="AI Assistant Library categories and records" expandTopLevel />
           </aside>
         )}
       >
@@ -149,7 +144,7 @@ export function AiAgentsLibrary({ state, activeSection = "library", activeEntry 
             <section className="grid auto-rows-fr gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">{visibleRecords.map((record) => <GeneratedLibraryCard key={record.id} record={record} />)}</section>
           ) : ["relationships", "runtime", "validation"].includes(activeSection) ? (
             <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-              {(activeSection === "relationships" ? ["Category peers", "Volume membership", "Assignment compatibility", "Memory links"] : activeSection === "runtime" ? ["ai_library.json", "ai_categories.json", "ai_rarity.json", "ai_personality_catalog.json", "ai_voice_catalog.json", "ai_assignment_roles.json"] : ["75 unique IDs", "75 unique names", "75 unique codenames", "All categories resolve", "Volume I rarities valid", "All required fields present"]).map((label) => <div key={label} className="rounded-md border border-cyan-300/15 bg-[#07101e]/78 p-4"><WorkspaceBadge value={activeSection === "validation" ? "Ready" : "Canonical"} /><p className="mt-3 font-black text-white">{label}</p></div>)}
+              {(activeSection === "relationships" ? ["Category peers", "Assignment compatibility", "Memory links"] : activeSection === "runtime" ? ["ai_library.json", "ai_categories.json", "ai_rarity.json", "ai_personality_catalog.json", "ai_voice_catalog.json", "ai_assignment_roles.json"] : ["100 unique IDs", "100 unique names", "100 unique codenames", "All categories resolve", "All rarities valid", "All required fields present"]).map((label) => <div key={label} className="rounded-md border border-cyan-300/15 bg-[#07101e]/78 p-4"><WorkspaceBadge value={activeSection === "validation" ? "Ready" : "Canonical"} /><p className="mt-3 font-black text-white">{label}</p></div>)}
             </section>
           ) : (
             <section className="rounded-md border border-cyan-300/15 bg-[#07101e]/78 p-8 text-center"><Bot className="mx-auto h-8 w-8 text-slate-600" /><p className="mt-3 text-xl font-black text-white">No {title.toLowerCase()} authored yet.</p><p className="mt-2 text-sm text-slate-400">This module remains empty until canonical records are supplied. Nothing has been fabricated.</p></section>
