@@ -686,8 +686,8 @@ export type CanonicalAiLibraryAgent = {
   ai_id: string;
   name: string;
   codename: string;
-  volume: 1 | 2 | 3 | 4 | 5;
-  volume_title: "Foundations" | "Industrial Systems" | "Scientific Systems" | "Exploration Systems" | "Civilization Systems";
+  volume: number;
+  volume_title: string;
   library_index: number;
   ai_type: string;
   category: string;

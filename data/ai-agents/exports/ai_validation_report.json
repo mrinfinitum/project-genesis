@@ -30,6 +30,36 @@
       "number": 5,
       "name": "Civilization Systems",
       "version": "ai-library-1.1.0"
+    },
+    {
+      "id": "ai-volume-06-economic-systems",
+      "number": 6,
+      "name": "Economic Systems",
+      "version": "ai-library-1.1.0"
+    },
+    {
+      "id": "ai-volume-07-logistics-transportation",
+      "number": 7,
+      "name": "Logistics & Transportation",
+      "version": "ai-library-1.1.0"
+    },
+    {
+      "id": "ai-volume-08-medical-population",
+      "number": 8,
+      "name": "Medical & Population",
+      "version": "ai-library-1.1.0"
+    },
+    {
+      "id": "ai-volume-09-government-administration",
+      "number": 9,
+      "name": "Government & Administration",
+      "version": "ai-library-1.1.0"
+    },
+    {
+      "id": "ai-volume-10-environmental-systems",
+      "number": 10,
+      "name": "Environmental Systems",
+      "version": "ai-library-1.1.0"
     }
   ],
   "status": "Ready",

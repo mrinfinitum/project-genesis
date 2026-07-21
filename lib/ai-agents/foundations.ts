@@ -1,9 +1,10 @@
 import sourceLibrary from "@/data/ai-agents/source/noveris_ai_library_volume_1_categorized.json";
 import sourceExpansionLibrary from "@/data/ai-agents/source/noveris_ai_library_volumes_02_to_05_master.json";
+import sourceSystemsLibrary from "@/data/ai-agents/source/noveris_ai_library_volumes_06_to_10_master.json";
 import type { CanonicalAiLibraryAgent } from "@/types/runtime";
 
-export const AI_LIBRARY_VERSION = sourceExpansionLibrary.schemaVersion;
-export const AI_LIBRARY_CONTENT_VERSION = Math.max(sourceLibrary.contentVersion, ...sourceExpansionLibrary.agents.map((agent) => agent.content_version));
+export const AI_LIBRARY_VERSION = sourceSystemsLibrary.schemaVersion;
+export const AI_LIBRARY_CONTENT_VERSION = Math.max(sourceLibrary.contentVersion, ...sourceExpansionLibrary.agents.map((agent) => agent.content_version), ...sourceSystemsLibrary.agents.map((agent) => agent.content_version));
 export const AI_LIBRARY_VOLUME_ID = "ai-volume-01-foundations";
 
 export const aiLibraryDesignContract = sourceLibrary.designContract;
@@ -21,11 +22,12 @@ export const aiLibraryRarities = [
   { id: "singularity", displayName: "Singularity", order: 10, volumeOneAllowed: false }
 ] as const;
 
-const sourceAgents = [...sourceLibrary.agents, ...sourceExpansionLibrary.agents];
+const sourceAgents = [...sourceLibrary.agents, ...sourceExpansionLibrary.agents, ...sourceSystemsLibrary.agents];
 
 const volumeTitles = new Map<number, string>([
   [1, sourceLibrary.volume.title],
-  ...sourceExpansionLibrary.volumes.map((volume) => [volume.number, volume.title] as const)
+  ...sourceExpansionLibrary.volumes.map((volume) => [volume.number, volume.title] as const),
+  ...sourceSystemsLibrary.volumes.map((volume) => [volume.number, volume.title] as const)
 ]);
 
 function volumeId(volume: number, title: string) {
@@ -56,13 +58,21 @@ export type CategoryProfile = {
   theme: string;
 };
 
-export const aiLibraryCategories: CategoryProfile[] = sourceLibrary.categorySchema.map((category) => ({
-  id: category.category_id,
-  displayName: category.name,
+const categoryDefinitions = [
+  ...sourceLibrary.categorySchema.map((category) => ({ id: category.category_id, displayName: category.name, subcategories: category.subcategories })),
+  ...sourceAgents
+    .filter((agent, index, agents) => agents.findIndex((candidate) => candidate.category_id === agent.category_id) === index)
+    .filter((agent) => !sourceLibrary.categorySchema.some((category) => category.category_id === agent.category_id))
+    .map((agent) => ({ id: agent.category_id, displayName: agent.category, subcategories: [] as string[] }))
+];
+
+export const aiLibraryCategories: CategoryProfile[] = categoryDefinitions.map((category) => ({
+  id: category.id,
+  displayName: category.displayName,
   subcategory: "Multiple specializations",
   subcategories: [...new Set([
     ...category.subcategories,
-    ...sourceAgents.filter((agent) => agent.category_id === category.category_id).map((agent) => agent.subcategory)
+    ...sourceAgents.filter((agent) => agent.category_id === category.id).map((agent) => agent.subcategory)
   ])],
   purpose: aiLibraryDesignContract.primaryPurpose,
   primaryFunction: "Generate passive Labor",
@@ -104,21 +114,21 @@ export function validateCanonicalAiLibrary(agents: CanonicalAiLibraryAgent[] = c
   const validRarities = new Set<string>(aiLibraryRarities.filter((rarity) => rarity.volumeOneAllowed).map((rarity) => rarity.displayName));
   const categories = new Map(aiLibraryCategories.map((category) => [category.id, category]));
 
-  if (agents.length !== 500) issues.push(`AI Library Volumes I-V must contain exactly 500 agents; received ${agents.length}.`);
+  if (agents.length !== 1000) issues.push(`AI Library Volumes I-X must contain exactly 1,000 agents; received ${agents.length}.`);
   if (!unique(agents.map((agent) => agent.ai_id))) issues.push("AI IDs must be unique.");
   if (!unique(agents.map((agent) => `${agent.volume}:${agent.library_index}`))) issues.push("AI library indexes must be unique within each volume.");
 
-  for (const [volume, title] of [[1, "Foundations"], [2, "Industrial Systems"], [3, "Scientific Systems"], [4, "Exploration Systems"], [5, "Civilization Systems"]] as const) {
+  for (const [volume, title] of volumeTitles) {
     const volumeAgents = agents.filter((agent) => agent.volume === volume);
     if (volumeAgents.length !== 100) issues.push(`Volume ${volume} must contain exactly 100 agents; received ${volumeAgents.length}.`);
     if (volumeAgents.some((agent) => agent.volume_title !== title)) issues.push(`Volume ${volume} must use the title ${title}.`);
   }
 
   for (const agent of agents) {
-    if (!/^ai_v0[1-5]_\d{3}_[a-z0-9_]+$/.test(agent.ai_id)) issues.push(`${agent.ai_id} does not use the Volumes I-V stable ID format.`);
+    if (!/^ai_v(?:0[1-9]|10)_\d{3}_[a-z0-9_]+$/.test(agent.ai_id)) issues.push(`${agent.ai_id} does not use the Volumes I-X stable ID format.`);
     const category = categories.get(agent.category_id);
     if (!category || category.displayName !== agent.category || !category.subcategories.includes(agent.subcategory)) issues.push(`${agent.ai_id} has invalid category metadata.`);
-    if (!validRarities.has(agent.rarity)) issues.push(`${agent.ai_id} uses invalid Volume I rarity ${agent.rarity}.`);
+    if (!validRarities.has(agent.rarity)) issues.push(`${agent.ai_id} uses invalid canonical rarity ${agent.rarity}.`);
     if (!agent.portrait_prompt || !agent.assignment_roles.length || !agent.primary_function || !agent.description || !agent.personality_primary || !agent.voice_style) issues.push(`${agent.ai_id} is missing required canonical fields.`);
     if (agent.starting_level !== 1 || agent.max_level < agent.starting_level) issues.push(`${agent.ai_id} has an invalid level range.`);
     if (agent.active_slot_limit !== aiLibraryDesignContract.activeAiSlots || !agent.can_be_active) issues.push(`${agent.ai_id} violates the one-active-assistant contract.`);
@@ -127,7 +137,7 @@ export function validateCanonicalAiLibrary(agents: CanonicalAiLibraryAgent[] = c
 
   const actualDistribution = Object.fromEntries(aiLibraryRarities.map((rarity) => [rarity.displayName, agents.filter((agent) => agent.rarity === rarity.displayName).length]));
   for (const [rarity, expectedPerVolume] of Object.entries(sourceLibrary.rarityDistribution)) {
-    const expected = expectedPerVolume * 5;
+    const expected = expectedPerVolume * 10;
     if (actualDistribution[rarity] !== expected) issues.push(`${rarity} rarity count must be ${expected}; received ${actualDistribution[rarity] ?? 0}.`);
   }
 

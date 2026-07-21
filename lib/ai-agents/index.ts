@@ -843,7 +843,7 @@ export async function getAiAgentLibraryState(assetState?: AssetProductionState):
     const requiredKinds = ["eyes_open", "eyes_blink", "eyes_closed"] as const;
     return requiredKinds.every((kind) => ["Approved", "Published"].includes(agent.artworkSlots.find((slotRecord) => slotRecord.kind === kind)?.status ?? "Missing"));
   }).length;
-  const importedRecords = records.filter((agent) => /^ai_v0[1-5]_\d{3}_[a-z0-9_]+$/.test(agent.id));
+  const importedRecords = records.filter((agent) => /^ai_v(?:0[1-9]|10)_\d{3}_[a-z0-9_]+$/.test(agent.id));
   const terminals = [...new Set(importedRecords.map((agent) => agent.terminalType).filter((value): value is string => Boolean(value)))].map((terminalType) => ({
     id: `AI-TERMINAL-${terminalType.toUpperCase().replace(/[^A-Z0-9]+/g, "-")}`,
     displayName: terminalType,

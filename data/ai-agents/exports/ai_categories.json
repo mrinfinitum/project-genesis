@@ -227,5 +227,170 @@
       "automation": 1
     },
     "theme": "Collectible NOVERIS companion intelligence"
+  },
+  {
+    "id": "economic_systems",
+    "displayName": "Economic Systems",
+    "subcategory": "Multiple specializations",
+    "subcategories": [
+      "Trade",
+      "Markets",
+      "Forecasting",
+      "Budgeting",
+      "Resource Valuation",
+      "Credit Optimization"
+    ],
+    "purpose": "Labor Generation",
+    "primaryFunction": "Generate passive Labor",
+    "secondaryFunctions": [
+      "Increase active click Labor",
+      "Support offline Labor generation"
+    ],
+    "assignments": [
+      "Active AI Assistant",
+      "Labor Generation",
+      "Offline Labor Generation"
+    ],
+    "bonuses": {
+      "labor": 1,
+      "action": 0,
+      "building": 0,
+      "research": 0,
+      "colony": 0,
+      "automation": 1
+    },
+    "theme": "Collectible NOVERIS companion intelligence"
+  },
+  {
+    "id": "logistics_transportation",
+    "displayName": "Logistics & Transportation",
+    "subcategory": "Multiple specializations",
+    "subcategories": [
+      "Routing",
+      "Cargo",
+      "Fleet Dispatch",
+      "Warehousing",
+      "Transit",
+      "Supply Chains"
+    ],
+    "purpose": "Labor Generation",
+    "primaryFunction": "Generate passive Labor",
+    "secondaryFunctions": [
+      "Increase active click Labor",
+      "Support offline Labor generation"
+    ],
+    "assignments": [
+      "Active AI Assistant",
+      "Labor Generation",
+      "Offline Labor Generation"
+    ],
+    "bonuses": {
+      "labor": 1,
+      "action": 0,
+      "building": 0,
+      "research": 0,
+      "colony": 0,
+      "automation": 1
+    },
+    "theme": "Collectible NOVERIS companion intelligence"
+  },
+  {
+    "id": "medical_population",
+    "displayName": "Medical & Population",
+    "subcategory": "Multiple specializations",
+    "subcategories": [
+      "Public Health",
+      "Medicine",
+      "Genetics",
+      "Population Growth",
+      "Workforce Wellness",
+      "Emergency Care"
+    ],
+    "purpose": "Labor Generation",
+    "primaryFunction": "Generate passive Labor",
+    "secondaryFunctions": [
+      "Increase active click Labor",
+      "Support offline Labor generation"
+    ],
+    "assignments": [
+      "Active AI Assistant",
+      "Labor Generation",
+      "Offline Labor Generation"
+    ],
+    "bonuses": {
+      "labor": 1,
+      "action": 0,
+      "building": 0,
+      "research": 0,
+      "colony": 0,
+      "automation": 1
+    },
+    "theme": "Collectible NOVERIS companion intelligence"
+  },
+  {
+    "id": "government_administration",
+    "displayName": "Government & Administration",
+    "subcategory": "Multiple specializations",
+    "subcategories": [
+      "Governance",
+      "Administration",
+      "Policy",
+      "Planning",
+      "Census",
+      "Civil Stability"
+    ],
+    "purpose": "Labor Generation",
+    "primaryFunction": "Generate passive Labor",
+    "secondaryFunctions": [
+      "Increase active click Labor",
+      "Support offline Labor generation"
+    ],
+    "assignments": [
+      "Active AI Assistant",
+      "Labor Generation",
+      "Offline Labor Generation"
+    ],
+    "bonuses": {
+      "labor": 1,
+      "action": 0,
+      "building": 0,
+      "research": 0,
+      "colony": 0,
+      "automation": 1
+    },
+    "theme": "Collectible NOVERIS companion intelligence"
+  },
+  {
+    "id": "environmental_systems",
+    "displayName": "Environmental Systems",
+    "subcategory": "Multiple specializations",
+    "subcategories": [
+      "Climate",
+      "Ecology",
+      "Atmosphere",
+      "Water Systems",
+      "Biosphere",
+      "Hazard Control"
+    ],
+    "purpose": "Labor Generation",
+    "primaryFunction": "Generate passive Labor",
+    "secondaryFunctions": [
+      "Increase active click Labor",
+      "Support offline Labor generation"
+    ],
+    "assignments": [
+      "Active AI Assistant",
+      "Labor Generation",
+      "Offline Labor Generation"
+    ],
+    "bonuses": {
+      "labor": 1,
+      "action": 0,
+      "building": 0,
+      "research": 0,
+      "colony": 0,
+      "automation": 1
+    },
+    "theme": "Collectible NOVERIS companion intelligence"
   }
 ]

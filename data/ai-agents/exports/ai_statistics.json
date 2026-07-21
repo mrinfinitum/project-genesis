@@ -1,5 +1,5 @@
 {
-  "totalAgents": 500,
+  "totalAgents": 1000,
   "minimumLevelCap": 40,
   "maximumLevelCap": 150,
   "categoryCounts": {
@@ -9,17 +9,22 @@
     "exploration_systems": 119,
     "civilization_systems": 125,
     "ancient_intelligence": 11,
-    "genesis_intelligence": 1
+    "genesis_intelligence": 1,
+    "economic_systems": 100,
+    "logistics_transportation": 100,
+    "medical_population": 100,
+    "government_administration": 100,
+    "environmental_systems": 100
   },
   "rarityCounts": {
-    "Common": 170,
-    "Uncommon": 120,
+    "Common": 340,
+    "Uncommon": 240,
     "Specialized": 0,
-    "Rare": 90,
-    "Epic": 60,
-    "Legendary": 35,
-    "Ancient": 20,
-    "Genesis": 5,
+    "Rare": 180,
+    "Epic": 120,
+    "Legendary": 70,
+    "Ancient": 40,
+    "Genesis": 10,
     "Mythic": 0,
     "Singularity": 0
   }
