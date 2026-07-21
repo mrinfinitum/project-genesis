@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "organize:source-masters": "node scripts/organize-source-masters.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
