@@ -67,7 +67,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 42;
+export const gameRuntimeContentVersion = 43;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -531,6 +531,17 @@ function metadata(overrides: Partial<RuntimeMetadata> = {}): RuntimeMetadata {
         preserveRule: "Resolve the former ID through the exported migration map by matching its canonical volume and library index; preserve unknown IDs for diagnostics.",
         introducedContentVersion: 42,
         notes: "Pack A schema 1.2.0 rebuilds Volumes 1 through 5. The migration map prevents existing AI selections and references from being silently discarded."
+      },
+      {
+        id: "migration_ai_library_pack_b_schema_1_2",
+        targetId: "ai-library-pack-b",
+        field: "selectedAiAgentId",
+        previousDefault: "ai-library-1.1.0",
+        currentDefault: "ai_id_migrations.json",
+        applyOnlyWhen: "A save or authored reference contains an AI ID from Volumes 6 through 10 using the schema 1.1.0 catalog.",
+        preserveRule: "Resolve the former ID through the exported migration map by matching its canonical volume and library index; preserve unknown IDs for diagnostics.",
+        introducedContentVersion: 43,
+        notes: "Pack B schema 1.2.0 rebuilds Volumes 6 through 10. The shared migration export now covers the complete 1,000-agent library."
       }
     ],
     ...overrides

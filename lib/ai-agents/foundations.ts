@@ -1,10 +1,11 @@
 import sourcePackA from "@/data/ai-agents/source/noveris_ai_library_pack_a_volumes_01_to_05.json";
 import sourcePackAIdMigrations from "@/data/ai-agents/source/noveris_ai_library_pack_a_id_migrations.json";
-import sourceSystemsLibrary from "@/data/ai-agents/source/noveris_ai_library_volumes_06_to_10_master.json";
+import sourcePackB from "@/data/ai-agents/source/noveris_ai_library_pack_b_volumes_06_to_10.json";
+import sourcePackBIdMigrations from "@/data/ai-agents/source/noveris_ai_library_pack_b_id_migrations.json";
 import type { CanonicalAiLibraryAgent } from "@/types/runtime";
 
 export const AI_LIBRARY_VERSION = sourcePackA.schemaVersion;
-export const AI_LIBRARY_CONTENT_VERSION = Math.max(...sourcePackA.agents.map((agent) => agent.content_version), ...sourceSystemsLibrary.agents.map((agent) => agent.content_version));
+export const AI_LIBRARY_CONTENT_VERSION = Math.max(...sourcePackA.agents.map((agent) => agent.content_version), ...sourcePackB.agents.map((agent) => agent.content_version));
 export const AI_LIBRARY_VOLUME_ID = "ai-volume-01-foundations";
 
 export const aiLibraryDesignContract = sourcePackA.designContract;
@@ -22,9 +23,9 @@ export const aiLibraryRarities = [
   { id: "singularity", displayName: "Singularity", order: 10, volumeOneAllowed: false }
 ] as const;
 
-const sourceAgents = [...sourcePackA.agents, ...sourceSystemsLibrary.agents];
+const sourceAgents = [...sourcePackA.agents, ...sourcePackB.agents];
 
-export const aiLibraryLegacyIdMigrations = sourcePackAIdMigrations.migrations;
+export const aiLibraryLegacyIdMigrations = [...sourcePackAIdMigrations.migrations, ...sourcePackBIdMigrations.migrations];
 const canonicalIdByLegacyId = new Map(aiLibraryLegacyIdMigrations.map((migration) => [migration.legacyAiId, migration.canonicalAiId]));
 const legacyIdsByCanonicalId = new Map(aiLibraryLegacyIdMigrations.map((migration) => [migration.canonicalAiId, [migration.legacyAiId]]));
 
@@ -34,7 +35,7 @@ export function resolveCanonicalAiLibraryId(aiId: string) {
 
 const volumeTitles = new Map<number, string>([
   ...sourcePackA.volumes.map((volume) => [volume.number, volume.title] as const),
-  ...sourceSystemsLibrary.volumes.map((volume) => [volume.number, volume.title] as const)
+  ...sourcePackB.volumes.map((volume) => [volume.number, volume.title] as const)
 ]);
 
 function volumeId(volume: number, title: string) {
@@ -123,10 +124,10 @@ export function validateCanonicalAiLibrary(agents: CanonicalAiLibraryAgent[] = c
   if (agents.length !== 1000) issues.push(`AI Library Volumes I-X must contain exactly 1,000 agents; received ${agents.length}.`);
   if (!unique(agents.map((agent) => agent.ai_id))) issues.push("AI IDs must be unique.");
   if (!unique(agents.map((agent) => `${agent.volume}:${agent.library_index}`))) issues.push("AI library indexes must be unique within each volume.");
-  if (aiLibraryLegacyIdMigrations.length !== 500) issues.push(`Pack A must provide exactly 500 legacy ID migrations; received ${aiLibraryLegacyIdMigrations.length}.`);
-  if (!unique(aiLibraryLegacyIdMigrations.map((migration) => migration.legacyAiId))) issues.push("Pack A legacy AI IDs must be unique.");
-  if (!unique(aiLibraryLegacyIdMigrations.map((migration) => migration.canonicalAiId))) issues.push("Pack A canonical migration targets must be unique.");
-  if (aiLibraryLegacyIdMigrations.some((migration) => !agents.some((agent) => agent.ai_id === migration.canonicalAiId))) issues.push("Every Pack A ID migration must resolve to a canonical AI record.");
+  if (aiLibraryLegacyIdMigrations.length !== 1000) issues.push(`Packs A and B must provide exactly 1,000 legacy ID migrations; received ${aiLibraryLegacyIdMigrations.length}.`);
+  if (!unique(aiLibraryLegacyIdMigrations.map((migration) => migration.legacyAiId))) issues.push("Legacy AI IDs must be unique across Packs A and B.");
+  if (!unique(aiLibraryLegacyIdMigrations.map((migration) => migration.canonicalAiId))) issues.push("Canonical migration targets must be unique across Packs A and B.");
+  if (aiLibraryLegacyIdMigrations.some((migration) => !agents.some((agent) => agent.ai_id === migration.canonicalAiId))) issues.push("Every AI ID migration must resolve to a canonical AI record.");
 
   for (const [volume, title] of volumeTitles) {
     const volumeAgents = agents.filter((agent) => agent.volume === volume);

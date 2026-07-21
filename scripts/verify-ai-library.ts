@@ -14,9 +14,11 @@ async function main() {
   assert(canonicalAiLibraryAgents.length === 1000, "AI Library Volumes I-X must contain 1,000 agents.");
   assert(Math.min(...canonicalAiLibraryAgents.map((agent) => agent.max_level)) === 40 && Math.max(...canonicalAiLibraryAgents.map((agent) => agent.max_level)) === 150, "AI Library rarity level caps must span 40 through 150.");
   assert(canonicalAiLibraryAgents.filter((agent) => agent.rarity === "Genesis").length === 10, "AI Library Volumes I-X must contain exactly ten Genesis agents.");
-  assert(aiLibraryLegacyIdMigrations.length === 500, "Pack A must publish 500 legacy AI ID migrations.");
+  assert(aiLibraryLegacyIdMigrations.length === 1000, "Packs A and B must publish 1,000 legacy AI ID migrations.");
   assert(resolveCanonicalAiLibraryId("ai_v01_001_nova") === "ai_v01_001_byte_link", "Pack A must migrate the former first Volume I AI ID.");
   assert(resolveCanonicalAiLibraryId("ai_v05_100_lyric_guide") === "ai_v05_100_ledger_system", "Pack A must migrate the former final Volume V AI ID.");
+  assert(resolveCanonicalAiLibraryId("ai_v06_001_yield_archive") === "ai_v06_001_margin_steward", "Pack B must migrate the former first Volume VI AI ID.");
+  assert(resolveCanonicalAiLibraryId("ai_v10_100_nimbus_nexus") === "ai_v10_100_gaia_system", "Pack B must migrate the former final Volume X AI ID.");
 
   const expectedCategoryCounts = new Map([
     ["civilization_systems", 100],

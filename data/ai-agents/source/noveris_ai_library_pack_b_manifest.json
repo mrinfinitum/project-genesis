@@ -1,0 +1,44 @@
+{
+  "pack_id": "ai_pack_b",
+  "pack_name": "Pack B",
+  "schemaVersion": "ai-library-pack-1.2.0",
+  "volumeRange": [
+    6,
+    10
+  ],
+  "activeAiSlots": 1,
+  "primaryPurpose": "Labor Generation",
+  "volumes": [
+    {
+      "number": 6,
+      "title": "Economic Systems",
+      "agentCount": 100,
+      "zipFilename": "NOVERIS_AI_Library_Volume_06.zip"
+    },
+    {
+      "number": 7,
+      "title": "Logistics & Transportation",
+      "agentCount": 100,
+      "zipFilename": "NOVERIS_AI_Library_Volume_07.zip"
+    },
+    {
+      "number": 8,
+      "title": "Medical & Population",
+      "agentCount": 100,
+      "zipFilename": "NOVERIS_AI_Library_Volume_08.zip"
+    },
+    {
+      "number": 9,
+      "title": "Government & Administration",
+      "agentCount": 100,
+      "zipFilename": "NOVERIS_AI_Library_Volume_09.zip"
+    },
+    {
+      "number": 10,
+      "title": "Environmental Systems",
+      "agentCount": 100,
+      "zipFilename": "NOVERIS_AI_Library_Volume_10.zip"
+    }
+  ],
+  "totalAgents": 500
+}

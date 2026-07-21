@@ -1,0 +1,3509 @@
+{
+  "schemaVersion": "ai-library-id-migration-1.0.0",
+  "sourceSchemaVersion": "ai-library-1.1.0",
+  "targetSchemaVersion": "ai-library-1.2.0",
+  "mappingRule": "volume_and_library_index",
+  "count": 500,
+  "migrations": [
+    {
+      "legacyAiId": "ai_v06_001_yield_archive",
+      "canonicalAiId": "ai_v06_001_margin_steward",
+      "volume": 6,
+      "libraryIndex": 1,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_002_tally_prime",
+      "canonicalAiId": "ai_v06_002_tally_system",
+      "volume": 6,
+      "libraryIndex": 2,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_003_equity_engine",
+      "canonicalAiId": "ai_v06_003_tally_prime",
+      "volume": 6,
+      "libraryIndex": 3,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_004_prosper_core",
+      "canonicalAiId": "ai_v06_004_cipher_matrix",
+      "volume": 6,
+      "libraryIndex": 4,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_005_ledger_matrix",
+      "canonicalAiId": "ai_v06_005_exchange_oracle",
+      "volume": 6,
+      "libraryIndex": 5,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_006_tally_counsel",
+      "canonicalAiId": "ai_v06_006_parity_archive",
+      "volume": 6,
+      "libraryIndex": 6,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_007_vantage_analyst",
+      "canonicalAiId": "ai_v06_007_tally_mind",
+      "volume": 6,
+      "libraryIndex": 7,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_008_dividend_mind",
+      "canonicalAiId": "ai_v06_008_dividend_core",
+      "volume": 6,
+      "libraryIndex": 8,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_009_market_engine",
+      "canonicalAiId": "ai_v06_009_quorum_director",
+      "volume": 6,
+      "libraryIndex": 9,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_010_ledger_system",
+      "canonicalAiId": "ai_v06_010_mint_mind",
+      "volume": 6,
+      "libraryIndex": 10,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_011_vantage_oracle",
+      "canonicalAiId": "ai_v06_011_parity_core",
+      "volume": 6,
+      "libraryIndex": 11,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_012_equity_node",
+      "canonicalAiId": "ai_v06_012_reserve_prime",
+      "volume": 6,
+      "libraryIndex": 12,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_013_vector_node",
+      "canonicalAiId": "ai_v06_013_cipher_prime",
+      "volume": 6,
+      "libraryIndex": 13,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_014_exchange_director",
+      "canonicalAiId": "ai_v06_014_prosper_director",
+      "volume": 6,
+      "libraryIndex": 14,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_015_quorum_matrix",
+      "canonicalAiId": "ai_v06_015_vector_node",
+      "volume": 6,
+      "libraryIndex": 15,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_016_prosper_matrix",
+      "canonicalAiId": "ai_v06_016_vector_nexus",
+      "volume": 6,
+      "libraryIndex": 16,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_017_equity_steward",
+      "canonicalAiId": "ai_v06_017_ledger_system",
+      "volume": 6,
+      "libraryIndex": 17,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_018_dividend_prime",
+      "canonicalAiId": "ai_v06_018_reserve_analyst",
+      "volume": 6,
+      "libraryIndex": 18,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_019_dividend_oracle",
+      "canonicalAiId": "ai_v06_019_cipher_steward",
+      "volume": 6,
+      "libraryIndex": 19,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_020_balance_steward",
+      "canonicalAiId": "ai_v06_020_balance_matrix",
+      "volume": 6,
+      "libraryIndex": 20,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_021_market_director",
+      "canonicalAiId": "ai_v06_021_vantage_steward",
+      "volume": 6,
+      "libraryIndex": 21,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_022_quorum_nexus",
+      "canonicalAiId": "ai_v06_022_reserve_mind",
+      "volume": 6,
+      "libraryIndex": 22,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_023_balance_matrix",
+      "canonicalAiId": "ai_v06_023_vantage_prime",
+      "volume": 6,
+      "libraryIndex": 23,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_024_aureus_prime",
+      "canonicalAiId": "ai_v06_024_parity_engine",
+      "volume": 6,
+      "libraryIndex": 24,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_025_vector_mind",
+      "canonicalAiId": "ai_v06_025_reserve_director",
+      "volume": 6,
+      "libraryIndex": 25,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_026_market_node",
+      "canonicalAiId": "ai_v06_026_ledger_mind",
+      "volume": 6,
+      "libraryIndex": 26,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_027_margin_nexus",
+      "canonicalAiId": "ai_v06_027_balance_system",
+      "volume": 6,
+      "libraryIndex": 27,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_028_prosper_keeper",
+      "canonicalAiId": "ai_v06_028_fortune_matrix",
+      "volume": 6,
+      "libraryIndex": 28,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_029_dividend_matrix",
+      "canonicalAiId": "ai_v06_029_equity_director",
+      "volume": 6,
+      "libraryIndex": 29,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_030_market_nexus",
+      "canonicalAiId": "ai_v06_030_parity_director",
+      "volume": 6,
+      "libraryIndex": 30,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_031_vector_keeper",
+      "canonicalAiId": "ai_v06_031_quorum_system",
+      "volume": 6,
+      "libraryIndex": 31,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_032_credit_engine",
+      "canonicalAiId": "ai_v06_032_mint_prime",
+      "volume": 6,
+      "libraryIndex": 32,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_033_reserve_matrix",
+      "canonicalAiId": "ai_v06_033_parity_keeper",
+      "volume": 6,
+      "libraryIndex": 33,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_034_quorum_archive",
+      "canonicalAiId": "ai_v06_034_fortune_prime",
+      "volume": 6,
+      "libraryIndex": 34,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_035_equity_director",
+      "canonicalAiId": "ai_v06_035_vantage_system",
+      "volume": 6,
+      "libraryIndex": 35,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_036_ledger_mind",
+      "canonicalAiId": "ai_v06_036_mint_nexus",
+      "volume": 6,
+      "libraryIndex": 36,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_037_vantage_node",
+      "canonicalAiId": "ai_v06_037_vector_analyst",
+      "volume": 6,
+      "libraryIndex": 37,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_038_margin_oracle",
+      "canonicalAiId": "ai_v06_038_prosper_steward",
+      "volume": 6,
+      "libraryIndex": 38,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_039_yield_matrix",
+      "canonicalAiId": "ai_v06_039_fortune_mind",
+      "volume": 6,
+      "libraryIndex": 39,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_040_vantage_core",
+      "canonicalAiId": "ai_v06_040_ledger_oracle",
+      "volume": 6,
+      "libraryIndex": 40,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_041_exchange_engine",
+      "canonicalAiId": "ai_v06_041_exchange_archive",
+      "volume": 6,
+      "libraryIndex": 41,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_042_dividend_nexus",
+      "canonicalAiId": "ai_v06_042_tally_director",
+      "volume": 6,
+      "libraryIndex": 42,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_043_vector_engine",
+      "canonicalAiId": "ai_v06_043_yield_nexus",
+      "volume": 6,
+      "libraryIndex": 43,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_044_balance_archive",
+      "canonicalAiId": "ai_v06_044_tally_keeper",
+      "volume": 6,
+      "libraryIndex": 44,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_045_reserve_archive",
+      "canonicalAiId": "ai_v06_045_aureus_keeper",
+      "volume": 6,
+      "libraryIndex": 45,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_046_ledger_analyst",
+      "canonicalAiId": "ai_v06_046_vector_counsel",
+      "volume": 6,
+      "libraryIndex": 46,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_047_credit_director",
+      "canonicalAiId": "ai_v06_047_fortune_keeper",
+      "volume": 6,
+      "libraryIndex": 47,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_048_tally_analyst",
+      "canonicalAiId": "ai_v06_048_equity_archive",
+      "volume": 6,
+      "libraryIndex": 48,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_049_yield_director",
+      "canonicalAiId": "ai_v06_049_mint_counsel",
+      "volume": 6,
+      "libraryIndex": 49,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_050_mint_engine",
+      "canonicalAiId": "ai_v06_050_equity_nexus",
+      "volume": 6,
+      "libraryIndex": 50,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_051_credit_oracle",
+      "canonicalAiId": "ai_v06_051_quorum_prime",
+      "volume": 6,
+      "libraryIndex": 51,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_052_exchange_keeper",
+      "canonicalAiId": "ai_v06_052_fortune_steward",
+      "volume": 6,
+      "libraryIndex": 52,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_053_tally_keeper",
+      "canonicalAiId": "ai_v06_053_aureus_director",
+      "volume": 6,
+      "libraryIndex": 53,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_054_tally_matrix",
+      "canonicalAiId": "ai_v06_054_prosper_matrix",
+      "volume": 6,
+      "libraryIndex": 54,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_055_credit_steward",
+      "canonicalAiId": "ai_v06_055_cipher_node",
+      "volume": 6,
+      "libraryIndex": 55,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_056_mint_archive",
+      "canonicalAiId": "ai_v06_056_prosper_counsel",
+      "volume": 6,
+      "libraryIndex": 56,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_057_balance_counsel",
+      "canonicalAiId": "ai_v06_057_market_analyst",
+      "volume": 6,
+      "libraryIndex": 57,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_058_cipher_core",
+      "canonicalAiId": "ai_v06_058_credit_system",
+      "volume": 6,
+      "libraryIndex": 58,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_059_cipher_director",
+      "canonicalAiId": "ai_v06_059_vantage_engine",
+      "volume": 6,
+      "libraryIndex": 59,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_060_fortune_nexus",
+      "canonicalAiId": "ai_v06_060_ledger_matrix",
+      "volume": 6,
+      "libraryIndex": 60,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_061_tally_director",
+      "canonicalAiId": "ai_v06_061_dividend_system",
+      "volume": 6,
+      "libraryIndex": 61,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_062_parity_counsel",
+      "canonicalAiId": "ai_v06_062_mint_system",
+      "volume": 6,
+      "libraryIndex": 62,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_063_margin_director",
+      "canonicalAiId": "ai_v06_063_market_archive",
+      "volume": 6,
+      "libraryIndex": 63,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_064_cipher_nexus",
+      "canonicalAiId": "ai_v06_064_exchange_mind",
+      "volume": 6,
+      "libraryIndex": 64,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_065_equity_keeper",
+      "canonicalAiId": "ai_v06_065_parity_nexus",
+      "volume": 6,
+      "libraryIndex": 65,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_066_reserve_node",
+      "canonicalAiId": "ai_v06_066_vector_mind",
+      "volume": 6,
+      "libraryIndex": 66,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_067_ledger_keeper",
+      "canonicalAiId": "ai_v06_067_cipher_system",
+      "volume": 6,
+      "libraryIndex": 67,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_068_margin_analyst",
+      "canonicalAiId": "ai_v06_068_cipher_archive",
+      "volume": 6,
+      "libraryIndex": 68,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_069_dividend_system",
+      "canonicalAiId": "ai_v06_069_aureus_archive",
+      "volume": 6,
+      "libraryIndex": 69,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_070_vector_prime",
+      "canonicalAiId": "ai_v06_070_market_director",
+      "volume": 6,
+      "libraryIndex": 70,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_071_aureus_director",
+      "canonicalAiId": "ai_v06_071_vector_director",
+      "volume": 6,
+      "libraryIndex": 71,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_072_equity_analyst",
+      "canonicalAiId": "ai_v06_072_yield_engine",
+      "volume": 6,
+      "libraryIndex": 72,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_073_vantage_director",
+      "canonicalAiId": "ai_v06_073_fortune_system",
+      "volume": 6,
+      "libraryIndex": 73,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_074_mint_node",
+      "canonicalAiId": "ai_v06_074_margin_prime",
+      "volume": 6,
+      "libraryIndex": 74,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_075_prosper_steward",
+      "canonicalAiId": "ai_v06_075_balance_nexus",
+      "volume": 6,
+      "libraryIndex": 75,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_076_quorum_mind",
+      "canonicalAiId": "ai_v06_076_equity_core",
+      "volume": 6,
+      "libraryIndex": 76,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_077_ledger_engine",
+      "canonicalAiId": "ai_v06_077_exchange_director",
+      "volume": 6,
+      "libraryIndex": 77,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_078_equity_core",
+      "canonicalAiId": "ai_v06_078_mint_director",
+      "volume": 6,
+      "libraryIndex": 78,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_079_parity_keeper",
+      "canonicalAiId": "ai_v06_079_dividend_archive",
+      "volume": 6,
+      "libraryIndex": 79,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_080_parity_mind",
+      "canonicalAiId": "ai_v06_080_quorum_archive",
+      "volume": 6,
+      "libraryIndex": 80,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_081_fortune_node",
+      "canonicalAiId": "ai_v06_081_fortune_archive",
+      "volume": 6,
+      "libraryIndex": 81,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_082_parity_steward",
+      "canonicalAiId": "ai_v06_082_fortune_oracle",
+      "volume": 6,
+      "libraryIndex": 82,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_083_vantage_prime",
+      "canonicalAiId": "ai_v06_083_quorum_nexus",
+      "volume": 6,
+      "libraryIndex": 83,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_084_exchange_system",
+      "canonicalAiId": "ai_v06_084_margin_core",
+      "volume": 6,
+      "libraryIndex": 84,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_085_aureus_mind",
+      "canonicalAiId": "ai_v06_085_balance_prime",
+      "volume": 6,
+      "libraryIndex": 85,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_086_cipher_keeper",
+      "canonicalAiId": "ai_v06_086_yield_steward",
+      "volume": 6,
+      "libraryIndex": 86,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_087_ledger_counsel",
+      "canonicalAiId": "ai_v06_087_credit_nexus",
+      "volume": 6,
+      "libraryIndex": 87,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_088_cipher_prime",
+      "canonicalAiId": "ai_v06_088_parity_steward",
+      "volume": 6,
+      "libraryIndex": 88,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_089_aureus_oracle",
+      "canonicalAiId": "ai_v06_089_margin_nexus",
+      "volume": 6,
+      "libraryIndex": 89,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_090_aureus_archive",
+      "canonicalAiId": "ai_v06_090_credit_prime",
+      "volume": 6,
+      "libraryIndex": 90,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_091_credit_prime",
+      "canonicalAiId": "ai_v06_091_balance_director",
+      "volume": 6,
+      "libraryIndex": 91,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_092_exchange_counsel",
+      "canonicalAiId": "ai_v06_092_tally_matrix",
+      "volume": 6,
+      "libraryIndex": 92,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_093_tally_oracle",
+      "canonicalAiId": "ai_v06_093_exchange_counsel",
+      "volume": 6,
+      "libraryIndex": 93,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_094_prosper_archive",
+      "canonicalAiId": "ai_v06_094_prosper_keeper",
+      "volume": 6,
+      "libraryIndex": 94,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_095_prosper_prime",
+      "canonicalAiId": "ai_v06_095_parity_node",
+      "volume": 6,
+      "libraryIndex": 95,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_096_market_counsel",
+      "canonicalAiId": "ai_v06_096_reserve_steward",
+      "volume": 6,
+      "libraryIndex": 96,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_097_parity_nexus",
+      "canonicalAiId": "ai_v06_097_quorum_oracle",
+      "volume": 6,
+      "libraryIndex": 97,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_098_cipher_counsel",
+      "canonicalAiId": "ai_v06_098_market_prime",
+      "volume": 6,
+      "libraryIndex": 98,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_099_quorum_oracle",
+      "canonicalAiId": "ai_v06_099_quorum_matrix",
+      "volume": 6,
+      "libraryIndex": 99,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v06_100_prosper_oracle",
+      "canonicalAiId": "ai_v06_100_vantage_mind",
+      "volume": 6,
+      "libraryIndex": 100,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_001_bridge_matrix",
+      "canonicalAiId": "ai_v07_001_vector_core",
+      "volume": 7,
+      "libraryIndex": 1,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_002_anchor_matrix",
+      "canonicalAiId": "ai_v07_002_track_core",
+      "volume": 7,
+      "libraryIndex": 2,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_003_harbor_node",
+      "canonicalAiId": "ai_v07_003_convoy_prime",
+      "volume": 7,
+      "libraryIndex": 3,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_004_flow_node",
+      "canonicalAiId": "ai_v07_004_vector_nexus",
+      "volume": 7,
+      "libraryIndex": 4,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_005_vector_dispatch",
+      "canonicalAiId": "ai_v07_005_flow_prime",
+      "volume": 7,
+      "libraryIndex": 5,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_006_transit_nexus",
+      "canonicalAiId": "ai_v07_006_relay_array",
+      "volume": 7,
+      "libraryIndex": 6,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_007_convoy_dispatch",
+      "canonicalAiId": "ai_v07_007_waypoint_master",
+      "volume": 7,
+      "libraryIndex": 7,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_008_flow_system",
+      "canonicalAiId": "ai_v07_008_waypoint_core",
+      "volume": 7,
+      "libraryIndex": 8,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_009_flow_dispatch",
+      "canonicalAiId": "ai_v07_009_cargo_core",
+      "volume": 7,
+      "libraryIndex": 9,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_010_link_matrix",
+      "canonicalAiId": "ai_v07_010_transit_nexus",
+      "volume": 7,
+      "libraryIndex": 10,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_011_harbor_guide",
+      "canonicalAiId": "ai_v07_011_convoy_engine",
+      "volume": 7,
+      "libraryIndex": 11,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_012_waypoint_guide",
+      "canonicalAiId": "ai_v07_012_harbor_engine",
+      "volume": 7,
+      "libraryIndex": 12,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_013_waypoint_node",
+      "canonicalAiId": "ai_v07_013_convoy_steward",
+      "volume": 7,
+      "libraryIndex": 13,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_014_passage_guide",
+      "canonicalAiId": "ai_v07_014_anchor_nexus",
+      "volume": 7,
+      "libraryIndex": 14,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_015_portal_guide",
+      "canonicalAiId": "ai_v07_015_passage_matrix",
+      "volume": 7,
+      "libraryIndex": 15,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_016_waypoint_matrix",
+      "canonicalAiId": "ai_v07_016_courier_dispatch",
+      "volume": 7,
+      "libraryIndex": 16,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_017_fleet_dispatch",
+      "canonicalAiId": "ai_v07_017_transit_steward",
+      "volume": 7,
+      "libraryIndex": 17,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_018_orbit_director",
+      "canonicalAiId": "ai_v07_018_fleet_node",
+      "volume": 7,
+      "libraryIndex": 18,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_019_transit_director",
+      "canonicalAiId": "ai_v07_019_orbit_system",
+      "volume": 7,
+      "libraryIndex": 19,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_020_vector_array",
+      "canonicalAiId": "ai_v07_020_courier_master",
+      "volume": 7,
+      "libraryIndex": 20,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_021_link_engine",
+      "canonicalAiId": "ai_v07_021_depot_matrix",
+      "volume": 7,
+      "libraryIndex": 21,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_022_courier_guide",
+      "canonicalAiId": "ai_v07_022_cargo_guide",
+      "volume": 7,
+      "libraryIndex": 22,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_023_track_master",
+      "canonicalAiId": "ai_v07_023_orbit_dispatch",
+      "volume": 7,
+      "libraryIndex": 23,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_024_orbit_guide",
+      "canonicalAiId": "ai_v07_024_anchor_director",
+      "volume": 7,
+      "libraryIndex": 24,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_025_track_system",
+      "canonicalAiId": "ai_v07_025_relay_prime",
+      "volume": 7,
+      "libraryIndex": 25,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_026_channel_prime",
+      "canonicalAiId": "ai_v07_026_harbor_matrix",
+      "volume": 7,
+      "libraryIndex": 26,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_027_passage_steward",
+      "canonicalAiId": "ai_v07_027_fleet_array",
+      "volume": 7,
+      "libraryIndex": 27,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_028_fleet_master",
+      "canonicalAiId": "ai_v07_028_anchor_steward",
+      "volume": 7,
+      "libraryIndex": 28,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_029_harbor_engine",
+      "canonicalAiId": "ai_v07_029_waypoint_node",
+      "volume": 7,
+      "libraryIndex": 29,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_030_cargo_guide",
+      "canonicalAiId": "ai_v07_030_relay_mind",
+      "volume": 7,
+      "libraryIndex": 30,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_031_fleet_director",
+      "canonicalAiId": "ai_v07_031_portal_system",
+      "volume": 7,
+      "libraryIndex": 31,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_032_cargo_master",
+      "canonicalAiId": "ai_v07_032_track_matrix",
+      "volume": 7,
+      "libraryIndex": 32,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_033_waypoint_array",
+      "canonicalAiId": "ai_v07_033_convoy_mind",
+      "volume": 7,
+      "libraryIndex": 33,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_034_transit_node",
+      "canonicalAiId": "ai_v07_034_depot_steward",
+      "volume": 7,
+      "libraryIndex": 34,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_035_passage_master",
+      "canonicalAiId": "ai_v07_035_link_guide",
+      "volume": 7,
+      "libraryIndex": 35,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_036_relay_array",
+      "canonicalAiId": "ai_v07_036_flow_matrix",
+      "volume": 7,
+      "libraryIndex": 36,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_037_waypoint_director",
+      "canonicalAiId": "ai_v07_037_convoy_system",
+      "volume": 7,
+      "libraryIndex": 37,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_038_track_guide",
+      "canonicalAiId": "ai_v07_038_link_system",
+      "volume": 7,
+      "libraryIndex": 38,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_039_waypoint_core",
+      "canonicalAiId": "ai_v07_039_relay_node",
+      "volume": 7,
+      "libraryIndex": 39,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_040_flow_engine",
+      "canonicalAiId": "ai_v07_040_orbit_array",
+      "volume": 7,
+      "libraryIndex": 40,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_041_link_mind",
+      "canonicalAiId": "ai_v07_041_courier_mind",
+      "volume": 7,
+      "libraryIndex": 41,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_042_relay_system",
+      "canonicalAiId": "ai_v07_042_bridge_director",
+      "volume": 7,
+      "libraryIndex": 42,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_043_depot_director",
+      "canonicalAiId": "ai_v07_043_portal_master",
+      "volume": 7,
+      "libraryIndex": 43,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_044_orbit_master",
+      "canonicalAiId": "ai_v07_044_relay_system",
+      "volume": 7,
+      "libraryIndex": 44,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_045_track_engine",
+      "canonicalAiId": "ai_v07_045_transit_engine",
+      "volume": 7,
+      "libraryIndex": 45,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_046_flow_matrix",
+      "canonicalAiId": "ai_v07_046_link_node",
+      "volume": 7,
+      "libraryIndex": 46,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_047_orbit_core",
+      "canonicalAiId": "ai_v07_047_link_dispatch",
+      "volume": 7,
+      "libraryIndex": 47,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_048_channel_mind",
+      "canonicalAiId": "ai_v07_048_relay_master",
+      "volume": 7,
+      "libraryIndex": 48,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_049_track_array",
+      "canonicalAiId": "ai_v07_049_orbit_nexus",
+      "volume": 7,
+      "libraryIndex": 49,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_050_route_nexus",
+      "canonicalAiId": "ai_v07_050_portal_core",
+      "volume": 7,
+      "libraryIndex": 50,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_051_portal_system",
+      "canonicalAiId": "ai_v07_051_convoy_keeper",
+      "volume": 7,
+      "libraryIndex": 51,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_052_route_node",
+      "canonicalAiId": "ai_v07_052_waypoint_dispatch",
+      "volume": 7,
+      "libraryIndex": 52,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_053_bridge_keeper",
+      "canonicalAiId": "ai_v07_053_relay_guide",
+      "volume": 7,
+      "libraryIndex": 53,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_054_bridge_system",
+      "canonicalAiId": "ai_v07_054_transit_matrix",
+      "volume": 7,
+      "libraryIndex": 54,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_055_convoy_master",
+      "canonicalAiId": "ai_v07_055_waypoint_system",
+      "volume": 7,
+      "libraryIndex": 55,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_056_route_master",
+      "canonicalAiId": "ai_v07_056_vector_system",
+      "volume": 7,
+      "libraryIndex": 56,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_057_orbit_mind",
+      "canonicalAiId": "ai_v07_057_courier_steward",
+      "volume": 7,
+      "libraryIndex": 57,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_058_transit_master",
+      "canonicalAiId": "ai_v07_058_link_core",
+      "volume": 7,
+      "libraryIndex": 58,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_059_harbor_nexus",
+      "canonicalAiId": "ai_v07_059_bridge_matrix",
+      "volume": 7,
+      "libraryIndex": 59,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_060_relay_steward",
+      "canonicalAiId": "ai_v07_060_channel_mind",
+      "volume": 7,
+      "libraryIndex": 60,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_061_flow_guide",
+      "canonicalAiId": "ai_v07_061_transit_guide",
+      "volume": 7,
+      "libraryIndex": 61,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_062_transit_guide",
+      "canonicalAiId": "ai_v07_062_passage_director",
+      "volume": 7,
+      "libraryIndex": 62,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_063_courier_engine",
+      "canonicalAiId": "ai_v07_063_orbit_guide",
+      "volume": 7,
+      "libraryIndex": 63,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_064_transit_engine",
+      "canonicalAiId": "ai_v07_064_channel_system",
+      "volume": 7,
+      "libraryIndex": 64,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_065_vector_guide",
+      "canonicalAiId": "ai_v07_065_route_array",
+      "volume": 7,
+      "libraryIndex": 65,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_066_courier_dispatch",
+      "canonicalAiId": "ai_v07_066_convoy_node",
+      "volume": 7,
+      "libraryIndex": 66,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_067_portal_steward",
+      "canonicalAiId": "ai_v07_067_fleet_master",
+      "volume": 7,
+      "libraryIndex": 67,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_068_portal_nexus",
+      "canonicalAiId": "ai_v07_068_waypoint_nexus",
+      "volume": 7,
+      "libraryIndex": 68,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_069_link_keeper",
+      "canonicalAiId": "ai_v07_069_bridge_system",
+      "volume": 7,
+      "libraryIndex": 69,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_070_route_mind",
+      "canonicalAiId": "ai_v07_070_flow_system",
+      "volume": 7,
+      "libraryIndex": 70,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_071_portal_master",
+      "canonicalAiId": "ai_v07_071_link_matrix",
+      "volume": 7,
+      "libraryIndex": 71,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_072_bridge_array",
+      "canonicalAiId": "ai_v07_072_depot_keeper",
+      "volume": 7,
+      "libraryIndex": 72,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_073_portal_prime",
+      "canonicalAiId": "ai_v07_073_bridge_guide",
+      "volume": 7,
+      "libraryIndex": 73,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_074_anchor_system",
+      "canonicalAiId": "ai_v07_074_link_master",
+      "volume": 7,
+      "libraryIndex": 74,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_075_convoy_engine",
+      "canonicalAiId": "ai_v07_075_channel_array",
+      "volume": 7,
+      "libraryIndex": 75,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_076_track_nexus",
+      "canonicalAiId": "ai_v07_076_channel_prime",
+      "volume": 7,
+      "libraryIndex": 76,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_077_bridge_dispatch",
+      "canonicalAiId": "ai_v07_077_courier_matrix",
+      "volume": 7,
+      "libraryIndex": 77,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_078_portal_dispatch",
+      "canonicalAiId": "ai_v07_078_bridge_master",
+      "volume": 7,
+      "libraryIndex": 78,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_079_bridge_mind",
+      "canonicalAiId": "ai_v07_079_fleet_steward",
+      "volume": 7,
+      "libraryIndex": 79,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_080_transit_keeper",
+      "canonicalAiId": "ai_v07_080_bridge_mind",
+      "volume": 7,
+      "libraryIndex": 80,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_081_harbor_master",
+      "canonicalAiId": "ai_v07_081_anchor_master",
+      "volume": 7,
+      "libraryIndex": 81,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_082_courier_core",
+      "canonicalAiId": "ai_v07_082_track_mind",
+      "volume": 7,
+      "libraryIndex": 82,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_083_relay_prime",
+      "canonicalAiId": "ai_v07_083_courier_guide",
+      "volume": 7,
+      "libraryIndex": 83,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_084_bridge_nexus",
+      "canonicalAiId": "ai_v07_084_link_keeper",
+      "volume": 7,
+      "libraryIndex": 84,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_085_channel_core",
+      "canonicalAiId": "ai_v07_085_fleet_guide",
+      "volume": 7,
+      "libraryIndex": 85,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_086_harbor_dispatch",
+      "canonicalAiId": "ai_v07_086_harbor_dispatch",
+      "volume": 7,
+      "libraryIndex": 86,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_087_vector_keeper",
+      "canonicalAiId": "ai_v07_087_route_matrix",
+      "volume": 7,
+      "libraryIndex": 87,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_088_flow_array",
+      "canonicalAiId": "ai_v07_088_portal_dispatch",
+      "volume": 7,
+      "libraryIndex": 88,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_089_route_guide",
+      "canonicalAiId": "ai_v07_089_vector_steward",
+      "volume": 7,
+      "libraryIndex": 89,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_090_waypoint_steward",
+      "canonicalAiId": "ai_v07_090_track_guide",
+      "volume": 7,
+      "libraryIndex": 90,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_091_flow_steward",
+      "canonicalAiId": "ai_v07_091_anchor_guide",
+      "volume": 7,
+      "libraryIndex": 91,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_092_route_matrix",
+      "canonicalAiId": "ai_v07_092_anchor_prime",
+      "volume": 7,
+      "libraryIndex": 92,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_093_vector_mind",
+      "canonicalAiId": "ai_v07_093_convoy_dispatch",
+      "volume": 7,
+      "libraryIndex": 93,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_094_anchor_director",
+      "canonicalAiId": "ai_v07_094_anchor_matrix",
+      "volume": 7,
+      "libraryIndex": 94,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_095_harbor_director",
+      "canonicalAiId": "ai_v07_095_passage_master",
+      "volume": 7,
+      "libraryIndex": 95,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_096_cargo_node",
+      "canonicalAiId": "ai_v07_096_courier_array",
+      "volume": 7,
+      "libraryIndex": 96,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_097_vector_master",
+      "canonicalAiId": "ai_v07_097_flow_engine",
+      "volume": 7,
+      "libraryIndex": 97,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_098_convoy_director",
+      "canonicalAiId": "ai_v07_098_route_guide",
+      "volume": 7,
+      "libraryIndex": 98,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_099_harbor_array",
+      "canonicalAiId": "ai_v07_099_bridge_node",
+      "volume": 7,
+      "libraryIndex": 99,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v07_100_depot_node",
+      "canonicalAiId": "ai_v07_100_portal_nexus",
+      "volume": 7,
+      "libraryIndex": 100,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_001_helios_nexus",
+      "canonicalAiId": "ai_v08_001_panacea_director",
+      "volume": 8,
+      "libraryIndex": 1,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_002_vita_keeper",
+      "canonicalAiId": "ai_v08_002_aesculus_node",
+      "volume": 8,
+      "libraryIndex": 2,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_003_medica_ward",
+      "canonicalAiId": "ai_v08_003_soma_mind",
+      "volume": 8,
+      "libraryIndex": 3,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_004_proteus_nexus",
+      "canonicalAiId": "ai_v08_004_aurora_steward",
+      "volume": 8,
+      "libraryIndex": 4,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_005_gene_prime",
+      "canonicalAiId": "ai_v08_005_renew_core",
+      "volume": 8,
+      "libraryIndex": 5,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_006_lifeline_mind",
+      "canonicalAiId": "ai_v08_006_harmony_core",
+      "volume": 8,
+      "libraryIndex": 6,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_007_solace_array",
+      "canonicalAiId": "ai_v08_007_aurora_ward",
+      "volume": 8,
+      "libraryIndex": 7,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_008_lifeline_ward",
+      "canonicalAiId": "ai_v08_008_serenity_keeper",
+      "volume": 8,
+      "libraryIndex": 8,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_009_vita_node",
+      "canonicalAiId": "ai_v08_009_haven_node",
+      "volume": 8,
+      "libraryIndex": 9,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_010_harmony_engine",
+      "canonicalAiId": "ai_v08_010_vitalis_array",
+      "volume": 8,
+      "libraryIndex": 10,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_011_vitalis_director",
+      "canonicalAiId": "ai_v08_011_helios_core",
+      "volume": 8,
+      "libraryIndex": 11,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_012_medica_matrix",
+      "canonicalAiId": "ai_v08_012_gene_keeper",
+      "volume": 8,
+      "libraryIndex": 12,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_013_cura_prime",
+      "canonicalAiId": "ai_v08_013_panacea_core",
+      "volume": 8,
+      "libraryIndex": 13,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_014_aesculus_array",
+      "canonicalAiId": "ai_v08_014_gene_system",
+      "volume": 8,
+      "libraryIndex": 14,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_015_solace_healer",
+      "canonicalAiId": "ai_v08_015_renew_steward",
+      "volume": 8,
+      "libraryIndex": 15,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_016_serenity_nexus",
+      "canonicalAiId": "ai_v08_016_vitalis_prime",
+      "volume": 8,
+      "libraryIndex": 16,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_017_lifeline_prime",
+      "canonicalAiId": "ai_v08_017_cura_guide",
+      "volume": 8,
+      "libraryIndex": 17,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_018_soma_steward",
+      "canonicalAiId": "ai_v08_018_cura_director",
+      "volume": 8,
+      "libraryIndex": 18,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_019_nurture_engine",
+      "canonicalAiId": "ai_v08_019_vitalis_ward",
+      "volume": 8,
+      "libraryIndex": 19,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_020_harmony_array",
+      "canonicalAiId": "ai_v08_020_proteus_steward",
+      "volume": 8,
+      "libraryIndex": 20,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_021_nurture_healer",
+      "canonicalAiId": "ai_v08_021_proteus_keeper",
+      "volume": 8,
+      "libraryIndex": 21,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_022_aesculus_system",
+      "canonicalAiId": "ai_v08_022_cura_prime",
+      "volume": 8,
+      "libraryIndex": 22,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_023_serenity_keeper",
+      "canonicalAiId": "ai_v08_023_vita_director",
+      "volume": 8,
+      "libraryIndex": 23,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_024_haven_director",
+      "canonicalAiId": "ai_v08_024_vita_guide",
+      "volume": 8,
+      "libraryIndex": 24,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_025_panacea_prime",
+      "canonicalAiId": "ai_v08_025_gene_core",
+      "volume": 8,
+      "libraryIndex": 25,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_026_medica_node",
+      "canonicalAiId": "ai_v08_026_soma_steward",
+      "volume": 8,
+      "libraryIndex": 26,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_027_harmony_nexus",
+      "canonicalAiId": "ai_v08_027_serenity_director",
+      "volume": 8,
+      "libraryIndex": 27,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_028_pulse_guide",
+      "canonicalAiId": "ai_v08_028_serenity_healer",
+      "volume": 8,
+      "libraryIndex": 28,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_029_harmony_ward",
+      "canonicalAiId": "ai_v08_029_care_ward",
+      "volume": 8,
+      "libraryIndex": 29,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_030_harmony_prime",
+      "canonicalAiId": "ai_v08_030_proteus_array",
+      "volume": 8,
+      "libraryIndex": 30,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_031_cura_array",
+      "canonicalAiId": "ai_v08_031_aesculus_nexus",
+      "volume": 8,
+      "libraryIndex": 31,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_032_proteus_guide",
+      "canonicalAiId": "ai_v08_032_lifeline_engine",
+      "volume": 8,
+      "libraryIndex": 32,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_033_vitalis_healer",
+      "canonicalAiId": "ai_v08_033_aurora_array",
+      "volume": 8,
+      "libraryIndex": 33,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_034_panacea_director",
+      "canonicalAiId": "ai_v08_034_soma_engine",
+      "volume": 8,
+      "libraryIndex": 34,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_035_helios_matrix",
+      "canonicalAiId": "ai_v08_035_proteus_ward",
+      "volume": 8,
+      "libraryIndex": 35,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_036_cura_director",
+      "canonicalAiId": "ai_v08_036_helios_array",
+      "volume": 8,
+      "libraryIndex": 36,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_037_aurora_nexus",
+      "canonicalAiId": "ai_v08_037_panacea_guide",
+      "volume": 8,
+      "libraryIndex": 37,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_038_gene_healer",
+      "canonicalAiId": "ai_v08_038_lifeline_prime",
+      "volume": 8,
+      "libraryIndex": 38,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_039_vitalis_core",
+      "canonicalAiId": "ai_v08_039_haven_director",
+      "volume": 8,
+      "libraryIndex": 39,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_040_care_matrix",
+      "canonicalAiId": "ai_v08_040_cura_steward",
+      "volume": 8,
+      "libraryIndex": 40,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_041_helios_array",
+      "canonicalAiId": "ai_v08_041_vitalis_system",
+      "volume": 8,
+      "libraryIndex": 41,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_042_serenity_matrix",
+      "canonicalAiId": "ai_v08_042_cura_system",
+      "volume": 8,
+      "libraryIndex": 42,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_043_aurora_prime",
+      "canonicalAiId": "ai_v08_043_nurture_guide",
+      "volume": 8,
+      "libraryIndex": 43,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_044_panacea_mind",
+      "canonicalAiId": "ai_v08_044_cura_engine",
+      "volume": 8,
+      "libraryIndex": 44,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_045_panacea_guide",
+      "canonicalAiId": "ai_v08_045_aurora_engine",
+      "volume": 8,
+      "libraryIndex": 45,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_046_aurora_core",
+      "canonicalAiId": "ai_v08_046_pulse_prime",
+      "volume": 8,
+      "libraryIndex": 46,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_047_helios_keeper",
+      "canonicalAiId": "ai_v08_047_soma_director",
+      "volume": 8,
+      "libraryIndex": 47,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_048_cura_mind",
+      "canonicalAiId": "ai_v08_048_vita_keeper",
+      "volume": 8,
+      "libraryIndex": 48,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_049_aurora_steward",
+      "canonicalAiId": "ai_v08_049_aurora_node",
+      "volume": 8,
+      "libraryIndex": 49,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_050_proteus_core",
+      "canonicalAiId": "ai_v08_050_renew_array",
+      "volume": 8,
+      "libraryIndex": 50,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_051_renew_prime",
+      "canonicalAiId": "ai_v08_051_care_node",
+      "volume": 8,
+      "libraryIndex": 51,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_052_panacea_matrix",
+      "canonicalAiId": "ai_v08_052_nurture_mind",
+      "volume": 8,
+      "libraryIndex": 52,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_053_solace_node",
+      "canonicalAiId": "ai_v08_053_gene_engine",
+      "volume": 8,
+      "libraryIndex": 53,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_054_care_keeper",
+      "canonicalAiId": "ai_v08_054_harmony_ward",
+      "volume": 8,
+      "libraryIndex": 54,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_055_proteus_system",
+      "canonicalAiId": "ai_v08_055_medica_core",
+      "volume": 8,
+      "libraryIndex": 55,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_056_renew_engine",
+      "canonicalAiId": "ai_v08_056_care_prime",
+      "volume": 8,
+      "libraryIndex": 56,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_057_soma_matrix",
+      "canonicalAiId": "ai_v08_057_harmony_keeper",
+      "volume": 8,
+      "libraryIndex": 57,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_058_care_director",
+      "canonicalAiId": "ai_v08_058_lifeline_array",
+      "volume": 8,
+      "libraryIndex": 58,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_059_serenity_engine",
+      "canonicalAiId": "ai_v08_059_solace_matrix",
+      "volume": 8,
+      "libraryIndex": 59,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_060_vitalis_keeper",
+      "canonicalAiId": "ai_v08_060_helios_prime",
+      "volume": 8,
+      "libraryIndex": 60,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_061_cura_system",
+      "canonicalAiId": "ai_v08_061_lifeline_steward",
+      "volume": 8,
+      "libraryIndex": 61,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_062_proteus_engine",
+      "canonicalAiId": "ai_v08_062_medica_engine",
+      "volume": 8,
+      "libraryIndex": 62,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_063_harmony_steward",
+      "canonicalAiId": "ai_v08_063_vita_node",
+      "volume": 8,
+      "libraryIndex": 63,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_064_gene_ward",
+      "canonicalAiId": "ai_v08_064_harmony_prime",
+      "volume": 8,
+      "libraryIndex": 64,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_065_aurora_healer",
+      "canonicalAiId": "ai_v08_065_care_keeper",
+      "volume": 8,
+      "libraryIndex": 65,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_066_helios_ward",
+      "canonicalAiId": "ai_v08_066_soma_nexus",
+      "volume": 8,
+      "libraryIndex": 66,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_067_medica_guide",
+      "canonicalAiId": "ai_v08_067_renew_mind",
+      "volume": 8,
+      "libraryIndex": 67,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_068_vitalis_array",
+      "canonicalAiId": "ai_v08_068_medica_healer",
+      "volume": 8,
+      "libraryIndex": 68,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_069_pulse_system",
+      "canonicalAiId": "ai_v08_069_vita_array",
+      "volume": 8,
+      "libraryIndex": 69,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_070_aurora_matrix",
+      "canonicalAiId": "ai_v08_070_vitalis_core",
+      "volume": 8,
+      "libraryIndex": 70,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_071_vita_core",
+      "canonicalAiId": "ai_v08_071_pulse_node",
+      "volume": 8,
+      "libraryIndex": 71,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_072_vita_healer",
+      "canonicalAiId": "ai_v08_072_care_nexus",
+      "volume": 8,
+      "libraryIndex": 72,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_073_cura_engine",
+      "canonicalAiId": "ai_v08_073_haven_mind",
+      "volume": 8,
+      "libraryIndex": 73,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_074_serenity_steward",
+      "canonicalAiId": "ai_v08_074_helios_ward",
+      "volume": 8,
+      "libraryIndex": 74,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_075_gene_mind",
+      "canonicalAiId": "ai_v08_075_soma_healer",
+      "volume": 8,
+      "libraryIndex": 75,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_076_renew_director",
+      "canonicalAiId": "ai_v08_076_pulse_array",
+      "volume": 8,
+      "libraryIndex": 76,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_077_soma_system",
+      "canonicalAiId": "ai_v08_077_vitalis_steward",
+      "volume": 8,
+      "libraryIndex": 77,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_078_serenity_array",
+      "canonicalAiId": "ai_v08_078_vitalis_engine",
+      "volume": 8,
+      "libraryIndex": 78,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_079_panacea_nexus",
+      "canonicalAiId": "ai_v08_079_nurture_steward",
+      "volume": 8,
+      "libraryIndex": 79,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_080_medica_prime",
+      "canonicalAiId": "ai_v08_080_haven_matrix",
+      "volume": 8,
+      "libraryIndex": 80,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_081_panacea_array",
+      "canonicalAiId": "ai_v08_081_pulse_mind",
+      "volume": 8,
+      "libraryIndex": 81,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_082_care_node",
+      "canonicalAiId": "ai_v08_082_vitalis_nexus",
+      "volume": 8,
+      "libraryIndex": 82,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_083_aesculus_ward",
+      "canonicalAiId": "ai_v08_083_gene_healer",
+      "volume": 8,
+      "libraryIndex": 83,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_084_aesculus_guide",
+      "canonicalAiId": "ai_v08_084_aesculus_ward",
+      "volume": 8,
+      "libraryIndex": 84,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_085_vitalis_matrix",
+      "canonicalAiId": "ai_v08_085_gene_ward",
+      "volume": 8,
+      "libraryIndex": 85,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_086_medica_keeper",
+      "canonicalAiId": "ai_v08_086_harmony_director",
+      "volume": 8,
+      "libraryIndex": 86,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_087_proteus_keeper",
+      "canonicalAiId": "ai_v08_087_proteus_guide",
+      "volume": 8,
+      "libraryIndex": 87,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_088_lifeline_system",
+      "canonicalAiId": "ai_v08_088_gene_mind",
+      "volume": 8,
+      "libraryIndex": 88,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_089_soma_guide",
+      "canonicalAiId": "ai_v08_089_nurture_node",
+      "volume": 8,
+      "libraryIndex": 89,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_090_solace_guide",
+      "canonicalAiId": "ai_v08_090_care_director",
+      "volume": 8,
+      "libraryIndex": 90,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_091_aesculus_director",
+      "canonicalAiId": "ai_v08_091_lifeline_node",
+      "volume": 8,
+      "libraryIndex": 91,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_092_vitalis_mind",
+      "canonicalAiId": "ai_v08_092_vita_healer",
+      "volume": 8,
+      "libraryIndex": 92,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_093_haven_prime",
+      "canonicalAiId": "ai_v08_093_aesculus_guide",
+      "volume": 8,
+      "libraryIndex": 93,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_094_helios_director",
+      "canonicalAiId": "ai_v08_094_pulse_core",
+      "volume": 8,
+      "libraryIndex": 94,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_095_serenity_mind",
+      "canonicalAiId": "ai_v08_095_panacea_healer",
+      "volume": 8,
+      "libraryIndex": 95,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_096_vita_guide",
+      "canonicalAiId": "ai_v08_096_proteus_nexus",
+      "volume": 8,
+      "libraryIndex": 96,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_097_harmony_mind",
+      "canonicalAiId": "ai_v08_097_nurture_nexus",
+      "volume": 8,
+      "libraryIndex": 97,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_098_vita_mind",
+      "canonicalAiId": "ai_v08_098_haven_ward",
+      "volume": 8,
+      "libraryIndex": 98,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_099_gene_core",
+      "canonicalAiId": "ai_v08_099_nurture_system",
+      "volume": 8,
+      "libraryIndex": 99,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v08_100_pulse_ward",
+      "canonicalAiId": "ai_v08_100_renew_matrix",
+      "volume": 8,
+      "libraryIndex": 100,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_001_mandate_node",
+      "canonicalAiId": "ai_v09_001_crown_prime",
+      "volume": 9,
+      "libraryIndex": 1,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_002_balance_engine",
+      "canonicalAiId": "ai_v09_002_vigil_system",
+      "volume": 9,
+      "libraryIndex": 2,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_003_council_node",
+      "canonicalAiId": "ai_v09_003_civic_prime",
+      "volume": 9,
+      "libraryIndex": 3,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_004_forum_governor",
+      "canonicalAiId": "ai_v09_004_civitas_council",
+      "volume": 9,
+      "libraryIndex": 4,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_005_regent_engine",
+      "canonicalAiId": "ai_v09_005_vigil_council",
+      "volume": 9,
+      "libraryIndex": 5,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_006_aurelia_steward",
+      "canonicalAiId": "ai_v09_006_aurelia_matrix",
+      "volume": 9,
+      "libraryIndex": 6,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_007_council_engine",
+      "canonicalAiId": "ai_v09_007_union_core",
+      "volume": 9,
+      "libraryIndex": 7,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_008_quorum_archive",
+      "canonicalAiId": "ai_v09_008_council_steward",
+      "volume": 9,
+      "libraryIndex": 8,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_009_civitas_governor",
+      "canonicalAiId": "ai_v09_009_charter_voice",
+      "volume": 9,
+      "libraryIndex": 9,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_010_forum_prime",
+      "canonicalAiId": "ai_v09_010_civitas_prime",
+      "volume": 9,
+      "libraryIndex": 10,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_011_census_prime",
+      "canonicalAiId": "ai_v09_011_forum_keeper",
+      "volume": 9,
+      "libraryIndex": 11,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_012_order_keeper",
+      "canonicalAiId": "ai_v09_012_balance_director",
+      "volume": 9,
+      "libraryIndex": 12,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_013_vigil_mind",
+      "canonicalAiId": "ai_v09_013_pact_node",
+      "volume": 9,
+      "libraryIndex": 13,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_014_sentinel_voice",
+      "canonicalAiId": "ai_v09_014_vigil_nexus",
+      "volume": 9,
+      "libraryIndex": 14,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_015_order_steward",
+      "canonicalAiId": "ai_v09_015_quorum_keeper",
+      "volume": 9,
+      "libraryIndex": 15,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_016_order_matrix",
+      "canonicalAiId": "ai_v09_016_vigil_matrix",
+      "volume": 9,
+      "libraryIndex": 16,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_017_union_system",
+      "canonicalAiId": "ai_v09_017_regent_matrix",
+      "volume": 9,
+      "libraryIndex": 17,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_018_pact_node",
+      "canonicalAiId": "ai_v09_018_census_matrix",
+      "volume": 9,
+      "libraryIndex": 18,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_019_praxis_core",
+      "canonicalAiId": "ai_v09_019_crown_core",
+      "volume": 9,
+      "libraryIndex": 19,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_020_vigil_council",
+      "canonicalAiId": "ai_v09_020_civic_council",
+      "volume": 9,
+      "libraryIndex": 20,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_021_charter_archive",
+      "canonicalAiId": "ai_v09_021_balance_voice",
+      "volume": 9,
+      "libraryIndex": 21,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_022_council_steward",
+      "canonicalAiId": "ai_v09_022_charter_system",
+      "volume": 9,
+      "libraryIndex": 22,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_023_pact_matrix",
+      "canonicalAiId": "ai_v09_023_sentinel_council",
+      "volume": 9,
+      "libraryIndex": 23,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_024_aurelia_keeper",
+      "canonicalAiId": "ai_v09_024_charter_matrix",
+      "volume": 9,
+      "libraryIndex": 24,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_025_census_archive",
+      "canonicalAiId": "ai_v09_025_crown_council",
+      "volume": 9,
+      "libraryIndex": 25,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_026_council_matrix",
+      "canonicalAiId": "ai_v09_026_civitas_archive",
+      "volume": 9,
+      "libraryIndex": 26,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_027_civitas_system",
+      "canonicalAiId": "ai_v09_027_order_matrix",
+      "volume": 9,
+      "libraryIndex": 27,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_028_praxis_governor",
+      "canonicalAiId": "ai_v09_028_aurelia_system",
+      "volume": 9,
+      "libraryIndex": 28,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_029_quorum_governor",
+      "canonicalAiId": "ai_v09_029_concord_director",
+      "volume": 9,
+      "libraryIndex": 29,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_030_council_nexus",
+      "canonicalAiId": "ai_v09_030_aurelia_keeper",
+      "volume": 9,
+      "libraryIndex": 30,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_031_union_core",
+      "canonicalAiId": "ai_v09_031_civitas_steward",
+      "volume": 9,
+      "libraryIndex": 31,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_032_aurelia_governor",
+      "canonicalAiId": "ai_v09_032_sentinel_keeper",
+      "volume": 9,
+      "libraryIndex": 32,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_033_pact_engine",
+      "canonicalAiId": "ai_v09_033_regent_director",
+      "volume": 9,
+      "libraryIndex": 33,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_034_balance_steward",
+      "canonicalAiId": "ai_v09_034_order_voice",
+      "volume": 9,
+      "libraryIndex": 34,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_035_census_matrix",
+      "canonicalAiId": "ai_v09_035_steward_voice",
+      "volume": 9,
+      "libraryIndex": 35,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_036_quorum_council",
+      "canonicalAiId": "ai_v09_036_order_archive",
+      "volume": 9,
+      "libraryIndex": 36,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_037_civitas_core",
+      "canonicalAiId": "ai_v09_037_mandate_matrix",
+      "volume": 9,
+      "libraryIndex": 37,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_038_regent_council",
+      "canonicalAiId": "ai_v09_038_steward_system",
+      "volume": 9,
+      "libraryIndex": 38,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_039_charter_prime",
+      "canonicalAiId": "ai_v09_039_pact_director",
+      "volume": 9,
+      "libraryIndex": 39,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_040_order_director",
+      "canonicalAiId": "ai_v09_040_crown_nexus",
+      "volume": 9,
+      "libraryIndex": 40,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_041_aurelia_core",
+      "canonicalAiId": "ai_v09_041_mandate_node",
+      "volume": 9,
+      "libraryIndex": 41,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_042_census_voice",
+      "canonicalAiId": "ai_v09_042_quorum_system",
+      "volume": 9,
+      "libraryIndex": 42,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_043_pact_nexus",
+      "canonicalAiId": "ai_v09_043_regent_prime",
+      "volume": 9,
+      "libraryIndex": 43,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_044_balance_nexus",
+      "canonicalAiId": "ai_v09_044_steward_prime",
+      "volume": 9,
+      "libraryIndex": 44,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_045_praxis_voice",
+      "canonicalAiId": "ai_v09_045_balance_council",
+      "volume": 9,
+      "libraryIndex": 45,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_046_balance_keeper",
+      "canonicalAiId": "ai_v09_046_crown_mind",
+      "volume": 9,
+      "libraryIndex": 46,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_047_civitas_matrix",
+      "canonicalAiId": "ai_v09_047_mandate_voice",
+      "volume": 9,
+      "libraryIndex": 47,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_048_praxis_keeper",
+      "canonicalAiId": "ai_v09_048_forum_director",
+      "volume": 9,
+      "libraryIndex": 48,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_049_order_system",
+      "canonicalAiId": "ai_v09_049_praxis_archive",
+      "volume": 9,
+      "libraryIndex": 49,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_050_charter_core",
+      "canonicalAiId": "ai_v09_050_aurelia_governor",
+      "volume": 9,
+      "libraryIndex": 50,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_051_aurelia_prime",
+      "canonicalAiId": "ai_v09_051_census_core",
+      "volume": 9,
+      "libraryIndex": 51,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_052_sentinel_system",
+      "canonicalAiId": "ai_v09_052_order_nexus",
+      "volume": 9,
+      "libraryIndex": 52,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_053_quorum_engine",
+      "canonicalAiId": "ai_v09_053_regent_governor",
+      "volume": 9,
+      "libraryIndex": 53,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_054_praxis_node",
+      "canonicalAiId": "ai_v09_054_pact_matrix",
+      "volume": 9,
+      "libraryIndex": 54,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_055_crown_nexus",
+      "canonicalAiId": "ai_v09_055_crown_archive",
+      "volume": 9,
+      "libraryIndex": 55,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_056_civic_engine",
+      "canonicalAiId": "ai_v09_056_aurelia_core",
+      "volume": 9,
+      "libraryIndex": 56,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_057_order_nexus",
+      "canonicalAiId": "ai_v09_057_quorum_governor",
+      "volume": 9,
+      "libraryIndex": 57,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_058_praxis_engine",
+      "canonicalAiId": "ai_v09_058_forum_mind",
+      "volume": 9,
+      "libraryIndex": 58,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_059_concord_keeper",
+      "canonicalAiId": "ai_v09_059_order_node",
+      "volume": 9,
+      "libraryIndex": 59,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_060_praxis_director",
+      "canonicalAiId": "ai_v09_060_mandate_director",
+      "volume": 9,
+      "libraryIndex": 60,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_061_praxis_system",
+      "canonicalAiId": "ai_v09_061_vigil_keeper",
+      "volume": 9,
+      "libraryIndex": 61,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_062_aurelia_engine",
+      "canonicalAiId": "ai_v09_062_forum_voice",
+      "volume": 9,
+      "libraryIndex": 62,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_063_regent_keeper",
+      "canonicalAiId": "ai_v09_063_aurelia_voice",
+      "volume": 9,
+      "libraryIndex": 63,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_064_forum_keeper",
+      "canonicalAiId": "ai_v09_064_pact_system",
+      "volume": 9,
+      "libraryIndex": 64,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_065_concord_node",
+      "canonicalAiId": "ai_v09_065_union_mind",
+      "volume": 9,
+      "libraryIndex": 65,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_066_crown_node",
+      "canonicalAiId": "ai_v09_066_council_system",
+      "volume": 9,
+      "libraryIndex": 66,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_067_balance_voice",
+      "canonicalAiId": "ai_v09_067_charter_mind",
+      "volume": 9,
+      "libraryIndex": 67,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_068_vigil_engine",
+      "canonicalAiId": "ai_v09_068_order_system",
+      "volume": 9,
+      "libraryIndex": 68,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_069_order_governor",
+      "canonicalAiId": "ai_v09_069_balance_governor",
+      "volume": 9,
+      "libraryIndex": 69,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_070_crown_council",
+      "canonicalAiId": "ai_v09_070_concord_archive",
+      "volume": 9,
+      "libraryIndex": 70,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_071_regent_node",
+      "canonicalAiId": "ai_v09_071_council_voice",
+      "volume": 9,
+      "libraryIndex": 71,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_072_forum_matrix",
+      "canonicalAiId": "ai_v09_072_charter_council",
+      "volume": 9,
+      "libraryIndex": 72,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_073_union_prime",
+      "canonicalAiId": "ai_v09_073_vigil_engine",
+      "volume": 9,
+      "libraryIndex": 73,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_074_regent_mind",
+      "canonicalAiId": "ai_v09_074_civic_engine",
+      "volume": 9,
+      "libraryIndex": 74,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_075_census_governor",
+      "canonicalAiId": "ai_v09_075_balance_steward",
+      "volume": 9,
+      "libraryIndex": 75,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_076_crown_governor",
+      "canonicalAiId": "ai_v09_076_order_core",
+      "volume": 9,
+      "libraryIndex": 76,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_077_forum_director",
+      "canonicalAiId": "ai_v09_077_aurelia_engine",
+      "volume": 9,
+      "libraryIndex": 77,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_078_crown_keeper",
+      "canonicalAiId": "ai_v09_078_regent_system",
+      "volume": 9,
+      "libraryIndex": 78,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_079_regent_steward",
+      "canonicalAiId": "ai_v09_079_sentinel_core",
+      "volume": 9,
+      "libraryIndex": 79,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_080_civitas_node",
+      "canonicalAiId": "ai_v09_080_sentinel_system",
+      "volume": 9,
+      "libraryIndex": 80,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_081_civitas_archive",
+      "canonicalAiId": "ai_v09_081_praxis_keeper",
+      "volume": 9,
+      "libraryIndex": 81,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_082_vigil_nexus",
+      "canonicalAiId": "ai_v09_082_union_archive",
+      "volume": 9,
+      "libraryIndex": 82,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_083_mandate_nexus",
+      "canonicalAiId": "ai_v09_083_charter_director",
+      "volume": 9,
+      "libraryIndex": 83,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_084_crown_system",
+      "canonicalAiId": "ai_v09_084_regent_engine",
+      "volume": 9,
+      "libraryIndex": 84,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_085_aurelia_archive",
+      "canonicalAiId": "ai_v09_085_civic_mind",
+      "volume": 9,
+      "libraryIndex": 85,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_086_pact_system",
+      "canonicalAiId": "ai_v09_086_mandate_governor",
+      "volume": 9,
+      "libraryIndex": 86,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_087_mandate_matrix",
+      "canonicalAiId": "ai_v09_087_pact_council",
+      "volume": 9,
+      "libraryIndex": 87,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_088_civic_archive",
+      "canonicalAiId": "ai_v09_088_quorum_mind",
+      "volume": 9,
+      "libraryIndex": 88,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_089_pact_steward",
+      "canonicalAiId": "ai_v09_089_council_keeper",
+      "volume": 9,
+      "libraryIndex": 89,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_090_balance_core",
+      "canonicalAiId": "ai_v09_090_aurelia_council",
+      "volume": 9,
+      "libraryIndex": 90,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_091_charter_nexus",
+      "canonicalAiId": "ai_v09_091_regent_keeper",
+      "volume": 9,
+      "libraryIndex": 91,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_092_pact_mind",
+      "canonicalAiId": "ai_v09_092_mandate_keeper",
+      "volume": 9,
+      "libraryIndex": 92,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_093_mandate_archive",
+      "canonicalAiId": "ai_v09_093_charter_steward",
+      "volume": 9,
+      "libraryIndex": 93,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_094_vigil_core",
+      "canonicalAiId": "ai_v09_094_crown_keeper",
+      "volume": 9,
+      "libraryIndex": 94,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_095_mandate_mind",
+      "canonicalAiId": "ai_v09_095_pact_voice",
+      "volume": 9,
+      "libraryIndex": 95,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_096_council_governor",
+      "canonicalAiId": "ai_v09_096_mandate_steward",
+      "volume": 9,
+      "libraryIndex": 96,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_097_steward_voice",
+      "canonicalAiId": "ai_v09_097_pact_core",
+      "volume": 9,
+      "libraryIndex": 97,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_098_council_mind",
+      "canonicalAiId": "ai_v09_098_union_node",
+      "volume": 9,
+      "libraryIndex": 98,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_099_pact_director",
+      "canonicalAiId": "ai_v09_099_forum_core",
+      "volume": 9,
+      "libraryIndex": 99,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v09_100_union_archive",
+      "canonicalAiId": "ai_v09_100_mandate_archive",
+      "volume": 9,
+      "libraryIndex": 100,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_001_root_keeper",
+      "canonicalAiId": "ai_v10_001_delta_mind",
+      "volume": 10,
+      "libraryIndex": 1,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_002_eco_warden",
+      "canonicalAiId": "ai_v10_002_gaia_node",
+      "volume": 10,
+      "libraryIndex": 2,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_003_atmos_keeper",
+      "canonicalAiId": "ai_v10_003_canopy_matrix",
+      "volume": 10,
+      "libraryIndex": 3,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_004_hydra_warden",
+      "canonicalAiId": "ai_v10_004_delta_prime",
+      "volume": 10,
+      "libraryIndex": 4,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_005_biome_keeper",
+      "canonicalAiId": "ai_v10_005_canopy_nexus",
+      "volume": 10,
+      "libraryIndex": 5,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_006_nimbus_node",
+      "canonicalAiId": "ai_v10_006_biome_array",
+      "volume": 10,
+      "libraryIndex": 6,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_007_climate_system",
+      "canonicalAiId": "ai_v10_007_eco_steward",
+      "volume": 10,
+      "libraryIndex": 7,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_008_ocean_core",
+      "canonicalAiId": "ai_v10_008_terra_nexus",
+      "volume": 10,
+      "libraryIndex": 8,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_009_climate_engine",
+      "canonicalAiId": "ai_v10_009_delta_matrix",
+      "volume": 10,
+      "libraryIndex": 9,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_010_eden_keeper",
+      "canonicalAiId": "ai_v10_010_gaia_array",
+      "volume": 10,
+      "libraryIndex": 10,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_011_terra_system",
+      "canonicalAiId": "ai_v10_011_nimbus_guide",
+      "volume": 10,
+      "libraryIndex": 11,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_012_atmos_guide",
+      "canonicalAiId": "ai_v10_012_aurora_steward",
+      "volume": 10,
+      "libraryIndex": 12,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_013_gaia_gardener",
+      "canonicalAiId": "ai_v10_013_eden_system",
+      "volume": 10,
+      "libraryIndex": 13,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_014_terra_keeper",
+      "canonicalAiId": "ai_v10_014_eden_matrix",
+      "volume": 10,
+      "libraryIndex": 14,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_015_gaia_nexus",
+      "canonicalAiId": "ai_v10_015_ocean_steward",
+      "volume": 10,
+      "libraryIndex": 15,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_016_root_director",
+      "canonicalAiId": "ai_v10_016_atmos_core",
+      "volume": 10,
+      "libraryIndex": 16,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_017_gaia_mind",
+      "canonicalAiId": "ai_v10_017_nimbus_warden",
+      "volume": 10,
+      "libraryIndex": 17,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_018_eden_node",
+      "canonicalAiId": "ai_v10_018_ocean_warden",
+      "volume": 10,
+      "libraryIndex": 18,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_019_river_node",
+      "canonicalAiId": "ai_v10_019_verdant_core",
+      "volume": 10,
+      "libraryIndex": 19,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_020_root_steward",
+      "canonicalAiId": "ai_v10_020_river_warden",
+      "volume": 10,
+      "libraryIndex": 20,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_021_nimbus_keeper",
+      "canonicalAiId": "ai_v10_021_aurora_nexus",
+      "volume": 10,
+      "libraryIndex": 21,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_022_gaia_prime",
+      "canonicalAiId": "ai_v10_022_biome_node",
+      "volume": 10,
+      "libraryIndex": 22,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_023_nimbus_matrix",
+      "canonicalAiId": "ai_v10_023_ocean_nexus",
+      "volume": 10,
+      "libraryIndex": 23,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_024_monsoon_steward",
+      "canonicalAiId": "ai_v10_024_atmos_steward",
+      "volume": 10,
+      "libraryIndex": 24,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_025_eco_steward",
+      "canonicalAiId": "ai_v10_025_canopy_director",
+      "volume": 10,
+      "libraryIndex": 25,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_026_aurora_nexus",
+      "canonicalAiId": "ai_v10_026_root_mind",
+      "volume": 10,
+      "libraryIndex": 26,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_027_verdant_warden",
+      "canonicalAiId": "ai_v10_027_biome_prime",
+      "volume": 10,
+      "libraryIndex": 27,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_028_verdant_keeper",
+      "canonicalAiId": "ai_v10_028_terra_matrix",
+      "volume": 10,
+      "libraryIndex": 28,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_029_aurora_core",
+      "canonicalAiId": "ai_v10_029_root_matrix",
+      "volume": 10,
+      "libraryIndex": 29,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_030_aether_array",
+      "canonicalAiId": "ai_v10_030_nimbus_node",
+      "volume": 10,
+      "libraryIndex": 30,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_031_nimbus_steward",
+      "canonicalAiId": "ai_v10_031_hydra_nexus",
+      "volume": 10,
+      "libraryIndex": 31,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_032_eco_keeper",
+      "canonicalAiId": "ai_v10_032_terra_mind",
+      "volume": 10,
+      "libraryIndex": 32,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_033_biome_engine",
+      "canonicalAiId": "ai_v10_033_nimbus_engine",
+      "volume": 10,
+      "libraryIndex": 33,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_034_terra_nexus",
+      "canonicalAiId": "ai_v10_034_monsoon_mind",
+      "volume": 10,
+      "libraryIndex": 34,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_035_terra_node",
+      "canonicalAiId": "ai_v10_035_aqua_system",
+      "volume": 10,
+      "libraryIndex": 35,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_036_root_warden",
+      "canonicalAiId": "ai_v10_036_delta_guide",
+      "volume": 10,
+      "libraryIndex": 36,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_037_solaris_director",
+      "canonicalAiId": "ai_v10_037_eden_director",
+      "volume": 10,
+      "libraryIndex": 37,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_038_climate_array",
+      "canonicalAiId": "ai_v10_038_terra_prime",
+      "volume": 10,
+      "libraryIndex": 38,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_039_aurora_warden",
+      "canonicalAiId": "ai_v10_039_root_keeper",
+      "volume": 10,
+      "libraryIndex": 39,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_040_eden_system",
+      "canonicalAiId": "ai_v10_040_monsoon_steward",
+      "volume": 10,
+      "libraryIndex": 40,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_041_delta_gardener",
+      "canonicalAiId": "ai_v10_041_ocean_engine",
+      "volume": 10,
+      "libraryIndex": 41,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_042_eden_mind",
+      "canonicalAiId": "ai_v10_042_aqua_gardener",
+      "volume": 10,
+      "libraryIndex": 42,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_043_terra_core",
+      "canonicalAiId": "ai_v10_043_atmos_matrix",
+      "volume": 10,
+      "libraryIndex": 43,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_044_delta_guide",
+      "canonicalAiId": "ai_v10_044_gaia_engine",
+      "volume": 10,
+      "libraryIndex": 44,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_045_nimbus_system",
+      "canonicalAiId": "ai_v10_045_river_matrix",
+      "volume": 10,
+      "libraryIndex": 45,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_046_terra_matrix",
+      "canonicalAiId": "ai_v10_046_hydra_system",
+      "volume": 10,
+      "libraryIndex": 46,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_047_biome_nexus",
+      "canonicalAiId": "ai_v10_047_aurora_warden",
+      "volume": 10,
+      "libraryIndex": 47,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_048_river_system",
+      "canonicalAiId": "ai_v10_048_verdant_warden",
+      "volume": 10,
+      "libraryIndex": 48,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_049_ocean_warden",
+      "canonicalAiId": "ai_v10_049_eco_array",
+      "volume": 10,
+      "libraryIndex": 49,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_050_aqua_matrix",
+      "canonicalAiId": "ai_v10_050_terra_array",
+      "volume": 10,
+      "libraryIndex": 50,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_051_monsoon_director",
+      "canonicalAiId": "ai_v10_051_gaia_nexus",
+      "volume": 10,
+      "libraryIndex": 51,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_052_solaris_mind",
+      "canonicalAiId": "ai_v10_052_canopy_engine",
+      "volume": 10,
+      "libraryIndex": 52,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_053_atmos_mind",
+      "canonicalAiId": "ai_v10_053_terra_system",
+      "volume": 10,
+      "libraryIndex": 53,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_054_eden_gardener",
+      "canonicalAiId": "ai_v10_054_canopy_steward",
+      "volume": 10,
+      "libraryIndex": 54,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_055_verdant_director",
+      "canonicalAiId": "ai_v10_055_delta_core",
+      "volume": 10,
+      "libraryIndex": 55,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_056_nimbus_array",
+      "canonicalAiId": "ai_v10_056_river_system",
+      "volume": 10,
+      "libraryIndex": 56,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_057_eden_prime",
+      "canonicalAiId": "ai_v10_057_solaris_prime",
+      "volume": 10,
+      "libraryIndex": 57,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_058_root_nexus",
+      "canonicalAiId": "ai_v10_058_delta_keeper",
+      "volume": 10,
+      "libraryIndex": 58,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_059_root_mind",
+      "canonicalAiId": "ai_v10_059_eco_core",
+      "volume": 10,
+      "libraryIndex": 59,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_060_aether_mind",
+      "canonicalAiId": "ai_v10_060_atmos_gardener",
+      "volume": 10,
+      "libraryIndex": 60,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_061_solaris_core",
+      "canonicalAiId": "ai_v10_061_eden_keeper",
+      "volume": 10,
+      "libraryIndex": 61,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_062_atmos_array",
+      "canonicalAiId": "ai_v10_062_hydra_core",
+      "volume": 10,
+      "libraryIndex": 62,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_063_ocean_director",
+      "canonicalAiId": "ai_v10_063_root_system",
+      "volume": 10,
+      "libraryIndex": 63,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_064_aurora_gardener",
+      "canonicalAiId": "ai_v10_064_aether_prime",
+      "volume": 10,
+      "libraryIndex": 64,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_065_gaia_director",
+      "canonicalAiId": "ai_v10_065_terra_guide",
+      "volume": 10,
+      "libraryIndex": 65,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_066_canopy_engine",
+      "canonicalAiId": "ai_v10_066_hydra_warden",
+      "volume": 10,
+      "libraryIndex": 66,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_067_eden_nexus",
+      "canonicalAiId": "ai_v10_067_river_guide",
+      "volume": 10,
+      "libraryIndex": 67,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_068_root_node",
+      "canonicalAiId": "ai_v10_068_delta_director",
+      "volume": 10,
+      "libraryIndex": 68,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_069_biome_gardener",
+      "canonicalAiId": "ai_v10_069_canopy_mind",
+      "volume": 10,
+      "libraryIndex": 69,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_070_gaia_matrix",
+      "canonicalAiId": "ai_v10_070_biome_warden",
+      "volume": 10,
+      "libraryIndex": 70,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_071_atmos_engine",
+      "canonicalAiId": "ai_v10_071_nimbus_system",
+      "volume": 10,
+      "libraryIndex": 71,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_072_delta_prime",
+      "canonicalAiId": "ai_v10_072_aether_matrix",
+      "volume": 10,
+      "libraryIndex": 72,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_073_river_mind",
+      "canonicalAiId": "ai_v10_073_verdant_nexus",
+      "volume": 10,
+      "libraryIndex": 73,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_074_delta_engine",
+      "canonicalAiId": "ai_v10_074_aurora_guide",
+      "volume": 10,
+      "libraryIndex": 74,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_075_aurora_system",
+      "canonicalAiId": "ai_v10_075_eco_node",
+      "volume": 10,
+      "libraryIndex": 75,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_076_verdant_system",
+      "canonicalAiId": "ai_v10_076_root_warden",
+      "volume": 10,
+      "libraryIndex": 76,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_077_hydra_director",
+      "canonicalAiId": "ai_v10_077_biome_mind",
+      "volume": 10,
+      "libraryIndex": 77,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_078_aether_engine",
+      "canonicalAiId": "ai_v10_078_nimbus_director",
+      "volume": 10,
+      "libraryIndex": 78,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_079_monsoon_guide",
+      "canonicalAiId": "ai_v10_079_aurora_engine",
+      "volume": 10,
+      "libraryIndex": 79,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_080_gaia_keeper",
+      "canonicalAiId": "ai_v10_080_nimbus_keeper",
+      "volume": 10,
+      "libraryIndex": 80,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_081_eco_core",
+      "canonicalAiId": "ai_v10_081_aether_system",
+      "volume": 10,
+      "libraryIndex": 81,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_082_nimbus_engine",
+      "canonicalAiId": "ai_v10_082_monsoon_warden",
+      "volume": 10,
+      "libraryIndex": 82,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_083_aether_node",
+      "canonicalAiId": "ai_v10_083_aurora_prime",
+      "volume": 10,
+      "libraryIndex": 83,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_084_climate_mind",
+      "canonicalAiId": "ai_v10_084_eco_nexus",
+      "volume": 10,
+      "libraryIndex": 84,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_085_atmos_matrix",
+      "canonicalAiId": "ai_v10_085_aether_nexus",
+      "volume": 10,
+      "libraryIndex": 85,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_086_hydra_matrix",
+      "canonicalAiId": "ai_v10_086_river_prime",
+      "volume": 10,
+      "libraryIndex": 86,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_087_gaia_steward",
+      "canonicalAiId": "ai_v10_087_aqua_director",
+      "volume": 10,
+      "libraryIndex": 87,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_088_verdant_core",
+      "canonicalAiId": "ai_v10_088_biome_steward",
+      "volume": 10,
+      "libraryIndex": 88,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_089_terra_guide",
+      "canonicalAiId": "ai_v10_089_terra_keeper",
+      "volume": 10,
+      "libraryIndex": 89,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_090_gaia_engine",
+      "canonicalAiId": "ai_v10_090_nimbus_matrix",
+      "volume": 10,
+      "libraryIndex": 90,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_091_river_keeper",
+      "canonicalAiId": "ai_v10_091_verdant_steward",
+      "volume": 10,
+      "libraryIndex": 91,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_092_delta_array",
+      "canonicalAiId": "ai_v10_092_biome_gardener",
+      "volume": 10,
+      "libraryIndex": 92,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_093_climate_node",
+      "canonicalAiId": "ai_v10_093_canopy_gardener",
+      "volume": 10,
+      "libraryIndex": 93,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_094_aether_system",
+      "canonicalAiId": "ai_v10_094_gaia_steward",
+      "volume": 10,
+      "libraryIndex": 94,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_095_aqua_engine",
+      "canonicalAiId": "ai_v10_095_aurora_matrix",
+      "volume": 10,
+      "libraryIndex": 95,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_096_aurora_matrix",
+      "canonicalAiId": "ai_v10_096_eco_gardener",
+      "volume": 10,
+      "libraryIndex": 96,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_097_biome_warden",
+      "canonicalAiId": "ai_v10_097_aether_engine",
+      "volume": 10,
+      "libraryIndex": 97,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_098_atmos_warden",
+      "canonicalAiId": "ai_v10_098_delta_system",
+      "volume": 10,
+      "libraryIndex": 98,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_099_ocean_mind",
+      "canonicalAiId": "ai_v10_099_climate_nexus",
+      "volume": 10,
+      "libraryIndex": 99,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    },
+    {
+      "legacyAiId": "ai_v10_100_nimbus_nexus",
+      "canonicalAiId": "ai_v10_100_gaia_system",
+      "volume": 10,
+      "libraryIndex": 100,
+      "migrationReason": "Pack B schema 1.2.0 rebuild"
+    }
+  ]
+}
