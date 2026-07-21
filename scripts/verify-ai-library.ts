@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { aiLibraryCategories, aiLibraryRarities, canonicalAiLibraryAgents, validateCanonicalAiLibrary } from "../lib/ai-agents/foundations";
+import { aiLibraryCategories, aiLibraryLegacyIdMigrations, aiLibraryRarities, canonicalAiLibraryAgents, resolveCanonicalAiLibraryId, validateCanonicalAiLibrary } from "../lib/ai-agents/foundations";
 import { buildGameEngineExport, type EngineTarget } from "../lib/export/game-engine";
 import { buildCanonicalRuntimeExportPayload, buildRobloxRuntimePayload, validateGameRuntimeData, validateRobloxRuntimePayload } from "../lib/runtime/game-runtime";
 
@@ -14,22 +14,23 @@ async function main() {
   assert(canonicalAiLibraryAgents.length === 1000, "AI Library Volumes I-X must contain 1,000 agents.");
   assert(Math.min(...canonicalAiLibraryAgents.map((agent) => agent.max_level)) === 40 && Math.max(...canonicalAiLibraryAgents.map((agent) => agent.max_level)) === 150, "AI Library rarity level caps must span 40 through 150.");
   assert(canonicalAiLibraryAgents.filter((agent) => agent.rarity === "Genesis").length === 10, "AI Library Volumes I-X must contain exactly ten Genesis agents.");
+  assert(aiLibraryLegacyIdMigrations.length === 500, "Pack A must publish 500 legacy AI ID migrations.");
+  assert(resolveCanonicalAiLibraryId("ai_v01_001_nova") === "ai_v01_001_byte_link", "Pack A must migrate the former first Volume I AI ID.");
+  assert(resolveCanonicalAiLibraryId("ai_v05_100_lyric_guide") === "ai_v05_100_ledger_system", "Pack A must migrate the former final Volume V AI ID.");
 
   const expectedCategoryCounts = new Map([
-    ["civilization_systems", 125],
-    ["exploration_systems", 119],
-    ["general_intelligence", 6],
-    ["industrial_systems", 118],
-    ["scientific_systems", 120],
-    ["ancient_intelligence", 11],
-    ["genesis_intelligence", 1],
+    ["civilization_systems", 100],
+    ["exploration_systems", 100],
+    ["general_intelligence", 100],
+    ["industrial_systems", 100],
+    ["scientific_systems", 100],
     ["economic_systems", 100],
     ["logistics_transportation", 100],
     ["medical_population", 100],
     ["government_administration", 100],
     ["environmental_systems", 100]
   ]);
-  assert(aiLibraryCategories.length === expectedCategoryCounts.size, "Canonical AI Library must contain the twelve authored categories.");
+  assert(aiLibraryCategories.length === expectedCategoryCounts.size, "Canonical AI Library must contain the ten authored categories.");
   for (const category of aiLibraryCategories) {
     const expectedCount = expectedCategoryCounts.get(category.id);
     assert(expectedCount !== undefined, `Unexpected AI Library category ${category.id}.`);

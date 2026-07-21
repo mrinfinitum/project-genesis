@@ -4,6 +4,7 @@ import {
   AI_LIBRARY_VERSION,
   aiLibraryAssignmentRoles,
   aiLibraryCategories,
+  aiLibraryLegacyIdMigrations,
   aiLibraryLocalizationPlaceholders,
   aiLibraryPersonalities,
   aiLibraryRarities,
@@ -37,6 +38,7 @@ async function main() {
 
   await Promise.all([
     writeJson("ai_library.json", canonicalAiLibraryAgents),
+    writeJson("ai_id_migrations.json", aiLibraryLegacyIdMigrations),
     writeJson("ai_categories.json", aiLibraryCategories),
     writeJson("ai_rarity.json", aiLibraryRarities),
     writeJson("ai_personality_catalog.json", aiLibraryPersonalities),

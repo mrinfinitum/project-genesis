@@ -1,13 +1,13 @@
-import sourceLibrary from "@/data/ai-agents/source/noveris_ai_library_volume_1_categorized.json";
-import sourceExpansionLibrary from "@/data/ai-agents/source/noveris_ai_library_volumes_02_to_05_master.json";
+import sourcePackA from "@/data/ai-agents/source/noveris_ai_library_pack_a_volumes_01_to_05.json";
+import sourcePackAIdMigrations from "@/data/ai-agents/source/noveris_ai_library_pack_a_id_migrations.json";
 import sourceSystemsLibrary from "@/data/ai-agents/source/noveris_ai_library_volumes_06_to_10_master.json";
 import type { CanonicalAiLibraryAgent } from "@/types/runtime";
 
-export const AI_LIBRARY_VERSION = sourceSystemsLibrary.schemaVersion;
-export const AI_LIBRARY_CONTENT_VERSION = Math.max(sourceLibrary.contentVersion, ...sourceExpansionLibrary.agents.map((agent) => agent.content_version), ...sourceSystemsLibrary.agents.map((agent) => agent.content_version));
+export const AI_LIBRARY_VERSION = sourcePackA.schemaVersion;
+export const AI_LIBRARY_CONTENT_VERSION = Math.max(...sourcePackA.agents.map((agent) => agent.content_version), ...sourceSystemsLibrary.agents.map((agent) => agent.content_version));
 export const AI_LIBRARY_VOLUME_ID = "ai-volume-01-foundations";
 
-export const aiLibraryDesignContract = sourceLibrary.designContract;
+export const aiLibraryDesignContract = sourcePackA.designContract;
 
 export const aiLibraryRarities = [
   { id: "common", displayName: "Common", order: 1, volumeOneAllowed: true },
@@ -22,11 +22,18 @@ export const aiLibraryRarities = [
   { id: "singularity", displayName: "Singularity", order: 10, volumeOneAllowed: false }
 ] as const;
 
-const sourceAgents = [...sourceLibrary.agents, ...sourceExpansionLibrary.agents, ...sourceSystemsLibrary.agents];
+const sourceAgents = [...sourcePackA.agents, ...sourceSystemsLibrary.agents];
+
+export const aiLibraryLegacyIdMigrations = sourcePackAIdMigrations.migrations;
+const canonicalIdByLegacyId = new Map(aiLibraryLegacyIdMigrations.map((migration) => [migration.legacyAiId, migration.canonicalAiId]));
+const legacyIdsByCanonicalId = new Map(aiLibraryLegacyIdMigrations.map((migration) => [migration.canonicalAiId, [migration.legacyAiId]]));
+
+export function resolveCanonicalAiLibraryId(aiId: string) {
+  return canonicalIdByLegacyId.get(aiId) ?? aiId;
+}
 
 const volumeTitles = new Map<number, string>([
-  [1, sourceLibrary.volume.title],
-  ...sourceExpansionLibrary.volumes.map((volume) => [volume.number, volume.title] as const),
+  ...sourcePackA.volumes.map((volume) => [volume.number, volume.title] as const),
   ...sourceSystemsLibrary.volumes.map((volume) => [volume.number, volume.title] as const)
 ]);
 
@@ -59,10 +66,8 @@ export type CategoryProfile = {
 };
 
 const categoryDefinitions = [
-  ...sourceLibrary.categorySchema.map((category) => ({ id: category.category_id, displayName: category.name, subcategories: category.subcategories })),
   ...sourceAgents
     .filter((agent, index, agents) => agents.findIndex((candidate) => candidate.category_id === agent.category_id) === index)
-    .filter((agent) => !sourceLibrary.categorySchema.some((category) => category.category_id === agent.category_id))
     .map((agent) => ({ id: agent.category_id, displayName: agent.category, subcategories: [] as string[] }))
 ];
 
@@ -89,6 +94,7 @@ export const canonicalAiLibraryAgents: CanonicalAiLibraryAgent[] = sourceAgents.
   volume_id: volumeId(agent.volume, agent.volume_title),
   collection: volumeTitles.get(agent.volume) ?? agent.volume_title,
   category_id: agent.category_id,
+  legacy_ai_ids: legacyIdsByCanonicalId.get(agent.ai_id) ?? [],
   assignment_roles: agent.supports_offline_generation ? [...aiLibraryAssignmentRoles] : ["Active AI Assistant", "Labor Generation"],
   runtime_metadata: {
     schemaVersion: agent.schema_version,
@@ -117,6 +123,10 @@ export function validateCanonicalAiLibrary(agents: CanonicalAiLibraryAgent[] = c
   if (agents.length !== 1000) issues.push(`AI Library Volumes I-X must contain exactly 1,000 agents; received ${agents.length}.`);
   if (!unique(agents.map((agent) => agent.ai_id))) issues.push("AI IDs must be unique.");
   if (!unique(agents.map((agent) => `${agent.volume}:${agent.library_index}`))) issues.push("AI library indexes must be unique within each volume.");
+  if (aiLibraryLegacyIdMigrations.length !== 500) issues.push(`Pack A must provide exactly 500 legacy ID migrations; received ${aiLibraryLegacyIdMigrations.length}.`);
+  if (!unique(aiLibraryLegacyIdMigrations.map((migration) => migration.legacyAiId))) issues.push("Pack A legacy AI IDs must be unique.");
+  if (!unique(aiLibraryLegacyIdMigrations.map((migration) => migration.canonicalAiId))) issues.push("Pack A canonical migration targets must be unique.");
+  if (aiLibraryLegacyIdMigrations.some((migration) => !agents.some((agent) => agent.ai_id === migration.canonicalAiId))) issues.push("Every Pack A ID migration must resolve to a canonical AI record.");
 
   for (const [volume, title] of volumeTitles) {
     const volumeAgents = agents.filter((agent) => agent.volume === volume);
@@ -136,7 +146,9 @@ export function validateCanonicalAiLibrary(agents: CanonicalAiLibraryAgent[] = c
   }
 
   const actualDistribution = Object.fromEntries(aiLibraryRarities.map((rarity) => [rarity.displayName, agents.filter((agent) => agent.rarity === rarity.displayName).length]));
-  for (const [rarity, expectedPerVolume] of Object.entries(sourceLibrary.rarityDistribution)) {
+  const packAVolumeOneAgents = sourcePackA.agents.filter((agent) => agent.volume === 1);
+  const packARarityDistribution = Object.fromEntries(aiLibraryRarities.map((rarity) => [rarity.displayName, packAVolumeOneAgents.filter((agent) => agent.rarity === rarity.displayName).length]));
+  for (const [rarity, expectedPerVolume] of Object.entries(packARarityDistribution)) {
     const expected = expectedPerVolume * 10;
     if (actualDistribution[rarity] !== expected) issues.push(`${rarity} rarity count must be ${expected}; received ${actualDistribution[rarity] ?? 0}.`);
   }

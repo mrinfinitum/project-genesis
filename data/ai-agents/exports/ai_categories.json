@@ -107,8 +107,7 @@
       "Scanning",
       "Planetology",
       "Cartography",
-      "Deep-Space Exploration",
-      "Astronomy"
+      "Deep-Space Exploration"
     ],
     "purpose": "Labor Generation",
     "primaryFunction": "Generate passive Labor",
@@ -143,69 +142,6 @@
       "Education",
       "Medical",
       "Culture"
-    ],
-    "purpose": "Labor Generation",
-    "primaryFunction": "Generate passive Labor",
-    "secondaryFunctions": [
-      "Increase active click Labor",
-      "Support offline Labor generation"
-    ],
-    "assignments": [
-      "Active AI Assistant",
-      "Labor Generation",
-      "Offline Labor Generation"
-    ],
-    "bonuses": {
-      "labor": 1,
-      "action": 0,
-      "building": 0,
-      "research": 0,
-      "colony": 0,
-      "automation": 1
-    },
-    "theme": "Collectible NOVERIS companion intelligence"
-  },
-  {
-    "id": "ancient_intelligence",
-    "displayName": "Ancient Intelligence",
-    "subcategory": "Multiple specializations",
-    "subcategories": [
-      "Precursor Mind",
-      "Archive Intelligence",
-      "Custodian Intelligence",
-      "Civilization Steward",
-      "Ancient Navigator"
-    ],
-    "purpose": "Labor Generation",
-    "primaryFunction": "Generate passive Labor",
-    "secondaryFunctions": [
-      "Increase active click Labor",
-      "Support offline Labor generation"
-    ],
-    "assignments": [
-      "Active AI Assistant",
-      "Labor Generation",
-      "Offline Labor Generation"
-    ],
-    "bonuses": {
-      "labor": 1,
-      "action": 0,
-      "building": 0,
-      "research": 0,
-      "colony": 0,
-      "automation": 1
-    },
-    "theme": "Collectible NOVERIS companion intelligence"
-  },
-  {
-    "id": "genesis_intelligence",
-    "displayName": "Genesis Intelligence",
-    "subcategory": "Multiple specializations",
-    "subcategories": [
-      "Origin Intelligence",
-      "Civilization Architect",
-      "Universal Coordinator",
-      "Genesis Core"
     ],
     "purpose": "Labor Generation",
     "primaryFunction": "Generate passive Labor",

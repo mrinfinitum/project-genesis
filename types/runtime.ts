@@ -742,6 +742,7 @@ export type CanonicalAiLibraryAgent = {
   volume_id: string;
   collection: string;
   category_id: string;
+  legacy_ai_ids?: string[];
   assignment_roles: string[];
   runtime_metadata: {
     schemaVersion: string;

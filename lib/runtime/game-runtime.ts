@@ -67,7 +67,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 41;
+export const gameRuntimeContentVersion = 42;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -520,6 +520,17 @@ function metadata(overrides: Partial<RuntimeMetadata> = {}): RuntimeMetadata {
         preserveRule: "If a save contains an unknown selectedAiAgentVariantId, clients should render the default variant while preserving the unresolved value for diagnostics.",
         introducedContentVersion: 13,
         notes: "AI Agent variant selection is cosmetic only. Automation upgrade levels remain the source of Labor Assistance strength."
+      },
+      {
+        id: "migration_ai_library_pack_a_schema_1_2",
+        targetId: "ai-library-pack-a",
+        field: "selectedAiAgentId",
+        previousDefault: "ai-library-1.1.0",
+        currentDefault: "ai_id_migrations.json",
+        applyOnlyWhen: "A save or authored reference contains an AI ID from Volumes 1 through 5 using the schema 1.1.0 catalog.",
+        preserveRule: "Resolve the former ID through the exported migration map by matching its canonical volume and library index; preserve unknown IDs for diagnostics.",
+        introducedContentVersion: 42,
+        notes: "Pack A schema 1.2.0 rebuilds Volumes 1 through 5. The migration map prevents existing AI selections and references from being silently discarded."
       }
     ],
     ...overrides

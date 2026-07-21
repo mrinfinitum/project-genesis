@@ -1,65 +1,65 @@
 {
-  "libraryVersion": "ai-library-1.1.0",
+  "libraryVersion": "ai-library-1.2.0",
   "volumes": [
     {
       "id": "ai-volume-01-foundations",
       "number": 1,
       "name": "Foundations",
-      "version": "ai-library-1.1.0"
+      "version": "ai-library-1.2.0"
     },
     {
       "id": "ai-volume-02-industrial-systems",
       "number": 2,
       "name": "Industrial Systems",
-      "version": "ai-library-1.1.0"
+      "version": "ai-library-1.2.0"
     },
     {
       "id": "ai-volume-03-scientific-systems",
       "number": 3,
       "name": "Scientific Systems",
-      "version": "ai-library-1.1.0"
+      "version": "ai-library-1.2.0"
     },
     {
       "id": "ai-volume-04-exploration-systems",
       "number": 4,
       "name": "Exploration Systems",
-      "version": "ai-library-1.1.0"
+      "version": "ai-library-1.2.0"
     },
     {
       "id": "ai-volume-05-civilization-systems",
       "number": 5,
       "name": "Civilization Systems",
-      "version": "ai-library-1.1.0"
+      "version": "ai-library-1.2.0"
     },
     {
       "id": "ai-volume-06-economic-systems",
       "number": 6,
       "name": "Economic Systems",
-      "version": "ai-library-1.1.0"
+      "version": "ai-library-1.2.0"
     },
     {
       "id": "ai-volume-07-logistics-transportation",
       "number": 7,
       "name": "Logistics & Transportation",
-      "version": "ai-library-1.1.0"
+      "version": "ai-library-1.2.0"
     },
     {
       "id": "ai-volume-08-medical-population",
       "number": 8,
       "name": "Medical & Population",
-      "version": "ai-library-1.1.0"
+      "version": "ai-library-1.2.0"
     },
     {
       "id": "ai-volume-09-government-administration",
       "number": 9,
       "name": "Government & Administration",
-      "version": "ai-library-1.1.0"
+      "version": "ai-library-1.2.0"
     },
     {
       "id": "ai-volume-10-environmental-systems",
       "number": 10,
       "name": "Environmental Systems",
-      "version": "ai-library-1.1.0"
+      "version": "ai-library-1.2.0"
     }
   ],
   "status": "Ready",

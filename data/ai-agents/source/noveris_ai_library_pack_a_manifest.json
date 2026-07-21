@@ -1,0 +1,44 @@
+{
+  "pack_id": "ai_pack_a",
+  "pack_name": "Pack A",
+  "schemaVersion": "ai-library-pack-1.2.0",
+  "volumeRange": [
+    1,
+    5
+  ],
+  "activeAiSlots": 1,
+  "primaryPurpose": "Labor Generation",
+  "volumes": [
+    {
+      "number": 1,
+      "title": "Foundations",
+      "agentCount": 100,
+      "zipFilename": "NOVERIS_AI_Library_Volume_01.zip"
+    },
+    {
+      "number": 2,
+      "title": "Industrial Systems",
+      "agentCount": 100,
+      "zipFilename": "NOVERIS_AI_Library_Volume_02.zip"
+    },
+    {
+      "number": 3,
+      "title": "Scientific Systems",
+      "agentCount": 100,
+      "zipFilename": "NOVERIS_AI_Library_Volume_03.zip"
+    },
+    {
+      "number": 4,
+      "title": "Exploration Systems",
+      "agentCount": 100,
+      "zipFilename": "NOVERIS_AI_Library_Volume_04.zip"
+    },
+    {
+      "number": 5,
+      "title": "Civilization Systems",
+      "agentCount": 100,
+      "zipFilename": "NOVERIS_AI_Library_Volume_05.zip"
+    }
+  ],
+  "totalAgents": 500
+}
