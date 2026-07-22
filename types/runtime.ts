@@ -1011,6 +1011,139 @@ export type GalaxyProceduralFallbackRule = {
   notes: string;
 };
 
+export type StarSystemBackgroundStatus = "draft" | "review" | "approved" | "published" | "archived";
+export type StarSystemBackgroundMode = "authored" | "hybrid";
+export type StarSystemBackgroundFit = "cover" | "contain";
+export type StarSystemBackgroundBlendMode = "normal" | "screen" | "add" | "soft-light";
+
+export type NormalizedPoint = { x: number; y: number };
+export type NormalizedRect = { x: number; y: number; width: number; height: number };
+export type NormalizedCircle = { x: number; y: number; radius: number };
+
+export type StarSystemBackgroundColorGrade = {
+  exposure: number;
+  saturation: number;
+  contrast: number;
+  hueShift: number;
+};
+
+export type StarSystemBackgroundDerivativeRecord = {
+  targetId: string;
+  format: "avif" | "webp" | "png";
+  width: number;
+  height: number;
+  publicPath?: string;
+  checksum?: string;
+  generatedAt?: string;
+  status: "pending" | "generated" | "failed";
+  notes?: string;
+};
+
+export type StarSystemBackgroundValidationCapabilities = {
+  canvasMetadata: boolean;
+  colorMode: boolean;
+  bitDepth: boolean;
+  layerGroups: boolean;
+  flattenedPreview: boolean;
+  luminanceAnalysis: boolean;
+};
+
+export type StarSystemBackgroundRecord = {
+  id: string;
+  name: string;
+  slug: string;
+  status: StarSystemBackgroundStatus;
+  sourceFormat: "psd";
+  sourceAssetId: string;
+  sourceFilename: string;
+  sourceRevision: number;
+  runtimeRevision: number;
+  generationVersion: number;
+  assignedSystemIds: string[];
+  compatiblePaletteIds: string[];
+  backgroundMode: StarSystemBackgroundMode;
+  fit: StarSystemBackgroundFit;
+  anchor: NormalizedPoint;
+  focalPoint: NormalizedPoint;
+  starExclusionZone: NormalizedCircle;
+  contentSafeZone?: NormalizedRect;
+  mobileCrop?: NormalizedRect;
+  desktopCrop?: NormalizedRect;
+  blendMode: StarSystemBackgroundBlendMode;
+  opacity: number;
+  colorGrade: StarSystemBackgroundColorGrade;
+  visualTags: string[];
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt?: string;
+  validation: {
+    status: RuntimeMetadata["validationStatus"];
+    parserCapabilities: StarSystemBackgroundValidationCapabilities;
+    issues: ImportIssue[];
+  };
+  derivatives: StarSystemBackgroundDerivativeRecord[];
+};
+
+export type RuntimeStarSystemBackground = {
+  assetId: string;
+  sourceType: "studio-authored";
+  sourceFormat: "psd";
+  sourceRevision: number;
+  runtimeRevision: number;
+  mode: StarSystemBackgroundMode;
+  desktop: {
+    avif?: string;
+    webp?: string;
+    png: string;
+    width: number;
+    height: number;
+  };
+  mobile?: {
+    avif?: string;
+    webp?: string;
+    png: string;
+    width: number;
+    height: number;
+  };
+  thumbnail: string;
+  focalPoint: NormalizedPoint;
+  starExclusionZone: NormalizedCircle;
+  contentSafeZone?: NormalizedRect;
+  fit: StarSystemBackgroundFit;
+  anchor: NormalizedPoint;
+  blendMode: StarSystemBackgroundBlendMode;
+  opacity: number;
+  colorGrade?: StarSystemBackgroundColorGrade;
+  checksum: string;
+};
+
+export type StarSystemVisualProfile = {
+  systemId: string;
+  visualSignatureId: string;
+  backgroundMode: "procedural" | StarSystemBackgroundMode;
+  starSystemBackgroundId?: string;
+  backgroundRevision?: number;
+  paletteId?: string;
+  visualVariantIndex: number;
+  visualTags: string[];
+};
+
+export type StarSystemBackgroundTemplateSpec = {
+  id: "star_system_background_psd_template_v1";
+  version: "1.0.0";
+  displayName: string;
+  sourceFormat: "psd";
+  masterDesktop: { width: number; height: number; aspectRatio: "16:9"; colorDepth: string; colorProfile: string };
+  minimumDesktop: { width: number; height: number };
+  optionalMobile: { width: number; height: number; aspectRatio: "9:16"; notes: string };
+  requiredLayerGroups: string[];
+  guideLayers: string[];
+  forbiddenBakedContent: string[];
+  derivativeTargets: Array<{ id: string; format: "avif" | "webp" | "png"; width: number; height: number; publicRuntime: boolean }>;
+  validationLimitations: string[];
+};
+
 export type GalaxyEnginePresentationContract = {
   id: "galaxy_engine_presentation_contract";
   version: "1.0.0";
@@ -1026,6 +1159,9 @@ export type GalaxyEnginePresentationContract = {
   assetRoles: GalaxyEngineAssetRole[];
   proceduralFallbackRules: GalaxyProceduralFallbackRule[];
   proceduralUniverse: import("@/lib/universe/visual-signatures").ProceduralUniverseVisualContract;
+  starSystemBackgroundTemplate: StarSystemBackgroundTemplateSpec;
+  starSystemBackgrounds: RuntimeStarSystemBackground[];
+  starSystemVisualProfiles: StarSystemVisualProfile[];
   validationRules: string[];
 };
 

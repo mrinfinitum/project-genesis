@@ -17,6 +17,7 @@ import {
   FlaskConical,
   Gem,
   GalleryHorizontalEnd,
+  ImageIcon,
   Landmark,
   LayoutDashboard,
   Map,
@@ -81,6 +82,7 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/galaxy", label: "Galaxy Library", icon: Star },
       { href: "/sector-map", label: "Sector Library", icon: Map },
       { href: "/star-system-map", label: "Star System Library", icon: Radar },
+      { href: "/star-system-backgrounds", label: "Star System Backgrounds", icon: ImageIcon },
       { href: "/celestial-bodies", label: "Star Library", icon: CircleDot },
       { href: "/planets", label: "Planet Library", icon: Orbit },
       { href: "/planet-generation", label: "Planet Generation", icon: Orbit }

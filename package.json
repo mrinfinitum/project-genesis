@@ -27,6 +27,7 @@
     "generate:ai-library-v2": "tsx scripts/generate-ai-library-v2-expansion.ts",
     "verify:ai-library": "tsx scripts/verify-ai-library.ts",
     "verify:procedural-universe": "tsx scripts/verify-procedural-universe.ts",
+    "verify:star-system-backgrounds": "tsx scripts/verify-star-system-backgrounds.ts",
     "export:procedural-universe-fixtures": "tsx scripts/export-procedural-universe-fixtures.ts"
   },
   "dependencies": {

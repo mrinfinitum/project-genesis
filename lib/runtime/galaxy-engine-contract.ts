@@ -1,5 +1,7 @@
 import type { GalaxyEnginePresentationContract, ImportIssue } from "@/types/runtime";
 import { proceduralUniverseVisualContract, validateVisualSignature, generateVisualSignature } from "@/lib/universe/visual-signatures";
+import { getRuntimeStarSystemBackgrounds, starSystemBackgroundTemplateSpec, validateStarSystemBackgroundRecords, buildStarSystemVisualProfile } from "@/lib/star-system-backgrounds";
+import { generateGalaxy, generateSector, generateStarSystems, generateUniverse } from "@/lib/universe/generator";
 
 export const galaxyEngineContractVersion = "1.0.0";
 
@@ -178,12 +180,21 @@ export const galaxyEnginePresentationContract: GalaxyEnginePresentationContract 
     { id: "fallback_label_only", appliesToClassIds: ["galaxy", "sector", "star", "planet", "moon", "asteroid_belt"], fallbackMode: "label_only", allowedWhenArtMissing: true, clientOwnsImplementation: true, notes: "UI-only interaction assets may fall back to semantic labels/icons." }
   ],
   proceduralUniverse: proceduralUniverseVisualContract,
+  starSystemBackgroundTemplate: starSystemBackgroundTemplateSpec,
+  starSystemBackgrounds: getRuntimeStarSystemBackgrounds(),
+  starSystemVisualProfiles: (() => {
+    const universe = generateUniverse("PROJECT-GENESIS-UNIVERSE");
+    const galaxy = generateGalaxy(universe.universe_seed, 0);
+    const sector = generateSector(galaxy, 0);
+    return generateStarSystems(sector, 12).map((system) => buildStarSystemVisualProfile(system.id, system.visual_signature?.fingerprint));
+  })(),
   validationRules: [
     "Studio publishes semantic contracts only; clients own renderer implementation.",
     "Unknown objects must display ??? when canShowName is false.",
     "Technology gates must resolve to supported semantic zoom levels.",
     "Asset roles must resolve to fallback rules.",
-    "Platform rendering profiles are recommendations only and must not include engine-specific code."
+    "Platform rendering profiles are recommendations only and must not include engine-specific code.",
+    "Star-system background exports must never include PSD URLs, private storage paths, unpublished revisions, or artist-private notes."
   ]
 };
 
@@ -256,6 +267,9 @@ export function validateGalaxyEnginePresentationContract(contract: GalaxyEngineP
   }
   const fixtureSignature = generateVisualSignature({ universeSeed: "validation", generationVersion: "seeded-cascade-v1", semanticLevel: "galaxy", canonicalObjectId: "validation-galaxy" });
   for (const issue of validateVisualSignature(fixtureSignature)) issues.push({ severity: issue.severity, code: issue.code, message: issue.message, records: ["proceduralUniverse"] });
+  for (const issue of validateStarSystemBackgroundRecords()) {
+    issues.push(issue);
+  }
   const profileIds = Object.values(contract.proceduralUniverse.profileLibraries).flatMap((library) => library.map((profile) => profile.id));
   const duplicateProfileIds = profileIds.filter((id, index) => profileIds.indexOf(id) !== index);
   if (duplicateProfileIds.length) {
@@ -294,6 +308,28 @@ export function validateGalaxyEnginePresentationContract(contract: GalaxyEngineP
       message: "Galaxy Engine contract must not publish renderer implementation config.",
       records: rendererConfigKeys
     });
+  }
+  const backgroundIds = new Set(contract.starSystemBackgrounds.map((background) => background.assetId));
+  const visualProfileSystemIds = contract.starSystemVisualProfiles.map((profile) => profile.systemId);
+  const duplicateVisualProfiles = visualProfileSystemIds.filter((id, index) => visualProfileSystemIds.indexOf(id) !== index);
+  if (duplicateVisualProfiles.length) {
+    issues.push({ severity: "error", code: "star_system_visual_profile_duplicate", message: "Star-system visual profiles must be unique per system.", records: [...new Set(duplicateVisualProfiles)] });
+  }
+  for (const profile of contract.starSystemVisualProfiles) {
+    if (profile.starSystemBackgroundId && !backgroundIds.has(profile.starSystemBackgroundId)) {
+      issues.push({ severity: "error", code: "star_system_visual_profile_background_missing", message: "Visual profiles may only reference sanitized published background assets.", records: [profile.systemId, profile.starSystemBackgroundId] });
+    }
+    if (profile.backgroundMode !== "procedural" && !profile.starSystemBackgroundId) {
+      issues.push({ severity: "error", code: "star_system_visual_profile_mode_invalid", message: "Authored or hybrid background modes require a published background asset.", records: [profile.systemId] });
+    }
+  }
+  const publicBackgroundLeaks = findForbiddenKeys(contract.starSystemBackgrounds, ["starSystemBackgrounds"]).filter((key) => /sourceUrl|private|artistNotes|storagePath/i.test(key));
+  if (publicBackgroundLeaks.length) {
+    issues.push({ severity: "error", code: "star_system_background_private_metadata_leak", message: "Public background exports must contain runtime derivatives only.", records: publicBackgroundLeaks });
+  }
+  const serializedBackgrounds = JSON.stringify(contract.starSystemBackgrounds);
+  if (/\.psd|\/Users\/|studio-private:\/\//i.test(serializedBackgrounds)) {
+    issues.push({ severity: "error", code: "star_system_background_source_leak", message: "Public background exports must not expose PSD files or private source paths.", records: ["starSystemBackgrounds"] });
   }
 
   return issues;

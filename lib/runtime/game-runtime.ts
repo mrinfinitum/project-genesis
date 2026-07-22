@@ -67,7 +67,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 51;
+export const gameRuntimeContentVersion = 52;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -630,6 +630,17 @@ function metadata(overrides: Partial<RuntimeMetadata> = {}): RuntimeMetadata {
         preserveRule: "Preserve every canonical universe, galaxy, sector, and star-system ID. Derive visual identity on demand from the existing universe seed, generation version, semantic level, and canonical object ID.",
         introducedContentVersion: 51,
         notes: "Visual signature migration changes presentation metadata only. It must never regenerate topology or materialize the full universe."
+      },
+      {
+        id: "migration_star_system_background_contract_v1",
+        targetId: "star_system_backgrounds",
+        field: "galaxyEngineContract.starSystemBackgrounds",
+        previousDefault: null,
+        currentDefault: "star-system-background-contract-v1",
+        applyOnlyWhen: "A client loads contentVersion 52 or later and supports Studio-authored star-system background derivatives.",
+        preserveRule: "Preserve star-system IDs and runtime visual signatures. Use published background derivatives when present; otherwise fall back to deterministic procedural atlas rendering.",
+        introducedContentVersion: 52,
+        notes: "PSD sources remain private Studio authoring files and are never consumed by game clients."
       }
     ],
     ...overrides
@@ -740,7 +751,9 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
       presentationClasses: [...runtimeData.galaxyEngineContract.presentationClasses].sort(byId),
       platformRenderingProfiles: [...runtimeData.galaxyEngineContract.platformRenderingProfiles].sort(byId),
       assetRoles: [...runtimeData.galaxyEngineContract.assetRoles].sort(byId),
-      proceduralFallbackRules: [...runtimeData.galaxyEngineContract.proceduralFallbackRules].sort(byId)
+      proceduralFallbackRules: [...runtimeData.galaxyEngineContract.proceduralFallbackRules].sort(byId),
+      starSystemBackgrounds: [...runtimeData.galaxyEngineContract.starSystemBackgrounds].sort((left, right) => left.assetId.localeCompare(right.assetId)),
+      starSystemVisualProfiles: [...runtimeData.galaxyEngineContract.starSystemVisualProfiles].sort((left, right) => left.systemId.localeCompare(right.systemId))
     },
     timeActionContract: {
       ...runtimeData.timeActionContract,
