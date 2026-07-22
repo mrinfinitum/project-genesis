@@ -25,7 +25,9 @@
     "verify:labor-generation": "tsx scripts/verify-labor-generation.ts",
     "export:ai-library": "tsx scripts/export-ai-library.ts",
     "generate:ai-library-v2": "tsx scripts/generate-ai-library-v2-expansion.ts",
-    "verify:ai-library": "tsx scripts/verify-ai-library.ts"
+    "verify:ai-library": "tsx scripts/verify-ai-library.ts",
+    "verify:procedural-universe": "tsx scripts/verify-procedural-universe.ts",
+    "export:procedural-universe-fixtures": "tsx scripts/export-procedural-universe-fixtures.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",

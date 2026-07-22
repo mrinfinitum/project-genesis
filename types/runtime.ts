@@ -1025,6 +1025,7 @@ export type GalaxyEnginePresentationContract = {
   platformRenderingProfiles: GalaxyPlatformRenderingProfile[];
   assetRoles: GalaxyEngineAssetRole[];
   proceduralFallbackRules: GalaxyProceduralFallbackRule[];
+  proceduralUniverse: import("@/lib/universe/visual-signatures").ProceduralUniverseVisualContract;
   validationRules: string[];
 };
 

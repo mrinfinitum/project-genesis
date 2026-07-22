@@ -1,4 +1,5 @@
 import type { GalaxyEnginePresentationContract, ImportIssue } from "@/types/runtime";
+import { proceduralUniverseVisualContract, validateVisualSignature, generateVisualSignature } from "@/lib/universe/visual-signatures";
 
 export const galaxyEngineContractVersion = "1.0.0";
 
@@ -176,6 +177,7 @@ export const galaxyEnginePresentationContract: GalaxyEnginePresentationContract 
     { id: "fallback_unknown_silhouette", appliesToClassIds: ["galaxy", "sector", "star", "planet", "moon", "asteroid_belt"], fallbackMode: "neutral_silhouette", allowedWhenArtMissing: true, clientOwnsImplementation: true, notes: "Unknown records use ??? and neutral silhouette treatment until knowledge visibility allows details." },
     { id: "fallback_label_only", appliesToClassIds: ["galaxy", "sector", "star", "planet", "moon", "asteroid_belt"], fallbackMode: "label_only", allowedWhenArtMissing: true, clientOwnsImplementation: true, notes: "UI-only interaction assets may fall back to semantic labels/icons." }
   ],
+  proceduralUniverse: proceduralUniverseVisualContract,
   validationRules: [
     "Studio publishes semantic contracts only; clients own renderer implementation.",
     "Unknown objects must display ??? when canShowName is false.",
@@ -248,6 +250,32 @@ export function validateGalaxyEnginePresentationContract(contract: GalaxyEngineP
     if (profile.recommendationOnly !== true) {
       issues.push({ severity: "error", code: "galaxy_engine_profile_not_recommendation", message: "Platform rendering profiles must remain recommendations only.", records: [profile.id] });
     }
+  }
+  if (contract.proceduralUniverse.visualSignatureVersion !== "visual-signature-v1") {
+    issues.push({ severity: "error", code: "visual_signature_version_invalid", message: "Procedural universe visual signature version is missing or unsupported.", records: [contract.proceduralUniverse.visualSignatureVersion] });
+  }
+  const fixtureSignature = generateVisualSignature({ universeSeed: "validation", generationVersion: "seeded-cascade-v1", semanticLevel: "galaxy", canonicalObjectId: "validation-galaxy" });
+  for (const issue of validateVisualSignature(fixtureSignature)) issues.push({ severity: issue.severity, code: issue.code, message: issue.message, records: ["proceduralUniverse"] });
+  const profileIds = Object.values(contract.proceduralUniverse.profileLibraries).flatMap((library) => library.map((profile) => profile.id));
+  const duplicateProfileIds = profileIds.filter((id, index) => profileIds.indexOf(id) !== index);
+  if (duplicateProfileIds.length) {
+    issues.push({ severity: "error", code: "visual_profile_id_duplicate", message: "Procedural visual profile IDs must be globally unique.", records: [...new Set(duplicateProfileIds)] });
+  }
+  const unknownVisibility = contract.proceduralUniverse.discoveryVisibility.find((state) => state.id === "unknown");
+  if (!unknownVisibility || unknownVisibility.canShowName || unknownVisibility.canShowClassification || unknownVisibility.canShowResources || unknownVisibility.canShowChildCounts || unknownVisibility.canShowDiscoveries || unknownVisibility.canShowRoutes || unknownVisibility.canShowRegistry || unknownVisibility.canShowOwnership) {
+    issues.push({ severity: "error", code: "procedural_unknown_visibility_invalid", message: "Unknown procedural objects must redact authored knowledge and display ???.", records: ["unknown"] });
+  }
+  const forbiddenPlayerStateKeys = new Set(["selectedObject", "camera", "probeState", "fogRevealMasks", "knownRoutes", "bookmarks", "saveData", "playerDiscovery"]);
+  const findForbiddenKeys = (value: unknown, trail: string[] = []): string[] => {
+    if (!value || typeof value !== "object") return [];
+    return Object.entries(value as Record<string, unknown>).flatMap(([key, nested]) => {
+      const nextTrail = [...trail, key];
+      return [...(forbiddenPlayerStateKeys.has(key) ? [nextTrail.join(".")] : []), ...findForbiddenKeys(nested, nextTrail)];
+    });
+  };
+  const playerStateLeaks = findForbiddenKeys(contract.proceduralUniverse);
+  if (playerStateLeaks.length) {
+    issues.push({ severity: "error", code: "procedural_player_state_leak", message: "Procedural universe exports must not contain player or renderer state.", records: playerStateLeaks });
   }
   const rendererOwnedConfigKeys = new Set(["threeJsConfig", "reactThreeFiberConfig", "cameraConfig", "shaderConfig", "lightingRig", "controlScheme", "rendererSettings"]);
   const findRendererConfigKeys = (value: unknown, trail: string[] = []): string[] => {

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Database, Filter, Plus, Search } from "lucide-react";
 import { GeneratedLibraryCard, type GeneratedLibraryCardRecord } from "@/components/generated-library-card";
 import { CanonicalIndex } from "@/components/ui/workspace";
+import { ProceduralVisualSignaturePreview } from "@/components/procedural-visual-signature-preview";
 import type { UniverseLibraryKind, UniverseLibraryRecord } from "@/lib/universe/library";
 
 type GeneratedUniverseLibraryProps = {
@@ -107,6 +108,10 @@ export function GeneratedUniverseLibrary({ kind, title, description, generateLab
         description="Generated canonical records only. Gameplay progression, screen workflows, and implementation details live in their dedicated workspaces."
         items={indexItems}
       />
+
+      {kind === "galaxies" || kind === "sectors" || kind === "star-systems" ? (
+        <ProceduralVisualSignaturePreview semanticLevel={kind === "galaxies" ? "galaxy" : kind === "sectors" ? "sector" : "system"} defaultObjectId={records[0]?.id ?? `${kind}-preview`} />
+      ) : null}
 
       <section className="rounded-md border border-cyan-300/15 bg-[#07101e]/78 p-4">
         <div className="grid gap-3 lg:grid-cols-[1fr_16rem]">

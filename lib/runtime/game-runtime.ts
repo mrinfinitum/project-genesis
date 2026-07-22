@@ -67,7 +67,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 50;
+export const gameRuntimeContentVersion = 51;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -619,6 +619,17 @@ function metadata(overrides: Partial<RuntimeMetadata> = {}): RuntimeMetadata {
         preserveRule: "Keep the published ai_v12 stable IDs. Resolve supplied AI-XII-001 through AI-XII-020 IDs as aliases and preserve player ownership or selection.",
         introducedContentVersion: 50,
         notes: "The first twenty Education & Knowledge companions now use the authored Volume XII identities."
+      },
+      {
+        id: "migration_procedural_visual_signature_v1",
+        targetId: "procedural_universe_visual_contract",
+        field: "visual_signature",
+        previousDefault: null,
+        currentDefault: "visual-signature-v1",
+        applyOnlyWhen: "A client loads contentVersion 51 or later and a canonical universe object does not yet have a visual signature.",
+        preserveRule: "Preserve every canonical universe, galaxy, sector, and star-system ID. Derive visual identity on demand from the existing universe seed, generation version, semantic level, and canonical object ID.",
+        introducedContentVersion: 51,
+        notes: "Visual signature migration changes presentation metadata only. It must never regenerate topology or materialize the full universe."
       }
     ],
     ...overrides

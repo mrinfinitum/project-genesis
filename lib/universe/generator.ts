@@ -1,6 +1,7 @@
 import { PLANET_CLASS_MODEL } from "@/lib/planets/class-model";
 import { generatePlanetRarity } from "@/lib/planets/rarity";
 import { normalizeResourceNames, ResourceService, resourceNames } from "@/lib/resources/service";
+import { generateUniqueVisualSignature, generateVisualSignature, type ProceduralVisualSignature } from "@/lib/universe/visual-signatures";
 
 type RandomSource = () => number;
 
@@ -20,6 +21,7 @@ export type UniverseNode = {
   universe_seed: string;
   name: string;
   created_at: string;
+  visual_signature?: ProceduralVisualSignature;
 };
 
 export type GalaxyNode = {
@@ -29,6 +31,7 @@ export type GalaxyNode = {
   name: string;
   galaxy_type: string;
   galaxy_size: string;
+  visual_signature?: ProceduralVisualSignature;
   sector_count: number;
   seed?: string;
   generation_parent_seed?: string | null;
@@ -90,6 +93,7 @@ export type SectorNode = {
   colonized_worlds: number;
   discovered: boolean;
   discovered_at: string | null;
+  visual_signature?: ProceduralVisualSignature;
   discoveryState?: string;
   discoveryPoints?: number;
   discoveredAt?: string | null;
@@ -143,6 +147,7 @@ export type StarSystemNode = {
   estimated_celestial_body_count_max: number | null;
   estimated_danger_level: number | null;
   known_star_signature: string | null;
+  visual_signature?: ProceduralVisualSignature;
   probe_data: Record<string, unknown>;
   scan_data: Record<string, unknown>;
   discovered: boolean;
@@ -1029,7 +1034,8 @@ export function generateUniverse(universeSeed: string, name = "Genesis Universe"
     id: `universe-${slug(seed)}`,
     universe_seed: seed,
     name,
-    created_at: "derived"
+    created_at: "derived",
+    visual_signature: generateVisualSignature({ universeSeed: seed, generationVersion: SEED_GENERATION_VERSION, semanticLevel: "universe", canonicalObjectId: `universe-${slug(seed)}` })
   };
 }
 
@@ -1042,6 +1048,7 @@ export function generateGalaxy(universeSeed: string, galaxyIndex = 0): GalaxyNod
       name: "Milky Way",
       galaxy_type: "Spiral Galaxy",
       galaxy_size: "Starting Galaxy",
+      visual_signature: generateVisualSignature({ universeSeed, generationVersion: SEED_GENERATION_VERSION, semanticLevel: "galaxy", canonicalObjectId: SOL_GALAXY_ID, override: { archetypeId: "grand_design_spiral", paletteId: "palette_cyan_amber" } }),
       sector_count: 100000,
       is_fixed: true,
       is_procedural: false,
@@ -1052,14 +1059,16 @@ export function generateGalaxy(universeSeed: string, galaxyIndex = 0): GalaxyNod
   const galaxySeed = deriveSeed(universeSeed, "galaxy", galaxyIndex);
   const random = seededRandom(galaxySeed);
   const galaxySize = pickWeighted(galaxySizes, random, galaxySizes[galaxySizes.length - 1]);
+  const galaxyId = `galaxy-${galaxyIndex}-${hashSeed(galaxySeed).toString(16)}`;
 
   return {
-    id: `galaxy-${galaxyIndex}-${hashSeed(galaxySeed).toString(16)}`,
+    id: galaxyId,
     universe_id: `universe-${slug(universeSeed)}`,
     galaxy_seed: galaxySeed,
     name: generatedName(galaxySeed, "galaxy"),
     galaxy_type: pick(galaxyTypes, random, "Spiral"),
     galaxy_size: galaxySize.name,
+    visual_signature: generateVisualSignature({ universeSeed, generationVersion: SEED_GENERATION_VERSION, semanticLevel: "galaxy", canonicalObjectId: galaxyId }),
     sector_count: galaxySize.sectors,
     is_fixed: false,
     is_procedural: true,
@@ -1088,6 +1097,7 @@ export function generateSector(galaxy: GalaxyNode, sectorIndex: number): SectorN
       colonized_worlds: 1,
       discovered: true,
       discovered_at: "derived",
+      visual_signature: generateVisualSignature({ universeSeed: galaxy.galaxy_seed, generationVersion: SEED_GENERATION_VERSION, semanticLevel: "sector", canonicalObjectId: SOL_SECTOR_ID, parentSignature: galaxy.visual_signature }),
       is_fixed: true,
       is_procedural: false,
       ...generationMetadata("PROJECT-GENESIS-UNIVERSE:milky-way:local-bubble", galaxy.galaxy_seed, sectorIndex)
@@ -1123,9 +1133,10 @@ export function generateSector(galaxy: GalaxyNode, sectorIndex: number): SectorN
   };
   const [difficultyMin, difficultyMax] = difficultyByRarity[sectorRarity] ?? difficultyByRarity.Common;
   const [valueMin, valueMax] = valueByRarity[sectorRarity] ?? valueByRarity.Common;
+  const sectorId = `sector-${sectorIndex}-${hashSeed(sectorSeed).toString(16)}`;
 
   return {
-    id: `sector-${sectorIndex}-${hashSeed(sectorSeed).toString(16)}`,
+    id: sectorId,
     galaxy_id: galaxy.id,
     sector_seed: sectorSeed,
     sector_name: `${pick(namePrefixes, random, "Astra")} ${pick(["Reach", "Veil", "Expanse", "Frontier", "Basin", "Crown", "Drift"], random, "Reach")}-${String(sectorIndex + 1).padStart(3, "0")}`,
@@ -1143,6 +1154,7 @@ export function generateSector(galaxy: GalaxyNode, sectorIndex: number): SectorN
     colonized_worlds: discovered ? numericRange(random, 0, 3) : 0,
     discovered,
     discovered_at: discovered ? "derived" : null,
+    visual_signature: generateVisualSignature({ universeSeed: galaxy.galaxy_seed, generationVersion: SEED_GENERATION_VERSION, semanticLevel: "sector", canonicalObjectId: sectorId, parentSignature: galaxy.visual_signature }),
     is_fixed: false,
     is_procedural: true,
     ...generationMetadata(sectorSeed, galaxy.galaxy_seed, sectorIndex)
@@ -1151,7 +1163,13 @@ export function generateSector(galaxy: GalaxyNode, sectorIndex: number): SectorN
 
 export function generateSectors(galaxy: GalaxyNode, limit = 24) {
   const count = Math.min(galaxy.sector_count, limit);
-  return Array.from({ length: count }, (_, index) => generateSector(galaxy, index));
+  const siblings: ProceduralVisualSignature[] = [];
+  return Array.from({ length: count }, (_, index) => {
+    const sector = generateSector(galaxy, index);
+    if (!sector.is_fixed) sector.visual_signature = generateUniqueVisualSignature({ universeSeed: galaxy.galaxy_seed, generationVersion: SEED_GENERATION_VERSION, semanticLevel: "sector", canonicalObjectId: sector.id, parentSignature: galaxy.visual_signature }, siblings);
+    if (sector.visual_signature) siblings.push(sector.visual_signature);
+    return sector;
+  });
 }
 
 export function generateStarSystem(sector: SectorNode, systemIndex: number): StarSystemNode {
@@ -1182,6 +1200,7 @@ export function generateStarSystem(sector: SectorNode, systemIndex: number): Sta
       estimated_celestial_body_count_max: 16,
       estimated_danger_level: 8,
       known_star_signature: "Yellow Main Sequence",
+      visual_signature: generateVisualSignature({ universeSeed: sector.sector_seed, generationVersion: SEED_GENERATION_VERSION, semanticLevel: "system", canonicalObjectId: SOL_SYSTEM_ID, parentSignature: sector.visual_signature, override: { archetypeId: "warm_golden_single_star" } }),
       probe_data: {
         interaction: "Starting system",
         status: "Fully known"
@@ -1206,9 +1225,10 @@ export function generateStarSystem(sector: SectorNode, systemIndex: number): Sta
   const discoveryState = discoveryStateForSystem(sector, systemIndex);
   const estimatedPlanetMin = Math.max(1, planetCount - numericRange(random, 1, 3));
   const estimatedPlanetMax = planetCount + numericRange(random, 1, 4);
+  const systemId = `system-${systemIndex}-${hashSeed(systemSeed).toString(16)}`;
 
   return {
-    id: `system-${systemIndex}-${hashSeed(systemSeed).toString(16)}`,
+    id: systemId,
     sector_id: sector.id,
     system_seed: systemSeed,
     system_name: generatedName(systemSeed, "system"),
@@ -1233,6 +1253,7 @@ export function generateStarSystem(sector: SectorNode, systemIndex: number): Sta
     estimated_celestial_body_count_max: estimatedPlanetMax + 2,
     estimated_danger_level: Math.max(1, Math.min(100, dangerLevel + numericRange(random, -10, 10))),
     known_star_signature: discoveryState === "Detected" ? "Unknown stellar signal" : starType,
+    visual_signature: generateVisualSignature({ universeSeed: sector.sector_seed, generationVersion: SEED_GENERATION_VERSION, semanticLevel: "system", canonicalObjectId: systemId, parentSignature: sector.visual_signature }),
     probe_data: {
       probe_accuracy: discoveryState === "Probed" ? "Low" : ["Scanned", "Visited", "Surveyed", "Colonized"].includes(discoveryState) ? "Moderate" : "None",
       estimated_bodies: `${estimatedPlanetMin + 1}-${estimatedPlanetMax + 2}`
@@ -1250,7 +1271,13 @@ export function generateStarSystem(sector: SectorNode, systemIndex: number): Sta
 
 export function generateStarSystems(sector: SectorNode, limit = 12) {
   const count = Math.min(sector.system_count, limit);
-  return Array.from({ length: count }, (_, index) => generateStarSystem(sector, index));
+  const siblings: ProceduralVisualSignature[] = [];
+  return Array.from({ length: count }, (_, index) => {
+    const system = generateStarSystem(sector, index);
+    if (!system.is_fixed) system.visual_signature = generateUniqueVisualSignature({ universeSeed: sector.sector_seed, generationVersion: SEED_GENERATION_VERSION, semanticLevel: "system", canonicalObjectId: system.id, parentSignature: sector.visual_signature }, siblings);
+    if (system.visual_signature) siblings.push(system.visual_signature);
+    return system;
+  });
 }
 
 export function generateStar(system: StarSystemNode, starIndex: number): StarNode {
