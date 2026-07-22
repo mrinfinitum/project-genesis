@@ -1,5 +1,5 @@
 import { UpgradeLibrary } from "@/components/upgrade-library";
-import { getAssetProductionState } from "@/lib/assets/asset-production";
+import { getAssetProductionAssets } from "@/lib/assets/asset-production";
 import { getRows } from "@/lib/data";
 import { buildUpgradeArtReport } from "@/lib/upgrades/art-previews";
 import type { Upgrade } from "@/types/schema";
@@ -7,8 +7,19 @@ import type { Upgrade } from "@/types/schema";
 export const dynamic = "force-dynamic";
 
 export default async function UpgradesPage() {
-  const [rows, assetState] = await Promise.all([getRows("upgrades"), getAssetProductionState()]);
+  const [rows, assets] = await Promise.all([getRows("upgrades"), getAssetProductionAssets()]);
   const upgrades = rows as Upgrade[];
-  const report = buildUpgradeArtReport(upgrades, assetState.assets);
-  return <UpgradeLibrary upgrades={upgrades} report={report} />;
+  const report = buildUpgradeArtReport(upgrades, assets);
+  const art = report.items.map((item) => ({
+    upgradeId: item.upgradeId,
+    matchStatus: item.matchStatus,
+    previewStatus: item.previewStatus,
+    resolvedPreviewUrl: item.resolvedPreviewUrl,
+    hasApprovedPreview: item.hasApprovedPreview,
+    hasThumbnail: item.hasThumbnail,
+    hasPreview: item.hasPreview,
+    hasWebMapping: item.hasWebMapping,
+    hasRobloxMapping: item.hasRobloxMapping
+  }));
+  return <UpgradeLibrary upgrades={upgrades} art={art} />;
 }

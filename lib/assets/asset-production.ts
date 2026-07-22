@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { copyFile, mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { getGameData, getRows } from "@/lib/data";
-import { buildAssetLibraryInventory, type AssetLibraryInventoryIndex } from "@/lib/assets/asset-library-inventory";
+import { buildAssetLibraryInventory, buildUploadedAssetLibraryInventory, type AssetLibraryInventoryIndex } from "@/lib/assets/asset-library-inventory";
 import { applyGameArtImport, getGameArtImportWorkspaceState, getMergedAssetLibraryRows, upsertAppliedGameArtAssets } from "@/lib/assets/game-art-import";
 import { buildVisualPreviewReport, previewDerivativePresets, type VisualPreviewReport } from "@/lib/assets/visual-previews";
 import { buildEncyclopediaAssetRequirements } from "@/lib/encyclopedia";
@@ -1386,6 +1386,16 @@ function auditRows(label: string, records: Array<{ missing: MissingAssetRequirem
     missingAssetSets: missing,
     totalRequiredDerivatives: records.length * profile.requirements.filter((requirement) => requirement.required).length
   };
+}
+
+export async function getAssetProductionAssets(): Promise<ProductionAsset[]> {
+  const [{ rows, usage }, store] = await Promise.all([getMergedAssetLibraryRows(), readProductionStore()]);
+  return rows.map((row) => productionAssetFor(row, usage, store)).sort((left, right) => left.name.localeCompare(right.name));
+}
+
+export async function getAssetLibraryBrowserState() {
+  const assets = await getAssetProductionAssets();
+  return { assetLibraryInventory: buildUploadedAssetLibraryInventory(assets) };
 }
 
 export async function getAssetProductionState(options: { includeEncyclopediaRequirements?: boolean } = {}): Promise<AssetProductionState> {

@@ -14,9 +14,10 @@ import energyPhenomenaCuriosityTaxonomyPack from "@/data/curiosity-volume-07-ene
 import anomaliesCuriosityTaxonomyPack from "@/data/curiosity-volume-08-anomalies-taxonomy.json";
 import unknownObjectsCuriosityTaxonomyPack from "@/data/curiosity-volume-09-unknown-objects-taxonomy.json";
 import geneticArchivesCuriosityTaxonomyPack from "@/data/curiosity-volume-10-genetic-archives-taxonomy.json";
-import type { AssetProductionState } from "@/lib/assets/asset-production";
+import type { AssetLibraryInventoryIndex } from "@/lib/assets/asset-library-inventory";
 
-type InventoryItem = AssetProductionState["assetLibraryInventory"]["items"][number];
+type AssetBrowserState = { assetLibraryInventory: AssetLibraryInventoryIndex };
+type InventoryItem = AssetLibraryInventoryIndex["items"][number];
 type InventoryStatus = InventoryItem["status"];
 
 type ContentBrowserNode = {
@@ -845,7 +846,7 @@ function AssetContextMenu({
   );
 }
 
-export function AssetContentBrowser({ state, initialNode }: { state: AssetProductionState; initialNode?: string | null }) {
+export function AssetContentBrowser({ state, initialNode }: { state: AssetBrowserState; initialNode?: string | null }) {
   const [activeNodeId, setActiveNodeId] = useState(() => resolveInitialNode(initialNode));
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<(typeof statusFilters)[number]>("all");

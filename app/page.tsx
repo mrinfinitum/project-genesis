@@ -1,14 +1,14 @@
 import { CommandCenterDashboard } from "@/components/command-center-dashboard";
-import { getAssetProductionState } from "@/lib/assets/asset-production";
+import { getAssetProductionAssets } from "@/lib/assets/asset-production";
 import { getGameData } from "@/lib/data";
 import { getUniverseLibraryData } from "@/lib/universe/library";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const [data, assetState] = await Promise.all([
+  const [data, assets] = await Promise.all([
     getGameData(),
-    getAssetProductionState({ includeEncyclopediaRequirements: false })
+    getAssetProductionAssets()
   ]);
   const universeLibraries = getUniverseLibraryData();
   const totalRecords = [
@@ -59,10 +59,10 @@ export default async function DashboardPage() {
     }).length
   }));
   const assetStats = [
-    { label: "Total Assets", value: assetState.dashboard.totalAssets },
-    { label: "Published", value: assetState.dashboard.published },
-    { label: "Source Files", value: assetState.dashboard.sourceFilesUploaded },
-    { label: "Preview Ready", value: assetState.dashboard.previewReady }
+    { label: "Total Assets", value: assets.length },
+    { label: "Published", value: assets.filter((asset) => asset.productionStatus === "published" || asset.status.toLowerCase() === "published").length },
+    { label: "Source Files", value: assets.reduce((sum, asset) => sum + asset.sourceFiles.length, 0) },
+    { label: "Preview Ready", value: assets.filter((asset) => asset.derivatives.some((derivative) => derivative.publicUrl || derivative.storagePath) || asset.sourceFiles.some((source) => source.previewUrl)).length }
   ];
 
   return (

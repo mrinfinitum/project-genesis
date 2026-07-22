@@ -1,5 +1,5 @@
 import { EncyclopediaBrowser, type EncyclopediaBrowserEntry, type EncyclopediaBrowserSection } from "@/components/encyclopedia-browser";
-import { getAssetProductionState } from "@/lib/assets/asset-production";
+import { getAssetProductionAssets } from "@/lib/assets/asset-production";
 import { getGameData } from "@/lib/data";
 import { buildCivilizationEncyclopediaState } from "@/lib/encyclopedia";
 
@@ -21,8 +21,8 @@ export default async function EncyclopediaPage({ searchParams }: { searchParams?
   const query = firstParam(params?.q)?.trim() ?? "";
   const requestedLimit = Number(firstParam(params?.limit) ?? 96);
   const limit = Number.isFinite(requestedLimit) ? Math.min(480, Math.max(48, requestedLimit)) : 96;
-  const [data, assetState] = await Promise.all([getGameData(), getAssetProductionState({ includeEncyclopediaRequirements: false })]);
-  const state = buildCivilizationEncyclopediaState(data, assetState.assets);
+  const [data, assets] = await Promise.all([getGameData(), getAssetProductionAssets()]);
+  const state = buildCivilizationEncyclopediaState(data, assets);
   const selectedSection = state.sections.find((section) => section.id === selectedSectionId) ?? state.sections[0];
   const sectionEntries = (selectedSection?.entries ?? []).filter((entry) => selectedSection?.id !== "era" || entry.canonicalRecordId !== "survival");
   const needle = query.toLowerCase();

@@ -73,6 +73,24 @@ export type AssetLibraryInventoryIndex = {
   generatedAt: string;
 };
 
+function emptyCategorySummary(id: AssetLibraryCategoryId): AssetLibraryCategorySummary {
+  return {
+    id,
+    label: assetLibraryCategoryLabels[id],
+    total: 0,
+    published: 0,
+    approved: 0,
+    uploaded: 0,
+    needsReview: 0,
+    missing: 0,
+    invalid: 0,
+    unmapped: 0,
+    screenReferences: 0,
+    componentReferences: 0,
+    placeholderReferences: 0
+  };
+}
+
 function titleFromKey(value: string) {
   return value.replace(/^asset_/, "").replace(/_/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
@@ -178,6 +196,60 @@ function currentDimensions(asset?: ProductionAsset | null) {
   const derivative = asset?.derivatives[0];
   if (derivative?.width && derivative.height) return `${derivative.width}x${derivative.height}`;
   return "Pending inspection";
+}
+
+export function buildUploadedAssetLibraryInventory(assets: ProductionAsset[]): AssetLibraryInventoryIndex {
+  const items = assets.map((asset, index): AssetLibraryInventoryItem => {
+    const semanticAssetKey = keyForAsset(asset);
+    const role = roleFor(asset.category, semanticAssetKey, asset.name);
+    const categoryId = categoryFor({ key: semanticAssetKey, label: asset.name, role, sourceType: "asset_registry" });
+    return {
+      id: `asset-library-${normalizeKey(semanticAssetKey)}`,
+      semanticAssetKey,
+      displayName: asset.name,
+      categoryId,
+      categoryPath: `Asset Library / ${assetLibraryCategoryLabels[categoryId]}`,
+      role,
+      sourceType: "asset_registry",
+      status: statusForAsset(asset),
+      previewUrl: previewUrlForAsset(asset),
+      sourceAssetId: asset.id,
+      requirementId: null,
+      referencedByScreens: asset.usageReferences.filter((reference) => reference.type === "screen").map((reference) => ({ type: "screen", id: reference.id, name: reference.name, href: `/assets/${encodeURIComponent(asset.id)}` })),
+      referencedByComponents: asset.usageReferences.filter((reference) => reference.type === "component").map((reference) => ({ type: "component", id: reference.id, name: reference.name, href: `/assets/${encodeURIComponent(asset.id)}` })),
+      referencedByPlaceholders: [{ type: "asset_registry", id: asset.id, name: asset.name, href: `/assets/${encodeURIComponent(asset.id)}` }],
+      platformReadiness: readinessFromAsset(asset),
+      requiredDimensions: requiredDimensionsFor(role, semanticAssetKey),
+      currentDimensions: currentDimensions(asset),
+      actions: ["Open", "Replace", "Move", "Tag", "Approve", "Publish"],
+      sortOrder: index
+    };
+  }).sort((left, right) => left.categoryId.localeCompare(right.categoryId) || left.displayName.localeCompare(right.displayName));
+
+  const categorySummaries = Object.fromEntries(assetLibraryCategoryIds.map((id) => {
+    const summary = emptyCategorySummary(id);
+    const rows = items.filter((item) => item.categoryId === id);
+    summary.total = rows.length;
+    summary.published = rows.filter((item) => item.status === "published").length;
+    summary.approved = rows.filter((item) => item.status === "approved").length;
+    summary.uploaded = rows.filter((item) => item.status === "uploaded").length;
+    summary.needsReview = rows.filter((item) => item.status === "needs_review").length;
+    summary.missing = rows.filter((item) => item.status === "missing").length;
+    summary.invalid = rows.filter((item) => item.status === "invalid").length;
+    summary.unmapped = rows.filter((item) => item.status === "unmapped").length;
+    return [id, summary];
+  })) as Record<AssetLibraryCategoryId, AssetLibraryCategorySummary>;
+
+  const keys = new Map<string, string[]>();
+  for (const item of items) keys.set(item.semanticAssetKey, [...(keys.get(item.semanticAssetKey) ?? []), item.id]);
+  return {
+    items,
+    categorySummaries,
+    unmappedAssets: items.filter((item) => item.categoryId === "unmapped"),
+    duplicateSemanticKeys: [...keys.entries()].filter(([, ids]) => ids.length > 1).map(([semanticAssetKey, itemIds]) => ({ semanticAssetKey, itemIds })),
+    defaultFilter: "all",
+    generatedAt: new Date().toISOString()
+  };
 }
 
 function requiredDimensionsFor(role: string, key: string) {

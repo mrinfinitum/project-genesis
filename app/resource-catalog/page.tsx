@@ -94,6 +94,8 @@ export default async function ResourceCatalogPage({ searchParams }: { searchPara
   const recordStatus = firstParam(params?.status) ?? "all";
   const view = firstParam(params?.view) ?? "library";
   const entry = firstParam(params?.entry);
+  const requestedLimit = Number(firstParam(params?.limit) ?? 96);
+  const limit = Number.isFinite(requestedLimit) ? Math.min(480, Math.max(48, requestedLimit)) : 96;
   const records = (await canonicalResources()).sort((left, right) => view === "periodic" ? (left.element?.atomic_number ?? 999) - (right.element?.atomic_number ?? 999) : left.resource_name.localeCompare(right.resource_name));
   const folderRecords = recordsForFolder(records, folder);
   const visibleRecords = folderRecords.filter((record) => {
@@ -108,6 +110,15 @@ export default async function ResourceCatalogPage({ searchParams }: { searchPara
       .toLowerCase()
       .includes(query);
   });
+  const renderedRecords = visibleRecords.slice(0, limit);
+  const moreParams = new URLSearchParams();
+  for (const [key, value] of Object.entries(params ?? {})) {
+    const first = firstParam(value);
+    if (first) moreParams.set(key, first);
+  }
+  moreParams.set("folder", folder);
+  moreParams.set("view", view);
+  moreParams.set("limit", String(Math.min(480, limit + 96)));
   const selected = records.find((record) => record.id === entry);
   const title = folderTitle(records, folder);
   const tree = buildTree(records);
@@ -178,12 +189,12 @@ export default async function ResourceCatalogPage({ searchParams }: { searchPara
           </form>
 
           <div className="flex items-center gap-2 rounded-md border border-cyan-300/10 bg-[#07101e]/70 px-3 py-2 text-xs font-bold text-slate-400">
-            <Database className="h-4 w-4 text-cyan-200" />{visibleRecords.length} shown / {folderRecords.length} in folder / {records.length} total
+            <Database className="h-4 w-4 text-cyan-200" />{renderedRecords.length} shown / {visibleRecords.length} matching / {folderRecords.length} in folder / {records.length} total
           </div>
 
           {visibleRecords.length ? (
             <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-              {visibleRecords.map((record) => (
+              {renderedRecords.map((record) => (
                 <Link key={record.id} href={resourceHref(folder, record.id)} scroll={false} className="group flex min-h-64 flex-col overflow-hidden rounded-md border border-cyan-300/15 bg-[#07101e]/84 transition hover:-translate-y-0.5 hover:border-cyan-200/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200">
                   <div className="relative grid h-24 place-items-center border-b border-cyan-300/10 bg-slate-950/45">
                     <span className="absolute inset-x-0 bottom-0 h-px" style={{ backgroundColor: record.rarity_color || "#67e8f9" }} />
@@ -206,6 +217,14 @@ export default async function ResourceCatalogPage({ searchParams }: { searchPara
           ) : (
             <section className="rounded-md border border-cyan-300/15 bg-[#07101e]/78 p-8 text-center"><p className="text-xl font-black text-white">No resources match this view.</p><p className="mt-2 text-sm text-slate-400">Choose another folder or clear the search filters.</p></section>
           )}
+
+          {renderedRecords.length < visibleRecords.length ? (
+            <div className="flex justify-center">
+              <Link href={`/resource-catalog?${moreParams.toString()}`} scroll={false} className="rounded-md border border-cyan-300/20 bg-cyan-300/5 px-4 py-2 text-sm font-black text-cyan-100 transition hover:bg-cyan-300/10">
+                Show more resources ({visibleRecords.length - renderedRecords.length} remaining)
+              </Link>
+            </div>
+          ) : null}
 
           {selected ? (
             <section className="rounded-md border border-cyan-300/20 bg-[#07101e]/92 p-4 shadow-glow">

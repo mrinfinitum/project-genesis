@@ -7,7 +7,7 @@ import { DiscoveryLibraryTree, type DiscoveryTreeNode } from "@/components/disco
 import { GeneratedLibraryCard, type GeneratedLibraryCardRecord } from "@/components/generated-library-card";
 import { ResizableDiscoveryLayout } from "@/components/resizable-discovery-layout";
 import { CanonicalIndex, WorkspaceBadge, WorkspaceStatTile } from "@/components/ui/workspace";
-import type { AiAgentLibraryState } from "@/lib/ai-agents";
+import type { AiAgentBrowserRecord, AiAgentBrowserState } from "@/lib/ai-agents/browser";
 
 function slug(value: string) {
   return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
@@ -19,20 +19,26 @@ function href(section: string, entry?: string) {
   return `/ai-agents?${params.toString()}`;
 }
 
-function buildTree(state: AiAgentLibraryState): DiscoveryTreeNode[] {
+function buildTree(state: AiAgentBrowserState): DiscoveryTreeNode[] {
+  const agentsBySubcategory = new Map<string, AiAgentBrowserRecord[]>();
+  for (const agent of state.records) {
+    const key = `${agent.categoryId}:${agent.subcategory}`;
+    const agents = agentsBySubcategory.get(key) ?? [];
+    agents.push(agent);
+    agentsBySubcategory.set(key, agents);
+  }
   return state.categories.map((category) => {
-    const categoryAgents = state.libraryAgents.filter((agent) => agent.category_id === category.id);
     return {
       id: `category:${category.id}`,
       label: category.displayName,
       href: href(`category:${category.id}`),
-      count: categoryAgents.length,
+      count: state.categoryCounts[category.id] ?? 0,
       icon: "folder" as const,
       children: category.subcategories.map((subcategory) => {
         const subcategoryId = `subcategory:${category.id}:${slug(subcategory)}`;
-        const agents = categoryAgents
-          .filter((agent) => agent.subcategory === subcategory)
-          .sort((left, right) => left.library_index - right.library_index);
+        const agents = (agentsBySubcategory.get(`${category.id}:${subcategory}`) ?? [])
+          .slice()
+          .sort((left, right) => left.libraryIndex - right.libraryIndex);
         return {
           id: subcategoryId,
           label: subcategory,
@@ -40,10 +46,10 @@ function buildTree(state: AiAgentLibraryState): DiscoveryTreeNode[] {
           count: agents.length,
           icon: "folder" as const,
           children: agents.map((agent) => ({
-            id: agent.ai_id,
+            id: agent.id,
             label: agent.name,
-            href: href(subcategoryId, agent.ai_id),
-            count: agent.library_index,
+            href: href(subcategoryId, agent.id),
+            count: agent.libraryIndex,
             icon: "curiosity" as const
           }))
         };
@@ -52,18 +58,17 @@ function buildTree(state: AiAgentLibraryState): DiscoveryTreeNode[] {
   });
 }
 
-function agentCard(agent: AiAgentLibraryState["agents"][number], section: string): GeneratedLibraryCardRecord {
+function agentCard(agent: AiAgentBrowserRecord, section: string): GeneratedLibraryCardRecord {
   return {
     id: agent.id,
-    name: agent.displayName,
-    type: agent.agentClass ?? "AI Agent",
-    classification: agent.specialization ?? agent.catalogRarity ?? agent.rarity,
-    parent: agent.terminalType ?? agent.personalityId,
-    contains: `${agent.supportedStates.length} states`,
-    status: agent.publishState,
+    name: agent.name,
+    type: agent.aiType || "AI Agent",
+    classification: agent.primaryFunction || agent.rarity,
+    parent: agent.categoryName,
+    contains: agent.subcategory,
+    status: agent.runtimeStatus,
     href: href(section, agent.id),
-    tone: "neutral",
-    thumbnailUrl: agent.primaryPreview.url || undefined
+    tone: "neutral"
   };
 }
 
@@ -87,7 +92,7 @@ function sectionTitle(section: string) {
 
 const INITIAL_CARD_LIMIT = 48;
 
-export function AiAgentsLibrary({ state, activeSection = "library", activeEntry }: { state: AiAgentLibraryState; activeSection?: string; activeEntry?: string }) {
+export function AiAgentsLibrary({ state, activeSection = "library", activeEntry }: { state: AiAgentBrowserState; activeSection?: string; activeEntry?: string }) {
   const [query, setQuery] = useState("");
   const [cardLimit, setCardLimit] = useState(INITIAL_CARD_LIMIT);
   const tree = useMemo(() => buildTree(state), [state]);
@@ -97,18 +102,17 @@ export function AiAgentsLibrary({ state, activeSection = "library", activeEntry 
     ? state.categories.find((category) => category.id === activeSubcategory[1])?.subcategories.find((subcategory) => slug(subcategory) === activeSubcategory[2]) ?? sectionTitle(activeSection)
     : state.categories.find((category) => category.id === activeCategoryId)?.displayName ?? sectionTitle(activeSection);
   const selectedAgent = state.records.find((agent) => agent.id === activeEntry);
-  const selectedDefinition = state.libraryAgents.find((agent) => agent.ai_id === activeEntry);
+  const selectedDefinition = state.selectedDefinition;
 
   const records = useMemo(() => {
-    if (activeSection === "categories") return state.categories.map((category) => moduleCard({ id: category.id, displayName: category.displayName, agentIds: state.libraryAgents.filter((agent) => agent.category_id === category.id).map((agent) => agent.ai_id), status: "canonical" }, activeSection, "AI Category", category.subcategory));
-    if (activeSection === "assignments") return state.assignmentRoles.map((role) => moduleCard({ id: `assignment:${slug(role)}`, displayName: role, agentIds: state.libraryAgents.filter((agent) => agent.assignment_roles.includes(role)).map((agent) => agent.ai_id), status: "canonical" }, activeSection, "Assignment Role"));
-    if (activeSection === "personalities") return state.personalityCatalog.map((personality) => moduleCard({ id: `personality:${slug(personality)}`, displayName: personality, agentIds: state.libraryAgents.filter((agent) => agent.personality_primary === personality || agent.personality_secondary === personality).map((agent) => agent.ai_id), status: "canonical" }, activeSection, "Personality"));
-    if (activeSection === "rarity") return state.rarityCatalog.map((rarity) => moduleCard({ id: `rarity:${rarity.id}`, displayName: rarity.displayName, agentIds: state.libraryAgents.filter((agent) => agent.rarity === rarity.displayName).map((agent) => agent.ai_id), status: rarity.volumeOneAllowed ? "canonical" : "future" }, activeSection, "Rarity"));
+    if (activeSection === "categories") return state.categories.map((category) => moduleCard({ id: category.id, displayName: category.displayName, agentIds: state.records.filter((agent) => agent.categoryId === category.id).map((agent) => agent.id), status: "canonical" }, activeSection, "AI Category", category.subcategory));
+    if (activeSection === "assignments") return state.assignmentRoles.map((role) => moduleCard({ id: `assignment:${slug(role)}`, displayName: role, agentIds: state.records.filter((agent) => agent.assignmentRoles.includes(role)).map((agent) => agent.id), status: "canonical" }, activeSection, "Assignment Role"));
+    if (activeSection === "personalities") return state.personalityCatalog.map((personality) => moduleCard({ id: `personality:${slug(personality)}`, displayName: personality, agentIds: state.records.filter((agent) => agent.personality === personality).map((agent) => agent.id), status: "canonical" }, activeSection, "Personality"));
+    if (activeSection === "rarity") return state.rarityCatalog.map((rarity) => moduleCard({ id: `rarity:${rarity.id}`, displayName: rarity.displayName, agentIds: state.records.filter((agent) => agent.rarity === rarity.displayName).map((agent) => agent.id), status: rarity.volumeOneAllowed ? "canonical" : "future" }, activeSection, "Rarity"));
     if (["relationships", "runtime", "validation"].includes(activeSection)) return [];
     const categoryId = activeSection.startsWith("category:") ? activeSection.split(":")[1] : activeSection.startsWith("subcategory:") ? activeSection.split(":")[1] : null;
     const subcategorySlug = activeSection.startsWith("subcategory:") ? activeSection.split(":")[2] : null;
-    const allowedIds = new Set(state.libraryAgents.filter((agent) => (!categoryId || agent.category_id === categoryId) && (!subcategorySlug || slug(agent.subcategory) === subcategorySlug)).map((agent) => agent.ai_id));
-    const agents = state.agents.filter((agent) => allowedIds.has(agent.id));
+    const agents = state.records.filter((agent) => (!categoryId || agent.categoryId === categoryId) && (!subcategorySlug || slug(agent.subcategory) === subcategorySlug));
     return agents.map((agent) => agentCard(agent, activeSection));
   }, [activeSection, state]);
 
@@ -126,10 +130,10 @@ export function AiAgentsLibrary({ state, activeSection = "library", activeEntry 
 
   const indexItems = activeSection === "library" || activeSection.startsWith("category:") || activeSection.startsWith("subcategory:")
     ? [
-        { label: "Assistants", value: records.length, detail: `${state.libraryAgents.length} canonical records` },
+        { label: "Assistants", value: records.length, detail: `${state.records.length} canonical records` },
         { label: "Categories", value: state.categories.length, detail: "canonical assistant systems" },
-        { label: "Rarities", value: new Set(state.libraryAgents.map((agent) => agent.rarity)).size, detail: "active rarity classes" },
-        { label: "Level Cap", value: Math.max(...state.libraryAgents.map((agent) => agent.max_level)), detail: "maximum by rarity" }
+        { label: "Rarities", value: state.rarityCount, detail: "active rarity classes" },
+        { label: "Level Cap", value: state.maxLevel, detail: "maximum by rarity" }
       ]
     : [
         { label: "Records", value: records.length, detail: title },
@@ -186,10 +190,10 @@ export function AiAgentsLibrary({ state, activeSection = "library", activeEntry 
 
           {selectedAgent ? (
             <section className="rounded-md border border-cyan-300/20 bg-[#07101e]/92 p-4 shadow-glow">
-              <div className="flex flex-wrap items-start justify-between gap-3"><div><div className="flex flex-wrap gap-2"><WorkspaceBadge value={selectedAgent.agentClass ?? "AI Agent"} /><WorkspaceBadge value={selectedAgent.catalogRarity ?? selectedAgent.rarity} /><WorkspaceBadge value={selectedAgent.publishState} /></div><h2 className="mt-3 text-2xl font-black text-white">{selectedAgent.displayName}</h2><p className="mt-1 text-sm font-semibold text-cyan-100/75">{selectedAgent.id}</p></div><Link href={href(activeSection)} scroll={false} className="rounded-md border border-cyan-300/20 px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-cyan-100 hover:bg-cyan-300/10">Close Record</Link></div>
+              <div className="flex flex-wrap items-start justify-between gap-3"><div><div className="flex flex-wrap gap-2"><WorkspaceBadge value={selectedAgent.aiType || "AI Agent"} /><WorkspaceBadge value={selectedAgent.rarity} /><WorkspaceBadge value={selectedAgent.runtimeStatus} /></div><h2 className="mt-3 text-2xl font-black text-white">{selectedAgent.name}</h2><p className="mt-1 text-sm font-semibold text-cyan-100/75">{selectedAgent.id}</p></div><Link href={href(activeSection)} scroll={false} className="rounded-md border border-cyan-300/20 px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-cyan-100 hover:bg-cyan-300/10">Close Record</Link></div>
               <p className="mt-4 max-w-5xl text-sm leading-6 text-slate-300">{selectedAgent.description}</p>
-              <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4"><WorkspaceStatTile label="Codename" value={selectedDefinition?.codename ?? "Compatibility agent"} /><WorkspaceStatTile label="Specialization" value={selectedAgent.specialization ?? "Not defined"} /><WorkspaceStatTile label="Personality" value={selectedAgent.catalogPersonality ?? selectedAgent.personalityId} /><WorkspaceStatTile label="Voice" value={selectedDefinition?.voice_style ?? selectedAgent.voiceProfile.notes} /></div>
-              <div className="mt-4 grid gap-3 lg:grid-cols-2"><div className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-3"><p className="text-xs font-black uppercase tracking-[0.16em] text-cyan-200">Discovery & Restoration</p><p className="mt-2 text-sm leading-6 text-slate-300">{selectedAgent.discoverySource || "Discovery source not defined"} · {selectedAgent.unlockMethod || "Unlock method not defined"} · {selectedAgent.restorationAction || "Restoration action not defined"}</p></div><div className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-3"><p className="text-xs font-black uppercase tracking-[0.16em] text-cyan-200">Canonical Bonuses</p><p className="mt-2 text-sm leading-6 text-slate-300">{selectedAgent.primaryBonusIds?.join(", ") || "No bonuses defined"}</p></div></div>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4"><WorkspaceStatTile label="Codename" value={selectedDefinition?.codename ?? "Canonical assistant"} /><WorkspaceStatTile label="Specialization" value={selectedAgent.primaryFunction} /><WorkspaceStatTile label="Personality" value={selectedAgent.personality} /><WorkspaceStatTile label="Voice" value={selectedAgent.voiceStyle} /></div>
+              <div className="mt-4 grid gap-3 lg:grid-cols-2"><div className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-3"><p className="text-xs font-black uppercase tracking-[0.16em] text-cyan-200">Discovery & Activation</p><p className="mt-2 text-sm leading-6 text-slate-300">{selectedAgent.discoveryMethod} · {selectedAgent.activationMethod}</p></div><div className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-3"><p className="text-xs font-black uppercase tracking-[0.16em] text-cyan-200">Canonical Function</p><p className="mt-2 text-sm leading-6 text-slate-300">{selectedAgent.primaryFunction} · {selectedAgent.secondaryFunction}</p></div></div>
               {selectedDefinition ? <div className="mt-3 grid gap-3 lg:grid-cols-2"><div className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-3"><p className="text-xs font-black uppercase tracking-[0.16em] text-cyan-200">Dialogue & Memory</p><p className="mt-2 text-sm leading-6 text-slate-300">{selectedDefinition.dialogue_examples.join(" ")} {[selectedDefinition.memory_fragment_1, selectedDefinition.memory_fragment_2, selectedDefinition.memory_fragment_3].join(" ")}</p></div><div className="rounded-md border border-cyan-300/10 bg-slate-950/35 p-3"><p className="text-xs font-black uppercase tracking-[0.16em] text-cyan-200">Portrait Prompt</p><p className="mt-2 text-sm leading-6 text-slate-300">{selectedDefinition.portrait_prompt}</p></div></div> : null}
             </section>
           ) : null}

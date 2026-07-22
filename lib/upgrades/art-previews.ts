@@ -200,7 +200,29 @@ function dedupeCandidates(candidates: UpgradeArtCandidate[]) {
   return [...map.values()].sort((left, right) => right.score - left.score || left.assetId.localeCompare(right.assetId));
 }
 
-function candidatesForUpgrade(upgrade: Upgrade, assets: ProductionAsset[]) {
+type UpgradeArtAssetIndexEntry = {
+  asset: ProductionAsset;
+  assetId: string;
+  artKey: string;
+  assetIconKey: string;
+  assetName: string;
+  values: Set<string>;
+  isUpgradeAsset: boolean;
+};
+
+function buildUpgradeArtAssetIndex(assets: ProductionAsset[]): UpgradeArtAssetIndexEntry[] {
+  return assets.map((asset) => ({
+    asset,
+    assetId: normalizeUpgradeArtKey(asset.id),
+    artKey: normalizeUpgradeArtKey(asset.artKey),
+    assetIconKey: normalizeUpgradeArtKey(asset.iconKey),
+    assetName: normalizeUpgradeArtKey(asset.name),
+    values: new Set(assetValues(asset).flatMap((value) => [normalizeUpgradeArtKey(value), filenameStem(value), iconKeyWithoutContext(value)]).filter(Boolean)),
+    isUpgradeAsset: /upgrade/i.test(`${asset.category} ${asset.type}`)
+  }));
+}
+
+function candidatesForUpgrade(upgrade: Upgrade, assetIndex: UpgradeArtAssetIndexEntry[]) {
   const upgradeId = normalizeUpgradeArtKey(upgrade.id);
   const nameKey = normalizeUpgradeArtKey(upgrade.name);
   const iconKey = normalizeUpgradeArtKey(upgrade.icon_name);
@@ -208,14 +230,10 @@ function candidatesForUpgrade(upgrade: Upgrade, assets: ProductionAsset[]) {
   const linkedAssetId = normalizeUpgradeArtKey(upgrade.asset_id ?? "");
   const candidates: UpgradeArtCandidate[] = [];
 
-  for (const asset of assets) {
-    const assetId = normalizeUpgradeArtKey(asset.id);
-    const artKey = normalizeUpgradeArtKey(asset.artKey);
-    const assetIconKey = normalizeUpgradeArtKey(asset.iconKey);
-    const assetName = normalizeUpgradeArtKey(asset.name);
-    const values = new Set(assetValues(asset).flatMap((value) => [normalizeUpgradeArtKey(value), filenameStem(value), iconKeyWithoutContext(value)]).filter(Boolean));
+  for (const entry of assetIndex) {
+    const { asset, assetId, artKey, assetIconKey, assetName, values } = entry;
     const usageMatch = usageMatches(asset, upgrade);
-    const upgradeAssetCategory = /upgrade/i.test(`${asset.category} ${asset.type}`) || usageMatch;
+    const upgradeAssetCategory = entry.isUpgradeAsset || usageMatch;
 
     const push = (reason: string, score: number) => candidates.push({ assetId: asset.id, name: asset.name, artKey: asset.artKey, iconKey: asset.iconKey, reason, score });
 
@@ -311,9 +329,9 @@ function retargetPreview(preview: VisualPreview, upgrade: Upgrade): VisualPrevie
   };
 }
 
-export function resolveUpgradeArtPreview(upgrade: Upgrade, assets: ProductionAsset[], options: { size?: PreviewSize } = {}): UpgradeArtResolution {
+function resolveUpgradeArtPreviewFromIndex(upgrade: Upgrade, assets: ProductionAsset[], assetIndex: UpgradeArtAssetIndexEntry[], options: { size?: PreviewSize } = {}): UpgradeArtResolution {
   const size = options.size ?? "card";
-  const candidates = candidatesForUpgrade(upgrade, assets);
+  const candidates = candidatesForUpgrade(upgrade, assetIndex);
   const topScore = candidates[0]?.score ?? 0;
   const topCandidates = candidates.filter((candidate) => candidate.score === topScore);
   const iconKey = text(upgrade.icon_name);
@@ -410,8 +428,13 @@ export function resolveUpgradeArtPreview(upgrade: Upgrade, assets: ProductionAss
   };
 }
 
+export function resolveUpgradeArtPreview(upgrade: Upgrade, assets: ProductionAsset[], options: { size?: PreviewSize } = {}): UpgradeArtResolution {
+  return resolveUpgradeArtPreviewFromIndex(upgrade, assets, buildUpgradeArtAssetIndex(assets), options);
+}
+
 export function buildUpgradeArtReport(upgrades: Upgrade[], assets: ProductionAsset[], options: { size?: PreviewSize } = {}): UpgradeArtReport {
-  const items = upgrades.map((upgrade) => resolveUpgradeArtPreview(upgrade, assets, options));
+  const assetIndex = buildUpgradeArtAssetIndex(assets);
+  const items = upgrades.map((upgrade) => resolveUpgradeArtPreviewFromIndex(upgrade, assets, assetIndex, options));
   const stats: UpgradeArtStats = {
     total: items.length,
     matched: items.filter((item) => item.matchStatus === "matched").length,

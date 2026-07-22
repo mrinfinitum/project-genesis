@@ -4,13 +4,15 @@ import { useEffect, useMemo, useState } from "react";
 import { Database, Filter, Search } from "lucide-react";
 import { GeneratedLibraryCard, type GeneratedLibraryCardRecord } from "@/components/generated-library-card";
 import { CanonicalIndex } from "@/components/ui/workspace";
-import type { UpgradeArtReport, UpgradeArtResolution } from "@/lib/upgrades/art-previews";
+import type { UpgradeArtResolution } from "@/lib/upgrades/art-previews";
 import type { Upgrade } from "@/types/schema";
 
 type UpgradeLibraryProps = {
   upgrades: Upgrade[];
-  report: UpgradeArtReport;
+  art: Array<Pick<UpgradeArtResolution, "upgradeId" | "matchStatus" | "previewStatus" | "resolvedPreviewUrl" | "hasApprovedPreview" | "hasThumbnail" | "hasPreview" | "hasWebMapping" | "hasRobloxMapping">>;
 };
+
+type UpgradeCardArt = UpgradeLibraryProps["art"][number];
 
 function normalize(value: string) {
   return value.trim().toLowerCase();
@@ -23,13 +25,13 @@ function titleCase(value: string) {
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
-function statusForUpgrade(upgrade: Upgrade, art?: UpgradeArtResolution) {
+function statusForUpgrade(upgrade: Upgrade, art?: UpgradeCardArt) {
   if (art?.matchStatus === "matched" && /approved|published|generated|needs review/i.test(art.previewStatus)) return "Ready";
   if (upgrade.asset_id) return "Needs Review";
   return "Missing Art";
 }
 
-function previewForUpgrade(art?: UpgradeArtResolution) {
+function previewForUpgrade(art?: UpgradeCardArt) {
   if (!art) return undefined;
   const hasUsablePreview = art.matchStatus === "matched" && (art.hasApprovedPreview || art.hasThumbnail || art.hasPreview || art.hasWebMapping || art.hasRobloxMapping);
   if (!hasUsablePreview) return undefined;
@@ -37,7 +39,7 @@ function previewForUpgrade(art?: UpgradeArtResolution) {
   return art.resolvedPreviewUrl;
 }
 
-function toCardRecord(upgrade: Upgrade, art?: UpgradeArtResolution): GeneratedLibraryCardRecord {
+function toCardRecord(upgrade: Upgrade, art?: UpgradeCardArt): GeneratedLibraryCardRecord {
   const displayName = upgrade.name || titleCase(upgrade.id);
   const classificationParts = [upgrade.type, upgrade.tier].filter(Boolean).map(titleCase);
   const costLabel = upgrade.base_cost && upgrade.cost_resource ? `${upgrade.base_cost.toLocaleString()} ${titleCase(upgrade.cost_resource)}` : undefined;
@@ -57,10 +59,13 @@ function toCardRecord(upgrade: Upgrade, art?: UpgradeArtResolution): GeneratedLi
   };
 }
 
-export function UpgradeLibrary({ upgrades, report }: UpgradeLibraryProps) {
+const INITIAL_CARD_LIMIT = 96;
+
+export function UpgradeLibrary({ upgrades, art }: UpgradeLibraryProps) {
   const [query, setQuery] = useState("");
   const [type, setType] = useState("all");
   const [hiddenIds, setHiddenIds] = useState<string[]>([]);
+  const [cardLimit, setCardLimit] = useState(INITIAL_CARD_LIMIT);
   const storageKey = "project-genesis-hidden-library-records:upgrades";
 
   useEffect(() => {
@@ -71,7 +76,7 @@ export function UpgradeLibrary({ upgrades, report }: UpgradeLibraryProps) {
     }
   }, []);
 
-  const artByUpgradeId = useMemo(() => new Map(report.items.map((item) => [item.upgradeId, item])), [report.items]);
+  const artByUpgradeId = useMemo(() => new Map(art.map((item) => [item.upgradeId, item])), [art]);
 
   const visibleUpgrades = useMemo(() => upgrades.filter((upgrade) => !hiddenIds.includes(upgrade.id)), [hiddenIds, upgrades]);
 
@@ -112,6 +117,12 @@ export function UpgradeLibrary({ upgrades, report }: UpgradeLibraryProps) {
       return matchesType && matchesQuery;
     });
   }, [query, type, visibleUpgrades]);
+
+  useEffect(() => {
+    setCardLimit(INITIAL_CARD_LIMIT);
+  }, [query, type]);
+
+  const renderedUpgrades = filteredUpgrades.slice(0, cardLimit);
 
   const hideRecord = (record: GeneratedLibraryCardRecord) => {
     setHiddenIds((current) => {
@@ -166,7 +177,7 @@ export function UpgradeLibrary({ upgrades, report }: UpgradeLibraryProps) {
 
       {filteredUpgrades.length ? (
         <section className="grid auto-rows-fr gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-          {filteredUpgrades.map((upgrade) => (
+          {renderedUpgrades.map((upgrade) => (
             <GeneratedLibraryCard key={upgrade.id} record={toCardRecord(upgrade, artByUpgradeId.get(upgrade.id))} onDelete={hideRecord} />
           ))}
         </section>
@@ -176,6 +187,13 @@ export function UpgradeLibrary({ upgrades, report }: UpgradeLibraryProps) {
           <p className="mt-2 text-sm text-slate-400">Clear search or class filters to return to the full canonical library.</p>
         </section>
       )}
+      {renderedUpgrades.length < filteredUpgrades.length ? (
+        <div className="flex justify-center">
+          <button type="button" onClick={() => setCardLimit((current) => current + INITIAL_CARD_LIMIT)} className="rounded-md border border-cyan-300/20 bg-cyan-300/5 px-4 py-2 text-sm font-black text-cyan-100 transition hover:bg-cyan-300/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200">
+            Show more upgrades ({filteredUpgrades.length - renderedUpgrades.length} remaining)
+          </button>
+        </div>
+      ) : null}
     </main>
   );
 }

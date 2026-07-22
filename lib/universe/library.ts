@@ -59,6 +59,8 @@ export type UniverseLibrarySource = {
   civilizations: FactionRecord[];
 };
 
+let cachedUniverseLibraryData: UniverseLibraryData | null = null;
+
 type GeneratedRecordType = UniverseLibraryKind | "star-system";
 
 const allowedBodyTypes = new Set([
@@ -213,6 +215,7 @@ export function getUniverseLibrarySource(): UniverseLibrarySource {
 }
 
 export function getUniverseLibraryData(): UniverseLibraryData {
+  if (cachedUniverseLibraryData) return cachedUniverseLibraryData;
   const source = getUniverseLibrarySource();
   const sectorByGalaxy = new Map(source.galaxies.map((galaxy) => [galaxy.id, source.sectors.filter((sector) => sector.galaxy_id === galaxy.id)]));
   const systemsBySector = new Map(source.sectors.map((sector) => [sector.id, source.starSystems.filter((system) => system.sector_id === sector.id)]));
@@ -360,7 +363,8 @@ export function getUniverseLibraryData(): UniverseLibraryData {
       meta: [{ label: "Export", value: "Ready" }]
     }));
 
-  return { galaxies, sectors, starSystems, stars, planets, discoveries, civilizations };
+  cachedUniverseLibraryData = { galaxies, sectors, starSystems, stars, planets, discoveries, civilizations };
+  return cachedUniverseLibraryData;
 }
 
 export function getUniverseLibraryRecords(kind: UniverseLibraryKind) {
