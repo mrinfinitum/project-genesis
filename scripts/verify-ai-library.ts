@@ -28,10 +28,12 @@ async function main() {
   assert(resolveCanonicalAiLibraryId("ai_v06_001_yield_archive") === "ai_v06_001_margin_steward", "Pack B must migrate the former first Volume VI AI ID.");
   assert(resolveCanonicalAiLibraryId("ai_v10_100_nimbus_nexus") === "ai_v10_100_gaia_system", "Pack B must migrate the former final Volume X AI ID.");
   const authoredVolumeElevenAgents = canonicalAiLibraryAgents.filter((agent) => agent.volume === 11 && agent.tags.includes("authored_volume_11"));
-  assert(authoredVolumeElevenAgents.length === 40, "Volume XI must include all forty authored Terraforming Initiative companions.");
+  assert(authoredVolumeElevenAgents.length === 60, "Volume XI must include all sixty authored Terraforming Initiative companions.");
   assert(authoredVolumeElevenAgents[0]?.name === "Auriga" && authoredVolumeElevenAgents[0]?.legacy_ai_ids?.includes("AI-XI-001"), "Authored Volume XI IDs must resolve through stable canonical aliases.");
   assert(authoredVolumeElevenAgents[20]?.name === "Verdigris" && authoredVolumeElevenAgents[20]?.legacy_ai_ids?.includes("AI-XI-021"), "Authored Volume XI Part 2 IDs must resolve through stable canonical aliases.");
   assert(authoredVolumeElevenAgents[39]?.name === "Genesis Bloom" && authoredVolumeElevenAgents[39]?.legacy_ai_ids?.includes("AI-XI-040"), "Authored Volume XI Part 2 must include Genesis Bloom at slot forty.");
+  assert(authoredVolumeElevenAgents[40]?.name === "Aurora" && authoredVolumeElevenAgents[40]?.legacy_ai_ids?.includes("AI-XI-041"), "Authored Volume XI Part 3 IDs must resolve through stable canonical aliases.");
+  assert(authoredVolumeElevenAgents[59]?.name === "Genesis Terra" && authoredVolumeElevenAgents[59]?.legacy_ai_ids?.includes("AI-XI-060"), "Authored Volume XI Part 3 must include Genesis Terra at slot sixty.");
 
   assert(romanNumeral(11) === "XI" && romanNumeral(20) === "XX", "AI Library volume labels must use canonical Roman numerals.");
   const normalizedLegacy = normalizeAiRecord({ ai_id: "legacy-ai", name: "Legacy", title: "LEGACY", volume: 1, category: "General Intelligence", subcategory: "Universal Assistants", rarity: "Common", labor_per_second: 2, click_bonus: 3, offline_bonus: 1.5, passive: "Legacy Passive", discoveryLocation: "Archive" });

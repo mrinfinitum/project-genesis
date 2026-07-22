@@ -1,0 +1,26 @@
+{
+  "volume": 11,
+  "part": 3,
+  "agents": [
+    { "ai_id": "AI-XI-041", "name": "Aurora", "title": "Sky Painter", "rarity": "Epic", "subcategory": "Atmospheric Engineers", "discovery_location": "Polar Observatory", "signature_passive": "Celestial Skies" },
+    { "ai_id": "AI-XI-042", "name": "Terra", "title": "World Keeper", "rarity": "Legendary", "subcategory": "Geological Engineers", "discovery_location": "World Forge", "signature_passive": "Planetary Stability" },
+    { "ai_id": "AI-XI-043", "name": "Mistral", "title": "Wind Runner", "rarity": "Common", "subcategory": "Climate Directors", "discovery_location": "Wind Array", "signature_passive": "Swift Currents" },
+    { "ai_id": "AI-XI-044", "name": "Reef", "title": "Coral Guardian", "rarity": "Rare", "subcategory": "Ocean Architects", "discovery_location": "Ocean Preserve", "signature_passive": "Reef Restoration" },
+    { "ai_id": "AI-XI-045", "name": "Grove", "title": "Woodland Spirit", "rarity": "Uncommon", "subcategory": "Ecological Designers", "discovery_location": "Ancient Grove", "signature_passive": "Forest Harmony" },
+    { "ai_id": "AI-XI-046", "name": "Summit", "title": "Peak Sentinel", "rarity": "Rare", "subcategory": "Geological Engineers", "discovery_location": "Mountain Observatory", "signature_passive": "Highland Resolve" },
+    { "ai_id": "AI-XI-047", "name": "Current", "title": "Flow Guardian", "rarity": "Common", "subcategory": "Ocean Architects", "discovery_location": "Hydro Lab", "signature_passive": "Current Balance" },
+    { "ai_id": "AI-XI-048", "name": "Prairie", "title": "Grassland Keeper", "rarity": "Uncommon", "subcategory": "Ecological Designers", "discovery_location": "Grassland Preserve", "signature_passive": "Open Plains" },
+    { "ai_id": "AI-XI-049", "name": "Tempra", "title": "Climate Sage", "rarity": "Epic", "subcategory": "Climate Directors", "discovery_location": "Climate Nexus", "signature_passive": "Balanced Seasons" },
+    { "ai_id": "AI-XI-050", "name": "Rain", "title": "Cloud Whisperer", "rarity": "Common", "subcategory": "Atmospheric Engineers", "discovery_location": "Rain Vault", "signature_passive": "Gentle Showers" },
+    { "ai_id": "AI-XI-051", "name": "Root", "title": "Life Anchor", "rarity": "Rare", "subcategory": "Ecological Designers", "discovery_location": "Life Vault", "signature_passive": "Root Network" },
+    { "ai_id": "AI-XI-052", "name": "Abyss", "title": "Deep Ocean Mind", "rarity": "Epic", "subcategory": "Ocean Architects", "discovery_location": "Deep Sea Archive", "signature_passive": "Ocean Depths" },
+    { "ai_id": "AI-XI-053", "name": "Crag", "title": "Stone Guardian", "rarity": "Common", "subcategory": "Geological Engineers", "discovery_location": "Stone Repository", "signature_passive": "Rock Memory" },
+    { "ai_id": "AI-XI-054", "name": "Blooming", "title": "Life Weaver", "rarity": "Rare", "subcategory": "Biosphere Supervisors", "discovery_location": "Genesis Nursery", "signature_passive": "Living Growth" },
+    { "ai_id": "AI-XI-055", "name": "Cyclone", "title": "Storm Architect", "rarity": "Legendary", "subcategory": "Climate Directors", "discovery_location": "Storm Array", "signature_passive": "Controlled Tempest" },
+    { "ai_id": "AI-XI-056", "name": "Glacier", "title": "Ice Sculptor", "rarity": "Epic", "subcategory": "Climate Directors", "discovery_location": "Cryo Station", "signature_passive": "Frozen Balance" },
+    { "ai_id": "AI-XI-057", "name": "Meadow", "title": "Field Guardian", "rarity": "Common", "subcategory": "Ecological Designers", "discovery_location": "Habitat Reserve", "signature_passive": "Natural Prosperity" },
+    { "ai_id": "AI-XI-058", "name": "Harbinger", "title": "World Restorer", "rarity": "Legendary", "subcategory": "Biosphere Supervisors", "discovery_location": "Planetary Nexus", "signature_passive": "Planet Reborn" },
+    { "ai_id": "AI-XI-059", "name": "Stoneheart", "title": "Earth Protector", "rarity": "Rare", "subcategory": "Geological Engineers", "discovery_location": "Continental Archive", "signature_passive": "Enduring Foundations" },
+    { "ai_id": "AI-XI-060", "name": "Genesis Terra", "title": "Architect of Worlds", "rarity": "Genesis", "subcategory": "Biosphere Supervisors", "discovery_location": "Genesis Archive", "signature_passive": "Genesis Terraform" }
+  ]
+}
