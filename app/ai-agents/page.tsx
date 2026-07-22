@@ -9,7 +9,13 @@ function firstParam(value: string | string[] | undefined) {
 
 export default async function AiAgentsPage({ searchParams }: { searchParams?: AiAgentSearchParams }) {
   const params = await searchParams;
-  const activeEntry = firstParam(params?.entry);
-  const state = getAiAgentBrowserState(activeEntry);
-  return <AiAgentsLibrary state={state} activeSection={firstParam(params?.section) ?? "library"} activeEntry={activeEntry} />;
+  return (
+    <AiAgentsLibrary
+      state={getAiAgentBrowserState()}
+      initialBrowse={firstParam(params?.browse)}
+      initialGroup={firstParam(params?.group)}
+      initialSubcategory={firstParam(params?.subcategory)}
+      initialAssistant={firstParam(params?.assistant) ?? firstParam(params?.entry)}
+    />
+  );
 }

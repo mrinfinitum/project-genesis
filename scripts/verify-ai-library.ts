@@ -1,6 +1,8 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { aiLibraryCategories, aiLibraryDesignContract, aiLibraryLegacyIdMigrations, aiLibraryRarities, aiLibraryVolumes, canonicalAiLibraryAgents, resolveCanonicalAiLibraryId, validateCanonicalAiLibrary } from "../lib/ai-agents/foundations";
+import { groupAiRecords, normalizeAiRecord, parseAiBrowseMode, searchAiRecords } from "../lib/ai-agents/browser-utils";
+import { AI_VOLUMES, romanNumeral } from "../lib/ai-agents/ai-volumes";
 import { buildGameEngineExport, type EngineTarget } from "../lib/export/game-engine";
 import { buildCanonicalRuntimeExportPayload, buildRobloxRuntimePayload, validateGameRuntimeData, validateRobloxRuntimePayload } from "../lib/runtime/game-runtime";
 
@@ -26,8 +28,23 @@ async function main() {
   assert(resolveCanonicalAiLibraryId("ai_v06_001_yield_archive") === "ai_v06_001_margin_steward", "Pack B must migrate the former first Volume VI AI ID.");
   assert(resolveCanonicalAiLibraryId("ai_v10_100_nimbus_nexus") === "ai_v10_100_gaia_system", "Pack B must migrate the former final Volume X AI ID.");
   const authoredVolumeElevenAgents = canonicalAiLibraryAgents.filter((agent) => agent.volume === 11 && agent.tags.includes("authored_volume_11"));
-  assert(authoredVolumeElevenAgents.length === 20, "Volume XI must include all twenty authored Terraforming Initiative companions.");
+  assert(authoredVolumeElevenAgents.length === 40, "Volume XI must include all forty authored Terraforming Initiative companions.");
   assert(authoredVolumeElevenAgents[0]?.name === "Auriga" && authoredVolumeElevenAgents[0]?.legacy_ai_ids?.includes("AI-XI-001"), "Authored Volume XI IDs must resolve through stable canonical aliases.");
+  assert(authoredVolumeElevenAgents[20]?.name === "Verdigris" && authoredVolumeElevenAgents[20]?.legacy_ai_ids?.includes("AI-XI-021"), "Authored Volume XI Part 2 IDs must resolve through stable canonical aliases.");
+  assert(authoredVolumeElevenAgents[39]?.name === "Genesis Bloom" && authoredVolumeElevenAgents[39]?.legacy_ai_ids?.includes("AI-XI-040"), "Authored Volume XI Part 2 must include Genesis Bloom at slot forty.");
+
+  assert(romanNumeral(11) === "XI" && romanNumeral(20) === "XX", "AI Library volume labels must use canonical Roman numerals.");
+  const normalizedLegacy = normalizeAiRecord({ ai_id: "legacy-ai", name: "Legacy", title: "LEGACY", volume: 1, category: "General Intelligence", subcategory: "Universal Assistants", rarity: "Common", labor_per_second: 2, click_bonus: 3, offline_bonus: 1.5, passive: "Legacy Passive", discoveryLocation: "Archive" });
+  assert(normalizedLegacy.baseLaborPerSecond === 2 && normalizedLegacy.baseClickLaborBonus === 3 && normalizedLegacy.offlineGenerationMultiplier === 1.5, "Legacy AI numeric fields must normalize without mutating imports.");
+  assert(normalizedLegacy.signaturePassiveName === "Legacy Passive" && normalizedLegacy.discoveryLocation === "Archive", "Legacy AI text aliases must normalize.");
+  const browserRecords = canonicalAiLibraryAgents.map(normalizeAiRecord);
+  const volumeGroups = groupAiRecords(browserRecords, "volume");
+  assert(volumeGroups.length === AI_VOLUMES.length && volumeGroups.every((group) => group.count === 100), "Volume browse mode must expose twenty data-driven groups of 100 canonical records.");
+  assert(groupAiRecords(browserRecords, "category").length === 20, "Category browse mode must preserve all canonical categories.");
+  assert(groupAiRecords(browserRecords, "rarity").length === 7, "Rarity browse mode must expose all seven canonical rarities.");
+  assert(searchAiRecords(browserRecords, "AI-XI-021").some((record) => record.name === "Verdigris"), "AI Library search must resolve imported AI aliases.");
+  assert(searchAiRecords(browserRecords, "Living Ground").some((record) => record.name === "Verdigris"), "AI Library search must include signature passives.");
+  assert(parseAiBrowseMode("origin") === "origin" && parseAiBrowseMode("invalid") === "volume", "AI Library browse mode parsing must provide a stable Volume fallback.");
 
   const expectedCategoryCounts = new Map([
     ["civilization_systems", 100],

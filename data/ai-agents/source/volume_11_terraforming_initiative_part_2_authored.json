@@ -1,0 +1,186 @@
+{
+  "volume": 11,
+  "part": 2,
+  "agents": [
+    {
+      "ai_id": "AI-XI-021",
+      "name": "Verdigris",
+      "title": "The Moss Keeper",
+      "rarity": "Common",
+      "subcategory": "Ecological Designers",
+      "discovery_location": "Ancient Greenhouse",
+      "signature_passive": "Living Ground"
+    },
+    {
+      "ai_id": "AI-XI-022",
+      "name": "Borealis",
+      "title": "Aurora Guardian",
+      "rarity": "Rare",
+      "subcategory": "Atmospheric Engineers",
+      "discovery_location": "Polar Sky Station",
+      "signature_passive": "Aurora Shield"
+    },
+    {
+      "ai_id": "AI-XI-023",
+      "name": "Torrent",
+      "title": "River Shaper",
+      "rarity": "Uncommon",
+      "subcategory": "Ocean Architects",
+      "discovery_location": "Hydrology Nexus",
+      "signature_passive": "Flow Control"
+    },
+    {
+      "ai_id": "AI-XI-024",
+      "name": "Flora",
+      "title": "Bloom Architect",
+      "rarity": "Epic",
+      "subcategory": "Ecological Designers",
+      "discovery_location": "Seed Cathedral",
+      "signature_passive": "Botanical Harmony"
+    },
+    {
+      "ai_id": "AI-XI-025",
+      "name": "Bedrock",
+      "title": "Foundation Mind",
+      "rarity": "Common",
+      "subcategory": "Geological Engineers",
+      "discovery_location": "Continental Forge",
+      "signature_passive": "Stable Foundations"
+    },
+    {
+      "ai_id": "AI-XI-026",
+      "name": "Cirrus",
+      "title": "Cloud Weaver",
+      "rarity": "Rare",
+      "subcategory": "Atmospheric Engineers",
+      "discovery_location": "Sky Nursery",
+      "signature_passive": "Cloud Symphony"
+    },
+    {
+      "ai_id": "AI-XI-027",
+      "name": "Harbor",
+      "title": "Safe Haven",
+      "rarity": "Uncommon",
+      "subcategory": "Biosphere Supervisors",
+      "discovery_location": "Refuge Habitat",
+      "signature_passive": "Population Shelter"
+    },
+    {
+      "ai_id": "AI-XI-028",
+      "name": "Evergreen",
+      "title": "Forest Warden",
+      "rarity": "Epic",
+      "subcategory": "Ecological Designers",
+      "discovery_location": "Ancient Arboretum",
+      "signature_passive": "Endless Growth"
+    },
+    {
+      "ai_id": "AI-XI-029",
+      "name": "Ridge",
+      "title": "Peak Builder",
+      "rarity": "Uncommon",
+      "subcategory": "Geological Engineers",
+      "discovery_location": "Mountain Foundry",
+      "signature_passive": "Highland Stability"
+    },
+    {
+      "ai_id": "AI-XI-030",
+      "name": "Rainfall",
+      "title": "Storm Singer",
+      "rarity": "Rare",
+      "subcategory": "Climate Directors",
+      "discovery_location": "Weather Observatory",
+      "signature_passive": "Seasonal Balance"
+    },
+    {
+      "ai_id": "AI-XI-031",
+      "name": "Harvester",
+      "title": "Soil Steward",
+      "rarity": "Common",
+      "subcategory": "Ecological Designers",
+      "discovery_location": "Agricultural Vault",
+      "signature_passive": "Fertile Ground"
+    },
+    {
+      "ai_id": "AI-XI-032",
+      "name": "Tidal",
+      "title": "Current Master",
+      "rarity": "Epic",
+      "subcategory": "Ocean Architects",
+      "discovery_location": "Ocean Observatory",
+      "signature_passive": "Ocean Harmony"
+    },
+    {
+      "ai_id": "AI-XI-033",
+      "name": "Oasis",
+      "title": "Life Oasis",
+      "rarity": "Rare",
+      "subcategory": "Biosphere Supervisors",
+      "discovery_location": "Desert Renewal Station",
+      "signature_passive": "Renewal Pulse"
+    },
+    {
+      "ai_id": "AI-XI-034",
+      "name": "Ember",
+      "title": "Volcanic Guide",
+      "rarity": "Rare",
+      "subcategory": "Geological Engineers",
+      "discovery_location": "Magma Research Core",
+      "signature_passive": "Thermal Control"
+    },
+    {
+      "ai_id": "AI-XI-035",
+      "name": "Sylvan",
+      "title": "Woodland Keeper",
+      "rarity": "Epic",
+      "subcategory": "Ecological Designers",
+      "discovery_location": "Primeval Forest",
+      "signature_passive": "Ancient Grove"
+    },
+    {
+      "ai_id": "AI-XI-036",
+      "name": "Atmos",
+      "title": "Breath Giver",
+      "rarity": "Legendary",
+      "subcategory": "Atmospheric Engineers",
+      "discovery_location": "Atmospheric Ring",
+      "signature_passive": "Breath of Worlds"
+    },
+    {
+      "ai_id": "AI-XI-037",
+      "name": "Estuary",
+      "title": "Delta Builder",
+      "rarity": "Uncommon",
+      "subcategory": "Ocean Architects",
+      "discovery_location": "River Archive",
+      "signature_passive": "Watershed Logic"
+    },
+    {
+      "ai_id": "AI-XI-038",
+      "name": "Verdance",
+      "title": "Planet Healer",
+      "rarity": "Legendary",
+      "subcategory": "Biosphere Supervisors",
+      "discovery_location": "Genesis Preserve",
+      "signature_passive": "Planetary Renewal"
+    },
+    {
+      "ai_id": "AI-XI-039",
+      "name": "Granite",
+      "title": "Earth Anchor",
+      "rarity": "Common",
+      "subcategory": "Geological Engineers",
+      "discovery_location": "Stone Vault",
+      "signature_passive": "Earth Stability"
+    },
+    {
+      "ai_id": "AI-XI-040",
+      "name": "Genesis Bloom",
+      "title": "Life Awakened",
+      "rarity": "Genesis",
+      "subcategory": "Biosphere Supervisors",
+      "discovery_location": "Genesis Archive",
+      "signature_passive": "Genesis Awakening"
+    }
+  ]
+}

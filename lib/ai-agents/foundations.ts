@@ -5,10 +5,11 @@ import sourcePackBIdMigrations from "@/data/ai-agents/source/noveris_ai_library_
 import sourcePackC from "@/data/ai-agents/source/noveris_ai_library_pack_c_volumes_11_to_15.json";
 import sourcePackD from "@/data/ai-agents/source/noveris_ai_library_pack_d_volumes_16_to_20.json";
 import authoredVolumeEleven from "@/data/ai-agents/source/volume_11_terraforming_initiative_authored.json";
+import authoredVolumeElevenPartTwo from "@/data/ai-agents/source/volume_11_terraforming_initiative_part_2_authored.json";
 import type { CanonicalAiLibraryAgent } from "@/types/runtime";
 
 export const AI_LIBRARY_VERSION = sourcePackC.schemaVersion;
-export const AI_LIBRARY_CONTENT_VERSION = 3;
+export const AI_LIBRARY_CONTENT_VERSION = 4;
 export const AI_LIBRARY_VOLUME_ID = "ai-volume-01-foundations";
 
 export const aiLibraryDesignContract = {
@@ -38,7 +39,10 @@ const authoredRarityProfiles = {
   Genesis: { rank: 7, weight: 0.02, maxLevel: 150, labor: 150, click: 42, offline: 8.5 }
 } as const;
 
-const authoredVolumeElevenByIndex = new Map(authoredVolumeEleven.agents.map((agent, index) => [index + 1, agent]));
+const authoredVolumeElevenByIndex = new Map([
+  ...authoredVolumeEleven.agents,
+  ...authoredVolumeElevenPartTwo.agents
+].map((agent) => [Number(agent.ai_id.split("-").at(-1)), agent]));
 const authoredVolumeElevenAliases = new Map<string, string>();
 
 function applyAuthoredVolumeEleven(agent: (typeof sourcePackC.agents)[number]) {
