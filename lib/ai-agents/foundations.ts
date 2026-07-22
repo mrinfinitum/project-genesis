@@ -7,10 +7,11 @@ import sourcePackD from "@/data/ai-agents/source/noveris_ai_library_pack_d_volum
 import authoredVolumeEleven from "@/data/ai-agents/source/volume_11_terraforming_initiative_authored.json";
 import authoredVolumeElevenPartTwo from "@/data/ai-agents/source/volume_11_terraforming_initiative_part_2_authored.json";
 import authoredVolumeElevenPartThree from "@/data/ai-agents/source/volume_11_terraforming_initiative_part_3_authored.json";
+import authoredVolumeElevenPartFour from "@/data/ai-agents/source/volume_11_terraforming_initiative_part_4_authored.json";
 import type { CanonicalAiLibraryAgent } from "@/types/runtime";
 
 export const AI_LIBRARY_VERSION = sourcePackC.schemaVersion;
-export const AI_LIBRARY_CONTENT_VERSION = 5;
+export const AI_LIBRARY_CONTENT_VERSION = 6;
 export const AI_LIBRARY_VOLUME_ID = "ai-volume-01-foundations";
 
 export const aiLibraryDesignContract = {
@@ -43,7 +44,8 @@ const authoredRarityProfiles = {
 const authoredVolumeElevenByIndex = new Map([
   ...authoredVolumeEleven.agents,
   ...authoredVolumeElevenPartTwo.agents,
-  ...authoredVolumeElevenPartThree.agents
+  ...authoredVolumeElevenPartThree.agents,
+  ...authoredVolumeElevenPartFour.agents
 ].map((agent) => [Number(agent.ai_id.split("-").at(-1)), agent]));
 const authoredVolumeElevenAliases = new Map<string, string>();
 

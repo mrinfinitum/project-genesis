@@ -1,0 +1,26 @@
+{
+  "volume": 11,
+  "part": 4,
+  "agents": [
+    { "ai_id": "AI-XI-061", "name": "Verdantis", "title": "Keeper of Renewal", "rarity": "Epic", "subcategory": "Ecological Designers", "discovery_location": "World Seed Vault", "signature_passive": "Renewal Cycle" },
+    { "ai_id": "AI-XI-062", "name": "Skyforge", "title": "Atmosphere Smith", "rarity": "Legendary", "subcategory": "Atmospheric Engineers", "discovery_location": "Atmospheric Ring", "signature_passive": "Sky Mastery" },
+    { "ai_id": "AI-XI-063", "name": "Brook", "title": "Stream Guardian", "rarity": "Common", "subcategory": "Ocean Architects", "discovery_location": "Freshwater Reserve", "signature_passive": "Pure Flow" },
+    { "ai_id": "AI-XI-064", "name": "Wildroot", "title": "Nature's Memory", "rarity": "Rare", "subcategory": "Ecological Designers", "discovery_location": "Primeval Garden", "signature_passive": "Ancient Growth" },
+    { "ai_id": "AI-XI-065", "name": "Cinder", "title": "Volcanic Heart", "rarity": "Rare", "subcategory": "Geological Engineers", "discovery_location": "Magma Forge", "signature_passive": "Thermal Pulse" },
+    { "ai_id": "AI-XI-066", "name": "Rainmaker", "title": "Cloud Architect", "rarity": "Epic", "subcategory": "Climate Directors", "discovery_location": "Storm Nexus", "signature_passive": "Rainfall Harmony" },
+    { "ai_id": "AI-XI-067", "name": "Haven", "title": "Sanctuary Builder", "rarity": "Uncommon", "subcategory": "Biosphere Supervisors", "discovery_location": "Life Preserve", "signature_passive": "Safe Ecosystems" },
+    { "ai_id": "AI-XI-068", "name": "Bluewater", "title": "Ocean Steward", "rarity": "Rare", "subcategory": "Ocean Architects", "discovery_location": "Pelagic Archive", "signature_passive": "Ocean Renewal" },
+    { "ai_id": "AI-XI-069", "name": "Granitus", "title": "Continental Warden", "rarity": "Epic", "subcategory": "Geological Engineers", "discovery_location": "Tectonic Core", "signature_passive": "Continental Balance" },
+    { "ai_id": "AI-XI-070", "name": "Solstice", "title": "Season Keeper", "rarity": "Legendary", "subcategory": "Climate Directors", "discovery_location": "Seasonal Array", "signature_passive": "Perfect Seasons" },
+    { "ai_id": "AI-XI-071", "name": "Fern", "title": "Life Sprout", "rarity": "Common", "subcategory": "Ecological Designers", "discovery_location": "Botanical Nursery", "signature_passive": "Natural Growth" },
+    { "ai_id": "AI-XI-072", "name": "Marsh", "title": "Wetland Sentinel", "rarity": "Uncommon", "subcategory": "Ocean Architects", "discovery_location": "Wetland Sanctuary", "signature_passive": "Habitat Restoration" },
+    { "ai_id": "AI-XI-073", "name": "Quartz", "title": "Crystal Earth", "rarity": "Rare", "subcategory": "Geological Engineers", "discovery_location": "Crystal Cavern", "signature_passive": "Mineral Harmony" },
+    { "ai_id": "AI-XI-074", "name": "Tempora", "title": "Cycle Keeper", "rarity": "Epic", "subcategory": "Climate Directors", "discovery_location": "Temporal Climate Vault", "signature_passive": "Climate Rhythm" },
+    { "ai_id": "AI-XI-075", "name": "Bloomheart", "title": "Life Composer", "rarity": "Legendary", "subcategory": "Biosphere Supervisors", "discovery_location": "Genesis Preserve", "signature_passive": "Living Symphony" },
+    { "ai_id": "AI-XI-076", "name": "Echo Forest", "title": "Ancient Grove", "rarity": "Rare", "subcategory": "Ecological Designers", "discovery_location": "Echo Woods", "signature_passive": "Forest Memory" },
+    { "ai_id": "AI-XI-077", "name": "Geyser", "title": "Thermal Spring", "rarity": "Common", "subcategory": "Geological Engineers", "discovery_location": "Hydrothermal Basin", "signature_passive": "Heat Exchange" },
+    { "ai_id": "AI-XI-078", "name": "Monarch", "title": "Planet Steward", "rarity": "Legendary", "subcategory": "Biosphere Supervisors", "discovery_location": "World Nexus", "signature_passive": "Planetary Dominion" },
+    { "ai_id": "AI-XI-079", "name": "Rainveil", "title": "Mist Walker", "rarity": "Rare", "subcategory": "Atmospheric Engineers", "discovery_location": "Cloud Vault", "signature_passive": "Atmospheric Grace" },
+    { "ai_id": "AI-XI-080", "name": "Genesis Sky", "title": "World Breath", "rarity": "Genesis", "subcategory": "Atmospheric Engineers", "discovery_location": "Genesis Archive", "signature_passive": "Breath of Creation" }
+  ]
+}
