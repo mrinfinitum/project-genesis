@@ -686,6 +686,7 @@ export type CanonicalAiLibraryAgent = {
   ai_id: string;
   name: string;
   codename: string;
+  title?: string;
   volume: number;
   volume_title: string;
   library_index: number;

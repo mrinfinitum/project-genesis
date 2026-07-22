@@ -334,6 +334,12 @@
     "displayName": "Terraforming Initiative",
     "subcategory": "Multiple specializations",
     "subcategories": [
+      "Atmospheric Engineers",
+      "Biosphere Supervisors",
+      "Ecological Designers",
+      "Climate Directors",
+      "Ocean Architects",
+      "Geological Engineers",
       "Climate Engineering",
       "Atmospheric Conversion",
       "Hydrology",

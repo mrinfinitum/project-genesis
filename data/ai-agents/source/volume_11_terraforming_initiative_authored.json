@@ -1,0 +1,186 @@
+{
+  "volume": 11,
+  "title": "Terraforming Initiative",
+  "agents": [
+    {
+      "ai_id": "AI-XI-001",
+      "name": "Auriga",
+      "title": "The Sky Gardener",
+      "rarity": "Legendary",
+      "subcategory": "Atmospheric Engineers",
+      "discovery_location": "Orbital Seed Vault",
+      "signature_passive": "Adaptive Efficiency"
+    },
+    {
+      "ai_id": "AI-XI-002",
+      "name": "Gaia",
+      "title": "The Living Planet",
+      "rarity": "Genesis",
+      "subcategory": "Biosphere Supervisors",
+      "discovery_location": "Genesis Archive",
+      "signature_passive": "Living Atmosphere"
+    },
+    {
+      "ai_id": "AI-XI-003",
+      "name": "Verdant",
+      "title": "Forest Architect",
+      "rarity": "Epic",
+      "subcategory": "Ecological Designers",
+      "discovery_location": "Lost Ecological Preserve",
+      "signature_passive": "Ecological Balance"
+    },
+    {
+      "ai_id": "AI-XI-004",
+      "name": "Nimbus",
+      "title": "Rain Weaver",
+      "rarity": "Rare",
+      "subcategory": "Climate Directors",
+      "discovery_location": "Ancient Climate Array",
+      "signature_passive": "Perfect Climate"
+    },
+    {
+      "ai_id": "AI-XI-005",
+      "name": "Cascade",
+      "title": "Ocean Singer",
+      "rarity": "Epic",
+      "subcategory": "Ocean Architects",
+      "discovery_location": "Oceanic Genesis Core",
+      "signature_passive": "Ocean Memory"
+    },
+    {
+      "ai_id": "AI-XI-006",
+      "name": "Atlas",
+      "title": "Mountain Builder",
+      "rarity": "Legendary",
+      "subcategory": "Geological Engineers",
+      "discovery_location": "World Forge",
+      "signature_passive": "Continental Harmony"
+    },
+    {
+      "ai_id": "AI-XI-007",
+      "name": "Helios",
+      "title": "Solar Shepherd",
+      "rarity": "Rare",
+      "subcategory": "Climate Directors",
+      "discovery_location": "Atmospheric Control Ring",
+      "signature_passive": "Solar Optimization"
+    },
+    {
+      "ai_id": "AI-XI-008",
+      "name": "Canopy",
+      "title": "Green Mind",
+      "rarity": "Rare",
+      "subcategory": "Ecological Designers",
+      "discovery_location": "Planetary Restoration Nexus",
+      "signature_passive": "Living Canopy"
+    },
+    {
+      "ai_id": "AI-XI-009",
+      "name": "Monsoon",
+      "title": "Water Caller",
+      "rarity": "Epic",
+      "subcategory": "Ocean Architects",
+      "discovery_location": "Hydrological Vault",
+      "signature_passive": "Hydrologic Cycle"
+    },
+    {
+      "ai_id": "AI-XI-010",
+      "name": "Eden",
+      "title": "World Dreamer",
+      "rarity": "Genesis",
+      "subcategory": "Biosphere Supervisors",
+      "discovery_location": "Genesis Archive",
+      "signature_passive": "World Genesis"
+    },
+    {
+      "ai_id": "AI-XI-011",
+      "name": "Strata",
+      "title": "Stone Whisper",
+      "rarity": "Uncommon",
+      "subcategory": "Geological Engineers",
+      "discovery_location": "Crust Observatory",
+      "signature_passive": "Tectonic Insight"
+    },
+    {
+      "ai_id": "AI-XI-012",
+      "name": "Zephyr",
+      "title": "Wind Sculptor",
+      "rarity": "Rare",
+      "subcategory": "Atmospheric Engineers",
+      "discovery_location": "Sky Relay",
+      "signature_passive": "Wind Harmony"
+    },
+    {
+      "ai_id": "AI-XI-013",
+      "name": "Bloom",
+      "title": "Seed Keeper",
+      "rarity": "Common",
+      "subcategory": "Ecological Designers",
+      "discovery_location": "Seed Vault",
+      "signature_passive": "Growth Catalyst"
+    },
+    {
+      "ai_id": "AI-XI-014",
+      "name": "Aqua",
+      "title": "River Builder",
+      "rarity": "Uncommon",
+      "subcategory": "Ocean Architects",
+      "discovery_location": "Waterworks",
+      "signature_passive": "Freshwater Flow"
+    },
+    {
+      "ai_id": "AI-XI-015",
+      "name": "Frost",
+      "title": "Ice Warden",
+      "rarity": "Rare",
+      "subcategory": "Climate Directors",
+      "discovery_location": "Polar Array",
+      "signature_passive": "Cryo Balance"
+    },
+    {
+      "ai_id": "AI-XI-016",
+      "name": "Mantle",
+      "title": "Core Shaper",
+      "rarity": "Epic",
+      "subcategory": "Geological Engineers",
+      "discovery_location": "Mantle Lab",
+      "signature_passive": "Geothermal Stability"
+    },
+    {
+      "ai_id": "AI-XI-017",
+      "name": "Sprout",
+      "title": "Life Starter",
+      "rarity": "Common",
+      "subcategory": "Biosphere Supervisors",
+      "discovery_location": "Life Nursery",
+      "signature_passive": "Population Bloom"
+    },
+    {
+      "ai_id": "AI-XI-018",
+      "name": "Tempest",
+      "title": "Storm Tamer",
+      "rarity": "Legendary",
+      "subcategory": "Climate Directors",
+      "discovery_location": "Storm Citadel",
+      "signature_passive": "Storm Control"
+    },
+    {
+      "ai_id": "AI-XI-019",
+      "name": "Delta",
+      "title": "Wetland Guardian",
+      "rarity": "Uncommon",
+      "subcategory": "Ocean Architects",
+      "discovery_location": "Delta Preserve",
+      "signature_passive": "Wetland Recovery"
+    },
+    {
+      "ai_id": "AI-XI-020",
+      "name": "Horizon",
+      "title": "World Steward",
+      "rarity": "Epic",
+      "subcategory": "Biosphere Supervisors",
+      "discovery_location": "Frontier Habitat",
+      "signature_passive": "Planetary Stewardship"
+    }
+  ]
+}

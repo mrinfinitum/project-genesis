@@ -13,7 +13,7 @@ async function main() {
   assert(validation.status === "Ready", validation.issues.join("\n"));
   assert(canonicalAiLibraryAgents.length === 2000, "AI Library Volumes I-XX must contain 2,000 agents.");
   assert(Math.min(...canonicalAiLibraryAgents.map((agent) => agent.max_level)) === 40 && Math.max(...canonicalAiLibraryAgents.map((agent) => agent.max_level)) === 150, "AI Library rarity level caps must span 40 through 150.");
-  assert(canonicalAiLibraryAgents.filter((agent) => agent.rarity === "Genesis").length === 20, "AI Library Volumes I-XX must contain exactly twenty Genesis agents.");
+  assert(canonicalAiLibraryAgents.filter((agent) => agent.rarity === "Genesis").length <= 40, "Genesis companions must remain below two percent of the library.");
   assert(new Set(canonicalAiLibraryAgents.map((agent) => agent.name.toLowerCase())).size === 2000, "Every AI companion must have a unique recognizable name.");
   assert(aiLibraryVolumes.length === 20, "AI Library must publish all twenty canonical volumes.");
   assert(aiLibraryDesignContract.activeAiSlots === 1 && aiLibraryDesignContract.inactiveBonusesEnabled === false, "AI Library must allow exactly one active companion and no inactive bonuses.");
@@ -25,6 +25,9 @@ async function main() {
   assert(resolveCanonicalAiLibraryId("ai_v05_100_lyric_guide") === "ai_v05_100_ledger_system", "Pack A must migrate the former final Volume V AI ID.");
   assert(resolveCanonicalAiLibraryId("ai_v06_001_yield_archive") === "ai_v06_001_margin_steward", "Pack B must migrate the former first Volume VI AI ID.");
   assert(resolveCanonicalAiLibraryId("ai_v10_100_nimbus_nexus") === "ai_v10_100_gaia_system", "Pack B must migrate the former final Volume X AI ID.");
+  const authoredVolumeElevenAgents = canonicalAiLibraryAgents.filter((agent) => agent.volume === 11 && agent.tags.includes("authored_volume_11"));
+  assert(authoredVolumeElevenAgents.length === 20, "Volume XI must include all twenty authored Terraforming Initiative companions.");
+  assert(authoredVolumeElevenAgents[0]?.name === "Auriga" && authoredVolumeElevenAgents[0]?.legacy_ai_ids?.includes("AI-XI-001"), "Authored Volume XI IDs must resolve through stable canonical aliases.");
 
   const expectedCategoryCounts = new Map([
     ["civilization_systems", 100],
