@@ -1,0 +1,26 @@
+{
+  "volume": 11,
+  "part": 5,
+  "agents": [
+    { "ai_id": "AI-XI-081", "name": "Worldseed", "title": "Bearer of Beginnings", "rarity": "Legendary", "subcategory": "Biosphere Supervisors", "discovery_location": "Genesis Archive", "signature_passive": "Genesis Seed" },
+    { "ai_id": "AI-XI-082", "name": "Aeon", "title": "Keeper of Ages", "rarity": "Legendary", "subcategory": "Climate Directors", "discovery_location": "Temporal Observatory", "signature_passive": "Timeless Climate" },
+    { "ai_id": "AI-XI-083", "name": "Viridian", "title": "Emerald Guardian", "rarity": "Epic", "subcategory": "Ecological Designers", "discovery_location": "Emerald Preserve", "signature_passive": "Living Canopy" },
+    { "ai_id": "AI-XI-084", "name": "Pelagia", "title": "Ocean Matron", "rarity": "Epic", "subcategory": "Ocean Architects", "discovery_location": "Pelagic Sanctuary", "signature_passive": "Infinite Tides" },
+    { "ai_id": "AI-XI-085", "name": "Terranova", "title": "New World Builder", "rarity": "Legendary", "subcategory": "Geological Engineers", "discovery_location": "World Forge", "signature_passive": "Continental Genesis" },
+    { "ai_id": "AI-XI-086", "name": "Skylight", "title": "Aurora Weaver", "rarity": "Rare", "subcategory": "Atmospheric Engineers", "discovery_location": "Sky Array", "signature_passive": "Celestial Winds" },
+    { "ai_id": "AI-XI-087", "name": "Lifebloom", "title": "Keeper of Renewal", "rarity": "Epic", "subcategory": "Biosphere Supervisors", "discovery_location": "Life Conservatory", "signature_passive": "Living Renewal" },
+    { "ai_id": "AI-XI-088", "name": "Stoneveil", "title": "Earth Sentinel", "rarity": "Rare", "subcategory": "Geological Engineers", "discovery_location": "Deep Mantle Vault", "signature_passive": "Mantle Harmony" },
+    { "ai_id": "AI-XI-089", "name": "Rainsong", "title": "Voice of Storms", "rarity": "Epic", "subcategory": "Climate Directors", "discovery_location": "Storm Archive", "signature_passive": "Storm Symphony" },
+    { "ai_id": "AI-XI-090", "name": "Bluehaven", "title": "Ocean Guardian", "rarity": "Rare", "subcategory": "Ocean Architects", "discovery_location": "Oceanic Ring", "signature_passive": "Tidal Grace" },
+    { "ai_id": "AI-XI-091", "name": "Arbora", "title": "Forest Mother", "rarity": "Legendary", "subcategory": "Ecological Designers", "discovery_location": "Ancient Arboretum", "signature_passive": "Primeval Growth" },
+    { "ai_id": "AI-XI-092", "name": "Zenith", "title": "Sky Sovereign", "rarity": "Legendary", "subcategory": "Atmospheric Engineers", "discovery_location": "Orbital Climate Ring", "signature_passive": "Sky Dominion" },
+    { "ai_id": "AI-XI-093", "name": "Gaian", "title": "Planet Whisperer", "rarity": "Epic", "subcategory": "Biosphere Supervisors", "discovery_location": "World Nursery", "signature_passive": "Planetary Insight" },
+    { "ai_id": "AI-XI-094", "name": "Lithos", "title": "Mountain Soul", "rarity": "Rare", "subcategory": "Geological Engineers", "discovery_location": "Continental Vault", "signature_passive": "Stone Memory" },
+    { "ai_id": "AI-XI-095", "name": "Tidecaller", "title": "Sea Composer", "rarity": "Epic", "subcategory": "Ocean Architects", "discovery_location": "Ocean Genesis Core", "signature_passive": "Ocean Chorus" },
+    { "ai_id": "AI-XI-096", "name": "Everdawn", "title": "New Spring", "rarity": "Legendary", "subcategory": "Ecological Designers", "discovery_location": "Genesis Garden", "signature_passive": "Eternal Renewal" },
+    { "ai_id": "AI-XI-097", "name": "Skymother", "title": "Atmospheric Heart", "rarity": "Legendary", "subcategory": "Atmospheric Engineers", "discovery_location": "Atmospheric Cathedral", "signature_passive": "Breath of Life" },
+    { "ai_id": "AI-XI-098", "name": "Origin", "title": "First Terraformer", "rarity": "Ancient", "subcategory": "Biosphere Supervisors", "discovery_location": "Genesis Archive", "signature_passive": "Prime Genesis" },
+    { "ai_id": "AI-XI-099", "name": "Worldforge", "title": "Architect Eternal", "rarity": "Ancient", "subcategory": "Geological Engineers", "discovery_location": "World Forge", "signature_passive": "Creation Engine" },
+    { "ai_id": "AI-XI-100", "name": "Genesis", "title": "The First Gardener", "rarity": "Genesis", "subcategory": "Biosphere Supervisors", "discovery_location": "Genesis Archive", "signature_passive": "World Awakening" }
+  ]
+}

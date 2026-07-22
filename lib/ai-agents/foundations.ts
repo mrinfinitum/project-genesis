@@ -8,10 +8,11 @@ import authoredVolumeEleven from "@/data/ai-agents/source/volume_11_terraforming
 import authoredVolumeElevenPartTwo from "@/data/ai-agents/source/volume_11_terraforming_initiative_part_2_authored.json";
 import authoredVolumeElevenPartThree from "@/data/ai-agents/source/volume_11_terraforming_initiative_part_3_authored.json";
 import authoredVolumeElevenPartFour from "@/data/ai-agents/source/volume_11_terraforming_initiative_part_4_authored.json";
+import authoredVolumeElevenPartFive from "@/data/ai-agents/source/volume_11_terraforming_initiative_part_5_authored.json";
 import type { CanonicalAiLibraryAgent } from "@/types/runtime";
 
 export const AI_LIBRARY_VERSION = sourcePackC.schemaVersion;
-export const AI_LIBRARY_CONTENT_VERSION = 6;
+export const AI_LIBRARY_CONTENT_VERSION = 7;
 export const AI_LIBRARY_VOLUME_ID = "ai-volume-01-foundations";
 
 export const aiLibraryDesignContract = {
@@ -45,7 +46,8 @@ const authoredVolumeElevenByIndex = new Map([
   ...authoredVolumeEleven.agents,
   ...authoredVolumeElevenPartTwo.agents,
   ...authoredVolumeElevenPartThree.agents,
-  ...authoredVolumeElevenPartFour.agents
+  ...authoredVolumeElevenPartFour.agents,
+  ...authoredVolumeElevenPartFive.agents
 ].map((agent) => [Number(agent.ai_id.split("-").at(-1)), agent]));
 const authoredVolumeElevenAliases = new Map<string, string>();
 
