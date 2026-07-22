@@ -38,6 +38,10 @@ async function main() {
   assert(authoredVolumeElevenAgents[79]?.name === "Genesis Sky" && authoredVolumeElevenAgents[79]?.legacy_ai_ids?.includes("AI-XI-080"), "Authored Volume XI Part 4 must include Genesis Sky at slot eighty.");
   assert(authoredVolumeElevenAgents[80]?.name === "Worldseed" && authoredVolumeElevenAgents[80]?.legacy_ai_ids?.includes("AI-XI-081"), "Authored Volume XI Part 5 IDs must resolve through stable canonical aliases.");
   assert(authoredVolumeElevenAgents[99]?.name === "Genesis" && authoredVolumeElevenAgents[99]?.legacy_ai_ids?.includes("AI-XI-100"), "Authored Volume XI Part 5 must include Genesis at slot one hundred.");
+  const authoredVolumeTwelveAgents = canonicalAiLibraryAgents.filter((agent) => agent.volume === 12 && agent.tags.includes("authored_volume_12"));
+  assert(authoredVolumeTwelveAgents.length === 20, "Volume XII must include the first twenty authored Education & Knowledge companions.");
+  assert(authoredVolumeTwelveAgents[0]?.name === "Sagan" && authoredVolumeTwelveAgents[0]?.legacy_ai_ids?.includes("AI-XII-001"), "Authored Volume XII IDs must resolve through stable canonical aliases.");
+  assert(authoredVolumeTwelveAgents[19]?.name === "Athena" && authoredVolumeTwelveAgents[19]?.legacy_ai_ids?.includes("AI-XII-020"), "Authored Volume XII Part 1 must include Athena at slot twenty.");
 
   assert(romanNumeral(11) === "XI" && romanNumeral(20) === "XX", "AI Library volume labels must use canonical Roman numerals.");
   const normalizedLegacy = normalizeAiRecord({ ai_id: "legacy-ai", name: "Legacy", title: "LEGACY", volume: 1, category: "General Intelligence", subcategory: "Universal Assistants", rarity: "Common", labor_per_second: 2, click_bonus: 3, offline_bonus: 1.5, passive: "Legacy Passive", discoveryLocation: "Archive" });

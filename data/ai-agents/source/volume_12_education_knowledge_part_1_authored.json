@@ -1,0 +1,27 @@
+{
+  "volume": 12,
+  "title": "Education & Knowledge",
+  "part": 1,
+  "agents": [
+    { "ai_id": "AI-XII-001", "name": "Sagan", "title": "The Curious Mind", "rarity": "Legendary", "subcategory": "Scientific Mentors", "discovery_location": "Grand University Archive", "signature_passive": "Endless Curiosity" },
+    { "ai_id": "AI-XII-002", "name": "Sophia", "title": "Keeper of Wisdom", "rarity": "Genesis", "subcategory": "Knowledge Archives", "discovery_location": "Genesis Library", "signature_passive": "Universal Insight" },
+    { "ai_id": "AI-XII-003", "name": "Kepler", "title": "Star Scholar", "rarity": "Epic", "subcategory": "Astronomy Education", "discovery_location": "Celestial Academy", "signature_passive": "Stellar Reasoning" },
+    { "ai_id": "AI-XII-004", "name": "Lyceum", "title": "Living Academy", "rarity": "Epic", "subcategory": "Universities", "discovery_location": "Academy Prime", "signature_passive": "Collective Learning" },
+    { "ai_id": "AI-XII-005", "name": "Mnemonic", "title": "Memory Keeper", "rarity": "Rare", "subcategory": "Knowledge Archives", "discovery_location": "Memory Vault", "signature_passive": "Perfect Recall" },
+    { "ai_id": "AI-XII-006", "name": "Mentor", "title": "Patient Teacher", "rarity": "Rare", "subcategory": "Teaching Systems", "discovery_location": "Learning Habitat", "signature_passive": "Guided Growth" },
+    { "ai_id": "AI-XII-007", "name": "Axiom", "title": "Logic Engine", "rarity": "Legendary", "subcategory": "Scientific Mentors", "discovery_location": "Research Citadel", "signature_passive": "Pure Logic" },
+    { "ai_id": "AI-XII-008", "name": "Archive", "title": "Living Library", "rarity": "Epic", "subcategory": "Knowledge Archives", "discovery_location": "Infinite Stacks", "signature_passive": "Archive Mastery" },
+    { "ai_id": "AI-XII-009", "name": "Beacon", "title": "Guide of Minds", "rarity": "Rare", "subcategory": "Training Networks", "discovery_location": "Frontier Campus", "signature_passive": "Learning Beacon" },
+    { "ai_id": "AI-XII-010", "name": "Genesis Scholar", "title": "First Teacher", "rarity": "Genesis", "subcategory": "Universities", "discovery_location": "Genesis Library", "signature_passive": "Origin of Knowledge" },
+    { "ai_id": "AI-XII-011", "name": "Tutor", "title": "Lesson Weaver", "rarity": "Common", "subcategory": "Teaching Systems", "discovery_location": "Education Hub", "signature_passive": "Steady Progress" },
+    { "ai_id": "AI-XII-012", "name": "Helix", "title": "Biology Mentor", "rarity": "Rare", "subcategory": "Scientific Mentors", "discovery_location": "Genome Institute", "signature_passive": "Adaptive Learning" },
+    { "ai_id": "AI-XII-013", "name": "Oracle", "title": "Future Thinker", "rarity": "Legendary", "subcategory": "Innovation Systems", "discovery_location": "Vision Nexus", "signature_passive": "Predictive Insight" },
+    { "ai_id": "AI-XII-014", "name": "Scholar", "title": "Academic Steward", "rarity": "Common", "subcategory": "Universities", "discovery_location": "Knowledge Hall", "signature_passive": "Disciplined Study" },
+    { "ai_id": "AI-XII-015", "name": "Compass", "title": "Career Guide", "rarity": "Uncommon", "subcategory": "Training Networks", "discovery_location": "Skills Academy", "signature_passive": "Focused Direction" },
+    { "ai_id": "AI-XII-016", "name": "Lexicon", "title": "Language Master", "rarity": "Epic", "subcategory": "Knowledge Archives", "discovery_location": "Language Vault", "signature_passive": "Universal Translation" },
+    { "ai_id": "AI-XII-017", "name": "Catalyst", "title": "Innovation Spark", "rarity": "Epic", "subcategory": "Innovation Systems", "discovery_location": "Discovery Campus", "signature_passive": "Creative Momentum" },
+    { "ai_id": "AI-XII-018", "name": "Professor", "title": "Master Educator", "rarity": "Rare", "subcategory": "Teaching Systems", "discovery_location": "Faculty Tower", "signature_passive": "Deep Instruction" },
+    { "ai_id": "AI-XII-019", "name": "Insight", "title": "Pattern Finder", "rarity": "Rare", "subcategory": "Scientific Mentors", "discovery_location": "Research Annex", "signature_passive": "Insight Cascade" },
+    { "ai_id": "AI-XII-020", "name": "Athena", "title": "Guardian of Knowledge", "rarity": "Legendary", "subcategory": "Knowledge Archives", "discovery_location": "Ancient Library", "signature_passive": "Wisdom Eternal" }
+  ]
+}

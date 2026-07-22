@@ -9,10 +9,11 @@ import authoredVolumeElevenPartTwo from "@/data/ai-agents/source/volume_11_terra
 import authoredVolumeElevenPartThree from "@/data/ai-agents/source/volume_11_terraforming_initiative_part_3_authored.json";
 import authoredVolumeElevenPartFour from "@/data/ai-agents/source/volume_11_terraforming_initiative_part_4_authored.json";
 import authoredVolumeElevenPartFive from "@/data/ai-agents/source/volume_11_terraforming_initiative_part_5_authored.json";
+import authoredVolumeTwelvePartOne from "@/data/ai-agents/source/volume_12_education_knowledge_part_1_authored.json";
 import type { CanonicalAiLibraryAgent } from "@/types/runtime";
 
 export const AI_LIBRARY_VERSION = sourcePackC.schemaVersion;
-export const AI_LIBRARY_CONTENT_VERSION = 7;
+export const AI_LIBRARY_CONTENT_VERSION = 8;
 export const AI_LIBRARY_VOLUME_ID = "ai-volume-01-foundations";
 
 export const aiLibraryDesignContract = {
@@ -42,21 +43,21 @@ const authoredRarityProfiles = {
   Genesis: { rank: 7, weight: 0.02, maxLevel: 150, labor: 150, click: 42, offline: 8.5 }
 } as const;
 
-const authoredVolumeElevenByIndex = new Map([
-  ...authoredVolumeEleven.agents,
-  ...authoredVolumeElevenPartTwo.agents,
-  ...authoredVolumeElevenPartThree.agents,
-  ...authoredVolumeElevenPartFour.agents,
-  ...authoredVolumeElevenPartFive.agents
-].map((agent) => [Number(agent.ai_id.split("-").at(-1)), agent]));
-const authoredVolumeElevenAliases = new Map<string, string>();
+const authoredAgentsBySlot = new Map([
+  ...authoredVolumeEleven.agents.map((agent) => ({ ...agent, volume: 11 })),
+  ...authoredVolumeElevenPartTwo.agents.map((agent) => ({ ...agent, volume: 11 })),
+  ...authoredVolumeElevenPartThree.agents.map((agent) => ({ ...agent, volume: 11 })),
+  ...authoredVolumeElevenPartFour.agents.map((agent) => ({ ...agent, volume: 11 })),
+  ...authoredVolumeElevenPartFive.agents.map((agent) => ({ ...agent, volume: 11 })),
+  ...authoredVolumeTwelvePartOne.agents.map((agent) => ({ ...agent, volume: 12 }))
+].map((agent) => [`${agent.volume}:${Number(agent.ai_id.split("-").at(-1))}`, agent]));
+const authoredAgentAliases = new Map<string, string>();
 
-function applyAuthoredVolumeEleven(agent: (typeof sourcePackC.agents)[number]) {
-  if (agent.volume !== 11) return agent;
-  const authored = authoredVolumeElevenByIndex.get(agent.library_index);
+function applyAuthoredAgent(agent: (typeof sourcePackC.agents)[number]) {
+  const authored = authoredAgentsBySlot.get(`${agent.volume}:${agent.library_index}`);
   if (!authored) return agent;
   const rarity = authoredRarityProfiles[authored.rarity as keyof typeof authoredRarityProfiles];
-  authoredVolumeElevenAliases.set(agent.ai_id, authored.ai_id);
+  authoredAgentAliases.set(agent.ai_id, authored.ai_id);
   return {
     ...agent,
     name: authored.name,
@@ -84,15 +85,15 @@ function applyAuthoredVolumeEleven(agent: (typeof sourcePackC.agents)[number]) {
     memory_fragment_1: `At level 10, ${authored.name} recalls arriving at ${authored.discovery_location}.`,
     memory_fragment_2: `At level 25, ${authored.name} reveals the first use of ${authored.signature_passive}.`,
     memory_fragment_3: `At level ${Math.min(50, rarity.maxLevel)}, ${authored.name} identifies the civilization that entrusted it with its final directive.`,
-    portrait_prompt: `Premium NOVERIS sci-fi companion portrait of ${authored.name}, ${authored.title}, terraforming intelligence specializing in ${authored.subcategory.toLowerCase()}, ${authored.rarity.toLowerCase()} rarity treatment, centered memorable holographic persona, dark deep-space card background, cinematic rim light, collectible-quality game artwork, no text, square composition`,
+    portrait_prompt: `Premium NOVERIS sci-fi companion portrait of ${authored.name}, ${authored.title}, ${agent.category.toLowerCase()} intelligence specializing in ${authored.subcategory.toLowerCase()}, ${authored.rarity.toLowerCase()} rarity treatment, centered memorable holographic persona, dark deep-space card background, cinematic rim light, collectible-quality game artwork, no text, square composition`,
     hud_display_name: authored.name,
     content_version: AI_LIBRARY_CONTENT_VERSION,
-    tags: ["companion", "collectible", "labor", "terraforming_initiative", authored.subcategory.toLowerCase().replace(/[^a-z0-9]+/g, "_"), authored.rarity.toLowerCase(), authored.signature_passive.toLowerCase().replace(/[^a-z0-9]+/g, "_"), "authored_volume_11"],
+    tags: ["companion", "collectible", "labor", agent.category_id, authored.subcategory.toLowerCase().replace(/[^a-z0-9]+/g, "_"), authored.rarity.toLowerCase(), authored.signature_passive.toLowerCase().replace(/[^a-z0-9]+/g, "_"), `authored_volume_${agent.volume}`],
     library_sort: { ...agent.library_sort, secondary: authored.subcategory, tertiary: authored.rarity, quaternary: authored.name }
   };
 }
 
-const sourceAgents = [...sourcePackA.agents, ...sourcePackB.agents, ...sourcePackC.agents.map(applyAuthoredVolumeEleven), ...sourcePackD.agents];
+const sourceAgents = [...sourcePackA.agents, ...sourcePackB.agents, ...sourcePackC.agents.map(applyAuthoredAgent), ...sourcePackD.agents];
 
 const canonicalNamesById = new Map<string, string>();
 const usedCanonicalNames = new Set<string>();
@@ -201,7 +202,7 @@ export const canonicalAiLibraryAgents: CanonicalAiLibraryAgent[] = sourceAgents.
     collection: volumeTitles.get(agent.volume) ?? agent.volume_title,
     category_id: agent.category_id,
     special_effect_type: canonicalLaborEffectType(agent.special_effect_type),
-    legacy_ai_ids: [...(legacyIdsByCanonicalId.get(agent.ai_id) ?? []), ...(authoredVolumeElevenAliases.has(agent.ai_id) ? [authoredVolumeElevenAliases.get(agent.ai_id)!] : [])],
+    legacy_ai_ids: [...(legacyIdsByCanonicalId.get(agent.ai_id) ?? []), ...(authoredAgentAliases.has(agent.ai_id) ? [authoredAgentAliases.get(agent.ai_id)!] : [])],
     legacy_names: renamed ? [agent.name] : [],
     assignment_roles: agent.supports_offline_generation ? [...aiLibraryAssignmentRoles] : ["Active AI Assistant", "Labor Generation"],
     runtime_metadata: {

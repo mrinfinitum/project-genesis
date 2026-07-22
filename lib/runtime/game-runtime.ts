@@ -67,7 +67,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 49;
+export const gameRuntimeContentVersion = 50;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -608,6 +608,17 @@ function metadata(overrides: Partial<RuntimeMetadata> = {}): RuntimeMetadata {
         preserveRule: "Keep the published ai_v11 stable IDs. Resolve supplied AI-XI-081 through AI-XI-100 IDs as aliases and preserve player ownership or selection.",
         introducedContentVersion: 49,
         notes: "The final twenty Terraforming Initiative companions complete the authored Volume XI collection."
+      },
+      {
+        id: "migration_ai_library_volume_12_authored_part_1",
+        targetId: "ai-volume-12-education-knowledge",
+        field: "aiLibrary",
+        previousDefault: "generated-volume-12-slots-1-20",
+        currentDefault: "authored-volume-12-slots-1-20",
+        applyOnlyWhen: "A client loads contentVersion 50 or later.",
+        preserveRule: "Keep the published ai_v12 stable IDs. Resolve supplied AI-XII-001 through AI-XII-020 IDs as aliases and preserve player ownership or selection.",
+        introducedContentVersion: 50,
+        notes: "The first twenty Education & Knowledge companions now use the authored Volume XII identities."
       }
     ],
     ...overrides
