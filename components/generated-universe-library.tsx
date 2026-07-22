@@ -37,7 +37,8 @@ function toGeneratedCardRecord(record: UniverseLibraryRecord): GeneratedLibraryC
     thumbnailAvifUrl: record.thumbnailAvifUrl,
     thumbnailSrcSet: record.thumbnailSrcSet,
     mediumPreviewUrl: record.mediumPreviewUrl,
-    focalPoint: record.focalPoint
+    focalPoint: record.focalPoint,
+    visualSignaturePreview: record.visualSignaturePreview
   };
 }
 
@@ -109,7 +110,7 @@ export function GeneratedUniverseLibrary({ kind, title, description, generateLab
         items={indexItems}
       />
 
-      {kind === "galaxies" || kind === "sectors" || kind === "star-systems" ? (
+      {kind === "galaxies" || kind === "sectors" ? (
         <ProceduralVisualSignaturePreview semanticLevel={kind === "galaxies" ? "galaxy" : kind === "sectors" ? "sector" : "system"} defaultObjectId={records[0]?.id ?? `${kind}-preview`} />
       ) : null}
 

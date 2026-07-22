@@ -23,6 +23,21 @@ export type GeneratedLibraryCardRecord = {
   thumbnailSrcSet?: string;
   mediumPreviewUrl?: string;
   focalPoint?: string;
+  visualSignaturePreview?: GeneratedLibraryVisualSignaturePreview;
+};
+
+export type GeneratedLibraryVisualSignaturePreview = {
+  paletteId?: string;
+  primaryHue: number;
+  secondaryHue: number;
+  accentHue: number;
+  luminosity: number;
+  bloomIntensity: number;
+  stellarDensity: number;
+  nebulaDensity: number;
+  dustDensity: number;
+  fogDensity: number;
+  fingerprint: string;
 };
 
 const toneClasses: Record<GeneratedLibraryCardTone, string> = {
@@ -54,6 +69,109 @@ function MetadataField({ label, value }: { label: string; value?: string }) {
   );
 }
 
+function numericFallback(value: number | undefined, fallback: number) {
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+}
+
+function hashPercent(seed: string, index: number, salt: number) {
+  let hash = 2166136261;
+  const value = `${seed}:${index}:${salt}`;
+  for (let i = 0; i < value.length; i += 1) {
+    hash ^= value.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  return ((hash >>> 0) % 1000) / 10;
+}
+
+function SystemAtlasPreview({ signature }: { signature: GeneratedLibraryVisualSignaturePreview }) {
+  const primaryHue = numericFallback(signature.primaryHue, 190);
+  const secondaryHue = numericFallback(signature.secondaryHue, 222);
+  const accentHue = numericFallback(signature.accentHue, 42);
+  const luminosity = numericFallback(signature.luminosity, 0.55);
+  const bloom = numericFallback(signature.bloomIntensity, 0.22);
+  const stellarDensity = numericFallback(signature.stellarDensity, 0.45);
+  const nebulaDensity = numericFallback(signature.nebulaDensity, 0.28);
+  const dustDensity = numericFallback(signature.dustDensity, 0.24);
+  const fogDensity = numericFallback(signature.fogDensity, 0.22);
+  const seed = signature.fingerprint || signature.paletteId || "system";
+  const starCount = Math.max(12, Math.min(38, Math.round(14 + stellarDensity * 30)));
+  const dustCount = Math.max(4, Math.min(18, Math.round(4 + dustDensity * 20)));
+  const stars = Array.from({ length: starCount }, (_, index) => ({
+    left: hashPercent(seed, index, 1),
+    top: hashPercent(seed, index, 2),
+    opacity: 0.22 + hashPercent(seed, index, 3) / 170,
+    size: hashPercent(seed, index, 4) > 88 ? 2 : 1
+  }));
+  const dust = Array.from({ length: dustCount }, (_, index) => ({
+    left: hashPercent(seed, index, 5),
+    top: hashPercent(seed, index, 6),
+    width: 8 + hashPercent(seed, index, 7) / 2,
+    opacity: 0.08 + hashPercent(seed, index, 8) / 900
+  }));
+
+  return (
+    <div className="absolute inset-0 overflow-hidden">
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            `radial-gradient(circle at 50% 46%, hsla(${accentHue}, 96%, 78%, ${0.12 + bloom * 0.22}), transparent 10%), ` +
+            `radial-gradient(circle at 30% 24%, hsla(${primaryHue}, 88%, 55%, ${0.1 + nebulaDensity * 0.2}), transparent 34%), ` +
+            `radial-gradient(circle at 76% 70%, hsla(${secondaryHue}, 84%, 50%, ${0.08 + fogDensity * 0.18}), transparent 42%), ` +
+            `linear-gradient(135deg, hsl(${primaryHue} 58% ${8 + luminosity * 9}%), hsl(${secondaryHue} 62% 6%))`
+        }}
+      />
+      {dust.map((item, index) => (
+        <span
+          key={`dust-${index}`}
+          className="absolute h-px rounded-full bg-cyan-100/60 blur-[1px]"
+          style={{
+            left: `${item.left}%`,
+            top: `${item.top}%`,
+            width: `${item.width}%`,
+            opacity: item.opacity,
+            transform: `rotate(${hashPercent(seed, index, 9) - 50}deg)`
+          }}
+        />
+      ))}
+      {[0, 1, 2, 3].map((index) => {
+        const width = 26 + index * 15 + nebulaDensity * 10;
+        const height = 11 + index * 6 + fogDensity * 6;
+        return (
+          <span
+            key={`orbit-${index}`}
+            className="absolute left-1/2 top-1/2 rounded-[999px] border border-cyan-100/20"
+            style={{
+              width: `${width}%`,
+              height: `${height}%`,
+              transform: `translate(-50%, -50%) rotate(${-18 + index * 12}deg)`,
+              boxShadow: index === 0 ? `0 0 ${18 + bloom * 42}px hsla(${accentHue}, 95%, 68%, ${0.24 + bloom * 0.25})` : undefined
+            }}
+          />
+        );
+      })}
+      <span
+        className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full"
+        style={{
+          background: `hsl(${accentHue} 98% 78%)`,
+          boxShadow: `0 0 ${18 + bloom * 44}px 8px hsla(${accentHue}, 94%, 68%, ${0.2 + bloom * 0.26})`
+        }}
+      />
+      {stars.map((item, index) => (
+        <span
+          key={`star-${index}`}
+          className="absolute rounded-full bg-cyan-50"
+          style={{ left: `${item.left}%`, top: `${item.top}%`, width: item.size, height: item.size, opacity: item.opacity }}
+        />
+      ))}
+      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/72 to-transparent p-3">
+        <p className="truncate text-[0.58rem] font-black uppercase tracking-[0.18em] text-cyan-100/90">System Background</p>
+        <p className="mt-0.5 truncate font-mono text-[0.55rem] font-bold uppercase tracking-[0.12em] text-slate-400">{signature.fingerprint}</p>
+      </div>
+    </div>
+  );
+}
+
 function CardThumbnail({ record, hovered, className }: { record: GeneratedLibraryCardRecord; hovered: boolean; className?: string }) {
   const tone = record.tone ?? "neutral";
   const imageUrl = hovered && record.mediumPreviewUrl ? record.mediumPreviewUrl : record.thumbnailUrl;
@@ -74,6 +192,11 @@ function CardThumbnail({ record, hovered, className }: { record: GeneratedLibrar
             style={{ objectPosition: record.focalPoint ?? "center" }}
           />
         </picture>
+      ) : record.visualSignaturePreview && tone === "system" ? (
+        <>
+          <SystemAtlasPreview signature={record.visualSignaturePreview} />
+          <span className="sr-only">Procedural star system background preview</span>
+        </>
       ) : (
         <>
           <div className="absolute inset-0 bg-slate-950/45" />
@@ -113,6 +236,8 @@ function LibraryRecordModal({
               <MetadataField label="Contains" value={record.contains} />
               <MetadataField label="Type" value={record.type} />
               <MetadataField label="Class" value={record.classification} />
+              {record.visualSignaturePreview ? <MetadataField label="Background" value={record.thumbnailUrl ? "Published PSD derivative" : "Procedural atlas preview"} /> : null}
+              {record.visualSignaturePreview ? <MetadataField label="Visual Signature" value={record.visualSignaturePreview.fingerprint} /> : null}
             </div>
           </div>
           <aside className="border-t border-cyan-300/15 bg-slate-950/35 p-4 sm:p-6 lg:border-l lg:border-t-0">

@@ -13,6 +13,7 @@ import {
   type StarNode,
   type StarSystemNode
 } from "@/lib/universe/generator";
+import type { ProceduralVisualSignature } from "@/lib/universe/visual-signatures";
 
 export const UNIVERSE_LIBRARY_SEED = "PROJECT-GENESIS-UNIVERSE";
 
@@ -37,6 +38,7 @@ export type UniverseLibraryRecord = {
   thumbnailSrcSet?: string;
   mediumPreviewUrl?: string;
   focalPoint?: string;
+  visualSignaturePreview?: Pick<ProceduralVisualSignature, "paletteId" | "primaryHue" | "secondaryHue" | "accentHue" | "luminosity" | "bloomIntensity" | "stellarDensity" | "nebulaDensity" | "dustDensity" | "fogDensity" | "fingerprint">;
   meta?: Array<{ label: string; value: string | number }>;
 };
 
@@ -282,6 +284,21 @@ export function getUniverseLibraryData(): UniverseLibraryData {
       readiness: "Ready",
       href: `/star-system-map?record=${encodeURIComponent(system.id)}`,
       previewTone: "system",
+      visualSignaturePreview: system.visual_signature
+        ? {
+            paletteId: system.visual_signature.paletteId,
+            primaryHue: system.visual_signature.primaryHue,
+            secondaryHue: system.visual_signature.secondaryHue,
+            accentHue: system.visual_signature.accentHue,
+            luminosity: system.visual_signature.luminosity,
+            bloomIntensity: system.visual_signature.bloomIntensity,
+            stellarDensity: system.visual_signature.stellarDensity,
+            nebulaDensity: system.visual_signature.nebulaDensity,
+            dustDensity: system.visual_signature.dustDensity,
+            fogDensity: system.visual_signature.fogDensity,
+            fingerprint: system.visual_signature.fingerprint
+          }
+        : undefined,
       meta: [{ label: "Export", value: "Ready" }]
     }));
 
