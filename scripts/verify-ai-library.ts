@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { aiLibraryCategories, aiLibraryLegacyIdMigrations, aiLibraryRarities, canonicalAiLibraryAgents, resolveCanonicalAiLibraryId, validateCanonicalAiLibrary } from "../lib/ai-agents/foundations";
+import { aiLibraryCategories, aiLibraryDesignContract, aiLibraryLegacyIdMigrations, aiLibraryRarities, aiLibraryVolumes, canonicalAiLibraryAgents, resolveCanonicalAiLibraryId, validateCanonicalAiLibrary } from "../lib/ai-agents/foundations";
 import { buildGameEngineExport, type EngineTarget } from "../lib/export/game-engine";
 import { buildCanonicalRuntimeExportPayload, buildRobloxRuntimePayload, validateGameRuntimeData, validateRobloxRuntimePayload } from "../lib/runtime/game-runtime";
 
@@ -11,9 +11,15 @@ function assert(condition: unknown, message: string): asserts condition {
 async function main() {
   const validation = validateCanonicalAiLibrary();
   assert(validation.status === "Ready", validation.issues.join("\n"));
-  assert(canonicalAiLibraryAgents.length === 1000, "AI Library Volumes I-X must contain 1,000 agents.");
+  assert(canonicalAiLibraryAgents.length === 2000, "AI Library Volumes I-XX must contain 2,000 agents.");
   assert(Math.min(...canonicalAiLibraryAgents.map((agent) => agent.max_level)) === 40 && Math.max(...canonicalAiLibraryAgents.map((agent) => agent.max_level)) === 150, "AI Library rarity level caps must span 40 through 150.");
-  assert(canonicalAiLibraryAgents.filter((agent) => agent.rarity === "Genesis").length === 10, "AI Library Volumes I-X must contain exactly ten Genesis agents.");
+  assert(canonicalAiLibraryAgents.filter((agent) => agent.rarity === "Genesis").length === 20, "AI Library Volumes I-XX must contain exactly twenty Genesis agents.");
+  assert(new Set(canonicalAiLibraryAgents.map((agent) => agent.name.toLowerCase())).size === 2000, "Every AI companion must have a unique recognizable name.");
+  assert(aiLibraryVolumes.length === 20, "AI Library must publish all twenty canonical volumes.");
+  assert(aiLibraryDesignContract.activeAiSlots === 1 && aiLibraryDesignContract.inactiveBonusesEnabled === false, "AI Library must allow exactly one active companion and no inactive bonuses.");
+  assert(aiLibraryDesignContract.directResourceProduction === false, "AI companions must never directly produce resources.");
+  assert(canonicalAiLibraryAgents.every((agent) => agent.dialogue_examples.length === 3 && agent.generation && agent.discovery_location && agent.signature_passive_name), "Every AI companion must include its complete v2 identity contract.");
+  assert(canonicalAiLibraryAgents.every((agent) => ["labor_efficiency", "manual_labor_bonus", "offline_labor_bonus", "xp_gain_modifier", "level_scaling", "automation_efficiency", "exploration_efficiency"].includes(agent.special_effect_type)), "Every AI effect must remain Labor, progression, automation, or exploration focused.");
   assert(aiLibraryLegacyIdMigrations.length === 1000, "Packs A and B must publish 1,000 legacy AI ID migrations.");
   assert(resolveCanonicalAiLibraryId("ai_v01_001_nova") === "ai_v01_001_byte_link", "Pack A must migrate the former first Volume I AI ID.");
   assert(resolveCanonicalAiLibraryId("ai_v05_100_lyric_guide") === "ai_v05_100_ledger_system", "Pack A must migrate the former final Volume V AI ID.");
@@ -30,9 +36,19 @@ async function main() {
     ["logistics_transportation", 100],
     ["medical_population", 100],
     ["government_administration", 100],
-    ["environmental_systems", 100]
+    ["environmental_systems", 100],
+    ["terraforming_initiative", 100],
+    ["education_knowledge", 100],
+    ["cultural_preservation", 100],
+    ["historical_archives", 100],
+    ["first_contact", 100],
+    ["ancient_intelligence", 100],
+    ["experimental_intelligence", 100],
+    ["genesis_intelligence", 100],
+    ["companion_ai", 100],
+    ["legendary_singularity_ai", 100]
   ]);
-  assert(aiLibraryCategories.length === expectedCategoryCounts.size, "Canonical AI Library must contain the ten authored categories.");
+  assert(aiLibraryCategories.length === expectedCategoryCounts.size, "Canonical AI Library must contain the twenty authored categories.");
   for (const category of aiLibraryCategories) {
     const expectedCount = expectedCategoryCounts.get(category.id);
     assert(expectedCount !== undefined, `Unexpected AI Library category ${category.id}.`);
@@ -43,26 +59,26 @@ async function main() {
 
   const runtime = await buildCanonicalRuntimeExportPayload();
   const runtimeValidation = validateGameRuntimeData(runtime);
-  assert(runtime.aiLibrary.length === 1000, "Canonical runtime must export 1,000 AI Library records.");
+  assert(runtime.aiLibrary.length === 2000, "Canonical runtime must export 2,000 AI Library records.");
   assert(runtime.aiCategories.length === aiLibraryCategories.length, "Canonical runtime category catalog is incomplete.");
   assert(runtime.aiRarity.length === aiLibraryRarities.length, "Canonical runtime rarity catalog is incomplete.");
   assert(runtimeValidation.status === "Ready", runtimeValidation.issues.map((issue) => `${issue.code}: ${issue.message}`).join("\n"));
 
   const roblox = buildRobloxRuntimePayload(runtime);
   const robloxValidation = validateRobloxRuntimePayload(roblox);
-  assert(roblox.aiLibrary.length === 1000, "Roblox runtime must export 1,000 AI Library records.");
+  assert(roblox.aiLibrary.length === 2000, "Roblox runtime must export 2,000 AI Library records.");
   assert(robloxValidation.status === "Ready", robloxValidation.issues.map((issue) => `${issue.code}: ${issue.message}`).join("\n"));
 
   const targets: EngineTarget[] = ["generic", "roblox", "web", "unity", "unreal", "godot"];
   for (const target of targets) {
     const payload = await buildGameEngineExport(target);
     assert(payload.validation.status === "Ready", `${target} export is not Ready.`);
-    assert(Array.isArray(payload.canonical.ai_library) && payload.canonical.ai_library.length === 1000, `${target} export is missing the canonical AI Library.`);
+    assert(Array.isArray(payload.canonical.ai_library) && payload.canonical.ai_library.length === 2000, `${target} export is missing the canonical AI Library.`);
   }
 
   const exported = JSON.parse(await readFile(path.join(process.cwd(), "data", "ai-agents", "exports", "ai_library.json"), "utf8")) as unknown[];
-  assert(exported.length === 1000, "Generated ai_library.json must contain 1,000 records.");
-  console.log(JSON.stringify({ status: "Ready", agents: 1000, volumes: 10, categories: aiLibraryCategories.length, rarities: aiLibraryRarities.length, engineExports: targets.length }, null, 2));
+  assert(exported.length === 2000, "Generated ai_library.json must contain 2,000 records.");
+  console.log(JSON.stringify({ status: "Ready", agents: 2000, volumes: 20, categories: aiLibraryCategories.length, rarities: aiLibraryRarities.length, engineExports: targets.length }, null, 2));
 }
 
 main().catch((error) => {

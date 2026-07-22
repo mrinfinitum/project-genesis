@@ -24,6 +24,7 @@
     "verify:resource-discovery": "tsx scripts/verify-resource-discovery-reclassification.ts",
     "verify:labor-generation": "tsx scripts/verify-labor-generation.ts",
     "export:ai-library": "tsx scripts/export-ai-library.ts",
+    "generate:ai-library-v2": "tsx scripts/generate-ai-library-v2-expansion.ts",
     "verify:ai-library": "tsx scripts/verify-ai-library.ts"
   },
   "dependencies": {

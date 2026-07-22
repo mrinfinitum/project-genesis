@@ -328,5 +328,325 @@
       "automation": 1
     },
     "theme": "Collectible NOVERIS companion intelligence"
+  },
+  {
+    "id": "terraforming_initiative",
+    "displayName": "Terraforming Initiative",
+    "subcategory": "Multiple specializations",
+    "subcategories": [
+      "Climate Engineering",
+      "Atmospheric Conversion",
+      "Hydrology",
+      "Biosphere Seeding",
+      "Geophysical Stabilization"
+    ],
+    "purpose": "Labor Generation",
+    "primaryFunction": "Generate passive Labor",
+    "secondaryFunctions": [
+      "Increase active click Labor",
+      "Support offline Labor generation"
+    ],
+    "assignments": [
+      "Active AI Assistant",
+      "Labor Generation",
+      "Offline Labor Generation"
+    ],
+    "bonuses": {
+      "labor": 1,
+      "action": 0,
+      "building": 0,
+      "research": 0,
+      "colony": 0,
+      "automation": 1
+    },
+    "theme": "Collectible NOVERIS companion intelligence"
+  },
+  {
+    "id": "education_knowledge",
+    "displayName": "Education & Knowledge",
+    "subcategory": "Multiple specializations",
+    "subcategories": [
+      "Learning Systems",
+      "Knowledge Archives",
+      "Mentorship",
+      "Simulation",
+      "Linguistics"
+    ],
+    "purpose": "Labor Generation",
+    "primaryFunction": "Generate passive Labor",
+    "secondaryFunctions": [
+      "Increase active click Labor",
+      "Support offline Labor generation"
+    ],
+    "assignments": [
+      "Active AI Assistant",
+      "Labor Generation",
+      "Offline Labor Generation"
+    ],
+    "bonuses": {
+      "labor": 1,
+      "action": 0,
+      "building": 0,
+      "research": 0,
+      "colony": 0,
+      "automation": 1
+    },
+    "theme": "Collectible NOVERIS companion intelligence"
+  },
+  {
+    "id": "cultural_preservation",
+    "displayName": "Cultural Preservation",
+    "subcategory": "Multiple specializations",
+    "subcategories": [
+      "Arts",
+      "Traditions",
+      "Languages",
+      "Heritage",
+      "Memory"
+    ],
+    "purpose": "Labor Generation",
+    "primaryFunction": "Generate passive Labor",
+    "secondaryFunctions": [
+      "Increase active click Labor",
+      "Support offline Labor generation"
+    ],
+    "assignments": [
+      "Active AI Assistant",
+      "Labor Generation",
+      "Offline Labor Generation"
+    ],
+    "bonuses": {
+      "labor": 1,
+      "action": 0,
+      "building": 0,
+      "research": 0,
+      "colony": 0,
+      "automation": 1
+    },
+    "theme": "Collectible NOVERIS companion intelligence"
+  },
+  {
+    "id": "historical_archives",
+    "displayName": "Historical Archives",
+    "subcategory": "Multiple specializations",
+    "subcategories": [
+      "Archaeology",
+      "Chronology",
+      "Records",
+      "Reconstruction",
+      "Oral History"
+    ],
+    "purpose": "Labor Generation",
+    "primaryFunction": "Generate passive Labor",
+    "secondaryFunctions": [
+      "Increase active click Labor",
+      "Support offline Labor generation"
+    ],
+    "assignments": [
+      "Active AI Assistant",
+      "Labor Generation",
+      "Offline Labor Generation"
+    ],
+    "bonuses": {
+      "labor": 1,
+      "action": 0,
+      "building": 0,
+      "research": 0,
+      "colony": 0,
+      "automation": 1
+    },
+    "theme": "Collectible NOVERIS companion intelligence"
+  },
+  {
+    "id": "first_contact",
+    "displayName": "First Contact",
+    "subcategory": "Multiple specializations",
+    "subcategories": [
+      "Xenolinguistics",
+      "Diplomacy",
+      "Signal Analysis",
+      "Cultural Exchange",
+      "Contact Protocol"
+    ],
+    "purpose": "Labor Generation",
+    "primaryFunction": "Generate passive Labor",
+    "secondaryFunctions": [
+      "Increase active click Labor",
+      "Support offline Labor generation"
+    ],
+    "assignments": [
+      "Active AI Assistant",
+      "Labor Generation",
+      "Offline Labor Generation"
+    ],
+    "bonuses": {
+      "labor": 1,
+      "action": 0,
+      "building": 0,
+      "research": 0,
+      "colony": 0,
+      "automation": 1
+    },
+    "theme": "Collectible NOVERIS companion intelligence"
+  },
+  {
+    "id": "ancient_intelligence",
+    "displayName": "Ancient Intelligence",
+    "subcategory": "Multiple specializations",
+    "subcategories": [
+      "Precursor Archives",
+      "Monolith Minds",
+      "Ruin Guardians",
+      "Stellar Memory",
+      "Lost Networks"
+    ],
+    "purpose": "Labor Generation",
+    "primaryFunction": "Generate passive Labor",
+    "secondaryFunctions": [
+      "Increase active click Labor",
+      "Support offline Labor generation"
+    ],
+    "assignments": [
+      "Active AI Assistant",
+      "Labor Generation",
+      "Offline Labor Generation"
+    ],
+    "bonuses": {
+      "labor": 1,
+      "action": 0,
+      "building": 0,
+      "research": 0,
+      "colony": 0,
+      "automation": 1
+    },
+    "theme": "Collectible NOVERIS companion intelligence"
+  },
+  {
+    "id": "experimental_intelligence",
+    "displayName": "Experimental Intelligence",
+    "subcategory": "Multiple specializations",
+    "subcategories": [
+      "Quantum Cognition",
+      "Emergent Systems",
+      "Synthetic Intuition",
+      "Distributed Minds",
+      "Adaptive Research"
+    ],
+    "purpose": "Labor Generation",
+    "primaryFunction": "Generate passive Labor",
+    "secondaryFunctions": [
+      "Increase active click Labor",
+      "Support offline Labor generation"
+    ],
+    "assignments": [
+      "Active AI Assistant",
+      "Labor Generation",
+      "Offline Labor Generation"
+    ],
+    "bonuses": {
+      "labor": 1,
+      "action": 0,
+      "building": 0,
+      "research": 0,
+      "colony": 0,
+      "automation": 1
+    },
+    "theme": "Collectible NOVERIS companion intelligence"
+  },
+  {
+    "id": "genesis_intelligence",
+    "displayName": "Genesis Intelligence",
+    "subcategory": "Multiple specializations",
+    "subcategories": [
+      "Creation Systems",
+      "Planetary Design",
+      "Life Seeding",
+      "Cosmic Architecture",
+      "Origin Archives"
+    ],
+    "purpose": "Labor Generation",
+    "primaryFunction": "Generate passive Labor",
+    "secondaryFunctions": [
+      "Increase active click Labor",
+      "Support offline Labor generation"
+    ],
+    "assignments": [
+      "Active AI Assistant",
+      "Labor Generation",
+      "Offline Labor Generation"
+    ],
+    "bonuses": {
+      "labor": 1,
+      "action": 0,
+      "building": 0,
+      "research": 0,
+      "colony": 0,
+      "automation": 1
+    },
+    "theme": "Collectible NOVERIS companion intelligence"
+  },
+  {
+    "id": "companion_ai",
+    "displayName": "Companion AI",
+    "subcategory": "Multiple specializations",
+    "subcategories": [
+      "Guidance",
+      "Morale",
+      "Exploration",
+      "Stewardship",
+      "Personal Growth"
+    ],
+    "purpose": "Labor Generation",
+    "primaryFunction": "Generate passive Labor",
+    "secondaryFunctions": [
+      "Increase active click Labor",
+      "Support offline Labor generation"
+    ],
+    "assignments": [
+      "Active AI Assistant",
+      "Labor Generation",
+      "Offline Labor Generation"
+    ],
+    "bonuses": {
+      "labor": 1,
+      "action": 0,
+      "building": 0,
+      "research": 0,
+      "colony": 0,
+      "automation": 1
+    },
+    "theme": "Collectible NOVERIS companion intelligence"
+  },
+  {
+    "id": "legendary_singularity_ai",
+    "displayName": "Legendary & Singularity AI",
+    "subcategory": "Multiple specializations",
+    "subcategories": [
+      "Transcendent Minds",
+      "Reality Modeling",
+      "Galactic Coordination",
+      "Temporal Insight",
+      "Singularity Guardians"
+    ],
+    "purpose": "Labor Generation",
+    "primaryFunction": "Generate passive Labor",
+    "secondaryFunctions": [
+      "Increase active click Labor",
+      "Support offline Labor generation"
+    ],
+    "assignments": [
+      "Active AI Assistant",
+      "Labor Generation",
+      "Offline Labor Generation"
+    ],
+    "bonuses": {
+      "labor": 1,
+      "action": 0,
+      "building": 0,
+      "research": 0,
+      "colony": 0,
+      "automation": 1
+    },
+    "theme": "Collectible NOVERIS companion intelligence"
   }
 ]

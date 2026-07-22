@@ -67,7 +67,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 43;
+export const gameRuntimeContentVersion = 44;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -541,7 +541,18 @@ function metadata(overrides: Partial<RuntimeMetadata> = {}): RuntimeMetadata {
         applyOnlyWhen: "A save or authored reference contains an AI ID from Volumes 6 through 10 using the schema 1.1.0 catalog.",
         preserveRule: "Resolve the former ID through the exported migration map by matching its canonical volume and library index; preserve unknown IDs for diagnostics.",
         introducedContentVersion: 43,
-        notes: "Pack B schema 1.2.0 rebuilds Volumes 6 through 10. The shared migration export now covers the complete 1,000-agent library."
+        notes: "Pack B schema 1.2.0 rebuilds Volumes 6 through 10. The shared migration export covers all legacy Pack A and B IDs."
+      },
+      {
+        id: "migration_ai_library_schema_2_0_expansion",
+        targetId: "ai-library-packs-c-d",
+        field: "aiLibrary",
+        previousDefault: "ai-library-1.2.0",
+        currentDefault: "ai-library-2.0.0",
+        applyOnlyWhen: "A client loads contentVersion 44 or later and does not yet contain AI Library Volumes 11 through 20.",
+        preserveRule: "Preserve all owned and selected Pack A/B AI IDs. Add Packs C/D as unowned collectible definitions without changing the active companion.",
+        introducedContentVersion: 44,
+        notes: "AI Library v2 expands the canonical collection to 2,000 companions across 20 volumes while preserving the one-active-AI rule."
       }
     ],
     ...overrides

@@ -689,6 +689,7 @@ export type CanonicalAiLibraryAgent = {
   volume: number;
   volume_title: string;
   library_index: number;
+  generation?: string;
   ai_type: string;
   category: string;
   subcategory: string;
@@ -696,6 +697,7 @@ export type CanonicalAiLibraryAgent = {
   rarity_rank: number;
   drop_weight: number;
   origin: string;
+  discovery_location?: string;
   discovery_method: string;
   activation_method: string;
   base_labor_per_second: number;
@@ -708,6 +710,8 @@ export type CanonicalAiLibraryAgent = {
   max_level: number;
   evolution_id: string;
   evolution_name: string;
+  signature_passive_name?: string;
+  signature_passive_description?: string;
   special_effect_type: string;
   special_effect_value: number;
   primary_function: string;
@@ -733,6 +737,7 @@ export type CanonicalAiLibraryAgent = {
   content_version: number;
   schema_version: string;
   tags: string[];
+  collection_set?: string;
   library_sort: {
     primary: string;
     secondary: string;
@@ -743,6 +748,7 @@ export type CanonicalAiLibraryAgent = {
   collection: string;
   category_id: string;
   legacy_ai_ids?: string[];
+  legacy_names?: string[];
   assignment_roles: string[];
   runtime_metadata: {
     schemaVersion: string;

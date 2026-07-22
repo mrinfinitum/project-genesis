@@ -1,5 +1,5 @@
 {
-  "totalAgents": 1000,
+  "totalAgents": 2000,
   "minimumLevelCap": 40,
   "maximumLevelCap": 150,
   "categoryCounts": {
@@ -12,18 +12,25 @@
     "logistics_transportation": 100,
     "medical_population": 100,
     "government_administration": 100,
-    "environmental_systems": 100
+    "environmental_systems": 100,
+    "terraforming_initiative": 100,
+    "education_knowledge": 100,
+    "cultural_preservation": 100,
+    "historical_archives": 100,
+    "first_contact": 100,
+    "ancient_intelligence": 100,
+    "experimental_intelligence": 100,
+    "genesis_intelligence": 100,
+    "companion_ai": 100,
+    "legendary_singularity_ai": 100
   },
   "rarityCounts": {
-    "Common": 340,
-    "Uncommon": 240,
-    "Specialized": 0,
-    "Rare": 180,
-    "Epic": 120,
-    "Legendary": 70,
-    "Ancient": 40,
-    "Genesis": 10,
-    "Mythic": 0,
-    "Singularity": 0
+    "Common": 680,
+    "Uncommon": 480,
+    "Rare": 360,
+    "Epic": 240,
+    "Legendary": 140,
+    "Ancient": 80,
+    "Genesis": 20
   }
 }

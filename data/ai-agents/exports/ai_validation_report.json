@@ -1,65 +1,125 @@
 {
-  "libraryVersion": "ai-library-1.2.0",
+  "libraryVersion": "ai-library-2.0.0",
   "volumes": [
     {
       "id": "ai-volume-01-foundations",
       "number": 1,
       "name": "Foundations",
-      "version": "ai-library-1.2.0"
+      "version": "ai-library-2.0.0"
     },
     {
       "id": "ai-volume-02-industrial-systems",
       "number": 2,
       "name": "Industrial Systems",
-      "version": "ai-library-1.2.0"
+      "version": "ai-library-2.0.0"
     },
     {
       "id": "ai-volume-03-scientific-systems",
       "number": 3,
       "name": "Scientific Systems",
-      "version": "ai-library-1.2.0"
+      "version": "ai-library-2.0.0"
     },
     {
       "id": "ai-volume-04-exploration-systems",
       "number": 4,
       "name": "Exploration Systems",
-      "version": "ai-library-1.2.0"
+      "version": "ai-library-2.0.0"
     },
     {
       "id": "ai-volume-05-civilization-systems",
       "number": 5,
       "name": "Civilization Systems",
-      "version": "ai-library-1.2.0"
+      "version": "ai-library-2.0.0"
     },
     {
       "id": "ai-volume-06-economic-systems",
       "number": 6,
       "name": "Economic Systems",
-      "version": "ai-library-1.2.0"
+      "version": "ai-library-2.0.0"
     },
     {
       "id": "ai-volume-07-logistics-transportation",
       "number": 7,
       "name": "Logistics & Transportation",
-      "version": "ai-library-1.2.0"
+      "version": "ai-library-2.0.0"
     },
     {
       "id": "ai-volume-08-medical-population",
       "number": 8,
       "name": "Medical & Population",
-      "version": "ai-library-1.2.0"
+      "version": "ai-library-2.0.0"
     },
     {
       "id": "ai-volume-09-government-administration",
       "number": 9,
       "name": "Government & Administration",
-      "version": "ai-library-1.2.0"
+      "version": "ai-library-2.0.0"
     },
     {
       "id": "ai-volume-10-environmental-systems",
       "number": 10,
       "name": "Environmental Systems",
-      "version": "ai-library-1.2.0"
+      "version": "ai-library-2.0.0"
+    },
+    {
+      "id": "ai-volume-11-terraforming-initiative",
+      "number": 11,
+      "name": "Terraforming Initiative",
+      "version": "ai-library-2.0.0"
+    },
+    {
+      "id": "ai-volume-12-education-knowledge",
+      "number": 12,
+      "name": "Education & Knowledge",
+      "version": "ai-library-2.0.0"
+    },
+    {
+      "id": "ai-volume-13-cultural-preservation",
+      "number": 13,
+      "name": "Cultural Preservation",
+      "version": "ai-library-2.0.0"
+    },
+    {
+      "id": "ai-volume-14-historical-archives",
+      "number": 14,
+      "name": "Historical Archives",
+      "version": "ai-library-2.0.0"
+    },
+    {
+      "id": "ai-volume-15-first-contact",
+      "number": 15,
+      "name": "First Contact",
+      "version": "ai-library-2.0.0"
+    },
+    {
+      "id": "ai-volume-16-ancient-intelligence",
+      "number": 16,
+      "name": "Ancient Intelligence",
+      "version": "ai-library-2.0.0"
+    },
+    {
+      "id": "ai-volume-17-experimental-intelligence",
+      "number": 17,
+      "name": "Experimental Intelligence",
+      "version": "ai-library-2.0.0"
+    },
+    {
+      "id": "ai-volume-18-genesis-intelligence",
+      "number": 18,
+      "name": "Genesis Intelligence",
+      "version": "ai-library-2.0.0"
+    },
+    {
+      "id": "ai-volume-19-companion-ai",
+      "number": 19,
+      "name": "Companion AI",
+      "version": "ai-library-2.0.0"
+    },
+    {
+      "id": "ai-volume-20-legendary-singularity-ai",
+      "number": 20,
+      "name": "Legendary & Singularity AI",
+      "version": "ai-library-2.0.0"
     }
   ],
   "status": "Ready",
