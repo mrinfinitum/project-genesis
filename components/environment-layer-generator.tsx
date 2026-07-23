@@ -22,10 +22,12 @@ import {
   buildEnvironmentLayerPrompt,
   calculateEnvironmentGeneratorProgress,
   defaultEnvironmentGeneratorControls,
+  environmentArtStandard,
   environmentGeneratorStatuses,
   extractFixedExclusions,
   migrateEnvironmentLayerProgress,
   nextEnvironmentLayerFilename,
+  starSystemAstronomicalMattePaintingPrompt,
   type EnvironmentGeneratorControls,
   type EnvironmentGeneratorDefinition,
   type EnvironmentGeneratorStatus,
@@ -110,6 +112,98 @@ function Metric({ label, value }: { label: string; value: string | number }) {
   );
 }
 
+function EnvironmentArtStandardPanel() {
+  return (
+    <section className="overflow-hidden rounded-md border border-cyan-300/25 bg-[#050d19]/95 shadow-glow">
+      <div className="border-b border-cyan-300/15 px-4 py-3 lg:px-5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-cyan-300">Permanent Visual Benchmark</p>
+            <h2 className="mt-1 text-xl font-bold text-white">NOVERIS Environment Standard</h2>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <span className="rounded border border-cyan-300/25 bg-cyan-300/[0.07] px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.15em] text-cyan-100">
+              Version {environmentArtStandard.version}
+            </span>
+            <span className="rounded border border-emerald-300/30 bg-emerald-300/[0.07] px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.15em] text-emerald-100">
+              Quiet Mode · Enabled
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid lg:grid-cols-[minmax(0,1.15fr)_minmax(340px,0.85fr)]">
+        <figure className="border-b border-cyan-300/15 bg-black lg:border-b-0 lg:border-r">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={environmentArtStandard.referenceImagePath}
+            alt="Canonical NOVERIS deep-space environment artwork benchmark"
+            className="aspect-video h-full max-h-[360px] w-full object-cover"
+            loading="eager"
+            decoding="async"
+          />
+          <figcaption className="border-t border-cyan-300/10 px-4 py-2 text-xs text-slate-500">
+            Canonical reference for restraint, stellar density, cloud scale, and negative space.
+          </figcaption>
+        </figure>
+
+        <div className="space-y-4 p-4 lg:p-5">
+          <p className="text-sm leading-6 text-slate-300">{environmentArtStandard.philosophy}</p>
+          <div className="grid grid-cols-2 gap-2">
+            <Metric
+              label="Visual Quiet"
+              value={`${environmentArtStandard.backgroundOccupancy.quietMinimumPercent}-${environmentArtStandard.backgroundOccupancy.quietMaximumPercent}%`}
+            />
+            <Metric
+              label="Artwork Occupancy"
+              value={`${environmentArtStandard.backgroundOccupancy.artworkMinimumPercent}-${environmentArtStandard.backgroundOccupancy.artworkMaximumPercent}%`}
+            />
+            <Metric label="Tiny Stars" value={`${environmentArtStandard.starDensity.tinyPercent}%`} />
+            <Metric label="Bright Stars" value={`${environmentArtStandard.starDensity.brightPercent}%`} />
+          </div>
+          <div>
+            <p className="text-[0.65rem] font-semibold uppercase tracking-[0.17em] text-slate-500">Visual Hierarchy</p>
+            <ol className="mt-2 flex flex-wrap gap-1.5">
+              {environmentArtStandard.visualHierarchy.map((item, index) => (
+                <li key={item} className="inline-flex items-center gap-1.5 text-xs text-slate-300">
+                  <span className="rounded border border-cyan-300/20 bg-cyan-300/[0.05] px-2 py-1">
+                    {index + 1}. {item}
+                  </span>
+                  {index < environmentArtStandard.visualHierarchy.length - 1 ? <span className="text-slate-700">›</span> : null}
+                </li>
+              ))}
+            </ol>
+          </div>
+          <p className="text-xs leading-5 text-slate-500">
+            Molecular clouds: {environmentArtStandard.molecularCloudQualities.join(", ")}. They should feel thousands of light years away.
+          </p>
+          <div className="rounded border border-cyan-300/15 bg-[#030916] p-3">
+            <p className="text-[0.65rem] font-semibold uppercase tracking-[0.17em] text-cyan-300">Quiet Mode</p>
+            <p className="mt-1 text-xs font-semibold text-emerald-200">Enabled</p>
+            <p className="mt-2 text-xs leading-5 text-slate-400">
+              {starSystemAstronomicalMattePaintingPrompt.quietMode.description.join(" ")}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="border-t border-cyan-300/15 px-4 py-4 lg:px-5">
+        <p className="text-[0.65rem] font-semibold uppercase tracking-[0.17em] text-cyan-300">Approval Checklist</p>
+        <ul className="mt-3 grid gap-x-5 gap-y-2 sm:grid-cols-2 xl:grid-cols-5">
+          {environmentArtStandard.reviewChecklist.map((item) => (
+            <li key={item} className="flex items-start gap-2 text-xs leading-5 text-slate-300">
+              <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border border-cyan-300/30 text-cyan-200">
+                <Check className="h-3 w-3" />
+              </span>
+              {item}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
 function LayerPreview({ path, name }: { path: string; name: string }) {
   const canRender = path.startsWith("/") || path.startsWith("https://");
   return (
@@ -161,6 +255,7 @@ function LayerCard({
   );
   const prompt = buildEnvironmentLayerPrompt(layer, controls, progress.editablePromptAdditions);
   const exclusions = extractFixedExclusions(layer.canonicalPrompt);
+  const isLockedEnvironmentPainting = layer.id === starSystemAstronomicalMattePaintingPrompt.layerId;
   const [registering, setRegistering] = useState(false);
   const [registrationError, setRegistrationError] = useState("");
 
@@ -218,7 +313,28 @@ function LayerCard({
               </div>
               <div>
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <p className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-cyan-300">Finished Image Prompt</p>
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-cyan-300">
+                        {isLockedEnvironmentPainting ? "Canonical Render Prompt" : "Finished Image Prompt"}
+                      </p>
+                      {isLockedEnvironmentPainting ? (
+                        <>
+                          <span className="rounded border border-emerald-300/30 bg-emerald-300/[0.07] px-2 py-0.5 text-[0.58rem] font-semibold uppercase tracking-[0.14em] text-emerald-100">
+                            Locked
+                          </span>
+                          <span className="rounded border border-cyan-300/20 px-2 py-0.5 text-[0.58rem] font-semibold uppercase tracking-[0.14em] text-cyan-100">
+                            Version {starSystemAstronomicalMattePaintingPrompt.version}
+                          </span>
+                        </>
+                      ) : null}
+                    </div>
+                    {isLockedEnvironmentPainting ? (
+                      <p className="mt-1 text-xs text-slate-500">
+                        Approved production prompt used to generate every NOVERIS Star System Astronomical Matte Painting.
+                      </p>
+                    ) : null}
+                  </div>
                   <Button type="button" className="h-8 px-3" onClick={() => onCopy(`${layer.id}:prompt`, prompt)}>
                     {copiedKey === `${layer.id}:prompt` ? <Check className="h-4 w-4" /> : <Clipboard className="h-4 w-4" />}
                     Copy Prompt
@@ -228,15 +344,17 @@ function LayerCard({
                   {prompt}
                 </pre>
               </div>
-              <label className="block space-y-1.5">
-                <span className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-slate-500">Editable Prompt Additions</span>
-                <textarea
-                  value={progress.editablePromptAdditions}
-                  onChange={(event) => onProgress({ editablePromptAdditions: event.target.value })}
-                  placeholder="Add controlled details for this layer without changing its canonical purpose."
-                  className="min-h-24 w-full rounded border border-cyan-400/20 bg-[#050d1a] p-3 text-sm text-white outline-none placeholder:text-slate-600 focus:border-cyan-300/60"
-                />
-              </label>
+              {isLockedEnvironmentPainting ? null : (
+                <label className="block space-y-1.5">
+                  <span className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-slate-500">Editable Prompt Additions</span>
+                  <textarea
+                    value={progress.editablePromptAdditions}
+                    onChange={(event) => onProgress({ editablePromptAdditions: event.target.value })}
+                    placeholder="Add controlled details for this layer without changing its canonical purpose."
+                    className="min-h-24 w-full rounded border border-cyan-400/20 bg-[#050d1a] p-3 text-sm text-white outline-none placeholder:text-slate-600 focus:border-cyan-300/60"
+                  />
+                </label>
+              )}
               <div>
                 <p className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-slate-500">Fixed Exclusions</p>
                 <ul className="mt-2 space-y-1 text-xs leading-5 text-slate-400">
@@ -430,6 +548,8 @@ export function EnvironmentLayerGenerator({ definition }: { definition: Environm
           <Metric label="Source Root" value={definition.sourceRoot} />
         </div>
       </section>
+
+      {definition.layers.some((layer) => layer.layerType === "environment-painting") ? <EnvironmentArtStandardPanel /> : null}
 
       <details className="rounded-md border border-cyan-400/20 bg-[#07101e]/90 p-4 shadow-glow">
         <summary className="cursor-pointer list-none text-sm font-bold text-white">

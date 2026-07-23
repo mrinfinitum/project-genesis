@@ -89,6 +89,69 @@ export type EnvironmentLayerAssetRecord = {
   updatedAt: string;
 };
 
+export const environmentArtStandard = {
+  id: "noveris-environment-art-standard",
+  version: "1.0.0",
+  referenceImagePath: "/images/environment-art-standard/noveris-environment-art-standard-v1.png",
+  referenceImageSha256: "90ae71750a1d77212797abe6d53db3d34313361965c8b55cc5f936290a68f0f1",
+  philosophy: "The environment creates wonder through realism, restraint, silence, scale, and negative space. Never through spectacle.",
+  visualHierarchy: ["Star", "Planets", "Gameplay", "Environment"],
+  backgroundOccupancy: {
+    artworkMinimumPercent: 10,
+    artworkMaximumPercent: 15,
+    quietMinimumPercent: 85,
+    quietMaximumPercent: 90
+  },
+  starDensity: {
+    tinyPercent: 98,
+    mediumPercent: 1.5,
+    brightPercent: 0.5
+  },
+  molecularCloudQualities: ["small", "fragmented", "subtle", "low contrast", "irregular", "partially dissolved"],
+  requirements: [
+    "Large uninterrupted negative space",
+    "Extremely restrained molecular clouds",
+    "Mostly tiny stars with very few bright stars",
+    "Natural stellar density",
+    "No obvious framing or wallpaper composition",
+    "No fantasy appearance or exaggerated nebula",
+    "No artificial vignette",
+    "No large continuous dust bands",
+    "No decorative effects"
+  ],
+  reviewChecklist: [
+    "Large negative space dominates the image",
+    "Center remains open",
+    "Molecular clouds remain subtle",
+    "No obvious focal point",
+    "Bright stars remain rare",
+    "No wallpaper composition",
+    "No artificial vignette",
+    "No fantasy appearance",
+    "Environment supports gameplay",
+    "Image feels scientifically believable"
+  ]
+} as const;
+
+export const starSystemAstronomicalMattePaintingPrompt = {
+  id: "star_system_astronomical_matte_painting_v1",
+  version: "1.0",
+  status: "LOCKED",
+  approved: true,
+  canonical: true,
+  layerId: "starSystem-01-environment-painting",
+  quietMode: {
+    enabled: true,
+    description: [
+      "Prioritize restraint over spectacle.",
+      "Choose the quieter, darker, more scientifically believable composition.",
+      "Reduce visual clutter.",
+      "Reduce bright stars.",
+      "Preserve negative space."
+    ]
+  }
+} as const;
+
 export const commonEnvironmentPromptFooter =
   "This is a reusable production asset, not concept art. Do not include text, logos, borders, frames, user interface elements, planets, spacecraft, orbit lines, or unrelated celestial objects unless explicitly requested for this layer. Preserve generous negative space and avoid obvious repeated patterns, artificial vignette, circular edge shading, radial falloff, lens distortion, and generated texture artifacts.";
 
@@ -227,6 +290,10 @@ export function buildEnvironmentLayerPrompt(
   controls: EnvironmentGeneratorControls,
   additions = ""
 ) {
+  if (layer.id === starSystemAstronomicalMattePaintingPrompt.layerId) {
+    return layer.canonicalPrompt;
+  }
+
   const artistDirection = [
     "Artist direction:",
     environmentArtDirection,

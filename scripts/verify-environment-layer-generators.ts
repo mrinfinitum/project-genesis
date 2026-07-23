@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import {
@@ -6,11 +7,13 @@ import {
   buildEnvironmentLayerPrompt,
   calculateEnvironmentGeneratorProgress,
   defaultEnvironmentGeneratorControls,
+  environmentArtStandard,
   environmentGeneratorDefinitions,
   getEnvironmentGeneratorDefinition,
   migrateEnvironmentLayerAssetRecord,
   migrateEnvironmentLayerProgress,
   nextEnvironmentLayerFilename,
+  starSystemAstronomicalMattePaintingPrompt,
   validateEnvironmentGeneratorDefinitions,
   type EnvironmentLayerProgress
 } from "../lib/environment-layer-generators";
@@ -50,6 +53,21 @@ for (const [id, contract] of Object.entries(expected)) {
 
 const starSystem = getEnvironmentGeneratorDefinition("starSystem");
 const firstLayer = starSystem.layers[0];
+const standardImage = path.join(projectRoot, "public", environmentArtStandard.referenceImagePath.replace(/^\//, ""));
+assert(existsSync(standardImage), "The canonical Environment Art Standard reference image is missing.");
+assert.equal(
+  createHash("sha256").update(readFileSync(standardImage)).digest("hex"),
+  environmentArtStandard.referenceImageSha256,
+  "The canonical Environment Art Standard reference image checksum changed unexpectedly."
+);
+assert.deepEqual(environmentArtStandard.visualHierarchy, ["Star", "Planets", "Gameplay", "Environment"]);
+assert.deepEqual(environmentArtStandard.starDensity, { tinyPercent: 98, mediumPercent: 1.5, brightPercent: 0.5 });
+assert.equal(starSystemAstronomicalMattePaintingPrompt.id, "star_system_astronomical_matte_painting_v1");
+assert.equal(starSystemAstronomicalMattePaintingPrompt.version, "1.0");
+assert.equal(starSystemAstronomicalMattePaintingPrompt.status, "LOCKED");
+assert.equal(starSystemAstronomicalMattePaintingPrompt.approved, true);
+assert.equal(starSystemAstronomicalMattePaintingPrompt.canonical, true);
+assert.equal(starSystemAstronomicalMattePaintingPrompt.quietMode.enabled, true);
 assert.deepEqual(
   starSystem.layers.map((layer) => layer.name),
   ["Environment Painting", "Light Rays", "Foreground Dust", "Ambient Particles", "Fog of War", "Orbit Style", "Asteroid Belt", "Selection Effects"],
@@ -62,13 +80,12 @@ assert.deepEqual(
 );
 assert.equal(firstLayer.id, "starSystem-01-environment-painting");
 assert.equal(firstLayer.prefix, "EP");
-assert.match(firstLayer.canonicalPrompt, /far stars/i);
-assert.match(firstLayer.canonicalPrompt, /mid-distance stars/i);
-assert.match(firstLayer.canonicalPrompt, /distant nebula/i);
-assert.match(firstLayer.canonicalPrompt, /foreground nebula/i);
+assert.match(firstLayer.canonicalPrompt, /quiet deep space/i);
+assert.match(firstLayer.canonicalPrompt, /Most stars should be extremely faint/i);
+assert.match(firstLayer.canonicalPrompt, /molecular clouds/i);
 assert.match(firstLayer.canonicalPrompt, /interstellar dust/i);
 assert.match(firstLayer.canonicalPrompt, /cosmic haze/i);
-assert.match(firstLayer.canonicalPrompt, /Do not include planets/i);
+assert.match(firstLayer.canonicalPrompt, /recognizable Milky Way/i);
 assert.doesNotMatch(
   starSystem.layers.map((layer) => layer.name).join(" "),
   /Far Stars|Mid Stars|Rear Nebula|Front Nebula|Space Dust/,
@@ -76,7 +93,20 @@ assert.doesNotMatch(
 );
 const finishedPrompt = buildEnvironmentLayerPrompt(firstLayer, defaultEnvironmentGeneratorControls);
 assert.doesNotMatch(finishedPrompt, /Copy Prompt|Copy Filename|Copy PSD Folder|[{"]assetId["}]/, "Copied prompt must exclude UI labels and JSON.");
-assert.match(finishedPrompt, /reusable production asset/i, "Copied prompt must include the common production footer.");
+assert.equal(finishedPrompt, firstLayer.canonicalPrompt, "The locked Copy Prompt output must exactly match the canonical prompt.");
+assert.equal(
+  buildEnvironmentLayerPrompt(firstLayer, { ...defaultEnvironmentGeneratorControls, theme: "Must not appear" }, "Must not appear"),
+  firstLayer.canonicalPrompt,
+  "Controls and editable additions must not alter the locked canonical prompt."
+);
+assert.equal(
+  createHash("sha256").update(firstLayer.canonicalPrompt).digest("hex"),
+  "e2735e005225e4b7a377e8fd1ed89fb7c94a80c3c304b914ed22c6a01eac9e7e",
+  "The production-locked prompt changed without an intentional version increment."
+);
+assert.match(finishedPrompt, /^Create a premium astronomical matte painting for the science-fiction game NOVERIS\./);
+assert.match(finishedPrompt, /If this image could be mistaken for a desktop wallpaper, it is too visually busy\./);
+assert.match(finishedPrompt, /3840×2160$/);
 
 assert.equal(
   nextEnvironmentLayerFilename("EP", "Deep Void", ["source-masters/environments/star-system/01_environment-painting/EP_001_Midnight.psd", "EP_002_Blue.psd"]),

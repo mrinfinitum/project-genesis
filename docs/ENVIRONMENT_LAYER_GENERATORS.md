@@ -34,6 +34,38 @@ Light Rays, Foreground Dust, Ambient Particles, Fog of War, Orbit Styles, Astero
 
 Existing Star System progress and registered layer metadata are normalized when read. Legacy atmosphere records resolve to Environment Painting, surviving layer IDs remain stable, and their layer numbers and canonical folders shift to the new eight-layer order.
 
+## Production-Locked Star System Environment Prompt
+
+The Star System Environment Painting uses the canonical production prompt:
+
+- Prompt ID: `star_system_astronomical_matte_painting_v1`
+- Version: `1.0`
+- Status: `LOCKED`
+- Approved: yes
+- Canonical: yes
+
+Copy Prompt returns the locked text exactly. Artist controls and editable additions cannot alter it. Universe, Galaxy, Sector, and transparent Star System layer prompts retain their existing behavior.
+
+The canonical visual benchmark is displayed directly on the Star System Layer Generator and stored at:
+
+`public/images/environment-art-standard/noveris-environment-art-standard-v1.png`
+
+Quiet Mode is permanently enabled for Star System Environment Paintings. It prioritizes the quieter, darker, more scientifically believable composition, reduces visual clutter and bright stars, and preserves negative space.
+
+Its permanent principles are:
+
+- the star, planets, and gameplay remain visually dominant over the environment
+- 85–90% of a background remains visually quiet
+- atmospheric artwork occupies approximately 10–15%
+- stellar distribution targets 98% tiny, 1.5% medium, and 0.5% bright stars
+- molecular clouds remain small, fragmented, subtle, low contrast, irregular, and partially dissolved
+- no framing composition, recognizable Milky Way, fantasy spectacle, artificial vignette, large continuous dust bands, or exaggerated nebula
+- every approval uses the artist review checklist displayed beneath the benchmark
+
+This prompt is considered production locked.
+
+Future variation should come from artistic curation and environment biome selection rather than continual prompt editing.
+
 ## Source-Masters Workflow
 
 The artist-facing root is `source-masters/`, which resolves locally to the existing private `game-art/source-masters/` collection. Source artwork remains private and ignored by Git. Numbered environment folders contain tracked `.gitkeep` files only.
