@@ -23,8 +23,9 @@ async function main() {
   assert(contractErrors.length === 0, contractErrors.map((issue) => `${issue.code}: ${issue.message}`).join("\n"));
   assert(contract.environmentTypes.length === 8, "Environment Composer must publish exactly eight canonical environment types.");
   assert(contract.profiles.length === contract.environmentTypes.length, "Every environment type must resolve one default profile.");
-  assert(contract.layerTrees.star_system.length >= 10, "Star System requires the canonical layered authoring tree.");
-  assert(contract.profiles.find((profile) => profile.environmentTypeId === "star_system")?.layers.length === 16, "Star System default profile must publish the canonical 16-layer stack.");
+  assert(contract.layerTrees.star_system.length === 9, "Star System requires the canonical master-painting authoring tree.");
+  assert(contract.layerTrees.star_system[0]?.label === "01 Environment Painting", "Star System must begin with Environment Painting.");
+  assert(contract.profiles.find((profile) => profile.environmentTypeId === "star_system")?.layers.length === 12, "Star System default profile must publish the canonical 12-layer composition stack.");
   assert(contract.runtimeRules.publishesReferencesOnly && !contract.runtimeRules.embedsTextures && contract.runtimeRules.clientsOwnRendering, "Runtime ownership boundary is invalid.");
 
   const serialized = JSON.stringify(contract);
@@ -34,7 +35,7 @@ async function main() {
 
   const runtime = await buildCanonicalRuntimeExportPayload();
   const runtimeValidation = validateGameRuntimeData(runtime);
-  assert(gameRuntimeContentVersion >= 53, "Environment Composer requires contentVersion 53 or newer.");
+  assert(gameRuntimeContentVersion >= 54, "The master Environment Painting workflow requires contentVersion 54 or newer.");
   assert(runtime.metadata.validationStatus === "Ready" && runtimeValidation.status === "Ready", runtimeValidation.issues.map((issue) => `${issue.code}: ${issue.message}`).join("\n"));
   assert(runtime.environmentComposerContract.version === environmentComposerContractVersion, "Canonical runtime is missing the current Environment Composer contract.");
 

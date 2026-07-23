@@ -24,6 +24,7 @@ import {
   defaultEnvironmentGeneratorControls,
   environmentGeneratorStatuses,
   extractFixedExclusions,
+  migrateEnvironmentLayerProgress,
   nextEnvironmentLayerFilename,
   type EnvironmentGeneratorControls,
   type EnvironmentGeneratorDefinition,
@@ -64,13 +65,13 @@ function statusClass(status: EnvironmentGeneratorStatus) {
   return "border-cyan-300/30 bg-cyan-300/10 text-cyan-100";
 }
 
-function parseState(value: string | null): WorkspaceState {
+function parseState(value: string | null, definition: EnvironmentGeneratorDefinition): WorkspaceState {
   if (!value) return { controls: defaultEnvironmentGeneratorControls, progress: {} };
   try {
     const parsed = JSON.parse(value) as Partial<WorkspaceState>;
     return {
       controls: { ...defaultEnvironmentGeneratorControls, ...(parsed.controls ?? {}) },
-      progress: parsed.progress ?? {}
+      progress: migrateEnvironmentLayerProgress(definition.id, parsed.progress ?? {})
     };
   } catch {
     return { controls: defaultEnvironmentGeneratorControls, progress: {} };
@@ -337,13 +338,13 @@ export function EnvironmentLayerGenerator({ definition }: { definition: Environm
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    setWorkspace(parseState(window.localStorage.getItem(storageKey)));
+    setWorkspace(parseState(window.localStorage.getItem(storageKey), definition));
     setHydrated(true);
     fetch("/api/environment-layer-assets")
       .then((response) => response.json())
       .then((payload) => setAssets(Array.isArray(payload.records) ? payload.records : []))
       .catch(() => setAssets([]));
-  }, [storageKey]);
+  }, [definition, storageKey]);
 
   useEffect(() => {
     if (hydrated) window.localStorage.setItem(storageKey, JSON.stringify(workspace));

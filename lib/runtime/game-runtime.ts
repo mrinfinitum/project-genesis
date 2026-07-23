@@ -68,7 +68,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 53;
+export const gameRuntimeContentVersion = 54;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 

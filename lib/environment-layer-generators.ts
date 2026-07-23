@@ -120,12 +120,99 @@ export const defaultEnvironmentGeneratorControls: EnvironmentGeneratorControls =
 export const environmentGeneratorDefinitions =
   definitionsJson.definitions as EnvironmentGeneratorDefinition[];
 
+const legacyStarSystemAtmosphereLayerIds = [
+  "starSystem-01-far-stars",
+  "starSystem-02-mid-stars",
+  "starSystem-03-rear-nebula",
+  "starSystem-04-front-nebula",
+  "starSystem-05-haze",
+  "starSystem-06-space-dust"
+] as const;
+
+const legacyStarSystemAtmosphereTypes = new Set([
+  "far-stars",
+  "mid-stars",
+  "rear-nebula",
+  "front-nebula",
+  "haze",
+  "space-dust"
+]);
+
+const progressStatusRank: Record<EnvironmentGeneratorStatus, number> = {
+  not_started: 0,
+  prompt_copied: 1,
+  generated: 2,
+  psd_saved: 3,
+  exported: 4,
+  registered: 5,
+  approved: 6,
+  needs_revision: 7
+};
+
 export function getEnvironmentGeneratorDefinition(id: EnvironmentGeneratorId) {
   const definition = environmentGeneratorDefinitions.find((row) => row.id === id);
   if (!definition) {
     throw new Error(`Unknown environment generator: ${id}`);
   }
   return definition;
+}
+
+export function migrateEnvironmentLayerProgress(
+  environmentType: EnvironmentGeneratorId,
+  progress: Record<string, EnvironmentLayerProgress>
+) {
+  if (environmentType !== "starSystem") return progress;
+
+  const targetId = "starSystem-01-environment-painting";
+  const legacyRows = legacyStarSystemAtmosphereLayerIds
+    .map((id) => progress[id])
+    .filter((row): row is EnvironmentLayerProgress => Boolean(row));
+  const current = progress[targetId];
+  if (!current && !legacyRows.length) return progress;
+
+  const rows = [current, ...legacyRows].filter((row): row is EnvironmentLayerProgress => Boolean(row));
+  const uniqueText = (values: string[]) => [...new Set(values.map((value) => value.trim()).filter(Boolean))].join("\n\n");
+  const migrated: Record<string, EnvironmentLayerProgress> = { ...progress };
+  for (const id of legacyStarSystemAtmosphereLayerIds) delete migrated[id];
+  migrated[targetId] = {
+    status: rows.reduce(
+      (best, row) => progressStatusRank[row.status] > progressStatusRank[best] ? row.status : best,
+      "not_started" as EnvironmentGeneratorStatus
+    ),
+    editablePromptAdditions: uniqueText(rows.map((row) => row.editablePromptAdditions)),
+    filenameSuffix: current?.filenameSuffix || rows.find((row) => row.filenameSuffix.trim())?.filenameSuffix || "MidnightSapphire",
+    previewRelativePath: current?.previewRelativePath || rows.find((row) => row.previewRelativePath.trim())?.previewRelativePath || "",
+    notes: uniqueText(rows.map((row) => row.notes))
+  };
+  return migrated;
+}
+
+export function migrateEnvironmentLayerAssetRecord(
+  record: EnvironmentLayerAssetRecord
+): EnvironmentLayerAssetRecord {
+  if (record.environmentType !== "starSystem") return record;
+
+  const definition = getEnvironmentGeneratorDefinition("starSystem");
+  const layer = legacyStarSystemAtmosphereTypes.has(record.layerType)
+    ? definition.layers.find((row) => row.layerType === "environment-painting")
+    : definition.layers.find((row) => row.layerType === record.layerType);
+  if (!layer) return record;
+
+  const sourceFilename = record.sourceRelativePath.split("/").at(-1) ?? "";
+  const runtimeFilename = record.runtimeExportRelativePath.split("/").at(-1) ?? "";
+  return {
+    ...record,
+    layerNumber: layer.number,
+    layerType: layer.layerType,
+    prefix: layer.prefix,
+    sourceRelativePath: sourceFilename ? `${layer.folder}${sourceFilename}` : record.sourceRelativePath,
+    runtimeExportRelativePath: runtimeFilename
+      ? `${layer.runtimeExportFolder}${runtimeFilename}`
+      : record.runtimeExportRelativePath,
+    dimensions: `${layer.output.width}x${layer.output.height}`,
+    aspectRatio: layer.output.aspectRatio,
+    transparency: layer.output.transparency
+  };
 }
 
 export function extractFixedExclusions(prompt: string) {

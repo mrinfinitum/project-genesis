@@ -474,115 +474,30 @@
       "sourceRoot": "source-masters/environments/star-system/",
       "layers": [
         {
-          "id": "starSystem-01-far-stars",
+          "id": "starSystem-01-environment-painting",
           "number": 1,
-          "name": "Far Stars",
-          "layerType": "far-stars",
-          "prefix": "FS",
-          "folder": "source-masters/environments/star-system/01_far-stars/",
-          "runtimeExportFolder": "source-masters/exports/web/environments/star-system/01_far-stars/",
+          "name": "Environment Painting",
+          "layerType": "environment-painting",
+          "prefix": "EP",
+          "folder": "source-masters/environments/star-system/01_environment-painting/",
+          "runtimeExportFolder": "source-masters/exports/web/environments/star-system/01_environment-painting/",
           "output": {
             "width": 3840,
             "height": 2160,
             "aspectRatio": "16:9",
             "transparency": "opaque"
           },
-          "purpose": "Create a premium AAA-quality far-star background layer for a NOVERIS star-system scene.",
-          "canonicalPrompt": "Create a premium AAA-quality far-star background layer for a NOVERIS star-system scene.\n\nShow only sparse tiny distant stars on an even deep navy-black field.\n\nUse natural variation in size, brightness, and color temperature.\n\nLeave generous negative space.\n\nKeep the central 40 percent relatively open for the central star, orbit lines, planets, and UI-safe gameplay composition.\n\nUse even edge-to-edge exposure.\n\nDo not add a vignette.\n\nDo not darken corners.\n\nDo not add circular gradients, radial gradients, artificial edge shading, planets, suns, moons, nebula, galaxy, asteroid belt, spacecraft, orbit lines, UI, lens flare, giant bright stars, or a central focal point.\n\nNo obvious repeated clusters.\n\n3840 × 2160, 16:9."
-        },
-        {
-          "id": "starSystem-02-mid-stars",
-          "number": 2,
-          "name": "Mid Stars",
-          "layerType": "mid-stars",
-          "prefix": "MS",
-          "folder": "source-masters/environments/star-system/02_mid-stars/",
-          "runtimeExportFolder": "source-masters/exports/web/environments/star-system/02_mid-stars/",
-          "output": {
-            "width": 3840,
-            "height": 2160,
-            "aspectRatio": "16:9",
-            "transparency": "required"
-          },
-          "purpose": "Create a transparent mid-distance star overlay for a NOVERIS star-system scene.",
-          "canonicalPrompt": "Create a transparent mid-distance star overlay for a NOVERIS star-system scene.\n\nInclude a restrained number of small and medium stars with subtle variation in brightness and color temperature.\n\nUse mostly white and pale-blue stars with occasional restrained warm-ivory points.\n\nKeep the central orbital area relatively clear.\n\nPreserve large transparent areas.\n\nDo not include a solid background, nebula, planets, sun, galaxy, orbit lines, lens flares, labels, UI, vignette, circular shading, or giant stars.\n\nTransparent PNG-ready overlay.\n\n3840 × 2160, 16:9."
-        },
-        {
-          "id": "starSystem-03-rear-nebula",
-          "number": 3,
-          "name": "Rear Nebula",
-          "layerType": "rear-nebula",
-          "prefix": "NR",
-          "folder": "source-masters/environments/star-system/03_rear-nebulas/",
-          "runtimeExportFolder": "source-masters/exports/web/environments/star-system/03_rear-nebulas/",
-          "output": {
-            "width": 3840,
-            "height": 2160,
-            "aspectRatio": "16:9",
-            "transparency": "required"
-          },
-          "purpose": "Create a premium painterly rear-nebula layer for a NOVERIS HD-2D star-system scene.",
-          "canonicalPrompt": "Create a premium painterly rear-nebula layer for a NOVERIS HD-2D star-system scene.\n\nShow one broad, soft, asymmetrical nebular formation positioned mainly away from the central orbital gameplay area.\n\nUse elegant flowing forms, soft edges, restrained brightness, and the selected palette.\n\nKeep at least 55 percent of the canvas transparent.\n\nThe center must remain readable for a star and orbit system.\n\nNo stars, planets, sun, moons, orbit lines, text, UI, vignette, darkened corners, radial falloff, borders, or lens flare.\n\nTransparent PNG-ready overlay.\n\n3840 × 2160, 16:9."
-        },
-        {
-          "id": "starSystem-04-front-nebula",
-          "number": 4,
-          "name": "Front Nebula",
-          "layerType": "front-nebula",
-          "prefix": "NF",
-          "folder": "source-masters/environments/star-system/04_front-nebulas/",
-          "runtimeExportFolder": "source-masters/exports/web/environments/star-system/04_front-nebulas/",
-          "output": {
-            "width": 3840,
-            "height": 2160,
-            "aspectRatio": "16:9",
-            "transparency": "required"
-          },
-          "purpose": "Create a sparse foreground-nebula accent layer for a NOVERIS HD-2D star-system scene.",
-          "canonicalPrompt": "Create a sparse foreground-nebula accent layer for a NOVERIS HD-2D star-system scene.\n\nUse wispy painterly cloud forms with slightly stronger detail than the rear-nebula layer.\n\nPlace visual weight primarily near one or two outer edges.\n\nKeep the central orbital area clear.\n\nPreserve extensive transparency.\n\nNo stars, planets, sun, moons, orbit paths, text, UI, vignette, radial shading, border, or lens flare.\n\nDo not cover the full frame.\n\nTransparent PNG-ready overlay.\n\n3840 × 2160, 16:9."
-        },
-        {
-          "id": "starSystem-05-haze",
-          "number": 5,
-          "name": "Haze",
-          "layerType": "haze",
-          "prefix": "HZ",
-          "folder": "source-masters/environments/star-system/05_haze/",
-          "runtimeExportFolder": "source-masters/exports/web/environments/star-system/05_haze/",
-          "output": {
-            "width": 3840,
-            "height": 2160,
-            "aspectRatio": "16:9",
-            "transparency": "required"
-          },
-          "purpose": "Create an extremely subtle space-haze overlay for a NOVERIS HD-2D star-system scene.",
-          "canonicalPrompt": "Create an extremely subtle space-haze overlay for a NOVERIS HD-2D star-system scene.\n\nUse broad, soft, low-opacity painterly gradients that add depth without appearing as a visible cloud.\n\nKeep the central star and orbit area readable.\n\nPreserve extensive transparency.\n\nUse restrained blue-gray, midnight-blue, or theme-compatible tones.\n\nNo stars, planets, nebula detail, particles, light rays, text, UI, vignette, circular gradient, radial falloff, or hard edges.\n\nTransparent PNG-ready overlay.\n\n3840 × 2160, 16:9."
-        },
-        {
-          "id": "starSystem-06-space-dust",
-          "number": 6,
-          "name": "Space Dust",
-          "layerType": "space-dust",
-          "prefix": "DT",
-          "folder": "source-masters/environments/star-system/06_dust/",
-          "runtimeExportFolder": "source-masters/exports/web/environments/star-system/06_dust/",
-          "output": {
-            "width": 3840,
-            "height": 2160,
-            "aspectRatio": "16:9",
-            "transparency": "required"
-          },
-          "purpose": "Create a subtle space-dust overlay for a NOVERIS HD-2D star-system scene.",
-          "canonicalPrompt": "Create a subtle space-dust overlay for a NOVERIS HD-2D star-system scene.\n\nShow sparse illuminated dust structures and very fine particulate detail with asymmetrical distribution.\n\nPreserve large transparent areas and keep the central orbital region clear.\n\nUse restrained brightness.\n\nNo stars, planets, sun, nebula cloud, giant particles, foreground bokeh, text, UI, vignette, radial shading, or solid background.\n\nTransparent PNG-ready overlay.\n\n3840 × 2160, 16:9."
+          "purpose": "Create one premium cinematic deep-space matte painting that establishes the complete foundational atmosphere for a NOVERIS star-system scene.",
+          "canonicalPrompt": "Create a premium cinematic deep-space matte painting for the foundational environment of a NOVERIS star-system scene.\n\nPaint deep space, sparse far stars, restrained mid-distance stars, a subtle distant nebula, a restrained foreground nebula, fine interstellar dust, and soft cosmic haze as one artistically cohesive environment.\n\nUse realistic astronomical inspiration, an asymmetrical composition, restrained painterly detail, and a controlled palette. Keep the center open and preserve large areas of negative space for the central star, orbit paths, planets, and gameplay navigation.\n\nThe atmospheric elements should influence one another naturally without becoming busy, decorative, or evenly distributed. Use even edge-to-edge exposure.\n\nDo not include planets, a central star or sun, moons, orbit lines, galaxies, spacecraft, text, UI, vignette, radial gradients, circular edge shading, decorative framing, lens flare, or a central focal object.\n\n3840 × 2160, 16:9."
         },
         {
           "id": "starSystem-07-light-rays",
-          "number": 7,
+          "number": 2,
           "name": "Light Rays",
           "layerType": "light-rays",
           "prefix": "LR",
-          "folder": "source-masters/environments/star-system/07_light-rays/",
-          "runtimeExportFolder": "source-masters/exports/web/environments/star-system/07_light-rays/",
+          "folder": "source-masters/environments/star-system/02_light-rays/",
+          "runtimeExportFolder": "source-masters/exports/web/environments/star-system/02_light-rays/",
           "output": {
             "width": 3840,
             "height": 2160,
@@ -594,12 +509,12 @@
         },
         {
           "id": "starSystem-08-foreground-dust",
-          "number": 8,
+          "number": 3,
           "name": "Foreground Dust",
           "layerType": "foreground-dust",
           "prefix": "FD",
-          "folder": "source-masters/environments/star-system/08_foreground-dust/",
-          "runtimeExportFolder": "source-masters/exports/web/environments/star-system/08_foreground-dust/",
+          "folder": "source-masters/environments/star-system/03_foreground-dust/",
+          "runtimeExportFolder": "source-masters/exports/web/environments/star-system/03_foreground-dust/",
           "output": {
             "width": 3840,
             "height": 2160,
@@ -611,12 +526,12 @@
         },
         {
           "id": "starSystem-09-ambient-particles",
-          "number": 9,
+          "number": 4,
           "name": "Ambient Particles",
           "layerType": "ambient-particles",
           "prefix": "PT",
-          "folder": "source-masters/environments/star-system/09_particles/",
-          "runtimeExportFolder": "source-masters/exports/web/environments/star-system/09_particles/",
+          "folder": "source-masters/environments/star-system/04_particles/",
+          "runtimeExportFolder": "source-masters/exports/web/environments/star-system/04_particles/",
           "output": {
             "width": 3840,
             "height": 2160,
@@ -628,12 +543,12 @@
         },
         {
           "id": "starSystem-10-fog-of-war",
-          "number": 10,
+          "number": 5,
           "name": "Fog of War",
           "layerType": "fog-of-war",
           "prefix": "FW",
-          "folder": "source-masters/environments/star-system/10_fog-of-war/",
-          "runtimeExportFolder": "source-masters/exports/web/environments/star-system/10_fog-of-war/",
+          "folder": "source-masters/environments/star-system/05_fog-of-war/",
+          "runtimeExportFolder": "source-masters/exports/web/environments/star-system/05_fog-of-war/",
           "output": {
             "width": 3840,
             "height": 2160,
@@ -645,12 +560,12 @@
         },
         {
           "id": "starSystem-11-orbit-style",
-          "number": 11,
+          "number": 6,
           "name": "Orbit Style",
           "layerType": "orbit-style",
           "prefix": "OL",
-          "folder": "source-masters/environments/star-system/11_orbit-styles/",
-          "runtimeExportFolder": "source-masters/exports/web/environments/star-system/11_orbit-styles/",
+          "folder": "source-masters/environments/star-system/06_orbit-styles/",
+          "runtimeExportFolder": "source-masters/exports/web/environments/star-system/06_orbit-styles/",
           "output": {
             "width": 4096,
             "height": 4096,
@@ -662,12 +577,12 @@
         },
         {
           "id": "starSystem-12-asteroid-belt",
-          "number": 12,
+          "number": 7,
           "name": "Asteroid Belt",
           "layerType": "asteroid-belt",
           "prefix": "AB",
-          "folder": "source-masters/environments/star-system/12_asteroid-belts/",
-          "runtimeExportFolder": "source-masters/exports/web/environments/star-system/12_asteroid-belts/",
+          "folder": "source-masters/environments/star-system/07_asteroid-belts/",
+          "runtimeExportFolder": "source-masters/exports/web/environments/star-system/07_asteroid-belts/",
           "output": {
             "width": 4096,
             "height": 4096,
@@ -679,12 +594,12 @@
         },
         {
           "id": "starSystem-13-selection-effects",
-          "number": 13,
+          "number": 8,
           "name": "Selection Effects",
           "layerType": "selection-effects",
           "prefix": "SE",
-          "folder": "source-masters/environments/star-system/13_selection-effects/",
-          "runtimeExportFolder": "source-masters/exports/web/environments/star-system/13_selection-effects/",
+          "folder": "source-masters/environments/star-system/08_selection-effects/",
+          "runtimeExportFolder": "source-masters/exports/web/environments/star-system/08_selection-effects/",
           "output": {
             "width": 2048,
             "height": 2048,

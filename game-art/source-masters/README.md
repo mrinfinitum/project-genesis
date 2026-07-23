@@ -70,18 +70,14 @@ source-masters/
       haze/
       particles/
     star-system/
-      01_far-stars/
-      02_mid-stars/
-      03_rear-nebulas/
-      04_front-nebulas/
-      05_haze/
-      06_dust/
-      07_light-rays/
-      08_foreground-dust/
-      09_particles/
-      10_vignettes/
-      11_fog/
-      12_masks/
+      01_environment-painting/
+      02_light-rays/
+      03_foreground-dust/
+      04_particles/
+      05_fog-of-war/
+      06_orbit-styles/
+      07_asteroid-belts/
+      08_selection-effects/
     planet-surface/
       skies/
       mountains/

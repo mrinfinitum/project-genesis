@@ -11,7 +11,7 @@ const environmentGeneratorDirectories = [
   ...["01_deep-cosmic-background", "02_distant-galaxies", "03_cosmic-web", "04_cosmic-dust", "05_deep-haze", "06_foreground-dust"].map((folder) => `environments/universe/${folder}`),
   ...["01_far-stars", "02_galaxy-disc", "03_spiral-arms", "04_core-glow", "05_dust-lanes", "06_nebula-accents", "07_star-clouds", "08_sector-overlays", "09_exploration-fog", "10_foreground-particles"].map((folder) => `environments/galaxy/${folder}`),
   ...["01_deep-stars", "02_distant-fields", "03_star-clusters", "04_nebulas", "05_dust", "06_haze", "07_navigation-grids", "08_probe-routes", "09_fog-of-war", "10_foreground-effects"].map((folder) => `environments/sector/${folder}`),
-  ...["01_far-stars", "02_mid-stars", "03_rear-nebulas", "04_front-nebulas", "05_haze", "06_dust", "07_light-rays", "08_foreground-dust", "09_particles", "10_fog-of-war", "11_orbit-styles", "12_asteroid-belts", "13_selection-effects"].map((folder) => `environments/star-system/${folder}`)
+  ...["01_environment-painting", "02_light-rays", "03_foreground-dust", "04_particles", "05_fog-of-war", "06_orbit-styles", "07_asteroid-belts", "08_selection-effects"].map((folder) => `environments/star-system/${folder}`)
 ];
 const canonicalDirectories = [
   "icons", "ui", "legacy", "testing",
@@ -20,7 +20,7 @@ const canonicalDirectories = [
   "environments/universe/backgrounds", "environments/universe/galaxies", "environments/universe/cosmic-web", "environments/universe/haze", "environments/universe/dust", "environments/universe/light-rays",
   "environments/galaxy/backgrounds", "environments/galaxy/spiral-arms", "environments/galaxy/core-glow", "environments/galaxy/dust-lanes", "environments/galaxy/nebulas", "environments/galaxy/star-clouds", "environments/galaxy/particles",
   "environments/sector/backgrounds", "environments/sector/deep-stars", "environments/sector/clusters", "environments/sector/nebulas", "environments/sector/dust", "environments/sector/haze", "environments/sector/particles",
-  ...["01_far-stars", "02_mid-stars", "03_rear-nebulas", "04_front-nebulas", "05_haze", "06_dust", "07_light-rays", "08_foreground-dust", "09_particles", "10_vignettes", "11_fog", "12_masks"].map((folder) => `environments/star-system/${folder}`),
+  ...["01_environment-painting", "02_light-rays", "03_foreground-dust", "04_particles", "05_fog-of-war", "06_orbit-styles", "07_asteroid-belts", "08_selection-effects"].map((folder) => `environments/star-system/${folder}`),
   "environments/planet-surface/skies", "environments/planet-surface/mountains", "environments/planet-surface/terrain", "environments/planet-surface/vegetation", "environments/planet-surface/clouds", "environments/planet-surface/weather", "environments/planet-surface/fog", "environments/planet-surface/particles",
   "environments/settlements/backgrounds", "environments/settlements/skyline", "environments/settlements/atmosphere", "environments/settlements/lighting", "environments/settlements/particles",
   "effects/selection", "effects/discovery", "effects/ping", "effects/glows", "effects/flares", "effects/fog", "effects/orbit-lines", "effects/ui-overlays",

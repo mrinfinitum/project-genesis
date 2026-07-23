@@ -3,6 +3,7 @@ import { getRows, upsertRow } from "@/lib/data";
 import {
   environmentGeneratorStatuses,
   getEnvironmentGeneratorDefinition,
+  migrateEnvironmentLayerAssetRecord,
   type EnvironmentGeneratorId,
   type EnvironmentLayerAssetRecord
 } from "@/lib/environment-layer-generators";
@@ -21,7 +22,7 @@ function parseRecord(row: Record<string, unknown>): EnvironmentLayerAssetRecord 
   if (markerIndex < 0) return null;
   try {
     const parsed = JSON.parse(notes.slice(markerIndex + metadataMarker.length)) as EnvironmentLayerAssetRecord;
-    return parsed.assetId ? parsed : null;
+    return parsed.assetId ? migrateEnvironmentLayerAssetRecord(parsed) : null;
   } catch {
     return null;
   }
@@ -37,7 +38,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const record = (await request.json()) as EnvironmentLayerAssetRecord;
+  const record = migrateEnvironmentLayerAssetRecord((await request.json()) as EnvironmentLayerAssetRecord);
   const errors: string[] = [];
   let definition;
 

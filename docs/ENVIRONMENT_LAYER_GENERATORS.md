@@ -20,9 +20,19 @@ Each route renders its own fixed canonical layer stack. The environments are not
 | Universe | 6 |
 | Galaxy | 10 |
 | Sector | 10 |
-| Star System | 13 |
+| Star System | 8 |
 
 Definitions and prompts live in `data/environment-layer-generator-definitions.json`. The source specification can be re-imported with `scripts/import-environment-layer-generator-spec.mjs`.
+
+### Star System Environment Painting
+
+The Star System workflow uses one foundational `Environment Painting` instead of separate Far Stars, Mid Stars, Rear Nebula, Front Nebula, Haze, and Space Dust production layers. Painting those atmospheric elements together improves artistic cohesion and reduces production complexity.
+
+The master painting contains deep space, far and mid-distance stars, distant and foreground nebula, subtle interstellar dust, and subtle cosmic haze. It excludes planets, the central star, moons, orbit lines, galaxies, spacecraft, text, UI, vignettes, radial gradients, and decorative framing.
+
+Light Rays, Foreground Dust, Ambient Particles, Fog of War, Orbit Styles, Asteroid Belts, and Selection Effects remain independent because they animate, change at runtime, carry gameplay meaning, or benefit from compositing.
+
+Existing Star System progress and registered layer metadata are normalized when read. Legacy atmosphere records resolve to Environment Painting, surviving layer IDs remain stable, and their layer numbers and canonical folders shift to the new eight-layer order.
 
 ## Source-Masters Workflow
 
@@ -52,8 +62,8 @@ Master filenames follow:
 
 Examples:
 
-- `FS_001_MidnightSapphire.psd`
-- `NR_001_AncientViolet.psd`
+- `EP_001_MidnightSapphire.psd`
+- `LR_001_AncientViolet.psd`
 - `GDL_003_ShadowArms.psd`
 
 The generator inspects registered records for a layer and proposes the next unused three-digit index. Artists can edit the descriptive suffix.
