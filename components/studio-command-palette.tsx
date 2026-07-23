@@ -30,6 +30,10 @@ const commandSeeds: PaletteResult[] = [
   { id: "command:create-resource", type: "Library Action", title: "Create Resource", subtitle: "Open Resource Library creation tools", href: "/resource-catalog?action=create" },
   { id: "command:ai-agents", type: "Library", title: "Open AI Agent Libraries", subtitle: "Browse agents, terminals, personalities, memory, and dialogue", href: "/ai-agents" },
   { id: "command:encyclopedia", type: "Library", title: "Open Encyclopedia", subtitle: "Canonical knowledge browser", href: "/encyclopedia" },
+  { id: "command:environment-layers", type: "Environment Composer", title: "Open Layer Library", subtitle: "Reusable authored environment layers", href: "/environment-composer/layers" },
+  { id: "command:environment-scenes", type: "Environment Composer", title: "Open Scene Composer", subtitle: "Layered environment compositions", href: "/environment-composer/scenes" },
+  { id: "command:environment-themes", type: "Environment Composer", title: "Open Environment Themes", subtitle: "Palette, lighting, fog, and effects intent", href: "/environment-composer/themes" },
+  { id: "command:environment-export", type: "Environment Composer", title: "Open Environment Runtime Export", subtitle: "Sanitized renderer-neutral contract", href: "/environment-composer/export" },
   { id: "command:production-health", type: "Health", title: "Open Production Health", subtitle: "Assets, routes, exports, verification", href: "/asset-library?section=all-assets" },
   { id: "command:recent-assets", type: "Asset Library", title: "Open Recent Assets", subtitle: "Recently opened Studio assets", href: "/asset-library?folder=recently-opened" },
   { id: "command:favorites", type: "Asset Library", title: "Open Favorite Assets", subtitle: "Studio-only favorites", href: "/asset-library?folder=favorites" }

@@ -18,6 +18,7 @@ import {
   Gem,
   GalleryHorizontalEnd,
   Landmark,
+  Layers3,
   LayoutDashboard,
   Map,
   Menu,
@@ -87,6 +88,17 @@ const navigationGroups: NavigationGroup[] = [
     ]
   },
   {
+    id: "environment-composer",
+    label: "Environment Composer",
+    icon: Layers3,
+    items: [
+      { href: "/environment-composer/layers", label: "Layer Library", icon: Layers3 },
+      { href: "/environment-composer/scenes", label: "Scene Composer", icon: GalleryHorizontalEnd },
+      { href: "/environment-composer/themes", label: "Themes", icon: WandSparkles },
+      { href: "/environment-composer/export", label: "Runtime Export", icon: FileText }
+    ]
+  },
+  {
     id: "civilization",
     label: "Civilization",
     icon: Landmark,
@@ -126,6 +138,7 @@ function activeGroupForPath(pathname: string) {
 }
 
 function workspaceEnvironmentForPath(pathname: string) {
+  if (/environment-composer/.test(pathname)) return "assets";
   if (/asset/.test(pathname)) return "assets";
   if (/discovery/.test(pathname)) return "discovery";
   if (/galaxy|sector|star|planet|civilization|universe/.test(pathname)) return "universe";

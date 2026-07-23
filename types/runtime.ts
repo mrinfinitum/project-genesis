@@ -1,3 +1,5 @@
+import type { EnvironmentComposerContract } from "@/lib/environment-composer";
+
 export type RuntimeMetadata = {
   schemaVersion: string;
   architectureVersion: string;
@@ -3457,6 +3459,7 @@ export type GameRuntimeData = {
   resourceEconomyLogisticsFramework: ResourceEconomyLogisticsFrameworkContract;
   missionExpeditionFramework: MissionExpeditionFrameworkContract;
   dynamicEventFramework: DynamicEventFrameworkContract;
+  environmentComposerContract: EnvironmentComposerContract;
   clientProfiles: ClientProfiles;
 };
 

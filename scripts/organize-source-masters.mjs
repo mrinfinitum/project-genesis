@@ -6,6 +6,19 @@ import path from "node:path";
 const projectRoot = process.cwd();
 const destinationRoot = path.join(projectRoot, "game-art", "source-masters");
 const apply = process.argv.includes("--apply");
+const canonicalDirectories = [
+  "icons", "ui", "legacy", "testing",
+  "planets/terrestrial", "planets/gas-giants", "planets/ice", "planets/lava", "planets/ocean", "planets/desert", "planets/toxic", "planets/barren", "planets/atmospheres", "planets/clouds", "planets/rings", "planets/moons",
+  "stars/yellow", "stars/blue", "stars/red", "stars/white", "stars/neutron", "stars/giant", "stars/binary", "stars/coronas", "stars/glows", "stars/surface-noise",
+  "environments/universe/backgrounds", "environments/universe/galaxies", "environments/universe/cosmic-web", "environments/universe/haze", "environments/universe/dust", "environments/universe/light-rays",
+  "environments/galaxy/backgrounds", "environments/galaxy/spiral-arms", "environments/galaxy/core-glow", "environments/galaxy/dust-lanes", "environments/galaxy/nebulas", "environments/galaxy/star-clouds", "environments/galaxy/particles",
+  "environments/sector/backgrounds", "environments/sector/deep-stars", "environments/sector/clusters", "environments/sector/nebulas", "environments/sector/dust", "environments/sector/haze", "environments/sector/particles",
+  ...["01_far-stars", "02_mid-stars", "03_rear-nebulas", "04_front-nebulas", "05_haze", "06_dust", "07_light-rays", "08_foreground-dust", "09_particles", "10_vignettes", "11_fog", "12_masks"].map((folder) => `environments/star-system/${folder}`),
+  "environments/planet-surface/skies", "environments/planet-surface/mountains", "environments/planet-surface/terrain", "environments/planet-surface/vegetation", "environments/planet-surface/clouds", "environments/planet-surface/weather", "environments/planet-surface/fog", "environments/planet-surface/particles",
+  "environments/settlements/backgrounds", "environments/settlements/skyline", "environments/settlements/atmosphere", "environments/settlements/lighting", "environments/settlements/particles",
+  "effects/selection", "effects/discovery", "effects/ping", "effects/glows", "effects/flares", "effects/fog", "effects/orbit-lines", "effects/ui-overlays",
+  "exports/unity", "exports/roblox", "exports/web", "exports/thumbnails"
+];
 
 const sourceGroups = [
   { root: path.join(projectRoot, "planet-renders"), kind: "planets" },
@@ -126,6 +139,7 @@ if (!apply) {
 }
 
 await mkdir(destinationRoot, { recursive: true });
+await Promise.all(canonicalDirectories.map((directory) => mkdir(path.join(destinationRoot, directory), { recursive: true })));
 const manifest = [];
 for (const record of planned) {
   const details = await stat(record.sourcePath);
@@ -152,5 +166,5 @@ for (const record of planned) {
   console.log(`${migrationMode === "verified-copy" ? "Copied" : "Verified"} ${record.sourcePath} -> ${record.destinationPath}`);
 }
 
-await writeFile(path.join(destinationRoot, "manifest.local.json"), `${JSON.stringify({ schemaVersion: "1.0.0", generatedAt: new Date().toISOString(), count: manifest.length, files: manifest }, null, 2)}\n`);
+await writeFile(path.join(destinationRoot, "manifest.local.json"), `${JSON.stringify({ schemaVersion: "2.0.0", sourceMasterRoot: "game-art/source-masters", generatedAt: new Date().toISOString(), count: manifest.length, files: manifest }, null, 2)}\n`);
 console.log(`Organized ${manifest.length} verified source-master copies in ${destinationRoot}`);

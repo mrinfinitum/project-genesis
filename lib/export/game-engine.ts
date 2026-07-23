@@ -30,6 +30,7 @@ import {
 import { laborGenerationFramework, validateLaborGenerationFramework } from "@/lib/economy/labor-generation";
 import { resourceEconomyLogisticsFramework, validateResourceEconomyLogisticsFramework } from "@/lib/economy/logistics-framework";
 import { dynamicEventFramework, validateDynamicEventFramework } from "@/lib/events/framework";
+import { environmentComposerRuntimeContract, validateEnvironmentComposerContract } from "@/lib/environment-composer";
 import { buildEconomyState, economySchemas, priceClamps, type MarketRecord, type ResourceListing, type TradeOpportunity, type TradeRoute } from "@/lib/economy/trade";
 import { generateFaction, generateFallbackFactions, type FactionRecord } from "@/lib/factions/procedural";
 import { missionExpeditionFramework, validateMissionExpeditionFramework } from "@/lib/missions/framework";
@@ -228,6 +229,7 @@ type CanonicalModules = {
   resource_economy_logistics_framework: typeof resourceEconomyLogisticsFramework;
   mission_expedition_framework: typeof missionExpeditionFramework;
   dynamic_event_framework: typeof dynamicEventFramework;
+  environment_composer_contract: ReturnType<typeof environmentComposerRuntimeContract>;
   economy_usage_relationships: ReturnType<typeof buildEconomyUsageRelationships>;
   inventory_resource_metadata: ReturnType<typeof buildInventoryResourceMetadata>;
   economy_schemas: typeof economySchemas;
@@ -687,6 +689,7 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
     resource_economy_logistics_framework: resourceEconomyLogisticsFramework,
     mission_expedition_framework: missionExpeditionFramework,
     dynamic_event_framework: dynamicEventFramework,
+    environment_composer_contract: environmentComposerRuntimeContract(),
     economy_usage_relationships: buildEconomyUsageRelationships(data),
     inventory_resource_metadata: buildInventoryResourceMetadata(data),
     economy_schemas: economySchemas,
@@ -1613,6 +1616,9 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
   })) {
     addIssue(issues, issue.severity, issue.code, issue.message, issue.records);
   }
+  for (const issue of validateEnvironmentComposerContract(modules.environment_composer_contract)) {
+    addIssue(issues, issue.severity, `environment_composer_${issue.code}`, issue.message, issue.records);
+  }
   validateEconomy(issues, modules);
   for (const issue of validateLaborGenerationFramework(modules.labor_generation_framework)) {
     addIssue(issues, issue.severity, issue.code, issue.message, issue.records);
@@ -1700,6 +1706,9 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
       "technology gates resolve semantic zoom levels",
       "knowledge visibility states resolve",
       "platform rendering profiles are recommendations only",
+      "environment composition assets and layer references resolve",
+      "environment exports contain references only and no private source paths",
+      "client rendering remains client-owned",
       "star systems link to sectors",
       "sectors link to galaxies",
       "architectureVersion is sanitized semantic metadata only"
@@ -1728,6 +1737,7 @@ function schemaNotes(target: EngineTarget) {
     ids: "IDs are stable and should be treated as save-compatible identifiers.",
     resources: "Resource display data must be resolved through resource_catalog/ResourceService.",
     hierarchy: "Preserve Galaxy -> Sector -> Star System -> Planet. Do not add Region or Cluster layers.",
+    environmentComposer: "Environment Composer publishes ordered layers, semantic asset references, themes, and artistic constraints. It never embeds textures or private PSD paths, and clients retain rendering ownership.",
     planetOpportunities: "Planet Opportunity Profiles define strategic uses, suitability scores, capabilities, hazards, and valid player actions. Planets and celestial bodies reference opportunityProfileId; clients do not invent these values.",
     planetExploration: "Planet Exploration Progression defines the Unknown -> Detected -> Probed -> Surveyed -> Evaluated -> Selected -> Active Project -> Complete pipeline. CSI, SVI, nickname, recommended uses, and actions are hidden until Surveyed. Timed actions reference the shared Time Action Contract.",
     planetDevelopment: "Planet Development Framework defines the post-survey report contract: knowledge lifecycle, visibility matrix, CSI/SVI bands, opportunity archetypes, valid actions, blocked reasons, hazards, project phases, and presentation intent. Active player projects remain Game-owned.",
@@ -1792,6 +1802,7 @@ function compactModules(modules: CanonicalModules) {
     resource_economy_logistics_framework: modules.resource_economy_logistics_framework,
     mission_expedition_framework: modules.mission_expedition_framework,
     dynamic_event_framework: modules.dynamic_event_framework,
+    environment_composer_contract: modules.environment_composer_contract,
     discovery_journal: modules.discovery_journal,
     timeline_events: modules.timeline_events,
     explorer_schemas: modules.explorer_schemas,

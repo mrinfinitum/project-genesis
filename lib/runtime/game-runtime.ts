@@ -17,6 +17,7 @@ import { universalDiscoveryRegistryContract, universalDiscoveryRegistryVersion, 
 import { laborGenerationFramework, validateLaborGenerationFramework } from "@/lib/economy/labor-generation";
 import { resourceEconomyLogisticsFramework, validateResourceEconomyLogisticsFramework } from "@/lib/economy/logistics-framework";
 import { dynamicEventFramework, validateDynamicEventFramework } from "@/lib/events/framework";
+import { environmentComposerRuntimeContract, validateEnvironmentComposerContract } from "@/lib/environment-composer";
 import { missionExpeditionFramework, validateMissionExpeditionFramework } from "@/lib/missions/framework";
 import {
   buildEconomyUsageRelationships,
@@ -67,7 +68,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 52;
+export const gameRuntimeContentVersion = 53;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -121,6 +122,7 @@ export type RobloxRuntimeExportPayload = {
   resourceEconomyLogisticsFramework: GameRuntimeData["resourceEconomyLogisticsFramework"];
   missionExpeditionFramework: GameRuntimeData["missionExpeditionFramework"];
   dynamicEventFramework: GameRuntimeData["dynamicEventFramework"];
+  environmentComposerContract: GameRuntimeData["environmentComposerContract"];
   resources: ResourceDefinition[];
   buildingTaxonomy: GameRuntimeData["buildingTaxonomy"];
   buildingLibrary: GameRuntimeData["buildingLibrary"];
@@ -754,6 +756,19 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
       proceduralFallbackRules: [...runtimeData.galaxyEngineContract.proceduralFallbackRules].sort(byId),
       starSystemBackgrounds: [...runtimeData.galaxyEngineContract.starSystemBackgrounds].sort((left, right) => left.assetId.localeCompare(right.assetId)),
       starSystemVisualProfiles: [...runtimeData.galaxyEngineContract.starSystemVisualProfiles].sort((left, right) => left.systemId.localeCompare(right.systemId))
+    },
+    environmentComposerContract: {
+      ...runtimeData.environmentComposerContract,
+      environmentTypes: [...runtimeData.environmentComposerContract.environmentTypes].sort(byId),
+      layerAssets: [...runtimeData.environmentComposerContract.layerAssets].sort(byId),
+      themes: [...runtimeData.environmentComposerContract.themes].sort(byId).map((theme) => ({
+        ...theme,
+        allowedAssetIds: [...theme.allowedAssetIds].sort()
+      })),
+      profiles: [...runtimeData.environmentComposerContract.profiles].sort(byId).map((profile) => ({
+        ...profile,
+        layers: [...profile.layers].sort((left, right) => left.order - right.order || left.id.localeCompare(right.id))
+      }))
     },
     timeActionContract: {
       ...runtimeData.timeActionContract,
@@ -2072,6 +2087,15 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   const resourceIds = new Set(runtimeData.resources.map((row) => row.id));
   const upgradeIds = new Set(runtimeData.upgrades.map((row) => row.id));
 
+  for (const issue of validateEnvironmentComposerContract(runtimeData.environmentComposerContract)) {
+    issues.push({
+      severity: issue.severity,
+      code: `environment_composer_${issue.code}`,
+      message: issue.message,
+      records: issue.records
+    });
+  }
+
   if (!runtimeData.metadata.schemaVersion) {
     issues.push({ severity: "error", code: "metadata_missing", message: "metadata.schemaVersion is required.", records: ["metadata"] });
   }
@@ -2386,6 +2410,7 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     resourceEconomyLogisticsFramework: sorted.resourceEconomyLogisticsFramework,
     missionExpeditionFramework: sorted.missionExpeditionFramework,
     dynamicEventFramework: sorted.dynamicEventFramework,
+    environmentComposerContract: sorted.environmentComposerContract,
     resources: sorted.resources,
     buildingTaxonomy: sorted.buildingTaxonomy,
     buildingLibrary: sorted.buildingLibrary,
@@ -2522,6 +2547,14 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
     progressionMilestoneIds: new Set(payload.civilizationProgressionFramework.civilizationMilestones.map((milestone) => milestone.id))
   })) {
     issues.push(issue);
+  }
+  for (const issue of validateEnvironmentComposerContract(payload.environmentComposerContract)) {
+    issues.push({
+      severity: issue.severity,
+      code: `environment_composer_${issue.code}`,
+      message: issue.message,
+      records: issue.records
+    });
   }
   validateBuildingTaxonomyRuntime(payload, issues);
 
@@ -2680,6 +2713,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     resourceEconomyLogisticsFramework,
     missionExpeditionFramework,
     dynamicEventFramework,
+    environmentComposerContract: environmentComposerRuntimeContract(),
     resources: ResourceService.catalog.map(resourceToRuntime),
     resourceTaxonomy: { version: ResourceService.taxonomyVersion, profileGenerationVersion: ResourceService.profileGenerationVersion, primaryCategories: RESOURCE_PRIMARY_CATEGORIES, validationStatus: ResourceService.validate().status },
     resourceMigrations: ResourceService.migrations.map((migration) => ({ ...migration })),
@@ -2754,6 +2788,7 @@ export async function getGameRuntimeData() {
     resourceEconomyLogisticsFramework: base.resourceEconomyLogisticsFramework,
     missionExpeditionFramework: base.missionExpeditionFramework,
     dynamicEventFramework: base.dynamicEventFramework,
+    environmentComposerContract: base.environmentComposerContract,
     resourceTaxonomy: base.resourceTaxonomy,
     resourceMigrations: base.resourceMigrations,
     resources: base.resources,
@@ -2977,6 +3012,7 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     resourceEconomyLogisticsFramework: base.resourceEconomyLogisticsFramework,
     missionExpeditionFramework: base.missionExpeditionFramework,
     dynamicEventFramework: base.dynamicEventFramework,
+    environmentComposerContract: base.environmentComposerContract,
     resourceTaxonomy: base.resourceTaxonomy,
     resourceMigrations: base.resourceMigrations,
     resources: base.resources,
