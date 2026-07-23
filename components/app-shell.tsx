@@ -92,6 +92,10 @@ const navigationGroups: NavigationGroup[] = [
     label: "Environment Composer",
     icon: Layers3,
     items: [
+      { href: "/universe-layer-generator", label: "Universe Layer Generator", icon: GalleryHorizontalEnd },
+      { href: "/galaxy-layer-generator", label: "Galaxy Layer Generator", icon: GalleryHorizontalEnd },
+      { href: "/sector-layer-generator", label: "Sector Layer Generator", icon: GalleryHorizontalEnd },
+      { href: "/star-system-layer-generator", label: "Star System Layer Generator", icon: GalleryHorizontalEnd },
       { href: "/environment-composer/layers", label: "Layer Library", icon: Layers3 },
       { href: "/environment-composer/scenes", label: "Scene Composer", icon: GalleryHorizontalEnd },
       { href: "/environment-composer/themes", label: "Themes", icon: WandSparkles },
@@ -138,6 +142,7 @@ function activeGroupForPath(pathname: string) {
 }
 
 function workspaceEnvironmentForPath(pathname: string) {
+  if (/layer-generator/.test(pathname)) return "assets";
   if (/environment-composer/.test(pathname)) return "assets";
   if (/asset/.test(pathname)) return "assets";
   if (/discovery/.test(pathname)) return "discovery";

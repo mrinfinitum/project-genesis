@@ -6,6 +6,13 @@ import path from "node:path";
 const projectRoot = process.cwd();
 const destinationRoot = path.join(projectRoot, "game-art", "source-masters");
 const apply = process.argv.includes("--apply");
+const directoriesOnly = process.argv.includes("--directories-only");
+const environmentGeneratorDirectories = [
+  ...["01_deep-cosmic-background", "02_distant-galaxies", "03_cosmic-web", "04_cosmic-dust", "05_deep-haze", "06_foreground-dust"].map((folder) => `environments/universe/${folder}`),
+  ...["01_far-stars", "02_galaxy-disc", "03_spiral-arms", "04_core-glow", "05_dust-lanes", "06_nebula-accents", "07_star-clouds", "08_sector-overlays", "09_exploration-fog", "10_foreground-particles"].map((folder) => `environments/galaxy/${folder}`),
+  ...["01_deep-stars", "02_distant-fields", "03_star-clusters", "04_nebulas", "05_dust", "06_haze", "07_navigation-grids", "08_probe-routes", "09_fog-of-war", "10_foreground-effects"].map((folder) => `environments/sector/${folder}`),
+  ...["01_far-stars", "02_mid-stars", "03_rear-nebulas", "04_front-nebulas", "05_haze", "06_dust", "07_light-rays", "08_foreground-dust", "09_particles", "10_fog-of-war", "11_orbit-styles", "12_asteroid-belts", "13_selection-effects"].map((folder) => `environments/star-system/${folder}`)
+];
 const canonicalDirectories = [
   "icons", "ui", "legacy", "testing",
   "planets/terrestrial", "planets/gas-giants", "planets/ice", "planets/lava", "planets/ocean", "planets/desert", "planets/toxic", "planets/barren", "planets/atmospheres", "planets/clouds", "planets/rings", "planets/moons",
@@ -17,8 +24,22 @@ const canonicalDirectories = [
   "environments/planet-surface/skies", "environments/planet-surface/mountains", "environments/planet-surface/terrain", "environments/planet-surface/vegetation", "environments/planet-surface/clouds", "environments/planet-surface/weather", "environments/planet-surface/fog", "environments/planet-surface/particles",
   "environments/settlements/backgrounds", "environments/settlements/skyline", "environments/settlements/atmosphere", "environments/settlements/lighting", "environments/settlements/particles",
   "effects/selection", "effects/discovery", "effects/ping", "effects/glows", "effects/flares", "effects/fog", "effects/orbit-lines", "effects/ui-overlays",
-  "exports/unity", "exports/roblox", "exports/web", "exports/thumbnails"
+  "exports/unity", "exports/roblox", "exports/web", "exports/thumbnails",
+  ...environmentGeneratorDirectories
 ];
+
+if (directoriesOnly) {
+  await mkdir(destinationRoot, { recursive: true });
+  await Promise.all(
+    environmentGeneratorDirectories.map(async (directory) => {
+      const target = path.join(destinationRoot, directory);
+      await mkdir(target, { recursive: true });
+      await writeFile(path.join(target, ".gitkeep"), "");
+    })
+  );
+  console.log(`Created ${environmentGeneratorDirectories.length} canonical environment layer directories in ${destinationRoot}.`);
+  process.exit(0);
+}
 
 const sourceGroups = [
   { root: path.join(projectRoot, "planet-renders"), kind: "planets" },

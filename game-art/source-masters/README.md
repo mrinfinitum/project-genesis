@@ -3,8 +3,13 @@
 This is the canonical local home for layered artwork imported into Project Genesis Studio.
 The artwork itself and `manifest.local.json` are intentionally ignored by git.
 
-The canonical private root is `game-art/source-masters/`. Do not create a second
-source-master root elsewhere in the repository.
+The canonical private root is `game-art/source-masters/`. The repository-relative
+artist alias `source-masters/` points here so copied generator paths resolve
+locally without creating or maintaining a second artwork collection.
+
+The numbered Universe, Galaxy, Sector, and Star System directories are the
+canonical destinations used by the dedicated Environment Layer Generator pages.
+Empty production folders contain only `.gitkeep`; PSD artwork remains ignored.
 
 ## Folder structure
 

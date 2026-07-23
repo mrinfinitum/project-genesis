@@ -1,0 +1,292 @@
+import definitionsJson from "@/data/environment-layer-generator-definitions.json";
+
+export const environmentGeneratorStatuses = [
+  "not_started",
+  "prompt_copied",
+  "generated",
+  "psd_saved",
+  "exported",
+  "registered",
+  "approved",
+  "needs_revision"
+] as const;
+
+export type EnvironmentGeneratorStatus = (typeof environmentGeneratorStatuses)[number];
+export type EnvironmentGeneratorId = "universe" | "galaxy" | "sector" | "starSystem";
+export type TransparencyRequirement = "opaque" | "preferred" | "required";
+
+export type EnvironmentLayerDefinition = {
+  id: string;
+  number: number;
+  name: string;
+  layerType: string;
+  prefix: string;
+  folder: string;
+  runtimeExportFolder: string;
+  output: {
+    width: number;
+    height: number;
+    aspectRatio: string;
+    transparency: TransparencyRequirement;
+  };
+  purpose: string;
+  canonicalPrompt: string;
+};
+
+export type EnvironmentGeneratorDefinition = {
+  id: EnvironmentGeneratorId;
+  name: string;
+  route: string;
+  sourceRoot: string;
+  layers: EnvironmentLayerDefinition[];
+};
+
+export type EnvironmentGeneratorControls = {
+  theme: string;
+  palette: string;
+  mood: string;
+  primaryColorFamily: string;
+  secondaryColorFamily: string;
+  accentColorFamily: string;
+  density: string;
+  brightness: string;
+  negativeSpacePreference: string;
+  centralSafeZonePercentage: number;
+  masterResolution: string;
+  runtimeExportResolution: string;
+  aspectRatio: string;
+  transparencyRequirement: string;
+  styleNotes: string;
+  additionalExclusions: string;
+};
+
+export type EnvironmentLayerProgress = {
+  status: EnvironmentGeneratorStatus;
+  editablePromptAdditions: string;
+  filenameSuffix: string;
+  previewRelativePath: string;
+  notes: string;
+};
+
+export type EnvironmentLayerAssetRecord = {
+  assetId: string;
+  displayName: string;
+  environmentType: EnvironmentGeneratorId;
+  layerNumber: number;
+  layerType: string;
+  prefix: string;
+  sourceRelativePath: string;
+  previewRelativePath: string;
+  runtimeExportRelativePath: string;
+  dimensions: string;
+  aspectRatio: string;
+  transparency: TransparencyRequirement;
+  themeTags: string[];
+  paletteTags: string[];
+  status: EnvironmentGeneratorStatus;
+  notes: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export const commonEnvironmentPromptFooter =
+  "This is a reusable production asset, not concept art. Do not include text, logos, borders, frames, user interface elements, planets, spacecraft, orbit lines, or unrelated celestial objects unless explicitly requested for this layer. Preserve generous negative space and avoid obvious repeated patterns, artificial vignette, circular edge shading, radial falloff, lens distortion, and generated texture artifacts.";
+
+export const transparentEnvironmentPromptFooter =
+  "Isolate only the requested visual element. Preserve large transparent areas. No solid background. Output as a clean transparent PNG-ready composition.";
+
+export const environmentArtDirection =
+  "Premium NOVERIS science-fiction illustration; artist-directed HD-2D layered artwork; cinematic but restrained, painterly, elegant, uncluttered, with strong negative space, a readable central gameplay area, and one controlled focal hierarchy.";
+
+export const defaultEnvironmentGeneratorControls: EnvironmentGeneratorControls = {
+  theme: "Deep Frontier",
+  palette: "Midnight sapphire, restrained cyan, muted violet",
+  mood: "Ancient, quiet, immense",
+  primaryColorFamily: "Deep navy",
+  secondaryColorFamily: "Muted violet",
+  accentColorFamily: "Pale cyan",
+  density: "Restrained",
+  brightness: "Low to medium",
+  negativeSpacePreference: "Generous",
+  centralSafeZonePercentage: 50,
+  masterResolution: "3840 x 2160",
+  runtimeExportResolution: "1920 x 1080",
+  aspectRatio: "16:9",
+  transparencyRequirement: "Follow canonical layer requirement",
+  styleNotes: "",
+  additionalExclusions: ""
+};
+
+export const environmentGeneratorDefinitions =
+  definitionsJson.definitions as EnvironmentGeneratorDefinition[];
+
+export function getEnvironmentGeneratorDefinition(id: EnvironmentGeneratorId) {
+  const definition = environmentGeneratorDefinitions.find((row) => row.id === id);
+  if (!definition) {
+    throw new Error(`Unknown environment generator: ${id}`);
+  }
+  return definition;
+}
+
+export function extractFixedExclusions(prompt: string) {
+  return prompt
+    .split(/\n\s*\n/)
+    .map((row) => row.trim())
+    .filter((row) => /^(no\b|do not\b|avoid\b)/i.test(row));
+}
+
+export function buildEnvironmentLayerPrompt(
+  layer: EnvironmentLayerDefinition,
+  controls: EnvironmentGeneratorControls,
+  additions = ""
+) {
+  const artistDirection = [
+    "Artist direction:",
+    environmentArtDirection,
+    `Theme: ${controls.theme}.`,
+    `Palette: ${controls.palette}.`,
+    `Mood: ${controls.mood}.`,
+    `Color hierarchy: ${controls.primaryColorFamily} primary, ${controls.secondaryColorFamily} secondary, ${controls.accentColorFamily} accent.`,
+    `Density: ${controls.density}. Brightness: ${controls.brightness}. Negative space: ${controls.negativeSpacePreference}.`,
+    `Keep the central ${controls.centralSafeZonePercentage}% suitable for gameplay and navigation.`,
+    `Master resolution: ${controls.masterResolution}. Runtime target: ${controls.runtimeExportResolution}. Aspect ratio: ${controls.aspectRatio}.`,
+    `Transparency: ${controls.transparencyRequirement}.`
+  ];
+  if (controls.styleNotes.trim()) artistDirection.push(`Additional style notes: ${controls.styleNotes.trim()}`);
+  if (additions.trim()) artistDirection.push(`Layer-specific additions: ${additions.trim()}`);
+  if (controls.additionalExclusions.trim()) artistDirection.push(`Additional exclusions: ${controls.additionalExclusions.trim()}`);
+
+  return [
+    layer.canonicalPrompt,
+    artistDirection.join("\n"),
+    commonEnvironmentPromptFooter,
+    layer.output.transparency === "opaque" ? "" : transparentEnvironmentPromptFooter
+  ]
+    .filter(Boolean)
+    .join("\n\n");
+}
+
+function safeFilenamePart(value: string) {
+  return value
+    .trim()
+    .replace(/[^a-zA-Z0-9]+/g, " ")
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => `${word.charAt(0).toUpperCase()}${word.slice(1)}`)
+    .join("") || "Untitled";
+}
+
+export function nextEnvironmentLayerFilename(
+  prefix: string,
+  suffix: string,
+  existingPaths: string[]
+) {
+  const used = new Set(
+    existingPaths
+      .map((value) => value.split("/").at(-1) ?? "")
+      .map((value) => value.match(new RegExp(`^${prefix}_(\\d{3})_`, "i"))?.[1])
+      .filter(Boolean)
+      .map(Number)
+  );
+  let index = 1;
+  while (used.has(index)) index += 1;
+  return `${prefix}_${String(index).padStart(3, "0")}_${safeFilenamePart(suffix)}.psd`;
+}
+
+export function buildEnvironmentLayerAssetRecord(input: {
+  definition: EnvironmentGeneratorDefinition;
+  layer: EnvironmentLayerDefinition;
+  filename: string;
+  previewRelativePath: string;
+  status: EnvironmentGeneratorStatus;
+  notes: string;
+  controls: EnvironmentGeneratorControls;
+  now?: string;
+}): EnvironmentLayerAssetRecord {
+  const now = input.now ?? new Date().toISOString();
+  const baseName = input.filename.replace(/\.psd$/i, "");
+  return {
+    assetId: `environment-${input.definition.id}-${baseName.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+    displayName: `${input.layer.name} - ${baseName}`,
+    environmentType: input.definition.id,
+    layerNumber: input.layer.number,
+    layerType: input.layer.layerType,
+    prefix: input.layer.prefix,
+    sourceRelativePath: `${input.layer.folder}${input.filename}`,
+    previewRelativePath: input.previewRelativePath.trim(),
+    runtimeExportRelativePath: `${input.layer.runtimeExportFolder}${baseName}.webp`,
+    dimensions: `${input.layer.output.width}x${input.layer.output.height}`,
+    aspectRatio: input.layer.output.aspectRatio,
+    transparency: input.layer.output.transparency,
+    themeTags: [input.controls.theme].filter(Boolean),
+    paletteTags: [
+      input.controls.palette,
+      input.controls.primaryColorFamily,
+      input.controls.secondaryColorFamily,
+      input.controls.accentColorFamily
+    ].filter(Boolean),
+    status: input.status,
+    notes: input.notes.trim(),
+    createdAt: now,
+    updatedAt: now
+  };
+}
+
+export function calculateEnvironmentGeneratorProgress(
+  definition: EnvironmentGeneratorDefinition,
+  progress: Record<string, EnvironmentLayerProgress>,
+  assets: EnvironmentLayerAssetRecord[]
+) {
+  const rows = definition.layers.map((layer) => progress[layer.id]?.status ?? "not_started");
+  const started = rows.filter((status) => status !== "not_started").length;
+  const approved = rows.filter((status) => status === "approved").length;
+  const needsRevision = rows.filter((status) => status === "needs_revision").length;
+  const psdSaved = rows.filter((status) => ["psd_saved", "exported", "registered", "approved"].includes(status)).length;
+  const exported = rows.filter((status) => ["exported", "registered", "approved"].includes(status)).length;
+  const registered = assets.filter((asset) => asset.environmentType === definition.id).length;
+  const missingPreviews = definition.layers.filter((layer) => !progress[layer.id]?.previewRelativePath.trim()).length;
+  const approvedExports = rows.filter((status) => status === "approved").length;
+
+  return {
+    total: definition.layers.length,
+    started,
+    approved,
+    needsRevision,
+    notStarted: rows.length - started,
+    psdSaved,
+    exported,
+    registered,
+    missingPreviews,
+    missingApprovedExports: rows.length - approvedExports
+  };
+}
+
+export function validateEnvironmentGeneratorDefinitions() {
+  const issues: string[] = [];
+  const expectedIds: EnvironmentGeneratorId[] = ["universe", "galaxy", "sector", "starSystem"];
+
+  if (environmentGeneratorDefinitions.length !== 4) issues.push("Exactly four environment generator definitions are required.");
+  for (const id of expectedIds) {
+    const definition = environmentGeneratorDefinitions.find((row) => row.id === id);
+    if (!definition) {
+      issues.push(`Missing ${id} generator definition.`);
+      continue;
+    }
+    const numbers = definition.layers.map((layer) => layer.number);
+    const prefixes = definition.layers.map((layer) => layer.prefix.toLowerCase());
+    if (new Set(numbers).size !== numbers.length) issues.push(`${id} has duplicate layer numbers.`);
+    if (new Set(prefixes).size !== prefixes.length) issues.push(`${id} has duplicate layer prefixes.`);
+    for (const layer of definition.layers) {
+      if (!layer.canonicalPrompt.trim()) issues.push(`${layer.id} is missing its canonical prompt.`);
+      if (!layer.folder.startsWith("source-masters/environments/")) issues.push(`${layer.id} has an invalid source path.`);
+      if (layer.folder.startsWith("/") || layer.folder.includes("..")) issues.push(`${layer.id} emits an unsafe source path.`);
+      if (layer.output.transparency !== "opaque" && !/transparent/i.test(layer.canonicalPrompt)) {
+        issues.push(`${layer.id} is transparent but lacks transparency language.`);
+      }
+      if (layer.output.transparency === "opaque" && /transparent png-ready/i.test(layer.canonicalPrompt)) {
+        issues.push(`${layer.id} is opaque but requires transparent output.`);
+      }
+    }
+  }
+  return issues;
+}

@@ -16,3 +16,5 @@ planet-renders/**
 game-art/source-masters/**
 !game-art/source-masters/
 !game-art/source-masters/README.md
+!game-art/source-masters/**/
+!game-art/source-masters/**/.gitkeep
