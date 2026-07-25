@@ -1,5 +1,6 @@
 import { handoffData } from "@/data/handoff";
 import { PLANET_CLASS_MODEL, findPlanetClassByName, slugPlanetTaxonomyValue } from "@/lib/planets/class-model";
+import { applyCanonicalSolDeepData } from "@/lib/planets/sol-system-data";
 import { normalizePlanetResourceProfiles, type NormalizedPlanetResourceProfile } from "@/lib/resources/planet-resource-profiles";
 import { ResourceService } from "@/lib/resources/service";
 import type { GeneratedPlanet, PlanetResourceProfile } from "@/types/schema";
@@ -679,6 +680,12 @@ export function createPlanetResourceOccurrence(
     strategicValueModifier: between(random, 0.7, 1.8),
     marketValueModifier: between(random, 0.7, 1.8),
     knownDepositIds: [],
+    biomeAffinities: biomeIds,
+    geologicalAffinities: [],
+    atmosphereAffinities: sourceCategory === "atmospheric" ? [planetTypeName] : [],
+    oceanAffinities: sourceCategory === "oceanic" ? [planetTypeName] : [],
+    scientificSourceIds: [],
+    sourceNote: "Deterministic gameplay distribution; no scientific reserve claim.",
     notes: ""
   };
 }
@@ -1075,6 +1082,34 @@ export function generatePlanetDeepData(
       persistenceOwner: "player-persistence",
       canonicalOwner: "studio"
     },
+    knowledgeModes: {
+      canonicalHumanKnowledgeEnabled: false,
+      gameplayDiscoveryEnabled: true,
+      testPresetStates: [...discoveryStates]
+    },
+    activeEnvironmentRules: {
+      eligibleWeatherProfileIds: weatherProfileIds,
+      weatherWeights: Object.fromEntries(weatherProfileIds.map((id, index) => [id, Math.max(10, 100 - index * 20)])),
+      durationRangesMinutes: Object.fromEntries(weatherProfileIds.map((id) => [id, [30, 1440] as [number, number]])),
+      transitionRules: ["Game clients own active weather selection and transitions."],
+      seasonalModifiers: {},
+      regionalModifiers: {},
+      hazardModifiers: {},
+      simulationSeedInputs: ["planet.seed", "planet.id", "weatherProfileId", "seasonPhase", "timeBucket"],
+      conventionalWeather: atmosphereProfile.atmospherePresent,
+      alternateStateLabel: atmosphereProfile.atmospherePresent ? null : "Environmental exposure cycle"
+    },
+    scientificSources: [],
+    sourceIdsBySection: {},
+    dataCompleteness: {
+      sectionCompletion: {},
+      overallPercentage: 65,
+      verifiedFieldCount: 0,
+      estimatedFieldCount: 42,
+      missingRequiredFieldCount: 0,
+      scientificWarningCount: 0,
+      gameplayWarningCount: 1
+    },
     discoveryVisibility: [
       visibility("identity", "detected"),
       visibility("orbital", "detected"),
@@ -1099,7 +1134,7 @@ export function generatePlanetDeepData(
     overrides: current?.overrides ?? { lockedSections: [], lockedFields: [], values: {} }
   };
 
-  return mergeAuthoringOverrides(generated, current);
+  return mergeAuthoringOverrides(applyCanonicalSolDeepData(planet, generated), current);
 }
 
 export function ensurePlanetDeepData(planet: GeneratedPlanet, profiles?: PlanetResourceProfile[]) {
@@ -1217,6 +1252,36 @@ export function validatePlanetDeepData(data: PlanetDeepData): PlanetValidationIs
     if (!data.atmosphere.atmospherePresent && occurrence.populationEstimate > 0 && !["synthetic", "exotic"].includes(occurrence.nativeStatus.toLowerCase())) {
       issues.push({ severity: "scientific_plausibility", code: "species_atmosphere_mismatch", message: `Species ${occurrence.speciesId} has a population on an airless planet without a synthetic or exotic override.`, path: `speciesOccurrences.${occurrence.occurrenceId}`, relatedIds: [occurrence.speciesId] });
     }
+  }
+
+  const sourceIds = new Set<string>();
+  for (const source of data.scientificSources) {
+    if (!source.sourceId || sourceIds.has(source.sourceId)) {
+      issues.push({ severity: "error", code: "duplicate_or_missing_scientific_source", message: `Scientific source ${source.sourceId || "(missing)"} is invalid or duplicated.`, path: "scientificSources", relatedIds: source.sourceId ? [source.sourceId] : [] });
+    }
+    sourceIds.add(source.sourceId);
+    if (/^(file:|\/Users\/|studio-private:)/i.test(source.url)) {
+      issues.push({ severity: "error", code: "private_scientific_source_path", message: `Scientific source ${source.sourceId} exposes a private path.`, path: `scientificSources.${source.sourceId}.url`, relatedIds: [source.sourceId] });
+    }
+  }
+  for (const [section, sectionSourceIds] of Object.entries(data.sourceIdsBySection)) {
+    for (const sourceId of sectionSourceIds) {
+      if (!sourceIds.has(sourceId)) {
+        issues.push({ severity: "error", code: "missing_scientific_source_reference", message: `Section ${section} references missing source ${sourceId}.`, path: `sourceIdsBySection.${section}`, relatedIds: [sourceId] });
+      }
+    }
+  }
+  if (data.dataCompleteness.overallPercentage < 0 || data.dataCompleteness.overallPercentage > 100) {
+    issues.push({ severity: "error", code: "invalid_data_completeness", message: "Planet data completeness must be between 0 and 100.", path: "dataCompleteness.overallPercentage", relatedIds: [] });
+  }
+  if (!data.atmosphere.atmospherePresent && data.activeEnvironmentRules.conventionalWeather) {
+    issues.push({ severity: "error", code: "airless_conventional_weather", message: "An airless body cannot enable conventional atmospheric weather.", path: "activeEnvironmentRules.conventionalWeather", relatedIds: [] });
+  }
+  if (data.planetId.startsWith("fixed-sol-") && !data.scientificSources.length) {
+    issues.push({ severity: "error", code: "sol_scientific_sources_missing", message: "Canonical Sol bodies require authoritative scientific source metadata.", path: "scientificSources", relatedIds: [data.planetId] });
+  }
+  if (data.planetId !== "fixed-sol-earth" && data.planetId.startsWith("fixed-sol-") && data.life.estimatedSpeciesCount > 0) {
+    issues.push({ severity: "scientific_plausibility", code: "unsupported_sol_life_claim", message: "Earth is the only Sol body with confirmed native life; other bodies must express potential rather than confirmed species counts.", path: "life.estimatedSpeciesCount", relatedIds: [data.planetId] });
   }
 
   for (const visibility of data.discoveryVisibility) {

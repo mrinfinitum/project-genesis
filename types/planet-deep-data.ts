@@ -18,6 +18,40 @@ export type PlanetValidationSeverity =
   | "gameplay_balance"
   | "missing_optional_data";
 
+export type PlanetScientificSource = {
+  sourceId: string;
+  publisher: string;
+  title: string;
+  sourceType: "government_science" | "intergovernmental_science" | "peer_reviewed" | "canonical_gameplay";
+  url: string;
+  retrievedAt: string;
+  dataDate: string | null;
+  notes: string;
+};
+
+export type PlanetDataCompleteness = {
+  sectionCompletion: Record<string, number>;
+  overallPercentage: number;
+  verifiedFieldCount: number;
+  estimatedFieldCount: number;
+  missingRequiredFieldCount: number;
+  scientificWarningCount: number;
+  gameplayWarningCount: number;
+};
+
+export type PlanetActiveEnvironmentRules = {
+  eligibleWeatherProfileIds: string[];
+  weatherWeights: Record<string, number>;
+  durationRangesMinutes: Record<string, [number, number]>;
+  transitionRules: string[];
+  seasonalModifiers: Record<string, number>;
+  regionalModifiers: Record<string, number>;
+  hazardModifiers: Record<string, number>;
+  simulationSeedInputs: string[];
+  conventionalWeather: boolean;
+  alternateStateLabel: string | null;
+};
+
 export type PlanetValidationIssue = {
   severity: PlanetValidationSeverity;
   code: string;
@@ -298,6 +332,12 @@ export type PlanetResourceOccurrence = {
   strategicValueModifier: number;
   marketValueModifier: number;
   knownDepositIds: string[];
+  biomeAffinities: string[];
+  geologicalAffinities: string[];
+  atmosphereAffinities: string[];
+  oceanAffinities: string[];
+  scientificSourceIds: string[];
+  sourceNote: string;
   notes: string;
 };
 
@@ -649,6 +689,15 @@ export type PlanetDeepData = {
     persistenceOwner: "player-persistence";
     canonicalOwner: "studio";
   };
+  knowledgeModes: {
+    canonicalHumanKnowledgeEnabled: boolean;
+    gameplayDiscoveryEnabled: boolean;
+    testPresetStates: PlanetDiscoveryState[];
+  };
+  activeEnvironmentRules: PlanetActiveEnvironmentRules;
+  scientificSources: PlanetScientificSource[];
+  sourceIdsBySection: Record<string, string[]>;
+  dataCompleteness: PlanetDataCompleteness;
   discoveryVisibility: PlanetFieldVisibility[];
   presentation: {
     presentationProfileId: string;

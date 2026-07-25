@@ -138,6 +138,10 @@ const profileSupplementalResourceCatalog: ResourceCatalogItem[] = [
   });
 
 const classificationSupplementalResourceCatalog: ResourceCatalogItem[] = [
+  ["RES-PACK-SURVIVAL-WATER", "Water", "Liquids", "Common", "Earth", "Canonical water resource used by planetary hydrology, atmospheres, life support, and the Survival economy."],
+  ["RES-COMPOUND-CARBON-DIOXIDE", "Carbon Dioxide", "Chemicals and Compounds", "Common", "Earth", "Carbon-oxygen compound found in planetary atmospheres, ices, and biological and industrial cycles."],
+  ["RES-COMPOUND-CARBON-MONOXIDE", "Carbon Monoxide", "Chemicals and Compounds", "Uncommon", "Planetary", "Reactive carbon-oxygen compound found in trace atmospheres, volatile ices, and industrial chemistry."],
+  ["RES-COMPOUND-SULFUR-DIOXIDE", "Sulfur Dioxide", "Chemicals and Compounds", "Uncommon", "Planetary", "Sulfur-oxygen compound associated with volcanism, atmospheric chemistry, and sulfur frost cycles."],
   ["RES-ISOTOPE-TRITIUM", "Tritium", "Isotopes", "Rare", "Space", "Radioactive hydrogen isotope used in fusion systems and scientific research."],
   ["RES-ISOTOPE-CARBON-14", "Carbon-14", "Isotopes", "Uncommon", "Planetary", "Radioactive carbon isotope used in dating, tracing, and research."],
   ["RES-ISOTOPE-URANIUM-235", "Uranium-235", "Isotopes", "Rare", "Planetary", "Fissile uranium isotope used in advanced energy and research systems."],

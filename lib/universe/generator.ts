@@ -230,6 +230,7 @@ export type CelestialBodyNode = {
   isColonizable?: boolean;
   resources: string[];
   notes: string;
+  scientific_profile?: Record<string, unknown>;
   seed?: string;
   generation_parent_seed?: string | null;
   generation_index?: number;
@@ -501,6 +502,162 @@ const PLUTO_MOONS: CelestialBodyNode[] = [
   solMoon({ parentId: "body-pluto", parentName: "Pluto", name: "Styx", planetClass: "Ice", planetSubclass: "Small Ice", biome: "Outer Ice", atmosphere: "None", gravity: "Very Low", resources: resourceNames(["RES-0041", "RES-0044"]), notes: "Small outer moon of Pluto." })
 ];
 
+const ADDITIONAL_SOL_DWARF_PLANETS: CelestialBodyNode[] = [
+  {
+    id: "body-ceres",
+    system_id: SOL_SYSTEM_ID,
+    parent_body_id: "body-sol",
+    name: "Ceres",
+    celestial_body_type: "Dwarf Planet",
+    planet_class: "Ice",
+    planet_subclass: "Cryovolcanic",
+    planet_rarity: "Uncommon",
+    biome: "Hydrated Cratered Plains",
+    atmosphere: "Transient Exosphere",
+    gravity: "Very Low",
+    orbit_position: null,
+    orbit_parent: "Sol",
+    landable: true,
+    colonizable: true,
+    colonizable_status: "Future",
+    uses_orbital_gameplay: false,
+    is_fixed: true,
+    is_starting_body: false,
+    is_procedural: false,
+    unlock_requirement: "Asteroid Mining",
+    resources: resourceNames(["RES-0041", "RES-0182", "RES-0027", "RES-0190"]),
+    notes: "IAU-recognized dwarf planet in the main asteroid belt with water ice, hydrated minerals, salts, and evidence for brines."
+  },
+  {
+    id: "body-haumea",
+    system_id: SOL_SYSTEM_ID,
+    parent_body_id: "body-sol",
+    name: "Haumea",
+    celestial_body_type: "Dwarf Planet",
+    planet_class: "Ice",
+    planet_subclass: "Fractured Ice",
+    planet_rarity: "Rare",
+    biome: "Rapid-Rotation Ice",
+    atmosphere: "None Confirmed",
+    gravity: "Very Low",
+    orbit_position: null,
+    orbit_parent: "Sol",
+    landable: true,
+    colonizable: true,
+    colonizable_status: "Future",
+    uses_orbital_gameplay: false,
+    is_fixed: true,
+    is_starting_body: false,
+    is_procedural: false,
+    unlock_requirement: "Deep Space Communications",
+    resources: resourceNames(["RES-0041", "RES-0027"]),
+    notes: "IAU-recognized rapidly rotating elongated dwarf planet with a water-ice-rich surface and a narrow ring."
+  },
+  {
+    id: "body-makemake",
+    system_id: SOL_SYSTEM_ID,
+    parent_body_id: "body-sol",
+    name: "Makemake",
+    celestial_body_type: "Dwarf Planet",
+    planet_class: "Ice",
+    planet_subclass: "Polar",
+    planet_rarity: "Rare",
+    biome: "Methane Frost",
+    atmosphere: "None Confirmed",
+    gravity: "Very Low",
+    orbit_position: null,
+    orbit_parent: "Sol",
+    landable: true,
+    colonizable: true,
+    colonizable_status: "Future",
+    uses_orbital_gameplay: false,
+    is_fixed: true,
+    is_starting_body: false,
+    is_procedural: false,
+    unlock_requirement: "Deep Space Communications",
+    resources: resourceNames(["RES-0044", "RES-0045", "RES-0041"]),
+    notes: "IAU-recognized Kuiper Belt dwarf planet with methane, ethane, and probable nitrogen-bearing surface ices."
+  },
+  {
+    id: "body-eris",
+    system_id: SOL_SYSTEM_ID,
+    parent_body_id: "body-sol",
+    name: "Eris",
+    celestial_body_type: "Dwarf Planet",
+    planet_class: "Ice",
+    planet_subclass: "Polar",
+    planet_rarity: "Rare",
+    biome: "Distant Methane Ice",
+    atmosphere: "Frozen / None Present",
+    gravity: "Very Low",
+    orbit_position: null,
+    orbit_parent: "Sol",
+    landable: true,
+    colonizable: true,
+    colonizable_status: "Future",
+    uses_orbital_gameplay: false,
+    is_fixed: true,
+    is_starting_body: false,
+    is_procedural: false,
+    unlock_requirement: "Deep Space Communications",
+    resources: resourceNames(["RES-0044", "RES-0045", "RES-0041"]),
+    notes: "IAU-recognized distant dwarf planet with a bright methane-ice-rich surface and highly inclined eccentric orbit."
+  }
+];
+
+const SOL_REFERENCE_REGIONS: CelestialBodyNode[] = [
+  {
+    id: "body-kuiper-belt",
+    system_id: SOL_SYSTEM_ID,
+    parent_body_id: "body-sol",
+    name: "Kuiper Belt",
+    celestial_body_type: "Small Body Region",
+    planet_class: null,
+    planet_subclass: "Trans-Neptunian Disk",
+    planet_rarity: "Uncommon",
+    biome: "Icy Minor Bodies",
+    atmosphere: "None",
+    gravity: "Microgravity",
+    orbit_position: null,
+    orbit_parent: "Sol",
+    landable: false,
+    colonizable: false,
+    colonizable_status: "Not Colonizable",
+    uses_orbital_gameplay: true,
+    is_fixed: true,
+    is_starting_body: false,
+    is_procedural: false,
+    unlock_requirement: "Deep Space Communications",
+    resources: resourceNames(["RES-0041", "RES-0044", "RES-0045", "RES-0179", "RES-0190"]),
+    notes: "Canonical circumstellar disk of icy minor bodies beyond Neptune; not forced into the Planet schema."
+  },
+  {
+    id: "body-oort-cloud",
+    system_id: SOL_SYSTEM_ID,
+    parent_body_id: "body-sol",
+    name: "Oort Cloud",
+    celestial_body_type: "Small Body Region",
+    planet_class: null,
+    planet_subclass: "Distant Spherical Comet Reservoir",
+    planet_rarity: "Rare",
+    biome: "Distant Icy Comets",
+    atmosphere: "None",
+    gravity: "Microgravity",
+    orbit_position: null,
+    orbit_parent: "Sol",
+    landable: false,
+    colonizable: false,
+    colonizable_status: "Not Colonizable",
+    uses_orbital_gameplay: true,
+    is_fixed: true,
+    is_starting_body: false,
+    is_procedural: false,
+    unlock_requirement: "Interstellar Navigation",
+    resources: resourceNames(["RES-0041", "RES-0044", "RES-0045", "RES-0179", "RES-0190"]),
+    notes: "Model-supported distant comet reservoir marking the outermost gravitational domain of Sol; confidence is lower than directly observed belts."
+  }
+];
+
 const SOL_CELESTIAL_BODIES: CelestialBodyNode[] = [
   {
     id: "body-sol",
@@ -525,7 +682,34 @@ const SOL_CELESTIAL_BODIES: CelestialBodyNode[] = [
     is_procedural: false,
     unlock_requirement: "Start",
     resources: resourceNames(["RES-0189"]),
-    notes: "The home star of humanity."
+    notes: "The home star of humanity.",
+    scientific_profile: {
+      schemaVersion: "sol-star-profile-v1",
+      stellarClassification: "G2 V yellow main-sequence star",
+      massKg: 1.9885e30,
+      radiusKm: 695700,
+      luminosityW: 3.828e26,
+      effectiveTemperatureK: 5772,
+      coreTemperatureK: 1.57e7,
+      ageGyr: 4.568,
+      metallicityDex: 0,
+      rotationBehavior: "Differential rotation; approximately 25 days at the equator and 35 days near the poles.",
+      activityCycleYears: 11,
+      solarWind: "Variable magnetized plasma flowing through the heliosphere.",
+      flareBehavior: "Magnetic active regions produce flares and coronal mass ejections.",
+      radiation: "Electromagnetic and particle radiation varies with the solar activity cycle.",
+      conservativeHabitableZoneAu: [0.95, 1.67],
+      frostLineAu: 2.7,
+      systemFormationAgeGyr: 4.568,
+      canonicalPlanetCount: 8,
+      canonicalDwarfPlanetCount: 5,
+      majorRegionIds: ["body-asteroid-belt", "body-kuiper-belt", "body-oort-cloud"],
+      heliosphere: "Solar-wind bubble bounded by termination shock, heliosheath, and heliopause.",
+      presentationProfileId: "presentation_star_yellow_main_sequence",
+      confidence: 0.96,
+      estimatedFields: ["coreTemperatureK", "conservativeHabitableZoneAu", "frostLineAu"],
+      sourceIds: ["nasa_planetary_science", "jpl_planetary_physical_parameters"]
+    }
   },
   {
     id: "body-earth",
@@ -907,7 +1091,9 @@ const SOL_CELESTIAL_BODIES: CelestialBodyNode[] = [
     resources: resourceNames(["RES-0045", "RES-0044", "RES-0041"]),
     notes: "Edge of the starting Sol system."
   },
-  ...PLUTO_MOONS
+  ...PLUTO_MOONS,
+  ...ADDITIONAL_SOL_DWARF_PLANETS,
+  ...SOL_REFERENCE_REGIONS
 ];
 
 function slug(value: string) {

@@ -70,7 +70,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 55;
+export const gameRuntimeContentVersion = 56;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -647,6 +647,17 @@ function metadata(overrides: Partial<RuntimeMetadata> = {}): RuntimeMetadata {
         preserveRule: "Preserve star-system IDs and runtime visual signatures. Use published background derivatives when present; otherwise fall back to deterministic procedural atlas rendering.",
         introducedContentVersion: 52,
         notes: "PSD sources remain private Studio authoring files and are never consumed by game clients."
+      },
+      {
+        id: "migration_sol_system_reference_data_v1",
+        targetId: "sol-system",
+        field: "planets.deepPlanetData",
+        previousDefault: "deterministic-generic-sol-profiles",
+        currentDefault: "sol-system-reference-v1",
+        applyOnlyWhen: "A client loads contentVersion 56 or later and consumes canonical Sol body data.",
+        preserveRule: "Preserve all existing Sol body IDs, parent links, discovery attribution, authored history, and player state. Replace only unlocked generated scientific fields with source-backed canonical overrides.",
+        introducedContentVersion: 56,
+        notes: "Adds the five recognized dwarf planets, source metadata, completeness, knowledge modes, active-environment rules, and locked scientific overrides without creating parallel Planet Types or Resources."
       }
     ],
     ...overrides

@@ -458,6 +458,12 @@ export function PlanetDeepDataEditor({ planet, activeTab, onTabChange, onSave }:
           {activeTab === "weather" ? (
             <>
               <SectionHeader title="Eligible Weather" description="These profiles define possible conditions. They do not store the planet's live current weather." />
+              <MetricGrid values={{
+                conventionalWeather: draft.activeEnvironmentRules.conventionalWeather,
+                alternateState: draft.activeEnvironmentRules.alternateStateLabel,
+                transitionRules: draft.activeEnvironmentRules.transitionRules,
+                simulationSeedInputs: draft.activeEnvironmentRules.simulationSeedInputs
+              }} />
               <ProfileList rows={draft.weatherProfileIds.map((id) => {
                 const profile = canonicalWeatherProfiles.find((candidate) => candidate.id === id);
                 return { id, displayName: profile?.displayName ?? id, detail: profile ? `${profile.family}; intensity ${profile.intensityRange.join("-")}` : "Missing profile" };
@@ -605,6 +611,18 @@ export function PlanetDeepDataEditor({ planet, activeTab, onTabChange, onSave }:
             <>
               <SectionHeader title="Presentation Intent" description="Studio publishes content, ordering, units, formatting, confidence, and warnings. Clients own responsive layout and rendering." />
               <MetricGrid values={draft.presentation as unknown as Record<string, unknown>} />
+              <SectionHeader title="Scientific Completeness" description="Verified facts, estimates, warnings, and source coverage remain explicit for authoring and runtime diagnostics." />
+              <MetricGrid values={Object.fromEntries(Object.entries(draft.dataCompleteness).filter(([key]) => key !== "sectionCompletion"))} />
+              <ProfileList rows={Object.entries(draft.dataCompleteness.sectionCompletion).map(([section, percentage]) => ({
+                id: section,
+                displayName: titleFromKey(section),
+                detail: `${percentage}% complete`
+              }))} />
+              <ProfileList rows={draft.scientificSources.map((source) => ({
+                id: source.sourceId,
+                displayName: source.title,
+                detail: `${source.publisher} / ${source.sourceType}${source.dataDate ? ` / data ${source.dataDate}` : ""}`
+              }))} />
             </>
           ) : null}
 
