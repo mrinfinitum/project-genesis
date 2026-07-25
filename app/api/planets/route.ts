@@ -5,6 +5,7 @@ import { getRows, upsertRow } from "@/lib/data";
 import { withFixedSolGeneratedPlanets } from "@/lib/planets/fixed-sol-planets";
 import { imageVariantsFromRender, matchPlanetRender } from "@/lib/planets/render-library";
 import { hasLockedPlanetRender } from "@/lib/planets/render-lock";
+import { ensurePlanetDeepData } from "@/lib/planets/deep-data";
 import { planetGenerationRuleRows } from "@/lib/planets/rule-rows";
 import type { GeneratedPlanet, PlanetRenderLibraryRecord, PlanetResourceProfile, PlanetVariable } from "@/types/schema";
 
@@ -43,7 +44,7 @@ function errorMessage(error: unknown, fallback: string) {
 
 function isMissingGeneratedPlanetOptionalColumn(error: unknown) {
   const message = errorMessage(error, "");
-  return message.includes("generated_planets") && /(resource_ids|image_(url|prompt|status|variants)|orbit_view_(prompt|image_url)|surface_landscape_(prompt|image_url|status|notes)|rarity|planet_subclass|anomalies|colonizable|landable|surface_exploration|terrain_generation|uses_orbital_gameplay|orbital_slot_count|orbital_platforms_built|atmospheric_harvest_rate|gas_giant_hazard_level|required_technology|resource_transport_options)/.test(message);
+  return message.includes("generated_planets") && /(resource_ids|deep_planet_data|image_(url|prompt|status|variants)|orbit_view_(prompt|image_url)|surface_landscape_(prompt|image_url|status|notes)|rarity|planet_subclass|anomalies|colonizable|landable|surface_exploration|terrain_generation|uses_orbital_gameplay|orbital_slot_count|orbital_platforms_built|atmospheric_harvest_rate|gas_giant_hazard_level|required_technology|resource_transport_options)/.test(message);
 }
 
 function unsupportedGeneratedPlanetColumn(error: unknown) {
@@ -62,8 +63,13 @@ async function upsertGeneratedPlanet(planet: GeneratedPlanet) {
     row.resource_ids = planet.resourceIds;
     delete row.resourceIds;
   }
+  if (planet.deepPlanetData) {
+    row.deep_planet_data = planet.deepPlanetData;
+    delete row.deepPlanetData;
+  }
   const unsupportedColumns = new Set([
     "resource_ids",
+    "deep_planet_data",
     "image_url",
     "image_prompt",
     "image_status",
@@ -108,16 +114,21 @@ async function upsertGeneratedPlanet(planet: GeneratedPlanet) {
 }
 
 function hydrateGeneratedPlanet(row: GeneratedPlanet & { resource_ids?: string[] }) {
-  return {
+  const hydrated = {
     ...row,
-    resourceIds: row.resourceIds ?? row.resource_ids
+    resourceIds: row.resourceIds ?? row.resource_ids,
+    deepPlanetData: row.deepPlanetData ?? row.deep_planet_data
   } as GeneratedPlanet;
+  hydrated.deepPlanetData = ensurePlanetDeepData(hydrated);
+  return hydrated;
 }
 
 export async function GET() {
   try {
     const [rows, renderLibrary] = await Promise.all([getRows("generated_planets"), getRows("planet_render_library").catch(() => [])]);
-    return NextResponse.json({ rows: sortRows(withFixedSolGeneratedPlanets((rows as Array<GeneratedPlanet & { resource_ids?: string[] }>).map(hydrateGeneratedPlanet), renderLibrary as PlanetRenderLibraryRecord[])) });
+    const hydratedRows = withFixedSolGeneratedPlanets((rows as Array<GeneratedPlanet & { resource_ids?: string[] }>).map(hydrateGeneratedPlanet), renderLibrary as PlanetRenderLibraryRecord[])
+      .map((planet) => ({ ...planet, deepPlanetData: ensurePlanetDeepData(planet) }));
+    return NextResponse.json({ rows: sortRows(hydratedRows) });
   } catch (error) {
     const message = errorMessage(error, "Could not load generated planets.");
     return NextResponse.json({ error: message }, { status: 500 });
@@ -186,7 +197,9 @@ export async function POST(request: Request) {
       });
     }
 
-    return NextResponse.json({ row: { ...planetWithLibraryRender, ...row } as GeneratedPlanet }, { status: 201 });
+    const savedPlanet = { ...planetWithLibraryRender, ...row } as GeneratedPlanet;
+    savedPlanet.deepPlanetData = ensurePlanetDeepData(savedPlanet);
+    return NextResponse.json({ row: savedPlanet }, { status: 201 });
   } catch (error) {
     console.error("Planet generation failed", error);
     const message = errorMessage(error, "Could not generate planet.");

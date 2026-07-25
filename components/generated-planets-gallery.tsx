@@ -4,6 +4,7 @@ import { useMemo, useState, type CSSProperties } from "react";
 import { Download, ImageIcon, Orbit, Plus, Search, Sparkles, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CanonicalIndex } from "@/components/ui/workspace";
+import { PlanetDeepDataEditor, type PlanetDetailTabId } from "@/components/planet-deep-data-editor";
 import { PLANET_CLASS_MODEL } from "@/lib/planets/class-model";
 import { normalizePlanetRarity } from "@/lib/planets/rarity";
 import { hasLockedPlanetRender } from "@/lib/planets/render-lock";
@@ -308,6 +309,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
   const [variantMenuPlanetId, setVariantMenuPlanetId] = useState("");
   const [error, setError] = useState("");
   const [selectedPlanet, setSelectedPlanet] = useState<GeneratedPlanet | null>(null);
+  const [selectedPlanetTab, setSelectedPlanetTab] = useState<PlanetDetailTabId>("overview");
   const [lightboxImage, setLightboxImage] = useState<{ url: string; alt: string } | null>(null);
 
   const filteredRows = useMemo(() => {
@@ -361,6 +363,31 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
     }
   }
 
+  function openPlanet(row: GeneratedPlanet) {
+    setSelectedPlanet(row);
+    setSelectedPlanetTab("overview");
+  }
+
+  function closePlanet() {
+    setSelectedPlanet(null);
+    setSelectedPlanetTab("overview");
+  }
+
+  async function savePlanetDeepData(deepPlanetData: NonNullable<GeneratedPlanet["deepPlanetData"]>) {
+    if (!selectedPlanet) return;
+    const response = await fetch(`/api/planets/${encodeURIComponent(selectedPlanet.id)}`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ deepPlanetData })
+    });
+    const payload = await readPayload<{ row?: GeneratedPlanet; error?: string; issues?: unknown[] }>(response);
+    if (!response.ok || !payload.row) {
+      throw new Error(payload.error ?? "Could not save planet deep data.");
+    }
+    setRows((currentRows) => currentRows.map((row) => row.id === payload.row!.id ? payload.row! : row));
+    setSelectedPlanet(payload.row);
+  }
+
   async function generateNewPlanet() {
     setLoading(true);
     setError("");
@@ -388,13 +415,13 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
 
       if (payload.row) {
         setRows((currentRows) => [payload.row!, ...currentRows.filter((current) => current.id !== payload.row!.id)]);
-        setSelectedPlanet(payload.row);
+        openPlanet(payload.row);
         if (!hasLockedPlanetRender(payload.row) && autoRenderProceduralPlanets) {
           void renderPlanet(payload.row, "procedural", { openVariantMenu: false });
         }
       } else {
         await refreshRows();
-        setSelectedPlanet(null);
+        closePlanet();
       }
     } catch (caughtError) {
       setError(caughtError instanceof Error ? caughtError.message : String(caughtError || "Could not generate planet."));
@@ -428,7 +455,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
       }
 
       if (selectedPlanet?.id === row.id) {
-        setSelectedPlanet(null);
+        closePlanet();
       }
 
       await refreshRows();
@@ -572,7 +599,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                 .filter(Boolean)
                 .join(" ")}
               style={planetCardStyle(row)}
-              onClick={() => setSelectedPlanet(row)}
+              onClick={() => openPlanet(row)}
             >
               <div className="relative grid h-36 place-items-center overflow-hidden border-b border-cyan-300/10 bg-black p-4">
                 {heroVariant || row.image_url ? (
@@ -721,7 +748,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
       ) : null}
 
       {selectedPlanet ? (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/90 p-4 backdrop-blur-md" onClick={() => setSelectedPlanet(null)}>
+        <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/90 p-4 backdrop-blur-md" onClick={closePlanet}>
           <section
             className={["max-h-[92vh] w-full max-w-6xl overflow-y-auto rounded-md border bg-[#07101e] shadow-glow", rarityAnimationClass(selectedPlanet)]
               .filter(Boolean)
@@ -738,11 +765,17 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                 <h3 className="mt-2 text-3xl font-bold text-white">{selectedPlanet.name}</h3>
                 <p className="mt-1 font-mono text-xs text-slate-500">{selectedPlanet.seed}</p>
               </div>
-              <Button className="h-9 w-9 px-0" onClick={() => setSelectedPlanet(null)} type="button">
+              <Button className="h-9 w-9 px-0" onClick={closePlanet} type="button">
                 <X className="h-4 w-4" />
               </Button>
             </div>
-            <div className="grid gap-5 p-5 xl:grid-cols-[1fr_0.9fr]">
+            <PlanetDeepDataEditor
+              planet={selectedPlanet}
+              activeTab={selectedPlanetTab}
+              onTabChange={setSelectedPlanetTab}
+              onSave={savePlanetDeepData}
+            />
+            {selectedPlanetTab === "overview" ? <div className="grid gap-5 p-5 xl:grid-cols-[1fr_0.9fr]">
               <div className="space-y-5">
                 <div className="relative grid aspect-square max-h-[64vh] place-items-center overflow-hidden rounded-md border border-cyan-300/10 bg-black p-6">
                   {largestVariant(selectedPlanet) || selectedPlanet.image_url ? (
@@ -884,7 +917,7 @@ export function GeneratedPlanetsGallery({ initialRows }: { initialRows: Generate
                   </div>
                 ))}
               </div>
-            </div>
+            </div> : null}
           </section>
         </div>
       ) : null}

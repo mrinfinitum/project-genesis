@@ -1,3 +1,5 @@
+import type { PlanetDeepData } from "@/types/planet-deep-data";
+
 export type Status = string;
 
 export type ResearchBranch = {
@@ -519,6 +521,8 @@ export type GeneratedPlanet = {
     path: string;
     filename: string;
   }> | null;
+  deepPlanetData?: PlanetDeepData;
+  deep_planet_data?: PlanetDeepData;
   created_at: string;
   notes: string;
 };

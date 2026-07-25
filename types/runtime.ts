@@ -1,4 +1,5 @@
 import type { EnvironmentComposerContract } from "@/lib/environment-composer";
+import type { PlanetDataScreenContract, PlanetDeepDataFramework } from "@/types/planet-deep-data";
 
 export type RuntimeMetadata = {
   schemaVersion: string;
@@ -3451,6 +3452,8 @@ export type GameRuntimeData = {
   balance: BalanceDefinition;
   galaxyEngineContract: GalaxyEnginePresentationContract;
   planetOpportunityProfiles: PlanetOpportunityProfile[];
+  planetDeepDataFramework: PlanetDeepDataFramework;
+  planetDataScreenContract: PlanetDataScreenContract;
   planetExplorationProgression: PlanetExplorationProgressionContract;
   planetDevelopmentFramework: PlanetDevelopmentFrameworkContract;
   civilizationProgressionFramework: CivilizationProgressionFrameworkContract;

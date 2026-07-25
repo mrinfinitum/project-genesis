@@ -9,6 +9,7 @@ import {
 } from "@/lib/planets/class-model";
 import { generatePlanetRarity } from "@/lib/planets/rarity";
 import { buildOrbitViewPrompt } from "@/lib/planets/artwork-prompts";
+import { generatePlanetDeepData } from "@/lib/planets/deep-data";
 import { normalizePlanetResourceProfile, resourceNamesForIds, type NormalizedPlanetResourceProfile } from "@/lib/resources/planet-resource-profiles";
 import { ResourceService, resourceNames } from "@/lib/resources/service";
 import { RESOURCE_PROFILE_GENERATION_VERSION } from "@/lib/resources/taxonomy";
@@ -680,6 +681,7 @@ export function generatePlanet(rules: PlanetVariable[], existingCount: number, r
     notes: normalizedResourceProfile?.notes ?? ""
   };
 
+  generatedPlanet.deepPlanetData = generatePlanetDeepData(generatedPlanet, options.resourceProfiles);
   generatedPlanet.orbit_view_prompt = buildOrbitViewPrompt(generatedPlanet);
   generatedPlanet.image_prompt = generatedPlanet.orbit_view_prompt;
 

@@ -43,6 +43,8 @@ import { RESOURCE_PRIMARY_CATEGORIES } from "@/lib/resources/taxonomy";
 import { planetExplorationProgression, timeActionContract, validatePlanetExplorationProgression, validateTimeActionContract } from "@/lib/planets/exploration-progression";
 import { planetDevelopmentFramework, validatePlanetDevelopmentFramework } from "@/lib/planets/development-framework";
 import { canonicalPlanetOpportunityProfiles, validatePlanetOpportunityProfiles } from "@/lib/planets/opportunity-profiles";
+import { planetDataScreenContract, planetDeepDataFramework } from "@/lib/planets/deep-data";
+import { PLANET_DEEP_DATA_SCHEMA_VERSION } from "@/types/planet-deep-data";
 import { populationSimulationFramework, validatePopulationSimulationFramework } from "@/lib/population/framework";
 import { engineEraNavigationOverrides, resolveEraNavigationProfile, supportedEraNavigationBoundaryModes, supportedEraNavigationDashboardModes } from "@/lib/runtime/client-profiles";
 import { galaxyEngineContractVersion, galaxyEnginePresentationContract, validateGalaxyEnginePresentationContract } from "@/lib/runtime/galaxy-engine-contract";
@@ -68,7 +70,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 54;
+export const gameRuntimeContentVersion = 55;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -114,6 +116,8 @@ export type RobloxRuntimeExportPayload = {
   timeActionContract: GameRuntimeData["timeActionContract"];
   actionSystem: GameRuntimeData["actionSystem"];
   planetOpportunityProfiles: GameRuntimeData["planetOpportunityProfiles"];
+  planetDeepDataFramework: GameRuntimeData["planetDeepDataFramework"];
+  planetDataScreenContract: GameRuntimeData["planetDataScreenContract"];
   planetExplorationProgression: GameRuntimeData["planetExplorationProgression"];
   planetDevelopmentFramework: GameRuntimeData["planetDevelopmentFramework"];
   civilizationProgressionFramework: GameRuntimeData["civilizationProgressionFramework"];
@@ -808,6 +812,29 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
       validationRules: [...runtimeData.actionSystem.validationRules].sort()
     },
     planetOpportunityProfiles: [...runtimeData.planetOpportunityProfiles].sort(byId),
+    planetDeepDataFramework: {
+      ...runtimeData.planetDeepDataFramework,
+      planetTypeProfiles: [...runtimeData.planetDeepDataFramework.planetTypeProfiles].sort((left, right) => left.canonicalId.localeCompare(right.canonicalId)),
+      resourceDistributionProfiles: [...runtimeData.planetDeepDataFramework.resourceDistributionProfiles].sort((left, right) => left.profileId.localeCompare(right.profileId)),
+      atmosphereProfiles: [...runtimeData.planetDeepDataFramework.atmosphereProfiles].sort(byId),
+      climateProfiles: [...runtimeData.planetDeepDataFramework.climateProfiles].sort(byId),
+      weatherProfiles: [...runtimeData.planetDeepDataFramework.weatherProfiles].sort(byId),
+      seasonProfiles: [...runtimeData.planetDeepDataFramework.seasonProfiles].sort(byId),
+      biomeProfiles: [...runtimeData.planetDeepDataFramework.biomeProfiles].sort(byId),
+      geologyProfiles: [...runtimeData.planetDeepDataFramework.geologyProfiles].sort(byId),
+      hydrosphereProfiles: [...runtimeData.planetDeepDataFramework.hydrosphereProfiles].sort(byId),
+      hazardProfiles: [...runtimeData.planetDeepDataFramework.hazardProfiles].sort(byId),
+      discoveryStates: [...runtimeData.planetDeepDataFramework.discoveryStates],
+      validationRules: [...runtimeData.planetDeepDataFramework.validationRules],
+      dataScreenContract: {
+        ...runtimeData.planetDeepDataFramework.dataScreenContract,
+        sections: [...runtimeData.planetDeepDataFramework.dataScreenContract.sections].sort((left, right) => left.sortOrder - right.sortOrder || left.sectionId.localeCompare(right.sectionId))
+      }
+    },
+    planetDataScreenContract: {
+      ...runtimeData.planetDataScreenContract,
+      sections: [...runtimeData.planetDataScreenContract.sections].sort((left, right) => left.sortOrder - right.sortOrder || left.sectionId.localeCompare(right.sectionId))
+    },
     planetExplorationProgression: {
       ...runtimeData.planetExplorationProgression,
       pipeline: [...runtimeData.planetExplorationProgression.pipeline].sort(byOrderThenId),
@@ -2159,6 +2186,18 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   for (const issue of validatePlanetOpportunityProfiles(runtimeData.planetOpportunityProfiles)) {
     issues.push(issue);
   }
+  if (runtimeData.planetDeepDataFramework.schemaVersion !== PLANET_DEEP_DATA_SCHEMA_VERSION || !runtimeData.planetDeepDataFramework.planetTypeProfiles.length) {
+    issues.push({ severity: "error", code: "planet_deep_data_framework_invalid", message: "Planet deep-data framework must expose a supported schema and existing Planet Type profiles.", records: ["planetDeepDataFramework"] });
+  }
+  if (runtimeData.planetDataScreenContract.id !== runtimeData.planetDeepDataFramework.dataScreenContract.id) {
+    issues.push({ severity: "error", code: "planet_data_screen_contract_mismatch", message: "Planet Data Screen contract must match the canonical planet deep-data framework.", records: ["planetDataScreenContract"] });
+  }
+  const deepFrameworkInvalidResources = runtimeData.planetDeepDataFramework.resourceDistributionProfiles.flatMap((profile) =>
+    profile.resourceRules.filter((rule) => !resourceIds.has(rule.resourceId)).map((rule) => rule.resourceId)
+  );
+  if (deepFrameworkInvalidResources.length) {
+    issues.push({ severity: "error", code: "planet_deep_data_resource_invalid", message: "Planet resource distribution profiles reference missing canonical resources.", records: [...new Set(deepFrameworkInvalidResources)] });
+  }
   for (const issue of validatePlanetExplorationProgression(runtimeData.planetExplorationProgression, runtimeData.timeActionContract)) {
     issues.push(issue);
   }
@@ -2402,6 +2441,8 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     timeActionContract: sorted.timeActionContract,
     actionSystem: sorted.actionSystem,
     planetOpportunityProfiles: sorted.planetOpportunityProfiles,
+    planetDeepDataFramework: sorted.planetDeepDataFramework,
+    planetDataScreenContract: sorted.planetDataScreenContract,
     planetExplorationProgression: sorted.planetExplorationProgression,
     planetDevelopmentFramework: sorted.planetDevelopmentFramework,
     civilizationProgressionFramework: sorted.civilizationProgressionFramework,
@@ -2486,6 +2527,15 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
   }
   for (const issue of validatePlanetOpportunityProfiles(payload.planetOpportunityProfiles)) {
     issues.push(issue);
+  }
+  if (payload.planetDeepDataFramework.schemaVersion !== PLANET_DEEP_DATA_SCHEMA_VERSION || payload.planetDataScreenContract.id !== payload.planetDeepDataFramework.dataScreenContract.id) {
+    issues.push({ severity: "error", code: "planet_deep_data_framework_invalid", message: "Roblox planet deep-data and Planet Data Screen contracts must match the canonical runtime.", records: ["planetDeepDataFramework", "planetDataScreenContract"] });
+  }
+  const invalidPlanetDistributionResources = payload.planetDeepDataFramework.resourceDistributionProfiles.flatMap((profile) =>
+    profile.resourceRules.filter((rule) => !resourceIds.has(rule.resourceId)).map((rule) => rule.resourceId)
+  );
+  if (invalidPlanetDistributionResources.length) {
+    issues.push({ severity: "error", code: "planet_deep_data_resource_invalid", message: "Roblox planet resource distributions reference missing resources.", records: [...new Set(invalidPlanetDistributionResources)] });
   }
   for (const issue of validatePlanetExplorationProgression(payload.planetExplorationProgression, payload.timeActionContract)) {
     issues.push(issue);
@@ -2705,6 +2755,8 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     timeActionContract,
     actionSystem: canonicalActionSystem,
     planetOpportunityProfiles: canonicalPlanetOpportunityProfiles,
+    planetDeepDataFramework,
+    planetDataScreenContract,
     planetExplorationProgression,
     planetDevelopmentFramework,
     civilizationProgressionFramework,
@@ -2780,6 +2832,8 @@ export async function getGameRuntimeData() {
     timeActionContract: base.timeActionContract,
     actionSystem: base.actionSystem,
     planetOpportunityProfiles: base.planetOpportunityProfiles,
+    planetDeepDataFramework: base.planetDeepDataFramework,
+    planetDataScreenContract: base.planetDataScreenContract,
     planetExplorationProgression: base.planetExplorationProgression,
     planetDevelopmentFramework: base.planetDevelopmentFramework,
     civilizationProgressionFramework: base.civilizationProgressionFramework,
@@ -3004,6 +3058,8 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     timeActionContract: base.timeActionContract,
     actionSystem: base.actionSystem,
     planetOpportunityProfiles: base.planetOpportunityProfiles,
+    planetDeepDataFramework: base.planetDeepDataFramework,
+    planetDataScreenContract: base.planetDataScreenContract,
     planetExplorationProgression: base.planetExplorationProgression,
     planetDevelopmentFramework: base.planetDevelopmentFramework,
     civilizationProgressionFramework: base.civilizationProgressionFramework,

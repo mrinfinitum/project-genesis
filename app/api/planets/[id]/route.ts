@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { deleteRow, getRows, upsertRow } from "@/lib/data";
-import { isFixedSolGeneratedPlanet } from "@/lib/planets/fixed-sol-planets";
+import { ensurePlanetDeepData, validatePlanetDeepData } from "@/lib/planets/deep-data";
+import { fixedSolGeneratedPlanets, isFixedSolGeneratedPlanet } from "@/lib/planets/fixed-sol-planets";
 import type { GeneratedPlanet } from "@/types/schema";
 
 export const runtime = "nodejs";
@@ -39,7 +40,7 @@ export async function PATCH(request: Request, { params }: Params) {
   try {
     const patch = (await request.json().catch(() => ({}))) as Partial<GeneratedPlanet>;
     const rows = (await getRows("generated_planets")) as GeneratedPlanet[];
-    const existing = rows.find((row) => row.id === id);
+    const existing = rows.find((row) => row.id === id) ?? fixedSolGeneratedPlanets().find((row) => row.id === id);
 
     if (!existing) {
       return NextResponse.json({ error: "Planet not found." }, { status: 404 });
@@ -54,15 +55,30 @@ export async function PATCH(request: Request, { params }: Params) {
       "surface_landscape_notes",
       "image_url",
       "image_prompt",
-      "image_status"
+      "image_status",
+      "deepPlanetData"
     ]);
     const cleanPatch = Object.fromEntries(Object.entries(patch).filter(([key]) => allowedKeys.has(key)));
+    if (patch.deepPlanetData) {
+      const validationIssues = validatePlanetDeepData(patch.deepPlanetData);
+      const errors = validationIssues.filter((issue) => issue.severity === "error");
+      if (errors.length) {
+        return NextResponse.json(
+          { error: "Planet deep data failed validation.", issues: validationIssues },
+          { status: 400 }
+        );
+      }
+      cleanPatch.deep_planet_data = patch.deepPlanetData;
+      delete cleanPatch.deepPlanetData;
+    }
     const row = await upsertRow("generated_planets", {
       ...existing,
       ...cleanPatch
     });
 
-    return NextResponse.json({ row });
+    const savedPlanet = { ...existing, ...row, deepPlanetData: (row.deep_planet_data ?? patch.deepPlanetData ?? existing.deep_planet_data) } as GeneratedPlanet;
+    savedPlanet.deepPlanetData = ensurePlanetDeepData(savedPlanet);
+    return NextResponse.json({ row: savedPlanet });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Could not update planet.";
     return NextResponse.json({ error: message }, { status: 500 });
