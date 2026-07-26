@@ -8,6 +8,7 @@ import { canonicalActionSystem, validateActionSystem } from "@/lib/actions/actio
 import { ARCHITECTURE_VERSION } from "@/lib/architecture/version";
 import { getAssetProductionRuntimeOverrides } from "@/lib/assets/asset-production";
 import { getAppliedGameArtAssets } from "@/lib/assets/game-art-import";
+import { planetDetailScreenRuntimeContract, validatePlanetDetailScreenContract } from "@/lib/assets/planet-detail-screen";
 import { buildBuildingClassifications, canonicalBuildingLibrary, canonicalBuildingTaxonomy } from "@/lib/buildings/taxonomy";
 import { civilizationProgressionFramework, validateCivilizationProgressionFramework } from "@/lib/civilization/progression-framework";
 import { colonizationFramework, validateColonizationFramework } from "@/lib/colonization/framework";
@@ -70,7 +71,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 56;
+export const gameRuntimeContentVersion = 57;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -127,6 +128,7 @@ export type RobloxRuntimeExportPayload = {
   missionExpeditionFramework: GameRuntimeData["missionExpeditionFramework"];
   dynamicEventFramework: GameRuntimeData["dynamicEventFramework"];
   environmentComposerContract: GameRuntimeData["environmentComposerContract"];
+  planetDetailScreen: NonNullable<GameRuntimeData["planetDetailScreen"]>;
   resources: ResourceDefinition[];
   buildingTaxonomy: GameRuntimeData["buildingTaxonomy"];
   buildingLibrary: GameRuntimeData["buildingLibrary"];
@@ -785,6 +787,7 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
         layers: [...profile.layers].sort((left, right) => left.order - right.order || left.id.localeCompare(right.id))
       }))
     },
+    planetDetailScreen: runtimeData.planetDetailScreen,
     timeActionContract: {
       ...runtimeData.timeActionContract,
       stateMachine: [...runtimeData.timeActionContract.stateMachine],
@@ -2133,6 +2136,13 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
       records: issue.records
     });
   }
+  if (!runtimeData.planetDetailScreen) {
+    issues.push({ severity: "error", code: "planet_detail_screen_missing", message: "Planet Detail Screen runtime contract is required.", records: ["planetDetailScreen"] });
+  } else {
+    for (const message of validatePlanetDetailScreenContract(runtimeData.planetDetailScreen)) {
+      issues.push({ severity: "error", code: "planet_detail_screen_invalid", message, records: ["planetDetailScreen"] });
+    }
+  }
 
   if (!runtimeData.metadata.schemaVersion) {
     issues.push({ severity: "error", code: "metadata_missing", message: "metadata.schemaVersion is required.", records: ["metadata"] });
@@ -2463,6 +2473,7 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     missionExpeditionFramework: sorted.missionExpeditionFramework,
     dynamicEventFramework: sorted.dynamicEventFramework,
     environmentComposerContract: sorted.environmentComposerContract,
+    planetDetailScreen: sorted.planetDetailScreen ?? planetDetailScreenRuntimeContract,
     resources: sorted.resources,
     buildingTaxonomy: sorted.buildingTaxonomy,
     buildingLibrary: sorted.buildingLibrary,
@@ -2616,6 +2627,9 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
       message: issue.message,
       records: issue.records
     });
+  }
+  for (const message of validatePlanetDetailScreenContract(payload.planetDetailScreen)) {
+    issues.push({ severity: "error", code: "planet_detail_screen_invalid", message, records: ["planetDetailScreen"] });
   }
   validateBuildingTaxonomyRuntime(payload, issues);
 
@@ -2777,6 +2791,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     missionExpeditionFramework,
     dynamicEventFramework,
     environmentComposerContract: environmentComposerRuntimeContract(),
+    planetDetailScreen: planetDetailScreenRuntimeContract,
     resources: ResourceService.catalog.map(resourceToRuntime),
     resourceTaxonomy: { version: ResourceService.taxonomyVersion, profileGenerationVersion: ResourceService.profileGenerationVersion, primaryCategories: RESOURCE_PRIMARY_CATEGORIES, validationStatus: ResourceService.validate().status },
     resourceMigrations: ResourceService.migrations.map((migration) => ({ ...migration })),
@@ -2854,6 +2869,7 @@ export async function getGameRuntimeData() {
     missionExpeditionFramework: base.missionExpeditionFramework,
     dynamicEventFramework: base.dynamicEventFramework,
     environmentComposerContract: base.environmentComposerContract,
+    planetDetailScreen: base.planetDetailScreen,
     resourceTaxonomy: base.resourceTaxonomy,
     resourceMigrations: base.resourceMigrations,
     resources: base.resources,
@@ -3080,6 +3096,7 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     missionExpeditionFramework: base.missionExpeditionFramework,
     dynamicEventFramework: base.dynamicEventFramework,
     environmentComposerContract: base.environmentComposerContract,
+    planetDetailScreen: base.planetDetailScreen,
     resourceTaxonomy: base.resourceTaxonomy,
     resourceMigrations: base.resourceMigrations,
     resources: base.resources,

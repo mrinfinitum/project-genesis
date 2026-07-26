@@ -3,6 +3,7 @@ import { defaultAiAgentVariantId, getAiAgentRuntimeModules } from "@/lib/ai-agen
 import { aiLibraryAssignmentRoles, aiLibraryCategories, aiLibraryPersonalities, aiLibraryRarities, aiLibraryVoices, canonicalAiLibraryAgents, validateCanonicalAiLibrary } from "@/lib/ai-agents/foundations";
 import { canonicalActionSystem, validateActionSystem } from "@/lib/actions/action-system";
 import { ARCHITECTURE_VERSION } from "@/lib/architecture/version";
+import { planetDetailScreenRuntimeContract, validatePlanetDetailScreenContract } from "@/lib/assets/planet-detail-screen";
 import { buildBuildingClassifications, canonicalBuildingLibrary, canonicalBuildingTaxonomy } from "@/lib/buildings/taxonomy";
 import { civilizationProgressionFramework, validateCivilizationProgressionFramework } from "@/lib/civilization/progression-framework";
 import { colonizationFramework, validateColonizationFramework } from "@/lib/colonization/framework";
@@ -234,6 +235,7 @@ type CanonicalModules = {
   mission_expedition_framework: typeof missionExpeditionFramework;
   dynamic_event_framework: typeof dynamicEventFramework;
   environment_composer_contract: ReturnType<typeof environmentComposerRuntimeContract>;
+  planet_detail_screen: typeof planetDetailScreenRuntimeContract;
   economy_usage_relationships: ReturnType<typeof buildEconomyUsageRelationships>;
   inventory_resource_metadata: ReturnType<typeof buildInventoryResourceMetadata>;
   economy_schemas: typeof economySchemas;
@@ -702,6 +704,7 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
     mission_expedition_framework: missionExpeditionFramework,
     dynamic_event_framework: dynamicEventFramework,
     environment_composer_contract: environmentComposerRuntimeContract(),
+    planet_detail_screen: planetDetailScreenRuntimeContract,
     economy_usage_relationships: buildEconomyUsageRelationships(data),
     inventory_resource_metadata: buildInventoryResourceMetadata(data),
     economy_schemas: economySchemas,
@@ -1677,6 +1680,9 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
   for (const issue of validateEnvironmentComposerContract(modules.environment_composer_contract)) {
     addIssue(issues, issue.severity, `environment_composer_${issue.code}`, issue.message, issue.records);
   }
+  for (const message of validatePlanetDetailScreenContract(modules.planet_detail_screen)) {
+    addIssue(issues, "error", "planet_detail_screen_invalid", message, ["planet_detail_screen"]);
+  }
   validateEconomy(issues, modules);
   for (const issue of validateLaborGenerationFramework(modules.labor_generation_framework)) {
     addIssue(issues, issue.severity, issue.code, issue.message, issue.records);
@@ -1864,6 +1870,7 @@ function compactModules(modules: CanonicalModules) {
     mission_expedition_framework: modules.mission_expedition_framework,
     dynamic_event_framework: modules.dynamic_event_framework,
     environment_composer_contract: modules.environment_composer_contract,
+    planet_detail_screen: modules.planet_detail_screen,
     discovery_journal: modules.discovery_journal,
     timeline_events: modules.timeline_events,
     explorer_schemas: modules.explorer_schemas,

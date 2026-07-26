@@ -32,6 +32,7 @@
     "verify:star-system-backgrounds": "tsx scripts/verify-star-system-backgrounds.ts",
     "verify:environment-composer": "tsx scripts/verify-environment-composer.ts",
     "verify:environment-layer-generators": "tsx scripts/verify-environment-layer-generators.ts",
+    "verify:planet-detail-screen": "tsx scripts/verify-planet-detail-screen.ts",
     "export:procedural-universe-fixtures": "tsx scripts/export-procedural-universe-fixtures.ts"
   },
   "dependencies": {

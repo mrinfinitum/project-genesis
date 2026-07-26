@@ -22,6 +22,7 @@ import {
   LayoutDashboard,
   Map,
   Menu,
+  Monitor,
   Orbit,
   PackageCheck,
   Radar,
@@ -100,6 +101,14 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/environment-composer/scenes", label: "Scene Composer", icon: GalleryHorizontalEnd },
       { href: "/environment-composer/themes", label: "Themes", icon: WandSparkles },
       { href: "/environment-composer/export", label: "Runtime Export", icon: FileText }
+    ]
+  },
+  {
+    id: "creative-production",
+    label: "Creative Production",
+    icon: Monitor,
+    items: [
+      { href: "/creative-production/ui-screens/planet-detail", label: "Planet Detail Screen", icon: Monitor }
     ]
   },
   {

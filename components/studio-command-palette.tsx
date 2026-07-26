@@ -29,6 +29,7 @@ const commandSeeds: PaletteResult[] = [
   { id: "command:resource-library", type: "Library", title: "Open Resource Library", subtitle: "Create and manage canonical resources", href: "/resource-catalog" },
   { id: "command:create-resource", type: "Library Action", title: "Create Resource", subtitle: "Open Resource Library creation tools", href: "/resource-catalog?action=create" },
   { id: "command:ai-agents", type: "Library", title: "Open AI Agent Libraries", subtitle: "Browse agents, terminals, personalities, memory, and dialogue", href: "/ai-agents" },
+  { id: "command:planet-detail-screen", type: "Creative Production", title: "Open Planet Detail Screen", subtitle: "PSD source, slice contracts, runtime preview, and artpack export", href: "/creative-production/ui-screens/planet-detail" },
   { id: "command:encyclopedia", type: "Library", title: "Open Encyclopedia", subtitle: "Canonical knowledge browser", href: "/encyclopedia" },
   { id: "command:environment-layers", type: "Environment Composer", title: "Open Layer Library", subtitle: "Reusable authored environment layers", href: "/environment-composer/layers" },
   { id: "command:universe-layer-generator", type: "Environment Composer", title: "Open Universe Layer Generator", subtitle: "Produce the six canonical universe layers", href: "/universe-layer-generator" },

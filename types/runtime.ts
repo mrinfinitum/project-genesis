@@ -3463,6 +3463,7 @@ export type GameRuntimeData = {
   missionExpeditionFramework: MissionExpeditionFrameworkContract;
   dynamicEventFramework: DynamicEventFrameworkContract;
   environmentComposerContract: EnvironmentComposerContract;
+  planetDetailScreen?: import("@/lib/assets/planet-detail-screen").PlanetDetailScreenRuntimeContract;
   clientProfiles: ClientProfiles;
 };
 

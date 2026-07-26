@@ -1,0 +1,69 @@
+import { auditPlanetDetailScreenSources } from "@/lib/assets/planet-detail-screen-server";
+import {
+  PLANET_DETAIL_SCREEN_VERSION,
+  buildPlanetDetailArtpackDescriptor,
+  planetDetailScreenRuntimeContract,
+  validatePlanetDetailScreenContract
+} from "@/lib/assets/planet-detail-screen";
+import { buildGameEngineExport, type EngineTarget } from "@/lib/export/game-engine";
+import {
+  buildCanonicalRuntimeExportPayload,
+  buildRobloxRuntimePayload,
+  gameRuntimeContentVersion
+} from "@/lib/runtime/game-runtime";
+
+function assert(condition: unknown, message: string): asserts condition {
+  if (!condition) throw new Error(message);
+}
+
+async function main() {
+  const contractIssues = validatePlanetDetailScreenContract();
+  assert(contractIssues.length === 0, contractIssues.join("\n"));
+  assert(planetDetailScreenRuntimeContract.slices.length === 25, "Planet Detail Screen must publish 25 canonical slices.");
+  assert(planetDetailScreenRuntimeContract.manifest.assets.planetHero === "sprites/PlanetHero_Backplate.png", "Planet Hero manifest mapping is invalid.");
+  assert(planetDetailScreenRuntimeContract.referenceResolution.join("x") === "1536x1024", "Reference resolution must remain 1536 x 1024.");
+
+  const audit = await auditPlanetDetailScreenSources();
+  assert(audit.summary.sourceCount === 4, "Expected four canonical Planet Detail Screen source PSDs.");
+  assert(audit.summary.sourceFilesPresent === 4, `Expected all four source PSDs, found ${audit.summary.sourceFilesPresent}.`);
+
+  const publicContract = JSON.stringify(planetDetailScreenRuntimeContract);
+  assert(!/\/Users\/|source-masters|studio-private:\/\/|\.psd|\.psb/i.test(publicContract), "Public Planet Detail Screen contract leaks private source data.");
+
+  const descriptor = buildPlanetDetailArtpackDescriptor();
+  assert(descriptor.files["PlanetDetailScreen/PlanetDetailScreen.manifest.json"], "Artpack descriptor is missing its screen manifest.");
+  assert(descriptor.files["PlanetDetailScreen/sprites/index.json"].length === 25, "Artpack sprite index is incomplete.");
+
+  const runtime = await buildCanonicalRuntimeExportPayload();
+  assert(gameRuntimeContentVersion >= 57, "Planet Detail Screen runtime publication requires contentVersion 57 or newer.");
+  assert(runtime.metadata.validationStatus === "Ready", `Canonical runtime is ${runtime.metadata.validationStatus}.`);
+  assert(runtime.planetDetailScreen?.version === PLANET_DETAIL_SCREEN_VERSION, "Canonical runtime is missing Planet Detail Screen.");
+
+  const roblox = buildRobloxRuntimePayload(runtime);
+  assert(roblox.planetDetailScreen.version === PLANET_DETAIL_SCREEN_VERSION, "Roblox runtime is missing Planet Detail Screen.");
+
+  const targets: EngineTarget[] = ["generic", "roblox", "web", "unity", "unreal", "godot"];
+  const exports = await Promise.all(targets.map(async (target) => ({ target, payload: await buildGameEngineExport(target) })));
+  for (const { target, payload } of exports) {
+    assert(payload.validation.status === "Ready", `${target} export is ${payload.validation.status}.`);
+    assert(payload.canonical.planet_detail_screen.version === PLANET_DETAIL_SCREEN_VERSION, `${target} export is missing Planet Detail Screen.`);
+    assert(!/\/Users\/|source-masters|studio-private:\/\/|\.psd|\.psb/i.test(JSON.stringify(payload.canonical.planet_detail_screen)), `${target} export leaks private source data.`);
+  }
+
+  console.log(JSON.stringify({
+    status: "Ready",
+    contentVersion: runtime.metadata.contentVersion,
+    checksum: runtime.metadata.checksum,
+    contractVersion: PLANET_DETAIL_SCREEN_VERSION,
+    sourceFiles: audit.summary.sourceFilesPresent,
+    slices: audit.summary.sliceCount,
+    mappedSlices: audit.summary.mappedSlices,
+    pendingSourceMappings: audit.summary.pendingSlices,
+    engineExports: Object.fromEntries(exports.map(({ target, payload }) => [target, payload.validation.status]))
+  }, null, 2));
+}
+
+main().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
