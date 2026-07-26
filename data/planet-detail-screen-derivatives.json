@@ -1,0 +1,177 @@
+{
+  "schemaVersion": "psd-game-derivatives-v1",
+  "records": [
+    {
+      "id": "biome-environment",
+      "displayName": "Biome Environment",
+      "status": "published",
+      "source": {
+        "width": 1319,
+        "height": 1189,
+        "checksum": "2c442b2e4c95e0d0f1ee210446ac251eca1d0d586c96e5a6aaab99bf4c7a07a8",
+        "bytes": 9821219
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/ui/screens/planet-detail/biome-environment.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 1319,
+          "height": 1189,
+          "bytes": 962535,
+          "checksum": "f62ce36216bee376172e9190a660514354f82992fdcd4967f052fd8d71df415c"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/ui/screens/planet-detail/biome-environment-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1319,
+          "height": 1189,
+          "bytes": 8702,
+          "checksum": "9bb79e32cf8e97e6999c0e7778a1790c44b3be3fc81f084cb568af848d66350e"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/ui/screens/planet-detail/biome-environment-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 480,
+          "height": 270,
+          "bytes": 976,
+          "checksum": "b3e703ed09c281e02b1bd8e3d3290eba59bc46ff3742fe5d7eecfa9a6a8d1b61"
+        }
+      ]
+    },
+    {
+      "id": "creatures-life",
+      "displayName": "Creatures & Life",
+      "status": "published",
+      "source": {
+        "width": 2119,
+        "height": 1300,
+        "checksum": "21f70893503b054601b0634e3b31bc7b75db3af3cbc97f092ac7dcaca5afc7ca",
+        "bytes": 16496210
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/ui/screens/planet-detail/creatures-life.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 2119,
+          "height": 1300,
+          "bytes": 1656682,
+          "checksum": "72b4ac010b6e0474b6fff435b6fde92e776a3c8036a3bbb7384103b54362ee8f"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/ui/screens/planet-detail/creatures-life-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 982,
+          "bytes": 7488,
+          "checksum": "d1b4fe0fdc78031e6e0b43c60cf661244971f1e59ee1ad2b2ac815afd3daa68f"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/ui/screens/planet-detail/creatures-life-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 480,
+          "height": 270,
+          "bytes": 878,
+          "checksum": "adc236a578edb3d3fe0e6ed1c629301f5d910972fd9a017b463952f318081293"
+        }
+      ]
+    },
+    {
+      "id": "resources",
+      "displayName": "Resources",
+      "status": "published",
+      "source": {
+        "width": 1449,
+        "height": 1404,
+        "checksum": "50308ac7ddcdde284e756809eaf629eb2aad402082bfe6f7f3d148125c8169bb",
+        "bytes": 13865270
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/ui/screens/planet-detail/resources.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 1449,
+          "height": 1404,
+          "bytes": 1457514,
+          "checksum": "ecfe34ce2ed62f962175ab4e94f32fd00cd21b28a1f3c564382026c839346337"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/ui/screens/planet-detail/resources-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1449,
+          "height": 1404,
+          "bytes": 10286,
+          "checksum": "35b4143135a511e05fe12543717f146c32a2b8524a89933a307c8a47b4278734"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/ui/screens/planet-detail/resources-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 480,
+          "height": 270,
+          "bytes": 960,
+          "checksum": "60553ed55e96395f787c90725a04b1c35f4f012a33df5fb3b3f2961cbca87b1e"
+        }
+      ]
+    },
+    {
+      "id": "weather-climate",
+      "displayName": "Weather & Climate",
+      "status": "published",
+      "source": {
+        "width": 1888,
+        "height": 1256,
+        "checksum": "3c36954f50b80eb9ae5a0c641a8cd8d0a8b2a74c347136d730a504861fdef909",
+        "bytes": 16788382
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/ui/screens/planet-detail/weather-climate.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 1888,
+          "height": 1256,
+          "bytes": 1704055,
+          "checksum": "8daae229c45f8eeb9477341c258b2ecd606658cdfc76fb212f5e7064be39aa22"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/ui/screens/planet-detail/weather-climate-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 1064,
+          "bytes": 11168,
+          "checksum": "f70c1c257a69f5334924504acb95c63aea690925e101010ad3b9f51626589649"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/ui/screens/planet-detail/weather-climate-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 480,
+          "height": 270,
+          "bytes": 1180,
+          "checksum": "bbf3b0e61e90d9034767e3d811fa2cb3bc28de24118a60b5422ee32e9cf7565a"
+        }
+      ]
+    }
+  ]
+}

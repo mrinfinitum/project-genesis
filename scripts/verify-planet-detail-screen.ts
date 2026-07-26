@@ -1,3 +1,6 @@
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import sharp from "sharp";
 import { auditPlanetDetailScreenSources } from "@/lib/assets/planet-detail-screen-server";
 import {
   PLANET_DETAIL_SCREEN_VERSION,
@@ -26,6 +29,14 @@ async function main() {
   const audit = await auditPlanetDetailScreenSources();
   assert(audit.summary.sourceCount === 4, "Expected four canonical Planet Detail Screen source PSDs.");
   assert(audit.summary.sourceFilesPresent === 4, `Expected all four source PSDs, found ${audit.summary.sourceFilesPresent}.`);
+  assert(audit.sources.every((source) => source.derivativeStatus === "Published"), "Every Planet Detail PSD must have published game derivatives.");
+  assert(audit.sources.every((source) => source.gamePngPath && source.previewPath && source.thumbnailPath), "Every Planet Detail PSD derivative set must be complete.");
+  for (const source of audit.sources) {
+    const gamePngPath = path.join(process.cwd(), "public", source.gamePngPath!);
+    const metadata = await sharp(await readFile(gamePngPath)).metadata();
+    assert(metadata.format === "png", `${source.id} game derivative is not PNG.`);
+    assert(metadata.width === source.width && metadata.height === source.height, `${source.id} game PNG must retain native PSD dimensions.`);
+  }
 
   const publicContract = JSON.stringify(planetDetailScreenRuntimeContract);
   assert(!/\/Users\/|source-masters|studio-private:\/\/|\.psd|\.psb/i.test(publicContract), "Public Planet Detail Screen contract leaks private source data.");
@@ -35,7 +46,7 @@ async function main() {
   assert(descriptor.files["PlanetDetailScreen/sprites/index.json"].length === 25, "Artpack sprite index is incomplete.");
 
   const runtime = await buildCanonicalRuntimeExportPayload();
-  assert(gameRuntimeContentVersion >= 57, "Planet Detail Screen runtime publication requires contentVersion 57 or newer.");
+  assert(gameRuntimeContentVersion >= 58, "PSD game derivative publication requires contentVersion 58 or newer.");
   assert(runtime.metadata.validationStatus === "Ready", `Canonical runtime is ${runtime.metadata.validationStatus}.`);
   assert(runtime.planetDetailScreen?.version === PLANET_DETAIL_SCREEN_VERSION, "Canonical runtime is missing Planet Detail Screen.");
 
@@ -59,6 +70,7 @@ async function main() {
     slices: audit.summary.sliceCount,
     mappedSlices: audit.summary.mappedSlices,
     pendingSourceMappings: audit.summary.pendingSlices,
+    gameReadyPsdSources: audit.sources.filter((source) => source.derivativeStatus === "Published").length,
     engineExports: Object.fromEntries(exports.map(({ target, payload }) => [target, payload.validation.status]))
   }, null, 2));
 }

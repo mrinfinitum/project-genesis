@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
+import derivativeData from "@/data/planet-detail-screen-derivatives.json";
 
-export const PLANET_DETAIL_SCREEN_VERSION = "1.0.0";
+export const PLANET_DETAIL_SCREEN_VERSION = "1.1.0";
 export const PLANET_DETAIL_SCREEN_ID = "planet-detail" as const;
 
 export type PlanetDetailScreenSlice = {
@@ -55,7 +56,19 @@ export type PlanetDetailScreenRuntimeContract = {
     version: string;
     referenceResolution: [number, number];
     assets: Record<string, string>;
+    sourceArtwork: Record<string, string>;
   };
+  sourceArtwork: Array<{
+    id: string;
+    displayName: string;
+    status: "published";
+    width: number;
+    height: number;
+    gamePngPath: string;
+    previewPath: string;
+    thumbnailPath: string;
+    gamePngChecksum: string;
+  }>;
   slices: PlanetDetailScreenSlice[];
   theme: "noveris";
   hash: string;
@@ -123,6 +136,24 @@ const manifestAssets = Object.fromEntries(
   sliceSeeds.map((slice) => [slice.key, `sprites/${slice.id}.png`])
 );
 
+const sourceArtwork = derivativeData.records.map((record) => {
+  const gamePng = record.derivatives.find((item) => item.id === "game_png");
+  const preview = record.derivatives.find((item) => item.id === "web_preview");
+  const thumbnail = record.derivatives.find((item) => item.id === "library_thumbnail");
+  if (!gamePng || !preview || !thumbnail) throw new Error(`Incomplete PSD derivative set: ${record.id}.`);
+  return {
+    id: record.id,
+    displayName: record.displayName,
+    status: "published" as const,
+    width: record.source.width,
+    height: record.source.height,
+    gamePngPath: gamePng.path,
+    previewPath: preview.path,
+    thumbnailPath: thumbnail.path,
+    gamePngChecksum: gamePng.checksum
+  };
+});
+
 const contractWithoutHash = {
   id: "planet-detail-screen" as const,
   screen: PLANET_DETAIL_SCREEN_ID as "planet-detail",
@@ -162,8 +193,10 @@ const contractWithoutHash = {
     screen: PLANET_DETAIL_SCREEN_ID as "planet-detail",
     version: PLANET_DETAIL_SCREEN_VERSION,
     referenceResolution: [1536, 1024] as [number, number],
-    assets: manifestAssets
+    assets: manifestAssets,
+    sourceArtwork: Object.fromEntries(sourceArtwork.map((asset) => [asset.id, asset.gamePngPath]))
   },
+  sourceArtwork,
   slices: planetDetailScreenSlices,
   theme: "noveris" as const,
   validationStatus: "Ready" as const
@@ -190,6 +223,18 @@ export function validatePlanetDetailScreenContract(
   }
   if (contract.slices.length !== 25) {
     issues.push(`Expected 25 canonical slices, received ${contract.slices.length}.`);
+  }
+  if (contract.sourceArtwork.length !== 4) {
+    issues.push(`Expected four published source artwork derivatives, received ${contract.sourceArtwork.length}.`);
+  }
+  for (const artwork of contract.sourceArtwork) {
+    if (!artwork.gamePngPath.endsWith(".png")) issues.push(`Game derivative must be PNG: ${artwork.id}.`);
+    if (!artwork.previewPath.endsWith(".webp") || !artwork.thumbnailPath.endsWith(".webp")) {
+      issues.push(`Web derivatives must be WebP: ${artwork.id}.`);
+    }
+    if (!artwork.width || !artwork.height || !artwork.gamePngChecksum) {
+      issues.push(`Published artwork metadata is incomplete: ${artwork.id}.`);
+    }
   }
   for (const slice of contract.slices) {
     if (ids.has(slice.id)) issues.push(`Duplicate slice ID: ${slice.id}.`);
@@ -232,6 +277,7 @@ export function buildPlanetDetailArtpackDescriptor() {
         exportProfile: planetDetailScreenRuntimeContract.exportProfile,
         validationStatus: planetDetailScreenRuntimeContract.validationStatus
       },
+      "PlanetDetailScreen/source-artwork/index.json": planetDetailScreenRuntimeContract.sourceArtwork,
       "PlanetDetailScreen/atlas/PlanetDetailScreen.spriteatlas.json": {
         ...planetDetailScreenRuntimeContract.exportProfile.spriteAtlas,
         sprites: planetDetailScreenRuntimeContract.slices.map((slice) => slice.runtimePath)

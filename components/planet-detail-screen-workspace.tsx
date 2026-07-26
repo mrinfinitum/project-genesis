@@ -66,6 +66,19 @@ function SourcePanel({ audit }: Pick<Props, "audit">) {
       <div className="grid gap-3 xl:grid-cols-2">
         {audit.sources.map((source) => (
           <article key={source.id} className="rounded-md border border-slate-800 bg-slate-950/65 p-4">
+            <div className="mb-4 aspect-video overflow-hidden rounded border border-slate-800 bg-slate-950">
+              {source.previewPath ? (
+                <img
+                  src={source.previewPath}
+                  alt={`${source.displayName} game derivative preview`}
+                  className="h-full w-full object-contain"
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : (
+                <div className="flex h-full items-center justify-center text-xs font-bold uppercase text-slate-600">Preview Pending</div>
+              )}
+            </div>
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <h3 className="truncate text-base font-bold text-white">{source.displayName}</h3>
@@ -75,7 +88,7 @@ function SourcePanel({ audit }: Pick<Props, "audit">) {
                 "shrink-0 rounded border px-2 py-1 text-[11px] font-bold uppercase",
                 source.exists ? "border-emerald-800 text-emerald-200" : "border-red-900 text-red-200"
               )}>
-                {source.exists ? "Present" : "Missing"}
+                {source.derivativeStatus === "Published" ? "Game Ready" : source.exists ? "Present" : "Missing"}
               </span>
             </div>
             <dl className="mt-4 grid grid-cols-2 gap-2 text-sm sm:grid-cols-3">
@@ -83,6 +96,15 @@ function SourcePanel({ audit }: Pick<Props, "audit">) {
               <div><dt className="text-xs uppercase text-slate-500">Size</dt><dd className="mt-1 text-slate-200">{bytes(source.bytes)}</dd></div>
               <div><dt className="text-xs uppercase text-slate-500">Layers</dt><dd className="mt-1 text-slate-200">{source.layerNames.length}</dd></div>
             </dl>
+            {source.gamePngPath && (
+              <a
+                className="mt-3 inline-flex text-xs font-bold text-cyan-200 hover:text-white"
+                href={source.gamePngPath}
+                download
+              >
+                Download native PNG
+              </a>
+            )}
             <div className="mt-3 truncate font-mono text-[11px] text-slate-500" title={source.checksum ?? undefined}>
               SHA-256 {source.checksum ?? "Unavailable"}
             </div>

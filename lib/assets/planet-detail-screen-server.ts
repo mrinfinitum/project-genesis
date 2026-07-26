@@ -6,6 +6,7 @@ import {
   planetDetailScreenRuntimeContract,
   type PlanetDetailScreenSlice
 } from "@/lib/assets/planet-detail-screen";
+import derivativeData from "@/data/planet-detail-screen-derivatives.json";
 
 const SOURCE_ROOT = path.join(process.cwd(), "source-masters", "ui", "screens", "planet-detail");
 
@@ -34,6 +35,10 @@ export type PlanetDetailSourceAudit = {
   bytes: number | null;
   checksum: string | null;
   layerNames: string[];
+  gamePngPath: string | null;
+  previewPath: string | null;
+  thumbnailPath: string | null;
+  derivativeStatus: "Published" | "Missing";
 };
 
 export type PlanetDetailSliceAudit = PlanetDetailScreenSlice & {
@@ -47,6 +52,8 @@ export async function auditPlanetDetailScreenSources() {
   const sources: PlanetDetailSourceAudit[] = await Promise.all(
     sourceDocuments.map(async (source) => {
       const sourcePath = path.join(SOURCE_ROOT, source.filename);
+      const published = derivativeData.records.find((record) => record.id === source.id);
+      const derivativePath = (id: string) => published?.derivatives.find((item) => item.id === id)?.path ?? null;
       try {
         const [buffer, fileStat] = await Promise.all([readFile(sourcePath), stat(sourcePath)]);
         const psd = readPsd(buffer, { skipLayerImageData: true, skipCompositeImageData: true });
@@ -59,7 +66,11 @@ export async function auditPlanetDetailScreenSources() {
           height: psd.height,
           bytes: fileStat.size,
           checksum: createHash("sha256").update(buffer).digest("hex"),
-          layerNames: collectLayerNames(psd.children)
+          layerNames: collectLayerNames(psd.children),
+          gamePngPath: derivativePath("game_png"),
+          previewPath: derivativePath("web_preview"),
+          thumbnailPath: derivativePath("library_thumbnail"),
+          derivativeStatus: derivativePath("game_png") ? "Published" as const : "Missing" as const
         };
       } catch {
         return {
@@ -71,7 +82,11 @@ export async function auditPlanetDetailScreenSources() {
           height: null,
           bytes: null,
           checksum: null,
-          layerNames: []
+          layerNames: [],
+          gamePngPath: derivativePath("game_png"),
+          previewPath: derivativePath("web_preview"),
+          thumbnailPath: derivativePath("library_thumbnail"),
+          derivativeStatus: derivativePath("game_png") ? "Published" as const : "Missing" as const
         };
       }
     })

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { mkdir, writeFile } from "fs/promises";
 import nodePath from "path";
 import { getRows, upsertRow } from "@/lib/data";
+import { generatePsdGameDerivatives, type PsdGameDerivativeSet } from "@/lib/assets/psd-game-derivatives";
 import { createSupabaseAdminClient, getAssetBucketName, hasSupabaseServerConfig } from "@/lib/supabase/server";
 import type { TableName } from "@/types/schema";
 
@@ -58,6 +59,55 @@ function isFileLike(value: FormDataEntryValue | null): value is File {
   return Boolean(value && typeof value === "object" && "arrayBuffer" in value && "name" in value && "type" in value);
 }
 
+function derivativeStoragePath(assetId: string, derivativeId: string, filename: string) {
+  const extension = filename.endsWith(".png") ? "png" : "webp";
+  return `${assetId}/exports/${derivativeId}.${extension}`;
+}
+
+async function publishLocalDerivatives(assetId: string, generated: PsdGameDerivativeSet) {
+  const bucket = getAssetBucketName();
+  const localRoot = nodePath.join(process.cwd(), "public", "uploads", bucket);
+  return Promise.all(generated.derivatives.map(async (item) => {
+    const storagePath = derivativeStoragePath(assetId, item.id, item.filename);
+    const localPath = nodePath.join(localRoot, storagePath);
+    await mkdir(nodePath.dirname(localPath), { recursive: true });
+    await writeFile(localPath, item.buffer);
+    return {
+      id: item.id,
+      url: `/uploads/${bucket}/${storagePath}`,
+      path: storagePath,
+      width: item.width,
+      height: item.height,
+      bytes: item.bytes,
+      checksum: item.checksum,
+      mimeType: item.mimeType
+    };
+  }));
+}
+
+async function publishSupabaseDerivatives(assetId: string, generated: PsdGameDerivativeSet) {
+  const bucket = getAssetBucketName();
+  const supabase = createSupabaseAdminClient();
+  return Promise.all(generated.derivatives.map(async (item) => {
+    const storagePath = derivativeStoragePath(assetId, item.id, item.filename);
+    const { error } = await supabase.storage.from(bucket).upload(storagePath, item.buffer, {
+      contentType: item.mimeType,
+      upsert: true
+    });
+    if (error) throw new Error(error.message);
+    return {
+      id: item.id,
+      url: supabase.storage.from(bucket).getPublicUrl(storagePath).data.publicUrl,
+      path: storagePath,
+      width: item.width,
+      height: item.height,
+      bytes: item.bytes,
+      checksum: item.checksum,
+      mimeType: item.mimeType
+    };
+  }));
+}
+
 export async function POST(request: Request) {
   const formData = await request.formData();
   const file = formData.get("file");
@@ -95,14 +145,24 @@ export async function POST(request: Request) {
     ? `game-assets/source/${safeId(safeSourceTable)}/${safeId(assetId)}/${timestamp}-${safeFilename(file.name)}`
     : `${assetId}/exports/${timestamp}-${safeFilename(file.name)}`;
   const buffer = Buffer.from(await file.arrayBuffer());
+  let generated: PsdGameDerivativeSet | null = null;
+  if (uploadKind === "source" && extension === ".psd") {
+    try {
+      generated = await generatePsdGameDerivatives(buffer, { basename: safeId(fileBaseName(file.name).toLowerCase()) });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "PSD derivative generation failed.";
+      return NextResponse.json({ error: message }, { status: 422 });
+    }
+  }
   const assetName = String(formData.get("asset_name") ?? file.name).trim() || file.name;
-  const buildAssetPatch = (fileUrl: string) =>
+  const buildAssetPatch = (fileUrl: string, gamePngUrl?: string) =>
     uploadKind === "source"
       ? {
           source_file_url: fileUrl,
           source_file_type: extension.replace(".", "").toUpperCase(),
-          export_status: "Source Uploaded",
-          status: "Source Uploaded"
+          ...(gamePngUrl ? { file_url: gamePngUrl } : {}),
+          export_status: gamePngUrl ? "Game Derivatives Generated" : "Source Uploaded",
+          status: gamePngUrl ? "Generated" : "Source Uploaded"
         }
       : {
           file_url: fileUrl,
@@ -119,6 +179,8 @@ export async function POST(request: Request) {
     await writeFile(localPath, buffer);
 
     const fileUrl = uploadKind === "source" ? `studio-private://assets/${storagePath}` : `/uploads/${bucket}/${storagePath}`;
+    const publishedDerivatives = generated ? await publishLocalDerivatives(assetId, generated) : [];
+    const gamePngUrl = publishedDerivatives.find((item) => item.id === "game_png")?.url;
     const existingAssets = await getRows("assets");
     const existingAsset = existingAssets.find((row) => row.id === assetId) ?? {};
     const assetRow = await upsertRow("assets", {
@@ -129,8 +191,8 @@ export async function POST(request: Request) {
       category: assetCategoryFor(safeSourceTable, uploadKind),
       prompt: "",
       roblox_asset_id: "",
-      ...buildAssetPatch(fileUrl),
-      notes: `${uploadKind === "source" ? "Source PSD" : "PNG export"} uploaded locally from ${safeSourceTable}${sourceId ? `:${sourceId}` : ""}.`
+      ...buildAssetPatch(fileUrl, gamePngUrl),
+      notes: `${uploadKind === "source" ? "Source PSD" : "PNG export"} uploaded locally from ${safeSourceTable}${sourceId ? `:${sourceId}` : ""}.${generated ? ` Native ${generated.source.width}x${generated.source.height} game PNG, Web preview, and library thumbnail generated automatically.` : ""}`
     });
 
     if (sourceTableHasAssetId(safeSourceTable) && sourceId) {
@@ -142,21 +204,23 @@ export async function POST(request: Request) {
       });
 
       return NextResponse.json({
-        file_url: uploadKind === "source" ? undefined : fileUrl,
+        file_url: gamePngUrl ?? (uploadKind === "source" ? undefined : fileUrl),
         source_file_url: uploadKind === "source" ? fileUrl : undefined,
         asset_id: assetId,
         storage: "local",
         path: storagePath,
+        derivatives: publishedDerivatives,
         row
       });
     }
 
     return NextResponse.json({
-      file_url: uploadKind === "source" ? undefined : fileUrl,
+      file_url: gamePngUrl ?? (uploadKind === "source" ? undefined : fileUrl),
       source_file_url: uploadKind === "source" ? fileUrl : undefined,
       asset_id: assetId,
       storage: "local",
       path: storagePath,
+      derivatives: publishedDerivatives,
       row: assetRow
     });
   }
@@ -173,6 +237,8 @@ export async function POST(request: Request) {
 
   const { data: publicUrlData } = uploadKind === "source" ? { data: { publicUrl: `studio-private://supabase/${bucket}/${storagePath}` } } : supabase.storage.from(bucket).getPublicUrl(storagePath);
   const fileUrl = publicUrlData.publicUrl;
+  const publishedDerivatives = generated ? await publishSupabaseDerivatives(assetId, generated) : [];
+  const gamePngUrl = publishedDerivatives.find((item) => item.id === "game_png")?.url;
 
   const { error: assetUpsertError } = await supabase.from("assets").upsert({
     id: assetId,
@@ -181,8 +247,8 @@ export async function POST(request: Request) {
     category: assetCategoryFor(safeSourceTable, uploadKind),
     prompt: "",
     roblox_asset_id: "",
-    ...buildAssetPatch(fileUrl),
-    notes: `${uploadKind === "source" ? "Source PSD" : "PNG export"} uploaded from ${safeSourceTable}${sourceId ? `:${sourceId}` : ""}.`
+    ...buildAssetPatch(fileUrl, gamePngUrl),
+    notes: `${uploadKind === "source" ? "Source PSD" : "PNG export"} uploaded from ${safeSourceTable}${sourceId ? `:${sourceId}` : ""}.${generated ? ` Native ${generated.source.width}x${generated.source.height} game PNG, Web preview, and library thumbnail generated automatically.` : ""}`
   });
 
   if (assetUpsertError) {
@@ -197,10 +263,11 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({
-      file_url: uploadKind === "source" ? undefined : fileUrl,
+      file_url: gamePngUrl ?? (uploadKind === "source" ? undefined : fileUrl),
       source_file_url: uploadKind === "source" ? fileUrl : undefined,
       asset_id: assetId,
       path: storagePath,
+      derivatives: publishedDerivatives,
       row
     });
   }
@@ -211,5 +278,5 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: updateError.message, file_url: fileUrl, path: storagePath }, { status: 500 });
   }
 
-  return NextResponse.json({ file_url: fileUrl, source_file_url: uploadKind === "source" ? fileUrl : undefined, asset_id: assetId, path: storagePath, row });
+  return NextResponse.json({ file_url: gamePngUrl ?? fileUrl, source_file_url: uploadKind === "source" ? fileUrl : undefined, asset_id: assetId, path: storagePath, derivatives: publishedDerivatives, row });
 }

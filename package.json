@@ -33,6 +33,7 @@
     "verify:environment-composer": "tsx scripts/verify-environment-composer.ts",
     "verify:environment-layer-generators": "tsx scripts/verify-environment-layer-generators.ts",
     "verify:planet-detail-screen": "tsx scripts/verify-planet-detail-screen.ts",
+    "generate:psd-game-derivatives": "tsx scripts/generate-psd-game-derivatives.ts",
     "export:procedural-universe-fixtures": "tsx scripts/export-procedural-universe-fixtures.ts"
   },
   "dependencies": {

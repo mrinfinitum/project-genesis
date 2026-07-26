@@ -120,6 +120,17 @@ source-masters/
 - Use the Environment Composer semantic asset ID in derivative metadata, not a
   machine-specific source path.
 
+## Game-use derivatives
+
+- PSD files remain private canonical masters and are never referenced by a game client.
+- Studio PSD uploads automatically generate a native-resolution lossless PNG, a
+  WebP preview, and a 480x270 library thumbnail.
+- Raster masters are never upscaled beyond their source dimensions.
+- Game clients consume the published derivative URL and checksum, never the PSD
+  filename or a local filesystem path.
+- Planet Detail Screen masters can be regenerated with
+  `npm run generate:psd-game-derivatives`.
+
 ## Organize local masters
 
 Preview the migration:
