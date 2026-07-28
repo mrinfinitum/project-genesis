@@ -15,6 +15,11 @@ function main() {
   assert(starSystemBackgroundTemplateSpec.minimumDesktop.width === 3840, "PSD template must publish the 3840px minimum desktop width.");
   assert(starSystemBackgroundTemplateSpec.requiredLayerGroups.includes("00_GUIDES_DO_NOT_EXPORT"), "PSD template must include required guide layer groups.");
   assert(canonicalStarSystemBackgrounds.every((record) => record.sourceFormat === "psd"), "Every authoring record must retain PSD as the source format.");
+  const assignments = canonicalStarSystemBackgrounds.flatMap((record) => record.assignedSystemIds);
+  assert(new Set(assignments).size === assignments.length, "Environment paintings must never be reused across star systems.");
+  const gameChecksums = canonicalStarSystemBackgrounds.map((record) => record.derivatives.find((derivative) => derivative.targetId === "desktop_png")?.checksum);
+  assert(new Set(gameChecksums).size === gameChecksums.length, "Pixel-identical environment paintings must not be assigned as separate system art.");
+  assert(canonicalStarSystemBackgrounds.some((record) => record.assignedSystemIds.includes("system-sol")), "Sol must resolve its exact environment painting.");
 
   const contractIssues = validateGalaxyEnginePresentationContract(galaxyEnginePresentationContract);
   const contractErrors = contractIssues.filter((issue) => issue.severity === "error");

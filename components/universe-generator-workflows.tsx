@@ -906,7 +906,7 @@ function normalizeGalaxySector(galaxy: GalaxyNode, sector: SectorNode, sectorInd
   if (!galaxy.is_unlimited || sector.is_fixed) return sector;
   const galaxySlug = galaxySeedSlug(galaxy);
   const sectorSeed = `PROJECT-GENESIS:${galaxySlug}:sector-${sectorIndex}`;
-  const sectorName = sectorIndex === 0 && isMilkyWay(galaxy) ? "Local Bubble" : `${sector.sector_name.replace(/-\d+$/, "")}-${String(sectorIndex).padStart(4, "0")}`;
+  const sectorName = sectorIndex === 0 && isMilkyWay(galaxy) ? "Orion Spur" : `${sector.sector_name.replace(/-\d+$/, "")}-${String(sectorIndex).padStart(4, "0")}`;
 
   return {
     ...sector,
@@ -1839,7 +1839,7 @@ function galaxySeedModel(card: GalaxyCardState): GalaxySeedModel {
   const rarity = sectors.find((sector) => ["Genesis", "Relic", "Mythic", "Legendary"].includes(sector.sector.sector_rarity))?.sector.sector_rarity ?? (milkyWay ? "Common" : "Uncommon");
   const galaxyClass = milkyWay ? "Spiral" : galaxy.galaxy_type.replace(" Galaxy", "");
   const galaxyScale = milkyWay ? "Mythic" : galaxy.galaxy_size === "Large" ? "Vast" : galaxy.galaxy_size === "Small" ? "Local" : galaxy.galaxy_size === "Starting Galaxy" ? "Mythic" : "Regional";
-  const startingSector = milkyWay ? "Local Bubble" : sectors[0]?.sector.sector_name ?? "None";
+  const startingSector = milkyWay ? "Orion Spur" : sectors[0]?.sector.sector_name ?? "None";
   const resourceBias = sectorModels[0]?.resourceBias ?? `${galaxyDna.resourceRichness} Resources`;
   const anomalyDensity = galaxyDna.anomalyDensity;
   const discoveryDisplay = milkyWay ? "<0.0001%" : sectors.length ? `${discoveryPercent}%` : "0%";

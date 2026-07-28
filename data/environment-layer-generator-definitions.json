@@ -120,19 +120,19 @@
         {
           "id": "galaxy-01-far-stars",
           "number": 1,
-          "name": "Far Stars",
+          "name": "Environment Painting",
           "layerType": "far-stars",
           "prefix": "GFS",
-          "folder": "source-masters/environments/galaxy/01_far-stars/",
-          "runtimeExportFolder": "source-masters/exports/web/environments/galaxy/01_far-stars/",
+          "folder": "source-masters/galaxies/environment-painting/",
+          "runtimeExportFolder": "source-masters/exports/web/galaxies/environment-painting/",
           "output": {
             "width": 3840,
             "height": 2160,
             "aspectRatio": "16:9",
             "transparency": "opaque"
           },
-          "purpose": "Create a restrained far-star background for the NOVERIS galaxy view.",
-          "canonicalPrompt": "Create a restrained far-star background for the NOVERIS galaxy view.\n\nShow only tiny distant stars on an even deep navy-black field.\n\nThe central area must remain quiet so the primary galaxy can become the unmistakable focal point.\n\nUse sparse natural distribution, subtle color-temperature variation, and generous negative space.\n\nNo vignette.\n\nNo darkened corners.\n\nNo circular or radial gradients.\n\nNo galaxy, nebula, planets, dust clouds, lens flare, large bright stars, grid, labels, UI, borders, or central focal point.\n\n3840 × 2160, 16:9."
+          "purpose": "Create the dark, sparse environment painting behind the interactive NOVERIS galaxy view.",
+          "canonicalPrompt": "Create a premium deep-space environment painting for the NOVERIS galaxy view.\n\nThis is a quiet production plate behind an interactive galaxy, not concept art, key art, or a wallpaper.\n\nKeep the image very dark and low exposure, using near-black, deep midnight navy, and only the faintest restrained cool-blue variation.\n\nApproximately 90–95% of the frame should read as uninterrupted dark negative space.\n\nUse a sparse, natural distribution of mostly tiny, dim, distant stars. Stars should feel embedded at immense depth rather than sprinkled decoratively across the surface.\n\nKeep bright and medium stars exceptionally rare. Do not create luminous anchor points, obvious constellations, clusters, or a uniform star pattern.\n\nLeave a broad, calm, naturally sharp central field so the interactive galaxy remains the only visual focus added by the Game.\n\nAllow only a barely perceptible increase in soft, out-of-focus stellar depth near the extreme upper and lower edges. The transition must be gradual, irregular, and optically natural.\n\nDo not create a visible horizontal focus strip, center band, hard blur boundary, symmetrical blur zone, or miniature effect.\n\nNo galaxy.\n\nNo recognizable Milky Way.\n\nNo nebula.\n\nNo molecular clouds.\n\nNo dust bands.\n\nNo planets.\n\nNo lens flare.\n\nNo bloom.\n\nNo vignette or artificially darkened corners.\n\nNo radial gradient.\n\nNo grid, labels, interface, borders, or central focal point.\n\nThe first impression should be darkness, silence, and scale. Fine stellar detail should emerge only after the viewer looks for it.\n\n3840 × 2160, 16:9."
         },
         {
           "id": "galaxy-02-galaxy-disc",
@@ -291,25 +291,25 @@
     },
     {
       "id": "sector",
-      "name": "Sector Layer Generator",
+      "name": "Galactic Region Layer Generator",
       "route": "/sector-layer-generator",
-      "sourceRoot": "source-masters/environments/sector/",
+      "sourceRoot": "source-masters/galactic-regions/",
       "layers": [
         {
           "id": "sector-01-deep-star-background",
           "number": 1,
-          "name": "Deep Star Background",
+          "name": "Environment Painting",
           "layerType": "deep-star-background",
           "prefix": "SDS",
-          "folder": "source-masters/environments/sector/01_deep-stars/",
-          "runtimeExportFolder": "source-masters/exports/web/environments/sector/01_deep-stars/",
+          "folder": "source-masters/galactic-regions/environment-painting/",
+          "runtimeExportFolder": "source-masters/exports/web/galactic-regions/environment-painting/",
           "output": {
             "width": 3840,
             "height": 2160,
             "aspectRatio": "16:9",
             "transparency": "opaque"
           },
-          "purpose": "Create a premium deep-star background for the NOVERIS sector map.",
+          "purpose": "Create the restrained environment painting behind the interactive NOVERIS sector view.",
           "canonicalPrompt": "Create a premium deep-star background for the NOVERIS sector map.\n\nShow a sparse field of tiny distant stars on an even deep navy-black background.\n\nUse subtle natural variation in brightness and color temperature.\n\nPreserve generous negative space and a readable center for interactive star systems.\n\nDo not add vignette, darkened corners, radial gradients, nebula, galaxy, clusters, planets, bright focal stars, grid, routes, labels, UI, lens flare, or borders.\n\n3840 × 2160, 16:9."
         },
         {
@@ -479,16 +479,16 @@
           "name": "Environment Painting",
           "layerType": "environment-painting",
           "prefix": "EP",
-          "folder": "source-masters/environments/star-system/01_environment-painting/",
-          "runtimeExportFolder": "source-masters/exports/web/environments/star-system/01_environment-painting/",
+          "folder": "source-masters/star-systems/environment-painting/",
+          "runtimeExportFolder": "source-masters/exports/web/star-systems/environment-painting/",
           "output": {
             "width": 3840,
             "height": 2160,
             "aspectRatio": "16:9",
             "transparency": "opaque"
           },
-          "purpose": "Create the production-locked astronomical matte painting used behind every interactive NOVERIS star system.",
-          "canonicalPrompt": "Create a premium astronomical matte painting for the science-fiction game NOVERIS.\n\nThis is a reusable production background that sits behind an interactive star system.\n\nIt is not concept art.\n\nIt is not key art.\n\nIt is not a wallpaper.\n\nIt is not the focal point.\n\nIt is simply the quiet universe surrounding a future star system.\n\nThe image should feel like looking into real interstellar space through the eyes of a world-class cinematic environment artist.\n\nThe overwhelming feeling should be silence, scale, loneliness, realism, and wonder.\n\nThe universe should feel unimaginably large.\n\nMost of the composition should consist of quiet deep space.\n\nThe viewer should immediately feel the emptiness before noticing individual details.\n\nUse only subtle traces of distant molecular clouds, faint interstellar dust, barely visible hydrogen emission, and extremely delicate cosmic haze.\n\nThese structures should feel ancient, fragmented, naturally formed, and thousands of light-years away.\n\nDo not create large dramatic nebulae.\n\nDo not create recognizable cloud shapes.\n\nDo not create continuous dust bands.\n\nClouds should dissolve naturally into darkness.\n\nLeave the center of the image almost completely open.\n\nThis space will eventually contain a star, planets, orbit rings, gameplay, and interface elements.\n\nThe environment should quietly support those future elements instead of competing with them.\n\nStars should be understated.\n\nMost stars should be extremely faint.\n\nOnly a very small number should appear brighter.\n\nBright stars should feel rare.\n\nThe viewer should perceive the scale of the universe rather than individual stars.\n\nAvoid decorative star fields.\n\nAvoid obvious star clusters.\n\nAvoid bright anchor points that immediately attract the eye.\n\nIf uncertain, reduce both the number and brightness of visible stars.\n\nUse a restrained astronomical color palette.\n\nDeep black.\n\nMidnight blue.\n\nDark indigo.\n\nSubtle cool violet.\n\nVery faint cyan.\n\nOccasional warm ivory stars.\n\nNatural saturation.\n\nLow contrast.\n\nLighting comes only from distant astronomical objects.\n\nNo bloom.\n\nNo lens flares.\n\nNo god rays.\n\nNo cinematic lighting.\n\nNo glowing edges.\n\nThis image should feel like a real astronomical observation interpreted by a cinematic matte painter rather than fantasy science fiction.\n\nAvoid:\n\nplanets\n\nsuns\n\nmoons\n\ngalaxies\n\nrecognizable Milky Way\n\norbit lines\n\nasteroids\n\nspacecraft\n\nstations\n\nblack holes\n\nconstellations\n\ntext\n\nlogos\n\ninterface elements\n\nborders\n\nframes\n\nartificial vignette\n\ndarkened corners\n\nwallpaper composition\n\nsymmetrical layouts\n\nfantasy nebulae\n\ncolorful smoke\n\nlarge continuous cloud formations\n\nbright focal points\n\nanything that competes with future gameplay\n\nIf this image could be mistaken for a desktop wallpaper, it is too visually busy.\n\nThe final artwork should initially read as vast empty space.\n\nOnly after several moments should the viewer begin to discover the subtle beauty hidden within the darkness.\n\n16:9\n\n3840×2160"
+          "purpose": "Create the production-locked environment painting used behind every interactive NOVERIS star system.",
+          "canonicalPrompt": "Create a premium astronomical matte painting for the science-fiction game NOVERIS.\n\nThis is a reusable production environment painting that sits behind an interactive star system.\n\nIt is not concept art.\n\nIt is not key art.\n\nIt is not a wallpaper.\n\nIt is not the focal point.\n\nIt is simply the quiet universe surrounding a future star system.\n\nThe image should feel like looking into real interstellar space through the eyes of a world-class cinematic environment artist.\n\nThe overwhelming feeling should be silence, scale, loneliness, realism, and wonder.\n\nThe universe should feel unimaginably large.\n\nMost of the composition should consist of quiet deep space.\n\nThe viewer should immediately feel the emptiness before noticing individual details.\n\nUse only subtle traces of distant molecular clouds, faint interstellar dust, barely visible hydrogen emission, and extremely delicate cosmic haze.\n\nThese structures should feel ancient, fragmented, naturally formed, and thousands of light-years away.\n\nDo not create large dramatic nebulae.\n\nDo not create recognizable cloud shapes.\n\nDo not create continuous dust bands.\n\nClouds should dissolve naturally into darkness.\n\nLeave the center of the image almost completely open.\n\nThis space will eventually contain a star, planets, orbit rings, gameplay, and interface elements.\n\nThe environment should quietly support those future elements instead of competing with them.\n\nStars should be understated.\n\nMost stars should be extremely faint.\n\nOnly a very small number should appear brighter.\n\nBright stars should feel rare.\n\nThe viewer should perceive the scale of the universe rather than individual stars.\n\nAvoid decorative star fields.\n\nAvoid obvious star clusters.\n\nAvoid bright anchor points that immediately attract the eye.\n\nIf uncertain, reduce both the number and brightness of visible stars.\n\nUse a restrained astronomical color palette.\n\nDeep black.\n\nMidnight blue.\n\nDark indigo.\n\nSubtle cool violet.\n\nVery faint cyan.\n\nOccasional warm ivory stars.\n\nNatural saturation.\n\nLow contrast.\n\nApply an extremely subtle tilt-shift-style depth treatment.\n\nUse barely perceptible selective-focus falloff only in remote edge detail and the faintest foreground dust.\n\nKeep the central gameplay field naturally sharp and open.\n\nUse a continuous natural depth transition across the frame.\n\nDo not create visible horizontal or vertical focus bands, central blur bands, hard focus seams, or abrupt sharp-to-soft zones in or near the center.\n\nThe effect must reinforce immense astronomical depth and must never make the universe look miniature, toy-like, or artificially blurred.\n\nLighting comes only from distant astronomical objects.\n\nNo bloom.\n\nNo lens flares.\n\nNo god rays.\n\nNo cinematic lighting.\n\nNo glowing edges.\n\nThis image should feel like a real astronomical observation interpreted by a cinematic matte painter rather than fantasy science fiction.\n\nAvoid:\n\nplanets\n\nsuns\n\nmoons\n\ngalaxies\n\nrecognizable Milky Way\n\norbit lines\n\nasteroids\n\nspacecraft\n\nstations\n\nblack holes\n\nconstellations\n\ntext\n\nlogos\n\ninterface elements\n\nborders\n\nframes\n\nartificial vignette\n\ndarkened corners\n\nwallpaper composition\n\nsymmetrical layouts\n\nfantasy nebulae\n\ncolorful smoke\n\nlarge continuous cloud formations\n\nbright focal points\n\nanything that competes with future gameplay\n\nIf this image could be mistaken for a desktop wallpaper, it is too visually busy.\n\nThe final artwork should initially read as vast empty space.\n\nOnly after several moments should the viewer begin to discover the subtle beauty hidden within the darkness.\n\n16:9\n\n3840×2160"
         },
         {
           "id": "starSystem-07-light-rays",

@@ -1,0 +1,465 @@
+{
+  "schemaVersion": "galactic-region-environment-paintings-v1",
+  "records": [
+    {
+      "id": "0002",
+      "galacticRegionId": "sector-galactic-core",
+      "sequence": 2,
+      "displayName": "0002 Environment Painting",
+      "status": "published",
+      "duplicateOf": null,
+      "source": {
+        "width": 5504,
+        "height": 3072,
+        "checksum": "022a16e7093cef4edc35b400e3d77825f55ce284cad91b1fdc3d38c5d6880b19",
+        "bytes": 121418673
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/galactic-regions/0002/environment-painting/environment-painting-0002.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 3840,
+          "height": 2160,
+          "bytes": 9245303,
+          "checksum": "ee5942a1dbf3d39363ede8e3b27d656e7d95f84dd8d7c733c696974e2ea72e46"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/galactic-regions/0002/environment-painting/environment-painting-0002-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 900,
+          "bytes": 30684,
+          "checksum": "2d850d2c0826ad1f99aafa139dcf825ccdd00b53aa0db540b7a4602ad46cd13d"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/galactic-regions/0002/environment-painting/environment-painting-0002-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 288,
+          "bytes": 4854,
+          "checksum": "df2cdedf424add69c6717d222790a3ec9b7b7e1710a11c9ae7375970a7ac3767"
+        }
+      ]
+    },
+    {
+      "id": "0003",
+      "galacticRegionId": "sector-galactic-bar",
+      "sequence": 3,
+      "displayName": "0003 Environment Painting",
+      "status": "published",
+      "duplicateOf": null,
+      "source": {
+        "width": 5504,
+        "height": 3072,
+        "checksum": "b85bf9a79feba5e3ed5cdfe00b55acc74b1c273125447f5192088206ded53bcf",
+        "bytes": 115672802
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/galactic-regions/0003/environment-painting/environment-painting-0003.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 3840,
+          "height": 2160,
+          "bytes": 9190285,
+          "checksum": "d9b0d383cff641cbf56b5eae3418330590ea05f8767bf3778eb5219430ec9c1d"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/galactic-regions/0003/environment-painting/environment-painting-0003-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 900,
+          "bytes": 68126,
+          "checksum": "3daa890930474553507259e35af9683207fdf788279a46fdbc475844256e4477"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/galactic-regions/0003/environment-painting/environment-painting-0003-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 288,
+          "bytes": 8146,
+          "checksum": "8c9f2f06cfa97002cc3ffd550d6fbc6e22099ed4341443a553605bbbf7ab4cf8"
+        }
+      ]
+    },
+    {
+      "id": "0004",
+      "galacticRegionId": "sector-perseus-arm",
+      "sequence": 4,
+      "displayName": "0004 Environment Painting",
+      "status": "published",
+      "duplicateOf": null,
+      "source": {
+        "width": 5504,
+        "height": 3072,
+        "checksum": "f7de13a40e11ea4845833b25a3dec53ceed359118f15ea1918c4ec1e83ebdda4",
+        "bytes": 105763169
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/galactic-regions/0004/environment-painting/environment-painting-0004.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 3840,
+          "height": 2160,
+          "bytes": 7885453,
+          "checksum": "8986402d0ab5a1824eb31505b8ad8e109bba1ccb5818f879e974bbfd7ce469eb"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/galactic-regions/0004/environment-painting/environment-painting-0004-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 900,
+          "bytes": 10632,
+          "checksum": "5059fcfb67c9feabce2ceea4129d32aa4c5646dcec33f43d062156603205f565"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/galactic-regions/0004/environment-painting/environment-painting-0004-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 288,
+          "bytes": 1700,
+          "checksum": "b514a64ef597d4f6b2b09c912fdb864242ca05e2c75ad89a7def01ae61cded3a"
+        }
+      ]
+    },
+    {
+      "id": "0005",
+      "galacticRegionId": "sector-sagittarius-arm",
+      "sequence": 5,
+      "displayName": "0005 Environment Painting",
+      "status": "published",
+      "duplicateOf": null,
+      "source": {
+        "width": 5504,
+        "height": 3072,
+        "checksum": "6df02b860f0adbe1883ce1af6ebf7777d22c951bae967ff50116b76481c1c0e5",
+        "bytes": 115152933
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/galactic-regions/0005/environment-painting/environment-painting-0005.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 3840,
+          "height": 2160,
+          "bytes": 8757295,
+          "checksum": "c2533ef247338143283a7652541d6228818596123b7ef2805a0fb1816d4483bb"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/galactic-regions/0005/environment-painting/environment-painting-0005-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 900,
+          "bytes": 30056,
+          "checksum": "36bb056f6625886c5f1ccb57f4cb4be6d13d974334806cc82ea9330204166c21"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/galactic-regions/0005/environment-painting/environment-painting-0005-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 288,
+          "bytes": 3204,
+          "checksum": "c4ee8a15cf794a16816c69fca4da7c4dfe823d0f63fc7130e18f57c589ace5da"
+        }
+      ]
+    },
+    {
+      "id": "0006",
+      "galacticRegionId": "sector-scutum-centaurus-arm",
+      "sequence": 6,
+      "displayName": "0006 Environment Painting",
+      "status": "published",
+      "duplicateOf": null,
+      "source": {
+        "width": 5504,
+        "height": 3072,
+        "checksum": "a29de8d46273ca431305f91daefe984e606b3af6fc7c1dc6a59b6e7cdb776a77",
+        "bytes": 109431353
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/galactic-regions/0006/environment-painting/environment-painting-0006.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 3840,
+          "height": 2160,
+          "bytes": 8310962,
+          "checksum": "3afa20aa3e940fab62ebcd2b263cabe2a35f8b22fc92fdc75254ddd495fa14f9"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/galactic-regions/0006/environment-painting/environment-painting-0006-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 900,
+          "bytes": 31748,
+          "checksum": "0988f85b4b9cde65f24f8af79a62ac323d85c7088a4d1f9eb20470f7873adb10"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/galactic-regions/0006/environment-painting/environment-painting-0006-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 288,
+          "bytes": 2442,
+          "checksum": "ba5a10d4aa6b4400c8893e88ada87f2bce74c4de337cefa268b05052026beb46"
+        }
+      ]
+    },
+    {
+      "id": "0007",
+      "galacticRegionId": null,
+      "sequence": 7,
+      "displayName": "0007 Environment Painting",
+      "status": "duplicate",
+      "duplicateOf": "0004",
+      "source": {
+        "width": 5504,
+        "height": 3072,
+        "checksum": "ac4dd608bb340c21b988a324a46e18ce582188325bc812019c7c95dc6342a41c",
+        "bytes": 105763177
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/galactic-regions/0007/environment-painting/environment-painting-0007.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 3840,
+          "height": 2160,
+          "bytes": 7885453,
+          "checksum": "8986402d0ab5a1824eb31505b8ad8e109bba1ccb5818f879e974bbfd7ce469eb"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/galactic-regions/0007/environment-painting/environment-painting-0007-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 900,
+          "bytes": 10632,
+          "checksum": "5059fcfb67c9feabce2ceea4129d32aa4c5646dcec33f43d062156603205f565"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/galactic-regions/0007/environment-painting/environment-painting-0007-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 288,
+          "bytes": 1700,
+          "checksum": "b514a64ef597d4f6b2b09c912fdb864242ca05e2c75ad89a7def01ae61cded3a"
+        }
+      ]
+    },
+    {
+      "id": "0008",
+      "galacticRegionId": "sector-norma-arm",
+      "sequence": 8,
+      "displayName": "0008 Environment Painting",
+      "status": "published",
+      "duplicateOf": null,
+      "source": {
+        "width": 5504,
+        "height": 3072,
+        "checksum": "5e758f961afb523ace041aa365445ed5235c358caa19543ca73ff927ca186fbc",
+        "bytes": 105846295
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/galactic-regions/0008/environment-painting/environment-painting-0008.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 3840,
+          "height": 2160,
+          "bytes": 8031418,
+          "checksum": "df0bada8620da76c5caef7ebba59387be04221731e443a9a97cfb0fc4f36ae95"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/galactic-regions/0008/environment-painting/environment-painting-0008-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 900,
+          "bytes": 25486,
+          "checksum": "302c7106ff922b630f26d39afc619232c74adafe80abf976d7d2c9e644ca5f1d"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/galactic-regions/0008/environment-painting/environment-painting-0008-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 288,
+          "bytes": 3536,
+          "checksum": "42c55419af60f58716c3fc2ee6ae15c076f4304ccf8ff3ac15418ca6fa6cb07c"
+        }
+      ]
+    },
+    {
+      "id": "0009",
+      "galacticRegionId": "sector-outer-rim",
+      "sequence": 9,
+      "displayName": "0009 Environment Painting",
+      "status": "published",
+      "duplicateOf": null,
+      "source": {
+        "width": 5504,
+        "height": 3072,
+        "checksum": "b1081c70e7a9052ddb76d5b1122b2ea91646d3e7e2b11c869eabcd9ebcd29eaf",
+        "bytes": 113464314
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/galactic-regions/0009/environment-painting/environment-painting-0009.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 3840,
+          "height": 2160,
+          "bytes": 8442303,
+          "checksum": "c6bbc8f5d85796544f9fc9919e1ef3afbd0c443b20fb6cb4aad44f900f85a26b"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/galactic-regions/0009/environment-painting/environment-painting-0009-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 900,
+          "bytes": 41192,
+          "checksum": "69ff1a35add8cebeed6e9048c4a77fe0a7641984bcbb96bdba6906278dceabd6"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/galactic-regions/0009/environment-painting/environment-painting-0009-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 288,
+          "bytes": 2454,
+          "checksum": "d482c7ff51e07e38cc1695ed69f5ad52b8d90073b800ad460d8d014a0a68159b"
+        }
+      ]
+    },
+    {
+      "id": "0010",
+      "galacticRegionId": "sector-galactic-halo",
+      "sequence": 10,
+      "displayName": "0010 Environment Painting",
+      "status": "published",
+      "duplicateOf": null,
+      "source": {
+        "width": 5504,
+        "height": 3072,
+        "checksum": "837d1214c4fa34055ec2e1276a19af8e106ebedfd7edf59526ac4421c03984ed",
+        "bytes": 119542991
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/galactic-regions/0010/environment-painting/environment-painting-0010.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 3840,
+          "height": 2160,
+          "bytes": 9034527,
+          "checksum": "fe1979a761c368bc6b315c74a26ac43142c5bec5ded2df0f2b8c2fd35cd7b5b2"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/galactic-regions/0010/environment-painting/environment-painting-0010-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 900,
+          "bytes": 31446,
+          "checksum": "35c7947ff1849ac88c2fae8cf9078218f78b26cbf7e2d21f04f7141c678475ac"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/galactic-regions/0010/environment-painting/environment-painting-0010-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 288,
+          "bytes": 2724,
+          "checksum": "73ff61c5f4b6cb3465edbb538a9d767c5cf1d044d0dee9a606ddc8866bcabe27"
+        }
+      ]
+    },
+    {
+      "id": "orion-spur",
+      "galacticRegionId": "sector-local-bubble",
+      "sequence": null,
+      "displayName": "Orion Spur Environment Painting",
+      "status": "published",
+      "duplicateOf": null,
+      "source": {
+        "width": 5504,
+        "height": 3072,
+        "checksum": "692ad776f58273b992af4cf797310b3d85ac2ca874162d78440d8b869858eeb3",
+        "bytes": 83716635
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/galactic-regions/orion-spur/environment-painting/environment-painting-orion-spur.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 3840,
+          "height": 2160,
+          "bytes": 6580886,
+          "checksum": "7c22291ad1a688d3c5095e06ac497794d50395b8922b0292035d4140a982c612"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/galactic-regions/orion-spur/environment-painting/environment-painting-orion-spur-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 900,
+          "bytes": 18472,
+          "checksum": "52ffb095a4fdfee8df82673fd3931fe9986807d0351ce8d05ab30234bbc55d4b"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/galactic-regions/orion-spur/environment-painting/environment-painting-orion-spur-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 288,
+          "bytes": 1810,
+          "checksum": "cdcf7ca860ef6c82a8e161f1b1a35cb0b52fa101f9c8fa858c284ae46e132ce7"
+        }
+      ]
+    }
+  ]
+}

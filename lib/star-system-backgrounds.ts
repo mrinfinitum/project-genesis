@@ -1,5 +1,6 @@
 import type { ImportIssue, RuntimeStarSystemBackground, StarSystemBackgroundRecord, StarSystemBackgroundTemplateSpec, StarSystemVisualProfile } from "@/types/runtime";
 import { generateSector, generateGalaxy, generateStarSystems, generateUniverse } from "@/lib/universe/generator";
+import derivativeData from "@/data/star-system-environment-painting-derivatives.json";
 
 export const starSystemBackgroundContractVersion = "1.0.0";
 export const starSystemBackgroundGenerationVersion = 1;
@@ -7,7 +8,7 @@ export const starSystemBackgroundGenerationVersion = 1;
 export const starSystemBackgroundTemplateSpec: StarSystemBackgroundTemplateSpec = {
   id: "star_system_background_psd_template_v1",
   version: starSystemBackgroundContractVersion,
-  displayName: "NOVERIS Star System Background PSD",
+  displayName: "NOVERIS Star System Environment Painting PSD",
   sourceFormat: "psd",
   masterDesktop: {
     width: 7680,
@@ -63,7 +64,7 @@ export const starSystemBackgroundTemplateSpec: StarSystemBackgroundTemplateSpec 
   ]
 };
 
-const publicDerivativeBase = "/assets/game-art/star-system-backgrounds";
+const publicDerivativeBase = "/generated/game-assets/star-systems";
 
 type PublicDerivative = StarSystemBackgroundRecord["derivatives"][number] & { publicPath: string; checksum: string };
 
@@ -71,19 +72,63 @@ function hasPublicDerivative(derivative: StarSystemBackgroundRecord["derivatives
   return Boolean(derivative?.publicPath && derivative.checksum);
 }
 
-export const canonicalStarSystemBackgrounds: StarSystemBackgroundRecord[] = [
-  {
-    id: "ssbg-sol-local-atlas",
-    name: "Sol Local Atlas Field",
-    slug: "sol-local-atlas-field",
-    status: "draft",
+type EnvironmentPaintingDerivativeRow = (typeof derivativeData.records)[number];
+
+function environmentPaintingDerivatives(record: EnvironmentPaintingDerivativeRow) {
+  const gamePng = record.derivatives.find((row) => row.id === "game_png");
+  const preview = record.derivatives.find((row) => row.id === "web_preview");
+  const thumbnail = record.derivatives.find((row) => row.id === "library_thumbnail");
+  if (!gamePng || !preview || !thumbnail) throw new Error(`${record.displayName} derivative set is incomplete.`);
+  return [
+    {
+      targetId: "desktop_png",
+      format: "png" as const,
+      width: gamePng.width,
+      height: gamePng.height,
+      publicPath: gamePng.path,
+      checksum: gamePng.checksum,
+      status: "generated" as const
+    },
+    {
+      targetId: "review_preview",
+      format: "webp" as const,
+      width: preview.width,
+      height: preview.height,
+      publicPath: preview.path,
+      checksum: preview.checksum,
+      status: "generated" as const
+    },
+    {
+      targetId: "thumbnail",
+      format: "webp" as const,
+      width: thumbnail.width,
+      height: thumbnail.height,
+      publicPath: thumbnail.path,
+      checksum: thumbnail.checksum,
+      status: "generated" as const
+    }
+  ];
+}
+
+function assignedSystemId(record: EnvironmentPaintingDerivativeRow) {
+  return record.systemId ?? undefined;
+}
+
+function buildEnvironmentPaintingRecord(record: EnvironmentPaintingDerivativeRow): StarSystemBackgroundRecord {
+  const systemId = assignedSystemId(record);
+  const canonicalId = record.id === "sol" ? "ssbg-sol-local-atlas" : `ssbg-environment-painting-${record.id}`;
+  return {
+    id: canonicalId,
+    name: record.displayName,
+    slug: record.id,
+    status: "published",
     sourceFormat: "psd",
-    sourceAssetId: "asset-ssbg-sol-local-atlas-source",
-    sourceFilename: "sol_local_atlas_field.psd",
+    sourceAssetId: record.id === "sol" ? "asset-ssbg-sol-local-atlas-source" : `asset-star-system-environment-painting-${record.id}`,
+    sourceFilename: `environment-painting-${record.id}.psd`,
     sourceRevision: 1,
-    runtimeRevision: 0,
+    runtimeRevision: 1,
     generationVersion: starSystemBackgroundGenerationVersion,
-    assignedSystemIds: ["system-sol"],
+    assignedSystemIds: systemId ? [systemId] : [],
     compatiblePaletteIds: ["euclid-blue", "aurora-teal", "ancient-gold"],
     backgroundMode: "hybrid",
     fit: "cover",
@@ -94,30 +139,41 @@ export const canonicalStarSystemBackgrounds: StarSystemBackgroundRecord[] = [
     mobileCrop: { x: 0.24, y: 0, width: 0.52, height: 1 },
     desktopCrop: { x: 0, y: 0, width: 1, height: 1 },
     blendMode: "screen",
-    opacity: 0.82,
+    opacity: 1,
     colorGrade: { exposure: 0, saturation: 0, contrast: 0, hueShift: 0 },
-    visualTags: ["home-system", "solar-neighborhood", "atlas-field"],
-    notes: "Draft placeholder record for the Sol system authored background. Runtime falls back procedurally until derivatives are approved.",
-    createdAt: "2026-07-21T00:00:00.000Z",
-    updatedAt: "2026-07-21T00:00:00.000Z",
+    visualTags: record.id === "sol" ? ["home-system", "solar-neighborhood", "environment-painting"] : ["generated-system", "environment-painting"],
+    notes: systemId
+      ? `Canonical environment painting assigned exclusively to ${systemId}. Studio cards and clients consume derivatives generated from the exact PSD composite.`
+      : "Canonical environment painting awaiting the next generated star-system assignment.",
+    createdAt: "2026-07-26T00:00:00.000Z",
+    updatedAt: "2026-07-26T00:00:00.000Z",
+    publishedAt: "2026-07-26T00:00:00.000Z",
     validation: {
       status: "Ready With Warnings",
       parserCapabilities: {
-        canvasMetadata: false,
-        colorMode: false,
-        bitDepth: false,
+        canvasMetadata: true,
+        colorMode: true,
+        bitDepth: true,
         layerGroups: false,
-        flattenedPreview: false,
+        flattenedPreview: true,
         luminanceAnalysis: false
       },
       issues: [
-        { severity: "warning", code: "psd_parser_not_configured", message: "PSD layer/canvas parsing is not configured; validation is limited to record metadata.", records: ["ssbg-sol-local-atlas"] },
-        { severity: "warning", code: "runtime_derivatives_missing", message: "Runtime derivatives are not generated yet, so the public export must use procedural fallback.", records: ["ssbg-sol-local-atlas"] }
+        { severity: "info", code: "psd_layer_review_manual", message: "Layer-group and luminance review remain artist-approved manual checks.", records: [canonicalId] }
       ]
     },
-    derivatives: []
-  }
-];
+    derivatives: environmentPaintingDerivatives(record)
+  };
+}
+
+export const canonicalStarSystemBackgrounds: StarSystemBackgroundRecord[] = [...derivativeData.records]
+  .filter((record) => record.status === "published")
+  .sort((left, right) => {
+    if (left.id === "sol") return -1;
+    if (right.id === "sol") return 1;
+    return left.id.localeCompare(right.id, undefined, { numeric: true });
+  })
+  .map(buildEnvironmentPaintingRecord);
 
 function normalizePath(path: string) {
   return path.replace(/\\/g, "/");
@@ -185,7 +241,7 @@ export function buildStarSystemVisualProfile(systemId: string, visualSignatureId
     backgroundRevision: background?.runtimeRevision,
     paletteId: undefined,
     visualVariantIndex: 0,
-    visualTags: background ? ["authored-background"] : ["procedural-fallback"]
+    visualTags: background ? ["authored-environment-painting"] : ["procedural-fallback"]
   };
 }
 
@@ -193,7 +249,7 @@ export function starSystemBackgroundAssetLibraryRows() {
   return canonicalStarSystemBackgrounds.map((record) => ({
     id: record.id,
     displayName: record.name,
-    assetType: "star-system-background" as const,
+    assetType: "star-system-environment-painting" as const,
     sourceFormat: record.sourceFormat,
     runtimeFormats: ["avif", "webp", "png"],
     lineage: `PSD revision ${record.sourceRevision} -> flattened master -> runtime revision ${record.runtimeRevision}`,
@@ -213,6 +269,12 @@ export function validateStarSystemBackgroundRecords(records: StarSystemBackgroun
 
   for (const id of duplicateIds) {
     issues.push({ severity: "error", code: "star_system_background_duplicate_id", message: "Star-system background IDs must be unique.", records: [id] });
+  }
+
+  const assignments = records.flatMap((record) => record.assignedSystemIds);
+  const duplicateAssignments = [...new Set(assignments.filter((systemId, index) => assignments.indexOf(systemId) !== index))];
+  for (const systemId of duplicateAssignments) {
+    issues.push({ severity: "error", code: "star_system_environment_painting_reused", message: "An environment painting assignment must be exclusive; each star system may resolve exactly one painting.", records: [systemId] });
   }
 
   for (const record of records) {

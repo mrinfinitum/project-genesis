@@ -18,3 +18,4 @@ game-art/source-masters/**
 !game-art/source-masters/README.md
 !game-art/source-masters/**/
 !game-art/source-masters/**/.gitkeep
+!game-art/source-masters/star-systems/README.md

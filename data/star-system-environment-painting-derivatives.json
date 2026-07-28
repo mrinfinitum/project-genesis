@@ -1,0 +1,833 @@
+{
+  "schemaVersion": "star-system-environment-paintings-v1",
+  "records": [
+    {
+      "id": "0001",
+      "systemId": "system-1-dc7cafd8",
+      "sequence": 1,
+      "displayName": "0001 Environment Painting",
+      "status": "published",
+      "duplicateOf": null,
+      "source": {
+        "width": 5504,
+        "height": 3072,
+        "checksum": "6185bbb16cee76ff655e9478befb580699d5727e3985fb67a1230a3d16f938d1",
+        "bytes": 121899498
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/star-systems/0001/environment-painting/environment-painting-0001.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 3840,
+          "height": 2160,
+          "bytes": 9428160,
+          "checksum": "3c6e36f461d1d4b517b94a08f3425daaacce3764ca19bc01f03609e4520bc539"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/star-systems/0001/environment-painting/environment-painting-0001-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 900,
+          "bytes": 35752,
+          "checksum": "aa0174d6929896fd37069d6088814758dff4453e58a9b2844afcf964f3a64f98"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/star-systems/0001/environment-painting/environment-painting-0001-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 288,
+          "bytes": 3500,
+          "checksum": "b83c07712e304e27b61a41292b720a4fc35f740e7b18f649ad6eb02bb6f308a5"
+        }
+      ]
+    },
+    {
+      "id": "0002",
+      "systemId": null,
+      "sequence": 2,
+      "displayName": "0002 Environment Painting",
+      "status": "duplicate",
+      "duplicateOf": "0001",
+      "source": {
+        "width": 5504,
+        "height": 3072,
+        "checksum": "85415d14d7f911d3b33b03d8265af18466c29563ce2e442d875f45c5693a924b",
+        "bytes": 121899498
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/star-systems/0002/environment-painting/environment-painting-0002.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 3840,
+          "height": 2160,
+          "bytes": 9428160,
+          "checksum": "3c6e36f461d1d4b517b94a08f3425daaacce3764ca19bc01f03609e4520bc539"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/star-systems/0002/environment-painting/environment-painting-0002-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 900,
+          "bytes": 35752,
+          "checksum": "aa0174d6929896fd37069d6088814758dff4453e58a9b2844afcf964f3a64f98"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/star-systems/0002/environment-painting/environment-painting-0002-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 288,
+          "bytes": 3500,
+          "checksum": "b83c07712e304e27b61a41292b720a4fc35f740e7b18f649ad6eb02bb6f308a5"
+        }
+      ]
+    },
+    {
+      "id": "0003",
+      "systemId": "system-2-948e406c",
+      "sequence": 3,
+      "displayName": "0003 Environment Painting",
+      "status": "published",
+      "duplicateOf": null,
+      "source": {
+        "width": 5504,
+        "height": 3072,
+        "checksum": "4136e24563dbeaa148081ae42f9dfd59164f405b879439e8a468ac20ebe16940",
+        "bytes": 114928317
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/star-systems/0003/environment-painting/environment-painting-0003.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 3840,
+          "height": 2160,
+          "bytes": 8897542,
+          "checksum": "27b0196924b9897572fbb3020d71c9937590638de82f8e67ffd7a529e28a3f45"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/star-systems/0003/environment-painting/environment-painting-0003-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 900,
+          "bytes": 22224,
+          "checksum": "7b8e5733deb8c93032a76069b3fe25ae144f4340dac7685670fa86a7c482b75a"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/star-systems/0003/environment-painting/environment-painting-0003-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 288,
+          "bytes": 1992,
+          "checksum": "1c354bbb3919279a93608264c3d8447ed3e19913ba18801bfd21eac0474515c7"
+        }
+      ]
+    },
+    {
+      "id": "0004",
+      "systemId": "system-3-a28e7669",
+      "sequence": 4,
+      "displayName": "0004 Environment Painting",
+      "status": "published",
+      "duplicateOf": null,
+      "source": {
+        "width": 5504,
+        "height": 3072,
+        "checksum": "80308f0c6bd0e4fea3077afc62fdd1cab3eb00ee4bbd72dfc6ad40f82784e0c2",
+        "bytes": 127079113
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/star-systems/0004/environment-painting/environment-painting-0004.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 3840,
+          "height": 2160,
+          "bytes": 9846458,
+          "checksum": "c08520b0e68683e21f1baf09168e8dc0a12a0fdcba9d643adadcabbde0c2d626"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/star-systems/0004/environment-painting/environment-painting-0004-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 900,
+          "bytes": 36210,
+          "checksum": "0507b38d02f72d8fc941d266407e16ea75e1da1b921c4533493b794635eeb520"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/star-systems/0004/environment-painting/environment-painting-0004-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 288,
+          "bytes": 3528,
+          "checksum": "1c4a4994039191e79b55031dd82759288d6bdeba4a24eaaa156ea80443549c8b"
+        }
+      ]
+    },
+    {
+      "id": "0005",
+      "systemId": "system-4-866cc86c",
+      "sequence": 5,
+      "displayName": "0005 Environment Painting",
+      "status": "published",
+      "duplicateOf": null,
+      "source": {
+        "width": 5504,
+        "height": 3072,
+        "checksum": "50bccd84bc20f56133e52829cc167dbac607684cd7b8bfce0a841f9754486c94",
+        "bytes": 113554918
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/star-systems/0005/environment-painting/environment-painting-0005.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 3840,
+          "height": 2160,
+          "bytes": 8862502,
+          "checksum": "a518253e59883633475ee717e5ac4318a8235460311effc75983f892bc25a2f1"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/star-systems/0005/environment-painting/environment-painting-0005-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 900,
+          "bytes": 35798,
+          "checksum": "a9b6e0d84b7e831ceedeca172d33a5dcba86a52dfbd4c00eb9d427b4d8647532"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/star-systems/0005/environment-painting/environment-painting-0005-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 288,
+          "bytes": 3286,
+          "checksum": "ccf9ea80e99f9a6e2363f79727934dfbc9e651404179ad2aa4dbb49a634bb7b2"
+        }
+      ]
+    },
+    {
+      "id": "0006",
+      "systemId": "system-5-544dcfaf",
+      "sequence": 6,
+      "displayName": "0006 Environment Painting",
+      "status": "published",
+      "duplicateOf": null,
+      "source": {
+        "width": 5504,
+        "height": 3072,
+        "checksum": "cc364927db73fffba3eb291b022669c2071eee90b7828562b79ae4667035734a",
+        "bytes": 127361250
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/star-systems/0006/environment-painting/environment-painting-0006.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 3840,
+          "height": 2160,
+          "bytes": 9904385,
+          "checksum": "a683d8b368549ed64884e19d12b7585701c7cbd9ab5c01182324e41f4fa1a078"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/star-systems/0006/environment-painting/environment-painting-0006-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 900,
+          "bytes": 52490,
+          "checksum": "eb7e57d9a402c603530051bdd526dd8b462527d3a447167b8a5ea52be0f19128"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/star-systems/0006/environment-painting/environment-painting-0006-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 288,
+          "bytes": 4666,
+          "checksum": "172ba034a71fe1f039a83c6f77dcf8ede7c18ea7389765639809a85650d37f5e"
+        }
+      ]
+    },
+    {
+      "id": "0007",
+      "systemId": "system-6-d7f005bb",
+      "sequence": 7,
+      "displayName": "0007 Environment Painting",
+      "status": "published",
+      "duplicateOf": null,
+      "source": {
+        "width": 5504,
+        "height": 3072,
+        "checksum": "5c4e45acc5ac99f05d2e41f2b1c431eaf8e450ea4c531ba444db6c7082f9cd29",
+        "bytes": 116499831
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/star-systems/0007/environment-painting/environment-painting-0007.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 3840,
+          "height": 2160,
+          "bytes": 8856532,
+          "checksum": "bafab92b436f9994081cdad87459342d06ddd95b3f19921942adf5edd4dc21fd"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/star-systems/0007/environment-painting/environment-painting-0007-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 900,
+          "bytes": 24370,
+          "checksum": "7ca5b1564731459ecfe3493c70620f0f4daaf0dbfb61d2c6de7e47e6e12d06b0"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/star-systems/0007/environment-painting/environment-painting-0007-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 288,
+          "bytes": 2350,
+          "checksum": "eaf1f4da042140b1bf3f5db4df7986fd4258b7e1525e5c88078ead40759f4c15"
+        }
+      ]
+    },
+    {
+      "id": "0008",
+      "systemId": "system-7-48a5e31a",
+      "sequence": 8,
+      "displayName": "0008 Environment Painting",
+      "status": "published",
+      "duplicateOf": null,
+      "source": {
+        "width": 5504,
+        "height": 3072,
+        "checksum": "342514707e3fc7d1ee085f1ef95e95ed10c086634eec4af7de1d06c9c03da5cd",
+        "bytes": 127461487
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/star-systems/0008/environment-painting/environment-painting-0008.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 3840,
+          "height": 2160,
+          "bytes": 9977001,
+          "checksum": "5f76a891898374d452b02c6d7c0e2f39a65c16b76e58a6c7b66bf99b483aaa93"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/star-systems/0008/environment-painting/environment-painting-0008-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 900,
+          "bytes": 41790,
+          "checksum": "fecedbabbf98ca9faf7bf870e573f8c1aeeb6f5a6fe619af62f8625774633291"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/star-systems/0008/environment-painting/environment-painting-0008-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 288,
+          "bytes": 4058,
+          "checksum": "80cf9aeeff53691756ff8365e1694439a59648e3b3f6cf01bcfd25282f85cdce"
+        }
+      ]
+    },
+    {
+      "id": "0009",
+      "systemId": "system-8-9d17f6ca",
+      "sequence": 9,
+      "displayName": "0009 Environment Painting",
+      "status": "published",
+      "duplicateOf": null,
+      "source": {
+        "width": 5504,
+        "height": 3072,
+        "checksum": "bb0b7258f7540cac8b7c51a3f640389029b95286fe14708033c0bfaa3f10812d",
+        "bytes": 125966916
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/star-systems/0009/environment-painting/environment-painting-0009.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 3840,
+          "height": 2160,
+          "bytes": 9683379,
+          "checksum": "341b677bcee7e08203646249334835626bbfe152a9095dabd3349e1f78fb632d"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/star-systems/0009/environment-painting/environment-painting-0009-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 900,
+          "bytes": 33914,
+          "checksum": "d2933e8ef1643e7a14c0297efed7ab2244b60ef97ff0d739ee7d030093ad4ea3"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/star-systems/0009/environment-painting/environment-painting-0009-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 288,
+          "bytes": 3190,
+          "checksum": "8cd5c7781653c412346a5bdae8461f99ee6db843eeeb37eac26722c652078296"
+        }
+      ]
+    },
+    {
+      "id": "0010",
+      "systemId": "system-9-c71f01fc",
+      "sequence": 10,
+      "displayName": "0010 Environment Painting",
+      "status": "published",
+      "duplicateOf": null,
+      "source": {
+        "width": 5504,
+        "height": 3072,
+        "checksum": "8763e4448d4083ab44221959b5dcaca88b9c47b98451684cad8106f5ffc3e5d7",
+        "bytes": 121505930
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/star-systems/0010/environment-painting/environment-painting-0010.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 3840,
+          "height": 2160,
+          "bytes": 9516782,
+          "checksum": "bbf84cd536eebb807a6fadd96dbe0d4171671f7fdd2bf8924e15344942bbc4da"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/star-systems/0010/environment-painting/environment-painting-0010-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 900,
+          "bytes": 28706,
+          "checksum": "fb00cb29d5d9f53c962800f5aeb06bb908427b43538a5b7a38163dc20d6e51b6"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/star-systems/0010/environment-painting/environment-painting-0010-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 288,
+          "bytes": 2680,
+          "checksum": "8e8f59044d602c085f8b44e29fe69bcf7ca1b1fe1812589d5c0fbf2e1783a6d0"
+        }
+      ]
+    },
+    {
+      "id": "0011",
+      "systemId": "system-10-7c6130cb",
+      "sequence": 11,
+      "displayName": "0011 Environment Painting",
+      "status": "published",
+      "duplicateOf": null,
+      "source": {
+        "width": 5504,
+        "height": 3072,
+        "checksum": "5510285e98be1e816788ae519c020ce76ebae09e17f3463b602af909f3244849",
+        "bytes": 120277855
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/star-systems/0011/environment-painting/environment-painting-0011.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 3840,
+          "height": 2160,
+          "bytes": 9679904,
+          "checksum": "5e182793f7915854106089a2f4745717215b6905a05cc647e3fd35ded391e6ac"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/star-systems/0011/environment-painting/environment-painting-0011-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 900,
+          "bytes": 22498,
+          "checksum": "fb102de47ebc500b9d8bb5306841c82ab4fdfc0cd84e351e2265c5c145c5b268"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/star-systems/0011/environment-painting/environment-painting-0011-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 288,
+          "bytes": 2390,
+          "checksum": "41a6898de35da91160c2a05f9ccfbc7ef7f0c9854ad2c60c9c7cae023d499770"
+        }
+      ]
+    },
+    {
+      "id": "0012",
+      "systemId": "system-11-f8689be7",
+      "sequence": 12,
+      "displayName": "0012 Environment Painting",
+      "status": "published",
+      "duplicateOf": null,
+      "source": {
+        "width": 5504,
+        "height": 3072,
+        "checksum": "dc4e22edf28336c49ef40685bd9f739e951b3e6899b476299aa7df3fca0d6e1b",
+        "bytes": 126885617
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/star-systems/0012/environment-painting/environment-painting-0012.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 3840,
+          "height": 2160,
+          "bytes": 9429366,
+          "checksum": "882e43d008cd624073fb26d6de87524c08e4600d4db532dcea0dbeecf631b7f7"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/star-systems/0012/environment-painting/environment-painting-0012-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 900,
+          "bytes": 34124,
+          "checksum": "b791d11e3e8fb500b5497bc4dec361288d96d9e7665b3896ce62e148f1e198c6"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/star-systems/0012/environment-painting/environment-painting-0012-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 288,
+          "bytes": 3076,
+          "checksum": "8612e2053991df3587fecd8c5c5794490cb1ddebad06adace61b198ef2b9cebf"
+        }
+      ]
+    },
+    {
+      "id": "0013",
+      "systemId": null,
+      "sequence": 13,
+      "displayName": "0013 Environment Painting",
+      "status": "published",
+      "duplicateOf": null,
+      "source": {
+        "width": 5504,
+        "height": 3072,
+        "checksum": "6fb45c0e4624c21991f104340487c0d0611d54e287ec14a3b89852650a81fddc",
+        "bytes": 125039495
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/star-systems/0013/environment-painting/environment-painting-0013.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 3840,
+          "height": 2160,
+          "bytes": 10017322,
+          "checksum": "c4986de1c245a5bd93c5d8268ed5a302f8ab72ae52aeb3e11c1ed31a884fa993"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/star-systems/0013/environment-painting/environment-painting-0013-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 900,
+          "bytes": 19674,
+          "checksum": "71b506dce214cc3fdea877386fc47751ab6d2ac788d2a40b59abc7d248b211ba"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/star-systems/0013/environment-painting/environment-painting-0013-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 288,
+          "bytes": 1468,
+          "checksum": "18c20b336dff59ab53aec74d7b94ed750d22c56dedb8de2b936357fad6cfeff8"
+        }
+      ]
+    },
+    {
+      "id": "0014",
+      "systemId": null,
+      "sequence": 14,
+      "displayName": "0014 Environment Painting",
+      "status": "published",
+      "duplicateOf": null,
+      "source": {
+        "width": 5504,
+        "height": 3072,
+        "checksum": "b3bebbbf7b756169ad8be2e94df28cd758a611e3eb4795ed2e2e19f22dd12fec",
+        "bytes": 127724691
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/star-systems/0014/environment-painting/environment-painting-0014.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 3840,
+          "height": 2160,
+          "bytes": 10115956,
+          "checksum": "71374dfbf3844dd78e44a970af92878d32f2bd0d96e6db7116c445b21a17157d"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/star-systems/0014/environment-painting/environment-painting-0014-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 900,
+          "bytes": 34246,
+          "checksum": "7167a8c0f6b7e8897b062894a88a3aff2c5a7fe1bdeed72b1e67529922efd26d"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/star-systems/0014/environment-painting/environment-painting-0014-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 288,
+          "bytes": 3626,
+          "checksum": "a488e5926633b128ebaca4723608bdba7b23843aae0db6201c4a6a91e5de025a"
+        }
+      ]
+    },
+    {
+      "id": "0015",
+      "systemId": null,
+      "sequence": 15,
+      "displayName": "0015 Environment Painting",
+      "status": "published",
+      "duplicateOf": null,
+      "source": {
+        "width": 5504,
+        "height": 3072,
+        "checksum": "fb2ccddbcb9c3fce323af11c40dd1db847cb69e6ba45be311c265c2977e02a6a",
+        "bytes": 122239305
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/star-systems/0015/environment-painting/environment-painting-0015.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 3840,
+          "height": 2160,
+          "bytes": 9488659,
+          "checksum": "2f5ab1c2fc0fe3dd73e5c38e11104afa3715a21501a199f9bbae76baffbc659b"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/star-systems/0015/environment-painting/environment-painting-0015-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 900,
+          "bytes": 25188,
+          "checksum": "6a6f01db35e87bd3c1e5649ecd426717bb874524b5af09220032189334acb4ed"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/star-systems/0015/environment-painting/environment-painting-0015-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 288,
+          "bytes": 2428,
+          "checksum": "25b2b3a382af89e4a090bc20eb542071aea1265756d8a8cb29be03c908f26b97"
+        }
+      ]
+    },
+    {
+      "id": "0016",
+      "systemId": null,
+      "sequence": 16,
+      "displayName": "0016 Environment Painting",
+      "status": "published",
+      "duplicateOf": null,
+      "source": {
+        "width": 5504,
+        "height": 3072,
+        "checksum": "801d17f48ba6384368a8c1ccd1f3ea8f6951a7e959a817d170e8378ec53d6e30",
+        "bytes": 128772783
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/star-systems/0016/environment-painting/environment-painting-0016.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 3840,
+          "height": 2160,
+          "bytes": 10120983,
+          "checksum": "4f97d1f7583427dc2f27d380a7da93867ed35357560ff5a9d239f3ec7d3a0455"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/star-systems/0016/environment-painting/environment-painting-0016-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 900,
+          "bytes": 33178,
+          "checksum": "afd010f7d1329187b726e09fd60d2f8bc40ab2b2bbf65203f0ec592c5debadd5"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/star-systems/0016/environment-painting/environment-painting-0016-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 288,
+          "bytes": 2766,
+          "checksum": "01110a5d810edf8c0ab21cb4f997016ebec9b2e46d50fea5be73b83b6984df36"
+        }
+      ]
+    },
+    {
+      "id": "0017",
+      "systemId": null,
+      "sequence": 17,
+      "displayName": "0017 Environment Painting",
+      "status": "published",
+      "duplicateOf": null,
+      "source": {
+        "width": 5504,
+        "height": 3072,
+        "checksum": "933c90721f3d5aac2ecc102c861e69062b0d9a84050302a1967aa1d59f0e655c",
+        "bytes": 111498969
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/star-systems/0017/environment-painting/environment-painting-0017.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 3840,
+          "height": 2160,
+          "bytes": 8448975,
+          "checksum": "1d3b4b448bcb7abd567e3da231a16027fd6143c39527652d7603a2a54fe22f0a"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/star-systems/0017/environment-painting/environment-painting-0017-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 900,
+          "bytes": 14428,
+          "checksum": "1e148106078e1f9a04f2853159c308e1e24a622be8c7ae57e47a494ac821d5c8"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/star-systems/0017/environment-painting/environment-painting-0017-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 288,
+          "bytes": 1456,
+          "checksum": "f2c91f4f434246bab76119b3dacc3657d403cbab9d6f2f79230921841cfae0fb"
+        }
+      ]
+    },
+    {
+      "id": "sol",
+      "systemId": "system-sol",
+      "sequence": null,
+      "displayName": "Sol Environment Painting",
+      "status": "published",
+      "duplicateOf": null,
+      "source": {
+        "width": 5504,
+        "height": 3072,
+        "checksum": "2a0598b4720ab31cd0a882e874af67a21ecb570751660e5918f291af763ec32e",
+        "bytes": 125559802
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/generated/game-assets/star-systems/sol/environment-painting/environment-painting-sol.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 3840,
+          "height": 2160,
+          "bytes": 9822961,
+          "checksum": "2cd6eb610f11266fc941f3e381160edc38b11ae47a3e7720420777eeecc8ff2d"
+        },
+        {
+          "id": "web_preview",
+          "path": "/generated/game-assets/star-systems/sol/environment-painting/environment-painting-sol-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 1600,
+          "height": 900,
+          "bytes": 41226,
+          "checksum": "95fe49296314d4d34e8efa2c20bf4e167c9de007b73f83bf1f1116493ac2f5b4"
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/generated/game-assets/star-systems/sol/environment-painting/environment-painting-sol-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 288,
+          "bytes": 4108,
+          "checksum": "f67ff11d3630ff5eb76ef62462a05417d3e72697b670a9b746c5f0ed18251d5f"
+        }
+      ]
+    }
+  ]
+}

@@ -95,7 +95,7 @@ export const environmentArtStandard = {
   referenceImagePath: "/images/environment-art-standard/noveris-environment-art-standard-v1.png",
   referenceImageSha256: "90ae71750a1d77212797abe6d53db3d34313361965c8b55cc5f936290a68f0f1",
   philosophy: "The environment creates wonder through realism, restraint, silence, scale, and negative space. Never through spectacle.",
-  visualHierarchy: ["Star", "Planets", "Gameplay", "Environment"],
+  visualHierarchy: ["Gameplay", "Star", "Planets", "Interactive Elements", "Environment"],
   backgroundOccupancy: {
     artworkMinimumPercent: 10,
     artworkMaximumPercent: 15,
@@ -113,6 +113,8 @@ export const environmentArtStandard = {
     "Extremely restrained molecular clouds",
     "Mostly tiny stars with very few bright stars",
     "Natural stellar density",
+    "Restrained tilt-shift lens depth without a miniature effect",
+    "Continuous focus transition with no visible banding through the center",
     "No obvious framing or wallpaper composition",
     "No fantasy appearance or exaggerated nebula",
     "No artificial vignette",
@@ -125,6 +127,8 @@ export const environmentArtStandard = {
     "Molecular clouds remain subtle",
     "No obvious focal point",
     "Bright stars remain rare",
+    "Tilt-shift depth remains subtle and natural",
+    "No visible center banding or hard focus seam",
     "No wallpaper composition",
     "No artificial vignette",
     "No fantasy appearance",
@@ -135,7 +139,7 @@ export const environmentArtStandard = {
 
 export const starSystemAstronomicalMattePaintingPrompt = {
   id: "star_system_astronomical_matte_painting_v1",
-  version: "1.0",
+  version: "1.2",
   status: "LOCKED",
   approved: true,
   canonical: true,
@@ -148,9 +152,13 @@ export const starSystemAstronomicalMattePaintingPrompt = {
       "Reduce visual clutter.",
       "Reduce bright stars.",
       "Preserve negative space."
-    ]
+    ],
+    depthTreatment: "Use an extremely subtle tilt-shift-style selective focus falloff only in remote edge detail. Preserve astronomical scale; never create a miniature effect. Keep the focus transition continuous with no visible banding or focus seam through the center."
   }
 } as const;
+
+export const environmentPaintingOpticalStandard =
+  "Apply a restrained tilt-shift lens appearance using only a subtle, continuous depth-of-field transition in remote edge detail. Keep the central gameplay area naturally sharp and visually uninterrupted. No visible banding may appear in or across the center. Do not create horizontal or vertical focus bands, a central blur band, hard focus seams, abrupt sharp-to-soft zones, or a miniature/toy effect.";
 
 export const commonEnvironmentPromptFooter =
   "This is a reusable production asset, not concept art. Do not include text, logos, borders, frames, user interface elements, planets, spacecraft, orbit lines, or unrelated celestial objects unless explicitly requested for this layer. Preserve generous negative space and avoid obvious repeated patterns, artificial vignette, circular edge shading, radial falloff, lens distortion, and generated texture artifacts.";
@@ -313,6 +321,7 @@ export function buildEnvironmentLayerPrompt(
   return [
     layer.canonicalPrompt,
     artistDirection.join("\n"),
+    layer.output.transparency === "opaque" ? environmentPaintingOpticalStandard : "",
     commonEnvironmentPromptFooter,
     layer.output.transparency === "opaque" ? "" : transparentEnvironmentPromptFooter
   ]
@@ -432,7 +441,11 @@ export function validateEnvironmentGeneratorDefinitions() {
     if (new Set(prefixes).size !== prefixes.length) issues.push(`${id} has duplicate layer prefixes.`);
     for (const layer of definition.layers) {
       if (!layer.canonicalPrompt.trim()) issues.push(`${layer.id} is missing its canonical prompt.`);
-      if (!layer.folder.startsWith("source-masters/environments/")) issues.push(`${layer.id} has an invalid source path.`);
+      const validSourcePath = layer.folder.startsWith("source-masters/environments/")
+        || layer.folder.startsWith("source-masters/galaxies/")
+        || layer.folder.startsWith("source-masters/galactic-regions/")
+        || layer.folder.startsWith("source-masters/star-systems/");
+      if (!validSourcePath) issues.push(`${layer.id} has an invalid source path.`);
       if (layer.folder.startsWith("/") || layer.folder.includes("..")) issues.push(`${layer.id} emits an unsafe source path.`);
       if (layer.output.transparency !== "opaque" && !/transparent/i.test(layer.canonicalPrompt)) {
         issues.push(`${layer.id} is transparent but lacks transparency language.`);

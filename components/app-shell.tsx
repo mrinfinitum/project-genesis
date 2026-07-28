@@ -81,7 +81,7 @@ const navigationGroups: NavigationGroup[] = [
     icon: Orbit,
     items: [
       { href: "/galaxy", label: "Galaxy Library", icon: Star },
-      { href: "/sector-map", label: "Sector Library", icon: Map },
+      { href: "/sector-map", label: "Galactic Region Library", icon: Map },
       { href: "/star-system-map", label: "Star System Library", icon: Radar },
       { href: "/celestial-bodies", label: "Star Library", icon: CircleDot },
       { href: "/planets", label: "Planet Library", icon: Orbit },
@@ -95,7 +95,7 @@ const navigationGroups: NavigationGroup[] = [
     items: [
       { href: "/universe-layer-generator", label: "Universe Layer Generator", icon: GalleryHorizontalEnd },
       { href: "/galaxy-layer-generator", label: "Galaxy Layer Generator", icon: GalleryHorizontalEnd },
-      { href: "/sector-layer-generator", label: "Sector Layer Generator", icon: GalleryHorizontalEnd },
+      { href: "/sector-layer-generator", label: "Galactic Region Layer Generator", icon: GalleryHorizontalEnd },
       { href: "/star-system-layer-generator", label: "Star System Layer Generator", icon: GalleryHorizontalEnd },
       { href: "/environment-composer/layers", label: "Layer Library", icon: Layers3 },
       { href: "/environment-composer/scenes", label: "Scene Composer", icon: GalleryHorizontalEnd },

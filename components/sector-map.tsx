@@ -5,11 +5,11 @@ export function SectorLibrary() {
   return (
     <GeneratedUniverseLibrary
       kind="sectors"
-      title="Sector Library"
-      description="Manage canonical generated sectors with resolved parent galaxies and export-ready IDs."
-      generateLabel="Generate Sector"
+      title="Galactic Region Library"
+      description="Manage the nine canonical Milky Way Galactic Regions and their generated star systems."
+      generateLabel="Generate Galactic Region"
       records={getUniverseLibraryRecords("sectors")}
-      emptyMessage="No generated sectors yet."
+      emptyMessage="No Galactic Regions have been generated yet."
     />
   );
 }

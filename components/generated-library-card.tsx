@@ -164,10 +164,6 @@ function SystemAtlasPreview({ signature }: { signature: GeneratedLibraryVisualSi
           style={{ left: `${item.left}%`, top: `${item.top}%`, width: item.size, height: item.size, opacity: item.opacity }}
         />
       ))}
-      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/72 to-transparent p-3">
-        <p className="truncate text-[0.58rem] font-black uppercase tracking-[0.18em] text-cyan-100/90">System Background</p>
-        <p className="mt-0.5 truncate font-mono text-[0.55rem] font-bold uppercase tracking-[0.12em] text-slate-400">{signature.fingerprint}</p>
-      </div>
     </div>
   );
 }
@@ -236,7 +232,7 @@ function LibraryRecordModal({
               <MetadataField label="Contains" value={record.contains} />
               <MetadataField label="Type" value={record.type} />
               <MetadataField label="Class" value={record.classification} />
-              {record.visualSignaturePreview ? <MetadataField label="Background" value={record.thumbnailUrl ? "Published PSD derivative" : "Procedural atlas preview"} /> : null}
+              {record.tone === "system" ? <MetadataField label="Environment Painting" value={record.thumbnailUrl ? "Published PSD derivative" : "Not assigned"} /> : null}
               {record.visualSignaturePreview ? <MetadataField label="Visual Signature" value={record.visualSignaturePreview.fingerprint} /> : null}
             </div>
           </div>

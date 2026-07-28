@@ -87,7 +87,7 @@ function generatedPlanetFromSolBody(body: CelestialBodyNode, allBodies: Celestia
     id: fixedPlanetId(body),
     seed: `${SOL_SEED_PREFIX}:${slug(body.name)}`,
     name: body.name,
-    galaxy_sector: "Local Bubble",
+    galaxy_sector: "Orion Spur",
     star_system: "Sol",
     orbit_position: body.orbit_position ?? 0,
     discovery_order: body.orbit_position ?? 0,

@@ -8,6 +8,7 @@ import { generateCelestialBodies } from "../lib/universe/generator";
 
 const solSystem = getLocalBubbleSystems(1).systems[0];
 assert(solSystem, "Sol System must exist.");
+assert.equal(getLocalBubbleSystems(1).sector.sector_name, "Orion Spur", "Sol must belong to the Orion Spur Galactic Region.");
 
 const bodies = generateCelestialBodies(solSystem);
 const bodyByName = new Map(bodies.map((body) => [body.name, body]));

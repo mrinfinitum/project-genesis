@@ -331,6 +331,18 @@ const SOL_SECTOR_ID = "sector-local-bubble";
 const SOL_SYSTEM_ID = "system-sol";
 const SOL_SYSTEM_SEED = "PROJECT-GENESIS-UNIVERSE:milky-way:local-bubble:sol";
 
+export const MILKY_WAY_GALACTIC_REGIONS = [
+  { id: SOL_SECTOR_ID, name: "Orion Spur", slug: "orion-spur", type: "Galactic Spur", coordinates: [0, 0, 0], discovered: true },
+  { id: "sector-galactic-core", name: "Galactic Core", slug: "galactic-core", type: "Galactic Core", coordinates: [0, 0, 1], discovered: false },
+  { id: "sector-galactic-bar", name: "Galactic Bar", slug: "galactic-bar", type: "Central Bar", coordinates: [0, 0, 2], discovered: false },
+  { id: "sector-perseus-arm", name: "Perseus Arm", slug: "perseus-arm", type: "Spiral Arm", coordinates: [2, 1, 0], discovered: false },
+  { id: "sector-sagittarius-arm", name: "Sagittarius Arm", slug: "sagittarius-arm", type: "Spiral Arm", coordinates: [1, -1, 0], discovered: false },
+  { id: "sector-scutum-centaurus-arm", name: "Scutum-Centaurus Arm", slug: "scutum-centaurus-arm", type: "Spiral Arm", coordinates: [-1, -1, 0], discovered: false },
+  { id: "sector-norma-arm", name: "Norma Arm", slug: "norma-arm", type: "Spiral Arm", coordinates: [-2, 0, 0], discovered: false },
+  { id: "sector-outer-rim", name: "Outer Rim", slug: "outer-rim", type: "Outer Disk", coordinates: [3, 2, 0], discovered: false },
+  { id: "sector-galactic-halo", name: "Galactic Halo", slug: "galactic-halo", type: "Galactic Halo", coordinates: [0, 0, 4], discovered: false }
+] as const;
+
 export const SOL_UNLOCK_PROGRESSION = [
   { unlock: "Start", bodies: ["Earth"] },
   { unlock: "Lunar Exploration", bodies: ["Moon"] },
@@ -1235,7 +1247,7 @@ export function generateGalaxy(universeSeed: string, galaxyIndex = 0): GalaxyNod
       galaxy_type: "Spiral Galaxy",
       galaxy_size: "Starting Galaxy",
       visual_signature: generateVisualSignature({ universeSeed, generationVersion: SEED_GENERATION_VERSION, semanticLevel: "galaxy", canonicalObjectId: SOL_GALAXY_ID, override: { archetypeId: "grand_design_spiral", paletteId: "palette_cyan_amber" } }),
-      sector_count: 100000,
+      sector_count: MILKY_WAY_GALACTIC_REGIONS.length,
       is_fixed: true,
       is_procedural: false,
       ...generationMetadata("PROJECT-GENESIS-UNIVERSE:milky-way", universeSeed, galaxyIndex)
@@ -1263,30 +1275,35 @@ export function generateGalaxy(universeSeed: string, galaxyIndex = 0): GalaxyNod
 }
 
 export function generateSector(galaxy: GalaxyNode, sectorIndex: number): SectorNode {
-  if (galaxy.id === SOL_GALAXY_ID && sectorIndex === 0) {
+  const fixedRegion = galaxy.id === SOL_GALAXY_ID ? MILKY_WAY_GALACTIC_REGIONS[sectorIndex] : undefined;
+  if (fixedRegion) {
+    const isOrionSpur = fixedRegion.id === SOL_SECTOR_ID;
+    const regionSeed = isOrionSpur
+      ? "PROJECT-GENESIS-UNIVERSE:milky-way:local-bubble"
+      : `PROJECT-GENESIS-UNIVERSE:milky-way:${fixedRegion.slug}`;
     return {
-      id: SOL_SECTOR_ID,
+      id: fixedRegion.id,
       galaxy_id: galaxy.id,
-      sector_seed: "PROJECT-GENESIS-UNIVERSE:milky-way:local-bubble",
-      sector_name: "Local Bubble",
-      coordinates_x: 0,
-      coordinates_y: 0,
-      coordinates_z: 0,
-      sector_type: "Civilized Space",
+      sector_seed: regionSeed,
+      sector_name: fixedRegion.name,
+      coordinates_x: fixedRegion.coordinates[0],
+      coordinates_y: fixedRegion.coordinates[1],
+      coordinates_z: fixedRegion.coordinates[2],
+      sector_type: fixedRegion.type,
       sector_rarity: "Common",
-      system_count: 24,
-      difficulty: 5,
-      discovery_value: 100,
-      discovery_level: "Scanned",
-      modifier: "Starting Region",
-      resource_signal: "Balanced",
-      colonized_worlds: 1,
-      discovered: true,
-      discovered_at: "derived",
-      visual_signature: generateVisualSignature({ universeSeed: galaxy.galaxy_seed, generationVersion: SEED_GENERATION_VERSION, semanticLevel: "sector", canonicalObjectId: SOL_SECTOR_ID, parentSignature: galaxy.visual_signature }),
+      system_count: isOrionSpur ? 24 : 0,
+      difficulty: isOrionSpur ? 5 : 25 + sectorIndex * 6,
+      discovery_value: isOrionSpur ? 100 : 500 + sectorIndex * 250,
+      discovery_level: isOrionSpur ? "Scanned" : "Unknown",
+      modifier: isOrionSpur ? "Starting Region" : "Canonical Galactic Region",
+      resource_signal: isOrionSpur ? "Balanced" : "Unsurveyed",
+      colonized_worlds: isOrionSpur ? 1 : 0,
+      discovered: fixedRegion.discovered,
+      discovered_at: fixedRegion.discovered ? "derived" : null,
+      visual_signature: generateVisualSignature({ universeSeed: galaxy.galaxy_seed, generationVersion: SEED_GENERATION_VERSION, semanticLevel: "sector", canonicalObjectId: fixedRegion.id, parentSignature: galaxy.visual_signature }),
       is_fixed: true,
       is_procedural: false,
-      ...generationMetadata("PROJECT-GENESIS-UNIVERSE:milky-way:local-bubble", galaxy.galaxy_seed, sectorIndex)
+      ...generationMetadata(regionSeed, galaxy.galaxy_seed, sectorIndex)
     };
   }
 

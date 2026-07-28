@@ -31,6 +31,12 @@ export type PsdGameDerivativeSet = {
   derivatives: PsdGameDerivative[];
 };
 
+type PsdDerivativeSize = {
+  width: number;
+  height: number;
+  fit?: "inside" | "contain" | "cover";
+};
+
 function checksum(buffer: Buffer) {
   return createHash("sha256").update(buffer).digest("hex");
 }
@@ -81,7 +87,13 @@ function derivative(
 
 export async function generatePsdGameDerivatives(
   sourceBuffer: Buffer,
-  options: { basename: string; previewMax?: number } 
+  options: {
+    basename: string;
+    previewMax?: number;
+    gameOutput?: PsdDerivativeSize;
+    previewOutput?: PsdDerivativeSize;
+    thumbnailOutput?: PsdDerivativeSize;
+  }
 ): Promise<PsdGameDerivativeSet> {
   const psd = readPsd(sourceBuffer, {
     useImageData: true,
@@ -99,23 +111,45 @@ export async function generatePsdGameDerivatives(
   const height = imageData.height || psd.height;
   const rgba = toEightBitRgba(imageData.data, width, height);
   const input = sharp(rgba, { raw: { width, height, channels: 4 } });
-  const gamePng = await input.clone().png({ compressionLevel: 9, adaptiveFiltering: true }).toBuffer();
-  const preview = await input
-    .clone()
+  const gameInput = options.gameOutput
+    ? input.clone().resize({
+        width: options.gameOutput.width,
+        height: options.gameOutput.height,
+        fit: options.gameOutput.fit ?? "cover",
+        position: "centre",
+        withoutEnlargement: true
+      })
+    : input.clone();
+  const gamePng = await gameInput
+    .png({ compressionLevel: 9, adaptiveFiltering: true })
+    .toBuffer({ resolveWithObject: true });
+  const previewSize = options.previewOutput ?? {
+    width: options.previewMax ?? 1600,
+    height: options.previewMax ?? 1600,
+    fit: "inside" as const
+  };
+  const preview = await input.clone()
     .resize({
-      width: options.previewMax ?? 1600,
-      height: options.previewMax ?? 1600,
-      fit: "inside",
+      width: previewSize.width,
+      height: previewSize.height,
+      fit: previewSize.fit ?? "inside",
+      position: "centre",
       withoutEnlargement: true
     })
     .webp({ quality: 84, alphaQuality: 95, effort: 5 })
     .toBuffer({ resolveWithObject: true });
+  const thumbnailSize = options.thumbnailOutput ?? {
+    width: 480,
+    height: 270,
+    fit: "contain" as const
+  };
   const thumbnail = await input
     .clone()
     .resize({
-      width: 480,
-      height: 270,
-      fit: "contain",
+      width: thumbnailSize.width,
+      height: thumbnailSize.height,
+      fit: thumbnailSize.fit ?? "contain",
+      position: "centre",
       background: { r: 3, g: 10, b: 22, alpha: 0 }
     })
     .webp({ quality: 80, alphaQuality: 92, effort: 5 })
@@ -129,7 +163,15 @@ export async function generatePsdGameDerivatives(
       bytes: sourceBuffer.byteLength
     },
     derivatives: [
-      derivative("game_png", `${options.basename}.png`, "PNG", "image/png", gamePng, width, height),
+      derivative(
+        "game_png",
+        `${options.basename}.png`,
+        "PNG",
+        "image/png",
+        gamePng.data,
+        gamePng.info.width,
+        gamePng.info.height
+      ),
       derivative(
         "web_preview",
         `${options.basename}-preview.webp`,
@@ -151,4 +193,3 @@ export async function generatePsdGameDerivatives(
     ]
   };
 }
-

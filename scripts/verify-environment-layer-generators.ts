@@ -8,6 +8,7 @@ import {
   calculateEnvironmentGeneratorProgress,
   defaultEnvironmentGeneratorControls,
   environmentArtStandard,
+  environmentPaintingOpticalStandard,
   environmentGeneratorDefinitions,
   getEnvironmentGeneratorDefinition,
   migrateEnvironmentLayerAssetRecord,
@@ -39,7 +40,13 @@ for (const [id, contract] of Object.entries(expected)) {
 
   for (const layer of definition.layers) {
     assert(layer.canonicalPrompt.trim().length > 40, `${layer.id} must provide a full prompt.`);
-    assert(layer.folder.startsWith("source-masters/environments/"), `${layer.id} source path escaped source-masters.`);
+    assert(
+      layer.folder.startsWith("source-masters/environments/") ||
+        layer.folder.startsWith("source-masters/galaxies/") ||
+        layer.folder.startsWith("source-masters/galactic-regions/") ||
+        layer.folder.startsWith("source-masters/star-systems/"),
+      `${layer.id} source path escaped source-masters.`
+    );
     assert(!path.isAbsolute(layer.folder) && !layer.folder.includes(".."), `${layer.id} source path must be repository-relative.`);
     assert(existsSync(path.join(projectRoot, "game-art", layer.folder, ".gitkeep")), `${layer.id} source folder is not represented.`);
     if (layer.output.transparency !== "opaque") {
@@ -47,6 +54,9 @@ for (const [id, contract] of Object.entries(expected)) {
     } else {
       assert.doesNotMatch(layer.canonicalPrompt, /transparent png-ready/i, `${layer.id} incorrectly requires transparent output.`);
       assert.match(layer.canonicalPrompt, /vignette/i, `${layer.id} base prompt must explicitly control vignette behavior.`);
+      const generatedPrompt = buildEnvironmentLayerPrompt(layer, defaultEnvironmentGeneratorControls);
+      assert.match(generatedPrompt, /tilt-shift lens appearance|tilt-shift-style depth treatment/i, `${layer.id} must inherit the tilt-shift lens treatment.`);
+      assert.match(generatedPrompt, /no visible banding|do not create visible horizontal or vertical focus bands/i, `${layer.id} must prohibit visible center banding.`);
     }
   }
 }
@@ -60,10 +70,10 @@ assert.equal(
   environmentArtStandard.referenceImageSha256,
   "The canonical Environment Art Standard reference image checksum changed unexpectedly."
 );
-assert.deepEqual(environmentArtStandard.visualHierarchy, ["Star", "Planets", "Gameplay", "Environment"]);
+assert.deepEqual(environmentArtStandard.visualHierarchy, ["Gameplay", "Star", "Planets", "Interactive Elements", "Environment"]);
 assert.deepEqual(environmentArtStandard.starDensity, { tinyPercent: 98, mediumPercent: 1.5, brightPercent: 0.5 });
 assert.equal(starSystemAstronomicalMattePaintingPrompt.id, "star_system_astronomical_matte_painting_v1");
-assert.equal(starSystemAstronomicalMattePaintingPrompt.version, "1.0");
+assert.equal(starSystemAstronomicalMattePaintingPrompt.version, "1.2");
 assert.equal(starSystemAstronomicalMattePaintingPrompt.status, "LOCKED");
 assert.equal(starSystemAstronomicalMattePaintingPrompt.approved, true);
 assert.equal(starSystemAstronomicalMattePaintingPrompt.canonical, true);
@@ -85,6 +95,9 @@ assert.match(firstLayer.canonicalPrompt, /Most stars should be extremely faint/i
 assert.match(firstLayer.canonicalPrompt, /molecular clouds/i);
 assert.match(firstLayer.canonicalPrompt, /interstellar dust/i);
 assert.match(firstLayer.canonicalPrompt, /cosmic haze/i);
+assert.match(firstLayer.canonicalPrompt, /tilt-shift-style depth treatment/i);
+assert.match(firstLayer.canonicalPrompt, /central blur bands/i);
+assert.match(environmentPaintingOpticalStandard, /central gameplay area naturally sharp/i);
 assert.match(firstLayer.canonicalPrompt, /recognizable Milky Way/i);
 assert.doesNotMatch(
   starSystem.layers.map((layer) => layer.name).join(" "),
@@ -101,7 +114,7 @@ assert.equal(
 );
 assert.equal(
   createHash("sha256").update(firstLayer.canonicalPrompt).digest("hex"),
-  "e2735e005225e4b7a377e8fd1ed89fb7c94a80c3c304b914ed22c6a01eac9e7e",
+  "7da3a6acea9f069b0f65616056dd172e7ceb0947203e3208ed02febe591d5f4f",
   "The production-locked prompt changed without an intentional version increment."
 );
 assert.match(finishedPrompt, /^Create a premium astronomical matte painting for the science-fiction game NOVERIS\./);
@@ -135,8 +148,8 @@ const record = buildEnvironmentLayerAssetRecord({
 });
 assert.equal(record.environmentType, "starSystem");
 assert.equal(record.layerNumber, 1);
-assert.equal(record.sourceRelativePath, "source-masters/environments/star-system/01_environment-painting/EP_001_DeepVoid.psd");
-assert.equal(record.runtimeExportRelativePath, "source-masters/exports/web/environments/star-system/01_environment-painting/EP_001_DeepVoid.webp");
+assert.equal(record.sourceRelativePath, "source-masters/star-systems/environment-painting/EP_001_DeepVoid.psd");
+assert.equal(record.runtimeExportRelativePath, "source-masters/exports/web/star-systems/environment-painting/EP_001_DeepVoid.webp");
 assert(!record.sourceRelativePath.startsWith("/"), "Registration metadata cannot contain absolute paths.");
 
 const migratedProgress = migrateEnvironmentLayerProgress("starSystem", {

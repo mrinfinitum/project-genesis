@@ -45,6 +45,9 @@ source-masters/
     coronas/
     glows/
     surface-noise/
+  star-systems/
+    environment-painting/
+      environment-painting-<system-slug>.psd
   environments/
     universe/
       backgrounds/
@@ -117,6 +120,9 @@ source-masters/
 - Keep ambiguous legacy artwork under `legacy/unclassified` until reviewed.
 - Never put PSD, PSB, TIFF, AI, or other private source masters under `public/`.
 - Keep editable masters outside `exports/`; exports contain approved derivatives only.
+- Store star-system environment paintings under `star-systems/environment-painting/`
+  using `environment-painting-<system-slug>.psd`; never register a generic
+  painting as a system-specific source.
 - Use the Environment Composer semantic asset ID in derivative metadata, not a
   machine-specific source path.
 
@@ -130,6 +136,8 @@ source-masters/
   filename or a local filesystem path.
 - Planet Detail Screen masters can be regenerated with
   `npm run generate:psd-game-derivatives`.
+- Star-system environment paintings can be regenerated with
+  `npm run generate:star-system-environment-paintings`.
 
 ## Organize local masters
 

@@ -4,6 +4,7 @@ import {
   generateCelestialBodies,
   generateGalaxy,
   generateSector,
+  generateSectors,
   generateStars,
   generateStarSystems,
   generateUniverse,
@@ -14,6 +15,8 @@ import {
   type StarSystemNode
 } from "@/lib/universe/generator";
 import type { ProceduralVisualSignature } from "@/lib/universe/visual-signatures";
+import { resolveStarSystemBackground } from "@/lib/star-system-backgrounds";
+import { resolveGalacticRegionEnvironmentPainting } from "@/lib/galactic-region-environment-paintings";
 
 export const UNIVERSE_LIBRARY_SEED = "PROJECT-GENESIS-UNIVERSE";
 
@@ -165,7 +168,8 @@ export function isGeneratedGameRecord(record: Record<string, unknown>, type: Gen
 export function getUniverseLibrarySource(): UniverseLibrarySource {
   const universe = generateUniverse(UNIVERSE_LIBRARY_SEED);
   const galaxy = generateGalaxy(universe.universe_seed, 0);
-  const sector = generateSector(galaxy, 0);
+  const sectors = generateSectors(galaxy, 9);
+  const sector = sectors.find((row) => row.id === "sector-local-bubble") ?? generateSector(galaxy, 0);
   const starSystems = generateStarSystems(sector, 12);
   const stars = starSystems.flatMap((system) => generateStars(system));
   const bodies = starSystems.flatMap((system) => generateCelestialBodies(system));
@@ -208,7 +212,7 @@ export function getUniverseLibrarySource(): UniverseLibrarySource {
 
   return {
     galaxies: [galaxy],
-    sectors: [sector],
+    sectors,
     starSystems,
     stars,
     bodies,
@@ -239,7 +243,7 @@ export function getUniverseLibraryData(): UniverseLibraryData {
         type: galaxy.galaxy_type,
         subtype: galaxy.galaxy_size,
         seed: galaxy.galaxy_seed,
-        childCountLabel: [compactCount(sectors.length, "sector"), compactCount(systems.length, "system"), compactCount(bodies.length, "body")].join(" / "),
+        childCountLabel: [compactCount(sectors.length, "galactic region"), compactCount(systems.length, "system"), compactCount(bodies.length, "body")].join(" / "),
         status: recordStatus(),
         readiness: "Ready",
         href: `/galaxy?record=${encodeURIComponent(galaxy.id)}`,
@@ -252,6 +256,7 @@ export function getUniverseLibraryData(): UniverseLibraryData {
     .filter((record) => isGeneratedGameRecord(record as unknown as Record<string, unknown>, "sectors", source))
     .map((sector): UniverseLibraryRecord => {
       const systems = systemsBySector.get(sector.id) ?? [];
+      const environmentPainting = resolveGalacticRegionEnvironmentPainting(sector.id);
       return {
         id: sector.id,
         name: sector.sector_name,
@@ -265,42 +270,36 @@ export function getUniverseLibraryData(): UniverseLibraryData {
         readiness: "Ready",
         href: `/sector-map?record=${encodeURIComponent(sector.id)}`,
         previewTone: "sector",
-        meta: [{ label: "Export", value: "Ready" }]
+        thumbnailUrl: environmentPainting?.thumbnail,
+        mediumPreviewUrl: environmentPainting?.preview ?? environmentPainting?.desktopPng,
+        focalPoint: environmentPainting ? `${environmentPainting.focalPoint.x * 100}% ${environmentPainting.focalPoint.y * 100}%` : undefined,
+        meta: [{ label: "Environment Painting", value: environmentPainting ? "Published" : "Not assigned" }]
       };
     });
 
   const starSystems = source.starSystems
     .filter((record) => isGeneratedGameRecord(record as unknown as Record<string, unknown>, "star-systems", source))
-    .map((system): UniverseLibraryRecord => ({
-      id: system.id,
-      name: system.system_name,
-      type: system.system_type,
-      subtype: system.star_type,
-      parentLabel: sectorById.get(system.sector_id)?.sector_name ?? system.sector_id,
-      parentId: system.sector_id,
-      seed: system.system_seed,
-      childCountLabel: [compactCount(starsBySystem.get(system.id)?.length ?? 0, "star"), compactCount(bodiesBySystem.get(system.id)?.length ?? 0, "body")].join(" / "),
-      status: recordStatus(),
-      readiness: "Ready",
-      href: `/star-system-map?record=${encodeURIComponent(system.id)}`,
-      previewTone: "system",
-      visualSignaturePreview: system.visual_signature
-        ? {
-            paletteId: system.visual_signature.paletteId,
-            primaryHue: system.visual_signature.primaryHue,
-            secondaryHue: system.visual_signature.secondaryHue,
-            accentHue: system.visual_signature.accentHue,
-            luminosity: system.visual_signature.luminosity,
-            bloomIntensity: system.visual_signature.bloomIntensity,
-            stellarDensity: system.visual_signature.stellarDensity,
-            nebulaDensity: system.visual_signature.nebulaDensity,
-            dustDensity: system.visual_signature.dustDensity,
-            fogDensity: system.visual_signature.fogDensity,
-            fingerprint: system.visual_signature.fingerprint
-          }
-        : undefined,
-      meta: [{ label: "Export", value: "Ready" }]
-    }));
+    .map((system): UniverseLibraryRecord => {
+      const environmentPainting = resolveStarSystemBackground(system.id);
+      return {
+        id: system.id,
+        name: system.system_name,
+        type: system.system_type,
+        subtype: system.star_type,
+        parentLabel: sectorById.get(system.sector_id)?.sector_name ?? system.sector_id,
+        parentId: system.sector_id,
+        seed: system.system_seed,
+        childCountLabel: [compactCount(starsBySystem.get(system.id)?.length ?? 0, "star"), compactCount(bodiesBySystem.get(system.id)?.length ?? 0, "body")].join(" / "),
+        status: recordStatus(),
+        readiness: "Ready",
+        href: `/star-system-map?record=${encodeURIComponent(system.id)}`,
+        previewTone: "system",
+        thumbnailUrl: environmentPainting?.thumbnail,
+        mediumPreviewUrl: environmentPainting?.desktop.webp ?? environmentPainting?.desktop.png,
+        focalPoint: environmentPainting ? `${environmentPainting.focalPoint.x * 100}% ${environmentPainting.focalPoint.y * 100}%` : undefined,
+        meta: [{ label: "Environment Painting", value: environmentPainting ? "Published" : "Not assigned" }]
+      };
+    });
 
   const stars = source.stars
     .filter((record) => isGeneratedGameRecord(record as unknown as Record<string, unknown>, "stars", source))

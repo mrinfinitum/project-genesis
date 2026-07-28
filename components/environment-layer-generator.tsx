@@ -183,6 +183,9 @@ function EnvironmentArtStandardPanel() {
             <p className="mt-2 text-xs leading-5 text-slate-400">
               {starSystemAstronomicalMattePaintingPrompt.quietMode.description.join(" ")}
             </p>
+            <p className="mt-2 text-xs leading-5 text-slate-400">
+              {starSystemAstronomicalMattePaintingPrompt.quietMode.depthTreatment}
+            </p>
           </div>
         </div>
       </div>
@@ -331,7 +334,7 @@ function LayerCard({
                     </div>
                     {isLockedEnvironmentPainting ? (
                       <p className="mt-1 text-xs text-slate-500">
-                        Approved production prompt used to generate every NOVERIS Star System Astronomical Matte Painting.
+                        Approved production prompt used to generate every NOVERIS Star System Environment Painting.
                       </p>
                     ) : null}
                   </div>

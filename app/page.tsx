@@ -30,7 +30,7 @@ export default async function DashboardPage() {
   ].reduce((sum, rows) => sum + rows.length, 0) + universeLibraries.discoveries.length;
   const libraryStats = [
     { label: "Galaxy Library", href: "/galaxy", rows: universeLibraries.galaxies },
-    { label: "Sector Library", href: "/sector-map", rows: universeLibraries.sectors },
+    { label: "Galactic Region Library", href: "/sector-map", rows: universeLibraries.sectors },
     { label: "Star System Library", href: "/star-system-map", rows: universeLibraries.starSystems },
     { label: "Star Library", href: "/celestial-bodies", rows: universeLibraries.stars },
     { label: "Planet Library", href: "/planets", rows: universeLibraries.planets },
