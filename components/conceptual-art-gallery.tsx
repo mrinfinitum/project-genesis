@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Download, FileArchive, Image as ImageIcon, Search, Trash2, Upload, X } from "lucide-react";
+import { Download, FileArchive, Search, Trash2, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { ConceptualArtRecord } from "@/types/schema";
 
@@ -15,17 +15,6 @@ function formatBytes(value: number) {
   const units = ["B", "KB", "MB", "GB"];
   const exponent = Math.min(Math.floor(Math.log(value) / Math.log(1024)), units.length - 1);
   return `${(value / 1024 ** exponent).toFixed(exponent === 0 ? 0 : 1)} ${units[exponent]}`;
-}
-
-function formatDate(value: string) {
-  if (!value) {
-    return "";
-  }
-
-  return new Intl.DateTimeFormat(undefined, {
-    dateStyle: "medium",
-    timeStyle: "short"
-  }).format(new Date(value));
 }
 
 function previewUrlFor(row: ConceptualArtRecord) {
@@ -235,77 +224,79 @@ export function ConceptualArtGallery({ initialRows }: { initialRows: ConceptualA
       {message ? <p className="rounded-md border border-green-400/30 bg-green-400/10 px-3 py-2 text-sm text-green-100">{message}</p> : null}
       {error ? <p className="rounded-md border border-red-400/30 bg-red-400/10 px-3 py-2 text-sm text-red-100">{error}</p> : null}
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-        {filteredRows.map((row) => {
+      <div className="columns-1 gap-4 sm:columns-2 lg:columns-3 xl:columns-4">
+        {filteredRows.map((row, index) => {
           const previewUrl = previewUrlFor(row);
+          const tileAspect = ["aspect-[4/3]", "aspect-[3/4]", "aspect-square", "aspect-[16/10]", "aspect-[4/5]", "aspect-[16/9]"][index % 6];
           return (
-          <article
-            key={row.id}
-            className={`group overflow-hidden rounded-md border border-cyan-300/15 bg-[#07101e]/85 shadow-glow transition hover:border-cyan-300/45 ${previewUrl ? "cursor-pointer hover:-translate-y-0.5" : ""}`}
-            role={previewUrl ? "button" : undefined}
-            tabIndex={previewUrl ? 0 : undefined}
-            onClick={() => (previewUrl ? setSelectedRow(row) : undefined)}
-            onKeyDown={(event) => {
-              if (previewUrl && (event.key === "Enter" || event.key === " ")) {
-                event.preventDefault();
-                setSelectedRow(row);
-              }
-            }}
-          >
-            <div className="grid aspect-square place-items-center bg-slate-950/65">
-              {previewUrl ? (
-                <img className="h-full w-full object-contain transition group-hover:scale-[1.02]" src={previewUrl} alt={row.name} />
-              ) : (
-                <div className="grid place-items-center gap-3 text-center text-slate-300">
-                  <FileArchive className="h-12 w-12 text-cyan-200" />
-                  <span className="max-w-48 break-all font-mono text-xs uppercase tracking-[0.12em] text-cyan-100">{row.file_name}</span>
-                </div>
-              )}
-            </div>
-            <div className="space-y-3 p-4">
-              <div>
-                <div className="flex items-center justify-between gap-3">
-                  <h3 className="truncate text-base font-semibold text-white">{row.name}</h3>
-                  <span className="rounded border border-cyan-300/20 bg-cyan-400/10 px-2 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-cyan-100">
-                    {row.category || "Art"}
-                  </span>
-                </div>
-                <p className="mt-1 text-xs text-slate-500">{formatDate(row.created_at)}</p>
-              </div>
-              {row.description ? <p className="line-clamp-3 text-sm leading-6 text-slate-300">{row.description}</p> : null}
-              <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400">
-                <span className="inline-flex items-center gap-1">
-                  <ImageIcon className="h-3.5 w-3.5" />
-                  {row.file_type || "file"}
+            <article
+              key={row.id}
+              className={`group relative mb-4 inline-block w-full break-inside-avoid overflow-hidden rounded-xl border border-white/10 bg-[#07101e] shadow-glow transition duration-300 hover:-translate-y-0.5 hover:border-cyan-200/40 hover:shadow-[0_20px_60px_rgba(0,0,0,0.45)] ${previewUrl ? "cursor-pointer" : ""}`}
+              role={previewUrl ? "button" : undefined}
+              tabIndex={previewUrl ? 0 : undefined}
+              onClick={() => (previewUrl ? setSelectedRow(row) : undefined)}
+              onKeyDown={(event) => {
+                if (previewUrl && (event.key === "Enter" || event.key === " ")) {
+                  event.preventDefault();
+                  setSelectedRow(row);
+                }
+              }}
+            >
+              <div className={`relative grid w-full place-items-center overflow-hidden bg-slate-950/65 ${tileAspect}`}>
+                {previewUrl ? (
+                  <img
+                    className="h-full w-full object-cover transition duration-500 ease-out group-hover:scale-[1.025]"
+                    src={previewUrl}
+                    alt={row.name}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  <div className="grid place-items-center gap-3 px-6 text-center text-slate-300">
+                    <FileArchive className="h-12 w-12 text-cyan-200/70" />
+                    <span className="max-w-48 break-all font-mono text-xs uppercase tracking-[0.12em] text-cyan-100">{row.file_name}</span>
+                  </div>
+                )}
+
+                <span className="absolute left-3 top-3 max-w-[calc(100%-1.5rem)] truncate rounded-md border border-white/15 bg-slate-950/65 px-2.5 py-1.5 text-[0.62rem] font-bold uppercase tracking-[0.14em] text-white shadow-lg backdrop-blur-md">
+                  {row.category || "Art"}
                 </span>
-                <span>{formatBytes(row.file_size)}</span>
+
+                <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 bg-gradient-to-t from-slate-950 via-slate-950/72 to-transparent p-4 pt-14">
+                  <div className="min-w-0">
+                    <h3 className="truncate text-base font-semibold text-white">{row.name}</h3>
+                    <p className="mt-1 truncate text-xs text-slate-300/80">{row.file_type || "Artwork"} · {formatBytes(row.file_size)}</p>
+                  </div>
+                  <div className="flex shrink-0 gap-2 opacity-80 transition group-hover:opacity-100">
+                    <a
+                      className="grid h-9 w-9 place-items-center rounded-md border border-white/15 bg-slate-950/70 text-cyan-100 backdrop-blur-md transition hover:border-cyan-200/60 hover:bg-cyan-300/15"
+                      href={row.file_url}
+                      download={row.file_name}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={`Download ${row.name}`}
+                      title="Download"
+                      onClick={(event) => event.stopPropagation()}
+                    >
+                      <Download className="h-4 w-4" />
+                    </a>
+                    <Button
+                      aria-label={`Delete ${row.name}`}
+                      title="Delete"
+                      className="h-9 w-9 border-red-300/20 bg-slate-950/70 px-0 text-red-100 backdrop-blur-md hover:border-red-300/60 hover:bg-red-400/20"
+                      disabled={loading}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        deleteConceptArt(row);
+                      }}
+                      type="button"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center justify-between gap-2">
-                <a
-                  className="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-cyan-400/25 bg-cyan-400/10 px-3 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/60 hover:bg-cyan-400/20"
-                  href={row.file_url}
-                  download={row.file_name}
-                  target="_blank"
-                  rel="noreferrer"
-                  onClick={(event) => event.stopPropagation()}
-                >
-                  <Download className="h-4 w-4" />
-                  Download
-                </a>
-                <Button
-                  className="h-9 border-red-400/25 bg-red-400/10 px-3 text-red-100 hover:border-red-300/60 hover:bg-red-400/20"
-                  disabled={loading}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    deleteConceptArt(row);
-                  }}
-                  type="button"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </article>
+            </article>
           );
         })}
       </div>
