@@ -3464,6 +3464,7 @@ export type GameRuntimeData = {
   dynamicEventFramework: DynamicEventFrameworkContract;
   environmentComposerContract: EnvironmentComposerContract;
   planetDetailScreen?: import("@/lib/assets/planet-detail-screen").PlanetDetailScreenRuntimeContract;
+  civilizationOperationsDeck?: import("@/lib/assets/civilization-operations-deck").CivilizationOperationsDeckContract;
   clientProfiles: ClientProfiles;
 };
 
