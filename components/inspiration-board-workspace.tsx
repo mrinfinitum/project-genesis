@@ -5,21 +5,34 @@ import { useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { ChevronLeft, ChevronRight, Expand, GalleryHorizontalEnd, ImageIcon, Play, Search, UploadCloud, X } from "lucide-react";
 import type { InspirationWallImage, InspirationWallManifest } from "@/lib/experience-design/inspiration-wall";
 
-function WallImage({ image, onOpen }: { image: InspirationWallImage; onOpen: () => void }) {
+const masonryAspectClasses = [
+  "aspect-[4/3]",
+  "aspect-[3/4]",
+  "aspect-[16/10]",
+  "aspect-square",
+  "aspect-[4/5]",
+  "aspect-[16/9]",
+  "aspect-[5/4]",
+  "aspect-[3/2]"
+] as const;
+
+function WallImage({ image, index, onOpen }: { image: InspirationWallImage; index: number; onOpen: () => void }) {
+  const tileAspect = masonryAspectClasses[index % masonryAspectClasses.length];
+
   return (
     <button
       type="button"
       onClick={onOpen}
-      className="group mb-3 block w-full break-inside-avoid overflow-hidden rounded-md border border-cyan-300/10 bg-slate-950 text-left transition hover:border-cyan-200/45 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-200"
+      className="group mb-4 block w-full break-inside-avoid overflow-hidden rounded-lg border border-cyan-300/10 bg-slate-950 text-left shadow-[0_12px_36px_rgba(0,0,0,0.22)] transition duration-300 hover:-translate-y-0.5 hover:border-cyan-200/45 hover:shadow-[0_20px_56px_rgba(0,0,0,0.42)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-200"
     >
-      <span className="relative block w-full overflow-hidden" style={{ aspectRatio: `${image.width} / ${image.height}` }}>
+      <span className={`relative block w-full overflow-hidden ${tileAspect}`}>
         <Image
           src={image.publicUrl}
           alt={image.title}
           fill
-          sizes="(min-width: 1800px) 16vw, (min-width: 1280px) 20vw, (min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+          sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
           quality={68}
-          className="object-cover transition duration-300 group-hover:scale-[1.02]"
+          className="object-cover transition duration-500 ease-out group-hover:scale-[1.025]"
         />
         <span className="absolute inset-x-0 bottom-0 flex translate-y-full items-center justify-between gap-3 bg-gradient-to-t from-black/90 via-black/65 to-transparent px-3 pb-3 pt-9 transition group-hover:translate-y-0 group-focus-visible:translate-y-0">
           <span className="truncate text-xs font-bold text-white">{image.title}</span>
@@ -112,7 +125,7 @@ export function InspirationBoardWorkspace({ initialManifest }: { initialManifest
   }
 
   return (
-    <main className="min-h-screen bg-[#05070b] text-white">
+    <main className="min-h-screen scroll-smooth bg-[#05070b] text-white">
       <header className="sticky top-0 z-20 flex flex-wrap items-center gap-3 border-b border-white/10 bg-[#05070b]/92 px-4 py-3 backdrop-blur-xl">
         <div className="mr-auto flex min-w-0 items-center gap-3">
           <GalleryHorizontalEnd className="h-5 w-5 text-cyan-200" />
@@ -134,8 +147,8 @@ export function InspirationBoardWorkspace({ initialManifest }: { initialManifest
       {message ? <p className="mx-4 mt-3 rounded-md border border-cyan-300/15 bg-cyan-300/10 px-3 py-2 text-sm text-cyan-100">{message}</p> : null}
       <section className="p-3 sm:p-4" aria-label="Inspiration images">
         {images.length ? (
-          <div className="columns-1 gap-3 sm:columns-2 lg:columns-3 xl:columns-4 2xl:columns-5 min-[1800px]:columns-6">
-            {images.map((image, index) => <WallImage key={image.id} image={image} onOpen={() => { setAutoPlay(false); setViewerIndex(index); }} />)}
+          <div className="columns-1 gap-4 sm:columns-2 lg:columns-3 xl:columns-4">
+            {images.map((image, index) => <WallImage key={image.id} image={image} index={index} onOpen={() => { setAutoPlay(false); setViewerIndex(index); }} />)}
           </div>
         ) : (
           <div className="grid min-h-[55vh] place-items-center text-center">
