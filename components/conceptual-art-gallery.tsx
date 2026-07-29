@@ -109,7 +109,7 @@ export function ConceptualArtGallery({ initialRows }: { initialRows: ConceptualA
     setCategory("");
     setDescription("");
     setNotes("");
-    setMessage("Concept art uploaded.");
+    setMessage("Artwork uploaded.");
     await refreshRows();
     setLoading(false);
   }
@@ -163,8 +163,11 @@ export function ConceptualArtGallery({ initialRows }: { initialRows: ConceptualA
     <div className="space-y-6">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">Art Library</p>
-          <h2 className="mt-2 text-3xl font-bold text-white">Conceptual Art</h2>
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">Studio Library</p>
+          <h2 className="mt-2 text-3xl font-bold text-white">Art & Screens</h2>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
+            Review concept artwork and current screen references in one visual workspace.
+          </p>
         </div>
 
         <form className="grid gap-3 rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-4 shadow-glow lg:grid-cols-[14rem_12rem_1fr_auto]" onSubmit={uploadConceptArt}>
@@ -223,7 +226,7 @@ export function ConceptualArtGallery({ initialRows }: { initialRows: ConceptualA
         <Search className="h-4 w-4 text-slate-500" />
         <input
           className="h-10 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-slate-500"
-          placeholder="Search conceptual art"
+          placeholder="Search concept art and screens"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
         />
@@ -308,7 +311,7 @@ export function ConceptualArtGallery({ initialRows }: { initialRows: ConceptualA
       </div>
 
       {!filteredRows.length ? (
-        <div className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-8 text-center text-sm text-slate-400 shadow-glow">No conceptual art uploaded.</div>
+        <div className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-8 text-center text-sm text-slate-400 shadow-glow">No artwork or screen references uploaded.</div>
       ) : null}
 
       {selectedRow ? (
