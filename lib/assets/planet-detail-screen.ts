@@ -1,7 +1,8 @@
 import { createHash } from "node:crypto";
 import derivativeData from "@/data/planet-detail-screen-derivatives.json";
+import referenceData from "@/data/planet-detail-screen-reference.json";
 
-export const PLANET_DETAIL_SCREEN_VERSION = "1.2.0";
+export const PLANET_DETAIL_SCREEN_VERSION = "1.3.0";
 export const PLANET_DETAIL_SCREEN_ID = "planet-detail" as const;
 
 export type PlanetDetailScreenSlice = {
@@ -71,6 +72,44 @@ export type PlanetDetailScreenRuntimeContract = {
     alphaPolicy: "remove_edge_white_matte";
     transparentPixelCount: number;
   }>;
+  presentationReference: {
+    id: string;
+    displayName: string;
+    role: "canonical-style-reference";
+    width: number;
+    height: number;
+    imagePath: string;
+    checksum: string;
+  };
+  presentationContract: {
+    authority: "studio";
+    implementationOwner: "game-client";
+    matchIntent: "visual-hierarchy-and-style";
+    hierarchy: [
+      "planet-identity-and-hero",
+      "overview-and-resources",
+      "environment-and-life",
+      "scientific-detail"
+    ];
+    layout: {
+      density: "compact";
+      panelComposition: "contiguous-dashboard";
+      heroEmphasis: "dominant";
+      informationGrouping: "domain-panels";
+      desktopReference: "landscape";
+      responsiveRule: "preserve-hierarchy-not-pixel-layout";
+    };
+    visualLanguage: {
+      surface: "deep-space-glass";
+      panelRadius: "minimal";
+      borders: "fine-cyan-technical";
+      typography: "compact-scientific";
+      accentUsage: "restrained-status-and-data";
+      artworkTreatment: "scientific-cinematic";
+    };
+    requirements: string[];
+    prohibitions: string[];
+  };
   slices: PlanetDetailScreenSlice[];
   theme: "noveris";
   hash: string;
@@ -158,6 +197,63 @@ const sourceArtwork = derivativeData.records.map((record) => {
   };
 });
 
+const presentationReference = {
+  id: referenceData.id,
+  displayName: referenceData.displayName,
+  role: referenceData.role as "canonical-style-reference",
+  width: referenceData.width,
+  height: referenceData.height,
+  imagePath: referenceData.publicPath,
+  checksum: referenceData.publicChecksum
+};
+
+const presentationContract = {
+  authority: "studio" as const,
+  implementationOwner: "game-client" as const,
+  matchIntent: "visual-hierarchy-and-style" as const,
+  hierarchy: [
+    "planet-identity-and-hero",
+    "overview-and-resources",
+    "environment-and-life",
+    "scientific-detail"
+  ] as [
+    "planet-identity-and-hero",
+    "overview-and-resources",
+    "environment-and-life",
+    "scientific-detail"
+  ],
+  layout: {
+    density: "compact" as const,
+    panelComposition: "contiguous-dashboard" as const,
+    heroEmphasis: "dominant" as const,
+    informationGrouping: "domain-panels" as const,
+    desktopReference: "landscape" as const,
+    responsiveRule: "preserve-hierarchy-not-pixel-layout" as const
+  },
+  visualLanguage: {
+    surface: "deep-space-glass" as const,
+    panelRadius: "minimal" as const,
+    borders: "fine-cyan-technical" as const,
+    typography: "compact-scientific" as const,
+    accentUsage: "restrained-status-and-data" as const,
+    artworkTreatment: "scientific-cinematic" as const
+  },
+  requirements: [
+    "Use the canonical reference image as the visual benchmark for composition, hierarchy, density, materials, and information grouping.",
+    "Keep the planet identity and large planet artwork as the dominant first-viewport signal.",
+    "Present overview and resource data as compact, scan-friendly technical information.",
+    "Group biome, climate, seasons, creatures, atmosphere, composition, features, and additional data into clearly bounded domain panels.",
+    "Use restrained cyan technical borders, deep translucent surfaces, compact typography, and status color only where it carries meaning.",
+    "Adapt responsively while preserving the reference hierarchy; do not copy desktop pixel coordinates into smaller clients."
+  ],
+  prohibitions: [
+    "Do not replace the reference with oversized decorative cards or marketing-style composition.",
+    "Do not let secondary charts, panels, or controls compete with the planet hero.",
+    "Do not use large rounded containers, bright gradients, ornamental glow, or excessive empty padding.",
+    "Do not hardcode sample names, values, resources, creatures, or statuses shown in the reference."
+  ]
+};
+
 const contractWithoutHash = {
   id: "planet-detail-screen" as const,
   screen: PLANET_DETAIL_SCREEN_ID as "planet-detail",
@@ -201,6 +297,8 @@ const contractWithoutHash = {
     sourceArtwork: Object.fromEntries(sourceArtwork.map((asset) => [asset.id, asset.gamePngPath]))
   },
   sourceArtwork,
+  presentationReference,
+  presentationContract,
   slices: planetDetailScreenSlices,
   theme: "noveris" as const,
   validationStatus: "Ready" as const
@@ -243,6 +341,22 @@ export function validatePlanetDetailScreenContract(
       issues.push(`Published UI artwork must contain PSD-derived transparency: ${artwork.id}.`);
     }
   }
+  if (
+    contract.presentationReference.role !== "canonical-style-reference"
+    || contract.presentationReference.width <= 0
+    || contract.presentationReference.height <= 0
+    || !contract.presentationReference.imagePath.endsWith(".webp")
+    || !contract.presentationReference.checksum
+  ) {
+    issues.push("Planet Detail Screen presentation reference is incomplete.");
+  }
+  if (
+    contract.presentationContract.authority !== "studio"
+    || contract.presentationContract.implementationOwner !== "game-client"
+    || contract.presentationContract.requirements.length === 0
+  ) {
+    issues.push("Planet Detail Screen presentation contract is incomplete.");
+  }
   for (const slice of contract.slices) {
     if (ids.has(slice.id)) issues.push(`Duplicate slice ID: ${slice.id}.`);
     if (keys.has(slice.semanticKey)) issues.push(`Duplicate semantic key: ${slice.semanticKey}.`);
@@ -282,6 +396,8 @@ export function buildPlanetDetailArtpackDescriptor() {
       "PlanetDetailScreen/metadata.json": {
         referenceResolution: planetDetailScreenRuntimeContract.referenceResolution,
         exportProfile: planetDetailScreenRuntimeContract.exportProfile,
+        presentationReference: planetDetailScreenRuntimeContract.presentationReference,
+        presentationContract: planetDetailScreenRuntimeContract.presentationContract,
         validationStatus: planetDetailScreenRuntimeContract.validationStatus
       },
       "PlanetDetailScreen/source-artwork/index.json": planetDetailScreenRuntimeContract.sourceArtwork,

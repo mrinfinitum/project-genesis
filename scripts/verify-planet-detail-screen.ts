@@ -25,6 +25,16 @@ async function main() {
   assert(planetDetailScreenRuntimeContract.slices.length === 25, "Planet Detail Screen must publish 25 canonical slices.");
   assert(planetDetailScreenRuntimeContract.manifest.assets.planetHero === "sprites/PlanetHero_Backplate.png", "Planet Hero manifest mapping is invalid.");
   assert(planetDetailScreenRuntimeContract.referenceResolution.join("x") === "1536x1024", "Reference resolution must remain 1536 x 1024.");
+  assert(planetDetailScreenRuntimeContract.presentationReference.role === "canonical-style-reference", "Planet Detail Screen must publish its canonical visual reference.");
+  const referencePath = path.join(process.cwd(), "public", planetDetailScreenRuntimeContract.presentationReference.imagePath);
+  const referenceImage = await sharp(await readFile(referencePath)).metadata();
+  assert(referenceImage.format === "webp", "Planet Detail Screen presentation reference must be a WebP derivative.");
+  assert(
+    referenceImage.width === planetDetailScreenRuntimeContract.presentationReference.width
+      && referenceImage.height === planetDetailScreenRuntimeContract.presentationReference.height,
+    "Planet Detail Screen presentation reference dimensions do not match the contract."
+  );
+  assert(planetDetailScreenRuntimeContract.presentationContract.implementationOwner === "game-client", "The Game must remain the Planet Detail Screen implementation owner.");
 
   const audit = await auditPlanetDetailScreenSources();
   assert(audit.summary.sourceCount === 4, "Expected four canonical Planet Detail Screen source PSDs.");
@@ -80,6 +90,7 @@ async function main() {
     pendingSourceMappings: audit.summary.pendingSlices,
     gameReadyPsdSources: audit.sources.filter((source) => source.derivativeStatus === "Published").length,
     transparentPsdSources: planetDetailScreenRuntimeContract.sourceArtwork.filter((source) => source.transparentPixelCount > 0).length,
+    presentationReference: planetDetailScreenRuntimeContract.presentationReference.imagePath,
     engineExports: Object.fromEntries(exports.map(({ target, payload }) => [target, payload.validation.status]))
   }, null, 2));
 }

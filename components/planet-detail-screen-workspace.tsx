@@ -183,28 +183,29 @@ function SlicesPanel({ audit }: Pick<Props, "audit">) {
 function RuntimePreview({ contract }: Pick<Props, "contract">) {
   return (
     <section className="grid gap-4 xl:grid-cols-[1.5fr_1fr]">
-      <div className="aspect-[3/2] rounded-md border border-cyan-900/80 bg-slate-950 p-4">
-        <div className="grid h-full grid-cols-[18%_1fr] gap-3">
-          <div className="rounded border border-cyan-900/70 bg-cyan-950/15 p-2 text-[10px] uppercase text-cyan-200">Left Navigation</div>
-          <div className="grid min-w-0 grid-rows-[10%_34%_1fr] gap-3">
-            <div className="rounded border border-slate-700 p-2 text-[10px] uppercase text-slate-400">Breadcrumb</div>
-            <div className="grid grid-cols-[1.4fr_1fr] gap-3">
-              <div className="rounded border border-cyan-800/70 bg-cyan-950/20 p-2 text-[10px] uppercase text-cyan-200">Planet Hero</div>
-              <div className="rounded border border-slate-700 p-2 text-[10px] uppercase text-slate-400">Overview</div>
-            </div>
-            <div className="grid grid-cols-3 gap-3">
-              {["Resources", "Biome", "Weather", "Creatures", "Atmosphere", "Composition"].map((label) => (
-                <div key={label} className="rounded border border-slate-800 p-2 text-[10px] uppercase text-slate-400">{label}</div>
-              ))}
-            </div>
-          </div>
-        </div>
+      <div className="overflow-hidden rounded-md border border-cyan-900/80 bg-slate-950">
+        <img
+          src={contract.presentationReference.imagePath}
+          alt={contract.presentationReference.displayName}
+          className="h-auto w-full object-contain"
+          loading="eager"
+          decoding="async"
+        />
       </div>
       <article className="rounded-md border border-slate-800 bg-slate-950/65 p-4">
-        <div className="flex items-center gap-2"><Layers3 size={18} className="text-cyan-200" /><h3 className="font-bold text-white">Runtime Contract</h3></div>
+        <div className="flex items-center gap-2"><Layers3 size={18} className="text-cyan-200" /><h3 className="font-bold text-white">Game Presentation Contract</h3></div>
+        <p className="mt-3 text-sm leading-6 text-slate-400">
+          The Game should match this reference&apos;s visual hierarchy and style while owning responsive layout, interaction, and live data binding.
+        </p>
+        <ul className="mt-4 space-y-2 text-sm text-slate-300">
+          {contract.presentationContract.requirements.map((requirement) => (
+            <li key={requirement} className="border-l border-cyan-800 pl-3">{requirement}</li>
+          ))}
+        </ul>
         <dl className="mt-4 space-y-3 text-sm">
           <div><dt className="text-xs uppercase text-slate-500">Screen</dt><dd className="mt-1 text-slate-100">{contract.screen}</dd></div>
           <div><dt className="text-xs uppercase text-slate-500">Asset Pack</dt><dd className="mt-1 text-slate-100">{contract.assetPack.id}</dd></div>
+          <div><dt className="text-xs uppercase text-slate-500">Reference</dt><dd className="mt-1 text-slate-100">{contract.presentationReference.width} × {contract.presentationReference.height}</dd></div>
           <div><dt className="text-xs uppercase text-slate-500">Manifest</dt><dd className="mt-1 break-all font-mono text-xs text-slate-300">{contract.assetPack.manifestPath}</dd></div>
           <div><dt className="text-xs uppercase text-slate-500">Atlas</dt><dd className="mt-1 break-all font-mono text-xs text-slate-300">{contract.exportProfile.spriteAtlas.manifestPath}</dd></div>
           <div><dt className="text-xs uppercase text-slate-500">Theme</dt><dd className="mt-1 text-slate-100">{contract.theme}</dd></div>
