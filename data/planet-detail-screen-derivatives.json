@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "psd-game-derivatives-v1",
+  "schemaVersion": "psd-game-derivatives-v2",
   "records": [
     {
       "id": "biome-environment",
@@ -9,7 +9,14 @@
         "width": 1319,
         "height": 1189,
         "checksum": "2c442b2e4c95e0d0f1ee210446ac251eca1d0d586c96e5a6aaab99bf4c7a07a8",
-        "bytes": 9821219
+        "bytes": 9821219,
+        "alphaPolicy": "remove_edge_white_matte",
+        "alpha": {
+          "hasAlpha": true,
+          "transparentPixelCount": 2433,
+          "partialPixelCount": 0,
+          "opaquePixelCount": 1565858
+        }
       },
       "derivatives": [
         {
@@ -19,8 +26,14 @@
           "mimeType": "image/png",
           "width": 1319,
           "height": 1189,
-          "bytes": 962535,
-          "checksum": "f62ce36216bee376172e9190a660514354f82992fdcd4967f052fd8d71df415c"
+          "bytes": 960746,
+          "checksum": "dbd607d2f49aea75d50d2c22660c14279ad710367fc75f9b8d10592068eab981",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 2433,
+            "partialPixelCount": 0,
+            "opaquePixelCount": 1565858
+          }
         },
         {
           "id": "web_preview",
@@ -29,8 +42,14 @@
           "mimeType": "image/webp",
           "width": 1319,
           "height": 1189,
-          "bytes": 8702,
-          "checksum": "9bb79e32cf8e97e6999c0e7778a1790c44b3be3fc81f084cb568af848d66350e"
+          "bytes": 8946,
+          "checksum": "46a4b11f08ffa3e08f7a167a57e1dfd6557e8c55be7d97a85157b2b6ad407988",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 2433,
+            "partialPixelCount": 0,
+            "opaquePixelCount": 1565858
+          }
         },
         {
           "id": "library_thumbnail",
@@ -39,8 +58,14 @@
           "mimeType": "image/webp",
           "width": 480,
           "height": 270,
-          "bytes": 976,
-          "checksum": "b3e703ed09c281e02b1bd8e3d3290eba59bc46ff3742fe5d7eecfa9a6a8d1b61"
+          "bytes": 1274,
+          "checksum": "171ad318f0d7870edac279e26dda94e88f11f57328daea362b699ad7be443541",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 48662,
+            "partialPixelCount": 313,
+            "opaquePixelCount": 80625
+          }
         }
       ]
     },
@@ -52,7 +77,14 @@
         "width": 2119,
         "height": 1300,
         "checksum": "21f70893503b054601b0634e3b31bc7b75db3af3cbc97f092ac7dcaca5afc7ca",
-        "bytes": 16496210
+        "bytes": 16496210,
+        "alphaPolicy": "remove_edge_white_matte",
+        "alpha": {
+          "hasAlpha": true,
+          "transparentPixelCount": 2217,
+          "partialPixelCount": 0,
+          "opaquePixelCount": 2752483
+        }
       },
       "derivatives": [
         {
@@ -62,8 +94,14 @@
           "mimeType": "image/png",
           "width": 2119,
           "height": 1300,
-          "bytes": 1656682,
-          "checksum": "72b4ac010b6e0474b6fff435b6fde92e776a3c8036a3bbb7384103b54362ee8f"
+          "bytes": 1643121,
+          "checksum": "087c85d5191d2625c7f77a2c520272b96d75f6c945a012ef18f9e29c54999190",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 2217,
+            "partialPixelCount": 0,
+            "opaquePixelCount": 2752483
+          }
         },
         {
           "id": "web_preview",
@@ -72,8 +110,14 @@
           "mimeType": "image/webp",
           "width": 1600,
           "height": 982,
-          "bytes": 7488,
-          "checksum": "d1b4fe0fdc78031e6e0b43c60cf661244971f1e59ee1ad2b2ac815afd3daa68f"
+          "bytes": 9044,
+          "checksum": "e72f218635b569a8fcfd763b8e2283f791dd57c6bb3bb0b12d3c08b907b52775",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 1008,
+            "partialPixelCount": 653,
+            "opaquePixelCount": 1569539
+          }
         },
         {
           "id": "library_thumbnail",
@@ -82,8 +126,14 @@
           "mimeType": "image/webp",
           "width": 480,
           "height": 270,
-          "bytes": 878,
-          "checksum": "adc236a578edb3d3fe0e6ed1c629301f5d910972fd9a017b463952f318081293"
+          "bytes": 1132,
+          "checksum": "bab127bd668c144acb4cf07653a50019a3185c85e4995f622e51cc7312d03bf1",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 10841,
+            "partialPixelCount": 182,
+            "opaquePixelCount": 118577
+          }
         }
       ]
     },
@@ -95,7 +145,14 @@
         "width": 1449,
         "height": 1404,
         "checksum": "50308ac7ddcdde284e756809eaf629eb2aad402082bfe6f7f3d148125c8169bb",
-        "bytes": 13865270
+        "bytes": 13865270,
+        "alphaPolicy": "remove_edge_white_matte",
+        "alpha": {
+          "hasAlpha": true,
+          "transparentPixelCount": 4057,
+          "partialPixelCount": 0,
+          "opaquePixelCount": 2030339
+        }
       },
       "derivatives": [
         {
@@ -105,8 +162,14 @@
           "mimeType": "image/png",
           "width": 1449,
           "height": 1404,
-          "bytes": 1457514,
-          "checksum": "ecfe34ce2ed62f962175ab4e94f32fd00cd21b28a1f3c564382026c839346337"
+          "bytes": 1456355,
+          "checksum": "21a04347e37eabc639e2b908e0380109fbe23ee167b7728313d479091fa0ca45",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 4057,
+            "partialPixelCount": 0,
+            "opaquePixelCount": 2030339
+          }
         },
         {
           "id": "web_preview",
@@ -115,8 +178,14 @@
           "mimeType": "image/webp",
           "width": 1449,
           "height": 1404,
-          "bytes": 10286,
-          "checksum": "35b4143135a511e05fe12543717f146c32a2b8524a89933a307c8a47b4278734"
+          "bytes": 10662,
+          "checksum": "29ddfc8e72c6e8c553b13e1091c3ae3583fbaf23795e59424bb5dcc5bee09db0",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 4057,
+            "partialPixelCount": 0,
+            "opaquePixelCount": 2030339
+          }
         },
         {
           "id": "library_thumbnail",
@@ -125,8 +194,14 @@
           "mimeType": "image/webp",
           "width": 480,
           "height": 270,
-          "bytes": 960,
-          "checksum": "60553ed55e96395f787c90725a04b1c35f4f012a33df5fb3b3f2961cbca87b1e"
+          "bytes": 1238,
+          "checksum": "39390c09d5507bacbd1784073b933b633d4f17a63ae39fa570be64f71492fbac",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 54316,
+            "partialPixelCount": 717,
+            "opaquePixelCount": 74567
+          }
         }
       ]
     },
@@ -138,7 +213,14 @@
         "width": 1888,
         "height": 1256,
         "checksum": "3c36954f50b80eb9ae5a0c641a8cd8d0a8b2a74c347136d730a504861fdef909",
-        "bytes": 16788382
+        "bytes": 16788382,
+        "alphaPolicy": "remove_edge_white_matte",
+        "alpha": {
+          "hasAlpha": true,
+          "transparentPixelCount": 2018,
+          "partialPixelCount": 0,
+          "opaquePixelCount": 2369310
+        }
       },
       "derivatives": [
         {
@@ -148,8 +230,14 @@
           "mimeType": "image/png",
           "width": 1888,
           "height": 1256,
-          "bytes": 1704055,
-          "checksum": "8daae229c45f8eeb9477341c258b2ecd606658cdfc76fb212f5e7064be39aa22"
+          "bytes": 1703817,
+          "checksum": "5664504e45bab94b6bab21b8db9f51ba6d4dbdae12b2686f8b14d4ff2671a506",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 2018,
+            "partialPixelCount": 0,
+            "opaquePixelCount": 2369310
+          }
         },
         {
           "id": "web_preview",
@@ -158,8 +246,14 @@
           "mimeType": "image/webp",
           "width": 1600,
           "height": 1064,
-          "bytes": 11168,
-          "checksum": "f70c1c257a69f5334924504acb95c63aea690925e101010ad3b9f51626589649"
+          "bytes": 12372,
+          "checksum": "253321c4c5bd4c23cc03e702f42f7e9f6c5bcfabd22698271dc7573ef8cfddfa",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 1052,
+            "partialPixelCount": 896,
+            "opaquePixelCount": 1700452
+          }
         },
         {
           "id": "library_thumbnail",
@@ -168,8 +262,14 @@
           "mimeType": "image/webp",
           "width": 480,
           "height": 270,
-          "bytes": 1180,
-          "checksum": "bbf3b0e61e90d9034767e3d811fa2cb3bc28de24118a60b5422ee32e9cf7565a"
+          "bytes": 1434,
+          "checksum": "747855e03d1ac404aacfb6cb385b8b5c7ae2cd170ab05862deb83c0499c5d0ed",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 20021,
+            "partialPixelCount": 242,
+            "opaquePixelCount": 109337
+          }
         }
       ]
     }

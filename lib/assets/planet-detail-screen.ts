@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import derivativeData from "@/data/planet-detail-screen-derivatives.json";
 
-export const PLANET_DETAIL_SCREEN_VERSION = "1.1.0";
+export const PLANET_DETAIL_SCREEN_VERSION = "1.2.0";
 export const PLANET_DETAIL_SCREEN_ID = "planet-detail" as const;
 
 export type PlanetDetailScreenSlice = {
@@ -68,6 +68,8 @@ export type PlanetDetailScreenRuntimeContract = {
     previewPath: string;
     thumbnailPath: string;
     gamePngChecksum: string;
+    alphaPolicy: "remove_edge_white_matte";
+    transparentPixelCount: number;
   }>;
   slices: PlanetDetailScreenSlice[];
   theme: "noveris";
@@ -150,7 +152,9 @@ const sourceArtwork = derivativeData.records.map((record) => {
     gamePngPath: gamePng.path,
     previewPath: preview.path,
     thumbnailPath: thumbnail.path,
-    gamePngChecksum: gamePng.checksum
+    gamePngChecksum: gamePng.checksum,
+    alphaPolicy: record.source.alphaPolicy as "remove_edge_white_matte",
+    transparentPixelCount: gamePng.alpha.transparentPixelCount
   };
 });
 
@@ -234,6 +238,9 @@ export function validatePlanetDetailScreenContract(
     }
     if (!artwork.width || !artwork.height || !artwork.gamePngChecksum) {
       issues.push(`Published artwork metadata is incomplete: ${artwork.id}.`);
+    }
+    if (artwork.alphaPolicy !== "remove_edge_white_matte" || artwork.transparentPixelCount <= 0) {
+      issues.push(`Published UI artwork must contain PSD-derived transparency: ${artwork.id}.`);
     }
   }
   for (const slice of contract.slices) {

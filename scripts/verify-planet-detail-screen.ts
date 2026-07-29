@@ -33,9 +33,17 @@ async function main() {
   assert(audit.sources.every((source) => source.gamePngPath && source.previewPath && source.thumbnailPath), "Every Planet Detail PSD derivative set must be complete.");
   for (const source of audit.sources) {
     const gamePngPath = path.join(process.cwd(), "public", source.gamePngPath!);
-    const metadata = await sharp(await readFile(gamePngPath)).metadata();
+    const gamePng = sharp(await readFile(gamePngPath));
+    const metadata = await gamePng.metadata();
     assert(metadata.format === "png", `${source.id} game derivative is not PNG.`);
     assert(metadata.width === source.width && metadata.height === source.height, `${source.id} game PNG must retain native PSD dimensions.`);
+    assert(metadata.hasAlpha === true, `${source.id} game PNG must retain an alpha channel.`);
+    const alpha = await sharp(await readFile(gamePngPath)).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+    let transparentPixelCount = 0;
+    for (let offset = 3; offset < alpha.data.length; offset += alpha.info.channels) {
+      if (alpha.data[offset] === 0) transparentPixelCount += 1;
+    }
+    assert(transparentPixelCount > 0, `${source.id} game PNG must contain transparent edge pixels.`);
   }
 
   const publicContract = JSON.stringify(planetDetailScreenRuntimeContract);
@@ -71,6 +79,7 @@ async function main() {
     mappedSlices: audit.summary.mappedSlices,
     pendingSourceMappings: audit.summary.pendingSlices,
     gameReadyPsdSources: audit.sources.filter((source) => source.derivativeStatus === "Published").length,
+    transparentPsdSources: planetDetailScreenRuntimeContract.sourceArtwork.filter((source) => source.transparentPixelCount > 0).length,
     engineExports: Object.fromEntries(exports.map(({ target, payload }) => [target, payload.validation.status]))
   }, null, 2));
 }

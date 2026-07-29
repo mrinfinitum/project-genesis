@@ -20,7 +20,11 @@ async function main() {
 
   for (const source of sources) {
     const buffer = await readFile(path.join(sourceRoot, source.filename));
-    const generated = await generatePsdGameDerivatives(buffer, { basename: source.id });
+    const generated = await generatePsdGameDerivatives(buffer, {
+      basename: source.id,
+      alphaPolicy: "remove_edge_white_matte",
+      requireTransparentPixels: true
+    });
     const derivatives = [];
 
     for (const item of generated.derivatives) {
@@ -33,7 +37,8 @@ async function main() {
         width: item.width,
         height: item.height,
         bytes: item.bytes,
-        checksum: item.checksum
+        checksum: item.checksum,
+        alpha: item.alpha
       });
     }
 
@@ -49,7 +54,7 @@ async function main() {
 
   await writeFile(
     metadataPath,
-    `${JSON.stringify({ schemaVersion: "psd-game-derivatives-v1", records }, null, 2)}\n`
+    `${JSON.stringify({ schemaVersion: "psd-game-derivatives-v2", records }, null, 2)}\n`
   );
   console.log(`Wrote ${metadataPath}`);
 }
@@ -58,4 +63,3 @@ main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });
-

@@ -18,7 +18,17 @@ export type PsdGameDerivative = {
   height: number;
   bytes: number;
   checksum: string;
+  alpha: PsdAlphaCoverage;
   buffer: Buffer;
+};
+
+export type PsdAlphaPolicy = "preserve" | "remove_edge_white_matte";
+
+export type PsdAlphaCoverage = {
+  hasAlpha: boolean;
+  transparentPixelCount: number;
+  partialPixelCount: number;
+  opaquePixelCount: number;
 };
 
 export type PsdGameDerivativeSet = {
@@ -27,6 +37,8 @@ export type PsdGameDerivativeSet = {
     height: number;
     checksum: string;
     bytes: number;
+    alphaPolicy: PsdAlphaPolicy;
+    alpha: PsdAlphaCoverage;
   };
   derivatives: PsdGameDerivative[];
 };
@@ -37,8 +49,98 @@ type PsdDerivativeSize = {
   fit?: "inside" | "contain" | "cover";
 };
 
+function removeEdgeConnectedWhiteMatte(
+  source: Buffer,
+  width: number,
+  height: number
+) {
+  const rgba = Buffer.from(source);
+  const pixelCount = width * height;
+  const visited = new Uint8Array(pixelCount);
+  const queue = new Int32Array(pixelCount);
+  let head = 0;
+  let tail = 0;
+
+  const isMatte = (pixel: number) => {
+    const offset = pixel * 4;
+    const red = rgba[offset];
+    const green = rgba[offset + 1];
+    const blue = rgba[offset + 2];
+    const highest = Math.max(red, green, blue);
+    const lowest = Math.min(red, green, blue);
+    return lowest >= 220 && highest - lowest <= 24;
+  };
+
+  const enqueue = (pixel: number) => {
+    if (visited[pixel] || !isMatte(pixel)) return;
+    visited[pixel] = 1;
+    queue[tail] = pixel;
+    tail += 1;
+  };
+
+  for (let x = 0; x < width; x += 1) {
+    enqueue(x);
+    enqueue((height - 1) * width + x);
+  }
+  for (let y = 0; y < height; y += 1) {
+    enqueue(y * width);
+    enqueue(y * width + width - 1);
+  }
+
+  while (head < tail) {
+    const pixel = queue[head];
+    head += 1;
+    const x = pixel % width;
+    const y = Math.floor(pixel / width);
+    if (x > 0) enqueue(pixel - 1);
+    if (x + 1 < width) enqueue(pixel + 1);
+    if (y > 0) enqueue(pixel - width);
+    if (y + 1 < height) enqueue(pixel + width);
+  }
+
+  for (let pixel = 0; pixel < pixelCount; pixel += 1) {
+    if (!visited[pixel]) continue;
+    const offset = pixel * 4;
+    rgba[offset] = 0;
+    rgba[offset + 1] = 0;
+    rgba[offset + 2] = 0;
+    rgba[offset + 3] = 0;
+  }
+
+  return rgba;
+}
+
 function checksum(buffer: Buffer) {
   return createHash("sha256").update(buffer).digest("hex");
+}
+
+function alphaCoverage(rgba: Uint8Array, channels = 4): PsdAlphaCoverage {
+  let transparentPixelCount = 0;
+  let partialPixelCount = 0;
+  let opaquePixelCount = 0;
+
+  for (let offset = 3; offset < rgba.length; offset += channels) {
+    const alpha = rgba[offset];
+    if (alpha === 0) transparentPixelCount += 1;
+    else if (alpha === 255) opaquePixelCount += 1;
+    else partialPixelCount += 1;
+  }
+
+  return {
+    hasAlpha: channels === 4,
+    transparentPixelCount,
+    partialPixelCount,
+    opaquePixelCount
+  };
+}
+
+async function derivativeAlphaCoverage(buffer: Buffer) {
+  const metadata = await sharp(buffer).metadata();
+  const raw = await sharp(buffer).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  return {
+    ...alphaCoverage(raw.data, raw.info.channels),
+    hasAlpha: metadata.hasAlpha === true
+  };
 }
 
 function toEightBitRgba(
@@ -63,7 +165,7 @@ function toEightBitRgba(
   return Buffer.from(data);
 }
 
-function derivative(
+async function derivative(
   id: PsdGameDerivative["id"],
   filename: string,
   format: PsdGameDerivative["format"],
@@ -71,7 +173,7 @@ function derivative(
   buffer: Buffer,
   width: number,
   height: number
-): PsdGameDerivative {
+): Promise<PsdGameDerivative> {
   return {
     id,
     filename,
@@ -81,6 +183,7 @@ function derivative(
     height,
     bytes: buffer.byteLength,
     checksum: checksum(buffer),
+    alpha: await derivativeAlphaCoverage(buffer),
     buffer
   };
 }
@@ -93,6 +196,8 @@ export async function generatePsdGameDerivatives(
     gameOutput?: PsdDerivativeSize;
     previewOutput?: PsdDerivativeSize;
     thumbnailOutput?: PsdDerivativeSize;
+    alphaPolicy?: PsdAlphaPolicy;
+    requireTransparentPixels?: boolean;
   }
 ): Promise<PsdGameDerivativeSet> {
   const psd = readPsd(sourceBuffer, {
@@ -109,7 +214,15 @@ export async function generatePsdGameDerivatives(
 
   const width = imageData.width || psd.width;
   const height = imageData.height || psd.height;
-  const rgba = toEightBitRgba(imageData.data, width, height);
+  const sourceRgba = toEightBitRgba(imageData.data, width, height);
+  const alphaPolicy = options.alphaPolicy ?? "preserve";
+  const rgba = alphaPolicy === "remove_edge_white_matte"
+    ? removeEdgeConnectedWhiteMatte(sourceRgba, width, height)
+    : sourceRgba;
+  const processedAlpha = alphaCoverage(rgba);
+  if (options.requireTransparentPixels && processedAlpha.transparentPixelCount === 0) {
+    throw new Error(`PSD derivative ${options.basename} requires transparency but no transparent pixels were produced.`);
+  }
   const input = sharp(rgba, { raw: { width, height, channels: 4 } });
   const gameInput = options.gameOutput
     ? input.clone().resize({
@@ -160,10 +273,12 @@ export async function generatePsdGameDerivatives(
       width,
       height,
       checksum: checksum(sourceBuffer),
-      bytes: sourceBuffer.byteLength
+      bytes: sourceBuffer.byteLength,
+      alphaPolicy,
+      alpha: processedAlpha
     },
     derivatives: [
-      derivative(
+      await derivative(
         "game_png",
         `${options.basename}.png`,
         "PNG",
@@ -172,7 +287,7 @@ export async function generatePsdGameDerivatives(
         gamePng.info.width,
         gamePng.info.height
       ),
-      derivative(
+      await derivative(
         "web_preview",
         `${options.basename}-preview.webp`,
         "WebP",
@@ -181,7 +296,7 @@ export async function generatePsdGameDerivatives(
         preview.info.width,
         preview.info.height
       ),
-      derivative(
+      await derivative(
         "library_thumbnail",
         `${options.basename}-thumbnail.webp`,
         "WebP",
