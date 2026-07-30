@@ -1,0 +1,494 @@
+{
+  "schemaVersion": "navigation-icon-derivatives-v1",
+  "generatedFrom": "canonical-art-pipeline",
+  "records": [
+    {
+      "assetId": "asset_buildings_icon",
+      "artKey": "buildings_icon",
+      "displayName": "Buildings Icon",
+      "status": "published",
+      "source": {
+        "width": 3000,
+        "height": 3000,
+        "checksum": "4758b18baa5223044c0807e0aa787a48a4b846abe169535f5ea6fb2c1073c3bb"
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/assets/game-art/asset_buildings_icon/asset_buildings_icon.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 512,
+          "height": 512,
+          "bytes": 26578,
+          "checksum": "89709a95ddee7579e347c8b06cd27ff249f826fe68d7b1bd493b534eb7af4c4d",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 163635,
+            "partialPixelCount": 23489,
+            "opaquePixelCount": 75020
+          }
+        },
+        {
+          "id": "web_preview",
+          "path": "/assets/game-art/asset_buildings_icon/asset_buildings_icon-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 512,
+          "bytes": 15172,
+          "checksum": "1a3ef79b0cd9418b603cbb67f851b7110270b73e082e64fa55ff3fdb7fc4b53f",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 163635,
+            "partialPixelCount": 23489,
+            "opaquePixelCount": 75020
+          }
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/assets/game-art/asset_buildings_icon/asset_buildings_icon-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 256,
+          "height": 256,
+          "bytes": 7188,
+          "checksum": "1885e69e21f0978efe21548129facfc3bfd786b465c82ec5854bcdc02490534e",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 38156,
+            "partialPixelCount": 11447,
+            "opaquePixelCount": 15933
+          }
+        }
+      ]
+    },
+    {
+      "assetId": "asset_civilization_icon",
+      "artKey": "civilization_icon",
+      "displayName": "Civilization Icon",
+      "status": "published",
+      "source": {
+        "width": 3000,
+        "height": 3000,
+        "checksum": "5b6152558b68af75f81b2a9ac796b6be4828992029d0fb14b5dab76f7b8e0637"
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/assets/game-art/asset_civilization_icon/asset_civilization_icon.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 512,
+          "height": 512,
+          "bytes": 42455,
+          "checksum": "7c18731c79d3084cce2eaae2573e91d62eb9b3f31b3ffabeacfd80561a5e7aa5",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 207393,
+            "partialPixelCount": 21563,
+            "opaquePixelCount": 33188
+          }
+        },
+        {
+          "id": "web_preview",
+          "path": "/assets/game-art/asset_civilization_icon/asset_civilization_icon-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 512,
+          "bytes": 25410,
+          "checksum": "4f96107620d4c3cb58af3de3b5951fd66103416636c568f347e74cb3c642f100",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 207393,
+            "partialPixelCount": 21563,
+            "opaquePixelCount": 33188
+          }
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/assets/game-art/asset_civilization_icon/asset_civilization_icon-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 256,
+          "height": 256,
+          "bytes": 11320,
+          "checksum": "4347f575a9d67e41a0d00b990bd338c2b4936a5e4ca21714a5f68ce6372ec16f",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 49253,
+            "partialPixelCount": 9785,
+            "opaquePixelCount": 6498
+          }
+        }
+      ]
+    },
+    {
+      "assetId": "asset_events_icon",
+      "artKey": "events_icon",
+      "displayName": "Events Icon",
+      "status": "published",
+      "source": {
+        "width": 3000,
+        "height": 3000,
+        "checksum": "6e8f538c2d92c93924c9054519e3941e706879a510fe452b89d10a0d2cc853d6"
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/assets/game-art/asset_events_icon/asset_events_icon.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 512,
+          "height": 512,
+          "bytes": 19228,
+          "checksum": "24b6f30e9c47147a5a903c92763fde247601dcfa79050c383f06422f244669d4",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 191233,
+            "partialPixelCount": 24250,
+            "opaquePixelCount": 46661
+          }
+        },
+        {
+          "id": "web_preview",
+          "path": "/assets/game-art/asset_events_icon/asset_events_icon-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 512,
+          "bytes": 11582,
+          "checksum": "8e91390bac165e78c894fcd69102b15ff1b0fdd7d9dcbeb8bfa26ce6ee73da08",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 191233,
+            "partialPixelCount": 24250,
+            "opaquePixelCount": 46661
+          }
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/assets/game-art/asset_events_icon/asset_events_icon-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 256,
+          "height": 256,
+          "bytes": 6254,
+          "checksum": "b998f8e4313575097ce565060c60a2c923a9bd79da01b6adc4dd218c924764c1",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 44847,
+            "partialPixelCount": 11453,
+            "opaquePixelCount": 9236
+          }
+        }
+      ]
+    },
+    {
+      "assetId": "asset_galaxy_icon",
+      "artKey": "galaxy_icon",
+      "displayName": "Galaxy Icon",
+      "status": "published",
+      "source": {
+        "width": 3000,
+        "height": 3000,
+        "checksum": "8326fb293da01d6d2962fe1a8eaaeba5c8bc137272489636fa6ee3a540aaf8ba"
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/assets/game-art/asset_galaxy_icon/asset_galaxy_icon.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 512,
+          "height": 512,
+          "bytes": 39360,
+          "checksum": "7b51305f66e17d9009962f61cac8ec49d8bf8eebb80ae43379e2ed4977fbe715",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 212831,
+            "partialPixelCount": 19125,
+            "opaquePixelCount": 30188
+          }
+        },
+        {
+          "id": "web_preview",
+          "path": "/assets/game-art/asset_galaxy_icon/asset_galaxy_icon-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 512,
+          "bytes": 21850,
+          "checksum": "b8261b9a26c2fce54405ceb4492f2c0dc342b743c69741e858fcd376d18189ec",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 212831,
+            "partialPixelCount": 19125,
+            "opaquePixelCount": 30188
+          }
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/assets/game-art/asset_galaxy_icon/asset_galaxy_icon-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 256,
+          "height": 256,
+          "bytes": 10644,
+          "checksum": "85202fcf016700186fe4b513d5b8356076c56b6718047cadf94a8434af3db959",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 50904,
+            "partialPixelCount": 9283,
+            "opaquePixelCount": 5349
+          }
+        }
+      ]
+    },
+    {
+      "assetId": "asset_overview_icon",
+      "artKey": "overview_icon",
+      "displayName": "Overview Icon",
+      "status": "published",
+      "source": {
+        "width": 3000,
+        "height": 3000,
+        "checksum": "1f2d817968d20dcb799e0fe26da14fc5545c0089c8bfda833e57ce1239009098"
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/assets/game-art/asset_overview_icon/asset_overview_icon.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 512,
+          "height": 512,
+          "bytes": 27642,
+          "checksum": "ac6ea6936773b70b1b585ec34fc86355777a945f097bccb64db4620e6a092bce",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 197788,
+            "partialPixelCount": 23125,
+            "opaquePixelCount": 41231
+          }
+        },
+        {
+          "id": "web_preview",
+          "path": "/assets/game-art/asset_overview_icon/asset_overview_icon-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 512,
+          "bytes": 16570,
+          "checksum": "6b879084a8d5fc34778324b7589a31e2deeb9e9f452e0b28590b7a013ff28186",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 197788,
+            "partialPixelCount": 23125,
+            "opaquePixelCount": 41231
+          }
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/assets/game-art/asset_overview_icon/asset_overview_icon-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 256,
+          "height": 256,
+          "bytes": 7750,
+          "checksum": "7e9f78d6a40f6525b87b890fefe7481621438474750f3bc4a1dfccb726f81103",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 46751,
+            "partialPixelCount": 10303,
+            "opaquePixelCount": 8482
+          }
+        }
+      ]
+    },
+    {
+      "assetId": "asset_research_icon",
+      "artKey": "research_icon",
+      "displayName": "Research Icon",
+      "status": "published",
+      "source": {
+        "width": 3000,
+        "height": 3000,
+        "checksum": "caa96a10a357a2dd029ddc6db8eee19fea6dc32940a706d54d310c187d8d89ef"
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/assets/game-art/asset_research_icon/asset_research_icon.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 512,
+          "height": 512,
+          "bytes": 27479,
+          "checksum": "122f032e6d416481f903c3b0833cd96a03ce42514c6d9b863432d827435ebc7c",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 214083,
+            "partialPixelCount": 19165,
+            "opaquePixelCount": 28896
+          }
+        },
+        {
+          "id": "web_preview",
+          "path": "/assets/game-art/asset_research_icon/asset_research_icon-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 512,
+          "bytes": 15868,
+          "checksum": "c6cfcc8ec465cc64b84a4b27a4334fae985d26c8319f97549a72d46be33913bd",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 214083,
+            "partialPixelCount": 19165,
+            "opaquePixelCount": 28896
+          }
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/assets/game-art/asset_research_icon/asset_research_icon-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 256,
+          "height": 256,
+          "bytes": 7368,
+          "checksum": "ac705450708cdbacf822c7e9de8f3aa889dd36469d7b1f2d40bb7da613622417",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 51457,
+            "partialPixelCount": 8641,
+            "opaquePixelCount": 5438
+          }
+        }
+      ]
+    },
+    {
+      "assetId": "asset_spaceport_icon",
+      "artKey": "spaceport_icon",
+      "displayName": "Spaceport Icon",
+      "status": "published",
+      "source": {
+        "width": 3000,
+        "height": 3000,
+        "checksum": "20a07dd97c08b10942d77a8b44de4af85841a094f9fe1d5187277c58509310a1"
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/assets/game-art/asset_spaceport_icon/asset_spaceport_icon.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 512,
+          "height": 512,
+          "bytes": 32507,
+          "checksum": "21e9e2ea654eb874d3ebf960036c5b89fd48898ccd761424bddd442fce8fe73f",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 217349,
+            "partialPixelCount": 15537,
+            "opaquePixelCount": 29258
+          }
+        },
+        {
+          "id": "web_preview",
+          "path": "/assets/game-art/asset_spaceport_icon/asset_spaceport_icon-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 512,
+          "bytes": 19142,
+          "checksum": "548863dbc4133973cb57c00e2a1dc9d1414b9f075340d1d3e2bce31641e35c0a",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 217349,
+            "partialPixelCount": 15537,
+            "opaquePixelCount": 29258
+          }
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/assets/game-art/asset_spaceport_icon/asset_spaceport_icon-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 256,
+          "height": 256,
+          "bytes": 9824,
+          "checksum": "521813d534e761c1cd9e14446b6b7644e6900b309b6e82cc85164b09d54fe213",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 52510,
+            "partialPixelCount": 7727,
+            "opaquePixelCount": 5299
+          }
+        }
+      ]
+    },
+    {
+      "assetId": "asset_upgrades_icon",
+      "artKey": "upgrades_icon",
+      "displayName": "Upgrades Icon",
+      "status": "published",
+      "source": {
+        "width": 3000,
+        "height": 3000,
+        "checksum": "7d952769aa7e446b68207d17b8d9491e74f289c60aed943115d2e82e9cd2a47b"
+      },
+      "derivatives": [
+        {
+          "id": "game_png",
+          "path": "/assets/game-art/asset_upgrades_icon/asset_upgrades_icon.png",
+          "format": "PNG",
+          "mimeType": "image/png",
+          "width": 512,
+          "height": 512,
+          "bytes": 29806,
+          "checksum": "7c0ef7063a3be76f07a8ed9f6e3dd83bc309efb6ccb76a77d3094edffc0dbe38",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 197999,
+            "partialPixelCount": 22544,
+            "opaquePixelCount": 41601
+          }
+        },
+        {
+          "id": "web_preview",
+          "path": "/assets/game-art/asset_upgrades_icon/asset_upgrades_icon-preview.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 512,
+          "height": 512,
+          "bytes": 17484,
+          "checksum": "4b0509ddcce6c4ffbbf63e676546fadb840cf4d3a83f70ed93690d94b5985ae0",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 197999,
+            "partialPixelCount": 22544,
+            "opaquePixelCount": 41601
+          }
+        },
+        {
+          "id": "library_thumbnail",
+          "path": "/assets/game-art/asset_upgrades_icon/asset_upgrades_icon-thumbnail.webp",
+          "format": "WebP",
+          "mimeType": "image/webp",
+          "width": 256,
+          "height": 256,
+          "bytes": 8104,
+          "checksum": "7a0e4ef9cf61b973bc54f692cbf8169848b34792df4d4cbd249e3c702c567429",
+          "alpha": {
+            "hasAlpha": true,
+            "transparentPixelCount": 46545,
+            "partialPixelCount": 11318,
+            "opaquePixelCount": 7673
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -696,14 +696,14 @@
       "category": "navigation_icon",
       "artKey": "buildings_icon",
       "mimeType": "image/png",
-      "width": 96,
-      "height": 96,
-      "aspectRatio": "96:96",
-      "fileSizeBytes": 0,
+      "width": 512,
+      "height": 512,
+      "aspectRatio": "512:512",
+      "fileSizeBytes": 26578,
       "status": "mapped",
-      "notes": "Imported from Roblox art manifest. Web publish is pending.",
-      "previewUrl": "rbxassetid://82915516332061",
-      "storagePath": "",
+      "notes": "Canonical transparent navigation icon generated from the current Studio PSD master.",
+      "previewUrl": "/assets/game-art/asset_buildings_icon/asset_buildings_icon.png",
+      "storagePath": "/assets/game-art/asset_buildings_icon/asset_buildings_icon.png",
       "platformMappings": {
         "roblox": {
           "assetId": "rbxassetid://82915516332061",
@@ -711,9 +711,9 @@
           "publishedAt": "2026-07-12T23:38:23.912Z"
         },
         "web": {
-          "path": "",
-          "status": "Needs Web Publish",
-          "sourceFile": "assets/menu/icon_buildings_96x96.png"
+          "path": "/assets/game-art/asset_buildings_icon/asset_buildings_icon.png",
+          "status": "published",
+          "publishedAt": "2026-07-30T03:16:09.056Z"
         }
       },
       "usageReferences": [
@@ -740,7 +740,7 @@
       ],
       "importedFrom": "Project Genesis Roblox",
       "importedAt": "2026-07-12T23:38:23.912Z",
-      "updatedAt": "2026-07-12T23:38:23.918Z"
+      "updatedAt": "2026-07-30T03:16:09.056Z"
     },
     {
       "id": "asset_calendar_icon",
@@ -900,6 +900,47 @@
       "importedFrom": "Project Genesis Roblox",
       "importedAt": "2026-07-12T23:38:23.912Z",
       "updatedAt": "2026-07-12T23:38:23.918Z"
+    },
+    {
+      "id": "asset_civilization_icon",
+      "name": "Civilization Icon",
+      "type": "image",
+      "category": "navigation_icon",
+      "artKey": "civilization_icon",
+      "usageReferences": [
+        {
+          "type": "UI",
+          "id": "navigation.civilization",
+          "name": "navigation.civilization"
+        }
+      ],
+      "aliases": [
+        "civilization_icon",
+        "Civilization Icon"
+      ],
+      "tags": [
+        "navigation_icon",
+        "studio_source_master"
+      ],
+      "importedFrom": "NOVERIS Studio source master",
+      "importedAt": "2026-07-30T03:18:45.808Z",
+      "mimeType": "image/png",
+      "width": 512,
+      "height": 512,
+      "aspectRatio": "512:512",
+      "fileSizeBytes": 42455,
+      "status": "mapped",
+      "notes": "Canonical transparent navigation icon generated from the current Studio PSD master.",
+      "previewUrl": "/assets/game-art/asset_civilization_icon/asset_civilization_icon.png",
+      "storagePath": "/assets/game-art/asset_civilization_icon/asset_civilization_icon.png",
+      "platformMappings": {
+        "web": {
+          "path": "/assets/game-art/asset_civilization_icon/asset_civilization_icon.png",
+          "status": "published",
+          "publishedAt": "2026-07-30T03:18:45.808Z"
+        }
+      },
+      "updatedAt": "2026-07-30T03:18:45.808Z"
     },
     {
       "id": "asset_civilization_points_icon",
@@ -2333,14 +2374,14 @@
       "category": "navigation_icon",
       "artKey": "events_icon",
       "mimeType": "image/png",
-      "width": 96,
-      "height": 96,
-      "aspectRatio": "96:96",
-      "fileSizeBytes": 0,
+      "width": 512,
+      "height": 512,
+      "aspectRatio": "512:512",
+      "fileSizeBytes": 19228,
       "status": "mapped",
-      "notes": "Imported from Roblox art manifest. Web publish is pending.",
-      "previewUrl": "rbxassetid://109412483529666",
-      "storagePath": "",
+      "notes": "Canonical transparent navigation icon generated from the current Studio PSD master.",
+      "previewUrl": "/assets/game-art/asset_events_icon/asset_events_icon.png",
+      "storagePath": "/assets/game-art/asset_events_icon/asset_events_icon.png",
       "platformMappings": {
         "roblox": {
           "assetId": "rbxassetid://109412483529666",
@@ -2348,9 +2389,9 @@
           "publishedAt": "2026-07-12T23:38:23.912Z"
         },
         "web": {
-          "path": "",
-          "status": "Needs Web Publish",
-          "sourceFile": "assets/menu/icon_events_96x96.png"
+          "path": "/assets/game-art/asset_events_icon/asset_events_icon.png",
+          "status": "published",
+          "publishedAt": "2026-07-30T03:19:51.790Z"
         }
       },
       "usageReferences": [
@@ -2377,7 +2418,7 @@
       ],
       "importedFrom": "Project Genesis Roblox",
       "importedAt": "2026-07-12T23:38:23.912Z",
-      "updatedAt": "2026-07-12T23:38:23.918Z"
+      "updatedAt": "2026-07-30T03:19:51.790Z"
     },
     {
       "id": "asset_financial_planning",
@@ -2439,14 +2480,14 @@
       "category": "navigation_icon",
       "artKey": "galaxy_icon",
       "mimeType": "image/png",
-      "width": 96,
-      "height": 96,
-      "aspectRatio": "96:96",
-      "fileSizeBytes": 0,
+      "width": 512,
+      "height": 512,
+      "aspectRatio": "512:512",
+      "fileSizeBytes": 39360,
       "status": "mapped",
-      "notes": "Imported from Roblox art manifest. Web publish is pending.",
-      "previewUrl": "rbxassetid://92678951819674",
-      "storagePath": "",
+      "notes": "Canonical transparent navigation icon generated from the current Studio PSD master.",
+      "previewUrl": "/assets/game-art/asset_galaxy_icon/asset_galaxy_icon.png",
+      "storagePath": "/assets/game-art/asset_galaxy_icon/asset_galaxy_icon.png",
       "platformMappings": {
         "roblox": {
           "assetId": "rbxassetid://92678951819674",
@@ -2454,9 +2495,9 @@
           "publishedAt": "2026-07-12T23:38:23.912Z"
         },
         "web": {
-          "path": "",
-          "status": "Needs Web Publish",
-          "sourceFile": "assets/menu/icon_galaxy_96x96.png"
+          "path": "/assets/game-art/asset_galaxy_icon/asset_galaxy_icon.png",
+          "status": "published",
+          "publishedAt": "2026-07-30T03:18:13.840Z"
         }
       },
       "usageReferences": [
@@ -2483,7 +2524,7 @@
       ],
       "importedFrom": "Project Genesis Roblox",
       "importedAt": "2026-07-12T23:38:23.912Z",
-      "updatedAt": "2026-07-12T23:38:23.918Z"
+      "updatedAt": "2026-07-30T03:18:13.840Z"
     },
     {
       "id": "asset_global_commerce",
@@ -3393,14 +3434,14 @@
       "category": "navigation_icon",
       "artKey": "overview_icon",
       "mimeType": "image/png",
-      "width": 100,
-      "height": 100,
-      "aspectRatio": "100:100",
-      "fileSizeBytes": 0,
+      "width": 512,
+      "height": 512,
+      "aspectRatio": "512:512",
+      "fileSizeBytes": 27642,
       "status": "mapped",
-      "notes": "Imported from Roblox art manifest. Web publish is pending.",
-      "previewUrl": "rbxassetid://79397960883593",
-      "storagePath": "",
+      "notes": "Canonical transparent navigation icon generated from the current Studio PSD master.",
+      "previewUrl": "/assets/game-art/asset_overview_icon/asset_overview_icon.png",
+      "storagePath": "/assets/game-art/asset_overview_icon/asset_overview_icon.png",
       "platformMappings": {
         "roblox": {
           "assetId": "rbxassetid://79397960883593",
@@ -3408,9 +3449,9 @@
           "publishedAt": "2026-07-12T23:38:23.912Z"
         },
         "web": {
-          "path": "",
-          "status": "Needs Web Publish",
-          "sourceFile": "assets/menu/icon_overview_96x96.png"
+          "path": "/assets/game-art/asset_overview_icon/asset_overview_icon.png",
+          "status": "published",
+          "publishedAt": "2026-07-30T03:15:36.076Z"
         }
       },
       "usageReferences": [
@@ -3437,7 +3478,7 @@
       ],
       "importedFrom": "Project Genesis Roblox",
       "importedAt": "2026-07-12T23:38:23.912Z",
-      "updatedAt": "2026-07-12T23:38:23.918Z"
+      "updatedAt": "2026-07-30T03:15:36.076Z"
     },
     {
       "id": "asset_population_icon",
@@ -3764,14 +3805,14 @@
       "category": "resource_icon",
       "artKey": "research_icon",
       "mimeType": "image/png",
-      "width": 96,
-      "height": 96,
-      "aspectRatio": "96:96",
-      "fileSizeBytes": 0,
+      "width": 512,
+      "height": 512,
+      "aspectRatio": "512:512",
+      "fileSizeBytes": 27479,
       "status": "mapped",
-      "notes": "Imported from Roblox art manifest. Web publish is pending.",
-      "previewUrl": "rbxassetid://79646906444906",
-      "storagePath": "",
+      "notes": "Canonical transparent navigation icon generated from the current Studio PSD master.",
+      "previewUrl": "/assets/game-art/asset_research_icon/asset_research_icon.png",
+      "storagePath": "/assets/game-art/asset_research_icon/asset_research_icon.png",
       "platformMappings": {
         "roblox": {
           "assetId": "rbxassetid://79646906444906",
@@ -3779,9 +3820,9 @@
           "publishedAt": "2026-07-12T23:38:23.912Z"
         },
         "web": {
-          "path": "",
-          "status": "Needs Web Publish",
-          "sourceFile": "assets/menu/icon_research_96x96.png"
+          "path": "/assets/game-art/asset_research_icon/asset_research_icon.png",
+          "status": "published",
+          "publishedAt": "2026-07-30T03:16:31.140Z"
         }
       },
       "usageReferences": [
@@ -3814,7 +3855,7 @@
       ],
       "importedFrom": "Project Genesis Roblox",
       "importedAt": "2026-07-12T23:38:23.912Z",
-      "updatedAt": "2026-07-12T23:38:23.918Z"
+      "updatedAt": "2026-07-30T03:16:31.140Z"
     },
     {
       "id": "asset_resource_management",
@@ -4204,14 +4245,14 @@
       "category": "navigation_icon",
       "artKey": "spaceport_icon",
       "mimeType": "image/png",
-      "width": 96,
-      "height": 96,
-      "aspectRatio": "96:96",
-      "fileSizeBytes": 0,
+      "width": 512,
+      "height": 512,
+      "aspectRatio": "512:512",
+      "fileSizeBytes": 32507,
       "status": "mapped",
-      "notes": "Imported from Roblox art manifest. Web publish is pending.",
-      "previewUrl": "rbxassetid://105730152289089",
-      "storagePath": "",
+      "notes": "Canonical transparent navigation icon generated from the current Studio PSD master.",
+      "previewUrl": "/assets/game-art/asset_spaceport_icon/asset_spaceport_icon.png",
+      "storagePath": "/assets/game-art/asset_spaceport_icon/asset_spaceport_icon.png",
       "platformMappings": {
         "roblox": {
           "assetId": "rbxassetid://105730152289089",
@@ -4219,9 +4260,9 @@
           "publishedAt": "2026-07-12T23:38:23.912Z"
         },
         "web": {
-          "path": "",
-          "status": "Needs Web Publish",
-          "sourceFile": "assets/menu/icon_spaceports_96x96.png"
+          "path": "/assets/game-art/asset_spaceport_icon/asset_spaceport_icon.png",
+          "status": "published",
+          "publishedAt": "2026-07-30T03:19:26.816Z"
         }
       },
       "usageReferences": [
@@ -4248,7 +4289,7 @@
       ],
       "importedFrom": "Project Genesis Roblox",
       "importedAt": "2026-07-12T23:38:23.912Z",
-      "updatedAt": "2026-07-12T23:38:23.918Z"
+      "updatedAt": "2026-07-30T03:19:26.816Z"
     },
     {
       "id": "asset_storage_systems",
@@ -4840,14 +4881,14 @@
       "category": "upgrade_icon",
       "artKey": "upgrades_icon",
       "mimeType": "image/png",
-      "width": 96,
-      "height": 96,
-      "aspectRatio": "96:96",
-      "fileSizeBytes": 0,
+      "width": 512,
+      "height": 512,
+      "aspectRatio": "512:512",
+      "fileSizeBytes": 29806,
       "status": "mapped",
-      "notes": "Imported from Roblox art manifest. Web publish is pending.",
-      "previewUrl": "rbxassetid://128289681864521",
-      "storagePath": "",
+      "notes": "Canonical transparent navigation icon generated from the current Studio PSD master.",
+      "previewUrl": "/assets/game-art/asset_upgrades_icon/asset_upgrades_icon.png",
+      "storagePath": "/assets/game-art/asset_upgrades_icon/asset_upgrades_icon.png",
       "platformMappings": {
         "roblox": {
           "assetId": "rbxassetid://128289681864521",
@@ -4855,9 +4896,9 @@
           "publishedAt": "2026-07-12T23:38:23.912Z"
         },
         "web": {
-          "path": "",
-          "status": "Needs Web Publish",
-          "sourceFile": "assets/menu/icon_upgrades_96x96.png"
+          "path": "/assets/game-art/asset_upgrades_icon/asset_upgrades_icon.png",
+          "status": "published",
+          "publishedAt": "2026-07-30T03:17:00.249Z"
         }
       },
       "usageReferences": [
@@ -4884,7 +4925,7 @@
       ],
       "importedFrom": "Project Genesis Roblox",
       "importedAt": "2026-07-12T23:38:23.912Z",
-      "updatedAt": "2026-07-12T23:38:23.918Z"
+      "updatedAt": "2026-07-30T03:17:00.249Z"
     },
     {
       "id": "asset_urban_ai",

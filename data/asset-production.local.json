@@ -2193,13 +2193,36 @@
           "versionLabel": "v1",
           "uploadedAt": "2026-07-12T23:38:23.912Z",
           "uploadedBy": "roblox-manifest",
-          "isCurrent": true,
+          "isCurrent": false,
           "archived": false,
           "previewUrl": "",
           "previewStatus": "missing",
           "width": 96,
           "height": 96,
           "notes": "Imported from Roblox art manifest. Source file exists in the Roblox project and needs Studio-managed Web derivative publishing."
+        },
+        {
+          "id": "source_asset_buildings_icon_psd_4758b18baa52",
+          "assetId": "asset_buildings_icon",
+          "filename": "ui-panel-side-menu-buildings.psd",
+          "extension": ".psd",
+          "mimeType": "image/vnd.adobe.photoshop",
+          "storagePath": "source-masters/ui/navigation/ui-panel-side-menu-buildings.psd",
+          "fileSizeBytes": 4751947,
+          "checksum": "4758b18baa5223044c0807e0aa787a48a4b846abe169535f5ea6fb2c1073c3bb",
+          "version": 2,
+          "versionLabel": "v2",
+          "uploadedAt": "2026-07-30T03:16:09.056Z",
+          "uploadedBy": "studio-source-master",
+          "isCurrent": true,
+          "archived": false,
+          "previewUrl": "/assets/game-art/asset_buildings_icon/asset_buildings_icon-preview.webp",
+          "previewStatus": "ready",
+          "width": 3000,
+          "height": 3000,
+          "sourceRole": "master",
+          "masterFormat": "PSD",
+          "notes": "Private canonical PSD master. Public clients receive generated derivatives only."
         }
       ],
       "derivatives": [
@@ -2229,20 +2252,21 @@
           "archived": false
         },
         {
-          "id": "derivative_asset_buildings_icon_web_8512910f55a1",
+          "id": "derivative_asset_buildings_icon_web_89709a95ddee",
           "assetId": "asset_buildings_icon",
-          "sourceFileId": "source_asset_buildings_icon_cd1c4a14d923",
+          "sourceFileId": "source_asset_buildings_icon_psd_4758b18baa52",
+          "presetId": "icon_512",
           "derivativeType": "icon",
           "format": "PNG",
-          "width": 96,
-          "height": 96,
-          "aspectRatio": "96:96",
-          "quality": null,
+          "width": 512,
+          "height": 512,
+          "aspectRatio": "1:1",
+          "quality": 100,
           "storagePath": "public/assets/game-art/asset_buildings_icon/asset_buildings_icon.png",
           "publicUrl": "/assets/game-art/asset_buildings_icon/asset_buildings_icon.png",
-          "checksum": "8512910f55a1",
-          "generatedAt": "2026-07-12T23:52:05.114Z",
-          "generationMethod": "web_derivative_publish",
+          "checksum": "89709a95ddee7579e347c8b06cd27ff249f826fe68d7b1bd493b534eb7af4c4d",
+          "generatedAt": "2026-07-30T03:16:09.056Z",
+          "generationMethod": "psd_game_derivative",
           "status": "approved",
           "approvalStatus": "approved",
           "publishStatus": "published",
@@ -2251,7 +2275,54 @@
               "path": "/assets/game-art/asset_buildings_icon/asset_buildings_icon.png"
             }
           },
-          "archived": false
+          "archived": false,
+          "alphaRequired": true,
+          "derivativeStatus": "published"
+        },
+        {
+          "id": "derivative_asset_buildings_icon_preview_1a3ef79b0cd9",
+          "assetId": "asset_buildings_icon",
+          "sourceFileId": "source_asset_buildings_icon_psd_4758b18baa52",
+          "derivativeType": "web_preview",
+          "format": "WebP",
+          "width": 512,
+          "height": 512,
+          "aspectRatio": "1:1",
+          "quality": 84,
+          "storagePath": "public/assets/game-art/asset_buildings_icon/asset_buildings_icon-preview.webp",
+          "publicUrl": "/assets/game-art/asset_buildings_icon/asset_buildings_icon-preview.webp",
+          "checksum": "1a3ef79b0cd9418b603cbb67f851b7110270b73e082e64fa55ff3fdb7fc4b53f",
+          "generatedAt": "2026-07-30T03:16:09.056Z",
+          "generationMethod": "psd_game_derivative",
+          "status": "approved",
+          "approvalStatus": "approved",
+          "publishStatus": "published",
+          "archived": false,
+          "alphaRequired": true,
+          "derivativeStatus": "published"
+        },
+        {
+          "id": "derivative_asset_buildings_icon_thumbnail_1885e69e21f0",
+          "assetId": "asset_buildings_icon",
+          "sourceFileId": "source_asset_buildings_icon_psd_4758b18baa52",
+          "presetId": "icon_256",
+          "derivativeType": "library_thumbnail",
+          "format": "WebP",
+          "width": 256,
+          "height": 256,
+          "aspectRatio": "1:1",
+          "quality": 80,
+          "storagePath": "public/assets/game-art/asset_buildings_icon/asset_buildings_icon-thumbnail.webp",
+          "publicUrl": "/assets/game-art/asset_buildings_icon/asset_buildings_icon-thumbnail.webp",
+          "checksum": "1885e69e21f0978efe21548129facfc3bfd786b465c82ec5854bcdc02490534e",
+          "generatedAt": "2026-07-30T03:16:09.056Z",
+          "generationMethod": "psd_game_derivative",
+          "status": "approved",
+          "approvalStatus": "approved",
+          "publishStatus": "published",
+          "archived": false,
+          "alphaRequired": true,
+          "derivativeStatus": "published"
         }
       ],
       "platformMappings": {
@@ -2263,13 +2334,21 @@
         "web": {
           "path": "/assets/game-art/asset_buildings_icon/asset_buildings_icon.png",
           "status": "published",
-          "publishedAt": "2026-07-12T23:52:05.114Z"
+          "publishedAt": "2026-07-30T03:16:09.056Z"
         }
       },
       "productionStatus": "published",
       "status": "web_published",
-      "notes": "Imported from Roblox art manifest.\nSource Uploaded; Web publish pending.",
+      "notes": "Canonical navigation icon published from the current private Studio PSD master.",
       "historyEvents": [
+        {
+          "id": "history_asset_buildings_icon_psd_4758b18baa52",
+          "assetId": "asset_buildings_icon",
+          "eventType": "psd_master_published",
+          "title": "Published navigation icon from PSD master",
+          "timestamp": "2026-07-30T03:16:09.056Z",
+          "notes": "/assets/game-art/asset_buildings_icon/asset_buildings_icon.png"
+        },
         {
           "id": "history_asset_buildings_icon_1783900325127_2a23a9031ab2",
           "assetId": "asset_buildings_icon",
@@ -2288,7 +2367,7 @@
         }
       ],
       "approvalStatus": "approved",
-      "publishedAt": "2026-07-12T23:52:05.114Z"
+      "publishedAt": "2026-07-30T03:16:09.056Z"
     },
     "asset_events_icon": {
       "sourceFiles": [
@@ -2305,13 +2384,36 @@
           "versionLabel": "v1",
           "uploadedAt": "2026-07-12T23:38:23.912Z",
           "uploadedBy": "roblox-manifest",
-          "isCurrent": true,
+          "isCurrent": false,
           "archived": false,
           "previewUrl": "",
           "previewStatus": "missing",
           "width": 96,
           "height": 96,
           "notes": "Imported from Roblox art manifest. Source file exists in the Roblox project and needs Studio-managed Web derivative publishing."
+        },
+        {
+          "id": "source_asset_events_icon_psd_6e8f538c2d92",
+          "assetId": "asset_events_icon",
+          "filename": "ui-panel-side-menu-events.psd",
+          "extension": ".psd",
+          "mimeType": "image/vnd.adobe.photoshop",
+          "storagePath": "source-masters/ui/navigation/ui-panel-side-menu-events.psd",
+          "fileSizeBytes": 14617083,
+          "checksum": "6e8f538c2d92c93924c9054519e3941e706879a510fe452b89d10a0d2cc853d6",
+          "version": 2,
+          "versionLabel": "v2",
+          "uploadedAt": "2026-07-30T03:19:51.790Z",
+          "uploadedBy": "studio-source-master",
+          "isCurrent": true,
+          "archived": false,
+          "previewUrl": "/assets/game-art/asset_events_icon/asset_events_icon-preview.webp",
+          "previewStatus": "ready",
+          "width": 3000,
+          "height": 3000,
+          "sourceRole": "master",
+          "masterFormat": "PSD",
+          "notes": "Private canonical PSD master. Public clients receive generated derivatives only."
         }
       ],
       "derivatives": [
@@ -2341,20 +2443,21 @@
           "archived": false
         },
         {
-          "id": "derivative_asset_events_icon_web_951fe5f7d593",
+          "id": "derivative_asset_events_icon_web_24b6f30e9c47",
           "assetId": "asset_events_icon",
-          "sourceFileId": "source_asset_events_icon_535b53c4e89b",
+          "sourceFileId": "source_asset_events_icon_psd_6e8f538c2d92",
+          "presetId": "icon_512",
           "derivativeType": "icon",
           "format": "PNG",
-          "width": 96,
-          "height": 96,
-          "aspectRatio": "96:96",
-          "quality": null,
+          "width": 512,
+          "height": 512,
+          "aspectRatio": "1:1",
+          "quality": 100,
           "storagePath": "public/assets/game-art/asset_events_icon/asset_events_icon.png",
           "publicUrl": "/assets/game-art/asset_events_icon/asset_events_icon.png",
-          "checksum": "951fe5f7d593",
-          "generatedAt": "2026-07-12T23:52:05.114Z",
-          "generationMethod": "web_derivative_publish",
+          "checksum": "24b6f30e9c47147a5a903c92763fde247601dcfa79050c383f06422f244669d4",
+          "generatedAt": "2026-07-30T03:19:51.790Z",
+          "generationMethod": "psd_game_derivative",
           "status": "approved",
           "approvalStatus": "approved",
           "publishStatus": "published",
@@ -2363,7 +2466,54 @@
               "path": "/assets/game-art/asset_events_icon/asset_events_icon.png"
             }
           },
-          "archived": false
+          "archived": false,
+          "alphaRequired": true,
+          "derivativeStatus": "published"
+        },
+        {
+          "id": "derivative_asset_events_icon_preview_8e91390bac16",
+          "assetId": "asset_events_icon",
+          "sourceFileId": "source_asset_events_icon_psd_6e8f538c2d92",
+          "derivativeType": "web_preview",
+          "format": "WebP",
+          "width": 512,
+          "height": 512,
+          "aspectRatio": "1:1",
+          "quality": 84,
+          "storagePath": "public/assets/game-art/asset_events_icon/asset_events_icon-preview.webp",
+          "publicUrl": "/assets/game-art/asset_events_icon/asset_events_icon-preview.webp",
+          "checksum": "8e91390bac165e78c894fcd69102b15ff1b0fdd7d9dcbeb8bfa26ce6ee73da08",
+          "generatedAt": "2026-07-30T03:19:51.790Z",
+          "generationMethod": "psd_game_derivative",
+          "status": "approved",
+          "approvalStatus": "approved",
+          "publishStatus": "published",
+          "archived": false,
+          "alphaRequired": true,
+          "derivativeStatus": "published"
+        },
+        {
+          "id": "derivative_asset_events_icon_thumbnail_b998f8e43135",
+          "assetId": "asset_events_icon",
+          "sourceFileId": "source_asset_events_icon_psd_6e8f538c2d92",
+          "presetId": "icon_256",
+          "derivativeType": "library_thumbnail",
+          "format": "WebP",
+          "width": 256,
+          "height": 256,
+          "aspectRatio": "1:1",
+          "quality": 80,
+          "storagePath": "public/assets/game-art/asset_events_icon/asset_events_icon-thumbnail.webp",
+          "publicUrl": "/assets/game-art/asset_events_icon/asset_events_icon-thumbnail.webp",
+          "checksum": "b998f8e4313575097ce565060c60a2c923a9bd79da01b6adc4dd218c924764c1",
+          "generatedAt": "2026-07-30T03:19:51.790Z",
+          "generationMethod": "psd_game_derivative",
+          "status": "approved",
+          "approvalStatus": "approved",
+          "publishStatus": "published",
+          "archived": false,
+          "alphaRequired": true,
+          "derivativeStatus": "published"
         }
       ],
       "platformMappings": {
@@ -2375,13 +2525,21 @@
         "web": {
           "path": "/assets/game-art/asset_events_icon/asset_events_icon.png",
           "status": "published",
-          "publishedAt": "2026-07-12T23:52:05.114Z"
+          "publishedAt": "2026-07-30T03:19:51.790Z"
         }
       },
       "productionStatus": "published",
       "status": "web_published",
-      "notes": "Imported from Roblox art manifest.\nSource Uploaded; Web publish pending.",
+      "notes": "Canonical navigation icon published from the current private Studio PSD master.",
       "historyEvents": [
+        {
+          "id": "history_asset_events_icon_psd_6e8f538c2d92",
+          "assetId": "asset_events_icon",
+          "eventType": "psd_master_published",
+          "title": "Published navigation icon from PSD master",
+          "timestamp": "2026-07-30T03:19:51.790Z",
+          "notes": "/assets/game-art/asset_events_icon/asset_events_icon.png"
+        },
         {
           "id": "history_asset_events_icon_1783900325147_da91e0dae462",
           "assetId": "asset_events_icon",
@@ -2400,7 +2558,7 @@
         }
       ],
       "approvalStatus": "approved",
-      "publishedAt": "2026-07-12T23:52:05.114Z"
+      "publishedAt": "2026-07-30T03:19:51.790Z"
     },
     "asset_galaxy_icon": {
       "sourceFiles": [
@@ -2417,13 +2575,36 @@
           "versionLabel": "v1",
           "uploadedAt": "2026-07-12T23:38:23.912Z",
           "uploadedBy": "roblox-manifest",
-          "isCurrent": true,
+          "isCurrent": false,
           "archived": false,
           "previewUrl": "",
           "previewStatus": "missing",
           "width": 96,
           "height": 96,
           "notes": "Imported from Roblox art manifest. Source file exists in the Roblox project and needs Studio-managed Web derivative publishing."
+        },
+        {
+          "id": "source_asset_galaxy_icon_psd_8326fb293da0",
+          "assetId": "asset_galaxy_icon",
+          "filename": "ui-panel-side-menu-galaxy.psd",
+          "extension": ".psd",
+          "mimeType": "image/vnd.adobe.photoshop",
+          "storagePath": "source-masters/ui/navigation/ui-panel-side-menu-galaxy.psd",
+          "fileSizeBytes": 11345817,
+          "checksum": "8326fb293da01d6d2962fe1a8eaaeba5c8bc137272489636fa6ee3a540aaf8ba",
+          "version": 2,
+          "versionLabel": "v2",
+          "uploadedAt": "2026-07-30T03:18:13.840Z",
+          "uploadedBy": "studio-source-master",
+          "isCurrent": true,
+          "archived": false,
+          "previewUrl": "/assets/game-art/asset_galaxy_icon/asset_galaxy_icon-preview.webp",
+          "previewStatus": "ready",
+          "width": 3000,
+          "height": 3000,
+          "sourceRole": "master",
+          "masterFormat": "PSD",
+          "notes": "Private canonical PSD master. Public clients receive generated derivatives only."
         }
       ],
       "derivatives": [
@@ -2453,20 +2634,21 @@
           "archived": false
         },
         {
-          "id": "derivative_asset_galaxy_icon_web_cebf264ce47a",
+          "id": "derivative_asset_galaxy_icon_web_7b51305f66e1",
           "assetId": "asset_galaxy_icon",
-          "sourceFileId": "source_asset_galaxy_icon_92613dc3d9db",
+          "sourceFileId": "source_asset_galaxy_icon_psd_8326fb293da0",
+          "presetId": "icon_512",
           "derivativeType": "icon",
           "format": "PNG",
-          "width": 96,
-          "height": 96,
-          "aspectRatio": "96:96",
-          "quality": null,
+          "width": 512,
+          "height": 512,
+          "aspectRatio": "1:1",
+          "quality": 100,
           "storagePath": "public/assets/game-art/asset_galaxy_icon/asset_galaxy_icon.png",
           "publicUrl": "/assets/game-art/asset_galaxy_icon/asset_galaxy_icon.png",
-          "checksum": "cebf264ce47a",
-          "generatedAt": "2026-07-12T23:52:05.114Z",
-          "generationMethod": "web_derivative_publish",
+          "checksum": "7b51305f66e17d9009962f61cac8ec49d8bf8eebb80ae43379e2ed4977fbe715",
+          "generatedAt": "2026-07-30T03:18:13.840Z",
+          "generationMethod": "psd_game_derivative",
           "status": "approved",
           "approvalStatus": "approved",
           "publishStatus": "published",
@@ -2475,7 +2657,54 @@
               "path": "/assets/game-art/asset_galaxy_icon/asset_galaxy_icon.png"
             }
           },
-          "archived": false
+          "archived": false,
+          "alphaRequired": true,
+          "derivativeStatus": "published"
+        },
+        {
+          "id": "derivative_asset_galaxy_icon_preview_b8261b9a26c2",
+          "assetId": "asset_galaxy_icon",
+          "sourceFileId": "source_asset_galaxy_icon_psd_8326fb293da0",
+          "derivativeType": "web_preview",
+          "format": "WebP",
+          "width": 512,
+          "height": 512,
+          "aspectRatio": "1:1",
+          "quality": 84,
+          "storagePath": "public/assets/game-art/asset_galaxy_icon/asset_galaxy_icon-preview.webp",
+          "publicUrl": "/assets/game-art/asset_galaxy_icon/asset_galaxy_icon-preview.webp",
+          "checksum": "b8261b9a26c2fce54405ceb4492f2c0dc342b743c69741e858fcd376d18189ec",
+          "generatedAt": "2026-07-30T03:18:13.840Z",
+          "generationMethod": "psd_game_derivative",
+          "status": "approved",
+          "approvalStatus": "approved",
+          "publishStatus": "published",
+          "archived": false,
+          "alphaRequired": true,
+          "derivativeStatus": "published"
+        },
+        {
+          "id": "derivative_asset_galaxy_icon_thumbnail_85202fcf0167",
+          "assetId": "asset_galaxy_icon",
+          "sourceFileId": "source_asset_galaxy_icon_psd_8326fb293da0",
+          "presetId": "icon_256",
+          "derivativeType": "library_thumbnail",
+          "format": "WebP",
+          "width": 256,
+          "height": 256,
+          "aspectRatio": "1:1",
+          "quality": 80,
+          "storagePath": "public/assets/game-art/asset_galaxy_icon/asset_galaxy_icon-thumbnail.webp",
+          "publicUrl": "/assets/game-art/asset_galaxy_icon/asset_galaxy_icon-thumbnail.webp",
+          "checksum": "85202fcf016700186fe4b513d5b8356076c56b6718047cadf94a8434af3db959",
+          "generatedAt": "2026-07-30T03:18:13.840Z",
+          "generationMethod": "psd_game_derivative",
+          "status": "approved",
+          "approvalStatus": "approved",
+          "publishStatus": "published",
+          "archived": false,
+          "alphaRequired": true,
+          "derivativeStatus": "published"
         }
       ],
       "platformMappings": {
@@ -2487,13 +2716,21 @@
         "web": {
           "path": "/assets/game-art/asset_galaxy_icon/asset_galaxy_icon.png",
           "status": "published",
-          "publishedAt": "2026-07-12T23:52:05.114Z"
+          "publishedAt": "2026-07-30T03:18:13.840Z"
         }
       },
       "productionStatus": "published",
       "status": "web_published",
-      "notes": "Imported from Roblox art manifest.\nSource Uploaded; Web publish pending.",
+      "notes": "Canonical navigation icon published from the current private Studio PSD master.",
       "historyEvents": [
+        {
+          "id": "history_asset_galaxy_icon_psd_8326fb293da0",
+          "assetId": "asset_galaxy_icon",
+          "eventType": "psd_master_published",
+          "title": "Published navigation icon from PSD master",
+          "timestamp": "2026-07-30T03:18:13.840Z",
+          "notes": "/assets/game-art/asset_galaxy_icon/asset_galaxy_icon.png"
+        },
         {
           "id": "history_asset_galaxy_icon_1783900325149_b07b1fef3334",
           "assetId": "asset_galaxy_icon",
@@ -2512,7 +2749,7 @@
         }
       ],
       "approvalStatus": "approved",
-      "publishedAt": "2026-07-12T23:52:05.114Z"
+      "publishedAt": "2026-07-30T03:18:13.840Z"
     },
     "asset_overview_icon": {
       "sourceFiles": [
@@ -2529,13 +2766,36 @@
           "versionLabel": "v1",
           "uploadedAt": "2026-07-12T23:38:23.912Z",
           "uploadedBy": "roblox-manifest",
-          "isCurrent": true,
+          "isCurrent": false,
           "archived": false,
           "previewUrl": "",
           "previewStatus": "missing",
           "width": 100,
           "height": 100,
           "notes": "Imported from Roblox art manifest. Source file exists in the Roblox project and needs Studio-managed Web derivative publishing."
+        },
+        {
+          "id": "source_asset_overview_icon_psd_1f2d817968d2",
+          "assetId": "asset_overview_icon",
+          "filename": "ui-panel-side-menu-overview.psd",
+          "extension": ".psd",
+          "mimeType": "image/vnd.adobe.photoshop",
+          "storagePath": "source-masters/ui/navigation/ui-panel-side-menu-overview.psd",
+          "fileSizeBytes": 3007420,
+          "checksum": "1f2d817968d20dcb799e0fe26da14fc5545c0089c8bfda833e57ce1239009098",
+          "version": 2,
+          "versionLabel": "v2",
+          "uploadedAt": "2026-07-30T03:15:36.076Z",
+          "uploadedBy": "studio-source-master",
+          "isCurrent": true,
+          "archived": false,
+          "previewUrl": "/assets/game-art/asset_overview_icon/asset_overview_icon-preview.webp",
+          "previewStatus": "ready",
+          "width": 3000,
+          "height": 3000,
+          "sourceRole": "master",
+          "masterFormat": "PSD",
+          "notes": "Private canonical PSD master. Public clients receive generated derivatives only."
         }
       ],
       "derivatives": [
@@ -2565,20 +2825,21 @@
           "archived": false
         },
         {
-          "id": "derivative_asset_overview_icon_web_392a5f29bb3e",
+          "id": "derivative_asset_overview_icon_web_ac6ea6936773",
           "assetId": "asset_overview_icon",
-          "sourceFileId": "source_asset_overview_icon_7a8cca09bc96",
+          "sourceFileId": "source_asset_overview_icon_psd_1f2d817968d2",
+          "presetId": "icon_512",
           "derivativeType": "icon",
           "format": "PNG",
-          "width": 100,
-          "height": 100,
-          "aspectRatio": "100:100",
-          "quality": null,
+          "width": 512,
+          "height": 512,
+          "aspectRatio": "1:1",
+          "quality": 100,
           "storagePath": "public/assets/game-art/asset_overview_icon/asset_overview_icon.png",
           "publicUrl": "/assets/game-art/asset_overview_icon/asset_overview_icon.png",
-          "checksum": "392a5f29bb3e",
-          "generatedAt": "2026-07-12T23:52:05.114Z",
-          "generationMethod": "web_derivative_publish",
+          "checksum": "ac6ea6936773b70b1b585ec34fc86355777a945f097bccb64db4620e6a092bce",
+          "generatedAt": "2026-07-30T03:15:36.076Z",
+          "generationMethod": "psd_game_derivative",
           "status": "approved",
           "approvalStatus": "approved",
           "publishStatus": "published",
@@ -2587,7 +2848,54 @@
               "path": "/assets/game-art/asset_overview_icon/asset_overview_icon.png"
             }
           },
-          "archived": false
+          "archived": false,
+          "alphaRequired": true,
+          "derivativeStatus": "published"
+        },
+        {
+          "id": "derivative_asset_overview_icon_preview_6b879084a8d5",
+          "assetId": "asset_overview_icon",
+          "sourceFileId": "source_asset_overview_icon_psd_1f2d817968d2",
+          "derivativeType": "web_preview",
+          "format": "WebP",
+          "width": 512,
+          "height": 512,
+          "aspectRatio": "1:1",
+          "quality": 84,
+          "storagePath": "public/assets/game-art/asset_overview_icon/asset_overview_icon-preview.webp",
+          "publicUrl": "/assets/game-art/asset_overview_icon/asset_overview_icon-preview.webp",
+          "checksum": "6b879084a8d5fc34778324b7589a31e2deeb9e9f452e0b28590b7a013ff28186",
+          "generatedAt": "2026-07-30T03:15:36.076Z",
+          "generationMethod": "psd_game_derivative",
+          "status": "approved",
+          "approvalStatus": "approved",
+          "publishStatus": "published",
+          "archived": false,
+          "alphaRequired": true,
+          "derivativeStatus": "published"
+        },
+        {
+          "id": "derivative_asset_overview_icon_thumbnail_7e9f78d6a40f",
+          "assetId": "asset_overview_icon",
+          "sourceFileId": "source_asset_overview_icon_psd_1f2d817968d2",
+          "presetId": "icon_256",
+          "derivativeType": "library_thumbnail",
+          "format": "WebP",
+          "width": 256,
+          "height": 256,
+          "aspectRatio": "1:1",
+          "quality": 80,
+          "storagePath": "public/assets/game-art/asset_overview_icon/asset_overview_icon-thumbnail.webp",
+          "publicUrl": "/assets/game-art/asset_overview_icon/asset_overview_icon-thumbnail.webp",
+          "checksum": "7e9f78d6a40f6525b87b890fefe7481621438474750f3bc4a1dfccb726f81103",
+          "generatedAt": "2026-07-30T03:15:36.076Z",
+          "generationMethod": "psd_game_derivative",
+          "status": "approved",
+          "approvalStatus": "approved",
+          "publishStatus": "published",
+          "archived": false,
+          "alphaRequired": true,
+          "derivativeStatus": "published"
         }
       ],
       "platformMappings": {
@@ -2599,13 +2907,21 @@
         "web": {
           "path": "/assets/game-art/asset_overview_icon/asset_overview_icon.png",
           "status": "published",
-          "publishedAt": "2026-07-12T23:52:05.114Z"
+          "publishedAt": "2026-07-30T03:15:36.076Z"
         }
       },
       "productionStatus": "published",
       "status": "web_published",
-      "notes": "Imported from Roblox art manifest.\nSource Uploaded; Web publish pending.",
+      "notes": "Canonical navigation icon published from the current private Studio PSD master.",
       "historyEvents": [
+        {
+          "id": "history_asset_overview_icon_psd_1f2d817968d2",
+          "assetId": "asset_overview_icon",
+          "eventType": "psd_master_published",
+          "title": "Published navigation icon from PSD master",
+          "timestamp": "2026-07-30T03:15:36.076Z",
+          "notes": "/assets/game-art/asset_overview_icon/asset_overview_icon.png"
+        },
         {
           "id": "history_asset_overview_icon_1783900325161_3337c581e88b",
           "assetId": "asset_overview_icon",
@@ -2624,7 +2940,7 @@
         }
       ],
       "approvalStatus": "approved",
-      "publishedAt": "2026-07-12T23:52:05.114Z"
+      "publishedAt": "2026-07-30T03:15:36.076Z"
     },
     "asset_spaceport_icon": {
       "sourceFiles": [
@@ -2641,13 +2957,36 @@
           "versionLabel": "v1",
           "uploadedAt": "2026-07-12T23:38:23.912Z",
           "uploadedBy": "roblox-manifest",
-          "isCurrent": true,
+          "isCurrent": false,
           "archived": false,
           "previewUrl": "",
           "previewStatus": "missing",
           "width": 96,
           "height": 96,
           "notes": "Imported from Roblox art manifest. Source file exists in the Roblox project and needs Studio-managed Web derivative publishing."
+        },
+        {
+          "id": "source_asset_spaceport_icon_psd_20a07dd97c08",
+          "assetId": "asset_spaceport_icon",
+          "filename": "ui-panel-side-menu-spaceport.psd",
+          "extension": ".psd",
+          "mimeType": "image/vnd.adobe.photoshop",
+          "storagePath": "source-masters/ui/navigation/ui-panel-side-menu-spaceport.psd",
+          "fileSizeBytes": 12979146,
+          "checksum": "20a07dd97c08b10942d77a8b44de4af85841a094f9fe1d5187277c58509310a1",
+          "version": 2,
+          "versionLabel": "v2",
+          "uploadedAt": "2026-07-30T03:19:26.816Z",
+          "uploadedBy": "studio-source-master",
+          "isCurrent": true,
+          "archived": false,
+          "previewUrl": "/assets/game-art/asset_spaceport_icon/asset_spaceport_icon-preview.webp",
+          "previewStatus": "ready",
+          "width": 3000,
+          "height": 3000,
+          "sourceRole": "master",
+          "masterFormat": "PSD",
+          "notes": "Private canonical PSD master. Public clients receive generated derivatives only."
         }
       ],
       "derivatives": [
@@ -2677,20 +3016,21 @@
           "archived": false
         },
         {
-          "id": "derivative_asset_spaceport_icon_web_dbcfd561e17a",
+          "id": "derivative_asset_spaceport_icon_web_21e9e2ea654e",
           "assetId": "asset_spaceport_icon",
-          "sourceFileId": "source_asset_spaceport_icon_8e0a53bac4e3",
+          "sourceFileId": "source_asset_spaceport_icon_psd_20a07dd97c08",
+          "presetId": "icon_512",
           "derivativeType": "icon",
           "format": "PNG",
-          "width": 96,
-          "height": 96,
-          "aspectRatio": "96:96",
-          "quality": null,
+          "width": 512,
+          "height": 512,
+          "aspectRatio": "1:1",
+          "quality": 100,
           "storagePath": "public/assets/game-art/asset_spaceport_icon/asset_spaceport_icon.png",
           "publicUrl": "/assets/game-art/asset_spaceport_icon/asset_spaceport_icon.png",
-          "checksum": "dbcfd561e17a",
-          "generatedAt": "2026-07-12T23:52:05.114Z",
-          "generationMethod": "web_derivative_publish",
+          "checksum": "21e9e2ea654eb874d3ebf960036c5b89fd48898ccd761424bddd442fce8fe73f",
+          "generatedAt": "2026-07-30T03:19:26.816Z",
+          "generationMethod": "psd_game_derivative",
           "status": "approved",
           "approvalStatus": "approved",
           "publishStatus": "published",
@@ -2699,7 +3039,54 @@
               "path": "/assets/game-art/asset_spaceport_icon/asset_spaceport_icon.png"
             }
           },
-          "archived": false
+          "archived": false,
+          "alphaRequired": true,
+          "derivativeStatus": "published"
+        },
+        {
+          "id": "derivative_asset_spaceport_icon_preview_548863dbc413",
+          "assetId": "asset_spaceport_icon",
+          "sourceFileId": "source_asset_spaceport_icon_psd_20a07dd97c08",
+          "derivativeType": "web_preview",
+          "format": "WebP",
+          "width": 512,
+          "height": 512,
+          "aspectRatio": "1:1",
+          "quality": 84,
+          "storagePath": "public/assets/game-art/asset_spaceport_icon/asset_spaceport_icon-preview.webp",
+          "publicUrl": "/assets/game-art/asset_spaceport_icon/asset_spaceport_icon-preview.webp",
+          "checksum": "548863dbc4133973cb57c00e2a1dc9d1414b9f075340d1d3e2bce31641e35c0a",
+          "generatedAt": "2026-07-30T03:19:26.816Z",
+          "generationMethod": "psd_game_derivative",
+          "status": "approved",
+          "approvalStatus": "approved",
+          "publishStatus": "published",
+          "archived": false,
+          "alphaRequired": true,
+          "derivativeStatus": "published"
+        },
+        {
+          "id": "derivative_asset_spaceport_icon_thumbnail_521813d534e7",
+          "assetId": "asset_spaceport_icon",
+          "sourceFileId": "source_asset_spaceport_icon_psd_20a07dd97c08",
+          "presetId": "icon_256",
+          "derivativeType": "library_thumbnail",
+          "format": "WebP",
+          "width": 256,
+          "height": 256,
+          "aspectRatio": "1:1",
+          "quality": 80,
+          "storagePath": "public/assets/game-art/asset_spaceport_icon/asset_spaceport_icon-thumbnail.webp",
+          "publicUrl": "/assets/game-art/asset_spaceport_icon/asset_spaceport_icon-thumbnail.webp",
+          "checksum": "521813d534e761c1cd9e14446b6b7644e6900b309b6e82cc85164b09d54fe213",
+          "generatedAt": "2026-07-30T03:19:26.816Z",
+          "generationMethod": "psd_game_derivative",
+          "status": "approved",
+          "approvalStatus": "approved",
+          "publishStatus": "published",
+          "archived": false,
+          "alphaRequired": true,
+          "derivativeStatus": "published"
         }
       ],
       "platformMappings": {
@@ -2711,13 +3098,21 @@
         "web": {
           "path": "/assets/game-art/asset_spaceport_icon/asset_spaceport_icon.png",
           "status": "published",
-          "publishedAt": "2026-07-12T23:52:05.114Z"
+          "publishedAt": "2026-07-30T03:19:26.816Z"
         }
       },
       "productionStatus": "published",
       "status": "web_published",
-      "notes": "Imported from Roblox art manifest.\nSource Uploaded; Web publish pending.",
+      "notes": "Canonical navigation icon published from the current private Studio PSD master.",
       "historyEvents": [
+        {
+          "id": "history_asset_spaceport_icon_psd_20a07dd97c08",
+          "assetId": "asset_spaceport_icon",
+          "eventType": "psd_master_published",
+          "title": "Published navigation icon from PSD master",
+          "timestamp": "2026-07-30T03:19:26.816Z",
+          "notes": "/assets/game-art/asset_spaceport_icon/asset_spaceport_icon.png"
+        },
         {
           "id": "history_asset_spaceport_icon_1783900325171_fc06919de4c6",
           "assetId": "asset_spaceport_icon",
@@ -2736,7 +3131,7 @@
         }
       ],
       "approvalStatus": "approved",
-      "publishedAt": "2026-07-12T23:52:05.114Z"
+      "publishedAt": "2026-07-30T03:19:26.816Z"
     },
     "asset_city_preview": {
       "sourceFiles": [
@@ -3782,13 +4177,36 @@
           "versionLabel": "v2",
           "uploadedAt": "2026-07-12T23:38:23.912Z",
           "uploadedBy": "roblox-manifest",
-          "isCurrent": true,
+          "isCurrent": false,
           "archived": false,
           "previewUrl": "",
           "previewStatus": "missing",
           "width": 96,
           "height": 96,
           "notes": "Imported from Roblox art manifest. Source file exists in the Roblox project and needs Studio-managed Web derivative publishing."
+        },
+        {
+          "id": "source_asset_research_icon_psd_caa96a10a357",
+          "assetId": "asset_research_icon",
+          "filename": "ui-panel-side-menu-research.psd",
+          "extension": ".psd",
+          "mimeType": "image/vnd.adobe.photoshop",
+          "storagePath": "source-masters/ui/navigation/ui-panel-side-menu-research.psd",
+          "fileSizeBytes": 6296819,
+          "checksum": "caa96a10a357a2dd029ddc6db8eee19fea6dc32940a706d54d310c187d8d89ef",
+          "version": 3,
+          "versionLabel": "v3",
+          "uploadedAt": "2026-07-30T03:16:31.140Z",
+          "uploadedBy": "studio-source-master",
+          "isCurrent": true,
+          "archived": false,
+          "previewUrl": "/assets/game-art/asset_research_icon/asset_research_icon-preview.webp",
+          "previewStatus": "ready",
+          "width": 3000,
+          "height": 3000,
+          "sourceRole": "master",
+          "masterFormat": "PSD",
+          "notes": "Private canonical PSD master. Public clients receive generated derivatives only."
         }
       ],
       "derivatives": [
@@ -3843,20 +4261,21 @@
           "archived": false
         },
         {
-          "id": "derivative_asset_research_icon_web_e00095c2c069",
+          "id": "derivative_asset_research_icon_web_122f032e6d41",
           "assetId": "asset_research_icon",
-          "sourceFileId": "source_asset_research_icon_350328841a00",
+          "sourceFileId": "source_asset_research_icon_psd_caa96a10a357",
+          "presetId": "icon_512",
           "derivativeType": "icon",
           "format": "PNG",
-          "width": 96,
-          "height": 96,
-          "aspectRatio": "96:96",
-          "quality": null,
+          "width": 512,
+          "height": 512,
+          "aspectRatio": "1:1",
+          "quality": 100,
           "storagePath": "public/assets/game-art/asset_research_icon/asset_research_icon.png",
           "publicUrl": "/assets/game-art/asset_research_icon/asset_research_icon.png",
-          "checksum": "e00095c2c069",
-          "generatedAt": "2026-07-12T23:52:05.114Z",
-          "generationMethod": "web_derivative_publish",
+          "checksum": "122f032e6d416481f903c3b0833cd96a03ce42514c6d9b863432d827435ebc7c",
+          "generatedAt": "2026-07-30T03:16:31.140Z",
+          "generationMethod": "psd_game_derivative",
           "status": "approved",
           "approvalStatus": "approved",
           "publishStatus": "published",
@@ -3865,7 +4284,54 @@
               "path": "/assets/game-art/asset_research_icon/asset_research_icon.png"
             }
           },
-          "archived": false
+          "archived": false,
+          "alphaRequired": true,
+          "derivativeStatus": "published"
+        },
+        {
+          "id": "derivative_asset_research_icon_preview_c6cfcc8ec465",
+          "assetId": "asset_research_icon",
+          "sourceFileId": "source_asset_research_icon_psd_caa96a10a357",
+          "derivativeType": "web_preview",
+          "format": "WebP",
+          "width": 512,
+          "height": 512,
+          "aspectRatio": "1:1",
+          "quality": 84,
+          "storagePath": "public/assets/game-art/asset_research_icon/asset_research_icon-preview.webp",
+          "publicUrl": "/assets/game-art/asset_research_icon/asset_research_icon-preview.webp",
+          "checksum": "c6cfcc8ec465cc64b84a4b27a4334fae985d26c8319f97549a72d46be33913bd",
+          "generatedAt": "2026-07-30T03:16:31.140Z",
+          "generationMethod": "psd_game_derivative",
+          "status": "approved",
+          "approvalStatus": "approved",
+          "publishStatus": "published",
+          "archived": false,
+          "alphaRequired": true,
+          "derivativeStatus": "published"
+        },
+        {
+          "id": "derivative_asset_research_icon_thumbnail_ac705450708c",
+          "assetId": "asset_research_icon",
+          "sourceFileId": "source_asset_research_icon_psd_caa96a10a357",
+          "presetId": "icon_256",
+          "derivativeType": "library_thumbnail",
+          "format": "WebP",
+          "width": 256,
+          "height": 256,
+          "aspectRatio": "1:1",
+          "quality": 80,
+          "storagePath": "public/assets/game-art/asset_research_icon/asset_research_icon-thumbnail.webp",
+          "publicUrl": "/assets/game-art/asset_research_icon/asset_research_icon-thumbnail.webp",
+          "checksum": "ac705450708cdbacf822c7e9de8f3aa889dd36469d7b1f2d40bb7da613622417",
+          "generatedAt": "2026-07-30T03:16:31.140Z",
+          "generationMethod": "psd_game_derivative",
+          "status": "approved",
+          "approvalStatus": "approved",
+          "publishStatus": "published",
+          "archived": false,
+          "alphaRequired": true,
+          "derivativeStatus": "published"
         }
       ],
       "platformMappings": {
@@ -3877,13 +4343,21 @@
         "web": {
           "path": "/assets/game-art/asset_research_icon/asset_research_icon.png",
           "status": "published",
-          "publishedAt": "2026-07-12T23:52:05.114Z"
+          "publishedAt": "2026-07-30T03:16:31.140Z"
         }
       },
       "productionStatus": "published",
       "status": "web_published",
-      "notes": "Imported from Roblox art manifest.\nSource Uploaded; Web publish pending.\nImported from Roblox art manifest.\nSource Uploaded; Web publish pending.",
+      "notes": "Canonical navigation icon published from the current private Studio PSD master.",
       "historyEvents": [
+        {
+          "id": "history_asset_research_icon_psd_caa96a10a357",
+          "assetId": "asset_research_icon",
+          "eventType": "psd_master_published",
+          "title": "Published navigation icon from PSD master",
+          "timestamp": "2026-07-30T03:16:31.140Z",
+          "notes": "/assets/game-art/asset_research_icon/asset_research_icon.png"
+        },
         {
           "id": "history_asset_research_icon_1783900325167_c4bd69491e97",
           "assetId": "asset_research_icon",
@@ -3910,7 +4384,7 @@
         }
       ],
       "approvalStatus": "approved",
-      "publishedAt": "2026-07-12T23:52:05.114Z"
+      "publishedAt": "2026-07-30T03:16:31.140Z"
     },
     "asset_settings_icon": {
       "sourceFiles": [
@@ -10199,13 +10673,36 @@
           "versionLabel": "v1",
           "uploadedAt": "2026-07-12T23:38:23.912Z",
           "uploadedBy": "roblox-manifest",
-          "isCurrent": true,
+          "isCurrent": false,
           "archived": false,
           "previewUrl": "",
           "previewStatus": "missing",
           "width": 96,
           "height": 96,
           "notes": "Imported from Roblox art manifest. Source file exists in the Roblox project and needs Studio-managed Web derivative publishing."
+        },
+        {
+          "id": "source_asset_upgrades_icon_psd_7d952769aa7e",
+          "assetId": "asset_upgrades_icon",
+          "filename": "ui-panel-side-menu-upgrades.psd",
+          "extension": ".psd",
+          "mimeType": "image/vnd.adobe.photoshop",
+          "storagePath": "source-masters/ui/navigation/ui-panel-side-menu-upgrades.psd",
+          "fileSizeBytes": 8130638,
+          "checksum": "7d952769aa7e446b68207d17b8d9491e74f289c60aed943115d2e82e9cd2a47b",
+          "version": 2,
+          "versionLabel": "v2",
+          "uploadedAt": "2026-07-30T03:17:00.249Z",
+          "uploadedBy": "studio-source-master",
+          "isCurrent": true,
+          "archived": false,
+          "previewUrl": "/assets/game-art/asset_upgrades_icon/asset_upgrades_icon-preview.webp",
+          "previewStatus": "ready",
+          "width": 3000,
+          "height": 3000,
+          "sourceRole": "master",
+          "masterFormat": "PSD",
+          "notes": "Private canonical PSD master. Public clients receive generated derivatives only."
         }
       ],
       "derivatives": [
@@ -10235,20 +10732,21 @@
           "archived": false
         },
         {
-          "id": "derivative_asset_upgrades_icon_web_f510b7b5926e",
+          "id": "derivative_asset_upgrades_icon_web_7c0ef7063a3b",
           "assetId": "asset_upgrades_icon",
-          "sourceFileId": "source_asset_upgrades_icon_05b84e8fe49d",
+          "sourceFileId": "source_asset_upgrades_icon_psd_7d952769aa7e",
+          "presetId": "icon_512",
           "derivativeType": "icon",
           "format": "PNG",
-          "width": 96,
-          "height": 96,
-          "aspectRatio": "96:96",
-          "quality": null,
+          "width": 512,
+          "height": 512,
+          "aspectRatio": "1:1",
+          "quality": 100,
           "storagePath": "public/assets/game-art/asset_upgrades_icon/asset_upgrades_icon.png",
           "publicUrl": "/assets/game-art/asset_upgrades_icon/asset_upgrades_icon.png",
-          "checksum": "f510b7b5926e",
-          "generatedAt": "2026-07-12T23:52:05.114Z",
-          "generationMethod": "web_derivative_publish",
+          "checksum": "7c0ef7063a3be76f07a8ed9f6e3dd83bc309efb6ccb76a77d3094edffc0dbe38",
+          "generatedAt": "2026-07-30T03:17:00.249Z",
+          "generationMethod": "psd_game_derivative",
           "status": "approved",
           "approvalStatus": "approved",
           "publishStatus": "published",
@@ -10257,7 +10755,54 @@
               "path": "/assets/game-art/asset_upgrades_icon/asset_upgrades_icon.png"
             }
           },
-          "archived": false
+          "archived": false,
+          "alphaRequired": true,
+          "derivativeStatus": "published"
+        },
+        {
+          "id": "derivative_asset_upgrades_icon_preview_4b0509ddcce6",
+          "assetId": "asset_upgrades_icon",
+          "sourceFileId": "source_asset_upgrades_icon_psd_7d952769aa7e",
+          "derivativeType": "web_preview",
+          "format": "WebP",
+          "width": 512,
+          "height": 512,
+          "aspectRatio": "1:1",
+          "quality": 84,
+          "storagePath": "public/assets/game-art/asset_upgrades_icon/asset_upgrades_icon-preview.webp",
+          "publicUrl": "/assets/game-art/asset_upgrades_icon/asset_upgrades_icon-preview.webp",
+          "checksum": "4b0509ddcce6c4ffbbf63e676546fadb840cf4d3a83f70ed93690d94b5985ae0",
+          "generatedAt": "2026-07-30T03:17:00.249Z",
+          "generationMethod": "psd_game_derivative",
+          "status": "approved",
+          "approvalStatus": "approved",
+          "publishStatus": "published",
+          "archived": false,
+          "alphaRequired": true,
+          "derivativeStatus": "published"
+        },
+        {
+          "id": "derivative_asset_upgrades_icon_thumbnail_7a0e4ef9cf61",
+          "assetId": "asset_upgrades_icon",
+          "sourceFileId": "source_asset_upgrades_icon_psd_7d952769aa7e",
+          "presetId": "icon_256",
+          "derivativeType": "library_thumbnail",
+          "format": "WebP",
+          "width": 256,
+          "height": 256,
+          "aspectRatio": "1:1",
+          "quality": 80,
+          "storagePath": "public/assets/game-art/asset_upgrades_icon/asset_upgrades_icon-thumbnail.webp",
+          "publicUrl": "/assets/game-art/asset_upgrades_icon/asset_upgrades_icon-thumbnail.webp",
+          "checksum": "7a0e4ef9cf61b973bc54f692cbf8169848b34792df4d4cbd249e3c702c567429",
+          "generatedAt": "2026-07-30T03:17:00.249Z",
+          "generationMethod": "psd_game_derivative",
+          "status": "approved",
+          "approvalStatus": "approved",
+          "publishStatus": "published",
+          "archived": false,
+          "alphaRequired": true,
+          "derivativeStatus": "published"
         }
       ],
       "platformMappings": {
@@ -10269,13 +10814,21 @@
         "web": {
           "path": "/assets/game-art/asset_upgrades_icon/asset_upgrades_icon.png",
           "status": "published",
-          "publishedAt": "2026-07-12T23:52:05.114Z"
+          "publishedAt": "2026-07-30T03:17:00.249Z"
         }
       },
       "productionStatus": "published",
       "status": "web_published",
-      "notes": "Imported from Roblox art manifest.\nSource Uploaded; Web publish pending.",
+      "notes": "Canonical navigation icon published from the current private Studio PSD master.",
       "historyEvents": [
+        {
+          "id": "history_asset_upgrades_icon_psd_7d952769aa7e",
+          "assetId": "asset_upgrades_icon",
+          "eventType": "psd_master_published",
+          "title": "Published navigation icon from PSD master",
+          "timestamp": "2026-07-30T03:17:00.249Z",
+          "notes": "/assets/game-art/asset_upgrades_icon/asset_upgrades_icon.png"
+        },
         {
           "id": "history_asset_upgrades_icon_1783900325179_b1fbddff18fc",
           "assetId": "asset_upgrades_icon",
@@ -10294,7 +10847,7 @@
         }
       ],
       "approvalStatus": "approved",
-      "publishedAt": "2026-07-12T23:52:05.114Z"
+      "publishedAt": "2026-07-30T03:17:00.249Z"
     },
     "asset_urban_ai": {
       "sourceFiles": [
@@ -10631,6 +11184,130 @@
       ],
       "approvalStatus": "approved",
       "publishedAt": "2026-07-12T23:52:05.114Z"
+    },
+    "asset_civilization_icon": {
+      "sourceFiles": [
+        {
+          "id": "source_asset_civilization_icon_psd_5b6152558b68",
+          "assetId": "asset_civilization_icon",
+          "filename": "ui-panel-side-menu-civilization.psd",
+          "extension": ".psd",
+          "mimeType": "image/vnd.adobe.photoshop",
+          "storagePath": "source-masters/ui/navigation/ui-panel-side-menu-civilization.psd",
+          "fileSizeBytes": 11376130,
+          "checksum": "5b6152558b68af75f81b2a9ac796b6be4828992029d0fb14b5dab76f7b8e0637",
+          "version": 1,
+          "versionLabel": "v1",
+          "uploadedAt": "2026-07-30T03:18:45.808Z",
+          "uploadedBy": "studio-source-master",
+          "isCurrent": true,
+          "archived": false,
+          "previewUrl": "/assets/game-art/asset_civilization_icon/asset_civilization_icon-preview.webp",
+          "previewStatus": "ready",
+          "width": 3000,
+          "height": 3000,
+          "sourceRole": "master",
+          "masterFormat": "PSD",
+          "notes": "Private canonical PSD master. Public clients receive generated derivatives only."
+        }
+      ],
+      "derivatives": [
+        {
+          "id": "derivative_asset_civilization_icon_web_7c18731c79d3",
+          "assetId": "asset_civilization_icon",
+          "sourceFileId": "source_asset_civilization_icon_psd_5b6152558b68",
+          "presetId": "icon_512",
+          "derivativeType": "icon",
+          "format": "PNG",
+          "width": 512,
+          "height": 512,
+          "aspectRatio": "1:1",
+          "quality": 100,
+          "storagePath": "public/assets/game-art/asset_civilization_icon/asset_civilization_icon.png",
+          "publicUrl": "/assets/game-art/asset_civilization_icon/asset_civilization_icon.png",
+          "checksum": "7c18731c79d3084cce2eaae2573e91d62eb9b3f31b3ffabeacfd80561a5e7aa5",
+          "generatedAt": "2026-07-30T03:18:45.808Z",
+          "generationMethod": "psd_game_derivative",
+          "status": "approved",
+          "approvalStatus": "approved",
+          "publishStatus": "published",
+          "platformMappings": {
+            "web": {
+              "path": "/assets/game-art/asset_civilization_icon/asset_civilization_icon.png"
+            }
+          },
+          "archived": false,
+          "alphaRequired": true,
+          "derivativeStatus": "published"
+        },
+        {
+          "id": "derivative_asset_civilization_icon_preview_4f96107620d4",
+          "assetId": "asset_civilization_icon",
+          "sourceFileId": "source_asset_civilization_icon_psd_5b6152558b68",
+          "derivativeType": "web_preview",
+          "format": "WebP",
+          "width": 512,
+          "height": 512,
+          "aspectRatio": "1:1",
+          "quality": 84,
+          "storagePath": "public/assets/game-art/asset_civilization_icon/asset_civilization_icon-preview.webp",
+          "publicUrl": "/assets/game-art/asset_civilization_icon/asset_civilization_icon-preview.webp",
+          "checksum": "4f96107620d4c3cb58af3de3b5951fd66103416636c568f347e74cb3c642f100",
+          "generatedAt": "2026-07-30T03:18:45.808Z",
+          "generationMethod": "psd_game_derivative",
+          "status": "approved",
+          "approvalStatus": "approved",
+          "publishStatus": "published",
+          "archived": false,
+          "alphaRequired": true,
+          "derivativeStatus": "published"
+        },
+        {
+          "id": "derivative_asset_civilization_icon_thumbnail_4347f575a9d6",
+          "assetId": "asset_civilization_icon",
+          "sourceFileId": "source_asset_civilization_icon_psd_5b6152558b68",
+          "presetId": "icon_256",
+          "derivativeType": "library_thumbnail",
+          "format": "WebP",
+          "width": 256,
+          "height": 256,
+          "aspectRatio": "1:1",
+          "quality": 80,
+          "storagePath": "public/assets/game-art/asset_civilization_icon/asset_civilization_icon-thumbnail.webp",
+          "publicUrl": "/assets/game-art/asset_civilization_icon/asset_civilization_icon-thumbnail.webp",
+          "checksum": "4347f575a9d67e41a0d00b990bd338c2b4936a5e4ca21714a5f68ce6372ec16f",
+          "generatedAt": "2026-07-30T03:18:45.808Z",
+          "generationMethod": "psd_game_derivative",
+          "status": "approved",
+          "approvalStatus": "approved",
+          "publishStatus": "published",
+          "archived": false,
+          "alphaRequired": true,
+          "derivativeStatus": "published"
+        }
+      ],
+      "platformMappings": {
+        "web": {
+          "path": "/assets/game-art/asset_civilization_icon/asset_civilization_icon.png",
+          "status": "published",
+          "publishedAt": "2026-07-30T03:18:45.808Z"
+        }
+      },
+      "productionStatus": "published",
+      "status": "web_published",
+      "approvalStatus": "approved",
+      "publishedAt": "2026-07-30T03:18:45.808Z",
+      "notes": "Canonical navigation icon published from the current private Studio PSD master.",
+      "historyEvents": [
+        {
+          "id": "history_asset_civilization_icon_psd_5b6152558b68",
+          "assetId": "asset_civilization_icon",
+          "eventType": "psd_master_published",
+          "title": "Published navigation icon from PSD master",
+          "timestamp": "2026-07-30T03:18:45.808Z",
+          "notes": "/assets/game-art/asset_civilization_icon/asset_civilization_icon.png"
+        }
+      ]
     }
   },
   "derivativePresets": [],
