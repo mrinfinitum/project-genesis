@@ -449,6 +449,46 @@ function PathCopyRow({
   );
 }
 
+export function GalaxyEnvironmentPainting({ definition }: { definition: EnvironmentGeneratorDefinition }) {
+  const layer = definition.layers[0];
+  const [copied, setCopied] = useState(false);
+  const prompt = buildEnvironmentLayerPrompt(layer, defaultEnvironmentGeneratorControls);
+
+  async function copyPrompt() {
+    await navigator.clipboard.writeText(prompt);
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1400);
+  }
+
+  return (
+    <main className="mx-auto max-w-5xl space-y-5">
+      <header>
+        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Environment Artwork Production</p>
+        <h1 className="mt-2 text-3xl font-bold text-white">Galaxy Environmental Painting</h1>
+        <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
+          One restrained environmental painting for each generated galaxy. Copy the canonical prompt and produce one approved artwork asset; the Game owns the rendered galaxy and interactive presentation.
+        </p>
+      </header>
+
+      <section className="rounded-md border border-cyan-300/20 bg-[#07101e]/90 p-5 shadow-glow">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-cyan-300">Environmental Painting Prompt</p>
+            <p className="mt-1 text-xs text-slate-500">{layer.output.width} × {layer.output.height} · {layer.output.aspectRatio} · one image per galaxy</p>
+          </div>
+          <Button type="button" className="h-9 px-3" onClick={copyPrompt}>
+            {copied ? <Check className="h-4 w-4" /> : <Clipboard className="h-4 w-4" />}
+            {copied ? "Copied" : "Copy Prompt"}
+          </Button>
+        </div>
+        <pre className="mt-4 max-h-[min(68vh,42rem)] overflow-auto whitespace-pre-wrap rounded border border-cyan-400/15 bg-[#030916] p-4 text-xs leading-5 text-slate-300">
+          {prompt}
+        </pre>
+      </section>
+    </main>
+  );
+}
+
 export function EnvironmentLayerGenerator({ definition }: { definition: EnvironmentGeneratorDefinition }) {
   const storageKey = `project-genesis-environment-generator:${definition.id}:v1`;
   const [workspace, setWorkspace] = useState<WorkspaceState>({ controls: defaultEnvironmentGeneratorControls, progress: {} });

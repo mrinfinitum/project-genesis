@@ -88,8 +88,7 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/sector-map", label: "Galactic Region Library", icon: Map },
       { href: "/star-system-map", label: "Star System Library", icon: Radar },
       { href: "/celestial-bodies", label: "Star Library", icon: CircleDot },
-      { href: "/planets", label: "Planet Library", icon: Orbit },
-      { href: "/planet-generation", label: "Planet Generation", icon: Orbit }
+      { href: "/planets", label: "Planet Library", icon: Orbit }
     ]
   },
   {
@@ -97,11 +96,13 @@ const navigationGroups: NavigationGroup[] = [
     label: "Environment Composer",
     icon: Layers3,
     items: [
-      { href: "/universe-layer-generator", label: "Universe Layer Generator", icon: GalleryHorizontalEnd },
-      { href: "/galaxy-layer-generator", label: "Galaxy Layer Generator", icon: GalleryHorizontalEnd },
-      { href: "/sector-layer-generator", label: "Galactic Region Layer Generator", icon: GalleryHorizontalEnd },
-      { href: "/star-system-layer-generator", label: "Star System Layer Generator", icon: GalleryHorizontalEnd },
-      { href: "/environment-composer/layers", label: "Layer Library", icon: Layers3 },
+      { href: "/universe-layer-generator", label: "Universe Generator", icon: GalleryHorizontalEnd },
+      { href: "/galaxy-layer-generator", label: "Galaxy Environmental Painting", icon: GalleryHorizontalEnd },
+      { href: "/sector-layer-generator", label: "Galactic Region Generator", icon: GalleryHorizontalEnd },
+      { href: "/star-system-layer-generator", label: "Star System Generator", icon: GalleryHorizontalEnd },
+      { href: "/planet-generation", label: "Planet Generator", icon: Orbit },
+      { href: "/life-generator", label: "Life Generator", icon: Dna },
+      { href: "/environment-composer/layers", label: "Environment Asset Library", icon: Layers3 },
       { href: "/environment-composer/scenes", label: "Scene Composer", icon: GalleryHorizontalEnd },
       { href: "/environment-composer/themes", label: "Themes", icon: WandSparkles },
       { href: "/environment-composer/export", label: "Runtime Export", icon: FileText }
@@ -113,8 +114,7 @@ const navigationGroups: NavigationGroup[] = [
     icon: Monitor,
     items: [
       { href: "/creative-production/ui-screens/planet-detail", label: "Planet Detail Screen", icon: Monitor },
-      { href: "/creative-production/ui-screens/civilization-operations", label: "Civilization Operations", icon: Monitor },
-      { href: "/creature-generator", label: "Creature Generator", icon: Dna }
+      { href: "/creative-production/ui-screens/civilization-operations", label: "Civilization Operations", icon: Monitor }
     ]
   },
   {

@@ -3,7 +3,7 @@
   "definitions": [
     {
       "id": "universe",
-      "name": "Universe Layer Generator",
+      "name": "Universe Generator",
       "route": "/universe-layer-generator",
       "sourceRoot": "source-masters/environments/universe/",
       "layers": [
@@ -113,7 +113,7 @@
     },
     {
       "id": "galaxy",
-      "name": "Galaxy Layer Generator",
+      "name": "Galaxy Environmental Painting",
       "route": "/galaxy-layer-generator",
       "sourceRoot": "source-masters/environments/galaxy/",
       "layers": [
@@ -291,7 +291,7 @@
     },
     {
       "id": "sector",
-      "name": "Galactic Region Layer Generator",
+      "name": "Galactic Region Generator",
       "route": "/sector-layer-generator",
       "sourceRoot": "source-masters/galactic-regions/",
       "layers": [
@@ -469,7 +469,7 @@
     },
     {
       "id": "starSystem",
-      "name": "Star System Layer Generator",
+      "name": "Star System Generator",
       "route": "/star-system-layer-generator",
       "sourceRoot": "source-masters/environments/star-system/",
       "layers": [
