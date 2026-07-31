@@ -45,8 +45,6 @@
     "generate:psd-game-derivatives": "tsx scripts/generate-psd-game-derivatives.ts",
     "generate:navigation-icons": "tsx scripts/generate-navigation-icon-derivatives.ts",
     "verify:navigation-icons": "tsx scripts/verify-navigation-icons.ts",
-    "generate:navigation-background": "tsx scripts/generate-navigation-background.ts",
-    "verify:navigation-background": "tsx scripts/verify-navigation-background.ts",
     "export:procedural-universe-fixtures": "tsx scripts/export-procedural-universe-fixtures.ts"
   },
   "dependencies": {

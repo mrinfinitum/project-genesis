@@ -1,13 +1,14 @@
-import { UpgradeLibrary } from "@/components/upgrade-library";
+import { UpgradeTreeWorkspace } from "@/components/upgrade-tree-workspace";
 import { getAssetProductionAssets } from "@/lib/assets/asset-production";
 import { getRows } from "@/lib/data";
+import { getGameRuntimeData } from "@/lib/runtime/game-runtime";
 import { buildUpgradeArtReport } from "@/lib/upgrades/art-previews";
 import type { Upgrade } from "@/types/schema";
 
 export const dynamic = "force-dynamic";
 
 export default async function UpgradesPage() {
-  const [rows, assets] = await Promise.all([getRows("upgrades"), getAssetProductionAssets()]);
+  const [rows, assets, runtime] = await Promise.all([getRows("upgrades"), getAssetProductionAssets(), getGameRuntimeData()]);
   const upgrades = rows as Upgrade[];
   const report = buildUpgradeArtReport(upgrades, assets);
   const art = report.items.map((item) => ({
@@ -21,5 +22,5 @@ export default async function UpgradesPage() {
     hasWebMapping: item.hasWebMapping,
     hasRobloxMapping: item.hasRobloxMapping
   }));
-  return <UpgradeLibrary upgrades={upgrades} art={art} />;
+  return <UpgradeTreeWorkspace upgrades={upgrades} tree={runtime.upgradeTree} art={art} />;
 }
