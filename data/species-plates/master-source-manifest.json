@@ -1,0 +1,19 @@
+{
+  "id": "SPECIES_PLATE_MASTER_V1",
+  "version": "1.0.0",
+  "sourceRoot": "source-masters/production/visual-engine/species-plates",
+  "requiredDirectories": [
+    "templates/SPECIES_PLATE_MASTER_V1",
+    "creatures",
+    "plants",
+    "fungi",
+    "microorganisms",
+    "exotic-life",
+    "comparative",
+    "ecosystem",
+    "approved",
+    "rejected",
+    "manifests"
+  ],
+  "publicationRule": "Private masters, prompts, rejected work, and local paths remain Studio-only. Runtime exports contain sanitized approved references only."
+}
