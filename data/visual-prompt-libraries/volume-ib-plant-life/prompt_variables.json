@@ -1,0 +1,134 @@
+[
+  {
+    "name": "PlantName",
+    "token": "{{PlantName}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "ScientificName",
+    "token": "{{ScientificName}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "Planet",
+    "token": "{{Planet}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "PlanetType",
+    "token": "{{PlanetType}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "Biome",
+    "token": "{{Biome}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "Climate",
+    "token": "{{Climate}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "Season",
+    "token": "{{Season}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "Gravity",
+    "token": "{{Gravity}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "Atmosphere",
+    "token": "{{Atmosphere}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "Temperature",
+    "token": "{{Temperature}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "Humidity",
+    "token": "{{Humidity}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "Soil Chemistry",
+    "token": "{{Soil Chemistry}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "Water Requirement",
+    "token": "{{Water Requirement}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "Growth Pattern",
+    "token": "{{Growth Pattern}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "Leaf Type",
+    "token": "{{Leaf Type}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "Flower Type",
+    "token": "{{Flower Type}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "Fruit Type",
+    "token": "{{Fruit Type}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "Seed Type",
+    "token": "{{Seed Type}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "Root Type",
+    "token": "{{Root Type}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "Color Palette",
+    "token": "{{Color Palette}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "Distinctive Features",
+    "token": "{{Distinctive Features}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "Rarity",
+    "token": "{{Rarity}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  }
+]

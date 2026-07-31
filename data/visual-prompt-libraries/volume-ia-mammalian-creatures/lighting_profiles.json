@@ -1,0 +1,22 @@
+[
+  {
+    "id": "soft-studio",
+    "displayName": "Soft Studio",
+    "intent": "soft neutral studio lighting, neutral white balance, readable materials"
+  },
+  {
+    "id": "soft-rim",
+    "displayName": "Soft Rim",
+    "intent": "soft studio key with a restrained rim light for silhouette separation"
+  },
+  {
+    "id": "museum-specimen",
+    "displayName": "Museum Specimen",
+    "intent": "museum-quality specimen illumination without dramatic shadows"
+  },
+  {
+    "id": "habitat-natural",
+    "displayName": "Habitat Natural",
+    "intent": "natural low-contrast environmental illumination with no focal flare"
+  }
+]

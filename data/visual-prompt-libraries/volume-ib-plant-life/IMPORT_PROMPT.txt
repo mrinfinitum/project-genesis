@@ -1,0 +1,12 @@
+IMPORT NOVERIS_Visual_Prompt_Library_Volume_IB_Plant_Life
+
+Import the JSON files as a canonical Visual Production Engine package. Preserve prompt IDs and version 1.0.0.
+
+Generator consumption:
+- Resolve a record by category=plant-life, subcategory, and outputType.
+- Substitute only fields declared in prompt_variables.json from the canonical plant record and its linked planet/biome data.
+- Reject unresolved or undeclared variables.
+- Present the positive and negative prompts as copyable Nano Banana 2 production prompts.
+- Track the prompt ID and version with any PSD source master and generated derivative.
+
+Do not use this package to create player state, spawned runtime instances, or non-canonical gameplay values.

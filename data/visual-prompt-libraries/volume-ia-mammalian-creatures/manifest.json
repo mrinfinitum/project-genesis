@@ -1,0 +1,25 @@
+{
+  "id": "NOVERIS_Visual_Prompt_Library_Volume_IA_Mammalian_Creatures",
+  "displayName": "NOVERIS Visual Prompt Library Volume IA Mammalian Creatures",
+  "packageVersion": "1.0.0",
+  "engine": "Visual Production Engine",
+  "imageModel": "Nano Banana 2",
+  "styleProfile": "NOVERIS Scientific Realism",
+  "category": "creature",
+  "archetypeCount": 37,
+  "outputTypeCount": 37,
+  "promptCount": 1369,
+  "files": [
+    "manifest.json",
+    "prompt_library.json",
+    "camera_profiles.json",
+    "lighting_profiles.json",
+    "negative_prompts.json",
+    "render_profiles.json",
+    "species_plate_profiles.json",
+    "prompt_variables.json",
+    "README.md",
+    "IMPORT_PROMPT.txt"
+  ],
+  "validationStatus": "Ready"
+}

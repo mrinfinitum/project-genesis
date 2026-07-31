@@ -1,0 +1,27 @@
+{
+  "id": "noveris_visual_prompt_library_registry",
+  "version": "1.0.0",
+  "engine": "Visual Production Engine",
+  "packages": [
+    {
+      "id": "NOVERIS_Visual_Prompt_Library_Volume_IA_Mammalian_Creatures",
+      "displayName": "NOVERIS Visual Prompt Library Volume IA Mammalian Creatures",
+      "category": "creature",
+      "packageVersion": "1.0.0",
+      "promptCount": 1369,
+      "manifestPath": "volume-ia-mammalian-creatures/manifest.json",
+      "promptLibraryPath": "volume-ia-mammalian-creatures/prompt_library.json",
+      "validationStatus": "Ready"
+    },
+    {
+      "id": "NOVERIS_Visual_Prompt_Library_Volume_IB_Plant_Life",
+      "displayName": "NOVERIS Visual Prompt Library Volume IB Plant Life",
+      "category": "plant-life",
+      "packageVersion": "1.0.0",
+      "promptCount": 2442,
+      "manifestPath": "volume-ib-plant-life/manifest.json",
+      "promptLibraryPath": "volume-ib-plant-life/prompt_library.json",
+      "validationStatus": "Ready"
+    }
+  ]
+}

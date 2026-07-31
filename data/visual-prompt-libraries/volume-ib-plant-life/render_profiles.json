@@ -1,0 +1,11 @@
+[
+  {
+    "id": "nano-banana-2-production",
+    "imageModel": "Nano Banana 2",
+    "styleProfile": "NOVERIS Botanical Scientific Realism",
+    "defaultBackground": "pure black",
+    "onlyEnvironmentalOutputsUseEnvironment": true,
+    "extractionTarget": "layered PSD/PSB source master",
+    "outputPolicy": "Studio publishes approved game-ready derivatives only."
+  }
+]

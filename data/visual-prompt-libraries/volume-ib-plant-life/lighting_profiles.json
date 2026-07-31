@@ -1,0 +1,22 @@
+[
+  {
+    "id": "soft-neutral-studio",
+    "displayName": "Soft Neutral Studio",
+    "intent": "soft neutral studio lighting and physically believable botanical materials"
+  },
+  {
+    "id": "soft-rim",
+    "displayName": "Soft Rim",
+    "intent": "soft neutral studio key with a restrained rim light for silhouette separation"
+  },
+  {
+    "id": "museum-specimen",
+    "displayName": "Museum Specimen",
+    "intent": "museum specimen lighting with readable leaf, bark, root, and reproductive detail"
+  },
+  {
+    "id": "habitat-natural",
+    "displayName": "Habitat Natural",
+    "intent": "natural low-contrast habitat illumination with no dramatic shadows"
+  }
+]

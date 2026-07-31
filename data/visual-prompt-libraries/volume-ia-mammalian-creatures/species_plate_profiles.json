@@ -1,0 +1,24 @@
+[
+  {
+    "id": "mammalian-species-plate",
+    "displayName": "Mammalian Species Plate",
+    "assets": [
+      "full body",
+      "portrait",
+      "front",
+      "rear",
+      "side",
+      "skeleton",
+      "footprint",
+      "juvenile",
+      "adult",
+      "elder",
+      "male",
+      "female",
+      "habitat",
+      "scale comparison",
+      "silhouette",
+      "materials"
+    ]
+  }
+]

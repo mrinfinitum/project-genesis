@@ -1,0 +1,24 @@
+{
+  "default": [
+    "text",
+    "watermark",
+    "logo",
+    "UI",
+    "frame",
+    "cropped subject",
+    "duplicate limbs",
+    "duplicate heads",
+    "incorrect anatomy",
+    "random wings",
+    "random horns",
+    "armor",
+    "weapons",
+    "cartoon",
+    "anime",
+    "oversaturation",
+    "motion blur",
+    "low resolution",
+    "compression artifacts",
+    "floating body parts"
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "default": [
+    "text",
+    "watermark",
+    "logo",
+    "frame",
+    "UI",
+    "cropped subject",
+    "floating roots",
+    "floating branches",
+    "incorrect leaf arrangement",
+    "duplicate trunks",
+    "duplicate flowers",
+    "duplicate fruit",
+    "cartoon",
+    "anime",
+    "oversaturated colors",
+    "motion blur",
+    "low resolution",
+    "compression artifacts",
+    "plastic materials",
+    "fantasy glowing unless canonical"
+  ]
+}

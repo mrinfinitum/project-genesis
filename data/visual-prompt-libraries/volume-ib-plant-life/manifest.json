@@ -1,0 +1,25 @@
+{
+  "id": "NOVERIS_Visual_Prompt_Library_Volume_IB_Plant_Life",
+  "displayName": "NOVERIS Visual Prompt Library Volume IB Plant Life",
+  "packageVersion": "1.0.0",
+  "engine": "Visual Production Engine",
+  "imageModel": "Nano Banana 2",
+  "styleProfile": "NOVERIS Botanical Scientific Realism",
+  "category": "plant-life",
+  "archetypeCount": 66,
+  "outputTypeCount": 37,
+  "promptCount": 2442,
+  "files": [
+    "manifest.json",
+    "prompt_library.json",
+    "camera_profiles.json",
+    "lighting_profiles.json",
+    "negative_prompts.json",
+    "render_profiles.json",
+    "botanical_plate_profiles.json",
+    "prompt_variables.json",
+    "README.md",
+    "IMPORT_PROMPT.txt"
+  ],
+  "validationStatus": "Ready"
+}

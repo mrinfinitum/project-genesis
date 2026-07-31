@@ -1,0 +1,25 @@
+[
+  {
+    "id": "botanical-production-plate",
+    "displayName": "Botanical Production Plate",
+    "assets": [
+      "entire plant",
+      "portrait",
+      "front",
+      "rear",
+      "side",
+      "roots",
+      "leaves",
+      "flowers",
+      "fruit",
+      "seeds",
+      "cross section",
+      "growth stages",
+      "seasonal variants",
+      "habitat thumbnail",
+      "silhouette",
+      "scale comparison",
+      "material closeups"
+    ]
+  }
+]

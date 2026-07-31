@@ -1,0 +1,52 @@
+[
+  {
+    "id": "portrait",
+    "displayName": "Portrait",
+    "intent": "eye-level portrait framing with clear facial anatomy"
+  },
+  {
+    "id": "orthographic-front",
+    "displayName": "Orthographic Front",
+    "intent": "true front orthographic reference with no perspective distortion"
+  },
+  {
+    "id": "orthographic-side",
+    "displayName": "Orthographic Side",
+    "intent": "true side orthographic reference with no perspective distortion"
+  },
+  {
+    "id": "orthographic-rear",
+    "displayName": "Orthographic Rear",
+    "intent": "true rear orthographic reference with no perspective distortion"
+  },
+  {
+    "id": "three-quarter",
+    "displayName": "Three Quarter",
+    "intent": "three-quarter full-body specimen view with grounded posture"
+  },
+  {
+    "id": "top",
+    "displayName": "Top",
+    "intent": "top-down anatomical reference"
+  },
+  {
+    "id": "bottom",
+    "displayName": "Bottom",
+    "intent": "underside anatomical reference"
+  },
+  {
+    "id": "macro",
+    "displayName": "Macro",
+    "intent": "controlled macro study of material and anatomy"
+  },
+  {
+    "id": "habitat-wide",
+    "displayName": "Habitat Wide",
+    "intent": "restrained wide habitat composition with the subject readable"
+  },
+  {
+    "id": "reference-sheet",
+    "displayName": "Reference Sheet",
+    "intent": "neutral production reference-sheet framing"
+  }
+]

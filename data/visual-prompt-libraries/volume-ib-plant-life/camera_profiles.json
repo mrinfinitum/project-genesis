@@ -1,0 +1,82 @@
+[
+  {
+    "id": "portrait",
+    "displayName": "Portrait",
+    "intent": "portrait specimen composition with the full botanical silhouette readable"
+  },
+  {
+    "id": "orthographic-front",
+    "displayName": "Orthographic Front",
+    "intent": "true front orthographic botanical reference"
+  },
+  {
+    "id": "orthographic-side",
+    "displayName": "Orthographic Side",
+    "intent": "true side orthographic botanical reference"
+  },
+  {
+    "id": "orthographic-rear",
+    "displayName": "Orthographic Rear",
+    "intent": "true rear orthographic botanical reference"
+  },
+  {
+    "id": "three-quarter",
+    "displayName": "Three Quarter",
+    "intent": "three-quarter specimen view preserving growth habit"
+  },
+  {
+    "id": "top",
+    "displayName": "Top",
+    "intent": "top-down foliage and canopy reference"
+  },
+  {
+    "id": "bottom",
+    "displayName": "Bottom",
+    "intent": "underside and root-system reference"
+  },
+  {
+    "id": "macro",
+    "displayName": "Macro",
+    "intent": "controlled macro botanical material study"
+  },
+  {
+    "id": "leaf-closeup",
+    "displayName": "Leaf Closeup",
+    "intent": "leaf venation and attachment closeup"
+  },
+  {
+    "id": "flower-closeup",
+    "displayName": "Flower Closeup",
+    "intent": "reproductive flower structure closeup"
+  },
+  {
+    "id": "fruit-closeup",
+    "displayName": "Fruit Closeup",
+    "intent": "fruit structure closeup"
+  },
+  {
+    "id": "seed-closeup",
+    "displayName": "Seed Closeup",
+    "intent": "seed morphology closeup"
+  },
+  {
+    "id": "root-closeup",
+    "displayName": "Root Closeup",
+    "intent": "root-system structure closeup"
+  },
+  {
+    "id": "habitat-wide",
+    "displayName": "Habitat Wide",
+    "intent": "restrained habitat composition that preserves ecological scale"
+  },
+  {
+    "id": "forest-wide",
+    "displayName": "Forest Wide",
+    "intent": "restrained forest composition with realistic spacing"
+  },
+  {
+    "id": "reference-board",
+    "displayName": "Reference Board",
+    "intent": "neutral botanical reference-board composition"
+  }
+]

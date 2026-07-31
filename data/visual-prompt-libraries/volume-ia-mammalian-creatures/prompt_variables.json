@@ -1,0 +1,86 @@
+[
+  {
+    "name": "SpeciesName",
+    "token": "{{SpeciesName}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "ScientificName",
+    "token": "{{ScientificName}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "Planet",
+    "token": "{{Planet}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "Biome",
+    "token": "{{Biome}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "Gravity",
+    "token": "{{Gravity}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "Atmosphere",
+    "token": "{{Atmosphere}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "Climate",
+    "token": "{{Climate}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "BodyPlan",
+    "token": "{{BodyPlan}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "Diet",
+    "token": "{{Diet}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "Behavior",
+    "token": "{{Behavior}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "PrimaryMaterial",
+    "token": "{{PrimaryMaterial}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "ColorPalette",
+    "token": "{{ColorPalette}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "DistinctiveFeatures",
+    "token": "{{DistinctiveFeatures}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  },
+  {
+    "name": "Rarity",
+    "token": "{{Rarity}}",
+    "required": true,
+    "source": "canonical Studio record or linked canonical world data"
+  }
+]
