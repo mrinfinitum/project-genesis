@@ -8,14 +8,14 @@
       "source": {
         "width": 1319,
         "height": 1189,
-        "checksum": "2c442b2e4c95e0d0f1ee210446ac251eca1d0d586c96e5a6aaab99bf4c7a07a8",
-        "bytes": 9821219,
+        "checksum": "d8a6236b1fb58763b3961dcd8e6d3018b85c9db2d17e7b1f8c6c29829f861259",
+        "bytes": 9851154,
         "alphaPolicy": "remove_edge_white_matte",
         "alpha": {
           "hasAlpha": true,
-          "transparentPixelCount": 2433,
-          "partialPixelCount": 0,
-          "opaquePixelCount": 1565858
+          "transparentPixelCount": 2040,
+          "partialPixelCount": 2580,
+          "opaquePixelCount": 1563671
         }
       },
       "derivatives": [
@@ -26,13 +26,13 @@
           "mimeType": "image/png",
           "width": 1319,
           "height": 1189,
-          "bytes": 960746,
-          "checksum": "dbd607d2f49aea75d50d2c22660c14279ad710367fc75f9b8d10592068eab981",
+          "bytes": 960450,
+          "checksum": "c0a762f4a4fe54bc3c37b51311f34299108f0e72872e302cb4826115207e5a86",
           "alpha": {
             "hasAlpha": true,
-            "transparentPixelCount": 2433,
-            "partialPixelCount": 0,
-            "opaquePixelCount": 1565858
+            "transparentPixelCount": 2040,
+            "partialPixelCount": 2580,
+            "opaquePixelCount": 1563671
           }
         },
         {
@@ -42,13 +42,13 @@
           "mimeType": "image/webp",
           "width": 1319,
           "height": 1189,
-          "bytes": 8946,
-          "checksum": "46a4b11f08ffa3e08f7a167a57e1dfd6557e8c55be7d97a85157b2b6ad407988",
+          "bytes": 9500,
+          "checksum": "c7624f34b75299b2cfef02706e38d7f259c4296179ce36939e41bb33b5c992d4",
           "alpha": {
             "hasAlpha": true,
-            "transparentPixelCount": 2433,
-            "partialPixelCount": 0,
-            "opaquePixelCount": 1565858
+            "transparentPixelCount": 2040,
+            "partialPixelCount": 2580,
+            "opaquePixelCount": 1563671
           }
         },
         {
@@ -58,13 +58,13 @@
           "mimeType": "image/webp",
           "width": 480,
           "height": 270,
-          "bytes": 1274,
-          "checksum": "171ad318f0d7870edac279e26dda94e88f11f57328daea362b699ad7be443541",
+          "bytes": 1248,
+          "checksum": "9d123cbd15c39aa3a19628a565deabbd32be0a0821687b044c455ffe2f1b4fcb",
           "alpha": {
             "hasAlpha": true,
-            "transparentPixelCount": 48662,
-            "partialPixelCount": 313,
-            "opaquePixelCount": 80625
+            "transparentPixelCount": 48664,
+            "partialPixelCount": 1171,
+            "opaquePixelCount": 79765
           }
         }
       ]
@@ -76,14 +76,14 @@
       "source": {
         "width": 2119,
         "height": 1300,
-        "checksum": "21f70893503b054601b0634e3b31bc7b75db3af3cbc97f092ac7dcaca5afc7ca",
-        "bytes": 16496210,
+        "checksum": "615453673ac04e4aa0c94021e59281a972fa01944e54937a333f341c6172b47d",
+        "bytes": 16546597,
         "alphaPolicy": "remove_edge_white_matte",
         "alpha": {
           "hasAlpha": true,
-          "transparentPixelCount": 2217,
-          "partialPixelCount": 0,
-          "opaquePixelCount": 2752483
+          "transparentPixelCount": 2023,
+          "partialPixelCount": 1375,
+          "opaquePixelCount": 2751302
         }
       },
       "derivatives": [
@@ -94,13 +94,13 @@
           "mimeType": "image/png",
           "width": 2119,
           "height": 1300,
-          "bytes": 1643121,
-          "checksum": "087c85d5191d2625c7f77a2c520272b96d75f6c945a012ef18f9e29c54999190",
+          "bytes": 1643230,
+          "checksum": "f884ad5c4d5f6b3437210d7b24277e54140dc1f63b8f9d9b8734cf421b277699",
           "alpha": {
             "hasAlpha": true,
-            "transparentPixelCount": 2217,
-            "partialPixelCount": 0,
-            "opaquePixelCount": 2752483
+            "transparentPixelCount": 2023,
+            "partialPixelCount": 1375,
+            "opaquePixelCount": 2751302
           }
         },
         {
@@ -110,13 +110,13 @@
           "mimeType": "image/webp",
           "width": 1600,
           "height": 982,
-          "bytes": 9044,
-          "checksum": "e72f218635b569a8fcfd763b8e2283f791dd57c6bb3bb0b12d3c08b907b52775",
+          "bytes": 8794,
+          "checksum": "6e3a4a83a5205298a747eae90d20e59bc7a6402b9584e1b71e12e497599829ac",
           "alpha": {
             "hasAlpha": true,
-            "transparentPixelCount": 1008,
-            "partialPixelCount": 653,
-            "opaquePixelCount": 1569539
+            "transparentPixelCount": 1027,
+            "partialPixelCount": 2162,
+            "opaquePixelCount": 1568011
           }
         },
         {
@@ -126,13 +126,13 @@
           "mimeType": "image/webp",
           "width": 480,
           "height": 270,
-          "bytes": 1132,
-          "checksum": "bab127bd668c144acb4cf07653a50019a3185c85e4995f622e51cc7312d03bf1",
+          "bytes": 1140,
+          "checksum": "22980637e6e49e2cd6113838e4b468eeec78996d21b9c2b9a226a4b156e809e3",
           "alpha": {
             "hasAlpha": true,
-            "transparentPixelCount": 10841,
-            "partialPixelCount": 182,
-            "opaquePixelCount": 118577
+            "transparentPixelCount": 10846,
+            "partialPixelCount": 558,
+            "opaquePixelCount": 118196
           }
         }
       ]
@@ -144,14 +144,14 @@
       "source": {
         "width": 1449,
         "height": 1404,
-        "checksum": "50308ac7ddcdde284e756809eaf629eb2aad402082bfe6f7f3d148125c8169bb",
-        "bytes": 13865270,
+        "checksum": "96d7262980120a6c83c70d0b8385601424c6219ee3103a403073b219945335cc",
+        "bytes": 13906384,
         "alphaPolicy": "remove_edge_white_matte",
         "alpha": {
           "hasAlpha": true,
-          "transparentPixelCount": 4057,
-          "partialPixelCount": 0,
-          "opaquePixelCount": 2030339
+          "transparentPixelCount": 3660,
+          "partialPixelCount": 2795,
+          "opaquePixelCount": 2027941
         }
       },
       "derivatives": [
@@ -162,13 +162,13 @@
           "mimeType": "image/png",
           "width": 1449,
           "height": 1404,
-          "bytes": 1456355,
-          "checksum": "21a04347e37eabc639e2b908e0380109fbe23ee167b7728313d479091fa0ca45",
+          "bytes": 1453897,
+          "checksum": "a255e1dd96429fea5d98d19be01688b24a1095ead23feb5d643dd4cfe46c6f0f",
           "alpha": {
             "hasAlpha": true,
-            "transparentPixelCount": 4057,
-            "partialPixelCount": 0,
-            "opaquePixelCount": 2030339
+            "transparentPixelCount": 3660,
+            "partialPixelCount": 2795,
+            "opaquePixelCount": 2027941
           }
         },
         {
@@ -178,13 +178,13 @@
           "mimeType": "image/webp",
           "width": 1449,
           "height": 1404,
-          "bytes": 10662,
-          "checksum": "29ddfc8e72c6e8c553b13e1091c3ae3583fbaf23795e59424bb5dcc5bee09db0",
+          "bytes": 11248,
+          "checksum": "6e0d80e909b3af4edbe758c7a27de164e7db2c67a8334c9e83c1d76f63a307d9",
           "alpha": {
             "hasAlpha": true,
-            "transparentPixelCount": 4057,
-            "partialPixelCount": 0,
-            "opaquePixelCount": 2030339
+            "transparentPixelCount": 3660,
+            "partialPixelCount": 2795,
+            "opaquePixelCount": 2027941
           }
         },
         {
@@ -194,13 +194,13 @@
           "mimeType": "image/webp",
           "width": 480,
           "height": 270,
-          "bytes": 1238,
-          "checksum": "39390c09d5507bacbd1784073b933b633d4f17a63ae39fa570be64f71492fbac",
+          "bytes": 1274,
+          "checksum": "3553a51463d6a4fa3c742e2616335b4e906752ff61cae0bebdc1dafeec67c091",
           "alpha": {
             "hasAlpha": true,
-            "transparentPixelCount": 54316,
-            "partialPixelCount": 717,
-            "opaquePixelCount": 74567
+            "transparentPixelCount": 54319,
+            "partialPixelCount": 1099,
+            "opaquePixelCount": 74182
           }
         }
       ]
@@ -212,14 +212,14 @@
       "source": {
         "width": 1888,
         "height": 1256,
-        "checksum": "3c36954f50b80eb9ae5a0c641a8cd8d0a8b2a74c347136d730a504861fdef909",
-        "bytes": 16788382,
+        "checksum": "de7a44cd090f1b31dc4962efc594088f31c0159a7b12177e0140c4b0171f0d8a",
+        "bytes": 16829734,
         "alphaPolicy": "remove_edge_white_matte",
         "alpha": {
           "hasAlpha": true,
-          "transparentPixelCount": 2018,
-          "partialPixelCount": 0,
-          "opaquePixelCount": 2369310
+          "transparentPixelCount": 1747,
+          "partialPixelCount": 1874,
+          "opaquePixelCount": 2367707
         }
       },
       "derivatives": [
@@ -230,13 +230,13 @@
           "mimeType": "image/png",
           "width": 1888,
           "height": 1256,
-          "bytes": 1703817,
-          "checksum": "5664504e45bab94b6bab21b8db9f51ba6d4dbdae12b2686f8b14d4ff2671a506",
+          "bytes": 1703643,
+          "checksum": "2ff71f43a28da6409df2683d12ef9aac91f4791d9ac7bf595f7ae2cd084d47b2",
           "alpha": {
             "hasAlpha": true,
-            "transparentPixelCount": 2018,
-            "partialPixelCount": 0,
-            "opaquePixelCount": 2369310
+            "transparentPixelCount": 1747,
+            "partialPixelCount": 1874,
+            "opaquePixelCount": 2367707
           }
         },
         {
@@ -246,13 +246,13 @@
           "mimeType": "image/webp",
           "width": 1600,
           "height": 1064,
-          "bytes": 12372,
-          "checksum": "253321c4c5bd4c23cc03e702f42f7e9f6c5bcfabd22698271dc7573ef8cfddfa",
+          "bytes": 12336,
+          "checksum": "784641c3e14720305f55eedf96406aee0a108c0749c0ee9ce8647b78f0648ec2",
           "alpha": {
             "hasAlpha": true,
-            "transparentPixelCount": 1052,
-            "partialPixelCount": 896,
-            "opaquePixelCount": 1700452
+            "transparentPixelCount": 1055,
+            "partialPixelCount": 3310,
+            "opaquePixelCount": 1698035
           }
         },
         {
@@ -262,13 +262,13 @@
           "mimeType": "image/webp",
           "width": 480,
           "height": 270,
-          "bytes": 1434,
-          "checksum": "747855e03d1ac404aacfb6cb385b8b5c7ae2cd170ab05862deb83c0499c5d0ed",
+          "bytes": 1430,
+          "checksum": "1331978913704331087953462a08e08d75c39a11706f77b5cfd9202c5cd9f449",
           "alpha": {
             "hasAlpha": true,
-            "transparentPixelCount": 20021,
-            "partialPixelCount": 242,
-            "opaquePixelCount": 109337
+            "transparentPixelCount": 20027,
+            "partialPixelCount": 847,
+            "opaquePixelCount": 108726
           }
         }
       ]
