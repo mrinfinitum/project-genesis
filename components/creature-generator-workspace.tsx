@@ -5,6 +5,8 @@ import type { ReactNode } from "react";
 import { Copy, Dna, RefreshCw, Sparkles } from "lucide-react";
 import { creatureEcologicalRoles, creatureFunctionalCategories, creatureHabitats, generateSpeciesDraft, type CreatureGenerationMode, type SpeciesRecord } from "@/lib/life/creature-system";
 import { CreaturePromptPanel } from "@/components/creature-prompt-panel";
+import { SpeciesPlatePromptCard } from "@/components/species-plate-prompt-card";
+import { speciesPlateSourceFromCreature } from "@/lib/species-plates/adapters";
 
 const inputClass = "w-full rounded-md border border-cyan-300/15 bg-slate-950/60 px-3 py-2 text-sm font-semibold text-slate-100 outline-none focus:border-cyan-200/60";
 
@@ -50,6 +52,7 @@ export function CreatureGeneratorWorkspace() {
         <div className="mt-4 rounded-md border border-cyan-300/10 bg-slate-900/40 p-4"><p className="text-[0.65rem] font-black uppercase tracking-[0.18em] text-slate-500">Authoring boundary</p><p className="mt-2 text-sm leading-6 text-slate-300">Studio owns this definition and its approved references. The Game owns spawned creatures, animation runtime, simulation, and player-specific collection state.</p></div>
       </div>
     </section>
+    <SpeciesPlatePromptCard source={speciesPlateSourceFromCreature(draft)} />
     <CreaturePromptPanel species={draft} />
   </main>;
 }

@@ -3587,6 +3587,7 @@ export type GameRuntimeData = {
   creaturePromptBatchActions: string[];
   creaturePromptModelProfiles: import("@/lib/life/creature-system").CreaturePromptModelProfile[];
   creaturePromptTypeTemplates: Record<string, readonly string[]>;
+  speciesPlates: import("@/lib/species-plates/runtime").SpeciesPlateRuntimeReference[];
   planetDetailScreen?: import("@/lib/assets/planet-detail-screen").PlanetDetailScreenRuntimeContract;
   civilizationOperationsDeck?: import("@/lib/assets/civilization-operations-deck").CivilizationOperationsDeckContract;
   clientProfiles: ClientProfiles;

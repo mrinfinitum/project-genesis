@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { Dna, Leaf, Orbit, ArrowRight } from "lucide-react";
+import { Dna, Leaf, Orbit, ArrowRight, Layers3 } from "lucide-react";
 
 const tools = [
   { href: "/creature-generator", label: "Creature Generator", description: "Generate deterministic species drafts from canonical taxonomy, habitats, ecology, and planet context.", icon: Dna },
   { href: "/plant-life-generator", label: "Plant Life Generator", description: "Generate deterministic flora, fungi, coral, moss, tree, flower, seed, and spore drafts.", icon: Leaf },
+  { href: "/visual-production/species-plates", label: "Species Plates", description: "Compile canonical creature and life-record reference boards for review, source masters, and approved asset extraction.", icon: Layers3 },
   { href: "/species", label: "Species Library", description: "Browse approved and draft creature records connected to their canonical world references.", icon: Orbit }
 ];
 

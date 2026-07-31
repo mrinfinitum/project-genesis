@@ -51,9 +51,14 @@ export type SpeciesPlateGroup = {
 
 export type SpeciesPlateTemplate = {
   id: "SPECIES_PLATE_MASTER_V1";
-  type: "species_plate_template";
+  recordType: "species_plate_template";
   version: "1.0.0";
-  canonical: true;
+  status: "canonical";
+  displayName: string;
+  description: string;
+  domain: "multi-domain";
+  outputType: "scientific-reference-board";
+  modelProfile: "nano-banana-2";
   resolution: [4000, 4000];
   aspectRatio: "1:1";
   background: "pure-black";
@@ -63,11 +68,20 @@ export type SpeciesPlateTemplate = {
   lightingProfileId: "LIGHT_MUSEUM_SPECIMEN";
   defaultVersionCount: 4;
   psdFriendly: true;
+  generateMultipleVersions: true;
   anatomyChangesAllowed: false;
   materialChangesAllowed: false;
   backgroundChangesAllowed: false;
   naturalVariationAllowed: true;
   groups: SpeciesPlateGroup[];
+  promptRules: string[];
+  validationRules: string[];
+  negativePromptProfile: string[];
+  sourceMasterRules: string[];
+  exportFormats: Array<"png" | "webp" | "artpack" | "manifest">;
+  runtimeSanitization: string[];
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type SpeciesPlatePreset = {
@@ -97,6 +111,11 @@ export type SpeciesPlateRecord = {
   generationSeed: string;
   sourcePromptId: string | null;
   promptHash: string | null;
+  approvedAssetId: string | null;
+  previewAssetId: string | null;
+  thumbnailAssetId: string | null;
+  extractedAssetIds: string[];
+  reviewNotes: string | null;
   productionStatus: SpeciesPlateProductionStatus;
   panels: SpeciesPlatePanel[];
   createdAt: string;

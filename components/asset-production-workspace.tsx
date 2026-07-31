@@ -1900,6 +1900,7 @@ export function AssetProductionWorkspace({ state, view, preferredRoute = "/asset
           Upload Asset
         </Button>
         <Link href={`${preferredRoute}?category=upgrade-categories`} onClick={(event) => { event.preventDefault(); selectNode("upgrade-categories"); }} className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Upgrades</Link>
+        <Link href="/visual-production/species-plates" className="inline-flex h-10 items-center gap-2 rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100"><Layers3 className="h-4 w-4" /> Species Plates</Link>
         <Link href={`${preferredRoute}?section=missing`} onClick={(event) => { event.preventDefault(); selectNode("missing"); }} className="inline-flex h-10 items-center rounded-md border border-cyan-300/25 bg-cyan-300/10 px-3 text-sm font-bold text-cyan-100">Missing Assets</Link>
         {pickerMode ? <WorkspaceBadge value={`Picker: ${pickerMode}`} /> : null}
         {deprecated ? <WorkspaceBadge value="Moved to Asset Library" /> : null}

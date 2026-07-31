@@ -1,6 +1,6 @@
 import { compileNanoBanana2Prompt, getNanoBanana2PromptStaleness, type CanonicalVisualRecord } from "@/lib/visual-production/nano-banana-2";
-import { SPECIES_PLATE_MASTER_V1, speciesPlateDomainMappings, speciesPlatePromptTemplate, speciesPlateVariationProfiles } from "@/lib/species-plates/master-template";
-import type { SpeciesPlateDomain, SpeciesPlateRecord, SpeciesPlateValidationIssue } from "@/lib/species-plates/types";
+import { SPECIES_PLATE_MASTER_V1, resolveSpeciesPlatePreset, speciesPlateDomainMappings, speciesPlatePromptTemplate, speciesPlateVariationProfiles } from "@/lib/species-plates/master-template";
+import type { SpeciesPlateDomain, SpeciesPlateProductionStatus, SpeciesPlateRecord, SpeciesPlateValidationIssue } from "@/lib/species-plates/types";
 
 export const SPECIES_PLATE_COMPILER_VERSION = "1.0.0";
 
@@ -51,8 +51,23 @@ const compilerDomain = (domain: SpeciesPlateDomain): "creature" | "plant" => dom
 const defaultArchetype = (domain: "creature" | "plant") => domain === "creature" ? "volume-ia-mammalian-grazer" : "volume-pa-trees-temperate-forest-tree";
 
 export function createSpeciesPlateRecord(source: SpeciesPlateSource, presetId = source.domain === "creature" ? "creature-standard" : "botanical-standard"): SpeciesPlateRecord {
-  const panels = SPECIES_PLATE_MASTER_V1.groups.flatMap((group) => group.panels).filter((item) => item.domain.includes(source.domain)).map((item) => ({ ...item, targetBounds: { ...item.targetBounds }, safeBounds: { ...item.safeBounds } }));
-  return { id: `species-plate-${source.id}`, canonicalRecordId: source.id, domain: source.domain, templateId: SPECIES_PLATE_MASTER_V1.id, templateVersion: SPECIES_PLATE_MASTER_V1.version, presetId, generationSeed: source.seed, sourcePromptId: null, promptHash: null, productionStatus: "awaiting_prompt", panels, createdAt: "deterministic-build", updatedAt: "deterministic-build" };
+  const resolvedPreset = resolveSpeciesPlatePreset(presetId);
+  const panels = resolvedPreset.groups.flatMap((group) => group.panels).filter((item) => item.domain.includes(source.domain)).map((item) => ({ ...item, targetBounds: { ...item.targetBounds }, safeBounds: { ...item.safeBounds } }));
+  return { id: `species-plate-${source.id}`, canonicalRecordId: source.id, domain: source.domain, templateId: SPECIES_PLATE_MASTER_V1.id, templateVersion: SPECIES_PLATE_MASTER_V1.version, presetId, generationSeed: source.seed, sourcePromptId: null, promptHash: null, approvedAssetId: null, previewAssetId: null, thumbnailAssetId: null, extractedAssetIds: [], reviewNotes: null, productionStatus: "awaiting_prompt", panels, createdAt: "deterministic-build", updatedAt: "deterministic-build" };
+}
+
+const productionTransitions: Record<SpeciesPlateProductionStatus, SpeciesPlateProductionStatus[]> = {
+  not_started: ["awaiting_prompt", "blocked"], awaiting_prompt: ["prompt_ready", "blocked"], prompt_ready: ["generating", "stale", "blocked"], generating: ["generated", "blocked"], generated: ["awaiting_review", "revision_required", "blocked"], awaiting_review: ["approved", "rejected", "revision_required"], approved: ["extraction_pending", "stale"], rejected: ["awaiting_prompt"], revision_required: ["awaiting_prompt", "generating"], extraction_pending: ["extracted", "blocked"], extracted: ["published", "revision_required"], published: ["stale"], stale: ["awaiting_prompt", "generating"], blocked: ["awaiting_prompt"]
+};
+
+export function transitionSpeciesPlateStatus(plate: SpeciesPlateRecord, nextStatus: SpeciesPlateProductionStatus, reviewNotes: string | null = plate.reviewNotes) {
+  if (!productionTransitions[plate.productionStatus].includes(nextStatus)) throw new Error(`Invalid species plate status transition: ${plate.productionStatus} -> ${nextStatus}.`);
+  if (["approved", "extracted", "published"].includes(nextStatus) && !plate.approvedAssetId) throw new Error("An approved asset ID is required before a species plate can advance to approved output states.");
+  return { ...plate, productionStatus: nextStatus, reviewNotes, updatedAt: "deterministic-build" };
+}
+
+export function attachApprovedSpeciesPlateAssets(plate: SpeciesPlateRecord, assets: { approvedAssetId: string; previewAssetId?: string; thumbnailAssetId?: string; extractedAssetIds?: string[] }) {
+  return { ...plate, approvedAssetId: assets.approvedAssetId, previewAssetId: assets.previewAssetId ?? null, thumbnailAssetId: assets.thumbnailAssetId ?? null, extractedAssetIds: assets.extractedAssetIds ?? [], productionStatus: "approved" as const, updatedAt: "deterministic-build" };
 }
 
 export function compileSpeciesPlatePrompt(source: SpeciesPlateSource, options: { presetId?: string; variationProfileId?: string; versionCount?: 1 | 2 | 3 | 4 | 6 | 8; seed?: string } = {}): ResolvedSpeciesPlatePrompt {
@@ -74,9 +89,10 @@ export function compileSpeciesPlatePrompt(source: SpeciesPlateSource, options: {
 
 export function getSpeciesPlatePromptStaleness(source: SpeciesPlateSource, prompt: ResolvedSpeciesPlatePrompt) {
   const current = compileSpeciesPlatePrompt(source, { presetId: prompt.presetId, versionCount: prompt.requestedVersionCount as 1 | 2 | 3 | 4 | 6 | 8, seed: prompt.seed });
-  return { stale: current.promptHash !== prompt.promptHash, currentPromptHash: current.promptHash, reason: current.promptHash === prompt.promptHash ? "current" : "canonical_record_or_template_changed" };
+  const stale = current.promptHash !== prompt.promptHash;
+  return { stale, currentPromptHash: current.promptHash, reason: stale ? "canonical_record_or_template_changed" : "current", changedFields: stale ? ["canonicalSource", "templateVersion", "promptHash"] : [] };
 }
 
 export function sanitizeSpeciesPlateForRuntime(plate: SpeciesPlateRecord) {
-  return { speciesPlateId: plate.id, templateId: plate.templateId, templateVersion: plate.templateVersion, approvedAssetId: null, previewAssetId: null, thumbnailAssetId: null, extractedAssetIds: [] as string[], discoveryVisibilityRules: { defaultState: "unknown" }, sourcePromptId: plate.sourcePromptId, promptHash: plate.promptHash, generationSeed: plate.generationSeed, productionStatus: plate.productionStatus };
+  return { speciesPlateId: plate.id, templateId: plate.templateId, templateVersion: plate.templateVersion, approvedAssetId: plate.approvedAssetId, previewAssetId: plate.previewAssetId, thumbnailAssetId: plate.thumbnailAssetId, extractedAssetIds: plate.extractedAssetIds, discoveryVisibilityRules: { defaultState: "unknown" }, sourcePromptId: plate.sourcePromptId, promptHash: plate.promptHash, generationSeed: plate.generationSeed, productionStatus: plate.productionStatus };
 }

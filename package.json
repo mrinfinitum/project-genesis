@@ -39,6 +39,7 @@
     "verify:civilization-operations": "tsx scripts/verify-civilization-operations.ts",
     "verify:creature-system": "tsx scripts/verify-creature-system.ts",
     "verify:species-plates": "tsx scripts/verify-species-plates.ts",
+    "verify:species-plate-exports": "tsx scripts/verify-species-plate-exports.ts",
     "ensure:species-plate-source-masters": "node scripts/ensure-species-plate-source-masters.mjs",
     "generate:visual-prompt-libraries": "tsx scripts/generate-visual-prompt-libraries.ts",
     "verify:visual-prompt-libraries": "tsx scripts/generate-visual-prompt-libraries.ts --verify",

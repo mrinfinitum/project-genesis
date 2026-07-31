@@ -21,6 +21,7 @@ import { resourceEconomyLogisticsFramework, validateResourceEconomyLogisticsFram
 import { dynamicEventFramework, validateDynamicEventFramework } from "@/lib/events/framework";
 import { environmentComposerRuntimeContract, validateEnvironmentComposerContract } from "@/lib/environment-composer";
 import { buildCreatureRuntimeData, validateCreatureSystem } from "@/lib/life/creature-system";
+import { buildSpeciesPlateRuntimeData, validateSpeciesPlateRuntimeData } from "@/lib/species-plates/runtime";
 import { missionExpeditionFramework, validateMissionExpeditionFramework } from "@/lib/missions/framework";
 import {
   buildEconomyUsageRelationships,
@@ -145,6 +146,7 @@ export type RobloxRuntimeExportPayload = {
   creaturePromptBatchActions: GameRuntimeData["creaturePromptBatchActions"];
   creaturePromptModelProfiles: GameRuntimeData["creaturePromptModelProfiles"];
   creaturePromptTypeTemplates: GameRuntimeData["creaturePromptTypeTemplates"];
+  speciesPlates: GameRuntimeData["speciesPlates"];
   planetDetailScreen: NonNullable<GameRuntimeData["planetDetailScreen"]>;
   civilizationOperationsDeck: NonNullable<GameRuntimeData["civilizationOperationsDeck"]>;
   resources: ResourceDefinition[];
@@ -2185,6 +2187,9 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   for (const issue of creatureValidation.issues) {
     issues.push({ severity: issue.severity, code: `creature_${issue.code}`, message: issue.message, records: issue.records });
   }
+  for (const message of validateSpeciesPlateRuntimeData(runtimeData.speciesPlates)) {
+    issues.push({ severity: "error", code: "species_plate_runtime_invalid", message, records: ["speciesPlates"] });
+  }
   if (!runtimeData.planetDetailScreen) {
     issues.push({ severity: "error", code: "planet_detail_screen_missing", message: "Planet Detail Screen runtime contract is required.", records: ["planetDetailScreen"] });
   } else {
@@ -2550,6 +2555,7 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     creaturePromptBatchActions: sorted.creaturePromptBatchActions,
     creaturePromptModelProfiles: sorted.creaturePromptModelProfiles,
     creaturePromptTypeTemplates: sorted.creaturePromptTypeTemplates,
+    speciesPlates: sorted.speciesPlates,
     planetDetailScreen: sorted.planetDetailScreen ?? planetDetailScreenRuntimeContract,
     civilizationOperationsDeck: sorted.civilizationOperationsDeck ?? civilizationOperationsDeckContract,
     resources: sorted.resources,
@@ -2814,6 +2820,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
   const buildingResourceEffects = buildBuildingResourceEffects(data);
   const resourceProducerDefinitions = buildResourceProducerDefinitions(data);
   const creatureRuntime = buildCreatureRuntimeData();
+  const speciesPlates = buildSpeciesPlateRuntimeData(creatureRuntime.species);
 
   for (const upgrade of upgrades) {
     if (!categories.has(upgrade.categoryId)) {
@@ -2885,6 +2892,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     dynamicEventFramework,
     environmentComposerContract: environmentComposerRuntimeContract(),
     ...creatureRuntime,
+    speciesPlates,
     planetDetailScreen: planetDetailScreenRuntimeContract,
     civilizationOperationsDeck: civilizationOperationsDeckContract,
     resources: ResourceService.catalog.map(resourceToRuntime),
@@ -2979,6 +2987,7 @@ export async function getGameRuntimeData() {
     creaturePromptBatchActions: base.creaturePromptBatchActions,
     creaturePromptModelProfiles: base.creaturePromptModelProfiles,
     creaturePromptTypeTemplates: base.creaturePromptTypeTemplates,
+    speciesPlates: base.speciesPlates,
     planetDetailScreen: base.planetDetailScreen,
     civilizationOperationsDeck: base.civilizationOperationsDeck,
     resourceTaxonomy: base.resourceTaxonomy,
@@ -3222,6 +3231,7 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     creaturePromptBatchActions: base.creaturePromptBatchActions,
     creaturePromptModelProfiles: base.creaturePromptModelProfiles,
     creaturePromptTypeTemplates: base.creaturePromptTypeTemplates,
+    speciesPlates: base.speciesPlates,
     planetDetailScreen: base.planetDetailScreen,
     civilizationOperationsDeck: base.civilizationOperationsDeck,
     resourceTaxonomy: base.resourceTaxonomy,
