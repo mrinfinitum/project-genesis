@@ -449,6 +449,96 @@ function PathCopyRow({
   );
 }
 
+/**
+ * The active galaxy, galactic-region, and star-system routes each author one
+ * quiet environmental painting. The older multi-layer workspace remains for
+ * the universe authoring route, where separate production layers still exist.
+ */
+export function EnvironmentPaintingGenerator({ definition }: { definition: EnvironmentGeneratorDefinition }) {
+  const layer = definition.layers.find((item) => item.layerType === "environment-painting") ?? definition.layers[0]!;
+  const [query, setQuery] = useState("");
+  const [copied, setCopied] = useState(false);
+  const prompt = buildEnvironmentLayerPrompt(layer, defaultEnvironmentGeneratorControls);
+  const isVisible = `${layer.name} ${layer.purpose} ${definition.name}`.toLowerCase().includes(query.trim().toLowerCase());
+
+  async function copyPrompt() {
+    await navigator.clipboard.writeText(prompt);
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1400);
+  }
+
+  return (
+    <div className="space-y-7">
+      <section className="space-y-4">
+        <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Prompt Library</p>
+            <h1 className="mt-2 text-4xl font-bold text-white">{definition.name}</h1>
+            <p className="mt-3 max-w-4xl text-sm leading-6 text-slate-300">
+              One canonical environmental painting per generated {definition.id === "starSystem" ? "star system" : definition.id === "sector" ? "galactic region" : "galaxy"}. Copy the approved production prompt, create the source PSD, and let Studio publish the resulting game-ready derivative.
+            </p>
+          </div>
+          <Button type="button" className="h-9 border-cyan-400/25 bg-cyan-300/10 px-3 text-cyan-100 hover:bg-cyan-300/20" title="Copy environmental painting prompt" onClick={copyPrompt}>
+            {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+            {copied ? "Prompt Copied" : "Master Prompt"}
+          </Button>
+        </div>
+
+        <pre className="max-h-80 overflow-auto whitespace-pre-wrap rounded-md border border-cyan-400/15 bg-[#07101e]/85 p-4 text-xs leading-5 text-slate-300 shadow-glow">
+          {prompt}
+        </pre>
+
+        <div className="rounded-md border border-cyan-400/15 bg-[#07101e]/85 p-4 shadow-glow">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">Production Rule</p>
+          <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-300">
+            This is one quiet environmental painting, never a gameplay or interface layer. Keep the center clear for the Game, preserve the NOVERIS environment standard, and do not split the result into decorative overlays.
+          </p>
+          <div className="mt-4 grid gap-3 lg:grid-cols-2">
+            <div className="rounded border border-slate-700/70 bg-slate-950/45 p-3">
+              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-slate-500">Source Folder</p>
+              <code className="mt-2 block overflow-x-auto whitespace-nowrap text-sm text-cyan-100">{layer.folder}</code>
+            </div>
+            <div className="rounded border border-slate-700/70 bg-slate-950/45 p-3">
+              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-slate-500">Master Output</p>
+              <code className="mt-2 block overflow-x-auto whitespace-nowrap text-sm text-cyan-100">{layer.output.width} × {layer.output.height} · {layer.output.aspectRatio}</code>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="grid gap-3 md:grid-cols-[1fr_auto]">
+        <label className="relative block">
+          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search environmental painting prompts" className="h-12 w-full rounded-md border border-cyan-400/20 bg-[#07101e]/85 pl-11 pr-4 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/60" />
+        </label>
+        <span className="inline-flex items-center justify-center rounded-md border border-cyan-400/20 bg-cyan-300/10 px-4 text-sm font-semibold text-cyan-100">{isVisible ? "1 prompt" : "0 prompts"}</span>
+      </section>
+
+      {isVisible ? (
+        <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          <article className="rounded-md border border-cyan-400/15 bg-[#07101e]/85 p-4 shadow-glow">
+            <div className="flex min-h-24 flex-col justify-between gap-3">
+              <div>
+                <p className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-cyan-300">Environmental Painting</p>
+                <h2 className="mt-2 text-lg font-semibold text-white">{layer.name}</h2>
+              </div>
+              <p className="line-clamp-4 text-sm leading-6 text-slate-300">{layer.purpose}</p>
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Button type="button" className="h-9 border-cyan-400/25 bg-cyan-300/10 px-3 text-cyan-100 hover:bg-cyan-300/20" onClick={copyPrompt}>
+                {copied ? <Check className="h-4 w-4" /> : <Clipboard className="h-4 w-4" />}
+                Copy Prompt
+              </Button>
+            </div>
+          </article>
+        </section>
+      ) : (
+        <section className="rounded-md border border-dashed border-cyan-400/20 py-16 text-center text-sm text-slate-500">No environmental painting prompt matches this search.</section>
+      )}
+    </div>
+  );
+}
+
 export function GalaxyEnvironmentPainting({ definition }: { definition: EnvironmentGeneratorDefinition }) {
   const layer = definition.layers[0];
   const [copied, setCopied] = useState(false);
