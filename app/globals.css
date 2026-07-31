@@ -138,7 +138,9 @@ select {
 
 .studio-material-navigation {
   border: 1px solid rgba(103, 232, 249, 0.14);
-  background: linear-gradient(180deg, rgba(5, 12, 24, 0.9), rgba(7, 16, 30, 0.72));
+  /* Studio navigation is intentionally material-only; game HUD artwork belongs to the Game. */
+  background-color: #07101e;
+  background-image: none;
   box-shadow: 18px 0 70px rgba(0, 0, 0, 0.24), inset -1px 0 0 rgba(103, 232, 249, 0.08);
   backdrop-filter: blur(24px);
 }
