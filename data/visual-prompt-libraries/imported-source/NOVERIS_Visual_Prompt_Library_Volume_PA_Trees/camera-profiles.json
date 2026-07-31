@@ -1,0 +1,14 @@
+[
+  {
+    "id": "CAM-BOTANICAL",
+    "name": "Botanical Studio"
+  },
+  {
+    "id": "CAM-REFERENCE",
+    "name": "Reference Board"
+  },
+  {
+    "id": "CAM-HABITAT",
+    "name": "Habitat Wide"
+  }
+]

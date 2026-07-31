@@ -12,6 +12,16 @@
       "derivedStudioPackagePath": "../volume-ib-avian-flying-creatures",
       "sourceRole": "canonical-authored-import",
       "derivedRole": "studio-production-variants"
+    },
+    {
+      "id": "NOVERIS_Visual_Prompt_Library_Volume_PA_Trees",
+      "volumeId": "VOLUME-PA",
+      "displayName": "Visual Prompt Library Volume PA - Trees",
+      "version": "1.0.0",
+      "modelProfile": "nano-banana-2",
+      "promptRecordCount": 672,
+      "sourcePath": "NOVERIS_Visual_Prompt_Library_Volume_PA_Trees",
+      "sourceRole": "canonical-authored-import"
     }
   ]
 }

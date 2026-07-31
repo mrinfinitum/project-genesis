@@ -1,0 +1,146 @@
+[
+  {
+    "outputType": "whole-tree",
+    "name": "Whole Tree Render",
+    "instruction": "show the complete mature tree including root flare, trunk, crown and reproductive structures",
+    "aspectRatio": "3:4"
+  },
+  {
+    "outputType": "portrait",
+    "name": "Botanical Portrait",
+    "instruction": "emphasize defining crown, trunk, bark and foliage while retaining species identity",
+    "aspectRatio": "1:1"
+  },
+  {
+    "outputType": "ortho-front",
+    "name": "Orthographic Front",
+    "instruction": "exact front orthographic view, no perspective distortion",
+    "aspectRatio": "3:4"
+  },
+  {
+    "outputType": "ortho-side",
+    "name": "Orthographic Side",
+    "instruction": "exact side orthographic view, no perspective distortion",
+    "aspectRatio": "3:4"
+  },
+  {
+    "outputType": "ortho-rear",
+    "name": "Orthographic Rear",
+    "instruction": "exact rear orthographic view, no perspective distortion",
+    "aspectRatio": "3:4"
+  },
+  {
+    "outputType": "top-view",
+    "name": "Top Canopy View",
+    "instruction": "top-down crown geometry and branch distribution",
+    "aspectRatio": "1:1"
+  },
+  {
+    "outputType": "roots",
+    "name": "Root System",
+    "instruction": "complete roots or anchor interface showing support, storage and nutrient exchange",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "trunk",
+    "name": "Trunk Study",
+    "instruction": "trunk taper, transport tissue, growth rings or analogs, damage repair and branch joints",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "bark",
+    "name": "Bark Study",
+    "instruction": "young, mature, damaged and repaired surface tissues in macro detail",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "branches",
+    "name": "Branch Architecture",
+    "instruction": "primary, secondary and tertiary branch hierarchy and load distribution",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "leaves",
+    "name": "Leaf or Collector Study",
+    "instruction": "front, back, edge, juvenile, mature, seasonal and damaged states",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "flowers",
+    "name": "Reproductive Structure",
+    "instruction": "closed, opening, mature, pollinated and spent reproductive structures",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "fruit",
+    "name": "Fruit or Storage Body",
+    "instruction": "external form, cross-section, ripening and dispersal function",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "seeds",
+    "name": "Seed or Propagule Study",
+    "instruction": "seeds, spores, pods or packets, dispersal, germination and establishment",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "cross-section",
+    "name": "Internal Cross Section",
+    "instruction": "protective, transport, support, storage and reproductive tissues",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "growth",
+    "name": "Growth Stages",
+    "instruction": "propagule, juvenile, adolescent, mature, old-growth and senescent stages",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "seasonal",
+    "name": "Seasonal Variants",
+    "instruction": "growth, reproductive, stress, dormant, damaged and recovery states",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "habitat",
+    "name": "Native Habitat",
+    "instruction": "natural population with realistic spacing, age diversity and climate interaction",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "forest",
+    "name": "Forest Composition",
+    "instruction": "forest-scale role, understory relationships, spacing and age classes",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "discovery",
+    "name": "Discovery Scan",
+    "instruction": "centered scientific scan source with restrained contour illumination",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "icon",
+    "name": "UI Icon",
+    "instruction": "strong isolated silhouette readable at 64 pixels",
+    "aspectRatio": "1:1"
+  },
+  {
+    "outputType": "scale",
+    "name": "Scale Comparison",
+    "instruction": "side view beside a simple adult human silhouette and one-meter bar, no text",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "plate",
+    "name": "Master Botanical Plate",
+    "instruction": "whole tree, views, roots, trunk, bark, branches, leaves, reproduction, growth, variants, materials and habitat vignette",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "psd",
+    "name": "PSD Extraction Board",
+    "instruction": "isolated full tree, canopy, trunk, roots, branch groups, foliage clusters, reproductive parts and silhouette reference",
+    "aspectRatio": "16:9"
+  }
+]

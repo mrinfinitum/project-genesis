@@ -1,0 +1,83 @@
+{
+  "packageId": "NOVERIS_Visual_Prompt_Library_Volume_PA_Trees",
+  "volumeId": "VOLUME-PA",
+  "displayName": "Visual Prompt Library Volume PA \u2014 Trees",
+  "version": "1.0.0",
+  "generatedAt": "2026-07-31T18:37:32.349287+00:00",
+  "modelProfile": "nano-banana-2",
+  "archetypeCount": 28,
+  "outputTypeCount": 24,
+  "promptRecordCount": 672,
+  "files": [
+    {
+      "name": "CODEX_IMPORT_PROMPT.txt",
+      "bytes": 466,
+      "sha256": "d06cb1e0372698c93c79db828d1877097a76a7380a590abb3b621a6d31b508b4"
+    },
+    {
+      "name": "PROMPT_CATALOG.md",
+      "bytes": 1575994,
+      "sha256": "90ea1480e56bab72144fe7c63a39b835ac7ccccaba6567b579988aeeb3174bf4"
+    },
+    {
+      "name": "README.md",
+      "bytes": 194,
+      "sha256": "4c442c65ae99e522d8987c868a00cba9cfd577693d2f201f18d170b7d0c706e0"
+    },
+    {
+      "name": "camera-profiles.json",
+      "bytes": 196,
+      "sha256": "bbb300963c71dd8920c169031662ddeb1dadf6a694fe547ea68500f4a3faff36"
+    },
+    {
+      "name": "lighting-profiles.json",
+      "bytes": 132,
+      "sha256": "3e2dc76a8fa58662c455d5b9ef61b554c13e6e1fc225edc634288667dcab798d"
+    },
+    {
+      "name": "negative-prompt-library.json",
+      "bytes": 485,
+      "sha256": "ee5c613fd0544cbfa4e4a27eb24ec6618c5248143ca9c81712f4fca921999d9b"
+    },
+    {
+      "name": "output-types.json",
+      "bytes": 4608,
+      "sha256": "060dfe4954edcd1865f90a93e943b2719a9bac6d9c8a653ea76c5647a6ee4e46"
+    },
+    {
+      "name": "prompt-library.csv",
+      "bytes": 1598474,
+      "sha256": "2bb0613bd5b79fcba9934480ea380a7e9871aa905704fa48176412d43ca94b5c"
+    },
+    {
+      "name": "prompt-library.json",
+      "bytes": 3899786,
+      "sha256": "14a9ed171f39332f2cea070e3fdb3e90da445458d7012bcdf9d25a966f34ee30"
+    },
+    {
+      "name": "prompt-library.jsonl",
+      "bytes": 3727272,
+      "sha256": "4c4e30f05cf8e7ec3d2626212edb46389becf42e9bd41a23aedeafe1faf02471"
+    },
+    {
+      "name": "prompt-record.schema.json",
+      "bytes": 290,
+      "sha256": "b07aa38ba3b3825093d3d2c03efe6f60df005e205f8c17d6692645ce86c42da8"
+    },
+    {
+      "name": "prompt-variables.json",
+      "bytes": 530,
+      "sha256": "83cb3c77b71434ba4f89fd0521b30e7a94970bcc48a67590edd25a9b9b126dad"
+    },
+    {
+      "name": "style-profiles.json",
+      "bytes": 118,
+      "sha256": "539e95d73f2882439d91da0eaff422b5abc40a18333e7b30d7dc81dc32921b11"
+    },
+    {
+      "name": "tree-archetypes.json",
+      "bytes": 8382,
+      "sha256": "4ab9dcb91d64b8f917b318de608b20bd5bb4a3c8d33cf54b89b7c981f56af1ff"
+    }
+  ]
+}

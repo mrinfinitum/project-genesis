@@ -1,0 +1,254 @@
+[
+  {
+    "archetypeId": "TREE-TEMPERATE",
+    "name": "Temperate Forest Tree",
+    "family": "seasonal forest",
+    "requiredTraits": "hierarchical branching, layered canopy, structural roots, seasonal dormancy",
+    "avoid": "fantasy world tree, perfect symmetry",
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "TREE-RAINFOREST",
+    "name": "Rainforest Canopy Tree",
+    "family": "humid rainforest",
+    "requiredTraits": "buttress roots, tall trunk, high canopy, rain-shedding foliage",
+    "avoid": "generic palm, magical vines",
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "TREE-DECIDUOUS",
+    "name": "Deciduous Tree",
+    "family": "seasonal woodland",
+    "requiredTraits": "leaf-drop cycle, buds, sap storage, natural crown architecture",
+    "avoid": "mixed seasons, ornamental pruning",
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "TREE-CONIFER",
+    "name": "Evergreen Conifer",
+    "family": "cold or dry forest",
+    "requiredTraits": "needle or scale foliage, resin, snow-shedding crown",
+    "avoid": "Christmas tree styling, decorations",
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "TREE-MANGROVE",
+    "name": "Mangrove",
+    "family": "tidal wetland",
+    "requiredTraits": "prop roots, salt management, sediment capture, tidal dispersal",
+    "avoid": "tree randomly in water, impossible roots",
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "TREE-SWAMP",
+    "name": "Swamp Tree",
+    "family": "flooded wetland",
+    "requiredTraits": "aerated roots, flood-resistant bark, broad anchoring",
+    "avoid": "dead swamp clich\u00e9, fantasy moss",
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "TREE-DESERT",
+    "name": "Desert Tree",
+    "family": "arid desert",
+    "requiredTraits": "water conservation, heat-resistant bark, sparse canopy, opportunistic roots",
+    "avoid": "lush canopy, cactus clone",
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "TREE-WATER-STORAGE",
+    "name": "Water-Storage Tree",
+    "family": "extreme aridity",
+    "requiredTraits": "swollen storage tissues, thick bark, restrained canopy",
+    "avoid": "baobab clone, bottle cartoon",
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "TREE-POLAR",
+    "name": "Polar Tree",
+    "family": "polar biome",
+    "requiredTraits": "compact growth, antifreeze chemistry, wind resistance, short-season productivity",
+    "avoid": "blue fantasy foliage, ice ornaments",
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "TREE-VOLCANIC",
+    "name": "Volcanic Tree",
+    "family": "volcanic terrain",
+    "requiredTraits": "mineral-resistant roots, gas tolerance, heat-managed tissues",
+    "avoid": "lava tree, burning leaves",
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "TREE-MOUNTAIN",
+    "name": "Mountain Tree",
+    "family": "alpine slopes",
+    "requiredTraits": "deep anchoring, wind-shaped crown, flexible branches, UV tolerance",
+    "avoid": "bonsai styling, ornamental horns",
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "TREE-HIGH-GRAVITY",
+    "name": "High-Gravity Tree",
+    "family": "high gravity",
+    "requiredTraits": "low profile, thick trunk, broad root plate, compact canopy",
+    "avoid": "tall thin trunk, floating leaves",
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "TREE-LOW-GRAVITY",
+    "name": "Low-Gravity Tree",
+    "family": "low gravity",
+    "requiredTraits": "light tissues, long supported spans, broad collectors, drifting propagules",
+    "avoid": "heavy branches, random floating parts",
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "TREE-CAVE",
+    "name": "Cave Tree",
+    "family": "subterranean cave",
+    "requiredTraits": "chemosynthesis or symbiosis, mineral roots, humidity tolerance",
+    "avoid": "glowing mushroom tree, surface leaves",
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "TREE-GIANT",
+    "name": "Giant Tree",
+    "family": "megaflora habitat",
+    "requiredTraits": "massive buttressing, high-capacity transport, tiered canopy",
+    "avoid": "world-tree clich\u00e9, impossible thin trunk",
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "TREE-ANCIENT",
+    "name": "Ancient Living Tree",
+    "family": "old-growth habitat",
+    "requiredTraits": "growth scars, layered bark, repair zones, multi-age branches",
+    "avoid": "face in bark, wizard tree",
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "TREE-EXTINCT",
+    "name": "Extinct Tree",
+    "family": "paleobotanical reconstruction",
+    "requiredTraits": "fossil-informed branching, primitive reproduction, credible support",
+    "avoid": "modern tree with cosmetics, dinosaur prop",
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "TREE-CRYSTAL",
+    "name": "Crystal Tree",
+    "family": "crystalline ecology",
+    "requiredTraits": "lattice grammar, growth nodes, mineral transport, restrained inner light",
+    "avoid": "gem cluster, rainbow shards",
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "TREE-SILICON",
+    "name": "Silicon Tree",
+    "family": "silicon biochemistry",
+    "requiredTraits": "mineral-organic structure, catalytic surfaces, slow growth zones",
+    "avoid": "stone sculpture, metal leaves",
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "TREE-MINERAL",
+    "name": "Mineral Tree",
+    "family": "geobiological terrain",
+    "requiredTraits": "layered accretion, pores, veins, geochemical roots",
+    "avoid": "stalagmite sculpture, carved form",
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "TREE-ENERGY",
+    "name": "Energy Tree",
+    "family": "field-based ecology",
+    "requiredTraits": "anchored energy channels, branching collectors, controlled luminosity",
+    "avoid": "magic glowing tree, hologram",
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "TREE-GAS",
+    "name": "Gas Tree",
+    "family": "dense atmosphere",
+    "requiredTraits": "buoyant chambers, membrane collectors, steering or anchoring structures",
+    "avoid": "balloon tree, cloud branches",
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "TREE-PLASMA",
+    "name": "Plasma Tree",
+    "family": "plasma ecology",
+    "requiredTraits": "electromagnetic anchoring, coherent plasma trunk, stable branching canopy",
+    "avoid": "fire tree, lightning sculpture",
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "TREE-BIOMECH",
+    "name": "Biomechanical Tree",
+    "family": "engineered biome",
+    "requiredTraits": "organic-mechanical interfaces, self-repair, functional collectors",
+    "avoid": "machine with leaves, random cables",
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "TREE-SYNTHETIC",
+    "name": "Synthetic Tree",
+    "family": "manufactured habitat",
+    "requiredTraits": "purpose-built collectors, modular roots, controlled growth",
+    "avoid": "plastic decoration, solar-panel clich\u00e9",
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "TREE-ROBOTIC",
+    "name": "Robotic Tree",
+    "family": "machine ecology",
+    "requiredTraits": "functional anchoring, energy collectors, modular branches, self-maintenance",
+    "avoid": "metal statue, decorative gears",
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "TREE-NANITE",
+    "name": "Nanite Tree",
+    "family": "nanite ecology",
+    "requiredTraits": "coherent swarm surface, stable branching, material intake, controlled reconfiguration",
+    "avoid": "gray goo, pixel dissolve",
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "TREE-TERRAFORMING",
+    "name": "Terraforming Tree",
+    "family": "planetary restoration",
+    "requiredTraits": "atmosphere or soil processing, pioneer form, durable reproduction",
+    "avoid": "instant magic forest, terraforming aura",
+    "version": "1.0.0",
+    "status": "canonical"
+  }
+]

@@ -50,8 +50,12 @@ async function main() {
       assert(hash(content) === item.sha256, `${folder}: checksum mismatch for ${item.name}.`);
     }
 
+    const packageFiles = await readdir(packageRoot);
+    const archetypeFile = packageFiles.find((filename) => filename.endsWith("-archetypes.json"));
+    assert(archetypeFile, `${folder}: package is missing an archetypes file.`);
+
     const [archetypes, outputTypes, prompts] = await Promise.all([
-      readFile(path.join(packageRoot, "avian-archetypes.json"), "utf8").then((value) => JSON.parse(value) as Array<{ archetypeId: string }>),
+      readFile(path.join(packageRoot, archetypeFile), "utf8").then((value) => JSON.parse(value) as Array<{ archetypeId: string }>),
       readFile(path.join(packageRoot, "output-types.json"), "utf8").then((value) => JSON.parse(value) as Array<{ outputType: string }>),
       readFile(path.join(packageRoot, "prompt-library.json"), "utf8").then((value) => JSON.parse(value) as PromptRecord[])
     ]);
