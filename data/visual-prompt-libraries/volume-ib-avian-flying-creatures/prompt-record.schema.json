@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "NOVERIS Visual Prompt Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "title",
+    "category",
+    "subcategory",
+    "outputType",
+    "imageModel",
+    "styleProfile",
+    "cameraProfile",
+    "lightingProfile",
+    "prompt",
+    "negativePrompt",
+    "variables",
+    "tags",
+    "version"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "category": {
+      "type": "string",
+      "minLength": 1
+    },
+    "subcategory": {
+      "type": "string",
+      "minLength": 1
+    },
+    "outputType": {
+      "type": "string",
+      "minLength": 1
+    },
+    "imageModel": {
+      "const": "Nano Banana 2"
+    },
+    "styleProfile": {
+      "type": "string",
+      "minLength": 1
+    },
+    "cameraProfile": {
+      "type": "string",
+      "minLength": 1
+    },
+    "lightingProfile": {
+      "type": "string",
+      "minLength": 1
+    },
+    "prompt": {
+      "type": "string",
+      "minLength": 1
+    },
+    "negativePrompt": {
+      "type": "string",
+      "minLength": 1
+    },
+    "variables": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "version": {
+      "const": "1.0.0"
+    }
+  }
+}

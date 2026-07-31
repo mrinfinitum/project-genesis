@@ -1,0 +1,25 @@
+{
+  "default": [
+    "text",
+    "watermark",
+    "frame",
+    "logo",
+    "UI",
+    "cropped subject",
+    "duplicate wings",
+    "incorrect feather count",
+    "impossible wing loading",
+    "incorrect anatomy",
+    "fantasy armor",
+    "weapons",
+    "cartoon",
+    "anime",
+    "oversaturated colors",
+    "motion blur",
+    "low resolution",
+    "compression artifacts",
+    "angel wings",
+    "fantasy dragons",
+    "Earth bird default"
+  ]
+}

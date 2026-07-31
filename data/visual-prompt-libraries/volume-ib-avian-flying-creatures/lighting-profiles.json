@@ -1,0 +1,22 @@
+[
+  {
+    "id": "neutral-studio",
+    "displayName": "Neutral Studio",
+    "intent": "soft neutral studio lighting, neutral white balance, and readable feather materials"
+  },
+  {
+    "id": "museum-specimen",
+    "displayName": "Museum Specimen",
+    "intent": "museum-quality specimen illumination without dramatic shadows"
+  },
+  {
+    "id": "habitat-natural",
+    "displayName": "Habitat Natural",
+    "intent": "natural low-contrast environmental illumination with no focal flare"
+  },
+  {
+    "id": "discovery-scan",
+    "displayName": "Discovery Scan",
+    "intent": "restrained scientific scanning illumination that preserves anatomy and surface readability"
+  }
+]

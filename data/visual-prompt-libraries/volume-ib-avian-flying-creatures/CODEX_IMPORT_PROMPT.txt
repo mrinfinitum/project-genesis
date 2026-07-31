@@ -1,0 +1,13 @@
+IMPORT NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures
+
+Import the JSON files as a canonical Visual Production Engine package. Preserve prompt IDs and version 1.0.0.
+
+Generator consumption:
+- Resolve a record by category=creature, subcategory, and outputType.
+- Substitute only fields declared in prompt-variables.json from the canonical species record and its linked planet/biome data.
+- Reject unresolved or undeclared variables.
+- Present the positive and negative prompts as copyable Nano Banana 2 production prompts.
+- Track the prompt ID and version with any PSD source master and generated derivative.
+
+Do not use this package to create player state, spawned runtime instances, or non-canonical gameplay values.
+

@@ -1,0 +1,166 @@
+[
+  {
+    "id": "full-body",
+    "displayName": "Full Body"
+  },
+  {
+    "id": "portrait",
+    "displayName": "Portrait"
+  },
+  {
+    "id": "head-study",
+    "displayName": "Head Study"
+  },
+  {
+    "id": "front-view",
+    "displayName": "Front View"
+  },
+  {
+    "id": "side-view",
+    "displayName": "Side View"
+  },
+  {
+    "id": "rear-view",
+    "displayName": "Rear View"
+  },
+  {
+    "id": "top-view",
+    "displayName": "Top View"
+  },
+  {
+    "id": "bottom-view",
+    "displayName": "Bottom View"
+  },
+  {
+    "id": "orthographic-turnaround",
+    "displayName": "Orthographic Turnaround"
+  },
+  {
+    "id": "wing-spread",
+    "displayName": "Wing Spread"
+  },
+  {
+    "id": "folded-wings",
+    "displayName": "Folded Wings"
+  },
+  {
+    "id": "skeleton",
+    "displayName": "Skeleton"
+  },
+  {
+    "id": "musculature",
+    "displayName": "Musculature"
+  },
+  {
+    "id": "internal-anatomy",
+    "displayName": "Internal Anatomy"
+  },
+  {
+    "id": "feather-study",
+    "displayName": "Feather Study"
+  },
+  {
+    "id": "foot-study",
+    "displayName": "Foot Study"
+  },
+  {
+    "id": "beak-study",
+    "displayName": "Beak Study"
+  },
+  {
+    "id": "eye-study",
+    "displayName": "Eye Study"
+  },
+  {
+    "id": "lifecycle",
+    "displayName": "Lifecycle"
+  },
+  {
+    "id": "variants",
+    "displayName": "Variants"
+  },
+  {
+    "id": "behavior",
+    "displayName": "Behavior"
+  },
+  {
+    "id": "perching",
+    "displayName": "Perching"
+  },
+  {
+    "id": "takeoff",
+    "displayName": "Takeoff"
+  },
+  {
+    "id": "landing",
+    "displayName": "Landing"
+  },
+  {
+    "id": "gliding",
+    "displayName": "Gliding"
+  },
+  {
+    "id": "powered-flight",
+    "displayName": "Powered Flight"
+  },
+  {
+    "id": "hunting",
+    "displayName": "Hunting"
+  },
+  {
+    "id": "feeding",
+    "displayName": "Feeding"
+  },
+  {
+    "id": "sleeping",
+    "displayName": "Sleeping"
+  },
+  {
+    "id": "discovery-scan",
+    "displayName": "Discovery Scan"
+  },
+  {
+    "id": "habitat-scene",
+    "displayName": "Habitat Scene"
+  },
+  {
+    "id": "species-plate",
+    "displayName": "Species Plate"
+  },
+  {
+    "id": "reference-board",
+    "displayName": "Reference Board"
+  },
+  {
+    "id": "animation-sheet",
+    "displayName": "Animation Sheet"
+  },
+  {
+    "id": "scale-comparison",
+    "displayName": "Scale Comparison"
+  },
+  {
+    "id": "silhouette",
+    "displayName": "Silhouette"
+  },
+  {
+    "id": "ui-icon",
+    "displayName": "UI Icon"
+  },
+  {
+    "id": "card-artwork",
+    "displayName": "Card Artwork"
+  },
+  {
+    "id": "loading-artwork",
+    "displayName": "Loading Artwork"
+  },
+  {
+    "id": "encyclopedia-artwork",
+    "displayName": "Encyclopedia Artwork"
+  },
+  {
+    "id": "psd-extraction-board",
+    "displayName": "PSD Extraction Board"
+  }
+]

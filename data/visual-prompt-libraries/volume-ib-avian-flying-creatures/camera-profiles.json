@@ -1,0 +1,57 @@
+[
+  {
+    "id": "portrait",
+    "displayName": "Portrait",
+    "intent": "eye-level portrait framing with clear facial, eye, and beak anatomy"
+  },
+  {
+    "id": "orthographic-front",
+    "displayName": "Orthographic Front",
+    "intent": "true front orthographic reference with no perspective distortion"
+  },
+  {
+    "id": "orthographic-side",
+    "displayName": "Orthographic Side",
+    "intent": "true side orthographic reference with no perspective distortion"
+  },
+  {
+    "id": "orthographic-rear",
+    "displayName": "Orthographic Rear",
+    "intent": "true rear orthographic reference with no perspective distortion"
+  },
+  {
+    "id": "orthographic-top",
+    "displayName": "Orthographic Top",
+    "intent": "true top orthographic reference for silhouette and wing geometry"
+  },
+  {
+    "id": "orthographic-bottom",
+    "displayName": "Orthographic Bottom",
+    "intent": "true underside orthographic reference for flight and landing anatomy"
+  },
+  {
+    "id": "three-quarter",
+    "displayName": "Three Quarter",
+    "intent": "three-quarter full-body specimen view with the complete flight silhouette readable"
+  },
+  {
+    "id": "wing-detail",
+    "displayName": "Wing Detail",
+    "intent": "controlled wing-detail view showing feather architecture, lift surfaces, and attachment points"
+  },
+  {
+    "id": "macro-feather",
+    "displayName": "Macro Feather",
+    "intent": "controlled macro study of feather microstructure and physically based surface materials"
+  },
+  {
+    "id": "habitat-wide",
+    "displayName": "Habitat Wide",
+    "intent": "restrained habitat composition with believable aerial scale and clear subject readability"
+  },
+  {
+    "id": "reference-board",
+    "displayName": "Reference Board",
+    "intent": "neutral museum production reference-board framing"
+  }
+]

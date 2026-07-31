@@ -1,0 +1,212 @@
+[
+  {
+    "id": "apex-raptor",
+    "displayName": "Apex Raptor",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "pack-hunter",
+    "displayName": "Pack Hunter",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "forest-glider",
+    "displayName": "Forest Glider",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "soaring-hunter",
+    "displayName": "Soaring Hunter",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "high-altitude-flyer",
+    "displayName": "High Altitude Flyer",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "hovering-nectar-feeder",
+    "displayName": "Hovering Nectar Feeder",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "scavenger",
+    "displayName": "Scavenger",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "carrion-specialist",
+    "displayName": "Carrion Specialist",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "marsh-wader",
+    "displayName": "Marsh Wader",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "river-hunter",
+    "displayName": "River Hunter",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "coastal-flyer",
+    "displayName": "Coastal Flyer",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "ocean-skimmer",
+    "displayName": "Ocean Skimmer",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "deep-ocean-surface-hunter",
+    "displayName": "Deep Ocean Surface Hunter",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "cliff-nesting-flyer",
+    "displayName": "Cliff Nesting Flyer",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "canopy-flyer",
+    "displayName": "Canopy Flyer",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "cave-flyer",
+    "displayName": "Cave Flyer",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "desert-flyer",
+    "displayName": "Desert Flyer",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "polar-flyer",
+    "displayName": "Polar Flyer",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "mountain-flyer",
+    "displayName": "Mountain Flyer",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "low-gravity-flyer",
+    "displayName": "Low Gravity Flyer",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "high-gravity-flyer",
+    "displayName": "High Gravity Flyer",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "bioluminescent-flyer",
+    "displayName": "Bioluminescent Flyer",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "nocturnal-flyer",
+    "displayName": "Nocturnal Flyer",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "thermal-soarer",
+    "displayName": "Thermal Soarer",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "floating-atmospheric-organism",
+    "displayName": "Floating Atmospheric Organism",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "winged-megafauna",
+    "displayName": "Winged Megafauna",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "winged-microfauna",
+    "displayName": "Winged Microfauna",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "crystal-flyer",
+    "displayName": "Crystal Flyer",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "silicon-flyer",
+    "displayName": "Silicon Flyer",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "energy-flyer",
+    "displayName": "Energy Flyer",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "gas-flyer",
+    "displayName": "Gas Flyer",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "plasma-flyer",
+    "displayName": "Plasma Flyer",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "biomechanical-flyer",
+    "displayName": "Biomechanical Flyer",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "synthetic-flyer",
+    "displayName": "Synthetic Flyer",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  },
+  {
+    "id": "engineered-flyer",
+    "displayName": "Engineered Flyer",
+    "category": "creature",
+    "family": "avian-flying-creature"
+  }
+]

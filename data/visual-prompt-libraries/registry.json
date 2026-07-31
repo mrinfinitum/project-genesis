@@ -22,6 +22,16 @@
       "manifestPath": "volume-ib-plant-life/manifest.json",
       "promptLibraryPath": "volume-ib-plant-life/prompt_library.json",
       "validationStatus": "Ready"
+    },
+    {
+      "id": "NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures",
+      "displayName": "NOVERIS Visual Prompt Library Volume IB Avian Flying Creatures",
+      "category": "creature",
+      "packageVersion": "1.0.0",
+      "promptCount": 1435,
+      "manifestPath": "volume-ib-avian-flying-creatures/manifest.json",
+      "promptLibraryPath": "volume-ib-avian-flying-creatures/prompt-library.json",
+      "validationStatus": "Ready"
     }
   ]
 }
