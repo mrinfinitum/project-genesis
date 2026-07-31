@@ -1,0 +1,496 @@
+[
+  {
+    "archetypeId": "SHRUB-TEMPERATE",
+    "name": "Temperate Shrub",
+    "family": "temperate",
+    "definition": "A multi-stemmed woody plant adapted to seasonal temperate climates, layered understory light, periodic cold, and variable moisture.",
+    "requiredTraits": [
+      "multiple basal stems",
+      "dense but readable branching",
+      "seasonal foliage",
+      "understory adaptation"
+    ],
+    "avoid": [
+      "miniature tree clone",
+      "perfect ball shape",
+      "ornamental topiary"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "SHRUB-DESERT",
+    "name": "Desert Shrub",
+    "family": "arid",
+    "definition": "A low woody plant adapted to heat, drought, abrasive wind, sparse rainfall, and poor soils.",
+    "requiredTraits": [
+      "water-conserving leaves",
+      "deep or wide roots",
+      "heat-resistant bark",
+      "wind-shaped form"
+    ],
+    "avoid": [
+      "lush foliage",
+      "cactus clone",
+      "magical oasis styling"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "SHRUB-POLAR",
+    "name": "Polar Shrub",
+    "family": "cold",
+    "definition": "A low-growing woody plant adapted to freezing temperatures, wind abrasion, permafrost, and brief growing seasons.",
+    "requiredTraits": [
+      "compact cushion form",
+      "protected buds",
+      "freeze-thaw resilience",
+      "low wind profile"
+    ],
+    "avoid": [
+      "tall branches",
+      "blue fantasy leaves",
+      "ice-crystal decoration"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "SHRUB-SWAMP",
+    "name": "Swamp Shrub",
+    "family": "wetland",
+    "definition": "A flood-tolerant shrub adapted to saturated soils, fluctuating water levels, low root oxygen, and humid decay-rich habitats.",
+    "requiredTraits": [
+      "aerated roots",
+      "water-tolerant stems",
+      "flexible branching",
+      "flood-marked tissues"
+    ],
+    "avoid": [
+      "dead swamp clich\u00e9",
+      "hanging fantasy moss",
+      "floating roots"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "SHRUB-THORN",
+    "name": "Thorn Bush",
+    "family": "defensive",
+    "definition": "A woody shrub using thorns, tough tissues, toxins, or dense branch architecture to resist browsing and protect reproductive structures.",
+    "requiredTraits": [
+      "functional thorn placement",
+      "protected growth tips",
+      "dense branching",
+      "credible herbivore defense"
+    ],
+    "avoid": [
+      "random spikes everywhere",
+      "metal thorns",
+      "monster-mouth branches"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "SHRUB-FLOWERING",
+    "name": "Flowering Bush",
+    "family": "reproductive",
+    "definition": "A multi-stemmed flowering shrub with coherent floral placement, pollination strategy, foliage structure, and seasonal reproductive cycle.",
+    "requiredTraits": [
+      "credible flower attachment",
+      "pollinator access",
+      "balanced flower-to-foliage ratio",
+      "seasonal bloom cycle"
+    ],
+    "avoid": [
+      "decorative bouquet bush",
+      "oversized flowers",
+      "identical blossoms"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "SHRUB-FRUIT",
+    "name": "Fruit Bush",
+    "family": "agriculture",
+    "definition": "A woody shrub producing fleshy or dry storage bodies for seed dispersal, with harvestable structure and ecological plausibility.",
+    "requiredTraits": [
+      "fruit attachment logic",
+      "ripening stages",
+      "supportive branch structure",
+      "seed dispersal strategy"
+    ],
+    "avoid": [
+      "ornamental fruit ornaments",
+      "impossible fruit weight",
+      "plastic produce"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "SHRUB-MEDICINAL",
+    "name": "Medicinal Shrub",
+    "family": "resource",
+    "definition": "A shrub producing canonical compounds in leaves, bark, roots, flowers, or fruit for medical or biochemical use.",
+    "requiredTraits": [
+      "specialized glands or tissues",
+      "harvestable organs",
+      "credible defense chemistry",
+      "resource-linked morphology"
+    ],
+    "avoid": [
+      "glowing medicine symbols",
+      "pharmaceutical branding",
+      "random vials"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "SHRUB-POISONOUS",
+    "name": "Poisonous Shrub",
+    "family": "hazard",
+    "definition": "A defensive shrub producing toxins, irritants, corrosive compounds, or harmful spores through coherent biological structures.",
+    "requiredTraits": [
+      "warning coloration if canonical",
+      "toxin-bearing tissues",
+      "protected reproductive organs",
+      "animal-deterrent morphology"
+    ],
+    "avoid": [
+      "skull motifs",
+      "toxic gas cloud clich\u00e9",
+      "excessive neon"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "GROUND-COVER",
+    "name": "Ground Cover",
+    "family": "groundcover",
+    "definition": "A low plant spreading across soil to reduce erosion, retain moisture, suppress competitors, and stabilize microclimate.",
+    "requiredTraits": [
+      "creeping growth",
+      "dense low canopy",
+      "rooting nodes",
+      "patch-edge variation"
+    ],
+    "avoid": [
+      "flat carpet texture",
+      "decorative mosaic",
+      "no visible structure"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "GROUND-CREEPING",
+    "name": "Creeping Ground Cover",
+    "family": "groundcover",
+    "definition": "A plant spreading by runners, rhizomes, stolons, or creeping stems with repeated rooting and localized reproduction.",
+    "requiredTraits": [
+      "visible runner nodes",
+      "rooting intervals",
+      "modular spread",
+      "natural patch variation"
+    ],
+    "avoid": [
+      "floating vines",
+      "perfect grid pattern",
+      "single central root only"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "GROUND-MAT",
+    "name": "Mat-Forming Flora",
+    "family": "groundcover",
+    "definition": "A dense colony-forming plant creating compact mats adapted to harsh wind, cold, drought, or exposed substrates.",
+    "requiredTraits": [
+      "cushion growth",
+      "tight microcanopy",
+      "protected growth points",
+      "edge-to-center age variation"
+    ],
+    "avoid": [
+      "fabric-like carpet",
+      "foam texture",
+      "perfect symmetry"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "GROUND-STABILIZER",
+    "name": "Soil-Stabilizing Flora",
+    "family": "ecology",
+    "definition": "A low plant specialized for binding loose soil, sand, ash, scree, or regolith with extensive root and rhizome networks.",
+    "requiredTraits": [
+      "broad root web",
+      "low wind profile",
+      "rapid colonization",
+      "substrate-binding architecture"
+    ],
+    "avoid": [
+      "decorative roots",
+      "unsupported canopy",
+      "instant full coverage"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "GROUND-HIGHG",
+    "name": "High-Gravity Ground Cover",
+    "family": "gravity",
+    "definition": "A compact spreading plant evolved under high gravity with minimal height, dense tissues, broad anchoring, and short support spans.",
+    "requiredTraits": [
+      "very low profile",
+      "reinforced tissues",
+      "broad shallow roots",
+      "compact collectors"
+    ],
+    "avoid": [
+      "tall stems",
+      "delicate unsupported flowers",
+      "floating leaves"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "GROUND-LOWG",
+    "name": "Low-Gravity Ground Cover",
+    "family": "gravity",
+    "definition": "A low-gravity spreading plant with elongated light structures, drifting propagules, and tension-supported mats.",
+    "requiredTraits": [
+      "light tissues",
+      "long runners",
+      "buoyant or drifting reproduction",
+      "momentum-aware growth"
+    ],
+    "avoid": [
+      "heavy Earthlike mat",
+      "random floating chunks",
+      "unsupported thick stems"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "SHRUB-CRYSTAL",
+    "name": "Crystal Shrub",
+    "family": "exotic",
+    "definition": "A crystalline shrub whose branching, growth nodes, transport, repair, and reproduction follow coherent lattice logic.",
+    "requiredTraits": [
+      "repeating lattice grammar",
+      "growth fronts",
+      "mineral transport channels",
+      "restrained internal light"
+    ],
+    "avoid": [
+      "gem pile",
+      "rainbow crystal bush",
+      "random shards"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "SHRUB-SILICON",
+    "name": "Silicon Shrub",
+    "family": "exotic",
+    "definition": "A silicon-based shrub with mineralized tissues, catalytic exchange surfaces, non-carbon transport, and slow growth.",
+    "requiredTraits": [
+      "mineral-organic structure",
+      "porous collectors",
+      "flexible mineral joints",
+      "substrate integration"
+    ],
+    "avoid": [
+      "stone sculpture",
+      "metal leaves without function",
+      "golem bush"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "SHRUB-MINERAL",
+    "name": "Mineral Shrub",
+    "family": "exotic",
+    "definition": "A low geobiological organism growing through accretion, dissolution, pore networks, and catalytic metabolism.",
+    "requiredTraits": [
+      "layered mineral growth",
+      "fluid-exchange pores",
+      "weathered edges",
+      "anchoring veins"
+    ],
+    "avoid": [
+      "stalagmite garden",
+      "carved ornament",
+      "gemstone cluster"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "SHRUB-ENERGY",
+    "name": "Energy Shrub",
+    "family": "field-life",
+    "definition": "A low branching organism organized from persistent energy channels anchored to a substrate or field source.",
+    "requiredTraits": [
+      "coherent energy topology",
+      "anchored base",
+      "branching collectors",
+      "controlled luminosity"
+    ],
+    "avoid": [
+      "magic glowing bush",
+      "hologram shrub",
+      "lens flare"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "SHRUB-GAS",
+    "name": "Gas Shrub",
+    "family": "field-life",
+    "definition": "A low buoyant or semi-anchored organism using gas cells, membranes, and chemical gradients to form branching growth.",
+    "requiredTraits": [
+      "buoyant chambers",
+      "membrane branches",
+      "chemical nutrient capture",
+      "stable shape"
+    ],
+    "avoid": [
+      "balloon bush",
+      "cloud plant",
+      "smoke effect"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "SHRUB-PLASMA",
+    "name": "Plasma Shrub",
+    "family": "field-life",
+    "definition": "A compact plasma-based organism stabilized by electromagnetic fields and branching energy pathways.",
+    "requiredTraits": [
+      "field anchoring",
+      "coherent plasma branches",
+      "stable containment",
+      "environmental ionization"
+    ],
+    "avoid": [
+      "fire bush",
+      "lightning sculpture",
+      "pure glow"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "SHRUB-BIOMECH",
+    "name": "Biomechanical Shrub",
+    "family": "artificial",
+    "definition": "A shrub integrating living tissues with mechanical supports, sensors, transport systems, and self-repair.",
+    "requiredTraits": [
+      "organic-machine interfaces",
+      "functional joints",
+      "self-repair channels",
+      "purpose-built collectors"
+    ],
+    "avoid": [
+      "machine with leaves attached",
+      "random cables",
+      "weaponized shrub"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "SHRUB-SYNTHETIC",
+    "name": "Synthetic Shrub",
+    "family": "artificial",
+    "definition": "A manufactured shrub-like organism designed for habitat control, resource production, or aesthetics through coherent engineered biology.",
+    "requiredTraits": [
+      "modular roots",
+      "controlled branching",
+      "purpose-driven tissues",
+      "maintenance access"
+    ],
+    "avoid": [
+      "plastic decoration",
+      "corporate sculpture",
+      "solar-panel bush"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "SHRUB-ROBOTIC",
+    "name": "Robotic Shrub",
+    "family": "artificial",
+    "definition": "An autonomous mechanical shrub analog that anchors, gathers energy and materials, assembles modules, and responds to local conditions.",
+    "requiredTraits": [
+      "functional anchoring",
+      "modular branch units",
+      "energy collectors",
+      "self-maintenance"
+    ],
+    "avoid": [
+      "metal topiary",
+      "decorative gears",
+      "antenna bouquet"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "SHRUB-NANITE",
+    "name": "Nanite Shrub",
+    "family": "artificial",
+    "definition": "A shrub-like colony of coordinated nanomachines forming roots, branches, collectors, and reproductive packets.",
+    "requiredTraits": [
+      "coherent swarm surface",
+      "stable branching",
+      "material intake",
+      "controlled reconfiguration"
+    ],
+    "avoid": [
+      "gray goo",
+      "pixel dissolve",
+      "glitter cloud"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "SHRUB-TERRAFORMING",
+    "name": "Terraforming Shrub",
+    "family": "engineered",
+    "definition": "A hardy engineered shrub designed to stabilize soil, retain water, process atmosphere, reduce radiation, or pioneer hostile terrain.",
+    "requiredTraits": [
+      "pioneer growth",
+      "environment-processing tissues",
+      "rapid but controlled spread",
+      "durable reproduction"
+    ],
+    "avoid": [
+      "instant green carpet",
+      "magic terraforming glow",
+      "industrial machine disguise"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  }
+]

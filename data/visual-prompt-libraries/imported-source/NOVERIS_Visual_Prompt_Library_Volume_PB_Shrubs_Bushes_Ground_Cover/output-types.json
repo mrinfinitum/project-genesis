@@ -1,0 +1,134 @@
+[
+  {
+    "outputType": "whole-plant",
+    "name": "Whole Plant Render",
+    "instruction": "show one complete mature specimen with roots or root flare, all stems, foliage, and reproductive structures",
+    "aspectRatio": "3:4"
+  },
+  {
+    "outputType": "portrait",
+    "name": "Botanical Portrait",
+    "instruction": "emphasize defining branching, foliage, flowers, fruit, or surface materials",
+    "aspectRatio": "1:1"
+  },
+  {
+    "outputType": "ortho-front",
+    "name": "Orthographic Front",
+    "instruction": "exact front orthographic view with no perspective distortion",
+    "aspectRatio": "3:4"
+  },
+  {
+    "outputType": "ortho-side",
+    "name": "Orthographic Side",
+    "instruction": "exact side orthographic view with no perspective distortion",
+    "aspectRatio": "3:4"
+  },
+  {
+    "outputType": "ortho-top",
+    "name": "Orthographic Top",
+    "instruction": "exact top-down view showing spread pattern and canopy density",
+    "aspectRatio": "1:1"
+  },
+  {
+    "outputType": "roots",
+    "name": "Root System",
+    "instruction": "show complete roots, rhizomes, runners, holdfasts, or anchor structures",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "stems",
+    "name": "Stem and Branch Study",
+    "instruction": "show basal stems, branch hierarchy, joints, growth points, and load distribution",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "surface",
+    "name": "Bark and Surface Study",
+    "instruction": "show young, mature, damaged, repaired, waxy, mineral, synthetic, or field surfaces",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "leaves",
+    "name": "Leaf or Collector Study",
+    "instruction": "show front, back, edge, juvenile, mature, seasonal, and damaged states",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "flowers",
+    "name": "Reproductive Structure",
+    "instruction": "show closed, opening, mature, pollinated, and spent stages",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "fruit",
+    "name": "Fruit or Storage Body",
+    "instruction": "show external form, internal cross-section, ripening, and dispersal function",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "seeds",
+    "name": "Seed or Propagule Study",
+    "instruction": "show seeds, spores, pods, packets, dispersal, germination, and establishment",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "cross-section",
+    "name": "Internal Cross Section",
+    "instruction": "show protection, transport, support, storage, energy capture, and reproductive tissues",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "growth",
+    "name": "Growth Stages",
+    "instruction": "show propagule, juvenile, spreading, mature, reproductive, and senescent stages",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "seasonal",
+    "name": "Seasonal Variants",
+    "instruction": "show growth, bloom, fruiting, stress, dormancy, and recovery states",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "habitat",
+    "name": "Native Habitat",
+    "instruction": "show a natural population with realistic spacing, age diversity, and climate interaction",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "biome-set",
+    "name": "Biome Composition",
+    "instruction": "show this archetype integrated with compatible flora at consistent scale",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "discovery",
+    "name": "Discovery Scan",
+    "instruction": "centered scientific scan source with restrained contour illumination",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "icon",
+    "name": "UI Icon",
+    "instruction": "strong isolated silhouette readable at 64 pixels",
+    "aspectRatio": "1:1"
+  },
+  {
+    "outputType": "scale",
+    "name": "Scale Comparison",
+    "instruction": "side view beside a simple adult human silhouette and one-meter bar, no text",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "plate",
+    "name": "Master Botanical Plate",
+    "instruction": "whole plant, views, roots, stems, surface, leaves, reproduction, growth, seasonal states, materials, and habitat vignette",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "psd",
+    "name": "PSD Extraction Board",
+    "instruction": "isolated full plant, root system, main stems, foliage clusters, reproductive parts, silhouette, and material swatches",
+    "aspectRatio": "16:9"
+  }
+]

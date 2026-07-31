@@ -1,0 +1,83 @@
+{
+  "packageId": "NOVERIS_Visual_Prompt_Library_Volume_PB_Shrubs_Bushes_Ground_Cover",
+  "volumeId": "VOLUME-PB",
+  "displayName": "Visual Prompt Library Volume PB \u2014 Shrubs, Bushes & Ground Cover",
+  "version": "1.0.0",
+  "generatedAt": "2026-07-31T18:41:42.567124+00:00",
+  "modelProfile": "nano-banana-2",
+  "archetypeCount": 26,
+  "outputTypeCount": 22,
+  "promptRecordCount": 572,
+  "files": [
+    {
+      "name": "CODEX_IMPORT_PROMPT.txt",
+      "bytes": 515,
+      "sha256": "d9cf59bcc47a32c6d922bc761e2aaf0394a345b06e13f65d1ed8b35ebd8aa6c1"
+    },
+    {
+      "name": "PROMPT_CATALOG.md",
+      "bytes": 1406621,
+      "sha256": "fabcde776546e4e7e779b8927a3dc06bb6648a8722d3257598c1231b1fec01d4"
+    },
+    {
+      "name": "README.md",
+      "bytes": 213,
+      "sha256": "eec17a69a77abb5a3706c3c507f2761304e2ce74812e2aaa126f3c29aa3c2d7f"
+    },
+    {
+      "name": "camera-profiles.json",
+      "bytes": 196,
+      "sha256": "bbb300963c71dd8920c169031662ddeb1dadf6a694fe547ea68500f4a3faff36"
+    },
+    {
+      "name": "lighting-profiles.json",
+      "bytes": 132,
+      "sha256": "3e2dc76a8fa58662c455d5b9ef61b554c13e6e1fc225edc634288667dcab798d"
+    },
+    {
+      "name": "negative-prompt-library.json",
+      "bytes": 466,
+      "sha256": "ef601977f269c66bbecb8f31d5a42949175a4465fd654e2c46f9012ef6ced6fa"
+    },
+    {
+      "name": "output-types.json",
+      "bytes": 4354,
+      "sha256": "fe3bdb1db96a23df85252e609a703123aaf303c80800aa093facb32c5153a442"
+    },
+    {
+      "name": "prompt-library.csv",
+      "bytes": 1422250,
+      "sha256": "eb5609849a2629df1e061541c636daa2424864626d3fa6de4b8406f1b999f033"
+    },
+    {
+      "name": "prompt-library.json",
+      "bytes": 3473628,
+      "sha256": "51c5870842c210bfea76bbe459c0adeb4bb162cc7ac5b950b85c50abb84b12b1"
+    },
+    {
+      "name": "prompt-library.jsonl",
+      "bytes": 3313334,
+      "sha256": "d049ea733f75b2d8a03d28be9c3010148f1140a5314061590ca27a8325b26320"
+    },
+    {
+      "name": "prompt-record.schema.json",
+      "bytes": 290,
+      "sha256": "ae78c1366f84f12b8564a592b1e827a8dedb1a98fc2f21fba2aa2327366a73f8"
+    },
+    {
+      "name": "prompt-variables.json",
+      "bytes": 529,
+      "sha256": "f1b7e7b6d0c2d6db24e50e331a3fe64f589da20e9b7c5255e7137afcd93e3c77"
+    },
+    {
+      "name": "shrub-archetypes.json",
+      "bytes": 14216,
+      "sha256": "704dd18244b86903a78273d35de820ad3423bb367d275d9e46cc1b6a3cbf841b"
+    },
+    {
+      "name": "style-profiles.json",
+      "bytes": 118,
+      "sha256": "539e95d73f2882439d91da0eaff422b5abc40a18333e7b30d7dc81dc32921b11"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "NOVERIS Volume PB Prompt",
+  "type": "object",
+  "required": [
+    "promptId",
+    "volumeId",
+    "modelProfile",
+    "archetypeId",
+    "outputType",
+    "positivePrompt",
+    "negativePrompt",
+    "version"
+  ]
+}

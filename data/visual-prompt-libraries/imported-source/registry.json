@@ -22,6 +22,16 @@
       "promptRecordCount": 672,
       "sourcePath": "NOVERIS_Visual_Prompt_Library_Volume_PA_Trees",
       "sourceRole": "canonical-authored-import"
+    },
+    {
+      "id": "NOVERIS_Visual_Prompt_Library_Volume_PB_Shrubs_Bushes_Ground_Cover",
+      "volumeId": "VOLUME-PB",
+      "displayName": "Visual Prompt Library Volume PB - Shrubs, Bushes and Ground Cover",
+      "version": "1.0.0",
+      "modelProfile": "nano-banana-2",
+      "promptRecordCount": 572,
+      "sourcePath": "NOVERIS_Visual_Prompt_Library_Volume_PB_Shrubs_Bushes_Ground_Cover",
+      "sourceRole": "canonical-authored-import"
     }
   ]
 }
