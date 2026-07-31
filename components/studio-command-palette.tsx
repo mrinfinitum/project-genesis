@@ -36,7 +36,7 @@ const commandSeeds: PaletteResult[] = [
   { id: "command:universe-layer-generator", type: "Environment Composer", title: "Open Universe Generator", subtitle: "Canonical universe environment painting inputs", href: "/universe-layer-generator" },
   { id: "command:galaxy-layer-generator", type: "Environment Composer", title: "Open Galaxy Environmental Painting", subtitle: "One canonical galaxy environment painting", href: "/galaxy-layer-generator" },
   { id: "command:sector-layer-generator", type: "Environment Composer", title: "Open Galactic Region Generator", subtitle: "Canonical galactic region environment painting inputs", href: "/sector-layer-generator" },
-  { id: "command:star-system-layer-generator", type: "Environment Composer", title: "Open Star System Generator", subtitle: "Canonical star-system environment painting inputs", href: "/star-system-layer-generator" },
+  { id: "command:star-system-layer-generator", type: "Environment Composer", title: "Open Star System Generator", subtitle: "Handcrafted star-system prompt library", href: "/star-system-layer-generator" },
   { id: "command:environment-scenes", type: "Environment Composer", title: "Open Scene Composer", subtitle: "Layered environment compositions", href: "/environment-composer/scenes" },
   { id: "command:environment-themes", type: "Environment Composer", title: "Open Environment Themes", subtitle: "Palette, lighting, fog, and effects intent", href: "/environment-composer/themes" },
   { id: "command:environment-export", type: "Environment Composer", title: "Open Environment Runtime Export", subtitle: "Sanitized renderer-neutral contract", href: "/environment-composer/export" },

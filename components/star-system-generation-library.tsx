@@ -42,8 +42,8 @@ export function StarSystemGenerationLibrary({ rows }: { rows: StarSystemPromptTe
       <section className="space-y-4">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Prompt Library</p>
-            <h1 className="mt-2 text-4xl font-bold text-white">Star System Generator</h1>
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Star System Generator</p>
+            <h1 className="mt-2 text-4xl font-bold text-white">Handcrafted Star System Prompts</h1>
             <p className="mt-3 max-w-4xl text-sm leading-6 text-slate-300">
               Handcraft canonical, scientifically plausible system specifications before they enter the generator. Each preset defines a single strong orbital identity without changing the procedural rules.
             </p>

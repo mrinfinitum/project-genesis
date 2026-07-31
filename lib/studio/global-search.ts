@@ -59,7 +59,7 @@ const workspaceResults: StudioSearchResult[] = [
   workspace("universe-layer-generator", "Universe Generator", "/universe-layer-generator", "Canonical universe environment painting inputs"),
   workspace("galaxy-layer-generator", "Galaxy Environmental Painting", "/galaxy-layer-generator", "One canonical galaxy environment painting"),
   workspace("sector-layer-generator", "Galactic Region Generator", "/sector-layer-generator", "Canonical galactic region environment painting inputs"),
-  workspace("star-system-layer-generator", "Star System Generator", "/star-system-layer-generator", "Canonical star-system environment painting inputs"),
+  workspace("star-system-layer-generator", "Star System Generator", "/star-system-layer-generator", "Handcrafted star-system prompt library"),
   workspace("environment-scenes", "Environment Scene Composer", "/environment-composer/scenes", "Layered environment compositions"),
   workspace("environment-themes", "Environment Themes", "/environment-composer/themes", "Palette, lighting, fog, and effects intent"),
   workspace("environment-export", "Environment Runtime Export", "/environment-composer/export", "Sanitized renderer-neutral contract"),
