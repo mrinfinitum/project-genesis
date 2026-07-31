@@ -1,0 +1,412 @@
+[
+  {
+    "id": "creature-fur",
+    "domain": "creature",
+    "name": "fur",
+    "instructions": "physically based fur with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-hair",
+    "domain": "creature",
+    "name": "hair",
+    "instructions": "physically based hair with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-quills",
+    "domain": "creature",
+    "name": "quills",
+    "instructions": "physically based quills with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-feathers",
+    "domain": "creature",
+    "name": "feathers",
+    "instructions": "physically based feathers with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-scales",
+    "domain": "creature",
+    "name": "scales",
+    "instructions": "physically based scales with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-skin",
+    "domain": "creature",
+    "name": "skin",
+    "instructions": "physically based skin with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-membrane",
+    "domain": "creature",
+    "name": "membrane",
+    "instructions": "physically based membrane with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-chitin",
+    "domain": "creature",
+    "name": "chitin",
+    "instructions": "physically based chitin with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-shell",
+    "domain": "creature",
+    "name": "shell",
+    "instructions": "physically based shell with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-bone",
+    "domain": "creature",
+    "name": "bone",
+    "instructions": "physically based bone with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-keratin",
+    "domain": "creature",
+    "name": "keratin",
+    "instructions": "physically based keratin with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-soft-tissue",
+    "domain": "creature",
+    "name": "soft tissue",
+    "instructions": "physically based soft tissue with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-gelatinous-tissue",
+    "domain": "creature",
+    "name": "gelatinous tissue",
+    "instructions": "physically based gelatinous tissue with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-mineral-tissue",
+    "domain": "creature",
+    "name": "mineral tissue",
+    "instructions": "physically based mineral tissue with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-crystal-tissue",
+    "domain": "creature",
+    "name": "crystal tissue",
+    "instructions": "physically based crystal tissue with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-silicon-tissue",
+    "domain": "creature",
+    "name": "silicon tissue",
+    "instructions": "physically based silicon tissue with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-metallic-synthetic-tissue",
+    "domain": "creature",
+    "name": "metallic synthetic tissue",
+    "instructions": "physically based metallic synthetic tissue with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-biomechanical-interface",
+    "domain": "creature",
+    "name": "biomechanical interface",
+    "instructions": "physically based biomechanical interface with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-energy-structure",
+    "domain": "creature",
+    "name": "energy structure",
+    "instructions": "physically based energy structure with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-plasma-boundary",
+    "domain": "creature",
+    "name": "plasma boundary",
+    "instructions": "physically based plasma boundary with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-gas-membrane",
+    "domain": "creature",
+    "name": "gas membrane",
+    "instructions": "physically based gas membrane with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-bark",
+    "domain": "plant",
+    "name": "bark",
+    "instructions": "physically based bark with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-wood",
+    "domain": "plant",
+    "name": "wood",
+    "instructions": "physically based wood with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-stem-tissue",
+    "domain": "plant",
+    "name": "stem tissue",
+    "instructions": "physically based stem tissue with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-leaf-tissue",
+    "domain": "plant",
+    "name": "leaf tissue",
+    "instructions": "physically based leaf tissue with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-waxy-surface",
+    "domain": "plant",
+    "name": "waxy surface",
+    "instructions": "physically based waxy surface with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-succulent-tissue",
+    "domain": "plant",
+    "name": "succulent tissue",
+    "instructions": "physically based succulent tissue with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-thorn",
+    "domain": "plant",
+    "name": "thorn",
+    "instructions": "physically based thorn with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-root-tissue",
+    "domain": "plant",
+    "name": "root tissue",
+    "instructions": "physically based root tissue with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-flower-petal",
+    "domain": "plant",
+    "name": "flower petal",
+    "instructions": "physically based flower petal with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-fruit-skin",
+    "domain": "plant",
+    "name": "fruit skin",
+    "instructions": "physically based fruit skin with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-seed-shell",
+    "domain": "plant",
+    "name": "seed shell",
+    "instructions": "physically based seed shell with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-spore-surface",
+    "domain": "plant",
+    "name": "spore surface",
+    "instructions": "physically based spore surface with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-fungal-cap",
+    "domain": "plant",
+    "name": "fungal cap",
+    "instructions": "physically based fungal cap with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-mycelium",
+    "domain": "plant",
+    "name": "mycelium",
+    "instructions": "physically based mycelium with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-mineral-tissue",
+    "domain": "plant",
+    "name": "mineral tissue",
+    "instructions": "physically based mineral tissue with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-crystal-tissue",
+    "domain": "plant",
+    "name": "crystal tissue",
+    "instructions": "physically based crystal tissue with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-synthetic-plant-tissue",
+    "domain": "plant",
+    "name": "synthetic plant tissue",
+    "instructions": "physically based synthetic plant tissue with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-biomechanical-plant-interface",
+    "domain": "plant",
+    "name": "biomechanical plant interface",
+    "instructions": "physically based biomechanical plant interface with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-energy-collector",
+    "domain": "plant",
+    "name": "energy collector",
+    "instructions": "physically based energy collector with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-gas-membrane",
+    "domain": "plant",
+    "name": "gas membrane",
+    "instructions": "physically based gas membrane with believable structure, roughness, translucency, and age detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  }
+]

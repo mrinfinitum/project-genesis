@@ -1,0 +1,25 @@
+{
+  "shared": [
+    "text",
+    "watermark",
+    "logo",
+    "UI",
+    "frame",
+    "border",
+    "cropped subject",
+    "duplicate anatomy",
+    "incorrect limb count",
+    "incorrect wing count",
+    "incorrect root type",
+    "impossible gravity adaptation",
+    "impossible atmosphere adaptation",
+    "fantasy armor",
+    "weapons",
+    "cartoon",
+    "anime",
+    "oversaturated colors",
+    "motion blur",
+    "low resolution",
+    "compression artifacts"
+  ]
+}

@@ -1,0 +1,192 @@
+[
+  {
+    "id": "three-quarter-studio",
+    "domain": "shared",
+    "name": "Three-Quarter Studio",
+    "instructions": "three-quarter studio view with the complete silhouette readable",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "portrait",
+    "domain": "shared",
+    "name": "Portrait",
+    "instructions": "eye-level portrait framing with anatomy readable",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "orthographic-front",
+    "domain": "shared",
+    "name": "Orthographic Front",
+    "instructions": "true front orthographic view with no perspective distortion",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "orthographic-side",
+    "domain": "shared",
+    "name": "Orthographic Side",
+    "instructions": "true side orthographic view with no perspective distortion",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "orthographic-rear",
+    "domain": "shared",
+    "name": "Orthographic Rear",
+    "instructions": "true rear orthographic view with no perspective distortion",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "orthographic-top",
+    "domain": "shared",
+    "name": "Orthographic Top",
+    "instructions": "true top orthographic view with no perspective distortion",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "orthographic-bottom",
+    "domain": "shared",
+    "name": "Orthographic Bottom",
+    "instructions": "true underside orthographic view with no perspective distortion",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "macro-detail",
+    "domain": "shared",
+    "name": "Macro Detail",
+    "instructions": "controlled macro detail with no crop ambiguity",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "material-closeup",
+    "domain": "shared",
+    "name": "Material Closeup",
+    "instructions": "controlled material closeup with physically based surface readability",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "wing-detail",
+    "domain": "shared",
+    "name": "Wing Detail",
+    "instructions": "wing attachment, feather architecture, lift surface, and joint detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "leaf-detail",
+    "domain": "shared",
+    "name": "Leaf Detail",
+    "instructions": "leaf, collector surface, and venation detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "root-detail",
+    "domain": "shared",
+    "name": "Root Detail",
+    "instructions": "root or anchor system detail",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "habitat-wide",
+    "domain": "shared",
+    "name": "Habitat Wide",
+    "instructions": "restrained wide habitat composition",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "ecosystem-wide",
+    "domain": "shared",
+    "name": "Ecosystem Wide",
+    "instructions": "wide ecosystem composition with the canonical subject retained",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "reference-board",
+    "domain": "shared",
+    "name": "Reference Board",
+    "instructions": "ordered neutral production reference board",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "species-plate",
+    "domain": "shared",
+    "name": "Species Plate",
+    "instructions": "ordered species plate with consistent studies",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "botanical-plate",
+    "domain": "shared",
+    "name": "Botanical Plate",
+    "instructions": "ordered botanical plate with consistent studies",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "scale-comparison",
+    "domain": "shared",
+    "name": "Scale Comparison",
+    "instructions": "neutral comparative scale framing",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "discovery-scan",
+    "domain": "shared",
+    "name": "Discovery Scan",
+    "instructions": "evidence-oriented scientific documentation framing",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  }
+]

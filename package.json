@@ -40,6 +40,8 @@
     "verify:creature-system": "tsx scripts/verify-creature-system.ts",
     "generate:visual-prompt-libraries": "tsx scripts/generate-visual-prompt-libraries.ts",
     "verify:visual-prompt-libraries": "tsx scripts/generate-visual-prompt-libraries.ts --verify",
+    "generate:nano-banana-contracts": "tsx scripts/generate-nano-banana-contracts.ts",
+    "verify:nano-banana-prompt-compiler": "tsx scripts/verify-nano-banana-prompt-compiler.ts",
     "generate:psd-game-derivatives": "tsx scripts/generate-psd-game-derivatives.ts",
     "generate:navigation-icons": "tsx scripts/generate-navigation-icon-derivatives.ts",
     "verify:navigation-icons": "tsx scripts/verify-navigation-icons.ts",

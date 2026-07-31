@@ -1,0 +1,262 @@
+[
+  {
+    "id": "high-gravity",
+    "domain": "shared",
+    "name": "high gravity",
+    "instructions": "show only canonical high gravity adaptations with scientifically plausible structural consequences",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "low-gravity",
+    "domain": "shared",
+    "name": "low gravity",
+    "instructions": "show only canonical low gravity adaptations with scientifically plausible structural consequences",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "extreme-heat",
+    "domain": "shared",
+    "name": "extreme heat",
+    "instructions": "show only canonical extreme heat adaptations with scientifically plausible structural consequences",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "extreme-cold",
+    "domain": "shared",
+    "name": "extreme cold",
+    "instructions": "show only canonical extreme cold adaptations with scientifically plausible structural consequences",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "high-pressure",
+    "domain": "shared",
+    "name": "high pressure",
+    "instructions": "show only canonical high pressure adaptations with scientifically plausible structural consequences",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "low-pressure",
+    "domain": "shared",
+    "name": "low pressure",
+    "instructions": "show only canonical low pressure adaptations with scientifically plausible structural consequences",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "vacuum",
+    "domain": "shared",
+    "name": "vacuum",
+    "instructions": "show only canonical vacuum adaptations with scientifically plausible structural consequences",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "high-radiation",
+    "domain": "shared",
+    "name": "high radiation",
+    "instructions": "show only canonical high radiation adaptations with scientifically plausible structural consequences",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "high-humidity",
+    "domain": "shared",
+    "name": "high humidity",
+    "instructions": "show only canonical high humidity adaptations with scientifically plausible structural consequences",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "extreme-aridity",
+    "domain": "shared",
+    "name": "extreme aridity",
+    "instructions": "show only canonical extreme aridity adaptations with scientifically plausible structural consequences",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "salt-water",
+    "domain": "shared",
+    "name": "salt water",
+    "instructions": "show only canonical salt water adaptations with scientifically plausible structural consequences",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "fresh-water",
+    "domain": "shared",
+    "name": "fresh water",
+    "instructions": "show only canonical fresh water adaptations with scientifically plausible structural consequences",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "deep-ocean",
+    "domain": "shared",
+    "name": "deep ocean",
+    "instructions": "show only canonical deep ocean adaptations with scientifically plausible structural consequences",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "cave-darkness",
+    "domain": "shared",
+    "name": "cave darkness",
+    "instructions": "show only canonical cave darkness adaptations with scientifically plausible structural consequences",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "dense-atmosphere",
+    "domain": "shared",
+    "name": "dense atmosphere",
+    "instructions": "show only canonical dense atmosphere adaptations with scientifically plausible structural consequences",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "thin-atmosphere",
+    "domain": "shared",
+    "name": "thin atmosphere",
+    "instructions": "show only canonical thin atmosphere adaptations with scientifically plausible structural consequences",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "methane-atmosphere",
+    "domain": "shared",
+    "name": "methane atmosphere",
+    "instructions": "show only canonical methane atmosphere adaptations with scientifically plausible structural consequences",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "ammonia-environment",
+    "domain": "shared",
+    "name": "ammonia environment",
+    "instructions": "show only canonical ammonia environment adaptations with scientifically plausible structural consequences",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "sulfur-environment",
+    "domain": "shared",
+    "name": "sulfur environment",
+    "instructions": "show only canonical sulfur environment adaptations with scientifically plausible structural consequences",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "volcanic-terrain",
+    "domain": "shared",
+    "name": "volcanic terrain",
+    "instructions": "show only canonical volcanic terrain adaptations with scientifically plausible structural consequences",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "polar-terrain",
+    "domain": "shared",
+    "name": "polar terrain",
+    "instructions": "show only canonical polar terrain adaptations with scientifically plausible structural consequences",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "desert-terrain",
+    "domain": "shared",
+    "name": "desert terrain",
+    "instructions": "show only canonical desert terrain adaptations with scientifically plausible structural consequences",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "forest-canopy",
+    "domain": "shared",
+    "name": "forest canopy",
+    "instructions": "show only canonical forest canopy adaptations with scientifically plausible structural consequences",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "open-grassland",
+    "domain": "shared",
+    "name": "open grassland",
+    "instructions": "show only canonical open grassland adaptations with scientifically plausible structural consequences",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "swamp",
+    "domain": "shared",
+    "name": "swamp",
+    "instructions": "show only canonical swamp adaptations with scientifically plausible structural consequences",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "orbital-environment",
+    "domain": "shared",
+    "name": "orbital environment",
+    "instructions": "show only canonical orbital environment adaptations with scientifically plausible structural consequences",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  }
+]

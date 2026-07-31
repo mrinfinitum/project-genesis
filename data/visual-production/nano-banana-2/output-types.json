@@ -1,0 +1,902 @@
+[
+  {
+    "id": "creature-full-body-production-render",
+    "domain": "creature",
+    "name": "Full Body Production Render",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-portrait",
+    "domain": "creature",
+    "name": "Portrait",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-head-study",
+    "domain": "creature",
+    "name": "Head Study",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-orthographic-front",
+    "domain": "creature",
+    "name": "Orthographic Front",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-orthographic-side",
+    "domain": "creature",
+    "name": "Orthographic Side",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-orthographic-rear",
+    "domain": "creature",
+    "name": "Orthographic Rear",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-orthographic-top",
+    "domain": "creature",
+    "name": "Orthographic Top",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-orthographic-bottom",
+    "domain": "creature",
+    "name": "Orthographic Bottom",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-turnaround-sheet",
+    "domain": "creature",
+    "name": "Turnaround Sheet",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-skeleton-or-support-structure",
+    "domain": "creature",
+    "name": "Skeleton or Support Structure",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-musculature",
+    "domain": "creature",
+    "name": "Musculature",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-internal-anatomy",
+    "domain": "creature",
+    "name": "Internal Anatomy",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-external-anatomy",
+    "domain": "creature",
+    "name": "External Anatomy",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-scale-comparison",
+    "domain": "creature",
+    "name": "Scale Comparison",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-lifecycle-sheet",
+    "domain": "creature",
+    "name": "Lifecycle Sheet",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-juvenile",
+    "domain": "creature",
+    "name": "Juvenile",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-adult",
+    "domain": "creature",
+    "name": "Adult",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-elder",
+    "domain": "creature",
+    "name": "Elder",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-reproductive-form",
+    "domain": "creature",
+    "name": "Reproductive Form",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-sex-or-morph-variants",
+    "domain": "creature",
+    "name": "Sex or Morph Variants",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-regional-variants",
+    "domain": "creature",
+    "name": "Regional Variants",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-seasonal-variants",
+    "domain": "creature",
+    "name": "Seasonal Variants",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-behavior-sheet",
+    "domain": "creature",
+    "name": "Behavior Sheet",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-locomotion-sheet",
+    "domain": "creature",
+    "name": "Locomotion Sheet",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-feeding",
+    "domain": "creature",
+    "name": "Feeding",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-resting",
+    "domain": "creature",
+    "name": "Resting",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-social-behavior",
+    "domain": "creature",
+    "name": "Social Behavior",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-defensive-behavior",
+    "domain": "creature",
+    "name": "Defensive Behavior",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-attack-behavior",
+    "domain": "creature",
+    "name": "Attack Behavior",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-native-habitat-scene",
+    "domain": "creature",
+    "name": "Native Habitat Scene",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-discovery-scan",
+    "domain": "creature",
+    "name": "Discovery Scan",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-species-plate",
+    "domain": "creature",
+    "name": "Species Plate",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-reference-board",
+    "domain": "creature",
+    "name": "Reference Board",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-animation-reference-sheet",
+    "domain": "creature",
+    "name": "Animation Reference Sheet",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-ui-icon-source",
+    "domain": "creature",
+    "name": "UI Icon Source",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-encyclopedia-artwork",
+    "domain": "creature",
+    "name": "Encyclopedia Artwork",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-card-artwork",
+    "domain": "creature",
+    "name": "Card Artwork",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-loading-artwork",
+    "domain": "creature",
+    "name": "Loading Artwork",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "creature-psd-extraction-board",
+    "domain": "creature",
+    "name": "PSD Extraction Board",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-whole-plant-production-render",
+    "domain": "plant",
+    "name": "Whole Plant Production Render",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-botanical-portrait",
+    "domain": "plant",
+    "name": "Botanical Portrait",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-orthographic-front",
+    "domain": "plant",
+    "name": "Orthographic Front",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-orthographic-side",
+    "domain": "plant",
+    "name": "Orthographic Side",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-orthographic-rear",
+    "domain": "plant",
+    "name": "Orthographic Rear",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-orthographic-top",
+    "domain": "plant",
+    "name": "Orthographic Top",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-root-or-anchor-system",
+    "domain": "plant",
+    "name": "Root or Anchor System",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-stem-or-trunk",
+    "domain": "plant",
+    "name": "Stem or Trunk",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-branch-architecture",
+    "domain": "plant",
+    "name": "Branch Architecture",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-bark-or-surface-tissue",
+    "domain": "plant",
+    "name": "Bark or Surface Tissue",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-leaves-or-collector-structures",
+    "domain": "plant",
+    "name": "Leaves or Collector Structures",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-flower-or-reproductive-structure",
+    "domain": "plant",
+    "name": "Flower or Reproductive Structure",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-fruit-or-storage-body",
+    "domain": "plant",
+    "name": "Fruit or Storage Body",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-seed",
+    "domain": "plant",
+    "name": "Seed",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-spore",
+    "domain": "plant",
+    "name": "Spore",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-germination",
+    "domain": "plant",
+    "name": "Germination",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-cross-section",
+    "domain": "plant",
+    "name": "Cross Section",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-internal-anatomy",
+    "domain": "plant",
+    "name": "Internal Anatomy",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-growth-stages",
+    "domain": "plant",
+    "name": "Growth Stages",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-seasonal-variants",
+    "domain": "plant",
+    "name": "Seasonal Variants",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-stress-and-dormancy-states",
+    "domain": "plant",
+    "name": "Stress and Dormancy States",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-habitat-composition",
+    "domain": "plant",
+    "name": "Habitat Composition",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-forest-composition",
+    "domain": "plant",
+    "name": "Forest Composition",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-biome-vegetation-set",
+    "domain": "plant",
+    "name": "Biome Vegetation Set",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-agricultural-field",
+    "domain": "plant",
+    "name": "Agricultural Field",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-harvest-ready-state",
+    "domain": "plant",
+    "name": "Harvest-Ready State",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-discovery-scan",
+    "domain": "plant",
+    "name": "Discovery Scan",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-botanical-plate",
+    "domain": "plant",
+    "name": "Botanical Plate",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-reference-board",
+    "domain": "plant",
+    "name": "Reference Board",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-scale-comparison",
+    "domain": "plant",
+    "name": "Scale Comparison",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-silhouette",
+    "domain": "plant",
+    "name": "Silhouette",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-ui-icon-source",
+    "domain": "plant",
+    "name": "UI Icon Source",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-encyclopedia-artwork",
+    "domain": "plant",
+    "name": "Encyclopedia Artwork",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-card-artwork",
+    "domain": "plant",
+    "name": "Card Artwork",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-loading-artwork",
+    "domain": "plant",
+    "name": "Loading Artwork",
+    "instructions": "Use an ecological composition only where it supports the canonical subject and leaves the subject readable.",
+    "tags": [
+      "environmental"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "plant-psd-extraction-board",
+    "domain": "plant",
+    "name": "PSD Extraction Board",
+    "instructions": "Use a complete isolated production study with clean subject boundaries, consistent scale, and no labels.",
+    "tags": [
+      "isolated"
+    ],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  }
+]

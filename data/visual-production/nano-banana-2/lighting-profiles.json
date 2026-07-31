@@ -1,0 +1,142 @@
+[
+  {
+    "id": "neutral-studio",
+    "domain": "shared",
+    "name": "Neutral Studio",
+    "instructions": "soft neutral studio lighting, natural white balance, and readable material separation",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "museum-specimen",
+    "domain": "shared",
+    "name": "Museum Specimen",
+    "instructions": "museum-quality specimen lighting without dramatic shadows",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "soft-product-reference",
+    "domain": "shared",
+    "name": "Soft Product Reference",
+    "instructions": "soft product reference illumination with restrained separation",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "anatomical-reference",
+    "domain": "shared",
+    "name": "Anatomical Reference",
+    "instructions": "even anatomical reference illumination with no hidden structures",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "material-study",
+    "domain": "shared",
+    "name": "Material Study",
+    "instructions": "controlled raking material light without stylized glare",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "native-habitat-day",
+    "domain": "shared",
+    "name": "Native Habitat Day",
+    "instructions": "restrained natural habitat daylight",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "native-habitat-low-light",
+    "domain": "shared",
+    "name": "Native Habitat Low Light",
+    "instructions": "low-light habitat illumination with no false focal flare",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "underwater-natural",
+    "domain": "shared",
+    "name": "Underwater Natural",
+    "instructions": "plausible underwater natural light",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "cave-natural",
+    "domain": "shared",
+    "name": "Cave Natural",
+    "instructions": "subtle cave light with geological context",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "polar-natural",
+    "domain": "shared",
+    "name": "Polar Natural",
+    "instructions": "cool restrained polar daylight",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "desert-natural",
+    "domain": "shared",
+    "name": "Desert Natural",
+    "instructions": "restrained desert light with readable form",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "volcanic-natural",
+    "domain": "shared",
+    "name": "Volcanic Natural",
+    "instructions": "heat-aware volcanic light without fantasy glow",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "discovery-scan",
+    "domain": "shared",
+    "name": "Discovery Scan",
+    "instructions": "restrained scientific scan illumination",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "transparent-extraction-compatible",
+    "domain": "shared",
+    "name": "Transparent-Extraction Compatible",
+    "instructions": "even clean extraction lighting with preserved edge separation",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  }
+]

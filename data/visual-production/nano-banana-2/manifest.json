@@ -1,0 +1,15 @@
+{
+  "id": "noveris_nano_banana_2_visual_prompt_compiler",
+  "compilerVersion": "1.0.0",
+  "libraryVersion": "1.0.0",
+  "modelProfileId": "nano-banana-2",
+  "creatureArchetypeCount": 245,
+  "plantArchetypeCount": 195,
+  "outputTypeCount": 75,
+  "compositionProfileCount": 6,
+  "validationStatus": "Ready",
+  "runtimePolicy": "Studio-only full prompts. Runtime receives sanitized prompt provenance only.",
+  "migration": {
+    "volumeIA": "Preserved as a compatibility export and regression baseline in data/visual-prompt-libraries."
+  }
+}

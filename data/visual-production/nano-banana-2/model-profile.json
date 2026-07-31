@@ -1,0 +1,42 @@
+{
+  "id": "nano-banana-2",
+  "name": "Nano Banana 2",
+  "preferredPromptOrder": [
+    "task",
+    "versionCount",
+    "identity",
+    "archetype",
+    "structure",
+    "movement",
+    "environment",
+    "ecology",
+    "materials",
+    "lockedTraits",
+    "variation",
+    "output",
+    "camera",
+    "lighting",
+    "background",
+    "composition",
+    "psd",
+    "consistency",
+    "negative"
+  ],
+  "promptVerbosity": "detailed with a compact copy variant",
+  "naturalLanguageStyle": "clear production-direction prose with explicit exclusions",
+  "phrases": {
+    "camera": "Camera:",
+    "lighting": "Lighting:",
+    "aspectRatio": "16:9",
+    "blackBackground": "pure black background for PSD extraction",
+    "transparentBackground": "transparent-compatible black background, preserve clean edge separation",
+    "referenceBoard": "ordered reference board with clean separation and no labels",
+    "orthographic": "true orthographic view with no perspective distortion",
+    "consistency": "preserve all locked canonical traits exactly",
+    "noText": "no text, watermark, logo, interface, border, or frame",
+    "variation": "vary only the permitted secondary traits",
+    "iteration": "produce each requested interpretation separately at consistent scale",
+    "editExisting": "future edit mode: preserve the supplied image composition while applying only approved deltas"
+  },
+  "version": "1.0.0"
+}

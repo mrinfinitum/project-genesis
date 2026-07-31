@@ -1,0 +1,62 @@
+[
+  {
+    "id": "isolated-production",
+    "domain": "shared",
+    "name": "Isolated Production",
+    "instructions": "center the complete subject with generous extraction margin and no environmental competition",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "hero-three-quarter",
+    "domain": "shared",
+    "name": "Hero Three-Quarter",
+    "instructions": "show a clear three-quarter silhouette with balanced negative space and no clipped anatomy",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "habitat-observational",
+    "domain": "shared",
+    "name": "Habitat Observational",
+    "instructions": "place the canonical subject naturally within its habitat while retaining immediate silhouette readability",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "scientific-documentation",
+    "domain": "shared",
+    "name": "Scientific Documentation",
+    "instructions": "prioritize measurement clarity, visual evidence, and unobstructed morphology",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "comparison-board",
+    "domain": "shared",
+    "name": "Comparison Board",
+    "instructions": "arrange the requested studies consistently with clean separation and no labels",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  },
+  {
+    "id": "ecosystem-composition",
+    "domain": "shared",
+    "name": "Ecosystem Composition",
+    "instructions": "show ecological context while keeping the requested subject as the unambiguous primary read",
+    "tags": [],
+    "exclusions": [],
+    "version": "1.0.0",
+    "status": "approved"
+  }
+]
