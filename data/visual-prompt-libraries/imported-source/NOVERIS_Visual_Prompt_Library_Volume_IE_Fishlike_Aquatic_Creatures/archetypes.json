@@ -1,0 +1,462 @@
+[
+  {
+    "archetypeId": "CRE-IE-001-PELAGIC-FISHLIKE",
+    "name": "Pelagic Fishlike",
+    "definition": "A canonical pelagic fishlike designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IE-002-REEF-FISHLIKE",
+    "name": "Reef Fishlike",
+    "definition": "A canonical reef fishlike designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IE-003-DEEP-OCEAN-FISHLIKE",
+    "name": "Deep-Ocean Fishlike",
+    "definition": "A canonical deep-ocean fishlike designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IE-004-ABYSSAL-PREDATOR",
+    "name": "Abyssal Predator",
+    "definition": "A canonical abyssal predator designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IE-005-FILTER-FEEDER",
+    "name": "Filter Feeder",
+    "definition": "A canonical filter feeder designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IE-006-SCHOOLING-FISHLIKE",
+    "name": "Schooling Fishlike",
+    "definition": "A canonical schooling fishlike designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IE-007-SOLITARY-HUNTER",
+    "name": "Solitary Hunter",
+    "definition": "A canonical solitary hunter designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IE-008-BOTTOM-DWELLER",
+    "name": "Bottom Dweller",
+    "definition": "A canonical bottom dweller designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IE-009-RIVER-FISHLIKE",
+    "name": "River Fishlike",
+    "definition": "A canonical river fishlike designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IE-010-COASTAL-FISHLIKE",
+    "name": "Coastal Fishlike",
+    "definition": "A canonical coastal fishlike designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IE-011-POLAR-FISHLIKE",
+    "name": "Polar Fishlike",
+    "definition": "A canonical polar fishlike designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IE-012-VOLCANIC-VENT-FISHLIKE",
+    "name": "Volcanic-Vent Fishlike",
+    "definition": "A canonical volcanic-vent fishlike designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IE-013-ARMORED-FISHLIKE",
+    "name": "Armored Fishlike",
+    "definition": "A canonical armored fishlike designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IE-014-ELECTRIC-FISHLIKE",
+    "name": "Electric Fishlike",
+    "definition": "A canonical electric fishlike designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IE-015-BIOLUMINESCENT-FISHLIKE",
+    "name": "Bioluminescent Fishlike",
+    "definition": "A canonical bioluminescent fishlike designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IE-016-GIANT-AQUATIC-CREATURE",
+    "name": "Giant Aquatic Creature",
+    "definition": "A canonical giant aquatic creature designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IE-017-MICRO-AQUATIC-CREATURE",
+    "name": "Micro Aquatic Creature",
+    "definition": "A canonical micro aquatic creature designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IE-018-LOW-GRAVITY-AQUATIC-CREATURE",
+    "name": "Low-Gravity Aquatic Creature",
+    "definition": "A canonical low-gravity aquatic creature designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IE-019-HIGH-PRESSURE-AQUATIC-CREATURE",
+    "name": "High-Pressure Aquatic Creature",
+    "definition": "A canonical high-pressure aquatic creature designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IE-020-CRYSTAL-AQUATIC-CREATURE",
+    "name": "Crystal Aquatic Creature",
+    "definition": "A canonical crystal aquatic creature designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation",
+      "coherent lattice or mineral biology",
+      "no decorative gemstone pile"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IE-021-SILICON-AQUATIC-CREATURE",
+    "name": "Silicon Aquatic Creature",
+    "definition": "A canonical silicon aquatic creature designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation",
+      "coherent lattice or mineral biology",
+      "no decorative gemstone pile"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IE-022-SYNTHETIC-AQUATIC-CREATURE",
+    "name": "Synthetic Aquatic Creature",
+    "definition": "A canonical synthetic aquatic creature designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation",
+      "purpose-built manufactured anatomy",
+      "no generic humanoid robot default"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  }
+]

@@ -1,0 +1,1 @@
+Import Volume PIII — Exotic Flora into Project Genesis Studio Visual Production Engine. Validate schema and checksums, preserve IDs, resolve canonical variables, enforce locks, expose copy/export and version-count controls, track stale prompts, sanitize runtime exports, run tests, build, and commit: Add Visual Prompt Library Volume PIII Exotic Flora.

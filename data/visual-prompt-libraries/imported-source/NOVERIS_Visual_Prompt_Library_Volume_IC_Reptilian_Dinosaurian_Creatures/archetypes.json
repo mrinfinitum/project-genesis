@@ -1,0 +1,527 @@
+[
+  {
+    "archetypeId": "CRE-IC-001-TERRESTRIAL-REPTILE",
+    "name": "Terrestrial Reptile",
+    "definition": "A canonical terrestrial reptile designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IC-002-ARBOREAL-REPTILE",
+    "name": "Arboreal Reptile",
+    "definition": "A canonical arboreal reptile designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IC-003-BURROWING-REPTILE",
+    "name": "Burrowing Reptile",
+    "definition": "A canonical burrowing reptile designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IC-004-DESERT-REPTILE",
+    "name": "Desert Reptile",
+    "definition": "A canonical desert reptile designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IC-005-POLAR-REPTILE",
+    "name": "Polar Reptile",
+    "definition": "A canonical polar reptile designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IC-006-AQUATIC-REPTILE",
+    "name": "Aquatic Reptile",
+    "definition": "A canonical aquatic reptile designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IC-007-SEMI-AQUATIC-REPTILE",
+    "name": "Semi-Aquatic Reptile",
+    "definition": "A canonical semi-aquatic reptile designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IC-008-GLIDING-REPTILE",
+    "name": "Gliding Reptile",
+    "definition": "A canonical gliding reptile designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IC-009-APEX-REPTILIAN-PREDATOR",
+    "name": "Apex Reptilian Predator",
+    "definition": "A canonical apex reptilian predator designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IC-010-HERD-REPTILIAN-HERBIVORE",
+    "name": "Herd Reptilian Herbivore",
+    "definition": "A canonical herd reptilian herbivore designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IC-011-ARMORED-REPTILE",
+    "name": "Armored Reptile",
+    "definition": "A canonical armored reptile designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IC-012-VENOMOUS-REPTILE",
+    "name": "Venomous Reptile",
+    "definition": "A canonical venomous reptile designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IC-013-CONSTRICTING-REPTILE",
+    "name": "Constricting Reptile",
+    "definition": "A canonical constricting reptile designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IC-014-DINOSAURIAN-PREDATOR",
+    "name": "Dinosaurian Predator",
+    "definition": "A canonical dinosaurian predator designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IC-015-DINOSAURIAN-HERBIVORE",
+    "name": "Dinosaurian Herbivore",
+    "definition": "A canonical dinosaurian herbivore designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IC-016-DINOSAURIAN-OMNIVORE",
+    "name": "Dinosaurian Omnivore",
+    "definition": "A canonical dinosaurian omnivore designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IC-017-FEATHERED-DINOSAURIAN",
+    "name": "Feathered Dinosaurian",
+    "definition": "A canonical feathered dinosaurian designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IC-018-COLOSSAL-DINOSAURIAN",
+    "name": "Colossal Dinosaurian",
+    "definition": "A canonical colossal dinosaurian designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IC-019-MICRO-DINOSAURIAN",
+    "name": "Micro Dinosaurian",
+    "definition": "A canonical micro dinosaurian designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IC-020-HIGH-GRAVITY-REPTILE",
+    "name": "High-Gravity Reptile",
+    "definition": "A canonical high-gravity reptile designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IC-021-LOW-GRAVITY-REPTILE",
+    "name": "Low-Gravity Reptile",
+    "definition": "A canonical low-gravity reptile designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IC-022-CAVE-REPTILE",
+    "name": "Cave Reptile",
+    "definition": "A canonical cave reptile designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IC-023-VOLCANIC-REPTILE",
+    "name": "Volcanic Reptile",
+    "definition": "A canonical volcanic reptile designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IC-024-CRYSTAL-REPTILE",
+    "name": "Crystal Reptile",
+    "definition": "A canonical crystal reptile designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "coherent lattice or mineral biology",
+      "no decorative gemstone pile"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IC-025-SILICON-REPTILE",
+    "name": "Silicon Reptile",
+    "definition": "A canonical silicon reptile designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "coherent lattice or mineral biology",
+      "no decorative gemstone pile"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IC-026-BIOMECHANICAL-REPTILE",
+    "name": "Biomechanical Reptile",
+    "definition": "A canonical biomechanical reptile designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "purpose-built manufactured anatomy",
+      "no generic humanoid robot default"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IC-027-SYNTHETIC-REPTILE",
+    "name": "Synthetic Reptile",
+    "definition": "A canonical synthetic reptile designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "purpose-built manufactured anatomy",
+      "no generic humanoid robot default"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  }
+]

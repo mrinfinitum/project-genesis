@@ -1,0 +1,309 @@
+[
+  {
+    "archetypeId": "PLT-PF-001-SUBMERGED-AQUATIC-PLANT",
+    "name": "Submerged Aquatic Plant",
+    "definition": "A canonical submerged aquatic plant designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth",
+      "hydrodynamic collectors",
+      "substrate or buoyancy logic"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PF-002-FLOATING-AQUATIC-PLANT",
+    "name": "Floating Aquatic Plant",
+    "definition": "A canonical floating aquatic plant designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth",
+      "hydrodynamic collectors",
+      "substrate or buoyancy logic"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PF-003-RIVER-PLANT",
+    "name": "River Plant",
+    "definition": "A canonical river plant designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth",
+      "hydrodynamic collectors",
+      "substrate or buoyancy logic"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PF-004-WETLAND-PLANT",
+    "name": "Wetland Plant",
+    "definition": "A canonical wetland plant designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth",
+      "hydrodynamic collectors",
+      "substrate or buoyancy logic"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PF-005-COASTAL-PLANT",
+    "name": "Coastal Plant",
+    "definition": "A canonical coastal plant designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PF-006-DEEP-WATER-PLANT",
+    "name": "Deep-Water Plant",
+    "definition": "A canonical deep-water plant designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PF-007-SEAWEED-ANALOG",
+    "name": "Seaweed-Analog",
+    "definition": "A canonical seaweed-analog designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth",
+      "hydrodynamic collectors",
+      "substrate or buoyancy logic"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PF-008-KELP-ANALOG",
+    "name": "Kelp-Analog",
+    "definition": "A canonical kelp-analog designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth",
+      "hydrodynamic collectors",
+      "substrate or buoyancy logic"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PF-009-REEF-FLORA",
+    "name": "Reef Flora",
+    "definition": "A canonical reef flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PF-010-POLAR-AQUATIC-FLORA",
+    "name": "Polar Aquatic Flora",
+    "definition": "A canonical polar aquatic flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth",
+      "hydrodynamic collectors",
+      "substrate or buoyancy logic"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PF-011-HYDROTHERMAL-FLORA",
+    "name": "Hydrothermal Flora",
+    "definition": "A canonical hydrothermal flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PF-012-METHANE-LAKE-FLORA",
+    "name": "Methane-Lake Flora",
+    "definition": "A canonical methane-lake flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PF-013-AMMONIA-OCEAN-FLORA",
+    "name": "Ammonia-Ocean Flora",
+    "definition": "A canonical ammonia-ocean flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PF-014-CRYSTAL-AQUATIC-FLORA",
+    "name": "Crystal Aquatic Flora",
+    "definition": "A canonical crystal aquatic flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth",
+      "hydrodynamic collectors",
+      "substrate or buoyancy logic",
+      "coherent lattice growth",
+      "geochemical exchange"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PF-015-SYNTHETIC-AQUATIC-FLORA",
+    "name": "Synthetic Aquatic Flora",
+    "definition": "A canonical synthetic aquatic flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth",
+      "hydrodynamic collectors",
+      "substrate or buoyancy logic",
+      "purpose-built morphology",
+      "maintenance and propagation logic"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  }
+]

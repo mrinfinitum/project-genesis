@@ -1,0 +1,79 @@
+{
+  "packageId": "NOVERIS_Visual_Prompt_Library_Volume_PIII_Exotic_Flora",
+  "volumeId": "VOLUME-PIII",
+  "displayName": "Visual Prompt Library Volume PIII \u2014 Exotic Flora",
+  "version": "1.0.0",
+  "generatedAt": "2026-07-31T18:48:37.691602+00:00",
+  "modelProfile": "nano-banana-2",
+  "domain": "plant",
+  "archetypeCount": 16,
+  "outputTypeCount": 20,
+  "promptRecordCount": 320,
+  "files": [
+    {
+      "name": "CODEX_IMPORT_PROMPT.txt",
+      "bytes": 354,
+      "sha256": "e865f6a6b12babf23ce241eee85173dc8cf052feac3518fa54d58cf2ed9a5738"
+    },
+    {
+      "name": "README.md",
+      "bytes": 183,
+      "sha256": "d1a12e211afcc167127e7dd5b81f4ee7c686d1d1d15de5a14246d2a1c08c8ca9"
+    },
+    {
+      "name": "archetypes.json",
+      "bytes": 12336,
+      "sha256": "56b3259ebcd94cde198cff2ad071b2f773ef35712da5783ac373dbc340976f31"
+    },
+    {
+      "name": "camera-profiles.json",
+      "bytes": 129,
+      "sha256": "3ea0bf89ca3d1dbf746527b9d1ce6ef77db656297302fe438f84dbf1281cb20d"
+    },
+    {
+      "name": "lighting-profiles.json",
+      "bytes": 132,
+      "sha256": "3e2dc76a8fa58662c455d5b9ef61b554c13e6e1fc225edc634288667dcab798d"
+    },
+    {
+      "name": "negative-prompt-library.json",
+      "bytes": 428,
+      "sha256": "7c1095b9de462e64505a8986faf887520209faa658659fc9d66ea5054ef88e84"
+    },
+    {
+      "name": "output-types.json",
+      "bytes": 3529,
+      "sha256": "9201e451c02667c74cd6b86f0b3fbe810e741373904d35efe75f0ca50bf5e4c5"
+    },
+    {
+      "name": "prompt-library.csv",
+      "bytes": 835503,
+      "sha256": "8cb55c542b6855d40657511d2da2e4b4779e56dbeac0dc1545140d16837f8558"
+    },
+    {
+      "name": "prompt-library.json",
+      "bytes": 1949710,
+      "sha256": "036835da06d31a6f7c78a19098eae102a2fd615ee47534cef8126c5f8b2a9bb3"
+    },
+    {
+      "name": "prompt-library.jsonl",
+      "bytes": 1875188,
+      "sha256": "7c4b9988b5c50c506c667b32ea272c8bb2a11186cb525073225850da6f6a7d58"
+    },
+    {
+      "name": "prompt-record.schema.json",
+      "bytes": 306,
+      "sha256": "d172c02a42b77188815af3d0bbbee94893831bff73918e7c43f02c60d81c6b40"
+    },
+    {
+      "name": "prompt-variables.json",
+      "bytes": 339,
+      "sha256": "6d4155a6db42d199e83cce3cd26dab711737228a7a98f1bc40074dbe5845ed19"
+    },
+    {
+      "name": "style-profiles.json",
+      "bytes": 98,
+      "sha256": "7396e768b6832c39f1d95ce40c12e65163b75e73b468642fc02aacab920a97e9"
+    }
+  ]
+}

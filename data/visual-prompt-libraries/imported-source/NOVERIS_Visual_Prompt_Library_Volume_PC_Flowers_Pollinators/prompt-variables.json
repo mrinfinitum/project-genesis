@@ -1,0 +1,21 @@
+{
+  "variables": [
+    "canonicalId",
+    "displayName",
+    "scientificName",
+    "originPlanet",
+    "planetType",
+    "biome",
+    "gravity",
+    "atmosphere",
+    "climate",
+    "temperatureRange",
+    "sizeScale",
+    "coloration",
+    "materials",
+    "distinctiveFeatures",
+    "lockedTraits",
+    "rarity",
+    "artDirection"
+  ]
+}

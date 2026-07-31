@@ -1,0 +1,194 @@
+[
+  {
+    "archetypeId": "PLT-PV-001-GIANT-FLORA",
+    "name": "Giant Flora",
+    "definition": "A canonical giant flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PV-002-ANCIENT-LIVING-FLORA",
+    "name": "Ancient Living Flora",
+    "definition": "A canonical ancient living flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PV-003-FOSSIL-FLORA",
+    "name": "Fossil Flora",
+    "definition": "A canonical fossil flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PV-004-EXTINCT-TREE",
+    "name": "Extinct Tree",
+    "definition": "A canonical extinct tree designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PV-005-EXTINCT-FLOWER",
+    "name": "Extinct Flower",
+    "definition": "A canonical extinct flower designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PV-006-EXTINCT-AQUATIC-FLORA",
+    "name": "Extinct Aquatic Flora",
+    "definition": "A canonical extinct aquatic flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth",
+      "hydrodynamic collectors",
+      "substrate or buoyancy logic"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PV-007-PLANETARY-KEYSTONE-FLORA",
+    "name": "Planetary Keystone Flora",
+    "definition": "A canonical planetary keystone flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PV-008-FOREST-SUPERORGANISM",
+    "name": "Forest Superorganism",
+    "definition": "A canonical forest superorganism designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PV-009-COLONIAL-FLORA",
+    "name": "Colonial Flora",
+    "definition": "A canonical colonial flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PV-010-MOBILE-SEED-ORGANISM",
+    "name": "Mobile Seed Organism",
+    "definition": "A canonical mobile seed organism designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  }
+]

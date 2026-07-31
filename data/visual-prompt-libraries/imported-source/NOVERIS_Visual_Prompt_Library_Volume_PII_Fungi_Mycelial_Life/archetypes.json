@@ -1,0 +1,315 @@
+[
+  {
+    "archetypeId": "PLT-PII-001-MUSHROOM-FORM-FUNGUS",
+    "name": "Mushroom-Form Fungus",
+    "definition": "A canonical mushroom-form fungus designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PII-002-SHELF-FUNGUS",
+    "name": "Shelf Fungus",
+    "definition": "A canonical shelf fungus designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PII-003-PUFF-FUNGUS",
+    "name": "Puff Fungus",
+    "definition": "A canonical puff fungus designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PII-004-SPORE-TOWER-FUNGUS",
+    "name": "Spore Tower Fungus",
+    "definition": "A canonical spore tower fungus designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PII-005-MYCELIAL-COLONY",
+    "name": "Mycelial Colony",
+    "definition": "A canonical mycelial colony designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PII-006-PARASITIC-FUNGUS",
+    "name": "Parasitic Fungus",
+    "definition": "A canonical parasitic fungus designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PII-007-SYMBIOTIC-FUNGUS",
+    "name": "Symbiotic Fungus",
+    "definition": "A canonical symbiotic fungus designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PII-008-AQUATIC-FUNGUS",
+    "name": "Aquatic Fungus",
+    "definition": "A canonical aquatic fungus designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth",
+      "hydrodynamic collectors",
+      "substrate or buoyancy logic"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PII-009-CAVE-FUNGUS",
+    "name": "Cave Fungus",
+    "definition": "A canonical cave fungus designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PII-010-POLAR-FUNGUS",
+    "name": "Polar Fungus",
+    "definition": "A canonical polar fungus designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PII-011-DESERT-FUNGUS",
+    "name": "Desert Fungus",
+    "definition": "A canonical desert fungus designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PII-012-GIANT-FUNGUS",
+    "name": "Giant Fungus",
+    "definition": "A canonical giant fungus designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PII-013-MICRO-FUNGUS",
+    "name": "Micro Fungus",
+    "definition": "A canonical micro fungus designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PII-014-CRYSTAL-FUNGUS",
+    "name": "Crystal Fungus",
+    "definition": "A canonical crystal fungus designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth",
+      "coherent lattice growth",
+      "geochemical exchange"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PII-015-ENERGY-FUNGUS",
+    "name": "Energy Fungus",
+    "definition": "A canonical energy fungus designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth",
+      "stable field anchoring",
+      "controlled luminosity",
+      "persistent growth grammar"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PII-016-SYNTHETIC-FUNGUS",
+    "name": "Synthetic Fungus",
+    "definition": "A canonical synthetic fungus designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth",
+      "purpose-built morphology",
+      "maintenance and propagation logic"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  }
+]

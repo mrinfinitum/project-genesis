@@ -14,6 +14,96 @@
       "derivedRole": "studio-production-variants"
     },
     {
+      "id": "NOVERIS_Visual_Prompt_Library_Volume_IC_Reptilian_Dinosaurian_Creatures",
+      "volumeId": "VOLUME-IC",
+      "displayName": "Visual Prompt Library Volume IC — Reptilian & Dinosaurian Creatures",
+      "version": "1.0.0",
+      "modelProfile": "nano-banana-2",
+      "promptRecordCount": 486,
+      "sourcePath": "NOVERIS_Visual_Prompt_Library_Volume_IC_Reptilian_Dinosaurian_Creatures",
+      "sourceRole": "canonical-authored-import"
+    },
+    {
+      "id": "NOVERIS_Visual_Prompt_Library_Volume_ID_Amphibian_Creatures",
+      "volumeId": "VOLUME-ID",
+      "displayName": "Visual Prompt Library Volume ID — Amphibian Creatures",
+      "version": "1.0.0",
+      "modelProfile": "nano-banana-2",
+      "promptRecordCount": 342,
+      "sourcePath": "NOVERIS_Visual_Prompt_Library_Volume_ID_Amphibian_Creatures",
+      "sourceRole": "canonical-authored-import"
+    },
+    {
+      "id": "NOVERIS_Visual_Prompt_Library_Volume_IE_Fishlike_Aquatic_Creatures",
+      "volumeId": "VOLUME-IE",
+      "displayName": "Visual Prompt Library Volume IE — Fishlike & Aquatic Creatures",
+      "version": "1.0.0",
+      "modelProfile": "nano-banana-2",
+      "promptRecordCount": 396,
+      "sourcePath": "NOVERIS_Visual_Prompt_Library_Volume_IE_Fishlike_Aquatic_Creatures",
+      "sourceRole": "canonical-authored-import"
+    },
+    {
+      "id": "NOVERIS_Visual_Prompt_Library_Volume_IF_Arthropods_Insectoids_Arachnids",
+      "volumeId": "VOLUME-IF",
+      "displayName": "Visual Prompt Library Volume IF — Arthropods, Insectoids & Arachnids",
+      "version": "1.0.0",
+      "modelProfile": "nano-banana-2",
+      "promptRecordCount": 432,
+      "sourcePath": "NOVERIS_Visual_Prompt_Library_Volume_IF_Arthropods_Insectoids_Arachnids",
+      "sourceRole": "canonical-authored-import"
+    },
+    {
+      "id": "NOVERIS_Visual_Prompt_Library_Volume_IG_Crustaceans_Molluscoids_Cephalopods",
+      "volumeId": "VOLUME-IG",
+      "displayName": "Visual Prompt Library Volume IG — Crustaceans, Molluscoids & Cephalopods",
+      "version": "1.0.0",
+      "modelProfile": "nano-banana-2",
+      "promptRecordCount": 324,
+      "sourcePath": "NOVERIS_Visual_Prompt_Library_Volume_IG_Crustaceans_Molluscoids_Cephalopods",
+      "sourceRole": "canonical-authored-import"
+    },
+    {
+      "id": "NOVERIS_Visual_Prompt_Library_Volume_IH_Wormlike_Jellyform_Echinoderm_Like_Creatures",
+      "volumeId": "VOLUME-IH",
+      "displayName": "Visual Prompt Library Volume IH — Wormlike, Jellyform & Echinoderm-Like Creatures",
+      "version": "1.0.0",
+      "modelProfile": "nano-banana-2",
+      "promptRecordCount": 288,
+      "sourcePath": "NOVERIS_Visual_Prompt_Library_Volume_IH_Wormlike_Jellyform_Echinoderm_Like_Creatures",
+      "sourceRole": "canonical-authored-import"
+    },
+    {
+      "id": "NOVERIS_Visual_Prompt_Library_Volume_II_Megafauna_Microfauna_Colonial_Organisms",
+      "volumeId": "VOLUME-II",
+      "displayName": "Visual Prompt Library Volume II — Megafauna, Microfauna & Colonial Organisms",
+      "version": "1.0.0",
+      "modelProfile": "nano-banana-2",
+      "promptRecordCount": 270,
+      "sourcePath": "NOVERIS_Visual_Prompt_Library_Volume_II_Megafauna_Microfauna_Colonial_Organisms",
+      "sourceRole": "canonical-authored-import"
+    },
+    {
+      "id": "NOVERIS_Visual_Prompt_Library_Volume_III_Exotic_Biological_Life",
+      "volumeId": "VOLUME-III",
+      "displayName": "Visual Prompt Library Volume III — Exotic Biological Life",
+      "version": "1.0.0",
+      "modelProfile": "nano-banana-2",
+      "promptRecordCount": 234,
+      "sourcePath": "NOVERIS_Visual_Prompt_Library_Volume_III_Exotic_Biological_Life",
+      "sourceRole": "canonical-authored-import"
+    },
+    {
+      "id": "NOVERIS_Visual_Prompt_Library_Volume_IV_Energy_Field_Based_Life",
+      "volumeId": "VOLUME-IV",
+      "displayName": "Visual Prompt Library Volume IV — Energy & Field-Based Life",
+      "version": "1.0.0",
+      "modelProfile": "nano-banana-2",
+      "promptRecordCount": 180,
+      "sourcePath": "NOVERIS_Visual_Prompt_Library_Volume_IV_Energy_Field_Based_Life",
+      "sourceRole": "canonical-authored-import"
+    },
+    {
       "id": "NOVERIS_Visual_Prompt_Library_Volume_PA_Trees",
       "volumeId": "VOLUME-PA",
       "displayName": "Visual Prompt Library Volume PA - Trees",
@@ -31,6 +121,126 @@
       "modelProfile": "nano-banana-2",
       "promptRecordCount": 572,
       "sourcePath": "NOVERIS_Visual_Prompt_Library_Volume_PB_Shrubs_Bushes_Ground_Cover",
+      "sourceRole": "canonical-authored-import"
+    },
+    {
+      "id": "NOVERIS_Visual_Prompt_Library_Volume_PC_Flowers_Pollinators",
+      "volumeId": "VOLUME-PC",
+      "displayName": "Visual Prompt Library Volume PC — Flowers & Pollinators",
+      "version": "1.0.0",
+      "modelProfile": "nano-banana-2",
+      "promptRecordCount": 520,
+      "sourcePath": "NOVERIS_Visual_Prompt_Library_Volume_PC_Flowers_Pollinators",
+      "sourceRole": "canonical-authored-import"
+    },
+    {
+      "id": "NOVERIS_Visual_Prompt_Library_Volume_PD_Grasses_Ferns_Mosses_Lichens",
+      "volumeId": "VOLUME-PD",
+      "displayName": "Visual Prompt Library Volume PD — Grasses, Ferns, Mosses & Lichens",
+      "version": "1.0.0",
+      "modelProfile": "nano-banana-2",
+      "promptRecordCount": 380,
+      "sourcePath": "NOVERIS_Visual_Prompt_Library_Volume_PD_Grasses_Ferns_Mosses_Lichens",
+      "sourceRole": "canonical-authored-import"
+    },
+    {
+      "id": "NOVERIS_Visual_Prompt_Library_Volume_PE_Vines_Epiphytes_Climbing_Flora",
+      "volumeId": "VOLUME-PE",
+      "displayName": "Visual Prompt Library Volume PE — Vines, Epiphytes & Climbing Flora",
+      "version": "1.0.0",
+      "modelProfile": "nano-banana-2",
+      "promptRecordCount": 300,
+      "sourcePath": "NOVERIS_Visual_Prompt_Library_Volume_PE_Vines_Epiphytes_Climbing_Flora",
+      "sourceRole": "canonical-authored-import"
+    },
+    {
+      "id": "NOVERIS_Visual_Prompt_Library_Volume_PF_Aquatic_Plants",
+      "volumeId": "VOLUME-PF",
+      "displayName": "Visual Prompt Library Volume PF — Aquatic Plants",
+      "version": "1.0.0",
+      "modelProfile": "nano-banana-2",
+      "promptRecordCount": 300,
+      "sourcePath": "NOVERIS_Visual_Prompt_Library_Volume_PF_Aquatic_Plants",
+      "sourceRole": "canonical-authored-import"
+    },
+    {
+      "id": "NOVERIS_Visual_Prompt_Library_Volume_PG_Succulents_Cacti_Extremophytes",
+      "volumeId": "VOLUME-PG",
+      "displayName": "Visual Prompt Library Volume PG — Succulents, Cacti & Extremophytes",
+      "version": "1.0.0",
+      "modelProfile": "nano-banana-2",
+      "promptRecordCount": 260,
+      "sourcePath": "NOVERIS_Visual_Prompt_Library_Volume_PG_Succulents_Cacti_Extremophytes",
+      "sourceRole": "canonical-authored-import"
+    },
+    {
+      "id": "NOVERIS_Visual_Prompt_Library_Volume_PH_Carnivorous_Parasitic_Symbiotic_Plants",
+      "volumeId": "VOLUME-PH",
+      "displayName": "Visual Prompt Library Volume PH — Carnivorous, Parasitic & Symbiotic Plants",
+      "version": "1.0.0",
+      "modelProfile": "nano-banana-2",
+      "promptRecordCount": 260,
+      "sourcePath": "NOVERIS_Visual_Prompt_Library_Volume_PH_Carnivorous_Parasitic_Symbiotic_Plants",
+      "sourceRole": "canonical-authored-import"
+    },
+    {
+      "id": "NOVERIS_Visual_Prompt_Library_Volume_PII_Fungi_Mycelial_Life",
+      "volumeId": "VOLUME-PII",
+      "displayName": "Visual Prompt Library Volume PII — Fungi & Mycelial Life",
+      "version": "1.0.0",
+      "modelProfile": "nano-banana-2",
+      "promptRecordCount": 320,
+      "sourcePath": "NOVERIS_Visual_Prompt_Library_Volume_PII_Fungi_Mycelial_Life",
+      "sourceRole": "canonical-authored-import"
+    },
+    {
+      "id": "NOVERIS_Visual_Prompt_Library_Volume_PIII_Exotic_Flora",
+      "volumeId": "VOLUME-PIII",
+      "displayName": "Visual Prompt Library Volume PIII — Exotic Flora",
+      "version": "1.0.0",
+      "modelProfile": "nano-banana-2",
+      "promptRecordCount": 320,
+      "sourcePath": "NOVERIS_Visual_Prompt_Library_Volume_PIII_Exotic_Flora",
+      "sourceRole": "canonical-authored-import"
+    },
+    {
+      "id": "NOVERIS_Visual_Prompt_Library_Volume_PIV_Artificial_Engineered_Flora",
+      "volumeId": "VOLUME-PIV",
+      "displayName": "Visual Prompt Library Volume PIV — Artificial & Engineered Flora",
+      "version": "1.0.0",
+      "modelProfile": "nano-banana-2",
+      "promptRecordCount": 300,
+      "sourcePath": "NOVERIS_Visual_Prompt_Library_Volume_PIV_Artificial_Engineered_Flora",
+      "sourceRole": "canonical-authored-import"
+    },
+    {
+      "id": "NOVERIS_Visual_Prompt_Library_Volume_PV_Giant_Ancient_Extinct_Flora",
+      "volumeId": "VOLUME-PV",
+      "displayName": "Visual Prompt Library Volume PV — Giant, Ancient & Extinct Flora",
+      "version": "1.0.0",
+      "modelProfile": "nano-banana-2",
+      "promptRecordCount": 200,
+      "sourcePath": "NOVERIS_Visual_Prompt_Library_Volume_PV_Giant_Ancient_Extinct_Flora",
+      "sourceRole": "canonical-authored-import"
+    },
+    {
+      "id": "NOVERIS_Visual_Prompt_Library_Volume_V_Artificial_Life",
+      "volumeId": "VOLUME-V",
+      "displayName": "Visual Prompt Library Volume V — Artificial Life",
+      "version": "1.0.0",
+      "modelProfile": "nano-banana-2",
+      "promptRecordCount": 180,
+      "sourcePath": "NOVERIS_Visual_Prompt_Library_Volume_V_Artificial_Life",
+      "sourceRole": "canonical-authored-import"
+    },
+    {
+      "id": "NOVERIS_Visual_Prompt_Library_Volume_VI_Sapient_Collective_Species",
+      "volumeId": "VOLUME-VI",
+      "displayName": "Visual Prompt Library Volume VI — Sapient & Collective Species",
+      "version": "1.0.0",
+      "modelProfile": "nano-banana-2",
+      "promptRecordCount": 180,
+      "sourcePath": "NOVERIS_Visual_Prompt_Library_Volume_VI_Sapient_Collective_Species",
       "sourceRole": "canonical-authored-import"
     }
   ]

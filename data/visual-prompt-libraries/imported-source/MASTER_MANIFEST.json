@@ -1,0 +1,204 @@
+{
+  "packageId": "NOVERIS_Visual_Prompt_Library_All_Remaining_Volumes",
+  "version": "1.0.0",
+  "generatedAt": "2026-07-31T18:48:37.858814+00:00",
+  "completedVolumesNotDuplicated": {
+    "IA": "Mammalian Creatures",
+    "IB": "Avian & Flying Creatures",
+    "PA": "Trees",
+    "PB": "Shrubs, Bushes & Ground Cover"
+  },
+  "includedVolumeCount": 21,
+  "includedPromptCount": 6472,
+  "volumes": [
+    {
+      "volumeId": "IC",
+      "displayName": "Reptilian & Dinosaurian Creatures",
+      "domain": "creature",
+      "archetypeCount": 27,
+      "outputCount": 18,
+      "promptCount": 486,
+      "zip": "NOVERIS_Visual_Prompt_Library_Volume_IC_Reptilian_Dinosaurian_Creatures_v1.0.0.zip"
+    },
+    {
+      "volumeId": "ID",
+      "displayName": "Amphibian Creatures",
+      "domain": "creature",
+      "archetypeCount": 19,
+      "outputCount": 18,
+      "promptCount": 342,
+      "zip": "NOVERIS_Visual_Prompt_Library_Volume_ID_Amphibian_Creatures_v1.0.0.zip"
+    },
+    {
+      "volumeId": "IE",
+      "displayName": "Fishlike & Aquatic Creatures",
+      "domain": "creature",
+      "archetypeCount": 22,
+      "outputCount": 18,
+      "promptCount": 396,
+      "zip": "NOVERIS_Visual_Prompt_Library_Volume_IE_Fishlike_Aquatic_Creatures_v1.0.0.zip"
+    },
+    {
+      "volumeId": "IF",
+      "displayName": "Arthropods, Insectoids & Arachnids",
+      "domain": "creature",
+      "archetypeCount": 24,
+      "outputCount": 18,
+      "promptCount": 432,
+      "zip": "NOVERIS_Visual_Prompt_Library_Volume_IF_Arthropods_Insectoids_Arachnids_v1.0.0.zip"
+    },
+    {
+      "volumeId": "IG",
+      "displayName": "Crustaceans, Molluscoids & Cephalopods",
+      "domain": "creature",
+      "archetypeCount": 18,
+      "outputCount": 18,
+      "promptCount": 324,
+      "zip": "NOVERIS_Visual_Prompt_Library_Volume_IG_Crustaceans_Molluscoids_Cephalopods_v1.0.0.zip"
+    },
+    {
+      "volumeId": "IH",
+      "displayName": "Wormlike, Jellyform & Echinoderm-Like Creatures",
+      "domain": "creature",
+      "archetypeCount": 16,
+      "outputCount": 18,
+      "promptCount": 288,
+      "zip": "NOVERIS_Visual_Prompt_Library_Volume_IH_Wormlike_Jellyform_Echinoderm_Like_Creatures_v1.0.0.zip"
+    },
+    {
+      "volumeId": "II",
+      "displayName": "Megafauna, Microfauna & Colonial Organisms",
+      "domain": "creature",
+      "archetypeCount": 15,
+      "outputCount": 18,
+      "promptCount": 270,
+      "zip": "NOVERIS_Visual_Prompt_Library_Volume_II_Megafauna_Microfauna_Colonial_Organisms_v1.0.0.zip"
+    },
+    {
+      "volumeId": "III",
+      "displayName": "Exotic Biological Life",
+      "domain": "creature",
+      "archetypeCount": 13,
+      "outputCount": 18,
+      "promptCount": 234,
+      "zip": "NOVERIS_Visual_Prompt_Library_Volume_III_Exotic_Biological_Life_v1.0.0.zip"
+    },
+    {
+      "volumeId": "IV",
+      "displayName": "Energy & Field-Based Life",
+      "domain": "creature",
+      "archetypeCount": 10,
+      "outputCount": 18,
+      "promptCount": 180,
+      "zip": "NOVERIS_Visual_Prompt_Library_Volume_IV_Energy_Field_Based_Life_v1.0.0.zip"
+    },
+    {
+      "volumeId": "V",
+      "displayName": "Artificial Life",
+      "domain": "creature",
+      "archetypeCount": 10,
+      "outputCount": 18,
+      "promptCount": 180,
+      "zip": "NOVERIS_Visual_Prompt_Library_Volume_V_Artificial_Life_v1.0.0.zip"
+    },
+    {
+      "volumeId": "VI",
+      "displayName": "Sapient & Collective Species",
+      "domain": "creature",
+      "archetypeCount": 10,
+      "outputCount": 18,
+      "promptCount": 180,
+      "zip": "NOVERIS_Visual_Prompt_Library_Volume_VI_Sapient_Collective_Species_v1.0.0.zip"
+    },
+    {
+      "volumeId": "PC",
+      "displayName": "Flowers & Pollinators",
+      "domain": "plant",
+      "archetypeCount": 26,
+      "outputCount": 20,
+      "promptCount": 520,
+      "zip": "NOVERIS_Visual_Prompt_Library_Volume_PC_Flowers_Pollinators_v1.0.0.zip"
+    },
+    {
+      "volumeId": "PD",
+      "displayName": "Grasses, Ferns, Mosses & Lichens",
+      "domain": "plant",
+      "archetypeCount": 19,
+      "outputCount": 20,
+      "promptCount": 380,
+      "zip": "NOVERIS_Visual_Prompt_Library_Volume_PD_Grasses_Ferns_Mosses_Lichens_v1.0.0.zip"
+    },
+    {
+      "volumeId": "PE",
+      "displayName": "Vines, Epiphytes & Climbing Flora",
+      "domain": "plant",
+      "archetypeCount": 15,
+      "outputCount": 20,
+      "promptCount": 300,
+      "zip": "NOVERIS_Visual_Prompt_Library_Volume_PE_Vines_Epiphytes_Climbing_Flora_v1.0.0.zip"
+    },
+    {
+      "volumeId": "PF",
+      "displayName": "Aquatic Plants",
+      "domain": "plant",
+      "archetypeCount": 15,
+      "outputCount": 20,
+      "promptCount": 300,
+      "zip": "NOVERIS_Visual_Prompt_Library_Volume_PF_Aquatic_Plants_v1.0.0.zip"
+    },
+    {
+      "volumeId": "PG",
+      "displayName": "Succulents, Cacti & Extremophytes",
+      "domain": "plant",
+      "archetypeCount": 13,
+      "outputCount": 20,
+      "promptCount": 260,
+      "zip": "NOVERIS_Visual_Prompt_Library_Volume_PG_Succulents_Cacti_Extremophytes_v1.0.0.zip"
+    },
+    {
+      "volumeId": "PH",
+      "displayName": "Carnivorous, Parasitic & Symbiotic Plants",
+      "domain": "plant",
+      "archetypeCount": 13,
+      "outputCount": 20,
+      "promptCount": 260,
+      "zip": "NOVERIS_Visual_Prompt_Library_Volume_PH_Carnivorous_Parasitic_Symbiotic_Plants_v1.0.0.zip"
+    },
+    {
+      "volumeId": "PII",
+      "displayName": "Fungi & Mycelial Life",
+      "domain": "plant",
+      "archetypeCount": 16,
+      "outputCount": 20,
+      "promptCount": 320,
+      "zip": "NOVERIS_Visual_Prompt_Library_Volume_PII_Fungi_Mycelial_Life_v1.0.0.zip"
+    },
+    {
+      "volumeId": "PIII",
+      "displayName": "Exotic Flora",
+      "domain": "plant",
+      "archetypeCount": 16,
+      "outputCount": 20,
+      "promptCount": 320,
+      "zip": "NOVERIS_Visual_Prompt_Library_Volume_PIII_Exotic_Flora_v1.0.0.zip"
+    },
+    {
+      "volumeId": "PIV",
+      "displayName": "Artificial & Engineered Flora",
+      "domain": "plant",
+      "archetypeCount": 15,
+      "outputCount": 20,
+      "promptCount": 300,
+      "zip": "NOVERIS_Visual_Prompt_Library_Volume_PIV_Artificial_Engineered_Flora_v1.0.0.zip"
+    },
+    {
+      "volumeId": "PV",
+      "displayName": "Giant, Ancient & Extinct Flora",
+      "domain": "plant",
+      "archetypeCount": 10,
+      "outputCount": 20,
+      "promptCount": 200,
+      "zip": "NOVERIS_Visual_Prompt_Library_Volume_PV_Giant_Ancient_Extinct_Flora_v1.0.0.zip"
+    }
+  ]
+}

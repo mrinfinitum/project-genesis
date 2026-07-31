@@ -1,0 +1,79 @@
+{
+  "packageId": "NOVERIS_Visual_Prompt_Library_Volume_IC_Reptilian_Dinosaurian_Creatures",
+  "volumeId": "VOLUME-IC",
+  "displayName": "Visual Prompt Library Volume IC \u2014 Reptilian & Dinosaurian Creatures",
+  "version": "1.0.0",
+  "generatedAt": "2026-07-31T18:48:36.555874+00:00",
+  "modelProfile": "nano-banana-2",
+  "domain": "creature",
+  "archetypeCount": 27,
+  "outputTypeCount": 18,
+  "promptRecordCount": 486,
+  "files": [
+    {
+      "name": "CODEX_IMPORT_PROMPT.txt",
+      "bytes": 392,
+      "sha256": "c2e8ba8cc488a274f0de2c13c8606eb01dac084c148bf08636daf55b37f2ae57"
+    },
+    {
+      "name": "README.md",
+      "bytes": 202,
+      "sha256": "c32fc5d90538c29c411fbfaa7cb706aa7597aa51f5a4a477d67c863e3ae30d5e"
+    },
+    {
+      "name": "archetypes.json",
+      "bytes": 19444,
+      "sha256": "3c222aa2b2fa6118181dafe838bc8f69e55a3b983474ded6db066039a2b51df3"
+    },
+    {
+      "name": "camera-profiles.json",
+      "bytes": 129,
+      "sha256": "3ea0bf89ca3d1dbf746527b9d1ce6ef77db656297302fe438f84dbf1281cb20d"
+    },
+    {
+      "name": "lighting-profiles.json",
+      "bytes": 132,
+      "sha256": "3e2dc76a8fa58662c455d5b9ef61b554c13e6e1fc225edc634288667dcab798d"
+    },
+    {
+      "name": "negative-prompt-library.json",
+      "bytes": 428,
+      "sha256": "7c1095b9de462e64505a8986faf887520209faa658659fc9d66ea5054ef88e84"
+    },
+    {
+      "name": "output-types.json",
+      "bytes": 3167,
+      "sha256": "2bd83ce3ffade5a16513d222ec53257ba3aca07a5fea8e4f317022ffa84742b7"
+    },
+    {
+      "name": "prompt-library.csv",
+      "bytes": 1246426,
+      "sha256": "40a5f255c8e1328e10f6b51a399983a0c85f0398977b667faf1570d9fb6248ac"
+    },
+    {
+      "name": "prompt-library.json",
+      "bytes": 2921654,
+      "sha256": "2fba05b45d4c2d455b6a3b2f0878c71299f8e1dfa34e43aeda3cef2199a5cb2d"
+    },
+    {
+      "name": "prompt-library.jsonl",
+      "bytes": 2811006,
+      "sha256": "35add67b9215c7ed52220893e23da93adb4f9f79919b23eb9075058669037155"
+    },
+    {
+      "name": "prompt-record.schema.json",
+      "bytes": 304,
+      "sha256": "a46cd1779003041704b265099d42bed9a0f2d6edb495ecf80c37a5f7a95dd498"
+    },
+    {
+      "name": "prompt-variables.json",
+      "bytes": 339,
+      "sha256": "6d4155a6db42d199e83cce3cd26dab711737228a7a98f1bc40074dbe5845ed19"
+    },
+    {
+      "name": "style-profiles.json",
+      "bytes": 98,
+      "sha256": "7396e768b6832c39f1d95ce40c12e65163b75e73b468642fc02aacab920a97e9"
+    }
+  ]
+}

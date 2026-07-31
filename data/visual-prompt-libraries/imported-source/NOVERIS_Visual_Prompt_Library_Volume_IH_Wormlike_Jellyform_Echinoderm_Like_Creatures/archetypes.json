@@ -1,0 +1,315 @@
+[
+  {
+    "archetypeId": "CRE-IH-001-BURROWING-WORMLIKE",
+    "name": "Burrowing Wormlike",
+    "definition": "A canonical burrowing wormlike designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IH-002-AQUATIC-WORMLIKE",
+    "name": "Aquatic Wormlike",
+    "definition": "A canonical aquatic wormlike designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IH-003-PARASITIC-WORMLIKE",
+    "name": "Parasitic Wormlike",
+    "definition": "A canonical parasitic wormlike designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IH-004-GIANT-WORMLIKE",
+    "name": "Giant Wormlike",
+    "definition": "A canonical giant wormlike designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IH-005-MICRO-WORMLIKE",
+    "name": "Micro Wormlike",
+    "definition": "A canonical micro wormlike designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IH-006-FLOATING-JELLYFORM",
+    "name": "Floating Jellyform",
+    "definition": "A canonical floating jellyform designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IH-007-DEEP-OCEAN-JELLYFORM",
+    "name": "Deep-Ocean Jellyform",
+    "definition": "A canonical deep-ocean jellyform designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IH-008-ATMOSPHERIC-JELLYFORM",
+    "name": "Atmospheric Jellyform",
+    "definition": "A canonical atmospheric jellyform designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IH-009-PREDATORY-JELLYFORM",
+    "name": "Predatory Jellyform",
+    "definition": "A canonical predatory jellyform designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IH-010-COLONIAL-JELLYFORM",
+    "name": "Colonial Jellyform",
+    "definition": "A canonical colonial jellyform designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IH-011-BENTHIC-ECHINODERM-LIKE",
+    "name": "Benthic Echinoderm-Like",
+    "definition": "A canonical benthic echinoderm-like designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IH-012-FILTER-FEEDING-ECHINODERM-LIKE",
+    "name": "Filter-Feeding Echinoderm-Like",
+    "definition": "A canonical filter-feeding echinoderm-like designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IH-013-ARMORED-ECHINODERM-LIKE",
+    "name": "Armored Echinoderm-Like",
+    "definition": "A canonical armored echinoderm-like designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IH-014-RADIAL-PREDATOR",
+    "name": "Radial Predator",
+    "definition": "A canonical radial predator designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IH-015-CRYSTAL-JELLYFORM",
+    "name": "Crystal Jellyform",
+    "definition": "A canonical crystal jellyform designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "coherent lattice or mineral biology",
+      "no decorative gemstone pile"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IH-016-ENERGY-JELLYFORM",
+    "name": "Energy Jellyform",
+    "definition": "A canonical energy jellyform designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "stable field topology",
+      "controlled luminosity",
+      "readable nonhumanoid silhouette"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  }
+]

@@ -1,0 +1,327 @@
+[
+  {
+    "archetypeId": "PLT-PIII-001-CRYSTAL-FLORA",
+    "name": "Crystal Flora",
+    "definition": "A canonical crystal flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth",
+      "coherent lattice growth",
+      "geochemical exchange"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PIII-002-SILICON-FLORA",
+    "name": "Silicon Flora",
+    "definition": "A canonical silicon flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth",
+      "coherent lattice growth",
+      "geochemical exchange"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PIII-003-MINERAL-FLORA",
+    "name": "Mineral Flora",
+    "definition": "A canonical mineral flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth",
+      "coherent lattice growth",
+      "geochemical exchange"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PIII-004-PLASMA-FLORA",
+    "name": "Plasma Flora",
+    "definition": "A canonical plasma flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth",
+      "stable field anchoring",
+      "controlled luminosity",
+      "persistent growth grammar"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PIII-005-GAS-FLORA",
+    "name": "Gas Flora",
+    "definition": "A canonical gas flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth",
+      "stable field anchoring",
+      "controlled luminosity",
+      "persistent growth grammar"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PIII-006-ENERGY-FLORA",
+    "name": "Energy Flora",
+    "definition": "A canonical energy flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth",
+      "stable field anchoring",
+      "controlled luminosity",
+      "persistent growth grammar"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PIII-007-ELECTROMAGNETIC-FLORA",
+    "name": "Electromagnetic Flora",
+    "definition": "A canonical electromagnetic flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth",
+      "stable field anchoring",
+      "controlled luminosity",
+      "persistent growth grammar"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PIII-008-PHOTONIC-FLORA",
+    "name": "Photonic Flora",
+    "definition": "A canonical photonic flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth",
+      "stable field anchoring",
+      "controlled luminosity",
+      "persistent growth grammar"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PIII-009-RADIOTROPHIC-FLORA",
+    "name": "Radiotrophic Flora",
+    "definition": "A canonical radiotrophic flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PIII-010-CRYOGENIC-FLORA",
+    "name": "Cryogenic Flora",
+    "definition": "A canonical cryogenic flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PIII-011-METHANE-BASED-FLORA",
+    "name": "Methane-Based Flora",
+    "definition": "A canonical methane-based flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PIII-012-AMMONIA-BASED-FLORA",
+    "name": "Ammonia-Based Flora",
+    "definition": "A canonical ammonia-based flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PIII-013-SULFUR-BASED-FLORA",
+    "name": "Sulfur-Based Flora",
+    "definition": "A canonical sulfur-based flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PIII-014-GEOTHERMAL-FLORA",
+    "name": "Geothermal Flora",
+    "definition": "A canonical geothermal flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PIII-015-VACUUM-FLORA",
+    "name": "Vacuum Flora",
+    "definition": "A canonical vacuum flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "PLT-PIII-016-ORBITAL-FLORA",
+    "name": "Orbital Flora",
+    "definition": "A canonical orbital flora designed as a scientifically plausible plant-like or fungal organism whose anchoring, support, transport, energy capture, growth, reproduction, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "credible anchoring",
+      "coherent support and transport",
+      "functional energy collectors",
+      "reproductive logic",
+      "environment-linked growth"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  }
+]

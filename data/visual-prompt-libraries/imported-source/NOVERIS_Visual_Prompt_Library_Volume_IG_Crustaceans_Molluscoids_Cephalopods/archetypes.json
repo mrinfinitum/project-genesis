@@ -1,0 +1,370 @@
+[
+  {
+    "archetypeId": "CRE-IG-001-COASTAL-CRUSTACEAN",
+    "name": "Coastal Crustacean",
+    "definition": "A canonical coastal crustacean designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IG-002-DEEP-OCEAN-CRUSTACEAN",
+    "name": "Deep-Ocean Crustacean",
+    "definition": "A canonical deep-ocean crustacean designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IG-003-RIVER-CRUSTACEAN",
+    "name": "River Crustacean",
+    "definition": "A canonical river crustacean designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IG-004-BURROWING-CRUSTACEAN",
+    "name": "Burrowing Crustacean",
+    "definition": "A canonical burrowing crustacean designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IG-005-ARMORED-CRUSTACEAN",
+    "name": "Armored Crustacean",
+    "definition": "A canonical armored crustacean designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IG-006-GIANT-CRUSTACEAN",
+    "name": "Giant Crustacean",
+    "definition": "A canonical giant crustacean designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IG-007-SOFT-BODIED-MOLLUSCOID",
+    "name": "Soft-Bodied Molluscoid",
+    "definition": "A canonical soft-bodied molluscoid designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IG-008-SHELLED-MOLLUSCOID",
+    "name": "Shelled Molluscoid",
+    "definition": "A canonical shelled molluscoid designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IG-009-GRAZING-MOLLUSCOID",
+    "name": "Grazing Molluscoid",
+    "definition": "A canonical grazing molluscoid designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IG-010-PREDATORY-MOLLUSCOID",
+    "name": "Predatory Molluscoid",
+    "definition": "A canonical predatory molluscoid designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IG-011-FLOATING-MOLLUSCOID",
+    "name": "Floating Molluscoid",
+    "definition": "A canonical floating molluscoid designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IG-012-INTELLIGENT-CEPHALOPOD",
+    "name": "Intelligent Cephalopod",
+    "definition": "A canonical intelligent cephalopod designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IG-013-AMBUSH-CEPHALOPOD",
+    "name": "Ambush Cephalopod",
+    "definition": "A canonical ambush cephalopod designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IG-014-REEF-CEPHALOPOD",
+    "name": "Reef Cephalopod",
+    "definition": "A canonical reef cephalopod designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IG-015-DEEP-OCEAN-CEPHALOPOD",
+    "name": "Deep-Ocean Cephalopod",
+    "definition": "A canonical deep-ocean cephalopod designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IG-016-COLONIAL-MOLLUSCOID",
+    "name": "Colonial Molluscoid",
+    "definition": "A canonical colonial molluscoid designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IG-017-CRYSTAL-MOLLUSCOID",
+    "name": "Crystal Molluscoid",
+    "definition": "A canonical crystal molluscoid designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "coherent lattice or mineral biology",
+      "no decorative gemstone pile"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-IG-018-SYNTHETIC-CEPHALOPOD",
+    "name": "Synthetic Cephalopod",
+    "definition": "A canonical synthetic cephalopod designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "hydrodynamic form",
+      "pressure and buoyancy adaptation",
+      "purpose-built manufactured anatomy",
+      "no generic humanoid robot default"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  }
+]

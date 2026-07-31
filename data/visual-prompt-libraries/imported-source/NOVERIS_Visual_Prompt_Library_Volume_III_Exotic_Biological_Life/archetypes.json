@@ -1,0 +1,255 @@
+[
+  {
+    "archetypeId": "CRE-III-001-SILICON-BASED-CREATURE",
+    "name": "Silicon-Based Creature",
+    "definition": "A canonical silicon-based creature designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "coherent lattice or mineral biology",
+      "no decorative gemstone pile"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-III-002-CRYSTAL-CREATURE",
+    "name": "Crystal Creature",
+    "definition": "A canonical crystal creature designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "coherent lattice or mineral biology",
+      "no decorative gemstone pile"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-III-003-MINERAL-CREATURE",
+    "name": "Mineral Creature",
+    "definition": "A canonical mineral creature designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale",
+      "coherent lattice or mineral biology",
+      "no decorative gemstone pile"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-III-004-SULFUR-BASED-CREATURE",
+    "name": "Sulfur-Based Creature",
+    "definition": "A canonical sulfur-based creature designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-III-005-METHANE-BASED-CREATURE",
+    "name": "Methane-Based Creature",
+    "definition": "A canonical methane-based creature designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-III-006-AMMONIA-BASED-CREATURE",
+    "name": "Ammonia-Based Creature",
+    "definition": "A canonical ammonia-based creature designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-III-007-CRYOGENIC-CREATURE",
+    "name": "Cryogenic Creature",
+    "definition": "A canonical cryogenic creature designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-III-008-RADIOTROPHIC-CREATURE",
+    "name": "Radiotrophic Creature",
+    "definition": "A canonical radiotrophic creature designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-III-009-GEOTHERMAL-CREATURE",
+    "name": "Geothermal Creature",
+    "definition": "A canonical geothermal creature designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-III-010-VACUUM-ADAPTED-CREATURE",
+    "name": "Vacuum-Adapted Creature",
+    "definition": "A canonical vacuum-adapted creature designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-III-011-ORBITAL-ORGANISM",
+    "name": "Orbital Organism",
+    "definition": "A canonical orbital organism designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-III-012-SYMBIOTIC-COMPOSITE",
+    "name": "Symbiotic Composite",
+    "definition": "A canonical symbiotic composite designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  },
+  {
+    "archetypeId": "CRE-III-013-MYCELIAL-ANIMAL-ANALOG",
+    "name": "Mycelial Animal Analog",
+    "definition": "A canonical mycelial animal analog designed as a scientifically plausible lifeform whose body plan, support system, locomotion, sensing, metabolism, ecology, and environmental adaptations are internally coherent.",
+    "requiredTraits": [
+      "functional anatomy",
+      "credible center of mass",
+      "coherent locomotion",
+      "environment-linked materials",
+      "ecologically plausible scale"
+    ],
+    "avoid": [
+      "generic Earth copy",
+      "unsupported fantasy styling",
+      "traits conflicting with locked canon"
+    ],
+    "status": "canonical",
+    "version": "1.0.0"
+  }
+]

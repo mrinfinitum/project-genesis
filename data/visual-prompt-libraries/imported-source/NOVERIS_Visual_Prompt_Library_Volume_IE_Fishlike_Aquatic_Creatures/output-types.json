@@ -1,0 +1,110 @@
+[
+  {
+    "outputType": "full-body",
+    "name": "Full Body Production Render",
+    "instruction": "complete mature specimen, neutral pose, entire body visible",
+    "aspectRatio": "3:4"
+  },
+  {
+    "outputType": "portrait",
+    "name": "Portrait",
+    "instruction": "head and upper body emphasizing sensory anatomy and defining materials",
+    "aspectRatio": "1:1"
+  },
+  {
+    "outputType": "ortho-front",
+    "name": "Orthographic Front",
+    "instruction": "exact front orthographic view",
+    "aspectRatio": "3:4"
+  },
+  {
+    "outputType": "ortho-side",
+    "name": "Orthographic Side",
+    "instruction": "exact side orthographic view",
+    "aspectRatio": "3:4"
+  },
+  {
+    "outputType": "ortho-rear",
+    "name": "Orthographic Rear",
+    "instruction": "exact rear orthographic view",
+    "aspectRatio": "3:4"
+  },
+  {
+    "outputType": "turnaround",
+    "name": "Turnaround Sheet",
+    "instruction": "front, side, rear, top and underside at identical scale",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "support",
+    "name": "Skeleton or Support Structure",
+    "instruction": "complete mechanical support system and joint logic",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "anatomy",
+    "name": "Internal Anatomy",
+    "instruction": "major respiratory, circulatory, digestive, sensory and reproductive systems",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "lifecycle",
+    "name": "Lifecycle Sheet",
+    "instruction": "reproductive form, juvenile, adult and elder stages",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "variants",
+    "name": "Canonical Variants",
+    "instruction": "regional, seasonal, sex, caste, morph or engineered variants",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "behavior",
+    "name": "Behavior Sheet",
+    "instruction": "idle, feeding, locomotion, social, defense and rest",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "habitat",
+    "name": "Native Habitat Scene",
+    "instruction": "natural behavior in canonical planet and biome",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "discovery",
+    "name": "Discovery Scan",
+    "instruction": "centered scientific scan source without labels",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "icon",
+    "name": "UI Icon",
+    "instruction": "isolated silhouette readable at 64 pixels",
+    "aspectRatio": "1:1"
+  },
+  {
+    "outputType": "scale",
+    "name": "Scale Comparison",
+    "instruction": "side view with adult human silhouette and one-meter bar",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "species-plate",
+    "name": "Master Species Plate",
+    "instruction": "full body, portrait, views, support system, lifecycle, variants, materials and habitat vignette",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "animation",
+    "name": "Animation Reference",
+    "instruction": "idle, locomotion, interaction, feeding, defense, rest and death or shutdown",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "psd",
+    "name": "PSD Extraction Board",
+    "instruction": "isolated whole subject, major parts, silhouette and material references",
+    "aspectRatio": "16:9"
+  }
+]

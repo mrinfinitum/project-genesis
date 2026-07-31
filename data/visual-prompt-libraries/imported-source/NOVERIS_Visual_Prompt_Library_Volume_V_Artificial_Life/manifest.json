@@ -1,0 +1,79 @@
+{
+  "packageId": "NOVERIS_Visual_Prompt_Library_Volume_V_Artificial_Life",
+  "volumeId": "VOLUME-V",
+  "displayName": "Visual Prompt Library Volume V \u2014 Artificial Life",
+  "version": "1.0.0",
+  "generatedAt": "2026-07-31T18:48:37.119143+00:00",
+  "modelProfile": "nano-banana-2",
+  "domain": "creature",
+  "archetypeCount": 10,
+  "outputTypeCount": 18,
+  "promptRecordCount": 180,
+  "files": [
+    {
+      "name": "CODEX_IMPORT_PROMPT.txt",
+      "bytes": 354,
+      "sha256": "26bac0c1afbe9ef025164351caeb7bce0475e26fbd29a662f29eabf37d705d08"
+    },
+    {
+      "name": "README.md",
+      "bytes": 183,
+      "sha256": "e2e3551473bf7188959d80fea248d821c62797f84ba90490ccc3c28a023d9597"
+    },
+    {
+      "name": "archetypes.json",
+      "bytes": 7517,
+      "sha256": "848b8a1387fcd6845cf5787573fb6682d30f132f622b1c21e0149afe29f61563"
+    },
+    {
+      "name": "camera-profiles.json",
+      "bytes": 129,
+      "sha256": "3ea0bf89ca3d1dbf746527b9d1ce6ef77db656297302fe438f84dbf1281cb20d"
+    },
+    {
+      "name": "lighting-profiles.json",
+      "bytes": 132,
+      "sha256": "3e2dc76a8fa58662c455d5b9ef61b554c13e6e1fc225edc634288667dcab798d"
+    },
+    {
+      "name": "negative-prompt-library.json",
+      "bytes": 428,
+      "sha256": "7c1095b9de462e64505a8986faf887520209faa658659fc9d66ea5054ef88e84"
+    },
+    {
+      "name": "output-types.json",
+      "bytes": 3167,
+      "sha256": "2bd83ce3ffade5a16513d222ec53257ba3aca07a5fea8e4f317022ffa84742b7"
+    },
+    {
+      "name": "prompt-library.csv",
+      "bytes": 467475,
+      "sha256": "360be94d608a17d910a41f52d96833e69ba0c4027e632938027a7e4e0b33ba22"
+    },
+    {
+      "name": "prompt-library.json",
+      "bytes": 1090542,
+      "sha256": "022d181364ed67268608cf7f77c43280570d68552f4ea65f437731aaeb2c8ae6"
+    },
+    {
+      "name": "prompt-library.jsonl",
+      "bytes": 1048960,
+      "sha256": "bea717374225444c910580b682bf5a528f0bb066356aa22f393b0dc8c5558283"
+    },
+    {
+      "name": "prompt-record.schema.json",
+      "bytes": 303,
+      "sha256": "ef464bcaf11cb923190d4285072336689acb3504054543b9aaa77ce413321111"
+    },
+    {
+      "name": "prompt-variables.json",
+      "bytes": 339,
+      "sha256": "6d4155a6db42d199e83cce3cd26dab711737228a7a98f1bc40074dbe5845ed19"
+    },
+    {
+      "name": "style-profiles.json",
+      "bytes": 98,
+      "sha256": "7396e768b6832c39f1d95ce40c12e65163b75e73b468642fc02aacab920a97e9"
+    }
+  ]
+}

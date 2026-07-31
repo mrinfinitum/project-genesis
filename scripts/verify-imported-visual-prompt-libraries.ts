@@ -51,7 +51,8 @@ async function main() {
     }
 
     const packageFiles = await readdir(packageRoot);
-    const archetypeFile = packageFiles.find((filename) => filename.endsWith("-archetypes.json"));
+    const archetypeFile = packageFiles.find((filename) => filename === "archetypes.json")
+      ?? packageFiles.find((filename) => filename.endsWith("-archetypes.json"));
     assert(archetypeFile, `${folder}: package is missing an archetypes file.`);
 
     const [archetypes, outputTypes, prompts] = await Promise.all([

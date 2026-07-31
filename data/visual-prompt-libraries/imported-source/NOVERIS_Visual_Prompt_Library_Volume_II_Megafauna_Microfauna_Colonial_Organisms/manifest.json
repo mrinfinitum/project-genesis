@@ -1,0 +1,79 @@
+{
+  "packageId": "NOVERIS_Visual_Prompt_Library_Volume_II_Megafauna_Microfauna_Colonial_Organisms",
+  "volumeId": "VOLUME-II",
+  "displayName": "Visual Prompt Library Volume II \u2014 Megafauna, Microfauna & Colonial Organisms",
+  "version": "1.0.0",
+  "generatedAt": "2026-07-31T18:48:36.978451+00:00",
+  "modelProfile": "nano-banana-2",
+  "domain": "creature",
+  "archetypeCount": 15,
+  "outputTypeCount": 18,
+  "promptRecordCount": 270,
+  "files": [
+    {
+      "name": "CODEX_IMPORT_PROMPT.txt",
+      "bytes": 410,
+      "sha256": "638a3618931ec1cdf289ed5624c0234fdb2badb953557e4b577dc8e36546b968"
+    },
+    {
+      "name": "README.md",
+      "bytes": 211,
+      "sha256": "1770ac0aacef18f3be881af5b5e927df5d44839bbba1add34f27bb3bf33f36fe"
+    },
+    {
+      "name": "archetypes.json",
+      "bytes": 10887,
+      "sha256": "8cf36761351a6a92cf78122fc2f8f22adf111d0cc46449fb9f601db391ec6d13"
+    },
+    {
+      "name": "camera-profiles.json",
+      "bytes": 129,
+      "sha256": "3ea0bf89ca3d1dbf746527b9d1ce6ef77db656297302fe438f84dbf1281cb20d"
+    },
+    {
+      "name": "lighting-profiles.json",
+      "bytes": 132,
+      "sha256": "3e2dc76a8fa58662c455d5b9ef61b554c13e6e1fc225edc634288667dcab798d"
+    },
+    {
+      "name": "negative-prompt-library.json",
+      "bytes": 428,
+      "sha256": "7c1095b9de462e64505a8986faf887520209faa658659fc9d66ea5054ef88e84"
+    },
+    {
+      "name": "output-types.json",
+      "bytes": 3167,
+      "sha256": "2bd83ce3ffade5a16513d222ec53257ba3aca07a5fea8e4f317022ffa84742b7"
+    },
+    {
+      "name": "prompt-library.csv",
+      "bytes": 695512,
+      "sha256": "118132f12a097a970fba5071afbb102509963cca2662e8c430d11dac167816c7"
+    },
+    {
+      "name": "prompt-library.json",
+      "bytes": 1629062,
+      "sha256": "82cb32bd46285aec423560fe873ffde2e458d9b0ad38038503d3548c0206800c"
+    },
+    {
+      "name": "prompt-library.jsonl",
+      "bytes": 1567662,
+      "sha256": "52e213246a88ae9ca543c07c7b75b428852f7169c83b6846946aa5358487ca58"
+    },
+    {
+      "name": "prompt-record.schema.json",
+      "bytes": 304,
+      "sha256": "78607bc989db6bed11e051c40fd6200cb23ab914103baa7478701259284e0b80"
+    },
+    {
+      "name": "prompt-variables.json",
+      "bytes": 339,
+      "sha256": "6d4155a6db42d199e83cce3cd26dab711737228a7a98f1bc40074dbe5845ed19"
+    },
+    {
+      "name": "style-profiles.json",
+      "bytes": 98,
+      "sha256": "7396e768b6832c39f1d95ce40c12e65163b75e73b468642fc02aacab920a97e9"
+    }
+  ]
+}
