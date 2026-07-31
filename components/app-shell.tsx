@@ -29,6 +29,7 @@ import {
   PackageCheck,
   Radar,
   ShieldCheck,
+  Sparkles,
   Star,
   WandSparkles,
   X
@@ -113,6 +114,7 @@ const navigationGroups: NavigationGroup[] = [
     label: "Creative Production",
     icon: Monitor,
     items: [
+      { href: "/visual-production", label: "Visual Production Engine", icon: Sparkles },
       { href: "/creative-production/ui-screens/planet-detail", label: "Planet Detail Screen", icon: Monitor },
       { href: "/creative-production/ui-screens/civilization-operations", label: "Civilization Operations", icon: Monitor }
     ]
