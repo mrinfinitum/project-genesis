@@ -98,7 +98,7 @@ const navigationGroups: NavigationGroup[] = [
     icon: Layers3,
     items: [
       { href: "/universe-layer-generator", label: "Universe Generator", icon: GalleryHorizontalEnd },
-      { href: "/galaxy-layer-generator", label: "Galaxy Environmental Painting", icon: GalleryHorizontalEnd },
+      { href: "/galaxy-layer-generator", label: "Galaxy Generator", icon: GalleryHorizontalEnd },
       { href: "/sector-layer-generator", label: "Galactic Region Generator", icon: GalleryHorizontalEnd },
       { href: "/star-system-layer-generator", label: "Star System Generator", icon: GalleryHorizontalEnd },
       { href: "/planet-generation", label: "Planet Generator", icon: Orbit },
