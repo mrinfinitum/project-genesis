@@ -62,6 +62,7 @@ import {
 import { getLocalBubbleSystems, generatedCelestialBodyRows, generatedStarSystemRows } from "@/lib/universe/fallback-data";
 import { normalizePlanetResourceProfiles, validatePlanetResourceProfiles } from "@/lib/resources/planet-resource-profiles";
 import { ResourceService } from "@/lib/resources/service";
+import { buildCreatureRuntimeData } from "@/lib/life/creature-system";
 import type { GameData, GeneratedPlanet, PlanetResourceProfile } from "@/types/schema";
 
 export type EngineTarget = "roblox" | "unity" | "unreal" | "godot" | "web" | "generic";
@@ -175,6 +176,18 @@ type CanonicalModules = {
   planet_data_screen_contract: typeof planetDataScreenContract;
   celestial_bodies: ExportCelestialBody[];
   planet_opportunity_profiles: typeof canonicalPlanetOpportunityProfiles;
+  species_categories: ReturnType<typeof buildCreatureRuntimeData>["speciesCategories"];
+  species_taxonomy_frameworks: ReturnType<typeof buildCreatureRuntimeData>["speciesTaxonomyFrameworks"];
+  species: ReturnType<typeof buildCreatureRuntimeData>["species"];
+  species_occurrences: ReturnType<typeof buildCreatureRuntimeData>["speciesOccurrences"];
+  species_resource_yields: ReturnType<typeof buildCreatureRuntimeData>["speciesResourceYields"];
+  creature_art_profiles: ReturnType<typeof buildCreatureRuntimeData>["creatureArtProfiles"];
+  creature_animation_profiles: ReturnType<typeof buildCreatureRuntimeData>["creatureAnimationProfiles"];
+  creature_audio_profiles: ReturnType<typeof buildCreatureRuntimeData>["creatureAudioProfiles"];
+  creature_generator_contract: ReturnType<typeof buildCreatureRuntimeData>["creatureGeneratorContract"];
+  creature_prompt_output_types: ReturnType<typeof buildCreatureRuntimeData>["creaturePromptOutputTypes"];
+  creature_prompt_model_profiles: ReturnType<typeof buildCreatureRuntimeData>["creaturePromptModelProfiles"];
+  creature_prompt_type_templates: ReturnType<typeof buildCreatureRuntimeData>["creaturePromptTypeTemplates"];
   discovery_journal: typeof sampleDiscoveryJournal;
   timeline_events: typeof sampleTimelineEvents;
   explorer_schemas: Array<Record<string, unknown>>;
@@ -548,6 +561,7 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
     research: data.research,
     generatedAt: "derived"
   });
+  const creatureRuntime = buildCreatureRuntimeData();
 
   return {
     resource_catalog: ResourceService.catalog,
@@ -579,6 +593,18 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
       opportunity_profile_id: resolvePlanetOpportunityProfileId(body)
     })),
     planet_opportunity_profiles: canonicalPlanetOpportunityProfiles,
+    species_categories: creatureRuntime.speciesCategories,
+    species_taxonomy_frameworks: creatureRuntime.speciesTaxonomyFrameworks,
+    species: creatureRuntime.species,
+    species_occurrences: creatureRuntime.speciesOccurrences,
+    species_resource_yields: creatureRuntime.speciesResourceYields,
+    creature_art_profiles: creatureRuntime.creatureArtProfiles,
+    creature_animation_profiles: creatureRuntime.creatureAnimationProfiles,
+    creature_audio_profiles: creatureRuntime.creatureAudioProfiles,
+    creature_generator_contract: creatureRuntime.creatureGeneratorContract,
+    creature_prompt_output_types: creatureRuntime.creaturePromptOutputTypes,
+    creature_prompt_model_profiles: creatureRuntime.creaturePromptModelProfiles,
+    creature_prompt_type_templates: creatureRuntime.creaturePromptTypeTemplates,
     discovery_journal: sampleDiscoveryJournal,
     timeline_events: sampleTimelineEvents,
     explorer_schemas: [
@@ -1863,6 +1889,18 @@ function compactModules(modules: CanonicalModules) {
     unassigned_planets: modules.unassigned_planets,
     celestial_bodies: modules.celestial_bodies,
     planet_opportunity_profiles: modules.planet_opportunity_profiles,
+    species_categories: modules.species_categories,
+    species_taxonomy_frameworks: modules.species_taxonomy_frameworks,
+    species: modules.species,
+    species_occurrences: modules.species_occurrences,
+    species_resource_yields: modules.species_resource_yields,
+    creature_art_profiles: modules.creature_art_profiles,
+    creature_animation_profiles: modules.creature_animation_profiles,
+    creature_audio_profiles: modules.creature_audio_profiles,
+    creature_generator_contract: modules.creature_generator_contract,
+    creature_prompt_output_types: modules.creature_prompt_output_types,
+    creature_prompt_model_profiles: modules.creature_prompt_model_profiles,
+    creature_prompt_type_templates: modules.creature_prompt_type_templates,
     planet_deep_data_framework: modules.planet_deep_data_framework,
     planet_data_screen_contract: modules.planet_data_screen_contract,
     time_action_contract: modules.time_action_contract,

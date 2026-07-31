@@ -37,6 +37,7 @@
     "verify:environment-layer-generators": "tsx scripts/verify-environment-layer-generators.ts",
     "verify:planet-detail-screen": "tsx scripts/verify-planet-detail-screen.ts",
     "verify:civilization-operations": "tsx scripts/verify-civilization-operations.ts",
+    "verify:creature-system": "tsx scripts/verify-creature-system.ts",
     "generate:psd-game-derivatives": "tsx scripts/generate-psd-game-derivatives.ts",
     "generate:navigation-icons": "tsx scripts/generate-navigation-icon-derivatives.ts",
     "verify:navigation-icons": "tsx scripts/verify-navigation-icons.ts",

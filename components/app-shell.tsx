@@ -13,6 +13,7 @@ import {
   CircleDot,
   Compass,
   Cpu,
+  Dna,
   FileText,
   FlaskConical,
   Gem,
@@ -74,7 +75,8 @@ const navigationGroups: NavigationGroup[] = [
     icon: Compass,
     items: [
       { href: "/discovery", label: "Discovery Library", icon: Compass },
-      { href: "/resource-catalog", label: "Resource Library", icon: Gem }
+      { href: "/resource-catalog", label: "Resource Library", icon: Gem },
+      { href: "/species", label: "Species Library", icon: Dna }
     ]
   },
   {
@@ -111,7 +113,8 @@ const navigationGroups: NavigationGroup[] = [
     icon: Monitor,
     items: [
       { href: "/creative-production/ui-screens/planet-detail", label: "Planet Detail Screen", icon: Monitor },
-      { href: "/creative-production/ui-screens/civilization-operations", label: "Civilization Operations", icon: Monitor }
+      { href: "/creative-production/ui-screens/civilization-operations", label: "Civilization Operations", icon: Monitor },
+      { href: "/creature-generator", label: "Creature Generator", icon: Dna }
     ]
   },
   {

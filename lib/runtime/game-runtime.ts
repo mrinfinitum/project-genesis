@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { civilizationAges } from "@/data/civilization-identity";
+import { civilizationAges, civilizationAlignmentScores } from "@/data/civilization-identity";
 import { aiAgentSafePublishedDefaultArtKeys, defaultAiAgentId, defaultAiAgentVariantId, getAiAgentRuntimeModules } from "@/lib/ai-agents";
 import { aiLibraryAssignmentRoles, aiLibraryCategories, aiLibraryPersonalities, aiLibraryRarities, aiLibraryVoices, canonicalAiLibraryAgents, validateCanonicalAiLibrary } from "@/lib/ai-agents/foundations";
 import { canonicalActionSystem, validateActionSystem } from "@/lib/actions/action-system";
@@ -20,6 +20,7 @@ import { laborGenerationFramework, validateLaborGenerationFramework } from "@/li
 import { resourceEconomyLogisticsFramework, validateResourceEconomyLogisticsFramework } from "@/lib/economy/logistics-framework";
 import { dynamicEventFramework, validateDynamicEventFramework } from "@/lib/events/framework";
 import { environmentComposerRuntimeContract, validateEnvironmentComposerContract } from "@/lib/environment-composer";
+import { buildCreatureRuntimeData, validateCreatureSystem } from "@/lib/life/creature-system";
 import { missionExpeditionFramework, validateMissionExpeditionFramework } from "@/lib/missions/framework";
 import {
   buildEconomyUsageRelationships,
@@ -52,6 +53,7 @@ import { engineEraNavigationOverrides, resolveEraNavigationProfile, supportedEra
 import { galaxyEngineContractVersion, galaxyEnginePresentationContract, validateGalaxyEnginePresentationContract } from "@/lib/runtime/galaxy-engine-contract";
 import { buildMobileClientProfile } from "@/lib/runtime/mobile-client-profiles";
 import { categoryPresentationFor, validateUpgradeCategoryPresentation } from "@/lib/upgrades/category-presentation";
+import { buildUpgradeTreeContract, upgradeTreeAlignmentIds, validateUpgradeTreeContract } from "@/lib/upgrades/tree-contract";
 import type { GameData, ResourceCatalogItem, Upgrade } from "@/types/schema";
 import type {
   AssetDefinition,
@@ -72,7 +74,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 63;
+export const gameRuntimeContentVersion = 64;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -129,6 +131,18 @@ export type RobloxRuntimeExportPayload = {
   missionExpeditionFramework: GameRuntimeData["missionExpeditionFramework"];
   dynamicEventFramework: GameRuntimeData["dynamicEventFramework"];
   environmentComposerContract: GameRuntimeData["environmentComposerContract"];
+  speciesCategories: GameRuntimeData["speciesCategories"];
+  speciesTaxonomyFrameworks: GameRuntimeData["speciesTaxonomyFrameworks"];
+  species: GameRuntimeData["species"];
+  speciesOccurrences: GameRuntimeData["speciesOccurrences"];
+  speciesResourceYields: GameRuntimeData["speciesResourceYields"];
+  creatureArtProfiles: GameRuntimeData["creatureArtProfiles"];
+  creatureAnimationProfiles: GameRuntimeData["creatureAnimationProfiles"];
+  creatureAudioProfiles: GameRuntimeData["creatureAudioProfiles"];
+  creatureGeneratorContract: GameRuntimeData["creatureGeneratorContract"];
+  creaturePromptOutputTypes: GameRuntimeData["creaturePromptOutputTypes"];
+  creaturePromptModelProfiles: GameRuntimeData["creaturePromptModelProfiles"];
+  creaturePromptTypeTemplates: GameRuntimeData["creaturePromptTypeTemplates"];
   planetDetailScreen: NonNullable<GameRuntimeData["planetDetailScreen"]>;
   civilizationOperationsDeck: NonNullable<GameRuntimeData["civilizationOperationsDeck"]>;
   resources: ResourceDefinition[];
@@ -137,6 +151,7 @@ export type RobloxRuntimeExportPayload = {
   buildingClassifications: GameRuntimeData["buildingClassifications"];
   upgradeTabs: Array<UpgradeCategory & { tabId: string; label: string }>;
   upgrades: Array<UpgradeDefinition & { tabId: string }>;
+  upgradeTree: GameRuntimeData["upgradeTree"];
   assets: Array<AssetDefinition & { robloxAssetId: string | null }>;
   balance: BalanceDefinition;
   clientHints: ClientProfile;
@@ -1465,6 +1480,22 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
     buildingClassifications: [...runtimeData.buildingClassifications].sort(byId),
     upgradeCategories: [...runtimeData.upgradeCategories].sort(byOrderThenId),
     upgrades: [...runtimeData.upgrades].sort(byOrderThenId),
+    upgradeTree: {
+      ...runtimeData.upgradeTree,
+      branches: [...runtimeData.upgradeTree.branches].sort(byOrderThenId),
+      eraBands: [...runtimeData.upgradeTree.eraBands].sort(byOrderThenId),
+      eraGates: [...runtimeData.upgradeTree.eraGates].sort(byId),
+      futureCivilizations: [...runtimeData.upgradeTree.futureCivilizations].sort(byId),
+      nodes: [...runtimeData.upgradeTree.nodes].sort(byId).map((node) => ({
+        ...node,
+        prerequisiteNodeIds: [...node.prerequisiteNodeIds].sort(),
+        alignmentInfluences: [...node.alignmentInfluences].sort(byId),
+        futureCivilizationInfluences: [...node.futureCivilizationInfluences].sort(byId),
+        mutuallyExclusiveUpgradeIds: [...node.mutuallyExclusiveUpgradeIds].sort()
+      })),
+      edges: [...runtimeData.upgradeTree.edges].sort(byId),
+      choiceGroups: [...runtimeData.upgradeTree.choiceGroups].sort(byId)
+    },
     assets: [...runtimeData.assets].sort(byId),
     clientProfiles: {
       default: runtimeData.clientProfiles.default,
@@ -2139,6 +2170,19 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
       records: issue.records
     });
   }
+  const creatureValidation = validateCreatureSystem({
+    species: runtimeData.species,
+    occurrences: runtimeData.speciesOccurrences,
+    resourceYields: runtimeData.speciesResourceYields,
+    artProfiles: runtimeData.creatureArtProfiles,
+    animationProfiles: runtimeData.creatureAnimationProfiles,
+    audioProfiles: runtimeData.creatureAudioProfiles,
+    contract: runtimeData.creatureGeneratorContract,
+    resourceIds
+  });
+  for (const issue of creatureValidation.issues) {
+    issues.push({ severity: issue.severity, code: `creature_${issue.code}`, message: issue.message, records: issue.records });
+  }
   if (!runtimeData.planetDetailScreen) {
     issues.push({ severity: "error", code: "planet_detail_screen_missing", message: "Planet Detail Screen runtime contract is required.", records: ["planetDetailScreen"] });
   } else {
@@ -2294,6 +2338,13 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   const categoryPresentationValidation = validateUpgradeCategoryPresentation({ categories: runtimeData.upgradeCategories });
   for (const message of categoryPresentationValidation.issues) {
     issues.push({ severity: "error", code: "upgrade_category_presentation_invalid", message, records: runtimeData.upgradeCategories.map((category) => category.id) });
+  }
+  for (const issue of validateUpgradeTreeContract(runtimeData.upgradeTree, {
+    upgrades: runtimeData.upgrades,
+    eras: runtimeData.eras,
+    alignmentIds: upgradeTreeAlignmentIds(civilizationAlignmentScores)
+  })) {
+    issues.push(issue);
   }
 
   const missingCategories = requiredCategoryIds.filter((id) => !categoryIds.has(id));
@@ -2483,6 +2534,18 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     missionExpeditionFramework: sorted.missionExpeditionFramework,
     dynamicEventFramework: sorted.dynamicEventFramework,
     environmentComposerContract: sorted.environmentComposerContract,
+    speciesCategories: sorted.speciesCategories,
+    speciesTaxonomyFrameworks: sorted.speciesTaxonomyFrameworks,
+    species: sorted.species,
+    speciesOccurrences: sorted.speciesOccurrences,
+    speciesResourceYields: sorted.speciesResourceYields,
+    creatureArtProfiles: sorted.creatureArtProfiles,
+    creatureAnimationProfiles: sorted.creatureAnimationProfiles,
+    creatureAudioProfiles: sorted.creatureAudioProfiles,
+    creatureGeneratorContract: sorted.creatureGeneratorContract,
+    creaturePromptOutputTypes: sorted.creaturePromptOutputTypes,
+    creaturePromptModelProfiles: sorted.creaturePromptModelProfiles,
+    creaturePromptTypeTemplates: sorted.creaturePromptTypeTemplates,
     planetDetailScreen: sorted.planetDetailScreen ?? planetDetailScreenRuntimeContract,
     civilizationOperationsDeck: sorted.civilizationOperationsDeck ?? civilizationOperationsDeckContract,
     resources: sorted.resources,
@@ -2498,6 +2561,7 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
       ...upgrade,
       tabId: upgrade.categoryId
     })),
+    upgradeTree: sorted.upgradeTree,
     assets: sorted.assets.map(publicAsset).map((asset) => ({
       ...asset,
       robloxAssetId: asset.platformMappings.roblox?.assetId ?? null
@@ -2515,6 +2579,7 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
   const resourceIds = new Set(payload.resources.map((resource) => resource.id));
   const economyIds = new Set(payload.economyDefinitions.map((definition) => definition.id));
   const tabIds = new Set(payload.upgradeTabs.map((tab) => tab.tabId));
+  const upgradeIds = new Set(payload.upgrades.map((upgrade) => upgrade.id));
 
   if (!payload.metadata.schemaVersion) {
     issues.push({ severity: "error", code: "metadata_schema_missing", message: "metadata.schemaVersion is required.", records: ["metadata"] });
@@ -2524,6 +2589,14 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
   }
   if (!payload.metadata.contentVersion) {
     issues.push({ severity: "error", code: "metadata_version_missing", message: "metadata.contentVersion is required.", records: ["metadata"] });
+  }
+  if (payload.upgradeTree.nodes.length !== payload.upgrades.length) {
+    issues.push({ severity: "error", code: "roblox_upgrade_tree_incomplete", message: "Roblox upgrade tree must include every canonical upgrade.", records: [String(payload.upgradeTree.nodes.length), String(payload.upgrades.length)] });
+  }
+  for (const node of payload.upgradeTree.nodes) {
+    if (!upgradeIds.has(node.upgradeId)) {
+      issues.push({ severity: "error", code: "roblox_upgrade_tree_reference_missing", message: "Roblox upgrade tree node must resolve to an upgrade.", records: [node.id, node.upgradeId] });
+    }
   }
   if (payload.upgradeTabs.length !== 4) {
     issues.push({ severity: "error", code: "invalid_upgrade_tab_count", message: "Roblox runtime payload must expose exactly four upgrade tabs.", records: payload.upgradeTabs.map((tab) => tab.tabId) });
@@ -2717,6 +2790,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
   const [data, importedAssets, productionOverrides] = await Promise.all([getGameData(), getAppliedGameArtAssets(), getAssetProductionRuntimeOverrides()]);
   const categories = new Map(defaultCategories().map((row) => [row.id, row]));
   const upgrades = data.upgrades.map(upgradeToRuntime);
+  const upgradeTree = buildUpgradeTreeContract(data.upgrades, upgrades);
   const assets = [...data.assets.map(assetToRuntime), ...importedAssets].map((asset) => {
     const override = productionOverrides[asset.id];
     if (!override) return asset;
@@ -2735,6 +2809,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
   const economyBehaviorContracts = buildEconomyBehaviorContracts();
   const buildingResourceEffects = buildBuildingResourceEffects(data);
   const resourceProducerDefinitions = buildResourceProducerDefinitions(data);
+  const creatureRuntime = buildCreatureRuntimeData();
 
   for (const upgrade of upgrades) {
     if (!categories.has(upgrade.categoryId)) {
@@ -2805,6 +2880,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     missionExpeditionFramework,
     dynamicEventFramework,
     environmentComposerContract: environmentComposerRuntimeContract(),
+    ...creatureRuntime,
     planetDetailScreen: planetDetailScreenRuntimeContract,
     civilizationOperationsDeck: civilizationOperationsDeckContract,
     resources: ResourceService.catalog.map(resourceToRuntime),
@@ -2815,6 +2891,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     buildingClassifications: buildBuildingClassifications(data.buildings),
     upgradeCategories: [...categories.values()].sort((left, right) => left.order - right.order),
     upgrades,
+    upgradeTree,
     assets,
     balance: gameConstantsBalance(data.game_constants),
     clientProfiles: defaultClientProfiles()
@@ -2884,11 +2961,24 @@ export async function getGameRuntimeData() {
     missionExpeditionFramework: base.missionExpeditionFramework,
     dynamicEventFramework: base.dynamicEventFramework,
     environmentComposerContract: base.environmentComposerContract,
+    speciesCategories: base.speciesCategories,
+    speciesTaxonomyFrameworks: base.speciesTaxonomyFrameworks,
+    species: base.species,
+    speciesOccurrences: base.speciesOccurrences,
+    speciesResourceYields: base.speciesResourceYields,
+    creatureArtProfiles: base.creatureArtProfiles,
+    creatureAnimationProfiles: base.creatureAnimationProfiles,
+    creatureAudioProfiles: base.creatureAudioProfiles,
+    creatureGeneratorContract: base.creatureGeneratorContract,
+    creaturePromptOutputTypes: base.creaturePromptOutputTypes,
+    creaturePromptModelProfiles: base.creaturePromptModelProfiles,
+    creaturePromptTypeTemplates: base.creaturePromptTypeTemplates,
     planetDetailScreen: base.planetDetailScreen,
     civilizationOperationsDeck: base.civilizationOperationsDeck,
     resourceTaxonomy: base.resourceTaxonomy,
     resourceMigrations: base.resourceMigrations,
     resources: base.resources,
+    upgradeTree: base.upgradeTree,
     balance: {
       ...store.appliedRuntimeData.balance,
       startingPopulation: base.balance.startingPopulation
@@ -3112,6 +3202,18 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     missionExpeditionFramework: base.missionExpeditionFramework,
     dynamicEventFramework: base.dynamicEventFramework,
     environmentComposerContract: base.environmentComposerContract,
+    speciesCategories: base.speciesCategories,
+    speciesTaxonomyFrameworks: base.speciesTaxonomyFrameworks,
+    species: base.species,
+    speciesOccurrences: base.speciesOccurrences,
+    speciesResourceYields: base.speciesResourceYields,
+    creatureArtProfiles: base.creatureArtProfiles,
+    creatureAnimationProfiles: base.creatureAnimationProfiles,
+    creatureAudioProfiles: base.creatureAudioProfiles,
+    creatureGeneratorContract: base.creatureGeneratorContract,
+    creaturePromptOutputTypes: base.creaturePromptOutputTypes,
+    creaturePromptModelProfiles: base.creaturePromptModelProfiles,
+    creaturePromptTypeTemplates: base.creaturePromptTypeTemplates,
     planetDetailScreen: base.planetDetailScreen,
     civilizationOperationsDeck: base.civilizationOperationsDeck,
     resourceTaxonomy: base.resourceTaxonomy,
@@ -3122,6 +3224,7 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     buildingClassifications: base.buildingClassifications,
     upgradeCategories: normalizeImportedCategories(payload, base.upgradeCategories),
     upgrades: normalizeImportedUpgrades(payload, base.upgrades),
+    upgradeTree: base.upgradeTree,
     assets: normalizeImportedAssets(payload, base.assets),
     balance: normalizeBalance(payload, base.balance),
     aiAgents: base.aiAgents,

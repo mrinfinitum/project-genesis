@@ -5,7 +5,7 @@ import { useState } from "react";
 import { ExternalLink, ImageIcon, Paperclip, Trash2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export type GeneratedLibraryCardTone = "galaxy" | "sector" | "system" | "star" | "planet" | "discovery" | "civilization" | "building" | "research" | "neutral";
+export type GeneratedLibraryCardTone = "galaxy" | "sector" | "system" | "star" | "planet" | "discovery" | "civilization" | "building" | "research" | "species" | "neutral";
 
 export type GeneratedLibraryCardRecord = {
   id: string;
@@ -50,6 +50,7 @@ const toneClasses: Record<GeneratedLibraryCardTone, string> = {
   civilization: "from-rose-300/20 via-cyan-300/10 to-amber-300/15",
   building: "from-teal-300/25 via-cyan-300/10 to-slate-900/20",
   research: "from-sky-300/25 via-cyan-300/10 to-indigo-500/15",
+  species: "from-emerald-300/25 via-cyan-300/10 to-amber-500/15",
   neutral: "from-cyan-300/20 via-slate-700/20 to-slate-950/20"
 };
 

@@ -202,6 +202,115 @@ export type UpgradeDefinition = {
   tags: string[];
 };
 
+export type UpgradeTreeInfluence = {
+  id: string;
+  weight: number;
+};
+
+export type UpgradeTreeVisibilityRule = {
+  visibilityMode: "progressive";
+  revealRule: "previous_completed" | "era_reached" | "start";
+  revealDepth: number;
+  mysteryUntilPreviousCompleted: boolean;
+  revealWhenPreviousAvailable: boolean;
+  revealWhenEraReached: boolean;
+  revealWhenResearchCompleted: string[];
+  revealWhenDiscoveryCompleted: string[];
+  previewAsQuestionMark: boolean;
+  allowSilhouette: boolean;
+  allowBranchHint: boolean;
+  hiddenName: boolean;
+  hiddenDescription: boolean;
+  hiddenEffect: boolean;
+  hiddenCost: boolean;
+  hiddenIcon: boolean;
+  revealTransitionId: string;
+};
+
+export type UpgradeTreeNode = {
+  id: string;
+  upgradeId: string;
+  treeBranchId: string;
+  treeEraId: string;
+  sourceEra: string;
+  treeNodeType: "standard_upgrade" | "major_upgrade" | "milestone" | "repeatable_upgrade" | "mastery_upgrade" | "choice_upgrade";
+  treePositionX: number;
+  treePositionY: number;
+  treeWidth: number;
+  treeHeight: number;
+  clusterId: string;
+  importance: "standard" | "major" | "milestone";
+  authoredPositionLocked: boolean;
+  semanticZoomLevel: number;
+  visibility: UpgradeTreeVisibilityRule;
+  prerequisiteNodeIds: string[];
+  alignmentInfluences: UpgradeTreeInfluence[];
+  futureCivilizationInfluences: UpgradeTreeInfluence[];
+  consequenceSummary: string;
+  trajectoryHint: string;
+  choiceGroupId: string | null;
+  mutuallyExclusiveUpgradeIds: string[];
+};
+
+export type UpgradeTreeEdge = {
+  id: string;
+  sourceNodeId: string;
+  targetNodeId: string;
+  relationship: "required" | "requires_all" | "requires_any" | "unlocks" | "optional_synergy" | "enhances" | "mutually_exclusive" | "era_progression";
+  mysterySafe: boolean;
+};
+
+export type UpgradeTreeContract = {
+  id: "canonical-upgrade-tree";
+  version: string;
+  direction: "left_to_right";
+  progressionMode: "connected_tree";
+  playerStateBoundary: "client_owned";
+  alignmentPresentationModes: Array<"hidden" | "subtle" | "directional" | "exact_development">;
+  trajectoryStates: Array<"undetermined" | "emerging" | "leaning" | "strongly_aligned" | "converging" | "future_path_established">;
+  branches: Array<{
+    id: string;
+    displayName: string;
+    order: number;
+    preferredLane: string;
+  }>;
+  eraBands: Array<{
+    id: string;
+    canonicalEraId: string;
+    sourceEraNames: string[];
+    displayName: string;
+    order: number;
+    positionX: number;
+    width: number;
+  }>;
+  eraGates: Array<{
+    id: string;
+    fromEraId: string;
+    toEraId: string;
+    actionSystemId: string;
+    requirements: RequirementMap;
+  }>;
+  futureCivilizations: Array<{ id: string; displayName: string; revealCondition: string }>;
+  nodes: UpgradeTreeNode[];
+  edges: UpgradeTreeEdge[];
+  choiceGroups: Array<{
+    id: string;
+    upgradeIds: string[];
+    mutuallyExclusive: boolean;
+  }>;
+  mysteryPresentation: {
+    icon: "question_mark";
+    accessibleLabel: "Unknown upgrade";
+    tooltip: "Unknown upgrade";
+    exposeCanonicalDetails: false;
+  };
+  validation: {
+    status: "Ready" | "Ready With Warnings" | "Blocked";
+    errorCount: number;
+    warningCount: number;
+  };
+};
+
 export type BuildingTaxonomyFamily = {
   id: string;
   displayName: string;
@@ -3448,6 +3557,7 @@ export type GameRuntimeData = {
   buildingClassifications: BuildingClassification[];
   upgradeCategories: UpgradeCategory[];
   upgrades: UpgradeDefinition[];
+  upgradeTree: UpgradeTreeContract;
   assets: AssetDefinition[];
   balance: BalanceDefinition;
   galaxyEngineContract: GalaxyEnginePresentationContract;
@@ -3463,6 +3573,18 @@ export type GameRuntimeData = {
   missionExpeditionFramework: MissionExpeditionFrameworkContract;
   dynamicEventFramework: DynamicEventFrameworkContract;
   environmentComposerContract: EnvironmentComposerContract;
+  speciesCategories: import("@/lib/life/creature-system").CreatureFunctionalCategory[];
+  speciesTaxonomyFrameworks: string[];
+  species: import("@/lib/life/creature-system").SpeciesRecord[];
+  speciesOccurrences: import("@/lib/life/creature-system").SpeciesOccurrence[];
+  speciesResourceYields: Array<import("@/lib/life/creature-system").SpeciesResourceYield & { speciesId: string }>;
+  creatureArtProfiles: import("@/lib/life/creature-system").CreatureArtProfile[];
+  creatureAnimationProfiles: import("@/lib/life/creature-system").CreatureAnimationProfile[];
+  creatureAudioProfiles: import("@/lib/life/creature-system").CreatureAudioProfile[];
+  creatureGeneratorContract: import("@/lib/life/creature-system").CreatureGeneratorContract;
+  creaturePromptOutputTypes: string[];
+  creaturePromptModelProfiles: import("@/lib/life/creature-system").CreaturePromptModelProfile[];
+  creaturePromptTypeTemplates: Record<string, readonly string[]>;
   planetDetailScreen?: import("@/lib/assets/planet-detail-screen").PlanetDetailScreenRuntimeContract;
   civilizationOperationsDeck?: import("@/lib/assets/civilization-operations-deck").CivilizationOperationsDeckContract;
   clientProfiles: ClientProfiles;
