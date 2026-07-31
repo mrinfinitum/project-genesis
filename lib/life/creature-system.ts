@@ -187,6 +187,7 @@ export type SpeciesRecord = {
     offspringRange: [number, number];
     seasonal: boolean;
   };
+  lifecycleStages: string[];
   intelligence: {
     level: string;
     toolUse: boolean;
@@ -292,7 +293,7 @@ function starterRecord(input: StarterSpeciesInput): SpeciesRecord {
     compatibility: { gravityRange: [0.65, 1.35], temperatureRangeC: [-20, 42], atmosphereTypes: ["breathable", "oxygen-bearing"], waterRequirement: "required" },
     behavior: { activityCycle: "diurnal", socialStructure: "small groups", intelligence: "instinctive", temperament: "non-aggressive unless threatened", migration: "local seasonal movement", communication: ["vocalization", "scent", "body language"] },
     ecology: { diet: ["flora", "organic matter"], predatorSpeciesIds: [], preySpeciesIds: [], symbioticSpeciesIds: [], ecologicalImpact: "Contributes to a stable terrestrial food web.", populationControls: ["food availability", "predation", "habitat capacity"] },
-    reproduction: { strategy: "sexual reproduction", maturityYears: 3, gestationOrIncubationDays: 240, offspringRange: [1, 4], seasonal: true },
+    reproduction: { strategy: "sexual reproduction", maturityYears: 3, gestationOrIncubationDays: 240, offspringRange: [1, 4], seasonal: true }, lifecycleStages: ["juvenile", "adult", "elder"],
     intelligence: { level: "animal", toolUse: false, languagePotential: false, civilizationPotential: false },
     hazards: { dangerRating: "low", venomous: false, territorial: true, diseaseRisk: "low", environmentalThreats: ["defensive charge"] },
     domestication: { possible: true, difficulty: "moderate", uses: ["companionship", "ecological stewardship"] },
@@ -324,7 +325,7 @@ export function generateSpeciesDraft(seed: string, options: { generationMode?: C
 }
 
 export function buildCreatureRuntimeData() {
-  return { speciesCategories: [...creatureFunctionalCategories], speciesTaxonomyFrameworks: ["biological-taxonomy", "functional-type", "planetary-ecology-role"], species: canonicalSpecies, speciesOccurrences: canonicalSpeciesOccurrences, speciesResourceYields: canonicalSpecies.flatMap((species) => species.resourceYields.map((yieldRecord) => ({ speciesId: species.id, ...yieldRecord }))), creatureArtProfiles, creatureAnimationProfiles, creatureAudioProfiles, creatureGeneratorContract, creaturePromptOutputTypes: [...creaturePromptOutputTypes], creaturePromptModelProfiles: creaturePromptModelProfiles.map((profile) => ({ ...profile, order: [...profile.order] })), creaturePromptTypeTemplates: { biological: [...creaturePromptTypeTemplates.biological], habitat: [...creaturePromptTypeTemplates.habitat], exotic: [...creaturePromptTypeTemplates.exotic], intelligence: [...creaturePromptTypeTemplates.intelligence] } };
+  return { speciesCategories: [...creatureFunctionalCategories], speciesTaxonomyFrameworks: ["biological-taxonomy", "functional-type", "planetary-ecology-role"], species: canonicalSpecies, speciesOccurrences: canonicalSpeciesOccurrences, speciesResourceYields: canonicalSpecies.flatMap((species) => species.resourceYields.map((yieldRecord) => ({ speciesId: species.id, ...yieldRecord }))), creatureArtProfiles, creatureAnimationProfiles, creatureAudioProfiles, creatureGeneratorContract, creaturePromptOutputTypes: [...creaturePromptOutputTypes], creaturePromptLifecycleStages: [...creaturePromptLifecycleStages], creaturePromptBatchActions: [...creaturePromptBatchActions], creaturePromptModelProfiles: creaturePromptModelProfiles.map((profile) => ({ ...profile, order: [...profile.order] })), creaturePromptTypeTemplates: { biological: [...creaturePromptTypeTemplates.biological], habitat: [...creaturePromptTypeTemplates.habitat], exotic: [...creaturePromptTypeTemplates.exotic], intelligence: [...creaturePromptTypeTemplates.intelligence], lifecycle: [...creaturePromptTypeTemplates.lifecycle] } };
 }
 
 export function validateCreatureSystem(input: { species: SpeciesRecord[]; occurrences: SpeciesOccurrence[]; resourceYields?: Array<{ resourceId: string; speciesId: string }>; artProfiles: CreatureArtProfile[]; animationProfiles: CreatureAnimationProfile[]; audioProfiles: CreatureAudioProfile[]; contract: CreatureGeneratorContract; resourceIds?: Iterable<string> }): CreatureSystemValidation {
@@ -351,6 +352,13 @@ export function validateCreatureSystem(input: { species: SpeciesRecord[]; occurr
 export const creaturePromptOutputTypes = [
   "full-body-creature", "creature-portrait", "side-view", "front-view", "rear-view", "three-quarter-view", "turnaround-sheet", "anatomy-diagram", "skeleton-diagram", "scale-comparison", "silhouette", "creature-icon", "creature-card", "encyclopedia-image", "discovery-scan", "habitat-scene", "nest", "egg", "tracks", "fossil", "juvenile", "adult", "elder", "male-variant", "female-variant", "sexless-variant", "seasonal-variant", "regional-variant", "biome-variant", "rare-variant", "domesticated-variant", "engineered-variant", "synthetic-variant", "animation-reference-sheet"
 ] as const;
+
+export const creaturePromptLifecycleStages = ["juvenile", "adult", "elder"] as const;
+export const creaturePromptBatchActions = [
+  "all-visual-prompts", "portrait-prompts", "full-body-prompts", "turnaround-prompts", "lifecycle-prompts", "variant-prompts", "habitat-prompts", "discovery-prompts", "icon-prompts", "selected-species", "planet-fauna", "biome-fauna", "export-prompt-pack"
+] as const;
+
+export type CreaturePromptBatchAction = typeof creaturePromptBatchActions[number];
 
 export type CreaturePromptOutputType = typeof creaturePromptOutputTypes[number];
 export type CreaturePromptMode = "compact" | "detailed";
@@ -409,6 +417,28 @@ const biologicalPromptRules: Record<string, string> = {
   synthetic: "intentionally manufactured morphology, clear locomotion, functional sensor placement, no generic humanoid robot default"
 };
 
+const earthLikePromptRules: Record<string, string> = {
+  mammalian: biologicalPromptRules.mammalian,
+  avian: biologicalPromptRules.avian,
+  reptilian: "coherent scales, thermoregulation, functional claws or grasping structures, believable reptilian locomotion",
+  amphibian: "moisture-compatible skin, metamorphic life history, functional limbs, plausible land and water transition",
+  fishlike: "hydrodynamic body, fin-driven propulsion, gill or equivalent respiration, pressure-compatible anatomy",
+  arthropod: "segmented exoskeleton, jointed appendages, load-bearing articulation, coherent molting logic",
+  insectoid: "segmented body, functional antennae, articulated limbs, believable small-scale musculature",
+  arachnid: "eight-leg or canonically specified limb plan, articulated exoskeleton, sensory hairs, grounded center of mass",
+  crustacean: "segmented shell, jointed walking or swimming limbs, pressure and salinity adaptation",
+  molluscoid: "soft-body support, muscular hydrostat logic, functional mantle or shell structures",
+  cephalopod: "distributed sensory systems, flexible tentacle control, hydrostatic body mechanics",
+  wormlike: "segmented or coherent elongated body, peristaltic movement, functional sensory gradient",
+  jellyform: "transparent or translucent hydrostatic body, radial propulsion, delicate but readable silhouette",
+  "echinoderm-like": "radial symmetry, tube-foot logic, water-vascular movement, coherent surface structure",
+  dinosaurian: "reptilian skeletal logic, species-appropriate center of mass, functional gait, restrained integument",
+  megafauna: "large-scale weight-bearing anatomy, load-distributed joints, environmental scale cues",
+  microfauna: "small-scale anatomy, surface-tension or microhabitat logic, readable enlarged field-guide presentation",
+  microorganism: "microscopic structure, membrane or colony logic, no unsupported macroscopic anatomy",
+  "colonial-organism": "multiple coordinated units with shared ecological function, no single generic humanoid body"
+};
+
 const habitatPromptRules: Record<string, string> = {
   terrestrial: "grounded weight-bearing contact and surface locomotion",
   aquatic: "water movement, pressure adaptation, and buoyancy",
@@ -463,10 +493,11 @@ const exoticPromptRules: Record<string, string> = {
 };
 
 export const creaturePromptTypeTemplates = {
-  biological: [...new Set([...creatureFunctionalCategories, ...Object.keys(biologicalPromptRules)])],
+  biological: [...new Set([...creatureFunctionalCategories, ...Object.keys(earthLikePromptRules), ...Object.keys(biologicalPromptRules)])],
   habitat: [...new Set([...creatureHabitats, ...Object.keys(habitatPromptRules)])],
   exotic: Object.keys(exoticPromptRules),
-  intelligence: ["non-sapient", "pre-sapient", "sapient", "hive-intelligence", "collective-intelligence", "machine-intelligence"]
+  intelligence: ["non-sapient", "pre-sapient", "sapient", "hive-intelligence", "collective-intelligence", "machine-intelligence"],
+  lifecycle: [...creaturePromptLifecycleStages]
 } as const;
 
 export const creaturePromptModelProfiles: CreaturePromptModelProfile[] = [
@@ -479,8 +510,74 @@ export const creaturePromptModelProfiles: CreaturePromptModelProfile[] = [
 
 const promptProfileById = new Map(creaturePromptModelProfiles.map((profile) => [profile.id, profile]));
 
+const outputTypePromptRules: Partial<Record<CreaturePromptOutputType, string>> = {
+  "full-body-creature": "show the complete body and all feet inside the frame",
+  "creature-portrait": "prioritize head, face, sensory structures, and expression without changing anatomy",
+  "side-view": "use a clean orthographic side profile",
+  "front-view": "use a centered front-facing anatomical reference view",
+  "rear-view": "use a centered rear anatomical reference view",
+  "three-quarter-view": "use a readable three-quarter field-guide pose",
+  "turnaround-sheet": "show consistent front, side, rear, and three-quarter views on one production sheet",
+  "anatomy-diagram": "show labeled-free anatomical callouts and clear external structures",
+  "skeleton-diagram": "show the species-consistent skeleton and preserve the canonical limb count",
+  "scale-comparison": "show the creature beside a neutral human scale reference and habitat scale marker",
+  silhouette: "show a high-contrast readable silhouette with species-defining proportions",
+  "creature-icon": "create a compact transparent-background icon with a clear species silhouette and no text",
+  "creature-card": "create a readable card illustration with safe margins and a clean subject separation",
+  "encyclopedia-image": "create a restrained scientific encyclopedia plate with the subject clearly isolated",
+  "discovery-scan": "create an evidence-oriented discovery scan with neutral documentation framing",
+  "habitat-scene": "show the creature in its canonical habitat while keeping the body readable",
+  nest: "show a biologically plausible nest or shelter consistent with the reproduction profile",
+  egg: "show a biologically plausible egg or reproductive structure consistent with the species",
+  tracks: "show identifiable tracks with scale and substrate appropriate to the species",
+  fossil: "show a fossilized trace or preserved specimen without inventing incompatible anatomy",
+  juvenile: "show the juvenile lifecycle stage while preserving the canonical body plan",
+  adult: "show the mature adult lifecycle stage while preserving the canonical body plan",
+  elder: "show the elder lifecycle stage with age-appropriate wear but no anatomy changes",
+  "male-variant": "show a sex-specific variant only where the canonical record supports it",
+  "female-variant": "show a sex-specific variant only where the canonical record supports it",
+  "sexless-variant": "show a sexless presentation without inventing sex-specific anatomy",
+  "seasonal-variant": "show seasonal changes limited to coloration, coat, behavior, or other canonical traits",
+  "regional-variant": "show a regional variant that remains compatible with the source planet and biome",
+  "biome-variant": "show a biome variant that remains compatible with the source habitat and ecology",
+  "rare-variant": "show a rare variant with restrained, canonically plausible distinction",
+  "domesticated-variant": "show domestication cues without changing the species anatomy or ecology",
+  "engineered-variant": "show intentional engineering while preserving the locked species identity",
+  "synthetic-variant": "show synthetic construction consistent with the canonical species profile",
+  "animation-reference-sheet": "show a clean animation reference sheet with consistent key poses and proportions"
+};
+
+function promptSourceHash(species: SpeciesRecord) {
+  return JSON.stringify({
+    id: species.id,
+    displayName: species.displayName,
+    scientificName: species.scientificName,
+    seed: species.seed,
+    generationVersion: species.generationVersion,
+    functionalCategories: species.functionalCategories,
+    habitats: species.habitats,
+    ecologicalRoles: species.ecologicalRoles,
+    bodyPlan: species.appearance.bodyPlan,
+    symmetry: species.appearance.symmetry,
+    sizeRange: species.appearance.sizeRange,
+    massRange: species.appearance.massRange,
+    locomotion: species.appearance.locomotion,
+    coloration: species.appearance.coloration,
+    distinguishingFeatures: species.appearance.distinguishingFeatures,
+    anatomy: species.anatomy,
+    physiology: species.physiology,
+    compatibility: species.compatibility,
+    behavior: species.behavior,
+    ecology: species.ecology,
+    intelligence: species.intelligence,
+    lifecycleStages: species.lifecycleStages,
+    originPlanetId: species.originPlanetId,
+    originBiomeId: species.originBiomeId
+  });
+}
+
 function promptHash(species: SpeciesRecord, outputType: CreaturePromptOutputType, model: CreaturePromptModel, mode: CreaturePromptMode) {
-  return `${species.id}:${species.seed}:${outputType}:${model}:${mode}:${species.generationVersion}`;
+  return `${outputType}:${model}:${mode}:${promptSourceHash(species)}`;
 }
 
 function promptOutputLabel(outputType: CreaturePromptOutputType) { return outputType.replaceAll("-", " "); }
@@ -491,13 +588,14 @@ export function compileCreaturePrompt(species: SpeciesRecord, options: { outputT
   const profile = promptProfileById.get(options.modelProfileId ?? "generic-image-model") ?? creaturePromptModelProfiles[4];
   const mode = options.mode ?? profile.promptLength;
   const habitatRule = species.habitats.map((habitat) => habitatPromptRules[habitat] ?? habitat).join(", ");
-  const biologyRule = [...species.functionalCategories, ...species.ecologicalRoles].map((value) => biologicalPromptRules[value] ?? exoticPromptRules[value] ?? value).join(", ");
+  const biologyRule = [...species.functionalCategories, ...species.ecologicalRoles].map((value) => biologicalPromptRules[value] ?? earthLikePromptRules[value] ?? exoticPromptRules[value] ?? habitatPromptRules[value] ?? value).join(", ");
   const intelligence = species.intelligence.level || "non-sapient";
   const output = `${promptOutputLabel(outputType)} production image`;
+  const outputRule = outputTypePromptRules[outputType] ?? "follow the canonical output specification";
   const sections: Record<string, string> = {
     output,
     identity: `canonical species “${species.displayName}”, scientific name ${species.scientificName}`,
-    type: `${species.functionalCategories.join(", ")} creature, ${intelligence} intelligence, ${species.ecologicalRoles.join(", ")} ecological role`,
+    type: `${species.functionalCategories.join(", ")} creature, ${intelligence} intelligence, ${species.ecologicalRoles.join(", ")} ecological role; ${outputRule}`,
     body: `${species.appearance.bodyPlan} body plan with ${species.appearance.symmetry} symmetry`,
     anatomy: `${species.anatomy.limbs} limbs, ${species.anatomy.appendages.join(", ")} appendages, ${species.anatomy.sensorySystems.join(", ")} sensory systems, ${species.appearance.distinguishingFeatures.join(", ")}`,
     scale: `size ${species.appearance.sizeRange[0]}–${species.appearance.sizeRange[1]} meters, mass ${species.appearance.massRange[0]}–${species.appearance.massRange[1]} kilograms`,
@@ -505,7 +603,7 @@ export function compileCreaturePrompt(species: SpeciesRecord, options: { outputT
     color: `${species.appearance.coloration.join(", ")} coloration`,
     adaptations: `${biologyRule}; ${habitatRule}`,
     movement: `${species.appearance.locomotion.join(", ")}, ${species.behavior.migration}, ${species.behavior.activityCycle} activity`,
-    ecology: `${species.behavior.temperament}, diet includes ${species.ecology.diet.join(", ")}, native to ${species.habitats.join(", ")} habitat`,
+    ecology: `${species.behavior.temperament}, diet includes ${species.ecology.diet.join(", ")}, native to ${species.habitats.join(", ")} habitat; lifecycle stages ${species.lifecycleStages.join(", ")}`,
     planet: species.originPlanetId ? `compatible with canonical planet ${species.originPlanetId} and biome ${species.originBiomeId ?? "unassigned"}; gravity ${species.compatibility.gravityRange.join("–")} G; temperature ${species.compatibility.temperatureRangeC.join("–")} Celsius` : "planet and biome compatibility remain unassigned until authoring",
     camera: profile.cameraPhrase,
     lighting: "restrained soft natural or studio lighting with readable form",
@@ -519,7 +617,7 @@ export function compileCreaturePrompt(species: SpeciesRecord, options: { outputT
     "humanoid posture", "fantasy armor", "clothing", "weapon", "extra limbs", "duplicated head", "malformed joints", "invented wings", "invented horns", "glowing eyes", "excessive bioluminescence", "oversaturated colors", "busy background", "text", "watermark", "UI border", "cropped feet", "anatomy contradiction", "planet incompatibility", "biome contradiction", "generic fantasy creature"
   ].join(profile.negativePromptFormat === "weighted" ? ", " : ", ");
   const sourceHash = promptHash(species, outputType, profile.id, mode);
-  return { speciesId: species.id, speciesName: species.displayName, outputType, modelProfileId: profile.id, presetId: options.presetId ?? "canonical-creature-prompt", mode, seed: species.seed, positivePrompt, negativePrompt, aspectRatio: "16:9", transparentBackground: Boolean(options.transparentBackground), sourceFields: ["displayName", "scientificName", "functionalCategories", "taxonomy", "appearance", "anatomy", "physiology", "compatibility", "behavior", "ecology", "intelligence", "habitats", "originPlanetId", "originBiomeId"], lockedFields: ["seed", "anatomy.limbs", "appearance.bodyPlan", "functionalCategories", "habitats", "compatibility", "appearance.coloration"], sourceHash, generatorVersion: creatureGeneratorContract.generationVersion, promptVersion: "1.0.0", tokenEstimate: Math.ceil(`${positivePrompt} ${negativePrompt}`.split(/\s+/).length * 1.25) };
+  return { speciesId: species.id, speciesName: species.displayName, outputType, modelProfileId: profile.id, presetId: options.presetId ?? "canonical-creature-prompt", mode, seed: species.seed, positivePrompt, negativePrompt, aspectRatio: "16:9", transparentBackground: Boolean(options.transparentBackground), sourceFields: ["displayName", "scientificName", "functionalCategories", "taxonomy", "appearance", "anatomy", "physiology", "compatibility", "behavior", "ecology", "intelligence", "lifecycleStages", "habitats", "originPlanetId", "originBiomeId"], lockedFields: ["seed", "anatomy.limbs", "appearance.bodyPlan", "functionalCategories", "habitats", "compatibility", "appearance.coloration", "lifecycleStages"], sourceHash, generatorVersion: creatureGeneratorContract.generationVersion, promptVersion: "1.0.0", tokenEstimate: Math.ceil(`${positivePrompt} ${negativePrompt}`.split(/\s+/).length * 1.25) };
 }
 
 export function isCreaturePromptStale(species: SpeciesRecord, prompt: CreaturePromptRecord) {
@@ -528,14 +626,47 @@ export function isCreaturePromptStale(species: SpeciesRecord, prompt: CreaturePr
 
 export function validateCreaturePrompt(prompt: CreaturePromptRecord, species: SpeciesRecord): CreaturePromptValidation {
   const issues: CreatureValidationIssue[] = [];
+  const positive = prompt.positivePrompt.toLowerCase();
+  const negative = prompt.negativePrompt.toLowerCase();
   if (!species.displayName || !species.scientificName) issues.push({ severity: "error", code: "prompt_species_identity_missing", message: "Prompt source species identity is incomplete.", records: [species.id] });
   if (!species.appearance.bodyPlan) issues.push({ severity: "error", code: "prompt_body_plan_missing", message: "Prompt source body plan is missing.", records: [species.id] });
-  if (!prompt.positivePrompt.includes(String(species.anatomy.limbs))) issues.push({ severity: "error", code: "prompt_anatomy_missing", message: "Prompt does not preserve the canonical limb count.", records: [species.id] });
-  if (!prompt.negativePrompt.match(/extra limbs|invented wings|invented horns|humanoid posture/)) issues.push({ severity: "error", code: "prompt_anatomy_controls_missing", message: "Negative prompt must include anatomy controls.", records: [species.id] });
-  if (!prompt.positivePrompt.match(/16:9|aspect|ratio/)) issues.push({ severity: "error", code: "prompt_scale_or_aspect_missing", message: "Prompt must include output aspect guidance.", records: [species.id] });
-  if (!prompt.positivePrompt.match(/text|lettering|labels/i) && !prompt.negativePrompt.match(/text/i)) issues.push({ severity: "error", code: "prompt_no_text_missing", message: "Prompt must include no-text guidance.", records: [species.id] });
+  if (!creaturePromptOutputTypes.includes(prompt.outputType)) issues.push({ severity: "error", code: "prompt_output_type_unsupported", message: "Prompt output type is not in the canonical output catalog.", records: [prompt.outputType] });
+  if (!promptProfileById.has(prompt.modelProfileId)) issues.push({ severity: "error", code: "prompt_model_profile_missing", message: "Prompt model profile is not in the canonical profile catalog.", records: [prompt.modelProfileId] });
+  if (!positive.includes(String(species.anatomy.limbs))) issues.push({ severity: "error", code: "prompt_anatomy_missing", message: "Prompt does not preserve the canonical limb count.", records: [species.id] });
+  if (!positive.includes(species.appearance.bodyPlan.toLowerCase())) issues.push({ severity: "error", code: "prompt_body_plan_contradiction", message: "Prompt does not preserve the canonical body plan.", records: [species.id] });
+  if (!negative.includes("extra limbs") || !negative.includes("invented wings") || !negative.includes("invented horns") || !negative.includes("humanoid posture")) issues.push({ severity: "error", code: "prompt_anatomy_controls_missing", message: "Negative prompt must include extra-limb, wing, horn, and humanoid-posture controls.", records: [species.id] });
+  if (!positive.match(/16:9|aspect|ratio/)) issues.push({ severity: "error", code: "prompt_scale_or_aspect_missing", message: "Prompt must include output aspect guidance.", records: [species.id] });
+  if (!positive.match(/text|lettering|labels/i) && !negative.match(/text/i)) issues.push({ severity: "error", code: "prompt_no_text_missing", message: "Prompt must include no-text guidance.", records: [species.id] });
+  if (prompt.outputType === "creature-icon" && !positive.match(/icon|silhouette|symbol/)) issues.push({ severity: "error", code: "prompt_icon_requirement_missing", message: "Creature icon prompts must include a canonical icon or silhouette requirement.", records: [species.id] });
+  for (const color of species.appearance.coloration) if (!positive.includes(color.toLowerCase())) issues.push({ severity: "error", code: "prompt_locked_coloration_missing", message: "Prompt must preserve every locked canonical coloration.", records: [species.id, color] });
+  if (species.originPlanetId && (!positive.includes(species.originPlanetId.toLowerCase()) || (species.originBiomeId && !positive.includes(species.originBiomeId.toLowerCase())))) issues.push({ severity: "error", code: "prompt_planet_biome_incompatibility", message: "Prompt must preserve canonical planet and biome compatibility.", records: [species.id, species.originPlanetId, species.originBiomeId ?? "unassigned"] });
+  if (species.functionalCategories.includes("aerial") && !positive.match(/flight|wing|aerial|air/)) issues.push({ severity: "error", code: "prompt_movement_contradiction", message: "Aerial species prompts must include flight-compatible movement guidance.", records: [species.id] });
   if (isCreaturePromptStale(species, prompt)) issues.push({ severity: "warning", code: "prompt_stale", message: "Prompt source fields changed; regenerate this prompt.", records: [species.id] });
   return { status: issues.some((issue) => issue.severity === "error") ? "Blocked" : issues.length ? "Ready With Warnings" : "Ready", issues };
+}
+
+const promptBatchOutputTypes: Record<Exclude<CreaturePromptBatchAction, "selected-species" | "planet-fauna" | "biome-fauna" | "export-prompt-pack">, CreaturePromptOutputType[]> = {
+  "all-visual-prompts": [...creaturePromptOutputTypes],
+  "portrait-prompts": ["creature-portrait"],
+  "full-body-prompts": ["full-body-creature"],
+  "turnaround-prompts": ["turnaround-sheet"],
+  "lifecycle-prompts": ["juvenile", "adult", "elder"],
+  "variant-prompts": ["male-variant", "female-variant", "sexless-variant", "seasonal-variant", "regional-variant", "biome-variant", "rare-variant", "domesticated-variant", "engineered-variant", "synthetic-variant"],
+  "habitat-prompts": ["habitat-scene", "nest", "egg", "tracks", "fossil"],
+  "discovery-prompts": ["encyclopedia-image", "discovery-scan"],
+  "icon-prompts": ["creature-icon", "creature-card"]
+};
+
+export function generateCreaturePromptBatch(action: CreaturePromptBatchAction, species: SpeciesRecord[], options: { modelProfileId?: CreaturePromptModel; mode?: CreaturePromptMode } = {}) {
+  const selected = action === "planet-fauna" ? species.filter((row) => row.originPlanetId) : action === "biome-fauna" ? species.filter((row) => row.originBiomeId) : species;
+  const outputTypes = action === "selected-species" || action === "export-prompt-pack" || action === "planet-fauna" || action === "biome-fauna" ? [...creaturePromptOutputTypes] : promptBatchOutputTypes[action as keyof typeof promptBatchOutputTypes];
+  return selected.flatMap((row) => outputTypes.map((outputType) => compileCreaturePrompt(row, { ...options, outputType })));
+}
+
+export function buildCreaturePromptBatchExport(action: CreaturePromptBatchAction, species: SpeciesRecord[], options: { modelProfileId?: CreaturePromptModel; mode?: CreaturePromptMode } = {}) {
+  const records = generateCreaturePromptBatch(action, species, options);
+  const markdown = [`# NOVERIS Creature Prompt Batch`, ``, `Action: ${action}`, `Generator: ${creatureGeneratorContract.generationVersion}`, ``].concat(records.flatMap((record) => [`## ${record.speciesName} · ${promptOutputLabel(record.outputType)}`, ``, `### Positive`, record.positivePrompt, ``, `### Negative`, record.negativePrompt, ``])).join("\n");
+  return { action, records, json: JSON.stringify({ action, generatorVersion: creatureGeneratorContract.generationVersion, records }, null, 2), markdown, text: records.map((record) => `${record.speciesName} · ${promptOutputLabel(record.outputType).toUpperCase()}\n${record.positivePrompt}\n\nNEGATIVE\n${record.negativePrompt}`).join("\n\n") };
 }
 
 export function buildCreaturePromptPack(species: SpeciesRecord, options: { modelProfileId?: CreaturePromptModel; mode?: CreaturePromptMode } = {}) {

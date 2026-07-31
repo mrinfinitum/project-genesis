@@ -186,6 +186,8 @@ type CanonicalModules = {
   creature_audio_profiles: ReturnType<typeof buildCreatureRuntimeData>["creatureAudioProfiles"];
   creature_generator_contract: ReturnType<typeof buildCreatureRuntimeData>["creatureGeneratorContract"];
   creature_prompt_output_types: ReturnType<typeof buildCreatureRuntimeData>["creaturePromptOutputTypes"];
+  creature_prompt_lifecycle_stages: ReturnType<typeof buildCreatureRuntimeData>["creaturePromptLifecycleStages"];
+  creature_prompt_batch_actions: ReturnType<typeof buildCreatureRuntimeData>["creaturePromptBatchActions"];
   creature_prompt_model_profiles: ReturnType<typeof buildCreatureRuntimeData>["creaturePromptModelProfiles"];
   creature_prompt_type_templates: ReturnType<typeof buildCreatureRuntimeData>["creaturePromptTypeTemplates"];
   discovery_journal: typeof sampleDiscoveryJournal;
@@ -603,6 +605,8 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
     creature_audio_profiles: creatureRuntime.creatureAudioProfiles,
     creature_generator_contract: creatureRuntime.creatureGeneratorContract,
     creature_prompt_output_types: creatureRuntime.creaturePromptOutputTypes,
+    creature_prompt_lifecycle_stages: creatureRuntime.creaturePromptLifecycleStages,
+    creature_prompt_batch_actions: creatureRuntime.creaturePromptBatchActions,
     creature_prompt_model_profiles: creatureRuntime.creaturePromptModelProfiles,
     creature_prompt_type_templates: creatureRuntime.creaturePromptTypeTemplates,
     discovery_journal: sampleDiscoveryJournal,
@@ -1899,6 +1903,8 @@ function compactModules(modules: CanonicalModules) {
     creature_audio_profiles: modules.creature_audio_profiles,
     creature_generator_contract: modules.creature_generator_contract,
     creature_prompt_output_types: modules.creature_prompt_output_types,
+    creature_prompt_lifecycle_stages: modules.creature_prompt_lifecycle_stages,
+    creature_prompt_batch_actions: modules.creature_prompt_batch_actions,
     creature_prompt_model_profiles: modules.creature_prompt_model_profiles,
     creature_prompt_type_templates: modules.creature_prompt_type_templates,
     planet_deep_data_framework: modules.planet_deep_data_framework,

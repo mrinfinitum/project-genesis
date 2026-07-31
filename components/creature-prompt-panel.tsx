@@ -3,12 +3,13 @@
 import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { Check, Clipboard, Download } from "lucide-react";
-import { buildCreaturePromptPack, compileCreaturePrompt, creaturePromptModelProfiles, creaturePromptOutputTypes, validateCreaturePrompt, type CreaturePromptMode, type CreaturePromptModel, type CreaturePromptOutputType, type SpeciesRecord } from "@/lib/life/creature-system";
+import { buildCreaturePromptBatchExport, buildCreaturePromptPack, compileCreaturePrompt, creaturePromptBatchActions, creaturePromptModelProfiles, creaturePromptOutputTypes, validateCreaturePrompt, type CreaturePromptBatchAction, type CreaturePromptMode, type CreaturePromptModel, type CreaturePromptOutputType, type SpeciesRecord } from "@/lib/life/creature-system";
 
-export function CreaturePromptPanel({ species }: { species: SpeciesRecord }) {
+export function CreaturePromptPanel({ species, availableSpecies = [species] }: { species: SpeciesRecord; availableSpecies?: SpeciesRecord[] }) {
   const [outputType, setOutputType] = useState<CreaturePromptOutputType>("full-body-creature");
   const [model, setModel] = useState<CreaturePromptModel>("generic-image-model");
   const [mode, setMode] = useState<CreaturePromptMode>("detailed");
+  const [batchAction, setBatchAction] = useState<CreaturePromptBatchAction>("all-visual-prompts");
   const [copied, setCopied] = useState<string | null>(null);
   const prompt = useMemo(() => compileCreaturePrompt(species, { outputType, modelProfileId: model, mode }), [species, outputType, model, mode]);
   const validation = useMemo(() => validateCreaturePrompt(prompt, species), [prompt, species]);
@@ -25,12 +26,20 @@ export function CreaturePromptPanel({ species }: { species: SpeciesRecord }) {
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a"); anchor.href = url; anchor.download = `${species.id}_visual_prompts.${format}`; anchor.click(); URL.revokeObjectURL(url);
   };
+  const downloadBatch = (format: "json" | "md" | "txt") => {
+    const pack = buildCreaturePromptBatchExport(batchAction, availableSpecies, { modelProfileId: model, mode });
+    const value = format === "json" ? pack.json : format === "md" ? pack.markdown : pack.text;
+    const blob = new Blob([value], { type: format === "json" ? "application/json" : "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a"); anchor.href = url; anchor.download = `noveris_${batchAction}_visual_prompts.${format}`; anchor.click(); URL.revokeObjectURL(url);
+  };
   return <section className="rounded-lg border border-cyan-300/15 bg-slate-950/45 p-5">
     <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-200">Art Production · Copyable Prompts</p><h2 className="mt-2 text-xl font-black text-white">Visual Prompt Compiler</h2><p className="mt-1 text-sm text-slate-400">Prompts inherit locked anatomy, compatibility, ecology, and visual traits from the canonical species record.</p></div><div className={`rounded-md border px-3 py-2 text-xs font-black uppercase tracking-[0.12em] ${validation.status === "Ready" ? "border-emerald-300/25 bg-emerald-300/10 text-emerald-100" : "border-amber-300/25 bg-amber-300/10 text-amber-100"}`}>{validation.status}</div></div>
     <div className="mt-5 grid gap-4 lg:grid-cols-[1.1fr_1fr_0.8fr]"><label className="space-y-2"><span className="block text-[0.65rem] font-black uppercase tracking-[0.16em] text-slate-500">Output Type</span><select className="w-full rounded-md border border-cyan-300/15 bg-slate-950/70 px-3 py-2 text-sm font-semibold text-white" value={outputType} onChange={(event) => setOutputType(event.target.value as CreaturePromptOutputType)}>{creaturePromptOutputTypes.map((value) => <option key={value}>{value}</option>)}</select></label><label className="space-y-2"><span className="block text-[0.65rem] font-black uppercase tracking-[0.16em] text-slate-500">Model Profile</span><select className="w-full rounded-md border border-cyan-300/15 bg-slate-950/70 px-3 py-2 text-sm font-semibold text-white" value={model} onChange={(event) => setModel(event.target.value as CreaturePromptModel)}>{creaturePromptModelProfiles.map((profile) => <option key={profile.id} value={profile.id}>{profile.displayName}</option>)}</select></label><label className="space-y-2"><span className="block text-[0.65rem] font-black uppercase tracking-[0.16em] text-slate-500">Prompt Mode</span><select className="w-full rounded-md border border-cyan-300/15 bg-slate-950/70 px-3 py-2 text-sm font-semibold text-white" value={mode} onChange={(event) => setMode(event.target.value as CreaturePromptMode)}><option value="detailed">Detailed</option><option value="compact">Compact</option></select></label></div>
     <div className="mt-4 grid gap-4 xl:grid-cols-2"><PromptBox label="Positive Prompt" value={prompt.positivePrompt} onCopy={() => copy("positive")} copied={copied === "positive"} /><PromptBox label="Negative Prompt" value={prompt.negativePrompt} onCopy={() => copy("negative")} copied={copied === "negative"} /></div>
     <div className="mt-4 flex flex-wrap items-center gap-2"><CopyButton label="Copy Combined Prompt" icon={<Clipboard className="h-4 w-4" />} onClick={() => copy("combined")} copied={copied === "combined"} /><DownloadButton label="JSON" onClick={() => downloadPack("json")} /><DownloadButton label="Markdown" onClick={() => downloadPack("md")} /><DownloadButton label="Text" onClick={() => downloadPack("txt")} /><span className="ml-auto text-xs font-semibold text-slate-500">v{prompt.promptVersion} · {prompt.generatorVersion} · ~{prompt.tokenEstimate} tokens</span></div>
     <div className="mt-4 grid gap-3 text-xs text-slate-400 sm:grid-cols-2 lg:grid-cols-4"><Meta label="Source Species" value={prompt.speciesId} /><Meta label="Preset" value={prompt.presetId} /><Meta label="Seed" value={prompt.seed} /><Meta label="Locked Fields" value={`${prompt.lockedFields.length} protected`} /></div>
+    <div className="mt-5 rounded-md border border-cyan-300/10 bg-slate-950/35 p-4"><div className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-xs font-black uppercase tracking-[0.16em] text-cyan-200">Batch Prompt Generation</p><p className="mt-1 text-xs text-slate-500">Generate prompts for the current species or the canonical planet/biome fauna set.</p></div><span className="text-xs font-bold text-slate-500">{availableSpecies.length} species in scope</span></div><div className="mt-3 flex flex-wrap gap-2"><select className="min-w-56 rounded-md border border-cyan-300/15 bg-slate-950/70 px-3 py-2 text-xs font-bold text-white" value={batchAction} onChange={(event) => setBatchAction(event.target.value as CreaturePromptBatchAction)}>{creaturePromptBatchActions.map((action) => <option key={action} value={action}>{action.replaceAll("-", " ")}</option>)}</select><DownloadButton label="Export Batch JSON" onClick={() => downloadBatch("json")} /><DownloadButton label="Export Batch MD" onClick={() => downloadBatch("md")} /><DownloadButton label="Export Batch TXT" onClick={() => downloadBatch("txt")} /></div></div>
   </section>;
 }
 

@@ -74,7 +74,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 64;
+export const gameRuntimeContentVersion = 65;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -141,6 +141,8 @@ export type RobloxRuntimeExportPayload = {
   creatureAudioProfiles: GameRuntimeData["creatureAudioProfiles"];
   creatureGeneratorContract: GameRuntimeData["creatureGeneratorContract"];
   creaturePromptOutputTypes: GameRuntimeData["creaturePromptOutputTypes"];
+  creaturePromptLifecycleStages: GameRuntimeData["creaturePromptLifecycleStages"];
+  creaturePromptBatchActions: GameRuntimeData["creaturePromptBatchActions"];
   creaturePromptModelProfiles: GameRuntimeData["creaturePromptModelProfiles"];
   creaturePromptTypeTemplates: GameRuntimeData["creaturePromptTypeTemplates"];
   planetDetailScreen: NonNullable<GameRuntimeData["planetDetailScreen"]>;
@@ -2544,6 +2546,8 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     creatureAudioProfiles: sorted.creatureAudioProfiles,
     creatureGeneratorContract: sorted.creatureGeneratorContract,
     creaturePromptOutputTypes: sorted.creaturePromptOutputTypes,
+    creaturePromptLifecycleStages: sorted.creaturePromptLifecycleStages,
+    creaturePromptBatchActions: sorted.creaturePromptBatchActions,
     creaturePromptModelProfiles: sorted.creaturePromptModelProfiles,
     creaturePromptTypeTemplates: sorted.creaturePromptTypeTemplates,
     planetDetailScreen: sorted.planetDetailScreen ?? planetDetailScreenRuntimeContract,
@@ -2971,6 +2975,8 @@ export async function getGameRuntimeData() {
     creatureAudioProfiles: base.creatureAudioProfiles,
     creatureGeneratorContract: base.creatureGeneratorContract,
     creaturePromptOutputTypes: base.creaturePromptOutputTypes,
+    creaturePromptLifecycleStages: base.creaturePromptLifecycleStages,
+    creaturePromptBatchActions: base.creaturePromptBatchActions,
     creaturePromptModelProfiles: base.creaturePromptModelProfiles,
     creaturePromptTypeTemplates: base.creaturePromptTypeTemplates,
     planetDetailScreen: base.planetDetailScreen,
@@ -3212,6 +3218,8 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     creatureAudioProfiles: base.creatureAudioProfiles,
     creatureGeneratorContract: base.creatureGeneratorContract,
     creaturePromptOutputTypes: base.creaturePromptOutputTypes,
+    creaturePromptLifecycleStages: base.creaturePromptLifecycleStages,
+    creaturePromptBatchActions: base.creaturePromptBatchActions,
     creaturePromptModelProfiles: base.creaturePromptModelProfiles,
     creaturePromptTypeTemplates: base.creaturePromptTypeTemplates,
     planetDetailScreen: base.planetDetailScreen,

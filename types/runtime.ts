@@ -3583,6 +3583,8 @@ export type GameRuntimeData = {
   creatureAudioProfiles: import("@/lib/life/creature-system").CreatureAudioProfile[];
   creatureGeneratorContract: import("@/lib/life/creature-system").CreatureGeneratorContract;
   creaturePromptOutputTypes: string[];
+  creaturePromptLifecycleStages: string[];
+  creaturePromptBatchActions: string[];
   creaturePromptModelProfiles: import("@/lib/life/creature-system").CreaturePromptModelProfile[];
   creaturePromptTypeTemplates: Record<string, readonly string[]>;
   planetDetailScreen?: import("@/lib/assets/planet-detail-screen").PlanetDetailScreenRuntimeContract;

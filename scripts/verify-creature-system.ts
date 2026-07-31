@@ -1,6 +1,6 @@
 import { buildGameEngineExport, type EngineTarget } from "@/lib/export/game-engine";
 import { buildCanonicalRuntimeExportPayload, buildRobloxRuntimePayload, getGameRuntimeData, validateGameRuntimeData } from "@/lib/runtime/game-runtime";
-import { compileCreaturePrompt, creaturePromptModelProfiles, creaturePromptOutputTypes, validateCreaturePrompt, validateCreatureSystem } from "@/lib/life/creature-system";
+import { buildCreaturePromptBatchExport, compileCreaturePrompt, creaturePromptBatchActions, creaturePromptLifecycleStages, creaturePromptModelProfiles, creaturePromptOutputTypes, creaturePromptTypeTemplates, validateCreaturePrompt, validateCreatureSystem } from "@/lib/life/creature-system";
 
 const targets: EngineTarget[] = ["generic", "roblox", "web", "unity", "unreal", "godot"];
 
@@ -21,6 +21,23 @@ async function main() {
     const prompt = compileCreaturePrompt(species, { outputType });
     return validateCreaturePrompt(prompt, species).issues;
   }));
+  const requiredTemplateGroups = {
+    biological: ["mammalian", "avian", "reptilian", "amphibian", "fishlike", "arthropod", "insectoid", "arachnid", "crustacean", "molluscoid", "cephalopod", "wormlike", "jellyform", "echinoderm-like", "dinosaurian", "megafauna", "microfauna", "microorganism", "colonial-organism"],
+    habitat: ["terrestrial", "aquatic", "amphibious", "aerial", "gliding", "arboreal", "burrowing", "subterranean", "cave-dwelling", "atmospheric", "floating", "deep-ocean", "coastal", "riverine", "polar", "desert", "volcanic", "cryogenic", "high-gravity", "low-gravity", "vacuum-adapted", "orbital"],
+    exotic: ["silicon-based", "crystal-life", "mineral-life", "plasma-life", "gas-life", "energy-life", "electromagnetic-life", "photonic-life", "quantum-life", "radiotrophic-life", "cryogenic-life", "sulfur-based", "methane-based", "ammonia-based", "hive-organism", "distributed-organism", "symbiotic-colony", "mycelial-organism", "biomechanical-life", "synthetic-life", "robotic-organism", "nanite-colony", "engineered-organism", "artificial-life-organism", "ai-organism"],
+    intelligence: ["non-sapient", "pre-sapient", "sapient", "hive-intelligence", "collective-intelligence", "machine-intelligence"],
+    lifecycle: [...creaturePromptLifecycleStages]
+  };
+  const missingTemplates = Object.entries(requiredTemplateGroups).flatMap(([group, values]) => {
+    const templateValues = creaturePromptTypeTemplates[group as keyof typeof creaturePromptTypeTemplates] as readonly string[];
+    return values.filter((value) => !templateValues.includes(value)).map((value) => `${group}:${value}`);
+  });
+  const batchSmoke = creaturePromptBatchActions.map((action) => ({ action, records: buildCreaturePromptBatchExport(action, runtime.species).records.length }));
+  if (missingTemplates.length || batchSmoke.some((batch) => batch.records === 0)) {
+    console.error(JSON.stringify({ missingTemplates, batchSmoke }, null, 2));
+    process.exitCode = 1;
+    return;
+  }
   if (promptIssues.some((issue) => issue.severity === "error")) {
     console.error(JSON.stringify({ promptIssues }, null, 2));
     process.exitCode = 1;
@@ -50,6 +67,9 @@ async function main() {
     resourceYields: runtime.speciesResourceYields.length,
     promptOutputTypes: creaturePromptOutputTypes.length,
     promptModelProfiles: creaturePromptModelProfiles.length,
+    promptBatchActions: creaturePromptBatchActions.length,
+    lifecycleStages: creaturePromptLifecycleStages.length,
+    templateGroups: Object.fromEntries(Object.entries(creaturePromptTypeTemplates).map(([key, values]) => [key, values.length])),
     engineTargets: targets,
     runtimeValidation: validation.status,
     contentVersion: runtime.metadata.contentVersion,
