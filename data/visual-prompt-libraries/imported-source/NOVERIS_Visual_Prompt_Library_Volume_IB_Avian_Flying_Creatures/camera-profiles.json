@@ -1,0 +1,26 @@
+[
+  {
+    "id": "CAM-THREE-QUARTER",
+    "name": "Three Quarter Studio"
+  },
+  {
+    "id": "CAM-PORTRAIT",
+    "name": "Portrait"
+  },
+  {
+    "id": "CAM-ORTHO",
+    "name": "Orthographic"
+  },
+  {
+    "id": "CAM-WING-STUDY",
+    "name": "Wing Study"
+  },
+  {
+    "id": "CAM-HABITAT-WIDE",
+    "name": "Habitat Wide"
+  },
+  {
+    "id": "CAM-REFERENCE",
+    "name": "Reference Board"
+  }
+]

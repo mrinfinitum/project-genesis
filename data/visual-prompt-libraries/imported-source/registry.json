@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "noveris-imported-visual-prompt-library-registry-v1",
+  "packages": [
+    {
+      "id": "NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures",
+      "volumeId": "VOLUME-IB",
+      "displayName": "Visual Prompt Library Volume IB - Avian and Flying Creatures",
+      "version": "1.0.0",
+      "modelProfile": "nano-banana-2",
+      "promptRecordCount": 720,
+      "sourcePath": "NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures",
+      "derivedStudioPackagePath": "../volume-ib-avian-flying-creatures",
+      "sourceRole": "canonical-authored-import",
+      "derivedRole": "studio-production-variants"
+    }
+  ]
+}

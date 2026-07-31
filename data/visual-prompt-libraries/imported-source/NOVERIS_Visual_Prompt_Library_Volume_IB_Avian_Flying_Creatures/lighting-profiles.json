@@ -1,0 +1,18 @@
+[
+  {
+    "id": "LIGHT-STUDIO-NEUTRAL",
+    "name": "Neutral Studio"
+  },
+  {
+    "id": "LIGHT-MUSEUM",
+    "name": "Museum Specimen"
+  },
+  {
+    "id": "LIGHT-HABITAT",
+    "name": "Native Habitat"
+  },
+  {
+    "id": "LIGHT-SCAN",
+    "name": "Discovery Scan"
+  }
+]

@@ -1,0 +1,688 @@
+[
+  {
+    "archetypeId": "AVI-APEX-RAPTOR",
+    "name": "Apex Raptor",
+    "family": "predator",
+    "definition": "A dominant aerial predator with powerful flight musculature, exceptional visual tracking, functional capture anatomy, and wing loading appropriate to its mass and atmosphere.",
+    "requiredTraits": [
+      "credible wing loading",
+      "powerful chest musculature",
+      "forward sensory emphasis",
+      "functional capture feet or equivalent",
+      "stable tail control"
+    ],
+    "avoid": [
+      "eagle clone",
+      "angel wings",
+      "dragon traits"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-PACK-HUNTER",
+    "name": "Pack Hunter",
+    "family": "predator",
+    "definition": "A social aerial hunter adapted to coordinated pursuit, signaling, formation flight, and cooperative capture.",
+    "requiredTraits": [
+      "endurance wings",
+      "social signaling structures",
+      "formation stability",
+      "cooperative hunting anatomy"
+    ],
+    "avoid": [
+      "military squad styling",
+      "wolf with wings",
+      "human expressions"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-AMBUSH-FLYER",
+    "name": "Ambush Flyer",
+    "family": "predator",
+    "definition": "A stealth-oriented flyer using concealment, silent approach, explosive acceleration, and short-range capture anatomy.",
+    "requiredTraits": [
+      "silent flight surfaces",
+      "biome camouflage",
+      "explosive takeoff",
+      "stable low-speed control"
+    ],
+    "avoid": [
+      "owl clone",
+      "invisibility effect",
+      "blade feathers"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-FOREST-GLIDER",
+    "name": "Forest Glider",
+    "family": "glider",
+    "definition": "A maneuverable canopy creature using gliding surfaces, grasping feet, and rapid turning through dense vegetation.",
+    "requiredTraits": [
+      "short broad control surfaces",
+      "gripping feet",
+      "branch-safe balance",
+      "controlled landing"
+    ],
+    "avoid": [
+      "flying squirrel clone",
+      "unattached membrane",
+      "extra wings"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-SOARING-HUNTER",
+    "name": "Soaring Hunter",
+    "family": "soarer",
+    "definition": "A large hunter specialized for thermal and dynamic soaring with efficient wings, excellent vision, and low-energy patrol behavior.",
+    "requiredTraits": [
+      "long efficient wings",
+      "thermal-soaring posture",
+      "stable tail",
+      "efficient respiration"
+    ],
+    "avoid": [
+      "albatross clone",
+      "constant flapping",
+      "unsupported giant wings"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-THERMAL-SOARER",
+    "name": "Thermal Soarer",
+    "family": "soarer",
+    "definition": "A flyer optimized for circling in rising air over open terrain with low-speed stability and efficient energy use.",
+    "requiredTraits": [
+      "broad lift surfaces",
+      "circling control",
+      "light support structure",
+      "heat management"
+    ],
+    "avoid": [
+      "vulture clone",
+      "paper-thin wings",
+      "ornamental plumes"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-HIGH-ALTITUDE",
+    "name": "High-Altitude Flyer",
+    "family": "environment",
+    "definition": "A flyer adapted to thin air, cold, UV exposure, and sustained flight above mountains or upper atmosphere.",
+    "requiredTraits": [
+      "high-efficiency respiration",
+      "large lift surfaces",
+      "cold resistance",
+      "UV protection"
+    ],
+    "avoid": [
+      "aircraft styling",
+      "spacesuit body",
+      "goose clone"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-NECTAR-HOVER",
+    "name": "Hovering Nectar Feeder",
+    "family": "pollinator",
+    "definition": "A small precision flyer capable of sustained hovering while feeding from specialized flowers.",
+    "requiredTraits": [
+      "rapid wingbeat anatomy",
+      "high metabolism",
+      "specialized feeding organ",
+      "fine control"
+    ],
+    "avoid": [
+      "hummingbird clone",
+      "bee-bird hybrid",
+      "toy proportions"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-SCAVENGER",
+    "name": "Scavenger",
+    "family": "scavenger",
+    "definition": "A resilient flyer adapted to locating carrion, soaring efficiently, and resisting pathogens.",
+    "requiredTraits": [
+      "wide-area sensing",
+      "efficient soaring",
+      "robust digestion",
+      "durable feeding anatomy"
+    ],
+    "avoid": [
+      "vulture clone",
+      "gore",
+      "villain styling"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-CARRION-SPECIALIST",
+    "name": "Carrion Specialist",
+    "family": "scavenger",
+    "definition": "A specialized carrion feeder adapted to remote harsh environments and difficult carcass processing.",
+    "requiredTraits": [
+      "distance sensing",
+      "disease resistance",
+      "long-range flight",
+      "specialized feeding"
+    ],
+    "avoid": [
+      "plague bird",
+      "skull face",
+      "black-only palette"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-MARSH-WADER",
+    "name": "Marsh Wader",
+    "family": "wader",
+    "definition": "A shallow-water flyer with stable long legs, probing or filtering feeding anatomy, and wetland locomotion.",
+    "requiredTraits": [
+      "water-adapted legs",
+      "wide or specialized feet",
+      "water-resistant covering",
+      "flexible neck"
+    ],
+    "avoid": [
+      "flamingo clone",
+      "impossibly thin legs",
+      "ornamental crest"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-RIVER-HUNTER",
+    "name": "River Hunter",
+    "family": "fisher",
+    "definition": "A flyer specialized for locating and capturing aquatic prey in rivers, lakes, and estuaries.",
+    "requiredTraits": [
+      "water-entry control",
+      "visual tracking",
+      "water-shedding covering",
+      "rapid takeoff"
+    ],
+    "avoid": [
+      "kingfisher clone",
+      "pelican clone",
+      "random fish fins"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-COASTAL",
+    "name": "Coastal Flyer",
+    "family": "coastal",
+    "definition": "A salt-tolerant flyer adapted to cliffs, beaches, tidal flats, storms, and shoreline feeding.",
+    "requiredTraits": [
+      "salt management",
+      "wind-stable wings",
+      "waterproof covering",
+      "storm-resistant nesting"
+    ],
+    "avoid": [
+      "seagull clone",
+      "pirate motifs",
+      "webbed feet without purpose"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-OCEAN-SKIMMER",
+    "name": "Ocean Skimmer",
+    "family": "marine",
+    "definition": "A long-range marine flyer using wave lift, dynamic soaring, surface skimming, and oceanic navigation.",
+    "requiredTraits": [
+      "long narrow wings",
+      "wave-skimming control",
+      "salt tolerance",
+      "open-ocean navigation"
+    ],
+    "avoid": [
+      "airplane wings",
+      "water-ski feet",
+      "albatross clone"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-DEEP-SURFACE-HUNTER",
+    "name": "Deep-Ocean Surface Hunter",
+    "family": "marine",
+    "definition": "A flyer adapted to diving for deep-water prey and surviving pressure transitions and long ocean flights.",
+    "requiredTraits": [
+      "reinforced diving anatomy",
+      "waterproof covering",
+      "pressure tolerance",
+      "surface takeoff"
+    ],
+    "avoid": [
+      "penguin with wings",
+      "gills",
+      "flippers plus wings"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-CLIFF-NESTER",
+    "name": "Cliff-Nesting Flyer",
+    "family": "habitat",
+    "definition": "A flyer specialized for launching, landing, nesting, and raising young on steep rock faces.",
+    "requiredTraits": [
+      "gripping feet",
+      "precise low-speed control",
+      "weather resistance",
+      "strong launch mechanics"
+    ],
+    "avoid": [
+      "generic eagle",
+      "mountain-goat feet",
+      "decorative talons"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-CANOPY",
+    "name": "Canopy Flyer",
+    "family": "habitat",
+    "definition": "A compact forest flyer adapted to short-range maneuvering, branch navigation, and visual signaling.",
+    "requiredTraits": [
+      "compact control surfaces",
+      "high turn authority",
+      "branch-compatible feet",
+      "short-burst acceleration"
+    ],
+    "avoid": [
+      "parrot clone",
+      "rainbow default",
+      "ornamental plumage"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-CAVE",
+    "name": "Cave Flyer",
+    "family": "habitat",
+    "definition": "A dark-adapted flyer specialized for confined spaces, nonvisual navigation, low-energy ecology, and roosting.",
+    "requiredTraits": [
+      "maneuverable wings",
+      "enhanced nonvisual senses",
+      "protected eyes",
+      "compact roost posture"
+    ],
+    "avoid": [
+      "bat clone",
+      "blind monster",
+      "glowing everything"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-DESERT",
+    "name": "Desert Flyer",
+    "family": "habitat",
+    "definition": "A flyer adapted to heat, dust, aridity, sparse resources, and strong thermals.",
+    "requiredTraits": [
+      "heat-resistant covering",
+      "dust protection",
+      "efficient soaring",
+      "water conservation"
+    ],
+    "avoid": [
+      "falcon clone",
+      "heat sails",
+      "glowing sand patterns"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-POLAR",
+    "name": "Polar Flyer",
+    "family": "habitat",
+    "definition": "A flyer adapted to extreme cold, snow, ice, seasonal darkness, and harsh winds.",
+    "requiredTraits": [
+      "insulation",
+      "compact heat retention",
+      "ice-capable feet",
+      "wind stability"
+    ],
+    "avoid": [
+      "snowy owl clone",
+      "blue fantasy feathers",
+      "ice crystals"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-MOUNTAIN",
+    "name": "Mountain Flyer",
+    "family": "habitat",
+    "definition": "A flyer adapted to steep terrain, turbulent winds, thin air, and alpine feeding zones.",
+    "requiredTraits": [
+      "high-lift wings",
+      "powerful takeoff",
+      "altitude respiration",
+      "terrain-following control"
+    ],
+    "avoid": [
+      "condor clone",
+      "mountain horns",
+      "unsupported wings"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-LOW-GRAVITY",
+    "name": "Low-Gravity Flyer",
+    "family": "gravity",
+    "definition": "A flyer evolved under low gravity with lightweight anatomy, elongated lift surfaces, and graceful momentum control.",
+    "requiredTraits": [
+      "reduced support mass",
+      "large efficient wings",
+      "momentum control",
+      "gentle landing"
+    ],
+    "avoid": [
+      "heavy Earth gait",
+      "floating feathers",
+      "space-bird clich\u00e9"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-HIGH-GRAVITY",
+    "name": "High-Gravity Flyer",
+    "family": "gravity",
+    "definition": "A compact flyer evolved under high gravity with short broad wings, extreme musculature, reinforced support, and limited credible flight.",
+    "requiredTraits": [
+      "short broad wings",
+      "large flight muscles",
+      "reinforced skeleton",
+      "powerful landing anatomy"
+    ],
+    "avoid": [
+      "long fragile wings",
+      "tiny wings on giant body",
+      "unsupported hovering"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-BIOLUM",
+    "name": "Bioluminescent Flyer",
+    "family": "visual",
+    "definition": "A flyer using restrained biological light for signaling, mating, navigation, camouflage, or prey interaction.",
+    "requiredTraits": [
+      "functional light organs",
+      "energy-aware placement",
+      "daylight-readable materials",
+      "controlled signaling"
+    ],
+    "avoid": [
+      "glowing everywhere",
+      "neon rainbow feathers",
+      "fantasy aura"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-NOCTURNAL",
+    "name": "Nocturnal Flyer",
+    "family": "behavior",
+    "definition": "A low-light flyer adapted to quiet movement, enhanced sensing, precise navigation, and nocturnal feeding.",
+    "requiredTraits": [
+      "low-light senses",
+      "quiet flight surfaces",
+      "subdued coloration",
+      "precise maneuverability"
+    ],
+    "avoid": [
+      "owl clone",
+      "huge glowing eyes",
+      "vampire styling"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-ATMOSPHERIC-FLOATER",
+    "name": "Floating Atmospheric Organism",
+    "family": "atmospheric",
+    "definition": "A buoyant airborne organism remaining aloft through gas chambers, membranes, atmospheric chemistry, or field effects.",
+    "requiredTraits": [
+      "buoyancy structures",
+      "stabilizing membranes",
+      "steering anatomy",
+      "atmospheric nutrient capture"
+    ],
+    "avoid": [
+      "balloon animal",
+      "cloud with eyes",
+      "bird with gas bag"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-MEGAFAUNA",
+    "name": "Winged Megafauna",
+    "family": "scale",
+    "definition": "A colossal flyer whose lift, mass distribution, respiration, circulation, takeoff, and ecology plausibly support extreme size.",
+    "requiredTraits": [
+      "massive lift surfaces",
+      "reinforced lightweight support",
+      "specialized takeoff",
+      "efficient respiration"
+    ],
+    "avoid": [
+      "dragon",
+      "kaiju",
+      "thin unsupported wings",
+      "impossible hovering"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-MICROFAUNA",
+    "name": "Winged Microfauna",
+    "family": "scale",
+    "definition": "A tiny flyer adapted to low-Reynolds-number flight, rapid metabolism, dense microhabitats, and miniature sensing.",
+    "requiredTraits": [
+      "small-scale wing physics",
+      "high-frequency control",
+      "compact anatomy",
+      "microhabitat adaptation"
+    ],
+    "avoid": [
+      "fairy creature",
+      "toy insect-bird",
+      "sparkle trail"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-CRYSTAL",
+    "name": "Crystal Flyer",
+    "family": "exotic",
+    "definition": "A flying crystalline organism with coherent lattice structure, flexible interfaces, energy transport, sensing, and lift.",
+    "requiredTraits": [
+      "repeating lattice grammar",
+      "flexible mineral joints",
+      "light-transmitting lift surfaces",
+      "credible mass distribution"
+    ],
+    "avoid": [
+      "gem bird",
+      "decorative crystal wings",
+      "rainbow shards"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-SILICON",
+    "name": "Silicon Flyer",
+    "family": "exotic",
+    "definition": "A silicon-based aerial organism with mineralized tissues, non-carbon metabolism, flexible joints, and atmosphere-compatible lift structures.",
+    "requiredTraits": [
+      "mineral-organic integration",
+      "catalytic surfaces",
+      "flexible joints",
+      "weathered realism"
+    ],
+    "avoid": [
+      "stone bird",
+      "golem anatomy",
+      "decorative crystal beak"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-ENERGY",
+    "name": "Energy Flyer",
+    "family": "exotic",
+    "definition": "A coherent energy-based aerial organism with persistent topology, environmental coupling, controlled motion, and readable internal structure.",
+    "requiredTraits": [
+      "stable energy boundary",
+      "repeating pathways",
+      "matter or field interaction",
+      "controlled luminosity"
+    ],
+    "avoid": [
+      "ghost bird",
+      "lens flare",
+      "angel aura"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-GAS",
+    "name": "Gas Flyer",
+    "family": "exotic",
+    "definition": "A gaseous aerial organism maintaining identity through membranes, vortices, pressure cells, chemistry, or electromagnetic containment.",
+    "requiredTraits": [
+      "stable vortical anatomy",
+      "buoyant chambers",
+      "steering structures",
+      "chemical gradients"
+    ],
+    "avoid": [
+      "smoke monster",
+      "cloud bird",
+      "balloon animal"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-PLASMA",
+    "name": "Plasma Flyer",
+    "family": "exotic",
+    "definition": "A plasma-based aerial lifeform stabilized by electromagnetic fields with coherent shape, energy intake, sensing, and movement.",
+    "requiredTraits": [
+      "coherent field boundary",
+      "internal circulation",
+      "environmental ionization",
+      "stable flight path"
+    ],
+    "avoid": [
+      "phoenix clich\u00e9",
+      "lightning scribble",
+      "overexposure"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-BIOMECH",
+    "name": "Biomechanical Flyer",
+    "family": "artificial",
+    "definition": "An integrated organic-mechanical flyer with purposeful actuators, living tissues, self-maintenance, and coherent flight anatomy.",
+    "requiredTraits": [
+      "organic-machine interfaces",
+      "functional actuators",
+      "coherent sensors",
+      "purpose-built wings"
+    ],
+    "avoid": [
+      "animal wearing armor",
+      "random cables",
+      "weapons"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-SYNTHETIC",
+    "name": "Synthetic Flyer",
+    "family": "artificial",
+    "definition": "A manufactured flying species with engineered anatomy, efficient energy use, clear sensors, maintainable joints, and habitat-specific purpose.",
+    "requiredTraits": [
+      "purpose-built morphology",
+      "manufacturable wings",
+      "maintenance access",
+      "efficient propulsion"
+    ],
+    "avoid": [
+      "drone clone",
+      "military aircraft",
+      "android with wings"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  },
+  {
+    "archetypeId": "AVI-ENGINEERED",
+    "name": "Engineered Flyer",
+    "family": "artificial",
+    "definition": "A deliberately designed biological flyer with integrated functional adaptations and a clear ecological or industrial role.",
+    "requiredTraits": [
+      "engineered organs",
+      "purpose-linked morphology",
+      "biological growth logic",
+      "role-specific adaptations"
+    ],
+    "avoid": [
+      "bio-weapon clich\u00e9",
+      "stitched hybrid",
+      "branding"
+    ],
+    "version": "1.0.0",
+    "status": "canonical"
+  }
+]

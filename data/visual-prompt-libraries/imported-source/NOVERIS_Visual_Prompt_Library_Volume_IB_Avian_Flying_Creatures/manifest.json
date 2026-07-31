@@ -1,0 +1,83 @@
+{
+  "packageId": "NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures",
+  "volumeId": "VOLUME-IB",
+  "displayName": "Visual Prompt Library Volume IB \u2014 Avian & Flying Creatures",
+  "version": "1.0.0",
+  "generatedAt": "2026-07-31T17:26:10.878143+00:00",
+  "modelProfile": "nano-banana-2",
+  "archetypeCount": 36,
+  "outputTypeCount": 20,
+  "promptRecordCount": 720,
+  "files": [
+    {
+      "name": "CODEX_IMPORT_PROMPT.txt",
+      "bytes": 522,
+      "sha256": "2cac14a8669ea57c912ee2bf706eada189da93f8b6d33e02ad3043e07cb3f446"
+    },
+    {
+      "name": "PROMPT_CATALOG.md",
+      "bytes": 1783503,
+      "sha256": "94130a9cb58be7c4e8e205a5bbb54d3e170aec317c8a54f57cfd337804c88136"
+    },
+    {
+      "name": "README.md",
+      "bytes": 305,
+      "sha256": "a110ce089ac72c10f940381774df5a8575d118807e230913b028efb9c6941445"
+    },
+    {
+      "name": "avian-archetypes.json",
+      "bytes": 19241,
+      "sha256": "d874c94df87fe37c12d2677c8ac8719de486b014c18a84d14185045c6ca1d39d"
+    },
+    {
+      "name": "camera-profiles.json",
+      "bytes": 388,
+      "sha256": "b4a29b16f31d3702660dcd55201f4a8b0d8e849258130228b26cf9c41b96db79"
+    },
+    {
+      "name": "lighting-profiles.json",
+      "bytes": 266,
+      "sha256": "dc089ec284ca1506faa68bc8c335c43aa505cdef3ec899f10ccf09bd67d46ad1"
+    },
+    {
+      "name": "negative-prompt-library.json",
+      "bytes": 559,
+      "sha256": "7a039c4a3ad9e3393acc612562f475e6dc937ad892ce439910cb75bff4ecf7ec"
+    },
+    {
+      "name": "output-types.json",
+      "bytes": 4956,
+      "sha256": "85937e167a0c2626db2526f6f7e9783cf9e031fe84fbed57f9f86ab1fdb57e21"
+    },
+    {
+      "name": "prompt-library.csv",
+      "bytes": 1825444,
+      "sha256": "82bf090aa3ad5a184a465b85c9f493add844b4106a83fedca1469ad86b13aa19"
+    },
+    {
+      "name": "prompt-library.json",
+      "bytes": 4396430,
+      "sha256": "4446cf078a8077a3c16e0239202e482ea93d3ccac7e691cd4e4cbc9183f11e9a"
+    },
+    {
+      "name": "prompt-library.jsonl",
+      "bytes": 4212828,
+      "sha256": "c9bb6775d255fae8da77cf5fb8309e7de622c32d8e111ff02a0f532941de746e"
+    },
+    {
+      "name": "prompt-record.schema.json",
+      "bytes": 290,
+      "sha256": "0f5005898a2561c52681706cd457df67718b41e6e7f84808451c6348d1605bd1"
+    },
+    {
+      "name": "prompt-variables.json",
+      "bytes": 521,
+      "sha256": "e6e32d2a58c98eaf08eddf9306d00bf9ca18f12c69fffb193dafbfff82951d99"
+    },
+    {
+      "name": "style-profiles.json",
+      "bytes": 98,
+      "sha256": "7396e768b6832c39f1d95ce40c12e65163b75e73b468642fc02aacab920a97e9"
+    }
+  ]
+}

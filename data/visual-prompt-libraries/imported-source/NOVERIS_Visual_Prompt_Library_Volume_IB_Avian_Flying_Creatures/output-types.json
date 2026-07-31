@@ -1,0 +1,122 @@
+[
+  {
+    "outputType": "full-body",
+    "name": "Full Body Production Render",
+    "instruction": "Create one complete mature specimen in a neutral natural pose, shown in a three-quarter view with the entire wingspan or folded-wing silhouette fully visible.",
+    "aspectRatio": "3:4"
+  },
+  {
+    "outputType": "portrait",
+    "name": "Portrait",
+    "instruction": "Create a museum-quality head and upper-body portrait emphasizing sensory organs, feeding anatomy, feather or membrane detail, and natural expression.",
+    "aspectRatio": "1:1"
+  },
+  {
+    "outputType": "orthographic-front",
+    "name": "Orthographic Front",
+    "instruction": "Create an exact front orthographic view with symmetrical alignment and no perspective distortion.",
+    "aspectRatio": "3:4"
+  },
+  {
+    "outputType": "orthographic-side",
+    "name": "Orthographic Side",
+    "instruction": "Create an exact left-side orthographic view in a neutral stance or stable flight posture with no perspective distortion.",
+    "aspectRatio": "3:4"
+  },
+  {
+    "outputType": "orthographic-rear",
+    "name": "Orthographic Rear",
+    "instruction": "Create an exact rear orthographic view showing tail, wing roots, and leg placement with no perspective distortion.",
+    "aspectRatio": "3:4"
+  },
+  {
+    "outputType": "turnaround",
+    "name": "Turnaround Sheet",
+    "instruction": "Create front, left, rear, right, top, and underside views at identical scale and consistent anatomy. No labels.",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "wing-study",
+    "name": "Wing Study",
+    "instruction": "Show fully spread wings, folded wings, upper and lower surfaces, joint structure, and primary control surfaces.",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "skeleton",
+    "name": "Skeleton Reference",
+    "instruction": "Show the complete support system with wing joints, flight-muscle attachments, tail support, and landing anatomy. No labels.",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "musculature",
+    "name": "Flight Musculature",
+    "instruction": "Show primary flight muscles, secondary control muscles, neck, leg, and tail muscle systems. No labels.",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "anatomy",
+    "name": "Internal Anatomy",
+    "instruction": "Show respiration, circulation, digestion, sensory systems, reproduction, and flight-specific anatomy in a restrained cutaway. No labels.",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "lifecycle",
+    "name": "Lifecycle Sheet",
+    "instruction": "Show reproductive form, newborn or hatchling, juvenile, adolescent where applicable, mature adult, and elder at comparative scale.",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "variants",
+    "name": "Canonical Variants",
+    "instruction": "Show canonical sex, regional, seasonal, plumage, morph, caste, or engineered variants while preserving core anatomy.",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "behavior",
+    "name": "Behavior Sheet",
+    "instruction": "Show idle, perching or resting, feeding, locomotion, social interaction, defensive response, and sleep.",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "flight-cycle",
+    "name": "Flight and Locomotion Sheet",
+    "instruction": "Show takeoff, powered flight, glide or soar, banked turn, climb, dive, landing, and ground locomotion where applicable.",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "habitat",
+    "name": "Native Habitat Scene",
+    "instruction": "Show the species behaving naturally in its canonical planet and biome, with conditions that explain its flight adaptations.",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "discovery",
+    "name": "Discovery Scan Source",
+    "instruction": "Create a centered scientific scan source with restrained contour illumination and no text, labels, or heavy HUD.",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "icon",
+    "name": "UI Icon Source",
+    "instruction": "Create a centered isolated icon with a strong silhouette and readability at 64 pixels.",
+    "aspectRatio": "1:1"
+  },
+  {
+    "outputType": "scale",
+    "name": "Scale Comparison",
+    "instruction": "Create a side-view comparison beside a simple unbranded adult human silhouette and one-meter bar. No words or numbers.",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "species-plate",
+    "name": "Master Species Plate",
+    "instruction": "Create a board with full body, portrait, front, side, rear, top, underside, skeleton, wing anatomy, foot, feeding organ, lifecycle, variants, silhouette, scale, material closeups, and habitat vignette. Unlabeled.",
+    "aspectRatio": "16:9"
+  },
+  {
+    "outputType": "animation",
+    "name": "Animation Reference Sheet",
+    "instruction": "Show idle, walk or perch, takeoff, powered flight, glide, turn, dive, feed, interact, defend or attack if canonical, sleep, and death or shutdown.",
+    "aspectRatio": "16:9"
+  }
+]

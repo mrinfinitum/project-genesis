@@ -1,0 +1,31 @@
+{
+  "variables": [
+    "speciesName",
+    "scientificName",
+    "canonicalId",
+    "originPlanet",
+    "planetType",
+    "biome",
+    "gravity",
+    "atmosphere",
+    "airDensity",
+    "windProfile",
+    "climate",
+    "temperatureRange",
+    "sizeScale",
+    "diet",
+    "behavior",
+    "bodyPlan",
+    "wingType",
+    "wingSpan",
+    "wingCount",
+    "featherOrMembraneType",
+    "surfaceCovering",
+    "coloration",
+    "materials",
+    "distinctiveFeatures",
+    "lockedTraits",
+    "rarity",
+    "artDirection"
+  ]
+}
