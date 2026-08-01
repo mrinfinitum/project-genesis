@@ -1,0 +1,72 @@
+[
+  {
+    "itemName": "Environment Composer UI",
+    "type": "workspace",
+    "path": "components/environment-composer-workspace.tsx",
+    "currentPurpose": "Theme and runtime-export views after scene/layer UI removal.",
+    "evidenceOfUse": "Referenced by app/environment-composer/themes/page.tsx and export/page.tsx.",
+    "dependents": "Environment Composer routes",
+    "category": "retain",
+    "riskLevel": "medium",
+    "dataMigrationRequired": "No, if only UI routes are removed.",
+    "recommendation": "Keep narrow theme/export contract; do not reintroduce freeform composition.",
+    "confidence": "high",
+    "proposedReplacement": "Flat background asset metadata and Unity-owned layout."
+  },
+  {
+    "itemName": "Environment layer asset API",
+    "type": "API",
+    "path": "app/api/environment-layer-assets/route.ts",
+    "currentPurpose": "Persists multi-layer environment asset records.",
+    "evidenceOfUse": "components/environment-layer-generator.tsx fetches this endpoint.",
+    "dependents": "Environment layer generators",
+    "category": "deprecate",
+    "riskLevel": "high",
+    "dataMigrationRequired": "Yes; preserve approved paintings as single background asset records first.",
+    "recommendation": "Inventory and migrate approved records before removal.",
+    "confidence": "high",
+    "proposedReplacement": "Canonical flat Environment Painting record per context."
+  },
+  {
+    "itemName": "Species Plate layout contract",
+    "type": "template system",
+    "path": "lib/species-plates/master-template.ts",
+    "currentPurpose": "Defines 4000x4000 plate panels, presets, and prompt constraints.",
+    "evidenceOfUse": "Referenced by compiler and species plate routes.",
+    "dependents": "Species plates endpoints and UI",
+    "category": "simplify",
+    "riskLevel": "medium",
+    "dataMigrationRequired": "No for prompts; yes for any active layout manifests.",
+    "recommendation": "Retain prompt and asset extraction contracts; move visual layout ownership to Unity or an offline art tool.",
+    "confidence": "high",
+    "proposedReplacement": "Prompt presets plus approved asset manifests."
+  },
+  {
+    "itemName": "Planet Detail PSD slicing",
+    "type": "asset pipeline",
+    "path": "lib/assets/planet-detail-screen.ts",
+    "currentPurpose": "PSD slices and artpack manifests.",
+    "evidenceOfUse": "Creative Production Planet Detail routes and exports.",
+    "dependents": "Planet detail artpack endpoints",
+    "category": "migrate_data_first",
+    "riskLevel": "high",
+    "dataMigrationRequired": "Yes; retain source master, exported PNG assets, manifest semantic keys, and safe-area metadata.",
+    "recommendation": "Keep asset identity and exported sprites; discontinue Studio ownership of Unity coordinates.",
+    "confidence": "high",
+    "proposedReplacement": "Unity screen prefab/layout with Studio asset-manifest references."
+  },
+  {
+    "itemName": "Legacy map-named routes",
+    "type": "routes",
+    "path": "app/sector-map, app/star-system-map",
+    "currentPurpose": "Canonical libraries with historic route names.",
+    "evidenceOfUse": "Primary navigation references both routes.",
+    "dependents": "Sidebar bookmarks",
+    "category": "rename",
+    "riskLevel": "low",
+    "dataMigrationRequired": "No; redirects preserve bookmarks.",
+    "recommendation": "Plan redirects only after confirming external links.",
+    "confidence": "medium",
+    "proposedReplacement": "Library-oriented route names."
+  }
+]

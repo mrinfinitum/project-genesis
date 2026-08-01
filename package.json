@@ -49,6 +49,7 @@
     "generate:psd-game-derivatives": "tsx scripts/generate-psd-game-derivatives.ts",
     "generate:navigation-icons": "tsx scripts/generate-navigation-icon-derivatives.ts",
     "verify:navigation-icons": "tsx scripts/verify-navigation-icons.ts",
+    "audit:studio": "node scripts/generate-studio-audit.mjs",
     "export:procedural-universe-fixtures": "tsx scripts/export-procedural-universe-fixtures.ts"
   },
   "dependencies": {

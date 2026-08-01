@@ -1,0 +1,23 @@
+{
+  "source": "data/asset-production.local.json",
+  "assetCount": 96,
+  "statusCounts": {
+    "web_published": 95,
+    "source_missing": 1
+  },
+  "approvedAssets": 0,
+  "missingAssets": 2,
+  "derivativePresetCount": 0,
+  "processingJobCount": 0,
+  "productionTaskCount": 15,
+  "warnings": [
+    "Registry is local JSON and may not match live Supabase state.",
+    "No image decoding or checksum verification was performed by this audit."
+  ],
+  "categories": [
+    {
+      "category": "Unclassified",
+      "count": 96
+    }
+  ]
+}

@@ -1,0 +1,1909 @@
+{
+  "canonicalRoot": "source-masters -> game-art/source-masters (symbolic link)",
+  "fileCount": 298,
+  "totalBytes": 9808086782,
+  "byExtension": [
+    [
+      ".psd",
+      196
+    ],
+    [
+      "[none]",
+      83
+    ],
+    [
+      ".md",
+      9
+    ],
+    [
+      ".png",
+      8
+    ],
+    [
+      ".json",
+      2
+    ]
+  ],
+  "emptyFolderMarkers": [
+    "source-masters/source-masters/environments/galaxy/01_far-stars/.gitkeep",
+    "source-masters/source-masters/environments/galaxy/02_galaxy-disc/.gitkeep",
+    "source-masters/source-masters/environments/galaxy/03_spiral-arms/.gitkeep",
+    "source-masters/source-masters/environments/galaxy/04_core-glow/.gitkeep",
+    "source-masters/source-masters/environments/galaxy/05_dust-lanes/.gitkeep",
+    "source-masters/source-masters/environments/galaxy/06_nebula-accents/.gitkeep",
+    "source-masters/source-masters/environments/galaxy/07_star-clouds/.gitkeep",
+    "source-masters/source-masters/environments/galaxy/08_sector-overlays/.gitkeep",
+    "source-masters/source-masters/environments/galaxy/09_exploration-fog/.gitkeep",
+    "source-masters/source-masters/environments/galaxy/10_foreground-particles/.gitkeep",
+    "source-masters/source-masters/environments/sector/01_deep-stars/.gitkeep",
+    "source-masters/source-masters/environments/sector/02_distant-fields/.gitkeep",
+    "source-masters/source-masters/environments/sector/03_star-clusters/.gitkeep",
+    "source-masters/source-masters/environments/sector/04_nebulas/.gitkeep",
+    "source-masters/source-masters/environments/sector/05_dust/.gitkeep",
+    "source-masters/source-masters/environments/sector/06_haze/.gitkeep",
+    "source-masters/source-masters/environments/sector/07_navigation-grids/.gitkeep",
+    "source-masters/source-masters/environments/sector/08_probe-routes/.gitkeep",
+    "source-masters/source-masters/environments/sector/09_fog-of-war/.gitkeep",
+    "source-masters/source-masters/environments/sector/10_foreground-effects/.gitkeep",
+    "source-masters/source-masters/environments/star-system/01_environment-painting/.gitkeep",
+    "source-masters/source-masters/environments/star-system/02_light-rays/.gitkeep",
+    "source-masters/source-masters/environments/star-system/03_foreground-dust/.gitkeep",
+    "source-masters/source-masters/environments/star-system/04_particles/.gitkeep",
+    "source-masters/source-masters/environments/star-system/05_fog-of-war/.gitkeep",
+    "source-masters/source-masters/environments/star-system/06_orbit-styles/.gitkeep",
+    "source-masters/source-masters/environments/star-system/07_asteroid-belts/.gitkeep",
+    "source-masters/source-masters/environments/star-system/08_selection-effects/.gitkeep",
+    "source-masters/source-masters/environments/universe/01_deep-cosmic-background/.gitkeep",
+    "source-masters/source-masters/environments/universe/02_distant-galaxies/.gitkeep",
+    "source-masters/source-masters/environments/universe/03_cosmic-web/.gitkeep",
+    "source-masters/source-masters/environments/universe/04_cosmic-dust/.gitkeep",
+    "source-masters/source-masters/environments/universe/05_deep-haze/.gitkeep",
+    "source-masters/source-masters/environments/universe/06_foreground-dust/.gitkeep",
+    "source-masters/source-masters/galactic-regions/environment-painting/.gitkeep",
+    "source-masters/source-masters/galaxies/environment-painting/.gitkeep",
+    "source-masters/source-masters/life/creatures/species/.gitkeep",
+    "source-masters/source-masters/life/plants/species/.gitkeep",
+    "source-masters/source-masters/production/visual-engine/nano-banana-2/.gitkeep",
+    "source-masters/source-masters/production/visual-engine/nano-banana-2/approved/.gitkeep",
+    "source-masters/source-masters/production/visual-engine/nano-banana-2/archetypes/creatures/.gitkeep",
+    "source-masters/source-masters/production/visual-engine/nano-banana-2/archetypes/plants/.gitkeep",
+    "source-masters/source-masters/production/visual-engine/nano-banana-2/backgrounds/.gitkeep",
+    "source-masters/source-masters/production/visual-engine/nano-banana-2/cameras/.gitkeep",
+    "source-masters/source-masters/production/visual-engine/nano-banana-2/compositions/.gitkeep",
+    "source-masters/source-masters/production/visual-engine/nano-banana-2/environmental-adaptations/.gitkeep",
+    "source-masters/source-masters/production/visual-engine/nano-banana-2/lighting/.gitkeep",
+    "source-masters/source-masters/production/visual-engine/nano-banana-2/manifests/.gitkeep",
+    "source-masters/source-masters/production/visual-engine/nano-banana-2/materials/.gitkeep",
+    "source-masters/source-masters/production/visual-engine/nano-banana-2/model-profile/.gitkeep",
+    "source-masters/source-masters/production/visual-engine/nano-banana-2/negative-prompts/.gitkeep",
+    "source-masters/source-masters/production/visual-engine/nano-banana-2/outputs/.gitkeep",
+    "source-masters/source-masters/production/visual-engine/nano-banana-2/prompt-packs/.gitkeep",
+    "source-masters/source-masters/production/visual-engine/nano-banana-2/psd-rules/.gitkeep",
+    "source-masters/source-masters/production/visual-engine/nano-banana-2/rejected/.gitkeep",
+    "source-masters/source-masters/production/visual-engine/nano-banana-2/schemas/.gitkeep",
+    "source-masters/source-masters/production/visual-engine/nano-banana-2/variations/.gitkeep",
+    "source-masters/source-masters/star-systems/environment-painting/.gitkeep",
+    "source-masters/source-masters/ui/hud/civilization-operations/01_operations-deck/.gitkeep",
+    "source-masters/source-masters/ui/hud/civilization-operations/02_active-actions/.gitkeep",
+    "source-masters/source-masters/ui/hud/civilization-operations/03_next-priorities/.gitkeep",
+    "source-masters/source-masters/ui/hud/civilization-operations/04_recent-activity/.gitkeep",
+    "source-masters/source-masters/ui/hud/civilization-operations/05_civilization-forecast/.gitkeep",
+    "source-masters/source-masters/ui/hud/civilization-operations/06_action-row/.gitkeep",
+    "source-masters/source-masters/ui/hud/civilization-operations/07_priority-card/.gitkeep",
+    "source-masters/source-masters/ui/hud/civilization-operations/08_activity-row/.gitkeep",
+    "source-masters/source-masters/ui/hud/civilization-operations/09_forecast-metrics/.gitkeep"
+  ],
+  "warnings": [
+    "source-masters/source-masters/.DS_Store",
+    "source-masters/source-masters/environments/.DS_Store",
+    "source-masters/source-masters/environments/galaxy/.DS_Store",
+    "source-masters/source-masters/environments/star-system/.DS_Store",
+    "source-masters/source-masters/environments/star-system/01_environment-painting/.DS_Store",
+    "source-masters/source-masters/galactic-regions/.DS_Store",
+    "source-masters/source-masters/galaxies/.DS_Store",
+    "source-masters/source-masters/legacy/unclassified/roblox/untitled-1.psd",
+    "source-masters/source-masters/legacy/unclassified/roblox/untitled-10-topaz-gigapixel-2x-scale.psd",
+    "source-masters/source-masters/legacy/unclassified/roblox/untitled-7.psd",
+    "source-masters/source-masters/legacy/unclassified/roblox/untitled-8.psd",
+    "source-masters/source-masters/life/.DS_Store",
+    "source-masters/source-masters/life/plants/.DS_Store",
+    "source-masters/source-masters/planets/.DS_Store",
+    "source-masters/source-masters/planets/crystal/.DS_Store",
+    "source-masters/source-masters/star-systems/.DS_Store",
+    "source-masters/source-masters/star-systems/environment-painting/.DS_Store",
+    "source-masters/source-masters/ui/.DS_Store",
+    "source-masters/source-masters/ui/components/.DS_Store",
+    "source-masters/source-masters/ui/screens/.DS_Store",
+    "source-masters/source-masters/ui/screens/planet-detail/biome-enviroment.psd"
+  ],
+  "files": [
+    {
+      "path": "source-masters/source-masters/.DS_Store",
+      "extension": "[none]",
+      "bytes": 26628,
+      "folder": "source-masters/source-masters"
+    },
+    {
+      "path": "source-masters/source-masters/README.md",
+      "extension": ".md",
+      "bytes": 3940,
+      "folder": "source-masters/source-masters"
+    },
+    {
+      "path": "source-masters/source-masters/environments/.DS_Store",
+      "extension": "[none]",
+      "bytes": 14340,
+      "folder": "source-masters/source-masters/environments"
+    },
+    {
+      "path": "source-masters/source-masters/environments/galaxy/.DS_Store",
+      "extension": "[none]",
+      "bytes": 8196,
+      "folder": "source-masters/source-masters/environments/galaxy"
+    },
+    {
+      "path": "source-masters/source-masters/environments/galaxy/01_far-stars/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/galaxy/01_far-stars"
+    },
+    {
+      "path": "source-masters/source-masters/environments/galaxy/02_galaxy-disc/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/galaxy/02_galaxy-disc"
+    },
+    {
+      "path": "source-masters/source-masters/environments/galaxy/03_spiral-arms/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/galaxy/03_spiral-arms"
+    },
+    {
+      "path": "source-masters/source-masters/environments/galaxy/04_core-glow/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/galaxy/04_core-glow"
+    },
+    {
+      "path": "source-masters/source-masters/environments/galaxy/05_dust-lanes/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/galaxy/05_dust-lanes"
+    },
+    {
+      "path": "source-masters/source-masters/environments/galaxy/06_nebula-accents/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/galaxy/06_nebula-accents"
+    },
+    {
+      "path": "source-masters/source-masters/environments/galaxy/07_star-clouds/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/galaxy/07_star-clouds"
+    },
+    {
+      "path": "source-masters/source-masters/environments/galaxy/08_sector-overlays/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/galaxy/08_sector-overlays"
+    },
+    {
+      "path": "source-masters/source-masters/environments/galaxy/09_exploration-fog/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/galaxy/09_exploration-fog"
+    },
+    {
+      "path": "source-masters/source-masters/environments/galaxy/10_foreground-particles/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/galaxy/10_foreground-particles"
+    },
+    {
+      "path": "source-masters/source-masters/environments/sector/01_deep-stars/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/sector/01_deep-stars"
+    },
+    {
+      "path": "source-masters/source-masters/environments/sector/02_distant-fields/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/sector/02_distant-fields"
+    },
+    {
+      "path": "source-masters/source-masters/environments/sector/03_star-clusters/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/sector/03_star-clusters"
+    },
+    {
+      "path": "source-masters/source-masters/environments/sector/04_nebulas/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/sector/04_nebulas"
+    },
+    {
+      "path": "source-masters/source-masters/environments/sector/05_dust/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/sector/05_dust"
+    },
+    {
+      "path": "source-masters/source-masters/environments/sector/06_haze/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/sector/06_haze"
+    },
+    {
+      "path": "source-masters/source-masters/environments/sector/07_navigation-grids/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/sector/07_navigation-grids"
+    },
+    {
+      "path": "source-masters/source-masters/environments/sector/08_probe-routes/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/sector/08_probe-routes"
+    },
+    {
+      "path": "source-masters/source-masters/environments/sector/09_fog-of-war/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/sector/09_fog-of-war"
+    },
+    {
+      "path": "source-masters/source-masters/environments/sector/10_foreground-effects/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/sector/10_foreground-effects"
+    },
+    {
+      "path": "source-masters/source-masters/environments/star-system/.DS_Store",
+      "extension": "[none]",
+      "bytes": 8196,
+      "folder": "source-masters/source-masters/environments/star-system"
+    },
+    {
+      "path": "source-masters/source-masters/environments/star-system/01_environment-painting/.DS_Store",
+      "extension": "[none]",
+      "bytes": 6148,
+      "folder": "source-masters/source-masters/environments/star-system/01_environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/environments/star-system/01_environment-painting/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/star-system/01_environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/environments/star-system/01_environment-painting/magnific_create-a-premium-astronom_9RPVibDNYZ.png",
+      "extension": ".png",
+      "bytes": 985168,
+      "folder": "source-masters/source-masters/environments/star-system/01_environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/environments/star-system/01_environment-painting/magnific_create-a-premium-astronom_J9wYy7AOq4.png",
+      "extension": ".png",
+      "bytes": 1125988,
+      "folder": "source-masters/source-masters/environments/star-system/01_environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/environments/star-system/01_environment-painting/magnific_create-a-premium-astronom_UygG7X7wny.png",
+      "extension": ".png",
+      "bytes": 1017658,
+      "folder": "source-masters/source-masters/environments/star-system/01_environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/environments/star-system/01_environment-painting/magnific_create-a-premium-astronom_swjRg8dl8e.png",
+      "extension": ".png",
+      "bytes": 1038180,
+      "folder": "source-masters/source-masters/environments/star-system/01_environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/environments/star-system/01_environment-painting/magnific_create-a-premium-deepspac_1sK4K3Kr4r.png",
+      "extension": ".png",
+      "bytes": 1244948,
+      "folder": "source-masters/source-masters/environments/star-system/01_environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/environments/star-system/01_environment-painting/magnific_create-a-premium-deepspac_KjbybRXkqp.png",
+      "extension": ".png",
+      "bytes": 1396096,
+      "folder": "source-masters/source-masters/environments/star-system/01_environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/environments/star-system/01_environment-painting/magnific_create-a-premium-deepspac_vumjCgWa47.png",
+      "extension": ".png",
+      "bytes": 1263212,
+      "folder": "source-masters/source-masters/environments/star-system/01_environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/environments/star-system/02_light-rays/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/star-system/02_light-rays"
+    },
+    {
+      "path": "source-masters/source-masters/environments/star-system/03_foreground-dust/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/star-system/03_foreground-dust"
+    },
+    {
+      "path": "source-masters/source-masters/environments/star-system/04_particles/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/star-system/04_particles"
+    },
+    {
+      "path": "source-masters/source-masters/environments/star-system/05_fog-of-war/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/star-system/05_fog-of-war"
+    },
+    {
+      "path": "source-masters/source-masters/environments/star-system/06_orbit-styles/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/star-system/06_orbit-styles"
+    },
+    {
+      "path": "source-masters/source-masters/environments/star-system/07_asteroid-belts/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/star-system/07_asteroid-belts"
+    },
+    {
+      "path": "source-masters/source-masters/environments/star-system/08_selection-effects/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/star-system/08_selection-effects"
+    },
+    {
+      "path": "source-masters/source-masters/environments/universe/01_deep-cosmic-background/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/universe/01_deep-cosmic-background"
+    },
+    {
+      "path": "source-masters/source-masters/environments/universe/02_distant-galaxies/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/universe/02_distant-galaxies"
+    },
+    {
+      "path": "source-masters/source-masters/environments/universe/03_cosmic-web/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/universe/03_cosmic-web"
+    },
+    {
+      "path": "source-masters/source-masters/environments/universe/04_cosmic-dust/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/universe/04_cosmic-dust"
+    },
+    {
+      "path": "source-masters/source-masters/environments/universe/05_deep-haze/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/universe/05_deep-haze"
+    },
+    {
+      "path": "source-masters/source-masters/environments/universe/06_foreground-dust/.gitkeep",
+      "extension": "[none]",
+      "bytes": 0,
+      "folder": "source-masters/source-masters/environments/universe/06_foreground-dust"
+    },
+    {
+      "path": "source-masters/source-masters/galactic-regions/.DS_Store",
+      "extension": "[none]",
+      "bytes": 10244,
+      "folder": "source-masters/source-masters/galactic-regions"
+    },
+    {
+      "path": "source-masters/source-masters/galactic-regions/environment-painting/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/galactic-regions/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/galactic-regions/environment-painting/environment-painting-0002.psd",
+      "extension": ".psd",
+      "bytes": 121418673,
+      "folder": "source-masters/source-masters/galactic-regions/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/galactic-regions/environment-painting/environment-painting-0003.psd",
+      "extension": ".psd",
+      "bytes": 115672802,
+      "folder": "source-masters/source-masters/galactic-regions/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/galactic-regions/environment-painting/environment-painting-0004.psd",
+      "extension": ".psd",
+      "bytes": 105763169,
+      "folder": "source-masters/source-masters/galactic-regions/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/galactic-regions/environment-painting/environment-painting-0005.psd",
+      "extension": ".psd",
+      "bytes": 115152933,
+      "folder": "source-masters/source-masters/galactic-regions/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/galactic-regions/environment-painting/environment-painting-0006.psd",
+      "extension": ".psd",
+      "bytes": 109431353,
+      "folder": "source-masters/source-masters/galactic-regions/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/galactic-regions/environment-painting/environment-painting-0007.psd",
+      "extension": ".psd",
+      "bytes": 105763177,
+      "folder": "source-masters/source-masters/galactic-regions/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/galactic-regions/environment-painting/environment-painting-0008.psd",
+      "extension": ".psd",
+      "bytes": 105846295,
+      "folder": "source-masters/source-masters/galactic-regions/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/galactic-regions/environment-painting/environment-painting-0009.psd",
+      "extension": ".psd",
+      "bytes": 113464314,
+      "folder": "source-masters/source-masters/galactic-regions/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/galactic-regions/environment-painting/environment-painting-0010.psd",
+      "extension": ".psd",
+      "bytes": 119542991,
+      "folder": "source-masters/source-masters/galactic-regions/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/galactic-regions/environment-painting/environment-painting-orion-spur.psd",
+      "extension": ".psd",
+      "bytes": 83716635,
+      "folder": "source-masters/source-masters/galactic-regions/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/galaxies/.DS_Store",
+      "extension": "[none]",
+      "bytes": 6148,
+      "folder": "source-masters/source-masters/galaxies"
+    },
+    {
+      "path": "source-masters/source-masters/galaxies/environment-painting/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/galaxies/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/galaxies/environment-painting/environment-painting-0001.psd",
+      "extension": ".psd",
+      "bytes": 110373308,
+      "folder": "source-masters/source-masters/galaxies/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/galaxies/environment-painting/environment-painting-0003.psd",
+      "extension": ".psd",
+      "bytes": 110373308,
+      "folder": "source-masters/source-masters/galaxies/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/galaxies/environment-painting/environment-painting-0004.psd",
+      "extension": ".psd",
+      "bytes": 113464314,
+      "folder": "source-masters/source-masters/galaxies/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/galaxies/environment-painting/environment-painting-0005.psd",
+      "extension": ".psd",
+      "bytes": 116074936,
+      "folder": "source-masters/source-masters/galaxies/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/galaxies/environment-painting/environment-painting-0006.psd",
+      "extension": ".psd",
+      "bytes": 116074936,
+      "folder": "source-masters/source-masters/galaxies/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/galaxies/environment-painting/environment-painting-0007.psd",
+      "extension": ".psd",
+      "bytes": 107428901,
+      "folder": "source-masters/source-masters/galaxies/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/galaxies/environment-painting/environment-painting-0008.psd",
+      "extension": ".psd",
+      "bytes": 111914187,
+      "folder": "source-masters/source-masters/galaxies/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/galaxies/environment-painting/environment-painting-milky-way.psd",
+      "extension": ".psd",
+      "bytes": 110373308,
+      "folder": "source-masters/source-masters/galaxies/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/icons/research/survival/icon-survival-science-01-storytelling.psd",
+      "extension": ".psd",
+      "bytes": 1573595,
+      "folder": "source-masters/source-masters/icons/research/survival"
+    },
+    {
+      "path": "source-masters/source-masters/icons/research/survival/icon-survival-science-02-primitive-mathematics.psd",
+      "extension": ".psd",
+      "bytes": 2106275,
+      "folder": "source-masters/source-masters/icons/research/survival"
+    },
+    {
+      "path": "source-masters/source-masters/icons/research/survival/icon-survival-science-03-agriculture.psd",
+      "extension": ".psd",
+      "bytes": 2653694,
+      "folder": "source-masters/source-masters/icons/research/survival"
+    },
+    {
+      "path": "source-masters/source-masters/icons/research/survival/icon-survival-science-04-animal-husbandry.psd",
+      "extension": ".psd",
+      "bytes": 3188173,
+      "folder": "source-masters/source-masters/icons/research/survival"
+    },
+    {
+      "path": "source-masters/source-masters/icons/research/survival/icon-survival-science-05-mining.psd",
+      "extension": ".psd",
+      "bytes": 4219393,
+      "folder": "source-masters/source-masters/icons/research/survival"
+    },
+    {
+      "path": "source-masters/source-masters/icons/research/survival/icon-survival-science-06-construction.psd",
+      "extension": ".psd",
+      "bytes": 4746670,
+      "folder": "source-masters/source-masters/icons/research/survival"
+    },
+    {
+      "path": "source-masters/source-masters/icons/research/survival/icon-survival-science-07-fire-engineering.psd",
+      "extension": ".psd",
+      "bytes": 5253982,
+      "folder": "source-masters/source-masters/icons/research/survival"
+    },
+    {
+      "path": "source-masters/source-masters/icons/research/survival/icon-survival-science-08-basic-medicine.psd",
+      "extension": ".psd",
+      "bytes": 5783886,
+      "folder": "source-masters/source-masters/icons/research/survival"
+    },
+    {
+      "path": "source-masters/source-masters/icons/research/survival/icon-survival-science-09-toolmaking.psd",
+      "extension": ".psd",
+      "bytes": 6300483,
+      "folder": "source-masters/source-masters/icons/research/survival"
+    },
+    {
+      "path": "source-masters/source-masters/icons/research/survival/icon-survival-science-10-early-science.psd",
+      "extension": ".psd",
+      "bytes": 6821978,
+      "folder": "source-masters/source-masters/icons/research/survival"
+    },
+    {
+      "path": "source-masters/source-masters/icons/research/survival/icon-survival-science-11-primitive-navigation.psd",
+      "extension": ".psd",
+      "bytes": 7348729,
+      "folder": "source-masters/source-masters/icons/research/survival"
+    },
+    {
+      "path": "source-masters/source-masters/icons/research/survival/icon-survival-science-12-natural-observation.psd",
+      "extension": ".psd",
+      "bytes": 7866577,
+      "folder": "source-masters/source-masters/icons/research/survival"
+    },
+    {
+      "path": "source-masters/source-masters/icons/research/town/icon-town-science-01-scientific-method.psd",
+      "extension": ".psd",
+      "bytes": 14644304,
+      "folder": "source-masters/source-masters/icons/research/town"
+    },
+    {
+      "path": "source-masters/source-masters/icons/research/town/icon-town-science-02-electricity.psd",
+      "extension": ".psd",
+      "bytes": 15156945,
+      "folder": "source-masters/source-masters/icons/research/town"
+    },
+    {
+      "path": "source-masters/source-masters/icons/research/village/icon-village-science-01-writing.psd",
+      "extension": ".psd",
+      "bytes": 8383260,
+      "folder": "source-masters/source-masters/icons/research/village"
+    },
+    {
+      "path": "source-masters/source-masters/icons/research/village/icon-village-science-02-libraries.psd",
+      "extension": ".psd",
+      "bytes": 8912629,
+      "folder": "source-masters/source-masters/icons/research/village"
+    },
+    {
+      "path": "source-masters/source-masters/icons/research/village/icon-village-science-03-surveying.psd",
+      "extension": ".psd",
+      "bytes": 9425768,
+      "folder": "source-masters/source-masters/icons/research/village"
+    },
+    {
+      "path": "source-masters/source-masters/icons/research/village/icon-village-science-04-architecture.psd",
+      "extension": ".psd",
+      "bytes": 9944757,
+      "folder": "source-masters/source-masters/icons/research/village"
+    },
+    {
+      "path": "source-masters/source-masters/icons/research/village/icon-village-science-05-early-engineering.psd",
+      "extension": ".psd",
+      "bytes": 10467343,
+      "folder": "source-masters/source-masters/icons/research/village"
+    },
+    {
+      "path": "source-masters/source-masters/icons/research/village/icon-village-science-06-navigation.psd",
+      "extension": ".psd",
+      "bytes": 10993867,
+      "folder": "source-masters/source-masters/icons/research/village"
+    },
+    {
+      "path": "source-masters/source-masters/icons/research/village/icon-village-science-07-education.psd",
+      "extension": ".psd",
+      "bytes": 11510570,
+      "folder": "source-masters/source-masters/icons/research/village"
+    },
+    {
+      "path": "source-masters/source-masters/icons/research/village/icon-village-science-08-crop-science.psd",
+      "extension": ".psd",
+      "bytes": 12040698,
+      "folder": "source-masters/source-masters/icons/research/village"
+    },
+    {
+      "path": "source-masters/source-masters/icons/research/village/icon-village-science-09-metallurgy.psd",
+      "extension": ".psd",
+      "bytes": 12558617,
+      "folder": "source-masters/source-masters/icons/research/village"
+    },
+    {
+      "path": "source-masters/source-masters/icons/research/village/icon-village-science-10-water-systems.psd",
+      "extension": ".psd",
+      "bytes": 13082160,
+      "folder": "source-masters/source-masters/icons/research/village"
+    },
+    {
+      "path": "source-masters/source-masters/icons/research/village/icon-village-science-11-cartography.psd",
+      "extension": ".psd",
+      "bytes": 13599224,
+      "folder": "source-masters/source-masters/icons/research/village"
+    },
+    {
+      "path": "source-masters/source-masters/icons/research/village/icon-village-science-12-irrigation.psd",
+      "extension": ".psd",
+      "bytes": 14128401,
+      "folder": "source-masters/source-masters/icons/research/village"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/future/icon-future-technology-01-planetary-economy.psd",
+      "extension": ".psd",
+      "bytes": 1701338,
+      "folder": "source-masters/source-masters/icons/technology/future"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/future/icon-future-technology-02-climate-engineering.psd",
+      "extension": ".psd",
+      "bytes": 1761010,
+      "folder": "source-masters/source-masters/icons/technology/future"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/future/icon-future-technology-03-fusion-infrastructure.psd",
+      "extension": ".psd",
+      "bytes": 1747772,
+      "folder": "source-masters/source-masters/icons/technology/future"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/future/icon-future-technology-05-digital-civilization.psd",
+      "extension": ".psd",
+      "bytes": 1780519,
+      "folder": "source-masters/source-masters/icons/technology/future"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/future/icon-future-technology-06-interstellar-commerce.psd",
+      "extension": ".psd",
+      "bytes": 1743452,
+      "folder": "source-masters/source-masters/icons/technology/future"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/future/icon-future-technology-07-planetary-governance.psd",
+      "extension": ".psd",
+      "bytes": 1728463,
+      "folder": "source-masters/source-masters/icons/technology/future"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/future/icon-future-technology-08-universal-infrastructure.psd",
+      "extension": ".psd",
+      "bytes": 1728977,
+      "folder": "source-masters/source-masters/icons/technology/future"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/future/icon-future-technology-09-civilization-network.psd",
+      "extension": ".psd",
+      "bytes": 1765280,
+      "folder": "source-masters/source-masters/icons/technology/future"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/future/icon-future-technology-09-universal-intelligence.psd",
+      "extension": ".psd",
+      "bytes": 1791954,
+      "folder": "source-masters/source-masters/icons/technology/future"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/future/icon-future-technology-11-interplanetary-logistics.psd",
+      "extension": ".psd",
+      "bytes": 1736335,
+      "folder": "source-masters/source-masters/icons/technology/future"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/industrial/icon-industrial-technology-01-power-grid.psd",
+      "extension": ".psd",
+      "bytes": 1755226,
+      "folder": "source-masters/source-masters/icons/technology/industrial"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/industrial/icon-industrial-technology-02-corporate-investment.psd",
+      "extension": ".psd",
+      "bytes": 1698841,
+      "folder": "source-masters/source-masters/icons/technology/industrial"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/industrial/icon-industrial-technology-03-infrastructure-expansion.psd",
+      "extension": ".psd",
+      "bytes": 1802591,
+      "folder": "source-masters/source-masters/icons/technology/industrial"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/industrial/icon-industrial-technology-04-mass-transit.psd",
+      "extension": ".psd",
+      "bytes": 1763907,
+      "folder": "source-masters/source-masters/icons/technology/industrial"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/industrial/icon-industrial-technology-05-environmental-protection.psd",
+      "extension": ".psd",
+      "bytes": 1774521,
+      "folder": "source-masters/source-masters/icons/technology/industrial"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/industrial/icon-industrial-technology-06-economic-growth.psd",
+      "extension": ".psd",
+      "bytes": 1721278,
+      "folder": "source-masters/source-masters/icons/technology/industrial"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/industrial/icon-industrial-technology-07-national-projects.psd",
+      "extension": ".psd",
+      "bytes": 1806863,
+      "folder": "source-masters/source-masters/icons/technology/industrial"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/industrial/icon-industrial-technology-08-global-commerce.psd",
+      "extension": ".psd",
+      "bytes": 1786131,
+      "folder": "source-masters/source-masters/icons/technology/industrial"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/industrial/icon-industrial-technology-09-industrial-management.psd",
+      "extension": ".psd",
+      "bytes": 1714715,
+      "folder": "source-masters/source-masters/icons/technology/industrial"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/industrial/icon-industrial-technology-10-advanced-logistics.psd",
+      "extension": ".psd",
+      "bytes": 1720580,
+      "folder": "source-masters/source-masters/icons/technology/industrial"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/master-sheets/01-technology-icons-master-sheet.psd",
+      "extension": ".psd",
+      "bytes": 3016086,
+      "folder": "source-masters/source-masters/icons/technology/master-sheets"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/modern/icon-modern-technology-01-smart-cities.psd",
+      "extension": ".psd",
+      "bytes": 1125973,
+      "folder": "source-masters/source-masters/icons/technology/modern"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/modern/icon-modern-technology-02-digital-government.psd",
+      "extension": ".psd",
+      "bytes": 1123010,
+      "folder": "source-masters/source-masters/icons/technology/modern"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/modern/icon-modern-technology-03-innovation-economy.psd",
+      "extension": ".psd",
+      "bytes": 1127100,
+      "folder": "source-masters/source-masters/icons/technology/modern"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/modern/icon-modern-technology-04-technology-parks.psd",
+      "extension": ".psd",
+      "bytes": 1128584,
+      "folder": "source-masters/source-masters/icons/technology/modern"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/modern/icon-modern-technology-05-global-finance.psd",
+      "extension": ".psd",
+      "bytes": 1119201,
+      "folder": "source-masters/source-masters/icons/technology/modern"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/modern/icon-modern-technology-06-clean-energy.psd",
+      "extension": ".psd",
+      "bytes": 1130316,
+      "folder": "source-masters/source-masters/icons/technology/modern"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/modern/icon-modern-technology-07-advanced-infrastructure.psd",
+      "extension": ".psd",
+      "bytes": 1144480,
+      "folder": "source-masters/source-masters/icons/technology/modern"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/modern/icon-modern-technology-08-digital-commerce.psd",
+      "extension": ".psd",
+      "bytes": 1115604,
+      "folder": "source-masters/source-masters/icons/technology/modern"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/modern/icon-modern-technology-08-urban-ai.psd",
+      "extension": ".psd",
+      "bytes": 1124760,
+      "folder": "source-masters/source-masters/icons/technology/modern"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/modern/icon-modern-technology-09-cyber-security.psd",
+      "extension": ".psd",
+      "bytes": 1731815,
+      "folder": "source-masters/source-masters/icons/technology/modern"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/modern/icon-modern-technology-10-cloud-infrastructure.psd",
+      "extension": ".psd",
+      "bytes": 1693568,
+      "folder": "source-masters/source-masters/icons/technology/modern"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/survival/icon-survival-technology-01-resource-management.psd",
+      "extension": ".psd",
+      "bytes": 1015835,
+      "folder": "source-masters/source-masters/icons/technology/survival"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/survival/icon-survival-technology-02-storage-systems.psd",
+      "extension": ".psd",
+      "bytes": 1503687,
+      "folder": "source-masters/source-masters/icons/technology/survival"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/survival/icon-survival-technology-03-basic-commerce.psd",
+      "extension": ".psd",
+      "bytes": 1551462,
+      "folder": "source-masters/source-masters/icons/technology/survival"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/survival/icon-survival-technology-04-leadership.psd",
+      "extension": ".psd",
+      "bytes": 1733611,
+      "folder": "source-masters/source-masters/icons/technology/survival"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/survival/icon-survival-technology-05-organization.psd",
+      "extension": ".psd",
+      "bytes": 1543892,
+      "folder": "source-masters/source-masters/icons/technology/survival"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/survival/icon-survival-technology-06-settlement-planning.psd",
+      "extension": ".psd",
+      "bytes": 1556254,
+      "folder": "source-masters/source-masters/icons/technology/survival"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/survival/icon-survival-technology-07-basic-administration.psd",
+      "extension": ".psd",
+      "bytes": 1493500,
+      "folder": "source-masters/source-masters/icons/technology/survival"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/survival/icon-survival-technology-08-construction-methods.psd",
+      "extension": ".psd",
+      "bytes": 1580978,
+      "folder": "source-masters/source-masters/icons/technology/survival"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/survival/icon-survival-technology-09-village-records.psd",
+      "extension": ".psd",
+      "bytes": 1551463,
+      "folder": "source-masters/source-masters/icons/technology/survival"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/town/icon-town-technology-01-national-banking.psd",
+      "extension": ".psd",
+      "bytes": 1741919,
+      "folder": "source-masters/source-masters/icons/technology/town"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/town/icon-town-technology-02-public-transportation.psd",
+      "extension": ".psd",
+      "bytes": 1734240,
+      "folder": "source-masters/source-masters/icons/technology/town"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/town/icon-town-technology-03-healthcare-systems.psd",
+      "extension": ".psd",
+      "bytes": 1743276,
+      "folder": "source-masters/source-masters/icons/technology/town"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/town/icon-town-technology-04-entertainment.psd",
+      "extension": ".psd",
+      "bytes": 1733181,
+      "folder": "source-masters/source-masters/icons/technology/town"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/town/icon-town-technology-05-financial-planning.psd",
+      "extension": ".psd",
+      "bytes": 1724423,
+      "folder": "source-masters/source-masters/icons/technology/town"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/town/icon-town-technology-06-government-administration.psd",
+      "extension": ".psd",
+      "bytes": 1769290,
+      "folder": "source-masters/source-masters/icons/technology/town"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/town/icon-town-technology-07-regional-development.psd",
+      "extension": ".psd",
+      "bytes": 1747814,
+      "folder": "source-masters/source-masters/icons/technology/town"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/town/icon-town-technology-08-commercial-infrastructure.psd",
+      "extension": ".psd",
+      "bytes": 1761815,
+      "folder": "source-masters/source-masters/icons/technology/town"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/town/icon-town-technology-09-communication-networks.psd",
+      "extension": ".psd",
+      "bytes": 1728949,
+      "folder": "source-masters/source-masters/icons/technology/town"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/village/icon-village-technology-01-road-systems.psd",
+      "extension": ".psd",
+      "bytes": 1611491,
+      "folder": "source-masters/source-masters/icons/technology/village"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/village/icon-village-technology-02-town-planning.psd",
+      "extension": ".psd",
+      "bytes": 1807062,
+      "folder": "source-masters/source-masters/icons/technology/village"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/village/icon-village-technology-03-merchant-economy.psd",
+      "extension": ".psd",
+      "bytes": 1749979,
+      "folder": "source-masters/source-masters/icons/technology/village"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/village/icon-village-technology-04-tax-collection.psd",
+      "extension": ".psd",
+      "bytes": 1745673,
+      "folder": "source-masters/source-masters/icons/technology/village"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/village/icon-village-technology-05-village-administration.psd",
+      "extension": ".psd",
+      "bytes": 1791044,
+      "folder": "source-masters/source-masters/icons/technology/village"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/village/icon-village-technology-06-public-services.psd",
+      "extension": ".psd",
+      "bytes": 1787414,
+      "folder": "source-masters/source-masters/icons/technology/village"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/village/icon-village-technology-07-housing-expansion.psd",
+      "extension": ".psd",
+      "bytes": 1740813,
+      "folder": "source-masters/source-masters/icons/technology/village"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/village/icon-village-technology-08-infrastructure-planning.psd",
+      "extension": ".psd",
+      "bytes": 1763073,
+      "folder": "source-masters/source-masters/icons/technology/village"
+    },
+    {
+      "path": "source-masters/source-masters/icons/technology/village/icon-village-technology-09-supply-organization.psd",
+      "extension": ".psd",
+      "bytes": 1779281,
+      "folder": "source-masters/source-masters/icons/technology/village"
+    },
+    {
+      "path": "source-masters/source-masters/legacy/unclassified/roblox/untitled-1.psd",
+      "extension": ".psd",
+      "bytes": 7194352,
+      "folder": "source-masters/source-masters/legacy/unclassified/roblox"
+    },
+    {
+      "path": "source-masters/source-masters/legacy/unclassified/roblox/untitled-10-topaz-gigapixel-2x-scale.psd",
+      "extension": ".psd",
+      "bytes": 417406,
+      "folder": "source-masters/source-masters/legacy/unclassified/roblox"
+    },
+    {
+      "path": "source-masters/source-masters/legacy/unclassified/roblox/untitled-7.psd",
+      "extension": ".psd",
+      "bytes": 2702559,
+      "folder": "source-masters/source-masters/legacy/unclassified/roblox"
+    },
+    {
+      "path": "source-masters/source-masters/legacy/unclassified/roblox/untitled-8.psd",
+      "extension": ".psd",
+      "bytes": 1457573,
+      "folder": "source-masters/source-masters/legacy/unclassified/roblox"
+    },
+    {
+      "path": "source-masters/source-masters/life/.DS_Store",
+      "extension": "[none]",
+      "bytes": 10244,
+      "folder": "source-masters/source-masters/life"
+    },
+    {
+      "path": "source-masters/source-masters/life/creatures/README.md",
+      "extension": ".md",
+      "bytes": 1212,
+      "folder": "source-masters/source-masters/life/creatures"
+    },
+    {
+      "path": "source-masters/source-masters/life/creatures/_templates/README.md",
+      "extension": ".md",
+      "bytes": 246,
+      "folder": "source-masters/source-masters/life/creatures/_templates"
+    },
+    {
+      "path": "source-masters/source-masters/life/creatures/species/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/life/creatures/species"
+    },
+    {
+      "path": "source-masters/source-masters/life/creatures/species/README.md",
+      "extension": ".md",
+      "bytes": 402,
+      "folder": "source-masters/source-masters/life/creatures/species"
+    },
+    {
+      "path": "source-masters/source-masters/life/plants/.DS_Store",
+      "extension": "[none]",
+      "bytes": 8196,
+      "folder": "source-masters/source-masters/life/plants"
+    },
+    {
+      "path": "source-masters/source-masters/life/plants/species/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/life/plants/species"
+    },
+    {
+      "path": "source-masters/source-masters/manifest.local.json",
+      "extension": ".json",
+      "bytes": 80583,
+      "folder": "source-masters/source-masters"
+    },
+    {
+      "path": "source-masters/source-masters/planets/.DS_Store",
+      "extension": "[none]",
+      "bytes": 8196,
+      "folder": "source-masters/source-masters/planets"
+    },
+    {
+      "path": "source-masters/source-masters/planets/artificial/data-sphere/planet-artificial-data-sphere-00001.psd",
+      "extension": ".psd",
+      "bytes": 111486177,
+      "folder": "source-masters/source-masters/planets/artificial/data-sphere"
+    },
+    {
+      "path": "source-masters/source-masters/planets/artificial/data-sphere/planet-artificial-data-sphere-landscape-00001.psd",
+      "extension": ".psd",
+      "bytes": 144891736,
+      "folder": "source-masters/source-masters/planets/artificial/data-sphere"
+    },
+    {
+      "path": "source-masters/source-masters/planets/crystal/.DS_Store",
+      "extension": "[none]",
+      "bytes": 8196,
+      "folder": "source-masters/source-masters/planets/crystal"
+    },
+    {
+      "path": "source-masters/source-masters/planets/crystal/sapphire-crystal/planet-crystal-sapphire-crystal-00001.psd",
+      "extension": ".psd",
+      "bytes": 110429159,
+      "folder": "source-masters/source-masters/planets/crystal/sapphire-crystal"
+    },
+    {
+      "path": "source-masters/source-masters/planets/dead/lifeless/planet-dead-lifeless-00001.psd",
+      "extension": ".psd",
+      "bytes": 119892622,
+      "folder": "source-masters/source-masters/planets/dead/lifeless"
+    },
+    {
+      "path": "source-masters/source-masters/planets/dead/lifeless/planet-dead-lifeless-landscape-00001.psd",
+      "extension": ".psd",
+      "bytes": 141426283,
+      "folder": "source-masters/source-masters/planets/dead/lifeless"
+    },
+    {
+      "path": "source-masters/source-masters/planets/desert/black-desert/planet-desert-black-desert-00001.psd",
+      "extension": ".psd",
+      "bytes": 119597664,
+      "folder": "source-masters/source-masters/planets/desert/black-desert"
+    },
+    {
+      "path": "source-masters/source-masters/planets/energy/ion-world/planet-energy-ion-world-00001.psd",
+      "extension": ".psd",
+      "bytes": 113663441,
+      "folder": "source-masters/source-masters/planets/energy/ion-world"
+    },
+    {
+      "path": "source-masters/source-masters/planets/energy/ion-world/planet-energy-ion-world-landscape-00001.psd",
+      "extension": ".psd",
+      "bytes": 142971972,
+      "folder": "source-masters/source-masters/planets/energy/ion-world"
+    },
+    {
+      "path": "source-masters/source-masters/planets/gas-giant/emerald-giant/planet-gas-giant-emerald-giant-00001.psd",
+      "extension": ".psd",
+      "bytes": 109049838,
+      "folder": "source-masters/source-masters/planets/gas-giant/emerald-giant"
+    },
+    {
+      "path": "source-masters/source-masters/planets/ice/polar/planet-ice-polar-00001.psd",
+      "extension": ".psd",
+      "bytes": 113235455,
+      "folder": "source-masters/source-masters/planets/ice/polar"
+    },
+    {
+      "path": "source-masters/source-masters/planets/ice/polar/planet-ice-polar-landscape-00001.psd",
+      "extension": ".psd",
+      "bytes": 141853548,
+      "folder": "source-masters/source-masters/planets/ice/polar"
+    },
+    {
+      "path": "source-masters/source-masters/planets/lava/obsidian/planet-lava-obsidian-00001.psd",
+      "extension": ".psd",
+      "bytes": 108796149,
+      "folder": "source-masters/source-masters/planets/lava/obsidian"
+    },
+    {
+      "path": "source-masters/source-masters/planets/lava/obsidian/planet-lava-obsidian-landscape-00001.psd",
+      "extension": ".psd",
+      "bytes": 136806529,
+      "folder": "source-masters/source-masters/planets/lava/obsidian"
+    },
+    {
+      "path": "source-masters/source-masters/planets/lava/volcanic/planet-lava-volcanic-00001.psd",
+      "extension": ".psd",
+      "bytes": 112215639,
+      "folder": "source-masters/source-masters/planets/lava/volcanic"
+    },
+    {
+      "path": "source-masters/source-masters/planets/lava/volcanic/planet-lava-volcanic-landscape-00001.psd",
+      "extension": ".psd",
+      "bytes": 138879084,
+      "folder": "source-masters/source-masters/planets/lava/volcanic"
+    },
+    {
+      "path": "source-masters/source-masters/planets/living/organic-world/planet-living-world-organic-planet-00001.psd",
+      "extension": ".psd",
+      "bytes": 112777278,
+      "folder": "source-masters/source-masters/planets/living/organic-world"
+    },
+    {
+      "path": "source-masters/source-masters/planets/living/organic-world/planet-living-world-organic-planet-landscape-00001.psd",
+      "extension": ".psd",
+      "bytes": 132898529,
+      "folder": "source-masters/source-masters/planets/living/organic-world"
+    },
+    {
+      "path": "source-masters/source-masters/planets/primordial/heavy-bombardment/planet-primordial-heavy-bombardment-00001.psd",
+      "extension": ".psd",
+      "bytes": 108590116,
+      "folder": "source-masters/source-masters/planets/primordial/heavy-bombardment"
+    },
+    {
+      "path": "source-masters/source-masters/planets/primordial/heavy-bombardment/planet-primordial-heavy-bombardment-landscape-00001.psd",
+      "extension": ".psd",
+      "bytes": 136456184,
+      "folder": "source-masters/source-masters/planets/primordial/heavy-bombardment"
+    },
+    {
+      "path": "source-masters/source-masters/planets/sol/sol-earth.psd",
+      "extension": ".psd",
+      "bytes": 108099831,
+      "folder": "source-masters/source-masters/planets/sol"
+    },
+    {
+      "path": "source-masters/source-masters/planets/sol/sol-enceladus.psd",
+      "extension": ".psd",
+      "bytes": 117445584,
+      "folder": "source-masters/source-masters/planets/sol"
+    },
+    {
+      "path": "source-masters/source-masters/planets/sol/sol-europa.psd",
+      "extension": ".psd",
+      "bytes": 120698748,
+      "folder": "source-masters/source-masters/planets/sol"
+    },
+    {
+      "path": "source-masters/source-masters/planets/sol/sol-ganymede.psd",
+      "extension": ".psd",
+      "bytes": 122065884,
+      "folder": "source-masters/source-masters/planets/sol"
+    },
+    {
+      "path": "source-masters/source-masters/planets/sol/sol-jupiter.psd",
+      "extension": ".psd",
+      "bytes": 110600580,
+      "folder": "source-masters/source-masters/planets/sol"
+    },
+    {
+      "path": "source-masters/source-masters/planets/sol/sol-mars.psd",
+      "extension": ".psd",
+      "bytes": 109908850,
+      "folder": "source-masters/source-masters/planets/sol"
+    },
+    {
+      "path": "source-masters/source-masters/planets/sol/sol-mercury.psd",
+      "extension": ".psd",
+      "bytes": 109734495,
+      "folder": "source-masters/source-masters/planets/sol"
+    },
+    {
+      "path": "source-masters/source-masters/planets/sol/sol-moon.psd",
+      "extension": ".psd",
+      "bytes": 102631520,
+      "folder": "source-masters/source-masters/planets/sol"
+    },
+    {
+      "path": "source-masters/source-masters/planets/sol/sol-neptune.psd",
+      "extension": ".psd",
+      "bytes": 107160498,
+      "folder": "source-masters/source-masters/planets/sol"
+    },
+    {
+      "path": "source-masters/source-masters/planets/sol/sol-saturn.psd",
+      "extension": ".psd",
+      "bytes": 97913810,
+      "folder": "source-masters/source-masters/planets/sol"
+    },
+    {
+      "path": "source-masters/source-masters/planets/sol/sol-titan.psd",
+      "extension": ".psd",
+      "bytes": 107251063,
+      "folder": "source-masters/source-masters/planets/sol"
+    },
+    {
+      "path": "source-masters/source-masters/planets/sol/sol-uranus.psd",
+      "extension": ".psd",
+      "bytes": 104985768,
+      "folder": "source-masters/source-masters/planets/sol"
+    },
+    {
+      "path": "source-masters/source-masters/planets/sol/sol-venus.psd",
+      "extension": ".psd",
+      "bytes": 109238851,
+      "folder": "source-masters/source-masters/planets/sol"
+    },
+    {
+      "path": "source-masters/source-masters/planets/sol/sol.psd",
+      "extension": ".psd",
+      "bytes": 122564402,
+      "folder": "source-masters/source-masters/planets/sol"
+    },
+    {
+      "path": "source-masters/source-masters/planets/terrestrial/swamp/planet-terrestrial-swamp-00001.psd",
+      "extension": ".psd",
+      "bytes": 109069893,
+      "folder": "source-masters/source-masters/planets/terrestrial/swamp"
+    },
+    {
+      "path": "source-masters/source-masters/planets/terrestrial/swamp/planet-terrestrial-swamp-landscape-00001.psd",
+      "extension": ".psd",
+      "bytes": 141018720,
+      "folder": "source-masters/source-masters/planets/terrestrial/swamp"
+    },
+    {
+      "path": "source-masters/source-masters/planets/toxic/industrial-wasteland/planet-toxic-industrial-wasteland-00001.psd",
+      "extension": ".psd",
+      "bytes": 110737129,
+      "folder": "source-masters/source-masters/planets/toxic/industrial-wasteland"
+    },
+    {
+      "path": "source-masters/source-masters/planets/toxic/industrial-wasteland/planet-toxic-industrial-wasteland-landscape-00001.psd",
+      "extension": ".psd",
+      "bytes": 138800719,
+      "folder": "source-masters/source-masters/planets/toxic/industrial-wasteland"
+    },
+    {
+      "path": "source-masters/source-masters/planets/toxic/purple-atmosphere/planet-toxic-purple-atmosphere-00001.psd",
+      "extension": ".psd",
+      "bytes": 109289023,
+      "folder": "source-masters/source-masters/planets/toxic/purple-atmosphere"
+    },
+    {
+      "path": "source-masters/source-masters/planets/toxic/purple-atmosphere/planet-toxic-purple-atmosphere-landscape-00001.psd",
+      "extension": ".psd",
+      "bytes": 139338595,
+      "folder": "source-masters/source-masters/planets/toxic/purple-atmosphere"
+    },
+    {
+      "path": "source-masters/source-masters/planets/void/shadow-world/planet-void-shadow-world-00001.psd",
+      "extension": ".psd",
+      "bytes": 108675675,
+      "folder": "source-masters/source-masters/planets/void/shadow-world"
+    },
+    {
+      "path": "source-masters/source-masters/planets/void/void-storms/planet-void-void-storms-00001.psd",
+      "extension": ".psd",
+      "bytes": 109624063,
+      "folder": "source-masters/source-masters/planets/void/void-storms"
+    },
+    {
+      "path": "source-masters/source-masters/planets/void/void-storms/planet-void-void-storms-landscape-00001.psd",
+      "extension": ".psd",
+      "bytes": 134078040,
+      "folder": "source-masters/source-masters/planets/void/void-storms"
+    },
+    {
+      "path": "source-masters/source-masters/production/visual-engine/nano-banana-2/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/production/visual-engine/nano-banana-2"
+    },
+    {
+      "path": "source-masters/source-masters/production/visual-engine/nano-banana-2/README.md",
+      "extension": ".md",
+      "bytes": 580,
+      "folder": "source-masters/source-masters/production/visual-engine/nano-banana-2"
+    },
+    {
+      "path": "source-masters/source-masters/production/visual-engine/nano-banana-2/approved/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/production/visual-engine/nano-banana-2/approved"
+    },
+    {
+      "path": "source-masters/source-masters/production/visual-engine/nano-banana-2/archetypes/creatures/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/production/visual-engine/nano-banana-2/archetypes/creatures"
+    },
+    {
+      "path": "source-masters/source-masters/production/visual-engine/nano-banana-2/archetypes/plants/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/production/visual-engine/nano-banana-2/archetypes/plants"
+    },
+    {
+      "path": "source-masters/source-masters/production/visual-engine/nano-banana-2/backgrounds/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/production/visual-engine/nano-banana-2/backgrounds"
+    },
+    {
+      "path": "source-masters/source-masters/production/visual-engine/nano-banana-2/cameras/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/production/visual-engine/nano-banana-2/cameras"
+    },
+    {
+      "path": "source-masters/source-masters/production/visual-engine/nano-banana-2/compositions/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/production/visual-engine/nano-banana-2/compositions"
+    },
+    {
+      "path": "source-masters/source-masters/production/visual-engine/nano-banana-2/environmental-adaptations/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/production/visual-engine/nano-banana-2/environmental-adaptations"
+    },
+    {
+      "path": "source-masters/source-masters/production/visual-engine/nano-banana-2/lighting/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/production/visual-engine/nano-banana-2/lighting"
+    },
+    {
+      "path": "source-masters/source-masters/production/visual-engine/nano-banana-2/manifests/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/production/visual-engine/nano-banana-2/manifests"
+    },
+    {
+      "path": "source-masters/source-masters/production/visual-engine/nano-banana-2/materials/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/production/visual-engine/nano-banana-2/materials"
+    },
+    {
+      "path": "source-masters/source-masters/production/visual-engine/nano-banana-2/model-profile/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/production/visual-engine/nano-banana-2/model-profile"
+    },
+    {
+      "path": "source-masters/source-masters/production/visual-engine/nano-banana-2/negative-prompts/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/production/visual-engine/nano-banana-2/negative-prompts"
+    },
+    {
+      "path": "source-masters/source-masters/production/visual-engine/nano-banana-2/outputs/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/production/visual-engine/nano-banana-2/outputs"
+    },
+    {
+      "path": "source-masters/source-masters/production/visual-engine/nano-banana-2/prompt-packs/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/production/visual-engine/nano-banana-2/prompt-packs"
+    },
+    {
+      "path": "source-masters/source-masters/production/visual-engine/nano-banana-2/psd-rules/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/production/visual-engine/nano-banana-2/psd-rules"
+    },
+    {
+      "path": "source-masters/source-masters/production/visual-engine/nano-banana-2/rejected/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/production/visual-engine/nano-banana-2/rejected"
+    },
+    {
+      "path": "source-masters/source-masters/production/visual-engine/nano-banana-2/schemas/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/production/visual-engine/nano-banana-2/schemas"
+    },
+    {
+      "path": "source-masters/source-masters/production/visual-engine/nano-banana-2/variations/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/production/visual-engine/nano-banana-2/variations"
+    },
+    {
+      "path": "source-masters/source-masters/production/visual-engine/species-plates/manifests/README.md",
+      "extension": ".md",
+      "bytes": 283,
+      "folder": "source-masters/source-masters/production/visual-engine/species-plates/manifests"
+    },
+    {
+      "path": "source-masters/source-masters/production/visual-engine/species-plates/templates/SPECIES_PLATE_MASTER_V1/README.md",
+      "extension": ".md",
+      "bytes": 166,
+      "folder": "source-masters/source-masters/production/visual-engine/species-plates/templates/SPECIES_PLATE_MASTER_V1"
+    },
+    {
+      "path": "source-masters/source-masters/production/visual-engine/species-plates/templates/SPECIES_PLATE_MASTER_V1/template.json",
+      "extension": ".json",
+      "bytes": 411,
+      "folder": "source-masters/source-masters/production/visual-engine/species-plates/templates/SPECIES_PLATE_MASTER_V1"
+    },
+    {
+      "path": "source-masters/source-masters/star-systems/.DS_Store",
+      "extension": "[none]",
+      "bytes": 10244,
+      "folder": "source-masters/source-masters/star-systems"
+    },
+    {
+      "path": "source-masters/source-masters/star-systems/README.md",
+      "extension": ".md",
+      "bytes": 765,
+      "folder": "source-masters/source-masters/star-systems"
+    },
+    {
+      "path": "source-masters/source-masters/star-systems/environment-painting/.DS_Store",
+      "extension": "[none]",
+      "bytes": 8196,
+      "folder": "source-masters/source-masters/star-systems/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/star-systems/environment-painting/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/star-systems/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/star-systems/environment-painting/environment-painting-0001.psd",
+      "extension": ".psd",
+      "bytes": 121899498,
+      "folder": "source-masters/source-masters/star-systems/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/star-systems/environment-painting/environment-painting-0002.psd",
+      "extension": ".psd",
+      "bytes": 121899498,
+      "folder": "source-masters/source-masters/star-systems/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/star-systems/environment-painting/environment-painting-0003.psd",
+      "extension": ".psd",
+      "bytes": 114928317,
+      "folder": "source-masters/source-masters/star-systems/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/star-systems/environment-painting/environment-painting-0004.psd",
+      "extension": ".psd",
+      "bytes": 127079113,
+      "folder": "source-masters/source-masters/star-systems/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/star-systems/environment-painting/environment-painting-0005.psd",
+      "extension": ".psd",
+      "bytes": 113554918,
+      "folder": "source-masters/source-masters/star-systems/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/star-systems/environment-painting/environment-painting-0006.psd",
+      "extension": ".psd",
+      "bytes": 127361250,
+      "folder": "source-masters/source-masters/star-systems/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/star-systems/environment-painting/environment-painting-0007.psd",
+      "extension": ".psd",
+      "bytes": 116499831,
+      "folder": "source-masters/source-masters/star-systems/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/star-systems/environment-painting/environment-painting-0008.psd",
+      "extension": ".psd",
+      "bytes": 127461487,
+      "folder": "source-masters/source-masters/star-systems/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/star-systems/environment-painting/environment-painting-0009.psd",
+      "extension": ".psd",
+      "bytes": 125966916,
+      "folder": "source-masters/source-masters/star-systems/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/star-systems/environment-painting/environment-painting-0010.psd",
+      "extension": ".psd",
+      "bytes": 121505930,
+      "folder": "source-masters/source-masters/star-systems/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/star-systems/environment-painting/environment-painting-0011.psd",
+      "extension": ".psd",
+      "bytes": 120277855,
+      "folder": "source-masters/source-masters/star-systems/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/star-systems/environment-painting/environment-painting-0012.psd",
+      "extension": ".psd",
+      "bytes": 126885617,
+      "folder": "source-masters/source-masters/star-systems/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/star-systems/environment-painting/environment-painting-0013.psd",
+      "extension": ".psd",
+      "bytes": 125039495,
+      "folder": "source-masters/source-masters/star-systems/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/star-systems/environment-painting/environment-painting-0014.psd",
+      "extension": ".psd",
+      "bytes": 127724691,
+      "folder": "source-masters/source-masters/star-systems/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/star-systems/environment-painting/environment-painting-0015.psd",
+      "extension": ".psd",
+      "bytes": 122239305,
+      "folder": "source-masters/source-masters/star-systems/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/star-systems/environment-painting/environment-painting-0016.psd",
+      "extension": ".psd",
+      "bytes": 128772783,
+      "folder": "source-masters/source-masters/star-systems/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/star-systems/environment-painting/environment-painting-0017.psd",
+      "extension": ".psd",
+      "bytes": 111498969,
+      "folder": "source-masters/source-masters/star-systems/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/star-systems/environment-painting/environment-painting-sol.psd",
+      "extension": ".psd",
+      "bytes": 125559802,
+      "folder": "source-masters/source-masters/star-systems/environment-painting"
+    },
+    {
+      "path": "source-masters/source-masters/testing/asset-smoke-local-psd/2026-06-30t21-51-54-546z-genesis-local-source-test.psd",
+      "extension": ".psd",
+      "bytes": 23,
+      "folder": "source-masters/source-masters/testing/asset-smoke-local-psd"
+    },
+    {
+      "path": "source-masters/source-masters/testing/asset-upgrades-u0001/2026-06-30t21-50-04-613z-genesis-test.psd",
+      "extension": ".psd",
+      "bytes": 20,
+      "folder": "source-masters/source-masters/testing/asset-upgrades-u0001"
+    },
+    {
+      "path": "source-masters/source-masters/ui/.DS_Store",
+      "extension": "[none]",
+      "bytes": 14340,
+      "folder": "source-masters/source-masters/ui"
+    },
+    {
+      "path": "source-masters/source-masters/ui/components/.DS_Store",
+      "extension": "[none]",
+      "bytes": 8196,
+      "folder": "source-masters/source-masters/ui/components"
+    },
+    {
+      "path": "source-masters/source-masters/ui/components/click-control/click.psd",
+      "extension": ".psd",
+      "bytes": 414315,
+      "folder": "source-masters/source-masters/ui/components/click-control"
+    },
+    {
+      "path": "source-masters/source-masters/ui/components/events/event-button-legacy.psd",
+      "extension": ".psd",
+      "bytes": 1179141,
+      "folder": "source-masters/source-masters/ui/components/events"
+    },
+    {
+      "path": "source-masters/source-masters/ui/components/objectives/objective-overlay-02.psd",
+      "extension": ".psd",
+      "bytes": 214321,
+      "folder": "source-masters/source-masters/ui/components/objectives"
+    },
+    {
+      "path": "source-masters/source-masters/ui/components/objectives/objective-overlay.psd",
+      "extension": ".psd",
+      "bytes": 2500119,
+      "folder": "source-masters/source-masters/ui/components/objectives"
+    },
+    {
+      "path": "source-masters/source-masters/ui/components/upgrades/folder-tabs.psd",
+      "extension": ".psd",
+      "bytes": 14161547,
+      "folder": "source-masters/source-masters/ui/components/upgrades"
+    },
+    {
+      "path": "source-masters/source-masters/ui/components/upgrades/upgrade-button.psd",
+      "extension": ".psd",
+      "bytes": 2330947,
+      "folder": "source-masters/source-masters/ui/components/upgrades"
+    },
+    {
+      "path": "source-masters/source-masters/ui/hud/civilization-operations/01_operations-deck/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/ui/hud/civilization-operations/01_operations-deck"
+    },
+    {
+      "path": "source-masters/source-masters/ui/hud/civilization-operations/02_active-actions/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/ui/hud/civilization-operations/02_active-actions"
+    },
+    {
+      "path": "source-masters/source-masters/ui/hud/civilization-operations/03_next-priorities/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/ui/hud/civilization-operations/03_next-priorities"
+    },
+    {
+      "path": "source-masters/source-masters/ui/hud/civilization-operations/04_recent-activity/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/ui/hud/civilization-operations/04_recent-activity"
+    },
+    {
+      "path": "source-masters/source-masters/ui/hud/civilization-operations/05_civilization-forecast/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/ui/hud/civilization-operations/05_civilization-forecast"
+    },
+    {
+      "path": "source-masters/source-masters/ui/hud/civilization-operations/06_action-row/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/ui/hud/civilization-operations/06_action-row"
+    },
+    {
+      "path": "source-masters/source-masters/ui/hud/civilization-operations/07_priority-card/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/ui/hud/civilization-operations/07_priority-card"
+    },
+    {
+      "path": "source-masters/source-masters/ui/hud/civilization-operations/08_activity-row/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/ui/hud/civilization-operations/08_activity-row"
+    },
+    {
+      "path": "source-masters/source-masters/ui/hud/civilization-operations/09_forecast-metrics/.gitkeep",
+      "extension": "[none]",
+      "bytes": 1,
+      "folder": "source-masters/source-masters/ui/hud/civilization-operations/09_forecast-metrics"
+    },
+    {
+      "path": "source-masters/source-masters/ui/hud/civilization-operations/README.md",
+      "extension": ".md",
+      "bytes": 748,
+      "folder": "source-masters/source-masters/ui/hud/civilization-operations"
+    },
+    {
+      "path": "source-masters/source-masters/ui/navigation/ui-panel-side-menu-buildings.psd",
+      "extension": ".psd",
+      "bytes": 4751947,
+      "folder": "source-masters/source-masters/ui/navigation"
+    },
+    {
+      "path": "source-masters/source-masters/ui/navigation/ui-panel-side-menu-civilization.psd",
+      "extension": ".psd",
+      "bytes": 11376130,
+      "folder": "source-masters/source-masters/ui/navigation"
+    },
+    {
+      "path": "source-masters/source-masters/ui/navigation/ui-panel-side-menu-events.psd",
+      "extension": ".psd",
+      "bytes": 14617083,
+      "folder": "source-masters/source-masters/ui/navigation"
+    },
+    {
+      "path": "source-masters/source-masters/ui/navigation/ui-panel-side-menu-galaxy.psd",
+      "extension": ".psd",
+      "bytes": 11345817,
+      "folder": "source-masters/source-masters/ui/navigation"
+    },
+    {
+      "path": "source-masters/source-masters/ui/navigation/ui-panel-side-menu-overview.psd",
+      "extension": ".psd",
+      "bytes": 3007420,
+      "folder": "source-masters/source-masters/ui/navigation"
+    },
+    {
+      "path": "source-masters/source-masters/ui/navigation/ui-panel-side-menu-research.psd",
+      "extension": ".psd",
+      "bytes": 6296819,
+      "folder": "source-masters/source-masters/ui/navigation"
+    },
+    {
+      "path": "source-masters/source-masters/ui/navigation/ui-panel-side-menu-spaceport.psd",
+      "extension": ".psd",
+      "bytes": 12979146,
+      "folder": "source-masters/source-masters/ui/navigation"
+    },
+    {
+      "path": "source-masters/source-masters/ui/navigation/ui-panel-side-menu-upgrades.psd",
+      "extension": ".psd",
+      "bytes": 8130638,
+      "folder": "source-masters/source-masters/ui/navigation"
+    },
+    {
+      "path": "source-masters/source-masters/ui/navigation/ui-panel-side-menu.psd",
+      "extension": ".psd",
+      "bytes": 6857581,
+      "folder": "source-masters/source-masters/ui/navigation"
+    },
+    {
+      "path": "source-masters/source-masters/ui/screens/.DS_Store",
+      "extension": "[none]",
+      "bytes": 10244,
+      "folder": "source-masters/source-masters/ui/screens"
+    },
+    {
+      "path": "source-masters/source-masters/ui/screens/alignment/alignment-background.psd",
+      "extension": ".psd",
+      "bytes": 16445829,
+      "folder": "source-masters/source-masters/ui/screens/alignment"
+    },
+    {
+      "path": "source-masters/source-masters/ui/screens/events/event-background.psd",
+      "extension": ".psd",
+      "bytes": 791889,
+      "folder": "source-masters/source-masters/ui/screens/events"
+    },
+    {
+      "path": "source-masters/source-masters/ui/screens/events/event-layer-02-background.psd",
+      "extension": ".psd",
+      "bytes": 185515,
+      "folder": "source-masters/source-masters/ui/screens/events"
+    },
+    {
+      "path": "source-masters/source-masters/ui/screens/leaderboard/leaderboard-main.psd",
+      "extension": ".psd",
+      "bytes": 3438646,
+      "folder": "source-masters/source-masters/ui/screens/leaderboard"
+    },
+    {
+      "path": "source-masters/source-masters/ui/screens/planet-detail/biome-enviroment.psd",
+      "extension": ".psd",
+      "bytes": 9851154,
+      "folder": "source-masters/source-masters/ui/screens/planet-detail"
+    },
+    {
+      "path": "source-masters/source-masters/ui/screens/planet-detail/creatures-life.psd",
+      "extension": ".psd",
+      "bytes": 16546597,
+      "folder": "source-masters/source-masters/ui/screens/planet-detail"
+    },
+    {
+      "path": "source-masters/source-masters/ui/screens/planet-detail/reference/planet-detail-screen-style-reference.png",
+      "extension": ".png",
+      "bytes": 1595442,
+      "folder": "source-masters/source-masters/ui/screens/planet-detail/reference"
+    },
+    {
+      "path": "source-masters/source-masters/ui/screens/planet-detail/resources.psd",
+      "extension": ".psd",
+      "bytes": 13906384,
+      "folder": "source-masters/source-masters/ui/screens/planet-detail"
+    },
+    {
+      "path": "source-masters/source-masters/ui/screens/planet-detail/weather-climate.psd",
+      "extension": ".psd",
+      "bytes": 16829734,
+      "folder": "source-masters/source-masters/ui/screens/planet-detail"
+    },
+    {
+      "path": "source-masters/source-masters/ui/screens/research/research-screen.psd",
+      "extension": ".psd",
+      "bytes": 46800815,
+      "folder": "source-masters/source-masters/ui/screens/research"
+    },
+    {
+      "path": "source-masters/source-masters/ui/screens/templates/menu-template.psd",
+      "extension": ".psd",
+      "bytes": 565258,
+      "folder": "source-masters/source-masters/ui/screens/templates"
+    },
+    {
+      "path": "source-masters/source-masters/ui/screens/templates/screen-main-1920x1080.psd",
+      "extension": ".psd",
+      "bytes": 16821231,
+      "folder": "source-masters/source-masters/ui/screens/templates"
+    },
+    {
+      "path": "source-masters/source-masters/ui/screens/templates/screen-main-1920x1280.psd",
+      "extension": ".psd",
+      "bytes": 19879207,
+      "folder": "source-masters/source-masters/ui/screens/templates"
+    }
+  ]
+}

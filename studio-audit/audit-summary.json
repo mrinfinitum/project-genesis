@@ -1,0 +1,58 @@
+{
+  "generatedAt": "2026-08-01T03:20:24.051Z",
+  "repository": "project-genesis-studio",
+  "branch": "main",
+  "commitHash": "7365e4e",
+  "contentVersion": 65,
+  "build": {
+    "status": "warnings_or_failures_recorded",
+    "commandsRun": 7,
+    "passed": 4,
+    "failed": 3
+  },
+  "counts": {
+    "routes": 191,
+    "pages": 127,
+    "components": 71,
+    "generators": 28,
+    "schemas": 29,
+    "canonicalLibraries": 70,
+    "canonicalRecords": 9950,
+    "promptRecords": 13682,
+    "sourceMasterFiles": 298,
+    "approvedAssets": 0,
+    "missingAssets": 2,
+    "runtimeTargets": 6
+  },
+  "directionalReview": {
+    "environmentBuilder": "Partially removed at UI level; environment generators and layer-asset API remain.",
+    "screenDesigner": "No current Screen Designer route found; PSD slice and creative-production screen contracts remain.",
+    "flatBackgroundReadiness": "Partial. Environment painting source folders and generator prompts exist, but multi-layer API and coordinate-oriented manifests require migration decisions.",
+    "speciesPlateRecommendation": "Retain prompt/asset manifest capabilities; simplify or externalize layout editing."
+  },
+  "topRisks": [
+    "Multi-layer environment records remain behind generators/API despite flat-background direction.",
+    "PSD slice manifests can imply Studio ownership of Unity layout coordinates.",
+    "Bundled fallback data and live Supabase can diverge.",
+    "No automated screenshot evidence was available for current UI state.",
+    "Some build-health commands are absent or incompatible with the current package script surface."
+  ],
+  "topRemovalCandidates": [
+    "Environment layer asset API",
+    "Planet Detail PSD slicing"
+  ],
+  "topMergeCandidates": [
+    "Species Plate layout contract"
+  ],
+  "topMissingCapabilities": [
+    "Flat-background migration manifest",
+    "Unity contract test fixture",
+    "Automated visual screenshot capture",
+    "Unified canonical validation runner"
+  ],
+  "recommendedNextActions": [
+    "Publish and review this audit before deleting additional architecture.",
+    "Define a single flat-background record/manifest contract before retiring environment layer records.",
+    "Decide Unity ownership for Planet Detail sprite placement and freeze only semantic asset keys in Studio."
+  ]
+}

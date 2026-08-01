@@ -1,0 +1,2419 @@
+{
+  "nodes": [
+    {
+      "id": "library:achievements",
+      "type": "canonical_library",
+      "label": "Achievements",
+      "path": "data/handoff/json/Achievements.json"
+    },
+    {
+      "id": "library:all_upgrades",
+      "type": "canonical_library",
+      "label": "All Upgrades",
+      "path": "data/handoff/json/All_Upgrades.json"
+    },
+    {
+      "id": "library:ancient_civilizations",
+      "type": "canonical_library",
+      "label": "Ancient Civilizations",
+      "path": "data/handoff/json/Ancient_Civilizations.json"
+    },
+    {
+      "id": "library:balance",
+      "type": "canonical_library",
+      "label": "Balance",
+      "path": "data/handoff/json/Balance.json"
+    },
+    {
+      "id": "library:building_chains",
+      "type": "canonical_library",
+      "label": "Building Chains",
+      "path": "data/handoff/json/Building_Chains.json"
+    },
+    {
+      "id": "library:building_evolution",
+      "type": "canonical_library",
+      "label": "Building Evolution",
+      "path": "data/handoff/json/Building_Evolution.json"
+    },
+    {
+      "id": "library:building_relationships",
+      "type": "canonical_library",
+      "label": "Building Relationships",
+      "path": "data/handoff/json/Building_Relationships.json"
+    },
+    {
+      "id": "library:buildings",
+      "type": "canonical_library",
+      "label": "Buildings",
+      "path": "data/handoff/json/Buildings.json"
+    },
+    {
+      "id": "library:changelog",
+      "type": "canonical_library",
+      "label": "Changelog",
+      "path": "data/handoff/json/Changelog.json"
+    },
+    {
+      "id": "library:civilization_paths",
+      "type": "canonical_library",
+      "label": "Civilization Paths",
+      "path": "data/handoff/json/Civilization_Paths.json"
+    },
+    {
+      "id": "library:codex_tasks",
+      "type": "canonical_library",
+      "label": "Codex Tasks",
+      "path": "data/handoff/json/Codex_Tasks.json"
+    },
+    {
+      "id": "library:collectibles",
+      "type": "canonical_library",
+      "label": "Collectibles",
+      "path": "data/handoff/json/Collectibles.json"
+    },
+    {
+      "id": "library:collection_sets",
+      "type": "canonical_library",
+      "label": "Collection Sets",
+      "path": "data/handoff/json/Collection_Sets.json"
+    },
+    {
+      "id": "library:content_status",
+      "type": "canonical_library",
+      "label": "Content Status",
+      "path": "data/handoff/json/Content_Status.json"
+    },
+    {
+      "id": "library:dashboard",
+      "type": "canonical_library",
+      "label": "Dashboard",
+      "path": "data/handoff/json/Dashboard.json"
+    },
+    {
+      "id": "library:difficulty_curves",
+      "type": "canonical_library",
+      "label": "Difficulty Curves",
+      "path": "data/handoff/json/Difficulty_Curves.json"
+    },
+    {
+      "id": "library:discovery",
+      "type": "canonical_library",
+      "label": "Discovery",
+      "path": "data/handoff/json/Discovery.json"
+    },
+    {
+      "id": "library:districts",
+      "type": "canonical_library",
+      "label": "Districts",
+      "path": "data/handoff/json/Districts.json"
+    },
+    {
+      "id": "library:eras",
+      "type": "canonical_library",
+      "label": "Eras",
+      "path": "data/handoff/json/Eras.json"
+    },
+    {
+      "id": "library:events",
+      "type": "canonical_library",
+      "label": "Events",
+      "path": "data/handoff/json/Events.json"
+    },
+    {
+      "id": "library:expeditions",
+      "type": "canonical_library",
+      "label": "Expeditions",
+      "path": "data/handoff/json/Expeditions.json"
+    },
+    {
+      "id": "library:feature_flags",
+      "type": "canonical_library",
+      "label": "Feature Flags",
+      "path": "data/handoff/json/Feature_Flags.json"
+    },
+    {
+      "id": "library:future_core",
+      "type": "canonical_library",
+      "label": "Future Core",
+      "path": "data/handoff/json/Future_Core.json"
+    },
+    {
+      "id": "library:galaxy",
+      "type": "canonical_library",
+      "label": "Galaxy",
+      "path": "data/handoff/json/Galaxy.json"
+    },
+    {
+      "id": "library:galaxy_design",
+      "type": "canonical_library",
+      "label": "Galaxy Design",
+      "path": "data/handoff/json/Galaxy_Design.json"
+    },
+    {
+      "id": "library:game_constants",
+      "type": "canonical_library",
+      "label": "Game Constants",
+      "path": "data/handoff/json/Game_Constants.json"
+    },
+    {
+      "id": "library:google_import_notes",
+      "type": "canonical_library",
+      "label": "Google Import Notes",
+      "path": "data/handoff/json/Google_Import_Notes.json"
+    },
+    {
+      "id": "library:governments",
+      "type": "canonical_library",
+      "label": "Governments",
+      "path": "data/handoff/json/Governments.json"
+    },
+    {
+      "id": "library:icons_assets",
+      "type": "canonical_library",
+      "label": "Icons Assets",
+      "path": "data/handoff/json/Icons_Assets.json"
+    },
+    {
+      "id": "library:industry_upgrades",
+      "type": "canonical_library",
+      "label": "Industry Upgrades",
+      "path": "data/handoff/json/Industry_Upgrades.json"
+    },
+    {
+      "id": "library:lookup_values",
+      "type": "canonical_library",
+      "label": "Lookup Values",
+      "path": "data/handoff/json/Lookup_Values.json"
+    },
+    {
+      "id": "library:monetization",
+      "type": "canonical_library",
+      "label": "Monetization",
+      "path": "data/handoff/json/Monetization.json"
+    },
+    {
+      "id": "library:museums",
+      "type": "canonical_library",
+      "label": "Museums",
+      "path": "data/handoff/json/Museums.json"
+    },
+    {
+      "id": "library:planet_generation",
+      "type": "canonical_library",
+      "label": "Planet Generation",
+      "path": "data/handoff/json/Planet_Generation.json"
+    },
+    {
+      "id": "library:planet_resource_profiles",
+      "type": "canonical_library",
+      "label": "Planet Resource Profiles",
+      "path": "data/handoff/json/Planet_Resource_Profiles.json"
+    },
+    {
+      "id": "library:planet_traits",
+      "type": "canonical_library",
+      "label": "Planet Traits",
+      "path": "data/handoff/json/Planet_Traits.json"
+    },
+    {
+      "id": "library:planets",
+      "type": "canonical_library",
+      "label": "Planets",
+      "path": "data/handoff/json/Planets.json"
+    },
+    {
+      "id": "library:policies",
+      "type": "canonical_library",
+      "label": "Policies",
+      "path": "data/handoff/json/Policies.json"
+    },
+    {
+      "id": "library:procedural_traits",
+      "type": "canonical_library",
+      "label": "Procedural Traits",
+      "path": "data/handoff/json/Procedural_Traits.json"
+    },
+    {
+      "id": "library:readme",
+      "type": "canonical_library",
+      "label": "README",
+      "path": "data/handoff/json/README.json"
+    },
+    {
+      "id": "library:rarity_table",
+      "type": "canonical_library",
+      "label": "Rarity Table",
+      "path": "data/handoff/json/Rarity_Table.json"
+    },
+    {
+      "id": "library:release_notes",
+      "type": "canonical_library",
+      "label": "Release Notes",
+      "path": "data/handoff/json/Release_Notes.json"
+    },
+    {
+      "id": "library:research",
+      "type": "canonical_library",
+      "label": "Research",
+      "path": "data/handoff/json/Research.json"
+    },
+    {
+      "id": "library:research_branches",
+      "type": "canonical_library",
+      "label": "Research Branches",
+      "path": "data/handoff/json/Research_Branches.json"
+    },
+    {
+      "id": "library:research_unlocks",
+      "type": "canonical_library",
+      "label": "Research Unlocks",
+      "path": "data/handoff/json/Research_Unlocks.json"
+    },
+    {
+      "id": "library:resource_catalog",
+      "type": "canonical_library",
+      "label": "Resource Catalog",
+      "path": "data/handoff/json/Resource_Catalog.json"
+    },
+    {
+      "id": "library:resources",
+      "type": "canonical_library",
+      "label": "Resources",
+      "path": "data/handoff/json/Resources.json"
+    },
+    {
+      "id": "library:roadmap",
+      "type": "canonical_library",
+      "label": "Roadmap",
+      "path": "data/handoff/json/Roadmap.json"
+    },
+    {
+      "id": "library:science_upgrades",
+      "type": "canonical_library",
+      "label": "Science Upgrades",
+      "path": "data/handoff/json/Science_Upgrades.json"
+    },
+    {
+      "id": "library:technology_upgrades",
+      "type": "canonical_library",
+      "label": "Technology Upgrades",
+      "path": "data/handoff/json/Technology_Upgrades.json"
+    },
+    {
+      "id": "library:trading",
+      "type": "canonical_library",
+      "label": "Trading",
+      "path": "data/handoff/json/Trading.json"
+    },
+    {
+      "id": "library:ui_screens",
+      "type": "canonical_library",
+      "label": "UI Screens",
+      "path": "data/handoff/json/UI_Screens.json"
+    },
+    {
+      "id": "library:unlock_matrix",
+      "type": "canonical_library",
+      "label": "Unlock Matrix",
+      "path": "data/handoff/json/Unlock_Matrix.json"
+    },
+    {
+      "id": "library:wonders",
+      "type": "canonical_library",
+      "label": "Wonders",
+      "path": "data/handoff/json/Wonders.json"
+    },
+    {
+      "id": "library:workforce_upgrades",
+      "type": "canonical_library",
+      "label": "Workforce Upgrades",
+      "path": "data/handoff/json/Workforce_Upgrades.json"
+    },
+    {
+      "id": "library:project_genesis_game_data",
+      "type": "canonical_library",
+      "label": "project genesis game data",
+      "path": "data/handoff/json/project_genesis_game_data.json"
+    },
+    {
+      "id": "library:curiosity-volume-01-biological",
+      "type": "canonical_library",
+      "label": "biological",
+      "path": "data/curiosity-volume-01-biological.json"
+    },
+    {
+      "id": "library:curiosity-volume-02-fauna",
+      "type": "canonical_library",
+      "label": "fauna",
+      "path": "data/curiosity-volume-02-fauna.json"
+    },
+    {
+      "id": "library:curiosity-volume-03-geological",
+      "type": "canonical_library",
+      "label": "geological",
+      "path": "data/curiosity-volume-03-geological.json"
+    },
+    {
+      "id": "library:curiosity-volume-04-ancient-relics",
+      "type": "canonical_library",
+      "label": "ancient relics",
+      "path": "data/curiosity-volume-04-ancient-relics.json"
+    },
+    {
+      "id": "library:curiosity-volume-05-alien-technology",
+      "type": "canonical_library",
+      "label": "alien technology",
+      "path": "data/curiosity-volume-05-alien-technology.json"
+    },
+    {
+      "id": "library:curiosity-volume-06-ruins-and-structures",
+      "type": "canonical_library",
+      "label": "ruins and structures",
+      "path": "data/curiosity-volume-06-ruins-and-structures.json"
+    },
+    {
+      "id": "library:curiosity-volume-07-energy-phenomena",
+      "type": "canonical_library",
+      "label": "energy phenomena",
+      "path": "data/curiosity-volume-07-energy-phenomena.json"
+    },
+    {
+      "id": "library:curiosity-volume-08-anomalies",
+      "type": "canonical_library",
+      "label": "anomalies",
+      "path": "data/curiosity-volume-08-anomalies.json"
+    },
+    {
+      "id": "library:curiosity-volume-09-unknown-objects",
+      "type": "canonical_library",
+      "label": "unknown objects",
+      "path": "data/curiosity-volume-09-unknown-objects.json"
+    },
+    {
+      "id": "library:curiosity-volume-10-genetic-archives",
+      "type": "canonical_library",
+      "label": "genetic archives",
+      "path": "data/curiosity-volume-10-genetic-archives.json"
+    },
+    {
+      "id": "library:curiosity-volume-11-organic-materials",
+      "type": "canonical_library",
+      "label": "organic materials",
+      "path": "data/curiosity-volume-11-organic-materials.json"
+    },
+    {
+      "id": "library:curiosity-volume-12-rare-collections-and-wonders",
+      "type": "canonical_library",
+      "label": "rare collections and wonders",
+      "path": "data/curiosity-volume-12-rare-collections-and-wonders.json"
+    },
+    {
+      "id": "library:ai_agents",
+      "type": "canonical_library",
+      "label": "AI Agents",
+      "path": "data/ai-agents/NOVERIS_AI_Agents_Studio_Seed.json"
+    },
+    {
+      "id": "library:species_plates",
+      "type": "canonical_library",
+      "label": "Species Plates",
+      "path": "lib/species-plates"
+    },
+    {
+      "id": "component:16f30cc34ddb",
+      "type": "generator",
+      "label": "creature-generator-workspace",
+      "path": "components/creature-generator-workspace.tsx"
+    },
+    {
+      "id": "component:0226a583fd73",
+      "type": "generator",
+      "label": "environment-layer-generator",
+      "path": "components/environment-layer-generator.tsx"
+    },
+    {
+      "id": "component:854c56ff7d0c",
+      "type": "generator",
+      "label": "life-generator-workspace",
+      "path": "components/life-generator-workspace.tsx"
+    },
+    {
+      "id": "component:9ca21cd969f9",
+      "type": "generator",
+      "label": "plant-life-generator-workspace",
+      "path": "components/plant-life-generator-workspace.tsx"
+    },
+    {
+      "id": "component:556626e6ed3b",
+      "type": "generator",
+      "label": "universe-generator-workflows",
+      "path": "components/universe-generator-workflows.tsx"
+    },
+    {
+      "id": "page:/actions",
+      "type": "page",
+      "label": "Actions",
+      "path": "app/actions/page.tsx"
+    },
+    {
+      "id": "page:/ai-agents",
+      "type": "page",
+      "label": "Ai Agents",
+      "path": "app/ai-agents/page.tsx"
+    },
+    {
+      "id": "page:/architecture",
+      "type": "page",
+      "label": "Architecture",
+      "path": "app/architecture/page.tsx"
+    },
+    {
+      "id": "page:/asset-library",
+      "type": "page",
+      "label": "Asset Library",
+      "path": "app/asset-library/page.tsx"
+    },
+    {
+      "id": "page:/assets/[assetId]",
+      "type": "page",
+      "label": "Assets / AssetId",
+      "path": "app/assets/[assetId]/page.tsx"
+    },
+    {
+      "id": "page:/assets/eras/[eraId]",
+      "type": "page",
+      "label": "Assets / Eras / EraId",
+      "path": "app/assets/eras/[eraId]/page.tsx"
+    },
+    {
+      "id": "page:/assets/generated",
+      "type": "page",
+      "label": "Assets / Generated",
+      "path": "app/assets/generated/page.tsx"
+    },
+    {
+      "id": "page:/assets/import-history",
+      "type": "page",
+      "label": "Assets / Import History",
+      "path": "app/assets/import-history/page.tsx"
+    },
+    {
+      "id": "page:/assets/missing",
+      "type": "page",
+      "label": "Assets / Missing",
+      "path": "app/assets/missing/page.tsx"
+    },
+    {
+      "id": "page:/assets",
+      "type": "page",
+      "label": "Assets",
+      "path": "app/assets/page.tsx"
+    },
+    {
+      "id": "page:/assets/processing",
+      "type": "page",
+      "label": "Assets / Processing",
+      "path": "app/assets/processing/page.tsx"
+    },
+    {
+      "id": "page:/assets/published",
+      "type": "page",
+      "label": "Assets / Published",
+      "path": "app/assets/published/page.tsx"
+    },
+    {
+      "id": "page:/assets/source",
+      "type": "page",
+      "label": "Assets / Source",
+      "path": "app/assets/source/page.tsx"
+    },
+    {
+      "id": "page:/auth/mfa",
+      "type": "page",
+      "label": "Auth / Mfa",
+      "path": "app/auth/mfa/page.tsx"
+    },
+    {
+      "id": "page:/auth/setup-2fa",
+      "type": "page",
+      "label": "Auth / Setup 2fa",
+      "path": "app/auth/setup-2fa/page.tsx"
+    },
+    {
+      "id": "page:/auth/update-password",
+      "type": "page",
+      "label": "Auth / Update Password",
+      "path": "app/auth/update-password/page.tsx"
+    },
+    {
+      "id": "page:/building-chains",
+      "type": "page",
+      "label": "Building Chains",
+      "path": "app/building-chains/page.tsx"
+    },
+    {
+      "id": "page:/building-relationships",
+      "type": "page",
+      "label": "Building Relationships",
+      "path": "app/building-relationships/page.tsx"
+    },
+    {
+      "id": "page:/buildings",
+      "type": "page",
+      "label": "Buildings",
+      "path": "app/buildings/page.tsx"
+    },
+    {
+      "id": "page:/celestial-bodies",
+      "type": "page",
+      "label": "Celestial Bodies",
+      "path": "app/celestial-bodies/page.tsx"
+    },
+    {
+      "id": "page:/changelog",
+      "type": "page",
+      "label": "Changelog",
+      "path": "app/changelog/page.tsx"
+    },
+    {
+      "id": "page:/civilizations",
+      "type": "page",
+      "label": "Civilizations",
+      "path": "app/civilizations/page.tsx"
+    },
+    {
+      "id": "page:/collectibles",
+      "type": "page",
+      "label": "Collectibles",
+      "path": "app/collectibles/page.tsx"
+    },
+    {
+      "id": "page:/colonies",
+      "type": "page",
+      "label": "Colonies",
+      "path": "app/colonies/page.tsx"
+    },
+    {
+      "id": "page:/conceptual-art",
+      "type": "page",
+      "label": "Conceptual Art",
+      "path": "app/conceptual-art/page.tsx"
+    },
+    {
+      "id": "page:/content-authoring",
+      "type": "page",
+      "label": "Content Authoring",
+      "path": "app/content-authoring/page.tsx"
+    },
+    {
+      "id": "page:/content-releases",
+      "type": "page",
+      "label": "Content Releases",
+      "path": "app/content-releases/page.tsx"
+    },
+    {
+      "id": "page:/creative-production/ui-screens/civilization-operations",
+      "type": "page",
+      "label": "Creative Production / Ui Screens / Civilization Operations",
+      "path": "app/creative-production/ui-screens/civilization-operations/page.tsx"
+    },
+    {
+      "id": "page:/creative-production/ui-screens/planet-detail",
+      "type": "page",
+      "label": "Creative Production / Ui Screens / Planet Detail",
+      "path": "app/creative-production/ui-screens/planet-detail/page.tsx"
+    },
+    {
+      "id": "page:/creature-generator",
+      "type": "page",
+      "label": "Creature Generator",
+      "path": "app/creature-generator/page.tsx"
+    },
+    {
+      "id": "page:/database",
+      "type": "page",
+      "label": "Database",
+      "path": "app/database/page.tsx"
+    },
+    {
+      "id": "page:/discovery/biological",
+      "type": "page",
+      "label": "Discovery / Biological",
+      "path": "app/discovery/biological/page.tsx"
+    },
+    {
+      "id": "page:/discovery",
+      "type": "page",
+      "label": "Discovery",
+      "path": "app/discovery/page.tsx"
+    },
+    {
+      "id": "page:/discovery-journal",
+      "type": "page",
+      "label": "Discovery Journal",
+      "path": "app/discovery-journal/page.tsx"
+    },
+    {
+      "id": "page:/districts",
+      "type": "page",
+      "label": "Districts",
+      "path": "app/districts/page.tsx"
+    },
+    {
+      "id": "page:/dynamic-events",
+      "type": "page",
+      "label": "Dynamic Events",
+      "path": "app/dynamic-events/page.tsx"
+    },
+    {
+      "id": "page:/economy",
+      "type": "page",
+      "label": "Economy",
+      "path": "app/economy/page.tsx"
+    },
+    {
+      "id": "page:/economy-designer",
+      "type": "page",
+      "label": "Economy Designer",
+      "path": "app/economy-designer/page.tsx"
+    },
+    {
+      "id": "page:/encyclopedia",
+      "type": "page",
+      "label": "Encyclopedia",
+      "path": "app/encyclopedia/page.tsx"
+    },
+    {
+      "id": "page:/environment-composer/export",
+      "type": "page",
+      "label": "Environment Composer / Export",
+      "path": "app/environment-composer/export/page.tsx"
+    },
+    {
+      "id": "page:/environment-composer",
+      "type": "page",
+      "label": "Environment Composer",
+      "path": "app/environment-composer/page.tsx"
+    },
+    {
+      "id": "page:/environment-composer/themes",
+      "type": "page",
+      "label": "Environment Composer / Themes",
+      "path": "app/environment-composer/themes/page.tsx"
+    },
+    {
+      "id": "page:/era-starter-kits",
+      "type": "page",
+      "label": "Era Starter Kits",
+      "path": "app/era-starter-kits/page.tsx"
+    },
+    {
+      "id": "page:/experience-design/inspiration-wall",
+      "type": "page",
+      "label": "Experience Design / Inspiration Wall",
+      "path": "app/experience-design/inspiration-wall/page.tsx"
+    },
+    {
+      "id": "page:/exploration-progression",
+      "type": "page",
+      "label": "Exploration Progression",
+      "path": "app/exploration-progression/page.tsx"
+    },
+    {
+      "id": "page:/factions",
+      "type": "page",
+      "label": "Factions",
+      "path": "app/factions/page.tsx"
+    },
+    {
+      "id": "page:/feature-flags",
+      "type": "page",
+      "label": "Feature Flags",
+      "path": "app/feature-flags/page.tsx"
+    },
+    {
+      "id": "page:/galaxy",
+      "type": "page",
+      "label": "Galaxy",
+      "path": "app/galaxy/page.tsx"
+    },
+    {
+      "id": "page:/galaxy-layer-generator",
+      "type": "page",
+      "label": "Galaxy Layer Generator",
+      "path": "app/galaxy-layer-generator/page.tsx"
+    },
+    {
+      "id": "page:/game-art-import",
+      "type": "page",
+      "label": "Game Art Import",
+      "path": "app/game-art-import/page.tsx"
+    },
+    {
+      "id": "page:/game-constants",
+      "type": "page",
+      "label": "Game Constants",
+      "path": "app/game-constants/page.tsx"
+    },
+    {
+      "id": "page:/hero-discovery-shots",
+      "type": "page",
+      "label": "Hero Discovery Shots",
+      "path": "app/hero-discovery-shots/page.tsx"
+    },
+    {
+      "id": "page:/inspiration-board",
+      "type": "page",
+      "label": "Inspiration Board",
+      "path": "app/inspiration-board/page.tsx"
+    },
+    {
+      "id": "page:/life-generator",
+      "type": "page",
+      "label": "Life Generator",
+      "path": "app/life-generator/page.tsx"
+    },
+    {
+      "id": "page:/login",
+      "type": "page",
+      "label": "Login",
+      "path": "app/login/page.tsx"
+    },
+    {
+      "id": "page:/missions",
+      "type": "page",
+      "label": "Missions",
+      "path": "app/missions/page.tsx"
+    },
+    {
+      "id": "page:/",
+      "type": "page",
+      "label": "Universe Command Center",
+      "path": "app/page.tsx"
+    },
+    {
+      "id": "page:/planet-artwork",
+      "type": "page",
+      "label": "Planet Artwork",
+      "path": "app/planet-artwork/page.tsx"
+    },
+    {
+      "id": "page:/planet-generation",
+      "type": "page",
+      "label": "Planet Generation",
+      "path": "app/planet-generation/page.tsx"
+    },
+    {
+      "id": "page:/planet-resource-profiles",
+      "type": "page",
+      "label": "Planet Resource Profiles",
+      "path": "app/planet-resource-profiles/page.tsx"
+    },
+    {
+      "id": "page:/planetary-rules",
+      "type": "page",
+      "label": "Planetary Rules",
+      "path": "app/planetary-rules/page.tsx"
+    },
+    {
+      "id": "page:/planets",
+      "type": "page",
+      "label": "Planets",
+      "path": "app/planets/page.tsx"
+    },
+    {
+      "id": "page:/plant-life-generator",
+      "type": "page",
+      "label": "Plant Life Generator",
+      "path": "app/plant-life-generator/page.tsx"
+    },
+    {
+      "id": "page:/population",
+      "type": "page",
+      "label": "Population",
+      "path": "app/population/page.tsx"
+    },
+    {
+      "id": "page:/prompt-library",
+      "type": "page",
+      "label": "Prompt Library",
+      "path": "app/prompt-library/page.tsx"
+    },
+    {
+      "id": "page:/prototype-content",
+      "type": "page",
+      "label": "Prototype Content",
+      "path": "app/prototype-content/page.tsx"
+    },
+    {
+      "id": "page:/releases",
+      "type": "page",
+      "label": "Releases",
+      "path": "app/releases/page.tsx"
+    },
+    {
+      "id": "page:/research",
+      "type": "page",
+      "label": "Research",
+      "path": "app/research/page.tsx"
+    },
+    {
+      "id": "page:/resource-catalog",
+      "type": "page",
+      "label": "Resource Catalog",
+      "path": "app/resource-catalog/page.tsx"
+    },
+    {
+      "id": "page:/sector-layer-generator",
+      "type": "page",
+      "label": "Sector Layer Generator",
+      "path": "app/sector-layer-generator/page.tsx"
+    },
+    {
+      "id": "page:/sector-map",
+      "type": "page",
+      "label": "Sector Map",
+      "path": "app/sector-map/page.tsx"
+    },
+    {
+      "id": "page:/settings",
+      "type": "page",
+      "label": "Settings",
+      "path": "app/settings/page.tsx"
+    },
+    {
+      "id": "page:/species/[speciesId]",
+      "type": "page",
+      "label": "Species / SpeciesId",
+      "path": "app/species/[speciesId]/page.tsx"
+    },
+    {
+      "id": "page:/species",
+      "type": "page",
+      "label": "Species",
+      "path": "app/species/page.tsx"
+    },
+    {
+      "id": "page:/star-system-layer-generator",
+      "type": "page",
+      "label": "Star System Layer Generator",
+      "path": "app/star-system-layer-generator/page.tsx"
+    },
+    {
+      "id": "page:/star-system-map",
+      "type": "page",
+      "label": "Star System Map",
+      "path": "app/star-system-map/page.tsx"
+    },
+    {
+      "id": "page:/star-systems",
+      "type": "page",
+      "label": "Star Systems",
+      "path": "app/star-systems/page.tsx"
+    },
+    {
+      "id": "page:/surface-landscapes",
+      "type": "page",
+      "label": "Surface Landscapes",
+      "path": "app/surface-landscapes/page.tsx"
+    },
+    {
+      "id": "page:/universe-explorer",
+      "type": "page",
+      "label": "Universe Explorer",
+      "path": "app/universe-explorer/page.tsx"
+    },
+    {
+      "id": "page:/universe-layer-generator",
+      "type": "page",
+      "label": "Universe Layer Generator",
+      "path": "app/universe-layer-generator/page.tsx"
+    },
+    {
+      "id": "page:/universe-timeline",
+      "type": "page",
+      "label": "Universe Timeline",
+      "path": "app/universe-timeline/page.tsx"
+    },
+    {
+      "id": "page:/unlock-matrix",
+      "type": "page",
+      "label": "Unlock Matrix",
+      "path": "app/unlock-matrix/page.tsx"
+    },
+    {
+      "id": "page:/upgrades",
+      "type": "page",
+      "label": "Upgrades",
+      "path": "app/upgrades/page.tsx"
+    },
+    {
+      "id": "page:/visual-production",
+      "type": "page",
+      "label": "Visual Production",
+      "path": "app/visual-production/page.tsx"
+    },
+    {
+      "id": "page:/visual-production/species-plates",
+      "type": "page",
+      "label": "Visual Production / Species Plates",
+      "path": "app/visual-production/species-plates/page.tsx"
+    },
+    {
+      "id": "page:/wonders",
+      "type": "page",
+      "label": "Wonders",
+      "path": "app/wonders/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/assets",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Assets",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/assets/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/auth/mfa",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Auth / Mfa",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/auth/mfa/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/auth/setup-2fa",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Auth / Setup 2fa",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/auth/setup-2fa/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/auth/update-password",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Auth / Update Password",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/auth/update-password/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/building-chains",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Building Chains",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/building-chains/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/building-relationships",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Building Relationships",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/building-relationships/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/buildings",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Buildings",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/buildings/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/celestial-bodies",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Celestial Bodies",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/celestial-bodies/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/changelog",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Changelog",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/changelog/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/civilizations",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Civilizations",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/civilizations/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/codex-handoffs",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Codex Handoffs",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/codex-handoffs/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/collectibles",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Collectibles",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/collectibles/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/conceptual-art",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Conceptual Art",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/conceptual-art/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/database",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Database",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/database/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/districts",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Districts",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/districts/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/feature-flags",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Feature Flags",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/feature-flags/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/galaxy",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Galaxy",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/galaxy/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/game-constants",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Game Constants",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/game-constants/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/hero-discovery-shots",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Hero Discovery Shots",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/hero-discovery-shots/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/login",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Login",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/login/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/planet-artwork",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Planet Artwork",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/planet-artwork/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/planet-generation",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Planet Generation",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/planet-generation/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/planet-resource-profiles",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Planet Resource Profiles",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/planet-resource-profiles/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/planetary-rules",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Planetary Rules",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/planetary-rules/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/planets",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Planets",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/planets/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/prompt-library",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Prompt Library",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/prompt-library/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/releases",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Releases",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/releases/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/research",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Research",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/research/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/resource-catalog",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Resource Catalog",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/resource-catalog/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/sector-map",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Sector Map",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/sector-map/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/settings",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Settings",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/settings/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/star-system-map",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Star System Map",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/star-system-map/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/star-systems",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Star Systems",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/star-systems/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/surface-landscapes",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Surface Landscapes",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/surface-landscapes/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/tasks",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Tasks",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/tasks/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/universe-explorer",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Universe Explorer",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/universe-explorer/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/unlock-matrix",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Unlock Matrix",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/unlock-matrix/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/upgrades",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Upgrades",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/upgrades/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/validation-engine",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Validation Engine",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/validation-engine/page.tsx"
+    },
+    {
+      "id": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/wonders",
+      "type": "page",
+      "label": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Wonders",
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/wonders/page.tsx"
+    },
+    {
+      "id": "export:generic",
+      "type": "export_target",
+      "label": "generic",
+      "path": "app/api/export/generic/route.ts"
+    },
+    {
+      "id": "export:web",
+      "type": "export_target",
+      "label": "web",
+      "path": "app/api/export/web/route.ts"
+    },
+    {
+      "id": "export:roblox",
+      "type": "export_target",
+      "label": "roblox",
+      "path": "app/api/export/roblox/route.ts"
+    },
+    {
+      "id": "export:unity",
+      "type": "export_target",
+      "label": "unity",
+      "path": "app/api/export/unity/route.ts"
+    },
+    {
+      "id": "export:unreal",
+      "type": "export_target",
+      "label": "unreal",
+      "path": "app/api/export/unreal/route.ts"
+    },
+    {
+      "id": "export:godot",
+      "type": "export_target",
+      "label": "godot",
+      "path": "app/api/export/godot/route.ts"
+    }
+  ],
+  "edges": [
+    {
+      "from": "page:/actions",
+      "to": "component:316984e664a0",
+      "type": "imports",
+      "evidence": "app/actions/page.tsx"
+    },
+    {
+      "from": "page:/ai-agents",
+      "to": "component:ea2b28e6b2c3",
+      "type": "imports",
+      "evidence": "app/ai-agents/page.tsx"
+    },
+    {
+      "from": "page:/architecture",
+      "to": "component:91bda05969fe",
+      "type": "imports",
+      "evidence": "app/architecture/page.tsx"
+    },
+    {
+      "from": "page:/asset-library",
+      "to": "component:6cf7306c9ea9",
+      "type": "imports",
+      "evidence": "app/asset-library/page.tsx"
+    },
+    {
+      "from": "page:/assets/[assetId]",
+      "to": "component:60264497e0c0",
+      "type": "imports",
+      "evidence": "app/assets/[assetId]/page.tsx"
+    },
+    {
+      "from": "page:/assets/eras/[eraId]",
+      "to": "component:84ca92fa3253",
+      "type": "imports",
+      "evidence": "app/assets/eras/[eraId]/page.tsx"
+    },
+    {
+      "from": "page:/assets/generated",
+      "to": "component:c42a0eb10ec6",
+      "type": "imports",
+      "evidence": "app/assets/generated/page.tsx"
+    },
+    {
+      "from": "page:/assets/import-history",
+      "to": "component:c42a0eb10ec6",
+      "type": "imports",
+      "evidence": "app/assets/import-history/page.tsx"
+    },
+    {
+      "from": "page:/assets/missing",
+      "to": "component:c42a0eb10ec6",
+      "type": "imports",
+      "evidence": "app/assets/missing/page.tsx"
+    },
+    {
+      "from": "page:/assets",
+      "to": "component:c42a0eb10ec6",
+      "type": "imports",
+      "evidence": "app/assets/page.tsx"
+    },
+    {
+      "from": "page:/assets/processing",
+      "to": "component:c42a0eb10ec6",
+      "type": "imports",
+      "evidence": "app/assets/processing/page.tsx"
+    },
+    {
+      "from": "page:/assets/published",
+      "to": "component:c42a0eb10ec6",
+      "type": "imports",
+      "evidence": "app/assets/published/page.tsx"
+    },
+    {
+      "from": "page:/assets/source",
+      "to": "component:c42a0eb10ec6",
+      "type": "imports",
+      "evidence": "app/assets/source/page.tsx"
+    },
+    {
+      "from": "page:/auth/mfa",
+      "to": "component:9cdc2e71d71b",
+      "type": "imports",
+      "evidence": "app/auth/mfa/page.tsx"
+    },
+    {
+      "from": "page:/auth/setup-2fa",
+      "to": "component:feddb0a48c9f",
+      "type": "imports",
+      "evidence": "app/auth/setup-2fa/page.tsx"
+    },
+    {
+      "from": "page:/auth/update-password",
+      "to": "component:6484889b49aa",
+      "type": "imports",
+      "evidence": "app/auth/update-password/page.tsx"
+    },
+    {
+      "from": "page:/building-chains",
+      "to": "component:7e396bc1706c",
+      "type": "imports",
+      "evidence": "app/building-chains/page.tsx"
+    },
+    {
+      "from": "page:/building-relationships",
+      "to": "component:7e396bc1706c",
+      "type": "imports",
+      "evidence": "app/building-relationships/page.tsx"
+    },
+    {
+      "from": "page:/buildings",
+      "to": "component:e72fd9cb1f9f",
+      "type": "imports",
+      "evidence": "app/buildings/page.tsx"
+    },
+    {
+      "from": "page:/buildings",
+      "to": "component:66c794e95daf",
+      "type": "imports",
+      "evidence": "app/buildings/page.tsx"
+    },
+    {
+      "from": "page:/buildings",
+      "to": "component:abd91fb31f3d",
+      "type": "imports",
+      "evidence": "app/buildings/page.tsx"
+    },
+    {
+      "from": "page:/buildings",
+      "to": "component:316984e664a0",
+      "type": "imports",
+      "evidence": "app/buildings/page.tsx"
+    },
+    {
+      "from": "page:/celestial-bodies",
+      "to": "component:72ce1b1d60e7",
+      "type": "imports",
+      "evidence": "app/celestial-bodies/page.tsx"
+    },
+    {
+      "from": "page:/collectibles",
+      "to": "component:a2d9b4644895",
+      "type": "imports",
+      "evidence": "app/collectibles/page.tsx"
+    },
+    {
+      "from": "page:/colonies",
+      "to": "component:b4189b6fa923",
+      "type": "imports",
+      "evidence": "app/colonies/page.tsx"
+    },
+    {
+      "from": "page:/conceptual-art",
+      "to": "component:7ddc813a8785",
+      "type": "imports",
+      "evidence": "app/conceptual-art/page.tsx"
+    },
+    {
+      "from": "page:/content-releases",
+      "to": "component:793bad3b4ff3",
+      "type": "imports",
+      "evidence": "app/content-releases/page.tsx"
+    },
+    {
+      "from": "page:/creative-production/ui-screens/civilization-operations",
+      "to": "component:4cf33ad4a5d8",
+      "type": "imports",
+      "evidence": "app/creative-production/ui-screens/civilization-operations/page.tsx"
+    },
+    {
+      "from": "page:/creative-production/ui-screens/planet-detail",
+      "to": "component:b35e89627385",
+      "type": "imports",
+      "evidence": "app/creative-production/ui-screens/planet-detail/page.tsx"
+    },
+    {
+      "from": "page:/creature-generator",
+      "to": "component:2fda87b086a1",
+      "type": "imports",
+      "evidence": "app/creature-generator/page.tsx"
+    },
+    {
+      "from": "page:/database",
+      "to": "component:7e396bc1706c",
+      "type": "imports",
+      "evidence": "app/database/page.tsx"
+    },
+    {
+      "from": "page:/discovery/biological",
+      "to": "component:316984e664a0",
+      "type": "imports",
+      "evidence": "app/discovery/biological/page.tsx"
+    },
+    {
+      "from": "page:/discovery",
+      "to": "component:e72fd9cb1f9f",
+      "type": "imports",
+      "evidence": "app/discovery/page.tsx"
+    },
+    {
+      "from": "page:/discovery",
+      "to": "component:abd91fb31f3d",
+      "type": "imports",
+      "evidence": "app/discovery/page.tsx"
+    },
+    {
+      "from": "page:/discovery",
+      "to": "component:316984e664a0",
+      "type": "imports",
+      "evidence": "app/discovery/page.tsx"
+    },
+    {
+      "from": "page:/discovery-journal",
+      "to": "component:72ce1b1d60e7",
+      "type": "imports",
+      "evidence": "app/discovery-journal/page.tsx"
+    },
+    {
+      "from": "page:/dynamic-events",
+      "to": "component:316984e664a0",
+      "type": "imports",
+      "evidence": "app/dynamic-events/page.tsx"
+    },
+    {
+      "from": "page:/economy",
+      "to": "component:34aef49f474d",
+      "type": "imports",
+      "evidence": "app/economy/page.tsx"
+    },
+    {
+      "from": "page:/economy-designer",
+      "to": "component:8e95ea5491bc",
+      "type": "imports",
+      "evidence": "app/economy-designer/page.tsx"
+    },
+    {
+      "from": "page:/encyclopedia",
+      "to": "component:a588a96fe331",
+      "type": "imports",
+      "evidence": "app/encyclopedia/page.tsx"
+    },
+    {
+      "from": "page:/environment-composer/export",
+      "to": "component:1cff321dc5ec",
+      "type": "imports",
+      "evidence": "app/environment-composer/export/page.tsx"
+    },
+    {
+      "from": "page:/environment-composer/themes",
+      "to": "component:1cff321dc5ec",
+      "type": "imports",
+      "evidence": "app/environment-composer/themes/page.tsx"
+    },
+    {
+      "from": "page:/factions",
+      "to": "component:cffacd8a9b2b",
+      "type": "imports",
+      "evidence": "app/factions/page.tsx"
+    },
+    {
+      "from": "page:/feature-flags",
+      "to": "component:7e396bc1706c",
+      "type": "imports",
+      "evidence": "app/feature-flags/page.tsx"
+    },
+    {
+      "from": "page:/galaxy",
+      "to": "component:64502a5bdf77",
+      "type": "imports",
+      "evidence": "app/galaxy/page.tsx"
+    },
+    {
+      "from": "page:/galaxy-layer-generator",
+      "to": "component:aed25b872f72",
+      "type": "imports",
+      "evidence": "app/galaxy-layer-generator/page.tsx"
+    },
+    {
+      "from": "page:/game-constants",
+      "to": "component:7e396bc1706c",
+      "type": "imports",
+      "evidence": "app/game-constants/page.tsx"
+    },
+    {
+      "from": "page:/hero-discovery-shots",
+      "to": "component:57165377c44c",
+      "type": "imports",
+      "evidence": "app/hero-discovery-shots/page.tsx"
+    },
+    {
+      "from": "page:/inspiration-board",
+      "to": "component:18a92eef77f0",
+      "type": "imports",
+      "evidence": "app/inspiration-board/page.tsx"
+    },
+    {
+      "from": "page:/life-generator",
+      "to": "component:fdc48752762a",
+      "type": "imports",
+      "evidence": "app/life-generator/page.tsx"
+    },
+    {
+      "from": "page:/login",
+      "to": "component:674c0bfb025a",
+      "type": "imports",
+      "evidence": "app/login/page.tsx"
+    },
+    {
+      "from": "page:/missions",
+      "to": "component:af08a299a0bb",
+      "type": "imports",
+      "evidence": "app/missions/page.tsx"
+    },
+    {
+      "from": "page:/",
+      "to": "component:8c112d7c0634",
+      "type": "imports",
+      "evidence": "app/page.tsx"
+    },
+    {
+      "from": "page:/planet-artwork",
+      "to": "component:57165377c44c",
+      "type": "imports",
+      "evidence": "app/planet-artwork/page.tsx"
+    },
+    {
+      "from": "page:/planet-generation",
+      "to": "component:57165377c44c",
+      "type": "imports",
+      "evidence": "app/planet-generation/page.tsx"
+    },
+    {
+      "from": "page:/planet-resource-profiles",
+      "to": "component:7e396bc1706c",
+      "type": "imports",
+      "evidence": "app/planet-resource-profiles/page.tsx"
+    },
+    {
+      "from": "page:/planetary-rules",
+      "to": "component:7e396bc1706c",
+      "type": "imports",
+      "evidence": "app/planetary-rules/page.tsx"
+    },
+    {
+      "from": "page:/planets",
+      "to": "component:f6ac23429202",
+      "type": "imports",
+      "evidence": "app/planets/page.tsx"
+    },
+    {
+      "from": "page:/plant-life-generator",
+      "to": "component:5b92e5747b73",
+      "type": "imports",
+      "evidence": "app/plant-life-generator/page.tsx"
+    },
+    {
+      "from": "page:/population",
+      "to": "component:316984e664a0",
+      "type": "imports",
+      "evidence": "app/population/page.tsx"
+    },
+    {
+      "from": "page:/prompt-library",
+      "to": "component:57165377c44c",
+      "type": "imports",
+      "evidence": "app/prompt-library/page.tsx"
+    },
+    {
+      "from": "page:/prototype-content",
+      "to": "component:b20cc591b80f",
+      "type": "imports",
+      "evidence": "app/prototype-content/page.tsx"
+    },
+    {
+      "from": "page:/research",
+      "to": "component:66c794e95daf",
+      "type": "imports",
+      "evidence": "app/research/page.tsx"
+    },
+    {
+      "from": "page:/research",
+      "to": "component:316984e664a0",
+      "type": "imports",
+      "evidence": "app/research/page.tsx"
+    },
+    {
+      "from": "page:/resource-catalog",
+      "to": "component:e72fd9cb1f9f",
+      "type": "imports",
+      "evidence": "app/resource-catalog/page.tsx"
+    },
+    {
+      "from": "page:/resource-catalog",
+      "to": "component:abd91fb31f3d",
+      "type": "imports",
+      "evidence": "app/resource-catalog/page.tsx"
+    },
+    {
+      "from": "page:/resource-catalog",
+      "to": "component:316984e664a0",
+      "type": "imports",
+      "evidence": "app/resource-catalog/page.tsx"
+    },
+    {
+      "from": "page:/sector-layer-generator",
+      "to": "component:aed25b872f72",
+      "type": "imports",
+      "evidence": "app/sector-layer-generator/page.tsx"
+    },
+    {
+      "from": "page:/sector-map",
+      "to": "component:59761d5aa5ab",
+      "type": "imports",
+      "evidence": "app/sector-map/page.tsx"
+    },
+    {
+      "from": "page:/settings",
+      "to": "component:d288e8bb0124",
+      "type": "imports",
+      "evidence": "app/settings/page.tsx"
+    },
+    {
+      "from": "page:/settings",
+      "to": "component:ec2dbb454a4c",
+      "type": "imports",
+      "evidence": "app/settings/page.tsx"
+    },
+    {
+      "from": "page:/species/[speciesId]",
+      "to": "component:3592f197b59f",
+      "type": "imports",
+      "evidence": "app/species/[speciesId]/page.tsx"
+    },
+    {
+      "from": "page:/species/[speciesId]",
+      "to": "component:b9db626f9409",
+      "type": "imports",
+      "evidence": "app/species/[speciesId]/page.tsx"
+    },
+    {
+      "from": "page:/species",
+      "to": "component:ff80ec91738c",
+      "type": "imports",
+      "evidence": "app/species/page.tsx"
+    },
+    {
+      "from": "page:/star-system-layer-generator",
+      "to": "component:bdf428fa0b76",
+      "type": "imports",
+      "evidence": "app/star-system-layer-generator/page.tsx"
+    },
+    {
+      "from": "page:/star-system-map",
+      "to": "component:88fb6728fcee",
+      "type": "imports",
+      "evidence": "app/star-system-map/page.tsx"
+    },
+    {
+      "from": "page:/star-systems",
+      "to": "component:7e396bc1706c",
+      "type": "imports",
+      "evidence": "app/star-systems/page.tsx"
+    },
+    {
+      "from": "page:/surface-landscapes",
+      "to": "component:57165377c44c",
+      "type": "imports",
+      "evidence": "app/surface-landscapes/page.tsx"
+    },
+    {
+      "from": "page:/universe-explorer",
+      "to": "component:c76a3228b89d",
+      "type": "imports",
+      "evidence": "app/universe-explorer/page.tsx"
+    },
+    {
+      "from": "page:/universe-layer-generator",
+      "to": "component:78e4624eaadb",
+      "type": "imports",
+      "evidence": "app/universe-layer-generator/page.tsx"
+    },
+    {
+      "from": "page:/unlock-matrix",
+      "to": "component:7e396bc1706c",
+      "type": "imports",
+      "evidence": "app/unlock-matrix/page.tsx"
+    },
+    {
+      "from": "page:/upgrades",
+      "to": "component:27d952dbb1ec",
+      "type": "imports",
+      "evidence": "app/upgrades/page.tsx"
+    },
+    {
+      "from": "page:/visual-production/species-plates",
+      "to": "component:2faef7bf9aa6",
+      "type": "imports",
+      "evidence": "app/visual-production/species-plates/page.tsx"
+    },
+    {
+      "from": "page:/wonders",
+      "to": "component:7e396bc1706c",
+      "type": "imports",
+      "evidence": "app/wonders/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/assets",
+      "to": "component:48fab1fd73a9",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/assets/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/auth/mfa",
+      "to": "component:9cdc2e71d71b",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/auth/mfa/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/auth/setup-2fa",
+      "to": "component:feddb0a48c9f",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/auth/setup-2fa/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/auth/update-password",
+      "to": "component:6484889b49aa",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/auth/update-password/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/building-chains",
+      "to": "component:48fab1fd73a9",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/building-chains/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/building-relationships",
+      "to": "component:48fab1fd73a9",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/building-relationships/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/buildings",
+      "to": "component:48fab1fd73a9",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/buildings/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/celestial-bodies",
+      "to": "component:212c5559d18e",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/celestial-bodies/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/codex-handoffs",
+      "to": "component:48fab1fd73a9",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/codex-handoffs/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/collectibles",
+      "to": "component:a2d9b4644895",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/collectibles/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/conceptual-art",
+      "to": "component:7ddc813a8785",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/conceptual-art/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/database",
+      "to": "component:48fab1fd73a9",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/database/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/districts",
+      "to": "component:48fab1fd73a9",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/districts/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/feature-flags",
+      "to": "component:48fab1fd73a9",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/feature-flags/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/galaxy",
+      "to": "component:64502a5bdf77",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/galaxy/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/game-constants",
+      "to": "component:48fab1fd73a9",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/game-constants/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/hero-discovery-shots",
+      "to": "component:57165377c44c",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/hero-discovery-shots/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/login",
+      "to": "component:674c0bfb025a",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/login/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app",
+      "to": "component:8c112d7c0634",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/planet-artwork",
+      "to": "component:57165377c44c",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/planet-artwork/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/planet-generation",
+      "to": "component:57165377c44c",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/planet-generation/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/planet-resource-profiles",
+      "to": "component:48fab1fd73a9",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/planet-resource-profiles/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/planetary-rules",
+      "to": "component:48fab1fd73a9",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/planetary-rules/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/planets",
+      "to": "component:f6ac23429202",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/planets/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/prompt-library",
+      "to": "component:57165377c44c",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/prompt-library/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/research",
+      "to": "component:48fab1fd73a9",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/research/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/resource-catalog",
+      "to": "component:48fab1fd73a9",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/resource-catalog/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/sector-map",
+      "to": "component:59761d5aa5ab",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/sector-map/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/settings",
+      "to": "component:d288e8bb0124",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/settings/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/settings",
+      "to": "component:ec2dbb454a4c",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/settings/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/star-system-map",
+      "to": "component:88fb6728fcee",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/star-system-map/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/star-systems",
+      "to": "component:48fab1fd73a9",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/star-systems/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/surface-landscapes",
+      "to": "component:57165377c44c",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/surface-landscapes/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/tasks",
+      "to": "component:df38a9adea2d",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/tasks/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/universe-explorer",
+      "to": "component:c76a3228b89d",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/universe-explorer/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/unlock-matrix",
+      "to": "component:48fab1fd73a9",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/unlock-matrix/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/upgrades",
+      "to": "component:48fab1fd73a9",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/upgrades/page.tsx"
+    },
+    {
+      "from": "page:project-genesis-chatgpt-handoff-2026-07-09/source/app/wonders",
+      "to": "component:48fab1fd73a9",
+      "type": "imports",
+      "evidence": "project-genesis-chatgpt-handoff-2026-07-09/source/app/wonders/page.tsx"
+    },
+    {
+      "from": "library:achievements",
+      "to": "export:generic",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:all_upgrades",
+      "to": "export:generic",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:ancient_civilizations",
+      "to": "export:generic",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:balance",
+      "to": "export:generic",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:building_chains",
+      "to": "export:generic",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:building_evolution",
+      "to": "export:generic",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:building_relationships",
+      "to": "export:generic",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:buildings",
+      "to": "export:generic",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:changelog",
+      "to": "export:generic",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:civilization_paths",
+      "to": "export:generic",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:codex_tasks",
+      "to": "export:generic",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:collectibles",
+      "to": "export:generic",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:achievements",
+      "to": "export:web",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:all_upgrades",
+      "to": "export:web",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:ancient_civilizations",
+      "to": "export:web",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:balance",
+      "to": "export:web",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:building_chains",
+      "to": "export:web",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:building_evolution",
+      "to": "export:web",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:building_relationships",
+      "to": "export:web",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:buildings",
+      "to": "export:web",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:changelog",
+      "to": "export:web",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:civilization_paths",
+      "to": "export:web",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:codex_tasks",
+      "to": "export:web",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:collectibles",
+      "to": "export:web",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:achievements",
+      "to": "export:roblox",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:all_upgrades",
+      "to": "export:roblox",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:ancient_civilizations",
+      "to": "export:roblox",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:balance",
+      "to": "export:roblox",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:building_chains",
+      "to": "export:roblox",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:building_evolution",
+      "to": "export:roblox",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:building_relationships",
+      "to": "export:roblox",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:buildings",
+      "to": "export:roblox",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:changelog",
+      "to": "export:roblox",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:civilization_paths",
+      "to": "export:roblox",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:codex_tasks",
+      "to": "export:roblox",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:collectibles",
+      "to": "export:roblox",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:achievements",
+      "to": "export:unity",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:all_upgrades",
+      "to": "export:unity",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:ancient_civilizations",
+      "to": "export:unity",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:balance",
+      "to": "export:unity",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:building_chains",
+      "to": "export:unity",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:building_evolution",
+      "to": "export:unity",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:building_relationships",
+      "to": "export:unity",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:buildings",
+      "to": "export:unity",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:changelog",
+      "to": "export:unity",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:civilization_paths",
+      "to": "export:unity",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:codex_tasks",
+      "to": "export:unity",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:collectibles",
+      "to": "export:unity",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:achievements",
+      "to": "export:unreal",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:all_upgrades",
+      "to": "export:unreal",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:ancient_civilizations",
+      "to": "export:unreal",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:balance",
+      "to": "export:unreal",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:building_chains",
+      "to": "export:unreal",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:building_evolution",
+      "to": "export:unreal",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:building_relationships",
+      "to": "export:unreal",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:buildings",
+      "to": "export:unreal",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:changelog",
+      "to": "export:unreal",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:civilization_paths",
+      "to": "export:unreal",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:codex_tasks",
+      "to": "export:unreal",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:collectibles",
+      "to": "export:unreal",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:achievements",
+      "to": "export:godot",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:all_upgrades",
+      "to": "export:godot",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:ancient_civilizations",
+      "to": "export:godot",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:balance",
+      "to": "export:godot",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:building_chains",
+      "to": "export:godot",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:building_evolution",
+      "to": "export:godot",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:building_relationships",
+      "to": "export:godot",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:buildings",
+      "to": "export:godot",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:changelog",
+      "to": "export:godot",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:civilization_paths",
+      "to": "export:godot",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:codex_tasks",
+      "to": "export:godot",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    },
+    {
+      "from": "library:collectibles",
+      "to": "export:godot",
+      "type": "publishes",
+      "evidence": "lib/runtime/game-runtime.ts and export adapters"
+    }
+  ],
+  "limitation": "Import edges are partial static aliases; dynamic imports and database relationships are not resolved."
+}

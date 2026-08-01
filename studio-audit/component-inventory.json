@@ -1,0 +1,1009 @@
+[
+  {
+    "id": "09fa3410ec92",
+    "name": "admin-table",
+    "sourceFile": "components/admin-table.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/components/ui/button",
+      "@/components/ui/status-badge",
+      "@/lib/utils",
+      "@/lib/tables"
+    ],
+    "category": "component",
+    "sourceLines": 691
+  },
+  {
+    "id": "8d38e5a8d2e2",
+    "name": "ai-agents-library",
+    "sourceFile": "components/ai-agents-library.tsx",
+    "imports": [
+      "react",
+      "next/link",
+      "next/navigation",
+      "lucide-react",
+      "@/components/discovery-library-tree",
+      "@/components/resizable-discovery-layout",
+      "@/components/ui/workspace",
+      "@/lib/ai-agents/browser-utils",
+      "@/lib/utils"
+    ],
+    "category": "workspace",
+    "sourceLines": 193
+  },
+  {
+    "id": "29e8725fde86",
+    "name": "ai-agents-workspace",
+    "sourceFile": "components/ai-agents-workspace.tsx",
+    "imports": [
+      "next/link",
+      "react",
+      "lucide-react",
+      "@/components/asset-preview",
+      "@/components/ui/density",
+      "@/components/ui/workspace",
+      "@/lib/ai-agents",
+      "@/lib/utils"
+    ],
+    "category": "workspace",
+    "sourceLines": 338
+  },
+  {
+    "id": "6dabe613e764",
+    "name": "app-shell",
+    "sourceFile": "components/app-shell.tsx",
+    "imports": [
+      "next/link",
+      "next/navigation",
+      "react",
+      "lucide-react",
+      "lucide-react",
+      "@/components/studio-command-palette",
+      "@/lib/utils"
+    ],
+    "category": "component",
+    "sourceLines": 398
+  },
+  {
+    "id": "65d012198eee",
+    "name": "architecture-workspace",
+    "sourceFile": "components/architecture-workspace.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/components/ui/workspace",
+      "@/lib/architecture",
+      "@/lib/utils"
+    ],
+    "category": "workspace",
+    "sourceLines": 312
+  },
+  {
+    "id": "3ab50ea946e1",
+    "name": "asset-content-browser",
+    "sourceFile": "components/asset-content-browser.tsx",
+    "imports": [
+      "next/link",
+      "react",
+      "lucide-react",
+      "@/components/ui/workspace",
+      "@/data/curiosity-volume-01-biological-taxonomy.json",
+      "@/data/curiosity-volume-02-fauna-taxonomy.json",
+      "@/data/curiosity-volume-03-geological-taxonomy.json",
+      "@/data/curiosity-volume-04-ancient-relics-taxonomy.json",
+      "@/data/curiosity-volume-05-alien-technology-taxonomy.json",
+      "@/data/curiosity-volume-06-ruins-and-structures-taxonomy.json",
+      "@/data/curiosity-volume-07-energy-phenomena-taxonomy.json",
+      "@/data/curiosity-volume-08-anomalies-taxonomy.json",
+      "@/data/curiosity-volume-09-unknown-objects-taxonomy.json",
+      "@/data/curiosity-volume-10-genetic-archives-taxonomy.json",
+      "@/lib/assets/asset-library-inventory"
+    ],
+    "category": "workspace",
+    "sourceLines": 1220
+  },
+  {
+    "id": "17a320ea708d",
+    "name": "asset-detail-workspace",
+    "sourceFile": "components/asset-detail-workspace.tsx",
+    "imports": [
+      "next/link",
+      "react",
+      "lucide-react",
+      "@/components/ui/button",
+      "@/components/ui/workspace",
+      "@/lib/assets/download-eligibility",
+      "@/lib/assets/asset-production"
+    ],
+    "category": "workspace",
+    "sourceLines": 739
+  },
+  {
+    "id": "ea80d93aff86",
+    "name": "asset-preview",
+    "sourceFile": "components/asset-preview.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/components/ui/workspace",
+      "@/lib/assets/visual-previews",
+      "@/lib/utils"
+    ],
+    "category": "component",
+    "sourceLines": 167
+  },
+  {
+    "id": "ea9c8ae3570c",
+    "name": "asset-production-workspace",
+    "sourceFile": "components/asset-production-workspace.tsx",
+    "imports": [
+      "next/link",
+      "react",
+      "lucide-react",
+      "@/components/asset-preview",
+      "@/components/generated-library-card",
+      "@/components/ui/button",
+      "@/components/ui/density",
+      "@/components/ui/workspace",
+      "@/lib/assets/visual-previews",
+      "@/lib/assets/asset-library-routing",
+      "@/lib/assets/asset-production",
+      "@/lib/upgrades/category-presentation"
+    ],
+    "category": "workspace",
+    "sourceLines": 1942
+  },
+  {
+    "id": "4262d048e8a4",
+    "name": "account-security-panel",
+    "sourceFile": "components/auth/account-security-panel.tsx",
+    "imports": [
+      "react",
+      "next/navigation",
+      "lucide-react",
+      "@/components/ui/button",
+      "@/lib/supabase/client"
+    ],
+    "category": "component",
+    "sourceLines": 267
+  },
+  {
+    "id": "a6314a23b664",
+    "name": "auth-card",
+    "sourceFile": "components/auth/auth-card.tsx",
+    "imports": [
+      "lucide-react"
+    ],
+    "category": "component",
+    "sourceLines": 33
+  },
+  {
+    "id": "c1d729664812",
+    "name": "login-form",
+    "sourceFile": "components/auth/login-form.tsx",
+    "imports": [
+      "react",
+      "next/navigation",
+      "lucide-react",
+      "@/components/auth/auth-card",
+      "@/components/ui/button",
+      "@/lib/supabase/client"
+    ],
+    "category": "component",
+    "sourceLines": 156
+  },
+  {
+    "id": "4e95382b1dc3",
+    "name": "mfa-challenge-form",
+    "sourceFile": "components/auth/mfa-challenge-form.tsx",
+    "imports": [
+      "react",
+      "next/navigation",
+      "lucide-react",
+      "@/components/auth/auth-card",
+      "@/components/ui/button",
+      "@/lib/supabase/client"
+    ],
+    "category": "component",
+    "sourceLines": 102
+  },
+  {
+    "id": "bf9433c30dd3",
+    "name": "setup-2fa-form",
+    "sourceFile": "components/auth/setup-2fa-form.tsx",
+    "imports": [
+      "react",
+      "next/navigation",
+      "lucide-react",
+      "@/components/auth/auth-card",
+      "@/components/ui/button",
+      "@/lib/supabase/client"
+    ],
+    "category": "component",
+    "sourceLines": 150
+  },
+  {
+    "id": "15ab89bd6777",
+    "name": "update-password-form",
+    "sourceFile": "components/auth/update-password-form.tsx",
+    "imports": [
+      "react",
+      "next/link",
+      "next/navigation",
+      "lucide-react",
+      "@/components/auth/auth-card",
+      "@/components/ui/button",
+      "@/lib/supabase/client"
+    ],
+    "category": "component",
+    "sourceLines": 190
+  },
+  {
+    "id": "5935c20b2e36",
+    "name": "user-management-panel",
+    "sourceFile": "components/auth/user-management-panel.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/components/ui/button"
+    ],
+    "category": "component",
+    "sourceLines": 225
+  },
+  {
+    "id": "91c5e696dd93",
+    "name": "celestial-body-designer",
+    "sourceFile": "components/celestial-body-designer.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/components/ui/button",
+      "@/data/canonical-sol-prompts",
+      "@/data/planet-generation-prompts",
+      "@/lib/planets/artwork-prompts",
+      "@/lib/utils",
+      "@/types/schema"
+    ],
+    "category": "component",
+    "sourceLines": 380
+  },
+  {
+    "id": "75ef44981c86",
+    "name": "civilization-era-carousel",
+    "sourceFile": "components/civilization-era-carousel.tsx",
+    "imports": [
+      "next/link",
+      "react",
+      "lucide-react",
+      "@/components/civilization-timeline",
+      "@/lib/utils"
+    ],
+    "category": "component",
+    "sourceLines": 213
+  },
+  {
+    "id": "1a990429baea",
+    "name": "civilization-operations-workspace",
+    "sourceFile": "components/civilization-operations-workspace.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/lib/assets/civilization-operations-deck",
+      "@/lib/assets/civilization-operations-deck-server",
+      "@/lib/utils"
+    ],
+    "category": "workspace",
+    "sourceLines": 300
+  },
+  {
+    "id": "323271e7e4f8",
+    "name": "civilization-timeline",
+    "sourceFile": "components/civilization-timeline.tsx",
+    "imports": [
+      "next/link",
+      "lucide-react",
+      "@/components/ui/workspace",
+      "@/lib/utils"
+    ],
+    "category": "component",
+    "sourceLines": 226
+  },
+  {
+    "id": "4fcc9ceb50c0",
+    "name": "colonies-workspace",
+    "sourceFile": "components/colonies-workspace.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/lib/economy/trade",
+      "@/lib/missions/procedural",
+      "@/lib/resources/service",
+      "@/components/ui/workspace",
+      "@/lib/colonies/procedural"
+    ],
+    "category": "workspace",
+    "sourceLines": 471
+  },
+  {
+    "id": "c2565ad9155c",
+    "name": "command-center-dashboard",
+    "sourceFile": "components/command-center-dashboard.tsx",
+    "imports": [
+      "next/image",
+      "next/link",
+      "lucide-react",
+      "@/types/schema"
+    ],
+    "category": "component",
+    "sourceLines": 364
+  },
+  {
+    "id": "53becee3a33f",
+    "name": "conceptual-art-gallery",
+    "sourceFile": "components/conceptual-art-gallery.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/components/ui/button",
+      "@/types/schema"
+    ],
+    "category": "component",
+    "sourceLines": 321
+  },
+  {
+    "id": "e2072c07c3f7",
+    "name": "content-authoring-workspace",
+    "sourceFile": "components/content-authoring-workspace.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/components/ui/workspace",
+      "@/lib/content-authoring/templates",
+      "@/lib/content-authoring/templates",
+      "@/lib/utils"
+    ],
+    "category": "workspace",
+    "sourceLines": 353
+  },
+  {
+    "id": "6c20d35f01ad",
+    "name": "content-releases-workspace",
+    "sourceFile": "components/content-releases-workspace.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/components/ui/button",
+      "@/components/ui/workspace"
+    ],
+    "category": "workspace",
+    "sourceLines": 255
+  },
+  {
+    "id": "aef4c18e80b7",
+    "name": "cosmic-generation-prompt-library",
+    "sourceFile": "components/cosmic-generation-prompt-library.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/components/ui/button",
+      "@/data/cosmic-generation-prompts"
+    ],
+    "category": "workspace",
+    "sourceLines": 115
+  },
+  {
+    "id": "16f30cc34ddb",
+    "name": "creature-generator-workspace",
+    "sourceFile": "components/creature-generator-workspace.tsx",
+    "imports": [
+      "react",
+      "react",
+      "lucide-react",
+      "@/lib/life/creature-system",
+      "@/components/creature-prompt-panel",
+      "@/components/species-plate-prompt-card",
+      "@/lib/species-plates/adapters"
+    ],
+    "category": "generator",
+    "sourceLines": 61
+  },
+  {
+    "id": "75a766b89fd5",
+    "name": "creature-prompt-panel",
+    "sourceFile": "components/creature-prompt-panel.tsx",
+    "imports": [
+      "@/components/nano-banana-prompt-panel",
+      "@/lib/visual-production/nano-banana-2",
+      "@/lib/life/creature-system"
+    ],
+    "category": "component",
+    "sourceLines": 46
+  },
+  {
+    "id": "f3b475343fbe",
+    "name": "data-workspace",
+    "sourceFile": "components/data-workspace.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "lucide-react",
+      "@/components/admin-table",
+      "@/components/ui/button",
+      "@/components/ui/density",
+      "@/components/ui/workspace",
+      "@/lib/tables",
+      "@/lib/utils"
+    ],
+    "category": "workspace",
+    "sourceLines": 482
+  },
+  {
+    "id": "fbb6ebb2c4e3",
+    "name": "discovery-journal-workspace",
+    "sourceFile": "components/discovery-journal-workspace.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/lib/explorer/discovery-log",
+      "@/components/ui/workspace"
+    ],
+    "category": "workspace",
+    "sourceLines": 205
+  },
+  {
+    "id": "25548bca85cc",
+    "name": "discovery-library-tree",
+    "sourceFile": "components/discovery-library-tree.tsx",
+    "imports": [
+      "next/link",
+      "react",
+      "lucide-react"
+    ],
+    "category": "workspace",
+    "sourceLines": 148
+  },
+  {
+    "id": "7d7344658956",
+    "name": "economy-designer-workspace",
+    "sourceFile": "components/economy-designer-workspace.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "lucide-react",
+      "@/lib/economy-designer",
+      "@/components/ui/density",
+      "@/components/ui/workspace",
+      "@/lib/utils"
+    ],
+    "category": "workspace",
+    "sourceLines": 573
+  },
+  {
+    "id": "a5c1b0f8f9bb",
+    "name": "economy-workspace",
+    "sourceFile": "components/economy-workspace.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/lib/resources/service",
+      "@/lib/colonies/procedural",
+      "@/lib/economy/trade",
+      "@/lib/missions/procedural",
+      "@/components/ui/workspace"
+    ],
+    "category": "workspace",
+    "sourceLines": 268
+  },
+  {
+    "id": "e988a6bc6131",
+    "name": "encyclopedia-browser",
+    "sourceFile": "components/encyclopedia-browser.tsx",
+    "imports": [
+      "next/link",
+      "lucide-react",
+      "@/components/discovery-library-tree",
+      "@/components/resizable-discovery-layout",
+      "@/components/ui/workspace",
+      "@/lib/encyclopedia",
+      "@/lib/utils"
+    ],
+    "category": "workspace",
+    "sourceLines": 195
+  },
+  {
+    "id": "c2a6827e45db",
+    "name": "environment-composer-workspace",
+    "sourceFile": "components/environment-composer-workspace.tsx",
+    "imports": [
+      "lucide-react",
+      "@/lib/environment-composer"
+    ],
+    "category": "workspace",
+    "sourceLines": 108
+  },
+  {
+    "id": "0226a583fd73",
+    "name": "environment-layer-generator",
+    "sourceFile": "components/environment-layer-generator.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/components/ui/button",
+      "@/lib/environment-layer-generators"
+    ],
+    "category": "generator",
+    "sourceLines": 786
+  },
+  {
+    "id": "d65f4106accc",
+    "name": "era-art-inventory-workspace",
+    "sourceFile": "components/era-art-inventory-workspace.tsx",
+    "imports": [
+      "next/link",
+      "react",
+      "lucide-react",
+      "@/components/asset-preview",
+      "@/components/ui/button",
+      "@/components/ui/workspace",
+      "@/lib/assets/visual-previews",
+      "@/lib/assets/era-art-inventory"
+    ],
+    "category": "workspace",
+    "sourceLines": 978
+  },
+  {
+    "id": "10264b6eb4fb",
+    "name": "factions-workspace",
+    "sourceFile": "components/factions-workspace.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/lib/factions/procedural",
+      "@/components/ui/workspace"
+    ],
+    "category": "workspace",
+    "sourceLines": 151
+  },
+  {
+    "id": "a4be6dbf6994",
+    "name": "galaxy-command-center",
+    "sourceFile": "components/galaxy-command-center.tsx",
+    "imports": [
+      "@/components/generated-universe-library",
+      "@/lib/universe/library"
+    ],
+    "category": "component",
+    "sourceLines": 18
+  },
+  {
+    "id": "0d59e3678eb9",
+    "name": "game-art-import-workspace",
+    "sourceFile": "components/game-art-import-workspace.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/components/ui/button",
+      "@/components/ui/workspace",
+      "@/lib/assets/game-art-import"
+    ],
+    "category": "workspace",
+    "sourceLines": 332
+  },
+  {
+    "id": "5417d8859ef5",
+    "name": "generated-library-card",
+    "sourceFile": "components/generated-library-card.tsx",
+    "imports": [
+      "next/link",
+      "react",
+      "lucide-react",
+      "@/lib/utils"
+    ],
+    "category": "workspace",
+    "sourceLines": 348
+  },
+  {
+    "id": "f55e12605699",
+    "name": "generated-planets-gallery",
+    "sourceFile": "components/generated-planets-gallery.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/components/ui/button",
+      "@/components/ui/workspace",
+      "@/components/planet-deep-data-editor",
+      "@/lib/planets/class-model",
+      "@/lib/planets/rarity",
+      "@/lib/planets/render-lock",
+      "@/lib/resources/service",
+      "@/types/schema"
+    ],
+    "category": "component",
+    "sourceLines": 947
+  },
+  {
+    "id": "553c74510646",
+    "name": "generated-universe-library",
+    "sourceFile": "components/generated-universe-library.tsx",
+    "imports": [
+      "react",
+      "next/link",
+      "lucide-react",
+      "@/components/generated-library-card",
+      "@/components/ui/workspace",
+      "@/lib/universe/library"
+    ],
+    "category": "workspace",
+    "sourceLines": 160
+  },
+  {
+    "id": "bd9d8e8bbe84",
+    "name": "inspiration-board-workspace",
+    "sourceFile": "components/inspiration-board-workspace.tsx",
+    "imports": [
+      "next/image",
+      "react",
+      "lucide-react",
+      "@/lib/experience-design/inspiration-wall"
+    ],
+    "category": "workspace",
+    "sourceLines": 163
+  },
+  {
+    "id": "854c56ff7d0c",
+    "name": "life-generator-workspace",
+    "sourceFile": "components/life-generator-workspace.tsx",
+    "imports": [
+      "next/link",
+      "lucide-react"
+    ],
+    "category": "generator",
+    "sourceLines": 27
+  },
+  {
+    "id": "4d79e4d765c0",
+    "name": "missions-workspace",
+    "sourceFile": "components/missions-workspace.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/lib/missions/procedural",
+      "@/lib/resources/service",
+      "@/components/ui/workspace"
+    ],
+    "category": "workspace",
+    "sourceLines": 281
+  },
+  {
+    "id": "f2aa660e74e8",
+    "name": "nano-banana-prompt-panel",
+    "sourceFile": "components/nano-banana-prompt-panel.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/lib/visual-production/nano-banana-2"
+    ],
+    "category": "component",
+    "sourceLines": 56
+  },
+  {
+    "id": "84145d56da76",
+    "name": "placeholder-page",
+    "sourceFile": "components/placeholder-page.tsx",
+    "imports": [],
+    "category": "component",
+    "sourceLines": 12
+  },
+  {
+    "id": "119cffd55a1f",
+    "name": "planet-deep-data-editor",
+    "sourceFile": "components/planet-deep-data-editor.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/components/ui/button",
+      "@/lib/planets/deep-data",
+      "@/lib/resources/service",
+      "@/types/planet-deep-data",
+      "@/types/schema"
+    ],
+    "category": "component",
+    "sourceLines": 678
+  },
+  {
+    "id": "a4aea774063f",
+    "name": "planet-detail-screen-workspace",
+    "sourceFile": "components/planet-detail-screen-workspace.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/lib/assets/planet-detail-screen-server",
+      "@/lib/assets/planet-detail-screen",
+      "@/lib/utils"
+    ],
+    "category": "workspace",
+    "sourceLines": 285
+  },
+  {
+    "id": "07360bdc46ce",
+    "name": "planet-generation-library",
+    "sourceFile": "components/planet-generation-library.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/components/ui/button",
+      "@/data/canonical-sol-prompts",
+      "@/data/planet-generation-prompts",
+      "@/lib/planets/artwork-prompts"
+    ],
+    "category": "workspace",
+    "sourceLines": 465
+  },
+  {
+    "id": "9ca21cd969f9",
+    "name": "plant-life-generator-workspace",
+    "sourceFile": "components/plant-life-generator-workspace.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/lib/life/plant-system",
+      "@/components/plant-prompt-panel",
+      "@/components/species-plate-prompt-card",
+      "@/lib/species-plates/adapters"
+    ],
+    "category": "generator",
+    "sourceLines": 36
+  },
+  {
+    "id": "5c590a66b6c5",
+    "name": "plant-prompt-panel",
+    "sourceFile": "components/plant-prompt-panel.tsx",
+    "imports": [
+      "@/components/nano-banana-prompt-panel",
+      "@/lib/life/plant-system",
+      "@/lib/visual-production/nano-banana-2"
+    ],
+    "category": "component",
+    "sourceLines": 37
+  },
+  {
+    "id": "c5840e8f7faa",
+    "name": "procedural-visual-signature-preview",
+    "sourceFile": "components/procedural-visual-signature-preview.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/lib/universe/visual-signatures"
+    ],
+    "category": "component",
+    "sourceLines": 65
+  },
+  {
+    "id": "3c3360a9d176",
+    "name": "prototype-content-workspace",
+    "sourceFile": "components/prototype-content-workspace.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/components/ui/button",
+      "@/components/ui/workspace",
+      "@/lib/game-content/prototype"
+    ],
+    "category": "workspace",
+    "sourceLines": 150
+  },
+  {
+    "id": "6bfb0dbcf49d",
+    "name": "resizable-discovery-layout",
+    "sourceFile": "components/resizable-discovery-layout.tsx",
+    "imports": [
+      "react"
+    ],
+    "category": "component",
+    "sourceLines": 94
+  },
+  {
+    "id": "813251ab66a2",
+    "name": "sector-map",
+    "sourceFile": "components/sector-map.tsx",
+    "imports": [
+      "@/components/generated-universe-library",
+      "@/lib/universe/library"
+    ],
+    "category": "component",
+    "sourceLines": 18
+  },
+  {
+    "id": "57a7c89b36ac",
+    "name": "species-library",
+    "sourceFile": "components/species-library.tsx",
+    "imports": [
+      "react",
+      "next/link",
+      "lucide-react",
+      "@/components/generated-library-card",
+      "@/lib/life/creature-system"
+    ],
+    "category": "workspace",
+    "sourceLines": 18
+  },
+  {
+    "id": "2f85ee802bc6",
+    "name": "species-plate-prompt-card",
+    "sourceFile": "components/species-plate-prompt-card.tsx",
+    "imports": [
+      "react",
+      "next/link",
+      "lucide-react",
+      "@/lib/species-plates/compiler",
+      "@/lib/species-plates/master-template"
+    ],
+    "category": "component",
+    "sourceLines": 21
+  },
+  {
+    "id": "7c637ea3df62",
+    "name": "species-plate-workspace",
+    "sourceFile": "components/species-plate-workspace.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/lib/species-plates/compiler",
+      "@/lib/species-plates/master-template",
+      "@/lib/species-plates/types"
+    ],
+    "category": "workspace",
+    "sourceLines": 52
+  },
+  {
+    "id": "ba06dc59053f",
+    "name": "star-system-generation-library",
+    "sourceFile": "components/star-system-generation-library.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/components/ui/button",
+      "@/data/star-system-generation-prompts"
+    ],
+    "category": "workspace",
+    "sourceLines": 109
+  },
+  {
+    "id": "69463ddced7d",
+    "name": "star-system-map",
+    "sourceFile": "components/star-system-map.tsx",
+    "imports": [
+      "@/components/generated-universe-library",
+      "@/lib/universe/library"
+    ],
+    "category": "component",
+    "sourceLines": 18
+  },
+  {
+    "id": "c14a410134e7",
+    "name": "studio-command-palette",
+    "sourceFile": "components/studio-command-palette.tsx",
+    "imports": [
+      "next/link",
+      "react",
+      "lucide-react"
+    ],
+    "category": "component",
+    "sourceLines": 145
+  },
+  {
+    "id": "3458df31a911",
+    "name": "button",
+    "sourceFile": "components/ui/button.tsx",
+    "imports": [
+      "react",
+      "@/lib/utils"
+    ],
+    "category": "component",
+    "sourceLines": 15
+  },
+  {
+    "id": "04b9b03ae5b1",
+    "name": "density",
+    "sourceFile": "components/ui/density.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/components/ui/workspace",
+      "@/lib/utils"
+    ],
+    "category": "component",
+    "sourceLines": 193
+  },
+  {
+    "id": "a9b11cc780a3",
+    "name": "status-badge",
+    "sourceFile": "components/ui/status-badge.tsx",
+    "imports": [
+      "@/lib/utils"
+    ],
+    "category": "component",
+    "sourceLines": 18
+  },
+  {
+    "id": "1e8db49fed82",
+    "name": "workspace",
+    "sourceFile": "components/ui/workspace.tsx",
+    "imports": [
+      "lucide-react",
+      "lucide-react",
+      "@/lib/utils"
+    ],
+    "category": "workspace",
+    "sourceLines": 150
+  },
+  {
+    "id": "e6fb8d213403",
+    "name": "universe-explorer",
+    "sourceFile": "components/universe-explorer.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/components/ui/button",
+      "@/lib/universe/generator"
+    ],
+    "category": "component",
+    "sourceLines": 371
+  },
+  {
+    "id": "556626e6ed3b",
+    "name": "universe-generator-workflows",
+    "sourceFile": "components/universe-generator-workflows.tsx",
+    "imports": [
+      "react",
+      "react-dom",
+      "lucide-react",
+      "@/components/ui/button",
+      "@/data/handoff",
+      "@/lib/colonies/procedural",
+      "@/lib/explorer/discovery-log",
+      "@/lib/factions/procedural",
+      "@/lib/missions/procedural",
+      "@/lib/universe/fallback-data",
+      "@/lib/universe/generator",
+      "@/lib/utils",
+      "@/lib/planets/fixed-sol-planets",
+      "@/lib/resources/service",
+      "@/types/schema"
+    ],
+    "category": "generator",
+    "sourceLines": 4767
+  },
+  {
+    "id": "1aa6a37360cb",
+    "name": "upgrade-art-workspace",
+    "sourceFile": "components/upgrade-art-workspace.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/components/asset-preview",
+      "@/components/ui/workspace",
+      "@/lib/upgrades/art-previews",
+      "@/types/schema",
+      "@/lib/utils"
+    ],
+    "category": "workspace",
+    "sourceLines": 280
+  },
+  {
+    "id": "7d513e0a761b",
+    "name": "upgrade-library",
+    "sourceFile": "components/upgrade-library.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/components/generated-library-card",
+      "@/components/ui/workspace",
+      "@/lib/upgrades/art-previews",
+      "@/types/schema"
+    ],
+    "category": "workspace",
+    "sourceLines": 200
+  }
+]

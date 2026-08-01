@@ -1,0 +1,81 @@
+[
+  {
+    "id": "16f30cc34ddb",
+    "name": "creature-generator-workspace",
+    "sourceFile": "components/creature-generator-workspace.tsx",
+    "imports": [
+      "react",
+      "react",
+      "lucide-react",
+      "@/lib/life/creature-system",
+      "@/components/creature-prompt-panel",
+      "@/components/species-plate-prompt-card",
+      "@/lib/species-plates/adapters"
+    ],
+    "category": "generator",
+    "sourceLines": 61
+  },
+  {
+    "id": "0226a583fd73",
+    "name": "environment-layer-generator",
+    "sourceFile": "components/environment-layer-generator.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/components/ui/button",
+      "@/lib/environment-layer-generators"
+    ],
+    "category": "generator",
+    "sourceLines": 786
+  },
+  {
+    "id": "854c56ff7d0c",
+    "name": "life-generator-workspace",
+    "sourceFile": "components/life-generator-workspace.tsx",
+    "imports": [
+      "next/link",
+      "lucide-react"
+    ],
+    "category": "generator",
+    "sourceLines": 27
+  },
+  {
+    "id": "9ca21cd969f9",
+    "name": "plant-life-generator-workspace",
+    "sourceFile": "components/plant-life-generator-workspace.tsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "@/lib/life/plant-system",
+      "@/components/plant-prompt-panel",
+      "@/components/species-plate-prompt-card",
+      "@/lib/species-plates/adapters"
+    ],
+    "category": "generator",
+    "sourceLines": 36
+  },
+  {
+    "id": "556626e6ed3b",
+    "name": "universe-generator-workflows",
+    "sourceFile": "components/universe-generator-workflows.tsx",
+    "imports": [
+      "react",
+      "react-dom",
+      "lucide-react",
+      "@/components/ui/button",
+      "@/data/handoff",
+      "@/lib/colonies/procedural",
+      "@/lib/explorer/discovery-log",
+      "@/lib/factions/procedural",
+      "@/lib/missions/procedural",
+      "@/lib/universe/fallback-data",
+      "@/lib/universe/generator",
+      "@/lib/utils",
+      "@/lib/planets/fixed-sol-planets",
+      "@/lib/resources/service",
+      "@/types/schema"
+    ],
+    "category": "generator",
+    "sourceLines": 4767
+  }
+]

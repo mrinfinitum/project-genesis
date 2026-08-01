@@ -1,0 +1,1272 @@
+[
+  {
+    "file": null,
+    "route": "/actions",
+    "pageTitle": "Actions",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "000-actions.png"
+  },
+  {
+    "file": null,
+    "route": "/ai-agents",
+    "pageTitle": "Ai Agents",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "001-ai-agents.png"
+  },
+  {
+    "file": null,
+    "route": "/architecture",
+    "pageTitle": "Architecture",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "002-architecture.png"
+  },
+  {
+    "file": null,
+    "route": "/asset-library",
+    "pageTitle": "Asset Library",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "003-asset-library.png"
+  },
+  {
+    "file": null,
+    "route": "/assets/[assetId]",
+    "pageTitle": "Assets / AssetId",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "004-assets-assetId.png"
+  },
+  {
+    "file": null,
+    "route": "/assets/eras/[eraId]",
+    "pageTitle": "Assets / Eras / EraId",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "005-assets-eras-eraId.png"
+  },
+  {
+    "file": null,
+    "route": "/assets/generated",
+    "pageTitle": "Assets / Generated",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "006-assets-generated.png"
+  },
+  {
+    "file": null,
+    "route": "/assets/import-history",
+    "pageTitle": "Assets / Import History",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "007-assets-import-history.png"
+  },
+  {
+    "file": null,
+    "route": "/assets/missing",
+    "pageTitle": "Assets / Missing",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "008-assets-missing.png"
+  },
+  {
+    "file": null,
+    "route": "/assets",
+    "pageTitle": "Assets",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "009-assets.png"
+  },
+  {
+    "file": null,
+    "route": "/assets/processing",
+    "pageTitle": "Assets / Processing",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "010-assets-processing.png"
+  },
+  {
+    "file": null,
+    "route": "/assets/published",
+    "pageTitle": "Assets / Published",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "011-assets-published.png"
+  },
+  {
+    "file": null,
+    "route": "/assets/source",
+    "pageTitle": "Assets / Source",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "012-assets-source.png"
+  },
+  {
+    "file": null,
+    "route": "/auth/mfa",
+    "pageTitle": "Auth / Mfa",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "013-auth-mfa.png"
+  },
+  {
+    "file": null,
+    "route": "/auth/setup-2fa",
+    "pageTitle": "Auth / Setup 2fa",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "014-auth-setup-2fa.png"
+  },
+  {
+    "file": null,
+    "route": "/auth/update-password",
+    "pageTitle": "Auth / Update Password",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "015-auth-update-password.png"
+  },
+  {
+    "file": null,
+    "route": "/building-chains",
+    "pageTitle": "Building Chains",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "016-building-chains.png"
+  },
+  {
+    "file": null,
+    "route": "/building-relationships",
+    "pageTitle": "Building Relationships",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "017-building-relationships.png"
+  },
+  {
+    "file": null,
+    "route": "/buildings",
+    "pageTitle": "Buildings",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "018-buildings.png"
+  },
+  {
+    "file": null,
+    "route": "/celestial-bodies",
+    "pageTitle": "Celestial Bodies",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "019-celestial-bodies.png"
+  },
+  {
+    "file": null,
+    "route": "/changelog",
+    "pageTitle": "Changelog",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "020-changelog.png"
+  },
+  {
+    "file": null,
+    "route": "/civilizations",
+    "pageTitle": "Civilizations",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "021-civilizations.png"
+  },
+  {
+    "file": null,
+    "route": "/collectibles",
+    "pageTitle": "Collectibles",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "022-collectibles.png"
+  },
+  {
+    "file": null,
+    "route": "/colonies",
+    "pageTitle": "Colonies",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "023-colonies.png"
+  },
+  {
+    "file": null,
+    "route": "/conceptual-art",
+    "pageTitle": "Conceptual Art",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "024-conceptual-art.png"
+  },
+  {
+    "file": null,
+    "route": "/content-authoring",
+    "pageTitle": "Content Authoring",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "025-content-authoring.png"
+  },
+  {
+    "file": null,
+    "route": "/content-releases",
+    "pageTitle": "Content Releases",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "026-content-releases.png"
+  },
+  {
+    "file": null,
+    "route": "/creative-production/ui-screens/civilization-operations",
+    "pageTitle": "Creative Production / Ui Screens / Civilization Operations",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "027-creative-production-ui-screens-civilization-operations.png"
+  },
+  {
+    "file": null,
+    "route": "/creative-production/ui-screens/planet-detail",
+    "pageTitle": "Creative Production / Ui Screens / Planet Detail",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "028-creative-production-ui-screens-planet-detail.png"
+  },
+  {
+    "file": null,
+    "route": "/creature-generator",
+    "pageTitle": "Creature Generator",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "029-creature-generator.png"
+  },
+  {
+    "file": null,
+    "route": "/database",
+    "pageTitle": "Database",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "030-database.png"
+  },
+  {
+    "file": null,
+    "route": "/discovery/biological",
+    "pageTitle": "Discovery / Biological",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "031-discovery-biological.png"
+  },
+  {
+    "file": null,
+    "route": "/discovery",
+    "pageTitle": "Discovery",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "032-discovery.png"
+  },
+  {
+    "file": null,
+    "route": "/discovery-journal",
+    "pageTitle": "Discovery Journal",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "033-discovery-journal.png"
+  },
+  {
+    "file": null,
+    "route": "/districts",
+    "pageTitle": "Districts",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "034-districts.png"
+  },
+  {
+    "file": null,
+    "route": "/dynamic-events",
+    "pageTitle": "Dynamic Events",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "035-dynamic-events.png"
+  },
+  {
+    "file": null,
+    "route": "/economy",
+    "pageTitle": "Economy",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "036-economy.png"
+  },
+  {
+    "file": null,
+    "route": "/economy-designer",
+    "pageTitle": "Economy Designer",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "037-economy-designer.png"
+  },
+  {
+    "file": null,
+    "route": "/encyclopedia",
+    "pageTitle": "Encyclopedia",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "038-encyclopedia.png"
+  },
+  {
+    "file": null,
+    "route": "/environment-composer/export",
+    "pageTitle": "Environment Composer / Export",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "039-environment-composer-export.png"
+  },
+  {
+    "file": null,
+    "route": "/environment-composer",
+    "pageTitle": "Environment Composer",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "040-environment-composer.png"
+  },
+  {
+    "file": null,
+    "route": "/environment-composer/themes",
+    "pageTitle": "Environment Composer / Themes",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "041-environment-composer-themes.png"
+  },
+  {
+    "file": null,
+    "route": "/era-starter-kits",
+    "pageTitle": "Era Starter Kits",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "042-era-starter-kits.png"
+  },
+  {
+    "file": null,
+    "route": "/experience-design/inspiration-wall",
+    "pageTitle": "Experience Design / Inspiration Wall",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "043-experience-design-inspiration-wall.png"
+  },
+  {
+    "file": null,
+    "route": "/exploration-progression",
+    "pageTitle": "Exploration Progression",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "044-exploration-progression.png"
+  },
+  {
+    "file": null,
+    "route": "/factions",
+    "pageTitle": "Factions",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "045-factions.png"
+  },
+  {
+    "file": null,
+    "route": "/feature-flags",
+    "pageTitle": "Feature Flags",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "046-feature-flags.png"
+  },
+  {
+    "file": null,
+    "route": "/galaxy",
+    "pageTitle": "Galaxy",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "047-galaxy.png"
+  },
+  {
+    "file": null,
+    "route": "/galaxy-layer-generator",
+    "pageTitle": "Galaxy Layer Generator",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "048-galaxy-layer-generator.png"
+  },
+  {
+    "file": null,
+    "route": "/game-art-import",
+    "pageTitle": "Game Art Import",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "049-game-art-import.png"
+  },
+  {
+    "file": null,
+    "route": "/game-constants",
+    "pageTitle": "Game Constants",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "050-game-constants.png"
+  },
+  {
+    "file": null,
+    "route": "/hero-discovery-shots",
+    "pageTitle": "Hero Discovery Shots",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "051-hero-discovery-shots.png"
+  },
+  {
+    "file": null,
+    "route": "/inspiration-board",
+    "pageTitle": "Inspiration Board",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "052-inspiration-board.png"
+  },
+  {
+    "file": null,
+    "route": "/life-generator",
+    "pageTitle": "Life Generator",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "053-life-generator.png"
+  },
+  {
+    "file": null,
+    "route": "/login",
+    "pageTitle": "Login",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "054-login.png"
+  },
+  {
+    "file": null,
+    "route": "/missions",
+    "pageTitle": "Missions",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "055-missions.png"
+  },
+  {
+    "file": null,
+    "route": "/",
+    "pageTitle": "Universe Command Center",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "056-dashboard.png"
+  },
+  {
+    "file": null,
+    "route": "/planet-artwork",
+    "pageTitle": "Planet Artwork",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "057-planet-artwork.png"
+  },
+  {
+    "file": null,
+    "route": "/planet-generation",
+    "pageTitle": "Planet Generation",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "058-planet-generation.png"
+  },
+  {
+    "file": null,
+    "route": "/planet-resource-profiles",
+    "pageTitle": "Planet Resource Profiles",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "059-planet-resource-profiles.png"
+  },
+  {
+    "file": null,
+    "route": "/planetary-rules",
+    "pageTitle": "Planetary Rules",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "060-planetary-rules.png"
+  },
+  {
+    "file": null,
+    "route": "/planets",
+    "pageTitle": "Planets",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "061-planets.png"
+  },
+  {
+    "file": null,
+    "route": "/plant-life-generator",
+    "pageTitle": "Plant Life Generator",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "062-plant-life-generator.png"
+  },
+  {
+    "file": null,
+    "route": "/population",
+    "pageTitle": "Population",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "063-population.png"
+  },
+  {
+    "file": null,
+    "route": "/prompt-library",
+    "pageTitle": "Prompt Library",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "064-prompt-library.png"
+  },
+  {
+    "file": null,
+    "route": "/prototype-content",
+    "pageTitle": "Prototype Content",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "065-prototype-content.png"
+  },
+  {
+    "file": null,
+    "route": "/releases",
+    "pageTitle": "Releases",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "066-releases.png"
+  },
+  {
+    "file": null,
+    "route": "/research",
+    "pageTitle": "Research",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "067-research.png"
+  },
+  {
+    "file": null,
+    "route": "/resource-catalog",
+    "pageTitle": "Resource Catalog",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "068-resource-catalog.png"
+  },
+  {
+    "file": null,
+    "route": "/sector-layer-generator",
+    "pageTitle": "Sector Layer Generator",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "069-sector-layer-generator.png"
+  },
+  {
+    "file": null,
+    "route": "/sector-map",
+    "pageTitle": "Sector Map",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "070-sector-map.png"
+  },
+  {
+    "file": null,
+    "route": "/settings",
+    "pageTitle": "Settings",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "071-settings.png"
+  },
+  {
+    "file": null,
+    "route": "/species/[speciesId]",
+    "pageTitle": "Species / SpeciesId",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "072-species-speciesId.png"
+  },
+  {
+    "file": null,
+    "route": "/species",
+    "pageTitle": "Species",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "073-species.png"
+  },
+  {
+    "file": null,
+    "route": "/star-system-layer-generator",
+    "pageTitle": "Star System Layer Generator",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "074-star-system-layer-generator.png"
+  },
+  {
+    "file": null,
+    "route": "/star-system-map",
+    "pageTitle": "Star System Map",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "075-star-system-map.png"
+  },
+  {
+    "file": null,
+    "route": "/star-systems",
+    "pageTitle": "Star Systems",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "076-star-systems.png"
+  },
+  {
+    "file": null,
+    "route": "/surface-landscapes",
+    "pageTitle": "Surface Landscapes",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "077-surface-landscapes.png"
+  },
+  {
+    "file": null,
+    "route": "/universe-explorer",
+    "pageTitle": "Universe Explorer",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "078-universe-explorer.png"
+  },
+  {
+    "file": null,
+    "route": "/universe-layer-generator",
+    "pageTitle": "Universe Layer Generator",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "079-universe-layer-generator.png"
+  },
+  {
+    "file": null,
+    "route": "/universe-timeline",
+    "pageTitle": "Universe Timeline",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "080-universe-timeline.png"
+  },
+  {
+    "file": null,
+    "route": "/unlock-matrix",
+    "pageTitle": "Unlock Matrix",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "081-unlock-matrix.png"
+  },
+  {
+    "file": null,
+    "route": "/upgrades",
+    "pageTitle": "Upgrades",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "082-upgrades.png"
+  },
+  {
+    "file": null,
+    "route": "/visual-production",
+    "pageTitle": "Visual Production",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "083-visual-production.png"
+  },
+  {
+    "file": null,
+    "route": "/visual-production/species-plates",
+    "pageTitle": "Visual Production / Species Plates",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "084-visual-production-species-plates.png"
+  },
+  {
+    "file": null,
+    "route": "/wonders",
+    "pageTitle": "Wonders",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "085-wonders.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/assets",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Assets",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "086-project-genesis-chatgpt-handoff-2026-07-09-source-app-assets.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/auth/mfa",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Auth / Mfa",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "087-project-genesis-chatgpt-handoff-2026-07-09-source-app-auth-mfa.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/auth/setup-2fa",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Auth / Setup 2fa",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "088-project-genesis-chatgpt-handoff-2026-07-09-source-app-auth-setup-2fa.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/auth/update-password",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Auth / Update Password",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "089-project-genesis-chatgpt-handoff-2026-07-09-source-app-auth-update-password.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/building-chains",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Building Chains",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "090-project-genesis-chatgpt-handoff-2026-07-09-source-app-building-chains.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/building-relationships",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Building Relationships",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "091-project-genesis-chatgpt-handoff-2026-07-09-source-app-building-relationships.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/buildings",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Buildings",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "092-project-genesis-chatgpt-handoff-2026-07-09-source-app-buildings.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/celestial-bodies",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Celestial Bodies",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "093-project-genesis-chatgpt-handoff-2026-07-09-source-app-celestial-bodies.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/changelog",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Changelog",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "094-project-genesis-chatgpt-handoff-2026-07-09-source-app-changelog.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/civilizations",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Civilizations",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "095-project-genesis-chatgpt-handoff-2026-07-09-source-app-civilizations.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/codex-handoffs",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Codex Handoffs",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "096-project-genesis-chatgpt-handoff-2026-07-09-source-app-codex-handoffs.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/collectibles",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Collectibles",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "097-project-genesis-chatgpt-handoff-2026-07-09-source-app-collectibles.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/conceptual-art",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Conceptual Art",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "098-project-genesis-chatgpt-handoff-2026-07-09-source-app-conceptual-art.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/database",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Database",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "099-project-genesis-chatgpt-handoff-2026-07-09-source-app-database.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/districts",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Districts",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "100-project-genesis-chatgpt-handoff-2026-07-09-source-app-districts.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/feature-flags",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Feature Flags",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "101-project-genesis-chatgpt-handoff-2026-07-09-source-app-feature-flags.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/galaxy",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Galaxy",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "102-project-genesis-chatgpt-handoff-2026-07-09-source-app-galaxy.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/game-constants",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Game Constants",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "103-project-genesis-chatgpt-handoff-2026-07-09-source-app-game-constants.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/hero-discovery-shots",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Hero Discovery Shots",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "104-project-genesis-chatgpt-handoff-2026-07-09-source-app-hero-discovery-shots.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/login",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Login",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "105-project-genesis-chatgpt-handoff-2026-07-09-source-app-login.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "106-project-genesis-chatgpt-handoff-2026-07-09-source-app.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/planet-artwork",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Planet Artwork",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "107-project-genesis-chatgpt-handoff-2026-07-09-source-app-planet-artwork.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/planet-generation",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Planet Generation",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "108-project-genesis-chatgpt-handoff-2026-07-09-source-app-planet-generation.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/planet-resource-profiles",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Planet Resource Profiles",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "109-project-genesis-chatgpt-handoff-2026-07-09-source-app-planet-resource-profiles.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/planetary-rules",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Planetary Rules",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "110-project-genesis-chatgpt-handoff-2026-07-09-source-app-planetary-rules.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/planets",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Planets",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "111-project-genesis-chatgpt-handoff-2026-07-09-source-app-planets.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/prompt-library",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Prompt Library",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "112-project-genesis-chatgpt-handoff-2026-07-09-source-app-prompt-library.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/releases",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Releases",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "113-project-genesis-chatgpt-handoff-2026-07-09-source-app-releases.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/research",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Research",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "114-project-genesis-chatgpt-handoff-2026-07-09-source-app-research.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/resource-catalog",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Resource Catalog",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "115-project-genesis-chatgpt-handoff-2026-07-09-source-app-resource-catalog.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/sector-map",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Sector Map",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "116-project-genesis-chatgpt-handoff-2026-07-09-source-app-sector-map.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/settings",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Settings",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "117-project-genesis-chatgpt-handoff-2026-07-09-source-app-settings.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/star-system-map",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Star System Map",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "118-project-genesis-chatgpt-handoff-2026-07-09-source-app-star-system-map.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/star-systems",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Star Systems",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "119-project-genesis-chatgpt-handoff-2026-07-09-source-app-star-systems.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/surface-landscapes",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Surface Landscapes",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "120-project-genesis-chatgpt-handoff-2026-07-09-source-app-surface-landscapes.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/tasks",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Tasks",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.050Z",
+    "suggestedFilename": "121-project-genesis-chatgpt-handoff-2026-07-09-source-app-tasks.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/universe-explorer",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Universe Explorer",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.051Z",
+    "suggestedFilename": "122-project-genesis-chatgpt-handoff-2026-07-09-source-app-universe-explorer.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/unlock-matrix",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Unlock Matrix",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.051Z",
+    "suggestedFilename": "123-project-genesis-chatgpt-handoff-2026-07-09-source-app-unlock-matrix.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/upgrades",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Upgrades",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.051Z",
+    "suggestedFilename": "124-project-genesis-chatgpt-handoff-2026-07-09-source-app-upgrades.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/validation-engine",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Validation Engine",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.051Z",
+    "suggestedFilename": "125-project-genesis-chatgpt-handoff-2026-07-09-source-app-validation-engine.png"
+  },
+  {
+    "file": null,
+    "route": "project-genesis-chatgpt-handoff-2026-07-09/source/app/wonders",
+    "pageTitle": "Project Genesis Chatgpt Handoff 2026 07 09 / Source / App / Wonders",
+    "viewport": "1920x1200",
+    "captureStatus": "not_captured",
+    "error": "No browser automation provider was available in this audit execution environment; no placeholder screenshot was created.",
+    "timestamp": "2026-08-01T03:20:24.051Z",
+    "suggestedFilename": "126-project-genesis-chatgpt-handoff-2026-07-09-source-app-wonders.png"
+  }
+]

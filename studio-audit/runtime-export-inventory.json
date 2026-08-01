@@ -1,0 +1,74 @@
+[
+  {
+    "target": "generic",
+    "route": "/api/export/generic",
+    "source": "app/api/export/generic/route.ts",
+    "format": "JSON adapter",
+    "staticReadiness": "route present; response not invoked",
+    "contentVersion": "runtime-derived; not executed",
+    "schemaVersion": "runtime-derived; not executed",
+    "checksum": "runtime-derived; not executed",
+    "leakageReview": "not runtime executed; inspect lib/runtime/game-runtime.ts and adapter serializers",
+    "evidence": "app/api/export/generic/route.ts"
+  },
+  {
+    "target": "web",
+    "route": "/api/export/web",
+    "source": "app/api/export/web/route.ts",
+    "format": "JSON adapter",
+    "staticReadiness": "route present; response not invoked",
+    "contentVersion": "runtime-derived; not executed",
+    "schemaVersion": "runtime-derived; not executed",
+    "checksum": "runtime-derived; not executed",
+    "leakageReview": "not runtime executed; inspect lib/runtime/game-runtime.ts and adapter serializers",
+    "evidence": "app/api/export/web/route.ts"
+  },
+  {
+    "target": "roblox",
+    "route": "/api/export/roblox",
+    "source": "app/api/export/roblox/route.ts",
+    "format": "Lua-oriented JSON adapter",
+    "staticReadiness": "route present; response not invoked",
+    "contentVersion": "runtime-derived; not executed",
+    "schemaVersion": "runtime-derived; not executed",
+    "checksum": "runtime-derived; not executed",
+    "leakageReview": "not runtime executed; inspect lib/runtime/game-runtime.ts and adapter serializers",
+    "evidence": "app/api/export/roblox/route.ts"
+  },
+  {
+    "target": "unity",
+    "route": "/api/export/unity",
+    "source": "app/api/export/unity/route.ts",
+    "format": "C#/JSON starter export",
+    "staticReadiness": "route present; response not invoked",
+    "contentVersion": "runtime-derived; not executed",
+    "schemaVersion": "runtime-derived; not executed",
+    "checksum": "runtime-derived; not executed",
+    "leakageReview": "not runtime executed; inspect lib/runtime/game-runtime.ts and adapter serializers",
+    "evidence": "app/api/export/unity/route.ts"
+  },
+  {
+    "target": "unreal",
+    "route": "/api/export/unreal",
+    "source": "app/api/export/unreal/route.ts",
+    "format": "JSON adapter",
+    "staticReadiness": "route present; response not invoked",
+    "contentVersion": "runtime-derived; not executed",
+    "schemaVersion": "runtime-derived; not executed",
+    "checksum": "runtime-derived; not executed",
+    "leakageReview": "not runtime executed; inspect lib/runtime/game-runtime.ts and adapter serializers",
+    "evidence": "app/api/export/unreal/route.ts"
+  },
+  {
+    "target": "godot",
+    "route": "/api/export/godot",
+    "source": "app/api/export/godot/route.ts",
+    "format": "JSON adapter",
+    "staticReadiness": "route present; response not invoked",
+    "contentVersion": "runtime-derived; not executed",
+    "schemaVersion": "runtime-derived; not executed",
+    "checksum": "runtime-derived; not executed",
+    "leakageReview": "not runtime executed; inspect lib/runtime/game-runtime.ts and adapter serializers",
+    "evidence": "app/api/export/godot/route.ts"
+  }
+]

@@ -1,0 +1,186 @@
+{
+  "current": [
+    {
+      "id": "home",
+      "label": "Home",
+      "items": [
+        {
+          "href": "/",
+          "label": "Universe Command Center"
+        },
+        {
+          "href": "/asset-library",
+          "label": "Asset Library"
+        },
+        {
+          "href": "/conceptual-art",
+          "label": "Art & Screens"
+        },
+        {
+          "href": "/inspiration-board",
+          "label": "Inspiration Board"
+        },
+        {
+          "href": "/encyclopedia",
+          "label": "Encyclopedia"
+        },
+        {
+          "href": "/architecture",
+          "label": "Architecture"
+        },
+        {
+          "href": "/settings#users",
+          "label": "Admin Users"
+        }
+      ]
+    },
+    {
+      "id": "discoveries",
+      "label": "Discoveries",
+      "items": [
+        {
+          "href": "/discovery",
+          "label": "Discovery Library"
+        },
+        {
+          "href": "/resource-catalog",
+          "label": "Resource Library"
+        },
+        {
+          "href": "/species",
+          "label": "Species Library"
+        }
+      ]
+    },
+    {
+      "id": "universe",
+      "label": "Universe",
+      "items": [
+        {
+          "href": "/galaxy",
+          "label": "Galaxy Library"
+        },
+        {
+          "href": "/sector-map",
+          "label": "Galactic Region Library"
+        },
+        {
+          "href": "/star-system-map",
+          "label": "Star System Library"
+        },
+        {
+          "href": "/celestial-bodies",
+          "label": "Star Library"
+        },
+        {
+          "href": "/planets",
+          "label": "Planet Library"
+        }
+      ]
+    },
+    {
+      "id": "environment-composer",
+      "label": "Environment Composer",
+      "items": [
+        {
+          "href": "/universe-layer-generator",
+          "label": "Universe Generator"
+        },
+        {
+          "href": "/galaxy-layer-generator",
+          "label": "Galaxy Generator"
+        },
+        {
+          "href": "/sector-layer-generator",
+          "label": "Galactic Region Generator"
+        },
+        {
+          "href": "/star-system-layer-generator",
+          "label": "Star System Generator"
+        },
+        {
+          "href": "/planet-generation",
+          "label": "Planet Generator"
+        },
+        {
+          "href": "/life-generator",
+          "label": "Life Generator"
+        },
+        {
+          "href": "/environment-composer/themes",
+          "label": "Themes"
+        },
+        {
+          "href": "/environment-composer/export",
+          "label": "Runtime Export"
+        }
+      ]
+    },
+    {
+      "id": "creative-production",
+      "label": "Creative Production",
+      "items": [
+        {
+          "href": "/visual-production",
+          "label": "Visual Production Engine"
+        },
+        {
+          "href": "/visual-production/species-plates",
+          "label": "Species Plates"
+        },
+        {
+          "href": "/creative-production/ui-screens/planet-detail",
+          "label": "Planet Detail Screen"
+        },
+        {
+          "href": "/creative-production/ui-screens/civilization-operations",
+          "label": "Civilization Operations"
+        }
+      ]
+    },
+    {
+      "id": "civilization",
+      "label": "Civilization",
+      "items": [
+        {
+          "href": "/buildings",
+          "label": "Building Library"
+        },
+        {
+          "href": "/research",
+          "label": "Research Library"
+        },
+        {
+          "href": "/upgrades",
+          "label": "Upgrade Library"
+        },
+        {
+          "href": "/population",
+          "label": "Population"
+        },
+        {
+          "href": "/economy",
+          "label": "Economy & Trade"
+        },
+        {
+          "href": "/ai-agents",
+          "label": "AI Agent Libraries"
+        }
+      ]
+    }
+  ],
+  "recommendation": {
+    "label": "Proposed Creative Production navigation (recommendation only)",
+    "tree": [
+      "Production Dashboard",
+      "Background Library",
+      "Visual Prompt Generator",
+      "Species Plates",
+      "Asset Library",
+      "Production Queue",
+      "Source Masters",
+      "Export Manifests",
+      "Validation"
+    ]
+  }
+}
