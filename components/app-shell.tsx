@@ -251,7 +251,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     window.localStorage.setItem(STORAGE_SECTIONS_KEY, JSON.stringify(next));
   }
 
-  function NavigationPanel({ mobile = false }: { mobile?: boolean }) {
+  function renderNavigationPanel(mobile = false) {
     return (
       <>
         <Link href="/" scroll={false} className="mb-6 flex items-center gap-3" onClick={() => mobile && setMobileNavOpen(false)}>
@@ -347,7 +347,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div data-studio-environment={environment} className="studio-cinematic-shell min-h-screen bg-genesis-void text-slate-100">
       <aside className="studio-material-navigation fixed inset-y-0 left-0 z-20 hidden w-80 px-4 py-5 lg:block">
-        <NavigationPanel />
+        {renderNavigationPanel()}
       </aside>
 
       <div className="lg:pl-80">
@@ -387,7 +387,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             >
               <X className="h-4 w-4" />
             </button>
-            <NavigationPanel mobile />
+            {renderNavigationPanel(true)}
           </aside>
         </div>
       ) : null}
