@@ -11,11 +11,11 @@ planet-renders/**
 !planet-renders/**/
 !planet-renders/**/.gitkeep
 
-# Private layered source masters. Keep documentation in git, never artwork or
+# Private source masters. Keep documentation in git, never artwork or
 # machine-specific migration manifests.
 game-art/source-masters/**
 !game-art/source-masters/
 !game-art/source-masters/README.md
 !game-art/source-masters/**/
 !game-art/source-masters/**/.gitkeep
-!game-art/source-masters/star-systems/README.md
+!game-art/source-masters/backgrounds/README.md

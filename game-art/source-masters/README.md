@@ -1,15 +1,16 @@
 # NOVERIS Source Masters
 
-This is the canonical local home for layered artwork imported into Project Genesis Studio.
+This is the canonical local home for source artwork imported into Project Genesis Studio.
 The artwork itself and `manifest.local.json` are intentionally ignored by git.
 
 The canonical private root is `game-art/source-masters/`. The repository-relative
 artist alias `source-masters/` points here so copied generator paths resolve
 locally without creating or maintaining a second artwork collection.
 
-The numbered Universe, Galaxy, Sector, and Star System directories are the
-canonical destinations used by the dedicated Environment Layer Generator pages.
-Empty production folders contain only `.gitkeep`; PSD artwork remains ignored.
+Flat production paintings live under `backgrounds/` and are grouped by their
+canonical owner context. Empty production folders contain only `.gitkeep`; PSD
+artwork remains local and ignored while approved derivatives are published by
+the Studio pipeline.
 
 ## Folder structure
 
@@ -45,57 +46,29 @@ source-masters/
     coronas/
     glows/
     surface-noise/
-  star-systems/
-    environment-painting/
-      environment-painting-<system-slug>.psd
-  environments/
+  backgrounds/
     universe/
-      backgrounds/
-      galaxies/
-      cosmic-web/
-      haze/
-      dust/
-      light-rays/
-    galaxy/
-      backgrounds/
-      spiral-arms/
-      core-glow/
-      dust-lanes/
-      nebulas/
-      star-clouds/
-      particles/
-    sector/
-      backgrounds/
-      deep-stars/
-      clusters/
-      nebulas/
-      dust/
-      haze/
-      particles/
-    star-system/
-      01_environment-painting/
-      02_light-rays/
-      03_foreground-dust/
-      04_particles/
-      05_fog-of-war/
-      06_orbit-styles/
-      07_asteroid-belts/
-      08_selection-effects/
-    planet-surface/
-      skies/
-      mountains/
-      terrain/
-      vegetation/
-      clouds/
-      weather/
-      fog/
-      particles/
+    galaxies/
+      galaxy-background-<id>.psd
+    galactic-regions/
+      galactic-region-background-<id>.psd
+    star-systems/
+      star-system-background-<id>.psd
+      references/
+    planet-orbit/
+    planet-surfaces/
+    civilization-command/
+    research/
+    skill-tree/
+    discovery/
+    encyclopedia/
+    missions/
+    events/
     settlements/
-      backgrounds/
-      skyline/
-      atmosphere/
-      lighting/
-      particles/
+    colonies/
+    loading/
+    menu/
+    generic-space/
   effects/
     selection/
     discovery/
@@ -120,10 +93,10 @@ source-masters/
 - Keep ambiguous legacy artwork under `legacy/unclassified` until reviewed.
 - Never put PSD, PSB, TIFF, AI, or other private source masters under `public/`.
 - Keep editable masters outside `exports/`; exports contain approved derivatives only.
-- Store star-system environment paintings under `star-systems/environment-painting/`
-  using `environment-painting-<system-slug>.psd`; never register a generic
-  painting as a system-specific source.
-- Use the Environment Composer semantic asset ID in derivative metadata, not a
+- Store flat star-system paintings under `backgrounds/star-systems/` using
+  `star-system-background-<system-slug>.psd`; never register a generic painting
+  as a system-specific source.
+- Use the canonical Background Library asset ID in derivative metadata, not a
   machine-specific source path.
 
 ## Game-use derivatives

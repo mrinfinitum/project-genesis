@@ -3,7 +3,7 @@ import path from "node:path";
 import { generatePsdGameDerivatives } from "@/lib/assets/psd-game-derivatives";
 import { MILKY_WAY_GALACTIC_REGIONS } from "@/lib/universe/generator";
 
-const sourceRoot = path.join(process.cwd(), "source-masters", "galactic-regions", "environment-painting");
+const sourceRoot = path.join(process.cwd(), "source-masters", "backgrounds", "galactic-regions");
 const publicRoot = path.join(process.cwd(), "public", "generated", "game-assets", "galactic-regions");
 const publicBase = "/generated/game-assets/galactic-regions";
 const metadataPath = path.join(process.cwd(), "data", "galactic-region-environment-painting-derivatives.json");
@@ -99,7 +99,7 @@ async function main() {
   }
 
   const filenames = (await readdir(sourceRoot))
-    .filter((filename) => /^environment-painting-[a-z0-9-]+\.psd$/i.test(filename))
+    .filter((filename) => /^galactic-region-background-[a-z0-9-]+\.psd$/i.test(filename))
     .sort();
   if (!filenames.length) {
     throw new Error(`No Galactic Region environment paintings found in ${sourceRoot}.`);
@@ -108,7 +108,7 @@ async function main() {
   const records: PaintingRecord[] = [];
   const checksumOwners = new Map<string, string>();
   for (const filename of filenames) {
-    const paintingId = filename.replace(/^environment-painting-/i, "").replace(/\.psd$/i, "");
+    const paintingId = filename.replace(/^galactic-region-background-/i, "").replace(/\.psd$/i, "");
     const basename = `environment-painting-${paintingId}`;
     const outputRoot = path.join(publicRoot, paintingId, "environment-painting");
     const outputBase = `${publicBase}/${paintingId}/environment-painting`;

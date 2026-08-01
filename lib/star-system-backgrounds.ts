@@ -124,7 +124,7 @@ function buildEnvironmentPaintingRecord(record: EnvironmentPaintingDerivativeRow
     status: "published",
     sourceFormat: "psd",
     sourceAssetId: record.id === "sol" ? "asset-ssbg-sol-local-atlas-source" : `asset-star-system-environment-painting-${record.id}`,
-    sourceFilename: `environment-painting-${record.id}.psd`,
+    sourceFilename: `star-system-background-${record.id}.psd`,
     sourceRevision: 1,
     runtimeRevision: 1,
     generationVersion: starSystemBackgroundGenerationVersion,

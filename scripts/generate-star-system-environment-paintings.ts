@@ -3,7 +3,7 @@ import path from "node:path";
 import { generatePsdGameDerivatives } from "@/lib/assets/psd-game-derivatives";
 import { generateGalaxy, generateSector, generateStarSystems, generateUniverse } from "@/lib/universe/generator";
 
-const sourceRoot = path.join(process.cwd(), "source-masters", "star-systems", "environment-painting");
+const sourceRoot = path.join(process.cwd(), "source-masters", "backgrounds", "star-systems");
 const publicRoot = path.join(process.cwd(), "public", "generated", "game-assets", "star-systems");
 const publicBase = "/generated/game-assets/star-systems";
 const metadataPath = path.join(process.cwd(), "data", "star-system-environment-painting-derivatives.json");
@@ -104,16 +104,16 @@ async function main() {
   }
 
   const filenames = (await readdir(sourceRoot))
-    .filter((filename) => /^environment-painting-[a-z0-9-]+\.psd$/i.test(filename))
+    .filter((filename) => /^star-system-background-[a-z0-9-]+\.psd$/i.test(filename))
     .sort();
   if (!filenames.length) {
-    throw new Error(`No environment-painting-<system>.psd masters found in ${sourceRoot}.`);
+    throw new Error(`No star-system-background-<system>.psd masters found in ${sourceRoot}.`);
   }
   const records = [];
   const checksumOwners = new Map<string, string>();
 
   for (const filename of filenames) {
-    const systemSlug = filename.replace(/^environment-painting-/i, "").replace(/\.psd$/i, "");
+    const systemSlug = filename.replace(/^star-system-background-/i, "").replace(/\.psd$/i, "");
     const basename = `environment-painting-${systemSlug}`;
     const outputRoot = path.join(publicRoot, systemSlug, "environment-painting");
     const outputBase = `${publicBase}/${systemSlug}/environment-painting`;

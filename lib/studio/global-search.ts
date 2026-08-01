@@ -61,6 +61,7 @@ const workspaceResults: StudioSearchResult[] = [
   workspace("star-system-layer-generator", "Star System Generator", "/star-system-layer-generator", "Handcrafted star-system prompt library"),
   workspace("environment-themes", "Environment Themes", "/environment-composer/themes", "Palette, lighting, fog, and effects intent"),
   workspace("environment-export", "Environment Runtime Export", "/environment-composer/export", "Sanitized renderer-neutral contract"),
+  workspace("background-library", "Background Library", "/backgrounds", "Flat approved backgrounds and source-master production status"),
   workspace("production-health", "Production Health", "/asset-library?section=all-assets", "Studio health and asset readiness"),
   workspace("architecture", "Architecture", "/architecture", "Architecture Workspace"),
   workspace("upload-asset", "Upload Asset", "/assets?upload=asset", "Asset pipeline"),

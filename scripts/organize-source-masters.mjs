@@ -7,37 +7,32 @@ const projectRoot = process.cwd();
 const destinationRoot = path.join(projectRoot, "game-art", "source-masters");
 const apply = process.argv.includes("--apply");
 const directoriesOnly = process.argv.includes("--directories-only");
-const environmentGeneratorDirectories = [
-  ...["01_deep-cosmic-background", "02_distant-galaxies", "03_cosmic-web", "04_cosmic-dust", "05_deep-haze", "06_foreground-dust"].map((folder) => `environments/universe/${folder}`),
-  ...["01_far-stars", "02_galaxy-disc", "03_spiral-arms", "04_core-glow", "05_dust-lanes", "06_nebula-accents", "07_star-clouds", "08_sector-overlays", "09_exploration-fog", "10_foreground-particles"].map((folder) => `environments/galaxy/${folder}`),
-  ...["01_deep-stars", "02_distant-fields", "03_star-clusters", "04_nebulas", "05_dust", "06_haze", "07_navigation-grids", "08_probe-routes", "09_fog-of-war", "10_foreground-effects"].map((folder) => `environments/sector/${folder}`),
-  ...["01_environment-painting", "02_light-rays", "03_foreground-dust", "04_particles", "05_fog-of-war", "06_orbit-styles", "07_asteroid-belts", "08_selection-effects"].map((folder) => `environments/star-system/${folder}`)
+const backgroundDirectories = [
+  "backgrounds/universe", "backgrounds/galaxies", "backgrounds/galactic-regions", "backgrounds/star-systems",
+  "backgrounds/planet-orbit", "backgrounds/planet-surfaces", "backgrounds/civilization-command",
+  "backgrounds/research", "backgrounds/skill-tree", "backgrounds/discovery", "backgrounds/encyclopedia",
+  "backgrounds/missions", "backgrounds/events", "backgrounds/settlements", "backgrounds/colonies",
+  "backgrounds/loading", "backgrounds/menu", "backgrounds/generic-space"
 ];
 const canonicalDirectories = [
   "icons", "ui", "legacy", "testing",
   "planets/terrestrial", "planets/gas-giants", "planets/ice", "planets/lava", "planets/ocean", "planets/desert", "planets/toxic", "planets/barren", "planets/atmospheres", "planets/clouds", "planets/rings", "planets/moons",
   "stars/yellow", "stars/blue", "stars/red", "stars/white", "stars/neutron", "stars/giant", "stars/binary", "stars/coronas", "stars/glows", "stars/surface-noise",
-  "environments/universe/backgrounds", "environments/universe/galaxies", "environments/universe/cosmic-web", "environments/universe/haze", "environments/universe/dust", "environments/universe/light-rays",
-  "environments/galaxy/backgrounds", "environments/galaxy/spiral-arms", "environments/galaxy/core-glow", "environments/galaxy/dust-lanes", "environments/galaxy/nebulas", "environments/galaxy/star-clouds", "environments/galaxy/particles",
-  "environments/sector/backgrounds", "environments/sector/deep-stars", "environments/sector/clusters", "environments/sector/nebulas", "environments/sector/dust", "environments/sector/haze", "environments/sector/particles",
-  ...["01_environment-painting", "02_light-rays", "03_foreground-dust", "04_particles", "05_fog-of-war", "06_orbit-styles", "07_asteroid-belts", "08_selection-effects"].map((folder) => `environments/star-system/${folder}`),
-  "environments/planet-surface/skies", "environments/planet-surface/mountains", "environments/planet-surface/terrain", "environments/planet-surface/vegetation", "environments/planet-surface/clouds", "environments/planet-surface/weather", "environments/planet-surface/fog", "environments/planet-surface/particles",
-  "environments/settlements/backgrounds", "environments/settlements/skyline", "environments/settlements/atmosphere", "environments/settlements/lighting", "environments/settlements/particles",
+  ...backgroundDirectories,
   "effects/selection", "effects/discovery", "effects/ping", "effects/glows", "effects/flares", "effects/fog", "effects/orbit-lines", "effects/ui-overlays",
   "exports/unity", "exports/roblox", "exports/web", "exports/thumbnails",
-  ...environmentGeneratorDirectories
 ];
 
 if (directoriesOnly) {
   await mkdir(destinationRoot, { recursive: true });
   await Promise.all(
-    environmentGeneratorDirectories.map(async (directory) => {
+    backgroundDirectories.map(async (directory) => {
       const target = path.join(destinationRoot, directory);
       await mkdir(target, { recursive: true });
       await writeFile(path.join(target, ".gitkeep"), "");
     })
   );
-  console.log(`Created ${environmentGeneratorDirectories.length} canonical environment layer directories in ${destinationRoot}.`);
+  console.log(`Created ${backgroundDirectories.length} canonical background directories in ${destinationRoot}.`);
   process.exit(0);
 }
 

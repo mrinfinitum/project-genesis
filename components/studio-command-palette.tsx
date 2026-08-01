@@ -38,6 +38,7 @@ const commandSeeds: PaletteResult[] = [
   { id: "command:star-system-layer-generator", type: "Environment Composer", title: "Open Star System Generator", subtitle: "Handcrafted star-system prompt library", href: "/star-system-layer-generator" },
   { id: "command:environment-themes", type: "Environment Composer", title: "Open Environment Themes", subtitle: "Palette, lighting, fog, and effects intent", href: "/environment-composer/themes" },
   { id: "command:environment-export", type: "Environment Composer", title: "Open Environment Runtime Export", subtitle: "Sanitized renderer-neutral contract", href: "/environment-composer/export" },
+  { id: "command:background-library", type: "Creative Production", title: "Open Background Library", subtitle: "Flat approved backgrounds and production status", href: "/backgrounds" },
   { id: "command:production-health", type: "Health", title: "Open Production Health", subtitle: "Assets, routes, exports, verification", href: "/asset-library?section=all-assets" },
   { id: "command:recent-assets", type: "Asset Library", title: "Open Recent Assets", subtitle: "Recently opened Studio assets", href: "/asset-library?folder=recently-opened" },
   { id: "command:favorites", type: "Asset Library", title: "Open Favorite Assets", subtitle: "Studio-only favorites", href: "/asset-library?folder=favorites" }
