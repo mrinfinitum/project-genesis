@@ -50,6 +50,7 @@
     "generate:navigation-icons": "tsx scripts/generate-navigation-icon-derivatives.ts",
     "verify:navigation-icons": "tsx scripts/verify-navigation-icons.ts",
     "audit:studio": "node scripts/generate-studio-audit.mjs",
+    "audit:migration": "tsx scripts/generate-studio-migration-inventory.ts",
     "export:procedural-universe-fixtures": "tsx scripts/export-procedural-universe-fixtures.ts"
   },
   "dependencies": {

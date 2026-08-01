@@ -1,0 +1,1054 @@
+{
+  "generatedAt": "2026-08-01T18:31:40.046Z",
+  "contract": {
+    "id": "planet-detail-screen",
+    "screen": "planet-detail",
+    "version": "1.3.0",
+    "referenceResolution": [
+      1536,
+      1024
+    ],
+    "exportProfile": {
+      "id": "PlanetDetailScreenExportProfile",
+      "resolutions": [
+        {
+          "id": "reference",
+          "width": 1536,
+          "height": 1024
+        },
+        {
+          "id": "desktop",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "id": "qhd",
+          "width": 2560,
+          "height": 1440
+        },
+        {
+          "id": "4k",
+          "width": 3840,
+          "height": 2160
+        }
+      ],
+      "nineSliceSupport": true,
+      "spriteAtlas": {
+        "id": "PlanetDetailScreenAtlas",
+        "manifestPath": "atlas/PlanetDetailScreen.spriteatlas.json",
+        "maxTextureSize": 4096,
+        "allowRotation": false,
+        "trimTransparent": true
+      },
+      "textureCompression": {
+        "desktop": "BC7",
+        "mobile": "ASTC_6x6",
+        "fallback": "RGBA32"
+      },
+      "pixelsPerUnit": 100,
+      "safeMargins": [
+        48,
+        48,
+        48,
+        48
+      ]
+    },
+    "assetPack": {
+      "id": "PlanetDetailScreen",
+      "filename": "PlanetDetailScreen.artpack",
+      "manifestPath": "PlanetDetailScreen/PlanetDetailScreen.manifest.json",
+      "packageRoot": "PlanetDetailScreen"
+    },
+    "manifest": {
+      "screen": "planet-detail",
+      "version": "1.3.0",
+      "referenceResolution": [
+        1536,
+        1024
+      ],
+      "assets": {
+        "planetScreenBackground": "sprites/PlanetScreen_Background.png",
+        "leftNavigation": "sprites/LeftNavigation_Backplate.png",
+        "planetHero": "sprites/PlanetHero_Backplate.png",
+        "planetOverview": "sprites/PlanetOverview_Backplate.png",
+        "resources": "sprites/Resources_Backplate.png",
+        "biome": "sprites/Biome_Backplate.png",
+        "weather": "sprites/Weather_Backplate.png",
+        "season": "sprites/Season_Backplate.png",
+        "creatures": "sprites/Creatures_Backplate.png",
+        "atmosphere": "sprites/Atmosphere_Backplate.png",
+        "composition": "sprites/Composition_Backplate.png",
+        "planetFeatures": "sprites/PlanetFeatures_Backplate.png",
+        "additionalData": "sprites/AdditionalData_Backplate.png",
+        "breadcrumb": "sprites/Breadcrumb_Backplate.png",
+        "previousButton": "sprites/PreviousButton.png",
+        "nextButton": "sprites/NextButton.png",
+        "planetPlaceholder": "sprites/PlanetPlaceholder.png",
+        "biomePlaceholder": "sprites/BiomePlaceholder.png",
+        "creaturePlaceholder01": "sprites/CreaturePlaceholder01.png",
+        "creaturePlaceholder02": "sprites/CreaturePlaceholder02.png",
+        "creaturePlaceholder03": "sprites/CreaturePlaceholder03.png",
+        "weatherIcon": "sprites/WeatherIcon.png",
+        "seasonOrbit": "sprites/SeasonOrbit.png",
+        "atmosphereChart": "sprites/AtmosphereChart.png",
+        "compositionChart": "sprites/CompositionChart.png"
+      },
+      "sourceArtwork": {
+        "biome-environment": "/generated/game-assets/ui/screens/planet-detail/biome-environment.png",
+        "creatures-life": "/generated/game-assets/ui/screens/planet-detail/creatures-life.png",
+        "resources": "/generated/game-assets/ui/screens/planet-detail/resources.png",
+        "weather-climate": "/generated/game-assets/ui/screens/planet-detail/weather-climate.png"
+      }
+    },
+    "sourceArtwork": [
+      {
+        "id": "biome-environment",
+        "displayName": "Biome Environment",
+        "status": "published",
+        "width": 1319,
+        "height": 1189,
+        "gamePngPath": "/generated/game-assets/ui/screens/planet-detail/biome-environment.png",
+        "previewPath": "/generated/game-assets/ui/screens/planet-detail/biome-environment-preview.webp",
+        "thumbnailPath": "/generated/game-assets/ui/screens/planet-detail/biome-environment-thumbnail.webp",
+        "gamePngChecksum": "c0a762f4a4fe54bc3c37b51311f34299108f0e72872e302cb4826115207e5a86",
+        "alphaPolicy": "remove_edge_white_matte",
+        "transparentPixelCount": 2040
+      },
+      {
+        "id": "creatures-life",
+        "displayName": "Creatures & Life",
+        "status": "published",
+        "width": 2119,
+        "height": 1300,
+        "gamePngPath": "/generated/game-assets/ui/screens/planet-detail/creatures-life.png",
+        "previewPath": "/generated/game-assets/ui/screens/planet-detail/creatures-life-preview.webp",
+        "thumbnailPath": "/generated/game-assets/ui/screens/planet-detail/creatures-life-thumbnail.webp",
+        "gamePngChecksum": "f884ad5c4d5f6b3437210d7b24277e54140dc1f63b8f9d9b8734cf421b277699",
+        "alphaPolicy": "remove_edge_white_matte",
+        "transparentPixelCount": 2023
+      },
+      {
+        "id": "resources",
+        "displayName": "Resources",
+        "status": "published",
+        "width": 1449,
+        "height": 1404,
+        "gamePngPath": "/generated/game-assets/ui/screens/planet-detail/resources.png",
+        "previewPath": "/generated/game-assets/ui/screens/planet-detail/resources-preview.webp",
+        "thumbnailPath": "/generated/game-assets/ui/screens/planet-detail/resources-thumbnail.webp",
+        "gamePngChecksum": "a255e1dd96429fea5d98d19be01688b24a1095ead23feb5d643dd4cfe46c6f0f",
+        "alphaPolicy": "remove_edge_white_matte",
+        "transparentPixelCount": 3660
+      },
+      {
+        "id": "weather-climate",
+        "displayName": "Weather & Climate",
+        "status": "published",
+        "width": 1888,
+        "height": 1256,
+        "gamePngPath": "/generated/game-assets/ui/screens/planet-detail/weather-climate.png",
+        "previewPath": "/generated/game-assets/ui/screens/planet-detail/weather-climate-preview.webp",
+        "thumbnailPath": "/generated/game-assets/ui/screens/planet-detail/weather-climate-thumbnail.webp",
+        "gamePngChecksum": "2ff71f43a28da6409df2683d12ef9aac91f4791d9ac7bf595f7ae2cd084d47b2",
+        "alphaPolicy": "remove_edge_white_matte",
+        "transparentPixelCount": 1747
+      }
+    ],
+    "presentationReference": {
+      "id": "planet-detail-screen-style-reference-v1",
+      "displayName": "Canonical Planet Detail Screen Style Reference",
+      "role": "canonical-style-reference",
+      "width": 1360,
+      "height": 883,
+      "imagePath": "/generated/game-assets/ui/screens/planet-detail/reference/planet-detail-screen-style-reference.webp",
+      "checksum": "991e6aeeb79fbdb9a58528a4bbb4866d1f7a7d33d4a114dd84fcfdb1e0d31b28"
+    },
+    "presentationContract": {
+      "authority": "studio",
+      "implementationOwner": "game-client",
+      "matchIntent": "visual-hierarchy-and-style",
+      "hierarchy": [
+        "planet-identity-and-hero",
+        "overview-and-resources",
+        "environment-and-life",
+        "scientific-detail"
+      ],
+      "layout": {
+        "density": "compact",
+        "panelComposition": "contiguous-dashboard",
+        "heroEmphasis": "dominant",
+        "informationGrouping": "domain-panels",
+        "desktopReference": "landscape",
+        "responsiveRule": "preserve-hierarchy-not-pixel-layout"
+      },
+      "visualLanguage": {
+        "surface": "deep-space-glass",
+        "panelRadius": "minimal",
+        "borders": "fine-cyan-technical",
+        "typography": "compact-scientific",
+        "accentUsage": "restrained-status-and-data",
+        "artworkTreatment": "scientific-cinematic"
+      },
+      "requirements": [
+        "Use the canonical reference image as the visual benchmark for composition, hierarchy, density, materials, and information grouping.",
+        "Keep the planet identity and large planet artwork as the dominant first-viewport signal.",
+        "Present overview and resource data as compact, scan-friendly technical information.",
+        "Group biome, climate, seasons, creatures, atmosphere, composition, features, and additional data into clearly bounded domain panels.",
+        "Use restrained cyan technical borders, deep translucent surfaces, compact typography, and status color only where it carries meaning.",
+        "Adapt responsively while preserving the reference hierarchy; do not copy desktop pixel coordinates into smaller clients."
+      ],
+      "prohibitions": [
+        "Do not replace the reference with oversized decorative cards or marketing-style composition.",
+        "Do not let secondary charts, panels, or controls compete with the planet hero.",
+        "Do not use large rounded containers, bright gradients, ornamental glow, or excessive empty padding.",
+        "Do not hardcode sample names, values, resources, creatures, or statuses shown in the reference."
+      ]
+    },
+    "slices": [
+      {
+        "id": "PlanetScreen_Background",
+        "displayName": "Planet Screen Background",
+        "semanticKey": "planet_detail.planetScreenBackground",
+        "sourceDocumentId": null,
+        "psdLayerGroup": "PlanetScreen_Background",
+        "exportFilename": "PlanetScreen_Background.png",
+        "runtimePath": "sprites/PlanetScreen_Background.png",
+        "spriteType": "sliced",
+        "nineSlice": {
+          "enabled": true,
+          "border": [
+            24,
+            24,
+            24,
+            24
+          ]
+        },
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "defaultScale": 1
+      },
+      {
+        "id": "LeftNavigation_Backplate",
+        "displayName": "Left Navigation Backplate",
+        "semanticKey": "planet_detail.leftNavigation",
+        "sourceDocumentId": null,
+        "psdLayerGroup": "LeftNavigation_Backplate",
+        "exportFilename": "LeftNavigation_Backplate.png",
+        "runtimePath": "sprites/LeftNavigation_Backplate.png",
+        "spriteType": "sliced",
+        "nineSlice": {
+          "enabled": true,
+          "border": [
+            24,
+            24,
+            24,
+            24
+          ]
+        },
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "defaultScale": 1
+      },
+      {
+        "id": "PlanetHero_Backplate",
+        "displayName": "Planet Hero Backplate",
+        "semanticKey": "planet_detail.planetHero",
+        "sourceDocumentId": null,
+        "psdLayerGroup": "PlanetHero_Backplate",
+        "exportFilename": "PlanetHero_Backplate.png",
+        "runtimePath": "sprites/PlanetHero_Backplate.png",
+        "spriteType": "sliced",
+        "nineSlice": {
+          "enabled": true,
+          "border": [
+            24,
+            24,
+            24,
+            24
+          ]
+        },
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "defaultScale": 1
+      },
+      {
+        "id": "PlanetOverview_Backplate",
+        "displayName": "Planet Overview Backplate",
+        "semanticKey": "planet_detail.planetOverview",
+        "sourceDocumentId": null,
+        "psdLayerGroup": "PlanetOverview_Backplate",
+        "exportFilename": "PlanetOverview_Backplate.png",
+        "runtimePath": "sprites/PlanetOverview_Backplate.png",
+        "spriteType": "sliced",
+        "nineSlice": {
+          "enabled": true,
+          "border": [
+            24,
+            24,
+            24,
+            24
+          ]
+        },
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "defaultScale": 1
+      },
+      {
+        "id": "Resources_Backplate",
+        "displayName": "Resources Backplate",
+        "semanticKey": "planet_detail.resources",
+        "sourceDocumentId": "resources",
+        "psdLayerGroup": "Resources_Backplate",
+        "exportFilename": "Resources_Backplate.png",
+        "runtimePath": "sprites/Resources_Backplate.png",
+        "spriteType": "sliced",
+        "nineSlice": {
+          "enabled": true,
+          "border": [
+            24,
+            24,
+            24,
+            24
+          ]
+        },
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "defaultScale": 1
+      },
+      {
+        "id": "Biome_Backplate",
+        "displayName": "Biome Backplate",
+        "semanticKey": "planet_detail.biome",
+        "sourceDocumentId": "biome-environment",
+        "psdLayerGroup": "Biome_Backplate",
+        "exportFilename": "Biome_Backplate.png",
+        "runtimePath": "sprites/Biome_Backplate.png",
+        "spriteType": "sliced",
+        "nineSlice": {
+          "enabled": true,
+          "border": [
+            24,
+            24,
+            24,
+            24
+          ]
+        },
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "defaultScale": 1
+      },
+      {
+        "id": "Weather_Backplate",
+        "displayName": "Weather Backplate",
+        "semanticKey": "planet_detail.weather",
+        "sourceDocumentId": "weather-climate",
+        "psdLayerGroup": "Weather_Backplate",
+        "exportFilename": "Weather_Backplate.png",
+        "runtimePath": "sprites/Weather_Backplate.png",
+        "spriteType": "sliced",
+        "nineSlice": {
+          "enabled": true,
+          "border": [
+            24,
+            24,
+            24,
+            24
+          ]
+        },
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "defaultScale": 1
+      },
+      {
+        "id": "Season_Backplate",
+        "displayName": "Season Backplate",
+        "semanticKey": "planet_detail.season",
+        "sourceDocumentId": "weather-climate",
+        "psdLayerGroup": "Season_Backplate",
+        "exportFilename": "Season_Backplate.png",
+        "runtimePath": "sprites/Season_Backplate.png",
+        "spriteType": "sliced",
+        "nineSlice": {
+          "enabled": true,
+          "border": [
+            24,
+            24,
+            24,
+            24
+          ]
+        },
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "defaultScale": 1
+      },
+      {
+        "id": "Creatures_Backplate",
+        "displayName": "Creatures Backplate",
+        "semanticKey": "planet_detail.creatures",
+        "sourceDocumentId": "creatures-life",
+        "psdLayerGroup": "Creatures_Backplate",
+        "exportFilename": "Creatures_Backplate.png",
+        "runtimePath": "sprites/Creatures_Backplate.png",
+        "spriteType": "sliced",
+        "nineSlice": {
+          "enabled": true,
+          "border": [
+            24,
+            24,
+            24,
+            24
+          ]
+        },
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "defaultScale": 1
+      },
+      {
+        "id": "Atmosphere_Backplate",
+        "displayName": "Atmosphere Backplate",
+        "semanticKey": "planet_detail.atmosphere",
+        "sourceDocumentId": "biome-environment",
+        "psdLayerGroup": "Atmosphere_Backplate",
+        "exportFilename": "Atmosphere_Backplate.png",
+        "runtimePath": "sprites/Atmosphere_Backplate.png",
+        "spriteType": "sliced",
+        "nineSlice": {
+          "enabled": true,
+          "border": [
+            24,
+            24,
+            24,
+            24
+          ]
+        },
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "defaultScale": 1
+      },
+      {
+        "id": "Composition_Backplate",
+        "displayName": "Composition Backplate",
+        "semanticKey": "planet_detail.composition",
+        "sourceDocumentId": "resources",
+        "psdLayerGroup": "Composition_Backplate",
+        "exportFilename": "Composition_Backplate.png",
+        "runtimePath": "sprites/Composition_Backplate.png",
+        "spriteType": "sliced",
+        "nineSlice": {
+          "enabled": true,
+          "border": [
+            24,
+            24,
+            24,
+            24
+          ]
+        },
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "defaultScale": 1
+      },
+      {
+        "id": "PlanetFeatures_Backplate",
+        "displayName": "Planet Features Backplate",
+        "semanticKey": "planet_detail.planetFeatures",
+        "sourceDocumentId": "biome-environment",
+        "psdLayerGroup": "PlanetFeatures_Backplate",
+        "exportFilename": "PlanetFeatures_Backplate.png",
+        "runtimePath": "sprites/PlanetFeatures_Backplate.png",
+        "spriteType": "sliced",
+        "nineSlice": {
+          "enabled": true,
+          "border": [
+            24,
+            24,
+            24,
+            24
+          ]
+        },
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "defaultScale": 1
+      },
+      {
+        "id": "AdditionalData_Backplate",
+        "displayName": "Additional Data Backplate",
+        "semanticKey": "planet_detail.additionalData",
+        "sourceDocumentId": null,
+        "psdLayerGroup": "AdditionalData_Backplate",
+        "exportFilename": "AdditionalData_Backplate.png",
+        "runtimePath": "sprites/AdditionalData_Backplate.png",
+        "spriteType": "sliced",
+        "nineSlice": {
+          "enabled": true,
+          "border": [
+            24,
+            24,
+            24,
+            24
+          ]
+        },
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "defaultScale": 1
+      },
+      {
+        "id": "Breadcrumb_Backplate",
+        "displayName": "Breadcrumb Backplate",
+        "semanticKey": "planet_detail.breadcrumb",
+        "sourceDocumentId": null,
+        "psdLayerGroup": "Breadcrumb_Backplate",
+        "exportFilename": "Breadcrumb_Backplate.png",
+        "runtimePath": "sprites/Breadcrumb_Backplate.png",
+        "spriteType": "sliced",
+        "nineSlice": {
+          "enabled": true,
+          "border": [
+            24,
+            24,
+            24,
+            24
+          ]
+        },
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "defaultScale": 1
+      },
+      {
+        "id": "PreviousButton",
+        "displayName": "Previous Button",
+        "semanticKey": "planet_detail.previousButton",
+        "sourceDocumentId": null,
+        "psdLayerGroup": "PreviousButton",
+        "exportFilename": "PreviousButton.png",
+        "runtimePath": "sprites/PreviousButton.png",
+        "spriteType": "simple",
+        "nineSlice": {
+          "enabled": false,
+          "border": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "defaultScale": 1
+      },
+      {
+        "id": "NextButton",
+        "displayName": "Next Button",
+        "semanticKey": "planet_detail.nextButton",
+        "sourceDocumentId": null,
+        "psdLayerGroup": "NextButton",
+        "exportFilename": "NextButton.png",
+        "runtimePath": "sprites/NextButton.png",
+        "spriteType": "simple",
+        "nineSlice": {
+          "enabled": false,
+          "border": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "defaultScale": 1
+      },
+      {
+        "id": "PlanetPlaceholder",
+        "displayName": "Planet Placeholder",
+        "semanticKey": "planet_detail.planetPlaceholder",
+        "sourceDocumentId": null,
+        "psdLayerGroup": "PlanetPlaceholder",
+        "exportFilename": "PlanetPlaceholder.png",
+        "runtimePath": "sprites/PlanetPlaceholder.png",
+        "spriteType": "simple",
+        "nineSlice": {
+          "enabled": false,
+          "border": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "defaultScale": 1
+      },
+      {
+        "id": "BiomePlaceholder",
+        "displayName": "Biome Placeholder",
+        "semanticKey": "planet_detail.biomePlaceholder",
+        "sourceDocumentId": "biome-environment",
+        "psdLayerGroup": "BiomePlaceholder",
+        "exportFilename": "BiomePlaceholder.png",
+        "runtimePath": "sprites/BiomePlaceholder.png",
+        "spriteType": "simple",
+        "nineSlice": {
+          "enabled": false,
+          "border": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "defaultScale": 1
+      },
+      {
+        "id": "CreaturePlaceholder01",
+        "displayName": "Creature Placeholder01",
+        "semanticKey": "planet_detail.creaturePlaceholder01",
+        "sourceDocumentId": "creatures-life",
+        "psdLayerGroup": "CreaturePlaceholder01",
+        "exportFilename": "CreaturePlaceholder01.png",
+        "runtimePath": "sprites/CreaturePlaceholder01.png",
+        "spriteType": "simple",
+        "nineSlice": {
+          "enabled": false,
+          "border": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "defaultScale": 1
+      },
+      {
+        "id": "CreaturePlaceholder02",
+        "displayName": "Creature Placeholder02",
+        "semanticKey": "planet_detail.creaturePlaceholder02",
+        "sourceDocumentId": "creatures-life",
+        "psdLayerGroup": "CreaturePlaceholder02",
+        "exportFilename": "CreaturePlaceholder02.png",
+        "runtimePath": "sprites/CreaturePlaceholder02.png",
+        "spriteType": "simple",
+        "nineSlice": {
+          "enabled": false,
+          "border": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "defaultScale": 1
+      },
+      {
+        "id": "CreaturePlaceholder03",
+        "displayName": "Creature Placeholder03",
+        "semanticKey": "planet_detail.creaturePlaceholder03",
+        "sourceDocumentId": "creatures-life",
+        "psdLayerGroup": "CreaturePlaceholder03",
+        "exportFilename": "CreaturePlaceholder03.png",
+        "runtimePath": "sprites/CreaturePlaceholder03.png",
+        "spriteType": "simple",
+        "nineSlice": {
+          "enabled": false,
+          "border": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "defaultScale": 1
+      },
+      {
+        "id": "WeatherIcon",
+        "displayName": "Weather Icon",
+        "semanticKey": "planet_detail.weatherIcon",
+        "sourceDocumentId": "weather-climate",
+        "psdLayerGroup": "WeatherIcon",
+        "exportFilename": "WeatherIcon.png",
+        "runtimePath": "sprites/WeatherIcon.png",
+        "spriteType": "simple",
+        "nineSlice": {
+          "enabled": false,
+          "border": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "defaultScale": 1
+      },
+      {
+        "id": "SeasonOrbit",
+        "displayName": "Season Orbit",
+        "semanticKey": "planet_detail.seasonOrbit",
+        "sourceDocumentId": "weather-climate",
+        "psdLayerGroup": "SeasonOrbit",
+        "exportFilename": "SeasonOrbit.png",
+        "runtimePath": "sprites/SeasonOrbit.png",
+        "spriteType": "simple",
+        "nineSlice": {
+          "enabled": false,
+          "border": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "defaultScale": 1
+      },
+      {
+        "id": "AtmosphereChart",
+        "displayName": "Atmosphere Chart",
+        "semanticKey": "planet_detail.atmosphereChart",
+        "sourceDocumentId": "biome-environment",
+        "psdLayerGroup": "AtmosphereChart",
+        "exportFilename": "AtmosphereChart.png",
+        "runtimePath": "sprites/AtmosphereChart.png",
+        "spriteType": "simple",
+        "nineSlice": {
+          "enabled": false,
+          "border": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "defaultScale": 1
+      },
+      {
+        "id": "CompositionChart",
+        "displayName": "Composition Chart",
+        "semanticKey": "planet_detail.compositionChart",
+        "sourceDocumentId": "resources",
+        "psdLayerGroup": "CompositionChart",
+        "exportFilename": "CompositionChart.png",
+        "runtimePath": "sprites/CompositionChart.png",
+        "spriteType": "simple",
+        "nineSlice": {
+          "enabled": false,
+          "border": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "defaultScale": 1
+      }
+    ],
+    "theme": "noveris",
+    "validationStatus": "Ready",
+    "hash": "3a41b0547d032bd8b52f81700e8e8bd5c8ae8d0200be79e08aaafe9bd91d992d"
+  },
+  "dependencies": [
+    {
+      "path": "app/api/creative-production/planet-detail-screen/artpack/route.ts",
+      "imports": [
+        "@/lib/assets/planet-detail-screen"
+      ],
+      "matches": [
+        "PlanetDetailScreen",
+        "planet-detail-screen"
+      ]
+    },
+    {
+      "path": "app/api/creative-production/planet-detail-screen/manifest/route.ts",
+      "imports": [
+        "@/lib/assets/planet-detail-screen"
+      ],
+      "matches": [
+        "PlanetDetailScreen",
+        "planet-detail-screen",
+        "planetDetailScreen"
+      ]
+    },
+    {
+      "path": "app/creative-production/ui-screens/planet-detail/page.tsx",
+      "imports": [
+        "@/components/planet-detail-screen-workspace",
+        "@/lib/assets/planet-detail-screen",
+        "@/lib/assets/planet-detail-screen-server"
+      ],
+      "matches": [
+        "PlanetDetailScreen",
+        "planet-detail-screen",
+        "planetDetailScreen"
+      ]
+    },
+    {
+      "path": "components/planet-detail-screen-workspace.tsx",
+      "imports": [
+        "@/lib/assets/planet-detail-screen",
+        "@/lib/assets/planet-detail-screen-server",
+        "@/lib/utils"
+      ],
+      "matches": [
+        "PlanetDetailScreen",
+        "planet-detail-screen"
+      ]
+    },
+    {
+      "path": "components/studio-command-palette.tsx",
+      "imports": [],
+      "matches": [
+        "planet-detail-screen"
+      ]
+    },
+    {
+      "path": "lib/assets/planet-detail-screen-server.ts",
+      "imports": [
+        "@/data/planet-detail-screen-derivatives.json",
+        "@/lib/assets/planet-detail-screen"
+      ],
+      "matches": [
+        "PlanetDetailScreen",
+        "planet-detail-screen",
+        "planetDetailScreen"
+      ]
+    },
+    {
+      "path": "lib/assets/planet-detail-screen.ts",
+      "imports": [
+        "@/data/planet-detail-screen-derivatives.json",
+        "@/data/planet-detail-screen-reference.json"
+      ],
+      "matches": [
+        "PlanetDetailScreen",
+        "planet-detail-screen",
+        "planetDetailScreen"
+      ]
+    },
+    {
+      "path": "lib/export/game-engine.ts",
+      "imports": [
+        "@/lib/actions/action-system",
+        "@/lib/ai-agents",
+        "@/lib/ai-agents/foundations",
+        "@/lib/architecture/version",
+        "@/lib/assets/civilization-operations-deck",
+        "@/lib/assets/planet-detail-screen",
+        "@/lib/buildings/taxonomy",
+        "@/lib/civilization/progression-framework",
+        "@/lib/colonies/procedural",
+        "@/lib/colonization/framework",
+        "@/lib/data",
+        "@/lib/discovery",
+        "@/lib/discovery/universal-registry",
+        "@/lib/economy/definitions",
+        "@/lib/economy/labor-generation",
+        "@/lib/economy/logistics-framework",
+        "@/lib/economy/trade",
+        "@/lib/environment-composer",
+        "@/lib/events/framework",
+        "@/lib/explorer/discovery-log",
+        "@/lib/factions/procedural",
+        "@/lib/life/creature-system",
+        "@/lib/missions/framework",
+        "@/lib/missions/procedural",
+        "@/lib/planets/deep-data",
+        "@/lib/planets/development-framework",
+        "@/lib/planets/exploration-progression",
+        "@/lib/planets/fixed-sol-planets",
+        "@/lib/planets/opportunity-profiles",
+        "@/lib/population/framework",
+        "@/lib/resources/planet-resource-profiles",
+        "@/lib/resources/service",
+        "@/lib/runtime/client-profiles",
+        "@/lib/runtime/galaxy-engine-contract",
+        "@/lib/runtime/game-runtime",
+        "@/lib/runtime/mobile-client-profiles",
+        "@/lib/species-plates/asset-pack",
+        "@/lib/species-plates/runtime",
+        "@/lib/universe/fallback-data",
+        "@/types/schema"
+      ],
+      "matches": [
+        "PlanetDetailScreen",
+        "planet-detail-screen",
+        "planetDetailScreen"
+      ]
+    },
+    {
+      "path": "lib/runtime/game-runtime.ts",
+      "imports": [
+        "@/data/civilization-identity",
+        "@/lib/actions/action-system",
+        "@/lib/ai-agents",
+        "@/lib/ai-agents/foundations",
+        "@/lib/architecture/version",
+        "@/lib/assets/asset-production",
+        "@/lib/assets/civilization-operations-deck",
+        "@/lib/assets/game-art-import",
+        "@/lib/assets/planet-detail-screen",
+        "@/lib/buildings/taxonomy",
+        "@/lib/civilization/progression-framework",
+        "@/lib/colonization/framework",
+        "@/lib/data",
+        "@/lib/discovery",
+        "@/lib/discovery/universal-registry",
+        "@/lib/economy/definitions",
+        "@/lib/economy/labor-generation",
+        "@/lib/economy/logistics-framework",
+        "@/lib/environment-composer",
+        "@/lib/events/framework",
+        "@/lib/life/creature-system",
+        "@/lib/missions/framework",
+        "@/lib/planets/deep-data",
+        "@/lib/planets/development-framework",
+        "@/lib/planets/exploration-progression",
+        "@/lib/planets/opportunity-profiles",
+        "@/lib/population/framework",
+        "@/lib/resources/service",
+        "@/lib/resources/taxonomy",
+        "@/lib/runtime/client-profiles",
+        "@/lib/runtime/galaxy-engine-contract",
+        "@/lib/runtime/mobile-client-profiles",
+        "@/lib/species-plates/runtime",
+        "@/lib/upgrades/category-presentation",
+        "@/lib/upgrades/tree-contract",
+        "@/types/planet-deep-data",
+        "@/types/runtime",
+        "@/types/schema"
+      ],
+      "matches": [
+        "PlanetDetailScreen",
+        "planet-detail-screen",
+        "planetDetailScreen"
+      ]
+    },
+    {
+      "path": "scripts/generate-psd-game-derivatives.ts",
+      "imports": [
+        "@/lib/assets/psd-game-derivatives"
+      ],
+      "matches": [
+        "planet-detail-screen"
+      ]
+    },
+    {
+      "path": "scripts/generate-studio-audit.mjs",
+      "imports": [
+        "@/components/"
+      ],
+      "matches": [
+        "planet-detail-screen"
+      ]
+    },
+    {
+      "path": "scripts/generate-studio-migration-inventory.ts",
+      "imports": [
+        "@/lib/assets/asset-production",
+        "@/lib/assets/planet-detail-screen",
+        "@/lib/environment-composer",
+        "@/lib/runtime/game-runtime",
+        "@/lib/species-plates/master-template"
+      ],
+      "matches": [
+        "PlanetDetailScreen",
+        "planet-detail-screen",
+        "planetDetailScreen"
+      ]
+    },
+    {
+      "path": "scripts/verify-planet-detail-screen.ts",
+      "imports": [
+        "@/lib/assets/planet-detail-screen",
+        "@/lib/assets/planet-detail-screen-server",
+        "@/lib/export/game-engine",
+        "@/lib/runtime/game-runtime"
+      ],
+      "matches": [
+        "PlanetDetailScreen",
+        "planet-detail-screen",
+        "planetDetailScreen"
+      ]
+    },
+    {
+      "path": "types/runtime.ts",
+      "imports": [
+        "@/lib/assets/civilization-operations-deck",
+        "@/lib/assets/planet-detail-screen",
+        "@/lib/environment-composer",
+        "@/lib/life/creature-system",
+        "@/lib/species-plates/runtime",
+        "@/lib/universe/visual-signatures",
+        "@/types/planet-deep-data"
+      ],
+      "matches": [
+        "PlanetDetailScreen",
+        "planet-detail-screen",
+        "planetDetailScreen"
+      ]
+    }
+  ]
+}

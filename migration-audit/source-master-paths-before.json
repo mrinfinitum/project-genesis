@@ -1,0 +1,1497 @@
+{
+  "generatedAt": "2026-08-01T18:31:40.129Z",
+  "root": "source-masters",
+  "count": 298,
+  "files": [
+    {
+      "path": "source-masters/.DS_Store",
+      "size": 26628,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/README.md",
+      "size": 3940,
+      "extension": ".md"
+    },
+    {
+      "path": "source-masters/environments/.DS_Store",
+      "size": 14340,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/galaxy/.DS_Store",
+      "size": 8196,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/galaxy/01_far-stars/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/galaxy/02_galaxy-disc/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/galaxy/03_spiral-arms/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/galaxy/04_core-glow/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/galaxy/05_dust-lanes/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/galaxy/06_nebula-accents/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/galaxy/07_star-clouds/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/galaxy/08_sector-overlays/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/galaxy/09_exploration-fog/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/galaxy/10_foreground-particles/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/sector/01_deep-stars/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/sector/02_distant-fields/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/sector/03_star-clusters/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/sector/04_nebulas/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/sector/05_dust/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/sector/06_haze/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/sector/07_navigation-grids/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/sector/08_probe-routes/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/sector/09_fog-of-war/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/sector/10_foreground-effects/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/star-system/.DS_Store",
+      "size": 8196,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/star-system/01_environment-painting/.DS_Store",
+      "size": 6148,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/star-system/01_environment-painting/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/star-system/01_environment-painting/magnific_create-a-premium-astronom_9RPVibDNYZ.png",
+      "size": 985168,
+      "extension": ".png"
+    },
+    {
+      "path": "source-masters/environments/star-system/01_environment-painting/magnific_create-a-premium-astronom_J9wYy7AOq4.png",
+      "size": 1125988,
+      "extension": ".png"
+    },
+    {
+      "path": "source-masters/environments/star-system/01_environment-painting/magnific_create-a-premium-astronom_UygG7X7wny.png",
+      "size": 1017658,
+      "extension": ".png"
+    },
+    {
+      "path": "source-masters/environments/star-system/01_environment-painting/magnific_create-a-premium-astronom_swjRg8dl8e.png",
+      "size": 1038180,
+      "extension": ".png"
+    },
+    {
+      "path": "source-masters/environments/star-system/01_environment-painting/magnific_create-a-premium-deepspac_1sK4K3Kr4r.png",
+      "size": 1244948,
+      "extension": ".png"
+    },
+    {
+      "path": "source-masters/environments/star-system/01_environment-painting/magnific_create-a-premium-deepspac_KjbybRXkqp.png",
+      "size": 1396096,
+      "extension": ".png"
+    },
+    {
+      "path": "source-masters/environments/star-system/01_environment-painting/magnific_create-a-premium-deepspac_vumjCgWa47.png",
+      "size": 1263212,
+      "extension": ".png"
+    },
+    {
+      "path": "source-masters/environments/star-system/02_light-rays/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/star-system/03_foreground-dust/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/star-system/04_particles/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/star-system/05_fog-of-war/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/star-system/06_orbit-styles/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/star-system/07_asteroid-belts/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/star-system/08_selection-effects/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/universe/01_deep-cosmic-background/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/universe/02_distant-galaxies/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/universe/03_cosmic-web/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/universe/04_cosmic-dust/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/universe/05_deep-haze/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/environments/universe/06_foreground-dust/.gitkeep",
+      "size": 0,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/galactic-regions/.DS_Store",
+      "size": 10244,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/galactic-regions/environment-painting/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/galactic-regions/environment-painting/environment-painting-0002.psd",
+      "size": 121418673,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/galactic-regions/environment-painting/environment-painting-0003.psd",
+      "size": 115672802,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/galactic-regions/environment-painting/environment-painting-0004.psd",
+      "size": 105763169,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/galactic-regions/environment-painting/environment-painting-0005.psd",
+      "size": 115152933,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/galactic-regions/environment-painting/environment-painting-0006.psd",
+      "size": 109431353,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/galactic-regions/environment-painting/environment-painting-0007.psd",
+      "size": 105763177,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/galactic-regions/environment-painting/environment-painting-0008.psd",
+      "size": 105846295,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/galactic-regions/environment-painting/environment-painting-0009.psd",
+      "size": 113464314,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/galactic-regions/environment-painting/environment-painting-0010.psd",
+      "size": 119542991,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/galactic-regions/environment-painting/environment-painting-orion-spur.psd",
+      "size": 83716635,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/galaxies/.DS_Store",
+      "size": 6148,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/galaxies/environment-painting/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/galaxies/environment-painting/environment-painting-0001.psd",
+      "size": 110373308,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/galaxies/environment-painting/environment-painting-0003.psd",
+      "size": 110373308,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/galaxies/environment-painting/environment-painting-0004.psd",
+      "size": 113464314,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/galaxies/environment-painting/environment-painting-0005.psd",
+      "size": 116074936,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/galaxies/environment-painting/environment-painting-0006.psd",
+      "size": 116074936,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/galaxies/environment-painting/environment-painting-0007.psd",
+      "size": 107428901,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/galaxies/environment-painting/environment-painting-0008.psd",
+      "size": 111914187,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/galaxies/environment-painting/environment-painting-milky-way.psd",
+      "size": 110373308,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/research/survival/icon-survival-science-01-storytelling.psd",
+      "size": 1573595,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/research/survival/icon-survival-science-02-primitive-mathematics.psd",
+      "size": 2106275,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/research/survival/icon-survival-science-03-agriculture.psd",
+      "size": 2653694,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/research/survival/icon-survival-science-04-animal-husbandry.psd",
+      "size": 3188173,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/research/survival/icon-survival-science-05-mining.psd",
+      "size": 4219393,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/research/survival/icon-survival-science-06-construction.psd",
+      "size": 4746670,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/research/survival/icon-survival-science-07-fire-engineering.psd",
+      "size": 5253982,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/research/survival/icon-survival-science-08-basic-medicine.psd",
+      "size": 5783886,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/research/survival/icon-survival-science-09-toolmaking.psd",
+      "size": 6300483,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/research/survival/icon-survival-science-10-early-science.psd",
+      "size": 6821978,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/research/survival/icon-survival-science-11-primitive-navigation.psd",
+      "size": 7348729,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/research/survival/icon-survival-science-12-natural-observation.psd",
+      "size": 7866577,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/research/town/icon-town-science-01-scientific-method.psd",
+      "size": 14644304,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/research/town/icon-town-science-02-electricity.psd",
+      "size": 15156945,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/research/village/icon-village-science-01-writing.psd",
+      "size": 8383260,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/research/village/icon-village-science-02-libraries.psd",
+      "size": 8912629,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/research/village/icon-village-science-03-surveying.psd",
+      "size": 9425768,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/research/village/icon-village-science-04-architecture.psd",
+      "size": 9944757,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/research/village/icon-village-science-05-early-engineering.psd",
+      "size": 10467343,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/research/village/icon-village-science-06-navigation.psd",
+      "size": 10993867,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/research/village/icon-village-science-07-education.psd",
+      "size": 11510570,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/research/village/icon-village-science-08-crop-science.psd",
+      "size": 12040698,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/research/village/icon-village-science-09-metallurgy.psd",
+      "size": 12558617,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/research/village/icon-village-science-10-water-systems.psd",
+      "size": 13082160,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/research/village/icon-village-science-11-cartography.psd",
+      "size": 13599224,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/research/village/icon-village-science-12-irrigation.psd",
+      "size": 14128401,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/future/icon-future-technology-01-planetary-economy.psd",
+      "size": 1701338,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/future/icon-future-technology-02-climate-engineering.psd",
+      "size": 1761010,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/future/icon-future-technology-03-fusion-infrastructure.psd",
+      "size": 1747772,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/future/icon-future-technology-05-digital-civilization.psd",
+      "size": 1780519,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/future/icon-future-technology-06-interstellar-commerce.psd",
+      "size": 1743452,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/future/icon-future-technology-07-planetary-governance.psd",
+      "size": 1728463,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/future/icon-future-technology-08-universal-infrastructure.psd",
+      "size": 1728977,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/future/icon-future-technology-09-civilization-network.psd",
+      "size": 1765280,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/future/icon-future-technology-09-universal-intelligence.psd",
+      "size": 1791954,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/future/icon-future-technology-11-interplanetary-logistics.psd",
+      "size": 1736335,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/industrial/icon-industrial-technology-01-power-grid.psd",
+      "size": 1755226,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/industrial/icon-industrial-technology-02-corporate-investment.psd",
+      "size": 1698841,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/industrial/icon-industrial-technology-03-infrastructure-expansion.psd",
+      "size": 1802591,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/industrial/icon-industrial-technology-04-mass-transit.psd",
+      "size": 1763907,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/industrial/icon-industrial-technology-05-environmental-protection.psd",
+      "size": 1774521,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/industrial/icon-industrial-technology-06-economic-growth.psd",
+      "size": 1721278,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/industrial/icon-industrial-technology-07-national-projects.psd",
+      "size": 1806863,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/industrial/icon-industrial-technology-08-global-commerce.psd",
+      "size": 1786131,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/industrial/icon-industrial-technology-09-industrial-management.psd",
+      "size": 1714715,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/industrial/icon-industrial-technology-10-advanced-logistics.psd",
+      "size": 1720580,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/master-sheets/01-technology-icons-master-sheet.psd",
+      "size": 3016086,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/modern/icon-modern-technology-01-smart-cities.psd",
+      "size": 1125973,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/modern/icon-modern-technology-02-digital-government.psd",
+      "size": 1123010,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/modern/icon-modern-technology-03-innovation-economy.psd",
+      "size": 1127100,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/modern/icon-modern-technology-04-technology-parks.psd",
+      "size": 1128584,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/modern/icon-modern-technology-05-global-finance.psd",
+      "size": 1119201,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/modern/icon-modern-technology-06-clean-energy.psd",
+      "size": 1130316,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/modern/icon-modern-technology-07-advanced-infrastructure.psd",
+      "size": 1144480,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/modern/icon-modern-technology-08-digital-commerce.psd",
+      "size": 1115604,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/modern/icon-modern-technology-08-urban-ai.psd",
+      "size": 1124760,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/modern/icon-modern-technology-09-cyber-security.psd",
+      "size": 1731815,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/modern/icon-modern-technology-10-cloud-infrastructure.psd",
+      "size": 1693568,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/survival/icon-survival-technology-01-resource-management.psd",
+      "size": 1015835,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/survival/icon-survival-technology-02-storage-systems.psd",
+      "size": 1503687,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/survival/icon-survival-technology-03-basic-commerce.psd",
+      "size": 1551462,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/survival/icon-survival-technology-04-leadership.psd",
+      "size": 1733611,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/survival/icon-survival-technology-05-organization.psd",
+      "size": 1543892,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/survival/icon-survival-technology-06-settlement-planning.psd",
+      "size": 1556254,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/survival/icon-survival-technology-07-basic-administration.psd",
+      "size": 1493500,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/survival/icon-survival-technology-08-construction-methods.psd",
+      "size": 1580978,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/survival/icon-survival-technology-09-village-records.psd",
+      "size": 1551463,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/town/icon-town-technology-01-national-banking.psd",
+      "size": 1741919,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/town/icon-town-technology-02-public-transportation.psd",
+      "size": 1734240,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/town/icon-town-technology-03-healthcare-systems.psd",
+      "size": 1743276,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/town/icon-town-technology-04-entertainment.psd",
+      "size": 1733181,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/town/icon-town-technology-05-financial-planning.psd",
+      "size": 1724423,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/town/icon-town-technology-06-government-administration.psd",
+      "size": 1769290,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/town/icon-town-technology-07-regional-development.psd",
+      "size": 1747814,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/town/icon-town-technology-08-commercial-infrastructure.psd",
+      "size": 1761815,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/town/icon-town-technology-09-communication-networks.psd",
+      "size": 1728949,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/village/icon-village-technology-01-road-systems.psd",
+      "size": 1611491,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/village/icon-village-technology-02-town-planning.psd",
+      "size": 1807062,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/village/icon-village-technology-03-merchant-economy.psd",
+      "size": 1749979,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/village/icon-village-technology-04-tax-collection.psd",
+      "size": 1745673,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/village/icon-village-technology-05-village-administration.psd",
+      "size": 1791044,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/village/icon-village-technology-06-public-services.psd",
+      "size": 1787414,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/village/icon-village-technology-07-housing-expansion.psd",
+      "size": 1740813,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/village/icon-village-technology-08-infrastructure-planning.psd",
+      "size": 1763073,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/icons/technology/village/icon-village-technology-09-supply-organization.psd",
+      "size": 1779281,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/legacy/unclassified/roblox/untitled-1.psd",
+      "size": 7194352,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/legacy/unclassified/roblox/untitled-10-topaz-gigapixel-2x-scale.psd",
+      "size": 417406,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/legacy/unclassified/roblox/untitled-7.psd",
+      "size": 2702559,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/legacy/unclassified/roblox/untitled-8.psd",
+      "size": 1457573,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/life/.DS_Store",
+      "size": 10244,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/life/creatures/README.md",
+      "size": 1212,
+      "extension": ".md"
+    },
+    {
+      "path": "source-masters/life/creatures/_templates/README.md",
+      "size": 246,
+      "extension": ".md"
+    },
+    {
+      "path": "source-masters/life/creatures/species/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/life/creatures/species/README.md",
+      "size": 402,
+      "extension": ".md"
+    },
+    {
+      "path": "source-masters/life/plants/.DS_Store",
+      "size": 8196,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/life/plants/species/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/manifest.local.json",
+      "size": 80583,
+      "extension": ".json"
+    },
+    {
+      "path": "source-masters/planets/.DS_Store",
+      "size": 8196,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/planets/artificial/data-sphere/planet-artificial-data-sphere-00001.psd",
+      "size": 111486177,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/artificial/data-sphere/planet-artificial-data-sphere-landscape-00001.psd",
+      "size": 144891736,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/crystal/.DS_Store",
+      "size": 8196,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/planets/crystal/sapphire-crystal/planet-crystal-sapphire-crystal-00001.psd",
+      "size": 110429159,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/dead/lifeless/planet-dead-lifeless-00001.psd",
+      "size": 119892622,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/dead/lifeless/planet-dead-lifeless-landscape-00001.psd",
+      "size": 141426283,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/desert/black-desert/planet-desert-black-desert-00001.psd",
+      "size": 119597664,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/energy/ion-world/planet-energy-ion-world-00001.psd",
+      "size": 113663441,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/energy/ion-world/planet-energy-ion-world-landscape-00001.psd",
+      "size": 142971972,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/gas-giant/emerald-giant/planet-gas-giant-emerald-giant-00001.psd",
+      "size": 109049838,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/ice/polar/planet-ice-polar-00001.psd",
+      "size": 113235455,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/ice/polar/planet-ice-polar-landscape-00001.psd",
+      "size": 141853548,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/lava/obsidian/planet-lava-obsidian-00001.psd",
+      "size": 108796149,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/lava/obsidian/planet-lava-obsidian-landscape-00001.psd",
+      "size": 136806529,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/lava/volcanic/planet-lava-volcanic-00001.psd",
+      "size": 112215639,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/lava/volcanic/planet-lava-volcanic-landscape-00001.psd",
+      "size": 138879084,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/living/organic-world/planet-living-world-organic-planet-00001.psd",
+      "size": 112777278,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/living/organic-world/planet-living-world-organic-planet-landscape-00001.psd",
+      "size": 132898529,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/primordial/heavy-bombardment/planet-primordial-heavy-bombardment-00001.psd",
+      "size": 108590116,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/primordial/heavy-bombardment/planet-primordial-heavy-bombardment-landscape-00001.psd",
+      "size": 136456184,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/sol/sol-earth.psd",
+      "size": 108099831,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/sol/sol-enceladus.psd",
+      "size": 117445584,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/sol/sol-europa.psd",
+      "size": 120698748,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/sol/sol-ganymede.psd",
+      "size": 122065884,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/sol/sol-jupiter.psd",
+      "size": 110600580,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/sol/sol-mars.psd",
+      "size": 109908850,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/sol/sol-mercury.psd",
+      "size": 109734495,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/sol/sol-moon.psd",
+      "size": 102631520,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/sol/sol-neptune.psd",
+      "size": 107160498,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/sol/sol-saturn.psd",
+      "size": 97913810,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/sol/sol-titan.psd",
+      "size": 107251063,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/sol/sol-uranus.psd",
+      "size": 104985768,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/sol/sol-venus.psd",
+      "size": 109238851,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/sol/sol.psd",
+      "size": 122564402,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/terrestrial/swamp/planet-terrestrial-swamp-00001.psd",
+      "size": 109069893,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/terrestrial/swamp/planet-terrestrial-swamp-landscape-00001.psd",
+      "size": 141018720,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/toxic/industrial-wasteland/planet-toxic-industrial-wasteland-00001.psd",
+      "size": 110737129,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/toxic/industrial-wasteland/planet-toxic-industrial-wasteland-landscape-00001.psd",
+      "size": 138800719,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/toxic/purple-atmosphere/planet-toxic-purple-atmosphere-00001.psd",
+      "size": 109289023,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/toxic/purple-atmosphere/planet-toxic-purple-atmosphere-landscape-00001.psd",
+      "size": 139338595,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/void/shadow-world/planet-void-shadow-world-00001.psd",
+      "size": 108675675,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/void/void-storms/planet-void-void-storms-00001.psd",
+      "size": 109624063,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/planets/void/void-storms/planet-void-void-storms-landscape-00001.psd",
+      "size": 134078040,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/production/visual-engine/nano-banana-2/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/production/visual-engine/nano-banana-2/README.md",
+      "size": 580,
+      "extension": ".md"
+    },
+    {
+      "path": "source-masters/production/visual-engine/nano-banana-2/approved/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/production/visual-engine/nano-banana-2/archetypes/creatures/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/production/visual-engine/nano-banana-2/archetypes/plants/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/production/visual-engine/nano-banana-2/backgrounds/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/production/visual-engine/nano-banana-2/cameras/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/production/visual-engine/nano-banana-2/compositions/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/production/visual-engine/nano-banana-2/environmental-adaptations/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/production/visual-engine/nano-banana-2/lighting/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/production/visual-engine/nano-banana-2/manifests/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/production/visual-engine/nano-banana-2/materials/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/production/visual-engine/nano-banana-2/model-profile/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/production/visual-engine/nano-banana-2/negative-prompts/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/production/visual-engine/nano-banana-2/outputs/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/production/visual-engine/nano-banana-2/prompt-packs/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/production/visual-engine/nano-banana-2/psd-rules/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/production/visual-engine/nano-banana-2/rejected/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/production/visual-engine/nano-banana-2/schemas/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/production/visual-engine/nano-banana-2/variations/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/production/visual-engine/species-plates/manifests/README.md",
+      "size": 283,
+      "extension": ".md"
+    },
+    {
+      "path": "source-masters/production/visual-engine/species-plates/templates/SPECIES_PLATE_MASTER_V1/README.md",
+      "size": 166,
+      "extension": ".md"
+    },
+    {
+      "path": "source-masters/production/visual-engine/species-plates/templates/SPECIES_PLATE_MASTER_V1/template.json",
+      "size": 411,
+      "extension": ".json"
+    },
+    {
+      "path": "source-masters/star-systems/.DS_Store",
+      "size": 10244,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/star-systems/README.md",
+      "size": 765,
+      "extension": ".md"
+    },
+    {
+      "path": "source-masters/star-systems/environment-painting/.DS_Store",
+      "size": 8196,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/star-systems/environment-painting/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/star-systems/environment-painting/environment-painting-0001.psd",
+      "size": 121899498,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/star-systems/environment-painting/environment-painting-0002.psd",
+      "size": 121899498,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/star-systems/environment-painting/environment-painting-0003.psd",
+      "size": 114928317,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/star-systems/environment-painting/environment-painting-0004.psd",
+      "size": 127079113,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/star-systems/environment-painting/environment-painting-0005.psd",
+      "size": 113554918,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/star-systems/environment-painting/environment-painting-0006.psd",
+      "size": 127361250,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/star-systems/environment-painting/environment-painting-0007.psd",
+      "size": 116499831,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/star-systems/environment-painting/environment-painting-0008.psd",
+      "size": 127461487,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/star-systems/environment-painting/environment-painting-0009.psd",
+      "size": 125966916,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/star-systems/environment-painting/environment-painting-0010.psd",
+      "size": 121505930,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/star-systems/environment-painting/environment-painting-0011.psd",
+      "size": 120277855,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/star-systems/environment-painting/environment-painting-0012.psd",
+      "size": 126885617,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/star-systems/environment-painting/environment-painting-0013.psd",
+      "size": 125039495,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/star-systems/environment-painting/environment-painting-0014.psd",
+      "size": 127724691,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/star-systems/environment-painting/environment-painting-0015.psd",
+      "size": 122239305,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/star-systems/environment-painting/environment-painting-0016.psd",
+      "size": 128772783,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/star-systems/environment-painting/environment-painting-0017.psd",
+      "size": 111498969,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/star-systems/environment-painting/environment-painting-sol.psd",
+      "size": 125559802,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/testing/asset-smoke-local-psd/2026-06-30t21-51-54-546z-genesis-local-source-test.psd",
+      "size": 23,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/testing/asset-upgrades-u0001/2026-06-30t21-50-04-613z-genesis-test.psd",
+      "size": 20,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/ui/.DS_Store",
+      "size": 14340,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/ui/components/.DS_Store",
+      "size": 8196,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/ui/components/click-control/click.psd",
+      "size": 414315,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/ui/components/events/event-button-legacy.psd",
+      "size": 1179141,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/ui/components/objectives/objective-overlay-02.psd",
+      "size": 214321,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/ui/components/objectives/objective-overlay.psd",
+      "size": 2500119,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/ui/components/upgrades/folder-tabs.psd",
+      "size": 14161547,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/ui/components/upgrades/upgrade-button.psd",
+      "size": 2330947,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/ui/hud/civilization-operations/01_operations-deck/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/ui/hud/civilization-operations/02_active-actions/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/ui/hud/civilization-operations/03_next-priorities/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/ui/hud/civilization-operations/04_recent-activity/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/ui/hud/civilization-operations/05_civilization-forecast/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/ui/hud/civilization-operations/06_action-row/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/ui/hud/civilization-operations/07_priority-card/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/ui/hud/civilization-operations/08_activity-row/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/ui/hud/civilization-operations/09_forecast-metrics/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/ui/hud/civilization-operations/README.md",
+      "size": 748,
+      "extension": ".md"
+    },
+    {
+      "path": "source-masters/ui/navigation/ui-panel-side-menu-buildings.psd",
+      "size": 4751947,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/ui/navigation/ui-panel-side-menu-civilization.psd",
+      "size": 11376130,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/ui/navigation/ui-panel-side-menu-events.psd",
+      "size": 14617083,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/ui/navigation/ui-panel-side-menu-galaxy.psd",
+      "size": 11345817,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/ui/navigation/ui-panel-side-menu-overview.psd",
+      "size": 3007420,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/ui/navigation/ui-panel-side-menu-research.psd",
+      "size": 6296819,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/ui/navigation/ui-panel-side-menu-spaceport.psd",
+      "size": 12979146,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/ui/navigation/ui-panel-side-menu-upgrades.psd",
+      "size": 8130638,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/ui/navigation/ui-panel-side-menu.psd",
+      "size": 6857581,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/ui/screens/.DS_Store",
+      "size": 10244,
+      "extension": ""
+    },
+    {
+      "path": "source-masters/ui/screens/alignment/alignment-background.psd",
+      "size": 16445829,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/ui/screens/events/event-background.psd",
+      "size": 791889,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/ui/screens/events/event-layer-02-background.psd",
+      "size": 185515,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/ui/screens/leaderboard/leaderboard-main.psd",
+      "size": 3438646,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/ui/screens/planet-detail/biome-enviroment.psd",
+      "size": 9851154,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/ui/screens/planet-detail/creatures-life.psd",
+      "size": 16546597,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/ui/screens/planet-detail/reference/planet-detail-screen-style-reference.png",
+      "size": 1595442,
+      "extension": ".png"
+    },
+    {
+      "path": "source-masters/ui/screens/planet-detail/resources.psd",
+      "size": 13906384,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/ui/screens/planet-detail/weather-climate.psd",
+      "size": 16829734,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/ui/screens/research/research-screen.psd",
+      "size": 46800815,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/ui/screens/templates/menu-template.psd",
+      "size": 565258,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/ui/screens/templates/screen-main-1920x1080.psd",
+      "size": 16821231,
+      "extension": ".psd"
+    },
+    {
+      "path": "source-masters/ui/screens/templates/screen-main-1920x1280.psd",
+      "size": 19879207,
+      "extension": ".psd"
+    }
+  ]
+}

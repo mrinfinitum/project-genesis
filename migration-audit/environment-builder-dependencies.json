@@ -1,0 +1,323 @@
+{
+  "generatedAt": "2026-08-01T18:31:39.937Z",
+  "contractVersion": "environment-composer-v1",
+  "routes": [
+    {
+      "path": "app/api/environment-layer-assets/route.ts",
+      "kind": "api",
+      "route": "/api/environment-layer-assets"
+    },
+    {
+      "path": "app/api/export/environment-composer.json/route.ts",
+      "kind": "api",
+      "route": "/api/export/environment-composer.json"
+    },
+    {
+      "path": "app/environment-composer/export/page.tsx",
+      "kind": "page",
+      "route": "/environment-composer/export"
+    },
+    {
+      "path": "app/environment-composer/page.tsx",
+      "kind": "page",
+      "route": "/environment-composer"
+    },
+    {
+      "path": "app/environment-composer/themes/page.tsx",
+      "kind": "page",
+      "route": "/environment-composer/themes"
+    },
+    {
+      "path": "app/galaxy-layer-generator/page.tsx",
+      "kind": "page",
+      "route": "/galaxy-layer-generator"
+    },
+    {
+      "path": "app/sector-layer-generator/page.tsx",
+      "kind": "page",
+      "route": "/sector-layer-generator"
+    },
+    {
+      "path": "app/star-system-layer-generator/page.tsx",
+      "kind": "page",
+      "route": "/star-system-layer-generator"
+    },
+    {
+      "path": "app/universe-layer-generator/page.tsx",
+      "kind": "page",
+      "route": "/universe-layer-generator"
+    }
+  ],
+  "dependencies": [
+    {
+      "path": "app/api/environment-layer-assets/route.ts",
+      "imports": [
+        "@/lib/data",
+        "@/lib/environment-layer-generators"
+      ],
+      "matches": [
+        "EnvironmentLayer",
+        "environment-layer"
+      ]
+    },
+    {
+      "path": "app/api/export/environment-composer.json/route.ts",
+      "imports": [
+        "@/lib/environment-composer",
+        "@/lib/runtime/game-runtime"
+      ],
+      "matches": [
+        "EnvironmentComposer",
+        "environmentComposer"
+      ]
+    },
+    {
+      "path": "app/environment-composer/export/page.tsx",
+      "imports": [
+        "@/components/environment-composer-workspace"
+      ],
+      "matches": [
+        "EnvironmentComposer"
+      ]
+    },
+    {
+      "path": "app/environment-composer/page.tsx",
+      "imports": [],
+      "matches": [
+        "EnvironmentComposer"
+      ]
+    },
+    {
+      "path": "app/environment-composer/themes/page.tsx",
+      "imports": [
+        "@/components/environment-composer-workspace"
+      ],
+      "matches": [
+        "EnvironmentComposer"
+      ]
+    },
+    {
+      "path": "app/universe-layer-generator/page.tsx",
+      "imports": [
+        "@/components/environment-layer-generator",
+        "@/lib/environment-layer-generators"
+      ],
+      "matches": [
+        "EnvironmentLayer",
+        "environment-layer"
+      ]
+    },
+    {
+      "path": "components/environment-composer-workspace.tsx",
+      "imports": [
+        "@/lib/environment-composer"
+      ],
+      "matches": [
+        "EnvironmentComposer",
+        "environmentComposer"
+      ]
+    },
+    {
+      "path": "components/environment-layer-generator.tsx",
+      "imports": [
+        "@/components/ui/button",
+        "@/lib/environment-layer-generators"
+      ],
+      "matches": [
+        "EnvironmentLayer",
+        "environment-layer"
+      ]
+    },
+    {
+      "path": "lib/environment-composer.ts",
+      "imports": [],
+      "matches": [
+        "EnvironmentComposer",
+        "EnvironmentLayer",
+        "environmentComposer"
+      ]
+    },
+    {
+      "path": "lib/environment-layer-generators.ts",
+      "imports": [
+        "@/data/environment-layer-generator-definitions.json"
+      ],
+      "matches": [
+        "EnvironmentLayer",
+        "environment-layer"
+      ]
+    },
+    {
+      "path": "lib/export/game-engine.ts",
+      "imports": [
+        "@/lib/actions/action-system",
+        "@/lib/ai-agents",
+        "@/lib/ai-agents/foundations",
+        "@/lib/architecture/version",
+        "@/lib/assets/civilization-operations-deck",
+        "@/lib/assets/planet-detail-screen",
+        "@/lib/buildings/taxonomy",
+        "@/lib/civilization/progression-framework",
+        "@/lib/colonies/procedural",
+        "@/lib/colonization/framework",
+        "@/lib/data",
+        "@/lib/discovery",
+        "@/lib/discovery/universal-registry",
+        "@/lib/economy/definitions",
+        "@/lib/economy/labor-generation",
+        "@/lib/economy/logistics-framework",
+        "@/lib/economy/trade",
+        "@/lib/environment-composer",
+        "@/lib/events/framework",
+        "@/lib/explorer/discovery-log",
+        "@/lib/factions/procedural",
+        "@/lib/life/creature-system",
+        "@/lib/missions/framework",
+        "@/lib/missions/procedural",
+        "@/lib/planets/deep-data",
+        "@/lib/planets/development-framework",
+        "@/lib/planets/exploration-progression",
+        "@/lib/planets/fixed-sol-planets",
+        "@/lib/planets/opportunity-profiles",
+        "@/lib/population/framework",
+        "@/lib/resources/planet-resource-profiles",
+        "@/lib/resources/service",
+        "@/lib/runtime/client-profiles",
+        "@/lib/runtime/galaxy-engine-contract",
+        "@/lib/runtime/game-runtime",
+        "@/lib/runtime/mobile-client-profiles",
+        "@/lib/species-plates/asset-pack",
+        "@/lib/species-plates/runtime",
+        "@/lib/universe/fallback-data",
+        "@/types/schema"
+      ],
+      "matches": [
+        "EnvironmentComposer",
+        "environmentComposer"
+      ]
+    },
+    {
+      "path": "lib/runtime/game-runtime.ts",
+      "imports": [
+        "@/data/civilization-identity",
+        "@/lib/actions/action-system",
+        "@/lib/ai-agents",
+        "@/lib/ai-agents/foundations",
+        "@/lib/architecture/version",
+        "@/lib/assets/asset-production",
+        "@/lib/assets/civilization-operations-deck",
+        "@/lib/assets/game-art-import",
+        "@/lib/assets/planet-detail-screen",
+        "@/lib/buildings/taxonomy",
+        "@/lib/civilization/progression-framework",
+        "@/lib/colonization/framework",
+        "@/lib/data",
+        "@/lib/discovery",
+        "@/lib/discovery/universal-registry",
+        "@/lib/economy/definitions",
+        "@/lib/economy/labor-generation",
+        "@/lib/economy/logistics-framework",
+        "@/lib/environment-composer",
+        "@/lib/events/framework",
+        "@/lib/life/creature-system",
+        "@/lib/missions/framework",
+        "@/lib/planets/deep-data",
+        "@/lib/planets/development-framework",
+        "@/lib/planets/exploration-progression",
+        "@/lib/planets/opportunity-profiles",
+        "@/lib/population/framework",
+        "@/lib/resources/service",
+        "@/lib/resources/taxonomy",
+        "@/lib/runtime/client-profiles",
+        "@/lib/runtime/galaxy-engine-contract",
+        "@/lib/runtime/mobile-client-profiles",
+        "@/lib/species-plates/runtime",
+        "@/lib/upgrades/category-presentation",
+        "@/lib/upgrades/tree-contract",
+        "@/types/planet-deep-data",
+        "@/types/runtime",
+        "@/types/schema"
+      ],
+      "matches": [
+        "EnvironmentComposer",
+        "environmentComposer"
+      ]
+    },
+    {
+      "path": "scripts/generate-studio-audit.mjs",
+      "imports": [
+        "@/components/"
+      ],
+      "matches": [
+        "environment-layer"
+      ]
+    },
+    {
+      "path": "scripts/generate-studio-migration-inventory.ts",
+      "imports": [
+        "@/lib/assets/asset-production",
+        "@/lib/assets/planet-detail-screen",
+        "@/lib/environment-composer",
+        "@/lib/runtime/game-runtime",
+        "@/lib/species-plates/master-template"
+      ],
+      "matches": [
+        "EnvironmentComposer",
+        "EnvironmentLayer",
+        "environment-layer",
+        "environmentComposer"
+      ]
+    },
+    {
+      "path": "scripts/import-environment-layer-generator-spec.mjs",
+      "imports": [],
+      "matches": [
+        "environment-layer"
+      ]
+    },
+    {
+      "path": "scripts/verify-environment-composer.ts",
+      "imports": [
+        "@/lib/environment-composer",
+        "@/lib/export/game-engine",
+        "@/lib/runtime/game-runtime"
+      ],
+      "matches": [
+        "EnvironmentComposer",
+        "environmentComposer"
+      ]
+    },
+    {
+      "path": "scripts/verify-environment-layer-generators.ts",
+      "imports": [
+        "../lib/environment-layer-generators"
+      ],
+      "matches": [
+        "EnvironmentLayer",
+        "environment-layer"
+      ]
+    },
+    {
+      "path": "types/runtime.ts",
+      "imports": [
+        "@/lib/assets/civilization-operations-deck",
+        "@/lib/assets/planet-detail-screen",
+        "@/lib/environment-composer",
+        "@/lib/life/creature-system",
+        "@/lib/species-plates/runtime",
+        "@/lib/universe/visual-signatures",
+        "@/types/planet-deep-data"
+      ],
+      "matches": [
+        "EnvironmentComposer",
+        "environmentComposer"
+      ]
+    }
+  ],
+  "contractCounts": {
+    "environmentTypes": 8,
+    "assets": 19,
+    "themes": 7,
+    "profiles": 8
+  }
+}

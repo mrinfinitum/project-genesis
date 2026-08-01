@@ -1,0 +1,2570 @@
+{
+  "generatedAt": "2026-08-01T18:31:40.103Z",
+  "count": 467,
+  "files": [
+    {
+      "path": "Curiosity Codex Handoff/Project_Genesis_Studio_Curiosities_Codex_Prompt.txt",
+      "size": 22915,
+      "extension": ".txt"
+    },
+    {
+      "path": "Curiosity Codex Handoff/project_genesis_resource_refactor_codex_prompt.md",
+      "size": 28959,
+      "extension": ".md"
+    },
+    {
+      "path": "app/prompt-library/page.tsx",
+      "size": 406,
+      "extension": ".tsx"
+    },
+    {
+      "path": "app/visual-production/page.tsx",
+      "size": 4748,
+      "extension": ".tsx"
+    },
+    {
+      "path": "app/visual-production/species-plates/page.tsx",
+      "size": 1031,
+      "extension": ".tsx"
+    },
+    {
+      "path": "components/cosmic-generation-prompt-library.tsx",
+      "size": 6050,
+      "extension": ".tsx"
+    },
+    {
+      "path": "components/creature-prompt-panel.tsx",
+      "size": 2737,
+      "extension": ".tsx"
+    },
+    {
+      "path": "components/nano-banana-prompt-panel.tsx",
+      "size": 11950,
+      "extension": ".tsx"
+    },
+    {
+      "path": "components/plant-prompt-panel.tsx",
+      "size": 1929,
+      "extension": ".tsx"
+    },
+    {
+      "path": "components/species-plate-prompt-card.tsx",
+      "size": 3007,
+      "extension": ".tsx"
+    },
+    {
+      "path": "data/ai-agents/exports/ai_portrait_prompts.csv",
+      "size": 770520,
+      "extension": ".csv"
+    },
+    {
+      "path": "data/canonical-sol-prompts.ts",
+      "size": 32211,
+      "extension": ".ts"
+    },
+    {
+      "path": "data/cosmic-generation-prompts.ts",
+      "size": 8326,
+      "extension": ".ts"
+    },
+    {
+      "path": "data/handoff/docs/codex_prompt.md",
+      "size": 2342,
+      "extension": ".md"
+    },
+    {
+      "path": "data/planet-generation-prompts.ts",
+      "size": 62643,
+      "extension": ".ts"
+    },
+    {
+      "path": "data/star-system-generation-prompts.ts",
+      "size": 6602,
+      "extension": ".ts"
+    },
+    {
+      "path": "data/visual-production/nano-banana-2/background-profiles.json",
+      "size": 3880,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-production/nano-banana-2/camera-profiles.json",
+      "size": 4835,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-production/nano-banana-2/composition-profiles.json",
+      "size": 1816,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-production/nano-banana-2/creature-archetypes.json",
+      "size": 429665,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-production/nano-banana-2/environmental-adaptations.json",
+      "size": 7795,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-production/nano-banana-2/lighting-profiles.json",
+      "size": 3640,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-production/nano-banana-2/manifest.json",
+      "size": 538,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-production/nano-banana-2/material-profiles.json",
+      "size": 12310,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-production/nano-banana-2/model-profile.json",
+      "size": 1408,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-production/nano-banana-2/negative-prompts.json",
+      "size": 469,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-production/nano-banana-2/output-types.json",
+      "size": 25832,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-production/nano-banana-2/plant-archetypes.json",
+      "size": 339495,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-production/nano-banana-2/psd-production-rules.json",
+      "size": 393,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-production/nano-banana-2/variation-profiles.json",
+      "size": 20385,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/MASTER_CODEX_IMPORT_PROMPT.txt",
+      "size": 653,
+      "extension": ".txt"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/MASTER_MANIFEST.json",
+      "size": 6486,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/CODEX_IMPORT_PROMPT.txt",
+      "size": 522,
+      "extension": ".txt"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/PROMPT_CATALOG.md",
+      "size": 1783503,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/README.md",
+      "size": 305,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/avian-archetypes.json",
+      "size": 19241,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/camera-profiles.json",
+      "size": 388,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/lighting-profiles.json",
+      "size": 266,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/manifest.json",
+      "size": 2571,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/negative-prompt-library.json",
+      "size": 559,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/output-types.json",
+      "size": 4956,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.csv",
+      "size": 1825444,
+      "extension": ".csv"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "size": 4396430,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.jsonl",
+      "size": 4212828,
+      "extension": ".jsonl"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-record.schema.json",
+      "size": 290,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-variables.json",
+      "size": 521,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/style-profiles.json",
+      "size": 98,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IC_Reptilian_Dinosaurian_Creatures/CODEX_IMPORT_PROMPT.txt",
+      "size": 392,
+      "extension": ".txt"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IC_Reptilian_Dinosaurian_Creatures/README.md",
+      "size": 202,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IC_Reptilian_Dinosaurian_Creatures/archetypes.json",
+      "size": 19444,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IC_Reptilian_Dinosaurian_Creatures/camera-profiles.json",
+      "size": 129,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IC_Reptilian_Dinosaurian_Creatures/lighting-profiles.json",
+      "size": 132,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IC_Reptilian_Dinosaurian_Creatures/manifest.json",
+      "size": 2452,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IC_Reptilian_Dinosaurian_Creatures/negative-prompt-library.json",
+      "size": 428,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IC_Reptilian_Dinosaurian_Creatures/output-types.json",
+      "size": 3167,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IC_Reptilian_Dinosaurian_Creatures/prompt-library.csv",
+      "size": 1246426,
+      "extension": ".csv"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IC_Reptilian_Dinosaurian_Creatures/prompt-library.json",
+      "size": 2921654,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IC_Reptilian_Dinosaurian_Creatures/prompt-library.jsonl",
+      "size": 2811006,
+      "extension": ".jsonl"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IC_Reptilian_Dinosaurian_Creatures/prompt-record.schema.json",
+      "size": 304,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IC_Reptilian_Dinosaurian_Creatures/prompt-variables.json",
+      "size": 339,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IC_Reptilian_Dinosaurian_Creatures/style-profiles.json",
+      "size": 98,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IC_Reptilian_Dinosaurian_Creatures_v1.0.0.zip",
+      "size": 147058,
+      "extension": ".zip"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_ID_Amphibian_Creatures/CODEX_IMPORT_PROMPT.txt",
+      "size": 364,
+      "extension": ".txt"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_ID_Amphibian_Creatures/README.md",
+      "size": 188,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_ID_Amphibian_Creatures/archetypes.json",
+      "size": 13732,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_ID_Amphibian_Creatures/camera-profiles.json",
+      "size": 129,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_ID_Amphibian_Creatures/lighting-profiles.json",
+      "size": 132,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_ID_Amphibian_Creatures/manifest.json",
+      "size": 2425,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_ID_Amphibian_Creatures/negative-prompt-library.json",
+      "size": 428,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_ID_Amphibian_Creatures/output-types.json",
+      "size": 3167,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_ID_Amphibian_Creatures/prompt-library.csv",
+      "size": 877974,
+      "extension": ".csv"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_ID_Amphibian_Creatures/prompt-library.json",
+      "size": 2053614,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_ID_Amphibian_Creatures/prompt-library.jsonl",
+      "size": 1975582,
+      "extension": ".jsonl"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_ID_Amphibian_Creatures/prompt-record.schema.json",
+      "size": 304,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_ID_Amphibian_Creatures/prompt-variables.json",
+      "size": 339,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_ID_Amphibian_Creatures/style-profiles.json",
+      "size": 98,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_ID_Amphibian_Creatures_v1.0.0.zip",
+      "size": 106651,
+      "extension": ".zip"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IE_Fishlike_Aquatic_Creatures/CODEX_IMPORT_PROMPT.txt",
+      "size": 382,
+      "extension": ".txt"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IE_Fishlike_Aquatic_Creatures/README.md",
+      "size": 197,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IE_Fishlike_Aquatic_Creatures/archetypes.json",
+      "size": 17039,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IE_Fishlike_Aquatic_Creatures/camera-profiles.json",
+      "size": 129,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IE_Fishlike_Aquatic_Creatures/lighting-profiles.json",
+      "size": 132,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IE_Fishlike_Aquatic_Creatures/manifest.json",
+      "size": 2442,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IE_Fishlike_Aquatic_Creatures/negative-prompt-library.json",
+      "size": 428,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IE_Fishlike_Aquatic_Creatures/output-types.json",
+      "size": 3167,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IE_Fishlike_Aquatic_Creatures/prompt-library.csv",
+      "size": 1035327,
+      "extension": ".csv"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IE_Fishlike_Aquatic_Creatures/prompt-library.json",
+      "size": 2421042,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IE_Fishlike_Aquatic_Creatures/prompt-library.jsonl",
+      "size": 2327404,
+      "extension": ".jsonl"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IE_Fishlike_Aquatic_Creatures/prompt-record.schema.json",
+      "size": 304,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IE_Fishlike_Aquatic_Creatures/prompt-variables.json",
+      "size": 339,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IE_Fishlike_Aquatic_Creatures/style-profiles.json",
+      "size": 98,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IE_Fishlike_Aquatic_Creatures_v1.0.0.zip",
+      "size": 123598,
+      "extension": ".zip"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IF_Arthropods_Insectoids_Arachnids/CODEX_IMPORT_PROMPT.txt",
+      "size": 394,
+      "extension": ".txt"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IF_Arthropods_Insectoids_Arachnids/README.md",
+      "size": 203,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IF_Arthropods_Insectoids_Arachnids/archetypes.json",
+      "size": 17297,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IF_Arthropods_Insectoids_Arachnids/camera-profiles.json",
+      "size": 129,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IF_Arthropods_Insectoids_Arachnids/lighting-profiles.json",
+      "size": 132,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IF_Arthropods_Insectoids_Arachnids/manifest.json",
+      "size": 2453,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IF_Arthropods_Insectoids_Arachnids/negative-prompt-library.json",
+      "size": 428,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IF_Arthropods_Insectoids_Arachnids/output-types.json",
+      "size": 3167,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IF_Arthropods_Insectoids_Arachnids/prompt-library.csv",
+      "size": 1107325,
+      "extension": ".csv"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IF_Arthropods_Insectoids_Arachnids/prompt-library.json",
+      "size": 2597084,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IF_Arthropods_Insectoids_Arachnids/prompt-library.jsonl",
+      "size": 2498586,
+      "extension": ".jsonl"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IF_Arthropods_Insectoids_Arachnids/prompt-record.schema.json",
+      "size": 304,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IF_Arthropods_Insectoids_Arachnids/prompt-variables.json",
+      "size": 339,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IF_Arthropods_Insectoids_Arachnids/style-profiles.json",
+      "size": 98,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IF_Arthropods_Insectoids_Arachnids_v1.0.0.zip",
+      "size": 132381,
+      "extension": ".zip"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IG_Crustaceans_Molluscoids_Cephalopods/CODEX_IMPORT_PROMPT.txt",
+      "size": 402,
+      "extension": ".txt"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IG_Crustaceans_Molluscoids_Cephalopods/README.md",
+      "size": 207,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IG_Crustaceans_Molluscoids_Cephalopods/archetypes.json",
+      "size": 13626,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IG_Crustaceans_Molluscoids_Cephalopods/camera-profiles.json",
+      "size": 129,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IG_Crustaceans_Molluscoids_Cephalopods/lighting-profiles.json",
+      "size": 132,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IG_Crustaceans_Molluscoids_Cephalopods/manifest.json",
+      "size": 2460,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IG_Crustaceans_Molluscoids_Cephalopods/negative-prompt-library.json",
+      "size": 428,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IG_Crustaceans_Molluscoids_Cephalopods/output-types.json",
+      "size": 3167,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IG_Crustaceans_Molluscoids_Cephalopods/prompt-library.csv",
+      "size": 841921,
+      "extension": ".csv"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IG_Crustaceans_Molluscoids_Cephalopods/prompt-library.json",
+      "size": 1972586,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IG_Crustaceans_Molluscoids_Cephalopods/prompt-library.jsonl",
+      "size": 1896876,
+      "extension": ".jsonl"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IG_Crustaceans_Molluscoids_Cephalopods/prompt-record.schema.json",
+      "size": 304,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IG_Crustaceans_Molluscoids_Cephalopods/prompt-variables.json",
+      "size": 339,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IG_Crustaceans_Molluscoids_Cephalopods/style-profiles.json",
+      "size": 98,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IG_Crustaceans_Molluscoids_Cephalopods_v1.0.0.zip",
+      "size": 103503,
+      "extension": ".zip"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IH_Wormlike_Jellyform_Echinoderm_Like_Creatures/CODEX_IMPORT_PROMPT.txt",
+      "size": 420,
+      "extension": ".txt"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IH_Wormlike_Jellyform_Echinoderm_Like_Creatures/README.md",
+      "size": 216,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IH_Wormlike_Jellyform_Echinoderm_Like_Creatures/archetypes.json",
+      "size": 11609,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IH_Wormlike_Jellyform_Echinoderm_Like_Creatures/camera-profiles.json",
+      "size": 129,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IH_Wormlike_Jellyform_Echinoderm_Like_Creatures/lighting-profiles.json",
+      "size": 132,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IH_Wormlike_Jellyform_Echinoderm_Like_Creatures/manifest.json",
+      "size": 2478,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IH_Wormlike_Jellyform_Echinoderm_Like_Creatures/negative-prompt-library.json",
+      "size": 428,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IH_Wormlike_Jellyform_Echinoderm_Like_Creatures/output-types.json",
+      "size": 3167,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IH_Wormlike_Jellyform_Echinoderm_Like_Creatures/prompt-library.csv",
+      "size": 740583,
+      "extension": ".csv"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IH_Wormlike_Jellyform_Echinoderm_Like_Creatures/prompt-library.json",
+      "size": 1738386,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IH_Wormlike_Jellyform_Echinoderm_Like_Creatures/prompt-library.jsonl",
+      "size": 1672612,
+      "extension": ".jsonl"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IH_Wormlike_Jellyform_Echinoderm_Like_Creatures/prompt-record.schema.json",
+      "size": 304,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IH_Wormlike_Jellyform_Echinoderm_Like_Creatures/prompt-variables.json",
+      "size": 339,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IH_Wormlike_Jellyform_Echinoderm_Like_Creatures/style-profiles.json",
+      "size": 98,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IH_Wormlike_Jellyform_Echinoderm_Like_Creatures_v1.0.0.zip",
+      "size": 93491,
+      "extension": ".zip"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_III_Exotic_Biological_Life/CODEX_IMPORT_PROMPT.txt",
+      "size": 372,
+      "extension": ".txt"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_III_Exotic_Biological_Life/README.md",
+      "size": 192,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_III_Exotic_Biological_Life/archetypes.json",
+      "size": 9469,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_III_Exotic_Biological_Life/camera-profiles.json",
+      "size": 129,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_III_Exotic_Biological_Life/lighting-profiles.json",
+      "size": 132,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_III_Exotic_Biological_Life/manifest.json",
+      "size": 2433,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_III_Exotic_Biological_Life/negative-prompt-library.json",
+      "size": 428,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_III_Exotic_Biological_Life/output-types.json",
+      "size": 3167,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_III_Exotic_Biological_Life/prompt-library.csv",
+      "size": 603228,
+      "extension": ".csv"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_III_Exotic_Biological_Life/prompt-library.json",
+      "size": 1409118,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_III_Exotic_Biological_Life/prompt-library.jsonl",
+      "size": 1355818,
+      "extension": ".jsonl"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_III_Exotic_Biological_Life/prompt-record.schema.json",
+      "size": 305,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_III_Exotic_Biological_Life/prompt-variables.json",
+      "size": 339,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_III_Exotic_Biological_Life/style-profiles.json",
+      "size": 98,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_III_Exotic_Biological_Life_v1.0.0.zip",
+      "size": 76903,
+      "extension": ".zip"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_II_Megafauna_Microfauna_Colonial_Organisms/CODEX_IMPORT_PROMPT.txt",
+      "size": 410,
+      "extension": ".txt"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_II_Megafauna_Microfauna_Colonial_Organisms/README.md",
+      "size": 211,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_II_Megafauna_Microfauna_Colonial_Organisms/archetypes.json",
+      "size": 10887,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_II_Megafauna_Microfauna_Colonial_Organisms/camera-profiles.json",
+      "size": 129,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_II_Megafauna_Microfauna_Colonial_Organisms/lighting-profiles.json",
+      "size": 132,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_II_Megafauna_Microfauna_Colonial_Organisms/manifest.json",
+      "size": 2468,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_II_Megafauna_Microfauna_Colonial_Organisms/negative-prompt-library.json",
+      "size": 428,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_II_Megafauna_Microfauna_Colonial_Organisms/output-types.json",
+      "size": 3167,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_II_Megafauna_Microfauna_Colonial_Organisms/prompt-library.csv",
+      "size": 695512,
+      "extension": ".csv"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_II_Megafauna_Microfauna_Colonial_Organisms/prompt-library.json",
+      "size": 1629062,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_II_Megafauna_Microfauna_Colonial_Organisms/prompt-library.jsonl",
+      "size": 1567662,
+      "extension": ".jsonl"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_II_Megafauna_Microfauna_Colonial_Organisms/prompt-record.schema.json",
+      "size": 304,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_II_Megafauna_Microfauna_Colonial_Organisms/prompt-variables.json",
+      "size": 339,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_II_Megafauna_Microfauna_Colonial_Organisms/style-profiles.json",
+      "size": 98,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_II_Megafauna_Microfauna_Colonial_Organisms_v1.0.0.zip",
+      "size": 88363,
+      "extension": ".zip"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IV_Energy_Field_Based_Life/CODEX_IMPORT_PROMPT.txt",
+      "size": 376,
+      "extension": ".txt"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IV_Energy_Field_Based_Life/README.md",
+      "size": 194,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IV_Energy_Field_Based_Life/archetypes.json",
+      "size": 7623,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IV_Energy_Field_Based_Life/camera-profiles.json",
+      "size": 129,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IV_Energy_Field_Based_Life/lighting-profiles.json",
+      "size": 132,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IV_Energy_Field_Based_Life/manifest.json",
+      "size": 2434,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IV_Energy_Field_Based_Life/negative-prompt-library.json",
+      "size": 428,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IV_Energy_Field_Based_Life/output-types.json",
+      "size": 3167,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IV_Energy_Field_Based_Life/prompt-library.csv",
+      "size": 467799,
+      "extension": ".csv"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IV_Energy_Field_Based_Life/prompt-library.json",
+      "size": 1095168,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IV_Energy_Field_Based_Life/prompt-library.jsonl",
+      "size": 1052722,
+      "extension": ".jsonl"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IV_Energy_Field_Based_Life/prompt-record.schema.json",
+      "size": 304,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IV_Energy_Field_Based_Life/prompt-variables.json",
+      "size": 339,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IV_Energy_Field_Based_Life/style-profiles.json",
+      "size": 98,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IV_Energy_Field_Based_Life_v1.0.0.zip",
+      "size": 62469,
+      "extension": ".zip"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PA_Trees/CODEX_IMPORT_PROMPT.txt",
+      "size": 466,
+      "extension": ".txt"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PA_Trees/PROMPT_CATALOG.md",
+      "size": 1575994,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PA_Trees/README.md",
+      "size": 194,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PA_Trees/camera-profiles.json",
+      "size": 196,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PA_Trees/lighting-profiles.json",
+      "size": 132,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PA_Trees/manifest.json",
+      "size": 2534,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PA_Trees/negative-prompt-library.json",
+      "size": 485,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PA_Trees/output-types.json",
+      "size": 4608,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PA_Trees/prompt-library.csv",
+      "size": 1598474,
+      "extension": ".csv"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PA_Trees/prompt-library.json",
+      "size": 3899786,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PA_Trees/prompt-library.jsonl",
+      "size": 3727272,
+      "extension": ".jsonl"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PA_Trees/prompt-record.schema.json",
+      "size": 290,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PA_Trees/prompt-variables.json",
+      "size": 530,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PA_Trees/style-profiles.json",
+      "size": 118,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PA_Trees/tree-archetypes.json",
+      "size": 8382,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PB_Shrubs_Bushes_Ground_Cover/CODEX_IMPORT_PROMPT.txt",
+      "size": 515,
+      "extension": ".txt"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PB_Shrubs_Bushes_Ground_Cover/PROMPT_CATALOG.md",
+      "size": 1406621,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PB_Shrubs_Bushes_Ground_Cover/README.md",
+      "size": 213,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PB_Shrubs_Bushes_Ground_Cover/camera-profiles.json",
+      "size": 196,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PB_Shrubs_Bushes_Ground_Cover/lighting-profiles.json",
+      "size": 132,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PB_Shrubs_Bushes_Ground_Cover/manifest.json",
+      "size": 2581,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PB_Shrubs_Bushes_Ground_Cover/negative-prompt-library.json",
+      "size": 466,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PB_Shrubs_Bushes_Ground_Cover/output-types.json",
+      "size": 4354,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PB_Shrubs_Bushes_Ground_Cover/prompt-library.csv",
+      "size": 1422250,
+      "extension": ".csv"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PB_Shrubs_Bushes_Ground_Cover/prompt-library.json",
+      "size": 3473628,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PB_Shrubs_Bushes_Ground_Cover/prompt-library.jsonl",
+      "size": 3313334,
+      "extension": ".jsonl"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PB_Shrubs_Bushes_Ground_Cover/prompt-record.schema.json",
+      "size": 290,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PB_Shrubs_Bushes_Ground_Cover/prompt-variables.json",
+      "size": 529,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PB_Shrubs_Bushes_Ground_Cover/shrub-archetypes.json",
+      "size": 14216,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PB_Shrubs_Bushes_Ground_Cover/style-profiles.json",
+      "size": 118,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PC_Flowers_Pollinators/CODEX_IMPORT_PROMPT.txt",
+      "size": 368,
+      "extension": ".txt"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PC_Flowers_Pollinators/README.md",
+      "size": 190,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PC_Flowers_Pollinators/archetypes.json",
+      "size": 19861,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PC_Flowers_Pollinators/camera-profiles.json",
+      "size": 129,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PC_Flowers_Pollinators/lighting-profiles.json",
+      "size": 132,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PC_Flowers_Pollinators/manifest.json",
+      "size": 2425,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PC_Flowers_Pollinators/negative-prompt-library.json",
+      "size": 428,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PC_Flowers_Pollinators/output-types.json",
+      "size": 3529,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PC_Flowers_Pollinators/prompt-library.csv",
+      "size": 1355293,
+      "extension": ".csv"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PC_Flowers_Pollinators/prompt-library.json",
+      "size": 3164630,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PC_Flowers_Pollinators/prompt-library.jsonl",
+      "size": 3044628,
+      "extension": ".jsonl"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PC_Flowers_Pollinators/prompt-record.schema.json",
+      "size": 304,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PC_Flowers_Pollinators/prompt-variables.json",
+      "size": 339,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PC_Flowers_Pollinators/style-profiles.json",
+      "size": 98,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PC_Flowers_Pollinators_v1.0.0.zip",
+      "size": 152724,
+      "extension": ".zip"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PD_Grasses_Ferns_Mosses_Lichens/CODEX_IMPORT_PROMPT.txt",
+      "size": 390,
+      "extension": ".txt"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PD_Grasses_Ferns_Mosses_Lichens/README.md",
+      "size": 201,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PD_Grasses_Ferns_Mosses_Lichens/archetypes.json",
+      "size": 13969,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PD_Grasses_Ferns_Mosses_Lichens/camera-profiles.json",
+      "size": 129,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PD_Grasses_Ferns_Mosses_Lichens/lighting-profiles.json",
+      "size": 132,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PD_Grasses_Ferns_Mosses_Lichens/manifest.json",
+      "size": 2444,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PD_Grasses_Ferns_Mosses_Lichens/negative-prompt-library.json",
+      "size": 428,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PD_Grasses_Ferns_Mosses_Lichens/output-types.json",
+      "size": 3529,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PD_Grasses_Ferns_Mosses_Lichens/prompt-library.csv",
+      "size": 977942,
+      "extension": ".csv"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PD_Grasses_Ferns_Mosses_Lichens/prompt-library.json",
+      "size": 2293324,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PD_Grasses_Ferns_Mosses_Lichens/prompt-library.jsonl",
+      "size": 2206862,
+      "extension": ".jsonl"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PD_Grasses_Ferns_Mosses_Lichens/prompt-record.schema.json",
+      "size": 304,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PD_Grasses_Ferns_Mosses_Lichens/prompt-variables.json",
+      "size": 339,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PD_Grasses_Ferns_Mosses_Lichens/style-profiles.json",
+      "size": 98,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PD_Grasses_Ferns_Mosses_Lichens_v1.0.0.zip",
+      "size": 114810,
+      "extension": ".zip"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PE_Vines_Epiphytes_Climbing_Flora/CODEX_IMPORT_PROMPT.txt",
+      "size": 392,
+      "extension": ".txt"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PE_Vines_Epiphytes_Climbing_Flora/README.md",
+      "size": 202,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PE_Vines_Epiphytes_Climbing_Flora/archetypes.json",
+      "size": 10981,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PE_Vines_Epiphytes_Climbing_Flora/camera-profiles.json",
+      "size": 129,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PE_Vines_Epiphytes_Climbing_Flora/lighting-profiles.json",
+      "size": 132,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PE_Vines_Epiphytes_Climbing_Flora/manifest.json",
+      "size": 2447,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PE_Vines_Epiphytes_Climbing_Flora/negative-prompt-library.json",
+      "size": 428,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PE_Vines_Epiphytes_Climbing_Flora/output-types.json",
+      "size": 3529,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PE_Vines_Epiphytes_Climbing_Flora/prompt-library.csv",
+      "size": 771810,
+      "extension": ".csv"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PE_Vines_Epiphytes_Climbing_Flora/prompt-library.json",
+      "size": 1809532,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PE_Vines_Epiphytes_Climbing_Flora/prompt-library.jsonl",
+      "size": 1741550,
+      "extension": ".jsonl"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PE_Vines_Epiphytes_Climbing_Flora/prompt-record.schema.json",
+      "size": 304,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PE_Vines_Epiphytes_Climbing_Flora/prompt-variables.json",
+      "size": 339,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PE_Vines_Epiphytes_Climbing_Flora/style-profiles.json",
+      "size": 98,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PE_Vines_Epiphytes_Climbing_Flora_v1.0.0.zip",
+      "size": 92971,
+      "extension": ".zip"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PF_Aquatic_Plants/CODEX_IMPORT_PROMPT.txt",
+      "size": 354,
+      "extension": ".txt"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PF_Aquatic_Plants/README.md",
+      "size": 183,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PF_Aquatic_Plants/archetypes.json",
+      "size": 11755,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PF_Aquatic_Plants/camera-profiles.json",
+      "size": 129,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PF_Aquatic_Plants/lighting-profiles.json",
+      "size": 132,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PF_Aquatic_Plants/manifest.json",
+      "size": 2412,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PF_Aquatic_Plants/negative-prompt-library.json",
+      "size": 428,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PF_Aquatic_Plants/output-types.json",
+      "size": 3529,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PF_Aquatic_Plants/prompt-library.csv",
+      "size": 787410,
+      "extension": ".csv"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PF_Aquatic_Plants/prompt-library.json",
+      "size": 1835932,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PF_Aquatic_Plants/prompt-library.jsonl",
+      "size": 1765790,
+      "extension": ".jsonl"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PF_Aquatic_Plants/prompt-record.schema.json",
+      "size": 304,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PF_Aquatic_Plants/prompt-variables.json",
+      "size": 339,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PF_Aquatic_Plants/style-profiles.json",
+      "size": 98,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PF_Aquatic_Plants_v1.0.0.zip",
+      "size": 94158,
+      "extension": ".zip"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PG_Succulents_Cacti_Extremophytes/CODEX_IMPORT_PROMPT.txt",
+      "size": 392,
+      "extension": ".txt"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PG_Succulents_Cacti_Extremophytes/README.md",
+      "size": 202,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PG_Succulents_Cacti_Extremophytes/archetypes.json",
+      "size": 9546,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PG_Succulents_Cacti_Extremophytes/camera-profiles.json",
+      "size": 129,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PG_Succulents_Cacti_Extremophytes/lighting-profiles.json",
+      "size": 132,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PG_Succulents_Cacti_Extremophytes/manifest.json",
+      "size": 2446,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PG_Succulents_Cacti_Extremophytes/negative-prompt-library.json",
+      "size": 428,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PG_Succulents_Cacti_Extremophytes/output-types.json",
+      "size": 3529,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PG_Succulents_Cacti_Extremophytes/prompt-library.csv",
+      "size": 671844,
+      "extension": ".csv"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PG_Succulents_Cacti_Extremophytes/prompt-library.json",
+      "size": 1570556,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PG_Succulents_Cacti_Extremophytes/prompt-library.jsonl",
+      "size": 1512054,
+      "extension": ".jsonl"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PG_Succulents_Cacti_Extremophytes/prompt-record.schema.json",
+      "size": 304,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PG_Succulents_Cacti_Extremophytes/prompt-variables.json",
+      "size": 339,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PG_Succulents_Cacti_Extremophytes/style-profiles.json",
+      "size": 98,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PG_Succulents_Cacti_Extremophytes_v1.0.0.zip",
+      "size": 82192,
+      "extension": ".zip"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PH_Carnivorous_Parasitic_Symbiotic_Plants/CODEX_IMPORT_PROMPT.txt",
+      "size": 408,
+      "extension": ".txt"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PH_Carnivorous_Parasitic_Symbiotic_Plants/README.md",
+      "size": 210,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PH_Carnivorous_Parasitic_Symbiotic_Plants/archetypes.json",
+      "size": 9722,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PH_Carnivorous_Parasitic_Symbiotic_Plants/camera-profiles.json",
+      "size": 129,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PH_Carnivorous_Parasitic_Symbiotic_Plants/lighting-profiles.json",
+      "size": 132,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PH_Carnivorous_Parasitic_Symbiotic_Plants/manifest.json",
+      "size": 2462,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PH_Carnivorous_Parasitic_Symbiotic_Plants/negative-prompt-library.json",
+      "size": 428,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PH_Carnivorous_Parasitic_Symbiotic_Plants/output-types.json",
+      "size": 3529,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PH_Carnivorous_Parasitic_Symbiotic_Plants/prompt-library.csv",
+      "size": 675444,
+      "extension": ".csv"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PH_Carnivorous_Parasitic_Symbiotic_Plants/prompt-library.json",
+      "size": 1579756,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PH_Carnivorous_Parasitic_Symbiotic_Plants/prompt-library.jsonl",
+      "size": 1520774,
+      "extension": ".jsonl"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PH_Carnivorous_Parasitic_Symbiotic_Plants/prompt-record.schema.json",
+      "size": 304,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PH_Carnivorous_Parasitic_Symbiotic_Plants/prompt-variables.json",
+      "size": 339,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PH_Carnivorous_Parasitic_Symbiotic_Plants/style-profiles.json",
+      "size": 98,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PH_Carnivorous_Parasitic_Symbiotic_Plants_v1.0.0.zip",
+      "size": 82875,
+      "extension": ".zip"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIII_Exotic_Flora/CODEX_IMPORT_PROMPT.txt",
+      "size": 354,
+      "extension": ".txt"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIII_Exotic_Flora/README.md",
+      "size": 183,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIII_Exotic_Flora/archetypes.json",
+      "size": 12336,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIII_Exotic_Flora/camera-profiles.json",
+      "size": 129,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIII_Exotic_Flora/lighting-profiles.json",
+      "size": 132,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIII_Exotic_Flora/manifest.json",
+      "size": 2414,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIII_Exotic_Flora/negative-prompt-library.json",
+      "size": 428,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIII_Exotic_Flora/output-types.json",
+      "size": 3529,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIII_Exotic_Flora/prompt-library.csv",
+      "size": 835503,
+      "extension": ".csv"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIII_Exotic_Flora/prompt-library.json",
+      "size": 1949710,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIII_Exotic_Flora/prompt-library.jsonl",
+      "size": 1875188,
+      "extension": ".jsonl"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIII_Exotic_Flora/prompt-record.schema.json",
+      "size": 306,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIII_Exotic_Flora/prompt-variables.json",
+      "size": 339,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIII_Exotic_Flora/style-profiles.json",
+      "size": 98,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIII_Exotic_Flora_v1.0.0.zip",
+      "size": 98680,
+      "extension": ".zip"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PII_Fungi_Mycelial_Life/CODEX_IMPORT_PROMPT.txt",
+      "size": 370,
+      "extension": ".txt"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PII_Fungi_Mycelial_Life/README.md",
+      "size": 191,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PII_Fungi_Mycelial_Life/archetypes.json",
+      "size": 11913,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PII_Fungi_Mycelial_Life/camera-profiles.json",
+      "size": 129,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PII_Fungi_Mycelial_Life/lighting-profiles.json",
+      "size": 132,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PII_Fungi_Mycelial_Life/manifest.json",
+      "size": 2427,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PII_Fungi_Mycelial_Life/negative-prompt-library.json",
+      "size": 428,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PII_Fungi_Mycelial_Life/output-types.json",
+      "size": 3529,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PII_Fungi_Mycelial_Life/prompt-library.csv",
+      "size": 827443,
+      "extension": ".csv"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PII_Fungi_Mycelial_Life/prompt-library.json",
+      "size": 1934950,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PII_Fungi_Mycelial_Life/prompt-library.jsonl",
+      "size": 1861868,
+      "extension": ".jsonl"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PII_Fungi_Mycelial_Life/prompt-record.schema.json",
+      "size": 305,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PII_Fungi_Mycelial_Life/prompt-variables.json",
+      "size": 339,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PII_Fungi_Mycelial_Life/style-profiles.json",
+      "size": 98,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PII_Fungi_Mycelial_Life_v1.0.0.zip",
+      "size": 98526,
+      "extension": ".zip"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIV_Artificial_Engineered_Flora/CODEX_IMPORT_PROMPT.txt",
+      "size": 386,
+      "extension": ".txt"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIV_Artificial_Engineered_Flora/README.md",
+      "size": 199,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIV_Artificial_Engineered_Flora/archetypes.json",
+      "size": 11409,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIV_Artificial_Engineered_Flora/camera-profiles.json",
+      "size": 129,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIV_Artificial_Engineered_Flora/lighting-profiles.json",
+      "size": 132,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIV_Artificial_Engineered_Flora/manifest.json",
+      "size": 2443,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIV_Artificial_Engineered_Flora/negative-prompt-library.json",
+      "size": 428,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIV_Artificial_Engineered_Flora/output-types.json",
+      "size": 3529,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIV_Artificial_Engineered_Flora/prompt-library.csv",
+      "size": 782310,
+      "extension": ".csv"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIV_Artificial_Engineered_Flora/prompt-library.json",
+      "size": 1826932,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIV_Artificial_Engineered_Flora/prompt-library.jsonl",
+      "size": 1758230,
+      "extension": ".jsonl"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIV_Artificial_Engineered_Flora/prompt-record.schema.json",
+      "size": 305,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIV_Artificial_Engineered_Flora/prompt-variables.json",
+      "size": 339,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIV_Artificial_Engineered_Flora/style-profiles.json",
+      "size": 98,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PIV_Artificial_Engineered_Flora_v1.0.0.zip",
+      "size": 93929,
+      "extension": ".zip"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PV_Giant_Ancient_Extinct_Flora/CODEX_IMPORT_PROMPT.txt",
+      "size": 386,
+      "extension": ".txt"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PV_Giant_Ancient_Extinct_Flora/README.md",
+      "size": 199,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PV_Giant_Ancient_Extinct_Flora/archetypes.json",
+      "size": 7396,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PV_Giant_Ancient_Extinct_Flora/camera-profiles.json",
+      "size": 129,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PV_Giant_Ancient_Extinct_Flora/lighting-profiles.json",
+      "size": 132,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PV_Giant_Ancient_Extinct_Flora/manifest.json",
+      "size": 2440,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PV_Giant_Ancient_Extinct_Flora/negative-prompt-library.json",
+      "size": 428,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PV_Giant_Ancient_Extinct_Flora/output-types.json",
+      "size": 3529,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PV_Giant_Ancient_Extinct_Flora/prompt-library.csv",
+      "size": 517445,
+      "extension": ".csv"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PV_Giant_Ancient_Extinct_Flora/prompt-library.json",
+      "size": 1209422,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PV_Giant_Ancient_Extinct_Flora/prompt-library.jsonl",
+      "size": 1164180,
+      "extension": ".jsonl"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PV_Giant_Ancient_Extinct_Flora/prompt-record.schema.json",
+      "size": 304,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PV_Giant_Ancient_Extinct_Flora/prompt-variables.json",
+      "size": 339,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PV_Giant_Ancient_Extinct_Flora/style-profiles.json",
+      "size": 98,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_PV_Giant_Ancient_Extinct_Flora_v1.0.0.zip",
+      "size": 66279,
+      "extension": ".zip"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_VI_Sapient_Collective_Species/CODEX_IMPORT_PROMPT.txt",
+      "size": 382,
+      "extension": ".txt"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_VI_Sapient_Collective_Species/README.md",
+      "size": 197,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_VI_Sapient_Collective_Species/archetypes.json",
+      "size": 7107,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_VI_Sapient_Collective_Species/camera-profiles.json",
+      "size": 129,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_VI_Sapient_Collective_Species/lighting-profiles.json",
+      "size": 132,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_VI_Sapient_Collective_Species/manifest.json",
+      "size": 2440,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_VI_Sapient_Collective_Species/negative-prompt-library.json",
+      "size": 428,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_VI_Sapient_Collective_Species/output-types.json",
+      "size": 3167,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_VI_Sapient_Collective_Species/prompt-library.csv",
+      "size": 461355,
+      "extension": ".csv"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_VI_Sapient_Collective_Species/prompt-library.json",
+      "size": 1078392,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_VI_Sapient_Collective_Species/prompt-library.jsonl",
+      "size": 1037890,
+      "extension": ".jsonl"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_VI_Sapient_Collective_Species/prompt-record.schema.json",
+      "size": 304,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_VI_Sapient_Collective_Species/prompt-variables.json",
+      "size": 339,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_VI_Sapient_Collective_Species/style-profiles.json",
+      "size": 98,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_VI_Sapient_Collective_Species_v1.0.0.zip",
+      "size": 61703,
+      "extension": ".zip"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_V_Artificial_Life/CODEX_IMPORT_PROMPT.txt",
+      "size": 354,
+      "extension": ".txt"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_V_Artificial_Life/README.md",
+      "size": 183,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_V_Artificial_Life/archetypes.json",
+      "size": 7517,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_V_Artificial_Life/camera-profiles.json",
+      "size": 129,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_V_Artificial_Life/lighting-profiles.json",
+      "size": 132,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_V_Artificial_Life/manifest.json",
+      "size": 2413,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_V_Artificial_Life/negative-prompt-library.json",
+      "size": 428,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_V_Artificial_Life/output-types.json",
+      "size": 3167,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_V_Artificial_Life/prompt-library.csv",
+      "size": 467475,
+      "extension": ".csv"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_V_Artificial_Life/prompt-library.json",
+      "size": 1090542,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_V_Artificial_Life/prompt-library.jsonl",
+      "size": 1048960,
+      "extension": ".jsonl"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_V_Artificial_Life/prompt-record.schema.json",
+      "size": 303,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_V_Artificial_Life/prompt-variables.json",
+      "size": 339,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_V_Artificial_Life/style-profiles.json",
+      "size": 98,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_V_Artificial_Life_v1.0.0.zip",
+      "size": 62213,
+      "extension": ".zip"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/README.md",
+      "size": 633,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/VOLUME_INDEX.json",
+      "size": 5710,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/imported-source/registry.json",
+      "size": 10985,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/registry.json",
+      "size": 1448,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ia-mammalian-creatures/IMPORT_PROMPT.txt",
+      "size": 731,
+      "extension": ".txt"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ia-mammalian-creatures/README.md",
+      "size": 1227,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ia-mammalian-creatures/camera_profiles.json",
+      "size": 1370,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ia-mammalian-creatures/lighting_profiles.json",
+      "size": 621,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ia-mammalian-creatures/manifest.json",
+      "size": 719,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ia-mammalian-creatures/negative_prompts.json",
+      "size": 395,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ia-mammalian-creatures/prompt_library.json",
+      "size": 3162245,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ia-mammalian-creatures/prompt_variables.json",
+      "size": 2213,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ia-mammalian-creatures/render_profiles.json",
+      "size": 360,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ia-mammalian-creatures/species_plate_profiles.json",
+      "size": 393,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ib-avian-flying-creatures/CODEX_IMPORT_PROMPT.txt",
+      "size": 735,
+      "extension": ".txt"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ib-avian-flying-creatures/PROMPT_CATALOG.md",
+      "size": 2890403,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ib-avian-flying-creatures/README.md",
+      "size": 1231,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ib-avian-flying-creatures/avian-archetypes.json",
+      "size": 4971,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ib-avian-flying-creatures/camera-profiles.json",
+      "size": 1804,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ib-avian-flying-creatures/lighting-profiles.json",
+      "size": 672,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ib-avian-flying-creatures/manifest.json",
+      "size": 981,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ib-avian-flying-creatures/negative-prompt-library.json",
+      "size": 449,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ib-avian-flying-creatures/output-types.json",
+      "size": 2762,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ib-avian-flying-creatures/prompt-library.csv",
+      "size": 3341245,
+      "extension": ".csv"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ib-avian-flying-creatures/prompt-library.json",
+      "size": 3965333,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ib-avian-flying-creatures/prompt-library.jsonl",
+      "size": 3590795,
+      "extension": ".jsonl"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ib-avian-flying-creatures/prompt-record.schema.json",
+      "size": 1502,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ib-avian-flying-creatures/prompt-variables.json",
+      "size": 2698,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ib-avian-flying-creatures/style-profiles.json",
+      "size": 367,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ib-plant-life/IMPORT_PROMPT.txt",
+      "size": 722,
+      "extension": ".txt"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ib-plant-life/README.md",
+      "size": 1215,
+      "extension": ".md"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ib-plant-life/botanical_plate_profiles.json",
+      "size": 456,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ib-plant-life/camera_profiles.json",
+      "size": 2058,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ib-plant-life/lighting_profiles.json",
+      "size": 666,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ib-plant-life/manifest.json",
+      "size": 715,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ib-plant-life/negative_prompts.json",
+      "size": 453,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ib-plant-life/prompt_library.json",
+      "size": 6727502,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ib-plant-life/prompt_variables.json",
+      "size": 3511,
+      "extension": ".json"
+    },
+    {
+      "path": "data/visual-prompt-libraries/volume-ib-plant-life/render_profiles.json",
+      "size": 370,
+      "extension": ".json"
+    },
+    {
+      "path": "design-review-package-2026-07-07/CHATGPT_REVIEW_PROMPT.md",
+      "size": 2123,
+      "extension": ".md"
+    },
+    {
+      "path": "game-art/source-masters/production/visual-engine/nano-banana-2/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "game-art/source-masters/production/visual-engine/nano-banana-2/README.md",
+      "size": 580,
+      "extension": ".md"
+    },
+    {
+      "path": "game-art/source-masters/production/visual-engine/nano-banana-2/approved/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "game-art/source-masters/production/visual-engine/nano-banana-2/archetypes/creatures/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "game-art/source-masters/production/visual-engine/nano-banana-2/archetypes/plants/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "game-art/source-masters/production/visual-engine/nano-banana-2/backgrounds/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "game-art/source-masters/production/visual-engine/nano-banana-2/cameras/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "game-art/source-masters/production/visual-engine/nano-banana-2/compositions/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "game-art/source-masters/production/visual-engine/nano-banana-2/environmental-adaptations/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "game-art/source-masters/production/visual-engine/nano-banana-2/lighting/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "game-art/source-masters/production/visual-engine/nano-banana-2/manifests/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "game-art/source-masters/production/visual-engine/nano-banana-2/materials/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "game-art/source-masters/production/visual-engine/nano-banana-2/model-profile/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "game-art/source-masters/production/visual-engine/nano-banana-2/negative-prompts/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "game-art/source-masters/production/visual-engine/nano-banana-2/outputs/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "game-art/source-masters/production/visual-engine/nano-banana-2/prompt-packs/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "game-art/source-masters/production/visual-engine/nano-banana-2/psd-rules/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "game-art/source-masters/production/visual-engine/nano-banana-2/rejected/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "game-art/source-masters/production/visual-engine/nano-banana-2/schemas/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "game-art/source-masters/production/visual-engine/nano-banana-2/variations/.gitkeep",
+      "size": 1,
+      "extension": ""
+    },
+    {
+      "path": "lib/planets/artwork-prompts.ts",
+      "size": 9780,
+      "extension": ".ts"
+    },
+    {
+      "path": "lib/visual-production/nano-banana-2.ts",
+      "size": 43465,
+      "extension": ".ts"
+    },
+    {
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/CHATGPT_REVIEW_PROMPT.md",
+      "size": 2377,
+      "extension": ".md"
+    },
+    {
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/data/canonical-sol-prompts.ts",
+      "size": 32211,
+      "extension": ".ts"
+    },
+    {
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/data/handoff/docs/codex_prompt.md",
+      "size": 2342,
+      "extension": ".md"
+    },
+    {
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/data/planet-generation-prompts.ts",
+      "size": 62643,
+      "extension": ".ts"
+    },
+    {
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/app/prompt-library/page.tsx",
+      "size": 406,
+      "extension": ".tsx"
+    },
+    {
+      "path": "project-genesis-chatgpt-handoff-2026-07-09/source/lib/planets/artwork-prompts.ts",
+      "size": 9780,
+      "extension": ".ts"
+    },
+    {
+      "path": "scripts/generate-nano-banana-contracts.ts",
+      "size": 2402,
+      "extension": ".ts"
+    },
+    {
+      "path": "scripts/generate-visual-prompt-libraries.ts",
+      "size": 42693,
+      "extension": ".ts"
+    },
+    {
+      "path": "scripts/verify-imported-visual-prompt-libraries.ts",
+      "size": 4437,
+      "extension": ".ts"
+    },
+    {
+      "path": "scripts/verify-nano-banana-prompt-compiler.ts",
+      "size": 5774,
+      "extension": ".ts"
+    },
+    {
+      "path": "supabase/migrations/202607062620_add_planet_artwork_prompts.sql",
+      "size": 1728,
+      "extension": ".sql"
+    },
+    {
+      "path": "supabase/migrations/202607072300_add_canonical_sol_prompt_library.sql",
+      "size": 8252,
+      "extension": ".sql"
+    },
+    {
+      "path": "supabase/migrations/202607072330_add_celestial_body_prompt_fields.sql",
+      "size": 842,
+      "extension": ".sql"
+    }
+  ],
+  "dependencies": [
+    {
+      "path": "app/api/export/[dataset]/route.ts",
+      "imports": [
+        "@/lib/ai-agents",
+        "@/lib/data",
+        "@/lib/export/csv",
+        "@/lib/resources/planet-resource-profiles",
+        "@/lib/resources/service",
+        "@/lib/runtime/game-runtime",
+        "@/lib/tables",
+        "@/types/schema"
+      ],
+      "matches": [
+        "prompt-library"
+      ]
+    },
+    {
+      "path": "app/api/planets/[id]/render/route.ts",
+      "imports": [
+        "@/lib/data",
+        "@/lib/planets/render-lock",
+        "@/lib/supabase/server",
+        "@/types/schema"
+      ],
+      "matches": [
+        "nano-banana"
+      ]
+    },
+    {
+      "path": "app/galaxy-layer-generator/page.tsx",
+      "imports": [
+        "@/components/cosmic-generation-prompt-library",
+        "@/data/cosmic-generation-prompts"
+      ],
+      "matches": [
+        "prompt-library"
+      ]
+    },
+    {
+      "path": "app/prompt-library/page.tsx",
+      "imports": [
+        "@/components/planet-generation-library",
+        "@/data/canonical-sol-prompts",
+        "@/data/planet-generation-prompts"
+      ],
+      "matches": [
+        "prompt-library"
+      ]
+    },
+    {
+      "path": "app/sector-layer-generator/page.tsx",
+      "imports": [
+        "@/components/cosmic-generation-prompt-library",
+        "@/data/cosmic-generation-prompts"
+      ],
+      "matches": [
+        "prompt-library"
+      ]
+    },
+    {
+      "path": "app/visual-production/page.tsx",
+      "imports": [
+        "@/lib/visual-production/nano-banana-2"
+      ],
+      "matches": [
+        "nano-banana"
+      ]
+    },
+    {
+      "path": "components/creature-prompt-panel.tsx",
+      "imports": [
+        "@/components/nano-banana-prompt-panel",
+        "@/lib/life/creature-system",
+        "@/lib/visual-production/nano-banana-2"
+      ],
+      "matches": [
+        "nano-banana"
+      ]
+    },
+    {
+      "path": "components/nano-banana-prompt-panel.tsx",
+      "imports": [
+        "@/lib/visual-production/nano-banana-2"
+      ],
+      "matches": [
+        "nano-banana"
+      ]
+    },
+    {
+      "path": "components/planet-generation-library.tsx",
+      "imports": [
+        "@/components/ui/button",
+        "@/data/canonical-sol-prompts",
+        "@/data/planet-generation-prompts",
+        "@/lib/planets/artwork-prompts"
+      ],
+      "matches": [
+        "prompt-library"
+      ]
+    },
+    {
+      "path": "components/plant-prompt-panel.tsx",
+      "imports": [
+        "@/components/nano-banana-prompt-panel",
+        "@/lib/life/plant-system",
+        "@/lib/visual-production/nano-banana-2"
+      ],
+      "matches": [
+        "nano-banana"
+      ]
+    },
+    {
+      "path": "lib/life/creature-system.ts",
+      "imports": [
+        "@/lib/resources/service"
+      ],
+      "matches": [
+        "nano-banana",
+        "visual-prompt"
+      ]
+    },
+    {
+      "path": "lib/species-plates/asset-pack.ts",
+      "imports": [
+        "@/lib/species-plates/master-template",
+        "@/lib/species-plates/types"
+      ],
+      "matches": [
+        "nano-banana"
+      ]
+    },
+    {
+      "path": "lib/species-plates/compiler.ts",
+      "imports": [
+        "@/lib/species-plates/master-template",
+        "@/lib/species-plates/types",
+        "@/lib/visual-production/nano-banana-2"
+      ],
+      "matches": [
+        "nano-banana"
+      ]
+    },
+    {
+      "path": "lib/species-plates/master-template.ts",
+      "imports": [
+        "@/lib/species-plates/types"
+      ],
+      "matches": [
+        "nano-banana"
+      ]
+    },
+    {
+      "path": "lib/species-plates/types.ts",
+      "imports": [],
+      "matches": [
+        "nano-banana"
+      ]
+    },
+    {
+      "path": "lib/visual-production/nano-banana-2.ts",
+      "imports": [],
+      "matches": [
+        "nano-banana"
+      ]
+    },
+    {
+      "path": "scripts/generate-nano-banana-contracts.ts",
+      "imports": [
+        "../lib/visual-production/nano-banana-2"
+      ],
+      "matches": [
+        "nano-banana",
+        "visual-prompt"
+      ]
+    },
+    {
+      "path": "scripts/generate-studio-audit.mjs",
+      "imports": [
+        "@/components/"
+      ],
+      "matches": [
+        "prompt-library",
+        "visual-prompt"
+      ]
+    },
+    {
+      "path": "scripts/generate-studio-migration-inventory.ts",
+      "imports": [
+        "@/lib/assets/asset-production",
+        "@/lib/assets/planet-detail-screen",
+        "@/lib/environment-composer",
+        "@/lib/runtime/game-runtime",
+        "@/lib/species-plates/master-template"
+      ],
+      "matches": [
+        "nano-banana",
+        "prompt-library",
+        "visual-prompt"
+      ]
+    },
+    {
+      "path": "scripts/generate-visual-prompt-libraries.ts",
+      "imports": [],
+      "matches": [
+        "nano-banana",
+        "prompt-library",
+        "visual-prompt"
+      ]
+    },
+    {
+      "path": "scripts/verify-imported-visual-prompt-libraries.ts",
+      "imports": [],
+      "matches": [
+        "nano-banana",
+        "prompt-library",
+        "visual-prompt"
+      ]
+    },
+    {
+      "path": "scripts/verify-nano-banana-prompt-compiler.ts",
+      "imports": [
+        "../lib/visual-production/nano-banana-2"
+      ],
+      "matches": [
+        "nano-banana"
+      ]
+    }
+  ]
+}

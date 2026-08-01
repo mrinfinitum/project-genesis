@@ -1,0 +1,158 @@
+{
+  "generatedAt": "2026-08-01T18:31:40.015Z",
+  "routes": [
+    {
+      "path": "app/api/creative-production/planet-detail-screen/artpack/route.ts",
+      "kind": "api",
+      "route": "/api/creative-production/planet-detail-screen/artpack"
+    },
+    {
+      "path": "app/api/creative-production/planet-detail-screen/manifest/route.ts",
+      "kind": "api",
+      "route": "/api/creative-production/planet-detail-screen/manifest"
+    },
+    {
+      "path": "app/creative-production/ui-screens/civilization-operations/page.tsx",
+      "kind": "page",
+      "route": "/creative-production/ui-screens/civilization-operations"
+    },
+    {
+      "path": "app/creative-production/ui-screens/planet-detail/page.tsx",
+      "kind": "page",
+      "route": "/creative-production/ui-screens/planet-detail"
+    }
+  ],
+  "dependencies": [
+    {
+      "path": "app/research/page.tsx",
+      "imports": [
+        "@/components/generated-library-card",
+        "@/components/ui/workspace",
+        "@/lib/data",
+        "@/types/schema"
+      ],
+      "matches": [
+        "Screen Designer"
+      ]
+    },
+    {
+      "path": "components/species-plate-workspace.tsx",
+      "imports": [
+        "@/lib/species-plates/compiler",
+        "@/lib/species-plates/master-template",
+        "@/lib/species-plates/types"
+      ],
+      "matches": [
+        "layoutManifest",
+        "targetBounds"
+      ]
+    },
+    {
+      "path": "lib/assets/civilization-operations-deck.ts",
+      "imports": [],
+      "matches": [
+        "referenceResolution"
+      ]
+    },
+    {
+      "path": "lib/assets/planet-detail-screen.ts",
+      "imports": [
+        "@/data/planet-detail-screen-derivatives.json",
+        "@/data/planet-detail-screen-reference.json"
+      ],
+      "matches": [
+        "referenceResolution"
+      ]
+    },
+    {
+      "path": "lib/species-plates/asset-pack.ts",
+      "imports": [
+        "@/lib/species-plates/master-template",
+        "@/lib/species-plates/types"
+      ],
+      "matches": [
+        "targetBounds"
+      ]
+    },
+    {
+      "path": "lib/species-plates/compiler.ts",
+      "imports": [
+        "@/lib/species-plates/master-template",
+        "@/lib/species-plates/types",
+        "@/lib/visual-production/nano-banana-2"
+      ],
+      "matches": [
+        "safeBounds",
+        "targetBounds"
+      ]
+    },
+    {
+      "path": "lib/species-plates/master-template.ts",
+      "imports": [
+        "@/lib/species-plates/types"
+      ],
+      "matches": [
+        "safeBounds",
+        "targetBounds"
+      ]
+    },
+    {
+      "path": "lib/species-plates/types.ts",
+      "imports": [],
+      "matches": [
+        "safeBounds",
+        "targetBounds"
+      ]
+    },
+    {
+      "path": "scripts/generate-studio-audit.mjs",
+      "imports": [
+        "@/components/"
+      ],
+      "matches": [
+        "Screen Designer"
+      ]
+    },
+    {
+      "path": "scripts/generate-studio-migration-inventory.ts",
+      "imports": [
+        "@/lib/assets/asset-production",
+        "@/lib/assets/planet-detail-screen",
+        "@/lib/environment-composer",
+        "@/lib/runtime/game-runtime",
+        "@/lib/species-plates/master-template"
+      ],
+      "matches": [
+        "ScreenDesigner",
+        "layoutManifest",
+        "referenceResolution",
+        "safeBounds",
+        "screen designer",
+        "targetBounds"
+      ]
+    },
+    {
+      "path": "scripts/verify-planet-detail-screen.ts",
+      "imports": [
+        "@/lib/assets/planet-detail-screen",
+        "@/lib/assets/planet-detail-screen-server",
+        "@/lib/export/game-engine",
+        "@/lib/runtime/game-runtime"
+      ],
+      "matches": [
+        "referenceResolution"
+      ]
+    },
+    {
+      "path": "scripts/verify-species-plates.ts",
+      "imports": [
+        "../lib/species-plates/asset-pack",
+        "../lib/species-plates/compiler",
+        "../lib/species-plates/master-template"
+      ],
+      "matches": [
+        "targetBounds"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,3168 @@
+{
+  "generatedAt": "2026-08-01T18:31:40.071Z",
+  "template": {
+    "id": "SPECIES_PLATE_MASTER_V1",
+    "recordType": "species_plate_template",
+    "version": "1.0.0",
+    "status": "canonical",
+    "displayName": "NOVERIS Species Plate Master",
+    "description": "The canonical scientific reference-board contract for NOVERIS life records.",
+    "domain": "multi-domain",
+    "outputType": "scientific-reference-board",
+    "modelProfile": "nano-banana-2",
+    "resolution": [
+      4000,
+      4000
+    ],
+    "aspectRatio": "1:1",
+    "background": "pure-black",
+    "modelProfileId": "nano-banana-2",
+    "styleProfileId": "STYLE_NOVERIS_SCIENTIFIC_REALISM",
+    "cameraProfileId": "CAM_SPECIES_PLATE",
+    "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+    "defaultVersionCount": 4,
+    "psdFriendly": true,
+    "generateMultipleVersions": true,
+    "anatomyChangesAllowed": false,
+    "materialChangesAllowed": false,
+    "backgroundChangesAllowed": false,
+    "naturalVariationAllowed": true,
+    "groups": [
+      {
+        "id": "hero",
+        "title": "Hero",
+        "required": true,
+        "order": 1,
+        "layoutMode": "hero",
+        "gridColumns": 3,
+        "gap": 40,
+        "padding": 80,
+        "minPanels": 1,
+        "maxPanels": 3,
+        "panels": [
+          {
+            "id": "full_body",
+            "title": "Full Body",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": true,
+            "enabled": true,
+            "order": 1,
+            "role": "hero",
+            "outputType": "full-body",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "2100:1880",
+            "targetBounds": {
+              "x": 950,
+              "y": 180,
+              "width": 2100,
+              "height": 1880
+            },
+            "safeBounds": {
+              "x": 970,
+              "y": 200,
+              "width": 2060,
+              "height": 1840
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": false,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "main_portrait",
+            "title": "Main Portrait",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 2,
+            "role": "hero",
+            "outputType": "main-portrait",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "700:820",
+            "targetBounds": {
+              "x": 160,
+              "y": 180,
+              "width": 700,
+              "height": 820
+            },
+            "safeBounds": {
+              "x": 180,
+              "y": 200,
+              "width": 660,
+              "height": 780
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": false,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "silhouette",
+            "title": "Silhouette",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 3,
+            "role": "hero",
+            "outputType": "silhouette",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "700:820",
+            "targetBounds": {
+              "x": 3140,
+              "y": 180,
+              "width": 700,
+              "height": 820
+            },
+            "safeBounds": {
+              "x": 3160,
+              "y": 200,
+              "width": 660,
+              "height": 780
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": false,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          }
+        ]
+      },
+      {
+        "id": "orthographic_views",
+        "title": "Orthographic Views",
+        "required": true,
+        "order": 2,
+        "layoutMode": "strip",
+        "gridColumns": 5,
+        "gap": 24,
+        "padding": 80,
+        "minPanels": 2,
+        "maxPanels": 5,
+        "panels": [
+          {
+            "id": "front",
+            "title": "Front View",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": true,
+            "enabled": true,
+            "order": 1,
+            "role": "orthographic",
+            "outputType": "front",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "620:520",
+            "targetBounds": {
+              "x": 160,
+              "y": 2140,
+              "width": 620,
+              "height": 520
+            },
+            "safeBounds": {
+              "x": 180,
+              "y": 2160,
+              "width": 580,
+              "height": 480
+            },
+            "cameraProfileId": "orthographic-front",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": false,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "side",
+            "title": "Side View",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": true,
+            "enabled": true,
+            "order": 2,
+            "role": "orthographic",
+            "outputType": "side",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "620:520",
+            "targetBounds": {
+              "x": 910,
+              "y": 2140,
+              "width": 620,
+              "height": 520
+            },
+            "safeBounds": {
+              "x": 930,
+              "y": 2160,
+              "width": 580,
+              "height": 480
+            },
+            "cameraProfileId": "orthographic-front",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": false,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "rear",
+            "title": "Rear View",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 3,
+            "role": "orthographic",
+            "outputType": "rear",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "620:520",
+            "targetBounds": {
+              "x": 1660,
+              "y": 2140,
+              "width": 620,
+              "height": 520
+            },
+            "safeBounds": {
+              "x": 1680,
+              "y": 2160,
+              "width": 580,
+              "height": 480
+            },
+            "cameraProfileId": "orthographic-front",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": false,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "top",
+            "title": "Top View",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 4,
+            "role": "orthographic",
+            "outputType": "top",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "620:520",
+            "targetBounds": {
+              "x": 2410,
+              "y": 2140,
+              "width": 620,
+              "height": 520
+            },
+            "safeBounds": {
+              "x": 2430,
+              "y": 2160,
+              "width": 580,
+              "height": 480
+            },
+            "cameraProfileId": "orthographic-front",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": false,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "bottom",
+            "title": "Bottom View",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 5,
+            "role": "orthographic",
+            "outputType": "bottom",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "620:520",
+            "targetBounds": {
+              "x": 3160,
+              "y": 2140,
+              "width": 620,
+              "height": 520
+            },
+            "safeBounds": {
+              "x": 3180,
+              "y": 2160,
+              "width": 580,
+              "height": 480
+            },
+            "cameraProfileId": "orthographic-front",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": false,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          }
+        ]
+      },
+      {
+        "id": "support_and_anatomy",
+        "title": "Support and Anatomy",
+        "required": false,
+        "order": 3,
+        "layoutMode": "grid",
+        "gridColumns": 5,
+        "gap": 24,
+        "padding": 80,
+        "minPanels": 0,
+        "maxPanels": 5,
+        "panels": [
+          {
+            "id": "skeleton_or_support_structure",
+            "title": "skeleton or support structure",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 1,
+            "role": "anatomy",
+            "outputType": "skeleton-or-support-structure",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "620:480",
+            "targetBounds": {
+              "x": 160,
+              "y": 2740,
+              "width": 620,
+              "height": 480
+            },
+            "safeBounds": {
+              "x": 180,
+              "y": 2760,
+              "width": 580,
+              "height": 440
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "study",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": false,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "musculature_or_motion_system",
+            "title": "musculature or motion system",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 2,
+            "role": "anatomy",
+            "outputType": "musculature-or-motion-system",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "620:480",
+            "targetBounds": {
+              "x": 910,
+              "y": 2740,
+              "width": 620,
+              "height": 480
+            },
+            "safeBounds": {
+              "x": 930,
+              "y": 2760,
+              "width": 580,
+              "height": 440
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "study",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": false,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "internal_anatomy",
+            "title": "internal anatomy",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 3,
+            "role": "anatomy",
+            "outputType": "internal-anatomy",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "620:480",
+            "targetBounds": {
+              "x": 1660,
+              "y": 2740,
+              "width": 620,
+              "height": 480
+            },
+            "safeBounds": {
+              "x": 1680,
+              "y": 2760,
+              "width": 580,
+              "height": 440
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "study",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": false,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "external_anatomy",
+            "title": "external anatomy",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 4,
+            "role": "anatomy",
+            "outputType": "external-anatomy",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "620:480",
+            "targetBounds": {
+              "x": 2410,
+              "y": 2740,
+              "width": 620,
+              "height": 480
+            },
+            "safeBounds": {
+              "x": 2430,
+              "y": 2760,
+              "width": 580,
+              "height": 440
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "study",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": false,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "cross_section",
+            "title": "cross section",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 5,
+            "role": "anatomy",
+            "outputType": "cross-section",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "620:480",
+            "targetBounds": {
+              "x": 3160,
+              "y": 2740,
+              "width": 620,
+              "height": 480
+            },
+            "safeBounds": {
+              "x": 3180,
+              "y": 2760,
+              "width": 580,
+              "height": 440
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "study",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": false,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          }
+        ]
+      },
+      {
+        "id": "lifecycle",
+        "title": "Lifecycle",
+        "required": false,
+        "order": 4,
+        "layoutMode": "strip",
+        "gridColumns": 5,
+        "gap": 24,
+        "padding": 80,
+        "minPanels": 0,
+        "maxPanels": 5,
+        "panels": [
+          {
+            "id": "reproductive_form",
+            "title": "reproductive form",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 1,
+            "role": "lifecycle",
+            "outputType": "reproductive-form",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "620:280",
+            "targetBounds": {
+              "x": 160,
+              "y": 3300,
+              "width": 620,
+              "height": 280
+            },
+            "safeBounds": {
+              "x": 180,
+              "y": 3320,
+              "width": 580,
+              "height": 240
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": true,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "juvenile",
+            "title": "juvenile",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 2,
+            "role": "lifecycle",
+            "outputType": "juvenile",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "620:280",
+            "targetBounds": {
+              "x": 910,
+              "y": 3300,
+              "width": 620,
+              "height": 280
+            },
+            "safeBounds": {
+              "x": 930,
+              "y": 3320,
+              "width": 580,
+              "height": 240
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": true,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "adolescent",
+            "title": "adolescent",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 3,
+            "role": "lifecycle",
+            "outputType": "adolescent",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "620:280",
+            "targetBounds": {
+              "x": 1660,
+              "y": 3300,
+              "width": 620,
+              "height": 280
+            },
+            "safeBounds": {
+              "x": 1680,
+              "y": 3320,
+              "width": 580,
+              "height": 240
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": true,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "adult",
+            "title": "adult",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 4,
+            "role": "lifecycle",
+            "outputType": "adult",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "620:280",
+            "targetBounds": {
+              "x": 2410,
+              "y": 3300,
+              "width": 620,
+              "height": 280
+            },
+            "safeBounds": {
+              "x": 2430,
+              "y": 3320,
+              "width": 580,
+              "height": 240
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": true,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "elder",
+            "title": "elder",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 5,
+            "role": "lifecycle",
+            "outputType": "elder",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "620:280",
+            "targetBounds": {
+              "x": 3160,
+              "y": 3300,
+              "width": 620,
+              "height": 280
+            },
+            "safeBounds": {
+              "x": 3180,
+              "y": 3320,
+              "width": 580,
+              "height": 240
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": true,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "terminal_or_dormant_state",
+            "title": "terminal or dormant state",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 6,
+            "role": "lifecycle",
+            "outputType": "terminal-or-dormant-state",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "620:280",
+            "targetBounds": {
+              "x": 160,
+              "y": 3660,
+              "width": 620,
+              "height": 280
+            },
+            "safeBounds": {
+              "x": 180,
+              "y": 3680,
+              "width": 580,
+              "height": 240
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": true,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          }
+        ]
+      },
+      {
+        "id": "variants",
+        "title": "Variants",
+        "required": false,
+        "order": 5,
+        "layoutMode": "grid",
+        "gridColumns": 4,
+        "gap": 24,
+        "padding": 80,
+        "minPanels": 0,
+        "maxPanels": 8,
+        "panels": [
+          {
+            "id": "male",
+            "title": "male",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 1,
+            "role": "variant",
+            "outputType": "male",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "780:150",
+            "targetBounds": {
+              "x": 160,
+              "y": 3260,
+              "width": 780,
+              "height": 150
+            },
+            "safeBounds": {
+              "x": 180,
+              "y": 3280,
+              "width": 740,
+              "height": 110
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": true,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "female",
+            "title": "female",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 2,
+            "role": "variant",
+            "outputType": "female",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "780:150",
+            "targetBounds": {
+              "x": 1090,
+              "y": 3260,
+              "width": 780,
+              "height": 150
+            },
+            "safeBounds": {
+              "x": 1110,
+              "y": 3280,
+              "width": 740,
+              "height": 110
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": true,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "caste",
+            "title": "caste",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 3,
+            "role": "variant",
+            "outputType": "caste",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "780:150",
+            "targetBounds": {
+              "x": 2020,
+              "y": 3260,
+              "width": 780,
+              "height": 150
+            },
+            "safeBounds": {
+              "x": 2040,
+              "y": 3280,
+              "width": 740,
+              "height": 110
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": true,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "regional_variant",
+            "title": "regional variant",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 4,
+            "role": "variant",
+            "outputType": "regional-variant",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "780:150",
+            "targetBounds": {
+              "x": 2950,
+              "y": 3260,
+              "width": 780,
+              "height": 150
+            },
+            "safeBounds": {
+              "x": 2970,
+              "y": 3280,
+              "width": 740,
+              "height": 110
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": true,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "seasonal_variant",
+            "title": "seasonal variant",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 5,
+            "role": "variant",
+            "outputType": "seasonal-variant",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "780:150",
+            "targetBounds": {
+              "x": 160,
+              "y": 3450,
+              "width": 780,
+              "height": 150
+            },
+            "safeBounds": {
+              "x": 180,
+              "y": 3470,
+              "width": 740,
+              "height": 110
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": true,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "rare_variant",
+            "title": "rare variant",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 6,
+            "role": "variant",
+            "outputType": "rare-variant",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "780:150",
+            "targetBounds": {
+              "x": 1090,
+              "y": 3450,
+              "width": 780,
+              "height": 150
+            },
+            "safeBounds": {
+              "x": 1110,
+              "y": 3470,
+              "width": 740,
+              "height": 110
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": true,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "domesticated_variant",
+            "title": "domesticated variant",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 7,
+            "role": "variant",
+            "outputType": "domesticated-variant",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "780:150",
+            "targetBounds": {
+              "x": 2020,
+              "y": 3450,
+              "width": 780,
+              "height": 150
+            },
+            "safeBounds": {
+              "x": 2040,
+              "y": 3470,
+              "width": 740,
+              "height": 110
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": true,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "engineered_variant",
+            "title": "engineered variant",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 8,
+            "role": "variant",
+            "outputType": "engineered-variant",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "780:150",
+            "targetBounds": {
+              "x": 2950,
+              "y": 3450,
+              "width": 780,
+              "height": 150
+            },
+            "safeBounds": {
+              "x": 2970,
+              "y": 3470,
+              "width": 740,
+              "height": 110
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": true,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          }
+        ]
+      },
+      {
+        "id": "reference_details",
+        "title": "Reference Details",
+        "required": false,
+        "order": 6,
+        "layoutMode": "grid",
+        "gridColumns": 5,
+        "gap": 24,
+        "padding": 80,
+        "minPanels": 0,
+        "maxPanels": 10,
+        "panels": [
+          {
+            "id": "eye_or_primary_sensor",
+            "title": "eye or primary sensor",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 1,
+            "role": "detail",
+            "outputType": "eye-or-primary-sensor",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "620:100",
+            "targetBounds": {
+              "x": 160,
+              "y": 3640,
+              "width": 620,
+              "height": 100
+            },
+            "safeBounds": {
+              "x": 180,
+              "y": 3660,
+              "width": 580,
+              "height": 60
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": false,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "mouth_or_feeding_structure",
+            "title": "mouth or feeding structure",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 2,
+            "role": "detail",
+            "outputType": "mouth-or-feeding-structure",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "620:100",
+            "targetBounds": {
+              "x": 910,
+              "y": 3640,
+              "width": 620,
+              "height": 100
+            },
+            "safeBounds": {
+              "x": 930,
+              "y": 3660,
+              "width": 580,
+              "height": 60
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": false,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "foot_claw_root_or_anchor",
+            "title": "foot claw root or anchor",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 3,
+            "role": "detail",
+            "outputType": "foot-claw-root-or-anchor",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "620:100",
+            "targetBounds": {
+              "x": 1660,
+              "y": 3640,
+              "width": 620,
+              "height": 100
+            },
+            "safeBounds": {
+              "x": 1680,
+              "y": 3660,
+              "width": 580,
+              "height": 60
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": false,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "skin_fur_scale_bark_or_surface",
+            "title": "skin fur scale bark or surface",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 4,
+            "role": "detail",
+            "outputType": "skin-fur-scale-bark-or-surface",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "620:100",
+            "targetBounds": {
+              "x": 2410,
+              "y": 3640,
+              "width": 620,
+              "height": 100
+            },
+            "safeBounds": {
+              "x": 2430,
+              "y": 3660,
+              "width": 580,
+              "height": 60
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": false,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "wing_fin_leaf_or_collector",
+            "title": "wing fin leaf or collector",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 5,
+            "role": "detail",
+            "outputType": "wing-fin-leaf-or-collector",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "620:100",
+            "targetBounds": {
+              "x": 3160,
+              "y": 3640,
+              "width": 620,
+              "height": 100
+            },
+            "safeBounds": {
+              "x": 3180,
+              "y": 3660,
+              "width": 580,
+              "height": 60
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": false,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "horn_antler_branch_or_structural_detail",
+            "title": "horn antler branch or structural detail",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 6,
+            "role": "detail",
+            "outputType": "horn-antler-branch-or-structural-detail",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "620:100",
+            "targetBounds": {
+              "x": 160,
+              "y": 3780,
+              "width": 620,
+              "height": 100
+            },
+            "safeBounds": {
+              "x": 180,
+              "y": 3800,
+              "width": 580,
+              "height": 60
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": false,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "tail_vine_or_extension",
+            "title": "tail vine or extension",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 7,
+            "role": "detail",
+            "outputType": "tail-vine-or-extension",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "620:100",
+            "targetBounds": {
+              "x": 910,
+              "y": 3780,
+              "width": 620,
+              "height": 100
+            },
+            "safeBounds": {
+              "x": 930,
+              "y": 3800,
+              "width": 580,
+              "height": 60
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": false,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "material_swatches",
+            "title": "material swatches",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 8,
+            "role": "detail",
+            "outputType": "material-swatches",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "620:100",
+            "targetBounds": {
+              "x": 1660,
+              "y": 3780,
+              "width": 620,
+              "height": 100
+            },
+            "safeBounds": {
+              "x": 1680,
+              "y": 3800,
+              "width": 580,
+              "height": 60
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": false,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "color_palette",
+            "title": "color palette",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 9,
+            "role": "detail",
+            "outputType": "color-palette",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "620:100",
+            "targetBounds": {
+              "x": 2410,
+              "y": 3780,
+              "width": 620,
+              "height": 100
+            },
+            "safeBounds": {
+              "x": 2430,
+              "y": 3800,
+              "width": 580,
+              "height": 60
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": false,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "footprint_track_spore_or_growth_trace",
+            "title": "footprint track spore or growth trace",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 10,
+            "role": "detail",
+            "outputType": "footprint-track-spore-or-growth-trace",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "620:100",
+            "targetBounds": {
+              "x": 3160,
+              "y": 3780,
+              "width": 620,
+              "height": 100
+            },
+            "safeBounds": {
+              "x": 3180,
+              "y": 3800,
+              "width": 580,
+              "height": 60
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": false,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          }
+        ]
+      },
+      {
+        "id": "scale_and_environment",
+        "title": "Scale and Environment",
+        "required": false,
+        "order": 7,
+        "layoutMode": "grid",
+        "gridColumns": 4,
+        "gap": 24,
+        "padding": 80,
+        "minPanels": 0,
+        "maxPanels": 4,
+        "panels": [
+          {
+            "id": "scale_comparison",
+            "title": "scale comparison",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life",
+              "comparative",
+              "ecosystem"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 1,
+            "role": "scale",
+            "outputType": "scale-comparison",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "780:120",
+            "targetBounds": {
+              "x": 160,
+              "y": 3780,
+              "width": 780,
+              "height": 120
+            },
+            "safeBounds": {
+              "x": 180,
+              "y": 3800,
+              "width": 740,
+              "height": 80
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "isolated",
+            "transparentCompatible": true,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": false,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "habitat_thumbnail",
+            "title": "habitat thumbnail",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life",
+              "comparative",
+              "ecosystem"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 2,
+            "role": "environment",
+            "outputType": "habitat-thumbnail",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "780:120",
+            "targetBounds": {
+              "x": 1090,
+              "y": 3780,
+              "width": 780,
+              "height": 120
+            },
+            "safeBounds": {
+              "x": 1110,
+              "y": 3800,
+              "width": 740,
+              "height": 80
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "context",
+            "transparentCompatible": false,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": false,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "biome_distribution_thumbnail",
+            "title": "biome distribution thumbnail",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life",
+              "comparative",
+              "ecosystem"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 3,
+            "role": "environment",
+            "outputType": "biome-distribution-thumbnail",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "780:120",
+            "targetBounds": {
+              "x": 2020,
+              "y": 3780,
+              "width": 780,
+              "height": 120
+            },
+            "safeBounds": {
+              "x": 2040,
+              "y": 3800,
+              "width": 740,
+              "height": 80
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "context",
+            "transparentCompatible": false,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": false,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          },
+          {
+            "id": "planet_context_thumbnail",
+            "title": "planet context thumbnail",
+            "domain": [
+              "creature",
+              "plant",
+              "fungi",
+              "microorganism",
+              "exotic-life",
+              "comparative",
+              "ecosystem"
+            ],
+            "required": false,
+            "enabled": false,
+            "order": 4,
+            "role": "environment",
+            "outputType": "planet-context-thumbnail",
+            "sourcePromptId": null,
+            "sourceAssetId": null,
+            "generatedAssetId": null,
+            "aspectRatio": "780:120",
+            "targetBounds": {
+              "x": 2950,
+              "y": 3780,
+              "width": 780,
+              "height": 120
+            },
+            "safeBounds": {
+              "x": 2970,
+              "y": 3800,
+              "width": 740,
+              "height": 80
+            },
+            "cameraProfileId": "CAM_SPECIES_PLATE",
+            "lightingProfileId": "LIGHT_MUSEUM_SPECIMEN",
+            "backgroundProfileId": "species-plate",
+            "extractionMode": "context",
+            "transparentCompatible": false,
+            "preserveScale": true,
+            "preserveAnatomy": true,
+            "preserveColor": true,
+            "preserveMaterials": true,
+            "allowVariant": false,
+            "validationStatus": "valid",
+            "productionStatus": "not_started",
+            "notes": "Canonical master panel; no labels, UI, borders, logos, or watermarks in generated art."
+          }
+        ]
+      }
+    ],
+    "promptRules": [
+      "Use the canonical source record and generation seed.",
+      "Keep locked anatomy, materials, identity, taxonomy, and planet context fixed.",
+      "Use clean separations and no labels, UI, borders, logos, frames, or watermarks."
+    ],
+    "validationRules": [
+      "Every enabled required panel must resolve.",
+      "All panel bounds must remain inside the 4000 x 4000 canvas.",
+      "Only compatible domain substitutions may be used.",
+      "Approved runtime records may contain asset references but never prompts or source-master paths."
+    ],
+    "negativePromptProfile": [
+      "labels",
+      "diagram callouts",
+      "invented anatomy",
+      "inconsistent scale",
+      "touching subjects",
+      "occluded anatomy",
+      "watermarks",
+      "logos"
+    ],
+    "sourceMasterRules": [
+      "Keep PSD masters private under the canonical species-plates source-master root.",
+      "Maintain a source manifest per plate.",
+      "Store approved and rejected work separately."
+    ],
+    "exportFormats": [
+      "png",
+      "webp",
+      "artpack",
+      "manifest"
+    ],
+    "runtimeSanitization": [
+      "approved asset IDs",
+      "preview and thumbnail asset IDs",
+      "extracted asset IDs",
+      "template version",
+      "prompt hash",
+      "generation seed",
+      "production status",
+      "visibility-safe discovery rules"
+    ],
+    "createdAt": "2026-07-31",
+    "updatedAt": "2026-07-31"
+  },
+  "presets": [
+    {
+      "id": "creature-standard",
+      "displayName": "Creature Standard",
+      "domain": "creature",
+      "enabledGroupIds": [
+        "hero",
+        "orthographic_views",
+        "support_and_anatomy",
+        "lifecycle",
+        "reference_details",
+        "scale_and_environment"
+      ],
+      "enabledPanelIds": [
+        "full_body",
+        "main_portrait",
+        "silhouette",
+        "front",
+        "side",
+        "rear",
+        "top",
+        "bottom",
+        "skeleton_or_support_structure",
+        "musculature_or_motion_system",
+        "internal_anatomy",
+        "external_anatomy",
+        "cross_section",
+        "reproductive_form",
+        "juvenile",
+        "adolescent",
+        "adult",
+        "elder",
+        "terminal_or_dormant_state",
+        "eye_or_primary_sensor",
+        "mouth_or_feeding_structure",
+        "foot_claw_root_or_anchor",
+        "skin_fur_scale_bark_or_surface",
+        "wing_fin_leaf_or_collector",
+        "horn_antler_branch_or_structural_detail",
+        "tail_vine_or_extension",
+        "material_swatches",
+        "color_palette",
+        "footprint_track_spore_or_growth_trace",
+        "scale_comparison",
+        "habitat_thumbnail",
+        "biome_distribution_thumbnail",
+        "planet_context_thumbnail"
+      ],
+      "notes": "Start from the canonical master; only compatible panels are enabled."
+    },
+    {
+      "id": "flying-creature",
+      "displayName": "Flying Creature",
+      "domain": "creature",
+      "enabledGroupIds": [
+        "hero",
+        "orthographic_views",
+        "support_and_anatomy",
+        "lifecycle",
+        "reference_details",
+        "scale_and_environment"
+      ],
+      "enabledPanelIds": [
+        "full_body",
+        "main_portrait",
+        "silhouette",
+        "front",
+        "side",
+        "rear",
+        "top",
+        "bottom",
+        "skeleton_or_support_structure",
+        "musculature_or_motion_system",
+        "internal_anatomy",
+        "external_anatomy",
+        "cross_section",
+        "reproductive_form",
+        "juvenile",
+        "adolescent",
+        "adult",
+        "elder",
+        "terminal_or_dormant_state",
+        "eye_or_primary_sensor",
+        "mouth_or_feeding_structure",
+        "foot_claw_root_or_anchor",
+        "skin_fur_scale_bark_or_surface",
+        "wing_fin_leaf_or_collector",
+        "horn_antler_branch_or_structural_detail",
+        "tail_vine_or_extension",
+        "material_swatches",
+        "color_palette",
+        "footprint_track_spore_or_growth_trace",
+        "scale_comparison",
+        "habitat_thumbnail",
+        "biome_distribution_thumbnail",
+        "planet_context_thumbnail"
+      ],
+      "notes": "Start from the canonical master; only compatible panels are enabled."
+    },
+    {
+      "id": "aquatic-creature",
+      "displayName": "Aquatic Creature",
+      "domain": "creature",
+      "enabledGroupIds": [
+        "hero",
+        "orthographic_views",
+        "support_and_anatomy",
+        "lifecycle",
+        "reference_details",
+        "scale_and_environment"
+      ],
+      "enabledPanelIds": [
+        "full_body",
+        "main_portrait",
+        "silhouette",
+        "front",
+        "side",
+        "rear",
+        "top",
+        "bottom",
+        "skeleton_or_support_structure",
+        "musculature_or_motion_system",
+        "internal_anatomy",
+        "external_anatomy",
+        "cross_section",
+        "reproductive_form",
+        "juvenile",
+        "adolescent",
+        "adult",
+        "elder",
+        "terminal_or_dormant_state",
+        "eye_or_primary_sensor",
+        "mouth_or_feeding_structure",
+        "foot_claw_root_or_anchor",
+        "skin_fur_scale_bark_or_surface",
+        "wing_fin_leaf_or_collector",
+        "horn_antler_branch_or_structural_detail",
+        "tail_vine_or_extension",
+        "material_swatches",
+        "color_palette",
+        "footprint_track_spore_or_growth_trace",
+        "scale_comparison",
+        "habitat_thumbnail",
+        "biome_distribution_thumbnail",
+        "planet_context_thumbnail"
+      ],
+      "notes": "Start from the canonical master; only compatible panels are enabled."
+    },
+    {
+      "id": "colonial-creature",
+      "displayName": "Colonial Creature",
+      "domain": "creature",
+      "enabledGroupIds": [
+        "hero",
+        "orthographic_views",
+        "lifecycle",
+        "variants",
+        "reference_details",
+        "scale_and_environment"
+      ],
+      "enabledPanelIds": [
+        "full_body",
+        "main_portrait",
+        "silhouette",
+        "front",
+        "side",
+        "rear",
+        "top",
+        "bottom",
+        "reproductive_form",
+        "juvenile",
+        "adolescent",
+        "adult",
+        "elder",
+        "terminal_or_dormant_state",
+        "male",
+        "female",
+        "caste",
+        "regional_variant",
+        "seasonal_variant",
+        "rare_variant",
+        "domesticated_variant",
+        "engineered_variant",
+        "eye_or_primary_sensor",
+        "mouth_or_feeding_structure",
+        "foot_claw_root_or_anchor",
+        "skin_fur_scale_bark_or_surface",
+        "wing_fin_leaf_or_collector",
+        "horn_antler_branch_or_structural_detail",
+        "tail_vine_or_extension",
+        "material_swatches",
+        "color_palette",
+        "footprint_track_spore_or_growth_trace",
+        "scale_comparison",
+        "habitat_thumbnail",
+        "biome_distribution_thumbnail",
+        "planet_context_thumbnail"
+      ],
+      "notes": "Start from the canonical master; only compatible panels are enabled."
+    },
+    {
+      "id": "exotic-creature",
+      "displayName": "Exotic Creature",
+      "domain": "exotic-life",
+      "enabledGroupIds": [
+        "hero",
+        "orthographic_views",
+        "support_and_anatomy",
+        "lifecycle",
+        "reference_details",
+        "scale_and_environment"
+      ],
+      "enabledPanelIds": [
+        "full_body",
+        "main_portrait",
+        "silhouette",
+        "front",
+        "side",
+        "rear",
+        "top",
+        "bottom",
+        "skeleton_or_support_structure",
+        "musculature_or_motion_system",
+        "internal_anatomy",
+        "external_anatomy",
+        "cross_section",
+        "reproductive_form",
+        "juvenile",
+        "adolescent",
+        "adult",
+        "elder",
+        "terminal_or_dormant_state",
+        "eye_or_primary_sensor",
+        "mouth_or_feeding_structure",
+        "foot_claw_root_or_anchor",
+        "skin_fur_scale_bark_or_surface",
+        "wing_fin_leaf_or_collector",
+        "horn_antler_branch_or_structural_detail",
+        "tail_vine_or_extension",
+        "material_swatches",
+        "color_palette",
+        "footprint_track_spore_or_growth_trace",
+        "scale_comparison",
+        "habitat_thumbnail",
+        "biome_distribution_thumbnail",
+        "planet_context_thumbnail"
+      ],
+      "notes": "Start from the canonical master; only compatible panels are enabled."
+    },
+    {
+      "id": "artificial-creature",
+      "displayName": "Artificial Creature",
+      "domain": "creature",
+      "enabledGroupIds": [
+        "hero",
+        "orthographic_views",
+        "support_and_anatomy",
+        "variants",
+        "reference_details",
+        "scale_and_environment"
+      ],
+      "enabledPanelIds": [
+        "full_body",
+        "main_portrait",
+        "silhouette",
+        "front",
+        "side",
+        "rear",
+        "top",
+        "bottom",
+        "skeleton_or_support_structure",
+        "musculature_or_motion_system",
+        "internal_anatomy",
+        "external_anatomy",
+        "cross_section",
+        "male",
+        "female",
+        "caste",
+        "regional_variant",
+        "seasonal_variant",
+        "rare_variant",
+        "domesticated_variant",
+        "engineered_variant",
+        "eye_or_primary_sensor",
+        "mouth_or_feeding_structure",
+        "foot_claw_root_or_anchor",
+        "skin_fur_scale_bark_or_surface",
+        "wing_fin_leaf_or_collector",
+        "horn_antler_branch_or_structural_detail",
+        "tail_vine_or_extension",
+        "material_swatches",
+        "color_palette",
+        "footprint_track_spore_or_growth_trace",
+        "scale_comparison",
+        "habitat_thumbnail",
+        "biome_distribution_thumbnail",
+        "planet_context_thumbnail"
+      ],
+      "notes": "Start from the canonical master; only compatible panels are enabled."
+    },
+    {
+      "id": "botanical-standard",
+      "displayName": "Botanical Standard",
+      "domain": "plant",
+      "enabledGroupIds": [
+        "hero",
+        "orthographic_views",
+        "support_and_anatomy",
+        "lifecycle",
+        "reference_details",
+        "scale_and_environment"
+      ],
+      "enabledPanelIds": [
+        "full_body",
+        "main_portrait",
+        "silhouette",
+        "front",
+        "side",
+        "rear",
+        "top",
+        "bottom",
+        "skeleton_or_support_structure",
+        "musculature_or_motion_system",
+        "internal_anatomy",
+        "external_anatomy",
+        "cross_section",
+        "reproductive_form",
+        "juvenile",
+        "adolescent",
+        "adult",
+        "elder",
+        "terminal_or_dormant_state",
+        "eye_or_primary_sensor",
+        "mouth_or_feeding_structure",
+        "foot_claw_root_or_anchor",
+        "skin_fur_scale_bark_or_surface",
+        "wing_fin_leaf_or_collector",
+        "horn_antler_branch_or_structural_detail",
+        "tail_vine_or_extension",
+        "material_swatches",
+        "color_palette",
+        "footprint_track_spore_or_growth_trace",
+        "scale_comparison",
+        "habitat_thumbnail",
+        "biome_distribution_thumbnail",
+        "planet_context_thumbnail"
+      ],
+      "notes": "Start from the canonical master; only compatible panels are enabled."
+    },
+    {
+      "id": "tree",
+      "displayName": "Tree",
+      "domain": "plant",
+      "enabledGroupIds": [
+        "hero",
+        "orthographic_views",
+        "support_and_anatomy",
+        "lifecycle",
+        "reference_details",
+        "scale_and_environment"
+      ],
+      "enabledPanelIds": [
+        "full_body",
+        "main_portrait",
+        "silhouette",
+        "front",
+        "side",
+        "rear",
+        "top",
+        "bottom",
+        "skeleton_or_support_structure",
+        "musculature_or_motion_system",
+        "internal_anatomy",
+        "external_anatomy",
+        "cross_section",
+        "reproductive_form",
+        "juvenile",
+        "adolescent",
+        "adult",
+        "elder",
+        "terminal_or_dormant_state",
+        "eye_or_primary_sensor",
+        "mouth_or_feeding_structure",
+        "foot_claw_root_or_anchor",
+        "skin_fur_scale_bark_or_surface",
+        "wing_fin_leaf_or_collector",
+        "horn_antler_branch_or_structural_detail",
+        "tail_vine_or_extension",
+        "material_swatches",
+        "color_palette",
+        "footprint_track_spore_or_growth_trace",
+        "scale_comparison",
+        "habitat_thumbnail",
+        "biome_distribution_thumbnail",
+        "planet_context_thumbnail"
+      ],
+      "notes": "Start from the canonical master; only compatible panels are enabled."
+    },
+    {
+      "id": "flower",
+      "displayName": "Flower",
+      "domain": "plant",
+      "enabledGroupIds": [
+        "hero",
+        "orthographic_views",
+        "lifecycle",
+        "reference_details",
+        "scale_and_environment"
+      ],
+      "enabledPanelIds": [
+        "full_body",
+        "main_portrait",
+        "silhouette",
+        "front",
+        "side",
+        "rear",
+        "top",
+        "bottom",
+        "reproductive_form",
+        "juvenile",
+        "adolescent",
+        "adult",
+        "elder",
+        "terminal_or_dormant_state",
+        "eye_or_primary_sensor",
+        "mouth_or_feeding_structure",
+        "foot_claw_root_or_anchor",
+        "skin_fur_scale_bark_or_surface",
+        "wing_fin_leaf_or_collector",
+        "horn_antler_branch_or_structural_detail",
+        "tail_vine_or_extension",
+        "material_swatches",
+        "color_palette",
+        "footprint_track_spore_or_growth_trace",
+        "scale_comparison",
+        "habitat_thumbnail",
+        "biome_distribution_thumbnail",
+        "planet_context_thumbnail"
+      ],
+      "notes": "Start from the canonical master; only compatible panels are enabled."
+    },
+    {
+      "id": "aquatic-flora",
+      "displayName": "Aquatic Flora",
+      "domain": "plant",
+      "enabledGroupIds": [
+        "hero",
+        "orthographic_views",
+        "support_and_anatomy",
+        "lifecycle",
+        "reference_details",
+        "scale_and_environment"
+      ],
+      "enabledPanelIds": [
+        "full_body",
+        "main_portrait",
+        "silhouette",
+        "front",
+        "side",
+        "rear",
+        "top",
+        "bottom",
+        "skeleton_or_support_structure",
+        "musculature_or_motion_system",
+        "internal_anatomy",
+        "external_anatomy",
+        "cross_section",
+        "reproductive_form",
+        "juvenile",
+        "adolescent",
+        "adult",
+        "elder",
+        "terminal_or_dormant_state",
+        "eye_or_primary_sensor",
+        "mouth_or_feeding_structure",
+        "foot_claw_root_or_anchor",
+        "skin_fur_scale_bark_or_surface",
+        "wing_fin_leaf_or_collector",
+        "horn_antler_branch_or_structural_detail",
+        "tail_vine_or_extension",
+        "material_swatches",
+        "color_palette",
+        "footprint_track_spore_or_growth_trace",
+        "scale_comparison",
+        "habitat_thumbnail",
+        "biome_distribution_thumbnail",
+        "planet_context_thumbnail"
+      ],
+      "notes": "Start from the canonical master; only compatible panels are enabled."
+    },
+    {
+      "id": "fungal",
+      "displayName": "Fungal",
+      "domain": "fungi",
+      "enabledGroupIds": [
+        "hero",
+        "orthographic_views",
+        "support_and_anatomy",
+        "lifecycle",
+        "reference_details",
+        "scale_and_environment"
+      ],
+      "enabledPanelIds": [
+        "full_body",
+        "main_portrait",
+        "silhouette",
+        "front",
+        "side",
+        "rear",
+        "top",
+        "bottom",
+        "skeleton_or_support_structure",
+        "musculature_or_motion_system",
+        "internal_anatomy",
+        "external_anatomy",
+        "cross_section",
+        "reproductive_form",
+        "juvenile",
+        "adolescent",
+        "adult",
+        "elder",
+        "terminal_or_dormant_state",
+        "eye_or_primary_sensor",
+        "mouth_or_feeding_structure",
+        "foot_claw_root_or_anchor",
+        "skin_fur_scale_bark_or_surface",
+        "wing_fin_leaf_or_collector",
+        "horn_antler_branch_or_structural_detail",
+        "tail_vine_or_extension",
+        "material_swatches",
+        "color_palette",
+        "footprint_track_spore_or_growth_trace",
+        "scale_comparison",
+        "habitat_thumbnail",
+        "biome_distribution_thumbnail",
+        "planet_context_thumbnail"
+      ],
+      "notes": "Start from the canonical master; only compatible panels are enabled."
+    },
+    {
+      "id": "microbial",
+      "displayName": "Microbial",
+      "domain": "microorganism",
+      "enabledGroupIds": [
+        "hero",
+        "orthographic_views",
+        "support_and_anatomy",
+        "lifecycle",
+        "reference_details"
+      ],
+      "enabledPanelIds": [
+        "full_body",
+        "main_portrait",
+        "silhouette",
+        "front",
+        "side",
+        "rear",
+        "top",
+        "bottom",
+        "skeleton_or_support_structure",
+        "musculature_or_motion_system",
+        "internal_anatomy",
+        "external_anatomy",
+        "cross_section",
+        "reproductive_form",
+        "juvenile",
+        "adolescent",
+        "adult",
+        "elder",
+        "terminal_or_dormant_state",
+        "eye_or_primary_sensor",
+        "mouth_or_feeding_structure",
+        "foot_claw_root_or_anchor",
+        "skin_fur_scale_bark_or_surface",
+        "wing_fin_leaf_or_collector",
+        "horn_antler_branch_or_structural_detail",
+        "tail_vine_or_extension",
+        "material_swatches",
+        "color_palette",
+        "footprint_track_spore_or_growth_trace"
+      ],
+      "notes": "Start from the canonical master; only compatible panels are enabled."
+    },
+    {
+      "id": "fossil",
+      "displayName": "Fossil",
+      "domain": "comparative",
+      "enabledGroupIds": [
+        "hero",
+        "orthographic_views",
+        "support_and_anatomy",
+        "reference_details",
+        "scale_and_environment"
+      ],
+      "enabledPanelIds": [
+        "full_body",
+        "main_portrait",
+        "silhouette",
+        "front",
+        "side",
+        "rear",
+        "top",
+        "bottom",
+        "skeleton_or_support_structure",
+        "musculature_or_motion_system",
+        "internal_anatomy",
+        "external_anatomy",
+        "cross_section",
+        "eye_or_primary_sensor",
+        "mouth_or_feeding_structure",
+        "foot_claw_root_or_anchor",
+        "skin_fur_scale_bark_or_surface",
+        "wing_fin_leaf_or_collector",
+        "horn_antler_branch_or_structural_detail",
+        "tail_vine_or_extension",
+        "material_swatches",
+        "color_palette",
+        "footprint_track_spore_or_growth_trace",
+        "scale_comparison",
+        "habitat_thumbnail",
+        "biome_distribution_thumbnail",
+        "planet_context_thumbnail"
+      ],
+      "notes": "Start from the canonical master; only compatible panels are enabled."
+    },
+    {
+      "id": "comparative",
+      "displayName": "Comparative",
+      "domain": "comparative",
+      "enabledGroupIds": [
+        "hero",
+        "orthographic_views",
+        "variants",
+        "reference_details",
+        "scale_and_environment"
+      ],
+      "enabledPanelIds": [
+        "full_body",
+        "main_portrait",
+        "silhouette",
+        "front",
+        "side",
+        "rear",
+        "top",
+        "bottom",
+        "male",
+        "female",
+        "caste",
+        "regional_variant",
+        "seasonal_variant",
+        "rare_variant",
+        "domesticated_variant",
+        "engineered_variant",
+        "eye_or_primary_sensor",
+        "mouth_or_feeding_structure",
+        "foot_claw_root_or_anchor",
+        "skin_fur_scale_bark_or_surface",
+        "wing_fin_leaf_or_collector",
+        "horn_antler_branch_or_structural_detail",
+        "tail_vine_or_extension",
+        "material_swatches",
+        "color_palette",
+        "footprint_track_spore_or_growth_trace",
+        "scale_comparison",
+        "habitat_thumbnail",
+        "biome_distribution_thumbnail",
+        "planet_context_thumbnail"
+      ],
+      "notes": "Start from the canonical master; only compatible panels are enabled."
+    },
+    {
+      "id": "planet-ecosystem",
+      "displayName": "Planet Ecosystem",
+      "domain": "ecosystem",
+      "enabledGroupIds": [
+        "hero",
+        "lifecycle",
+        "variants",
+        "scale_and_environment"
+      ],
+      "enabledPanelIds": [
+        "full_body",
+        "main_portrait",
+        "silhouette",
+        "reproductive_form",
+        "juvenile",
+        "adolescent",
+        "adult",
+        "elder",
+        "terminal_or_dormant_state",
+        "male",
+        "female",
+        "caste",
+        "regional_variant",
+        "seasonal_variant",
+        "rare_variant",
+        "domesticated_variant",
+        "engineered_variant",
+        "scale_comparison",
+        "habitat_thumbnail",
+        "biome_distribution_thumbnail",
+        "planet_context_thumbnail"
+      ],
+      "notes": "Start from the canonical master; only compatible panels are enabled."
+    }
+  ],
+  "dependencies": [
+    {
+      "path": "app/api/creative-production/species-plates/artpack/route.ts",
+      "imports": [
+        "@/lib/species-plates/asset-pack"
+      ],
+      "matches": [
+        "SpeciesPlate",
+        "species-plate"
+      ]
+    },
+    {
+      "path": "app/api/creative-production/species-plates/layout-manifest/route.ts",
+      "imports": [
+        "@/lib/species-plates/asset-pack"
+      ],
+      "matches": [
+        "SpeciesPlate",
+        "species-plate",
+        "speciesPlate"
+      ]
+    },
+    {
+      "path": "app/api/creative-production/species-plates/manifest/route.ts",
+      "imports": [
+        "@/lib/species-plates/asset-pack"
+      ],
+      "matches": [
+        "SpeciesPlate",
+        "species-plate",
+        "speciesPlate"
+      ]
+    },
+    {
+      "path": "app/api/creative-production/species-plates/panel-manifest/route.ts",
+      "imports": [
+        "@/lib/species-plates/asset-pack"
+      ],
+      "matches": [
+        "SpeciesPlate",
+        "species-plate",
+        "speciesPlate"
+      ]
+    },
+    {
+      "path": "app/api/creative-production/species-plates/slice-manifest/route.ts",
+      "imports": [
+        "@/lib/species-plates/asset-pack"
+      ],
+      "matches": [
+        "SpeciesPlate",
+        "species-plate",
+        "speciesPlate"
+      ]
+    },
+    {
+      "path": "app/species/[speciesId]/page.tsx",
+      "imports": [
+        "@/components/creature-prompt-panel",
+        "@/components/species-plate-prompt-card",
+        "@/lib/life/creature-system",
+        "@/lib/species-plates/adapters"
+      ],
+      "matches": [
+        "SpeciesPlate",
+        "species-plate",
+        "speciesPlate"
+      ]
+    },
+    {
+      "path": "app/visual-production/page.tsx",
+      "imports": [
+        "@/lib/visual-production/nano-banana-2"
+      ],
+      "matches": [
+        "species-plate"
+      ]
+    },
+    {
+      "path": "app/visual-production/species-plates/page.tsx",
+      "imports": [
+        "@/components/species-plate-workspace",
+        "@/lib/life/creature-system",
+        "@/lib/species-plates/adapters",
+        "@/lib/species-plates/types"
+      ],
+      "matches": [
+        "SpeciesPlate",
+        "species-plate",
+        "speciesPlate"
+      ]
+    },
+    {
+      "path": "components/app-shell.tsx",
+      "imports": [
+        "@/components/studio-command-palette",
+        "@/lib/utils"
+      ],
+      "matches": [
+        "species-plate"
+      ]
+    },
+    {
+      "path": "components/asset-production-workspace.tsx",
+      "imports": [
+        "@/components/asset-preview",
+        "@/components/generated-library-card",
+        "@/components/ui/button",
+        "@/components/ui/density",
+        "@/components/ui/workspace",
+        "@/lib/assets/asset-library-routing",
+        "@/lib/assets/asset-production",
+        "@/lib/assets/visual-previews",
+        "@/lib/upgrades/category-presentation"
+      ],
+      "matches": [
+        "species-plate"
+      ]
+    },
+    {
+      "path": "components/creature-generator-workspace.tsx",
+      "imports": [
+        "@/components/creature-prompt-panel",
+        "@/components/species-plate-prompt-card",
+        "@/lib/life/creature-system",
+        "@/lib/species-plates/adapters"
+      ],
+      "matches": [
+        "SpeciesPlate",
+        "species-plate",
+        "speciesPlate"
+      ]
+    },
+    {
+      "path": "components/life-generator-workspace.tsx",
+      "imports": [],
+      "matches": [
+        "species-plate"
+      ]
+    },
+    {
+      "path": "components/plant-life-generator-workspace.tsx",
+      "imports": [
+        "@/components/plant-prompt-panel",
+        "@/components/species-plate-prompt-card",
+        "@/lib/life/plant-system",
+        "@/lib/species-plates/adapters"
+      ],
+      "matches": [
+        "SpeciesPlate",
+        "species-plate",
+        "speciesPlate"
+      ]
+    },
+    {
+      "path": "components/species-plate-prompt-card.tsx",
+      "imports": [
+        "@/lib/species-plates/compiler",
+        "@/lib/species-plates/master-template"
+      ],
+      "matches": [
+        "SpeciesPlate",
+        "species-plate",
+        "speciesPlate"
+      ]
+    },
+    {
+      "path": "components/species-plate-workspace.tsx",
+      "imports": [
+        "@/lib/species-plates/compiler",
+        "@/lib/species-plates/master-template",
+        "@/lib/species-plates/types"
+      ],
+      "matches": [
+        "SpeciesPlate",
+        "species-plate",
+        "speciesPlate"
+      ]
+    },
+    {
+      "path": "lib/export/game-engine.ts",
+      "imports": [
+        "@/lib/actions/action-system",
+        "@/lib/ai-agents",
+        "@/lib/ai-agents/foundations",
+        "@/lib/architecture/version",
+        "@/lib/assets/civilization-operations-deck",
+        "@/lib/assets/planet-detail-screen",
+        "@/lib/buildings/taxonomy",
+        "@/lib/civilization/progression-framework",
+        "@/lib/colonies/procedural",
+        "@/lib/colonization/framework",
+        "@/lib/data",
+        "@/lib/discovery",
+        "@/lib/discovery/universal-registry",
+        "@/lib/economy/definitions",
+        "@/lib/economy/labor-generation",
+        "@/lib/economy/logistics-framework",
+        "@/lib/economy/trade",
+        "@/lib/environment-composer",
+        "@/lib/events/framework",
+        "@/lib/explorer/discovery-log",
+        "@/lib/factions/procedural",
+        "@/lib/life/creature-system",
+        "@/lib/missions/framework",
+        "@/lib/missions/procedural",
+        "@/lib/planets/deep-data",
+        "@/lib/planets/development-framework",
+        "@/lib/planets/exploration-progression",
+        "@/lib/planets/fixed-sol-planets",
+        "@/lib/planets/opportunity-profiles",
+        "@/lib/population/framework",
+        "@/lib/resources/planet-resource-profiles",
+        "@/lib/resources/service",
+        "@/lib/runtime/client-profiles",
+        "@/lib/runtime/galaxy-engine-contract",
+        "@/lib/runtime/game-runtime",
+        "@/lib/runtime/mobile-client-profiles",
+        "@/lib/species-plates/asset-pack",
+        "@/lib/species-plates/runtime",
+        "@/lib/universe/fallback-data",
+        "@/types/schema"
+      ],
+      "matches": [
+        "SpeciesPlate",
+        "species-plate",
+        "speciesPlate"
+      ]
+    },
+    {
+      "path": "lib/runtime/game-runtime.ts",
+      "imports": [
+        "@/data/civilization-identity",
+        "@/lib/actions/action-system",
+        "@/lib/ai-agents",
+        "@/lib/ai-agents/foundations",
+        "@/lib/architecture/version",
+        "@/lib/assets/asset-production",
+        "@/lib/assets/civilization-operations-deck",
+        "@/lib/assets/game-art-import",
+        "@/lib/assets/planet-detail-screen",
+        "@/lib/buildings/taxonomy",
+        "@/lib/civilization/progression-framework",
+        "@/lib/colonization/framework",
+        "@/lib/data",
+        "@/lib/discovery",
+        "@/lib/discovery/universal-registry",
+        "@/lib/economy/definitions",
+        "@/lib/economy/labor-generation",
+        "@/lib/economy/logistics-framework",
+        "@/lib/environment-composer",
+        "@/lib/events/framework",
+        "@/lib/life/creature-system",
+        "@/lib/missions/framework",
+        "@/lib/planets/deep-data",
+        "@/lib/planets/development-framework",
+        "@/lib/planets/exploration-progression",
+        "@/lib/planets/opportunity-profiles",
+        "@/lib/population/framework",
+        "@/lib/resources/service",
+        "@/lib/resources/taxonomy",
+        "@/lib/runtime/client-profiles",
+        "@/lib/runtime/galaxy-engine-contract",
+        "@/lib/runtime/mobile-client-profiles",
+        "@/lib/species-plates/runtime",
+        "@/lib/upgrades/category-presentation",
+        "@/lib/upgrades/tree-contract",
+        "@/types/planet-deep-data",
+        "@/types/runtime",
+        "@/types/schema"
+      ],
+      "matches": [
+        "SpeciesPlate",
+        "species-plate",
+        "speciesPlate"
+      ]
+    },
+    {
+      "path": "lib/species-plates/adapters.ts",
+      "imports": [
+        "@/lib/life/creature-system",
+        "@/lib/life/plant-system",
+        "@/lib/species-plates/compiler"
+      ],
+      "matches": [
+        "SpeciesPlate",
+        "species-plate",
+        "speciesPlate"
+      ]
+    },
+    {
+      "path": "lib/species-plates/asset-pack.ts",
+      "imports": [
+        "@/lib/species-plates/master-template",
+        "@/lib/species-plates/types"
+      ],
+      "matches": [
+        "SpeciesPlate",
+        "species-plate",
+        "speciesPlate"
+      ]
+    },
+    {
+      "path": "lib/species-plates/compiler.ts",
+      "imports": [
+        "@/lib/species-plates/master-template",
+        "@/lib/species-plates/types",
+        "@/lib/visual-production/nano-banana-2"
+      ],
+      "matches": [
+        "SpeciesPlate",
+        "species-plate",
+        "speciesPlate"
+      ]
+    },
+    {
+      "path": "lib/species-plates/master-template.ts",
+      "imports": [
+        "@/lib/species-plates/types"
+      ],
+      "matches": [
+        "SpeciesPlate",
+        "species-plate",
+        "speciesPlate"
+      ]
+    },
+    {
+      "path": "lib/species-plates/runtime.ts",
+      "imports": [
+        "@/lib/life/creature-system",
+        "@/lib/species-plates/adapters",
+        "@/lib/species-plates/compiler",
+        "@/lib/species-plates/master-template"
+      ],
+      "matches": [
+        "SpeciesPlate",
+        "species-plate",
+        "speciesPlate"
+      ]
+    },
+    {
+      "path": "lib/species-plates/types.ts",
+      "imports": [],
+      "matches": [
+        "SpeciesPlate"
+      ]
+    },
+    {
+      "path": "lib/visual-production/nano-banana-2.ts",
+      "imports": [],
+      "matches": [
+        "species-plate"
+      ]
+    },
+    {
+      "path": "scripts/ensure-species-plate-source-masters.mjs",
+      "imports": [],
+      "matches": [
+        "species-plate"
+      ]
+    },
+    {
+      "path": "scripts/generate-studio-audit.mjs",
+      "imports": [
+        "@/components/"
+      ],
+      "matches": [
+        "species-plate",
+        "speciesPlate"
+      ]
+    },
+    {
+      "path": "scripts/generate-studio-migration-inventory.ts",
+      "imports": [
+        "@/lib/assets/asset-production",
+        "@/lib/assets/planet-detail-screen",
+        "@/lib/environment-composer",
+        "@/lib/runtime/game-runtime",
+        "@/lib/species-plates/master-template"
+      ],
+      "matches": [
+        "SpeciesPlate",
+        "species-plate",
+        "speciesPlate"
+      ]
+    },
+    {
+      "path": "scripts/generate-visual-prompt-libraries.ts",
+      "imports": [],
+      "matches": [
+        "species-plate"
+      ]
+    },
+    {
+      "path": "scripts/verify-species-plate-exports.ts",
+      "imports": [
+        "../lib/export/game-engine",
+        "../lib/runtime/game-runtime"
+      ],
+      "matches": [
+        "speciesPlate"
+      ]
+    },
+    {
+      "path": "scripts/verify-species-plates.ts",
+      "imports": [
+        "../lib/species-plates/asset-pack",
+        "../lib/species-plates/compiler",
+        "../lib/species-plates/master-template"
+      ],
+      "matches": [
+        "SpeciesPlate",
+        "species-plate",
+        "speciesPlate"
+      ]
+    },
+    {
+      "path": "types/runtime.ts",
+      "imports": [
+        "@/lib/assets/civilization-operations-deck",
+        "@/lib/assets/planet-detail-screen",
+        "@/lib/environment-composer",
+        "@/lib/life/creature-system",
+        "@/lib/species-plates/runtime",
+        "@/lib/universe/visual-signatures",
+        "@/types/planet-deep-data"
+      ],
+      "matches": [
+        "SpeciesPlate",
+        "species-plate",
+        "speciesPlate"
+      ]
+    }
+  ]
+}
