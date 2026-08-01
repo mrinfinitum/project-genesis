@@ -103,8 +103,6 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/star-system-layer-generator", label: "Star System Generator", icon: GalleryHorizontalEnd },
       { href: "/planet-generation", label: "Planet Generator", icon: Orbit },
       { href: "/life-generator", label: "Life Generator", icon: Dna },
-      { href: "/environment-composer/layers", label: "Environment Asset Library", icon: Layers3 },
-      { href: "/environment-composer/scenes", label: "Scene Composer", icon: GalleryHorizontalEnd },
       { href: "/environment-composer/themes", label: "Themes", icon: WandSparkles },
       { href: "/environment-composer/export", label: "Runtime Export", icon: FileText }
     ]
