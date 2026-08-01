@@ -38,7 +38,14 @@ export const speciesPlateDomainMappings: Record<SpeciesPlateDomain, Record<strin
   creature: {}, plant: { skeleton_or_support_structure: "root_or_anchor_system", musculature_or_motion_system: "growth_or_transport_system", foot_claw_root_or_anchor: "root_or_anchor", wing_fin_leaf_or_collector: "leaf_or_collector", footprint_track_spore_or_growth_trace: "growth_trace" }, fungi: { skeleton_or_support_structure: "support_lattice", musculature_or_motion_system: "growth_network", reproductive_form: "propagation_event", foot_claw_root_or_anchor: "mycelial_anchor", footprint_track_spore_or_growth_trace: "spore_trace" }, microorganism: { skeleton_or_support_structure: "support_lattice", musculature_or_motion_system: "motion_field", internal_anatomy: "energy_circulation", external_anatomy: "containment_boundary", footprint_track_spore_or_growth_trace: "field_trace" }, "exotic-life": { skeleton_or_support_structure: "support_lattice", musculature_or_motion_system: "motion_field", internal_anatomy: "energy_circulation", external_anatomy: "containment_boundary", reproductive_form: "propagation_event", foot_claw_root_or_anchor: "anchor_field", footprint_track_spore_or_growth_trace: "field_trace" }, comparative: {}, ecosystem: {}
 };
 
-const presetDefinitions: Array<[string, string, string, string[]]> = [
+type SpeciesPlatePresetDefinition = [
+  id: string,
+  displayName: string,
+  domain: SpeciesPlateDomain,
+  enabledGroupIds: string[]
+];
+
+const presetDefinitions: SpeciesPlatePresetDefinition[] = [
   ["creature-standard", "Creature Standard", "creature", ["hero", "orthographic_views", "support_and_anatomy", "lifecycle", "reference_details", "scale_and_environment"]],
   ["flying-creature", "Flying Creature", "creature", ["hero", "orthographic_views", "support_and_anatomy", "lifecycle", "reference_details", "scale_and_environment"]],
   ["aquatic-creature", "Aquatic Creature", "creature", ["hero", "orthographic_views", "support_and_anatomy", "lifecycle", "reference_details", "scale_and_environment"]],
@@ -55,7 +62,7 @@ const presetDefinitions: Array<[string, string, string, string[]]> = [
   ["comparative", "Comparative", "comparative", ["hero", "orthographic_views", "variants", "reference_details", "scale_and_environment"]],
   ["planet-ecosystem", "Planet Ecosystem", "ecosystem", ["hero", "lifecycle", "variants", "scale_and_environment"]]
 ];
-export const speciesPlatePresets: SpeciesPlatePreset[] = presetDefinitions.map(([id, displayName, domain, enabledGroupIds]) => ({ id, displayName, domain: domain as SpeciesPlateDomain, enabledGroupIds, enabledPanelIds: groups.filter((group) => enabledGroupIds.includes(group.id)).flatMap((group) => group.panels.map((item) => item.id)), notes: "Start from the canonical master; only compatible panels are enabled." }));
+export const speciesPlatePresets: SpeciesPlatePreset[] = presetDefinitions.map(([id, displayName, domain, enabledGroupIds]) => ({ id, displayName, domain, enabledGroupIds, enabledPanelIds: groups.filter((group) => enabledGroupIds.includes(group.id)).flatMap((group) => group.panels.map((item) => item.id)), notes: "Start from the canonical master; only compatible panels are enabled." }));
 
 export function resolveSpeciesPlatePreset(presetId: string) {
   const preset = speciesPlatePresets.find((item) => item.id === presetId);
