@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { buildCanonicalRuntimeExportPayload, validateGameRuntimeData } from "@/lib/runtime/game-runtime";
+import { buildCanonicalRuntimeExportPayload } from "@/lib/runtime/game-runtime";
 
 export const dynamic = "force-dynamic";
 
@@ -11,17 +11,13 @@ const publicRuntimeHeaders = {
 export async function GET() {
   try {
     const payload = await buildCanonicalRuntimeExportPayload();
-    const validation = validateGameRuntimeData(payload);
 
-    if (!validation.valid) {
+    if (payload.metadata.validationStatus === "Blocked") {
       return NextResponse.json(
         {
           error: "Canonical runtime export validation failed.",
           validation: {
-            status: validation.status,
-            errorCount: validation.errorCount,
-            warningCount: validation.warningCount,
-            issues: validation.issues
+            status: payload.metadata.validationStatus
           }
         },
         { status: 500 }

@@ -58,6 +58,7 @@
     "audit:migration": "tsx scripts/generate-studio-migration-inventory.ts",
     "verify:production-foundation": "tsx scripts/verify-production-foundation.ts",
     "verify:asset-production-system": "tsx scripts/verify-asset-production-system.ts",
+    "verify:identity-relationships": "tsx scripts/verify-identity-relationships.ts",
     "verify:render-hub": "tsx scripts/verify-render-hub.ts",
     "export:procedural-universe-fixtures": "tsx scripts/export-procedural-universe-fixtures.ts"
   },

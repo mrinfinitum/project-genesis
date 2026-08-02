@@ -3581,6 +3581,7 @@ export type GameRuntimeData = {
   componentLibrary: ComponentLibraryContract;
   screenTemplateLibrary: ScreenTemplateLibraryContract;
   assetProductionRuntime: AssetProductionRuntimeManifest;
+  identityRelationshipGraph?: import("@/lib/identity-relationships").IdentityRelationshipGraph;
   speciesCategories: import("@/lib/life/creature-system").CreatureFunctionalCategory[];
   speciesTaxonomyFrameworks: string[];
   species: import("@/lib/life/creature-system").SpeciesRecord[];

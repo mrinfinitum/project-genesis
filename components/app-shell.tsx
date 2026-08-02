@@ -25,6 +25,7 @@ import {
   Map,
   Menu,
   Monitor,
+  Network,
   Orbit,
   Palette,
   PackageCheck,
@@ -69,6 +70,7 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/inspiration-board", label: "Inspiration Board", icon: GalleryHorizontalEnd },
       { href: "/encyclopedia", label: "Encyclopedia", icon: BookOpen },
       { href: "/architecture", label: "Architecture", icon: FileText },
+      { href: "/architecture/identity-relationships", label: "Identity & Relationships", icon: Network },
       { href: "/settings#users", label: "Admin Users", icon: ShieldCheck }
     ]
   },

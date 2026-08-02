@@ -21,6 +21,13 @@ import { laborGenerationFramework, validateLaborGenerationFramework } from "@/li
 import { resourceEconomyLogisticsFramework, validateResourceEconomyLogisticsFramework } from "@/lib/economy/logistics-framework";
 import { dynamicEventFramework, validateDynamicEventFramework } from "@/lib/events/framework";
 import { environmentComposerRuntimeContract, validateEnvironmentComposerContract } from "@/lib/environment-composer";
+import {
+  buildIdentityRelationshipGraphFromRuntime,
+  toIdentityRelationshipRuntimeExport,
+  validateIdentityRelationshipGraph,
+  type IdentityRelationshipGraph,
+  type IdentityRelationshipRuntimeExport
+} from "@/lib/identity-relationships";
 import { noverisDesignLanguage, validateDesignLanguage } from "@/lib/design-language";
 import { noverisComponentLibrary, validateComponentLibrary } from "@/lib/component-library";
 import { noverisScreenTemplateLibrary, validateScreenTemplateLibrary } from "@/lib/screen-template-library";
@@ -79,9 +86,11 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 69;
+export const gameRuntimeContentVersion = 70;
 
-export type CanonicalRuntimeExportPayload = GameRuntimeData;
+export type CanonicalRuntimeExportPayload = Omit<GameRuntimeData, "identityRelationshipGraph"> & {
+  identityRelationshipGraph?: IdentityRelationshipRuntimeExport;
+};
 
 export type RobloxRuntimeExportPayload = {
   metadata: RuntimeMetadata & { target: "roblox"; sourceSchemaVersion: string };
@@ -140,6 +149,7 @@ export type RobloxRuntimeExportPayload = {
   componentLibrary: GameRuntimeData["componentLibrary"];
   screenTemplateLibrary: GameRuntimeData["screenTemplateLibrary"];
   assetProductionRuntime: GameRuntimeData["assetProductionRuntime"];
+  identityRelationshipGraph?: IdentityRelationshipRuntimeExport;
   speciesCategories: GameRuntimeData["speciesCategories"];
   speciesTaxonomyFrameworks: GameRuntimeData["speciesTaxonomyFrameworks"];
   species: GameRuntimeData["species"];
@@ -753,6 +763,17 @@ function byDisplayOrderThenId<T extends { id: string; displayOrder: number }>(le
 function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
   return {
     ...runtimeData,
+    identityRelationshipGraph: runtimeData.identityRelationshipGraph
+      ? {
+          ...runtimeData.identityRelationshipGraph,
+          records: [...runtimeData.identityRelationshipGraph.records].sort((left, right) => left.canonicalId.localeCompare(right.canonicalId)),
+          relationships: [...runtimeData.identityRelationshipGraph.relationships].sort((left, right) => left.id.localeCompare(right.id)),
+          validation: {
+            ...runtimeData.identityRelationshipGraph.validation,
+            issues: [...runtimeData.identityRelationshipGraph.validation.issues].sort((left, right) => `${left.code}:${left.records.join(":")}`.localeCompare(`${right.code}:${right.records.join(":")}`))
+          }
+        }
+      : undefined,
     eras: [...runtimeData.eras].sort(byOrderThenId),
     economyDefinitions: [...runtimeData.economyDefinitions].sort(byId),
     economyBehaviorContracts: [...runtimeData.economyBehaviorContracts].sort(byId),
@@ -2133,7 +2154,7 @@ function publicAsset(asset: AssetDefinition): AssetDefinition {
   };
 }
 
-function withPublicMetadata<T extends GameRuntimeData | RobloxRuntimeExportPayload>(
+function withPublicMetadata<T extends { metadata: RuntimeMetadata }>(
   payload: T,
   validationStatus: RuntimeMetadata["validationStatus"]
 ): T {
@@ -2158,15 +2179,16 @@ function withPublicMetadata<T extends GameRuntimeData | RobloxRuntimeExportPaylo
 
 export async function buildCanonicalRuntimeExportPayload(): Promise<CanonicalRuntimeExportPayload> {
   const sorted = sortRuntimeData(await getGameRuntimeData());
-  const safePayload = {
+  const validation = validateGameRuntimeData(sorted);
+  const safePayload: CanonicalRuntimeExportPayload = {
     ...sorted,
-    assets: sorted.assets.map(publicAsset)
+    assets: sorted.assets.map(publicAsset),
+    identityRelationshipGraph: sorted.identityRelationshipGraph ? toIdentityRelationshipRuntimeExport(sorted.identityRelationshipGraph) : undefined
   };
-  const validation = validateGameRuntimeData(safePayload);
   return withPublicMetadata(safePayload, validation.status);
 }
 
-export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
+export function validateGameRuntimeData(runtimeData: GameRuntimeData | CanonicalRuntimeExportPayload) {
   const issues: ImportIssue[] = [];
   const eraIds = new Set(runtimeData.eras.map((row) => row.id));
   const categoryIds = new Set(runtimeData.upgradeCategories.map((row) => row.id));
@@ -2267,6 +2289,22 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
     issues.push({ severity: "error", code: "ai_library_catalog_invalid", message: "AI Library catalogs must match the canonical Foundations catalogs.", records: ["aiCategories", "aiRarity"] });
   }
   validateMobileClientProfiles(runtimeData, issues);
+  if (!runtimeData.identityRelationshipGraph) {
+    issues.push({ severity: "error", code: "identity_relationship_graph_missing", message: "Canonical runtime must include the identity and relationship graph.", records: ["identityRelationshipGraph"] });
+  } else if ("systemOwnerId" in runtimeData.identityRelationshipGraph) {
+    for (const issue of validateIdentityRelationshipGraph(runtimeData.identityRelationshipGraph)) {
+      issues.push({ severity: issue.severity, code: `identity_relationship_${issue.code}`, message: issue.message, records: issue.records });
+    }
+  } else {
+    const identityRecords = new Set(runtimeData.identityRelationshipGraph.records.map((record) => record.canonicalId));
+    if (runtimeData.identityRelationshipGraph.status !== "Ready" || identityRecords.size !== runtimeData.identityRelationshipGraph.records.length) {
+      issues.push({ severity: "error", code: "identity_relationship_runtime_invalid", message: "The published identity graph must be Ready and use unique canonical IDs.", records: [runtimeData.identityRelationshipGraph.id] });
+    }
+    const brokenRelationships = runtimeData.identityRelationshipGraph.relationships.filter((relationship) => !identityRecords.has(relationship.fromCanonicalId) || !identityRecords.has(relationship.toCanonicalId));
+    if (brokenRelationships.length) {
+      issues.push({ severity: "error", code: "identity_relationship_runtime_reference_invalid", message: "Published identity relationships must resolve canonical IDs.", records: brokenRelationships.map((relationship) => `${relationship.fromCanonicalId}:${relationship.toCanonicalId}`) });
+    }
+  }
   validateAiAgents(runtimeData, issues);
   const discoveryValidation = validateDiscoverySystem();
   for (const issue of discoveryValidation.issues) {
@@ -2502,8 +2540,14 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   };
 }
 
-export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxRuntimeExportPayload {
-  const sorted = sortRuntimeData(runtimeData);
+export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData | CanonicalRuntimeExportPayload): RobloxRuntimeExportPayload {
+  const sourceGraph = runtimeData.identityRelationshipGraph as IdentityRelationshipGraph | IdentityRelationshipRuntimeExport | undefined;
+  const identityRelationshipGraph = sourceGraph
+    ? "systemOwnerId" in sourceGraph
+      ? toIdentityRelationshipRuntimeExport(sourceGraph)
+      : sourceGraph
+    : undefined;
+  const sorted = sortRuntimeData({ ...runtimeData, identityRelationshipGraph: undefined } as GameRuntimeData);
   const payload: RobloxRuntimeExportPayload = {
     metadata: {
       ...sorted.metadata,
@@ -2565,6 +2609,7 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     componentLibrary: sorted.componentLibrary,
     screenTemplateLibrary: sorted.screenTemplateLibrary,
     assetProductionRuntime: sorted.assetProductionRuntime,
+    identityRelationshipGraph,
     speciesCategories: sorted.speciesCategories,
     speciesTaxonomyFrameworks: sorted.speciesTaxonomyFrameworks,
     species: sorted.species,
@@ -2623,6 +2668,18 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
   }
   if (!payload.metadata.contentVersion) {
     issues.push({ severity: "error", code: "metadata_version_missing", message: "metadata.contentVersion is required.", records: ["metadata"] });
+  }
+  if (!payload.identityRelationshipGraph || payload.identityRelationshipGraph.id !== "noveris-identity-relationships" || payload.identityRelationshipGraph.status !== "Ready") {
+    issues.push({ severity: "error", code: "identity_relationship_graph_missing", message: "Roblox runtime requires the safe canonical identity and relationship graph.", records: ["identityRelationshipGraph"] });
+  } else {
+    const canonicalIds = new Set(payload.identityRelationshipGraph.records.map((record) => record.canonicalId));
+    if (canonicalIds.size !== payload.identityRelationshipGraph.records.length) {
+      issues.push({ severity: "error", code: "identity_relationship_duplicate_id", message: "Roblox identity records must use unique canonical IDs.", records: payload.identityRelationshipGraph.records.map((record) => record.canonicalId) });
+    }
+    const brokenRelationships = payload.identityRelationshipGraph.relationships.filter((relationship) => !canonicalIds.has(relationship.fromCanonicalId) || !canonicalIds.has(relationship.toCanonicalId));
+    if (brokenRelationships.length) {
+      issues.push({ severity: "error", code: "identity_relationship_broken_reference", message: "Roblox identity relationships must resolve canonical IDs.", records: brokenRelationships.map((relationship) => `${relationship.fromCanonicalId}:${relationship.toCanonicalId}`) });
+    }
   }
   if (payload.upgradeTree.nodes.length !== payload.upgrades.length) {
     issues.push({ severity: "error", code: "roblox_upgrade_tree_incomplete", message: "Roblox upgrade tree must include every canonical upgrade.", records: [String(payload.upgradeTree.nodes.length), String(payload.upgrades.length)] });
@@ -2874,7 +2931,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     }
   }
 
-  return withCanonicalEraDefinitions({
+  const runtime = withCanonicalEraDefinitions({
     metadata: metadata(),
     eras: defaultEras(),
     economyDefinitions: canonicalEconomyDefinitions,
@@ -2948,6 +3005,28 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     balance: gameConstantsBalance(data.game_constants),
     clientProfiles: defaultClientProfiles()
   });
+  return {
+    ...runtime,
+    identityRelationshipGraph: buildIdentityRelationshipGraphFromRuntime({
+      resources: runtime.resources as unknown as Array<Record<string, unknown>>,
+      discoveries: runtime.discoveries as unknown as Array<Record<string, unknown>>,
+      buildingLibrary: runtime.buildingLibrary as unknown as Array<Record<string, unknown>>,
+      upgrades: runtime.upgrades as unknown as Array<Record<string, unknown>>,
+      assets: runtime.assets as unknown as Array<Record<string, unknown>>,
+      species: runtime.species as unknown as Array<Record<string, unknown>>,
+      speciesOccurrences: runtime.speciesOccurrences as unknown as Array<Record<string, unknown>>,
+      speciesPlates: runtime.speciesPlates as unknown as Array<Record<string, unknown>>,
+      planetPrompts: data.planet_prompt_library as unknown as Array<Record<string, unknown>>,
+      research: data.research as unknown as Array<Record<string, unknown>>,
+      actionSystem: runtime.actionSystem as unknown as Record<string, unknown>,
+      dynamicEventFramework: runtime.dynamicEventFramework as unknown as Record<string, unknown>,
+      missionExpeditionFramework: runtime.missionExpeditionFramework as unknown as Record<string, unknown>,
+      planetDeepDataFramework: runtime.planetDeepDataFramework as unknown as Record<string, unknown>,
+      componentLibrary: runtime.componentLibrary as unknown as Record<string, unknown>,
+      screenTemplateLibrary: runtime.screenTemplateLibrary as unknown as Record<string, unknown>,
+      designLanguage: runtime.designLanguage as unknown as Record<string, unknown>
+    })
+  };
 }
 
 export async function getGameRuntimeData() {
@@ -3017,6 +3096,7 @@ export async function getGameRuntimeData() {
     componentLibrary: base.componentLibrary,
     screenTemplateLibrary: base.screenTemplateLibrary,
     assetProductionRuntime: base.assetProductionRuntime,
+    identityRelationshipGraph: base.identityRelationshipGraph,
     speciesCategories: base.speciesCategories,
     speciesTaxonomyFrameworks: base.speciesTaxonomyFrameworks,
     species: base.species,
