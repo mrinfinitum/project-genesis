@@ -6,7 +6,7 @@
     "instructions": "physically based fur with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -16,7 +16,7 @@
     "instructions": "physically based hair with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -26,7 +26,7 @@
     "instructions": "physically based quills with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -36,7 +36,7 @@
     "instructions": "physically based feathers with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -46,7 +46,7 @@
     "instructions": "physically based scales with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -56,7 +56,7 @@
     "instructions": "physically based skin with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -66,7 +66,7 @@
     "instructions": "physically based membrane with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -76,7 +76,7 @@
     "instructions": "physically based chitin with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -86,7 +86,7 @@
     "instructions": "physically based shell with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -96,7 +96,7 @@
     "instructions": "physically based bone with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -106,7 +106,7 @@
     "instructions": "physically based keratin with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -116,7 +116,7 @@
     "instructions": "physically based soft tissue with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -126,7 +126,7 @@
     "instructions": "physically based gelatinous tissue with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -136,7 +136,7 @@
     "instructions": "physically based mineral tissue with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -146,7 +146,7 @@
     "instructions": "physically based crystal tissue with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -156,7 +156,7 @@
     "instructions": "physically based silicon tissue with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -166,7 +166,7 @@
     "instructions": "physically based metallic synthetic tissue with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -176,7 +176,7 @@
     "instructions": "physically based biomechanical interface with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -186,7 +186,7 @@
     "instructions": "physically based energy structure with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -196,7 +196,7 @@
     "instructions": "physically based plasma boundary with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -206,7 +206,7 @@
     "instructions": "physically based gas membrane with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -216,7 +216,7 @@
     "instructions": "physically based bark with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -226,7 +226,7 @@
     "instructions": "physically based wood with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -236,7 +236,7 @@
     "instructions": "physically based stem tissue with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -246,7 +246,7 @@
     "instructions": "physically based leaf tissue with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -256,7 +256,7 @@
     "instructions": "physically based waxy surface with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -266,7 +266,7 @@
     "instructions": "physically based succulent tissue with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -276,7 +276,7 @@
     "instructions": "physically based thorn with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -286,7 +286,7 @@
     "instructions": "physically based root tissue with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -296,7 +296,7 @@
     "instructions": "physically based flower petal with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -306,7 +306,7 @@
     "instructions": "physically based fruit skin with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -316,7 +316,7 @@
     "instructions": "physically based seed shell with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -326,7 +326,7 @@
     "instructions": "physically based spore surface with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -336,7 +336,7 @@
     "instructions": "physically based fungal cap with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -346,7 +346,7 @@
     "instructions": "physically based mycelium with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -356,7 +356,7 @@
     "instructions": "physically based mineral tissue with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -366,7 +366,7 @@
     "instructions": "physically based crystal tissue with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -376,7 +376,7 @@
     "instructions": "physically based synthetic plant tissue with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -386,7 +386,7 @@
     "instructions": "physically based biomechanical plant interface with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -396,7 +396,7 @@
     "instructions": "physically based energy collector with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -406,7 +406,7 @@
     "instructions": "physically based gas membrane with believable structure, roughness, translucency, and age detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   }
 ]

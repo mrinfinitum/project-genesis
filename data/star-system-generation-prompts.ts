@@ -6,18 +6,10 @@ export type StarSystemPromptTemplate = {
 };
 
 export const STAR_SYSTEM_MASTER_PROMPT = [
-  "Design one handcrafted, scientifically plausible star system for the science-fiction game NOVERIS.",
-  "",
-  "Return a concise production specification, not prose fiction. Name the primary star or stars, state the stellar class, system age, orbital architecture, major planets, moons, belts, hazards, and why the system is strategically interesting.",
-  "",
-  "Keep the hierarchy explicit: star system, stars, planets, moons, dwarf planets, asteroid belts, and anomalies. Use canonical, stable IDs only when the result is actually approved for Studio ingestion; otherwise use readable working names.",
-  "",
-  "Balance scientific plausibility with a clear gameplay identity. A system should have one defining character rather than every possible feature. Include a readable habitable-zone assessment and reserve room for later discoveries, resources, and colonies.",
-  "",
-  "Do not include UI, camera instructions, graphics settings, duplicate bodies, fixed real-world locations other than an explicitly requested Sol reference, or uncontrolled lore. Do not create a full galaxy or sector. Create one coherent star system.",
-  "",
-  "Use this selected system profile:",
-  "(INSERT STAR SYSTEM PROFILE)"
+  "Create a premium NOVERIS visual of one scientifically plausible star system with a clear orbital hierarchy, restrained lighting, and generous dark negative space.",
+  "Use this selected system character:",
+  "(INSERT STAR SYSTEM PROFILE)",
+  "No text, watermark, logo, interface, frame, diagram labels, decorative effects, duplicate worlds, or impossible orbital paths."
 ].join("\n");
 
 export function buildStarSystemPrompt(template: StarSystemPromptTemplate) {

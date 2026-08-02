@@ -2,28 +2,17 @@
   "id": "nano-banana-2",
   "name": "Nano Banana 2",
   "preferredPromptOrder": [
-    "task",
-    "versionCount",
-    "identity",
-    "archetype",
-    "structure",
-    "movement",
-    "environment",
-    "ecology",
-    "materials",
-    "lockedTraits",
-    "variation",
-    "output",
-    "camera",
+    "visual_task",
+    "subject",
+    "visual_traits",
+    "composition",
     "lighting",
     "background",
-    "composition",
-    "psd",
-    "consistency",
+    "output",
     "negative"
   ],
-  "promptVerbosity": "detailed with a compact copy variant",
-  "naturalLanguageStyle": "clear production-direction prose with explicit exclusions",
+  "promptVerbosity": "concise visual-only direction",
+  "naturalLanguageStyle": "natural-language image direction with explicit exclusions and no authoring data",
   "phrases": {
     "camera": "Camera:",
     "lighting": "Lighting:",
@@ -38,5 +27,5 @@
     "iteration": "produce each requested interpretation separately at consistent scale",
     "editExisting": "future edit mode: preserve the supplied image composition while applying only approved deltas"
   },
-  "version": "1.0.0"
+  "version": "3.0.0"
 }

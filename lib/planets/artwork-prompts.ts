@@ -1,5 +1,5 @@
 import { buildPlanetPrompt, planetTypeFeaturePrompt, PLANET_PROMPT_LIBRARY } from "@/data/planet-generation-prompts";
-import { resourceNames } from "@/lib/resources/service";
+import { compilePlanetVisualPrompt } from "@/lib/visual-production/celestial-prompt-compiler";
 import type { PlanetPromptTemplate } from "@/data/planet-generation-prompts";
 import type { GeneratedPlanet } from "@/types/schema";
 
@@ -50,26 +50,13 @@ export function buildOrbitViewPrompt(planet: GeneratedPlanet) {
   return buildPlanetPrompt(planetFeatureDescription(planet));
 }
 
-function commonPromptFacts(input: PlanetArtworkPromptInput) {
+function visualSummary(input: PlanetArtworkPromptInput) {
+  const anomalies = listText(input.anomalies);
   return [
-    "Planet Class",
-    input.planetClass || "Unknown",
-    "",
-    "Planet Subclass",
-    input.planetSubclass || "Unknown",
-    "",
-    "Planet Rarity",
-    input.rarity || "Common",
-    "",
-    "Primary Biome",
-    input.biome || input.planetClass || "Unknown",
-    "",
-    "Planet Anomalies",
-    listText(input.anomalies) || "None",
-    "",
-    "Visual Style",
-    "Cinematic realistic AAA science-fiction exploration game"
-  ].join("\n");
+    `${input.planetSubclass || "distinct"} ${input.planetClass || "planet"} world`,
+    input.biome ? `with a ${input.biome.toLowerCase()} environmental character` : "",
+    anomalies ? `and subtle signs of ${anomalies}` : ""
+  ].filter(Boolean).join(" ");
 }
 
 function planetInputFromGeneratedPlanet(planet: GeneratedPlanet): PlanetArtworkPromptInput {
@@ -93,101 +80,21 @@ function planetInputFromTemplate(row: PlanetPromptTemplate): PlanetArtworkPrompt
 }
 
 function buildSurfaceLandscapePromptForInput(input: PlanetArtworkPromptInput, options: SurfaceLandscapePromptOptions = {}) {
-  const referenceImageUrl = options.referenceImageUrl ?? "";
-  const useOrbitReference = options.useOrbitReference ?? true;
-  const referenceLines = useOrbitReference
-    ? [
-        "Reference Image",
-        "@img1",
-        referenceImageUrl ? `@img1 URL: ${referenceImageUrl}` : "",
-        "",
-        "REFERENCE RULE",
-        "Use @img1 as the visual anchor for this planet.",
-        "Create the surface landscape that belongs to this exact world, matching its colors, atmosphere, geology, lighting mood, planet class, subclass, and biome.",
-        "Do not redesign the planet or invent a different world. Interpret @img1 as a real place viewed from ground level.",
-        "",
-        "Create one ultra-realistic 16:9 photographic surface landscape from @img1."
-      ]
-    : [
-        "Reference Image",
-        "None selected",
-        "",
-        "REFERENCE RULE",
-        "Create the surface landscape from the planet class, subclass, biome, rarity, and notes below.",
-        "Do not use @img1 unless an orbit-view render has already been intentionally selected as a reference.",
-        "",
-        "Create one ultra-realistic 16:9 photographic surface landscape."
-      ];
-
-  return [
-    ...referenceLines,
-    "It should look like a real expedition photograph or high-end cinema still from an actual alien planet, not artwork.",
-    "",
-    commonPromptFacts(input),
-    "",
-    "SCENE",
-    "Show a massive open landscape with believable planetary scale, real geology, natural atmosphere, physical weather, and terrain appropriate to the selected planet.",
-    "Use mountains, cliffs, canyons, oceans, ice, lava, crystal formations, alien vegetation, ruins, or artificial structures only when they fit the planet data and @img1.",
-    "",
-    "PHOTOGRAPHY STYLE",
-    "Ultra-realistic photography, documentary science-fiction realism, natural materials, realistic textures, physically plausible lighting, detailed foreground, clear midground, distant horizon, high dynamic range, sharp focus.",
-    "Camera at human eye height with a wide cinematic lens. The scene must feel captured by a real camera in a real environment.",
-    "",
-    "LIGHTING",
-    "Physically believable planetary lighting, natural exposure, realistic shadow falloff, no lens flare, no excessive bloom, no fantasy glow.",
-    "",
-    "SKY",
-    "Generate a sky appropriate for @img1 and the planet data. Aurora, storm systems, dense atmosphere, thin atmosphere, or alien cloud formations may appear only if appropriate. No moons or companion bodies unless explicitly requested.",
-    "",
-    "ATMOSPHERE",
-    "Use subtle natural atmospheric effects only when appropriate: dust, fog, snow, ash, mist, crystal particles, spores, or toxic haze. Keep them realistic and physically grounded.",
-    "",
-    "ENVIRONMENTAL STORYTELLING",
-    "If the planet contains Ancient Civilization or Artificial World traits, include subtle evidence such as ruined temples, collapsed arcologies, machine infrastructure, ancient roads, or orbital elevator remains. Do not dominate the composition.",
-    "",
-    "QUALITY",
-    "Ultra detailed, photorealistic, realistic color grading, crisp, sharp, natural, cinematic, physically believable, premium science-fiction location photography.",
-    "",
-    "AVOID",
-    "Do not contradict @img1. Do not change the planet's color palette. Do not invent a different biome. Avoid cartoon, anime, illustration, painterly style, brush strokes, digital painting, concept art, stylized art, matte painting, flat game art, toy-like 3D render, over-saturated colors, fantasy diorama, miniature scene, text, UI, watermark, logos, signatures, characters, vehicles, spacecraft, or anything that looks hand-painted.",
-    "",
-    "GOAL",
-    "The viewer should immediately believe they are standing on the real surface of the exact planet shown in @img1."
-  ].join("\n");
+  const hasOrbitReference = Boolean(options.useOrbitReference && options.referenceImageUrl);
+  return compilePlanetVisualPrompt({
+    ...input,
+    visualSummary: `${visualSummary(input)}. ${hasOrbitReference ? "Match the supplied orbit reference for color, atmospheric character, and geology without redesigning the world." : "Establish the world from its visible planet characteristics."}`
+  }, "surface").visualPrompt;
 }
 
 function buildOrbitalPlatformPromptForInput(input: PlanetArtworkPromptInput, referenceImageUrl = "", resources = "", hazards = "") {
-  const defaultAtmosphericResources = resourceNames(["RES-0177", "RES-0178", "RES-0147"]).join(", ");
-
-  return [
-    "Reference Image",
-    "@img1",
-    referenceImageUrl ? `@img1 URL: ${referenceImageUrl}` : "",
-    "",
-    "IMPORTANT",
-    "@img1 is the visual reference for this non-landable Gas Giant.",
-    "Do not create a surface landscape. Gas Giants are orbital resource worlds.",
-    "",
-    "Create one ultra-high-resolution cinematic 16:9 orbital platform scene showing industrial harvesting infrastructure operating above @img1.",
-    "",
-    commonPromptFacts(input),
-    "",
-    "ORBITAL GAMEPLAY",
-    "Show believable orbital resource infrastructure such as atmospheric collectors, orbital harvesters, gas refineries, fusion fuel platforms, storm research stations, orbital depots, skyhook platforms, or floating platforms.",
-    "",
-    "RESOURCES",
-    `Atmospheric resources: ${resources || defaultAtmosphericResources}.`,
-    `Hazards: ${hazards || "extreme winds, high pressure, lightning storms, radiation belts"}.`,
-    "",
-    "COMPOSITION",
-    "16:9 cinematic view from orbit, massive gas giant below or behind the platform, clear scale, professional space-game key art, no surface landing, no terrain exploration.",
-    "",
-    "QUALITY",
-    "Ultra detailed, photorealistic, premium AAA science-fiction environment, physically believable lighting, sharp, HDR.",
-    "",
-    "AVOID",
-    "No ground landscape, no landable surface, no fantasy styling, no text, no UI, no watermark, no logos, no characters dominating the frame."
-  ].join("\n");
+  const context = [
+    visualSummary(input),
+    referenceImageUrl ? "Match the supplied orbit reference for atmospheric scale and palette." : "",
+    resources ? `Show restrained industrial use of ${resources}.` : "",
+    hazards ? `The engineering should credibly withstand ${hazards}.` : ""
+  ].filter(Boolean).join(" ");
+  return compilePlanetVisualPrompt({ ...input, visualSummary: context }, "orbital-platform").visualPrompt;
 }
 
 export function buildSurfaceLandscapePrompt(planet: GeneratedPlanet, referenceImageUrl: string) {

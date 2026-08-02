@@ -45,6 +45,8 @@
     "verify:imported-visual-prompt-libraries": "tsx scripts/verify-imported-visual-prompt-libraries.ts",
     "generate:nano-banana-contracts": "tsx scripts/generate-nano-banana-contracts.ts",
     "verify:nano-banana-prompt-compiler": "tsx scripts/verify-nano-banana-prompt-compiler.ts",
+    "migrate:nano-banana-visual-prompts": "tsx scripts/migrate-nano-banana-visual-prompts.ts",
+    "verify:nano-banana-visual-prompts": "tsx scripts/migrate-nano-banana-visual-prompts.ts --verify",
     "generate:psd-game-derivatives": "tsx scripts/generate-psd-game-derivatives.ts",
     "generate:navigation-icons": "tsx scripts/generate-navigation-icon-derivatives.ts",
     "verify:navigation-icons": "tsx scripts/verify-navigation-icons.ts",

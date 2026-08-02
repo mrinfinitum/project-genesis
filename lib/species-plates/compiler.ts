@@ -1,8 +1,8 @@
-import { compileNanoBanana2Prompt, getNanoBanana2PromptStaleness, type CanonicalVisualRecord } from "@/lib/visual-production/nano-banana-2";
-import { SPECIES_PLATE_MASTER_V1, resolveSpeciesPlatePreset, speciesPlateDomainMappings, speciesPlatePromptTemplate, speciesPlateVariationProfiles } from "@/lib/species-plates/master-template";
+import { compileNanoBanana2Prompt, getNanoBanana2PromptStaleness, validateNanoBananaVisualPrompt, type CanonicalVisualRecord } from "@/lib/visual-production/nano-banana-2";
+import { SPECIES_PLATE_MASTER_V1, resolveSpeciesPlatePreset, speciesPlateVariationProfiles } from "@/lib/species-plates/master-template";
 import type { SpeciesPlateDomain, SpeciesPlateProductionStatus, SpeciesPlateRecord, SpeciesPlateValidationIssue } from "@/lib/species-plates/types";
 
-export const SPECIES_PLATE_COMPILER_VERSION = "1.0.0";
+export const SPECIES_PLATE_COMPILER_VERSION = "3.0.0";
 
 export type SpeciesPlateSource = {
   id: string;
@@ -25,9 +25,13 @@ export type ResolvedSpeciesPlatePrompt = {
   templateVersion: string;
   presetId: string;
   compilerVersion: string;
+  promptVersion: "3.0.0";
   modelProfileId: "nano-banana-2";
   requestedVersionCount: number;
   seed: string;
+  canonicalData: Record<string, unknown>;
+  visualSummary: string;
+  visualPrompt: string;
   positivePrompt: string;
   negativePrompt: string;
   combinedPrompt: string;
@@ -35,6 +39,8 @@ export type ResolvedSpeciesPlatePrompt = {
   detailedPrompt: string;
   resolvedVariables: Record<string, string>;
   unresolvedVariables: string[];
+  resolvedVisualVariables: Record<string, string>;
+  unresolvedVisualVariables: string[];
   lockedFields: string[];
   promptHash: string;
   staleStatus: "current" | "stale";
@@ -75,16 +81,20 @@ export function compileSpeciesPlatePrompt(source: SpeciesPlateSource, options: {
   const variation = speciesPlateVariationProfiles.find((item) => item.id === options.variationProfileId) ?? speciesPlateVariationProfiles.find((item) => item.id === "standard")!;
   const record: CanonicalVisualRecord = { id: source.id, displayName: source.displayName, scientificName: source.scientificName, domain, sourceVersion: source.sourceVersion, seed: options.seed ?? source.seed, taxonomy: source.taxonomy, archetypeId: source.archetypeId ?? defaultArchetype(domain), variables: source.variables, lockedFields: [...new Set([...source.lockedFields, ...variation.lockedFields])], lockedValues: source.lockedValues };
   const base = compileNanoBanana2Prompt(record, { outputTypeId: domain === "creature" ? "creature-species-plate" : "plant-botanical-plate", variationProfileId: variation.id === "strict-canon" ? "conservative" : variation.id === "standard" ? "standard" : "conservative", versionCount: options.versionCount ?? 4, seed: record.seed, cameraProfileId: "species-plate", lightingProfileId: "museum-specimen", backgroundProfileId: "pure-black", compositionProfileId: "comparison-board" });
-  const domainTerminology = Object.entries(speciesPlateDomainMappings[source.domain]).map(([generic, mapped]) => `${generic.replaceAll("_", " ")} is represented as ${mapped.replaceAll("_", " ")}`).join("; ");
-  const panelInstruction = SPECIES_PLATE_MASTER_V1.groups.map((group) => `${group.title}: ${group.panels.filter((item) => item.domain.includes(source.domain)).map((item) => item.title).join(", ") || "not applicable"}`).join(". ");
-  const detailed = `${speciesPlatePromptTemplate.replace("{{versionCount}}", String(base.versionCount))} Canonical subject: ${source.displayName}${source.scientificName ? ` (${source.scientificName})` : ""}. Template ${SPECIES_PLATE_MASTER_V1.id} v${SPECIES_PLATE_MASTER_V1.version}. Panel plan: ${panelInstruction}. Domain substitutions: ${domainTerminology || "none"}. ${base.detailedPrompt}`;
-  const negative = `${base.negativePrompt}, incompatible panels, touching subjects, occluded anatomy, invented anatomy, inconsistent scale, labels, diagram callouts`;
-  const validation: SpeciesPlateValidationIssue[] = base.validation.map((issue) => ({ severity: issue.severity === "Structural Error" || issue.severity === "Canon Conflict" ? issue.severity : issue.severity === "Missing Optional Data" ? "Missing Optional Data" : "Visual Consistency Warning", code: issue.code, message: issue.message }));
+  const detailed = [
+    `Create a premium NOVERIS 4000 x 4000 scientific reference plate for ${source.displayName}${source.scientificName ? `, ${source.scientificName}` : ""}.`,
+    `Show the subject on a pure black studio field with a clean, readable primary specimen view and clearly separated supporting studies.`,
+    `Include a three-quarter full-body or whole-organism view, front and side reference views, material and anatomy detail, life-stage or growth detail, and a small habitat context study when appropriate.`,
+    `${base.visualSummary} Preserve coherent scale, natural proportions, physically credible materials, and clean edge separation.`,
+    "Keep every study ordered, uncluttered, and fully visible with generous spacing. No text, labels, callouts, watermark, logo, interface, border, frame, diagram arrows, touching subjects, cropped anatomy, or decorative treatment."
+  ].join(" ");
+  const negative = `${base.negativePrompt}, incompatible studies, touching subjects, occluded anatomy, invented anatomy, inconsistent scale, diagram callouts`;
+  const validation: SpeciesPlateValidationIssue[] = validateNanoBananaVisualPrompt({ visualPrompt: detailed, negativePrompt: negative }, { min: 180, max: 320 }).map((issue) => ({ severity: issue.severity === "Structural Error" || issue.severity === "Canon Conflict" ? issue.severity : issue.severity === "Missing Optional Data" ? "Missing Optional Data" : "Visual Consistency Warning", code: issue.code, message: issue.message }));
   if (!source.id) validation.push({ severity: "Structural Error", code: "missing_canonical_record", message: "A canonical life record is required for a species plate." });
   if (!source.seed) validation.push({ severity: "Production Error", code: "missing_seed", message: "A deterministic generation seed is required." });
   if (base.versionCount !== 4 && !options.versionCount) validation.push({ severity: "Production Error", code: "invalid_default_version_count", message: "The master plate defaults to four variations." });
   const promptHash = stringHash(`${detailed}\n${negative}`);
-  return { speciesPlateId: `species-plate-${source.id}`, canonicalRecordId: source.id, templateId: SPECIES_PLATE_MASTER_V1.id, templateVersion: SPECIES_PLATE_MASTER_V1.version, presetId: options.presetId ?? (source.domain === "creature" ? "creature-standard" : "botanical-standard"), compilerVersion: SPECIES_PLATE_COMPILER_VERSION, modelProfileId: "nano-banana-2", requestedVersionCount: base.versionCount, seed: base.seed, positivePrompt: detailed, negativePrompt: negative, combinedPrompt: `${detailed}\n\nNEGATIVE PROMPT\n${negative}`, compactPrompt: `NOVERIS species plate: ${source.displayName}, ${source.taxonomy}, 4000x4000 pure black museum reference board, preserve locked canon, ${base.compactPrompt}`, detailedPrompt: detailed, resolvedVariables: base.resolvedVariables, unresolvedVariables: base.unresolvedVariables, lockedFields: record.lockedFields, promptHash, staleStatus: "current", validation };
+  return { speciesPlateId: `species-plate-${source.id}`, canonicalRecordId: source.id, templateId: SPECIES_PLATE_MASTER_V1.id, templateVersion: SPECIES_PLATE_MASTER_V1.version, presetId: options.presetId ?? (source.domain === "creature" ? "creature-standard" : "botanical-standard"), compilerVersion: SPECIES_PLATE_COMPILER_VERSION, promptVersion: "3.0.0", modelProfileId: "nano-banana-2", requestedVersionCount: base.versionCount, seed: base.seed, canonicalData: { source, templateId: SPECIES_PLATE_MASTER_V1.id, templateVersion: SPECIES_PLATE_MASTER_V1.version, presetId: options.presetId ?? (source.domain === "creature" ? "creature-standard" : "botanical-standard") }, visualSummary: base.visualSummary, visualPrompt: detailed, positivePrompt: detailed, negativePrompt: negative, combinedPrompt: `${detailed}\n\nNEGATIVE / EXCLUDE:\n${negative}`, compactPrompt: `NOVERIS species plate, ${source.displayName}, 4000 x 4000 black studio field, clean specimen studies, no text or watermark.`, detailedPrompt: detailed, resolvedVariables: base.resolvedVariables, unresolvedVariables: base.unresolvedVariables, resolvedVisualVariables: base.resolvedVisualVariables, unresolvedVisualVariables: base.unresolvedVisualVariables, lockedFields: record.lockedFields, promptHash, staleStatus: "current", validation };
 }
 
 export function getSpeciesPlatePromptStaleness(source: SpeciesPlateSource, prompt: ResolvedSpeciesPlatePrompt) {

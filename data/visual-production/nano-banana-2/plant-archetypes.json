@@ -9,7 +9,7 @@
       "temperate-forest-tree"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Trees",
     "definition": "Temperate Forest Tree is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -44,7 +44,7 @@
       "rainforest-canopy-tree"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Trees",
     "definition": "Rainforest Canopy Tree is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -79,7 +79,7 @@
       "deciduous-tree"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Trees",
     "definition": "Deciduous Tree is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -114,7 +114,7 @@
       "evergreen-conifer"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Trees",
     "definition": "Evergreen Conifer is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -149,7 +149,7 @@
       "mangrove"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Trees",
     "definition": "Mangrove is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -184,7 +184,7 @@
       "swamp-tree"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Trees",
     "definition": "Swamp Tree is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -219,7 +219,7 @@
       "desert-tree"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Trees",
     "definition": "Desert Tree is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -254,7 +254,7 @@
       "water-storage-tree"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Trees",
     "definition": "Water-Storage Tree is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -289,7 +289,7 @@
       "polar-tree"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Trees",
     "definition": "Polar Tree is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -324,7 +324,7 @@
       "volcanic-tree"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Trees",
     "definition": "Volcanic Tree is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -359,7 +359,7 @@
       "mountain-tree"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Trees",
     "definition": "Mountain Tree is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -394,7 +394,7 @@
       "high-gravity-tree"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Trees",
     "definition": "High-Gravity Tree is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -429,7 +429,7 @@
       "low-gravity-tree"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Trees",
     "definition": "Low-Gravity Tree is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -464,7 +464,7 @@
       "cave-tree"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Trees",
     "definition": "Cave Tree is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -499,7 +499,7 @@
       "giant-tree"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Trees",
     "definition": "Giant Tree is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -534,7 +534,7 @@
       "ancient-tree"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Trees",
     "definition": "Ancient Tree is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -569,7 +569,7 @@
       "extinct-tree"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Trees",
     "definition": "Extinct Tree is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -604,7 +604,7 @@
       "crystal-tree"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Trees",
     "definition": "Crystal Tree is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -639,7 +639,7 @@
       "silicon-tree"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Trees",
     "definition": "Silicon Tree is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -674,7 +674,7 @@
       "mineral-tree"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Trees",
     "definition": "Mineral Tree is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -709,7 +709,7 @@
       "energy-tree"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Trees",
     "definition": "Energy Tree is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -744,7 +744,7 @@
       "gas-tree"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Trees",
     "definition": "Gas Tree is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -779,7 +779,7 @@
       "plasma-tree"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Trees",
     "definition": "Plasma Tree is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -814,7 +814,7 @@
       "biomechanical-tree"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Trees",
     "definition": "Biomechanical Tree is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -849,7 +849,7 @@
       "synthetic-tree"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Trees",
     "definition": "Synthetic Tree is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -884,7 +884,7 @@
       "robotic-tree"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Trees",
     "definition": "Robotic Tree is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -919,7 +919,7 @@
       "nanite-tree"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Trees",
     "definition": "Nanite Tree is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -954,7 +954,7 @@
       "terraforming-tree"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Trees",
     "definition": "Terraforming Tree is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -989,7 +989,7 @@
       "temperate-shrub"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Shrubs, Bushes and Ground Cover",
     "definition": "Temperate Shrub is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1024,7 +1024,7 @@
       "desert-shrub"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Shrubs, Bushes and Ground Cover",
     "definition": "Desert Shrub is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1059,7 +1059,7 @@
       "polar-shrub"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Shrubs, Bushes and Ground Cover",
     "definition": "Polar Shrub is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1094,7 +1094,7 @@
       "swamp-shrub"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Shrubs, Bushes and Ground Cover",
     "definition": "Swamp Shrub is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1129,7 +1129,7 @@
       "thorn-bush"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Shrubs, Bushes and Ground Cover",
     "definition": "Thorn Bush is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1164,7 +1164,7 @@
       "flowering-bush"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Shrubs, Bushes and Ground Cover",
     "definition": "Flowering Bush is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1199,7 +1199,7 @@
       "fruit-bush"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Shrubs, Bushes and Ground Cover",
     "definition": "Fruit Bush is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1234,7 +1234,7 @@
       "medicinal-shrub"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Shrubs, Bushes and Ground Cover",
     "definition": "Medicinal Shrub is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1269,7 +1269,7 @@
       "poisonous-shrub"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Shrubs, Bushes and Ground Cover",
     "definition": "Poisonous Shrub is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1304,7 +1304,7 @@
       "ground-cover"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Shrubs, Bushes and Ground Cover",
     "definition": "Ground Cover is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1339,7 +1339,7 @@
       "creeping-ground-cover"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Shrubs, Bushes and Ground Cover",
     "definition": "Creeping Ground Cover is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1374,7 +1374,7 @@
       "mat-forming-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Shrubs, Bushes and Ground Cover",
     "definition": "Mat-Forming Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1409,7 +1409,7 @@
       "soil-stabilizing-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Shrubs, Bushes and Ground Cover",
     "definition": "Soil-Stabilizing Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1444,7 +1444,7 @@
       "high-gravity-ground-cover"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Shrubs, Bushes and Ground Cover",
     "definition": "High-Gravity Ground Cover is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1479,7 +1479,7 @@
       "low-gravity-ground-cover"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Shrubs, Bushes and Ground Cover",
     "definition": "Low-Gravity Ground Cover is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1514,7 +1514,7 @@
       "crystal-shrub"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Shrubs, Bushes and Ground Cover",
     "definition": "Crystal Shrub is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1549,7 +1549,7 @@
       "synthetic-shrub"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Shrubs, Bushes and Ground Cover",
     "definition": "Synthetic Shrub is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1584,7 +1584,7 @@
       "flowering-plant"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Flowers and Pollinators",
     "definition": "Flowering Plant is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1619,7 +1619,7 @@
       "pollinator-specialist-flower"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Flowers and Pollinators",
     "definition": "Pollinator-Specialist Flower is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1654,7 +1654,7 @@
       "wind-pollinated-flower"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Flowers and Pollinators",
     "definition": "Wind-Pollinated Flower is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1689,7 +1689,7 @@
       "water-pollinated-flower"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Flowers and Pollinators",
     "definition": "Water-Pollinated Flower is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1724,7 +1724,7 @@
       "self-pollinating-flower"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Flowers and Pollinators",
     "definition": "Self-Pollinating Flower is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1759,7 +1759,7 @@
       "nocturnal-flower"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Flowers and Pollinators",
     "definition": "Nocturnal Flower is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1794,7 +1794,7 @@
       "bioluminescent-flower"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Flowers and Pollinators",
     "definition": "Bioluminescent Flower is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1829,7 +1829,7 @@
       "desert-flower"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Flowers and Pollinators",
     "definition": "Desert Flower is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1864,7 +1864,7 @@
       "polar-flower"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Flowers and Pollinators",
     "definition": "Polar Flower is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1899,7 +1899,7 @@
       "rainforest-flower"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Flowers and Pollinators",
     "definition": "Rainforest Flower is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1934,7 +1934,7 @@
       "aquatic-flower"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Flowers and Pollinators",
     "definition": "Aquatic Flower is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1969,7 +1969,7 @@
       "carnivorous-flower"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Flowers and Pollinators",
     "definition": "Carnivorous Flower is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2004,7 +2004,7 @@
       "parasitic-flower"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Flowers and Pollinators",
     "definition": "Parasitic Flower is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2039,7 +2039,7 @@
       "giant-flower"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Flowers and Pollinators",
     "definition": "Giant Flower is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2074,7 +2074,7 @@
       "micro-flower"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Flowers and Pollinators",
     "definition": "Micro Flower is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2109,7 +2109,7 @@
       "crystal-flower"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Flowers and Pollinators",
     "definition": "Crystal Flower is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2144,7 +2144,7 @@
       "energy-flower"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Flowers and Pollinators",
     "definition": "Energy Flower is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2179,7 +2179,7 @@
       "synthetic-flower"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Flowers and Pollinators",
     "definition": "Synthetic Flower is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2214,7 +2214,7 @@
       "grass-analog"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Grasses, Ferns, Mosses and Lichens",
     "definition": "Grass-Analog is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2249,7 +2249,7 @@
       "tall-grass"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Grasses, Ferns, Mosses and Lichens",
     "definition": "Tall Grass is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2284,7 +2284,7 @@
       "grazing-grass"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Grasses, Ferns, Mosses and Lichens",
     "definition": "Grazing Grass is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2319,7 +2319,7 @@
       "seed-grass"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Grasses, Ferns, Mosses and Lichens",
     "definition": "Seed Grass is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2354,7 +2354,7 @@
       "fire-adapted-grass"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Grasses, Ferns, Mosses and Lichens",
     "definition": "Fire-Adapted Grass is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2389,7 +2389,7 @@
       "polar-grass"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Grasses, Ferns, Mosses and Lichens",
     "definition": "Polar Grass is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2424,7 +2424,7 @@
       "aquatic-grass"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Grasses, Ferns, Mosses and Lichens",
     "definition": "Aquatic Grass is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2459,7 +2459,7 @@
       "fern-analog"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Grasses, Ferns, Mosses and Lichens",
     "definition": "Fern-Analog is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2494,7 +2494,7 @@
       "tree-fern"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Grasses, Ferns, Mosses and Lichens",
     "definition": "Tree Fern is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2529,7 +2529,7 @@
       "cave-fern"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Grasses, Ferns, Mosses and Lichens",
     "definition": "Cave Fern is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2564,7 +2564,7 @@
       "moss-analog"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Grasses, Ferns, Mosses and Lichens",
     "definition": "Moss-Analog is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2599,7 +2599,7 @@
       "cushion-moss"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Grasses, Ferns, Mosses and Lichens",
     "definition": "Cushion Moss is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2634,7 +2634,7 @@
       "aquatic-moss"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Grasses, Ferns, Mosses and Lichens",
     "definition": "Aquatic Moss is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2669,7 +2669,7 @@
       "lichen-analog"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Grasses, Ferns, Mosses and Lichens",
     "definition": "Lichen-Analog is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2704,7 +2704,7 @@
       "crustose-lichen"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Grasses, Ferns, Mosses and Lichens",
     "definition": "Crustose Lichen is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2739,7 +2739,7 @@
       "foliose-lichen"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Grasses, Ferns, Mosses and Lichens",
     "definition": "Foliose Lichen is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2774,7 +2774,7 @@
       "branching-lichen"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Grasses, Ferns, Mosses and Lichens",
     "definition": "Branching Lichen is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2809,7 +2809,7 @@
       "crystal-moss"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Grasses, Ferns, Mosses and Lichens",
     "definition": "Crystal Moss is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2844,7 +2844,7 @@
       "synthetic-ground-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Grasses, Ferns, Mosses and Lichens",
     "definition": "Synthetic Ground Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2879,7 +2879,7 @@
       "climbing-vine"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Vines, Epiphytes and Climbing Flora",
     "definition": "Climbing Vine is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2914,7 +2914,7 @@
       "twining-vine"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Vines, Epiphytes and Climbing Flora",
     "definition": "Twining Vine is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2949,7 +2949,7 @@
       "hooked-vine"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Vines, Epiphytes and Climbing Flora",
     "definition": "Hooked Vine is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2984,7 +2984,7 @@
       "adhesive-vine"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Vines, Epiphytes and Climbing Flora",
     "definition": "Adhesive Vine is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3019,7 +3019,7 @@
       "strangler-vine"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Vines, Epiphytes and Climbing Flora",
     "definition": "Strangler Vine is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3054,7 +3054,7 @@
       "epiphyte"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Vines, Epiphytes and Climbing Flora",
     "definition": "Epiphyte is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3089,7 +3089,7 @@
       "canopy-epiphyte"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Vines, Epiphytes and Climbing Flora",
     "definition": "Canopy Epiphyte is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3124,7 +3124,7 @@
       "water-catching-epiphyte"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Vines, Epiphytes and Climbing Flora",
     "definition": "Water-Catching Epiphyte is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3159,7 +3159,7 @@
       "parasitic-vine"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Vines, Epiphytes and Climbing Flora",
     "definition": "Parasitic Vine is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3194,7 +3194,7 @@
       "symbiotic-vine"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Vines, Epiphytes and Climbing Flora",
     "definition": "Symbiotic Vine is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3229,7 +3229,7 @@
       "flowering-vine"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Vines, Epiphytes and Climbing Flora",
     "definition": "Flowering Vine is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3264,7 +3264,7 @@
       "fruit-vine"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Vines, Epiphytes and Climbing Flora",
     "definition": "Fruit Vine is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3299,7 +3299,7 @@
       "low-gravity-vine"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Vines, Epiphytes and Climbing Flora",
     "definition": "Low-Gravity Vine is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3334,7 +3334,7 @@
       "crystal-vine"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Vines, Epiphytes and Climbing Flora",
     "definition": "Crystal Vine is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3369,7 +3369,7 @@
       "synthetic-vine"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Vines, Epiphytes and Climbing Flora",
     "definition": "Synthetic Vine is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3404,7 +3404,7 @@
       "submerged-aquatic-plant"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Aquatic Plants",
     "definition": "Submerged Aquatic Plant is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3439,7 +3439,7 @@
       "floating-aquatic-plant"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Aquatic Plants",
     "definition": "Floating Aquatic Plant is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3474,7 +3474,7 @@
       "river-plant"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Aquatic Plants",
     "definition": "River Plant is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3509,7 +3509,7 @@
       "wetland-plant"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Aquatic Plants",
     "definition": "Wetland Plant is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3544,7 +3544,7 @@
       "coastal-plant"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Aquatic Plants",
     "definition": "Coastal Plant is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3579,7 +3579,7 @@
       "deep-water-plant"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Aquatic Plants",
     "definition": "Deep-Water Plant is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3614,7 +3614,7 @@
       "seaweed-analog"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Aquatic Plants",
     "definition": "Seaweed-Analog is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3649,7 +3649,7 @@
       "kelp-analog"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Aquatic Plants",
     "definition": "Kelp-Analog is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3684,7 +3684,7 @@
       "reef-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Aquatic Plants",
     "definition": "Reef Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3719,7 +3719,7 @@
       "polar-aquatic-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Aquatic Plants",
     "definition": "Polar Aquatic Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3754,7 +3754,7 @@
       "hydrothermal-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Aquatic Plants",
     "definition": "Hydrothermal Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3789,7 +3789,7 @@
       "methane-lake-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Aquatic Plants",
     "definition": "Methane-Lake Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3824,7 +3824,7 @@
       "ammonia-ocean-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Aquatic Plants",
     "definition": "Ammonia-Ocean Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3859,7 +3859,7 @@
       "crystal-aquatic-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Aquatic Plants",
     "definition": "Crystal Aquatic Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3894,7 +3894,7 @@
       "synthetic-aquatic-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Aquatic Plants",
     "definition": "Synthetic Aquatic Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3929,7 +3929,7 @@
       "succulent"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Succulents, Cacti and Extremophytes",
     "definition": "Succulent is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3964,7 +3964,7 @@
       "cactus-analog"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Succulents, Cacti and Extremophytes",
     "definition": "Cactus-Analog is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3999,7 +3999,7 @@
       "water-storage-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Succulents, Cacti and Extremophytes",
     "definition": "Water-Storage Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4034,7 +4034,7 @@
       "salt-tolerant-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Succulents, Cacti and Extremophytes",
     "definition": "Salt-Tolerant Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4069,7 +4069,7 @@
       "heat-resistant-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Succulents, Cacti and Extremophytes",
     "definition": "Heat-Resistant Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4104,7 +4104,7 @@
       "cryogenic-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Succulents, Cacti and Extremophytes",
     "definition": "Cryogenic Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4139,7 +4139,7 @@
       "radiation-resistant-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Succulents, Cacti and Extremophytes",
     "definition": "Radiation-Resistant Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4174,7 +4174,7 @@
       "acid-tolerant-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Succulents, Cacti and Extremophytes",
     "definition": "Acid-Tolerant Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4209,7 +4209,7 @@
       "alkaline-tolerant-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Succulents, Cacti and Extremophytes",
     "definition": "Alkaline-Tolerant Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4244,7 +4244,7 @@
       "volcanic-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Succulents, Cacti and Extremophytes",
     "definition": "Volcanic Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4279,7 +4279,7 @@
       "cave-extremophyte"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Succulents, Cacti and Extremophytes",
     "definition": "Cave Extremophyte is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4314,7 +4314,7 @@
       "vacuum-adapted-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Succulents, Cacti and Extremophytes",
     "definition": "Vacuum-Adapted Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4349,7 +4349,7 @@
       "orbital-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Succulents, Cacti and Extremophytes",
     "definition": "Orbital Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4384,7 +4384,7 @@
       "snap-trap-plant"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Carnivorous, Parasitic and Symbiotic Plants",
     "definition": "Snap-Trap Plant is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4419,7 +4419,7 @@
       "pitfall-plant"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Carnivorous, Parasitic and Symbiotic Plants",
     "definition": "Pitfall Plant is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4454,7 +4454,7 @@
       "adhesive-trap-plant"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Carnivorous, Parasitic and Symbiotic Plants",
     "definition": "Adhesive-Trap Plant is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4489,7 +4489,7 @@
       "suction-trap-plant"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Carnivorous, Parasitic and Symbiotic Plants",
     "definition": "Suction-Trap Plant is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4524,7 +4524,7 @@
       "active-carnivorous-plant"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Carnivorous, Parasitic and Symbiotic Plants",
     "definition": "Active Carnivorous Plant is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4559,7 +4559,7 @@
       "parasitic-plant"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Carnivorous, Parasitic and Symbiotic Plants",
     "definition": "Parasitic Plant is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4594,7 +4594,7 @@
       "root-parasite"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Carnivorous, Parasitic and Symbiotic Plants",
     "definition": "Root Parasite is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4629,7 +4629,7 @@
       "stem-parasite"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Carnivorous, Parasitic and Symbiotic Plants",
     "definition": "Stem Parasite is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4664,7 +4664,7 @@
       "mycoheterotrophic-plant"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Carnivorous, Parasitic and Symbiotic Plants",
     "definition": "Mycoheterotrophic Plant is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4699,7 +4699,7 @@
       "symbiotic-plant"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Carnivorous, Parasitic and Symbiotic Plants",
     "definition": "Symbiotic Plant is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4734,7 +4734,7 @@
       "animal-symbiotic-plant"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Carnivorous, Parasitic and Symbiotic Plants",
     "definition": "Animal-Symbiotic Plant is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4769,7 +4769,7 @@
       "mineral-symbiotic-plant"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Carnivorous, Parasitic and Symbiotic Plants",
     "definition": "Mineral-Symbiotic Plant is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4804,7 +4804,7 @@
       "synthetic-symbiotic-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Carnivorous, Parasitic and Symbiotic Plants",
     "definition": "Synthetic-Symbiotic Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4839,7 +4839,7 @@
       "mushroom-form-fungus"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fungi and Mycelial Life",
     "definition": "Mushroom-Form Fungus is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4874,7 +4874,7 @@
       "shelf-fungus"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fungi and Mycelial Life",
     "definition": "Shelf Fungus is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4909,7 +4909,7 @@
       "puff-fungus"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fungi and Mycelial Life",
     "definition": "Puff Fungus is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4944,7 +4944,7 @@
       "spore-tower-fungus"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fungi and Mycelial Life",
     "definition": "Spore Tower Fungus is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4979,7 +4979,7 @@
       "mycelial-colony"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fungi and Mycelial Life",
     "definition": "Mycelial Colony is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5014,7 +5014,7 @@
       "parasitic-fungus"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fungi and Mycelial Life",
     "definition": "Parasitic Fungus is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5049,7 +5049,7 @@
       "symbiotic-fungus"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fungi and Mycelial Life",
     "definition": "Symbiotic Fungus is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5084,7 +5084,7 @@
       "aquatic-fungus"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fungi and Mycelial Life",
     "definition": "Aquatic Fungus is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5119,7 +5119,7 @@
       "cave-fungus"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fungi and Mycelial Life",
     "definition": "Cave Fungus is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5154,7 +5154,7 @@
       "polar-fungus"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fungi and Mycelial Life",
     "definition": "Polar Fungus is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5189,7 +5189,7 @@
       "desert-fungus"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fungi and Mycelial Life",
     "definition": "Desert Fungus is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5224,7 +5224,7 @@
       "giant-fungus"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fungi and Mycelial Life",
     "definition": "Giant Fungus is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5259,7 +5259,7 @@
       "micro-fungus"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fungi and Mycelial Life",
     "definition": "Micro Fungus is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5294,7 +5294,7 @@
       "crystal-fungus"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fungi and Mycelial Life",
     "definition": "Crystal Fungus is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5329,7 +5329,7 @@
       "energy-fungus"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fungi and Mycelial Life",
     "definition": "Energy Fungus is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5364,7 +5364,7 @@
       "synthetic-fungus"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fungi and Mycelial Life",
     "definition": "Synthetic Fungus is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5399,7 +5399,7 @@
       "crystal-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Flora",
     "definition": "Crystal Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5434,7 +5434,7 @@
       "silicon-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Flora",
     "definition": "Silicon Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5469,7 +5469,7 @@
       "mineral-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Flora",
     "definition": "Mineral Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5504,7 +5504,7 @@
       "plasma-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Flora",
     "definition": "Plasma Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5539,7 +5539,7 @@
       "gas-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Flora",
     "definition": "Gas Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5574,7 +5574,7 @@
       "energy-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Flora",
     "definition": "Energy Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5609,7 +5609,7 @@
       "electromagnetic-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Flora",
     "definition": "Electromagnetic Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5644,7 +5644,7 @@
       "photonic-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Flora",
     "definition": "Photonic Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5679,7 +5679,7 @@
       "radiotrophic-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Flora",
     "definition": "Radiotrophic Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5714,7 +5714,7 @@
       "cryogenic-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Flora",
     "definition": "Cryogenic Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5749,7 +5749,7 @@
       "methane-based-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Flora",
     "definition": "Methane-Based Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5784,7 +5784,7 @@
       "ammonia-based-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Flora",
     "definition": "Ammonia-Based Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5819,7 +5819,7 @@
       "sulfur-based-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Flora",
     "definition": "Sulfur-Based Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5854,7 +5854,7 @@
       "geothermal-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Flora",
     "definition": "Geothermal Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5889,7 +5889,7 @@
       "vacuum-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Flora",
     "definition": "Vacuum Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5924,7 +5924,7 @@
       "orbital-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Flora",
     "definition": "Orbital Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5959,7 +5959,7 @@
       "biomechanical-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Artificial and Engineered Flora",
     "definition": "Biomechanical Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5994,7 +5994,7 @@
       "synthetic-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Artificial and Engineered Flora",
     "definition": "Synthetic Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6029,7 +6029,7 @@
       "robotic-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Artificial and Engineered Flora",
     "definition": "Robotic Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6064,7 +6064,7 @@
       "nanite-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Artificial and Engineered Flora",
     "definition": "Nanite Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6099,7 +6099,7 @@
       "engineered-crop"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Artificial and Engineered Flora",
     "definition": "Engineered Crop is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6134,7 +6134,7 @@
       "terraforming-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Artificial and Engineered Flora",
     "definition": "Terraforming Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6169,7 +6169,7 @@
       "atmosphere-processing-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Artificial and Engineered Flora",
     "definition": "Atmosphere-Processing Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6204,7 +6204,7 @@
       "soil-restoration-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Artificial and Engineered Flora",
     "definition": "Soil-Restoration Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6239,7 +6239,7 @@
       "water-retention-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Artificial and Engineered Flora",
     "definition": "Water-Retention Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6274,7 +6274,7 @@
       "radiation-shielding-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Artificial and Engineered Flora",
     "definition": "Radiation-Shielding Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6309,7 +6309,7 @@
       "industrial-fiber-plant"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Artificial and Engineered Flora",
     "definition": "Industrial Fiber Plant is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6344,7 +6344,7 @@
       "biofuel-plant"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Artificial and Engineered Flora",
     "definition": "Biofuel Plant is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6379,7 +6379,7 @@
       "medicinal-crop"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Artificial and Engineered Flora",
     "definition": "Medicinal Crop is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6414,7 +6414,7 @@
       "food-crop"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Artificial and Engineered Flora",
     "definition": "Food Crop is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6449,7 +6449,7 @@
       "companion-crop"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Artificial and Engineered Flora",
     "definition": "Companion Crop is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6484,7 +6484,7 @@
       "giant-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Giant, Ancient and Extinct Flora",
     "definition": "Giant Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6519,7 +6519,7 @@
       "ancient-living-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Giant, Ancient and Extinct Flora",
     "definition": "Ancient Living Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6554,7 +6554,7 @@
       "fossil-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Giant, Ancient and Extinct Flora",
     "definition": "Fossil Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6589,7 +6589,7 @@
       "extinct-tree"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Giant, Ancient and Extinct Flora",
     "definition": "Extinct Tree is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6624,7 +6624,7 @@
       "extinct-flower"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Giant, Ancient and Extinct Flora",
     "definition": "Extinct Flower is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6659,7 +6659,7 @@
       "extinct-aquatic-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Giant, Ancient and Extinct Flora",
     "definition": "Extinct Aquatic Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6694,7 +6694,7 @@
       "planetary-keystone-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Giant, Ancient and Extinct Flora",
     "definition": "Planetary Keystone Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6729,7 +6729,7 @@
       "forest-superorganism"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Giant, Ancient and Extinct Flora",
     "definition": "Forest Superorganism is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6764,7 +6764,7 @@
       "colonial-flora"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Giant, Ancient and Extinct Flora",
     "definition": "Colonial Flora is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6799,7 +6799,7 @@
       "mobile-seed-organism"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Giant, Ancient and Extinct Flora",
     "definition": "Mobile Seed Organism is a canonical plant-life archetype whose visual interpretation remains subordinate to locked record data.",

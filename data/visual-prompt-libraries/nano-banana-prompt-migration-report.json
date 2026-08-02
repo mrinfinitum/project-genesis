@@ -1,0 +1,862 @@
+{
+  "reportVersion": "1.0.0",
+  "promptVersion": "3.0.0",
+  "generatedAt": "deterministic-build",
+  "sourceHistoryPolicy": "Legacy prompt-library packages are preserved as source history and are not sent to image models.",
+  "legacyFindingsDisposition": "Expected pre-v3 source-history findings retained for audit only. They are excluded from every active Studio image-model copy path.",
+  "migrationStatus": "complete",
+  "filesScanned": 381,
+  "legacyPromptFindings": 22252,
+  "migrationSummary": {
+    "totalPromptSources": 22260,
+    "promptsCorrected": 8,
+    "promptsUnchanged": 0,
+    "promptsDeprecated": 22252,
+    "promptsRequiringManualReview": 0,
+    "averageOldWordCount": 619,
+    "averageNewWordCount": 117,
+    "rejectionRiskPhrasesRemoved": [
+      "return",
+      "provide",
+      "write",
+      "list",
+      "schema",
+      "canonical ID",
+      "Studio ingestion",
+      "runtime export"
+    ],
+    "rawJsonInsertionRemoved": true,
+    "duplicateFragmentsRemoved": true
+  },
+  "activePromptSurfaces": [
+    "Nano Banana 2 creature and flora compiler",
+    "Legacy creature batch compiler",
+    "Species plate compiler",
+    "Galaxy visual prompt compiler",
+    "Galactic region visual prompt compiler",
+    "Star system visual prompt compiler",
+    "Environment and flat background visual prompt compiler",
+    "Planet and celestial body visual prompt compiler"
+  ],
+  "findingsByIssue": {
+    "raw_json": 29,
+    "unresolved_variable": 22172,
+    "implementation_language": 3087,
+    "authoring_language": 3
+  },
+  "activeCompiler": {
+    "promptVersion": "3.0.0",
+    "visualOnly": true,
+    "canonicalDataSeparated": true,
+    "expectedWordRanges": {
+      "simple": "80-160",
+      "detailed": "120-240",
+      "plates": "180-320",
+      "habitat": "140-260"
+    }
+  },
+  "sampleFindings": [
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/PROMPT_CATALOG.md",
+      "location": "legacy_text",
+      "issues": [
+        "raw_json",
+        "unresolved_variable"
+      ],
+      "words": 204791
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.csv",
+      "location": "legacy_text",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 198229
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[0].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 226
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[0].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 300
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[1].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 218
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[1].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 292
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[2].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 213
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[2].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 287
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[3].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 218
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[3].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 292
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[4].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 217
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[4].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 291
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[5].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 217
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[5].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 291
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[6].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 216
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[6].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 290
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[7].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 217
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[7].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 291
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[8].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 215
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[8].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 289
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[9].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 216
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[9].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 290
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[10].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 217
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[10].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 291
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[11].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 215
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[11].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 289
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[12].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 213
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[12].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 287
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[13].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 219
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[13].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 293
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[14].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 219
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[14].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 293
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[15].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 218
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[15].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 292
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[16].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 215
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[16].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 289
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[17].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 218
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[17].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 292
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[18].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 229
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[18].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 303
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[19].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 224
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[19].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 298
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[20].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 211
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[20].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 287
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[21].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 203
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[21].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 279
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[22].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 198
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[22].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 274
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[23].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 203
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[23].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 279
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[24].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 202
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[24].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 278
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[25].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 202
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[25].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 278
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[26].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 201
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[26].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 277
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[27].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 202
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[27].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 278
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[28].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 200
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[28].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 276
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[29].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 201
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[29].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 277
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[30].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 202
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[30].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 278
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[31].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 200
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[31].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 276
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[32].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 198
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[32].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 274
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[33].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 204
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[33].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 280
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[34].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 204
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[34].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 280
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[35].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 203
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[35].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 279
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[36].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 200
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[36].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 276
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[37].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 203
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[37].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 279
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[38].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 214
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[38].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 290
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[39].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 209
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[39].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 285
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[40].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 208
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[40].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 282
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[41].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 200
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[41].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 274
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[42].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 195
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[42].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 269
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[43].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 200
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[43].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 274
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[44].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 199
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[44].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 273
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[45].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 199
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[45].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 273
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[46].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 198
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[46].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 272
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[47].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 199
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[47].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 273
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[48].positivePrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 197
+    },
+    {
+      "file": "data/visual-prompt-libraries/imported-source/NOVERIS_Visual_Prompt_Library_Volume_IB_Avian_Flying_Creatures/prompt-library.json",
+      "location": "[48].combinedPrompt",
+      "issues": [
+        "unresolved_variable"
+      ],
+      "words": 271
+    }
+  ],
+  "omittedFindingCount": 22152
+}

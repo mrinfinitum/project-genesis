@@ -1,5 +1,5 @@
-export const NANO_BANANA_2_COMPILER_VERSION = "1.0.0";
-export const NANO_BANANA_2_LIBRARY_VERSION = "1.0.0";
+export const NANO_BANANA_2_COMPILER_VERSION = "3.0.0";
+export const NANO_BANANA_2_LIBRARY_VERSION = "3.0.0";
 
 export type VisualDomain = "creature" | "plant";
 export type ValidationSeverity = "Structural Error" | "Canon Conflict" | "Scientific Plausibility Warning" | "Visual Consistency Warning" | "Missing Optional Data" | "Production Warning" | "Runtime Export Error";
@@ -86,11 +86,18 @@ export type ResolvedVisualPrompt = {
   backgroundProfileId: string;
   compositionProfileId: string;
   versionCount: number;
+  /** Canonical content remains a separate Studio artifact and is never copied to an image model. */
+  canonicalData: Record<string, unknown>;
+  visualSummary: string;
+  visualPrompt: string;
   positivePrompt: string;
   negativePrompt: string;
   combinedPrompt: string;
   compactPrompt: string;
   detailedPrompt: string;
+  /** Preferred v3 names; legacy aliases remain for existing Studio integrations. */
+  resolvedVisualVariables: Record<string, string>;
+  unresolvedVisualVariables: string[];
   resolvedVariables: Record<string, string>;
   unresolvedVariables: string[];
   lockedFields: string[];
@@ -119,11 +126,11 @@ const grammar = (id: string, domain: VisualGrammar["domain"], name: string, inst
 export const nanoBanana2ModelProfile = {
   id: "nano-banana-2" as const,
   name: "Nano Banana 2",
-  preferredPromptOrder: ["task", "versionCount", "identity", "archetype", "structure", "movement", "environment", "ecology", "materials", "lockedTraits", "variation", "output", "camera", "lighting", "background", "composition", "psd", "consistency", "negative"],
-  promptVerbosity: "detailed with a compact copy variant",
-  naturalLanguageStyle: "clear production-direction prose with explicit exclusions",
+  preferredPromptOrder: ["visual_task", "subject", "visual_traits", "composition", "lighting", "background", "output", "negative"],
+  promptVerbosity: "concise visual-only direction",
+  naturalLanguageStyle: "natural-language image direction with explicit exclusions and no authoring data",
   phrases: {
-    camera: "Camera:", lighting: "Lighting:", aspectRatio: "16:9", blackBackground: "pure black background for PSD extraction", transparentBackground: "transparent-compatible black background, preserve clean edge separation", referenceBoard: "ordered reference board with clean separation and no labels", orthographic: "true orthographic view with no perspective distortion", consistency: "preserve all locked canonical traits exactly", noText: "no text, watermark, logo, interface, border, or frame", variation: "vary only the permitted secondary traits", iteration: "produce each requested interpretation separately at consistent scale", editExisting: "future edit mode: preserve the supplied image composition while applying only approved deltas"
+    camera: "Camera:", lighting: "Lighting:", aspectRatio: "16:9", blackBackground: "pure black background for PSD extraction", transparentBackground: "transparent-compatible black background, preserve clean edge separation", referenceBoard: "ordered reference board with clean separation and no labels", orthographic: "true orthographic view with no perspective distortion", consistency: "preserve all locked visual traits exactly", noText: "no text, watermark, logo, interface, border, or frame", variation: "vary only the permitted secondary traits", iteration: "produce each requested interpretation separately at consistent scale", editExisting: "future edit mode: preserve the supplied image composition while applying only approved deltas"
   },
   version: NANO_BANANA_2_LIBRARY_VERSION
 };
@@ -173,7 +180,7 @@ function archetypesFor(domain: VisualDomain, families: Array<[string, string, st
       materialRules: plant ? "Resolve biologically or materially appropriate plant tissue from locked material variables." : "Resolve biologically or materially appropriate surfaces from locked material variables.",
       silhouetteRules: "Keep the canonical silhouette class recognizable at a glance and never introduce unrelated anatomy.",
       variationRules: "Permit only secondary variation explicitly authorized by the selected variation profile.",
-      prohibitedChanges: ["canonical anatomy", "planet", "biome", "gravity adaptation", "atmospheric adaptation", "locked materials", "locked coloration", "distinctive features", "canonical rarity"],
+      prohibitedChanges: ["altered anatomy", "conflicting habitat", "altered gravity adaptation", "altered atmospheric adaptation", "conflicting materials", "conflicting coloration", "unrelated distinctive features", "altered rarity"],
       compatibleOutputTypes: [],
       compatibleVariationProfiles: []
     };
@@ -199,7 +206,7 @@ export const cameraProfiles = [
 
 export const lightingProfiles = ["Neutral Studio|soft neutral studio lighting, natural white balance, and readable material separation", "Museum Specimen|museum-quality specimen lighting without dramatic shadows", "Soft Product Reference|soft product reference illumination with restrained separation", "Anatomical Reference|even anatomical reference illumination with no hidden structures", "Material Study|controlled raking material light without stylized glare", "Native Habitat Day|restrained natural habitat daylight", "Native Habitat Low Light|low-light habitat illumination with no false focal flare", "Underwater Natural|plausible underwater natural light", "Cave Natural|subtle cave light with geological context", "Polar Natural|cool restrained polar daylight", "Desert Natural|restrained desert light with readable form", "Volcanic Natural|heat-aware volcanic light without fantasy glow", "Discovery Scan|restrained scientific scan illumination", "Transparent-Extraction Compatible|even clean extraction lighting with preserved edge separation"].map((value) => { const [name, instructions] = value.split("|"); return grammar(slug(name), "shared", name, instructions); });
 
-export const backgroundProfiles = ["Pure Black|pure black background for isolated PSD source-master extraction", "Dark Charcoal|dark charcoal background with no horizon or visual distraction", "Transparent-Compatible Black|transparent-compatible black background with clean edges", "Neutral Gray|neutral gray studio field for material readability", "Scientific White|scientific white board only when explicitly requested", "Native Habitat|canonical native habitat only", "Underwater Habitat|canonical underwater habitat only", "Atmospheric Habitat|canonical atmospheric habitat only", "Cave Habitat|canonical cave habitat only", "Forest Habitat|canonical forest habitat only", "Desert Habitat|canonical desert habitat only", "Polar Habitat|canonical polar habitat only", "Volcanic Habitat|canonical volcanic habitat only", "Reference Board|neutral reference board field", "Species Plate|neutral species plate field", "Botanical Plate|neutral botanical plate field"].map((value) => { const [name, instructions] = value.split("|"); return grammar(slug(name), "shared", name, instructions); });
+export const backgroundProfiles = ["Pure Black|pure black studio background with clean subject separation", "Dark Charcoal|dark charcoal background with no horizon or visual distraction", "Transparent-Compatible Black|transparent-compatible black background with clean edges", "Neutral Gray|neutral gray studio field for material readability", "Scientific White|scientific white board only when explicitly requested", "Native Habitat|native habitat appropriate to the subject", "Underwater Habitat|underwater habitat appropriate to the subject", "Atmospheric Habitat|atmospheric habitat appropriate to the subject", "Cave Habitat|cave habitat appropriate to the subject", "Forest Habitat|forest habitat appropriate to the subject", "Desert Habitat|desert habitat appropriate to the subject", "Polar Habitat|polar habitat appropriate to the subject", "Volcanic Habitat|volcanic habitat appropriate to the subject", "Reference Board|neutral reference board field", "Species Plate|neutral species plate field", "Botanical Plate|neutral botanical plate field"].map((value) => { const [name, instructions] = value.split("|"); return grammar(slug(name), "shared", name, instructions); });
 
 export const compositionProfiles = [
   ["isolated-production", "Isolated Production", "center the complete subject with generous extraction margin and no environmental competition"],
@@ -243,6 +250,47 @@ function invalidReferenceIssue(kind: string, requestedId: string | undefined, av
   return { severity: "Structural Error", code: `invalid_${kind}_reference`, message: `Invalid ${kind} reference: ${requestedId}.` };
 }
 
+const visualOnlyForbiddenPatterns: Array<[RegExp, string, string]> = [
+  [/```|\{\s*"|\[\s*\{/i, "raw_json", "Visual prompts must not contain JSON or object literals."],
+  [/\b(canonical|source master|source-masters|studio ingestion|ingest|runtime export|schema|report)\b/i, "authoring_language", "Visual prompts must not contain Studio workflow language."],
+  [/\b(seed|locked values?|resolved variables?|prompt hash|template id|production status)\b/i, "implementation_language", "Visual prompts must not expose implementation data."],
+  [/\{\{.+?\}\}|\bundefined\b|\bnull\b/i, "unresolved_variable", "Visual prompts must not contain unresolved variables."]
+];
+
+const humanizeKey = (value: string) => value.replace(/([a-z])([A-Z])/g, "$1 $2").replaceAll("_", " ").replaceAll("-", " ").toLowerCase();
+const sentenceCase = (value: string) => value.replace(/\s+/g, " ").trim();
+const wordCount = (value: string) => value.trim().split(/\s+/).filter(Boolean).length;
+
+function visualFacts(record: CanonicalVisualRecord, values: Record<string, string>) {
+  const entries = Object.entries(values)
+    .filter(([key, value]) => !["CanonicalId", "DisplayName", "ScientificName", "Taxonomy"].includes(key) && Boolean(value))
+    .slice(0, 8)
+    .map(([key, value]) => `${humanizeKey(key)}: ${sentenceCase(value)}`);
+  return entries.join("; ");
+}
+
+function createVisualSummary(record: CanonicalVisualRecord, archetype: VisualArchetype, values: Record<string, string>) {
+  const environment = values.Biome || values.Habitat || values.Climate || "a scientifically plausible native setting";
+  const materials = values.PrimaryMaterial || values.Material || "natural, physically credible surfaces";
+  return `${record.displayName} is a ${archetype.name.toLowerCase()} shown in ${environment}, with ${materials} and a readable ${record.domain === "plant" ? "growth silhouette" : "anatomical silhouette"}.`;
+}
+
+export function validateNanoBananaVisualPrompt(prompt: { visualPrompt: string; negativePrompt: string; combinedPrompt?: string }, expectedRange: { min: number; max: number } = { min: 80, max: 240 }): PromptIssue[] {
+  const issues: PromptIssue[] = [];
+  const visual = prompt.visualPrompt.trim();
+  for (const [pattern, code, message] of visualOnlyForbiddenPatterns) {
+    if (pattern.test(visual)) issues.push({ severity: "Structural Error", code, message });
+  }
+  const words = wordCount(visual);
+  if (words < expectedRange.min || words > expectedRange.max) issues.push({ severity: "Production Warning", code: "visual_prompt_word_limit", message: `Visual prompt is ${words} words; expected ${expectedRange.min}-${expectedRange.max}.` });
+  if (!/no text/i.test(visual) || !/watermark/i.test(visual)) issues.push({ severity: "Production Warning", code: "missing_no_text_watermark", message: "Visual prompts must exclude text and watermarks." });
+  if (!prompt.negativePrompt.trim()) issues.push({ severity: "Production Warning", code: "missing_negative_prompt", message: "A negative prompt is required." });
+  if (!/no text/i.test(prompt.negativePrompt) || !/watermark/i.test(prompt.negativePrompt)) issues.push({ severity: "Production Warning", code: "negative_prompt_incomplete", message: "Negative prompts must exclude text and watermarks." });
+  const repeated = [...visual.toLowerCase().matchAll(/\b([a-z]{5,})\b(?:[^a-z]+\1\b){2,}/g)].map((match) => match[1]);
+  if (repeated.length) issues.push({ severity: "Visual Consistency Warning", code: "repeated_terms", message: `Repeated visual terms: ${[...new Set(repeated)].join(", ")}.` });
+  return issues;
+}
+
 export function compileNanoBanana2Prompt(record: CanonicalVisualRecord, options: PromptCompileOptions): ResolvedVisualPrompt {
   const archetype = byId(visualArchetypes, record.archetypeId, visualArchetypes.find((item) => item.domain === record.domain)!);
   const output = byId(productionOutputs.filter((item) => item.domain === record.domain), options.outputTypeId, defaultOutput(record.domain));
@@ -270,21 +318,39 @@ export function compileNanoBanana2Prompt(record: CanonicalVisualRecord, options:
   if (versionCount !== 1 && versionCount !== 2 && versionCount !== 3 && versionCount !== 4 && versionCount !== 6 && versionCount !== 8) issues.push({ severity: "Structural Error", code: "invalid_version_count", message: "Version count must be 1, 2, 3, 4, 6, or 8." });
   if (variables.unresolved.length) issues.push({ severity: "Missing Optional Data", code: "unresolved_variables", message: `Unresolved variables: ${variables.unresolved.join(", ")}.` });
   if (variables.blockedOverrideKeys.length) issues.push({ severity: "Canon Conflict", code: "override_locked_field", message: `Author overrides cannot replace locked canonical fields: ${variables.blockedOverrideKeys.join(", ")}.` });
-  const identity = `Canonical ${record.domain} “${record.displayName}”${record.scientificName ? `, scientific name ${record.scientificName}` : ""}, canonical ID ${record.id}, taxonomy ${record.taxonomy}.`;
-  const variableSentence = Object.entries(variables.values).filter(([key]) => !["CanonicalId", "DisplayName", "ScientificName", "Taxonomy"].includes(key)).map(([key, value]) => `${key}: ${value}`).join("; ");
-  const variationInstruction = `Create ${versionCount} clearly different but canon-compliant interpretation${versionCount === 1 ? "" : "s"}. ${nanoBanana2ModelProfile.phrases.variation}: ${variation.permittedFields.join(", ")}. Never alter ${variation.prohibitedFields.join(", ")}.`;
-  const lockedValueSentence = Object.entries(record.lockedValues).map(([key, value]) => `${key}: ${JSON.stringify(value)}`).join("; ");
-  const detailed = [`Create a premium NOVERIS ${output.name.toLowerCase()} for ${nanoBanana2ModelProfile.name}.`, `Requested task: ${output.instructions}`, `Canonical identity: ${identity}`, `Archetype: ${archetype.definition} ${archetype.structuralRules} ${archetype.movementOrGrowthRules}`, `Environment and ecology: ${archetype.environmentalRules} ${archetype.ecologyRules}`, `Resolved canonical variables: ${variableSentence || "no optional variables resolved"}.`, `Materials: ${archetype.materialRules}`, `Locked traits: ${record.lockedFields.join(", ") || "none declared"}. Locked values: ${lockedValueSentence || "none declared"}. ${nanoBanana2ModelProfile.phrases.consistency}.`, variationInstruction, `Camera: ${camera.instructions}.`, `Lighting: ${lighting.instructions}.`, `Background: ${background.instructions}.`, `Composition: ${composition.instructions}.`, `PSD production: ${psdProductionRules.instructions}`, `${nanoBanana2ModelProfile.phrases.noText}. ${nanoBanana2ModelProfile.phrases.iteration}.`].join(" ");
-  const compact = [`${output.name}: ${record.displayName}`, archetype.name, archetype.structuralRules, variableSentence, `Camera ${camera.name}`, `lighting ${lighting.name}`, `background ${background.name}`, `composition ${composition.name}`, variationInstruction, psdProductionRules.instructions, nanoBanana2ModelProfile.phrases.noText].filter(Boolean).join(", ");
-  const negative = [...sharedNegativePrompts, ...domainNegatives[record.domain], ...archetype.prohibitedChanges, ...(archetype.exclusions ?? [])].join(", ");
-  if (detailed.length < 240) issues.push({ severity: "Production Warning", code: "prompt_too_short", message: "The resolved detailed prompt is unexpectedly short." });
-  if (!negative.trim()) issues.push({ severity: "Production Warning", code: "missing_negative_prompt", message: "A negative prompt is required." });
-  if (!detailed.includes(nanoBanana2ModelProfile.phrases.noText)) issues.push({ severity: "Production Warning", code: "missing_no_text_instruction", message: "The no-text instruction is required." });
-  if (!detailed.includes(psdProductionRules.instructions)) issues.push({ severity: "Production Warning", code: "missing_psd_rules", message: "PSD production rules are required." });
+  const facts = visualFacts(record, variables.values);
+  const visualSummary = createVisualSummary(record, archetype, variables.values);
+  const variationInstruction = versionCount === 1 ? "Create one resolved image." : `Create ${versionCount} coherent visual variants with only subtle changes to pose, markings, and secondary surface detail.`;
+  const detailed = [
+    `Create a premium NOVERIS ${output.name.toLowerCase()} of ${record.displayName}${record.scientificName ? `, ${record.scientificName}` : ""}.`,
+    `Show a ${archetype.name.toLowerCase()} with a clear, scientifically plausible silhouette and believable anatomy or growth structure.`,
+    facts ? `Visual traits: ${facts}.` : "Use restrained, scientifically plausible traits appropriate to the subject.",
+    `Use ${camera.instructions}, ${lighting.instructions}, and ${composition.instructions}.`,
+    `Use ${background.instructions}. Keep materials physically credible, finely detailed, and readable at a glance.`,
+    `${variationInstruction} Keep the subject fully in frame with clean edges and balanced negative space.`,
+    "No text, labels, watermark, logo, user interface, border, frame, collage, or decorative graphic treatment."
+  ].join(" ");
+  const compact = `${record.displayName}, ${archetype.name.toLowerCase()}, ${camera.name.toLowerCase()}, ${lighting.name.toLowerCase()}, clean silhouette, no text or watermark.`;
+  const negative = ["no text", "no labels", "no watermark", "no logo", "no user interface", "no border", "no frame", "no collage", "no cropped subject", "no duplicate anatomy", "no conflicting limbs", "no fantasy armor", "no weapons", "no cartoon", "no anime", "no oversaturation", "no blur", ...domainNegatives[record.domain], ...archetype.prohibitedChanges].join(", ");
+  const combined = `VISUAL PROMPT:\n${detailed}\n\nNEGATIVE / EXCLUDE:\n${negative}`;
+  issues.push(...validateNanoBananaVisualPrompt({ visualPrompt: detailed, negativePrompt: negative, combinedPrompt: combined }));
   const canonicalRecordHash = hash(JSON.stringify(record));
   const grammarHash = hash(JSON.stringify({ output, archetype, camera, lighting, background, composition, variation, psd: psdProductionRules, negatives: sharedNegativePrompts, model: nanoBanana2ModelProfile, compiler: NANO_BANANA_2_COMPILER_VERSION, library: NANO_BANANA_2_LIBRARY_VERSION }));
   const sourceHash = hash(JSON.stringify({ canonicalRecordHash, grammarHash, versionCount, seed }));
-  return { resolvedPromptId: `resolved-${record.id}-${output.id}-${sourceHash}`, canonicalId: record.id, modelProfileId: "nano-banana-2", compilerVersion: NANO_BANANA_2_COMPILER_VERSION, libraryVersion: NANO_BANANA_2_LIBRARY_VERSION, promptVersion: NANO_BANANA_2_LIBRARY_VERSION, sourceRecordVersion: record.sourceVersion, sourceHash, sourceSnapshot: { canonicalRecordHash, grammarHash }, promptHash: hash(`${detailed}\n${negative}`), seed, archetypeId: archetype.id, outputTypeId: output.id, variationProfileId: variation.id, cameraProfileId: camera.id, lightingProfileId: lighting.id, backgroundProfileId: background.id, compositionProfileId: composition.id, versionCount, positivePrompt: detailed, negativePrompt: negative, combinedPrompt: `${detailed}\n\nNEGATIVE PROMPT\n${negative}`, compactPrompt: compact, detailedPrompt: detailed, resolvedVariables: variables.values, unresolvedVariables: variables.unresolved, lockedFields: record.lockedFields, validation: issues, staleStatus: "current", productionStatus: "draft" };
+  const canonicalData = {
+    id: record.id,
+    displayName: record.displayName,
+    scientificName: record.scientificName,
+    domain: record.domain,
+    taxonomy: record.taxonomy,
+    sourceVersion: record.sourceVersion,
+    seed,
+    variables: record.variables,
+    lockedFields: record.lockedFields,
+    lockedValues: record.lockedValues,
+    promptOptions: { outputTypeId: output.id, variationProfileId: variation.id, cameraProfileId: camera.id, lightingProfileId: lighting.id, backgroundProfileId: background.id, compositionProfileId: composition.id, versionCount }
+  };
+  return { resolvedPromptId: `resolved-${record.id}-${output.id}-${sourceHash}`, canonicalId: record.id, modelProfileId: "nano-banana-2", compilerVersion: NANO_BANANA_2_COMPILER_VERSION, libraryVersion: NANO_BANANA_2_LIBRARY_VERSION, promptVersion: NANO_BANANA_2_LIBRARY_VERSION, sourceRecordVersion: record.sourceVersion, sourceHash, sourceSnapshot: { canonicalRecordHash, grammarHash }, promptHash: hash(`${detailed}\n${negative}`), seed, archetypeId: archetype.id, outputTypeId: output.id, variationProfileId: variation.id, cameraProfileId: camera.id, lightingProfileId: lighting.id, backgroundProfileId: background.id, compositionProfileId: composition.id, versionCount, canonicalData, visualSummary, visualPrompt: detailed, positivePrompt: detailed, negativePrompt: negative, combinedPrompt: combined, compactPrompt: compact, detailedPrompt: detailed, resolvedVisualVariables: variables.values, unresolvedVisualVariables: variables.unresolved, resolvedVariables: variables.values, unresolvedVariables: variables.unresolved, lockedFields: record.lockedFields, validation: issues, staleStatus: "current", productionStatus: "draft" };
 }
 
 export function getNanoBanana2PromptStaleness(record: CanonicalVisualRecord, prompt: ResolvedVisualPrompt): PromptStaleness {
@@ -307,8 +373,8 @@ export function compileNanoBanana2PromptBatch(records: CanonicalVisualRecord[], 
 }
 export function sanitizeVisualPromptForRuntime(prompt: ResolvedVisualPrompt) { return { generatedAssetId: null, sourcePromptId: prompt.resolvedPromptId, promptHash: prompt.promptHash, promptVersion: prompt.promptVersion, modelProfileId: prompt.modelProfileId, generationSeed: prompt.seed, variationProfileId: prompt.variationProfileId, productionStatus: prompt.productionStatus, approvedAssetReference: null }; }
 export function exportPromptPack(prompt: ResolvedVisualPrompt) {
-  const payload = { canonicalId: prompt.canonicalId, displayName: prompt.resolvedVariables.DisplayName, modelProfile: prompt.modelProfileId, archetype: prompt.archetypeId, outputType: prompt.outputTypeId, variationProfile: prompt.variationProfileId, versionCount: prompt.versionCount, seed: prompt.seed, positivePrompt: prompt.positivePrompt, negativePrompt: prompt.negativePrompt, combinedPrompt: prompt.combinedPrompt, resolvedVariables: prompt.resolvedVariables, lockedFields: prompt.lockedFields, compilerVersion: prompt.compilerVersion, promptVersion: prompt.promptVersion, generatedAt: "deterministic-build", staleStatus: prompt.staleStatus, promptHash: prompt.promptHash };
+  const payload = { canonicalId: prompt.canonicalId, displayName: prompt.resolvedVisualVariables.DisplayName, modelProfile: prompt.modelProfileId, archetype: prompt.archetypeId, outputType: prompt.outputTypeId, variationProfile: prompt.variationProfileId, versionCount: prompt.versionCount, seed: prompt.seed, canonicalData: prompt.canonicalData, visualSummary: prompt.visualSummary, visualPrompt: prompt.visualPrompt, negativePrompt: prompt.negativePrompt, combinedPrompt: prompt.combinedPrompt, resolvedVisualVariables: prompt.resolvedVisualVariables, lockedFields: prompt.lockedFields, compilerVersion: prompt.compilerVersion, promptVersion: prompt.promptVersion, generatedAt: "deterministic-build", staleStatus: prompt.staleStatus, promptHash: prompt.promptHash };
   const csv = [Object.keys(payload).join(","), Object.values(payload).map((value) => `"${JSON.stringify(value).replaceAll('"', '""')}"`).join(",")].join("\n");
-  const markdown = `# ${payload.displayName} Nano Banana 2 Prompt Pack\n\n## Positive Prompt\n\n\`\`\`text\n${prompt.positivePrompt}\n\`\`\`\n\n## Negative Prompt\n\n\`\`\`text\n${prompt.negativePrompt}\n\`\`\`\n`;
+  const markdown = `# ${payload.displayName} Nano Banana 2 Prompt Pack\n\n## Visual Prompt\n\n\`\`\`text\n${prompt.visualPrompt}\n\`\`\`\n\n## Negative Prompt\n\n\`\`\`text\n${prompt.negativePrompt}\n\`\`\`\n`;
   return { json: JSON.stringify(payload, null, 2), jsonl: JSON.stringify(payload), csv, markdown, text: prompt.combinedPrompt };
 }

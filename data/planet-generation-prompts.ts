@@ -1,3 +1,5 @@
+import { compilePlanetVisualPrompt } from "@/lib/visual-production/celestial-prompt-compiler";
+
 export type PlanetPromptTemplate = {
   planetClass: string;
   subclass: string;
@@ -6,24 +8,11 @@ export type PlanetPromptTemplate = {
 };
 
 export const PLANET_MASTER_PROMPT = [
-  "Create one high-resolution sci-fi planet asset on a clean black background.",
-  "",
-  "The planet must be a fully visible spherical world seen from orbit/space, centered in the image, with a smooth clean circular silhouette and crop-friendly edges. The entire planet must fit inside the frame with generous empty black space around it.",
-  "",
-  "Important: no glow, no aura, no bloom, no atmospheric haze extending into the background, no rim glow, no lens flare. The edge of the planet should be crisp and easy to cut out from the black background. Any atmosphere should stay very subtle and contained tightly inside the planet silhouette.",
-  "",
-  "Visual style: cinematic realistic space-game planet render, premium strategy game / space exploration asset, highly detailed planetary surface textures, realistic clouds, continents, oceans, deserts, ice caps, lava flows, storm systems, crater fields, alien terrain patterns, and believable spherical shading.",
-  "",
-  "The planet should look like a distant world viewed from space, not a miniature landscape or diorama. No terrain, trees, cities, buildings, ships, rocks, moons, satellites, debris, or structures may appear outside or protrude from the planet silhouette. All detail must appear painted onto or beneath the planet atmosphere.",
-  "",
-  "Create a unique planet type:",
-  "(INSERT PLANET DESCRIPTION)",
-  "",
-  "Lighting: single soft key light from upper left, realistic spherical shading, visible day side and subtle night side, clean shadow falloff, no external glow.",
-  "",
-  "Composition: square 1:1 image, one centered planet only, no moons, no companion bodies, planet occupies about 65 percent of the canvas height, large black negative space around the planet, clean black background, no stars, no UI, no text, no labels, no watermark.",
-  "",
-  "Quality: ultra detailed, crisp, sharp, realistic, cinematic, high dynamic range, game asset, ready for background removal, cropping, and upscaling. Avoid: glow, aura, bloom, atmospheric glow, rim glow, haze extending outside planet, lens flare, bright outline, stars, starfield, nebula, text, labels, captions, watermark, signature, logo, artist name, UI, interface, border, frame, blurry, low resolution, pixelated, flat icon, cartoon, anime, childish, simple vector art, cropped planet, partial planet, cut off edges, planet touching image edge, off-center planet, messy background, transparent background artifacts, spaceship, astronaut, moon, moons, satellite, characters, buildings, towers, cities protruding from surface, trees protruding from surface, forests sticking out, mountains sticking out, rocks floating outside planet, external debris, objects attached to planet edge, miniature landscape, diorama, terrain model, isometric world, floating islands, raised land, visible people, close-up landscape, excessive contrast, overexposed, distorted sphere, oval planet, deformed planet, bad perspective"
+  "Create a premium NOVERIS visual of one complete planet.",
+  "Show one scientifically plausible spherical world from orbit, fully visible and centered on a pure black background with generous negative space.",
+  "Preserve the selected planet class, subclass, surface materials, atmosphere, climate character, visible cloud systems, and any stated rings or moons.",
+  "Use controlled upper-left illumination, realistic terminator shading, crisp contained silhouette edges, restrained color, and clean extraction-friendly separation.",
+  "3840 x 3840, 1:1. No text, labels, watermark, logo, interface, border, external terrain, spacecraft, duplicate bodies, excessive glow, bloom, lens flare, or decorative background."
 ].join("\n");
 
 export const PLANET_PROMPT_LIBRARY: PlanetPromptTemplate[] = [
@@ -957,5 +946,9 @@ export function planetTypeFeaturePrompt(row: PlanetPromptTemplate) {
 }
 
 export function buildPlanetPrompt(description: string) {
-  return PLANET_MASTER_PROMPT.replace("(INSERT PLANET DESCRIPTION)", description.trim());
+  return compilePlanetVisualPrompt({
+    planetClass: "planet",
+    planetSubclass: "procedural",
+    visualSummary: description.trim()
+  }).visualPrompt;
 }

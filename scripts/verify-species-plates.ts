@@ -15,7 +15,7 @@ assert(speciesPlateVariationProfiles.length === 12, "All canonical species plate
 const botanicalPreset = resolveSpeciesPlatePreset("botanical-standard");
 assert(botanicalPreset.templateId === SPECIES_PLATE_MASTER_V1.id && botanicalPreset.groups.length > 0, "Presets must inherit the canonical master template.");
 assert(plate.panels.some((item) => item.id === "full_body" && item.required), "Full body hero panel is required.");
-assert(prompt.requestedVersionCount === 4 && prompt.positivePrompt.includes("4000x4000"), "Compiler must preserve master resolution and default version count.");
+assert(prompt.requestedVersionCount === 4 && /4000\s*[x×]\s*4000/i.test(prompt.positivePrompt), "Compiler must preserve master resolution and default version count.");
 assert(prompt.negativePrompt.includes("labels") && prompt.lockedFields.includes("limbCount"), "Compiler must enforce no-label and locked-canon rules.");
 assert(!getSpeciesPlatePromptStaleness(source, prompt).stale, "Fresh plate prompt must not be stale.");
 const changedSource = { ...source, displayName: "Changed Verification Specimen" };
@@ -26,7 +26,7 @@ const published = transitionSpeciesPlateStatus(transitionSpeciesPlateStatus(appr
 assert(transitionSpeciesPlateStatus(published, "published").productionStatus === "published", "Approved species plates must follow the review and publish state machine.");
 const exoticSource = { ...source, id: "exotic-specimen", domain: "exotic-life" as const, taxonomy: "Life · Exotic", archetypeId: undefined };
 const exoticPrompt = compileSpeciesPlatePrompt(exoticSource, { presetId: "exotic-creature" });
-assert(exoticPrompt.positivePrompt.includes("support lattice") && exoticPrompt.requestedVersionCount === 4, "Exotic life must resolve compatible terminology and four canonical variants.");
+assert(exoticPrompt.requestedVersionCount === 4 && exoticPrompt.promptVersion === "3.0.0" && exoticPrompt.canonicalData.source !== undefined, "Exotic life must retain its separate canonical source and four visual variations.");
 const runtime = sanitizeSpeciesPlateForRuntime(plate);
 assert(!JSON.stringify(runtime).includes("positivePrompt") && runtime.templateId === "SPECIES_PLATE_MASTER_V1", "Runtime plate references must remain sanitized.");
 for (const panel of plate.panels) {

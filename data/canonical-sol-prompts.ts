@@ -18,49 +18,20 @@ export type CanonicalSolPrompt = {
 };
 
 export const CANONICAL_SOL_MASTER_PROMPT = [
-  "Create one high-resolution canonical Solar System body asset on a clean black background.",
-  "",
-  "The body must be fully visible, centered in the image, scientifically grounded, and immediately recognizable as the real Solar System object being rendered.",
-  "",
-  "Use accurate NASA-inspired coloration, physically believable lighting, realistic surface or atmospheric detail, and premium space exploration game asset quality.",
-  "",
-  "Create this canonical Solar System body:",
+  "Create a premium NOVERIS visual of one real Solar System body.",
   "{{planet_description}}",
-  "",
-  "Composition: square 1:1 image, one centered body only, generous black negative space around it, clean black background, no stars, no UI, no text, no labels, no watermark.",
-  "",
-  "Lighting: single soft key light from upper left, realistic spherical shading, visible day side and subtle night side when appropriate, clean shadow falloff.",
-  "",
-  "Accuracy: prioritize real-world scientific identity over fantasy variation. Keep recognizable planetary colors, cloud structures, crater patterns, ice patterns, rings, or solar surface behavior where applicable.",
-  "",
-  "Avoid: stylized fantasy redesign, cartoon, anime, painterly brushwork, fictional terrain features, invented moons, extra planets, spacecraft, satellites, cities protruding from the surface, text, UI, watermark, signature, logo, cropped edges, distorted sphere, oval planet, excessive glow, excessive bloom, lens flare, nebula background, starfield, messy background."
+  "Keep the real-world scientific identity recognizable through plausible coloration, surface or atmospheric detail, and controlled upper-left illumination.",
+  "Show one fully visible centered body on pure black with generous negative space and a crisp contained silhouette. 3840 x 3840, 1:1.",
+  "No text, labels, watermark, logo, interface, border, star field, spacecraft, invented moons, duplicate planets, fictional terrain, excessive glow, bloom, or lens flare."
 ].join("\n");
 
 export const CANONICAL_SOL_SURFACE_LANDSCAPE_MASTER_PROMPT = [
-  "Create one high-resolution canonical Solar System surface landscape on a clean 16:9 cinematic frame.",
-  "",
-  "This must be a scientifically grounded surface-level or near-surface environment for the real Solar System body below.",
-  "",
-  "Use NASA, ESA, JPL, mission photography, probe imagery, orbital mapping, spectral data, and current planetary science as the visual authority.",
-  "",
-  "Canonical Solar System body:",
+  "Create a premium NOVERIS surface environment for a real Solar System body.",
   "{{body_name}}",
-  "",
-  "Scientific reference:",
-  "{{scientific_reference}}",
-  "",
-  "Surface landscape brief:",
   "{{planet_description}}",
-  "",
-  "Important: do not use @img1 unless a separate orbit-view render has already been intentionally selected as a reference. This first-pass Sol landscape should come from scientific identity, not a generated orbit asset.",
-  "",
-  "Visual style: ultra-realistic expedition photography, documentary planetary science realism, physically plausible terrain, atmosphere, lighting, color, geological scale, and material detail.",
-  "",
-  "Composition: 16:9 landscape image, broad readable horizon, believable foreground/midground/background depth, no UI, no text, no labels, no watermark.",
-  "",
-  "Accuracy: prioritize real planetary science over fantasy. Keep terrain, sky color, atmosphere, lighting, ice, dust, clouds, haze, craters, plains, mountains, or seas appropriate to the specific Solar System body.",
-  "",
-  "Avoid: cartoon, anime, painterly brushwork, stylized concept art, fantasy terrain, invented alien vegetation, invented cities, spacecraft as the subject, astronauts, characters, labels, logos, signatures, oversaturated colors, fantasy glow, excessive bloom, impossible geology, and anything that contradicts NASA/ESA/JPL references."
+  "Use documentary planetary-science realism with physically plausible terrain, sky, atmosphere, lighting, geological scale, and materials appropriate to this body.",
+  "Show a broad readable horizon with natural foreground-to-distance depth. 3840 x 2160, 16:9.",
+  "No text, labels, watermark, logo, interface, border, astronauts, dominant spacecraft, invented cities, alien vegetation, impossible geology, fantasy glow, bloom, or lens flare."
 ].join("\n");
 
 export const CANONICAL_SOL_PROMPTS: CanonicalSolPrompt[] = [

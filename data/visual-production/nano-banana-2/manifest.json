@@ -1,7 +1,7 @@
 {
   "id": "noveris_nano_banana_2_visual_prompt_compiler",
-  "compilerVersion": "1.0.0",
-  "libraryVersion": "1.0.0",
+  "compilerVersion": "3.0.0",
+  "libraryVersion": "3.0.0",
   "modelProfileId": "nano-banana-2",
   "creatureArchetypeCount": 245,
   "plantArchetypeCount": 195,

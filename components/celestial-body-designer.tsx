@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { AlertTriangle, Check, CheckCircle2, CircleDot, Clipboard, Database, GitBranch, Moon, Orbit, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { buildCanonicalSolLandscapePrompt, buildCanonicalSolPrompt, CANONICAL_SOL_PROMPTS, REQUIRED_CANONICAL_SOL_BODY_NAMES } from "@/data/canonical-sol-prompts";
-import { buildPlanetPrompt, PLANET_PROMPT_LIBRARY, planetTypeFeaturePrompt } from "@/data/planet-generation-prompts";
-import { buildPlanetLandscapePromptForTemplate } from "@/lib/planets/artwork-prompts";
+import { CANONICAL_SOL_PROMPTS, REQUIRED_CANONICAL_SOL_BODY_NAMES } from "@/data/canonical-sol-prompts";
+import { PLANET_PROMPT_LIBRARY } from "@/data/planet-generation-prompts";
+import { compileCelestialBodyVisualPrompt } from "@/lib/visual-production/celestial-prompt-compiler";
 import { cn } from "@/lib/utils";
 import type { CelestialBodyRecord } from "@/types/schema";
 
@@ -75,44 +75,36 @@ function supportsLandscapePrompt(row: Body) {
 
 function bodyFeatureDescription(row: Body) {
   const template = planetTemplateMatch(row);
-  if (template) return planetTypeFeaturePrompt(template);
+  if (template) return template.imagePrompt;
 
   return [
-    `${row.planet_subclass ?? row.biome ?? "Unique"} ${row.planet_class ?? row.celestial_body_type}.`,
+    `${row.planet_subclass ?? row.biome ?? "Distinct"} ${row.planet_class ?? row.celestial_body_type}.`,
     row.atmosphere ? `${row.atmosphere} atmosphere.` : "",
     row.gravity ? `${row.gravity} gravity.` : "",
-    row.resources?.length ? `Known resources: ${row.resources.join(", ")}.` : "",
-    row.notes ?? ""
   ]
     .filter(Boolean)
     .join(" ");
 }
 
 function buildBodyOrbitPrompt(row: Body) {
-  if (row.orbit_view_prompt) return row.orbit_view_prompt;
-
-  const canonical = canonicalSolPromptMatch(row);
-  if (canonical) return buildCanonicalSolPrompt(canonical.planetDescription);
-
-  return buildPlanetPrompt(bodyFeatureDescription(row));
+  return compileCelestialBodyVisualPrompt({
+    displayName: row.name,
+    bodyType: row.celestial_body_type,
+    bodyClass: row.planet_class,
+    bodySubclass: row.planet_subclass,
+    visualSummary: bodyFeatureDescription(row)
+  }).visualPrompt;
 }
 
 function buildBodyLandscapePrompt(row: Body) {
   if (!supportsLandscapePrompt(row)) return "";
-  if (row.surface_landscape_prompt) return row.surface_landscape_prompt;
-
-  const canonical = canonicalSolPromptMatch(row);
-  if (canonical) return buildCanonicalSolLandscapePrompt(canonical);
-
-  const template = planetTemplateMatch(row);
-  if (template) {
-    return buildPlanetLandscapePromptForTemplate(template, {
-      referenceImageUrl: row.orbit_view_image_url ?? "",
-      useOrbitReference: Boolean(row.orbit_view_image_url)
-    });
-  }
-
-  return buildPlanetPrompt(bodyFeatureDescription(row));
+  return compileCelestialBodyVisualPrompt({
+    displayName: row.name,
+    bodyType: row.celestial_body_type,
+    bodyClass: row.planet_class,
+    bodySubclass: row.planet_subclass,
+    visualSummary: bodyFeatureDescription(row)
+  }, "surface").visualPrompt;
 }
 
 function validationItems(rows: Body[]) {

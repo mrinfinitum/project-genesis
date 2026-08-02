@@ -1,6 +1,7 @@
 import galacticRegionDerivativeData from "@/data/galactic-region-environment-painting-derivatives.json";
 import starSystemDerivativeData from "@/data/star-system-environment-painting-derivatives.json";
 import type { CanonicalAssetStatus } from "@/lib/production/asset-model";
+import { compileEnvironmentVisualPrompt, type CelestialVisualPrompt } from "@/lib/visual-production/celestial-prompt-compiler";
 
 export const backgroundContextTypes = [
   "universe",
@@ -213,40 +214,26 @@ export const backgroundLibraryRecords: BackgroundRecord[] = [
   ...starSystemBackgrounds
 ].sort((left, right) => left.contextType.localeCompare(right.contextType) || left.name.localeCompare(right.name, undefined, { numeric: true }));
 
+export function compileBackgroundVisualPrompt(input: BackgroundPromptInput): CelestialVisualPrompt {
+  return compileEnvironmentVisualPrompt({
+    ...input,
+    ownerName: input.ownerName,
+    environment: input.environment ?? "quiet deep space",
+    visualPalette: input.visualPalette ?? "deep black, midnight blue, dark indigo, faint cyan, and rare ivory stars",
+    nebulaDensity: input.nebulaDensity ?? "very low",
+    dustDensity: input.dustDensity ?? "very low",
+    starDensity: input.starDensity ?? "sparse",
+    brightness: input.brightness ?? "very dark",
+    contrast: input.contrast ?? "low",
+    focalPoint: input.focalPoint ?? "open central field",
+    artDirection: input.artDirection ?? "Keep the scene quiet, low contrast, and visually unobtrusive with subtle distant astronomical texture.",
+    prohibitedElements: input.prohibitedElements
+  });
+}
+
+// Kept for existing callers that need a plain copied image prompt.
 export function compileBackgroundPrompt(input: BackgroundPromptInput) {
-  const prohibited = [
-    "central selectable objects",
-    "planets",
-    "interactive stars",
-    "orbit paths",
-    "labels",
-    "text",
-    "UI",
-    "frames",
-    "HUD",
-    "buttons",
-    "gameplay indicators",
-    "discovery markers",
-    "baked-in data",
-    ...(input.prohibitedElements ?? [])
-  ];
-  const identity = input.ownerName || input.canonicalOwnerId
-    ? `The canonical owner is ${input.ownerName ?? input.canonicalOwnerId}.`
-    : "This is a reusable unassigned production background.";
-  return [
-    `Create a premium flat ${input.contextType.replaceAll("_", " ")} background for a NOVERIS game screen using Nano Banana 2.`,
-    identity,
-    "Use a 2D face-on atlas presentation. The image is decorative only; Unity will overlay every interactive and data-bearing element.",
-    `Environment: ${input.environment ?? "quiet deep space"}. Star type: ${input.starType ?? "not baked into the image"}. Atmosphere: ${input.atmosphere ?? "none"}.`,
-    `Palette: ${input.visualPalette ?? "dark restrained navy-black with subtle cool variation"}. Nebula density: ${input.nebulaDensity ?? "very-low"}. Dust density: ${input.dustDensity ?? "very-low"}. Star density: ${input.starDensity ?? "sparse"}.`,
-    `Brightness: ${input.brightness ?? "very-dark"}. Contrast: ${input.contrast ?? "low"}. Preserve visual calm and broad negative space.`,
-    `Focal-point intent: ${input.focalPoint ?? "no focal object; preserve the central gameplay field"}. Preserve safe areas for the canonical HUD.`,
-    input.artDirection ?? "Use subtle nebulosity, faint dust structures, and mostly tiny restrained stars. Keep bright areas minimal.",
-    "No vignette. No visible blur band or hard focus transition. Any depth falloff must be subtle and optically continuous.",
-    `Do not include: ${prohibited.join(", ")}.`,
-    `Master resolution ${defaultBackgroundAuthoringProfile.masterWidth} x ${defaultBackgroundAuthoringProfile.masterHeight}. Aspect ratio ${defaultBackgroundAuthoringProfile.aspectRatio}.`,
-    "Suitable as a flat Unity screen background."
-  ].join("\n\n");
+  return compileBackgroundVisualPrompt(input).visualPrompt;
 }
 
 export function validateBackgroundRecords(records: BackgroundRecord[] = backgroundLibraryRecords) {

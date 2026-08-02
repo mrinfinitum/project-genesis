@@ -387,15 +387,21 @@ export type CreaturePromptRecord = {
   presetId: string;
   mode: CreaturePromptMode;
   seed: string;
+  canonicalData: Record<string, unknown>;
+  visualSummary: string;
+  visualPrompt: string;
   positivePrompt: string;
   negativePrompt: string;
+  combinedPrompt: string;
   aspectRatio: string;
   transparentBackground: boolean;
   sourceFields: string[];
   lockedFields: string[];
   sourceHash: string;
+  sourceRecordVersion: string;
   generatorVersion: string;
-  promptVersion: "1.0.0";
+  promptVersion: "3.0.0";
+  staleStatus: "current";
   tokenEstimate: number;
 };
 
@@ -583,41 +589,81 @@ function promptHash(species: SpeciesRecord, outputType: CreaturePromptOutputType
 function promptOutputLabel(outputType: CreaturePromptOutputType) { return outputType.replaceAll("-", " "); }
 function capitalize(value: string) { return value.charAt(0).toUpperCase() + value.slice(1); }
 
+function creatureVisualSummary(species: SpeciesRecord) {
+  const categories = species.functionalCategories.map((category) => category.replaceAll("-", " ")).join(", ");
+  const colors = species.appearance.coloration.join(", ");
+  const features = species.appearance.distinguishingFeatures.slice(0, 3).join(", ");
+  const locomotion = species.appearance.locomotion.slice(0, 2).join(" and ");
+  const habitat = species.habitats.map((value) => value.replaceAll("-", " ")).join(" and ");
+  return `${capitalize(categories)} creature with a ${species.appearance.symmetry} ${species.appearance.bodyPlan}, ${species.anatomy.limbs} limbs, ${species.anatomy.appendages.slice(0, 3).join(", ")}, ${colors} coloration, and ${features}. It is adapted for ${habitat} conditions and moves by ${locomotion || "a controlled natural gait"}.`;
+}
+
+function cleanCreaturePrompt(value: string) {
+  return value
+    .replace(/\bcanonical\b/gi, "")
+    .replace(/\blocked\b/gi, "defined")
+    .replace(/\bproduction\b/gi, "visual")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
 export function compileCreaturePrompt(species: SpeciesRecord, options: { outputType?: CreaturePromptOutputType; modelProfileId?: CreaturePromptModel; mode?: CreaturePromptMode; presetId?: string; transparentBackground?: boolean } = {}): CreaturePromptRecord {
   const outputType = options.outputType ?? "full-body-creature";
   const profile = promptProfileById.get(options.modelProfileId ?? "generic-image-model") ?? creaturePromptModelProfiles[4];
   const mode = options.mode ?? profile.promptLength;
   const habitatRule = species.habitats.map((habitat) => habitatPromptRules[habitat] ?? habitat).join(", ");
   const biologyRule = [...species.functionalCategories, ...species.ecologicalRoles].map((value) => biologicalPromptRules[value] ?? earthLikePromptRules[value] ?? exoticPromptRules[value] ?? habitatPromptRules[value] ?? value).join(", ");
-  const intelligence = species.intelligence.level || "non-sapient";
-  const output = `${promptOutputLabel(outputType)} production image`;
-  const outputRule = outputTypePromptRules[outputType] ?? "follow the canonical output specification";
-  const sections: Record<string, string> = {
-    output,
-    identity: `canonical species “${species.displayName}”, scientific name ${species.scientificName}`,
-    type: `${species.functionalCategories.join(", ")} creature, ${intelligence} intelligence, ${species.ecologicalRoles.join(", ")} ecological role; ${outputRule}`,
-    body: `${species.appearance.bodyPlan} body plan with ${species.appearance.symmetry} symmetry`,
-    anatomy: `${species.anatomy.limbs} limbs, ${species.anatomy.appendages.join(", ")} appendages, ${species.anatomy.sensorySystems.join(", ")} sensory systems, ${species.appearance.distinguishingFeatures.join(", ")}`,
-    scale: `size ${species.appearance.sizeRange[0]}–${species.appearance.sizeRange[1]} meters, mass ${species.appearance.massRange[0]}–${species.appearance.massRange[1]} kilograms`,
-    surface: `${species.physiology.metabolism}, ${species.physiology.respiration}, ${species.physiology.adaptations.join(", ")}`,
-    color: `${species.appearance.coloration.join(", ")} coloration`,
-    adaptations: `${biologyRule}; ${habitatRule}`,
-    movement: `${species.appearance.locomotion.join(", ")}, ${species.behavior.migration}, ${species.behavior.activityCycle} activity`,
-    ecology: `${species.behavior.temperament}, diet includes ${species.ecology.diet.join(", ")}, native to ${species.habitats.join(", ")} habitat; lifecycle stages ${species.lifecycleStages.join(", ")}`,
-    planet: species.originPlanetId ? `compatible with canonical planet ${species.originPlanetId} and biome ${species.originBiomeId ?? "unassigned"}; gravity ${species.compatibility.gravityRange.join("–")} G; temperature ${species.compatibility.temperatureRangeC.join("–")} Celsius` : "planet and biome compatibility remain unassigned until authoring",
-    camera: profile.cameraPhrase,
-    lighting: "restrained soft natural or studio lighting with readable form",
-    background: options.transparentBackground ? profile.transparencyPhrase : "dark neutral uncluttered background",
-    style: profile.styleStrengthPhrase,
-    technical: `${profile.noTextPhrase}; ${profile.anatomyConsistencyPhrase}; ${profile.aspectRatioPhrase}`
-  };
-  const ordered = profile.order.map((key) => sections[key]).filter(Boolean);
-  const positivePrompt = mode === "compact" ? ordered.join(", ") : `Create a ${ordered.join(". ")}.`;
+  const outputRule = outputTypePromptRules[outputType] ?? "show a complete isolated subject with a readable silhouette";
+  const visualSummary = creatureVisualSummary(species);
+  const visualPrompt = cleanCreaturePrompt([
+    `Create a premium NOVERIS visual of ${visualSummary}`,
+    cleanCreaturePrompt(outputRule),
+    `Preserve the ${species.appearance.bodyPlan}, ${species.appearance.symmetry} symmetry, ${species.anatomy.limbs} limbs, proportions, ${species.appearance.coloration.join(", ")} coloration, and defining features across the complete visible specimen.`,
+    `Use scientifically plausible joints, musculature, support structures, sensory organs, feeding anatomy, and movement suited to ${habitatRule}. ${biologyRule}.`,
+    "Use museum-quality scientific realism, soft neutral studio lighting, physically believable materials, a readable silhouette, generous negative space, and a pure black background with clean PSD-friendly separation.",
+    `Use a ${profile.cameraPhrase}, 16:9 composition. No text, lettering, labels, watermark, logo, interface, border, frame, cropped anatomy, or visual clutter.`
+  ].join(" "));
   const negativePrompt = [
     "humanoid posture", "fantasy armor", "clothing", "weapon", "extra limbs", "duplicated head", "malformed joints", "invented wings", "invented horns", "glowing eyes", "excessive bioluminescence", "oversaturated colors", "busy background", "text", "watermark", "UI border", "cropped feet", "anatomy contradiction", "planet incompatibility", "biome contradiction", "generic fantasy creature"
   ].join(profile.negativePromptFormat === "weighted" ? ", " : ", ");
   const sourceHash = promptHash(species, outputType, profile.id, mode);
-  return { speciesId: species.id, speciesName: species.displayName, outputType, modelProfileId: profile.id, presetId: options.presetId ?? "canonical-creature-prompt", mode, seed: species.seed, positivePrompt, negativePrompt, aspectRatio: "16:9", transparentBackground: Boolean(options.transparentBackground), sourceFields: ["displayName", "scientificName", "functionalCategories", "taxonomy", "appearance", "anatomy", "physiology", "compatibility", "behavior", "ecology", "intelligence", "lifecycleStages", "habitats", "originPlanetId", "originBiomeId"], lockedFields: ["seed", "anatomy.limbs", "appearance.bodyPlan", "functionalCategories", "habitats", "compatibility", "appearance.coloration", "lifecycleStages"], sourceHash, generatorVersion: creatureGeneratorContract.generationVersion, promptVersion: "1.0.0", tokenEstimate: Math.ceil(`${positivePrompt} ${negativePrompt}`.split(/\s+/).length * 1.25) };
+  const combinedPrompt = `VISUAL PROMPT:\n${visualPrompt}\n\nNEGATIVE / EXCLUDE:\n${negativePrompt}`;
+  return {
+    speciesId: species.id,
+    speciesName: species.displayName,
+    outputType,
+    modelProfileId: profile.id,
+    presetId: options.presetId ?? "creature-visual-prompt",
+    mode,
+    seed: species.seed,
+    canonicalData: {
+      id: species.id,
+      displayName: species.displayName,
+      scientificName: species.scientificName,
+      functionalCategories: species.functionalCategories,
+      habitats: species.habitats,
+      ecologicalRoles: species.ecologicalRoles,
+      appearance: species.appearance,
+      anatomy: species.anatomy,
+      compatibility: species.compatibility,
+      lifecycleStages: species.lifecycleStages
+    },
+    visualSummary,
+    visualPrompt,
+    positivePrompt: visualPrompt,
+    negativePrompt,
+    combinedPrompt,
+    aspectRatio: "16:9",
+    transparentBackground: Boolean(options.transparentBackground),
+    sourceFields: ["displayName", "scientificName", "functionalCategories", "taxonomy", "appearance", "anatomy", "physiology", "compatibility", "behavior", "ecology", "intelligence", "lifecycleStages", "habitats", "originPlanetId", "originBiomeId"],
+    lockedFields: ["seed", "anatomy.limbs", "appearance.bodyPlan", "functionalCategories", "habitats", "compatibility", "appearance.coloration", "lifecycleStages"],
+    sourceHash,
+    sourceRecordVersion: species.generationVersion,
+    generatorVersion: creatureGeneratorContract.generationVersion,
+    promptVersion: "3.0.0",
+    staleStatus: "current",
+    tokenEstimate: Math.ceil(`${visualPrompt} ${negativePrompt}`.split(/\s+/).length * 1.25)
+  };
 }
 
 export function isCreaturePromptStale(species: SpeciesRecord, prompt: CreaturePromptRecord) {
@@ -626,7 +672,7 @@ export function isCreaturePromptStale(species: SpeciesRecord, prompt: CreaturePr
 
 export function validateCreaturePrompt(prompt: CreaturePromptRecord, species: SpeciesRecord): CreaturePromptValidation {
   const issues: CreatureValidationIssue[] = [];
-  const positive = prompt.positivePrompt.toLowerCase();
+  const positive = prompt.visualPrompt.toLowerCase();
   const negative = prompt.negativePrompt.toLowerCase();
   if (!species.displayName || !species.scientificName) issues.push({ severity: "error", code: "prompt_species_identity_missing", message: "Prompt source species identity is incomplete.", records: [species.id] });
   if (!species.appearance.bodyPlan) issues.push({ severity: "error", code: "prompt_body_plan_missing", message: "Prompt source body plan is missing.", records: [species.id] });
@@ -639,7 +685,12 @@ export function validateCreaturePrompt(prompt: CreaturePromptRecord, species: Sp
   if (!positive.match(/text|lettering|labels/i) && !negative.match(/text/i)) issues.push({ severity: "error", code: "prompt_no_text_missing", message: "Prompt must include no-text guidance.", records: [species.id] });
   if (prompt.outputType === "creature-icon" && !positive.match(/icon|silhouette|symbol/)) issues.push({ severity: "error", code: "prompt_icon_requirement_missing", message: "Creature icon prompts must include a canonical icon or silhouette requirement.", records: [species.id] });
   for (const color of species.appearance.coloration) if (!positive.includes(color.toLowerCase())) issues.push({ severity: "error", code: "prompt_locked_coloration_missing", message: "Prompt must preserve every locked canonical coloration.", records: [species.id, color] });
-  if (species.originPlanetId && (!positive.includes(species.originPlanetId.toLowerCase()) || (species.originBiomeId && !positive.includes(species.originBiomeId.toLowerCase())))) issues.push({ severity: "error", code: "prompt_planet_biome_incompatibility", message: "Prompt must preserve canonical planet and biome compatibility.", records: [species.id, species.originPlanetId, species.originBiomeId ?? "unassigned"] });
+  if (/\b(canonical|schema|json|runtime export|source-master|studio ingestion|return|provide|write|list)\b/i.test(prompt.visualPrompt)) issues.push({ severity: "error", code: "prompt_non_visual_language", message: "Visual prompt contains non-image authoring language.", records: [species.id] });
+  if (/```|\{\s*"|\[\s*\{/i.test(prompt.visualPrompt)) issues.push({ severity: "error", code: "prompt_raw_object", message: "Visual prompt must not contain raw structured data.", records: [species.id] });
+  const visualWordCount = prompt.visualPrompt.split(/\s+/).filter(Boolean).length;
+  const minWords = prompt.mode === "compact" ? 80 : 120;
+  const maxWords = prompt.mode === "compact" ? 160 : 240;
+  if (visualWordCount < minWords || visualWordCount > maxWords) issues.push({ severity: "error", code: "prompt_word_count", message: `Visual prompt must contain ${minWords}-${maxWords} words.`, records: [species.id] });
   if (species.functionalCategories.includes("aerial") && !positive.match(/flight|wing|aerial|air/)) issues.push({ severity: "error", code: "prompt_movement_contradiction", message: "Aerial species prompts must include flight-compatible movement guidance.", records: [species.id] });
   if (isCreaturePromptStale(species, prompt)) issues.push({ severity: "warning", code: "prompt_stale", message: "Prompt source fields changed; regenerate this prompt.", records: [species.id] });
   return { status: issues.some((issue) => issue.severity === "error") ? "Blocked" : issues.length ? "Ready With Warnings" : "Ready", issues };
@@ -665,12 +716,12 @@ export function generateCreaturePromptBatch(action: CreaturePromptBatchAction, s
 
 export function buildCreaturePromptBatchExport(action: CreaturePromptBatchAction, species: SpeciesRecord[], options: { modelProfileId?: CreaturePromptModel; mode?: CreaturePromptMode } = {}) {
   const records = generateCreaturePromptBatch(action, species, options);
-  const markdown = [`# NOVERIS Creature Prompt Batch`, ``, `Action: ${action}`, `Generator: ${creatureGeneratorContract.generationVersion}`, ``].concat(records.flatMap((record) => [`## ${record.speciesName} · ${promptOutputLabel(record.outputType)}`, ``, `### Positive`, record.positivePrompt, ``, `### Negative`, record.negativePrompt, ``])).join("\n");
-  return { action, records, json: JSON.stringify({ action, generatorVersion: creatureGeneratorContract.generationVersion, records }, null, 2), markdown, text: records.map((record) => `${record.speciesName} · ${promptOutputLabel(record.outputType).toUpperCase()}\n${record.positivePrompt}\n\nNEGATIVE\n${record.negativePrompt}`).join("\n\n") };
+  const markdown = [`# NOVERIS Creature Visual Prompt Batch`, ``].concat(records.flatMap((record) => [`## ${record.speciesName} · ${promptOutputLabel(record.outputType)}`, ``, record.combinedPrompt, ``])).join("\n");
+  return { action, records, json: JSON.stringify({ action, generatorVersion: creatureGeneratorContract.generationVersion, records }, null, 2), markdown, text: records.map((record) => `${record.speciesName} · ${promptOutputLabel(record.outputType).toUpperCase()}\n${record.combinedPrompt}`).join("\n\n") };
 }
 
 export function buildCreaturePromptPack(species: SpeciesRecord, options: { modelProfileId?: CreaturePromptModel; mode?: CreaturePromptMode } = {}) {
   const records = creaturePromptOutputTypes.map((outputType) => compileCreaturePrompt(species, { ...options, outputType }));
-  const markdown = [`# ${species.displayName} Visual Prompt Pack`, ``, `Species ID: ${species.id}`, `Generator: ${creatureGeneratorContract.generationVersion}`, `Seed: ${species.seed}`, ``].concat(records.flatMap((record) => [`## ${promptOutputLabel(record.outputType)}`, ``, `### Positive`, record.positivePrompt, ``, `### Negative`, record.negativePrompt, ``])).join("\n");
-  return { speciesId: species.id, records, json: JSON.stringify({ speciesId: species.id, speciesName: species.displayName, generatorVersion: creatureGeneratorContract.generationVersion, seed: species.seed, records }, null, 2), markdown, text: records.map((record) => `${promptOutputLabel(record.outputType).toUpperCase()}\n${record.positivePrompt}\n\nNEGATIVE\n${record.negativePrompt}`).join("\n\n") };
+  const markdown = [`# ${species.displayName} Visual Prompt Pack`, ``].concat(records.flatMap((record) => [`## ${promptOutputLabel(record.outputType)}`, ``, record.combinedPrompt, ``])).join("\n");
+  return { speciesId: species.id, records, json: JSON.stringify({ speciesId: species.id, speciesName: species.displayName, generatorVersion: creatureGeneratorContract.generationVersion, seed: species.seed, records }, null, 2), markdown, text: records.map((record) => `${promptOutputLabel(record.outputType).toUpperCase()}\n${record.combinedPrompt}`).join("\n\n") };
 }

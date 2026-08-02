@@ -6,7 +6,7 @@
     "instructions": "show only canonical high gravity adaptations with scientifically plausible structural consequences",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -16,7 +16,7 @@
     "instructions": "show only canonical low gravity adaptations with scientifically plausible structural consequences",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -26,7 +26,7 @@
     "instructions": "show only canonical extreme heat adaptations with scientifically plausible structural consequences",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -36,7 +36,7 @@
     "instructions": "show only canonical extreme cold adaptations with scientifically plausible structural consequences",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -46,7 +46,7 @@
     "instructions": "show only canonical high pressure adaptations with scientifically plausible structural consequences",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -56,7 +56,7 @@
     "instructions": "show only canonical low pressure adaptations with scientifically plausible structural consequences",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -66,7 +66,7 @@
     "instructions": "show only canonical vacuum adaptations with scientifically plausible structural consequences",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -76,7 +76,7 @@
     "instructions": "show only canonical high radiation adaptations with scientifically plausible structural consequences",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -86,7 +86,7 @@
     "instructions": "show only canonical high humidity adaptations with scientifically plausible structural consequences",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -96,7 +96,7 @@
     "instructions": "show only canonical extreme aridity adaptations with scientifically plausible structural consequences",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -106,7 +106,7 @@
     "instructions": "show only canonical salt water adaptations with scientifically plausible structural consequences",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -116,7 +116,7 @@
     "instructions": "show only canonical fresh water adaptations with scientifically plausible structural consequences",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -126,7 +126,7 @@
     "instructions": "show only canonical deep ocean adaptations with scientifically plausible structural consequences",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -136,7 +136,7 @@
     "instructions": "show only canonical cave darkness adaptations with scientifically plausible structural consequences",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -146,7 +146,7 @@
     "instructions": "show only canonical dense atmosphere adaptations with scientifically plausible structural consequences",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -156,7 +156,7 @@
     "instructions": "show only canonical thin atmosphere adaptations with scientifically plausible structural consequences",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -166,7 +166,7 @@
     "instructions": "show only canonical methane atmosphere adaptations with scientifically plausible structural consequences",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -176,7 +176,7 @@
     "instructions": "show only canonical ammonia environment adaptations with scientifically plausible structural consequences",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -186,7 +186,7 @@
     "instructions": "show only canonical sulfur environment adaptations with scientifically plausible structural consequences",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -196,7 +196,7 @@
     "instructions": "show only canonical volcanic terrain adaptations with scientifically plausible structural consequences",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -206,7 +206,7 @@
     "instructions": "show only canonical polar terrain adaptations with scientifically plausible structural consequences",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -216,7 +216,7 @@
     "instructions": "show only canonical desert terrain adaptations with scientifically plausible structural consequences",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -226,7 +226,7 @@
     "instructions": "show only canonical forest canopy adaptations with scientifically plausible structural consequences",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -236,7 +236,7 @@
     "instructions": "show only canonical open grassland adaptations with scientifically plausible structural consequences",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -246,7 +246,7 @@
     "instructions": "show only canonical swamp adaptations with scientifically plausible structural consequences",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -256,7 +256,7 @@
     "instructions": "show only canonical orbital environment adaptations with scientifically plausible structural consequences",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   }
 ]

@@ -5,6 +5,6 @@
   "instructions": "Keep the complete subject inside frame, use clean silhouette separation, avoid crop ambiguity, no text or labels, no embedded UI, preserve material boundaries, and compose for layered PSD or PSB extraction.",
   "tags": [],
   "exclusions": [],
-  "version": "1.0.0",
+  "version": "3.0.0",
   "status": "approved"
 }

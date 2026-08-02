@@ -6,7 +6,7 @@
     "instructions": "soft neutral studio lighting, natural white balance, and readable material separation",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -16,7 +16,7 @@
     "instructions": "museum-quality specimen lighting without dramatic shadows",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -26,7 +26,7 @@
     "instructions": "soft product reference illumination with restrained separation",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -36,7 +36,7 @@
     "instructions": "even anatomical reference illumination with no hidden structures",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -46,7 +46,7 @@
     "instructions": "controlled raking material light without stylized glare",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -56,7 +56,7 @@
     "instructions": "restrained natural habitat daylight",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -66,7 +66,7 @@
     "instructions": "low-light habitat illumination with no false focal flare",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -76,7 +76,7 @@
     "instructions": "plausible underwater natural light",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -86,7 +86,7 @@
     "instructions": "subtle cave light with geological context",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -96,7 +96,7 @@
     "instructions": "cool restrained polar daylight",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -106,7 +106,7 @@
     "instructions": "restrained desert light with readable form",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -116,7 +116,7 @@
     "instructions": "heat-aware volcanic light without fantasy glow",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -126,7 +126,7 @@
     "instructions": "restrained scientific scan illumination",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -136,7 +136,7 @@
     "instructions": "even clean extraction lighting with preserved edge separation",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   }
 ]

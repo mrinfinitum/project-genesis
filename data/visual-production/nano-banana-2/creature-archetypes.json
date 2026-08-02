@@ -9,7 +9,7 @@
       "apex-predator"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Apex Predator is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -44,7 +44,7 @@
       "pack-predator"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Pack Predator is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -79,7 +79,7 @@
       "ambush-predator"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Ambush Predator is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -114,7 +114,7 @@
       "grazer"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Grazer is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -149,7 +149,7 @@
       "browser"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Browser is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -184,7 +184,7 @@
       "omnivore"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Omnivore is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -219,7 +219,7 @@
       "burrowing-mammal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Burrowing Mammal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -254,7 +254,7 @@
       "arboreal-mammal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Arboreal Mammal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -289,7 +289,7 @@
       "desert-mammal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Desert Mammal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -324,7 +324,7 @@
       "polar-mammal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Polar Mammal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -359,7 +359,7 @@
       "semi-aquatic-mammal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Semi-Aquatic Mammal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -394,7 +394,7 @@
       "fully-aquatic-mammal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Fully Aquatic Mammal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -429,7 +429,7 @@
       "flying-mammal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Flying Mammal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -464,7 +464,7 @@
       "high-gravity-mammal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "High-Gravity Mammal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -499,7 +499,7 @@
       "low-gravity-mammal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Low-Gravity Mammal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -534,7 +534,7 @@
       "domesticated-mammal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Domesticated Mammal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -569,7 +569,7 @@
       "colossal-mammal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Colossal Mammal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -604,7 +604,7 @@
       "micro-mammal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Micro Mammal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -639,7 +639,7 @@
       "mountain-mammal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Mountain Mammal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -674,7 +674,7 @@
       "forest-mammal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Forest Mammal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -709,7 +709,7 @@
       "jungle-mammal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Jungle Mammal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -744,7 +744,7 @@
       "grassland-mammal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Grassland Mammal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -779,7 +779,7 @@
       "wetland-mammal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Wetland Mammal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -814,7 +814,7 @@
       "cave-mammal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Cave Mammal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -849,7 +849,7 @@
       "nocturnal-mammal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Nocturnal Mammal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -884,7 +884,7 @@
       "migratory-mammal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Migratory Mammal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -919,7 +919,7 @@
       "working-mammal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Working Mammal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -954,7 +954,7 @@
       "companion-mammal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Companion Mammal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -989,7 +989,7 @@
       "pack-animal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Pack Animal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1024,7 +1024,7 @@
       "ancient-mammal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Ancient Mammal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1059,7 +1059,7 @@
       "extinct-mammal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Extinct Mammal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1094,7 +1094,7 @@
       "mutated-mammal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Mutated Mammal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1129,7 +1129,7 @@
       "engineered-mammal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Engineered Mammal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1164,7 +1164,7 @@
       "biomechanical-mammal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Biomechanical Mammal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1199,7 +1199,7 @@
       "synthetic-mammal"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Mammalian Creatures",
     "definition": "Synthetic Mammal is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1234,7 +1234,7 @@
       "apex-raptor"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Apex Raptor is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1269,7 +1269,7 @@
       "pack-hunter"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Pack Hunter is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1304,7 +1304,7 @@
       "ambush-flyer"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Ambush Flyer is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1339,7 +1339,7 @@
       "forest-glider"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Forest Glider is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1374,7 +1374,7 @@
       "soaring-hunter"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Soaring Hunter is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1409,7 +1409,7 @@
       "thermal-soarer"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Thermal Soarer is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1444,7 +1444,7 @@
       "high-altitude-flyer"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "High-Altitude Flyer is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1479,7 +1479,7 @@
       "hovering-nectar-feeder"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Hovering Nectar Feeder is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1514,7 +1514,7 @@
       "scavenger"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Scavenger is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1549,7 +1549,7 @@
       "carrion-specialist"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Carrion Specialist is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1584,7 +1584,7 @@
       "marsh-wader"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Marsh Wader is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1619,7 +1619,7 @@
       "river-hunter"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "River Hunter is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1654,7 +1654,7 @@
       "coastal-flyer"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Coastal Flyer is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1689,7 +1689,7 @@
       "ocean-skimmer"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Ocean Skimmer is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1724,7 +1724,7 @@
       "deep-ocean-surface-hunter"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Deep-Ocean Surface Hunter is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1759,7 +1759,7 @@
       "cliff-nesting-flyer"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Cliff-Nesting Flyer is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1794,7 +1794,7 @@
       "canopy-flyer"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Canopy Flyer is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1829,7 +1829,7 @@
       "cave-flyer"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Cave Flyer is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1864,7 +1864,7 @@
       "desert-flyer"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Desert Flyer is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1899,7 +1899,7 @@
       "polar-flyer"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Polar Flyer is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1934,7 +1934,7 @@
       "mountain-flyer"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Mountain Flyer is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -1969,7 +1969,7 @@
       "low-gravity-flyer"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Low-Gravity Flyer is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2004,7 +2004,7 @@
       "high-gravity-flyer"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "High-Gravity Flyer is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2039,7 +2039,7 @@
       "bioluminescent-flyer"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Bioluminescent Flyer is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2074,7 +2074,7 @@
       "nocturnal-flyer"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Nocturnal Flyer is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2109,7 +2109,7 @@
       "floating-atmospheric-organism"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Floating Atmospheric Organism is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2144,7 +2144,7 @@
       "winged-megafauna"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Winged Megafauna is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2179,7 +2179,7 @@
       "winged-microfauna"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Winged Microfauna is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2214,7 +2214,7 @@
       "crystal-flyer"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Crystal Flyer is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2249,7 +2249,7 @@
       "silicon-flyer"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Silicon Flyer is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2284,7 +2284,7 @@
       "energy-flyer"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Energy Flyer is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2319,7 +2319,7 @@
       "gas-flyer"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Gas Flyer is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2354,7 +2354,7 @@
       "plasma-flyer"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Plasma Flyer is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2389,7 +2389,7 @@
       "biomechanical-flyer"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Biomechanical Flyer is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2424,7 +2424,7 @@
       "synthetic-flyer"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Synthetic Flyer is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2459,7 +2459,7 @@
       "engineered-flyer"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Avian and Flying Creatures",
     "definition": "Engineered Flyer is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2494,7 +2494,7 @@
       "terrestrial-reptile"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Reptilian and Dinosaurian Creatures",
     "definition": "Terrestrial Reptile is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2529,7 +2529,7 @@
       "arboreal-reptile"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Reptilian and Dinosaurian Creatures",
     "definition": "Arboreal Reptile is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2564,7 +2564,7 @@
       "burrowing-reptile"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Reptilian and Dinosaurian Creatures",
     "definition": "Burrowing Reptile is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2599,7 +2599,7 @@
       "desert-reptile"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Reptilian and Dinosaurian Creatures",
     "definition": "Desert Reptile is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2634,7 +2634,7 @@
       "polar-reptile"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Reptilian and Dinosaurian Creatures",
     "definition": "Polar Reptile is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2669,7 +2669,7 @@
       "aquatic-reptile"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Reptilian and Dinosaurian Creatures",
     "definition": "Aquatic Reptile is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2704,7 +2704,7 @@
       "semi-aquatic-reptile"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Reptilian and Dinosaurian Creatures",
     "definition": "Semi-Aquatic Reptile is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2739,7 +2739,7 @@
       "gliding-reptile"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Reptilian and Dinosaurian Creatures",
     "definition": "Gliding Reptile is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2774,7 +2774,7 @@
       "apex-reptilian-predator"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Reptilian and Dinosaurian Creatures",
     "definition": "Apex Reptilian Predator is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2809,7 +2809,7 @@
       "herd-reptilian-herbivore"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Reptilian and Dinosaurian Creatures",
     "definition": "Herd Reptilian Herbivore is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2844,7 +2844,7 @@
       "armored-reptile"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Reptilian and Dinosaurian Creatures",
     "definition": "Armored Reptile is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2879,7 +2879,7 @@
       "venomous-reptile"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Reptilian and Dinosaurian Creatures",
     "definition": "Venomous Reptile is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2914,7 +2914,7 @@
       "constricting-reptile"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Reptilian and Dinosaurian Creatures",
     "definition": "Constricting Reptile is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2949,7 +2949,7 @@
       "dinosaurian-predator"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Reptilian and Dinosaurian Creatures",
     "definition": "Dinosaurian Predator is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -2984,7 +2984,7 @@
       "dinosaurian-herbivore"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Reptilian and Dinosaurian Creatures",
     "definition": "Dinosaurian Herbivore is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3019,7 +3019,7 @@
       "dinosaurian-omnivore"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Reptilian and Dinosaurian Creatures",
     "definition": "Dinosaurian Omnivore is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3054,7 +3054,7 @@
       "feathered-dinosaurian"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Reptilian and Dinosaurian Creatures",
     "definition": "Feathered Dinosaurian is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3089,7 +3089,7 @@
       "colossal-dinosaurian"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Reptilian and Dinosaurian Creatures",
     "definition": "Colossal Dinosaurian is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3124,7 +3124,7 @@
       "micro-dinosaurian"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Reptilian and Dinosaurian Creatures",
     "definition": "Micro Dinosaurian is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3159,7 +3159,7 @@
       "high-gravity-reptile"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Reptilian and Dinosaurian Creatures",
     "definition": "High-Gravity Reptile is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3194,7 +3194,7 @@
       "low-gravity-reptile"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Reptilian and Dinosaurian Creatures",
     "definition": "Low-Gravity Reptile is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3229,7 +3229,7 @@
       "cave-reptile"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Reptilian and Dinosaurian Creatures",
     "definition": "Cave Reptile is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3264,7 +3264,7 @@
       "volcanic-reptile"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Reptilian and Dinosaurian Creatures",
     "definition": "Volcanic Reptile is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3299,7 +3299,7 @@
       "crystal-reptile"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Reptilian and Dinosaurian Creatures",
     "definition": "Crystal Reptile is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3334,7 +3334,7 @@
       "silicon-reptile"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Reptilian and Dinosaurian Creatures",
     "definition": "Silicon Reptile is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3369,7 +3369,7 @@
       "biomechanical-reptile"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Reptilian and Dinosaurian Creatures",
     "definition": "Biomechanical Reptile is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3404,7 +3404,7 @@
       "synthetic-reptile"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Reptilian and Dinosaurian Creatures",
     "definition": "Synthetic Reptile is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3439,7 +3439,7 @@
       "terrestrial-amphibian"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Amphibian Creatures",
     "definition": "Terrestrial Amphibian is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3474,7 +3474,7 @@
       "aquatic-amphibian"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Amphibian Creatures",
     "definition": "Aquatic Amphibian is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3509,7 +3509,7 @@
       "semi-aquatic-amphibian"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Amphibian Creatures",
     "definition": "Semi-Aquatic Amphibian is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3544,7 +3544,7 @@
       "arboreal-amphibian"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Amphibian Creatures",
     "definition": "Arboreal Amphibian is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3579,7 +3579,7 @@
       "burrowing-amphibian"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Amphibian Creatures",
     "definition": "Burrowing Amphibian is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3614,7 +3614,7 @@
       "cave-amphibian"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Amphibian Creatures",
     "definition": "Cave Amphibian is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3649,7 +3649,7 @@
       "swamp-amphibian"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Amphibian Creatures",
     "definition": "Swamp Amphibian is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3684,7 +3684,7 @@
       "river-amphibian"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Amphibian Creatures",
     "definition": "River Amphibian is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3719,7 +3719,7 @@
       "polar-amphibian"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Amphibian Creatures",
     "definition": "Polar Amphibian is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3754,7 +3754,7 @@
       "desert-amphibian"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Amphibian Creatures",
     "definition": "Desert Amphibian is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3789,7 +3789,7 @@
       "toxic-amphibian"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Amphibian Creatures",
     "definition": "Toxic Amphibian is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3824,7 +3824,7 @@
       "camouflaged-amphibian"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Amphibian Creatures",
     "definition": "Camouflaged Amphibian is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3859,7 +3859,7 @@
       "giant-amphibian"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Amphibian Creatures",
     "definition": "Giant Amphibian is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3894,7 +3894,7 @@
       "micro-amphibian"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Amphibian Creatures",
     "definition": "Micro Amphibian is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3929,7 +3929,7 @@
       "high-gravity-amphibian"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Amphibian Creatures",
     "definition": "High-Gravity Amphibian is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3964,7 +3964,7 @@
       "low-gravity-amphibian"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Amphibian Creatures",
     "definition": "Low-Gravity Amphibian is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -3999,7 +3999,7 @@
       "bioluminescent-amphibian"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Amphibian Creatures",
     "definition": "Bioluminescent Amphibian is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4034,7 +4034,7 @@
       "crystal-amphibian"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Amphibian Creatures",
     "definition": "Crystal Amphibian is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4069,7 +4069,7 @@
       "synthetic-amphibian"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Amphibian Creatures",
     "definition": "Synthetic Amphibian is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4104,7 +4104,7 @@
       "pelagic-fishlike"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fishlike and Aquatic Creatures",
     "definition": "Pelagic Fishlike is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4139,7 +4139,7 @@
       "reef-fishlike"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fishlike and Aquatic Creatures",
     "definition": "Reef Fishlike is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4174,7 +4174,7 @@
       "deep-ocean-fishlike"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fishlike and Aquatic Creatures",
     "definition": "Deep-Ocean Fishlike is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4209,7 +4209,7 @@
       "abyssal-predator"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fishlike and Aquatic Creatures",
     "definition": "Abyssal Predator is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4244,7 +4244,7 @@
       "filter-feeder"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fishlike and Aquatic Creatures",
     "definition": "Filter Feeder is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4279,7 +4279,7 @@
       "schooling-fishlike"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fishlike and Aquatic Creatures",
     "definition": "Schooling Fishlike is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4314,7 +4314,7 @@
       "solitary-hunter"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fishlike and Aquatic Creatures",
     "definition": "Solitary Hunter is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4349,7 +4349,7 @@
       "bottom-dweller"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fishlike and Aquatic Creatures",
     "definition": "Bottom Dweller is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4384,7 +4384,7 @@
       "river-fishlike"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fishlike and Aquatic Creatures",
     "definition": "River Fishlike is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4419,7 +4419,7 @@
       "coastal-fishlike"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fishlike and Aquatic Creatures",
     "definition": "Coastal Fishlike is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4454,7 +4454,7 @@
       "polar-fishlike"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fishlike and Aquatic Creatures",
     "definition": "Polar Fishlike is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4489,7 +4489,7 @@
       "volcanic-vent-fishlike"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fishlike and Aquatic Creatures",
     "definition": "Volcanic-Vent Fishlike is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4524,7 +4524,7 @@
       "armored-fishlike"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fishlike and Aquatic Creatures",
     "definition": "Armored Fishlike is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4559,7 +4559,7 @@
       "electric-fishlike"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fishlike and Aquatic Creatures",
     "definition": "Electric Fishlike is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4594,7 +4594,7 @@
       "bioluminescent-fishlike"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fishlike and Aquatic Creatures",
     "definition": "Bioluminescent Fishlike is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4629,7 +4629,7 @@
       "giant-aquatic-creature"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fishlike and Aquatic Creatures",
     "definition": "Giant Aquatic Creature is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4664,7 +4664,7 @@
       "micro-aquatic-creature"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fishlike and Aquatic Creatures",
     "definition": "Micro Aquatic Creature is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4699,7 +4699,7 @@
       "low-gravity-aquatic-creature"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fishlike and Aquatic Creatures",
     "definition": "Low-Gravity Aquatic Creature is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4734,7 +4734,7 @@
       "high-pressure-aquatic-creature"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fishlike and Aquatic Creatures",
     "definition": "High-Pressure Aquatic Creature is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4769,7 +4769,7 @@
       "crystal-aquatic-creature"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fishlike and Aquatic Creatures",
     "definition": "Crystal Aquatic Creature is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4804,7 +4804,7 @@
       "silicon-aquatic-creature"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fishlike and Aquatic Creatures",
     "definition": "Silicon Aquatic Creature is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4839,7 +4839,7 @@
       "synthetic-aquatic-creature"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Fishlike and Aquatic Creatures",
     "definition": "Synthetic Aquatic Creature is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4874,7 +4874,7 @@
       "ground-arthropod"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Arthropods, Insectoids and Arachnids",
     "definition": "Ground Arthropod is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4909,7 +4909,7 @@
       "flying-insectoid"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Arthropods, Insectoids and Arachnids",
     "definition": "Flying Insectoid is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4944,7 +4944,7 @@
       "burrowing-arthropod"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Arthropods, Insectoids and Arachnids",
     "definition": "Burrowing Arthropod is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -4979,7 +4979,7 @@
       "arboreal-arthropod"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Arthropods, Insectoids and Arachnids",
     "definition": "Arboreal Arthropod is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5014,7 +5014,7 @@
       "aquatic-arthropod"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Arthropods, Insectoids and Arachnids",
     "definition": "Aquatic Arthropod is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5049,7 +5049,7 @@
       "swarming-insectoid"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Arthropods, Insectoids and Arachnids",
     "definition": "Swarming Insectoid is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5084,7 +5084,7 @@
       "pollinating-insectoid"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Arthropods, Insectoids and Arachnids",
     "definition": "Pollinating Insectoid is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5119,7 +5119,7 @@
       "predator-insectoid"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Arthropods, Insectoids and Arachnids",
     "definition": "Predator Insectoid is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5154,7 +5154,7 @@
       "herbivore-insectoid"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Arthropods, Insectoids and Arachnids",
     "definition": "Herbivore Insectoid is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5189,7 +5189,7 @@
       "parasitoid"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Arthropods, Insectoids and Arachnids",
     "definition": "Parasitoid is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5224,7 +5224,7 @@
       "colony-insectoid"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Arthropods, Insectoids and Arachnids",
     "definition": "Colony Insectoid is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5259,7 +5259,7 @@
       "hive-insectoid"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Arthropods, Insectoids and Arachnids",
     "definition": "Hive Insectoid is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5294,7 +5294,7 @@
       "web-building-arachnid"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Arthropods, Insectoids and Arachnids",
     "definition": "Web-Building Arachnid is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5329,7 +5329,7 @@
       "ambush-arachnid"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Arthropods, Insectoids and Arachnids",
     "definition": "Ambush Arachnid is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5364,7 +5364,7 @@
       "scavenger-arachnid"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Arthropods, Insectoids and Arachnids",
     "definition": "Scavenger Arachnid is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5399,7 +5399,7 @@
       "desert-arthropod"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Arthropods, Insectoids and Arachnids",
     "definition": "Desert Arthropod is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5434,7 +5434,7 @@
       "polar-arthropod"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Arthropods, Insectoids and Arachnids",
     "definition": "Polar Arthropod is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5469,7 +5469,7 @@
       "cave-arthropod"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Arthropods, Insectoids and Arachnids",
     "definition": "Cave Arthropod is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5504,7 +5504,7 @@
       "giant-arthropod"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Arthropods, Insectoids and Arachnids",
     "definition": "Giant Arthropod is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5539,7 +5539,7 @@
       "micro-arthropod"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Arthropods, Insectoids and Arachnids",
     "definition": "Micro Arthropod is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5574,7 +5574,7 @@
       "crystal-arthropod"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Arthropods, Insectoids and Arachnids",
     "definition": "Crystal Arthropod is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5609,7 +5609,7 @@
       "silicon-arthropod"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Arthropods, Insectoids and Arachnids",
     "definition": "Silicon Arthropod is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5644,7 +5644,7 @@
       "biomechanical-arthropod"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Arthropods, Insectoids and Arachnids",
     "definition": "Biomechanical Arthropod is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5679,7 +5679,7 @@
       "synthetic-arthropod"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Arthropods, Insectoids and Arachnids",
     "definition": "Synthetic Arthropod is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5714,7 +5714,7 @@
       "coastal-crustacean"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Crustaceans, Molluscoids and Cephalopods",
     "definition": "Coastal Crustacean is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5749,7 +5749,7 @@
       "deep-ocean-crustacean"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Crustaceans, Molluscoids and Cephalopods",
     "definition": "Deep-Ocean Crustacean is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5784,7 +5784,7 @@
       "river-crustacean"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Crustaceans, Molluscoids and Cephalopods",
     "definition": "River Crustacean is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5819,7 +5819,7 @@
       "burrowing-crustacean"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Crustaceans, Molluscoids and Cephalopods",
     "definition": "Burrowing Crustacean is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5854,7 +5854,7 @@
       "armored-crustacean"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Crustaceans, Molluscoids and Cephalopods",
     "definition": "Armored Crustacean is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5889,7 +5889,7 @@
       "giant-crustacean"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Crustaceans, Molluscoids and Cephalopods",
     "definition": "Giant Crustacean is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5924,7 +5924,7 @@
       "soft-bodied-molluscoid"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Crustaceans, Molluscoids and Cephalopods",
     "definition": "Soft-Bodied Molluscoid is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5959,7 +5959,7 @@
       "shelled-molluscoid"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Crustaceans, Molluscoids and Cephalopods",
     "definition": "Shelled Molluscoid is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -5994,7 +5994,7 @@
       "grazing-molluscoid"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Crustaceans, Molluscoids and Cephalopods",
     "definition": "Grazing Molluscoid is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6029,7 +6029,7 @@
       "predatory-molluscoid"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Crustaceans, Molluscoids and Cephalopods",
     "definition": "Predatory Molluscoid is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6064,7 +6064,7 @@
       "floating-molluscoid"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Crustaceans, Molluscoids and Cephalopods",
     "definition": "Floating Molluscoid is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6099,7 +6099,7 @@
       "intelligent-cephalopod"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Crustaceans, Molluscoids and Cephalopods",
     "definition": "Intelligent Cephalopod is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6134,7 +6134,7 @@
       "ambush-cephalopod"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Crustaceans, Molluscoids and Cephalopods",
     "definition": "Ambush Cephalopod is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6169,7 +6169,7 @@
       "reef-cephalopod"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Crustaceans, Molluscoids and Cephalopods",
     "definition": "Reef Cephalopod is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6204,7 +6204,7 @@
       "deep-ocean-cephalopod"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Crustaceans, Molluscoids and Cephalopods",
     "definition": "Deep-Ocean Cephalopod is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6239,7 +6239,7 @@
       "colonial-molluscoid"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Crustaceans, Molluscoids and Cephalopods",
     "definition": "Colonial Molluscoid is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6274,7 +6274,7 @@
       "crystal-molluscoid"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Crustaceans, Molluscoids and Cephalopods",
     "definition": "Crystal Molluscoid is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6309,7 +6309,7 @@
       "synthetic-cephalopod"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Crustaceans, Molluscoids and Cephalopods",
     "definition": "Synthetic Cephalopod is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6344,7 +6344,7 @@
       "burrowing-wormlike"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Wormlike, Jellyform and Echinoderm-Like Creatures",
     "definition": "Burrowing Wormlike is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6379,7 +6379,7 @@
       "aquatic-wormlike"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Wormlike, Jellyform and Echinoderm-Like Creatures",
     "definition": "Aquatic Wormlike is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6414,7 +6414,7 @@
       "parasitic-wormlike"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Wormlike, Jellyform and Echinoderm-Like Creatures",
     "definition": "Parasitic Wormlike is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6449,7 +6449,7 @@
       "giant-wormlike"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Wormlike, Jellyform and Echinoderm-Like Creatures",
     "definition": "Giant Wormlike is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6484,7 +6484,7 @@
       "micro-wormlike"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Wormlike, Jellyform and Echinoderm-Like Creatures",
     "definition": "Micro Wormlike is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6519,7 +6519,7 @@
       "floating-jellyform"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Wormlike, Jellyform and Echinoderm-Like Creatures",
     "definition": "Floating Jellyform is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6554,7 +6554,7 @@
       "deep-ocean-jellyform"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Wormlike, Jellyform and Echinoderm-Like Creatures",
     "definition": "Deep-Ocean Jellyform is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6589,7 +6589,7 @@
       "atmospheric-jellyform"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Wormlike, Jellyform and Echinoderm-Like Creatures",
     "definition": "Atmospheric Jellyform is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6624,7 +6624,7 @@
       "predatory-jellyform"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Wormlike, Jellyform and Echinoderm-Like Creatures",
     "definition": "Predatory Jellyform is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6659,7 +6659,7 @@
       "colonial-jellyform"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Wormlike, Jellyform and Echinoderm-Like Creatures",
     "definition": "Colonial Jellyform is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6694,7 +6694,7 @@
       "benthic-echinoderm-like"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Wormlike, Jellyform and Echinoderm-Like Creatures",
     "definition": "Benthic Echinoderm-Like is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6729,7 +6729,7 @@
       "filter-feeding-echinoderm-like"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Wormlike, Jellyform and Echinoderm-Like Creatures",
     "definition": "Filter-Feeding Echinoderm-Like is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6764,7 +6764,7 @@
       "armored-echinoderm-like"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Wormlike, Jellyform and Echinoderm-Like Creatures",
     "definition": "Armored Echinoderm-Like is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6799,7 +6799,7 @@
       "radial-predator"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Wormlike, Jellyform and Echinoderm-Like Creatures",
     "definition": "Radial Predator is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6834,7 +6834,7 @@
       "crystal-jellyform"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Wormlike, Jellyform and Echinoderm-Like Creatures",
     "definition": "Crystal Jellyform is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6869,7 +6869,7 @@
       "energy-jellyform"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Wormlike, Jellyform and Echinoderm-Like Creatures",
     "definition": "Energy Jellyform is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6904,7 +6904,7 @@
       "terrestrial-megafauna"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Megafauna, Microfauna and Colonial Organisms",
     "definition": "Terrestrial Megafauna is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6939,7 +6939,7 @@
       "aquatic-megafauna"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Megafauna, Microfauna and Colonial Organisms",
     "definition": "Aquatic Megafauna is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -6974,7 +6974,7 @@
       "aerial-megafauna"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Megafauna, Microfauna and Colonial Organisms",
     "definition": "Aerial Megafauna is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7009,7 +7009,7 @@
       "subterranean-megafauna"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Megafauna, Microfauna and Colonial Organisms",
     "definition": "Subterranean Megafauna is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7044,7 +7044,7 @@
       "filter-feeding-megafauna"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Megafauna, Microfauna and Colonial Organisms",
     "definition": "Filter-Feeding Megafauna is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7079,7 +7079,7 @@
       "ecosystem-engineer-megafauna"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Megafauna, Microfauna and Colonial Organisms",
     "definition": "Ecosystem-Engineer Megafauna is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7114,7 +7114,7 @@
       "microfauna-predator"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Megafauna, Microfauna and Colonial Organisms",
     "definition": "Microfauna Predator is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7149,7 +7149,7 @@
       "microfauna-grazer"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Megafauna, Microfauna and Colonial Organisms",
     "definition": "Microfauna Grazer is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7184,7 +7184,7 @@
       "microfauna-decomposer"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Megafauna, Microfauna and Colonial Organisms",
     "definition": "Microfauna Decomposer is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7219,7 +7219,7 @@
       "colonial-superorganism"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Megafauna, Microfauna and Colonial Organisms",
     "definition": "Colonial Superorganism is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7254,7 +7254,7 @@
       "modular-colony-creature"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Megafauna, Microfauna and Colonial Organisms",
     "definition": "Modular Colony Creature is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7289,7 +7289,7 @@
       "reef-building-colony"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Megafauna, Microfauna and Colonial Organisms",
     "definition": "Reef-Building Colony is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7324,7 +7324,7 @@
       "hive-superorganism"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Megafauna, Microfauna and Colonial Organisms",
     "definition": "Hive Superorganism is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7359,7 +7359,7 @@
       "symbiotic-composite"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Megafauna, Microfauna and Colonial Organisms",
     "definition": "Symbiotic Composite is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7394,7 +7394,7 @@
       "distributed-organism"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Megafauna, Microfauna and Colonial Organisms",
     "definition": "Distributed Organism is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7429,7 +7429,7 @@
       "silicon-based-creature"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Biological Life",
     "definition": "Silicon-Based Creature is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7464,7 +7464,7 @@
       "crystal-creature"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Biological Life",
     "definition": "Crystal Creature is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7499,7 +7499,7 @@
       "mineral-creature"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Biological Life",
     "definition": "Mineral Creature is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7534,7 +7534,7 @@
       "sulfur-based-creature"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Biological Life",
     "definition": "Sulfur-Based Creature is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7569,7 +7569,7 @@
       "methane-based-creature"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Biological Life",
     "definition": "Methane-Based Creature is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7604,7 +7604,7 @@
       "ammonia-based-creature"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Biological Life",
     "definition": "Ammonia-Based Creature is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7639,7 +7639,7 @@
       "cryogenic-creature"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Biological Life",
     "definition": "Cryogenic Creature is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7674,7 +7674,7 @@
       "radiotrophic-creature"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Biological Life",
     "definition": "Radiotrophic Creature is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7709,7 +7709,7 @@
       "geothermal-creature"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Biological Life",
     "definition": "Geothermal Creature is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7744,7 +7744,7 @@
       "vacuum-adapted-creature"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Biological Life",
     "definition": "Vacuum-Adapted Creature is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7779,7 +7779,7 @@
       "orbital-organism"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Biological Life",
     "definition": "Orbital Organism is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7814,7 +7814,7 @@
       "symbiotic-composite"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Biological Life",
     "definition": "Symbiotic Composite is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7849,7 +7849,7 @@
       "mycelial-animal-analog"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Exotic Biological Life",
     "definition": "Mycelial Animal Analog is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7884,7 +7884,7 @@
       "plasma-life"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Energy and Field-Based Life",
     "definition": "Plasma Life is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7919,7 +7919,7 @@
       "gas-life"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Energy and Field-Based Life",
     "definition": "Gas Life is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7954,7 +7954,7 @@
       "energy-life"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Energy and Field-Based Life",
     "definition": "Energy Life is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -7989,7 +7989,7 @@
       "electromagnetic-life"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Energy and Field-Based Life",
     "definition": "Electromagnetic Life is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -8024,7 +8024,7 @@
       "photonic-life"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Energy and Field-Based Life",
     "definition": "Photonic Life is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -8059,7 +8059,7 @@
       "quantum-life"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Energy and Field-Based Life",
     "definition": "Quantum Life is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -8094,7 +8094,7 @@
       "atmospheric-field-organism"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Energy and Field-Based Life",
     "definition": "Atmospheric Field Organism is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -8129,7 +8129,7 @@
       "stellar-corona-organism"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Energy and Field-Based Life",
     "definition": "Stellar-Corona Organism is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -8164,7 +8164,7 @@
       "magnetospheric-organism"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Energy and Field-Based Life",
     "definition": "Magnetospheric Organism is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -8199,7 +8199,7 @@
       "radiation-field-organism"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Energy and Field-Based Life",
     "definition": "Radiation-Field Organism is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -8234,7 +8234,7 @@
       "biomechanical-organism"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Artificial Life",
     "definition": "Biomechanical Organism is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -8269,7 +8269,7 @@
       "synthetic-organism"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Artificial Life",
     "definition": "Synthetic Organism is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -8304,7 +8304,7 @@
       "robotic-organism"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Artificial Life",
     "definition": "Robotic Organism is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -8339,7 +8339,7 @@
       "nanite-colony"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Artificial Life",
     "definition": "Nanite Colony is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -8374,7 +8374,7 @@
       "engineered-organism"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Artificial Life",
     "definition": "Engineered Organism is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -8409,7 +8409,7 @@
       "artificial-life-organism"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Artificial Life",
     "definition": "Artificial-Life Organism is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -8444,7 +8444,7 @@
       "ai-organism"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Artificial Life",
     "definition": "AI Organism is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -8479,7 +8479,7 @@
       "self-assembling-organism"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Artificial Life",
     "definition": "Self-Assembling Organism is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -8514,7 +8514,7 @@
       "modular-machine-species"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Artificial Life",
     "definition": "Modular Machine Species is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",
@@ -8549,7 +8549,7 @@
       "adaptive-terraforming-organism"
     ],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved",
     "family": "Artificial Life",
     "definition": "Adaptive Terraforming Organism is a canonical creature archetype whose visual interpretation remains subordinate to locked record data.",

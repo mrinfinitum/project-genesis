@@ -6,7 +6,7 @@
     "instructions": "center the complete subject with generous extraction margin and no environmental competition",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -16,7 +16,7 @@
     "instructions": "show a clear three-quarter silhouette with balanced negative space and no clipped anatomy",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -26,7 +26,7 @@
     "instructions": "place the canonical subject naturally within its habitat while retaining immediate silhouette readability",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -36,7 +36,7 @@
     "instructions": "prioritize measurement clarity, visual evidence, and unobstructed morphology",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -46,7 +46,7 @@
     "instructions": "arrange the requested studies consistently with clean separation and no labels",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -56,7 +56,7 @@
     "instructions": "show ecological context while keeping the requested subject as the unambiguous primary read",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   }
 ]

@@ -6,25 +6,17 @@ export type CosmicGenerationPromptTemplate = {
 };
 
 export const GALAXY_MASTER_PROMPT = [
-  "Design one handcrafted, scientifically plausible galaxy for the science-fiction game NOVERIS.",
-  "",
-  "Return a concise production specification, not fiction or concept-art direction. State the galaxy morphology, approximate scale, stellar population, dominant regions, notable structural features, exploration character, and any environmental constraints.",
-  "",
-  "Keep the result to one coherent galaxy. It must support procedural galactic regions, star systems, stars, planets, and discoveries without pre-generating their full contents. The Galaxy Generator remains authoritative for canonical IDs, seeds, parent links, and persistence after approval.",
-  "",
-  "Use this selected galaxy profile:",
-  "(INSERT GALAXY PROFILE)"
+  "Create a premium NOVERIS galaxy visual with restrained astronomical realism, broad negative space, sparse tiny stars, and quiet structural depth.",
+  "Use this selected galaxy character:",
+  "(INSERT GALAXY PROFILE)",
+  "No text, watermark, logo, interface, frame, diagram, decorative effects, or busy wallpaper composition."
 ].join("\n");
 
 export const GALACTIC_REGION_MASTER_PROMPT = [
-  "Design one handcrafted galactic region for the science-fiction game NOVERIS.",
-  "",
-  "Return a concise production specification, not fiction or visual key art. State the region's location within its parent galaxy, stellar density, gas and dust character, navigational conditions, system mix, exploration opportunities, and meaningful hazards.",
-  "",
-  "Keep the hierarchy explicit: galaxy, galactic region, star systems, stars, and planets. Do not generate full child records in this prompt. The Galactic Region Generator remains authoritative for canonical IDs, seeds, parent links, and persistence after approval.",
-  "",
-  "Use this selected galactic-region profile:",
-  "(INSERT GALACTIC REGION PROFILE)"
+  "Create a premium NOVERIS galactic-region visual with a quiet open center, sparse tiny stars, and distant low-contrast interstellar texture.",
+  "Use this selected region character:",
+  "(INSERT GALACTIC REGION PROFILE)",
+  "No text, watermark, logo, interface, frame, planets, suns, orbit paths, or decorative effects."
 ].join("\n");
 
 export function buildCosmicGenerationPrompt(masterPrompt: string, template: CosmicGenerationPromptTemplate) {

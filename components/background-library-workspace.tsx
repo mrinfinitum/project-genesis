@@ -1,14 +1,15 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Check, Copy, FileImage, ImageOff, Search, Sparkles } from "lucide-react";
+import { FileImage, ImageOff, Search } from "lucide-react";
 import {
   backgroundContextTypes,
-  compileBackgroundPrompt,
+  compileBackgroundVisualPrompt,
   type BackgroundContextType,
   type BackgroundRecord
 } from "@/lib/production/backgrounds";
 import { cn } from "@/lib/utils";
+import { VisualPromptOutput } from "@/components/visual-prompt-output";
 
 function label(value: string) {
   return value.replaceAll("_", " ").replace(/\b\w/g, (character) => character.toUpperCase());
@@ -74,20 +75,13 @@ export function BackgroundLibraryWorkspace({
 }) {
   const [query, setQuery] = useState("");
   const [context, setContext] = useState<BackgroundContextType | "all">(initialContext);
-  const [copied, setCopied] = useState(false);
   const filtered = useMemo(() => records.filter((record) => {
     const matchesContext = context === "all" || record.contextType === context;
     const haystack = `${record.name} ${record.contextType} ${record.canonicalOwnerId ?? ""}`.toLowerCase();
     return matchesContext && haystack.includes(query.trim().toLowerCase());
   }), [context, query, records]);
   const published = records.filter((record) => record.productionStatus === "published").length;
-  const prompt = compileBackgroundPrompt({ contextType: context === "all" ? "generic_space" : context });
-
-  async function copyPrompt() {
-    await navigator.clipboard.writeText(prompt);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1600);
-  }
+  const prompt = compileBackgroundVisualPrompt({ contextType: context === "all" ? "generic_space" : context });
 
   return (
     <main className="space-y-5">
@@ -98,10 +92,6 @@ export function BackgroundLibraryWorkspace({
             <h1 className="mt-2 text-3xl font-black text-white">{title}</h1>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">{description}</p>
           </div>
-          <button type="button" onClick={copyPrompt} className="inline-flex items-center gap-2 rounded-md border border-cyan-300/30 bg-cyan-300/10 px-3 py-2 text-sm font-black text-cyan-50">
-            {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-            {copied ? "Copied" : "Copy base prompt"}
-          </button>
         </div>
         <div className="mt-5 grid gap-3 sm:grid-cols-3">
           {[["Records", records.length], ["Published", published], ["Needs production", records.length - published]].map(([name, value]) => (
@@ -133,10 +123,7 @@ export function BackgroundLibraryWorkspace({
         {filtered.map((record) => <BackgroundCard key={record.id} record={record} />)}
       </section>
 
-      <section className="studio-material-command rounded-md p-4">
-        <div className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-cyan-200" /><h2 className="text-sm font-black text-white">Prompt contract</h2></div>
-        <p className="mt-2 text-xs leading-5 text-slate-500">Nano Banana 2 prompts inherit the flat-background rule, safe-area intent, prohibited gameplay elements, and 3840 × 2400 master profile.</p>
-      </section>
+      <VisualPromptOutput prompt={prompt} />
     </main>
   );
 }

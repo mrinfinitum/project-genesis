@@ -3,6 +3,7 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { Check, Clipboard, Copy, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { VisualPromptOutput } from "@/components/visual-prompt-output";
 import {
   buildCanonicalSolLandscapePrompt,
   buildCanonicalSolPrompt,
@@ -16,6 +17,7 @@ import {
   type PlanetPromptTemplate
 } from "@/data/planet-generation-prompts";
 import { buildPlanetLandscapePromptForTemplate } from "@/lib/planets/artwork-prompts";
+import { compileCelestialBodyVisualPrompt, compilePlanetVisualPrompt, type CelestialVisualPrompt } from "@/lib/visual-production/celestial-prompt-compiler";
 
 type CopyTarget = {
   id: string;
@@ -124,6 +126,7 @@ export function PlanetGenerationLibrary({
   const [planetClass, setPlanetClass] = useState("all");
   const [catalogFilter, setCatalogFilter] = useState("all");
   const [copied, setCopied] = useState<CopyTarget | null>(null);
+  const [selectedVisualPrompt, setSelectedVisualPrompt] = useState<CelestialVisualPrompt | null>(null);
 
   const classes = useMemo(() => [...new Set(rows.map((row) => row.planetClass))], [rows]);
   const showProceduralPrompts = catalogFilter === "all" || catalogFilter === "procedural";
@@ -299,6 +302,13 @@ export function PlanetGenerationLibrary({
         </select>
       </section>
 
+      {selectedVisualPrompt ? (
+        <VisualPromptOutput
+          prompt={selectedVisualPrompt}
+          onResetToCanonicalTemplate={() => setSelectedVisualPrompt(null)}
+        />
+      ) : null}
+
       {canonicalSolRows.length && filteredCanonicalSolRows.length ? (
         <section className="rounded-md border border-amber-300/20 bg-[#07101e]/85 p-5 shadow-glow">
           <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
@@ -364,6 +374,20 @@ export function PlanetGenerationLibrary({
                     </CopyButton>
                     <Button
                       type="button"
+                      className="h-9 border-cyan-400/25 bg-cyan-300/10 px-3 text-cyan-100 hover:bg-cyan-300/20"
+                      title="Open visual-only Nano Banana prompt"
+                      onClick={() => setSelectedVisualPrompt(compileCelestialBodyVisualPrompt({
+                        displayName: row.displayName,
+                        bodyType: row.celestialBodyType,
+                        bodyClass: row.planetClass,
+                        bodySubclass: row.planetSubclass,
+                        visualSummary: row.planetDescription
+                      }))}
+                    >
+                      Visual Prompt
+                    </Button>
+                    <Button
+                      type="button"
                       className="h-9 border-amber-300/25 bg-amber-300/10 px-3 text-amber-100 hover:bg-amber-300/20"
                       title="Copy full canonical Sol prompt"
                       onClick={() => copyValue(fullPrompt, { id, kind: "canonical-full" })}
@@ -422,6 +446,18 @@ export function PlanetGenerationLibrary({
                         <p className="line-clamp-4 text-sm leading-6 text-slate-300">{featurePrompt}</p>
                       </div>
                       <div className="mt-4 flex flex-wrap gap-2">
+                        <Button
+                          type="button"
+                          className="h-9 border-cyan-400/25 bg-cyan-300/10 px-3 text-cyan-100 hover:bg-cyan-300/20"
+                          title="Open visual-only Nano Banana prompt"
+                          onClick={() => setSelectedVisualPrompt(compilePlanetVisualPrompt({
+                            planetClass: row.planetClass,
+                            planetSubclass: row.subclass,
+                            visualSummary: featurePrompt
+                          }))}
+                        >
+                          Visual Prompt
+                        </Button>
                         <CopyButton
                           value={primaryValue}
                           copied={copied?.id === id && copied.kind === primaryKind}

@@ -3,10 +3,10 @@
     "id": "pure-black",
     "domain": "shared",
     "name": "Pure Black",
-    "instructions": "pure black background for isolated PSD source-master extraction",
+    "instructions": "pure black studio background with clean subject separation",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -16,7 +16,7 @@
     "instructions": "dark charcoal background with no horizon or visual distraction",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -26,7 +26,7 @@
     "instructions": "transparent-compatible black background with clean edges",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -36,7 +36,7 @@
     "instructions": "neutral gray studio field for material readability",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -46,87 +46,87 @@
     "instructions": "scientific white board only when explicitly requested",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
     "id": "native-habitat",
     "domain": "shared",
     "name": "Native Habitat",
-    "instructions": "canonical native habitat only",
+    "instructions": "native habitat appropriate to the subject",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
     "id": "underwater-habitat",
     "domain": "shared",
     "name": "Underwater Habitat",
-    "instructions": "canonical underwater habitat only",
+    "instructions": "underwater habitat appropriate to the subject",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
     "id": "atmospheric-habitat",
     "domain": "shared",
     "name": "Atmospheric Habitat",
-    "instructions": "canonical atmospheric habitat only",
+    "instructions": "atmospheric habitat appropriate to the subject",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
     "id": "cave-habitat",
     "domain": "shared",
     "name": "Cave Habitat",
-    "instructions": "canonical cave habitat only",
+    "instructions": "cave habitat appropriate to the subject",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
     "id": "forest-habitat",
     "domain": "shared",
     "name": "Forest Habitat",
-    "instructions": "canonical forest habitat only",
+    "instructions": "forest habitat appropriate to the subject",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
     "id": "desert-habitat",
     "domain": "shared",
     "name": "Desert Habitat",
-    "instructions": "canonical desert habitat only",
+    "instructions": "desert habitat appropriate to the subject",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
     "id": "polar-habitat",
     "domain": "shared",
     "name": "Polar Habitat",
-    "instructions": "canonical polar habitat only",
+    "instructions": "polar habitat appropriate to the subject",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
     "id": "volcanic-habitat",
     "domain": "shared",
     "name": "Volcanic Habitat",
-    "instructions": "canonical volcanic habitat only",
+    "instructions": "volcanic habitat appropriate to the subject",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -136,7 +136,7 @@
     "instructions": "neutral reference board field",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -146,7 +146,7 @@
     "instructions": "neutral species plate field",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -156,7 +156,7 @@
     "instructions": "neutral botanical plate field",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   }
 ]

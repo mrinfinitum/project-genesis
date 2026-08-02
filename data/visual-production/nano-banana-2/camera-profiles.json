@@ -6,7 +6,7 @@
     "instructions": "three-quarter studio view with the complete silhouette readable",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -16,7 +16,7 @@
     "instructions": "eye-level portrait framing with anatomy readable",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -26,7 +26,7 @@
     "instructions": "true front orthographic view with no perspective distortion",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -36,7 +36,7 @@
     "instructions": "true side orthographic view with no perspective distortion",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -46,7 +46,7 @@
     "instructions": "true rear orthographic view with no perspective distortion",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -56,7 +56,7 @@
     "instructions": "true top orthographic view with no perspective distortion",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -66,7 +66,7 @@
     "instructions": "true underside orthographic view with no perspective distortion",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -76,7 +76,7 @@
     "instructions": "controlled macro detail with no crop ambiguity",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -86,7 +86,7 @@
     "instructions": "controlled material closeup with physically based surface readability",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -96,7 +96,7 @@
     "instructions": "wing attachment, feather architecture, lift surface, and joint detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -106,7 +106,7 @@
     "instructions": "leaf, collector surface, and venation detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -116,7 +116,7 @@
     "instructions": "root or anchor system detail",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -126,7 +126,7 @@
     "instructions": "restrained wide habitat composition",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -136,7 +136,7 @@
     "instructions": "wide ecosystem composition with the canonical subject retained",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -146,7 +146,7 @@
     "instructions": "ordered neutral production reference board",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -156,7 +156,7 @@
     "instructions": "ordered species plate with consistent studies",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -166,7 +166,7 @@
     "instructions": "ordered botanical plate with consistent studies",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -176,7 +176,7 @@
     "instructions": "neutral comparative scale framing",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   },
   {
@@ -186,7 +186,7 @@
     "instructions": "evidence-oriented scientific documentation framing",
     "tags": [],
     "exclusions": [],
-    "version": "1.0.0",
+    "version": "3.0.0",
     "status": "approved"
   }
 ]
