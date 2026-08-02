@@ -89,6 +89,7 @@ const navigationGroups: NavigationGroup[] = [
     label: "Universe",
     icon: Orbit,
     items: [
+      { href: "/universe-explorer", label: "Universe Explorer", icon: Network },
       { href: "/galaxy", label: "Galaxy Library", icon: Star },
       { href: "/sector-map", label: "Galactic Region Library", icon: Map },
       { href: "/star-system-map", label: "Star System Library", icon: Radar },
