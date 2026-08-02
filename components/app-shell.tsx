@@ -115,6 +115,7 @@ const navigationGroups: NavigationGroup[] = [
     icon: Monitor,
     items: [
       { href: "/creative-production/asset-production", label: "Asset Production", icon: PackageCheck },
+      { href: "/creative-production/render-hub", label: "Render Hub", icon: WandSparkles },
       { href: "/backgrounds", label: "Background Library", icon: Images },
       { href: "/visual-production", label: "Visual Production Engine", icon: Sparkles },
       { href: "/visual-production/species-plates", label: "Species Plates", icon: Layers3 },
