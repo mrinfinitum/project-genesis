@@ -21,6 +21,7 @@ import { resourceEconomyLogisticsFramework, validateResourceEconomyLogisticsFram
 import { dynamicEventFramework, validateDynamicEventFramework } from "@/lib/events/framework";
 import { environmentComposerRuntimeContract, validateEnvironmentComposerContract } from "@/lib/environment-composer";
 import { noverisDesignLanguage, validateDesignLanguage } from "@/lib/design-language";
+import { noverisComponentLibrary, validateComponentLibrary } from "@/lib/component-library";
 import { buildCreatureRuntimeData, validateCreatureSystem } from "@/lib/life/creature-system";
 import { buildSpeciesPlateRuntimeData, validateSpeciesPlateRuntimeData } from "@/lib/species-plates/runtime";
 import { missionExpeditionFramework, validateMissionExpeditionFramework } from "@/lib/missions/framework";
@@ -76,7 +77,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 66;
+export const gameRuntimeContentVersion = 67;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -134,6 +135,7 @@ export type RobloxRuntimeExportPayload = {
   dynamicEventFramework: GameRuntimeData["dynamicEventFramework"];
   environmentComposerContract: GameRuntimeData["environmentComposerContract"];
   designLanguage: GameRuntimeData["designLanguage"];
+  componentLibrary: GameRuntimeData["componentLibrary"];
   speciesCategories: GameRuntimeData["speciesCategories"];
   speciesTaxonomyFrameworks: GameRuntimeData["speciesTaxonomyFrameworks"];
   species: GameRuntimeData["species"];
@@ -2179,6 +2181,9 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   for (const issue of validateDesignLanguage(runtimeData.designLanguage).issues) {
     issues.push({ severity: issue.severity, code: `design_language_${issue.code}`, message: issue.message, records: issue.records });
   }
+  for (const issue of validateComponentLibrary(runtimeData.componentLibrary).issues) {
+    issues.push({ severity: issue.severity, code: `component_library_${issue.code}`, message: issue.message, records: issue.records });
+  }
   const creatureValidation = validateCreatureSystem({
     species: runtimeData.species,
     occurrences: runtimeData.speciesOccurrences,
@@ -2547,6 +2552,7 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     dynamicEventFramework: sorted.dynamicEventFramework,
     environmentComposerContract: sorted.environmentComposerContract,
     designLanguage: sorted.designLanguage,
+    componentLibrary: sorted.componentLibrary,
     speciesCategories: sorted.speciesCategories,
     speciesTaxonomyFrameworks: sorted.speciesTaxonomyFrameworks,
     species: sorted.species,
@@ -2731,6 +2737,9 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
   for (const issue of validateDesignLanguage(payload.designLanguage).issues) {
     issues.push({ severity: issue.severity, code: `design_language_${issue.code}`, message: issue.message, records: issue.records });
   }
+  for (const issue of validateComponentLibrary(payload.componentLibrary).issues) {
+    issues.push({ severity: issue.severity, code: `component_library_${issue.code}`, message: issue.message, records: issue.records });
+  }
   for (const message of validatePlanetDetailScreenContract(payload.planetDetailScreen)) {
     issues.push({ severity: "error", code: "planet_detail_screen_invalid", message, records: ["planetDetailScreen"] });
   }
@@ -2901,6 +2910,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     dynamicEventFramework,
     environmentComposerContract: environmentComposerRuntimeContract(),
     designLanguage: noverisDesignLanguage,
+    componentLibrary: noverisComponentLibrary,
     ...creatureRuntime,
     speciesPlates,
     planetDetailScreen: planetDetailScreenRuntimeContract,
@@ -2984,6 +2994,7 @@ export async function getGameRuntimeData() {
     dynamicEventFramework: base.dynamicEventFramework,
     environmentComposerContract: base.environmentComposerContract,
     designLanguage: base.designLanguage,
+    componentLibrary: base.componentLibrary,
     speciesCategories: base.speciesCategories,
     speciesTaxonomyFrameworks: base.speciesTaxonomyFrameworks,
     species: base.species,
@@ -3229,6 +3240,7 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     dynamicEventFramework: base.dynamicEventFramework,
     environmentComposerContract: base.environmentComposerContract,
     designLanguage: base.designLanguage,
+    componentLibrary: base.componentLibrary,
     speciesCategories: base.speciesCategories,
     speciesTaxonomyFrameworks: base.speciesTaxonomyFrameworks,
     species: base.species,

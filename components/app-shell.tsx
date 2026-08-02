@@ -45,6 +45,7 @@ type NavigationItem = {
   icon: LucideIcon;
   future?: boolean;
   activePaths?: string[];
+  nested?: boolean;
 };
 
 type NavigationGroup = {
@@ -117,6 +118,7 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/visual-production", label: "Visual Production Engine", icon: Sparkles },
       { href: "/visual-production/species-plates", label: "Species Plates", icon: Layers3 },
       { href: "/creative-production/design-system", label: "Design System", icon: Palette },
+      { href: "/creative-production/design-system/component-library", label: "Component Library", icon: Layers3, nested: true },
       { href: "/creative-production/ui-screens/planet-detail", label: "Planet Detail Screen", icon: Monitor },
       { href: "/creative-production/ui-screens/civilization-operations", label: "Civilization Operations", icon: Monitor }
     ]
@@ -329,6 +331,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                           }}
                           className={cn(
                             "flex h-8 items-center gap-3 rounded-md border border-transparent px-2 text-sm font-semibold text-slate-400 transition hover:border-cyan-300/20 hover:bg-cyan-300/10 hover:text-cyan-50",
+                            item.nested && "ml-4 h-7 text-xs",
                             active && "border-cyan-300/35 bg-cyan-300/15 text-cyan-50 shadow-[inset_2px_0_0_rgba(103,232,249,0.9)]"
                           )}
                         >

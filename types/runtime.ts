@@ -1,5 +1,6 @@
 import type { EnvironmentComposerContract } from "@/lib/environment-composer";
 import type { DesignLanguageContract } from "@/lib/design-language";
+import type { ComponentLibraryContract } from "@/lib/component-library";
 import type { PlanetDataScreenContract, PlanetDeepDataFramework } from "@/types/planet-deep-data";
 
 export type RuntimeMetadata = {
@@ -3575,6 +3576,7 @@ export type GameRuntimeData = {
   dynamicEventFramework: DynamicEventFrameworkContract;
   environmentComposerContract: EnvironmentComposerContract;
   designLanguage: DesignLanguageContract;
+  componentLibrary: ComponentLibraryContract;
   speciesCategories: import("@/lib/life/creature-system").CreatureFunctionalCategory[];
   speciesTaxonomyFrameworks: string[];
   species: import("@/lib/life/creature-system").SpeciesRecord[];
