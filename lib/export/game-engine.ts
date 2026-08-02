@@ -5,6 +5,7 @@ import { canonicalActionSystem, validateActionSystem } from "@/lib/actions/actio
 import { ARCHITECTURE_VERSION } from "@/lib/architecture/version";
 import { civilizationOperationsDeckContract, validateCivilizationOperationsDeckContract } from "@/lib/assets/civilization-operations-deck";
 import { planetDetailScreenRuntimeContract, validatePlanetDetailScreenContract } from "@/lib/assets/planet-detail-screen";
+import { buildUnityAssetProductionRuntimeExport, validateAssetProductionRuntimeManifest, type AssetProductionRuntimeManifest } from "@/lib/assets/asset-production-system";
 import { buildBuildingClassifications, canonicalBuildingLibrary, canonicalBuildingTaxonomy } from "@/lib/buildings/taxonomy";
 import { civilizationProgressionFramework, validateCivilizationProgressionFramework } from "@/lib/civilization/progression-framework";
 import { colonizationFramework, validateColonizationFramework } from "@/lib/colonization/framework";
@@ -48,7 +49,7 @@ import { populationSimulationFramework, validatePopulationSimulationFramework } 
 import { defaultEraNavigationProfile, engineEraNavigationOverrides, resolveEraNavigationProfile, supportedEraNavigationBoundaryModes, supportedEraNavigationDashboardModes } from "@/lib/runtime/client-profiles";
 import { galaxyEngineContractVersion, galaxyEnginePresentationContract, validateGalaxyEnginePresentationContract } from "@/lib/runtime/galaxy-engine-contract";
 import { buildMobileClientProfile, mobileAssetRequirements } from "@/lib/runtime/mobile-client-profiles";
-import { gameRuntimeContentVersion, gameRuntimeSchemaVersion } from "@/lib/runtime/game-runtime";
+import { buildBaseGameRuntimeData, gameRuntimeContentVersion, gameRuntimeSchemaVersion } from "@/lib/runtime/game-runtime";
 import {
   generateMissionBundle,
   missionDifficulties,
@@ -99,7 +100,7 @@ const targetConfigs: Record<EngineTarget, EngineTargetConfig> = {
     format: "Lua ModuleScripts plus JSON-compatible Studio data",
     endpoint: "/api/export/roblox",
     folderStructure: ["ReplicatedStorage/ProjectGenesis/Data", "ReplicatedStorage/ProjectGenesis/Services", "ServerScriptService/ProjectGenesis"],
-    generatedModules: ["ResourceCatalogModule", "ResearchUnlockModule", "DiscoveryCatalogModule", "UniversalDiscoveryRegistryContract", "SpeciesPlateModule", "DesignLanguageModule", "ComponentLibraryModule", "ScreenTemplateLibraryModule", "UniverseDataModule", "ApiService"],
+    generatedModules: ["ResourceCatalogModule", "ResearchUnlockModule", "DiscoveryCatalogModule", "UniversalDiscoveryRegistryContract", "SpeciesPlateModule", "DesignLanguageModule", "ComponentLibraryModule", "ScreenTemplateLibraryModule", "AssetProductionRuntimeModule", "UniverseDataModule", "ApiService"],
     schemaMapping: ["resource_catalog -> ResourceCatalogModule", "research + unlock_matrix -> ResearchUnlockModule", "discoveries + discovery_categories -> DiscoveryCatalogModule", "universal_discovery_registry -> UniversalDiscoveryRegistryContract", "screen_template_library -> ScreenTemplateLibraryModule", "colonization_framework + population_simulation_framework + resource_economy_logistics_framework + mission_expedition_framework + dynamic_event_framework -> UniverseDataModule", "galaxies/sectors/star_systems/planets/factions -> UniverseDataModule"],
     apiNotes: ["Roblox consumes Studio/API data; it is not the primary data generator.", "Use HttpService against the Generic JSON API for live sync workflows."]
   },
@@ -109,7 +110,7 @@ const targetConfigs: Record<EngineTarget, EngineTargetConfig> = {
     format: "C# models, ScriptableObject guidance, and JSON import payloads",
     endpoint: "/api/export/unity",
     folderStructure: ["Assets/ProjectGenesis/Data", "Assets/ProjectGenesis/Scripts/Generated", "Assets/ProjectGenesis/ScriptableObjects"],
-    generatedModules: ["ResourceCatalog.cs", "ResearchUnlocks.cs", "NoverisDesignLanguage.json", "NoverisComponentLibrary.json", "NoverisScreenTemplateLibrary.json", "UniverseLoader.cs"],
+    generatedModules: ["ResourceCatalog.cs", "ResearchUnlocks.cs", "NoverisDesignLanguage.json", "NoverisComponentLibrary.json", "NoverisScreenTemplateLibrary.json", "NoverisAssetProductionRuntime.json", "UniverseLoader.cs"],
     schemaMapping: ["resource_catalog -> ResourceDefinition", "research + unlock_matrix -> ResearchUnlockDefinition", "screen_template_library -> NoverisScreenTemplateLibrary.json", "discoveries -> DiscoveryDefinition", "universe + factions -> UniverseData"],
     apiNotes: ["Import JSON at build time or pull from the Generic JSON API at runtime.", "ScriptableObjects should cache imported data, not replace Studio ownership."]
   },
@@ -119,7 +120,7 @@ const targetConfigs: Record<EngineTarget, EngineTargetConfig> = {
     format: "JSON/DataTable-ready rows plus C++/Blueprint struct definitions",
     endpoint: "/api/export/unreal",
     folderStructure: ["Content/ProjectGenesis/Data", "Source/ProjectGenesis/Public/Generated", "Source/ProjectGenesis/Private/Loaders"],
-    generatedModules: ["ResourceCatalog", "ResearchUnlockTable", "NoverisDesignLanguage.json", "NoverisComponentLibrary.json", "NoverisScreenTemplateLibrary.json", "UniverseData"],
+    generatedModules: ["ResourceCatalog", "ResearchUnlockTable", "NoverisDesignLanguage.json", "NoverisComponentLibrary.json", "NoverisScreenTemplateLibrary.json", "NoverisAssetProductionRuntime.json", "UniverseData"],
     schemaMapping: ["resource_catalog -> FGenesisResourceRow", "unlock_matrix -> FGenesisResearchUnlockRow", "screen_template_library -> NoverisScreenTemplateLibrary.json", "discoveries -> FGenesisDiscoveryRow", "universe + factions -> FGenesisUniverseData"],
     apiNotes: ["Use DataTables for static builds or HTTP JSON for live tools.", "Structs mirror Studio IDs and relationships."]
   },
@@ -129,7 +130,7 @@ const targetConfigs: Record<EngineTarget, EngineTargetConfig> = {
     format: "JSON exports with GDScript loader templates",
     endpoint: "/api/export/godot",
     folderStructure: ["res://project_genesis/data", "res://project_genesis/loaders", "res://project_genesis/autoload"],
-    generatedModules: ["ResourceCatalog.gd", "ResearchUnlocks.gd", "NoverisDesignLanguage.json", "NoverisComponentLibrary.json", "NoverisScreenTemplateLibrary.json", "UniverseLoader.gd"],
+    generatedModules: ["ResourceCatalog.gd", "ResearchUnlocks.gd", "NoverisDesignLanguage.json", "NoverisComponentLibrary.json", "NoverisScreenTemplateLibrary.json", "NoverisAssetProductionRuntime.json", "UniverseLoader.gd"],
     schemaMapping: ["resource_catalog -> ResourceCatalog.gd", "research + unlock_matrix -> ResearchUnlocks.gd", "screen_template_library -> NoverisScreenTemplateLibrary.json", "discoveries -> DiscoveryCatalog.gd", "universe + factions -> UniverseLoader.gd"],
     apiNotes: ["Load local JSON with FileAccess or fetch Studio exports with HTTPRequest.", "Keep gameplay rules in exported JSON, not duplicated GDScript tables."]
   },
@@ -139,7 +140,7 @@ const targetConfigs: Record<EngineTarget, EngineTargetConfig> = {
     format: "TypeScript interfaces, JSON exports, API client, and store examples",
     endpoint: "/api/export/web",
     folderStructure: ["src/project-genesis/data", "src/project-genesis/api", "src/project-genesis/store"],
-    generatedModules: ["project-genesis.types.ts", "NoverisDesignLanguage.json", "NoverisComponentLibrary.json", "NoverisScreenTemplateLibrary.json", "projectGenesisClient.ts", "projectGenesisStore.ts"],
+    generatedModules: ["project-genesis.types.ts", "NoverisDesignLanguage.json", "NoverisComponentLibrary.json", "NoverisScreenTemplateLibrary.json", "NoverisAssetProductionRuntime.json", "projectGenesisClient.ts", "projectGenesisStore.ts"],
     schemaMapping: ["canonical payload -> TypeScript interfaces", "screen_template_library -> NoverisScreenTemplateLibrary.json", "discoveries -> normalized discovery codex store", "factions -> normalized faction store", "endpoint references -> API client", "relationship map -> normalized store"],
     apiNotes: ["Use this target for browser games, tools, previews, and local editor clients.", "Zustand/Redux examples consume normalized canonical data."]
   },
@@ -149,7 +150,7 @@ const targetConfigs: Record<EngineTarget, EngineTargetConfig> = {
     format: "Clean normalized JSON, schema notes, and ID relationship map",
     endpoint: "/api/export/generic",
     folderStructure: ["project-genesis/data", "project-genesis/schema", "project-genesis/integration"],
-    generatedModules: ["canonical-data.json", "design-language.json", "component-library.json", "screen-template-library.json", "schema-notes.json", "relationship-map.json"],
+    generatedModules: ["canonical-data.json", "design-language.json", "component-library.json", "screen-template-library.json", "asset-production-runtime.json", "schema-notes.json", "relationship-map.json"],
     schemaMapping: ["All targets consume the same canonical modules.", "screen_template_library -> semantic hierarchy, component, asset-role, and layout-mode contract.", "Engine-specific exports derive from this payload."],
     apiNotes: ["Use as the foundation for every other engine target.", "No engine-specific syntax is included in the canonical data."]
   }
@@ -261,6 +262,7 @@ type CanonicalModules = {
   design_language: typeof noverisDesignLanguage;
   component_library: typeof noverisComponentLibrary;
   screen_template_library: typeof noverisScreenTemplateLibrary;
+  asset_production_runtime: AssetProductionRuntimeManifest;
   planet_detail_screen: typeof planetDetailScreenRuntimeContract;
   civilization_operations_deck: typeof civilizationOperationsDeckContract;
   economy_usage_relationships: ReturnType<typeof buildEconomyUsageRelationships>;
@@ -546,7 +548,8 @@ function buildExportColonies(planets: ExportGeneratedPlanet[], factions: Faction
   return colonies.length ? colonies : generateFallbackColonies();
 }
 
-function buildCanonicalModules(data: GameData): CanonicalModules {
+async function buildCanonicalModules(data: GameData): Promise<CanonicalModules> {
+  const runtimeAssets = (await buildBaseGameRuntimeData()).assetProductionRuntime;
   const localBubble = getLocalBubbleSystems(24);
   const starSystems = data.star_systems.length ? data.star_systems : (generatedStarSystemRows(24) as GameData["star_systems"]);
   const galaxies = [localBubble.galaxy];
@@ -755,6 +758,7 @@ function buildCanonicalModules(data: GameData): CanonicalModules {
     design_language: noverisDesignLanguage,
     component_library: noverisComponentLibrary,
     screen_template_library: noverisScreenTemplateLibrary,
+    asset_production_runtime: runtimeAssets,
     planet_detail_screen: planetDetailScreenRuntimeContract,
     civilization_operations_deck: civilizationOperationsDeckContract,
     economy_usage_relationships: buildEconomyUsageRelationships(data),
@@ -1677,6 +1681,9 @@ function validateEngineExport(target: EngineTarget, modules: CanonicalModules) {
   for (const issue of validateScreenTemplateLibrary(modules.screen_template_library).issues) {
     addIssue(issues, issue.severity, `screen_template_library_${issue.code}`, issue.message, issue.records);
   }
+  for (const issue of validateAssetProductionRuntimeManifest(modules.asset_production_runtime).issues) {
+    addIssue(issues, issue.severity, `asset_production_${issue.code}`, issue.message, issue.records);
+  }
   validateResourceTaxonomyExport(issues, modules);
   validateStableIds(issues, modules);
   validateResourceReferences(issues, modules);
@@ -1876,6 +1883,7 @@ function schemaNotes(target: EngineTarget) {
     environmentComposer: "Environment Composer publishes ordered layers, semantic asset references, themes, and artistic constraints. It never embeds textures or private PSD paths, and clients retain rendering ownership.",
     componentLibrary: "The NOVERIS Component Library publishes component contracts, token references, animation references, state variants, slots, screen usage, and prefab identifiers. Engines own rendering and must report unknown component IDs or style overrides as contract violations.",
     screenTemplateLibrary: "The NOVERIS Screen Template Library publishes semantic screen hierarchy, required components, asset roles, layout modes, and runtime contracts. Engine clients own coordinates, anchors, rendering, animation, interaction, and player state.",
+    assetProductionRuntime: "Asset Production publishes approved runtime asset IDs, runtime keys, public previews, thumbnails, checksums, and target mappings only. Prompts, source-master paths, provider notes, review history, and production notes remain Studio-private.",
     planetDeepData: "Planet records extend the existing canonical Planet root with deterministic profile references, scientific values, resource/biome/species/hazard occurrences, discovery visibility, and author locks. Resource IDs resolve through resource_catalog. Live weather, simulation ticks, and player-specific state remain client-owned.",
     planetOpportunities: "Planet Opportunity Profiles define strategic uses, suitability scores, capabilities, hazards, and valid player actions. Planets and celestial bodies reference opportunityProfileId; clients do not invent these values.",
     planetExploration: "Planet Exploration Progression defines the Unknown -> Detected -> Probed -> Surveyed -> Evaluated -> Selected -> Active Project -> Complete pipeline. CSI, SVI, nickname, recommended uses, and actions are hidden until Surveyed. Timed actions reference the shared Time Action Contract.",
@@ -1942,6 +1950,7 @@ function compactModules(modules: CanonicalModules) {
     creature_generator_contract: modules.creature_generator_contract,
     component_library: modules.component_library,
     screen_template_library: modules.screen_template_library,
+    asset_production_runtime: modules.asset_production_runtime,
     creature_prompt_output_types: modules.creature_prompt_output_types,
     creature_prompt_lifecycle_stages: modules.creature_prompt_lifecycle_stages,
     creature_prompt_batch_actions: modules.creature_prompt_batch_actions,
@@ -2048,6 +2057,7 @@ function targetArtifacts(target: EngineTarget, modules: CanonicalModules) {
       "DesignLanguageModule.lua": `local DesignLanguage = ${luaValue(modules.design_language)}\n\nreturn DesignLanguage\n`,
       "ComponentLibraryModule.lua": `local ComponentLibrary = ${luaValue(buildUnityComponentLibraryExport(modules.component_library).componentLibrary)}\n\nreturn ComponentLibrary\n`,
       "ScreenTemplateLibraryModule.lua": `local ScreenTemplateLibrary = ${luaValue(buildUnityScreenTemplateExport(modules.screen_template_library).screenTemplateLibrary)}\n\nreturn ScreenTemplateLibrary\n`,
+      "AssetProductionRuntimeModule.lua": `local AssetProductionRuntime = ${luaValue(buildUnityAssetProductionRuntimeExport(modules.asset_production_runtime).assetProductionRuntime)}\n\nreturn AssetProductionRuntime\n`,
       "ResearchUnlockModule.lua": `local ResearchUnlocks = ${luaValue({ research: modules.research, unlocks: modules.unlock_matrix })}\n\nreturn ResearchUnlocks\n`,
       "UniverseDataModule.lua": `local UniverseData = ${luaValue({ galaxies: modules.galaxies, sectors: modules.sectors, starSystems: modules.star_systems, planets: modules.planets, celestialBodies: modules.celestial_bodies, planetOpportunityProfiles: modules.planet_opportunity_profiles, planetDeepDataFramework: modules.planet_deep_data_framework, planetDataScreenContract: modules.planet_data_screen_contract, timeActionContract: modules.time_action_contract, actionSystem: modules.action_system, planetExplorationProgression: modules.planet_exploration_progression, planetDevelopmentFramework: modules.planet_development_framework, civilizationProgressionFramework: modules.civilization_progression_framework, colonizationFramework: modules.colonization_framework, populationSimulationFramework: modules.population_simulation_framework, resourceEconomyLogisticsFramework: modules.resource_economy_logistics_framework, missionExpeditionFramework: modules.mission_expedition_framework, dynamicEventFramework: modules.dynamic_event_framework, factions: modules.factions, colonies: modules.colonies, colonyBuildings: modules.colony_buildings, colonyLevels: modules.colony_level_definitions, colonyFocus: modules.colony_focus_definitions, markets: modules.markets, tradeRoutes: modules.trade_routes, tradeOpportunities: modules.trade_opportunities, missions: modules.missions, missionObjectives: modules.mission_objectives, missionRewards: modules.mission_rewards })}\n\nreturn UniverseData\n`,
       "ApiService.lua": "local HttpService = game:GetService(\"HttpService\")\n\nlocal ApiService = {}\nApiService.BaseUrl = \"https://your-studio-host.example.com/api/export\"\n\nfunction ApiService.FetchGeneric()\n  local response = HttpService:GetAsync(ApiService.BaseUrl .. \"/generic\")\n  return HttpService:JSONDecode(response)\nend\n\nreturn ApiService\n"
@@ -2059,7 +2069,8 @@ function targetArtifacts(target: EngineTarget, modules: CanonicalModules) {
       "NoverisDesignLanguage.json": modules.design_language,
       "NoverisComponentLibrary.json": buildUnityComponentLibraryExport(modules.component_library),
       "NoverisScreenTemplateLibrary.json": buildUnityScreenTemplateExport(modules.screen_template_library),
-      "project-genesis.types.ts": "export type GenesisId = string;\n\nexport interface GenesisResource { id: GenesisId; resource_name: string; category: string; rarity: string; }\nexport interface GenesisSpeciesPlate { speciesPlateId: GenesisId; templateId: string; templateVersion: string; approvedAssetId: GenesisId | null; previewAssetId: GenesisId | null; thumbnailAssetId: GenesisId | null; extractedAssetIds: GenesisId[]; discoveryVisibilityRules: Record<string, unknown>; sourcePromptId: GenesisId | null; promptHash: string; generationSeed: string; productionStatus: string; }\nexport interface GenesisEraNavigationProfile { dashboardMode: 'current_journey' | 'compact_timeline' | 'full_timeline'; visibleEraCount: number; fullTimelineEnabled: boolean; allowPrimaryHorizontalScroll: boolean; boundaryBehavior: { firstEraMode: string; middleEraMode: string; lastEraMode: string }; }\nexport interface GenesisTimeActionContract { id: GenesisId; stateMachine: string[]; accelerationPolicy: Record<string, unknown>; progressModel: Record<string, unknown>; }\nexport interface GenesisPlanetExplorationProgression { id: GenesisId; timeActionContractId: GenesisId; pipeline: Array<{ id: string; order: number; displayName: string }>; visibilityRules: Array<Record<string, unknown>>; timedActions: Array<Record<string, unknown>>; }\nexport interface GenesisColonizationFramework { id: GenesisId; colonyTypeDefinitions: Array<Record<string, unknown>>; colonyProjectPhaseDefinitions: Array<Record<string, unknown>>; colonyResourcePackageDefinitions: Array<Record<string, unknown>>; }\nexport interface GenesisResourceEconomyLogisticsFramework { id: GenesisId; resourceFlowDefinitions: Array<Record<string, unknown>>; economyNodeTypeDefinitions: Array<Record<string, unknown>>; logisticsRouteDefinitions: Array<Record<string, unknown>>; shipmentStateDefinitions: Array<Record<string, unknown>>; productionChainDefinitions: Array<Record<string, unknown>>; }\nexport interface GenesisMissionExpeditionFramework { id: GenesisId; missionTypeDefinitions: Array<Record<string, unknown>>; expeditionScopeDefinitions: Array<Record<string, unknown>>; missionTemplateDefinitions: Array<Record<string, unknown>>; missionObjectiveContractDefinitions: Array<Record<string, unknown>>; missionRewardContractDefinitions: Array<Record<string, unknown>>; }\nexport interface GenesisDynamicEventFramework { id: GenesisId; eventCategoryDefinitions: Array<Record<string, unknown>>; eventTypeDefinitions: Array<Record<string, unknown>>; eventDefinitions: Array<Record<string, unknown>>; eventChainDefinitions: Array<Record<string, unknown>>; eventChoiceDefinitions: Array<Record<string, unknown>>; }\nexport interface GenesisDiscovery { id: GenesisId; displayName: string; categoryId: GenesisId; subcategoryId: GenesisId; rarity: string; spawnWeight: number; discoveryXp: number; requiredScanLevel: number; assetProfile: Record<string, string>; }\nexport interface GenesisAiAgent { id: GenesisId; displayName: string; shortDisplayName: string; personalityId: GenesisId; defaultForNewPlayers: boolean; baseVariantId: GenesisId; availableVariantIds: GenesisId[]; headAssetKey: string; eyesOpenAssetKey: string; eyesBlinkAssetKey: string; eyesClosedAssetKey: string; }\nexport interface GenesisAiAgentVariant { id: GenesisId; agentId: GenesisId; displayName: string; tier: number; variantType: string; assetKeys: Record<string, string>; unlockText: string; }\nexport interface GenesisResearchNode { id: GenesisId; name: string; era: string; status: string; }\nexport interface GenesisFaction { id: GenesisId; name: string; type: string; disposition: string; homeStarSystemId: GenesisId; controlledPlanetIds: GenesisId[]; }\nexport interface GenesisColonyBuilding { id: GenesisId; name: string; category: string; colonyId: GenesisId; constructionStatus: string; modifiers: Record<string, number>; }\nexport interface GenesisColony { id: GenesisId; name: string; planetId: GenesisId; starSystemId: GenesisId; population: number; populationCapacity: number; populationGrowthRate: number; colonyLevel: number; focus: string; status: string; resourceOutputIds: GenesisId[]; resourceOutputRates: Record<string, number>; buildingIds: GenesisId[]; }\nexport interface GenesisMarketListing { resourceId: GenesisId; basePrice: number; currentPrice: number; supply: number; demand: number; priceTrend: string; availability: string; }\nexport interface GenesisMarket { id: GenesisId; name: string; marketType: string; colonyId?: GenesisId; childMarketIds: GenesisId[]; resourceListings: GenesisMarketListing[]; tradeVolume: number; prosperity: number; security: number; }\nexport interface GenesisTradeRoute { id: GenesisId; originMarketId: GenesisId; destinationMarketId: GenesisId; resourceIds: GenesisId[]; profitability: number; risk: number; status: string; }\nexport interface GenesisMissionObjective { id: GenesisId; missionId: GenesisId; objectiveType: string; targetId: GenesisId; targetCount: number; currentCount: number; completed: boolean; }\nexport interface GenesisMission { id: GenesisId; title: string; missionType: string; status: string; difficulty: string; objectiveIds: GenesisId[]; rewardIds: GenesisId[]; rewardsClaimed: boolean; tracked: boolean; }\nexport interface GenesisExportPayload { target: string; canonical: Record<string, unknown>; relationshipMap: Record<string, unknown>; }\n",
+      "NoverisAssetProductionRuntime.json": buildUnityAssetProductionRuntimeExport(modules.asset_production_runtime),
+      "project-genesis.types.ts": "export type GenesisId = string;\n\nexport interface GenesisResource { id: GenesisId; resource_name: string; category: string; rarity: string; }\nexport interface GenesisApprovedAsset { id: GenesisId; version: string; runtimeKey: string; preview: string | null; thumbnail: string | null; checksum: string; runtimeTargets: string[]; }\nexport interface GenesisAssetProductionRuntime { id: string; version: string; status: 'Ready' | 'Blocked'; publishingPolicy: 'approved-assets-only'; assets: GenesisApprovedAsset[]; }\nexport interface GenesisSpeciesPlate { speciesPlateId: GenesisId; templateId: string; templateVersion: string; approvedAssetId: GenesisId | null; previewAssetId: GenesisId | null; thumbnailAssetId: GenesisId | null; extractedAssetIds: GenesisId[]; discoveryVisibilityRules: Record<string, unknown>; sourcePromptId: GenesisId | null; promptHash: string; generationSeed: string; productionStatus: string; }\nexport interface GenesisEraNavigationProfile { dashboardMode: 'current_journey' | 'compact_timeline' | 'full_timeline'; visibleEraCount: number; fullTimelineEnabled: boolean; allowPrimaryHorizontalScroll: boolean; boundaryBehavior: { firstEraMode: string; middleEraMode: string; lastEraMode: string }; }\nexport interface GenesisTimeActionContract { id: GenesisId; stateMachine: string[]; accelerationPolicy: Record<string, unknown>; progressModel: Record<string, unknown>; }\nexport interface GenesisPlanetExplorationProgression { id: GenesisId; timeActionContractId: GenesisId; pipeline: Array<{ id: string; order: number; displayName: string }>; visibilityRules: Array<Record<string, unknown>>; timedActions: Array<Record<string, unknown>>; }\nexport interface GenesisColonizationFramework { id: GenesisId; colonyTypeDefinitions: Array<Record<string, unknown>>; colonyProjectPhaseDefinitions: Array<Record<string, unknown>>; colonyResourcePackageDefinitions: Array<Record<string, unknown>>; }\nexport interface GenesisResourceEconomyLogisticsFramework { id: GenesisId; resourceFlowDefinitions: Array<Record<string, unknown>>; economyNodeTypeDefinitions: Array<Record<string, unknown>>; logisticsRouteDefinitions: Array<Record<string, unknown>>; shipmentStateDefinitions: Array<Record<string, unknown>>; productionChainDefinitions: Array<Record<string, unknown>>; }\nexport interface GenesisMissionExpeditionFramework { id: GenesisId; missionTypeDefinitions: Array<Record<string, unknown>>; expeditionScopeDefinitions: Array<Record<string, unknown>>; missionTemplateDefinitions: Array<Record<string, unknown>>; missionObjectiveContractDefinitions: Array<Record<string, unknown>>; missionRewardContractDefinitions: Array<Record<string, unknown>>; }\nexport interface GenesisDynamicEventFramework { id: GenesisId; eventCategoryDefinitions: Array<Record<string, unknown>>; eventTypeDefinitions: Array<Record<string, unknown>>; eventDefinitions: Array<Record<string, unknown>>; eventChainDefinitions: Array<Record<string, unknown>>; eventChoiceDefinitions: Array<Record<string, unknown>>; }\nexport interface GenesisDiscovery { id: GenesisId; displayName: string; categoryId: GenesisId; subcategoryId: GenesisId; rarity: string; spawnWeight: number; discoveryXp: number; requiredScanLevel: number; assetProfile: Record<string, string>; }\nexport interface GenesisAiAgent { id: GenesisId; displayName: string; shortDisplayName: string; personalityId: GenesisId; defaultForNewPlayers: boolean; baseVariantId: GenesisId; availableVariantIds: GenesisId[]; headAssetKey: string; eyesOpenAssetKey: string; eyesBlinkAssetKey: string; eyesClosedAssetKey: string; }\nexport interface GenesisAiAgentVariant { id: GenesisId; agentId: GenesisId; displayName: string; tier: number; variantType: string; assetKeys: Record<string, string>; unlockText: string; }\nexport interface GenesisResearchNode { id: GenesisId; name: string; era: string; status: string; }\nexport interface GenesisFaction { id: GenesisId; name: string; type: string; disposition: string; homeStarSystemId: GenesisId; controlledPlanetIds: GenesisId[]; }\nexport interface GenesisColonyBuilding { id: GenesisId; name: string; category: string; colonyId: GenesisId; constructionStatus: string; modifiers: Record<string, number>; }\nexport interface GenesisColony { id: GenesisId; name: string; planetId: GenesisId; starSystemId: GenesisId; population: number; populationCapacity: number; populationGrowthRate: number; colonyLevel: number; focus: string; status: string; resourceOutputIds: GenesisId[]; resourceOutputRates: Record<string, number>; buildingIds: GenesisId[]; }\nexport interface GenesisMarketListing { resourceId: GenesisId; basePrice: number; currentPrice: number; supply: number; demand: number; priceTrend: string; availability: string; }\nexport interface GenesisMarket { id: GenesisId; name: string; marketType: string; colonyId?: GenesisId; childMarketIds: GenesisId[]; resourceListings: GenesisMarketListing[]; tradeVolume: number; prosperity: number; security: number; }\nexport interface GenesisTradeRoute { id: GenesisId; originMarketId: GenesisId; destinationMarketId: GenesisId; resourceIds: GenesisId[]; profitability: number; risk: number; status: string; }\nexport interface GenesisMissionObjective { id: GenesisId; missionId: GenesisId; objectiveType: string; targetId: GenesisId; targetCount: number; currentCount: number; completed: boolean; }\nexport interface GenesisMission { id: GenesisId; title: string; missionType: string; status: string; difficulty: string; objectiveIds: GenesisId[]; rewardIds: GenesisId[]; rewardsClaimed: boolean; tracked: boolean; }\nexport interface GenesisExportPayload { target: string; canonical: Record<string, unknown>; relationshipMap: Record<string, unknown>; }\n",
       "projectGenesisClient.ts": "export async function fetchProjectGenesisExport(target = 'generic') {\n  const response = await fetch(`/api/export/${target}`);\n  if (!response.ok) throw new Error(`Project Genesis export failed: ${response.status}`);\n  return response.json();\n}\n",
       "projectGenesisStore.ts": "import { create } from 'zustand';\n\ntype GenesisStore = { data: unknown | null; setData: (data: unknown) => void };\nexport const useGenesisStore = create<GenesisStore>((set) => ({ data: null, setData: (data) => set({ data }) }));\n"
     };
@@ -2070,6 +2081,7 @@ function targetArtifacts(target: EngineTarget, modules: CanonicalModules) {
       "NoverisDesignLanguage.json": buildUnityDesignLanguageExport(modules.design_language),
       "NoverisComponentLibrary.json": buildUnityComponentLibraryExport(modules.component_library),
       "NoverisScreenTemplateLibrary.json": buildUnityScreenTemplateExport(modules.screen_template_library),
+      "NoverisAssetProductionRuntime.json": buildUnityAssetProductionRuntimeExport(modules.asset_production_runtime),
       "ResourceCatalog.cs": "using System;\n\n[Serializable]\npublic class ResourceCatalogEntry { public string id; public string resource_name; public string category; public string rarity; }\n",
       "ResearchUnlocks.cs": "using System;\n\n[Serializable]\npublic class ResearchUnlockRow { public string id; public string source_id; public string unlock_type; public string unlock_name; }\n",
       "UniverseLoader.cs": "using UnityEngine;\n\npublic class UniverseLoader : MonoBehaviour { public TextAsset projectGenesisJson; }\n",
@@ -2082,6 +2094,7 @@ function targetArtifacts(target: EngineTarget, modules: CanonicalModules) {
       "NoverisDesignLanguage.json": modules.design_language,
       "NoverisComponentLibrary.json": buildUnityComponentLibraryExport(modules.component_library),
       "NoverisScreenTemplateLibrary.json": buildUnityScreenTemplateExport(modules.screen_template_library),
+      "NoverisAssetProductionRuntime.json": buildUnityAssetProductionRuntimeExport(modules.asset_production_runtime),
       "GenesisResourceStruct.h": "USTRUCT(BlueprintType)\nstruct FGenesisResourceRow { GENERATED_BODY() UPROPERTY(EditAnywhere, BlueprintReadWrite) FString Id; UPROPERTY(EditAnywhere, BlueprintReadWrite) FString ResourceName; };\n",
       "ResearchUnlockTable.md": "Import unlock_matrix as a DataTable keyed by stable id. Keep source_id and unlock_id as FString references.",
       "UniverseData.md": "Import galaxies, sectors, star_systems, planets, and celestial_bodies as JSON or DataTables. Preserve parent IDs."
@@ -2093,6 +2106,7 @@ function targetArtifacts(target: EngineTarget, modules: CanonicalModules) {
       "NoverisDesignLanguage.json": modules.design_language,
       "NoverisComponentLibrary.json": buildUnityComponentLibraryExport(modules.component_library),
       "NoverisScreenTemplateLibrary.json": buildUnityScreenTemplateExport(modules.screen_template_library),
+      "NoverisAssetProductionRuntime.json": buildUnityAssetProductionRuntimeExport(modules.asset_production_runtime),
       "ResourceCatalog.gd": "extends Node\n\nvar resources := {}\n\nfunc load_catalog(payload: Dictionary) -> void:\n\tresources = payload.get(\"canonical\", {}).get(\"resource_catalog\", {})\n",
       "ResearchUnlocks.gd": "extends Node\n\nfunc unlock_rows(payload: Dictionary) -> Array:\n\treturn payload.get(\"canonical\", {}).get(\"unlock_matrix\", [])\n",
       "UniverseLoader.gd": "extends Node\n\nfunc load_universe(payload: Dictionary) -> Dictionary:\n\treturn payload.get(\"canonical\", {})\n"
@@ -2104,6 +2118,7 @@ function targetArtifacts(target: EngineTarget, modules: CanonicalModules) {
     "design-language.json": modules.design_language,
     "component-library.json": buildUnityComponentLibraryExport(modules.component_library),
     "screen-template-library.json": buildUnityScreenTemplateExport(modules.screen_template_library),
+    "asset-production-runtime.json": buildUnityAssetProductionRuntimeExport(modules.asset_production_runtime),
     "schema-notes.json": schemaNotes("generic"),
     "relationship-map.json": buildRelationshipMap(modules)
   };
@@ -2112,7 +2127,7 @@ function targetArtifacts(target: EngineTarget, modules: CanonicalModules) {
 export async function buildGameEngineExport(target: EngineTarget) {
   const data = await getGameData();
   const config = getEngineTargetConfig(target);
-  const modules = buildCanonicalModules(data);
+  const modules = await buildCanonicalModules(data);
   const relationshipMap = buildRelationshipMap(modules);
   const validation = validateEngineExport(target, modules);
   const canonical = compactModules(modules);
