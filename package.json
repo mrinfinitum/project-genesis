@@ -51,6 +51,8 @@
     "generate:navigation-icons": "tsx scripts/generate-navigation-icon-derivatives.ts",
     "verify:navigation-icons": "tsx scripts/verify-navigation-icons.ts",
     "audit:studio": "node scripts/generate-studio-audit.mjs",
+    "audit:design-language": "tsx scripts/audit-design-language.ts",
+    "verify:design-language": "tsx scripts/verify-design-language.ts",
     "audit:migration": "tsx scripts/generate-studio-migration-inventory.ts",
     "verify:production-foundation": "tsx scripts/verify-production-foundation.ts",
     "export:procedural-universe-fixtures": "tsx scripts/export-procedural-universe-fixtures.ts"

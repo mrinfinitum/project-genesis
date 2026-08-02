@@ -26,6 +26,7 @@ import {
   Menu,
   Monitor,
   Orbit,
+  Palette,
   PackageCheck,
   Radar,
   ShieldCheck,
@@ -115,6 +116,7 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/backgrounds", label: "Background Library", icon: Images },
       { href: "/visual-production", label: "Visual Production Engine", icon: Sparkles },
       { href: "/visual-production/species-plates", label: "Species Plates", icon: Layers3 },
+      { href: "/creative-production/design-system", label: "Design System", icon: Palette },
       { href: "/creative-production/ui-screens/planet-detail", label: "Planet Detail Screen", icon: Monitor },
       { href: "/creative-production/ui-screens/civilization-operations", label: "Civilization Operations", icon: Monitor }
     ]

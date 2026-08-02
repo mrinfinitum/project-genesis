@@ -20,6 +20,7 @@ import { laborGenerationFramework, validateLaborGenerationFramework } from "@/li
 import { resourceEconomyLogisticsFramework, validateResourceEconomyLogisticsFramework } from "@/lib/economy/logistics-framework";
 import { dynamicEventFramework, validateDynamicEventFramework } from "@/lib/events/framework";
 import { environmentComposerRuntimeContract, validateEnvironmentComposerContract } from "@/lib/environment-composer";
+import { noverisDesignLanguage, validateDesignLanguage } from "@/lib/design-language";
 import { buildCreatureRuntimeData, validateCreatureSystem } from "@/lib/life/creature-system";
 import { buildSpeciesPlateRuntimeData, validateSpeciesPlateRuntimeData } from "@/lib/species-plates/runtime";
 import { missionExpeditionFramework, validateMissionExpeditionFramework } from "@/lib/missions/framework";
@@ -75,7 +76,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 65;
+export const gameRuntimeContentVersion = 66;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -132,6 +133,7 @@ export type RobloxRuntimeExportPayload = {
   missionExpeditionFramework: GameRuntimeData["missionExpeditionFramework"];
   dynamicEventFramework: GameRuntimeData["dynamicEventFramework"];
   environmentComposerContract: GameRuntimeData["environmentComposerContract"];
+  designLanguage: GameRuntimeData["designLanguage"];
   speciesCategories: GameRuntimeData["speciesCategories"];
   speciesTaxonomyFrameworks: GameRuntimeData["speciesTaxonomyFrameworks"];
   species: GameRuntimeData["species"];
@@ -2174,6 +2176,9 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
       records: issue.records
     });
   }
+  for (const issue of validateDesignLanguage(runtimeData.designLanguage).issues) {
+    issues.push({ severity: issue.severity, code: `design_language_${issue.code}`, message: issue.message, records: issue.records });
+  }
   const creatureValidation = validateCreatureSystem({
     species: runtimeData.species,
     occurrences: runtimeData.speciesOccurrences,
@@ -2541,6 +2546,7 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     missionExpeditionFramework: sorted.missionExpeditionFramework,
     dynamicEventFramework: sorted.dynamicEventFramework,
     environmentComposerContract: sorted.environmentComposerContract,
+    designLanguage: sorted.designLanguage,
     speciesCategories: sorted.speciesCategories,
     speciesTaxonomyFrameworks: sorted.speciesTaxonomyFrameworks,
     species: sorted.species,
@@ -2722,6 +2728,9 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
       records: issue.records
     });
   }
+  for (const issue of validateDesignLanguage(payload.designLanguage).issues) {
+    issues.push({ severity: issue.severity, code: `design_language_${issue.code}`, message: issue.message, records: issue.records });
+  }
   for (const message of validatePlanetDetailScreenContract(payload.planetDetailScreen)) {
     issues.push({ severity: "error", code: "planet_detail_screen_invalid", message, records: ["planetDetailScreen"] });
   }
@@ -2891,6 +2900,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     missionExpeditionFramework,
     dynamicEventFramework,
     environmentComposerContract: environmentComposerRuntimeContract(),
+    designLanguage: noverisDesignLanguage,
     ...creatureRuntime,
     speciesPlates,
     planetDetailScreen: planetDetailScreenRuntimeContract,
@@ -2973,6 +2983,7 @@ export async function getGameRuntimeData() {
     missionExpeditionFramework: base.missionExpeditionFramework,
     dynamicEventFramework: base.dynamicEventFramework,
     environmentComposerContract: base.environmentComposerContract,
+    designLanguage: base.designLanguage,
     speciesCategories: base.speciesCategories,
     speciesTaxonomyFrameworks: base.speciesTaxonomyFrameworks,
     species: base.species,
@@ -3217,6 +3228,7 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     missionExpeditionFramework: base.missionExpeditionFramework,
     dynamicEventFramework: base.dynamicEventFramework,
     environmentComposerContract: base.environmentComposerContract,
+    designLanguage: base.designLanguage,
     speciesCategories: base.speciesCategories,
     speciesTaxonomyFrameworks: base.speciesTaxonomyFrameworks,
     species: base.species,
