@@ -119,6 +119,7 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/visual-production/species-plates", label: "Species Plates", icon: Layers3 },
       { href: "/creative-production/design-system", label: "Design System", icon: Palette },
       { href: "/creative-production/design-system/component-library", label: "Component Library", icon: Layers3, nested: true },
+      { href: "/creative-production/design-system/screen-templates", label: "Screen Templates", icon: Monitor, nested: true },
       { href: "/creative-production/ui-screens/planet-detail", label: "Planet Detail Screen", icon: Monitor },
       { href: "/creative-production/ui-screens/civilization-operations", label: "Civilization Operations", icon: Monitor }
     ]

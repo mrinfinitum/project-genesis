@@ -22,6 +22,7 @@ import { dynamicEventFramework, validateDynamicEventFramework } from "@/lib/even
 import { environmentComposerRuntimeContract, validateEnvironmentComposerContract } from "@/lib/environment-composer";
 import { noverisDesignLanguage, validateDesignLanguage } from "@/lib/design-language";
 import { noverisComponentLibrary, validateComponentLibrary } from "@/lib/component-library";
+import { noverisScreenTemplateLibrary, validateScreenTemplateLibrary } from "@/lib/screen-template-library";
 import { buildCreatureRuntimeData, validateCreatureSystem } from "@/lib/life/creature-system";
 import { buildSpeciesPlateRuntimeData, validateSpeciesPlateRuntimeData } from "@/lib/species-plates/runtime";
 import { missionExpeditionFramework, validateMissionExpeditionFramework } from "@/lib/missions/framework";
@@ -77,7 +78,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 67;
+export const gameRuntimeContentVersion = 68;
 
 export type CanonicalRuntimeExportPayload = GameRuntimeData;
 
@@ -136,6 +137,7 @@ export type RobloxRuntimeExportPayload = {
   environmentComposerContract: GameRuntimeData["environmentComposerContract"];
   designLanguage: GameRuntimeData["designLanguage"];
   componentLibrary: GameRuntimeData["componentLibrary"];
+  screenTemplateLibrary: GameRuntimeData["screenTemplateLibrary"];
   speciesCategories: GameRuntimeData["speciesCategories"];
   speciesTaxonomyFrameworks: GameRuntimeData["speciesTaxonomyFrameworks"];
   species: GameRuntimeData["species"];
@@ -2184,6 +2186,9 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData) {
   for (const issue of validateComponentLibrary(runtimeData.componentLibrary).issues) {
     issues.push({ severity: issue.severity, code: `component_library_${issue.code}`, message: issue.message, records: issue.records });
   }
+  for (const issue of validateScreenTemplateLibrary(runtimeData.screenTemplateLibrary).issues) {
+    issues.push({ severity: issue.severity, code: `screen_template_library_${issue.code}`, message: issue.message, records: issue.records });
+  }
   const creatureValidation = validateCreatureSystem({
     species: runtimeData.species,
     occurrences: runtimeData.speciesOccurrences,
@@ -2553,6 +2558,7 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData): RobloxR
     environmentComposerContract: sorted.environmentComposerContract,
     designLanguage: sorted.designLanguage,
     componentLibrary: sorted.componentLibrary,
+    screenTemplateLibrary: sorted.screenTemplateLibrary,
     speciesCategories: sorted.speciesCategories,
     speciesTaxonomyFrameworks: sorted.speciesTaxonomyFrameworks,
     species: sorted.species,
@@ -2740,6 +2746,9 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
   for (const issue of validateComponentLibrary(payload.componentLibrary).issues) {
     issues.push({ severity: issue.severity, code: `component_library_${issue.code}`, message: issue.message, records: issue.records });
   }
+  for (const issue of validateScreenTemplateLibrary(payload.screenTemplateLibrary).issues) {
+    issues.push({ severity: issue.severity, code: `screen_template_library_${issue.code}`, message: issue.message, records: issue.records });
+  }
   for (const message of validatePlanetDetailScreenContract(payload.planetDetailScreen)) {
     issues.push({ severity: "error", code: "planet_detail_screen_invalid", message, records: ["planetDetailScreen"] });
   }
@@ -2911,6 +2920,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     environmentComposerContract: environmentComposerRuntimeContract(),
     designLanguage: noverisDesignLanguage,
     componentLibrary: noverisComponentLibrary,
+    screenTemplateLibrary: noverisScreenTemplateLibrary,
     ...creatureRuntime,
     speciesPlates,
     planetDetailScreen: planetDetailScreenRuntimeContract,
@@ -2995,6 +3005,7 @@ export async function getGameRuntimeData() {
     environmentComposerContract: base.environmentComposerContract,
     designLanguage: base.designLanguage,
     componentLibrary: base.componentLibrary,
+    screenTemplateLibrary: base.screenTemplateLibrary,
     speciesCategories: base.speciesCategories,
     speciesTaxonomyFrameworks: base.speciesTaxonomyFrameworks,
     species: base.species,
@@ -3241,6 +3252,7 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     environmentComposerContract: base.environmentComposerContract,
     designLanguage: base.designLanguage,
     componentLibrary: base.componentLibrary,
+    screenTemplateLibrary: base.screenTemplateLibrary,
     speciesCategories: base.speciesCategories,
     speciesTaxonomyFrameworks: base.speciesTaxonomyFrameworks,
     species: base.species,

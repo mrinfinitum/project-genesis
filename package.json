@@ -54,6 +54,7 @@
     "audit:design-language": "tsx scripts/audit-design-language.ts",
     "verify:design-language": "tsx scripts/verify-design-language.ts",
     "verify:component-library": "tsx scripts/verify-component-library.ts",
+    "verify:screen-template-library": "tsx scripts/verify-screen-template-library.ts",
     "audit:migration": "tsx scripts/generate-studio-migration-inventory.ts",
     "verify:production-foundation": "tsx scripts/verify-production-foundation.ts",
     "export:procedural-universe-fixtures": "tsx scripts/export-procedural-universe-fixtures.ts"
