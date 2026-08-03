@@ -568,28 +568,97 @@ export const actionDefinitions: ActionDefinition[] = [
   action({ id: "repair_asset", displayName: "Repair Asset", category: "repair", entityType: "building", targetTypes: ["building", "ship", "infrastructure"], description: "Repair an eligible damaged canonical asset.", durationDefinitionId: "duration_project", queueRuleId: "queue_construction", requirements: [requirement("target_state", "repairable_damage", "The target must have repairable damage."), serverVerified], inputs: [transfer("labor", "ECON-LABOR", "progress"), transfer("material", "repair_materials", "progress"), transfer("time", "time", "progress")], outputs: [transfer("repair", "restored_asset_condition", "completion")], phaseTemplateIds: ["planning", "allocation", "construction", "commissioning", "completion"] })
 ];
 
+function executableCost(definition: ActionDefinition, input: ActionTransfer): ActionCostProfile["costs"][number] {
+  const fixed = input.quantity !== null;
+  const generatedLevel = definition.id === "level_upgrade" && input.id === "ECON-LABOR";
+  const scalingSource = generatedLevel ? "generated_level" as const : fixed ? "fixed" as const : "target_derived" as const;
+  const quantity = input.quantity ?? 1;
+  const canonicalSourceId = generatedLevel ? "progression.generatedLevels" : `action.${definition.id}.input.${input.id}`;
+  return {
+    type: input.type,
+    canonicalId: input.id,
+    resourceId: input.id.startsWith("ECON-") ? null : input.id,
+    currencyId: input.id.startsWith("ECON-") ? input.id : null,
+    quantity,
+    costTiming: input.timing === "start" ? "upfront" : input.timing === "completion" ? "completion" : "over_time",
+    reservationPolicy: input.reservationBehavior,
+    refundPolicy: input.cancellationRefund,
+    scalingSource,
+    resolvedValue: fixed ? quantity : {
+      resolverType: generatedLevel ? "generated_level" : "target_derived",
+      canonicalSourceId,
+      valueField: generatedLevel ? "laborCost" : "quantity",
+      parameters: { minimum: 1, actionDefinitionId: definition.id }
+    }
+  };
+}
+
+function requirementTarget(item: ActionRequirement) {
+  const overrides: Record<string, string> = {
+    mining_capacity: "capability.mining",
+    shipyard_capacity: "building.shipyard",
+    ship_design_requirements: "ship-design.runtime-selected",
+    valid_resource_deposit: "condition.resource-deposit",
+    settlement_foundation_allowed: "settlement-rule.habitable-world",
+    district_expansion_allowed: "settlement-rule.district-expansion",
+    repairable_damage: "condition.repairable-damage"
+  };
+  return overrides[item.id] ?? `${item.type}.${item.id}`.replaceAll("_", "-");
+}
+
+function requirementScope(item: ActionRequirement): ActionRequirementProfile["requirements"][number]["scope"] {
+  if (item.type === "server_verification") return "server";
+  if (item.type === "queue_capacity") return "queue";
+  if (["target_class", "target_environment", "target_state", "location", "range", "planet_knowledge", "discovery_state"].includes(item.type)) return "target";
+  if (["civilization_identity", "civilization_milestone", "population", "workforce", "colony_level", "settlement_level"].includes(item.type)) return "civilization";
+  return "player";
+}
+
+function executableReward(definition: ActionDefinition, output: ActionTransfer): ActionRewardProfile["rewards"][number] {
+  const fixed = output.quantity !== null;
+  const weighted = output.id === "mission_rewards";
+  const targetDerived = output.id === "mined_resource_yield" || (!fixed && !weighted);
+  const rewardMode = fixed ? "fixed" as const : weighted ? "weighted" as const : targetDerived ? "target_derived" as const : "generated" as const;
+  const resolverType = weighted ? "weighted_table" as const : targetDerived ? "target_derived" as const : "custom_typed" as const;
+  return {
+    type: output.type,
+    canonicalId: output.id,
+    rewardMode,
+    amount: fixed ? output.quantity as number : {
+      resolverType,
+      canonicalSourceId: weighted ? "mission.reward-table.runtime-selected" : `action.${definition.id}.reward.${output.id}`,
+      valueField: weighted ? "selectedRewardAmount" : "quantity",
+      parameters: { minimum: 1, actionDefinitionId: definition.id }
+    },
+    resolverId: fixed ? "fixed_reward_v1" : weighted ? "weighted_reward_table_v1" : "target_derived_reward_v1"
+  };
+}
+
 export const actionCostProfiles: ActionCostProfile[] = actionDefinitions.map((definition) => ({
   id: `cost_${definition.id}`,
   displayName: `${definition.displayName} Costs`,
-  costs: definition.inputs.map((input) => ({
-    type: input.type,
-    canonicalId: input.id,
-    amount: input.quantity ?? 0,
-    timing: input.timing === "start" ? "upfront" : input.timing === "completion" ? "completion" : "over_time",
-    refundable: input.cancellationRefund !== "none"
-  }))
+  costs: definition.inputs.filter((input) => input.type !== "time").map((input) => executableCost(definition, input))
 }));
 
 export const actionRequirementProfiles: ActionRequirementProfile[] = actionDefinitions.map((definition) => ({
   id: `requirements_${definition.id}`,
   displayName: `${definition.displayName} Requirements`,
-  requirements: definition.requirements.map((item) => ({ type: item.type, canonicalId: item.id, minimum: item.quantity, hardGate: item.blocking }))
+  requirements: definition.requirements.map((item) => ({
+    requirementType: item.type,
+    canonicalTargetId: requirementTarget(item),
+    comparisonOperator: item.quantity === null ? "is_true" : "greater_than_or_equal",
+    requiredValue: item.quantity ?? true,
+    scope: requirementScope(item),
+    failureReasonKey: item.reasonCode,
+    evaluatorType: item.type === "server_verification" ? "server_authoritative" : item.quantity !== null ? "numeric_threshold" : ["target_class", "target_environment", "target_state", "location", "range"].includes(item.type) ? "canonical_condition_set" : "canonical_id",
+    hardGate: item.blocking
+  }))
 }));
 
 export const actionRewardProfiles: ActionRewardProfile[] = actionDefinitions.map((definition) => ({
   id: `rewards_${definition.id}`,
   displayName: `${definition.displayName} Rewards`,
-  rewards: definition.outputs.map((output) => ({ type: output.type, canonicalId: output.id, amount: output.quantity }))
+  rewards: definition.outputs.map((output) => executableReward(definition, output))
 }));
 
 export const actionQueueProfiles: ActionQueueProfile[] = actionQueueRules.map((rule) => ({
@@ -622,13 +691,46 @@ export const canonicalActionProfiles: CanonicalActionProfile[] = actionDefinitio
   queueProfileId: `profile_${definition.queueBehavior.queueRuleId}`,
   cancellationPolicy: definition.cancellationRules.refundPolicy,
   failurePolicy: definition.failureRules.join(","),
-  offlinePolicy: "eligible_when_action_and_queue_allow",
+  offlinePolicy: {
+    offlineAllowed: true,
+    maximumOfflineSeconds: definition.duration.maximumDurationSeconds,
+    offlineEfficiency: definition.category === "terraforming" ? 0.75 : 1,
+    progressClampingPolicy: "clamp_to_action_duration",
+    mayCompleteOffline: true,
+    rewardsGrantedOffline: definition.entityType !== "mission",
+    rewardClaimRequired: definition.entityType === "mission",
+    masteryXpAllowedOffline: definition.entityType !== "mission",
+    failureAllowedOffline: false,
+    queueAdvancesOffline: definition.automation.autoQueue,
+    trustedTimeRequired: true,
+    reconciliationPolicy: "authoritative_elapsed_time"
+  },
+  rewardClaimPolicy: {
+    mode: definition.entityType === "mission" ? "manual_after_validation" : "automatic_on_completion",
+    duplicateClaimProtection: "idempotency_key_required",
+    claimExpirationPolicy: "never",
+    inventoryCapacityBehavior: "grant_to_overflow",
+    offlineClaimBehavior: definition.entityType === "mission" ? "manual_after_validation" : "defer_until_online"
+  },
   repeatability: definition.category === "research" || definition.category === "colonization" ? "conditional" : "repeatable",
   runtimeTargets: ["unity", "web", "roblox", "unreal", "godot", "generic"],
   validationStatus: "Ready",
   createdAt: "2026-08-03T00:00:00.000Z",
   updatedAt: "2026-08-03T00:00:00.000Z"
 }));
+
+export const actionReconciliationPolicy = {
+  id: "action_reconciliation_v1" as const,
+  version: "1.0.0" as const,
+  durationChanged: "recalculate_remaining_duration" as const,
+  costsChanged: "lock_to_source_runtime_version" as const,
+  requirementsChanged: "grandfather_active_action" as const,
+  rewardsChanged: "lock_to_source_runtime_version" as const,
+  queuePolicyChanged: "grandfather_active_action" as const,
+  profileDeprecated: "manual_review_required" as const,
+  activeActionOlderRuntime: "lock_to_source_runtime_version" as const,
+  cancellationFallback: "cancel_and_refund" as const
+};
 
 export const accelerationRules = [
   "Premium Crystals never unlock unavailable Actions or bypass requirements.",
@@ -700,6 +802,7 @@ export const canonicalActionSystem: ActionSystemContract = {
   actionRewardProfiles,
   actionQueueProfiles,
   canonicalActionProfiles,
+  reconciliationPolicy: actionReconciliationPolicy,
   validationRules: [
     "Every Action Definition must use a stable canonical ID.",
     "Every Action Definition must reference a canonical category, duration definition, queue rule, automation policy, phase template, and Time Action Contract.",
@@ -785,7 +888,35 @@ export function validateActionSystem(system: ActionSystemContract = canonicalAct
     if (!actionIds.has(profile.actionDefinitionId)) issues.push(issue("error", "invalid_action_profile_definition", `${profile.id} references unknown action definition.`, [profile.id]));
     if (!durationIds.has(profile.durationProfileId)) issues.push(issue("error", "invalid_action_profile_duration", `${profile.id} references unknown duration profile.`, [profile.id]));
     if (!costProfileIds.has(profile.costProfileId) || !requirementProfileIds.has(profile.requirementProfileId) || !rewardProfileIds.has(profile.rewardProfileId) || !queueProfileIds.has(profile.queueProfileId)) issues.push(issue("error", "invalid_action_profile_contract", `${profile.id} has an unresolved normalized profile reference.`, [profile.id]));
+    if (!profile.offlinePolicy || profile.offlinePolicy.maximumOfflineSeconds < 0 || profile.offlinePolicy.offlineEfficiency < 0 || profile.offlinePolicy.offlineEfficiency > 1 || !profile.offlinePolicy.reconciliationPolicy) issues.push(issue("error", "invalid_structured_offline_policy", `${profile.id} must resolve a structured offline policy.`, [profile.id]));
+    if (!profile.rewardClaimPolicy?.mode || profile.rewardClaimPolicy.duplicateClaimProtection !== "idempotency_key_required" || !profile.rewardClaimPolicy.offlineClaimBehavior) issues.push(issue("error", "invalid_reward_claim_policy", `${profile.id} must resolve reward claim and duplicate-claim behavior.`, [profile.id]));
     if (profile.validationStatus !== "Ready") issues.push(issue("error", "blocked_action_profile", `${profile.id} is blocked.`, [profile.id]));
+  }
+  for (const profile of system.actionCostProfiles) {
+    for (const cost of profile.costs) {
+      const executableReference = typeof cost.resolvedValue === "object" && Boolean(cost.resolvedValue.canonicalSourceId && cost.resolvedValue.valueField && cost.resolvedValue.resolverType);
+      if (cost.quantity <= 0 || (typeof cost.resolvedValue === "number" ? cost.resolvedValue <= 0 : !executableReference) || (!cost.resourceId && !cost.currencyId)) {
+        issues.push(issue("error", "unresolved_action_cost", `${profile.id} contains a non-executable cost.`, [profile.id, cost.canonicalId]));
+      }
+    }
+  }
+  for (const profile of system.actionRewardProfiles) {
+    for (const reward of profile.rewards) {
+      const executableReference = typeof reward.amount === "object" && Boolean(reward.amount.canonicalSourceId && reward.amount.valueField && reward.amount.resolverType);
+      if (!reward.resolverId || (typeof reward.amount === "number" ? reward.amount <= 0 : !executableReference)) {
+        issues.push(issue("error", "unresolved_action_reward", `${profile.id} contains a non-executable reward.`, [profile.id, reward.canonicalId]));
+      }
+    }
+  }
+  for (const profile of system.actionRequirementProfiles) {
+    for (const requirementItem of profile.requirements) {
+      if (!requirementItem.requirementType || !requirementItem.canonicalTargetId || !requirementItem.comparisonOperator || !requirementItem.failureReasonKey || !requirementItem.evaluatorType) {
+        issues.push(issue("error", "untyped_action_requirement", `${profile.id} contains an untyped requirement.`, [profile.id, requirementItem.canonicalTargetId || "missing"]));
+      }
+    }
+  }
+  if (!system.reconciliationPolicy || system.reconciliationPolicy.id !== "action_reconciliation_v1" || !system.reconciliationPolicy.activeActionOlderRuntime) {
+    issues.push(issue("error", "action_reconciliation_policy_missing", "Canonical actions require deterministic runtime reconciliation."));
   }
   for (const policy of system.actionAccelerationPolicies) {
     if (!policy.serverAuthoritativeBalance || !policy.serverCalculatedCost || !policy.idempotencyRequired || !policy.minimumDurationClamp || policy.canBypassRequirements !== false) {

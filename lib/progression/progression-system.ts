@@ -74,6 +74,7 @@ export type ProgressionProfile = {
   researchCurve: ProgressionCurve;
   milestoneRules: ProgressionLevelOverride[];
   crystalRules: { profileId: string; prerequisiteBypassAllowed: false };
+  masteryXpOverflowPolicy: "carry_forward" | "clamp_to_requirement" | "discard";
   prerequisiteRules: string[];
   offlineRules: string[];
   validation: { status: "Ready"; rules: string[] };
@@ -143,6 +144,18 @@ export type ProgressionSystemContract = {
   upgradeXpSourceProfiles: UpgradeXpSourceProfile[];
   crystalAccelerationProfiles: CrystalAccelerationProfile[];
   crystalChunks: CrystalChunk[];
+  reconciliationPolicy: {
+    id: "progression_reconciliation_v1";
+    version: "1.0.0";
+    xpRequirementsChanged: "preserve_absolute_xp";
+    maxLevelDecreased: "preserve_level";
+    maxLevelIncreased: "preserve_level";
+    laborCostChanged: "use_new_cost_for_future_levels";
+    effectCurveChanged: "recalculate_from_current_level";
+    xpSourceChanged: "preserve_absolute_xp";
+    overflowPolicyChanged: "apply_on_next_xp_award";
+    upgradeDeprecated: "preserve_level";
+  };
   generatedLevelCount: number;
   validationStatus: "Ready" | "Blocked";
 };
@@ -196,6 +209,7 @@ export const progressionProfiles: ProgressionProfile[] = eraScalingProfiles.map(
   researchCurve: { mode: "quadratic", base: 0.05, growth: 0.012, exponent: 1.55 },
   milestoneRules: milestones,
   crystalRules: { profileId: "crystal_time_standard", prerequisiteBypassAllowed: false },
+  masteryXpOverflowPolicy: "carry_forward",
   prerequisiteRules: ["canonical_unlock_requirements", "previous_level_complete", "mastery_xp_full"],
   offlineRules: ["xp_sources_must_explicitly_allow_offline_progress", "active_timers_use_authoritative_elapsed_time"],
   validation: { status: "Ready", rules: ["levels_are_contiguous", "costs_are_non_negative", "level_100_is_mastery"] },
@@ -309,12 +323,19 @@ export function generateProgressionLevels(profile: ProgressionProfile, options: 
 export function validateProgressionSystem(system: ProgressionSystemContract = canonicalProgressionSystem): ImportIssue[] {
   const issues: ImportIssue[] = [];
   const ids = new Set<string>();
+  const validOverflowPolicies = new Set(["carry_forward", "clamp_to_requirement", "discard"]);
+  const validMilestoneEffects = new Set(milestones.flatMap((milestone) => milestone.milestoneEffects));
   for (const profile of system.progressionProfiles) {
     if (ids.has(profile.id)) issues.push({ severity: "error", code: "duplicate_progression_profile", message: `Duplicate progression profile ${profile.id}.`, records: [profile.id] });
     ids.add(profile.id);
     const levels = generateProgressionLevels(profile);
-    if (levels.length !== profile.maxLevel || levels.at(-1)?.level !== 100) issues.push({ severity: "error", code: "progression_level_gap", message: `${profile.id} must generate contiguous levels 1-100.`, records: [profile.id] });
+    if (levels.length !== profile.maxLevel || levels.at(-1)?.level !== 100 || levels.some((row, index) => row.level !== index + 1)) issues.push({ severity: "error", code: "progression_level_gap", message: `${profile.id} must generate contiguous levels 1-100.`, records: [profile.id] });
+    if (new Set(levels.map((row) => row.level)).size !== levels.length) issues.push({ severity: "error", code: "progression_level_duplicate", message: `${profile.id} generated duplicate levels.`, records: [profile.id] });
     if (levels.some((row) => row.xpRequired < 0 || row.laborCost < 0 || row.moneyCost < 0 || row.durationSeconds < 0 || row.outputValue < 0)) issues.push({ severity: "error", code: "negative_progression_value", message: `${profile.id} generated a negative value.`, records: [profile.id] });
+    if (levels.some((row, index) => index > 0 && row.cumulativeXp < levels[index - 1].cumulativeXp)) issues.push({ severity: "error", code: "progression_cumulative_xp_not_monotonic", message: `${profile.id} cumulative XP must be monotonic.`, records: [profile.id] });
+    if (levels.some((row) => !Number.isFinite(row.outputValue) || !Number.isFinite(row.crystalAccelerationCost) || !row.sourceProfileVersion || !row.checksum)) issues.push({ severity: "error", code: "progression_level_not_executable", message: `${profile.id} generated an incomplete executable row.`, records: [profile.id] });
+    if (levels.some((row) => row.milestoneEffects.some((effectId) => !validMilestoneEffects.has(effectId)))) issues.push({ severity: "error", code: "progression_milestone_effect_missing", message: `${profile.id} references an unknown milestone effect.`, records: [profile.id] });
+    if (!validOverflowPolicies.has(profile.masteryXpOverflowPolicy)) issues.push({ severity: "error", code: "progression_overflow_policy_missing", message: `${profile.id} must resolve a mastery XP overflow policy.`, records: [profile.id] });
     if ((levels[99]?.xpRequired ?? 0) <= (levels[9]?.xpRequired ?? 0) || (levels[99]?.durationSeconds ?? 0) <= (levels[9]?.durationSeconds ?? 0)) issues.push({ severity: "error", code: "late_progression_not_slower", message: `${profile.id} late progression must exceed early progression.`, records: [profile.id] });
   }
   for (const profile of system.crystalAccelerationProfiles) {
@@ -336,6 +357,18 @@ export const canonicalProgressionSystem: ProgressionSystemContract = {
   upgradeXpSourceProfiles,
   crystalAccelerationProfiles,
   crystalChunks,
+  reconciliationPolicy: {
+    id: "progression_reconciliation_v1",
+    version: "1.0.0",
+    xpRequirementsChanged: "preserve_absolute_xp",
+    maxLevelDecreased: "preserve_level",
+    maxLevelIncreased: "preserve_level",
+    laborCostChanged: "use_new_cost_for_future_levels",
+    effectCurveChanged: "recalculate_from_current_level",
+    xpSourceChanged: "preserve_absolute_xp",
+    overflowPolicyChanged: "apply_on_next_xp_award",
+    upgradeDeprecated: "preserve_level"
+  },
   generatedLevelCount: progressionProfiles.reduce((sum, profile) => sum + profile.maxLevel, 0),
   validationStatus: "Ready"
 };

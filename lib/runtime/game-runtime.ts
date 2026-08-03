@@ -87,7 +87,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 71;
+export const gameRuntimeContentVersion = 72;
 
 export type CanonicalRuntimeExportPayload = Omit<GameRuntimeData, "identityRelationshipGraph"> & {
   identityRelationshipGraph?: IdentityRelationshipRuntimeExport;
@@ -487,7 +487,8 @@ function upgradeToRuntime(upgrade: Upgrade, index: number): UpgradeDefinition {
     laborLevelUpPolicy: "spend_after_xp_full",
     crystalAccelerationPolicy: progressionProfile.crystalRules.profileId,
     effectScalingPolicy: "explicit_generated_level_values",
-    milestonePolicy: "profile_level_overrides"
+    milestonePolicy: "profile_level_overrides",
+    masteryXpOverflowPolicy: progressionProfile.masteryXpOverflowPolicy
   };
 }
 
@@ -3264,7 +3265,8 @@ function normalizeImportedUpgrades(payload: Record<string, unknown>, fallback: U
       laborLevelUpPolicy: "spend_after_xp_full",
       crystalAccelerationPolicy: progressionProfile.crystalRules.profileId,
       effectScalingPolicy: "explicit_generated_level_values",
-      milestonePolicy: "profile_level_overrides"
+      milestonePolicy: "profile_level_overrides",
+      masteryXpOverflowPolicy: progressionProfile.masteryXpOverflowPolicy
     };
   });
 }

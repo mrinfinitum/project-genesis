@@ -211,6 +211,7 @@ export type UpgradeDefinition = {
   crystalAccelerationPolicy: string;
   effectScalingPolicy: string;
   milestonePolicy: string;
+  masteryXpOverflowPolicy: "carry_forward" | "clamp_to_requirement" | "discard";
 };
 
 export type UpgradeTreeInfluence = {
@@ -3437,25 +3438,59 @@ export type ActionSystemContract = {
   actionRewardProfiles: ActionRewardProfile[];
   actionQueueProfiles: ActionQueueProfile[];
   canonicalActionProfiles: CanonicalActionProfile[];
+  reconciliationPolicy: ActionReconciliationPolicy;
   validationRules: string[];
+};
+
+export type ExecutableValueReference = {
+  resolverType: "generated_level" | "target_derived" | "weighted_table" | "level_scaled" | "canonical_condition_set" | "custom_typed";
+  canonicalSourceId: string;
+  valueField: string;
+  parameters: Record<string, number | string | boolean>;
 };
 
 export type ActionCostProfile = {
   id: string;
   displayName: string;
-  costs: Array<{ type: string; canonicalId: string; amount: number; timing: "upfront" | "reserved" | "over_time" | "completion"; refundable: boolean }>;
+  costs: Array<{
+    type: string;
+    canonicalId: string;
+    resourceId: string | null;
+    currencyId: string | null;
+    quantity: number;
+    costTiming: "upfront" | "reserved" | "over_time" | "completion";
+    reservationPolicy: "none" | "reserve_on_queue" | "reserve_on_start";
+    refundPolicy: "none" | "full" | "partial" | "unspent_only";
+    scalingSource: "fixed" | "generated_level" | "target_derived" | "level_scaled" | "custom_typed";
+    resolvedValue: number | ExecutableValueReference;
+  }>;
 };
 
 export type ActionRequirementProfile = {
   id: string;
   displayName: string;
-  requirements: Array<{ type: string; canonicalId: string; minimum: number | null; hardGate: boolean }>;
+  requirements: Array<{
+    requirementType: string;
+    canonicalTargetId: string;
+    comparisonOperator: "equals" | "greater_than_or_equal" | "contains" | "is_true" | "resolves";
+    requiredValue: number | string | boolean;
+    scope: "player" | "civilization" | "target" | "queue" | "server";
+    failureReasonKey: string;
+    evaluatorType: "canonical_id" | "numeric_threshold" | "canonical_condition_set" | "server_authoritative";
+    hardGate: boolean;
+  }>;
 };
 
 export type ActionRewardProfile = {
   id: string;
   displayName: string;
-  rewards: Array<{ type: string; canonicalId: string; amount: number | null }>;
+  rewards: Array<{
+    type: string;
+    canonicalId: string;
+    rewardMode: "fixed" | "generated" | "weighted" | "level_scaled" | "target_derived" | "custom_typed";
+    amount: number | ExecutableValueReference;
+    resolverId: string;
+  }>;
 };
 
 export type ActionQueueProfile = {
@@ -3488,12 +3523,45 @@ export type CanonicalActionProfile = {
   queueProfileId: string;
   cancellationPolicy: string;
   failurePolicy: string;
-  offlinePolicy: string;
+  offlinePolicy: {
+    offlineAllowed: boolean;
+    maximumOfflineSeconds: number;
+    offlineEfficiency: number;
+    progressClampingPolicy: "clamp_to_maximum_offline" | "clamp_to_action_duration" | "no_offline_progress";
+    mayCompleteOffline: boolean;
+    rewardsGrantedOffline: boolean;
+    rewardClaimRequired: boolean;
+    masteryXpAllowedOffline: boolean;
+    failureAllowedOffline: boolean;
+    queueAdvancesOffline: boolean;
+    trustedTimeRequired: boolean;
+    reconciliationPolicy: "authoritative_elapsed_time" | "online_only";
+  };
+  rewardClaimPolicy: {
+    mode: "automatic_on_completion" | "manual_claim" | "automatic_when_online" | "manual_after_validation";
+    duplicateClaimProtection: "idempotency_key_required";
+    claimExpirationPolicy: "never" | "runtime_defined";
+    inventoryCapacityBehavior: "grant_to_overflow" | "block_claim" | "partial_grant";
+    offlineClaimBehavior: "defer_until_online" | "grant_offline" | "manual_after_validation";
+  };
   repeatability: "once" | "repeatable" | "conditional";
   runtimeTargets: string[];
   validationStatus: "Ready" | "Blocked";
   createdAt: string;
   updatedAt: string;
+};
+
+export type ActionReconciliationPolicy = {
+  id: "action_reconciliation_v1";
+  version: "1.0.0";
+  durationChanged: "recalculate_remaining_duration";
+  costsChanged: "lock_to_source_runtime_version";
+  requirementsChanged: "grandfather_active_action";
+  rewardsChanged: "lock_to_source_runtime_version";
+  queuePolicyChanged: "grandfather_active_action";
+  profileDeprecated: "manual_review_required";
+  activeActionOlderRuntime: "lock_to_source_runtime_version";
+  cancellationFallback: "cancel_and_refund";
 };
 
 export type MobileDeviceClass = {
