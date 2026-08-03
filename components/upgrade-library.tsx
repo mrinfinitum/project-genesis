@@ -10,6 +10,7 @@ import type { Upgrade } from "@/types/schema";
 type UpgradeLibraryProps = {
   upgrades: Upgrade[];
   art: Array<Pick<UpgradeArtResolution, "upgradeId" | "matchStatus" | "previewStatus" | "resolvedPreviewUrl" | "hasApprovedPreview" | "hasThumbnail" | "hasPreview" | "hasWebMapping" | "hasRobloxMapping">>;
+  progression: { profiles: number; maxLevel: number; xpSources: number };
 };
 
 type UpgradeCardArt = UpgradeLibraryProps["art"][number];
@@ -61,7 +62,7 @@ function toCardRecord(upgrade: Upgrade, art?: UpgradeCardArt): GeneratedLibraryC
 
 const INITIAL_CARD_LIMIT = 96;
 
-export function UpgradeLibrary({ upgrades, art }: UpgradeLibraryProps) {
+export function UpgradeLibrary({ upgrades, art, progression }: UpgradeLibraryProps) {
   const [query, setQuery] = useState("");
   const [type, setType] = useState("all");
   const [hiddenIds, setHiddenIds] = useState<string[]>([]);
@@ -95,9 +96,11 @@ export function UpgradeLibrary({ upgrades, art }: UpgradeLibraryProps) {
       { label: "Classes", value: typeCount.toLocaleString(), detail: "upgrade categories" },
       { label: "Eras", value: eraCount.toLocaleString(), detail: "linked progression" },
       { label: "Levels", value: maxLevelTotal.toLocaleString(), detail: "total upgrade depth" },
-      { label: "Artwork", value: linkedArt.toLocaleString(), detail: "matched assets" }
+      { label: "Artwork", value: linkedArt.toLocaleString(), detail: "matched assets" },
+      { label: "Progression", value: progression.profiles.toLocaleString(), detail: "canonical curve profiles" },
+      { label: "Mastery", value: progression.maxLevel.toLocaleString(), detail: `${progression.xpSources} XP source profiles` }
     ];
-  }, [artByUpgradeId, visibleUpgrades]);
+  }, [artByUpgradeId, progression, visibleUpgrades]);
 
   const filteredUpgrades = useMemo(() => {
     const needle = normalize(query);

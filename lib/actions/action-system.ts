@@ -1,5 +1,6 @@
 import { timeActionContract } from "@/lib/planets/exploration-progression";
 import type {
+  ActionCostProfile,
   ActionAccelerationPolicy,
   ActionAutomationPolicy,
   ActionDefinition,
@@ -10,11 +11,15 @@ import type {
   ActionPresentation,
   ActionPresentationContract,
   ActionQueueRule,
+  ActionQueueProfile,
+  ActionRequirementProfile,
+  ActionRewardProfile,
   ActionRequirement,
   ActionSystemCategory,
   ActionSystemContract,
   ActionSystemState,
   ActionTransfer,
+  CanonicalActionProfile,
   ImportIssue,
   TimeActionContract
 } from "@/types/runtime";
@@ -244,6 +249,7 @@ export const actionDurationDefinitions: ActionDurationDefinition[] = [
   { id: "duration_standard", displayName: "Standard Action", baseDurationSeconds: 7200, minimumDurationSeconds: 900, maximumDurationSeconds: 28800, offlinePolicy: "eligible_with_authoritative_elapsed_time", modifierPolicy: "canonical_modifier_order", accelerationPolicy: "protected_premium_acceleration", startPolicy: "reserve_inputs_on_start", completionPolicy: "emit_completion_effects_once", authoritativeTimePolicy: "game_server_authoritative" },
   { id: "duration_project", displayName: "Project", baseDurationSeconds: 43200, minimumDurationSeconds: 3600, maximumDurationSeconds: 259200, offlinePolicy: "eligible_with_authoritative_elapsed_time", modifierPolicy: "canonical_modifier_order", accelerationPolicy: "protected_premium_acceleration", startPolicy: "reserve_inputs_on_start", completionPolicy: "emit_completion_effects_once", authoritativeTimePolicy: "game_server_authoritative" },
   { id: "duration_colony", displayName: "Colony Foundation", baseDurationSeconds: 86400, minimumDurationSeconds: 14400, maximumDurationSeconds: 604800, offlinePolicy: "eligible_with_authoritative_elapsed_time", modifierPolicy: "canonical_modifier_order", accelerationPolicy: "protected_premium_acceleration", startPolicy: "reserve_inputs_on_start", completionPolicy: "emit_completion_effects_once", authoritativeTimePolicy: "game_server_authoritative" },
+  { id: "duration_mission", displayName: "Mission Operation", baseDurationSeconds: 21600, minimumDurationSeconds: 1800, maximumDurationSeconds: 604800, offlinePolicy: "eligible_with_authoritative_elapsed_time", modifierPolicy: "canonical_modifier_order", accelerationPolicy: "protected_premium_acceleration", startPolicy: "reserve_inputs_on_start", completionPolicy: "emit_completion_effects_once", authoritativeTimePolicy: "game_server_authoritative" },
   { id: "duration_terraforming", displayName: "Terraforming Stage", baseDurationSeconds: 604800, minimumDurationSeconds: 86400, maximumDurationSeconds: 2592000, offlinePolicy: "eligible_with_authoritative_elapsed_time", modifierPolicy: "canonical_modifier_order", accelerationPolicy: "limited_protected_acceleration", startPolicy: "reserve_inputs_on_start", completionPolicy: "emit_completion_effects_once", authoritativeTimePolicy: "game_server_authoritative" }
 ];
 
@@ -272,7 +278,9 @@ export const actionQueueRules: ActionQueueRule[] = [
   { id: "queue_probe", displayName: "Probe Queue", queueScope: "probe", maxConcurrency: 3, capacitySource: "probe_capacity", supportsReorder: true, supportsPriority: true, supportsPause: true, supportsCancel: true, autoStart: true, conflictGroups: ["probe"], notes: "Probe launch, travel, and scan sequencing." },
   { id: "queue_survey", displayName: "Survey Queue", queueScope: "survey", maxConcurrency: 2, capacitySource: "survey_team_capacity", supportsReorder: true, supportsPriority: true, supportsPause: true, supportsCancel: true, autoStart: true, conflictGroups: ["survey"], notes: "Survey, catalog, analysis, and archaeological actions." },
   { id: "queue_manufacturing", displayName: "Manufacturing Queue", queueScope: "manufacturing", maxConcurrency: 2, capacitySource: "manufacturing_slots", supportsReorder: true, supportsPriority: true, supportsPause: true, supportsCancel: true, autoStart: true, conflictGroups: ["manufacturing"], notes: "Manufacturing and item production actions." },
-  { id: "queue_logistics", displayName: "Logistics Queue", queueScope: "logistics", maxConcurrency: 3, capacitySource: "logistics_capacity", supportsReorder: true, supportsPriority: true, supportsPause: true, supportsCancel: true, autoStart: true, conflictGroups: ["logistics"], notes: "Transfer, trade route, travel, and supply actions." }
+  { id: "queue_logistics", displayName: "Logistics Queue", queueScope: "logistics", maxConcurrency: 3, capacitySource: "logistics_capacity", supportsReorder: true, supportsPriority: true, supportsPause: true, supportsCancel: true, autoStart: true, conflictGroups: ["logistics"], notes: "Transfer, trade route, travel, and supply actions." },
+  { id: "queue_mission", displayName: "Mission Queue", queueScope: "future", maxConcurrency: 2, capacitySource: "mission_slots", supportsReorder: true, supportsPriority: true, supportsPause: true, supportsCancel: true, autoStart: true, conflictGroups: ["mission_operation"], notes: "Preparation, outbound travel, execution, and return use one mission queue." },
+  { id: "queue_shipyard", displayName: "Shipyard Queue", queueScope: "manufacturing", maxConcurrency: 1, capacitySource: "shipyard_slots", supportsReorder: true, supportsPriority: true, supportsPause: true, supportsCancel: true, autoStart: true, conflictGroups: ["shipyard"], notes: "Ship construction uses canonical manufacturing capacity." }
 ];
 
 export const actionAccelerationPolicies: ActionAccelerationPolicy[] = [
@@ -548,8 +556,79 @@ export const actionDefinitions: ActionDefinition[] = [
   action({ id: "reroute_shipment", displayName: "Reroute Shipment", category: "logistics", entityType: "route", description: "Change a delayed or disrupted shipment to another eligible route without bypassing travel time.", durationDefinitionId: "duration_standard", queueRuleId: "queue_logistics", requirements: [requirement("action_dependency", "create_shipment", "An active shipment must exist in Game-owned state."), requirement("queue_capacity", "alternate_route_capacity", "An alternate route with capacity is required."), serverVerified], inputs: [transfer("route", "active_shipment_route", "start"), transfer("logistics", "reroute_planning", "progress"), transfer("time", "time", "progress")], outputs: [transfer("route", "rerouted_shipment", "completion")], phaseTemplateIds: ["planning", "allocation", "transport", "completion"], automationPolicyId: "automation_advanced_ai" }),
   action({ id: "transfer_resources", displayName: "Transfer Resources", category: "resource_transfer", entityType: "route", description: "Move resources through a canonical logistics route.", durationDefinitionId: "duration_standard", queueRuleId: "queue_logistics", requirements: [requirement("queue_capacity", "route_capacity", "A route with available logistics capacity is required."), serverVerified], inputs: [transfer("resource", "transfer_payload", "start"), transfer("transport_capacity", "logistics_capacity", "progress"), transfer("time", "time", "progress")], outputs: [transfer("resource", "delivered_payload", "completion")], phaseTemplateIds: ["planning", "allocation", "transport", "completion"], automationPolicyId: "automation_advanced_ai" }),
   action({ id: "establish_trade_route", displayName: "Establish Trade Route", category: "trade", entityType: "trade_route", description: "Create a persistent trade route between eligible endpoints.", durationDefinitionId: "duration_project", queueRuleId: "queue_logistics", requirements: [requirement("technology", "trade_routes", "Trade route technology or feature unlock is required."), requirement("location", "valid_trade_endpoints", "Two valid endpoints are required."), serverVerified], inputs: [transfer("credits", "ECON-CREDITS", "start"), transfer("logistics", "route_planning", "progress"), transfer("time", "time", "progress")], outputs: [transfer("route", "trade_route", "completion"), transfer("notification", "trade_route_established", "completion")], phaseTemplateIds: ["planning", "allocation", "transport", "completion"], related: { economyIds: ["ECON-CREDITS"] } }),
-  action({ id: "travel_to_destination", displayName: "Travel To Destination", category: "travel", entityType: "destination", targetTypes: ["planet", "star_system", "sector", "galaxy"], description: "Travel to an eligible destination using current technology gates.", durationDefinitionId: "duration_standard", queueRuleId: "queue_logistics", requirements: [requirement("range", "within_travel_range", "Destination must be within travel range."), requirement("technology", "travel_gate", "Required travel technology gate must be unlocked."), serverVerified], inputs: [transfer("fuel", "travel_fuel", "progress"), transfer("time", "time", "progress")], outputs: [transfer("knowledge", "arrival_context", "completion"), transfer("notification", "arrival_complete", "completion")], phaseTemplateIds: ["planning", "allocation", "travel", "completion"] })
+  action({ id: "travel_to_destination", displayName: "Travel To Destination", category: "travel", entityType: "destination", targetTypes: ["planet", "star_system", "sector", "galaxy"], description: "Travel to an eligible destination using current technology gates.", durationDefinitionId: "duration_standard", queueRuleId: "queue_logistics", requirements: [requirement("range", "within_travel_range", "Destination must be within travel range."), requirement("technology", "travel_gate", "Required travel technology gate must be unlocked."), serverVerified], inputs: [transfer("fuel", "travel_fuel", "progress"), transfer("time", "time", "progress")], outputs: [transfer("knowledge", "arrival_context", "completion"), transfer("notification", "arrival_complete", "completion")], phaseTemplateIds: ["planning", "allocation", "travel", "completion"] }),
+  action({ id: "level_upgrade", displayName: "Level Upgrade", category: "upgrade", entityType: "upgrade", description: "Spend canonical Labor after mastery XP reaches the next-level threshold.", durationDefinitionId: "duration_standard", queueRuleId: "queue_civilization", requirements: [requirement("mastery_xp", "next_level_xp_full", "The upgrade mastery XP threshold must be full."), requirement("labor", "generated_level_labor_cost", "The generated level Labor cost is required."), serverVerified], inputs: [transfer("labor", "ECON-LABOR", "start"), transfer("time", "time", "progress")], outputs: [transfer("upgrade", "next_upgrade_level", "completion"), transfer("notification", "upgrade_level_complete", "completion")], phaseTemplateIds: ["planning", "allocation", "completion"], related: { economyIds: ["ECON-LABOR"] } }),
+  action({ id: "mine_resource", displayName: "Mine Resource", category: "mining", entityType: "resource", description: "Extract a canonical resource from an eligible location using assigned capacity.", durationDefinitionId: "duration_standard", queueRuleId: "queue_manufacturing", requirements: [requirement("building", "mining_capacity", "Mining equipment or infrastructure is required."), requirement("location", "valid_resource_deposit", "A valid resource deposit is required."), serverVerified], inputs: [transfer("labor", "ECON-LABOR", "progress"), transfer("energy", "mining_energy", "progress"), transfer("time", "time", "progress")], outputs: [transfer("resource", "mined_resource_yield", "completion"), transfer("mastery_xp", "mining_completed", "completion")], phaseTemplateIds: ["planning", "allocation", "construction", "completion"], related: { economyIds: ["ECON-LABOR"] } }),
+  action({ id: "construct_ship", displayName: "Construct Ship", category: "manufacturing", entityType: "fleet", description: "Construct a canonical ship definition through an eligible shipyard.", durationDefinitionId: "duration_project", queueRuleId: "queue_shipyard", requirements: [requirement("building", "shipyard_capacity", "An eligible shipyard slot is required."), requirement("research", "ship_design_requirements", "Ship research requirements must resolve."), serverVerified], inputs: [transfer("labor", "ECON-LABOR", "progress"), transfer("material", "ship_construction_materials", "progress"), transfer("time", "time", "progress")], outputs: [transfer("fleet", "constructed_ship", "completion"), transfer("notification", "ship_construction_complete", "completion")], phaseTemplateIds: ["planning", "allocation", "construction", "commissioning", "completion"] }),
+  action({ id: "prepare_mission", displayName: "Prepare Mission", category: "story", entityType: "mission", description: "Reserve crew, ship, equipment, and supplies for a canonical mission.", durationDefinitionId: "duration_standard", queueRuleId: "queue_mission", requirements: [requirement("mission", "mission_available", "The mission must be available."), requirement("ship", "eligible_mission_ship", "An eligible ship is required."), serverVerified], inputs: [transfer("labor", "mission_preparation_labor", "progress"), transfer("resource", "mission_supplies", "start"), transfer("time", "time", "progress")], outputs: [transfer("mission", "prepared_mission", "completion")], phaseTemplateIds: ["planning", "allocation", "preparation", "completion"] }),
+  action({ id: "execute_mission", displayName: "Execute Mission", category: "story", entityType: "mission", description: "Resolve the active objective phase of a prepared mission.", durationDefinitionId: "duration_mission", queueRuleId: "queue_mission", requirements: [requirement("action_dependency", "prepare_mission", "Mission preparation must be complete."), requirement("mission", "mission_objectives_valid", "Mission objectives must remain valid."), serverVerified], inputs: [transfer("fuel", "mission_fuel", "progress"), transfer("time", "time", "progress")], outputs: [transfer("mission", "mission_outcome", "completion"), transfer("reward", "mission_rewards", "completion"), transfer("mastery_xp", "missions_completed", "completion")], phaseTemplateIds: ["travel", "survey", "completion"] }),
+  action({ id: "return_mission", displayName: "Return Mission", category: "travel", entityType: "mission", description: "Return the mission team and deliver its canonical outcome.", durationDefinitionId: "duration_mission", queueRuleId: "queue_mission", requirements: [requirement("action_dependency", "execute_mission", "Mission execution must reach an outcome."), serverVerified], inputs: [transfer("fuel", "mission_return_fuel", "progress"), transfer("time", "time", "progress")], outputs: [transfer("fleet", "returned_mission_team", "completion"), transfer("notification", "mission_return_complete", "completion")], phaseTemplateIds: ["return", "completion"] }),
+  action({ id: "found_settlement", displayName: "Found Settlement", category: "colonization", entityType: "colony", description: "Found a settlement within an eligible established colony.", durationDefinitionId: "duration_colony", queueRuleId: "queue_colony", requirements: [requirement("colony_level", "settlement_foundation_allowed", "The colony must support a new settlement."), requirement("population", "settlement_population_available", "Settlement population must be available."), serverVerified], inputs: [transfer("population", "settlement_population", "start"), transfer("labor", "ECON-LABOR", "progress"), transfer("material", "settlement_materials", "progress"), transfer("time", "time", "progress")], outputs: [transfer("colony", "founded_settlement", "completion")], phaseTemplateIds: ["planning", "allocation", "construction", "commissioning", "completion"] }),
+  action({ id: "expand_settlement", displayName: "Expand Settlement", category: "building", entityType: "colony", description: "Expand a settlement district using canonical colony capacity and requirements.", durationDefinitionId: "duration_project", queueRuleId: "queue_colony", requirements: [requirement("settlement_level", "district_expansion_allowed", "The settlement must support district expansion."), serverVerified], inputs: [transfer("labor", "ECON-LABOR", "progress"), transfer("material", "district_materials", "progress"), transfer("time", "time", "progress")], outputs: [transfer("colony", "expanded_settlement_district", "completion")], phaseTemplateIds: ["planning", "allocation", "construction", "commissioning", "completion"] }),
+  action({ id: "repair_asset", displayName: "Repair Asset", category: "repair", entityType: "building", targetTypes: ["building", "ship", "infrastructure"], description: "Repair an eligible damaged canonical asset.", durationDefinitionId: "duration_project", queueRuleId: "queue_construction", requirements: [requirement("target_state", "repairable_damage", "The target must have repairable damage."), serverVerified], inputs: [transfer("labor", "ECON-LABOR", "progress"), transfer("material", "repair_materials", "progress"), transfer("time", "time", "progress")], outputs: [transfer("repair", "restored_asset_condition", "completion")], phaseTemplateIds: ["planning", "allocation", "construction", "commissioning", "completion"] })
 ];
+
+export const actionCostProfiles: ActionCostProfile[] = actionDefinitions.map((definition) => ({
+  id: `cost_${definition.id}`,
+  displayName: `${definition.displayName} Costs`,
+  costs: definition.inputs.map((input) => ({
+    type: input.type,
+    canonicalId: input.id,
+    amount: input.quantity ?? 0,
+    timing: input.timing === "start" ? "upfront" : input.timing === "completion" ? "completion" : "over_time",
+    refundable: input.cancellationRefund !== "none"
+  }))
+}));
+
+export const actionRequirementProfiles: ActionRequirementProfile[] = actionDefinitions.map((definition) => ({
+  id: `requirements_${definition.id}`,
+  displayName: `${definition.displayName} Requirements`,
+  requirements: definition.requirements.map((item) => ({ type: item.type, canonicalId: item.id, minimum: item.quantity, hardGate: item.blocking }))
+}));
+
+export const actionRewardProfiles: ActionRewardProfile[] = actionDefinitions.map((definition) => ({
+  id: `rewards_${definition.id}`,
+  displayName: `${definition.displayName} Rewards`,
+  rewards: definition.outputs.map((output) => ({ type: output.type, canonicalId: output.id, amount: output.quantity }))
+}));
+
+export const actionQueueProfiles: ActionQueueProfile[] = actionQueueRules.map((rule) => ({
+  id: `profile_${rule.id}`,
+  displayName: rule.displayName,
+  queueRuleId: rule.id,
+  maxConcurrent: rule.maxConcurrency,
+  maxQueued: Math.max(5, rule.maxConcurrency * 5),
+  pauseAllowed: rule.supportsPause,
+  reorderAllowed: rule.supportsReorder,
+  cancellationAllowed: rule.supportsCancel,
+  offlineAllowed: true
+}));
+
+export const canonicalActionProfiles: CanonicalActionProfile[] = actionDefinitions.map((definition) => ({
+  id: `action_profile_${definition.id}`,
+  version: "1.0.0",
+  displayName: definition.displayName,
+  description: definition.description,
+  domain: definition.category,
+  actionType: definition.actionType,
+  era: null,
+  tier: definition.duration.durationDefinitionId === "duration_terraforming" ? "extreme" : definition.duration.durationDefinitionId === "duration_colony" ? "advanced" : "standard",
+  actionDefinitionId: definition.id,
+  durationProfileId: definition.duration.durationDefinitionId,
+  costProfileId: `cost_${definition.id}`,
+  requirementProfileId: `requirements_${definition.id}`,
+  rewardProfileId: `rewards_${definition.id}`,
+  crystalAccelerationProfileId: "crystal_time_standard",
+  queueProfileId: `profile_${definition.queueBehavior.queueRuleId}`,
+  cancellationPolicy: definition.cancellationRules.refundPolicy,
+  failurePolicy: definition.failureRules.join(","),
+  offlinePolicy: "eligible_when_action_and_queue_allow",
+  repeatability: definition.category === "research" || definition.category === "colonization" ? "conditional" : "repeatable",
+  runtimeTargets: ["unity", "web", "roblox", "unreal", "godot", "generic"],
+  validationStatus: "Ready",
+  createdAt: "2026-08-03T00:00:00.000Z",
+  updatedAt: "2026-08-03T00:00:00.000Z"
+}));
 
 export const accelerationRules = [
   "Premium Crystals never unlock unavailable Actions or bypass requirements.",
@@ -616,6 +695,11 @@ export const canonicalActionSystem: ActionSystemContract = {
   accelerationRules,
   automationRules,
   actionPresentation,
+  actionCostProfiles,
+  actionRequirementProfiles,
+  actionRewardProfiles,
+  actionQueueProfiles,
+  canonicalActionProfiles,
   validationRules: [
     "Every Action Definition must use a stable canonical ID.",
     "Every Action Definition must reference a canonical category, duration definition, queue rule, automation policy, phase template, and Time Action Contract.",
@@ -638,9 +722,14 @@ export function validateActionSystem(system: ActionSystemContract = canonicalAct
   const durationIds = new Set(system.actionDurationDefinitions.map((duration) => duration.id));
   const phaseIds = new Set(system.actionPhaseTemplates.map((phase) => phase.id));
   const automationPolicyIds = new Set(system.actionAutomationPolicies.map((policy) => policy.id));
+  const costProfileIds = new Set(system.actionCostProfiles.map((profile) => profile.id));
+  const requirementProfileIds = new Set(system.actionRequirementProfiles.map((profile) => profile.id));
+  const rewardProfileIds = new Set(system.actionRewardProfiles.map((profile) => profile.id));
+  const queueProfileIds = new Set(system.actionQueueProfiles.map((profile) => profile.id));
   const eventIds = new Set(system.actionEventDefinitions.map((event) => event.id));
+  const actionIds = new Set(system.actionDefinitions.map((action) => action.id));
   const requiredStates = ["unavailable", "ready", "queued", "waiting", "preparing", "in_progress", "paused", "blocked", "completed", "failed", "cancelled", "archived"];
-  const requiredActions = ["send_probe", "probe_travel", "probe_scan", "survey_planet", "catalog_planet", "analyze_anomaly", "analyze_artifact", "excavate_ruin", "prepare_colony", "establish_colony", "build_mining_outpost", "deploy_automated_extraction", "build_gas_harvest_platform", "build_ocean_harvest_platform", "build_research_station", "build_archaeological_camp", "build_orbital_refinery", "designate_preserve", "begin_terraforming_study", "terraform_planet_stage", "conduct_research", "construct_building", "upgrade_building", "manufacture_item", "assign_workforce", "reassign_workforce", "train_specialist", "retrain_population", "transfer_population", "transport_colonists", "expand_housing", "establish_education_program", "establish_healthcare_program", "deploy_robotic_workforce", "create_shipment", "load_shipment", "unload_shipment", "process_resource", "recycle_resource", "reroute_shipment", "transfer_resources", "establish_trade_route", "travel_to_destination"];
+  const requiredActions = ["send_probe", "probe_travel", "probe_scan", "survey_planet", "catalog_planet", "analyze_anomaly", "analyze_artifact", "excavate_ruin", "prepare_colony", "establish_colony", "build_mining_outpost", "deploy_automated_extraction", "build_gas_harvest_platform", "build_ocean_harvest_platform", "build_research_station", "build_archaeological_camp", "build_orbital_refinery", "designate_preserve", "begin_terraforming_study", "terraform_planet_stage", "conduct_research", "construct_building", "upgrade_building", "manufacture_item", "assign_workforce", "reassign_workforce", "train_specialist", "retrain_population", "transfer_population", "transport_colonists", "expand_housing", "establish_education_program", "establish_healthcare_program", "deploy_robotic_workforce", "create_shipment", "load_shipment", "unload_shipment", "process_resource", "recycle_resource", "reroute_shipment", "transfer_resources", "establish_trade_route", "travel_to_destination", "level_upgrade", "mine_resource", "construct_ship", "prepare_mission", "execute_mission", "return_mission", "found_settlement", "expand_settlement", "repair_asset"];
 
   if (system.id !== "canonical_action_system_v1") issues.push(issue("error", "invalid_action_system_id", "Canonical Action System ID is invalid."));
   if (system.timeActionContractId !== timeContract.id) issues.push(issue("error", "invalid_time_action_contract", "Action System must reference the canonical Time Action Contract."));
@@ -691,6 +780,12 @@ export function validateActionSystem(system: ActionSystemContract = canonicalAct
     if (!actionItem.history.started || !actionItem.history.completed || !actionItem.history.cancelled || !actionItem.history.failed || !actionItem.history.accelerated || !actionItem.history.automated) {
       issues.push(issue("error", "incomplete_history_contract", `${actionItem.id} must declare all canonical history events.`, [actionItem.id]));
     }
+  }
+  for (const profile of system.canonicalActionProfiles) {
+    if (!actionIds.has(profile.actionDefinitionId)) issues.push(issue("error", "invalid_action_profile_definition", `${profile.id} references unknown action definition.`, [profile.id]));
+    if (!durationIds.has(profile.durationProfileId)) issues.push(issue("error", "invalid_action_profile_duration", `${profile.id} references unknown duration profile.`, [profile.id]));
+    if (!costProfileIds.has(profile.costProfileId) || !requirementProfileIds.has(profile.requirementProfileId) || !rewardProfileIds.has(profile.rewardProfileId) || !queueProfileIds.has(profile.queueProfileId)) issues.push(issue("error", "invalid_action_profile_contract", `${profile.id} has an unresolved normalized profile reference.`, [profile.id]));
+    if (profile.validationStatus !== "Ready") issues.push(issue("error", "blocked_action_profile", `${profile.id} is blocked.`, [profile.id]));
   }
   for (const policy of system.actionAccelerationPolicies) {
     if (!policy.serverAuthoritativeBalance || !policy.serverCalculatedCost || !policy.idempotencyRequired || !policy.minimumDurationClamp || policy.canBypassRequirements !== false) {

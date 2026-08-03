@@ -1,0 +1,6 @@
+{
+  "capturedAt": "2026-08-03T00:00:00.000Z",
+  "canonicalSystemId": "canonical_action_system_v1",
+  "preserved": true,
+  "migration": "Extend existing action definitions with normalized cost, requirement, reward, queue, and action profiles. No second timer engine created."
+}

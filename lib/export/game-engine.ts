@@ -46,6 +46,7 @@ import { canonicalPlanetOpportunityProfiles, resolvePlanetOpportunityProfileId, 
 import { buildPlanetDeepDataFramework, ensurePlanetDeepData, planetDataScreenContract, validatePlanetDeepData } from "@/lib/planets/deep-data";
 import { withFixedSolGeneratedPlanets } from "@/lib/planets/fixed-sol-planets";
 import { populationSimulationFramework, validatePopulationSimulationFramework } from "@/lib/population/framework";
+import { canonicalProgressionSystem, validateProgressionSystem } from "@/lib/progression/progression-system";
 import { defaultEraNavigationProfile, engineEraNavigationOverrides, resolveEraNavigationProfile, supportedEraNavigationBoundaryModes, supportedEraNavigationDashboardModes } from "@/lib/runtime/client-profiles";
 import { galaxyEngineContractVersion, galaxyEnginePresentationContract, validateGalaxyEnginePresentationContract } from "@/lib/runtime/galaxy-engine-contract";
 import { buildMobileClientProfile, mobileAssetRequirements } from "@/lib/runtime/mobile-client-profiles";
@@ -251,6 +252,7 @@ type CanonicalModules = {
   galaxy_engine_contract: typeof galaxyEnginePresentationContract;
   time_action_contract: typeof timeActionContract;
   action_system: typeof canonicalActionSystem;
+  progression_system: typeof canonicalProgressionSystem;
   planet_exploration_progression: typeof planetExplorationProgression;
   planet_development_framework: typeof planetDevelopmentFramework;
   civilization_progression_framework: typeof civilizationProgressionFramework;
@@ -752,6 +754,7 @@ async function buildCanonicalModules(data: GameData): Promise<CanonicalModules> 
     galaxy_engine_contract: galaxyEnginePresentationContract,
     time_action_contract: timeActionContract,
     action_system: canonicalActionSystem,
+    progression_system: canonicalProgressionSystem,
     planet_exploration_progression: planetExplorationProgression,
     planet_development_framework: planetDevelopmentFramework,
     civilization_progression_framework: civilizationProgressionFramework,
@@ -1220,6 +1223,9 @@ function validatePlanetExploration(issues: ExportValidationIssue[], modules: Can
     addIssue(issues, issue.severity, issue.code, issue.message, issue.records);
   }
   for (const issue of validateActionSystem(modules.action_system, modules.time_action_contract)) {
+    addIssue(issues, issue.severity, issue.code, issue.message, issue.records);
+  }
+  for (const issue of validateProgressionSystem(modules.progression_system)) {
     addIssue(issues, issue.severity, issue.code, issue.message, issue.records);
   }
   for (const issue of validatePlanetExplorationProgression(modules.planet_exploration_progression, modules.time_action_contract)) {
@@ -1992,6 +1998,7 @@ function compactModules(modules: CanonicalModules) {
     planet_data_screen_contract: modules.planet_data_screen_contract,
     time_action_contract: modules.time_action_contract,
     action_system: modules.action_system,
+    progression_system: modules.progression_system,
     planet_exploration_progression: modules.planet_exploration_progression,
     planet_development_framework: modules.planet_development_framework,
     civilization_progression_framework: modules.civilization_progression_framework,

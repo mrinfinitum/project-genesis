@@ -1,0 +1,6 @@
+{
+  "capturedAt": "2026-08-03T00:00:00.000Z",
+  "canonicalContractId": "time_action_contract_v1",
+  "existingDurationProfiles": ["duration_probe_short", "duration_standard", "duration_project", "duration_colony", "duration_terraforming"],
+  "migration": "All progression and domain actions continue to resolve through the canonical Time Action Contract."
+}

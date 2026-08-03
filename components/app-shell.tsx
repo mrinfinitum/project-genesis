@@ -33,6 +33,8 @@ import {
   ShieldCheck,
   Sparkles,
   Star,
+  TimerReset,
+  TrendingUp,
   WandSparkles,
   X
 } from "lucide-react";
@@ -110,6 +112,37 @@ const navigationGroups: NavigationGroup[] = [
       { href: "/life-generator", label: "Life Generator", icon: Dna },
       { href: "/environment-composer/themes", label: "Themes", icon: WandSparkles },
       { href: "/environment-composer/export", label: "Runtime Export", icon: FileText }
+    ]
+  },
+  {
+    id: "progression",
+    label: "Progression",
+    icon: TrendingUp,
+    items: [
+      { href: "/progression?view=dashboard", label: "Progression Dashboard", icon: LayoutDashboard },
+      { href: "/progression?view=profiles", label: "Progression Profiles", icon: TrendingUp },
+      { href: "/progression?view=curves", label: "Upgrade Level Curves", icon: TrendingUp },
+      { href: "/progression?view=eras", label: "Era Scaling", icon: Star },
+      { href: "/progression?view=crystals", label: "Crystal Acceleration", icon: Gem },
+      { href: "/progression?view=balance", label: "Balance Preview", icon: LayoutDashboard },
+      { href: "/progression?view=validation", label: "Validation", icon: ShieldCheck },
+      { href: "/progression?view=runtime", label: "Runtime Export", icon: FileText }
+    ]
+  },
+  {
+    id: "canonical-actions",
+    label: "Canonical Actions",
+    icon: TimerReset,
+    items: [
+      { href: "/actions?view=dashboard", label: "Action Dashboard", icon: LayoutDashboard },
+      { href: "/actions?view=profiles", label: "Action Profiles", icon: TimerReset },
+      { href: "/actions?view=costs", label: "Cost Profiles", icon: BadgeDollarSign },
+      { href: "/actions?view=durations", label: "Duration Profiles", icon: TimerReset },
+      { href: "/actions?view=requirements", label: "Requirement Profiles", icon: ShieldCheck },
+      { href: "/actions?view=crystals", label: "Crystal Rules", icon: Gem },
+      { href: "/actions?view=queues", label: "Queue Rules", icon: Layers3 },
+      { href: "/actions?view=validation", label: "Validation", icon: ShieldCheck },
+      { href: "/actions?view=runtime", label: "Runtime Export", icon: FileText }
     ]
   },
   {

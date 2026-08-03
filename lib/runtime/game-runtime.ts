@@ -61,6 +61,7 @@ import { canonicalPlanetOpportunityProfiles, validatePlanetOpportunityProfiles }
 import { planetDataScreenContract, planetDeepDataFramework } from "@/lib/planets/deep-data";
 import { PLANET_DEEP_DATA_SCHEMA_VERSION } from "@/types/planet-deep-data";
 import { populationSimulationFramework, validatePopulationSimulationFramework } from "@/lib/population/framework";
+import { canonicalProgressionSystem, generateProgressionLevels, progressionProfileForEra, validateProgressionSystem, xpSourceProfileForDomain } from "@/lib/progression/progression-system";
 import { engineEraNavigationOverrides, resolveEraNavigationProfile, supportedEraNavigationBoundaryModes, supportedEraNavigationDashboardModes } from "@/lib/runtime/client-profiles";
 import { galaxyEngineContractVersion, galaxyEnginePresentationContract, validateGalaxyEnginePresentationContract } from "@/lib/runtime/galaxy-engine-contract";
 import { buildMobileClientProfile } from "@/lib/runtime/mobile-client-profiles";
@@ -86,7 +87,7 @@ import type {
 } from "@/types/runtime";
 
 export const gameRuntimeSchemaVersion = "game-runtime-v1";
-export const gameRuntimeContentVersion = 70;
+export const gameRuntimeContentVersion = 71;
 
 export type CanonicalRuntimeExportPayload = Omit<GameRuntimeData, "identityRelationshipGraph"> & {
   identityRelationshipGraph?: IdentityRelationshipRuntimeExport;
@@ -133,6 +134,7 @@ export type RobloxRuntimeExportPayload = {
   galaxyEngineContract: GameRuntimeData["galaxyEngineContract"];
   timeActionContract: GameRuntimeData["timeActionContract"];
   actionSystem: GameRuntimeData["actionSystem"];
+  progressionSystem: GameRuntimeData["progressionSystem"];
   planetOpportunityProfiles: GameRuntimeData["planetOpportunityProfiles"];
   planetDeepDataFramework: GameRuntimeData["planetDeepDataFramework"];
   planetDataScreenContract: GameRuntimeData["planetDataScreenContract"];
@@ -454,6 +456,8 @@ function upgradeToRuntime(upgrade: Upgrade, index: number): UpgradeDefinition {
   const categoryId = upgradeCategoryId(upgrade.type);
   const era = eraIdFor(upgrade.era);
   const costEconomyId = resolveEconomyId(upgrade.cost_resource);
+  const progressionProfile = progressionProfileForEra(era);
+  const xpSourceProfile = xpSourceProfileForDomain(categoryId);
   return {
     id: upgrade.id,
     categoryId,
@@ -464,8 +468,8 @@ function upgradeToRuntime(upgrade: Upgrade, index: number): UpgradeDefinition {
     displayName: upgrade.name,
     description: upgrade.description,
     iconKey: upgrade.icon_name || `upgrade-${slug(upgrade.name)}`,
-    defaultLevel: 0,
-    maxLevel: Math.max(1, Number(upgrade.max_level) || 1),
+    defaultLevel: 1,
+    maxLevel: 100,
     baseCost: Math.max(0, Number(upgrade.base_cost) || 0),
     costResourceId: resolveResourceId(upgrade.cost_resource),
     costEconomyId,
@@ -476,7 +480,14 @@ function upgradeToRuntime(upgrade: Upgrade, index: number): UpgradeDefinition {
     unlockRequirements: Number(upgrade.unlock_level) > 0 ? { civilizationLevel: upgrade.unlock_level } : { start: true },
     nextUpgradeIds: [],
     visibilityRules: visibilityRulesFor(era, index + 1),
-    tags: [...new Set([upgrade.type, upgrade.civilization, upgrade.era, upgrade.tier].filter(Boolean))]
+    tags: [...new Set([upgrade.type, upgrade.civilization, upgrade.era, upgrade.tier].filter(Boolean))],
+    progressionProfileId: progressionProfile.id,
+    xpSourceProfileId: xpSourceProfile.id,
+    generatedLevels: generateProgressionLevels(progressionProfile, { baseCost: Math.max(0, Number(upgrade.base_cost) || 0), baseOutput: Math.max(0.01, parseEffectValue(upgrade.bonus_value)), resourceId: resolveResourceId(upgrade.cost_resource) }),
+    laborLevelUpPolicy: "spend_after_xp_full",
+    crystalAccelerationPolicy: progressionProfile.crystalRules.profileId,
+    effectScalingPolicy: "explicit_generated_level_values",
+    milestonePolicy: "profile_level_overrides"
   };
 }
 
@@ -874,7 +885,21 @@ function sortRuntimeData(runtimeData: GameRuntimeData): GameRuntimeData {
       accelerationRules: [...runtimeData.actionSystem.accelerationRules].sort(),
       automationRules: [...runtimeData.actionSystem.automationRules].sort(),
       actionPresentation: [...runtimeData.actionSystem.actionPresentation].sort((left, right) => left.mode.localeCompare(right.mode)),
+      actionCostProfiles: [...runtimeData.actionSystem.actionCostProfiles].sort(byId),
+      actionRequirementProfiles: [...runtimeData.actionSystem.actionRequirementProfiles].sort(byId),
+      actionRewardProfiles: [...runtimeData.actionSystem.actionRewardProfiles].sort(byId),
+      actionQueueProfiles: [...runtimeData.actionSystem.actionQueueProfiles].sort(byId),
+      canonicalActionProfiles: [...runtimeData.actionSystem.canonicalActionProfiles].sort(byId),
       validationRules: [...runtimeData.actionSystem.validationRules].sort()
+    },
+    progressionSystem: {
+      ...runtimeData.progressionSystem,
+      curveModes: [...runtimeData.progressionSystem.curveModes],
+      eraScalingProfiles: [...runtimeData.progressionSystem.eraScalingProfiles].sort((left, right) => left.order - right.order),
+      progressionProfiles: [...runtimeData.progressionSystem.progressionProfiles].sort(byId),
+      upgradeXpSourceProfiles: [...runtimeData.progressionSystem.upgradeXpSourceProfiles].sort(byId),
+      crystalAccelerationProfiles: [...runtimeData.progressionSystem.crystalAccelerationProfiles].sort(byId),
+      crystalChunks: [...runtimeData.progressionSystem.crystalChunks].sort(byId)
     },
     planetOpportunityProfiles: [...runtimeData.planetOpportunityProfiles].sort(byId),
     planetDeepDataFramework: {
@@ -2323,6 +2348,9 @@ export function validateGameRuntimeData(runtimeData: GameRuntimeData | Canonical
   for (const issue of validateActionSystem(runtimeData.actionSystem, runtimeData.timeActionContract)) {
     issues.push(issue);
   }
+  for (const issue of validateProgressionSystem(runtimeData.progressionSystem)) {
+    issues.push(issue);
+  }
   for (const issue of validatePlanetOpportunityProfiles(runtimeData.planetOpportunityProfiles)) {
     issues.push(issue);
   }
@@ -2593,6 +2621,7 @@ export function buildRobloxRuntimePayload(runtimeData: GameRuntimeData | Canonic
     galaxyEngineContract: sorted.galaxyEngineContract,
     timeActionContract: sorted.timeActionContract,
     actionSystem: sorted.actionSystem,
+    progressionSystem: sorted.progressionSystem,
     planetOpportunityProfiles: sorted.planetOpportunityProfiles,
     planetDeepDataFramework: sorted.planetDeepDataFramework,
     planetDataScreenContract: sorted.planetDataScreenContract,
@@ -2720,6 +2749,9 @@ export function validateRobloxRuntimePayload(payload: RobloxRuntimeExportPayload
     issues.push(issue);
   }
   for (const issue of validateActionSystem(payload.actionSystem, payload.timeActionContract)) {
+    issues.push(issue);
+  }
+  for (const issue of validateProgressionSystem(payload.progressionSystem)) {
     issues.push(issue);
   }
   for (const issue of validatePlanetOpportunityProfiles(payload.planetOpportunityProfiles)) {
@@ -2972,6 +3004,7 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
     galaxyEngineContract: galaxyEnginePresentationContract,
     timeActionContract,
     actionSystem: canonicalActionSystem,
+    progressionSystem: canonicalProgressionSystem,
     planetOpportunityProfiles: canonicalPlanetOpportunityProfiles,
     planetDeepDataFramework,
     planetDataScreenContract,
@@ -3080,6 +3113,7 @@ export async function getGameRuntimeData() {
     galaxyEngineContract: base.galaxyEngineContract,
     timeActionContract: base.timeActionContract,
     actionSystem: base.actionSystem,
+    progressionSystem: base.progressionSystem,
     planetOpportunityProfiles: base.planetOpportunityProfiles,
     planetDeepDataFramework: base.planetDeepDataFramework,
     planetDataScreenContract: base.planetDataScreenContract,
@@ -3197,6 +3231,11 @@ function normalizeImportedUpgrades(payload: Record<string, unknown>, fallback: U
     const row = asRecord(item);
     const categoryId = slug(display(row.categoryId ?? row.tabId ?? row.type, "technology"));
     const eraIdValue = eraIdFor(row.eraId ?? row.era);
+    const progressionProfile = progressionProfileForEra(eraIdValue);
+    const xpSourceProfile = xpSourceProfileForDomain(categoryId);
+    const baseCost = Math.max(0, asNumber(row.baseCost ?? row.base_cost, 0));
+    const costResourceId = resolveResourceId(row.costResourceId ?? row.cost_resource);
+    const baseEffectValue = asNumber(row.baseEffectValue, parseEffectValue(row.bonus_value));
     return {
       id: display(row.id, `upgrade-${index + 1}`),
       categoryId,
@@ -3207,18 +3246,25 @@ function normalizeImportedUpgrades(payload: Record<string, unknown>, fallback: U
       displayName: display(row.displayName ?? row.name, `Upgrade ${index + 1}`),
       description: display(row.description, "Imported upgrade."),
       iconKey: display(row.iconKey ?? row.icon_name, `upgrade-${slug(display(row.name, `upgrade-${index + 1}`))}`),
-      defaultLevel: asNumber(row.defaultLevel, 0),
-      maxLevel: Math.max(1, asNumber(row.maxLevel ?? row.max_level, 1)),
-      baseCost: Math.max(0, asNumber(row.baseCost ?? row.base_cost, 0)),
-      costResourceId: resolveResourceId(row.costResourceId ?? row.cost_resource),
+      defaultLevel: 1,
+      maxLevel: 100,
+      baseCost,
+      costResourceId,
       costGrowthRate: Math.max(1, asNumber(row.costGrowthRate ?? row.cost_multiplier, 1)),
       effectType: display(row.effectType ?? row.bonus_type, "modifier"),
-      baseEffectValue: asNumber(row.baseEffectValue, parseEffectValue(row.bonus_value)),
+      baseEffectValue,
       effectGrowthRate: asNumber(row.effectGrowthRate, 1),
       unlockRequirements: asRecord(row.unlockRequirements),
       nextUpgradeIds: asStringArray(row.nextUpgradeIds ?? row.next_upgrades),
       visibilityRules: { ...visibilityRulesFor(eraIdValue, index + 1), ...asRecord(row.visibilityRules) } as VisibilityRules,
-      tags: asStringArray(row.tags)
+      tags: asStringArray(row.tags),
+      progressionProfileId: progressionProfile.id,
+      xpSourceProfileId: xpSourceProfile.id,
+      generatedLevels: generateProgressionLevels(progressionProfile, { baseCost, baseOutput: Math.max(0.01, baseEffectValue), resourceId: costResourceId }),
+      laborLevelUpPolicy: "spend_after_xp_full",
+      crystalAccelerationPolicy: progressionProfile.crystalRules.profileId,
+      effectScalingPolicy: "explicit_generated_level_values",
+      milestonePolicy: "profile_level_overrides"
     };
   });
 }
@@ -3329,6 +3375,7 @@ function normalizedImportRuntimeData(base: GameRuntimeData, request: RuntimeImpo
     galaxyEngineContract: base.galaxyEngineContract,
     timeActionContract: base.timeActionContract,
     actionSystem: base.actionSystem,
+    progressionSystem: base.progressionSystem,
     planetOpportunityProfiles: base.planetOpportunityProfiles,
     planetDeepDataFramework: base.planetDeepDataFramework,
     planetDataScreenContract: base.planetDataScreenContract,

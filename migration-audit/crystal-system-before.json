@@ -1,0 +1,6 @@
+{
+  "capturedAt": "2026-08-03T00:00:00.000Z",
+  "currencyId": "ECON-PREMIUM-CRYSTALS",
+  "existingSafety": ["server-authoritative balance", "idempotent transaction", "minimum duration clamp", "no prerequisite bypass"],
+  "migration": "Preserve safety policies and add canonical time, instant-eligible, and progress-chunk profiles."
+}

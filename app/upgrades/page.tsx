@@ -1,6 +1,7 @@
 import { UpgradeLibrary } from "@/components/upgrade-library";
 import { getAssetProductionAssets } from "@/lib/assets/asset-production";
 import { getRows } from "@/lib/data";
+import { canonicalProgressionSystem } from "@/lib/progression/progression-system";
 import { buildUpgradeArtReport } from "@/lib/upgrades/art-previews";
 import type { Upgrade } from "@/types/schema";
 
@@ -21,5 +22,9 @@ export default async function UpgradesPage() {
     hasWebMapping: item.hasWebMapping,
     hasRobloxMapping: item.hasRobloxMapping
   }));
-  return <UpgradeLibrary upgrades={upgrades} art={art} />;
+  return <UpgradeLibrary upgrades={upgrades} art={art} progression={{
+    profiles: canonicalProgressionSystem.progressionProfiles.length,
+    maxLevel: Math.max(...canonicalProgressionSystem.progressionProfiles.map((profile) => profile.maxLevel)),
+    xpSources: canonicalProgressionSystem.upgradeXpSourceProfiles.length
+  }} />;
 }

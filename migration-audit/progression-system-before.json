@@ -1,0 +1,6 @@
+{
+  "capturedAt": "2026-08-03T00:00:00.000Z",
+  "source": "Studio upgrades table and runtime upgrade adapter",
+  "legacyBehavior": ["per-upgrade base_cost", "per-upgrade cost_multiplier", "per-upgrade max_level", "client-derived level values"],
+  "migration": "Preserve upgrade IDs and authoring records; publish canonical profile references and explicit levels 1-100."
+}

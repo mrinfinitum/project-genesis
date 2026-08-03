@@ -4,7 +4,9 @@ import { canonicalActionSystem, validateActionSystem } from "@/lib/actions/actio
 
 export const dynamic = "force-dynamic";
 
-export default function ActionsPage() {
+export default async function ActionsPage({ searchParams }: { searchParams?: Promise<{ view?: string }> }) {
+  const params = await searchParams;
+  const view = params?.view ?? "dashboard";
   const issues = validateActionSystem();
   const errors = issues.filter((issue) => issue.severity === "error");
 
@@ -36,9 +38,22 @@ export default function ActionsPage() {
         </div>
       </WorkspacePanel>
 
+      <WorkspacePanel title={`${view.replace(/_/g, " ")} Profiles`} icon={ListChecks}>
+        <div className="grid gap-3 md:grid-cols-5">
+          <WorkspaceStatTile label="Action Profiles" value={canonicalActionSystem.canonicalActionProfiles.length} />
+          <WorkspaceStatTile label="Cost Profiles" value={canonicalActionSystem.actionCostProfiles.length} />
+          <WorkspaceStatTile label="Requirements" value={canonicalActionSystem.actionRequirementProfiles.length} />
+          <WorkspaceStatTile label="Rewards" value={canonicalActionSystem.actionRewardProfiles.length} />
+          <WorkspaceStatTile label="Queues" value={canonicalActionSystem.actionQueueProfiles.length} />
+        </div>
+        <p className="mt-4 text-sm leading-6 text-slate-300">Every normalized profile resolves to the existing shared Action System. Studio publishes definitions and Unity owns active timers, queue state, progress, and saves.</p>
+      </WorkspacePanel>
+
       <section className="grid gap-3 lg:grid-cols-2 xl:grid-cols-3">
-        {canonicalActionSystem.actionDefinitions.slice(0, 18).map((action) => (
-          <article key={action.id} className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-4 shadow-glow">
+        {canonicalActionSystem.canonicalActionProfiles.map((profile) => {
+          const action = canonicalActionSystem.actionDefinitions.find((item) => item.id === profile.actionDefinitionId)!;
+          return (
+          <article key={profile.id} className="rounded-md border border-cyan-300/15 bg-[#07101e]/85 p-4 shadow-glow">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <h2 className="truncate text-base font-black text-white">{action.displayName}</h2>
@@ -47,8 +62,9 @@ export default function ActionsPage() {
               <WorkspaceBadge value={action.category} />
             </div>
             <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-300">{action.description}</p>
+            <div className="mt-3 flex flex-wrap gap-2"><WorkspaceBadge value={profile.durationProfileId} /><WorkspaceBadge value={profile.queueProfileId} /></div>
           </article>
-        ))}
+        )})}
       </section>
     </main>
   );

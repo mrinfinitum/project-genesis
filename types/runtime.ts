@@ -204,6 +204,13 @@ export type UpgradeDefinition = {
   nextUpgradeIds: string[];
   visibilityRules: VisibilityRules;
   tags: string[];
+  progressionProfileId: string;
+  xpSourceProfileId: string;
+  generatedLevels: import("@/lib/progression/progression-system").ProgressionGeneratedLevel[];
+  laborLevelUpPolicy: "spend_after_xp_full";
+  crystalAccelerationPolicy: string;
+  effectScalingPolicy: string;
+  milestonePolicy: string;
 };
 
 export type UpgradeTreeInfluence = {
@@ -3181,7 +3188,7 @@ export type ActionSystemState = {
 };
 
 export type ActionRequirement = {
-  type: "research" | "technology" | "building" | "resource" | "credits" | "labor" | "population" | "workforce" | "equipment" | "ai_agent" | "discovery_state" | "planet_knowledge" | "ownership" | "range" | "location" | "target_class" | "target_environment" | "civilization_milestone" | "civilization_identity" | "action_dependency" | "queue_capacity" | "server_verification" | "preservation_restriction" | "story_gate";
+  type: "research" | "technology" | "building" | "resource" | "credits" | "labor" | "population" | "workforce" | "equipment" | "ai_agent" | "discovery_state" | "planet_knowledge" | "ownership" | "range" | "location" | "target_class" | "target_environment" | "civilization_milestone" | "civilization_identity" | "action_dependency" | "queue_capacity" | "server_verification" | "preservation_restriction" | "story_gate" | "mastery_xp" | "mission" | "ship" | "colony_level" | "settlement_level" | "target_state";
   id: string;
   quantity: number | null;
   condition: string;
@@ -3191,7 +3198,7 @@ export type ActionRequirement = {
 };
 
 export type ActionTransfer = {
-  type: "resource" | "credits" | "labor" | "population" | "fuel" | "artifact" | "material" | "energy" | "logistics" | "transport_capacity" | "time" | "project_slot" | "research" | "discovery_points" | "knowledge" | "discovery_state" | "building" | "colony" | "infrastructure" | "route" | "unlock" | "notification" | "follow_up_action" | "civilization_identity";
+  type: "resource" | "credits" | "labor" | "population" | "fuel" | "artifact" | "material" | "energy" | "logistics" | "transport_capacity" | "time" | "project_slot" | "research" | "discovery_points" | "knowledge" | "discovery_state" | "building" | "colony" | "infrastructure" | "route" | "unlock" | "notification" | "follow_up_action" | "civilization_identity" | "mastery_xp" | "upgrade" | "fleet" | "mission" | "reward" | "repair";
   id: string;
   quantity: number | null;
   timing: "start" | "progress" | "completion";
@@ -3271,7 +3278,7 @@ export type ActionDefinition = {
   category: string;
   description: string;
   targetTypes: string[];
-  entityType: "planet" | "celestial_body" | "colony" | "building" | "research" | "resource" | "trade_route" | "fleet" | "artifact" | "ai_agent" | "civilization" | "route" | "destination";
+  entityType: "planet" | "celestial_body" | "colony" | "building" | "research" | "resource" | "trade_route" | "fleet" | "artifact" | "ai_agent" | "civilization" | "route" | "destination" | "upgrade" | "mission";
   actionType: string;
   requirements: ActionRequirement[];
   inputs: ActionTransfer[];
@@ -3425,7 +3432,68 @@ export type ActionSystemContract = {
   accelerationRules: string[];
   automationRules: string[];
   actionPresentation: ActionPresentation[];
+  actionCostProfiles: ActionCostProfile[];
+  actionRequirementProfiles: ActionRequirementProfile[];
+  actionRewardProfiles: ActionRewardProfile[];
+  actionQueueProfiles: ActionQueueProfile[];
+  canonicalActionProfiles: CanonicalActionProfile[];
   validationRules: string[];
+};
+
+export type ActionCostProfile = {
+  id: string;
+  displayName: string;
+  costs: Array<{ type: string; canonicalId: string; amount: number; timing: "upfront" | "reserved" | "over_time" | "completion"; refundable: boolean }>;
+};
+
+export type ActionRequirementProfile = {
+  id: string;
+  displayName: string;
+  requirements: Array<{ type: string; canonicalId: string; minimum: number | null; hardGate: boolean }>;
+};
+
+export type ActionRewardProfile = {
+  id: string;
+  displayName: string;
+  rewards: Array<{ type: string; canonicalId: string; amount: number | null }>;
+};
+
+export type ActionQueueProfile = {
+  id: string;
+  displayName: string;
+  queueRuleId: string;
+  maxConcurrent: number;
+  maxQueued: number;
+  pauseAllowed: boolean;
+  reorderAllowed: boolean;
+  cancellationAllowed: boolean;
+  offlineAllowed: boolean;
+};
+
+export type CanonicalActionProfile = {
+  id: string;
+  version: "1.0.0";
+  displayName: string;
+  description: string;
+  domain: string;
+  actionType: string;
+  era: string | null;
+  tier: string;
+  actionDefinitionId: string;
+  durationProfileId: string;
+  costProfileId: string;
+  requirementProfileId: string;
+  rewardProfileId: string;
+  crystalAccelerationProfileId: string;
+  queueProfileId: string;
+  cancellationPolicy: string;
+  failurePolicy: string;
+  offlinePolicy: string;
+  repeatability: "once" | "repeatable" | "conditional";
+  runtimeTargets: string[];
+  validationStatus: "Ready" | "Blocked";
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type MobileDeviceClass = {
@@ -3556,6 +3624,7 @@ export type GameRuntimeData = {
   resourceMigrations: Array<Record<string, unknown>>;
   timeActionContract: TimeActionContract;
   actionSystem: ActionSystemContract;
+  progressionSystem: import("@/lib/progression/progression-system").ProgressionSystemContract;
   buildingTaxonomy: BuildingTaxonomyFamily[];
   buildingLibrary: CanonicalBuildingDefinition[];
   buildingClassifications: BuildingClassification[];
