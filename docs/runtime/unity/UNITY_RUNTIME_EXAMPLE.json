@@ -1,0 +1,44 @@
+{
+  "metadata": {
+    "authoritativeEndpoint": "/api/export/unity-runtime.json",
+    "runtimeSchemaId": "game-runtime-v2",
+    "runtimeSchemaVersion": "2.0.0",
+    "sourceRuntimeSchemaId": "game-runtime-v1",
+    "contentVersion": 72,
+    "minimumClientVersion": "2.0.0",
+    "capabilities": [
+      "progression-levels-v1",
+      "canonical-actions-v1",
+      "offline-reconciliation-v1"
+    ],
+    "generatedAt": "2026-08-03T00:00:00.000Z",
+    "checksumAlgorithm": "sha256",
+    "packageChecksum": "representative-checksum-replaced-by-publisher",
+    "contractVersions": {
+      "canonicalProgressionSystem": "1.0.0",
+      "canonicalActionSystem": "1.0.0"
+    },
+    "compatibilityPolicy": {
+      "schemaVersionPolicy": "exact_match_required",
+      "minimumClientPolicy": "reject_below_minimum",
+      "missingCapabilityPolicy": "reject",
+      "unsupportedRequiredContractPolicy": "reject",
+      "unknownOptionalCapabilityPolicy": "ignore"
+    },
+    "validationStatus": "Ready"
+  },
+  "runtime": {
+    "metadata": {
+      "schemaVersion": "game-runtime-v1",
+      "contentVersion": 72
+    },
+    "progressionSystem": {
+      "id": "canonical_progression_system_v1",
+      "version": "1.0.0"
+    },
+    "actionSystem": {
+      "id": "canonical_action_system_v1",
+      "version": "1.0.0"
+    }
+  }
+}

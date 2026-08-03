@@ -61,6 +61,7 @@
     "verify:identity-relationships": "tsx scripts/verify-identity-relationships.ts",
     "verify:universe-explorer": "tsx scripts/verify-universe-explorer.ts",
     "verify:progression-actions": "tsx scripts/verify-progression-timed-actions.ts",
+    "verify:unity-runtime-package": "tsx scripts/verify-unity-runtime-package.ts",
     "generate:universe-explorer-migration-report": "tsx scripts/generate-universe-explorer-migration-report.ts",
     "verify:render-hub": "tsx scripts/verify-render-hub.ts",
     "export:procedural-universe-fixtures": "tsx scripts/export-procedural-universe-fixtures.ts"
