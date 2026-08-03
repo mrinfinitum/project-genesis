@@ -38,7 +38,7 @@ function isPublishedGameContentRead(request: NextRequest) {
 function isPublicPublishedRuntimeExportRead(request: NextRequest) {
   if (request.method !== "GET") return false;
   const { pathname } = request.nextUrl;
-  return pathname === "/api/export/game-runtime-data.json" || pathname === "/api/export/roblox-game-data.json";
+  return pathname === "/api/export/game-runtime-data.json" || pathname === "/api/export/roblox-game-data.json" || pathname === "/api/export/unity-runtime.json";
 }
 
 function isPublicEraArtInventoryHead(request: NextRequest) {
