@@ -13,6 +13,7 @@ import {
   type UnityRuntimePackage
 } from "@/lib/runtime/unity-runtime-contract";
 import type { ImportIssue } from "@/types/runtime";
+import type { GameData } from "@/types/schema";
 
 const privateRuntimeKeys = new Set(["sourceMasterPath", "sourcePath", "localPath", "privatePath"]);
 
@@ -85,8 +86,8 @@ export function validateUnityRuntimePackage(runtimePackage: UnityRuntimePackage)
   return { valid: issues.length === 0, status: issues.length ? "Blocked" as const : "Ready" as const, issues };
 }
 
-export async function buildUnityRuntimePackage(options: { generatedAt?: string } = {}): Promise<UnityRuntimePackage> {
-  const sourceRuntime = await buildCanonicalRuntimeExportPayload();
+export async function buildUnityRuntimePackage(options: { generatedAt?: string; sourceData?: GameData } = {}): Promise<UnityRuntimePackage> {
+  const sourceRuntime = await buildCanonicalRuntimeExportPayload({ sourceData: options.sourceData });
   const runtime = sanitizeForUnity(sourceRuntime) as typeof sourceRuntime;
   const runtimePackage: UnityRuntimePackage = {
     metadata: {

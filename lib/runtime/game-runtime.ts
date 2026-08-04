@@ -2203,8 +2203,8 @@ function withPublicMetadata<T extends { metadata: RuntimeMetadata }>(
   };
 }
 
-export async function buildCanonicalRuntimeExportPayload(): Promise<CanonicalRuntimeExportPayload> {
-  const sorted = sortRuntimeData(await getGameRuntimeData());
+export async function buildCanonicalRuntimeExportPayload(options: { sourceData?: GameData } = {}): Promise<CanonicalRuntimeExportPayload> {
+  const sorted = sortRuntimeData(await getGameRuntimeData(options));
   const validation = validateGameRuntimeData(sorted);
   const safePayload: CanonicalRuntimeExportPayload = {
     ...sorted,
@@ -2922,8 +2922,26 @@ async function writeImportStore(store: ImportStore) {
   await writeFile(importStorePath, `${JSON.stringify(store, null, 2)}\n`, "utf8");
 }
 
-export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
-  const [data, importedAssets, productionOverrides] = await Promise.all([getGameData(), getAppliedGameArtAssets(), getAssetProductionRuntimeOverrides()]);
+function stableRowsById<T extends { id: string }>(rows: T[]): T[] {
+  return [...rows].sort((left, right) => left.id.localeCompare(right.id));
+}
+
+export function normalizeGameDataForRuntime(data: GameData): GameData {
+  return {
+    ...data,
+    research: stableRowsById(data.research),
+    buildings: stableRowsById(data.buildings),
+    upgrades: stableRowsById(data.upgrades),
+    building_relationships: stableRowsById(data.building_relationships),
+    assets: stableRowsById(data.assets),
+    planet_prompt_library: stableRowsById(data.planet_prompt_library),
+    game_constants: stableRowsById(data.game_constants)
+  };
+}
+
+export async function buildBaseGameRuntimeData(options: { sourceData?: GameData } = {}): Promise<GameRuntimeData> {
+  const [sourceData, importedAssets, productionOverrides] = await Promise.all([options.sourceData ? Promise.resolve(options.sourceData) : getGameData(), getAppliedGameArtAssets(), getAssetProductionRuntimeOverrides()]);
+  const data = normalizeGameDataForRuntime(sourceData);
   const categories = new Map(defaultCategories().map((row) => [row.id, row]));
   const upgrades = data.upgrades.map(upgradeToRuntime);
   const upgradeTree = buildUpgradeTreeContract(data.upgrades, upgrades);
@@ -3063,8 +3081,8 @@ export async function buildBaseGameRuntimeData(): Promise<GameRuntimeData> {
   };
 }
 
-export async function getGameRuntimeData() {
-  const [base, store] = await Promise.all([buildBaseGameRuntimeData(), readImportStore()]);
+export async function getGameRuntimeData(options: { sourceData?: GameData } = {}) {
+  const [base, store] = await Promise.all([buildBaseGameRuntimeData(options), readImportStore()]);
   if (!store.appliedRuntimeData) return base;
 
   const merged = withCanonicalEraDefinitions({

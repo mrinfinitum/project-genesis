@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
+import { getGameData } from "@/lib/data";
 import {
   UNITY_MINIMUM_CLIENT_VERSION,
   UNITY_RUNTIME_CAPABILITIES,
@@ -33,6 +34,18 @@ async function main() {
   assert.equal(first.metadata.runtimeSchemaId, UNITY_RUNTIME_SCHEMA_ID);
   assert.equal(first.metadata.minimumClientVersion, UNITY_MINIMUM_CLIENT_VERSION);
   assert.equal(first.metadata.packageChecksum, second.metadata.packageChecksum, "volatile generatedAt must not affect checksum");
+
+  const sourceData = await getGameData();
+  const shuffledSourceData = structuredClone(sourceData);
+  const orderSensitiveTables = ["research", "buildings", "upgrades", "building_relationships", "assets", "planet_prompt_library", "game_constants"] as const;
+  for (const table of orderSensitiveTables) shuffledSourceData[table].reverse();
+  const canonicalSourcePackage = await buildUnityRuntimePackage({ generatedAt: "2026-08-04T00:00:00.000Z", sourceData });
+  const shuffledSourcePackage = await buildUnityRuntimePackage({ generatedAt: "2026-08-04T00:00:00.000Z", sourceData: shuffledSourceData });
+  assert.equal(
+    canonicalSourcePackage.metadata.packageChecksum,
+    shuffledSourcePackage.metadata.packageChecksum,
+    "source table row order must not affect the canonical Unity package"
+  );
 
   const compatibleRequest = {
     clientVersion: UNITY_MINIMUM_CLIENT_VERSION,
