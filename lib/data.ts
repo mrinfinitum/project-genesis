@@ -28,11 +28,14 @@ async function getFallbackRows(table: DataTableName) {
   return mutableFallback.get(table) ?? [];
 }
 
-async function getRowsFromSupabaseOrFallback(table: DataTableName) {
+async function getRowsFromSupabaseOrFallback(table: DataTableName, allowFallback = true) {
   const supabase = createSupabaseAdminClient();
   const { data, error } = await supabase.from(table).select("*");
 
   if (error) {
+    if (!allowFallback) {
+      throw new Error(`Authoritative Supabase read failed for ${table}: ${error.message}`);
+    }
     console.error(`Supabase read failed for ${table}; using bundled fallback data.`, error.message);
     return getFallbackRows(table);
   }
@@ -94,8 +97,11 @@ export async function deleteRow(table: TableName, id: string) {
   }
 }
 
-export async function getGameData(): Promise<GameData> {
+export async function getGameData(options: { requireSupabase?: boolean } = {}): Promise<GameData> {
   if (!hasSupabaseServerConfig()) {
+    if (options.requireSupabase) {
+      throw new Error("Authoritative runtime publication requires NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.");
+    }
     const [
       research,
       buildings,
@@ -207,6 +213,7 @@ export async function getGameData(): Promise<GameData> {
     };
   }
 
+  const readSourceRows = (table: DataTableName) => getRowsFromSupabaseOrFallback(table, !options.requireSupabase);
   const [
     researchBranches,
     research,
@@ -246,43 +253,43 @@ export async function getGameData(): Promise<GameData> {
     civilizationTitles,
     civilizationBonuses
   ] = await Promise.all([
-    getRowsFromSupabaseOrFallback("research_branches"),
-    getRowsFromSupabaseOrFallback("research"),
-    getRowsFromSupabaseOrFallback("buildings"),
-    getRowsFromSupabaseOrFallback("unlock_matrix"),
-    getRowsFromSupabaseOrFallback("districts"),
-    getRowsFromSupabaseOrFallback("wonders"),
-    getRowsFromSupabaseOrFallback("upgrades"),
-    getRowsFromSupabaseOrFallback("building_relationships"),
-    getRowsFromSupabaseOrFallback("building_chains"),
-    getRowsFromSupabaseOrFallback("game_constants"),
-    getRowsFromSupabaseOrFallback("feature_flags"),
-    getRowsFromSupabaseOrFallback("assets"),
-    getRowsFromSupabaseOrFallback("conceptual_art"),
-    getRowsFromSupabaseOrFallback("planets"),
-    getRowsFromSupabaseOrFallback("planet_resource_profiles"),
-    getRowsFromSupabaseOrFallback("resource_catalog"),
-    getRowsFromSupabaseOrFallback("star_systems"),
-    getRowsFromSupabaseOrFallback("celestial_bodies"),
-    getRowsFromSupabaseOrFallback("system_probes"),
-    getRowsFromSupabaseOrFallback("generated_planets"),
-    getRowsFromSupabaseOrFallback("planet_prompt_library"),
-    getRowsFromSupabaseOrFallback("planet_render_library"),
-    getRowsFromSupabaseOrFallback("release_notes"),
-    getRowsFromSupabaseOrFallback("changelog"),
-    getRowsFromSupabaseOrFallback("project_systems"),
-    getRowsFromSupabaseOrFallback("project_system_history"),
-    getRowsFromSupabaseOrFallback("data_health_checks"),
-    getRowsFromSupabaseOrFallback("codex_readiness_items"),
-    getRowsFromSupabaseOrFallback("dashboard_metrics"),
-    getRowsFromSupabaseOrFallback("codex_tasks"),
-    getRowsFromSupabaseOrFallback("civilization_identity"),
-    getRowsFromSupabaseOrFallback("civilization_alignment_scores"),
-    getRowsFromSupabaseOrFallback("civilization_alignment_history"),
-    getRowsFromSupabaseOrFallback("civilization_milestones"),
-    getRowsFromSupabaseOrFallback("civilization_unlocked_milestones"),
-    getRowsFromSupabaseOrFallback("civilization_titles"),
-    getRowsFromSupabaseOrFallback("civilization_bonuses")
+    readSourceRows("research_branches"),
+    readSourceRows("research"),
+    readSourceRows("buildings"),
+    readSourceRows("unlock_matrix"),
+    readSourceRows("districts"),
+    readSourceRows("wonders"),
+    readSourceRows("upgrades"),
+    readSourceRows("building_relationships"),
+    readSourceRows("building_chains"),
+    readSourceRows("game_constants"),
+    readSourceRows("feature_flags"),
+    readSourceRows("assets"),
+    readSourceRows("conceptual_art"),
+    readSourceRows("planets"),
+    readSourceRows("planet_resource_profiles"),
+    readSourceRows("resource_catalog"),
+    readSourceRows("star_systems"),
+    readSourceRows("celestial_bodies"),
+    readSourceRows("system_probes"),
+    readSourceRows("generated_planets"),
+    readSourceRows("planet_prompt_library"),
+    readSourceRows("planet_render_library"),
+    readSourceRows("release_notes"),
+    readSourceRows("changelog"),
+    readSourceRows("project_systems"),
+    readSourceRows("project_system_history"),
+    readSourceRows("data_health_checks"),
+    readSourceRows("codex_readiness_items"),
+    readSourceRows("dashboard_metrics"),
+    readSourceRows("codex_tasks"),
+    readSourceRows("civilization_identity"),
+    readSourceRows("civilization_alignment_scores"),
+    readSourceRows("civilization_alignment_history"),
+    readSourceRows("civilization_milestones"),
+    readSourceRows("civilization_unlocked_milestones"),
+    readSourceRows("civilization_titles"),
+    readSourceRows("civilization_bonuses")
   ]);
 
   return {

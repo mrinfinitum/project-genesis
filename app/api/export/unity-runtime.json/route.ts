@@ -5,7 +5,8 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const runtimePackage = await buildUnityRuntimePackage();
+    const requireSupabase = process.env.NODE_ENV === "production";
+    const runtimePackage = await buildUnityRuntimePackage({ requireSupabase });
     const validation = validateUnityRuntimePackage(runtimePackage);
     if (!validation.valid) {
       return NextResponse.json({ error: "Unity runtime package validation failed.", validation }, { status: 500 });
@@ -16,7 +17,8 @@ export async function GET() {
         "X-Noveris-Runtime-Schema": runtimePackage.metadata.runtimeSchemaId,
         "X-Noveris-Content-Version": String(runtimePackage.metadata.contentVersion),
         "X-Noveris-Package-Checksum": runtimePackage.metadata.packageChecksum,
-        "X-Noveris-Validation-Status": runtimePackage.metadata.validationStatus
+        "X-Noveris-Validation-Status": runtimePackage.metadata.validationStatus,
+        "X-Noveris-Data-Source": requireSupabase ? "supabase" : "fallback"
       }
     });
   } catch {

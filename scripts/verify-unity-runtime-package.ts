@@ -92,10 +92,13 @@ async function main() {
 
   const packageSource = await readFile("lib/runtime/unity-runtime-package.ts", "utf8");
   const contractSource = await readFile("lib/runtime/unity-runtime-contract.ts", "utf8");
+  const dataSource = await readFile("lib/data.ts", "utf8");
   const routeSource = await readFile("app/api/export/unity-runtime.json/route.ts", "utf8");
   assert.equal(packageSource.includes("server-only"), false, "standalone package builder must avoid undeclared server-only dependency");
   assert.equal(contractSource.includes("server-only"), false, "standalone contract must avoid undeclared server-only dependency");
   assert.ok(routeSource.includes("buildUnityRuntimePackage") && routeSource.includes("validateUnityRuntimePackage"), "authoritative route must build and validate the canonical package");
+  assert.ok(routeSource.includes('process.env.NODE_ENV === "production"') && routeSource.includes('"X-Noveris-Data-Source"'), "production Unity publication must require and identify Supabase");
+  assert.ok(dataSource.includes("if (!allowFallback)") && dataSource.includes("if (options.requireSupabase)"), "authoritative Supabase reads must fail closed");
   assert.equal((await readFile("docs/runtime/unity/UNITY_RUNTIME_SCHEMA.json", "utf8")).includes(UNITY_RUNTIME_SCHEMA_ID), true, "machine-readable schema must match runtime schema");
 
   const packageBytes = Buffer.byteLength(JSON.stringify(first));

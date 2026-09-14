@@ -4,9 +4,9 @@ Verified against the repository and deployed Unity endpoint on 2026-09-14.
 
 ## Start Here
 
-Reconcile the Unity release record with the deployed deterministic package. The live endpoint currently serves checksum `602a0ee8173592014970d7e1f5efb844eea5d83055ad77af406385d1a946bc1d`, while `docs/runtime/unity/UNITY_RUNTIME_RELEASE_72.md` still records the pre-normalization checksum `07d14ad578634dbad5f8504d2d33bdd103a8d16e5b284bbef6be6161af7a3041`.
+Restore the Studio Supabase project, which currently rejects reads because it exceeds its storage quota. Supabase-backed Studio data is the decided authoritative production source for Unity release 72; bundled handoff data remains a local-development fallback.
 
-Before editing the release document, decide whether production is intentionally using bundled fallback data. The live payload contains 96 assets and matches the normalized fallback package. A local Supabase-backed build previously contained 137 assets and produced checksum `d0ff0a06761a5a8a0de2236fb9ff8f064d9d5b8f6eab3bc75fbb904728f7df2a`. Do not publish the Supabase checksum unless that exact package is deployed and independently verified.
+Production Unity publication now fails closed when Supabase configuration or any required table read is unavailable. After Supabase is restored, deploy the Supabase-backed payload and run `npm run verify:unity-runtime-deployment`. That verifier downloads and validates the endpoint twice and requires stable checksums. Only then update `docs/runtime/unity/UNITY_RUNTIME_RELEASE_72.md` with the deployed authoritative checksum and byte size.
 
 Preserve runtime schema `game-runtime-v2@2.0.0`, content version `72`, stable canonical IDs, checksum semantics, and all existing engine exports.
 
@@ -37,11 +37,14 @@ The runtime contract work is committed and pushed:
 
 The latest commit fixes database-row-order dependence by sorting source tables before deriving runtime structures. It also adds an injected-source-data test path and a regression that reverses relevant input tables and requires an identical final package checksum.
 
+The continuation after that commit establishes Supabase as the production authority, makes the Unity endpoint fail closed in production, adds a repeated-download deployment verifier and scheduled CI workflow, and records why the fallback checksum is not approved for release activation.
+
 Relevant files:
 
 - `lib/runtime/game-runtime.ts` — canonical source normalization and runtime construction.
 - `lib/runtime/unity-runtime-package.ts` — Unity package construction, sanitization, canonical serialization, SHA-256 checksum, and validation.
 - `scripts/verify-unity-runtime-package.ts` — compatibility, checksum, policy, leakage, and shuffled-input determinism tests.
+- `scripts/verify-deployed-unity-runtime.ts` — repeated production download, contract validation, checksum stability, header, and size verification.
 - `app/api/export/unity-runtime.json/route.ts` — authoritative public GET endpoint.
 - `middleware.ts` — anonymous GET whitelist; anonymous HEAD is not whitelisted.
 - `docs/runtime/unity/` — schema, migration, compatibility, reconciliation, checksum, and release documentation.
@@ -66,7 +69,7 @@ Runtime inventory:
 
 ## Deployment Verification
 
-Verified `https://project-genesis-livid.vercel.app/api/export/unity-runtime.json` on 2026-09-14:
+Verified `https://project-genesis-livid.vercel.app/api/export/unity-runtime.json` twice on 2026-09-14 before deploying the fail-closed source guard:
 
 - Anonymous GET: HTTP 200.
 - Schema: `game-runtime-v2@2.0.0`.
@@ -79,7 +82,9 @@ Verified `https://project-genesis-livid.vercel.app/api/export/unity-runtime.json
 - Assets: 96; upgrades: 556.
 - Vercel reported `x-vercel-cache: MISS`.
 
-The live checksum equals the normalized local fallback-data checksum. A Supabase-backed verification previously passed with 137 assets and checksum `d0ff0a06761a5a8a0de2236fb9ff8f064d9d5b8f6eab3bc75fbb904728f7df2a`. This indicates the endpoint's canonical contents depend on whether Supabase configuration/data is available, even though row ordering is now deterministic within either dataset.
+Both downloads were 67,447,624 bytes, contained 96 assets, passed repository validation, and had identical checksum `602a0ee8173592014970d7e1f5efb844eea5d83055ad77af406385d1a946bc1d`. The checksum equals the normalized local fallback-data checksum and is not approved as the authoritative release checksum. A Supabase-backed verification previously passed with 137 assets and checksum `d0ff0a06761a5a8a0de2236fb9ff8f064d9d5b8f6eab3bc75fbb904728f7df2a`, but that value must not be published unless the exact package is deployed and twice verified.
+
+The locally configured Supabase project currently reports `exceed_storage_size_quota` for all table reads. The former fail-open behavior explains how a configured deployment could still emit the fallback package. Production Unity publication now rejects missing Supabase configuration and read failures instead of publishing fallback or hybrid data.
 
 ## Verification Status
 
@@ -88,9 +93,9 @@ Successful after `44f6c82`:
 - `npx tsc --noEmit --pretty false`
 - `npm run verify:progression-actions`
 - `npm run verify:unity-runtime-package` with fallback data
-- Unity verifier with `.env.local` Supabase-backed data
+- `npm run verify:unity-runtime-deployment` against two independent production downloads
 - `npm run build`
-- Local production HTTP GET: 200, content 72, `Ready`
+- Local production HTTP GET fails closed with HTTP 500 while Supabase is restricted
 - Shuffled-input regression for both fallback and Supabase-backed source data
 - Live deployment download and repository validation on 2026-09-14
 
@@ -103,13 +108,12 @@ Known pre-existing gaps:
 
 ## Recommended Next Steps
 
-1. Determine why the deployment is using fallback data rather than the Supabase-backed dataset, and decide which dataset is authoritative for Unity release 72.
-2. After that decision, fetch the deployed endpoint twice, validate both payloads, and require identical checksums.
-3. Update `docs/runtime/unity/UNITY_RUNTIME_RELEASE_72.md` with the verified authoritative deployed checksum and byte size; commit and push.
-4. Add a CI/deployment integration verifier for HTTP status, schema, content version, required capabilities, checksum validity, stable repeated checksum, and payload-size reporting.
-5. Improve delivery for the 67.4 MB JSON. Preserve the one authoritative entry point and deterministic content; evaluate a cached/static artifact or a versioned manifest/chunk transport.
-6. Review the two prior production-only records named `asset-smoke-local-png` and `asset-smoke-local-psd` if Supabase is restored; they appear to be test artifacts but must not be deleted without confirmation.
-7. Address legacy verifier drift and replace deprecated lint configuration separately from the runtime transport work.
+1. Restore the Studio Supabase project by resolving its storage quota restriction; no code or credential change can bypass that service state safely.
+2. Confirm production has `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` configured without printing their values.
+3. Deploy, then run `npm run verify:unity-runtime-deployment` and update `docs/runtime/unity/UNITY_RUNTIME_RELEASE_72.md` only if both validated downloads have the same Supabase-backed checksum.
+4. Improve delivery for the large JSON. Preserve the one authoritative entry point and deterministic content; evaluate a cached/static artifact or a versioned manifest/chunk transport.
+5. Review the two prior production-only records named `asset-smoke-local-png` and `asset-smoke-local-psd` after Supabase is restored; they appear to be test artifacts but must not be deleted without confirmation.
+6. Address legacy verifier drift and replace deprecated lint configuration separately from the runtime transport work.
 
 ## Working Tree and Safety
 

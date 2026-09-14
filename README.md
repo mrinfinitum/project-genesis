@@ -15,6 +15,8 @@ The app renders with local data from `data/handoff/json` when Supabase environme
 
 Uploads also work without Supabase during local development. PNG and PSD files are saved under `public/uploads/project-genesis-assets`, and their row links are saved in `.local-data`.
 
+Production Unity runtime publication uses Studio Supabase as its authoritative content source. On a production Vercel deployment, `/api/export/unity-runtime.json` fails closed if `NEXT_PUBLIC_SUPABASE_URL` or `SUPABASE_SERVICE_ROLE_KEY` is missing, or if any required Supabase table cannot be read. A successful production response identifies that authority with `X-Noveris-Data-Source: supabase`; bundled fallback rows are never an implicit production release source.
+
 The Planetary Rules section stores the Project Genesis Planet Generation System v1.0 as procedural generation variables, including seed-driven planet fields, star systems, classes, biomes, climates, atmospheres, resources, flora, fauna, ancient civilizations, hazards, traits, modifiers, collectibles, visual themes, weather, colonization, science, economy, events, discovery journal fields, and story components. The Planets section generates and stores planet cards from those rules.
 
 ## Supabase Setup

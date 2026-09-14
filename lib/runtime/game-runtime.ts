@@ -2203,7 +2203,7 @@ function withPublicMetadata<T extends { metadata: RuntimeMetadata }>(
   };
 }
 
-export async function buildCanonicalRuntimeExportPayload(options: { sourceData?: GameData } = {}): Promise<CanonicalRuntimeExportPayload> {
+export async function buildCanonicalRuntimeExportPayload(options: { sourceData?: GameData; requireSupabase?: boolean } = {}): Promise<CanonicalRuntimeExportPayload> {
   const sorted = sortRuntimeData(await getGameRuntimeData(options));
   const validation = validateGameRuntimeData(sorted);
   const safePayload: CanonicalRuntimeExportPayload = {
@@ -2939,8 +2939,8 @@ export function normalizeGameDataForRuntime(data: GameData): GameData {
   };
 }
 
-export async function buildBaseGameRuntimeData(options: { sourceData?: GameData } = {}): Promise<GameRuntimeData> {
-  const [sourceData, importedAssets, productionOverrides] = await Promise.all([options.sourceData ? Promise.resolve(options.sourceData) : getGameData(), getAppliedGameArtAssets(), getAssetProductionRuntimeOverrides()]);
+export async function buildBaseGameRuntimeData(options: { sourceData?: GameData; requireSupabase?: boolean } = {}): Promise<GameRuntimeData> {
+  const [sourceData, importedAssets, productionOverrides] = await Promise.all([options.sourceData ? Promise.resolve(options.sourceData) : getGameData({ requireSupabase: options.requireSupabase }), getAppliedGameArtAssets(), getAssetProductionRuntimeOverrides()]);
   const data = normalizeGameDataForRuntime(sourceData);
   const categories = new Map(defaultCategories().map((row) => [row.id, row]));
   const upgrades = data.upgrades.map(upgradeToRuntime);
@@ -3081,7 +3081,7 @@ export async function buildBaseGameRuntimeData(options: { sourceData?: GameData 
   };
 }
 
-export async function getGameRuntimeData(options: { sourceData?: GameData } = {}) {
+export async function getGameRuntimeData(options: { sourceData?: GameData; requireSupabase?: boolean } = {}) {
   const [base, store] = await Promise.all([buildBaseGameRuntimeData(options), readImportStore()]);
   if (!store.appliedRuntimeData) return base;
 

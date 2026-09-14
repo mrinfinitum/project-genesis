@@ -86,8 +86,8 @@ export function validateUnityRuntimePackage(runtimePackage: UnityRuntimePackage)
   return { valid: issues.length === 0, status: issues.length ? "Blocked" as const : "Ready" as const, issues };
 }
 
-export async function buildUnityRuntimePackage(options: { generatedAt?: string; sourceData?: GameData } = {}): Promise<UnityRuntimePackage> {
-  const sourceRuntime = await buildCanonicalRuntimeExportPayload({ sourceData: options.sourceData });
+export async function buildUnityRuntimePackage(options: { generatedAt?: string; sourceData?: GameData; requireSupabase?: boolean } = {}): Promise<UnityRuntimePackage> {
+  const sourceRuntime = await buildCanonicalRuntimeExportPayload({ sourceData: options.sourceData, requireSupabase: options.requireSupabase });
   const runtime = sanitizeForUnity(sourceRuntime) as typeof sourceRuntime;
   const runtimePackage: UnityRuntimePackage = {
     metadata: {
